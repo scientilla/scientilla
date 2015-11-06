@@ -7,6 +7,7 @@
     "angular-resource": "*",
     "angular-route": "*",
     "angular-material" : "*",
+    "angular-material-icons" : "*",
     "angular-animate" : "*",
     "angular-aria" : "*",
     "angular-sanitize" : "*",
