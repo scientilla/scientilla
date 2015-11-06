@@ -38,5 +38,9 @@
   },
   "main": "app.js",
   "author": "github.com/iit-federico-bozzini",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scientilla/scientilla"
+  },
   "license": "MIT"
 }
