@@ -1,0 +1,40 @@
+.main-view {
+    width: 100%;
+}
+
+md-list-item.scientilla-main-list {
+    align-items: center;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.scientilla-main-list > div {
+    width: 600px;
+}
+
+.scientilla-secondary-list > div {
+    width: 200px;
+}
+
+form[form-for] a.md-button {
+    display: inline;
+}
+
+form.autosave {
+    padding-left: 5px;
+}
+form.autosave.unsaved {
+    border-left: 2px red solid;
+}
+
+form.autosave.saved {
+    border-left: 2px green solid;
+}
+
+form[form-for] {
+    width: 80%;
+}
+
+md-list-item {
+    justify-content: flex-start !important;
+}

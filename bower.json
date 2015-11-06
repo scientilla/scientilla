@@ -1,0 +1,19 @@
+{
+  "name": "scientilla",
+  "dependencies": {
+    "angular": "*",
+    "angular-bootstrap": "*",
+    "angular-form-for": "*",
+    "angular-resource": "*",
+    "angular-route": "*",
+    "angular-material" : "*",
+    "angular-animate" : "*",
+    "angular-aria" : "*",
+    "angular-sanitize" : "*",
+    "bootstrap": "*",
+    "font-awesome": "*",
+    "lodash": "*",
+    "restangular": "*",
+    "jquery": "*"
+  }
+}

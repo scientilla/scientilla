@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>New Sails App</title>
+
+    <!-- Viewport mobile tag for sensible mobile support -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+    <!--  
+        Stylesheets and Preprocessors
+        ==============================
+
+        You can always bring in CSS files manually with `<link>` tags, or asynchronously
+        using a solution like AMD (RequireJS).  Or, if you like, you can take advantage 
+        of Sails' conventional asset pipeline (boilerplate Gruntfile).
+
+        By default, stylesheets from your `assets/styles` folder are included
+        here automatically (between STYLES and STYLES END). Both CSS (.css) and LESS (.less)
+        are supported. In production, your styles will be minified and concatenated into
+        a single file.
+        
+        To customize any part of the built-in behavior, just edit `tasks/pipeline.js`.
+        For example, here are a few things you could do:
+            
+            + Change the order of your CSS files
+            + Import stylesheets from other directories
+            + Use a different or additional preprocessor, like SASS, SCSS or Stylus
+    -->
+
+    <!--STYLES-->
+    <link rel="stylesheet" href="/styles/dependencies/angular-material.min.css">
+    <link rel="stylesheet" href="/styles/importer.css">
+    <link rel="stylesheet" href="/styles/main.css">
+    <!--STYLES END-->
+  </head>
+
+  <body ng-app="app">
+    <%- body %>
+
+
+
+    <!--
+        Client-side Templates
+        ========================
+
+        HTML templates are important prerequisites of modern, rich client applications.
+        To work their magic, frameworks like Backbone, Angular, Ember, and Knockout require
+        that you load these templates client-side.
+
+        By default, your Gruntfile is configured to automatically load and precompile
+        client-side JST templates in your `assets/templates` folder, then
+        include them here automatically (between TEMPLATES and TEMPLATES END).
+        
+        To customize this behavior to fit your needs, just edit `tasks/pipeline.js`.
+        For example, here are a few things you could do:
+
+            + Import templates from other directories
+            + Use a different template engine (handlebars, jade, dust, etc.)
+            + Internationalize your client-side templates using a server-side
+              stringfile before they're served.
+    -->
+
+    <!--TEMPLATES-->
+    
+    <!--TEMPLATES END-->
+
+
+    <!--
+
+      Client-side Javascript
+      ========================
+
+      You can always bring in JS files manually with `script` tags, or asynchronously
+      on the client using a solution like AMD (RequireJS).  Or, if you like, you can 
+      take advantage of Sails' conventional asset pipeline (boilerplate Gruntfile).
+
+      By default, files in your `assets/js` folder are included here
+      automatically (between SCRIPTS and SCRIPTS END).  Both JavaScript (.js) and
+      CoffeeScript (.coffee) are supported. In production, your scripts will be minified
+      and concatenated into a single file.
+      
+      To customize any part of the built-in behavior, just edit `tasks/pipeline.js`.
+      For example, here are a few things you could do:
+          
+          + Change the order of your scripts
+          + Import scripts from other directories
+          + Use a different preprocessor, like TypeScript
+
+    -->
+
+    <!--SCRIPTS-->
+    <script src="/js/dependencies/jquery.min.js"></script>
+    <script src="/js/dependencies/angular.min.js"></script>
+    <script src="/js/dependencies/angular-animate.min.js"></script>
+    <script src="/js/dependencies/angular-aria.min.js"></script>
+    <script src="/js/dependencies/angular-material-icons.min.js"></script>
+    <script src="/js/dependencies/angular-material.min.js"></script>
+    <script src="/js/dependencies/angular-resource.min.js"></script>
+    <script src="/js/dependencies/angular-route.min.js"></script>
+    <script src="/js/dependencies/angular-sanitize.min.js"></script>
+    <script src="/js/dependencies/bootstrap.min.js"></script>
+    <script src="/js/dependencies/form-for.material-templates.js"></script>
+    <script src="/js/dependencies/form-for.min.js"></script>
+    <script src="/js/dependencies/lodash.min.js"></script>
+    <script src="/js/dependencies/restangular.min.js"></script>
+    <script src="/js/app/app.module.js"></script>
+    <script src="/js/app/auth/auth.module.js"></script>
+    <script src="/js/app/components/components.module.js"></script>
+    <script src="/js/app/core/app.core.module.js"></script>
+    <script src="/js/app/groups/groups.module.js"></script>
+    <script src="/js/app/notifications/notifications.module.js"></script>
+    <script src="/js/app/references/references.module.js"></script>
+    <script src="/js/app/users/users.module.js"></script>
+    <script src="/js/app/app.config.js"></script>
+    <script src="/js/app/app.controller.js"></script>
+    <script src="/js/app/auth/AuthService.js"></script>
+    <script src="/js/app/auth/auth.config.js"></script>
+    <script src="/js/app/auth/login.controller.js"></script>
+    <script src="/js/app/auth/logout.controller.js"></script>
+    <script src="/js/app/auth/register.controller.js"></script>
+    <script src="/js/app/components/header.controller.js"></script>
+    <script src="/js/app/components/home.controller.js"></script>
+    <script src="/js/app/components/menu.controller.js"></script>
+    <script src="/js/app/core/ifEmpty.filter.js"></script>
+    <script src="/js/app/groups/GroupsService.js"></script>
+    <script src="/js/app/groups/group-browsing.controller.js"></script>
+    <script src="/js/app/groups/group-form.controller.js"></script>
+    <script src="/js/app/groups/groups.config.js"></script>
+    <script src="/js/app/notifications/NotificationsServiceFactory.js"></script>
+    <script src="/js/app/notifications/notification-browsing.controller.js"></script>
+    <script src="/js/app/notifications/notifications.config.js"></script>
+    <script src="/js/app/references/ReferenceServiceFactory.js"></script>
+    <script src="/js/app/references/linkableauthors.filter.js"></script>
+    <script src="/js/app/references/reference-browsing.controller.js"></script>
+    <script src="/js/app/references/reference-creation.controller.js"></script>
+    <script src="/js/app/references/reference-form.controller.js"></script>
+    <script src="/js/app/references/references.config.js"></script>
+    <script src="/js/app/references/title.filter.js"></script>
+    <script src="/js/app/scientilla.js"></script>
+    <script src="/js/app/users/UsersService.js"></script>
+    <script src="/js/app/users/aliases.directive.js"></script>
+    <script src="/js/app/users/fullname.filter.js"></script>
+    <script src="/js/app/users/user-browsing.controller.js"></script>
+    <script src="/js/app/users/user-form.controller.js"></script>
+    <script src="/js/app/users/users.config.js"></script>
+    <!--SCRIPTS END-->
+  </body>
+</html>
