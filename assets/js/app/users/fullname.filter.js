@@ -3,10 +3,7 @@
             .filter('fullname', function () {
 
                 function getUsername(user) {
-                    var name = user.name ? user.name : "";
-                    var surname = user.surname ? user.surname : "";
-                    var fullName = _.trim(name + " " + surname);
-                    return fullName;
+                    return user.getDisplayName();
                 }
 
                 return getUsername;
