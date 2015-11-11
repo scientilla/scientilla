@@ -129,28 +129,25 @@
             var url = '/references/' + referenceId + '/collaborators/' + userId;
             $http.delete(url)
                     .then(function () {
-                        console.log(vm.reference.collaborators);
                         vm.reference.collaborators = _.reject(
                                 vm.reference.collaborators,
                                 function (u) {
                                     return u.id === user.id;
                                 });
-                        console.log(vm.collaborators);
                     });
         }
 
         function querySearch(query) {
             var queryStr = '?where={"or" : [    {"name":{"contains":"' + query + '"}},  {"surname":{"contains":"' + query + '"} } ]}';
             var url = '/users/' + queryStr;
-            return $http.get(
-                    url,
-                    {
-                        headers: {access_token: AuthService.jwtToken}
-                    }
-            ).then(function (result) {
-                var users = filterOutUsedCollaborators(result.data);
-                return users;
-            });
+            return $http.get(url)
+                    .then(function (result) {
+                        var users = filterOutUsedCollaborators(result.data);
+                        _.forEach(users, function(u) {
+                            _.defaults(u, Scientilla.user);
+                        })
+                        return users;
+                    });
         }
 
         function filterOutUsedCollaborators(toBeFiltered) {
