@@ -47,5 +47,16 @@
 
             return reference;
         });
+        
+        Restangular.extendModel('groups', function (group) {
+            //sTODO: refactor
+//            _.assign(reference, Scientilla.group);
+            _.forEach(group.memberships, function(m) {
+                _.defaults(m, Scientilla.membership);
+                _.defaults(m.user, Scientilla.user);
+            });
+
+            return group;
+        });
     }
 })();
