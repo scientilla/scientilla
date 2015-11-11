@@ -65,6 +65,10 @@ module.exports = {
             collection: 'alias',
             via: 'user'
         },
+        admins: {
+            collection: 'group',
+            via: 'administrators'
+        }
         createReference: function (r) {
             r.owner = this;
             this.references.add(r);

@@ -17,6 +17,10 @@ module.exports = {
       collaborations: {
           collection: 'collaboration',
           via: 'group'
+      },
+      administrators: {
+          collection: 'user',
+          via: 'admins'
       }
   }
 };
