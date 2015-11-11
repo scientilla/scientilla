@@ -31,6 +31,13 @@ Scientilla.user = {
         var aliases = this.getAliases();
         var ucAliases = _.map(aliases, function(a) { return a.toUpperCase();});
         return ucAliases;
+    },
+    
+    getDisplayName: function() {
+        var name = this.name ? this.name : "";
+        var surname = this.surname ? this.surname : "";
+        var fullName = _.trim(name + " " + surname);
+        return fullName;
     }
 };
 
@@ -59,5 +66,18 @@ Scientilla.reference = {
         },
         hasRealOwner: function() {
             return _.isObject(this.owner);
+        },
+        getDisplayName: function() {
+            return this.getDisplayName();
         }
+};
+
+Scientilla.membership = {
+    getDisplayName: function() {
+        //sTODO: to be removed when deep populate is implemented
+        if (_.isFunction(this.user.getDisplayName))
+            return this.user.getDisplayName();
+        else
+            return '';
+    }
 };
