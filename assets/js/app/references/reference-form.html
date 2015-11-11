@@ -11,7 +11,7 @@
         <md-list>
             <md-list-item class="md-1-line scientilla-secondary-list" ng-repeat="c in vm.reference.collaborators">
                 <div>
-                    <i>{{ c | fullname }} </i>
+                    <i>{{ c.displayName() }} </i>
                 </div>
                 <ng-md-icon icon="delete" ng-click="vm.removeCollaborator(c)" class="md-primary"></ng-md-icon>
             </md-list-item>
