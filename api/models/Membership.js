@@ -12,8 +12,7 @@ module.exports = {
         },
         group: {
             model: 'Group'
-        },
-        administrator: 'BOOLEAN'
+        }
     }
 };
 
