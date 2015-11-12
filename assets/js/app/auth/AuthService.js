@@ -33,7 +33,7 @@
                                     .then(function (result) {
                                         var user = result.data;
                                         service.user = user;
-                                        _.assign(service.user, Scientilla.user);
+                                        _.defaults(service.user, Scientilla.user);
                                         service.userId = result.data.id;
                                         service.username = result.data.username;
                                         return $http.get('/users/jwt');
