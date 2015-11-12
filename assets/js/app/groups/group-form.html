@@ -5,10 +5,17 @@
           submit-with="vm.submit()">
         <scientilla-multicomplete
             items="vm.group.memberships"
-            query="vm.getMemershipUsersQuery"
+            query="vm.getUsersQuery"
             transform="vm.userToMembership"
             filter="vm.getMembers"
             title="Members"
+            >
+        </scientilla-multicomplete> 
+        <scientilla-multicomplete
+            items="vm.group.administrators"
+            query="vm.getUsersQuery"
+            filter="vm.group.administrators"
+            title="Administrators"
             >
         </scientilla-multicomplete> 
         <md-button ng-href="#/groups">Cancel</md-button>

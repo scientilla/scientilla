@@ -17,7 +17,7 @@
         var vm = this;
         vm.group = group;
         vm.getMembers = getMembers;
-        vm.getMemershipUsersQuery = getMemershipUsersQuery;
+        vm.getUsersQuery = getUsersQuery;
         vm.userToMembership = userToMembership;
         console.log(group);
 
@@ -94,7 +94,7 @@
                 GroupsService.put(vm.group);
         }
         
-        function getMemershipUsersQuery(searchText) {
+        function getUsersQuery(searchText) {
             var qs = {where: { or: [{ name : {contains: searchText}}, { surname : {contains: searchText}}]}};
             var model = 'users';
             return {model: model, qs:qs};

@@ -36,7 +36,7 @@
     function currentGroup(GroupsService, AuthService, $route, Restangular) {
         var groupId = $route.current.params.id;
         //sTODO: refactor
-        return GroupsService.one(groupId).get({populate: ['memberships']});
+        return GroupsService.one(groupId).get({populate: ['memberships', 'administrators']});
     }
 
 
