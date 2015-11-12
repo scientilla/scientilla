@@ -16,7 +16,9 @@
     function GroupFormController(GroupsService, FormForConfiguration, $scope, group, AuthService, $location, $http) {
         var vm = this;
         vm.group = group;
-        vm.getUsers = getUsers;
+        vm.getMembers = getMembers;
+        vm.getMemershipUsersQuery = getMemershipUsersQuery;
+        vm.userToMembership = userToMembership;
         console.log(group);
 
         vm.validationAndViewRules = {
@@ -91,31 +93,21 @@
             } else
                 GroupsService.put(vm.group);
         }
-
-        function getUsers(query) {
-            var queryStr = '?where={"or" : [ {"name":{"contains":"' + query + '"}},  {"surname":{"contains":"' + query + '"} } ]}';
-            var url = '/users/' + queryStr;
-            return $http.get(url)
-                    .then(function (result) {
-                        var users = filterOutUsedElems(result.data, _.map(vm.group.memberships, 'user'));
-                        //sTODO: refactor
-                        var memberships = _.map(users, function (u) {
-                            _.defaults(u, Scientilla.user);
-                            var membership = {group: vm.group.id, user: u};
-                            _.defaults(membership, Scientilla.membership);
-                            return membership;
-                        });
-                        return memberships;
-                    });
+        
+        function getMemershipUsersQuery(searchText) {
+            var qs = {where: { or: [{ name : {contains: searchText}}, { surname : {contains: searchText}}]}};
+            var model = 'users';
+            return {model: model, qs:qs};
         }
-
-        function filterOutUsedElems(toBeFiltered, filter) {
-            var alreadyUsedIds = _.map(filter, 'id');
-            var users = _.filter(toBeFiltered, function (u) {
-                return !_.includes(alreadyUsedIds, u.id);
-            });
-            return users;
+        
+        function userToMembership(u) {
+                var membership = {group: vm.group.id, user: u};
+                _.defaults(membership, Scientilla.membership);
+                return membership;
         }
-
+        
+        function getMembers() {
+            return _.map(vm.group.memberships, 'user');
+        }
     }
 })();

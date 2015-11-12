@@ -5,7 +5,9 @@
           submit-with="vm.submit()">
         <scientilla-multicomplete
             items="vm.group.memberships"
-            query="vm.getUsers"
+            query="vm.getMemershipUsersQuery"
+            transform="vm.userToMembership"
+            filter="vm.getMembers"
             title="Members"
             >
         </scientilla-multicomplete> 

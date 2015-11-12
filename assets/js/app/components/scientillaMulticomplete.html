@@ -7,12 +7,13 @@
     </md-list-item>
 </md-list>
 <md-autocomplete
-    md-items="item in query()(searchText)"
+    md-items="item in search(searchText)"
     md-selected-item="selectedItem"
     md-selected-item-change="selectedItemChange(item)"
     md-search-text="searchText"
     md-item-text="item.display"
     md-no-cache="true"
+    placeholder="Type here"
     >
     <md-item-template>
         <span md-highlight-text="searchText" md-highlight-flags="^i">{{item.getDisplayName()}}</span>
