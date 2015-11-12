@@ -68,7 +68,7 @@ module.exports = {
         admins: {
             collection: 'group',
             via: 'administrators'
-        }
+        },
         createReference: function (r) {
             r.owner = this;
             this.references.add(r);
