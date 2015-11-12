@@ -1,11 +1,13 @@
 (function () {
     angular.module("groups").factory("GroupsService",
-            ["Restangular", function (Restangular) {
+            ["Restangular", "AuthService", function (Restangular, AuthService) {
                     var service = Restangular.service("groups");
 
                     service.getNewGroup = function () {
                         return {
-                            name: ""
+                            name: "",
+                            administrators: [AuthService.user],
+                            memberships: []
                         }; 
                     };
                     
