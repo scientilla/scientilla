@@ -29,10 +29,13 @@
             return Restangular.all(info.model).getList(info.qs)
                     .then(function (result) {
                         var displayItems = result;
-                        if (_.isFunction(filter)) {
-                            var elementsToDiscard = filter();
+                        var elementsToDiscard;
+                        if (_.isFunction(filter)) 
+                            elementsToDiscard = filter();
+                        if (_.isArray(filter)) 
+                            elementsToDiscard = filter;
+                        if (_.isArray(elementsToDiscard))
                             displayItems = filterOutUsedElemsById(displayItems, elementsToDiscard);
-                        }
                         return displayItems;
                     });
         }
