@@ -56,10 +56,10 @@
 
         function filterOutUsedElemsById(toBeFiltered, filter) {
             var alreadyUsedIds = _.map(filter, 'id');
-            var users = _.filter(toBeFiltered, function (u) {
-                return !_.includes(alreadyUsedIds, u.id);
+            var items = _.filter(toBeFiltered, function (i) {
+                return !_.includes(alreadyUsedIds, i.id);
             });
-            return users;
+            return items;
         }
         
         function removeItem(item) {
