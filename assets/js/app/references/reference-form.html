@@ -4,37 +4,14 @@
           form-for-builder
           submit-with="vm.submit()"
           class="autosave {{vm.status}}">
-        <collection-label attribute="collaborators"
-                          label="Collaborators"
-                          help="Collaborators">
-        </collection-label>
-        <md-list>
-            <md-list-item class="md-1-line scientilla-secondary-list" ng-repeat="c in vm.reference.collaborators">
-                <div>
-                    <i>{{ c.displayName() }} </i>
-                </div>
-                <ng-md-icon icon="delete" ng-click="vm.removeCollaborator(c)" class="md-primary"></ng-md-icon>
-            </md-list-item>
-        </md-list>
-        <md-autocomplete
-            md-search-text="vm.ta.searchText"
-            md-items="user in vm.ta.querySearch(vm.ta.searchText)"
-            md-item-text="user.name"
-            md-selected-item-change="vm.ta.selectedUserChange(user)"
-            md-min-length="2"
-            placeholder="Search collaborators">
-            <md-item-template>
-                <span md-highlight-text="vm.ta.searchText" md-highlight-flags="^i">{{user| fullname}}</span>
-            </md-item-template>
-        </md-autocomplete>
-        <md-list>
-            <md-list-item class="md-1-line scientilla-secondary-list" ng-repeat="u in vm.suggestions.users">
-                <div>
-                    <i>{{ u | fullname }} </i>
-                </div>
-                <ng-md-icon icon="group_add" ng-click="vm.ta.selectedUserChange(u)" class="md-primary"></ng-md-icon>
-            </md-list-item>
-        </md-list>
+        <scientilla-multicomplete
+            items="vm.reference.collaborators"
+            query="vm.getUsersQuery"
+            filter="vm.getCollaboratorsFilter"
+            title="Collaborators"
+            suggested-items="vm.reference.suggestedCollaborators"
+            >
+        </scientilla-multicomplete> 
         <md-button ng-href="#/users/{{vm.userId}}/references">Cancel</md-button>
         <submit-button label="Save"></submit-button>
     </form>

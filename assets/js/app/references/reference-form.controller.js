@@ -12,17 +12,17 @@
         'AuthService',
         '$scope',
         '$route',
-        '$interval',
-        '$rootScope',
         '$location'
     ];
 
-    function ReferenceFormController(UsersService, ReferencesService, FormForConfiguration, $http, Restangular, AuthService, $scope, $route, $interval, $rootScope, $location) {
+    function ReferenceFormController(UsersService, ReferencesService, FormForConfiguration, $http, Restangular, AuthService, $scope, $route, $location) {
         var vm = this;
         vm.reference = ReferencesService.getNewReference();
         vm.userId = AuthService.userId;
-        vm.suggestions = {};
-        vm.removeCollaborator = removeCollaborator;
+        vm.getUsersQuery = getUsersQuery;
+        vm.getCollaboratorsFilter = getCollaboratorsFilter;
+        vm.submit = submit;
+        vm.status = 'saved';
 
         vm.validationAndViewRules = {
             title: {
@@ -50,17 +50,6 @@
             }
         };
 
-        vm.ta = {
-            collaborators: [],
-            querySearch: querySearch,
-            searchText: "",
-            selectedUserChange: selectedUserChange
-        };
-
-        vm.submit = submit;
-
-        vm.status = 'saved';
-
         activate();
 
 
@@ -72,8 +61,7 @@
                 $scope.$watch('vm.reference', _.debounce(saveReference, 3000), true);
                 getSuggestedUsers();
             });
-
-
+            
         }
 
         function markModified(newValue, oldValue) {
@@ -85,8 +73,11 @@
         function getSuggestedUsers() {
             return vm.reference.getList('suggested-collaborators')
                     .then(function (suggestedCollaborators) {
-                        return vm.suggestions.users = suggestedCollaborators;
-                    })
+                        _.forEach(suggestedCollaborators, function(c) {
+                            _.defaults(c, Scientilla.user);
+                        })
+                        return vm.reference.suggestedCollaborators = suggestedCollaborators;
+                    });
         }
 
         function saveReference() {
@@ -119,53 +110,19 @@
         function submit() {
             saveReference()
                     .then(function () {
-                        $location.path('/references');
+                        //sTODO: refactor
+                        $location.path('users' + AuthService.user + '/references');
                     });
         }
-
-        function removeCollaborator(user) {
-            var userId = user.id;
-            var referenceId = vm.reference.id;
-            var url = '/references/' + referenceId + '/collaborators/' + userId;
-            $http.delete(url)
-                    .then(function () {
-                        vm.reference.collaborators = _.reject(
-                                vm.reference.collaborators,
-                                function (u) {
-                                    return u.id === user.id;
-                                });
-                    });
+        
+        function getUsersQuery(searchText) {
+            var qs = {where: { or: [{ name : {contains: searchText}}, { surname : {contains: searchText}}]}};
+            var model = 'users';
+            return {model: model, qs:qs};
         }
-
-        function querySearch(query) {
-            var queryStr = '?where={"or" : [    {"name":{"contains":"' + query + '"}},  {"surname":{"contains":"' + query + '"} } ]}';
-            var url = '/users/' + queryStr;
-            return $http.get(url)
-                    .then(function (result) {
-                        var users = filterOutUsedCollaborators(result.data);
-                        _.forEach(users, function(u) {
-                            _.defaults(u, Scientilla.user);
-                        })
-                        return users;
-                    });
-        }
-
-        function filterOutUsedCollaborators(toBeFiltered) {
-            var alreadyUsedIds = _.map(vm.reference.collaborators, 'id');
-            alreadyUsedIds.push(AuthService.userId);
-            var users = _.filter(toBeFiltered, function (u) {
-                return !_.includes(alreadyUsedIds, u.id);
-            });
-            return users;
-        }
-
-        function selectedUserChange(user) {
-            if (!user)
-                return;
-
-            vm.ta.searchText = "";
-            vm.reference.collaborators.push(user);
-            vm.suggestions.users = filterOutUsedCollaborators(vm.suggestions.users);
+        
+        function getCollaboratorsFilter() {
+            return _.union(vm.reference.collaborators, [AuthService.user]);
         }
 
     }
