@@ -20,7 +20,7 @@ module.exports = {
       },
       administrators: {
           collection: 'user',
-          via: 'admins'
+          via: 'admininstratedGroups'
       }
   }
 };

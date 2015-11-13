@@ -65,7 +65,7 @@ module.exports = {
             collection: 'alias',
             via: 'user'
         },
-        admins: {
+        admininstratedGroups: {
             collection: 'group',
             via: 'administrators'
         },
