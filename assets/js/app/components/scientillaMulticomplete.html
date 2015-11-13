@@ -1,5 +1,8 @@
 <md-list>
-    <md-subheader class="md-no-sticky" >{{title}}</md-subheader>
+    <collection-label attribute="{{title}}"
+                          label="{{title}}"
+                          help="{{title}}">
+    </collection-label>
     <md-list-item class="md-1-line scientilla-secondary-list" ng-repeat="item in items">
         <div class="md-list-item-text">
             <i>{{ item.getDisplayName()}}</i>
@@ -10,7 +13,7 @@
 <md-autocomplete
     md-items="item in search(searchText)"
     md-selected-item="selectedItem"
-    md-selected-item-change="selectedItemChange(item)"
+    md-selected-item-change="addItem(item)"
     md-search-text="searchText"
     md-item-text="item.display"
     md-no-cache="true"
@@ -20,3 +23,11 @@
         <span md-highlight-text="searchText" md-highlight-flags="^i">{{item.getDisplayName()}}</span>
     </md-item-template>
 </md-autocomplete>
+<md-list>
+    <md-list-item class="md-1-line scientilla-secondary-list" ng-repeat="item in suggestedItems">
+        <div>
+            <i>{{ item.getDisplayName() }} </i>
+        </div>
+        <ng-md-icon icon="group_add" ng-click="addItem(item)" class="md-primary"></ng-md-icon>
+    </md-list-item>
+</md-list>

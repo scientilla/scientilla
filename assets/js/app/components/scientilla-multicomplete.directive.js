@@ -14,13 +14,14 @@
                 query: "&",
                 filter: "&",
                 transform: "&",
-                title: "@"
+                title: "@",
+                suggestedItems: "="
             }
         };
     }
 
     function scientillaMulticompleteController($scope, Restangular) {
-        $scope.selectedItemChange = selectedItemChange;
+        $scope.addItem = addItem;
         $scope.search = search;
         $scope.removeItem = removeItem;
 
@@ -41,9 +42,11 @@
                     });
         }
 
-        function selectedItemChange(item) {
+        function addItem(item) {
             if (!item)
                 return;
+            
+            //sTODO: when adding item, remove it from suggested if present
             var newItem;
             var transform = $scope.transform();
             if (_.isFunction(transform))
