@@ -55,6 +55,9 @@
                 _.defaults(m, Scientilla.membership);
                 _.defaults(m.user, Scientilla.user);
             });
+            _.forEach(group.administrators, function(a) {
+                _.defaults(a, Scientilla.user);
+            });
 
             return group;
         });
