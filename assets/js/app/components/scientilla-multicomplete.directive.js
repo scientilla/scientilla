@@ -22,6 +22,7 @@
     function scientillaMulticompleteController($scope, Restangular) {
         $scope.selectedItemChange = selectedItemChange;
         $scope.search = search;
+        $scope.removeItem = removeItem;
 
         function search(searchText) {
             var info = $scope.query()(searchText);
@@ -59,6 +60,10 @@
                 return !_.includes(alreadyUsedIds, u.id);
             });
             return users;
+        }
+        
+        function removeItem(item) {
+            _.remove($scope.items, item);
         }
 
     }

@@ -4,6 +4,7 @@
         <div class="md-list-item-text">
             <i>{{ item.getDisplayName()}}</i>
         </div>
+        <ng-md-icon icon="delete" ng-click="removeItem(item)" class="md-primary" ng-aria="delete"></ng-md-icon>
     </md-list-item>
 </md-list>
 <md-autocomplete
