@@ -13,9 +13,8 @@
 
     function ReferenceBrowsingController(ReferencesService, Restangular, AuthService, $route, user) {
         var vm = this;
-
+        
         vm.deleteReference = deleteReference;
-
         vm.isOwner = ($route.current.params.id == AuthService.user.id);
 
         activate();
@@ -32,15 +31,6 @@
                         vm.references = references;
                         return vm.references;
             });
-            //sTODO: with deep populate
-            return user.getList({populate: 'collaborators'})
-//            return Restangular.all('references')
-//                    .getList({owner: $route.current.params.id, populate: 'collaborators'})
-                    .then(function (data) {
-                        vm.references = data;
-                        vm.references = Restangular.restangularizeCollection(null, vm.references, 'references');
-                        return vm.references;
-                    });
         }
 
         function deleteReference(reference) {
