@@ -59,7 +59,7 @@
             getReference().then(function () {
                 $scope.$watch('vm.reference', markModified, true);
                 $scope.$watch('vm.reference', _.debounce(saveReference, 3000), true);
-                getSuggestedUsers();
+                getSuggestedCollaborators();
             });
             
         }
@@ -70,12 +70,12 @@
             vm.status = 'unsaved';
         }
 
-        function getSuggestedUsers() {
+        function getSuggestedCollaborators() {
             return vm.reference.getList('suggested-collaborators')
                     .then(function (suggestedCollaborators) {
                         _.forEach(suggestedCollaborators, function(c) {
                             _.defaults(c, Scientilla.user);
-                        })
+                        });
                         return vm.reference.suggestedCollaborators = suggestedCollaborators;
                     });
         }
@@ -90,7 +90,7 @@
                     vm.reference
                     ).then(function () {
                 vm.status = 'saved';
-                return getSuggestedUsers();
+                return getSuggestedCollaborators();
             });
         }
 
