@@ -56,6 +56,13 @@ Scientilla.reference = {
         _.extend(reference, Scientilla.reference);
         return reference;
     },
+    getRealAuthors: function () {
+        var realAuthors = this.collaborators;
+        if (this.hasRealOwner())
+            realAuthors.push(this.owner);
+        return realAuthors;
+        
+    },
     getAuthors: function () {
         if (!this.authors)
             return [];

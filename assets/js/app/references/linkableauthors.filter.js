@@ -11,7 +11,7 @@
             if (_.isUndefined(reference.collaborators)) return reference.authors;
 
             var authors = reference.getAuthors();
-            var possibleMatches = _.union(reference.collaborators, [reference.owner]); 
+            var possibleMatches = reference.getRealAuthors(); 
             var linkedAuthorsStr = reference.authors;
             authors.forEach(function (author) {
                 var ucAuthor = author.toUpperCase();
