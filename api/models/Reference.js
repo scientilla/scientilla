@@ -37,6 +37,9 @@ module.exports = {
         owner: {
             model: 'User'
         },
+        groupOwner: {
+            model: 'Group'
+        },
         collaborators: {
             collection: 'User',
             via: 'coauthors'

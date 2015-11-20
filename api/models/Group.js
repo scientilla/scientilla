@@ -21,6 +21,10 @@ module.exports = {
       administrators: {
           collection: 'user',
           via: 'admininstratedGroups'
+      },
+      references: {
+          collection: 'Reference',
+          via: 'groupOwner'
       }
   }
 };
