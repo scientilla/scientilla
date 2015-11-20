@@ -36,7 +36,7 @@
             var newReference = Scientilla.reference.create(reference, user.id);
             user.post('references', newReference)
                     .then(function() {
-                        vm.suggestedReferences = _.remove(vm.suggestedReferences, reference);
+                        _.remove(vm.suggestedReferences, reference);
                     })
         }
     }
