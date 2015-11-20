@@ -46,7 +46,8 @@
             if (!item)
                 return;
             
-            //sTODO: when adding item, remove it from suggested if present
+            if (_.isArray($scope.suggestedItems))
+                _.remove($scope.suggestedItems, item);
             var newItem;
             var transform = $scope.transform();
             if (_.isFunction(transform))
