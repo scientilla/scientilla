@@ -8,15 +8,15 @@
         'ReferencesService',
         '$scope',
         '$location',
-        'reference'
+        'reference',
+        'researchEntity'
     ];
 
-    function ReferenceCreationController(AuthService, ReferencesService, $scope, $location, reference) {
-
+    function ReferenceCreationController(AuthService, ReferencesService, $scope, $location, reference, researchEntity) {
         activate();
 
         function activate() {
-            ReferencesService.post(reference).then(function (r) {
+            researchEntity.all('references').post(reference).then(function (r) {
                 var referenceId = r.id;
                 $location.path('/references/' + referenceId);
             });

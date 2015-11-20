@@ -21,7 +21,17 @@
                     controller: "ReferenceCreationController",
                     resolve: {
                         ReferencesService: UserReferencesService,
-                        reference: newReference
+                        reference: newReference,
+                        researchEntity: getCurrentUser
+                    }
+                })
+                .when("/users/:id/references/new", {
+                    template: "",
+                    controller: "ReferenceCreationController",
+                    resolve: {
+                        ReferencesService: UserReferencesService,
+                        reference: newReference,
+                        researchEntity: getCurrentUser
                     }
                 })
                 .when("/references/:id", {
