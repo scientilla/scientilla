@@ -14,5 +14,5 @@
         </md-list>
     </md-content>
     <!--<md-button ng-href="#/users" class="md-primary">Users</md-button>-->
-    <md-button ng-show="vm.isOwner" ng-href="#/references/new" class="md-primary">Create New Reference</md-button>
+    <md-button ng-show="vm.canCreate" ng-href="#{{vm.createNewUrl}}" class="md-primary">Create New Reference</md-button>
 </div>

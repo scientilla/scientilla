@@ -15,7 +15,8 @@
         var vm = this;
         
         vm.deleteReference = deleteReference;
-        vm.isOwner = ($route.current.params.id == AuthService.user.id);
+        vm.canCreate = ($route.current.params.id == AuthService.user.id);
+        vm.createNewUrl = "/users/" + user.id + "/references/new";
 
         activate();
 
@@ -37,7 +38,7 @@
 //            reference.remove(reference)
             ReferencesService.delete(reference)
                     .then(function () {
-                        vm.references = _.remove(vm.references, reference);
+                        _.remove(vm.references, reference);
                     });
         }
     }
