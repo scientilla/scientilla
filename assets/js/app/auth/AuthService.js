@@ -1,6 +1,6 @@
 (function () {
     angular.module("auth").factory("AuthService",
-            ["$http", "Restangular", "$q", "$rootScope", function ($http, Restangular, $q, $rootScope) {
+            ["$http", "Restangular", "UsersService", "$q", "$rootScope", function ($http, Restangular, UsersService, $q, $rootScope) {
                     var service = {
                         isLogged: false,
                         userId: null,
@@ -31,11 +31,13 @@
                         return $q(function (resolve, reject) {
                             $http.post(url, data)
                                     .then(function (result) {
-                                        var user = result.data;
-                                        service.user = user;
-                                        _.defaults(service.user, Scientilla.user);
                                         service.userId = result.data.id;
                                         service.username = result.data.username;
+                                        return UsersService.one(result.data.id).get({populate: ['admininstratedGroups', 'collaborations', 'aliases']});
+                                    })
+                                    .then(function (user) {
+                                        service.user = user;
+                                        _.defaults(service.user, Scientilla.user);
                                         return $http.get('/users/jwt');
                                     })
                                     .then(function (result) {
