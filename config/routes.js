@@ -37,7 +37,9 @@ module.exports.routes = {
 
   'post /auths/register' : 'Auth.register',
   'post /users/:userId/references': 'Reference.create',
+  'post /groups/:userId/references': 'Reference.create',
   'put /users/:userId/references/:id': 'Reference.update',
+  'put /groups/:userId/references/:id': 'Reference.update',
   'get /references/:id/suggestions' : 'Suggestion.find', //sTODO delete
   'get /references/:id/suggested-collaborators' : 'Reference.getSuggestedCollaborators',
   'get /users/:id/notifications' : 'Notification.find', //sTODO delete
