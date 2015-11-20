@@ -8,6 +8,7 @@
                         <a ng-href="#/groups/{{g.id}}">{{ g.name}}</a>
                     </h3>
                 </div>
+                <md-button class="list-elem-button md-icon-button" ng-href="#/groups/{{g.id}}/references" aria-label="References"><ng-md-icon icon="book"></ng-md-icon></md-button>
                 <md-button class="list-elem-button md-icon-button" ng-click="vm.deleteGroup(g)" aria-label="Delete"><ng-md-icon icon="delete"></ng-md-icon></md-button>
             </md-list-item>
         </md-list>
