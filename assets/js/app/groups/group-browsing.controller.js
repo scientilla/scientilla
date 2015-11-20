@@ -29,7 +29,7 @@
         function deleteGroup(group) {
             group.remove()
                     .then(function () {
-                        vm.groups = _.remove(vm.groups, group);
+                        _.remove(vm.groups, group);
                     });
         }
     }

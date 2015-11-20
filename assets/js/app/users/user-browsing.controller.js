@@ -30,7 +30,7 @@
         function deleteUser(user) {
             user.remove()
                     .then(function () {
-                        vm.users = _.remove(vm.users, user);
+                        _.remove(vm.users, user);
                     });
         }
     }
