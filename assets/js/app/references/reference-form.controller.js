@@ -23,6 +23,7 @@
         vm.getCollaboratorsFilter = getCollaboratorsFilter;
         vm.submit = submit;
         vm.status = 'saved';
+        vm.goToBrowsing = goToBrowsing;
 
         vm.validationAndViewRules = {
             title: {
@@ -61,7 +62,7 @@
                 $scope.$watch('vm.reference', _.debounce(saveReference, 3000), true);
                 getSuggestedCollaborators();
             });
-            
+
         }
 
         function markModified(newValue, oldValue) {
@@ -73,7 +74,7 @@
         function getSuggestedCollaborators() {
             return vm.reference.getList('suggested-collaborators')
                     .then(function (suggestedCollaborators) {
-                        _.forEach(suggestedCollaborators, function(c) {
+                        _.forEach(suggestedCollaborators, function (c) {
                             _.defaults(c, Scientilla.user);
                         });
                         return vm.reference.suggestedCollaborators = suggestedCollaborators;
@@ -99,30 +100,42 @@
             var referenceId = $route.current.params.id;
 
             return Restangular
-//                    .one('users', AuthService.userId)
                     .one('references', referenceId)
                     .get({populate: ['collaborators']})
                     .then(function (reference) {
                         vm.reference = reference;
+                        return vm.reference;
                     });
         }
 
         function submit() {
             saveReference()
                     .then(function () {
-                        //sTODO: refactor
-                        $location.path('users' + AuthService.user + '/references');
+                        goToBrowsing();
                     });
         }
-        
+
         function getUsersQuery(searchText) {
-            var qs = {where: { or: [{ name : {contains: searchText}}, { surname : {contains: searchText}}]}};
+            var qs = {where: {or: [{name: {contains: searchText}}, {surname: {contains: searchText}}]}};
             var model = 'users';
-            return {model: model, qs:qs};
+            return {model: model, qs: qs};
         }
-        
+
         function getCollaboratorsFilter() {
             return _.union(vm.reference.collaborators, [AuthService.user]);
+        }
+
+        //sTODO: refactor
+        function goToBrowsing() {
+            var url;
+            if (!_.isNull(vm.reference.owner))
+                url = '/users/' + vm.reference.owner + '/references';
+            else if (!_.isNull(vm.reference.groupOwner))
+                url = '/groups/' + vm.reference.groupOwner + '/references';
+            else
+                url = '/home';
+            $location.path(url);
+
         }
 
     }

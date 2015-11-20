@@ -12,7 +12,8 @@
             suggested-items="vm.reference.suggestedCollaborators"
             >
         </scientilla-multicomplete> 
-        <md-button ng-href="#/users/{{vm.userId}}/references">Cancel</md-button>
+        <!--<md-button ng-href="#/users/{{vm.userId}}/references">Cancel</md-button>-->
+        <md-button ng-click="vm.goToBrowsing()">Cancel</md-button>
         <submit-button label="Save"></submit-button>
     </form>
 
