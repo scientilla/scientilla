@@ -1,13 +1,15 @@
 var Scientilla = Scientilla || {};
 
 Scientilla.user = {
-   getAliases: function() {
+    getAliases: function () {
         var firstLetter = function (string) {
-            if (!string) return "";
+            if (!string)
+                return "";
             return string.charAt(0).toUpperCase();
         };
         var capitalize = function (string) {
-            if (!string) return "";
+            if (!string)
+                return "";
             return _.capitalize(string.toLowerCase());
 //                return str.replace(/\w\S*/g, function (txt) {
 //                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -26,14 +28,14 @@ Scientilla.user = {
         aliases = _.uniq(aliases);
         return aliases;
     },
-
-    getUcAliases: function() {
+    getUcAliases: function () {
         var aliases = this.getAliases();
-        var ucAliases = _.map(aliases, function(a) { return a.toUpperCase();});
+        var ucAliases = _.map(aliases, function (a) {
+            return a.toUpperCase();
+        });
         return ucAliases;
     },
-    
-    getDisplayName: function() {
+    getDisplayName: function () {
         var name = this.name ? this.name : "";
         var surname = this.surname ? this.surname : "";
         var fullName = _.trim(name + " " + surname);
@@ -43,7 +45,7 @@ Scientilla.user = {
 
 //sTodo: evaluating wheter to reformat in a constructor style
 Scientilla.reference = {
-    create: function(referenceData, owner) {
+    create: function (referenceData, owner) {
         var fields = [
             'authors',
             'title',
@@ -55,25 +57,35 @@ Scientilla.reference = {
         return reference;
     },
     getAuthors: function () {
-            if (!this.authors) return [];
+        if (!this.authors)
+            return [];
 
-            return this.authors.replace(/\s+et all\s*$/i, '').split(',').map(_.trim);
-        },
-        getUcAuthors: function() {
-            var authors = this.getAuthors();
-            var ucAuthors = _.map(authors, function(a) { return a.toUpperCase();});
-            return ucAuthors;
-        },
-        hasRealOwner: function() {
-            return _.isObject(this.owner);
-        },
-        getDisplayName: function() {
-            return this.getDisplayName();
-        }
+        return this.authors.replace(/\s+et all\s*$/i, '').split(',').map(_.trim);
+    },
+    getUcAuthors: function () {
+        var authors = this.getAuthors();
+        var ucAuthors = _.map(authors, function (a) {
+            return a.toUpperCase();
+        });
+        return ucAuthors;
+    },
+    hasRealOwner: function () {
+        return _.isObject(this.owner);
+    },
+    getDisplayName: function () {
+        return this.getDisplayName();
+    },
+    getNewGroupReference: function (groupId) {
+        return {
+            title: "",
+            authors: "",
+            groupOwner: groupId
+        };
+    }
 };
 
 Scientilla.membership = {
-    getDisplayName: function() {
+    getDisplayName: function () {
         //sTODO: to be removed when deep populate is implemented
         if (_.isFunction(this.user.getDisplayName))
             return this.user.getDisplayName();
