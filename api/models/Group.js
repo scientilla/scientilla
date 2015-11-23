@@ -10,6 +10,7 @@ module.exports = {
   attributes: {
       name: 'STRING',
       slug: 'STRING',
+      description: 'TEXT',
       memberships: {
           collection: 'membership',
           via: 'group'
@@ -26,6 +27,5 @@ module.exports = {
           collection: 'Reference',
           via: 'groupOwner'
       }
-  }
 };
 
