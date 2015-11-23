@@ -16,6 +16,7 @@
     ];
 
     function ReferenceFormController(UsersService, ReferencesService, FormForConfiguration, $http, Restangular, AuthService, $scope, $route, $location) {
+        var referenceType;
         var vm = this;
         vm.reference = ReferencesService.getNewReference();
         vm.userId = AuthService.userId;
@@ -61,6 +62,7 @@
                 $scope.$watch('vm.reference', markModified, true);
                 $scope.$watch('vm.reference', _.debounce(saveReference, 3000), true);
                 getSuggestedCollaborators();
+                referenceType = vm.reference.getType();
             });
 
         }
@@ -128,14 +130,17 @@
         //sTODO: refactor
         function goToBrowsing() {
             var url;
-            if (!_.isNull(vm.reference.owner))
-                url = '/users/' + vm.reference.owner + '/references';
-            else if (!_.isNull(vm.reference.groupOwner))
-                url = '/groups/' + vm.reference.groupOwner + '/references';
-            else
-                url = '/home';
+            switch(referenceType) {
+                case Scientilla.reference.USER_REFERENCE : 
+                    url = '/users/' + vm.reference.owner + '/references';
+                    break;
+                case Scientilla.reference.GROUP_REFERENCE : 
+                    url = '/groups/' + vm.reference.groupOwner + '/references';
+                    break;
+                default : 
+                    url = '/home';
+            }
             $location.path(url);
-
         }
 
     }

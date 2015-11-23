@@ -45,6 +45,9 @@ Scientilla.user = {
 
 //sTodo: evaluating wheter to reformat in a constructor style
 Scientilla.reference = {
+    UNKNOWN_REFERENCE:0,
+    USER_REFERENCE: 1,
+    GROUP_REFERENCE: 2,
     create: function (referenceData, owner) {
         var fields = [
             'authors',
@@ -61,7 +64,15 @@ Scientilla.reference = {
         if (this.hasRealOwner())
             realAuthors.push(this.owner);
         return realAuthors;
-        
+
+    },
+    getType: function () {
+        if (!_.isNull(this.owner))
+            return this.USER_REFERENCE;
+        else if (!_.isNull(this.groupOwner))
+            return this.GROUP_REFERENCE;
+        else
+            return this.UNKNOWN_REFERENCE;
     },
     getAuthors: function () {
         if (!this.authors)
