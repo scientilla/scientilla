@@ -124,7 +124,10 @@
         }
 
         function getCollaboratorsFilter() {
-            return _.union(vm.reference.collaborators, [AuthService.user]);
+            if (referenceType === Scientilla.reference.USER_REFERENCE)
+                return _.union(vm.reference.collaborators, [AuthService.user]);
+            else
+                return vm.reference.collaborators;
         }
 
         //sTODO: refactor
