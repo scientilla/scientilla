@@ -44,6 +44,10 @@ module.exports = {
             collection: 'User',
             via: 'coauthors'
         },
+        groupCollaborations: {
+            collection: 'Group',
+            via: 'collaboratedReferences'
+        },
         verify: function () {
 //            this.verified = true;
             this.status = VERIFIED;

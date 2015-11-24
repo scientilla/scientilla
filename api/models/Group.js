@@ -26,6 +26,11 @@ module.exports = {
       references: {
           collection: 'Reference',
           via: 'groupOwner'
+      },
+      collaboratedReferences: {
+          collection: 'reference',
+          via: 'groupCollaborations'
       }
+  }
 };
 
