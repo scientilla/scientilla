@@ -67,9 +67,9 @@ Scientilla.reference = {
 
     },
     getType: function () {
-        if (!_.isNull(this.owner))
+        if (!!this.owner)
             return this.USER_REFERENCE;
-        else if (!_.isNull(this.groupOwner))
+        else if (!!this.groupOwner)
             return this.GROUP_REFERENCE;
         else
             return this.UNKNOWN_REFERENCE;
