@@ -60,7 +60,7 @@ Scientilla.reference = {
         return reference;
     },
     getRealAuthors: function () {
-        var realAuthors = this.collaborators;
+        var realAuthors = _.clone(this.collaborators);
         if (this.hasRealOwner())
             realAuthors.push(this.owner);
         return realAuthors;
