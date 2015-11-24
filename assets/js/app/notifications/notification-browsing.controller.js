@@ -4,12 +4,12 @@
             .controller('NotificationBrowsingController', NotificationBrowsingController);
 
     NotificationBrowsingController.$inject = [
-        'UsersService',
+        'AuthService',
         'Restangular',
         'user'
     ];
 
-    function NotificationBrowsingController(UsersService, Restangular, user) {
+    function NotificationBrowsingController(AuthService, Restangular, user) {
         var vm = this;
         vm.copyReference = copyReference;
 
@@ -25,7 +25,8 @@
             //sTODO move to a service
             return user.getList('notifications')
                     .then(function (notifications) {
-                        vm.suggestedReferences = _.map(notifications, 'content.reference');
+                        var userId = AuthService.user.id.toString();
+                        vm.suggestedReferences = _.map(_.filter(notifications, {targetType: 'user', targetId: userId}), 'content.reference');
                         return vm.suggestedReferences;
                     });
         }
