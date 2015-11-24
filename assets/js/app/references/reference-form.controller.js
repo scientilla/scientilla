@@ -103,7 +103,7 @@
 
             return Restangular
                     .one('references', referenceId)
-                    .get({populate: ['collaborators']})
+                    .get({populate: ['collaborators', 'owner', 'groupOwner']})
                     .then(function (reference) {
                         vm.reference = reference;
                         return vm.reference;
@@ -117,6 +117,7 @@
                     });
         }
 
+        //STODO: refactor
         function getUsersQuery(searchText) {
             var qs = {where: {or: [{name: {contains: searchText}}, {surname: {contains: searchText}}]}};
             var model = 'users';
@@ -124,10 +125,7 @@
         }
 
         function getCollaboratorsFilter() {
-            if (referenceType === Scientilla.reference.USER_REFERENCE)
-                return _.union(vm.reference.collaborators, [AuthService.user]);
-            else
-                return vm.reference.collaborators;
+            return vm.reference.getRealAuthors();
         }
 
         //sTODO: refactor
@@ -135,10 +133,10 @@
             var url;
             switch(referenceType) {
                 case Scientilla.reference.USER_REFERENCE : 
-                    url = '/users/' + vm.reference.owner + '/references';
+                    url = '/users/' + vm.reference.owner.id + '/references';
                     break;
                 case Scientilla.reference.GROUP_REFERENCE : 
-                    url = '/groups/' + vm.reference.groupOwner + '/references';
+                    url = '/groups/' + vm.reference.groupOwner.id + '/references';
                     break;
                 default : 
                     url = '/home';
