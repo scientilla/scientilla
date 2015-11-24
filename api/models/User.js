@@ -122,10 +122,17 @@ module.exports = {
                 suggestedReferencesFunctions.unshift(User.getSuggestedReferences(userId, user));
                 return Promise.all(suggestedReferencesFunctions)
                         .then(function(referencesGroups){
-                            var userReferences = referencesGroups[0];
+                            var userReferences = referencesGroups.shift();
                             var notifications = _.map(userReferences, function(r) {
                                 return {type: 'reference', content: {reference: r}, targetType: 'user', targetId: userId};
                             });
+                            var groupNotifications = _.flatten(referencesGroups.map(function(references, i) {
+                                var group = administeredGroups[i];
+                                return references.map(function(r) {
+                                    return {type: 'reference', content: {reference: r}, targetType: 'group', targetId: group.id};
+                                });
+                            }));
+                            notifications = _.union(notifications, groupNotifications);
                             return notifications;
                 });
             });
