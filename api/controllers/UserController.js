@@ -38,11 +38,18 @@ module.exports = require('waterlock').actions.user({
                 res.json(err);
             });
     },
-
     getSuggestedReferences: function(req, res) {
         var userId = req.params.id;
         var user = req.session.user;
         User.getSuggestedReferences(userId, user)
+                .then(function(suggestedReferences) {
+                    res.json(suggestedReferences);
+        });
+    },
+    getNotifications: function(req, res) {
+        var userId = req.params.id;
+        var user = req.session.user;
+        User.getNotifications(userId, user)
                 .then(function(suggestedReferences) {
                     res.json(suggestedReferences);
         });

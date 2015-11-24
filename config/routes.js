@@ -42,8 +42,8 @@ module.exports.routes = {
   'put /groups/:userId/references/:id': 'Reference.update',
   'get /references/:id/suggestions' : 'Suggestion.find', //sTODO delete
   'get /references/:id/suggested-collaborators' : 'Reference.getSuggestedCollaborators',
-  'get /users/:id/notifications' : 'Notification.find', //sTODO delete
-  'get /users/:id/suggested-references' : 'User.getSuggestedReferences'
+  'get /users/:id/suggested-references' : 'User.getSuggestedReferences',
+  'get /users/:id/notifications' : 'User.getNotifications'
 
 //    'get /': {
 //        controller: 'index',

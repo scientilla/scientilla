@@ -65,6 +65,7 @@ module.exports = {
             collection: 'alias',
             via: 'user'
         },
+        //STODO: typo, correct
         admininstratedGroups: {
             collection: 'group',
             via: 'administrators'
@@ -106,6 +107,26 @@ module.exports = {
         }
 
     }),
+    getAdministeredGroups: function(userId) {
+        return User.findOneById(userId)
+            .populate('admininstratedGroups')
+            .then(function(user) {
+                return user.admininstratedGroups;
+            });
+    },
+    getNotifications: function(userId, user) {
+        return User
+            .getAdministeredGroups(userId)
+            .then(function(administeredGroups) {
+                var suggestedReferencesFunctions = _.map(administeredGroups, function(g) { return Group.getSuggestedReferences(g.id);});
+                suggestedReferencesFunctions.unshift(User.getSuggestedReferences(userId, user));
+                return Promise.all(suggestedReferencesFunctions)
+                        .then(function(referencesGroups){
+                            var userReferences = referencesGroups[0];
+                            return userReferences;
+                });
+            });
+    },
 
     //sTODO: add deep populate for other fields of the references
     getSuggestedReferences: function(userId, user) {
@@ -122,6 +143,7 @@ module.exports = {
             return suggestedReferences;
         }
         var similarityThreshold = .98;
+        
         return Promise.all([
             User.findOneById(userId)
                 .populate('coauthors')

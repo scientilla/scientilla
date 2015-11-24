@@ -23,7 +23,7 @@
 
         function getSuggestedReferences() {
             //sTODO move to a service
-            return user.getList('suggested-references')
+            return user.getList('notifications')
                     .then(function (suggestedReferences) {
                         vm.suggestedReferences = suggestedReferences;
                         return vm.suggestedReferences;
