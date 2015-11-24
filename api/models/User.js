@@ -123,7 +123,10 @@ module.exports = {
                 return Promise.all(suggestedReferencesFunctions)
                         .then(function(referencesGroups){
                             var userReferences = referencesGroups[0];
-                            return userReferences;
+                            var notifications = _.map(userReferences, function(r) {
+                                return {type: 'reference', content: {reference: r}, targetType: 'user', targetId: userId};
+                            });
+                            return notifications;
                 });
             });
     },

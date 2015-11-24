@@ -24,8 +24,8 @@
         function getSuggestedReferences() {
             //sTODO move to a service
             return user.getList('notifications')
-                    .then(function (suggestedReferences) {
-                        vm.suggestedReferences = suggestedReferences;
+                    .then(function (notifications) {
+                        vm.suggestedReferences = _.map(notifications, 'content.reference');
                         return vm.suggestedReferences;
                     });
         }
