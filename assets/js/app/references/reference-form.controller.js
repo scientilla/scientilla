@@ -23,7 +23,7 @@
         vm.getUsersQuery = getUsersQuery;
         vm.getCollaboratorsFilter = getCollaboratorsFilter;
         vm.getGroupsQuery = getGroupsQuery;
-        vm.getCollaborationsFilter = getCollaboratorsFilter;
+        vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.submit = submit;
         vm.status = 'saved';
         vm.goToBrowsing = goToBrowsing;
