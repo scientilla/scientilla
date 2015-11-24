@@ -66,6 +66,12 @@ Scientilla.reference = {
         return realAuthors;
 
     },
+    getCollaborations: function () {
+        var collaborations = _.clone(this.groupCollaborations);
+        if (this.hasRealGroupOwner())
+            collaborations.push(this.groupOwner);
+        return collaborations;
+    },
     getType: function () {
         if (!!this.owner)
             return this.USER_REFERENCE;
@@ -90,6 +96,9 @@ Scientilla.reference = {
     hasRealOwner: function () {
         return _.isObject(this.owner);
     },
+    hasRealGroupOwner: function () {
+        return _.isObject(this.groupOwner);
+    },
     getDisplayName: function () {
         return this.getDisplayName();
     },
@@ -111,3 +120,9 @@ Scientilla.membership = {
             return '';
     }
 };
+
+Scientilla.group = {
+    getDisplayName: function() {
+        return this.name;
+    }
+}

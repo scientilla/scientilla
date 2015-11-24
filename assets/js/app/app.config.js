@@ -44,13 +44,16 @@
             _.forEach(reference.collaborators, function(c) {
                 _.assign(c, Scientilla.user);
             });
+            _.forEach(reference.groupCollaborations, function(c) {
+                _.assign(c, Scientilla.group);
+            });
 
             return reference;
         });
         
         Restangular.extendModel('groups', function (group) {
             //sTODO: refactor
-//            _.assign(reference, Scientilla.group);
+            _.assign(group, Scientilla.group);
             _.forEach(group.memberships, function(m) {
                 _.defaults(m, Scientilla.membership);
                 _.defaults(m.user, Scientilla.user);

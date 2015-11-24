@@ -22,6 +22,8 @@
         vm.userId = AuthService.userId;
         vm.getUsersQuery = getUsersQuery;
         vm.getCollaboratorsFilter = getCollaboratorsFilter;
+        vm.getGroupsQuery = getGroupsQuery;
+        vm.getCollaborationsFilter = getCollaboratorsFilter;
         vm.submit = submit;
         vm.status = 'saved';
         vm.goToBrowsing = goToBrowsing;
@@ -103,7 +105,7 @@
 
             return Restangular
                     .one('references', referenceId)
-                    .get({populate: ['collaborators', 'owner', 'groupOwner']})
+                    .get({populate: ['collaborators', 'owner', 'groupOwner', 'groupCollaborations']})
                     .then(function (reference) {
                         vm.reference = reference;
                         return vm.reference;
@@ -123,9 +125,20 @@
             var model = 'users';
             return {model: model, qs: qs};
         }
+        
+        //STODO: refactor
+        function getGroupsQuery(searchText) {
+            var qs = {where: {or: [{name: {contains: searchText}}, {description: {contains: searchText}}]}};
+            var model = 'groups';
+            return {model: model, qs: qs};
+        }
 
         function getCollaboratorsFilter() {
             return vm.reference.getRealAuthors();
+        }
+
+        function getCollaborationsFilter() {
+            return vm.reference.getCollaborations();
         }
 
         //sTODO: refactor
