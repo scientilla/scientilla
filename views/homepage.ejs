@@ -1,35 +1,7 @@
 <scientilla-toolbar></scientilla-toolbar>
 <div layout="column">
     <section layout="row" flex>
-        <div ng-controller="MenuController as vm">
-        <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')" style="position: absolute; top:64px; bottom:0">
-              <md-toolbar class="md-theme-indigo">
-                <h1 class="md-toolbar-tools">
-                    <md-button ng-href="#/users">Users</md-button>
-                </h1>
-              </md-toolbar>
-              <md-toolbar class="md-theme-indigo">
-                <h1 class="md-toolbar-tools">
-                    <md-button ng-href="#/users/{{vm.userId}}/references">References</md-button>
-                </h1>
-              </md-toolbar>
-              <md-toolbar class="md-theme-indigo">
-                <h1 class="md-toolbar-tools">
-                    <md-button ng-href="#/groups">Groups</md-button>
-                </h1>
-              </md-toolbar>
-              <md-toolbar class="md-theme-indigo">
-                <h1 class="md-toolbar-tools">
-                    <md-button ng-href="#/users/{{vm.userId}}/notifications">Notifications</md-button>
-                </h1>
-              </md-toolbar>
-              <md-toolbar class="md-theme-indigo">
-                <h1 class="md-toolbar-tools">
-                    <md-button ng-href="#/users/{{vm.userId}}">Profile</md-button>
-                </h1>
-              </md-toolbar>
-        </md-sidenav>
-        </div>
+        <scientilla-menu></scientilla-menu>
         <md-content flex layout-padding style="position: absolute; top:64px; bottom:0; left: 320px; width: 800px;">
             <div layout="column" layout-fill layout-align="top center">
                 <div class="main-view" ng-view></div>

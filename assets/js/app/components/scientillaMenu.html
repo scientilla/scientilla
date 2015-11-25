@@ -1,0 +1,29 @@
+<div>
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')" style="position: absolute; top:64px; bottom:0">
+        <md-toolbar class="md-theme-indigo">
+            <h1 class="md-toolbar-tools">
+                <md-button ng-href="#/users">Users</md-button>
+            </h1>
+        </md-toolbar>
+        <md-toolbar class="md-theme-indigo">
+            <h1 class="md-toolbar-tools">
+                <md-button ng-href="#/users/{{vm.userId}}/references">References</md-button>
+            </h1>
+        </md-toolbar>
+        <md-toolbar class="md-theme-indigo">
+            <h1 class="md-toolbar-tools">
+                <md-button ng-href="#/groups">Groups</md-button>
+            </h1>
+        </md-toolbar>
+        <md-toolbar class="md-theme-indigo">
+            <h1 class="md-toolbar-tools">
+                <md-button ng-href="#/users/{{vm.userId}}/notifications">Notifications</md-button>
+            </h1>
+        </md-toolbar>
+        <md-toolbar class="md-theme-indigo">
+            <h1 class="md-toolbar-tools">
+                <md-button ng-href="#/users/{{vm.userId}}">Profile</md-button>
+            </h1>
+        </md-toolbar>
+    </md-sidenav>
+</div>
