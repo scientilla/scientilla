@@ -1,24 +1,4 @@
-<div ng-controller="HeaderController as vm">
-    <md-content>
-        <md-toolbar>
-            <div class="md-toolbar-tools">
-                <md-button ng-if="!vm.isLogged" ng-href="#/login" aria-label="Login">
-                    Login
-                </md-button>
-                <md-button ng-if="!vm.isLogged" ng-href="#/register" aria-label="Register">
-                    Register
-                </md-button>
-                <md-button ng-if="vm.isLogged" ng-href="#/logout" aria-label="Logout">
-                    Logout
-                </md-button>
-                <span flex></span>
-                <md-button ng-if="vm.isLogged" class="md-icon-button" aria-label="Notifications" ng-href="#/users/{{vm.userId}}/notifications">
-                    <ng-md-icon icon="email" style="fill: white;"></md-icon>
-                </md-button>
-            </div>
-        </md-toolbar>
-    </md-content>
-</div>
+<scientilla-toolbar></scientilla-toolbar>
 <div layout="column">
     <section layout="row" flex>
         <div ng-controller="MenuController as vm">
