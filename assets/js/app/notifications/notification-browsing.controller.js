@@ -17,29 +17,27 @@
         activate();
 
         function activate() {
-            return getSuggestedReferences().then(function () {
+            return getNotifications().then(function () {
 
             });
         }
 
-        function getSuggestedReferences() {
+        function getNotifications() {
             //sTODO move to a service
             return user.getList('notifications')
                     .then(function (notifications) {
                         vm.notifications = notifications;
-                        var userId = AuthService.user.id.toString();
-                        vm.suggestedReferences = _.map(_.filter(notifications, {targetType: 'user', targetId: userId}), 'content.reference');
-                        return vm.suggestedReferences;
                     });
         }
 
-        function copyReference(reference) {
+        function copyReference(notification, target) {
             //sTODO-urgent owner must be changed server-side
             //sTODO move to a service
-            var newReference = Scientilla.reference.create(reference, user.id);
-            user.post('references', newReference)
+            var reference = notification.content.reference;
+            var newReference = Scientilla.reference.create(reference, target);
+            target.post('references', newReference)
                     .then(function () {
-                        _.remove(vm.suggestedReferences, reference);
+                        _.remove(vm.notifications, notification);
                     });
         }
     }

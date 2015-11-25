@@ -41,6 +41,7 @@
                                         _.forEach(service.user.admininstratedGroups, function(g) {
                                             _.defaults(g, Scientilla.group);
                                         });
+                                        user.admininstratedGroups = Restangular.restangularizeCollection(null, user.admininstratedGroups, 'groups');
                                         return $http.get('/users/jwt');
                                     })
                                     .then(function (result) {

@@ -58,7 +58,10 @@ Scientilla.reference = {
             'status'
         ];
         var reference = _.pick(referenceData, fields);
-        reference.owner = owner;
+        if (owner.getType() === 'user')
+            reference.owner = owner.id;
+        else
+            reference.groupOwner = owner.id;
         _.extend(reference, Scientilla.reference);
         return reference;
     },

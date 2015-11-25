@@ -14,7 +14,7 @@
                                 <i><span ng-bind-html='r | linkableauthors'></span></i>
                                 <i ng-if="r.hasRealOwner()">By {{r.owner| fullname}}</i>
                             </div>
-                            <md-button class="list-elem-button md-icon-button" ng-click="vm.copyReference(r)" aria-label="Copy to draft">
+                            <md-button class="list-elem-button md-icon-button" ng-click="vm.copyReference(n, target)" aria-label="Copy to draft">
                                 <ng-md-icon icon="content_copy"></ng-md-icon>
                             </md-button>
                         </md-list-item>
