@@ -12,6 +12,7 @@
     function NotificationBrowsingController(AuthService, Restangular, user) {
         var vm = this;
         vm.copyReference = copyReference;
+        vm.notificationTargets = _.union([AuthService.user], AuthService.user.admininstratedGroups);
 
         activate();
 
@@ -25,6 +26,7 @@
             //sTODO move to a service
             return user.getList('notifications')
                     .then(function (notifications) {
+                        vm.notifications = notifications;
                         var userId = AuthService.user.id.toString();
                         vm.suggestedReferences = _.map(_.filter(notifications, {targetType: 'user', targetId: userId}), 'content.reference');
                         return vm.suggestedReferences;
@@ -36,9 +38,9 @@
             //sTODO move to a service
             var newReference = Scientilla.reference.create(reference, user.id);
             user.post('references', newReference)
-                    .then(function() {
+                    .then(function () {
                         _.remove(vm.suggestedReferences, reference);
-                    })
+                    });
         }
     }
 })();

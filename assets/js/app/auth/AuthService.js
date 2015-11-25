@@ -38,6 +38,9 @@
                                     .then(function (user) {
                                         service.user = user;
                                         _.defaults(service.user, Scientilla.user);
+                                        _.forEach(service.user.admininstratedGroups, function(g) {
+                                            _.defaults(g, Scientilla.group);
+                                        });
                                         return $http.get('/users/jwt');
                                     })
                                     .then(function (result) {

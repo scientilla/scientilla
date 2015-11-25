@@ -1,19 +1,26 @@
 <div>
     <md-content>
-        <md-list>
-            <md-subheader class="md-no-sticky">Suggested References</md-subheader>
-            <md-list-item class="md-3-line scientilla-main-list" ng-repeat="r in vm.suggestedReferences">
-                <div>
-                    <h3>
-                        <a ng-href="#/references/{{r.id}}" style="min-width: 80px"><span ng-bind-html='r | title'></span></a>
-                    </h3>
-                    <i><span ng-bind-html='r | linkableauthors'></span></i>
-                    <i ng-if="r.hasRealOwner()">By {{r.owner | fullname}}</i>
-                </div>
-                <md-button class="list-elem-button md-icon-button" ng-click="vm.copyReference(r)" aria-label="Copy to draft">
-                    <ng-md-icon icon="content_copy"></ng-md-icon>
-                </md-button>
-            </md-list-item>
-        </md-list>
+        <md-tabs md-dynamic-height md-border-bottom class='notifications'>
+            <md-tab label="{{target.getDisplayName()}}" ng-repeat="target in vm.notificationTargets">
+                <md-content class="md-padding">
+                    <md-list>
+                        <md-subheader class="md-no-sticky">Suggested References</md-subheader>
+                        <md-list-item class="md-3-line scientilla-main-list" ng-repeat="n in vm.notifications | filter: {type: 'reference', targetId: target.id, targetType: target.getType()} " >
+                            {{r=n.content.reference;""}}
+                            <div>
+                                <h3>
+                                    <a ng-href="#/references/{{r.id}}" style="min-width: 80px"><span ng-bind-html='r | title'></span></a>
+                                </h3>
+                                <i><span ng-bind-html='r | linkableauthors'></span></i>
+                                <i ng-if="r.hasRealOwner()">By {{r.owner| fullname}}</i>
+                            </div>
+                            <md-button class="list-elem-button md-icon-button" ng-click="vm.copyReference(r)" aria-label="Copy to draft">
+                                <ng-md-icon icon="content_copy"></ng-md-icon>
+                            </md-button>
+                        </md-list-item>
+                    </md-list>
+                </md-content>
+            </md-tab>
+        </md-tabs>
     </md-content>
 </div>

@@ -38,3 +38,7 @@ form[form-for] {
 md-list-item {
     justify-content: flex-start !important;
 }
+
+md-tabs.notifications .md-tab.md-active {
+    color: rgb(63,81,181);
+}

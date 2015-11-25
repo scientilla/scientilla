@@ -40,6 +40,9 @@ Scientilla.user = {
         var surname = this.surname ? this.surname : "";
         var fullName = _.trim(name + " " + surname);
         return fullName;
+    },
+    getType: function() {
+        return 'user';
     }
 };
 
@@ -124,5 +127,8 @@ Scientilla.membership = {
 Scientilla.group = {
     getDisplayName: function() {
         return this.name;
+    },
+    getType: function() {
+        return 'group';
     }
-}
+};
