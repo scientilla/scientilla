@@ -88,7 +88,7 @@
         function saveReference() {
             if (!vm.reference.id)
                 return;
-            vm.reference.save().then(function () {
+            return vm.reference.save().then(function () {
                 vm.status = 'saved';
                 return getSuggestedCollaborators();
             });
