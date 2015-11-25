@@ -9,7 +9,9 @@
             restrict: 'E',
             templateUrl: 'partials/scientillaMulticomplete.html',
             controller: scientillaMulticompleteController,
-            scope: {
+            controllerAs: 'vm',
+            scope: {},
+            bindToController: {
                 items: "=",
                 query: "&",
                 filter: "&",
@@ -21,13 +23,16 @@
     }
 
     function scientillaMulticompleteController($scope, Restangular) {
-        $scope.addItem = addItem;
-        $scope.search = search;
-        $scope.removeItem = removeItem;
+        var vm = this;
+        vm.items = this.items;
+        vm.suggestedItems = this.suggestedItems;
+        vm.addItem = addItem;
+        vm.search = search;
+        vm.removeItem = removeItem;
 
         function search(searchText) {
-            var info = $scope.query()(searchText);
-            var filter = $scope.filter();
+            var info = this.query()(searchText);
+            var filter = this.filter();
             return Restangular.all(info.model).getList(info.qs)
                     .then(function (result) {
                         var displayItems = result;
@@ -46,16 +51,16 @@
             if (!item)
                 return;
             
-            if (_.isArray($scope.suggestedItems))
-                _.remove($scope.suggestedItems, item);
+            if (_.isArray(vm.suggestedItems))
+                _.remove(vm.suggestedItems, item);
             var newItem;
-            var transform = $scope.transform();
+            var transform = this.transform();
             if (_.isFunction(transform))
                 newItem = transform(item);
             else
                 newItem = item;
-            $scope.items.push(newItem);
-            $scope.searchText = "";
+            vm.items.push(newItem);
+            vm.searchText = "";
         }
 
         function filterOutUsedElemsById(toBeFiltered, filter) {
@@ -67,7 +72,7 @@
         }
         
         function removeItem(item) {
-            _.remove($scope.items, item);
+            _.remove(vm.items, item);
         }
 
     }
