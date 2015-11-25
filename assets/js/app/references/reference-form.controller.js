@@ -88,12 +88,7 @@
         function saveReference() {
             if (!vm.reference.id)
                 return;
-            //sTODO refactor
-            var url = '/users/' + AuthService.userId + '/references/' + vm.reference.id;
-            return $http.put(
-                    url,
-                    vm.reference
-                    ).then(function () {
+            vm.reference.save().then(function () {
                 vm.status = 'saved';
                 return getSuggestedCollaborators();
             });
