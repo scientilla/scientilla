@@ -49,8 +49,11 @@
                     rule: /^[a-zA-Z0-9-_]*$/,
                     message: 'The slug must contains only letters, number and dashes'
                 }
-            },
-            role: {
+            }
+        };
+
+        if (AuthService.user.role === Scientilla.user.ADMINISTRATOR)
+            vm.validationAndViewRules.role = {
                 allowBlank: false,
                 inputType: 'select',
                 label: 'Role',
@@ -59,8 +62,7 @@
                     {label: 'User', value: Scientilla.user.USER},
                     {label: 'Administrator', value: Scientilla.user.ADMINISTRATOR}
                 ]
-            }
-        };
+            };
 
         vm.submit = submit;
 
