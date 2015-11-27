@@ -7,7 +7,7 @@
         'UsersService',
         'ReferencesService',
         'FormForConfiguration',
-        '$http',
+        'GroupsService',
         'Restangular',
         'AuthService',
         '$scope',
@@ -16,13 +16,13 @@
         '$q'
     ];
 
-    function ReferenceFormController(UsersService, ReferencesService, FormForConfiguration, $http, Restangular, AuthService, $scope, $route, $location, $q) {
+    function ReferenceFormController(UsersService, ReferencesService, FormForConfiguration, GroupsService, Restangular, AuthService, $scope, $route, $location, $q) {
         var vm = this;
         vm.reference = ReferencesService.getNewReference();
         vm.userId = AuthService.userId;
         vm.getUsersQuery = getUsersQuery;
         vm.getCollaboratorsFilter = getCollaboratorsFilter;
-        vm.getGroupsQuery = getGroupsQuery;
+        vm.getGroupsQuery = GroupsService.getGroupsQuery;
         vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.submit = submit;
         vm.status = 'saved';
@@ -140,13 +140,6 @@
         function getUsersQuery(searchText) {
             var qs = {where: {or: [{name: {contains: searchText}}, {surname: {contains: searchText}}]}};
             var model = 'users';
-            return {model: model, qs: qs};
-        }
-
-        //STODO: refactor
-        function getGroupsQuery(searchText) {
-            var qs = {where: {or: [{name: {contains: searchText}}, {description: {contains: searchText}}]}};
-            var model = 'groups';
             return {model: model, qs: qs};
         }
 
