@@ -90,27 +90,12 @@
         //sTODO to be removed when deep populate exists
         function getCollaborations() {
             if (!vm.user || !vm.user.id) {
-                user.collaborations = [];
+                vm.user.collaborations = [];
                 return;
             }
-            var userGroupsIds = _.map(vm.user.collaborations, 'id');
-            //sTODO: substitute with es6 spread operator, restangularify
-//                    Restangular.several('collaborations', ...userGroupsIds)
-//                    .get({ user: vm.user.id, populate: 'group' })
-//          RESTANGULAR sucks
-//            var getCollaborations = _.spread(Restangular.several);
-//            var args = userGroupsIds;
-//            args.unshift('collaborations');
-//            getCollaborations(args)
-//                    .get({ user: vm.user.id, populate: 'group' })
-            var url = '/collaborations';
-            $http.get(url,
-                    {
-                        params: {user: vm.user.id, populate: 'group'}
-                    })
-                    .then(function (result) {
-                        var collaborations = result.data;
-                        user.collaborations = collaborations;
+            vm.user.all('collaborations').getList({populate: ['group']})
+                    .then(function (collaborations) {
+                        vm.user.collaborations = collaborations;
                     });
         }
 
