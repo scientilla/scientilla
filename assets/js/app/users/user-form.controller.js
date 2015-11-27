@@ -49,6 +49,16 @@
                     rule: /^[a-zA-Z0-9-_]*$/,
                     message: 'The slug must contains only letters, number and dashes'
                 }
+            },
+            role: {
+                allowBlank: false,
+                inputType: 'select',
+                label: 'Role',
+                required: true,
+                values: [
+                    {label: 'User', value: Scientilla.user.USER},
+                    {label: 'Administrator', value: Scientilla.user.ADMINISTRATOR}
+                ]
             }
         };
 
@@ -93,10 +103,10 @@
 //                    .get({ user: vm.user.id, populate: 'group' })
             var url = '/collaborations';
             $http.get(url,
-                {
-                    params: { user: vm.user.id, populate: 'group' }
-                })
-                    .then(function(result) {
+                    {
+                        params: {user: vm.user.id, populate: 'group'}
+                    })
+                    .then(function (result) {
                         var collaborations = result.data;
                         user.collaborations = collaborations;
                     });
@@ -106,8 +116,7 @@
 
             if (_.isUndefined(vm.user.id)) {
                 UsersService.post(vm.user);
-            }
-            else
+            } else
                 UsersService.put(vm.user);
         }
 
@@ -122,16 +131,15 @@
         }
 
         function initAliasesStr() {
-            if (!vm.user || ! vm.user.aliases) {
+            if (!vm.user || !vm.user.aliases) {
                 vm.user.aliasesStr = "";
-            }
-            else {
+            } else {
                 vm.user.aliasesStr = _.map(vm.user.aliases, "str").join("; ");
             }
         }
 
         function aliasesStrChanged() {
-            if (!vm.user || ! vm.user.aliasesStr) {
+            if (!vm.user || !vm.user.aliasesStr) {
                 vm.user.aliases = [];
                 return;
             }
@@ -143,7 +151,7 @@
         }
 
         function getRealAlias(aliasStr) {
-            return { str: aliasStr};
+            return {str: aliasStr};
         }
 
         function calculateSlug(user) {
