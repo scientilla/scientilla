@@ -1,6 +1,8 @@
 var Scientilla = Scientilla || {};
 
 Scientilla.user = {
+    USER: 'user',
+    ADMINISTRATOR: 'administrator',
     getAliases: function () {
         var firstLetter = function (string) {
             if (!string)
