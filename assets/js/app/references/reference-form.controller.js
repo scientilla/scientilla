@@ -41,9 +41,9 @@
                 inputType: 'radio',
                 required: true,
                 values: [
-                  {value: Scientilla.reference.DRAFT, label: 'Draft'},
-                  {value: Scientilla.reference.VERIFIED, label: 'Verified'},
-                  {value: Scientilla.reference.PUBLIC, label: 'Public'}
+                    {value: Scientilla.reference.DRAFT, label: 'Draft'},
+                    {value: Scientilla.reference.VERIFIED, label: 'Verified'},
+                    {value: Scientilla.reference.PUBLIC, label: 'Public'}
                 ]
             },
             collaborators: {
@@ -70,13 +70,20 @@
             FormForConfiguration.enableAutoLabels();
 
             getReference().then(function () {
-                $scope.$watch('vm.reference', markModified, true);
-                $scope.$watch('vm.reference', _.debounce(saveReference, 3000), true);
+                watchReference();
                 getSuggestedCollaborators();
-                referenceType = vm.reference.getType();
             });
 
         }
+
+        function watchReference() {
+            var fieldsToWatch = _.keys(vm.validationAndViewRules);
+            _.forEach(fieldsToWatch, function (f) {
+                $scope.$watch('vm.reference.' + f, markModified, true);
+                $scope.$watch('vm.reference.' + f, _.debounce(saveReference, 3000), true);
+            })
+        }
+        ;
 
         function markModified(newValue, oldValue) {
             if (newValue === oldValue)
@@ -90,14 +97,15 @@
                         _.forEach(suggestedCollaborators, function (c) {
                             _.defaults(c, Scientilla.user);
                         });
-                        return vm.reference.suggestedCollaborators = suggestedCollaborators;
+                        vm.reference.suggestedCollaborators = suggestedCollaborators;
+                        return vm.reference;
                     });
         }
 
         function saveReference() {
-            if (!vm.reference.id)
-                return;
-            return vm.reference.save().then(function () {
+            if (!vm.reference.id || vm.status === 'saved')
+                return Promise.resolve(vm.reference);
+            return ReferencesService.save(vm.reference).then(function () {
                 vm.status = 'saved';
                 return getSuggestedCollaborators();
             });
@@ -117,10 +125,9 @@
         }
 
         function submit() {
-            saveReference()
-                    .then(function () {
-                        goToBrowsing();
-                    });
+            saveReference().then(function () {
+                goToBrowsing();
+            });
         }
 
         //STODO: refactor
@@ -129,7 +136,7 @@
             var model = 'users';
             return {model: model, qs: qs};
         }
-        
+
         //STODO: refactor
         function getGroupsQuery(searchText) {
             var qs = {where: {or: [{name: {contains: searchText}}, {description: {contains: searchText}}]}};
@@ -148,14 +155,14 @@
         //sTODO: refactor
         function goToBrowsing() {
             var url;
-            switch(referenceType) {
-                case Scientilla.reference.USER_REFERENCE : 
+            switch (vm.reference.getType()) {
+                case Scientilla.reference.USER_REFERENCE :
                     url = '/users/' + vm.reference.owner.id + '/references';
                     break;
-                case Scientilla.reference.GROUP_REFERENCE : 
+                case Scientilla.reference.GROUP_REFERENCE :
                     url = '/groups/' + vm.reference.groupOwner.id + '/references';
                     break;
-                default : 
+                default :
                     url = '/home';
             }
             $location.path(url);
