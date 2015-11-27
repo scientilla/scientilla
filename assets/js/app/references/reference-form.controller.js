@@ -61,6 +61,12 @@
                         }
                     }
                 }
+            },
+            groupCollaborations: {
+                collection: {
+                    fields: {
+                    }
+                }
             }
         };
 
