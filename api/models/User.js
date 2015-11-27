@@ -169,50 +169,6 @@ module.exports = {
             return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
         });
     },
-    createGroup: function (opts, cb) {
-        var userName = opts.userName;
-        var group = opts.group;
-        async.waterfall([
-            function (cb2) {
-                User.findOneByName(userName).exec(cb2);
-            },
-            function (user, cb2) {
-                Group.create(group).exec(function (err, group) {
-                    cb2(err, user, group);
-                });
-            },
-            function (user, group, cb2) {
-                var membershipData = {group: group.id, user: user.id, administrator: true};
-                Membership.create(membershipData).exec(function (err, membership) {
-                    cb2(err, group);
-                });
-            }],
-                function (err) {
-                    cb(err, group);
-                });
-    },
-    joinGroup: function (opts, cb) {
-        var user = opts.userName;
-        var groupName = opts.groupName;
-        async.waterfall([
-            function (cb2) {
-                User.findOneByName(user).exec(cb2);
-            },
-            function (user, cb2) {
-                Group.findOneByName(groupName).exec(function (err, group) {
-                    cb2(err, user, group);
-                });
-            },
-            function (user, group, cb2) {
-                var membershipData = {group: group.id, user: user.id, administrator: false};
-                Membership.create(membershipData).exec(function (err, membership) {
-                    cb2(err, group);
-                });
-            }],
-                function (err, group) {
-                    cb(err, group);
-                });
-    },
     createCompleteUser: function(params) {
         function generateSlug(user) {
             var name = user.name ? user.name : "";
