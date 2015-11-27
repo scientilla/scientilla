@@ -9,7 +9,7 @@
 var _ = require('lodash');
 var stringSimilarity = require('string-similarity');
 
-
+//sTODO: evaluated whether convert the constants to numbers
 var VERIFIED = 'verified';
 var DRAFT = 'draft';
 var PUBLIC = 'public';
@@ -73,10 +73,10 @@ module.exports = {
             this.status = PUBLIC;
             return this;
         },
-        getSimilarity: function(ref) {
+        getSimilarity: function (ref) {
             var similarityFields = ['authors', 'title'];
             var similarity = 1;
-            _.forEach(similarityFields, function(f) {
+            _.forEach(similarityFields, function (f) {
                 var fieldSimilarity;
                 if (!_.isNull(this[f]) && !_.isNull(ref[f])) {
                     fieldSimilarity = stringSimilarity.compareTwoStrings(this[f], ref[f]);
@@ -118,5 +118,18 @@ module.exports = {
                     return suggestedUsers;
                 });
 
+    },
+    filterSuggested: function (maybeSuggestedReferences, toBeDiscardedReferences, similarityThreshold) {
+        var suggestedReferences = [];
+        _.forEach(maybeSuggestedReferences, function (r1) {
+            var checkAgainst = _.union(toBeDiscardedReferences, suggestedReferences);
+            var discard = _.some(checkAgainst, function (r2) {
+                return r1.getSimilarity(r2) > similarityThreshold;
+            });
+            if (discard)
+                return;
+            suggestedReferences.push(r1);
+        });
+        return suggestedReferences;
     }
 };

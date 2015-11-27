@@ -150,20 +150,6 @@ module.exports = {
 
     //sTODO: add deep populate for other fields of the references
     getSuggestedReferences: function(userId, user) {
-        function filterSuggested(maybeSuggestedReferences, toBeDiscardedReferences) {
-            var suggestedReferences = [];
-            _.forEach(maybeSuggestedReferences, function(r1) {
-                var checkAgainst = _.union(toBeDiscardedReferences, suggestedReferences);
-                var discard = _.some(checkAgainst, function(r2) {
-                    return r1.getSimilarity(r2) > similarityThreshold;
-                });
-                if (discard) return;
-                suggestedReferences.push(r1);
-            });
-            return suggestedReferences;
-        }
-        var similarityThreshold = .98;
-        
         return Promise.all([
             User.findOneById(userId)
                 .populate('coauthors')
@@ -175,12 +161,13 @@ module.exports = {
             Reference.find({owner: userId})
         ])
         .then(function (results) {
+            var similarityThreshold = .98;
             //sTODO union must discard same references
             var maybeSuggestedReferences = _.union(results[0], results[1]);
             //sTODO: refactor
             //sTODO: add check on discarded references
             var authoredReferences = results[2];
-            return filterSuggested(maybeSuggestedReferences, authoredReferences);
+            return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
         });
     },
     createGroup: function (opts, cb) {
