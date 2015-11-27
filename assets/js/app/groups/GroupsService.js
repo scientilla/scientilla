@@ -19,6 +19,12 @@
                         //validate user data
                     };
                     
+                    service.getGroupsQuery = function(searchText) {
+                        var qs = {where: {or: [{name: {contains: searchText}}, {description: {contains: searchText}}]}};
+                        var model = 'groups';
+                        return {model: model, qs: qs};
+                    }
+                    
                     return service;
                 }]);
 }());

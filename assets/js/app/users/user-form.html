@@ -3,29 +3,14 @@
           validation-rules="vm.validationAndViewRules"
           form-for-builder
           submit-with="vm.submit()">
-        <collection-label attribute="collaborations"
-                          label="Collaborations"
-                          help="Collaborations">
-        </collection-label>
-        <md-list>
-            <md-list-item class="md-1-line scientilla-secondary-list" ng-repeat="c in vm.user.collaborations">
-                <div>
-                    <i>{{ c.group.name }} </i>
-                </div>
-                <ng-md-icon icon="delete" ng-click="vm.removeItem(c)" class="md-primary"></ng-md-icon>
-            </md-list-item>
-        </md-list>
-        <md-autocomplete
-            md-search-text="vm.collaborationsSettings.searchText"
-            md-items="group in vm.collaborationsSettings.querySearch(vm.collaborationsSettings.searchText)"
-            md-item-text="group.name"
-            md-selected-item-change="vm.collaborationsSettings.selectedItemChange(group)"
-            md-min-length="2"
-            placeholder="Search groups">
-            <md-item-template>
-                <span md-highlight-text="vm.ta.searchText" md-highlight-flags="^i">{{group.name}}</span>
-            </md-item-template>
-        </md-autocomplete>
+        <scientilla-multicomplete
+            items="vm.user.collaborations"
+            query="vm.getGroupsQuery"
+            filter="vm.getCollaborationsFilter"
+            transform="vm.groupToCollaboration"
+            title="Collaborations"
+            >
+        </scientilla-multicomplete> 
         <md-button ng-href="#/users">Cancel</md-button>
         <submit-button label="Save"></submit-button>
     </form>

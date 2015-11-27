@@ -33,6 +33,10 @@
 
         Restangular.extendModel('users', function (user) {
             _.assign(user, Scientilla.user);
+            _.forEach(user.collaborations, function(c) {
+                _.defaults(c, Scientilla.collaboration);
+                _.defaults(c.group, Scientilla.group);
+            });
             return user;
         });
 
@@ -64,5 +68,8 @@
 
             return group;
         });
+//        Restangular.extendModel('collaborations', function (collaboration) {
+//            return collaboration;
+//        });
     }
 })();

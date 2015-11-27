@@ -45,6 +45,9 @@ Scientilla.user = {
     },
     getType: function() {
         return 'user';
+    },
+    getCollaborationGroups: function() {
+        return _.map(this.collaborations, 'group');
     }
 };
 
@@ -128,6 +131,16 @@ Scientilla.membership = {
         //sTODO: to be removed when deep populate is implemented
         if (_.isFunction(this.user.getDisplayName))
             return this.user.getDisplayName();
+        else
+            return '';
+    }
+};
+
+Scientilla.collaboration = {
+    getDisplayName: function () {
+        //sTODO: to be removed when deep populate is implemented
+        if (_.isFunction(this.group.getDisplayName))
+            return this.group.getDisplayName();
         else
             return '';
     }

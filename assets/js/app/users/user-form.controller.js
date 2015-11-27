@@ -10,14 +10,17 @@
         'user',
         'AuthService',
         '$location',
-        'Restangular',
+        'GroupsService',
         '$http'
     ];
 
-    function UserFormController(UsersService, FormForConfiguration, $scope, user, AuthService, $location, Restangular, $http) {
+    function UserFormController(UsersService, FormForConfiguration, $scope, user, AuthService, $location, GroupsService, $http) {
         var vm = this;
         vm.user = user;
-        vm.removeItem = removeItem;
+        vm.getCollaborationsFilter = getCollaborationsFilter;
+        vm.getGroupsQuery = GroupsService.getGroupsQuery;
+        vm.groupToCollaboration = groupToCollaboration;
+        vm.submit = submit;
 
         vm.validationAndViewRules = {
             name: {
@@ -60,15 +63,6 @@
                 ]
             };
 
-        vm.submit = submit;
-
-        vm.collaborationsSettings = {
-            collaborations: [],
-            querySearch: querySearch,
-            searchText: "",
-            selectedItemChange: selectedItemChange
-        };
-
         activate();
 
 
@@ -92,11 +86,14 @@
             vm.user.all('collaborations').getList({populate: ['group']})
                     .then(function (collaborations) {
                         vm.user.collaborations = collaborations;
+                        _.forEach(vm.user.collaborations, function(c) {
+                            _.defaults(c, Scientilla.collaboration);
+                            _.defaults(c.group, Scientilla.group);
+                        });
                     });
         }
 
         function submit() {
-
             if (_.isUndefined(vm.user.id)) {
                 UsersService.post(vm.user);
             } else
@@ -112,7 +109,8 @@
                 vm.user.aliasesStr = aliasesStr.join('; ');
             }
         }
-
+        
+        //sTODO: move all this alias thing in the proper place.
         function initAliasesStr() {
             if (!vm.user || !vm.user.aliases) {
                 vm.user.aliasesStr = "";
@@ -140,51 +138,19 @@
         function calculateSlug(user) {
             var name = user.name ? user.name : "";
             var surname = user.surname ? user.surname : "";
-            var fullName = _.trim(name + " " + surname)
+            var fullName = _.trim(name + " " + surname);
             var slug = fullName.toLowerCase().replace(/\s+/gi, '-');
             return slug;
         }
 
-        function removeItem(item) {
-            var itemId = item.id;
-            var userId = AuthService.user.id;
-            var url = '/users/' + userId + '/collaborations/' + itemId;
-            $http.delete(url)
-                    .then(function () {
-                        vm.user.collaborations = _.reject(
-                                vm.user.collaborations,
-                                function (c) {
-                                    return c.id === itemId;
-                                });
-                    });
+        function getCollaborationsFilter() {
+            return vm.user.getCollaborationGroups();
         }
-
-        function querySearch(query) {
-            var queryStr = '?where={"name":{"contains":"' + query + '"}}';
-            var url = '/groups' + queryStr;
-            return $http.get(url)
-                    .then(function (result) {
-                        var users = filterOutUsedGroups(result.data);
-                        return users;
-                    });
-        }
-
-        function filterOutUsedGroups(toBeFiltered) {
-            var alreadyUsedIds = _.map(vm.user.collaborations, 'group.id');
-            alreadyUsedIds.push(AuthService.userId);
-            var users = _.filter(toBeFiltered, function (u) {
-                return !_.contains(alreadyUsedIds, u.id);
-            });
-            return users;
-        }
-
-        function selectedItemChange(group) {
-            if (!group)
-                return;
-
-            vm.collaborationsSettings.searchText = "";
-            var collaboration = {user: user.id, group: group};
-            vm.user.collaborations.push(collaboration);
+        
+        function groupToCollaboration(g) {
+                var collaboration = {group: g, user: vm.user.id};
+                _.defaults(collaboration, Scientilla.collaboration);
+                return collaboration;
         }
 
     }
