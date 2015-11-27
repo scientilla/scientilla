@@ -155,9 +155,9 @@ module.exports = {
                 .populate('coauthors')
                 .then(function(user) {
 //                    _.forEach(user.coauthors, function(r){r.owner = user;});
-                    return user.coauthors;
+                    return Reference.getVerifiedAndPublicReferences(user.coauthors);
                 }),
-            Reference.find({authors: {contains: user.surname}}),
+            Reference.find({authors: {contains: user.surname}}).then(Reference.getVerifiedAndPublicReferences),
             Reference.find({owner: userId})
         ])
         .then(function (results) {

@@ -131,5 +131,10 @@ module.exports = {
             suggestedReferences.push(r1);
         });
         return suggestedReferences;
+    },
+    getVerifiedAndPublicReferences: function(references) {
+        return _.filter(references, function(r) {
+            return _.includes([VERIFIED, PUBLIC], r.status);
+        })
     }
 };

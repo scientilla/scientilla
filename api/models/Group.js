@@ -37,7 +37,7 @@ module.exports = {
             Group.findOneById(groupId)
                     .populate('collaboratedReferences')
                     .then(function (group) {
-                        return group.collaboratedReferences;
+                        return Reference.getVerifiedAndPublicReferences(group.collaboratedReferences);
                     }),
             Reference.find({groupOwner: groupId})
         ])
