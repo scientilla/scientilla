@@ -12,10 +12,11 @@
         'AuthService',
         '$scope',
         '$route',
-        '$location'
+        '$location',
+        '$q'
     ];
 
-    function ReferenceFormController(UsersService, ReferencesService, FormForConfiguration, $http, Restangular, AuthService, $scope, $route, $location) {
+    function ReferenceFormController(UsersService, ReferencesService, FormForConfiguration, $http, Restangular, AuthService, $scope, $route, $location, $q) {
         var referenceType;
         var vm = this;
         vm.reference = ReferencesService.getNewReference();
@@ -104,7 +105,7 @@
 
         function saveReference() {
             if (!vm.reference.id || vm.status === 'saved')
-                return Promise.resolve(vm.reference);
+                return $q(function (resolve) { resolve(vm.reference);});
             return ReferencesService.save(vm.reference).then(function () {
                 vm.status = 'saved';
                 return getSuggestedCollaborators();
