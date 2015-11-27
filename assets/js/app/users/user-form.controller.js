@@ -32,10 +32,6 @@
                 inputType: 'text',
                 required: true
             },
-            password: {
-                inputType: 'password',
-                required: true,
-            },
             aliasesStr: {
                 inputType: 'text',
                 label: 'aliases'
