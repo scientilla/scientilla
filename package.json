@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "keywords": [],
   "dependencies": {
+    "bluebird": "^3.0.5",
     "ejs": "~0.8.4",
     "grunt": "0.4.2",
     "grunt-contrib-clean": "~0.5.0",
