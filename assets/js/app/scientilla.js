@@ -115,7 +115,8 @@ Scientilla.reference = {
         return {
             title: "",
             authors: "",
-            groupOwner: groupId
+            groupOwner: groupId,
+            status: Scientilla.reference.DRAFT
         };
     }
 };

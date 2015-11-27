@@ -12,7 +12,8 @@
                 return {
                     title: "",
                     authors: "",
-                    owner: userId
+                    owner: userId,
+                    status: Scientilla.reference.DRAFT
                 };
             };
 
@@ -25,8 +26,5 @@
                         .copy(reference)
                         .customPUT(reference, '/users/' + userId + '/references/' + reference.id);
             };
-
-            return service;
-        };
     }
 }());
