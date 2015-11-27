@@ -8,7 +8,8 @@
                             name: "",
                             surname: "",
                             slug: "",
-                            username: ""
+                            username: "",
+                            role: Scientilla.user.USER
                         }; 
                         _.assign(user, Scientilla.user);
                         return user;
