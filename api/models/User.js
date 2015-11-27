@@ -8,6 +8,7 @@
 
 var _ = require('lodash');
 var waterlock = require('waterlock');
+var Promise = require("bluebird");
 
 var USER = 'user';
 var ADMINISTRATOR = 'administrator';
@@ -160,13 +161,11 @@ module.exports = {
             Reference.find({authors: {contains: user.surname}}).then(Reference.getVerifiedAndPublicReferences),
             Reference.find({owner: userId})
         ])
-        .then(function (results) {
+        .spread(function (suggestedReferences1, suggestedReferences2, authoredReferences) {
             var similarityThreshold = .98;
             //sTODO union must discard same references
-            var maybeSuggestedReferences = _.union(results[0], results[1]);
-            //sTODO: refactor
+            var maybeSuggestedReferences = _.union(suggestedReferences1, suggestedReferences2);
             //sTODO: add check on discarded references
-            var authoredReferences = results[2];
             return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
         });
     },

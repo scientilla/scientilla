@@ -5,6 +5,9 @@
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
+var _ = require('lodash');
+var Promise = require("bluebird");
+
 module.exports = {
     attributes: {
         name: 'STRING',
@@ -41,13 +44,9 @@ module.exports = {
                     }),
             Reference.find({groupOwner: groupId})
         ])
-                .then(function (results) {
+                .spread(function (maybeSuggestedReferences, authoredReferences) {
                     var similarityThreshold = .98;
-                    //sTODO union must discard same references
-                    var maybeSuggestedReferences = results[0];
-                    //sTODO: refactor
                     //sTODO: add check on discarded references
-                    var authoredReferences = results[1];
                     return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
                 });
     }
