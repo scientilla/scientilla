@@ -9,10 +9,14 @@
 var _ = require('lodash');
 var waterlock = require('waterlock');
 
+var USER = 'user';
+var ADMINISTRATOR = 'administrator';
 
 module.exports = {
+    USER: USER,
+    ADMINISTRATOR: ADMINISTRATOR,
     attributes: require('waterlock').models.user.attributes({
-
+        //Constants
         username: {
             type: 'STRING',
 //            required: true,
@@ -36,6 +40,12 @@ module.exports = {
 //            minLength: 3,
 //            maxLength: 30,
             defaultsTo: ""
+        },
+        role: {
+            type: 'STRING',
+            enum: [USER, ADMINISTRATOR],
+            defaultsTo: USER,
+            required: true
         },
         references: {
             collection: 'Reference',
