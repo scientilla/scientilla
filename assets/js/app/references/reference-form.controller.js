@@ -17,7 +17,6 @@
     ];
 
     function ReferenceFormController(UsersService, ReferencesService, FormForConfiguration, $http, Restangular, AuthService, $scope, $route, $location, $q) {
-        var referenceType;
         var vm = this;
         vm.reference = ReferencesService.getNewReference();
         vm.userId = AuthService.userId;
