@@ -37,6 +37,15 @@
                 inputType: 'text',
 //                required: true
             },
+            status: {
+                inputType: 'radio',
+                required: true,
+                values: [
+                  {value: Scientilla.reference.DRAFT, label: 'Draft'},
+                  {value: Scientilla.reference.VERIFIED, label: 'Verified'},
+                  {value: Scientilla.reference.PUBLIC, label: 'Public'}
+                ]
+            },
             collaborators: {
                 collection: {
                     fields: {

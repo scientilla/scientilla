@@ -51,6 +51,9 @@ Scientilla.reference = {
     UNKNOWN_REFERENCE:0,
     USER_REFERENCE: 1,
     GROUP_REFERENCE: 2,
+    DRAFT: 'draft',
+    VERIFIED: 'verified',
+    PUBLIC: 'public',
     create: function (referenceData, owner) {
         var fields = [
             'authors',
