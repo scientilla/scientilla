@@ -2,12 +2,22 @@
     <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')" style="position: absolute; top:64px; bottom:0">
         <md-toolbar class="md-theme-indigo">
             <h1 class="md-toolbar-tools">
-                <md-button ng-href="#/users">Users</md-button>
+                <md-button ng-href="#/users/{{vm.user.idd}}/notifications">Notifications</md-button>
             </h1>
         </md-toolbar>
         <md-toolbar class="md-theme-indigo">
             <h1 class="md-toolbar-tools">
-                <md-button ng-href="#/users/{{vm.userId}}/references">References</md-button>
+                <md-button ng-href="#/users/{{vm.user.id}}/references">Personal References</md-button>
+            </h1>
+        </md-toolbar>
+        <md-toolbar class="md-theme-indigo" ng-repeat="group in vm.user.admininstratedGroups">
+            <h1 class="md-toolbar-tools">
+                <md-button ng-href="#/groups/{{group.id}}/references">{{group.getDisplayName()}} References</md-button>
+            </h1>
+        </md-toolbar>
+        <md-toolbar class="md-theme-indigo">
+            <h1 class="md-toolbar-tools">
+                <md-button ng-href="#/users">Users</md-button>
             </h1>
         </md-toolbar>
         <md-toolbar class="md-theme-indigo">
@@ -17,12 +27,7 @@
         </md-toolbar>
         <md-toolbar class="md-theme-indigo">
             <h1 class="md-toolbar-tools">
-                <md-button ng-href="#/users/{{vm.userId}}/notifications">Notifications</md-button>
-            </h1>
-        </md-toolbar>
-        <md-toolbar class="md-theme-indigo">
-            <h1 class="md-toolbar-tools">
-                <md-button ng-href="#/users/{{vm.userId}}">Profile</md-button>
+                <md-button ng-href="#/users/{{vm.user.id}}">Profile</md-button>
             </h1>
         </md-toolbar>
     </md-sidenav>
