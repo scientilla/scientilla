@@ -9,11 +9,11 @@
         '$scope',
         'group',
         'AuthService',
-        '$location',
+        '$window',
         '$http'
     ];
 
-    function GroupFormController(GroupsService, FormForConfiguration, $scope, group, AuthService, $location, $http) {
+    function GroupFormController(GroupsService, FormForConfiguration, $scope, group, AuthService, $window, $http) {
         var vm = this;
         vm.group = group;
         vm.getMembers = getMembers;
@@ -86,10 +86,9 @@
         }
 
         function submit() {
-            if (_.isUndefined(vm.group.id)) {
-                GroupsService.post(vm.group);
-            } else
-                GroupsService.put(vm.group);
+            GroupsService.save(vm.group).then(function(){
+                $window.history.back();
+            });
         }
         
         function getUsersQuery(searchText) {
