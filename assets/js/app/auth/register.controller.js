@@ -52,7 +52,6 @@
         function submit() {
             AuthService.register(vm.user)
                     .then(function () {
-                        console.log('created');
                         $location.path("/");
                     });
         }

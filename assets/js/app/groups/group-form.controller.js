@@ -19,7 +19,6 @@
         vm.getMembers = getMembers;
         vm.getUsersQuery = getUsersQuery;
         vm.userToMembership = userToMembership;
-        console.log(group);
 
         vm.validationAndViewRules = {
             name: {
@@ -88,7 +87,6 @@
 
         function submit() {
             if (_.isUndefined(vm.group.id)) {
-                console.log('create new group');
                 GroupsService.post(vm.group);
             } else
                 GroupsService.put(vm.group);
