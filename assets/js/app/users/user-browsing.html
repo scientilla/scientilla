@@ -1,19 +1,21 @@
 <div>
     <md-content>
         <md-list>
-            <md-subheader class="md-no-sticky">Users</md-subheader>
+            <md-subheader class="md-no-sticky">
+                <h3>Users</h3>
+            </md-subheader>
+            <md-button ng-show="vm.user.isAdmin()" ng-href="#/users/new" class="md-primary">Create New User</md-button>
             <md-list-item class="md-2-line contact-item scientilla-main-list" ng-repeat="u in vm.users">
-                    <div>
-                        <h3>
-                            <a ng-href="#/users/{{u.id}}">{{ u | fullname}}</a>
-                        </h3>
-                        <i>{{u.username}}</i>
-                    </div>
-                    <md-button class="list-elem-button md-icon-button" ng-href="#/users/{{u.id}}/references" aria-label="References"><ng-md-icon icon="book"></ng-md-icon></md-button>
-                    <md-button class="list-elem-button md-icon-button" ng-click="vm.deleteUser(u)" aria-label="Delete"><ng-md-icon icon="delete"></ng-md-icon></md-button>
-                <!-- <md-divider ng-if="!$last"></md-divider> -->
+                <md-divider class="top-divider"></md-divider> 
+                <div>
+                    <h3>
+                        <a ng-href="#/users/{{u.id}}">{{ u | fullname}}</a>
+                    </h3>
+                    <i>{{u.username}}</i>
+                </div>
+                <md-button class="list-elem-button md-icon-button" ng-href="#/users/{{u.id}}/references" aria-label="References"><ng-md-icon icon="book"></ng-md-icon></md-button>
+                <md-button class="list-elem-button md-icon-button" ng-show="vm.user.isAdmin()" ng-click="vm.deleteUser(u)" aria-label="Delete"><ng-md-icon icon="clear"></ng-md-icon></md-button>
             </md-list-item>
         </md-list>
     </md-content>
-    <md-button ng-href="#/users/new" class="md-primary">Create New User</md-button>
 </div>

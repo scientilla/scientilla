@@ -3,11 +3,15 @@
             .module('users')
             .controller('UserBrowsingController', UserBrowsingController);
 
-    UserBrowsingController.$inject = ['UsersService', 'Restangular'];
+    UserBrowsingController.$inject = [
+        'UsersService', 
+        'AuthService'
+    ];
 
-    function UserBrowsingController(UsersService, Restangular) {
+    function UserBrowsingController(UsersService, AuthService) {
         var vm = this;
-
+        
+        vm.user = AuthService.user;
         vm.deleteUser = deleteUser;
 
         activate();

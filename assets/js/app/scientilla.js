@@ -48,6 +48,9 @@ Scientilla.user = {
     },
     getCollaborationGroups: function() {
         return _.map(this.collaborations, 'group');
+    },
+    isAdmin: function() {
+        return this.role === this.ADMINISTRATOR;
     }
 };
 
