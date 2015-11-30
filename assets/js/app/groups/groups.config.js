@@ -20,7 +20,7 @@
                         group: newGroup
                     }
                 })
-                .when("/groups/:id", {
+                .when("/groups/:id/edit", {
                     templateUrl: "partials/group-form.html",
                     controller: "GroupFormController",
                     controllerAs: 'vm',

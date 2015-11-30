@@ -18,7 +18,7 @@
         vm.canCreate = (_.contains(_.map(AuthService.user.admininstratedGroups, 'id'), group.id));
         //sTODO: rethink and refactor
         vm.createNewUrl = "/groups/" + group.id + "/references/new";
-        vm.editUrl = "#/groups/" + group.id;
+        vm.editUrl = "#/groups/" + group.id + '/edit';
 
         activate();
 
