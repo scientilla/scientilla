@@ -51,6 +51,10 @@ Scientilla.user = {
     },
     isAdmin: function() {
         return this.role === this.ADMINISTRATOR;
+    },
+    admins: function(group) {
+        var administeredGroupsId = _.map(this.admininstratedGroups, 'id');
+        return _.includes(administeredGroupsId, group.id);
     }
 };
 

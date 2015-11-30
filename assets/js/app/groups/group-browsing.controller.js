@@ -3,11 +3,15 @@
             .module('groups')
             .controller('GroupBrowsingController', GroupBrowsingController);
 
-    GroupBrowsingController.$inject = ['GroupsService', 'Restangular'];
+    GroupBrowsingController.$inject = [
+        'GroupsService',
+        'AuthService'
+    ];
 
-    function GroupBrowsingController(GroupsService, Restangular) {
+    function GroupBrowsingController(GroupsService, AuthService) {
         var vm = this;
 
+        vm.user = AuthService.user;
         vm.deleteGroup = deleteGroup;
 
         activate();
