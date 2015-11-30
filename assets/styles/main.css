@@ -51,3 +51,13 @@ h3 {
 i {
     font-style: italic;
 }
+
+.md-button.md-fab.scientilla-fab {
+    height: 42px;
+    width: 42px;
+}
+
+md-divider.top-divider {
+    top: 0;
+    bottom: auto;
+}

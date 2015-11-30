@@ -14,9 +14,11 @@
     function ReferenceBrowsingController(ReferencesService, Restangular, AuthService, $route, user) {
         var vm = this;
         
+        vm.researchEntity = user;
         vm.deleteReference = deleteReference;
         vm.canCreate = ($route.current.params.id == AuthService.user.id);
         vm.createNewUrl = "/users/" + user.id + "/references/new";
+        vm.editUrl = '#/users/' + user.id;
 
         activate();
 

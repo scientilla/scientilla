@@ -1,18 +1,24 @@
 <div>
     <md-content>
         <md-list>
-            <md-subheader class="md-no-sticky">References</md-subheader>
+            <md-subheader class="md-no-sticky">
+                <h3>{{vm.researchEntity.getDisplayName()}} references
+                    <md-button class="md-fab md-raised md-icon-button scientilla-fab" ng-href="{{vm.editUrl}}" aria-label="Edit">
+                        <ng-md-icon icon="mode_edit"></ng-md-icon>
+                    </md-button>
+                </h3>
+            </md-subheader>
+            <md-button ng-show="vm.canCreate" ng-href="#{{vm.createNewUrl}}" class="md-primary">Add New Reference</md-button>
             <md-list-item class="md-3-line scientilla-main-list" ng-repeat="r in vm.references">
+                <md-divider class="top-divider"></md-divider>
                 <div>
                     <h3>
                         <a ng-href="#/references/{{r.id}}" style="min-width: 80px"><span ng-bind-html='r | title'></span></a>
                     </h3>
                     <i><span ng-bind-html='r | linkableauthors'></span></i>
                 </div>
-                <md-button class="list-elem-button md-icon-button" ng-click="vm.deleteReference(r)" aria-label="Delete"><ng-md-icon icon="delete"></ng-md-icon></md-button>
+                <md-button class="list-elem-button md-icon-button" ng-click="vm.deleteReference(r)" aria-label="Delete"><ng-md-icon icon="clear"></ng-md-icon></md-button>
             </md-list-item>
         </md-list>
     </md-content>
-    <!--<md-button ng-href="#/users" class="md-primary">Users</md-button>-->
-    <md-button ng-show="vm.canCreate" ng-href="#{{vm.createNewUrl}}" class="md-primary">Create New Reference</md-button>
 </div>
