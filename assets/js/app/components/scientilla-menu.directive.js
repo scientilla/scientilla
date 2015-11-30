@@ -22,6 +22,7 @@
         $scope.$on('LOGOUT', refresh);
 
         function refresh() {
+            vm.isLogged = AuthService.isLogged;
             vm.user = AuthService.user;
         }
     }
