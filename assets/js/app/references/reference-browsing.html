@@ -13,10 +13,11 @@
                 <md-divider class="top-divider"></md-divider>
                 <div>
                     <h3>
-                        <a ng-href="#/references/{{r.id}}/edit" style="min-width: 80px"><span ng-bind-html='r | title'></span></a>
+                        <span ng-bind-html='r | title'></span>
                     </h3>
                     <i><span ng-bind-html='r | linkableauthors'></span></i>
                 </div>
+                <md-button class="list-elem-button md-icon-button"  ng-href="#/references/{{r.id}}/edit" aria-label="Edit"><ng-md-icon icon="edit"></ng-md-icon></md-button>
                 <md-button class="list-elem-button md-icon-button" ng-click="vm.deleteReference(r)" aria-label="Delete"><ng-md-icon icon="clear"></ng-md-icon></md-button>
             </md-list-item>
         </md-list>

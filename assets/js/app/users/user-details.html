@@ -10,7 +10,7 @@
                 <md-divider class="top-divider"></md-divider>
                 <div>
                     <h4>
-                        <a ng-href="#/groups/{{c.group.id}}" style="min-width: 80px">{{c.getDisplayName()}}</a>
+                        {{c.getDisplayName()}}
                     </h4>
                 </div>
             </md-list-item>
@@ -27,6 +27,7 @@
                     </h4>
                     <i><span ng-bind-html='r | linkableauthors'></span></i>
                 </div>
+                <md-button class="list-elem-button md-icon-button" ng-href="#/references/{{r.id}}" aria-label="Details"><ng-md-icon icon="book"></ng-md-icon></md-button>
             </md-list-item>
         </md-list>
     </md-content>
