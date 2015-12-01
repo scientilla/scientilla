@@ -36,14 +36,23 @@ module.exports = {
     },
     //sTODO: add deep populate for other fields of the references
     getSuggestedReferences: function (groupId) {
-        return Promise.all([
-            Group.findOneById(groupId)
-                    .populate('collaboratedReferences')
-                    .then(function (group) {
-                        return Reference.getVerifiedAndPublicReferences(group.collaboratedReferences);
-                    }),
-            Reference.find({groupOwner: groupId})
-        ])
+        return Group.findOneById(groupId)
+                .populate('collaboratedReferences')
+                .then(function (group) {
+                    return Reference.getVerifiedAndPublicReferences(group.collaboratedReferences);
+                })
+                .then(function (suggestedReferences) {
+                    //sTODO union must discard same references
+                    var maybeSuggestedReferencesId = _.map(suggestedReferences, 'id');
+
+                    return Promise.all([
+                        Reference.findById(maybeSuggestedReferencesId)
+                                .populate('collaborators')
+                                .populate('owner')
+                                .populate('groupOwner'),
+                        Reference.find({groupOwner: groupId})
+                    ])
+                })
                 .spread(function (maybeSuggestedReferences, authoredReferences) {
                     var similarityThreshold = .98;
                     //sTODO: add check on discarded references

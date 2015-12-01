@@ -27,6 +27,16 @@
             return user.getList('notifications')
                     .then(function (notifications) {
                         vm.notifications = notifications;
+                        _.forEach(vm.notifications, function(n) {
+                            if (n.content.reference)
+                                _.defaults(n.content.reference, Scientilla.reference);
+                                _.defaults(n.content.reference.owner, Scientilla.user);
+                                _.defaults(n.content.reference.groupOwner, Scientilla.group);
+                                _.forEach(n.content.reference.collaborators, function(c) {
+                                    _.defaults(c, Scientilla.user);
+                                    
+                                });
+                        });
                     });
         }
 

@@ -155,16 +155,24 @@ module.exports = {
             User.findOneById(userId)
                 .populate('coauthors')
                 .then(function(user) {
-//                    _.forEach(user.coauthors, function(r){r.owner = user;});
                     return Reference.getVerifiedAndPublicReferences(user.coauthors);
                 }),
-            Reference.find({authors: {contains: user.surname}}).then(Reference.getVerifiedAndPublicReferences),
-            Reference.find({owner: userId})
+            Reference.find({authors: {contains: user.surname}}).populate('collaborators').populate('owner').then(Reference.getVerifiedAndPublicReferences)
         ])
-        .spread(function (suggestedReferences1, suggestedReferences2, authoredReferences) {
-            var similarityThreshold = .98;
+        .spread(function (suggestedReferences1, suggestedReferences2) {
             //sTODO union must discard same references
-            var maybeSuggestedReferences = _.union(suggestedReferences1, suggestedReferences2);
+            var maybeSuggestedReferencesId = _.map(_.union(suggestedReferences1, suggestedReferences2), 'id');
+            
+            return Promise.all([
+                Reference.findById(maybeSuggestedReferencesId)
+                        .populate('collaborators')
+                        .populate('owner')
+                        .populate('groupOwner'),
+                Reference.find({owner: userId})
+            ])
+        })
+        .spread(function (maybeSuggestedReferences, authoredReferences) {
+            var similarityThreshold = .98;
             //sTODO: add check on discarded references
             return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
         });
