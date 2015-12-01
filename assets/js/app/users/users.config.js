@@ -20,6 +20,14 @@
                         user: getNewUser
                     }
                 })
+                .when("/users/:id", {
+                    templateUrl: "partials/user-details.html",
+                    controller: "UserDetailsController",
+                    controllerAs: 'vm',
+                    resolve: {
+                        user: getCurrentUser
+                    }
+                })
                 .when("/users/:id/edit", {
                     templateUrl: "partials/user-form.html",
                     controller: "UserFormController",
@@ -28,9 +36,6 @@
                         user: getCurrentUser
                     }
                 });
-                // .otherwise({
-                //     redirectTo: "/users"
-                // });
     }
 
     getNewUser.$inject = ['UsersService'];
