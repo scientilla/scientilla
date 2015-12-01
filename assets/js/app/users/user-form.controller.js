@@ -78,18 +78,7 @@
 
         //sTODO to be removed when deep populate exists
         function getCollaborations() {
-            if (!vm.user || !vm.user.id) {
-                vm.user.collaborations = [];
-                return;
-            }
-            vm.user.all('collaborations').getList({populate: ['group']})
-                    .then(function (collaborations) {
-                        vm.user.collaborations = collaborations;
-                        _.forEach(vm.user.collaborations, function(c) {
-                            _.defaults(c, Scientilla.collaboration);
-                            _.defaults(c.group, Scientilla.group);
-                        });
-                    });
+            return UsersService.getCollaborations(vm.user);
         }
 
         function submit() {
