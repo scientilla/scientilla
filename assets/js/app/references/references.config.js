@@ -58,6 +58,9 @@
                     controllerAs: 'vm',
                     resolve: {
                         reference: getCurrentReference
+                    },
+                    access: {
+                        noLogin: true
                     }
                 })
                 .when("/references/:id/edit", {

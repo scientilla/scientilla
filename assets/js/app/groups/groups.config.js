@@ -26,6 +26,9 @@
                     controllerAs: 'vm',
                     resolve: {
                         group: currentGroup
+                    },
+                    access: {
+                        noLogin: true
                     }
                 })
                 .when("/groups/:id/edit", {

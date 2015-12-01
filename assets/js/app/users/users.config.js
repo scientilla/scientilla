@@ -26,6 +26,9 @@
                     controllerAs: 'vm',
                     resolve: {
                         user: getCurrentUser
+                    },
+                    access: {
+                        noLogin: true
                     }
                 })
                 .when("/users/:id/edit", {
