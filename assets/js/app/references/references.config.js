@@ -52,7 +52,7 @@
                         researchEntity: getCurrentGroup
                     }
                 })
-                .when("/references/:id", {
+                .when("/references/:id/edit", {
                     templateUrl: "partials/reference-form.html",
                     controller: "ReferenceFormController",
                     controllerAs: 'vm',
