@@ -8,11 +8,10 @@
             <md-list-item class="md-2-line scientilla-main-list" ng-repeat="g in vm.groups">
                 <md-divider class="top-divider"></md-divider> 
                 <div>
-                    <h3>
-                        <a ng-href="#/groups/{{g.id}}/edit">{{ g.name}}</a>
-                    </h3>
+                    <h3>{{ g.getDisplayName()}}</h3>
                 </div>
-                <md-button class="list-elem-button md-icon-button" ng-href="#/groups/{{g.id}}/references" aria-label="References"><ng-md-icon icon="book"></ng-md-icon></md-button>
+                <md-button class="list-elem-button md-icon-button" ng-href="#/groups/{{g.id}}" aria-label="Details"><ng-md-icon icon="book"></ng-md-icon></md-button>
+                <md-button class="list-elem-button md-icon-button" ng-show="vm.user.isAdmin() || vm.user.admins(g)" ng-href="#/groups/{{g.id}}/edit" aria-label="Edit"><ng-md-icon icon="edit"></ng-md-icon></md-button>
                 <md-button  ng-show="vm.user.isAdmin() || vm.user.admins(g)" class="list-elem-button md-icon-button" ng-click="vm.deleteGroup(g)" aria-label="Delete"><ng-md-icon icon="clear"></ng-md-icon></md-button>
             </md-list-item>
         </md-list>

@@ -1,0 +1,18 @@
+<div>
+    <md-content>
+        <md-list>
+            <md-subheader class="md-no-sticky">
+                <h3>{{vm.group.getDisplayName()}}</h3>
+            </md-subheader>
+            <md-list-item class="md-3-line scientilla-main-list" ng-repeat="r in vm.references">
+                <md-divider class="top-divider"></md-divider>
+                <div>
+                    <h3>
+                        <a ng-href="#/references/{{r.id}}" style="min-width: 80px"><span ng-bind-html='r | title'></span></a>
+                    </h3>
+                    <i><span ng-bind-html='r | linkableauthors'></span></i>
+                </div>
+            </md-list-item>
+        </md-list>
+    </md-content>
+</div>
