@@ -22,7 +22,7 @@
                 });
                 if (matchingUser) {
                     //TODO: add offset to avoid substituting already substituted users
-                    linkedAuthorsStr = linkedAuthorsStr.replace(author, '<a href="#/users/'+ matchingUser.id+'/references">' + author + '</a>');
+                    linkedAuthorsStr = linkedAuthorsStr.replace(author, '<a href="#/users/'+ matchingUser.id+'">' + author + '</a>');
                 }
             });
             return linkedAuthorsStr;
