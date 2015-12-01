@@ -61,3 +61,7 @@ md-divider.top-divider {
     top: 0;
     bottom: auto;
 }
+
+.scientilla-main-list > div > h3 {
+    width: 600px;
+}
