@@ -24,6 +24,12 @@
                         //validate user data
                     };
                     
+                    service.save = function(user) {
+                        return user.save().then(function(u){
+                            return user;
+                        });
+                    }
+                    
                     return service;
                 }]);
 }());

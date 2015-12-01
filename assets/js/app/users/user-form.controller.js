@@ -9,12 +9,11 @@
         '$scope',
         'user',
         'AuthService',
-        '$location',
-        'GroupsService',
-        '$http'
+        '$window',
+        'GroupsService'
     ];
 
-    function UserFormController(UsersService, FormForConfiguration, $scope, user, AuthService, $location, GroupsService, $http) {
+    function UserFormController(UsersService, FormForConfiguration, $scope, user, AuthService, $window, GroupsService) {
         var vm = this;
         vm.user = user;
         vm.getCollaborationsFilter = getCollaborationsFilter;
@@ -94,10 +93,9 @@
         }
 
         function submit() {
-            if (_.isUndefined(vm.user.id)) {
-                UsersService.post(vm.user);
-            } else
-                UsersService.put(vm.user);
+                UsersService.save(vm.user).then(function(){
+                    $window.history.back();
+                });
         }
 
         function nameChanged() {
