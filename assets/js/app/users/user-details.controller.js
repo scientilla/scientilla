@@ -4,10 +4,11 @@
             .controller('UserDetailsController', UserDetailsController);
 
     UserDetailsController.$inject = [
+        'UsersService',
         'user'
     ];
 
-    function UserDetailsController(user) {
+    function UserDetailsController(UsersService, user) {
         var vm = this;        
         vm.user = user;
 
@@ -15,7 +16,7 @@
 
         function activate() {
             return getReferences().then(function () {
-
+                getCollaborations();
             });
         }
 
@@ -25,6 +26,10 @@
                         vm.references = references;
                         return vm.references;
             });
+        }
+        
+        function getCollaborations() {
+            return UsersService.getCollaborations(vm.user);
         }
     }
 })();
