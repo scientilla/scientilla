@@ -18,7 +18,7 @@
         vm.deleteReference = deleteReference;
         vm.canCreate = ($route.current.params.id == AuthService.user.id);
         vm.createNewUrl = "/users/" + user.id + "/references/new";
-        vm.editUrl = '#/users/' + user.id;
+        vm.editUrl = '#/users/' + user.id + '/edit';
 
         activate();
 

@@ -20,7 +20,7 @@
                         user: getNewUser
                     }
                 })
-                .when("/users/:id", {
+                .when("/users/:id/edit", {
                     templateUrl: "partials/user-form.html",
                     controller: "UserFormController",
                     controllerAs: 'vm',
