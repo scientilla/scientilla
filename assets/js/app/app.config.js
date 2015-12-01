@@ -8,12 +8,12 @@
 
     function configure(RestangularProvider, $routeProvider) {
         $routeProvider
-            .when("/home", {
+            .when("/", {
                 template: "",
                 controller: "HomeController"
             })
             .otherwise({
-                redirectTo: "/home"
+                redirectTo: "/"
             });
 
         //sTODO: set request error interceptor

@@ -162,7 +162,7 @@
                     url = '/groups/' + vm.reference.groupOwner.id + '/references';
                     break;
                 default :
-                    url = '/home';
+                    url = '/';
             }
             $location.path(url);
         }
