@@ -1,31 +1,30 @@
 <div>
     <md-content>
-        <h3>{{vm.user.getDisplayName()}}</h3>
-        <i>{{vm.user.username}}</i>
+        <h3><span ng-bind-html='vm.reference | title'></span></h3>
+        <i><span ng-bind-html='vm.reference | linkableauthors'></span></i>
         <md-list>
             <md-subheader class="md-no-sticky">
-                Career
+                Collaborators
             </md-subheader>
-            <md-list-item class="md-1-line scientilla-main-list" ng-repeat="c in vm.user.collaborations">
+            <md-list-item class="md-3-line scientilla-main-list" ng-repeat="c in vm.reference.getRealAuthors()">
                 <md-divider class="top-divider"></md-divider>
                 <div>
                     <h4>
-                        {{c.getDisplayName()}}
+                        <a ng-href="#/users/{{c.id}}" style="min-width: 80px">{{c.getDisplayName()}}</a>
                     </h4>
                 </div>
             </md-list-item>
         </md-list>
         <md-list>
             <md-subheader class="md-no-sticky">
-                References List
+                Collaborations
             </md-subheader>
-            <md-list-item class="md-2-line scientilla-main-list" ng-repeat="r in vm.references">
+            <md-list-item class="md-3-line scientilla-main-list" ng-repeat="c in vm.reference.getCollaborations()">
                 <md-divider class="top-divider"></md-divider>
                 <div>
                     <h4>
-                        <a ng-href="#/references/{{r.id}}" style="min-width: 80px"><span ng-bind-html='r | title'></span></a>
+                        <a ng-href="#/group/{{c.id}}" style="min-width: 80px">{{c.getDisplayName()}}</a>
                     </h4>
-                    <i><span ng-bind-html='r | linkableauthors'></span></i>
                 </div>
             </md-list-item>
         </md-list>

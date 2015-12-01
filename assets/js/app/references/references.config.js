@@ -52,6 +52,14 @@
                         researchEntity: getCurrentGroup
                     }
                 })
+                .when("/references/:id", {
+                    templateUrl: "partials/reference-details.html",
+                    controller: "ReferenceDetailsController",
+                    controllerAs: 'vm',
+                    resolve: {
+                        reference: getCurrentReference
+                    }
+                })
                 .when("/references/:id/edit", {
                     templateUrl: "partials/reference-form.html",
                     controller: "ReferenceFormController",
@@ -76,12 +84,13 @@
     }
 
 
-    UserReferencesService.$inject = ['ReferenceServiceFactory', 'AuthService', '$route', 'Restangular'];
+    getCurrentReference.$inject = ['$route', 'Restangular'];
 
-    function currentReference(ReferenceServiceFactory, AuthService, $route, Restangular) {
+    function getCurrentReference($route, Restangular) {
         var referenceId = $route.current.params.id;
-        var userId = AuthService.userId;
-        return ReferenceServiceFactory(AuthService.userId).one(referenceId).getList().$object;
+        return Restangular
+            .one('references', referenceId)
+            .get({populate: ['collaborators', 'owner', 'groupOwner', 'groupCollaborations']});
     }
 
 
