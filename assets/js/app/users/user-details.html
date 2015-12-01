@@ -10,7 +10,7 @@
                 <md-divider class="top-divider"></md-divider>
                 <div>
                     <h4>
-                        {{c.getDisplayName()}}
+                        <a ng-href="#/groups/{{c.group.id}}" style="min-width: 80px">{{c.getDisplayName()}}</a>
                     </h4>
                 </div>
             </md-list-item>
