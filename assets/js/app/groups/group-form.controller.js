@@ -86,7 +86,7 @@
         }
 
         function submit() {
-            GroupsService.save(vm.group).then(function(){
+            GroupsService.doSave(vm.group).then(function(){
                 $window.history.back();
             });
         }

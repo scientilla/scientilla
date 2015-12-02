@@ -24,8 +24,15 @@
                         var model = 'groups';
                         return {model: model, qs: qs};
                     };
+                    
+                    service.save = function(group) {
+                        if (group.id)
+                            return group.save();
+                        else
+                            return this.post(group);
+                    };
 
-                    service.save = function (group) {
+                    service.doSave = function (group) {
                         var administrators = group.administrators;
                         group.administrators = _.map(group.administrators, 'id');
                         
@@ -33,7 +40,8 @@
                         _.forEach(group.memberships, function(m) {
                             m.user = m.user.id;
                         });
-                        return group.save().then(function (g) {
+                        console.log(service);
+                        return service.save(group).then(function (g) {
                             group.administrators = administrators;
                             group.memberships = memberships;
                             return group;
