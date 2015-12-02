@@ -23,9 +23,16 @@
                     service.validateData = function (user) {
                         //validate user data
                     };
+                    
+                    service.save = function(user) {
+                        if (user.id)
+                            return user.save();
+                        else
+                            return this.post(user);
+                    };
 
-                    service.save = function (user) {
-                        return user.save().then(function (u) {
+                    service.doSave = function (user) {
+                        return this.save(user).then(function (u) {
                             return user;
                         });
                     }

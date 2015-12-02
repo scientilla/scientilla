@@ -82,7 +82,7 @@
         }
 
         function submit() {
-                UsersService.save(vm.user).then(function(){
+                UsersService.doSave(vm.user).then(function(){
                     $window.history.back();
                 });
         }
