@@ -49,6 +49,13 @@
                 }
             }
         };
+        
+        if (!vm.user.id) {
+            vm.validationAndViewRules.password = {
+                inputType: 'password',
+                required: true,
+            };
+        }
 
         if (AuthService.user.role === Scientilla.user.ADMINISTRATOR)
             vm.validationAndViewRules.role = {
