@@ -32,8 +32,6 @@ module.exports = {
             defaultsTo: DRAFT,
             required: true
         },
-        verified: 'BOOLEAN',
-        public: 'BOOLEAN',
         owner: {
             model: 'User'
         },
@@ -49,7 +47,6 @@ module.exports = {
             via: 'collaboratedReferences'
         },
         verify: function () {
-//            this.verified = true;
             this.status = VERIFIED;
             return this;
         },
@@ -67,9 +64,6 @@ module.exports = {
             return ucAuthors;
         },
         setPublic: function () {
-//            if (!this.verified)
-//                return false;
-//            this.public = true;
             this.status = PUBLIC;
             return this;
         },
