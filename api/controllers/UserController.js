@@ -57,7 +57,7 @@ module.exports = require('waterlock').actions.user({
     getReferences: function(req, res) {
         var userId = req.params.userId; 
         var populate = req.query.populate; 
-        if (!_.isString(populate))
+        if (_.isString(populate))
             populate = [populate];
         var filter = req.query.filter || 'all';
         User.getReferences(userId, populate, filter)
