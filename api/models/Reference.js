@@ -32,23 +32,40 @@ module.exports = {
             defaultsTo: DRAFT,
             required: true
         },
-        owner: {
+        publicCoauthors: {
+            collection: 'User',
+            via: 'publicReferences'
+        },
+        privateCoauthors: {
+            collection: 'User',
+            via: 'privateReferences'
+        },
+        discardedCoauthors: {
+            collection: 'User',
+            via: 'discardedReferences'
+        },
+        publicGroups: {
+            collection: 'Group',
+            via: 'publicReferences'
+        },
+        privateGroups: {
+            collection: 'Group',
+            via: 'privateReferences'
+        },
+        discardedGroups: {
+            collection: 'Group',
+            via: 'discardedReferences'
+        },
+        draft: 'BOOLEAN',
+        draftCreator: {
             model: 'User'
         },
-        groupOwner: {
+        draftGroupCreator: {
             model: 'Group'
         },
-        collaborators: {
-            collection: 'User',
-            via: 'coauthors'
-        },
-        groupCollaborations: {
+        suggestedGroups: {
             collection: 'Group',
-            via: 'collaboratedReferences'
-        },
-        verify: function () {
-            this.status = VERIFIED;
-            return this;
+            via: 'suggestedReferences'
         },
         getAuthors: function () {
             if (!this.authors)
@@ -62,10 +79,6 @@ module.exports = {
                 return a.toUpperCase();
             });
             return ucAuthors;
-        },
-        setPublic: function () {
-            this.status = PUBLIC;
-            return this;
         },
         getSimilarity: function (ref) {
             var similarityFields = ['authors', 'title'];

@@ -25,14 +25,26 @@ module.exports = {
             collection: 'user',
             via: 'admininstratedGroups'
         },
-        references: {
+        draftReferences: {
             collection: 'Reference',
-            via: 'groupOwner'
+            via: 'draftGroupCreator'
         },
-        collaboratedReferences: {
+        privateReferences: {
+            collection: 'Reference',
+            via: 'privateGroups'
+        },
+        publicReferences: {
+            collection: 'Reference',
+            via: 'publicGroups'
+        },
+        discardedReferences: {
+            collection: 'Reference',
+            via: 'discardedGroups'
+        },
+        suggestedReferences: {
             collection: 'reference',
-            via: 'groupCollaborations'
-        },
+            via: 'suggestedGroups'
+        }
     },
     //sTODO: add deep populate for other fields of the references
     getSuggestedReferences: function (groupId) {
