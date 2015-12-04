@@ -40,7 +40,7 @@ module.exports.routes = {
   'post /groups/:userId/references': 'Reference.create',
   'put /users/:userId/references/:id': 'Reference.update',
   'put /groups/:userId/references/:id': 'Reference.update',
-  'get /users/:userId/references': 'User.getAllReference',
+  'get /users/:userId/references': 'User.getReferences',
   'put /users/:userId/references/:id/verified': 'Reference.verifyDraft',
   'get /references/:id/suggestions' : 'Suggestion.find', //sTODO delete
   'get /references/:id/suggested-collaborators' : 'Reference.getSuggestedCollaborators',
