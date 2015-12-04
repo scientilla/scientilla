@@ -126,9 +126,9 @@ module.exports = {
         },
         getAllReferences: function () {
             return _.union(
-                    user.publicReferences,
-                    user.privateReferences,
-                    user.draftReferences);
+                    this.publicReferences,
+                    this.privateReferences,
+                    this.draftReferences);
         }
     }),
     getAdministeredGroups: function (userId) {
@@ -164,7 +164,7 @@ module.exports = {
                 });
     },
     getAllReferences: function (userId, populateFields) {
-        User.findOneById(userId)
+        return User.findOneById(userId)
                 .populate('publicReferences')
                 .populate('privateReferences')
                 .populate('draftReferences')

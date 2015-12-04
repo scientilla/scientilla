@@ -55,7 +55,7 @@ module.exports = require('waterlock').actions.user({
         });
     },
     getAllReference: function(req, res) {
-        var userId = req.params.id; 
+        var userId = req.params.userId; 
         var populate = req.params.populate; 
         User.getAllReferences(userId, populate)
                 .then(function(references) {
