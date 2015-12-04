@@ -26,12 +26,6 @@ module.exports = {
             type: 'STRING'
         },
         authors: 'STRING',
-        status: {
-            type: 'STRING',
-            enum: [DRAFT, VERIFIED, PUBLIC],
-            defaultsTo: DRAFT,
-            required: true
-        },
         publicCoauthors: {
             collection: 'User',
             via: 'publicReferences'
