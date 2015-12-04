@@ -30,7 +30,7 @@
         }
 
         function getReferences() {
-            return user.getList('draftReferences')
+            return user.getList('references', { populate: ['publicCoauthors', 'privateCoauthors']})
                     .then(function (references) {
                         vm.references = references;
                         return vm.references;
