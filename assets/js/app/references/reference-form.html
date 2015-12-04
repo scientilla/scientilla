@@ -4,21 +4,6 @@
           form-for-builder
           submit-with="vm.submit()"
           class="autosave {{vm.status}}">
-        <scientilla-multicomplete
-            items="vm.reference.collaborators"
-            query="vm.getUsersQuery"
-            filter="vm.getCollaboratorsFilter"
-            title="Collaborators"
-            suggested-items="vm.reference.suggestedCollaborators"
-            >
-        </scientilla-multicomplete> 
-        <scientilla-multicomplete
-            items="vm.reference.groupCollaborations"
-            query="vm.getGroupsQuery"
-            filter="vm.getCollaborationsFilter"
-            title="Collaborations"
-            >
-        </scientilla-multicomplete> 
         <!--<md-button ng-href="#/users/{{vm.userId}}/references">Cancel</md-button>-->
         <md-button ng-click="vm.goToBrowsing()">Cancel</md-button>
         <submit-button label="Save"></submit-button>
