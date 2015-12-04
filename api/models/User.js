@@ -129,6 +129,11 @@ module.exports = {
                     this.publicReferences,
                     this.privateReferences,
                     this.draftReferences);
+        },
+        getVerifiedReferences: function () {
+            return _.union(
+                    this.publicReferences,
+                    this.privateReferences);
         }
     }),
     getAdministeredGroups: function (userId) {
@@ -163,13 +168,25 @@ module.exports = {
                             });
                 });
     },
-    getAllReferences: function (userId, populateFields) {
+    getSearchFilterFunction: function(filterKey) {
+        //sTODO: use map
+        var filters = {
+            'all': 'getAllReferences',
+            'verified': 'getVerifiedReferences'
+        };
+        if (filterKey in filters)
+            return filters[filterKey];
+        else
+            return filters['all'];
+    },
+    getReferences: function (userId, populateFields, filterKey) {
+        var filterFunction = this.getSearchFilterFunction(filterKey);
         return User.findOneById(userId)
                 .populate('publicReferences')
                 .populate('privateReferences')
                 .populate('draftReferences')
                 .then(function (user) {
-                    var references = user.getAllReferences();
+                    var references = user[filterFunction]();
                     var referencesId = _.map(references, 'id');
                     var query = Reference.findById(referencesId);
                     _.forEach(populateFields, function (f) {
@@ -177,7 +194,12 @@ module.exports = {
                     });
                     return query;
                 });
-
+    },
+    getAllReferences: function (userId, populateFields) {
+        return this.getReferences(userId, populateFields, 'getAllReferences');
+    },
+    getVerifiedReferences: function (userId, populateFields) {
+        return this.getReferences(userId, populateFields, 'getVerifiedReferences');
     },
     //sTODO: add deep populate for other fields of the references
     getSuggestedReferences: function (userId, user) {
