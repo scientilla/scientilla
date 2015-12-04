@@ -97,10 +97,11 @@
     }
 
 
-    newReference.$inject = ['ReferenceServiceFactory', 'AuthService'];
+    newReference.$inject = ['$routeParams', 'AuthService'];
 
-    function newReference(ReferenceServiceFactory, AuthService) {
-        return ReferenceServiceFactory(AuthService.userId).getNewReference();
+    function newReference($routeParams, AuthService) {
+        var userId = $routeParams.id;
+        return Scientilla.reference.getNewDraftReference(userId);
     }
 
     newGroupReference.$inject = ['$routeParams'];

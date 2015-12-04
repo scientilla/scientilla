@@ -130,6 +130,14 @@ Scientilla.reference = {
             groupOwner: groupId,
             status: Scientilla.reference.DRAFT
         };
+    },
+    getNewDraftReference: function (userId) {
+        return {
+            title: "",
+            authors: "",
+            draftCreator: userId,
+            draft: true
+        };
     }
 };
 
