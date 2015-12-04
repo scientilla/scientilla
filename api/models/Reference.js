@@ -46,10 +46,6 @@ module.exports = {
             collection: 'Group',
             via: 'collaboratedReferences'
         },
-        verify: function () {
-            this.status = VERIFIED;
-            return this;
-        },
         getAuthors: function () {
             if (!this.authors)
                 return [];
