@@ -2,7 +2,9 @@
     angular.module("references").
             factory("ReferenceServiceFactory", ReferenceServiceFactory);
 
-    ReferenceServiceFactory.$inject = ['Restangular'];
+    ReferenceServiceFactory.$inject = [
+        'Restangular'
+    ];
 
     function ReferenceServiceFactory(Restangular) {
         return function (userId) {
@@ -44,6 +46,10 @@
                         reference.groupOwner = owner;
                     return reference;
                 });
+            };
+            
+            service.verify = function(reference) {
+                return reference.customPUT({},'verified');
             };
 
             return service;

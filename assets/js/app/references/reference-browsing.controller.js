@@ -16,6 +16,7 @@
         
         vm.researchEntity = user;
         vm.deleteReference = deleteReference;
+        vm.verifyReference = verifyReference;
         vm.canCreate = ($route.current.params.id == AuthService.user.id);
         vm.createNewUrl = "/users/" + user.id + "/references/new";
         vm.editUrl = '#/users/' + user.id + '/edit';
@@ -42,6 +43,10 @@
                     .then(function () {
                         _.remove(vm.references, reference);
                     });
+        }
+        
+        function verifyReference(reference) {
+            return ReferencesService.verify(reference);
         }
     }
 })();

@@ -13,6 +13,14 @@ module.exports = {
                 .then(function (suggestion) {
                     res.json(suggestion);
                 });
+    },
+    verifyDraft: function (req, res) {
+        var referenceId = req.params.id;
+        Reference
+                .verifyDraft(referenceId)
+                .then(function (reference) {
+                    res.json(reference);
+                });
     }
 };
 
