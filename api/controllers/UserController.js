@@ -53,5 +53,13 @@ module.exports = require('waterlock').actions.user({
                 .then(function(suggestedReferences) {
                     res.json(suggestedReferences);
         });
+    },
+    getAllReference: function(req, res) {
+        var userId = req.params.id; 
+        var populate = req.params.populate; 
+        User.getAllReferences(userId, populate)
+                .then(function(references) {
+                    res.json(references);
+        });
     }
 });

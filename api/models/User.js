@@ -123,6 +123,12 @@ module.exports = {
                 return a.toUpperCase();
             });
             return ucAliases;
+        },
+        getAllReferences: function () {
+            return _.union(
+                    user.publicReferences,
+                    user.privateReferences,
+                    user.draftReferences);
         }
     }),
     getAdministeredGroups: function (userId) {
@@ -156,6 +162,22 @@ module.exports = {
                                 return notifications;
                             });
                 });
+    },
+    getAllReferences: function (userId, populateFields) {
+        User.findOneById(userId)
+                .populate('publicReferences')
+                .populate('privateReferences')
+                .populate('draftReferences')
+                .then(function (user) {
+                    var references = user.getAllReferences();
+                    var referencesId = _.map(references, 'id');
+                    var query = Reference.findById(referencesId);
+                    _.forEach(populateFields, function (f) {
+                        query = query.populate(f);
+                    });
+                    return query;
+                });
+
     },
     //sTODO: add deep populate for other fields of the references
     getSuggestedReferences: function (userId, user) {
