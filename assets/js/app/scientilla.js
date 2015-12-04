@@ -80,6 +80,9 @@ Scientilla.reference = {
         _.extend(reference, Scientilla.reference);
         return reference;
     },
+    getAllCoauthors: function() {
+        return _.union(this.privateCoauthors, this.publicCoauthors);
+    },
     getRealAuthors: function () {
         var realAuthors = _.clone(this.collaborators);
         if (this.hasRealOwner())

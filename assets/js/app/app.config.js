@@ -45,11 +45,11 @@
             _.assign(reference, Scientilla.reference);
             if (reference.owner)
                 _.assign(reference.owner, Scientilla.user);
-            _.forEach(reference.collaborators, function(c) {
+            _.forEach(reference.privateCoauthors, function(c) {
                 _.assign(c, Scientilla.user);
             });
-            _.forEach(reference.groupCollaborations, function(c) {
-                _.assign(c, Scientilla.group);
+            _.forEach(reference.publicCoauthors, function(c) {
+                _.assign(c, Scientilla.user);
             });
 
             return reference;
