@@ -15,9 +15,8 @@
         vm.researchEntity = researchEntity;
         vm.deleteReference = deleteReference;
         vm.verifyReference = verifyReference;
-        vm.createNewUrl = (vm.researchEntity.getType ==='user') ? "/users/" + researchEntity.id + "/references/new" : "/groups/" + researchEntity.id + "/references/new";
-        vm.editUrl = (vm.researchEntity.getType ==='user') ? '#/users/' + researchEntity.id + '/edit' : '#/groups/' + researchEntity.id + '/edit';
-
+        vm.createNewUrl = (vm.researchEntity.getType() === 'user') ? "/users/" + researchEntity.id + "/references/new" : "/groups/" + researchEntity.id + "/references/new";
+        vm.editUrl = (vm.researchEntity.getType() === 'user') ? '#/users/' + researchEntity.id + '/edit' : '#/groups/' + researchEntity.id + '/edit';
         activate();
 
         function activate() {
