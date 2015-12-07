@@ -126,6 +126,16 @@ module.exports = _.merge({}, researchEntity, {
             return ucAliases;
         }
     }),
+    verifyDraft: function (referenceId) {
+        return Reference.findOneById(referenceId)
+                .then(function (r) {
+                    var draftCreator = r.draftCreator;
+                    r.draftCreator = null;
+                    r.draft = false;
+                    r.privateCoauthors.add(draftCreator);
+                    return r.save();
+                });
+    },
     getAdministeredGroups: function (userId) {
         return User.findOneById(userId)
                 .populate('admininstratedGroups')

@@ -44,7 +44,7 @@ module.exports.routes = {
   'get /groups/:id/references': 'Group.getReferences',
   'delete /users/:id/references/:referenceId': 'User.deleteReference',
   'delete /groups/:id/references/:referenceId': 'Group.deleteReference',
-  'put /users/:userId/references/:id/verified': 'Reference.verifyDraft',
+  'put /users/:userId/references/:id/verified': 'User.verifyDraft',
   'get /references/:id/suggestions' : 'Suggestion.find', //sTODO delete
   'get /references/:id/suggested-collaborators' : 'Reference.getSuggestedCollaborators',
   'get /users/:id/suggested-references' : 'User.getSuggestedReferences',

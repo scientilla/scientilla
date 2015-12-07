@@ -89,16 +89,6 @@ module.exports = {
             return similarity;
         }
     },
-    verifyDraft: function (referenceId) {
-        return Reference.findOneById(referenceId)
-                .then(function (r) {
-                    var draftCreator = r.draftCreator;
-                    r.draftCreator = null;
-                    r.draft = false;
-                    r.privateCoauthors.add(draftCreator);
-                    return r.save();
-                });
-    },
     getSuggestedCollaborators: function (referenceId) {
         return Promise.all([
             Reference.findOne(referenceId).populate('collaborators'),

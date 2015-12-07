@@ -21,19 +21,28 @@ module.exports = {
                     res.json(references);
                 });
     },
-    deleteReference: function(req, res) {
+    deleteReference: function (req, res) {
         var researcEntityId = req.params.id;
         var referenceId = req.params.referenceId;
         var Model = getModel(req);
-        Model.deleteReference(referenceId).then(function(r) {
+        Model.deleteReference(referenceId).then(function (r) {
             res.json();
         });
+    },
+    verifyDraft: function (req, res) {
+        var referenceId = req.params.id;
+        var Model = getModel(req);
+        Model
+                .verifyDraft(referenceId)
+                .then(function (reference) {
+                    res.json(reference);
+                });
     }
 };
 
 function getModel(req) {
-        var model = req.options.model || req.options.controller;
-        var Model = req._sails.models[model];
-        return Model;
+    var model = req.options.model || req.options.controller;
+    var Model = req._sails.models[model];
+    return Model;
 }
 
