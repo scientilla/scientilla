@@ -147,7 +147,21 @@ module.exports = _.merge({}, researchEntity, {
     removeReference: function (userId, referenceId) {
         return User
                 .findOneById(userId)
+                .populate('privateReferences')
+                .populate('publicReferences')
                 .then(function (user) {
+                    return Promise.all([
+                user, 
+                Reference.findOneById(referenceId)
+                        .populate('privateCoauthors')
+                        .populate('publicCoauthors')
+                        ]);
+                })
+                .spread(function (user, reference) {
+                    if (reference.privateCoauthors.length + reference.publicCoauthors.length === 1) {
+                        sails.log.debug('Reference ' + referenceId + ' will be deleted');
+                        return Reference.destroy({id: referenceId})
+                    }
                     user.privateReferences.remove(referenceId);
                     user.publicReferences.remove(referenceId);
                     user.save();
