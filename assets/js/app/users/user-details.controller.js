@@ -21,7 +21,7 @@
         }
 
         function getReferences() {
-            return user.getList('references', {filter: 'verified', populate: ['publicCoauthors', 'privateCoauthors']})
+            return user.getList('references', {filter: 'verified', populate: ['publicCoauthors', 'privateCoauthors', 'privateGroups', 'publicGroups']})
                     .then(function (references) {
                         vm.references = references;
                         return vm.references;
