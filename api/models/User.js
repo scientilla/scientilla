@@ -214,6 +214,12 @@ module.exports = _.merge({}, researchEntity, {
                     return users;
                 })
                 .then(function (users) {
+                    return User.count();
+                })
+                .then(function (usersNum) {
+                    if (usersNum === 0) {
+                        userObj.role = ADMINISTRATOR;
+                    }
                     return User.create(userObj);
                 })
                 .then(function (user) {

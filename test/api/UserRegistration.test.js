@@ -33,6 +33,7 @@ describe('User registration', function () {
                                 res.body.should.have.length(1);
                                 var newUser = res.body[0];
                                 newUser.username.should.equal('federico.bozzini@iit.it');
+                                newUser.role.should.equal(User.ADMINISTRATOR);
                             });
                 })
                 .then(res => done())
