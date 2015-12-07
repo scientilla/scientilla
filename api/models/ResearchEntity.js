@@ -47,8 +47,15 @@ module.exports = {
                 });
     },
     //sTODO: only drafts can be deleted
-    deleteReference: function(referenceId) {
-        return Reference.destroy({id: referenceId});
+    deleteReference: function(ResearchEntity, researchEntityId, referenceId) {
+        return Reference
+                .findById(referenceId)
+                .then(function(reference) {
+                    if (reference.draft)
+                        return Reference.destroy({id: referenceId});
+                    else
+                        return ResearchEntity.removeReference(researchEntityId, referenceId);
+                })
     }
 };
 

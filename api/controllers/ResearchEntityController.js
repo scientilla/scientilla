@@ -25,9 +25,11 @@ module.exports = {
         var researcEntityId = req.params.id;
         var referenceId = req.params.referenceId;
         var Model = getModel(req);
-        Model.deleteReference(referenceId).then(function (r) {
-            res.json();
-        });
+        Model
+                .deleteReference(Model, researcEntityId, referenceId)
+                .then(function (r) {
+                    res.json();
+                });
     },
     verifyDraft: function (req, res) {
         var referenceId = req.params.id;
@@ -38,7 +40,7 @@ module.exports = {
                     res.json(reference);
                 });
     },
-    verifyReference: function(req, res) {
+    verifyReference: function (req, res) {
         var researchEntityId = req.params.id;
         var referenceId = req.params.options.values.id;
         var Model = getModel(req);

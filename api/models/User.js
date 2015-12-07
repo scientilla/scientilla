@@ -133,7 +133,16 @@ module.exports = _.merge({}, researchEntity, {
                     r.draftCreator = null;
                     r.draft = false;
                     r.privateCoauthors.add(draftCreator);
-                    return r.save();
+                    r.save();
+                });
+    },
+    removeReference: function (userId, referenceId) {
+        return User
+                .findOneById(userId)
+                .then(function (user) {
+                    user.privateReferences.remove(referenceId);
+                    user.publicReferences.remove(referenceId);
+                    user.save();
                 });
     },
     verifyReference: function (userId, referenceId) {
