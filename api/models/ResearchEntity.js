@@ -30,14 +30,14 @@ module.exports = {
         else
             return filters['all'];
     },
-    getReferences: function (researchEntityModel, userId, populateFields, filterKey) {
+    getReferences: function (researchEntityModel, researchEntityId, populateFields, filterKey) {
         var filterFunction = this.getSearchFilterFunction(filterKey);
-        return researchEntityModel.findOneById(userId)
+        return researchEntityModel.findOneById(researchEntityId)
                 .populate('publicReferences')
                 .populate('privateReferences')
                 .populate('draftReferences')
-                .then(function (user) {
-                    var references = user[filterFunction]();
+                .then(function (researchEntity) {
+                    var references = researchEntity[filterFunction]();
                     var referencesId = _.map(references, 'id');
                     var query = Reference.findById(referencesId);
                     _.forEach(populateFields, function (f) {
@@ -45,12 +45,6 @@ module.exports = {
                     });
                     return query;
                 });
-    },
-    getAllReferences: function (userId, populateFields) {
-        return this.getReferences(userId, populateFields, 'getAllReferences');
-    },
-    getVerifiedReferences: function (userId, populateFields) {
-        return this.getReferences(userId, populateFields, 'getVerifiedReferences');
     }
 };
 

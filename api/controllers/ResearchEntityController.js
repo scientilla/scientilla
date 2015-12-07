@@ -7,7 +7,7 @@
 
 module.exports = {
     getReferences: function (req, res) {
-        var userId = req.params.userId;
+        var researchEntity = req.params.id;
         var populate = req.query.populate;
         if (_.isString(populate))
             populate = [populate];
@@ -16,7 +16,7 @@ module.exports = {
         if (!_.contains(['group', 'user'], model))
             return res.err('error');
         var Model = req._sails.models[model];
-        Model.getReferences(Model, userId, populate, filter)
+        Model.getReferences(Model, researchEntity, populate, filter)
                 .then(function (references) {
                     res.json(references);
                 });
