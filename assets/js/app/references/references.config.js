@@ -13,16 +13,16 @@
                     controllerAs: 'vm',
                     resolve: {
                         ReferencesService: RouteReferencesService,
-                        user: getCurrentUser
+                        researchEntity: getCurrentUser
                     }
                 })
                 .when("/groups/:id/references", {
                     templateUrl: "partials/reference-browsing.html",
-                    controller: "GroupReferenceBrowsingController",
+                    controller: "ReferenceBrowsingController",
                     controllerAs: 'vm',
                     resolve: {
                         ReferencesService: RouteReferencesService,
-                        group: getCurrentGroup
+                        researchEntity: getCurrentGroup
                     }
                 })
                 .when("/references/new", {
