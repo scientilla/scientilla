@@ -47,6 +47,16 @@ module.exports = _.merge({}, researchEntity, {
             via: 'suggestedGroups'
         }
     },
+    verifyDraft: function (referenceId) {
+        return Reference.findOneById(referenceId)
+                .then(function (r) {
+                    var draftGroupCreator = r.draftGroupCreator;
+                    r.draftGroupCreator = null;
+                    r.draft = false;
+                    r.privateGroups.add(draftGroupCreator);
+                    return r.save();
+                });
+    },
     //sTODO: add deep populate for other fields of the references
     getSuggestedReferences: function (groupId) {
         return Group.findOneById(groupId)
