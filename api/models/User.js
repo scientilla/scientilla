@@ -126,14 +126,22 @@ module.exports = _.merge({}, researchEntity, {
             return ucAliases;
         }
     }),
-    verifyDraft: function (referenceId) {
-        return Reference.findOneById(referenceId)
-                .then(function (r) {
-                    var draftCreator = r.draftCreator;
-                    r.draftCreator = null;
-                    r.draft = false;
-                    r.privateCoauthors.add(draftCreator);
-                    r.save();
+    verifyDraft: function (researchEntityId, draftId) {
+        return Reference.findOneById(draftId)
+                .then(function (draft) {
+                    return Promise.all([draft, Reference.findOne({draft: false, title: draft.title, authors: draft.authors})])
+                })
+                .spread(function (draft, sameReference) {
+                    if (sameReference) {
+                        sameReference.privateCoauthors.add(researchEntityId);
+                        sameReference.save();
+                        return Reference.destroy({id: draft.id});
+                    }
+                    var draftCreator = draft.draftCreator;
+                    draft.draftCreator = null;
+                    draft.draft = false;
+                    draft.privateCoauthors.add(draftCreator);
+                    draft.save();
                 });
     },
     removeReference: function (userId, referenceId) {
