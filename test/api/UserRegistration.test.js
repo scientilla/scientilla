@@ -3,21 +3,19 @@ var assert = require('assert');
 var request = require('supertest-as-promised');
 var test = require('./../helper.js');
 
-describe('Register', function () {
+describe('User registration', function () {
     before(test.cleanDb);
     after(test.cleanDb);
 
+    var url = test.getUrl();
+    var profile = {
+        username: 'federico.bozzini@iit.it',
+        password: 'userpass',
+        name: 'Federico',
+        lastName: 'Bozzini'
+    };
+
     it('should be able to register new user when there is no users', function (done) {
-        //sTODO: get real host.
-        var url = 'http://localhost:1338';
-
-        var profile = {
-            username: 'federico.bozzini@iit.it',
-            password: 'userpass',
-            name: 'Federico',
-            lastName: 'Bozzini'
-        };
-
         request(url)
                 .get('/users')
                 .expect(200, [])
@@ -30,7 +28,7 @@ describe('Register', function () {
                 .then(function (res) {
                     return request(url)
                             .get('/users')
-                            .expect(function(res) {
+                            .expect(function (res) {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
                                 var newUser = res.body[0];
@@ -41,5 +39,13 @@ describe('Register', function () {
                 .catch(err => done(err));
     });
 
+    it('should not be able to register a user with an already used username', function (done) {
+        request(url)
+                .post('/auths/register')
+                .send(profile)
+                .expect(400)
+                .then(res => done())
+                .catch(err => done(err));
+    });
 
 });

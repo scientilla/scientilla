@@ -32,15 +32,14 @@ module.exports = require('waterlock').actions.user(_.merge({}, researchEntityCon
         });
     },
     create: function (req, res, next) {
-
         var params = waterlock._utils.allParams(req);
         User.createCompleteUser(params)
                 .then(function (user) {
                     res.json(user);
                 })
                 .catch(function (err) {
-                    sails.log.error(err);
-                    res.json(err);
+                    sails.log.debug(err);
+                    res.badRequest(err);
                 });
     },
     getSuggestedReferences: function (req, res) {

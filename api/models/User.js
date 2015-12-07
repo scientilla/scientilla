@@ -205,7 +205,17 @@ module.exports = _.merge({}, researchEntity, {
         if (!userObj.slug) {
             userObj.slug = generateSlug(userObj) + _.random(1, 999);
         }
-        return User.create(userObj)
+        return User
+                .findByUsername(userObj.username)
+                .then(function (users) {
+                    if (users.length > 0) {
+                        throw new Error('Username already used');
+                    }
+                    return users;
+                })
+                .then(function (users) {
+                    return User.create(userObj);
+                })
                 .then(function (user) {
                     user.username = params.username;
                     user.password = params.password;

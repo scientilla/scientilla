@@ -16,5 +16,9 @@ module.exports = {
                 return done(err);
             done();
         };
+    },
+    getUrl: function(){
+        //sTODO: get real host.
+        return 'http://localhost:1338';
     }
 };
