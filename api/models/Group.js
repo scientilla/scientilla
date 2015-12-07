@@ -7,8 +7,9 @@
 
 var _ = require('lodash');
 var Promise = require("bluebird");
+var researchEntity = require('./ResearchEntity');
 
-module.exports = {
+module.exports = _.merge({}, researchEntity, {
     attributes: {
         name: 'STRING',
         slug: 'STRING',
@@ -71,5 +72,5 @@ module.exports = {
                     return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
                 });
     }
-};
+});
 
