@@ -171,23 +171,19 @@ module.exports = _.merge({}, researchEntity, {
     //sTODO: add deep populate for other fields of the references
     getSuggestedReferences: function (userId, user) {
         return Promise.all([
-            User.findOneById(userId)
-                    .populate('coauthors')
-                    .then(function (user) {
-                        return Reference.getVerifiedAndPublicReferences(user.coauthors);
-                    }),
-            Reference.find({authors: {contains: user.surname}}).populate('collaborators').populate('owner').then(Reference.getVerifiedAndPublicReferences)
+            Reference.find({draft: false, authors: {contains: user.surname}}),
+            User.findById(userId)
         ])
-                .spread(function (suggestedReferences1, suggestedReferences2) {
-                    //sTODO union must discard same references
-                    var maybeSuggestedReferencesId = _.map(_.union(suggestedReferences1, suggestedReferences2), 'id');
-
+                .spread(function (maybeSuggestedReferences, user) {
+                    var maybeSuggestedReferencesId = _.map(maybeSuggestedReferences, 'id');
                     return Promise.all([
                         Reference.findById(maybeSuggestedReferencesId)
-                                .populate('collaborators')
-                                .populate('owner')
-                                .populate('groupOwner'),
-                        Reference.find({owner: userId})
+                                .populate('privateCoauthors')
+                                .populate('publicCoauthors')
+                                .populate('privateGroups')
+                                .populate('publicGroups'),
+                        //sTODO: refactor
+                        User.getReferences(sails.models['user'], userId, [], 'all')
                     ])
                 })
                 .spread(function (maybeSuggestedReferences, authoredReferences) {
