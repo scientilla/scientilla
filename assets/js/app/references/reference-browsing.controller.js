@@ -41,7 +41,9 @@
         }
         
         function verifyReference(reference) {
-            return ReferencesService.verify(reference);
+            return ReferencesService.verify(reference).then(function(r) {
+                reference.draft = false;
+            })
         }
     }
 })();
