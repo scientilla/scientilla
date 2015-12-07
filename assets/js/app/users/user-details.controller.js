@@ -16,7 +16,6 @@
 
         function activate() {
             return getReferences().then(function () {
-                getCollaborations();
             });
         }
 
@@ -26,10 +25,6 @@
                         vm.references = references;
                         return vm.references;
             });
-        }
-        
-        function getCollaborations() {
-            return UsersService.getCollaborations(vm.user);
         }
     }
 })();
