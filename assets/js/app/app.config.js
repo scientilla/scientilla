@@ -43,8 +43,10 @@
         Restangular.extendModel('references', function (reference) {
             //sTODO: refactor
             _.assign(reference, Scientilla.reference);
-            if (reference.owner)
-                _.assign(reference.owner, Scientilla.user);
+            if (reference.draftCreator)
+                _.assign(reference.draftCreator, Scientilla.user);
+            if (reference.draftGroupCreator)
+                _.assign(reference.draftGroupCreator, Scientilla.group);
             _.forEach(reference.privateCoauthors, function(c) {
                 _.assign(c, Scientilla.user);
             });

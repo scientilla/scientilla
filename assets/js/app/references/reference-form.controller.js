@@ -71,7 +71,7 @@
 
             return Restangular
                     .one('references', referenceId)
-                    .get()
+                    .get({populate: ['draftCreator', 'draftGroupCreator']})
                     .then(function (reference) {
                         vm.reference = reference;
                         return vm.reference;
@@ -84,20 +84,9 @@
             });
         }
 
-        //sTODO: broken, needs fix
         //sTODO: refactor
         function goToBrowsing() {
-            var url;
-            switch (vm.reference.getType()) {
-                case Scientilla.reference.USER_REFERENCE :
-                    url = '/users/' + vm.reference.owner.id + '/references';
-                    break;
-                case Scientilla.reference.GROUP_REFERENCE :
-                    url = '/groups/' + vm.reference.groupOwner.id + '/references';
-                    break;
-                default :
-                    url = '/';
-            }
+            var url = vm.reference.getDraftCreator().getReferenceBrowsingUrl();
             $location.path(url);
         }
 

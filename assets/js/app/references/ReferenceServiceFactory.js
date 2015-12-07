@@ -30,20 +30,7 @@
             };
             
             service.save = function (reference) {
-                var isUser = (reference.getType() === Scientilla.reference.USER_REFERENCE);
-                var owner = (isUser) ? reference.owner : reference.groupOwner;
-                if (isUser) {
-                    owner = reference.owner;
-                    delete reference.owner;
-                } else {
-                    owner = reference.groupOwner;
-                    delete reference.groupOwner;
-                }
                 return reference.save().then(function (r) {
-                    if (isUser)
-                        reference.owner = owner;
-                    else
-                        reference.groupOwner = owner;
                     return reference;
                 });
             };

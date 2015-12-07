@@ -12,8 +12,6 @@
                                     <span ng-bind-html='r | title'></span>
                                 </h3>
                                 <div><i><span ng-bind-html='r | linkableauthors'></span></i></div>
-                                <div ng-if="r.hasRealOwner()"><i>By <a ng-href="#/users/{{r.owner.id}}"> {{r.owner| fullname}}</a></i></div>
-                                <div ng-if="r.hasRealGroupOwner()"><i>By <a ng-href="#/groups/{{r.groupOwner.id}}"> {{r.groupOwner.getDisplayName()}}</a></i></div>
                             </div>
                             <md-button class="list-elem-button md-icon-button" ng-href="#/references/{{r.id}}" aria-label="Details"><ng-md-icon icon="book"></ng-md-icon></md-button>
                             <md-button class="list-elem-button md-icon-button" ng-click="vm.copyReference(n, target)" aria-label="Copy to draft">

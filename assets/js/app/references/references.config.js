@@ -93,7 +93,7 @@
         var referenceId = $route.current.params.id;
         return Restangular
             .one('references', referenceId)
-            .get({populate: ['privateCoauthors', 'publicCoauthors']});
+            .get({populate: ['privateCoauthors', 'publicCoauthors', 'draftCreator', 'draftGroupCreator']});
     }
 
 

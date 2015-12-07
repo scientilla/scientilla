@@ -55,6 +55,10 @@ Scientilla.user = {
     admins: function(group) {
         var administeredGroupsId = _.map(this.admininstratedGroups, 'id');
         return _.includes(administeredGroupsId, group.id);
+    },
+    //sTODO: move to a service
+    getReferenceBrowsingUrl: function(){
+        return '/users/' + this.id + '/references'; 
     }
 };
 
@@ -84,13 +88,6 @@ Scientilla.reference = {
     getAllCoauthors: function() {
         return _.union(this.privateCoauthors, this.publicCoauthors);
     },
-    getRealAuthors: function () {
-        var realAuthors = _.clone(this.collaborators);
-        if (this.hasRealOwner())
-            realAuthors.push(this.owner);
-        return realAuthors;
-
-    },
     getType: function () {
         if (!!this.owner)
             return this.USER_REFERENCE;
@@ -112,12 +109,6 @@ Scientilla.reference = {
         });
         return ucAuthors;
     },
-    hasRealOwner: function () {
-        return _.isObject(this.owner);
-    },
-    hasRealGroupOwner: function () {
-        return _.isObject(this.groupOwner);
-    },
     getDisplayName: function () {
         return this.getDisplayName();
     },
@@ -136,6 +127,11 @@ Scientilla.reference = {
             draftCreator: userId,
             draft: true
         };
+    },
+    getDraftCreator: function () {
+        if (this.draftCreator)
+            return this.draftCreator;
+        return this.draftGroupCreator;
     }
 };
 
@@ -165,5 +161,9 @@ Scientilla.group = {
     },
     getType: function() {
         return 'group';
+    },
+    //sTODO: move to a service
+    getReferenceBrowsingUrl: function(){
+        return '/groups/' + this.id + '/references'; 
     }
 };
