@@ -45,6 +45,10 @@ module.exports = {
                     });
                     return query;
                 });
+    },
+    //sTODO: only drafts can be deleted
+    deleteReference: function(referenceId) {
+        return Reference.destroy({id: referenceId});
     }
 };
 

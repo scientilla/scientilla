@@ -20,6 +20,20 @@ module.exports = {
                 .then(function (references) {
                     res.json(references);
                 });
+    },
+    deleteReference: function(req, res) {
+        var researcEntityId = req.params.id;
+        var referenceId = req.params.referenceId;
+        var Model = getModel(req);
+        Model.deleteReference(referenceId).then(function(r) {
+            res.json();
+        });
     }
 };
+
+function getModel(req) {
+        var model = req.options.model || req.options.controller;
+        var Model = req._sails.models[model];
+        return Model;
+}
 
