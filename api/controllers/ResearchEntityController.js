@@ -37,6 +37,16 @@ module.exports = {
                 .then(function (reference) {
                     res.json(reference);
                 });
+    },
+    verifyReference: function(req, res) {
+        var researchEntityId = req.params.id;
+        var referenceId = req.params.options.values.id;
+        var Model = getModel(req);
+        Model
+                .verifyReference(researchEntityId, referenceId)
+                .then(function (reference) {
+                    res.json(reference);
+                });
     }
 };
 

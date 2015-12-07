@@ -12,6 +12,7 @@
     function NotificationBrowsingController(AuthService, Restangular, user) {
         var vm = this;
         vm.copyReference = copyReference;
+        vm.verifyReference = verifyReference;
         vm.notificationTargets = _.union([AuthService.user], AuthService.user.admininstratedGroups);
 
         activate();
@@ -27,15 +28,15 @@
             return user.getList('notifications')
                     .then(function (notifications) {
                         vm.notifications = notifications;
-                        _.forEach(vm.notifications, function(n) {
+                        _.forEach(vm.notifications, function (n) {
                             if (n.content.reference)
                                 _.defaults(n.content.reference, Scientilla.reference);
-                                _.defaults(n.content.reference.owner, Scientilla.user);
-                                _.defaults(n.content.reference.groupOwner, Scientilla.group);
-                                _.forEach(n.content.reference.collaborators, function(c) {
-                                    _.defaults(c, Scientilla.user);
-                                    
-                                });
+                            _.defaults(n.content.reference.owner, Scientilla.user);
+                            _.defaults(n.content.reference.groupOwner, Scientilla.group);
+                            _.forEach(n.content.reference.collaborators, function (c) {
+                                _.defaults(c, Scientilla.user);
+
+                            });
                         });
                     });
         }
@@ -46,6 +47,15 @@
             var reference = notification.content.reference;
             var newReference = Scientilla.reference.create(reference, target);
             target.post('references', newReference)
+                    .then(function () {
+                        _.remove(vm.notifications, notification);
+                    });
+        }
+
+        function verifyReference(notification, target) {
+            var reference = notification.content.reference;
+            //sTODO move to a service
+            target.post('privateReferences', {id: reference.id})
                     .then(function () {
                         _.remove(vm.notifications, notification);
                     });
