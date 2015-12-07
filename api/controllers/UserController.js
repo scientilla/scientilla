@@ -9,8 +9,9 @@
  */
 
 var _ = require('lodash');
+var researchEntityController = require('./ResearchEntityController');
 
-module.exports = require('waterlock').actions.user({
+module.exports = require('waterlock').actions.user(_.merge({}, researchEntityController, {
     //sTODO: move this function to the user model
     //sTODO: delete references or set the owner to null
     //sTODO: refactor
@@ -53,16 +54,5 @@ module.exports = require('waterlock').actions.user({
                 .then(function(suggestedReferences) {
                     res.json(suggestedReferences);
         });
-    },
-    getReferences: function(req, res) {
-        var userId = req.params.userId; 
-        var populate = req.query.populate; 
-        if (_.isString(populate))
-            populate = [populate];
-        var filter = req.query.filter || 'all';
-        User.getReferences(userId, populate, filter)
-                .then(function(references) {
-                    res.json(references);
-        });
     }
-});
+}));

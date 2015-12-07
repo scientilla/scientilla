@@ -9,11 +9,12 @@
 var _ = require('lodash');
 var waterlock = require('waterlock');
 var Promise = require("bluebird");
+var researchEntity = require('./ResearchEntity');
 
 var USER = 'user';
 var ADMINISTRATOR = 'administrator';
 
-module.exports = {
+module.exports = _.merge({}, researchEntity, {
     USER: USER,
     ADMINISTRATOR: ADMINISTRATOR,
     attributes: require('waterlock').models.user.attributes({
@@ -123,17 +124,6 @@ module.exports = {
                 return a.toUpperCase();
             });
             return ucAliases;
-        },
-        getAllReferences: function () {
-            return _.union(
-                    this.publicReferences,
-                    this.privateReferences,
-                    this.draftReferences);
-        },
-        getVerifiedReferences: function () {
-            return _.union(
-                    this.publicReferences,
-                    this.privateReferences);
         }
     }),
     getAdministeredGroups: function (userId) {
@@ -167,39 +157,6 @@ module.exports = {
                                 return notifications;
                             });
                 });
-    },
-    getSearchFilterFunction: function(filterKey) {
-        //sTODO: use map
-        var filters = {
-            'all': 'getAllReferences',
-            'verified': 'getVerifiedReferences'
-        };
-        if (filterKey in filters)
-            return filters[filterKey];
-        else
-            return filters['all'];
-    },
-    getReferences: function (userId, populateFields, filterKey) {
-        var filterFunction = this.getSearchFilterFunction(filterKey);
-        return User.findOneById(userId)
-                .populate('publicReferences')
-                .populate('privateReferences')
-                .populate('draftReferences')
-                .then(function (user) {
-                    var references = user[filterFunction]();
-                    var referencesId = _.map(references, 'id');
-                    var query = Reference.findById(referencesId);
-                    _.forEach(populateFields, function (f) {
-                        query = query.populate(f);
-                    });
-                    return query;
-                });
-    },
-    getAllReferences: function (userId, populateFields) {
-        return this.getReferences(userId, populateFields, 'getAllReferences');
-    },
-    getVerifiedReferences: function (userId, populateFields) {
-        return this.getReferences(userId, populateFields, 'getVerifiedReferences');
     },
     //sTODO: add deep populate for other fields of the references
     getSuggestedReferences: function (userId, user) {
@@ -256,4 +213,4 @@ module.exports = {
     },
     beforeCreate: require('waterlock').models.user.beforeCreate,
     beforeUpdate: require('waterlock').models.user.beforeUpdate
-};
+});
