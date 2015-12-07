@@ -46,7 +46,7 @@
             //sTODO move to a service
             var reference = notification.content.reference;
             var newReference = Scientilla.reference.create(reference, target);
-            target.post('references', newReference)
+            target.post('draftReferences', newReference)
                     .then(function () {
                         _.remove(vm.notifications, notification);
                     });

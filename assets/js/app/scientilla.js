@@ -66,17 +66,18 @@ Scientilla.reference = {
     DRAFT: 'draft',
     VERIFIED: 'verified',
     PUBLIC: 'public',
-    create: function (referenceData, owner) {
+    create: function (referenceData, creator) {
         var fields = [
             'authors',
             'title',
             'status'
         ];
         var reference = _.pick(referenceData, fields);
-        if (owner.getType() === 'user')
-            reference.owner = owner.id;
+        if (creator.getType() === 'user')
+            reference.draftCreator = creator.id;
         else
-            reference.groupOwner = owner.id;
+            reference.draftGroupCreator = creator.id;
+        reference.draft = true;
         _.extend(reference, Scientilla.reference);
         return reference;
     },
