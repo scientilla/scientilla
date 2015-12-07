@@ -59,6 +59,12 @@ Scientilla.user = {
     //sTODO: move to a service
     getReferenceBrowsingUrl: function(){
         return '/users/' + this.id + '/references'; 
+    },
+    getProfileUrl: function(){
+        return '/users/' + this.id + '/edit'; 
+    },
+    getNewReferenceUrl: function(){
+        return "/users/" + this.id + "/references/new"; 
     }
 };
 
@@ -165,5 +171,11 @@ Scientilla.group = {
     //sTODO: move to a service
     getReferenceBrowsingUrl: function(){
         return '/groups/' + this.id + '/references'; 
+    },
+    getProfileUrl: function(){
+        return '/groups/' + this.id + '/edit'; 
+    },
+    getNewReferenceUrl: function(){
+        return "/groups/" + this.id + "/references/new"; 
     }
 };
