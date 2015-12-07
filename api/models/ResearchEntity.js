@@ -49,12 +49,14 @@ module.exports = {
     //sTODO: only drafts can be deleted
     deleteReference: function(ResearchEntity, researchEntityId, referenceId) {
         return Reference
-                .findById(referenceId)
+                .findOneById(referenceId)
                 .then(function(reference) {
-                    if (reference.draft)
+                    if (reference.draft) {
                         return Reference.destroy({id: referenceId});
-                    else
+                    }
+                    else {
                         return ResearchEntity.removeReference(researchEntityId, referenceId);
+                    }
                 })
     }
 };

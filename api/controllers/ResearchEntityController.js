@@ -32,10 +32,11 @@ module.exports = {
                 });
     },
     verifyDraft: function (req, res) {
-        var referenceId = req.params.id;
+        var researchEntityId = req.params.id;
+        var referenceId = req.params.referenceId;
         var Model = getModel(req);
         Model
-                .verifyDraft(referenceId)
+                .verifyDraft(researchEntityId, referenceId)
                 .then(function (reference) {
                     res.json(reference);
                 });
