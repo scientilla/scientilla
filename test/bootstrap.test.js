@@ -6,12 +6,14 @@ var test = require('./helper.js');
 before(function (done) {
 
     var testConfig = {
-        // configuration for testing purposes
-        adapters: {
-            default: 'test'
+        models: {
+            connection: 'test',
+            migrate: 'drop'
         },
-        migrate: 'drop',
-        port: 1338
+        port: 1338,
+        log: {
+            level: 'warn'
+        }
     };
     Sails.lift(testConfig, function (err, server) {
         sails = server;
