@@ -96,9 +96,16 @@ module.exports = {
                 .then(function (reference) {
                     if (reference.privateCoauthors.length + reference.publicCoauthors.length === 0) {
                         sails.log.debug('Reference ' + referenceId + ' will be deleted');
-                        return Reference.destroy({id: referenceId})
+                        return Reference.destroy({id: referenceId});
                     }
-                })
+                });
+    },
+    getByIdsWithAuthors: function (referenceIds) {
+        return Reference.findById(referenceIds)
+                .populate('privateCoauthors')
+                .populate('publicCoauthors')
+                .populate('privateGroups')
+                .populate('publicGroups');
     },
     getSuggestedCollaborators: function (referenceId) {
         return Promise.all([

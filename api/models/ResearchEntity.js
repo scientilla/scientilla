@@ -5,6 +5,10 @@
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
+
+var Promise = require("bluebird");
+
+
 module.exports = {
     attributes: {
         getAllReferences: function () {
@@ -79,6 +83,19 @@ module.exports = {
                     researchEntity.privateReferences.add(referenceId);
                     return researchEntity.save();
                 });
+    },
+    filterNecessaryReferences: function (userId, ResearchEntity, maybeSuggestedReferences) {
+        var maybeSuggestedReferencesId = _.map(maybeSuggestedReferences, 'id');
+        return Promise.all([
+            Reference.getByIdsWithAuthors(maybeSuggestedReferencesId),
+            //sTODO: refactor
+            ResearchEntity.getReferences(ResearchEntity, userId, [], 'all')
+        ])
+        .spread(function (maybeSuggestedReferences, authoredReferences) {
+            var similarityThreshold = .98;
+            //sTODO: add check on discarded references
+            return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
+        });
     }
 };
 

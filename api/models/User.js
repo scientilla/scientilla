@@ -178,26 +178,9 @@ module.exports = _.merge({}, researchEntity, {
     },
     //sTODO: add deep populate for other fields of the references
     getSuggestedReferences: function (userId, user) {
-        return Promise.all([
-            Reference.find({draft: false, authors: {contains: user.surname}}),
-            User.findById(userId)
-        ])
-                .spread(function (maybeSuggestedReferences, user) {
-                    var maybeSuggestedReferencesId = _.map(maybeSuggestedReferences, 'id');
-                    return Promise.all([
-                        Reference.findById(maybeSuggestedReferencesId)
-                                .populate('privateCoauthors')
-                                .populate('publicCoauthors')
-                                .populate('privateGroups')
-                                .populate('publicGroups'),
-                        //sTODO: refactor
-                        User.getReferences(sails.models['user'], userId, [], 'all')
-                    ])
-                })
-                .spread(function (maybeSuggestedReferences, authoredReferences) {
-                    var similarityThreshold = .98;
-                    //sTODO: add check on discarded references
-                    return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
+        return Reference.find({draft: false, authors: {contains: user.surname}})
+                .then(function (maybeSuggestedReferences) {
+                    return User.filterNecessaryReferences(userId, User, maybeSuggestedReferences)
                 });
     },
     createCompleteUser: function (params) {
