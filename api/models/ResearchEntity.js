@@ -55,9 +55,23 @@ module.exports = {
                         return Reference.destroy({id: referenceId});
                     }
                     else {
-                        return ResearchEntity.removeReference(researchEntityId, referenceId);
+                        return ResearchEntity.removeReference(ResearchEntity, researchEntityId, referenceId);
                     }
                 })
-    }
+    },
+    removeReference: function (ResearchEntity, userId, referenceId) {
+        return ResearchEntity
+                .findOneById(userId)
+                .populate('privateReferences')
+                .populate('publicReferences')
+                .then(function (researchEntity) {
+                    researchEntity.privateReferences.remove(referenceId);
+                    researchEntity.publicReferences.remove(referenceId);
+                    return new Promise(function(resolve) {researchEntity.save(function(err, u) {resolve();});});
+                })
+                .then(function() {
+                    return Reference.checkDeletion(referenceId);
+                });
+    },
 };
 

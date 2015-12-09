@@ -89,6 +89,17 @@ module.exports = {
             return similarity;
         }
     },
+    checkDeletion: function (referenceId) {
+        return Reference.findOneById(referenceId)
+                .populate('privateCoauthors')
+                .populate('publicCoauthors')
+                .then(function (reference) {
+                    if (reference.privateCoauthors.length + reference.publicCoauthors.length === 0) {
+                        sails.log.debug('Reference ' + referenceId + ' will be deleted');
+                        return Reference.destroy({id: referenceId})
+                    }
+                })
+    },
     getSuggestedCollaborators: function (referenceId) {
         return Promise.all([
             Reference.findOne(referenceId).populate('collaborators'),
