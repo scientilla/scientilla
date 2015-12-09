@@ -73,5 +73,12 @@ module.exports = {
                     return Reference.checkDeletion(referenceId);
                 });
     },
+    verifyReference: function (ResearchEntity, researchEntityId, referenceId) {
+        return ResearchEntity.findOneById(researchEntityId)
+                .then(function (researchEntity) {
+                    researchEntity.privateReferences.add(referenceId);
+                    return researchEntity.save();
+                });
+    }
 };
 

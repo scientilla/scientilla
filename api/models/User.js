@@ -144,13 +144,6 @@ module.exports = _.merge({}, researchEntity, {
                     draft.save();
                 });
     },
-    verifyReference: function (userId, referenceId) {
-        return Reference.findOneById(referenceId)
-                .then(function (r) {
-                    r.privateCoauthors.add(userId);
-                    return r.save();
-                });
-    },
     getAdministeredGroups: function (userId) {
         return User.findOneById(userId)
                 .populate('admininstratedGroups')
