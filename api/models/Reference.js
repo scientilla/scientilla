@@ -26,25 +26,40 @@ module.exports = {
             type: 'STRING'
         },
         authors: 'STRING',
-        status: {
-            type: 'STRING',
-            enum: [DRAFT, VERIFIED, PUBLIC],
-            defaultsTo: DRAFT,
-            required: true
+        publicCoauthors: {
+            collection: 'User',
+            via: 'publicReferences'
         },
-        owner: {
+        privateCoauthors: {
+            collection: 'User',
+            via: 'privateReferences'
+        },
+        discardedCoauthors: {
+            collection: 'User',
+            via: 'discardedReferences'
+        },
+        publicGroups: {
+            collection: 'Group',
+            via: 'publicReferences'
+        },
+        privateGroups: {
+            collection: 'Group',
+            via: 'privateReferences'
+        },
+        discardedGroups: {
+            collection: 'Group',
+            via: 'discardedReferences'
+        },
+        draft: 'BOOLEAN',
+        draftCreator: {
             model: 'User'
         },
-        groupOwner: {
+        draftGroupCreator: {
             model: 'Group'
         },
-        collaborators: {
-            collection: 'User',
-            via: 'coauthors'
-        },
-        groupCollaborations: {
+        suggestedGroups: {
             collection: 'Group',
-            via: 'collaboratedReferences'
+            via: 'suggestedReferences'
         },
         getAuthors: function () {
             if (!this.authors)
@@ -58,10 +73,6 @@ module.exports = {
                 return a.toUpperCase();
             });
             return ucAuthors;
-        },
-        setPublic: function () {
-            this.status = PUBLIC;
-            return this;
         },
         getSimilarity: function (ref) {
             var similarityFields = ['authors', 'title'];
@@ -77,6 +88,24 @@ module.exports = {
             }, this);
             return similarity;
         }
+    },
+    checkDeletion: function (referenceId) {
+        return Reference.findOneById(referenceId)
+                .populate('privateCoauthors')
+                .populate('publicCoauthors')
+                .then(function (reference) {
+                    if (reference.privateCoauthors.length + reference.publicCoauthors.length === 0) {
+                        sails.log.debug('Reference ' + referenceId + ' will be deleted');
+                        return Reference.destroy({id: referenceId});
+                    }
+                });
+    },
+    getByIdsWithAuthors: function (referenceIds) {
+        return Reference.findById(referenceIds)
+                .populate('privateCoauthors')
+                .populate('publicCoauthors')
+                .populate('privateGroups')
+                .populate('publicGroups');
     },
     getSuggestedCollaborators: function (referenceId) {
         return Promise.all([
@@ -122,8 +151,8 @@ module.exports = {
         });
         return suggestedReferences;
     },
-    getVerifiedAndPublicReferences: function(references) {
-        return _.filter(references, function(r) {
+    getVerifiedAndPublicReferences: function (references) {
+        return _.filter(references, function (r) {
             return _.includes([VERIFIED, PUBLIC], r.status);
         })
     }

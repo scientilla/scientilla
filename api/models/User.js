@@ -9,11 +9,12 @@
 var _ = require('lodash');
 var waterlock = require('waterlock');
 var Promise = require("bluebird");
+var researchEntity = require('./ResearchEntity');
 
 var USER = 'user';
 var ADMINISTRATOR = 'administrator';
 
-module.exports = {
+module.exports = _.merge({}, researchEntity, {
     USER: USER,
     ADMINISTRATOR: ADMINISTRATOR,
     attributes: require('waterlock').models.user.attributes({
@@ -48,17 +49,21 @@ module.exports = {
             defaultsTo: USER,
             required: true
         },
-        references: {
+        draftReferences: {
             collection: 'Reference',
-            via: 'owner'
+            via: 'draftCreator'
+        },
+        privateReferences: {
+            collection: 'Reference',
+            via: 'privateCoauthors'
+        },
+        publicReferences: {
+            collection: 'Reference',
+            via: 'publicCoauthors'
         },
         discardedReferences: {
             collection: 'Reference',
-            via: 'owner'
-        },
-        coauthors: {
-            collection: 'Reference',
-            via: 'collaborators'
+            via: 'discardedCoauthors'
         },
         jsonWebTokens: {
             collection: 'jwt',
@@ -90,11 +95,13 @@ module.exports = {
         getAliases: function () {
 
             var firstLetter = function (string) {
-                if (!string) return "";
+                if (!string)
+                    return "";
                 return string.charAt(0).toUpperCase();
             };
             var capitalize = function (string) {
-                if (!string) return "";
+                if (!string)
+                    return "";
                 return _.capitalize(string.toLowerCase());
 //                return str.replace(/\w\S*/g, function (txt) {
 //                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -111,73 +118,72 @@ module.exports = {
             aliases = _.uniq(aliases);
             return aliases;
         },
-        getUcAliases: function() {
+        getUcAliases: function () {
             var aliases = this.getAliases();
-            var ucAliases = _.map(aliases, function(a) { return a.toUpperCase();});
+            var ucAliases = _.map(aliases, function (a) {
+                return a.toUpperCase();
+            });
             return ucAliases;
         }
-
     }),
-    getAdministeredGroups: function(userId) {
-        return User.findOneById(userId)
-            .populate('admininstratedGroups')
-            .then(function(user) {
-                return user.admininstratedGroups;
-            });
-    },
-    getNotifications: function(userId, user) {
-        return User
-            .getAdministeredGroups(userId)
-            .then(function(administeredGroups) {
-                var suggestedReferencesFunctions = _.map(administeredGroups, function(g) { return Group.getSuggestedReferences(g.id);});
-                suggestedReferencesFunctions.unshift(User.getSuggestedReferences(userId, user));
-                return Promise.all(suggestedReferencesFunctions)
-                        .then(function(referencesGroups){
-                            var userReferences = referencesGroups.shift();
-                            var notifications = _.map(userReferences, function(r) {
-                                return {type: 'reference', content: {reference: r}, targetType: 'user', targetId: userId};
-                            });
-                            var groupNotifications = _.flatten(referencesGroups.map(function(references, i) {
-                                var group = administeredGroups[i];
-                                return references.map(function(r) {
-                                    return {type: 'reference', content: {reference: r}, targetType: 'group', targetId: group.id};
-                                });
-                            }));
-                            notifications = _.union(notifications, groupNotifications);
-                            return notifications;
+    verifyDraft: function (researchEntityId, draftId) {
+        return Reference.findOneById(draftId)
+                .then(function (draft) {
+                    return Promise.all([draft, Reference.findOne({draft: false, title: draft.title, authors: draft.authors})])
+                })
+                .spread(function (draft, sameReference) {
+                    if (sameReference) {
+                        sameReference.privateCoauthors.add(researchEntityId);
+                        sameReference.save();
+                        return Reference.destroy({id: draft.id});
+                    }
+                    var draftCreator = draft.draftCreator;
+                    draft.draftCreator = null;
+                    draft.draft = false;
+                    draft.privateCoauthors.add(draftCreator);
+                    draft.save();
                 });
-            });
     },
-
+    getAdministeredGroups: function (userId) {
+        return User.findOneById(userId)
+                .populate('admininstratedGroups')
+                .then(function (user) {
+                    return user.admininstratedGroups;
+                });
+    },
+    getNotifications: function (userId, user) {
+        return User
+                .getAdministeredGroups(userId)
+                .then(function (administeredGroups) {
+                    var suggestedReferencesFunctions = _.map(administeredGroups, function (g) {
+                        return Group.getSuggestedReferences(g.id);
+                    });
+                    suggestedReferencesFunctions.unshift(User.getSuggestedReferences(userId, user));
+                    return Promise.all(suggestedReferencesFunctions)
+                            .then(function (referencesGroups) {
+                                var userReferences = referencesGroups.shift();
+                                var notifications = _.map(userReferences, function (r) {
+                                    return {type: 'reference', content: {reference: r}, targetType: 'user', targetId: userId};
+                                });
+                                var groupNotifications = _.flatten(referencesGroups.map(function (references, i) {
+                                    var group = administeredGroups[i];
+                                    return references.map(function (r) {
+                                        return {type: 'reference', content: {reference: r}, targetType: 'group', targetId: group.id};
+                                    });
+                                }));
+                                notifications = _.union(notifications, groupNotifications);
+                                return notifications;
+                            });
+                });
+    },
     //sTODO: add deep populate for other fields of the references
-    getSuggestedReferences: function(userId, user) {
-        return Promise.all([
-            User.findOneById(userId)
-                .populate('coauthors')
-                .then(function(user) {
-                    return Reference.getVerifiedAndPublicReferences(user.coauthors);
-                }),
-            Reference.find({authors: {contains: user.surname}}).populate('collaborators').populate('owner').then(Reference.getVerifiedAndPublicReferences)
-        ])
-        .spread(function (suggestedReferences1, suggestedReferences2) {
-            //sTODO union must discard same references
-            var maybeSuggestedReferencesId = _.map(_.union(suggestedReferences1, suggestedReferences2), 'id');
-            
-            return Promise.all([
-                Reference.findById(maybeSuggestedReferencesId)
-                        .populate('collaborators')
-                        .populate('owner')
-                        .populate('groupOwner'),
-                Reference.find({owner: userId})
-            ])
-        })
-        .spread(function (maybeSuggestedReferences, authoredReferences) {
-            var similarityThreshold = .98;
-            //sTODO: add check on discarded references
-            return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
-        });
+    getSuggestedReferences: function (userId, user) {
+        return Reference.find({draft: false, authors: {contains: user.surname}})
+                .then(function (maybeSuggestedReferences) {
+                    return User.filterNecessaryReferences(userId, User, maybeSuggestedReferences)
+                });
     },
-    createCompleteUser: function(params) {
+    createCompleteUser: function (params) {
         function generateSlug(user) {
             var name = user.name ? user.name : "";
             var surname = user.surname ? user.surname : "";
@@ -190,19 +196,34 @@ module.exports = {
         if (!userObj.slug) {
             userObj.slug = generateSlug(userObj) + _.random(1, 999);
         }
-        return User.create(userObj)
-            .then(function (user){
-                user.username = params.username;
-                user.password = params.password;
-                auth = user;
-                return new Promise(function(resolve, reject) {
-                    waterlock.engine.attachAuthToUser(auth, user, function() {
-                        resolve(user);
+        return User
+                .findByUsername(userObj.username)
+                .then(function (users) {
+                    if (users.length > 0) {
+                        throw new Error('Username already used');
+                    }
+                    return users;
+                })
+                .then(function (users) {
+                    return User.count();
+                })
+                .then(function (usersNum) {
+                    if (usersNum === 0) {
+                        userObj.role = ADMINISTRATOR;
+                    }
+                    return User.create(userObj);
+                })
+                .then(function (user) {
+                    user.username = params.username;
+                    user.password = params.password;
+                    auth = user;
+                    return new Promise(function (resolve, reject) {
+                        waterlock.engine.attachAuthToUser(auth, user, function () {
+                            resolve(user);
+                        });
                     });
                 });
-            });
     },
-
     beforeCreate: require('waterlock').models.user.beforeCreate,
     beforeUpdate: require('waterlock').models.user.beforeUpdate
-};
+});

@@ -30,12 +30,14 @@
     "waterlock-local-auth": "*"
   },
   "devDependencies": {
-    "should": "*"
+    "should": "*",
+    "supertest": "^1.1.0",
+    "supertest-as-promised": "^2.0.2"
   },
   "scripts": {
     "debug": "node debug app.js",
     "start": "node app.js",
-    "test": "mocha test/bootstrap.test.js test/**/*.test.js --harmony_arrow_functions"
+    "test": "mocha test/bootstrap.test.js test/**/*.test.js --harmony_arrow_functions "
   },
   "main": "app.js",
   "author": "github.com/iit-federico-bozzini",

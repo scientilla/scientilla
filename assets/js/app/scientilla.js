@@ -55,6 +55,16 @@ Scientilla.user = {
     admins: function(group) {
         var administeredGroupsId = _.map(this.admininstratedGroups, 'id');
         return _.includes(administeredGroupsId, group.id);
+    },
+    //sTODO: move to a service
+    getReferenceBrowsingUrl: function(){
+        return '/users/' + this.id + '/references'; 
+    },
+    getProfileUrl: function(){
+        return '/users/' + this.id + '/edit'; 
+    },
+    getNewReferenceUrl: function(){
+        return "/users/" + this.id + "/references/new"; 
     }
 };
 
@@ -66,32 +76,23 @@ Scientilla.reference = {
     DRAFT: 'draft',
     VERIFIED: 'verified',
     PUBLIC: 'public',
-    create: function (referenceData, owner) {
+    create: function (referenceData, creator) {
         var fields = [
             'authors',
             'title',
             'status'
         ];
         var reference = _.pick(referenceData, fields);
-        if (owner.getType() === 'user')
-            reference.owner = owner.id;
+        if (creator.getType() === 'user')
+            reference.draftCreator = creator.id;
         else
-            reference.groupOwner = owner.id;
+            reference.draftGroupCreator = creator.id;
+        reference.draft = true;
         _.extend(reference, Scientilla.reference);
         return reference;
     },
-    getRealAuthors: function () {
-        var realAuthors = _.clone(this.collaborators);
-        if (this.hasRealOwner())
-            realAuthors.push(this.owner);
-        return realAuthors;
-
-    },
-    getCollaborations: function () {
-        var collaborations = _.clone(this.groupCollaborations);
-        if (this.hasRealGroupOwner())
-            collaborations.push(this.groupOwner);
-        return collaborations;
+    getAllCoauthors: function() {
+        return _.union(this.privateCoauthors, this.publicCoauthors);
     },
     getType: function () {
         if (!!this.owner)
@@ -114,12 +115,6 @@ Scientilla.reference = {
         });
         return ucAuthors;
     },
-    hasRealOwner: function () {
-        return _.isObject(this.owner);
-    },
-    hasRealGroupOwner: function () {
-        return _.isObject(this.groupOwner);
-    },
     getDisplayName: function () {
         return this.getDisplayName();
     },
@@ -127,9 +122,22 @@ Scientilla.reference = {
         return {
             title: "",
             authors: "",
-            groupOwner: groupId,
-            status: Scientilla.reference.DRAFT
+            draftGroupCreator: groupId,
+            draft: true
         };
+    },
+    getNewDraftReference: function (userId) {
+        return {
+            title: "",
+            authors: "",
+            draftCreator: userId,
+            draft: true
+        };
+    },
+    getDraftCreator: function () {
+        if (this.draftCreator)
+            return this.draftCreator;
+        return this.draftGroupCreator;
     }
 };
 
@@ -159,5 +167,15 @@ Scientilla.group = {
     },
     getType: function() {
         return 'group';
+    },
+    //sTODO: move to a service
+    getReferenceBrowsingUrl: function(){
+        return '/groups/' + this.id + '/references'; 
+    },
+    getProfileUrl: function(){
+        return '/groups/' + this.id + '/edit'; 
+    },
+    getNewReferenceUrl: function(){
+        return "/groups/" + this.id + "/references/new"; 
     }
 };

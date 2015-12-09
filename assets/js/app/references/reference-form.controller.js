@@ -4,10 +4,8 @@
             .controller('ReferenceFormController', ReferenceFormController);
 
     ReferenceFormController.$inject = [
-        'UsersService',
         'ReferencesService',
         'FormForConfiguration',
-        'GroupsService',
         'Restangular',
         'AuthService',
         '$scope',
@@ -16,56 +14,20 @@
         '$q'
     ];
 
-    function ReferenceFormController(UsersService, ReferencesService, FormForConfiguration, GroupsService, Restangular, AuthService, $scope, $route, $location, $q) {
+    function ReferenceFormController(ReferencesService, FormForConfiguration, Restangular, AuthService, $scope, $route, $location, $q) {
         var vm = this;
         vm.reference = ReferencesService.getNewReference();
         vm.userId = AuthService.userId;
-        vm.getUsersQuery = getUsersQuery;
-        vm.getCollaboratorsFilter = getCollaboratorsFilter;
-        vm.getGroupsQuery = GroupsService.getGroupsQuery;
-        vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.submit = submit;
         vm.status = 'saved';
         vm.goToBrowsing = goToBrowsing;
 
         vm.validationAndViewRules = {
             title: {
-                inputType: 'text',
-//                required: true
+                inputType: 'text'
             },
             authors: {
-                inputType: 'text',
-//                required: true
-            },
-            status: {
-                inputType: 'radio',
-                required: true,
-                values: [
-                    {value: Scientilla.reference.DRAFT, label: 'Draft'},
-                    {value: Scientilla.reference.VERIFIED, label: 'Verified'},
-                    {value: Scientilla.reference.PUBLIC, label: 'Public'}
-                ]
-            },
-            collaborators: {
-                collection: {
-                    fields: {
-                        id: {
-                            required: true
-                        },
-                        name: {
-                            required: true
-                        },
-                        username: {
-                            required: true
-                        }
-                    }
-                }
-            },
-            groupCollaborations: {
-                collection: {
-                    fields: {
-                    }
-                }
+                inputType: 'text'
             }
         };
 
@@ -77,7 +39,6 @@
 
             getReference().then(function () {
                 watchReference();
-                getSuggestedCollaborators();
             });
 
         }
@@ -87,9 +48,8 @@
             _.forEach(fieldsToWatch, function (f) {
                 $scope.$watch('vm.reference.' + f, markModified, true);
                 $scope.$watch('vm.reference.' + f, _.debounce(saveReference, 3000), true);
-            })
-        }
-        ;
+            });
+        };
 
         function markModified(newValue, oldValue) {
             if (newValue === oldValue)
@@ -97,23 +57,11 @@
             vm.status = 'unsaved';
         }
 
-        function getSuggestedCollaborators() {
-            return vm.reference.getList('suggested-collaborators')
-                    .then(function (suggestedCollaborators) {
-                        _.forEach(suggestedCollaborators, function (c) {
-                            _.defaults(c, Scientilla.user);
-                        });
-                        vm.reference.suggestedCollaborators = suggestedCollaborators;
-                        return vm.reference;
-                    });
-        }
-
         function saveReference() {
             if (!vm.reference.id || vm.status === 'saved')
                 return $q(function (resolve) { resolve(vm.reference);});
             return ReferencesService.save(vm.reference).then(function () {
                 vm.status = 'saved';
-                return getSuggestedCollaborators();
             });
         }
 
@@ -123,7 +71,7 @@
 
             return Restangular
                     .one('references', referenceId)
-                    .get({populate: ['collaborators', 'owner', 'groupOwner', 'groupCollaborations']})
+                    .get({populate: ['draftCreator', 'draftGroupCreator']})
                     .then(function (reference) {
                         vm.reference = reference;
                         return vm.reference;
@@ -136,34 +84,9 @@
             });
         }
 
-        //STODO: refactor
-        function getUsersQuery(searchText) {
-            var qs = {where: {or: [{name: {contains: searchText}}, {surname: {contains: searchText}}]}};
-            var model = 'users';
-            return {model: model, qs: qs};
-        }
-
-        function getCollaboratorsFilter() {
-            return vm.reference.getRealAuthors();
-        }
-
-        function getCollaborationsFilter() {
-            return vm.reference.getCollaborations();
-        }
-
         //sTODO: refactor
         function goToBrowsing() {
-            var url;
-            switch (vm.reference.getType()) {
-                case Scientilla.reference.USER_REFERENCE :
-                    url = '/users/' + vm.reference.owner.id + '/references';
-                    break;
-                case Scientilla.reference.GROUP_REFERENCE :
-                    url = '/groups/' + vm.reference.groupOwner.id + '/references';
-                    break;
-                default :
-                    url = '/';
-            }
+            var url = vm.reference.getDraftCreator().getReferenceBrowsingUrl();
             $location.path(url);
         }
 

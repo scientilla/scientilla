@@ -20,7 +20,7 @@
         }
 
         function getReferences() {
-            return group.getList('references', {populate: ['owner', 'collaborators'], status:[Scientilla.reference.VERIFIED, Scientilla.reference.PUBLIC]})
+            return group.getList('references', {filter: 'verified', populate: ['publicCoauthors', 'privateCoauthors', 'privateGroups', 'publicGroups']})
                     .then(function (references) {
                         vm.references = references;
                         return vm.references;

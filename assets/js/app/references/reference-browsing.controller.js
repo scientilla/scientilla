@@ -5,21 +5,18 @@
 
     ReferenceBrowsingController.$inject = [
         'ReferencesService',
-        'Restangular',
-        'AuthService',
         '$route',
-        'user'
+        'researchEntity'
     ];
 
-    function ReferenceBrowsingController(ReferencesService, Restangular, AuthService, $route, user) {
+    function ReferenceBrowsingController(ReferencesService, $route, researchEntity) {
         var vm = this;
         
-        vm.researchEntity = user;
+        vm.researchEntity = researchEntity;
         vm.deleteReference = deleteReference;
-        vm.canCreate = ($route.current.params.id == AuthService.user.id);
-        vm.createNewUrl = "/users/" + user.id + "/references/new";
-        vm.editUrl = '#/users/' + user.id + '/edit';
-
+        vm.verifyReference = verifyReference;
+        vm.createNewUrl = vm.researchEntity.getNewReferenceUrl();
+        vm.editUrl = vm.researchEntity.getProfileUrl();
         activate();
 
         function activate() {
@@ -29,7 +26,7 @@
         }
 
         function getReferences() {
-            return user.getList('references', {populate: ['owner', 'collaborators']})
+            return researchEntity.getList('references', { populate: ['publicCoauthors', 'privateCoauthors']})
                     .then(function (references) {
                         vm.references = references;
                         return vm.references;
@@ -37,11 +34,16 @@
         }
 
         function deleteReference(reference) {
-//            reference.remove(reference)
             ReferencesService.delete(reference)
                     .then(function () {
                         _.remove(vm.references, reference);
                     });
+        }
+        
+        function verifyReference(reference) {
+            return ReferencesService.verify(reference).then(function(r) {
+                reference.draft = false;
+            })
         }
     }
 })();

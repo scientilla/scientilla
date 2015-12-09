@@ -9,17 +9,16 @@
  */
 
 module.exports = require('waterlock').waterlocked({
-
-  register: function(req, res) {
-      var params = waterlock._utils.allParams(req);
-      User.createCompleteUser(params)
-          .then(function(user) {
-              waterlock.cycle.loginSuccess(req, res, user);
-          })
-          .catch(function(err) {
-              sails.log.error(err);
-              res.json(err);
-          })
-  }
+    register: function (req, res) {
+        var params = waterlock._utils.allParams(req);
+        User.createCompleteUser(params)
+                .then(function (user) {
+                    waterlock.cycle.loginSuccess(req, res, user);
+                })
+                .catch(function (err) {
+                    sails.log.debug(err);
+                    res.badRequest(err);
+                })
+    }
 
 });

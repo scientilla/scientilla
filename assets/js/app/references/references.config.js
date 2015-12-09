@@ -13,16 +13,16 @@
                     controllerAs: 'vm',
                     resolve: {
                         ReferencesService: RouteReferencesService,
-                        user: getCurrentUser
+                        researchEntity: getCurrentUser
                     }
                 })
                 .when("/groups/:id/references", {
                     templateUrl: "partials/reference-browsing.html",
-                    controller: "GroupReferenceBrowsingController",
+                    controller: "ReferenceBrowsingController",
                     controllerAs: 'vm',
                     resolve: {
                         ReferencesService: RouteReferencesService,
-                        group: getCurrentGroup
+                        researchEntity: getCurrentGroup
                     }
                 })
                 .when("/references/new", {
@@ -93,14 +93,15 @@
         var referenceId = $route.current.params.id;
         return Restangular
             .one('references', referenceId)
-            .get({populate: ['collaborators', 'owner', 'groupOwner', 'groupCollaborations']});
+            .get({populate: ['privateCoauthors', 'publicCoauthors', 'draftCreator', 'draftGroupCreator']});
     }
 
 
-    newReference.$inject = ['ReferenceServiceFactory', 'AuthService'];
+    newReference.$inject = ['$routeParams', 'AuthService'];
 
-    function newReference(ReferenceServiceFactory, AuthService) {
-        return ReferenceServiceFactory(AuthService.userId).getNewReference();
+    function newReference($routeParams, AuthService) {
+        var userId = $routeParams.id;
+        return Scientilla.reference.getNewDraftReference(userId);
     }
 
     newGroupReference.$inject = ['$routeParams'];

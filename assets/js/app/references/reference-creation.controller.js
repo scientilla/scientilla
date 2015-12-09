@@ -18,7 +18,7 @@
         function activate() {
             researchEntity.all('references').post(reference).then(function (r) {
                 var referenceId = r.id;
-                $location.path('/references/' + referenceId);
+                $location.path('/references/' + referenceId + '/edit');
             });
 
         }

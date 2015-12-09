@@ -16,20 +16,15 @@
 
         function activate() {
             return getReferences().then(function () {
-                getCollaborations();
             });
         }
 
         function getReferences() {
-            return user.getList('references', {populate: ['owner', 'collaborators'], status:[Scientilla.reference.VERIFIED, Scientilla.reference.PUBLIC]})
+            return user.getList('references', {filter: 'verified', populate: ['publicCoauthors', 'privateCoauthors', 'privateGroups', 'publicGroups']})
                     .then(function (references) {
                         vm.references = references;
                         return vm.references;
             });
-        }
-        
-        function getCollaborations() {
-            return UsersService.getCollaborations(vm.user);
         }
     }
 })();

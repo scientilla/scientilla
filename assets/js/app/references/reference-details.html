@@ -4,9 +4,9 @@
         <i><span ng-bind-html='vm.reference | linkableauthors'></span></i>
         <md-list>
             <md-subheader class="md-no-sticky">
-                Collaborators
+                Coauthors
             </md-subheader>
-            <md-list-item class="md-3-line scientilla-main-list" ng-repeat="c in vm.reference.getRealAuthors()">
+            <md-list-item class="md-3-line scientilla-main-list" ng-repeat="c in vm.reference.getAllCoauthors()">
                 <md-divider class="top-divider"></md-divider>
                 <div>
                     <h4>
@@ -15,7 +15,7 @@
                 </div>
             </md-list-item>
         </md-list>
-        <md-list>
+<!--        <md-list>
             <md-subheader class="md-no-sticky">
                 Collaborations
             </md-subheader>
@@ -27,6 +27,6 @@
                     </h4>
                 </div>
             </md-list-item>
-        </md-list>
+        </md-list>-->
     </md-content>
 </div>

@@ -7,8 +7,9 @@
 
 var _ = require('lodash');
 var Promise = require("bluebird");
+var researchEntity = require('./ResearchEntity');
 
-module.exports = {
+module.exports = _.merge({}, researchEntity, {
     attributes: {
         name: 'STRING',
         slug: 'STRING',
@@ -25,39 +26,56 @@ module.exports = {
             collection: 'user',
             via: 'admininstratedGroups'
         },
-        references: {
+        draftReferences: {
             collection: 'Reference',
-            via: 'groupOwner'
+            via: 'draftGroupCreator'
         },
-        collaboratedReferences: {
+        privateReferences: {
+            collection: 'Reference',
+            via: 'privateGroups'
+        },
+        publicReferences: {
+            collection: 'Reference',
+            via: 'publicGroups'
+        },
+        discardedReferences: {
+            collection: 'Reference',
+            via: 'discardedGroups'
+        },
+        suggestedReferences: {
             collection: 'reference',
-            via: 'groupCollaborations'
-        },
+            via: 'suggestedGroups'
+        }
+    },
+    verifyDraft: function (referenceId) {
+        return Reference.findOneById(referenceId)
+                .then(function (r) {
+                    var draftGroupCreator = r.draftGroupCreator;
+                    r.draftGroupCreator = null;
+                    r.draft = false;
+                    r.privateGroups.add(draftGroupCreator);
+                    return r.save();
+                });
     },
     //sTODO: add deep populate for other fields of the references
     getSuggestedReferences: function (groupId) {
-        return Group.findOneById(groupId)
-                .populate('collaboratedReferences')
-                .then(function (group) {
-                    return Reference.getVerifiedAndPublicReferences(group.collaboratedReferences);
+        return Membership.find({group: groupId})
+                .then(function (memberships) {
+                    var memberIds = _.map(memberships, 'user');
+                    //sTODO: refactor
+                    var funs = _.map(memberIds, function (userId) {
+                        return User.getReferences(User, userId, ['privateCoauthors', 'publicCoauthors', 'privateGroups'], 'verified')
+                    })
+                    return Promise.all(funs);
                 })
-                .then(function (suggestedReferences) {
-                    //sTODO union must discard same references
-                    var maybeSuggestedReferencesId = _.map(suggestedReferences, 'id');
-
-                    return Promise.all([
-                        Reference.findById(maybeSuggestedReferencesId)
-                                .populate('collaborators')
-                                .populate('owner')
-                                .populate('groupOwner'),
-                        Reference.find({groupOwner: groupId})
-                    ])
+                //sTODO: sobstitute with spread operator
+                .then(function (referencesGroup) {
+                    var references = _.flatten(referencesGroup);
+                    return references;
                 })
-                .spread(function (maybeSuggestedReferences, authoredReferences) {
-                    var similarityThreshold = .98;
-                    //sTODO: add check on discarded references
-                    return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
+                .then(function (maybeSuggestedReferences) {
+                    return Group.filterNecessaryReferences(groupId, Group, maybeSuggestedReferences)
                 });
     }
-};
+});
 

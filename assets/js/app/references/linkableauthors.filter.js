@@ -8,10 +8,9 @@
 
         function getLinkableAuthors(reference) {
             if (!reference.authors) return "";
-            if (_.isUndefined(reference.collaborators)) return reference.authors;
 
             var authors = reference.getAuthors();
-            var possibleMatches = reference.getRealAuthors(); 
+            var possibleMatches = reference.getAllCoauthors(); 
             var linkedAuthorsStr = reference.authors;
             authors.forEach(function (author) {
                 var ucAuthor = author.toUpperCase();
