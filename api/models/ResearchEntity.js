@@ -89,7 +89,7 @@ module.exports = {
         return Promise.all([
             Reference.getByIdsWithAuthors(maybeSuggestedReferencesId),
             //sTODO: refactor
-            ResearchEntity.getReferences(ResearchEntity, userId, [], 'all')
+            ResearchEntity.getReferences(ResearchEntity, userId, [], 'verified')
         ])
         .spread(function (maybeSuggestedReferences, authoredReferences) {
             var similarityThreshold = .98;
