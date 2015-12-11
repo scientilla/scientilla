@@ -37,6 +37,24 @@
                         });
                     };
 
+                    service.getCollaborations = function (user) {
+                        if (!user || !user.id) {
+                            user.collaborations = [];
+                            return $q(function (resolve) {
+                                resolve(user);
+                            });
+                        }
+                        return user.all('collaborations').getList({populate: ['group']})
+                                .then(function (collaborations) {
+                                    user.collaborations = collaborations;
+                                    _.forEach(user.collaborations, function (c) {
+                                        _.defaults(c, Scientilla.collaboration);
+                                        _.defaults(c.group, Scientilla.group);
+                                    });
+                                    return user;
+                                });
+                    }
+
                     return service;
                 }]);
 }());

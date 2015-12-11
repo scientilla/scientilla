@@ -80,6 +80,12 @@
             $scope.$watch('vm.user.aliasesStr', aliasesStrChanged);
 
             initAliasesStr();
+            getCollaborations();
+        }
+
+        //sTODO to be removed when deep populate exists
+        function getCollaborations() {
+            return UsersService.getCollaborations(vm.user);
         }
 
         function submit() {
