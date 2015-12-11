@@ -34,10 +34,6 @@
                 inputType: 'text',
                 required: true
             },
-            aliasesStr: {
-                inputType: 'text',
-                label: 'aliases'
-            },
             slug: {
                 inputType: 'text',
                 required: true,
