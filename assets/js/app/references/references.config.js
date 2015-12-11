@@ -117,7 +117,7 @@
 
     function getCurrentUser(UsersService, $route) {
         var userId = $route.current.params.id;
-        return UsersService.one(userId).get({populate: ['collaborations', 'aliases']});
+        return UsersService.one(userId).get({populate: []});
     }
     
     getCurrentGroup.$inject = ['GroupsService', '$route'];

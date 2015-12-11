@@ -8,9 +8,7 @@
 module.exports = {
     getReferences: function (req, res) {
         var researchEntity = req.params.id;
-        var populate = req.query.populate;
-        if (_.isString(populate))
-            populate = [populate];
+        var populate = getPopulateFields(req);
         var filter = req.query.filter || 'all';
         var model = req.options.model || req.options.controller;
         if (!_.contains(['group', 'user'], model))
@@ -50,6 +48,15 @@ module.exports = {
                 .then(function (reference) {
                     res.json(reference);
                 });
+    },
+    getOne: function (req, res) {
+        var researchEntityId = req.params.id;
+        var populate = getPopulateFields(req);
+        var Model = getModel(req);
+        Model.getOne(Model, researchEntityId, populate)
+                .then(function (researchEntity) {
+                    res.json(researchEntity);
+                });
     }
 };
 
@@ -57,5 +64,12 @@ function getModel(req) {
     var model = req.options.model || req.options.controller;
     var Model = req._sails.models[model];
     return Model;
+}
+
+function getPopulateFields(req) {
+    var populate = req.query.populate;
+    if (_.isString(populate))
+        populate = [populate];
+    return populate;
 }
 

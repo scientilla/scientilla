@@ -17,33 +17,28 @@
         vm.verifyReference = verifyReference;
         vm.createNewUrl = vm.researchEntity.getNewReferenceUrl();
         vm.editUrl = vm.researchEntity.getProfileUrl();
+        vm.referenceStatusMap = {
+            Public: Scientilla.reference.PUBLIC, 
+            Private: Scientilla.reference.VERIFIED, 
+            Drafts: Scientilla.reference.DRAFT
+        }
         activate();
 
         function activate() {
-            return getReferences().then(function () {
-
-            });
-        }
-
-        function getReferences() {
-            return researchEntity.getList('references', { populate: ['publicCoauthors', 'privateCoauthors']})
-                    .then(function (references) {
-                        vm.references = references;
-                        return vm.references;
-            });
         }
 
         function deleteReference(reference) {
-            ReferencesService.delete(reference)
+            vm.researchEntity.one('references', reference.id).remove()
                     .then(function () {
-                        _.remove(vm.references, reference);
+                        _.remove(vm.researchEntity.references, reference);
                     });
         }
         
         function verifyReference(reference) {
-            return ReferencesService.verify(reference).then(function(r) {
+            return vm.researchEntity.one('references', reference.id).customPUT({},'verified').then(function(r) {
                 reference.draft = false;
-            })
+                reference.status = Scientilla.reference.VERIFIED;
+            });
         }
     }
 })();

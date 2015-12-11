@@ -55,6 +55,7 @@ module.exports = _.merge({}, researchEntity, {
                     r.draft = false;
                     r.privateGroups.add(draftGroupCreator);
                     return r.save();
+                    //STODO: return the new reference
                 });
     },
     //sTODO: add deep populate for other fields of the references

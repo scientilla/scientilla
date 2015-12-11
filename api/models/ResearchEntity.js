@@ -23,7 +23,45 @@ module.exports = {
                     this.privateReferences);
         }
     },
-    getSearchFilterFunction: function(filterKey) {
+    getOne: function (ResearchEntity, researchEntityId, populateFields) {
+        var query = ResearchEntity.findOneById(researchEntityId)
+                .populate('publicReferences')
+                .populate('privateReferences')
+                .populate('draftReferences');
+        _.forEach(populateFields, function (f) {
+            query = query.populate(f);
+        });
+        return query
+                .then(function (researchEntity) {
+                    var publicReferencesId = _.map(researchEntity.publicReferences, 'id');
+                    var privateReferencesId = _.map(researchEntity.privateReferences, 'id');
+                    var draftReferencesId = _.map(researchEntity.draftReferences, 'id');
+                    return Promise.all([
+                        researchEntity,
+                        Reference.getByIdsWithAuthors(publicReferencesId),
+                        Reference.getByIdsWithAuthors(privateReferencesId),
+                        Reference.getByIdsWithAuthors(draftReferencesId)
+                    ]);
+                })
+                .spread(function (researchEntity, publicReferences, privateReferences, draftReferences) {
+                    //sTODO: refactor
+                    _.forEach(publicReferences, function (r) {
+                        r.status = Reference.PUBLIC;
+                    });   
+                    _.forEach(privateReferences, function (r) {
+                        r.status = Reference.VERIFIED;
+                    });   
+                    _.forEach(draftReferences, function (r) {
+                        r.status = Reference.DRAFT;
+                    });   
+                    delete researchEntity.publicReferences;
+                    delete researchEntity.privateReferences;
+                    delete researchEntity.draftReferences;
+                    researchEntity.references = _.union(publicReferences, privateReferences, draftReferences);
+                    return researchEntity;
+                });
+    },
+    getSearchFilterFunction: function (filterKey) {
         //sTODO: use map
         var filters = {
             'all': 'getAllReferences',
@@ -51,17 +89,16 @@ module.exports = {
                 });
     },
     //sTODO: only drafts can be deleted
-    deleteReference: function(ResearchEntity, researchEntityId, referenceId) {
+    deleteReference: function (ResearchEntity, researchEntityId, referenceId) {
         return Reference
                 .findOneById(referenceId)
-                .then(function(reference) {
+                .then(function (reference) {
                     if (reference.draft) {
                         return Reference.destroy({id: referenceId});
-                    }
-                    else {
+                    } else {
                         return ResearchEntity.removeReference(ResearchEntity, researchEntityId, referenceId);
                     }
-                })
+                });
     },
     removeReference: function (ResearchEntity, userId, referenceId) {
         return ResearchEntity
@@ -71,9 +108,13 @@ module.exports = {
                 .then(function (researchEntity) {
                     researchEntity.privateReferences.remove(referenceId);
                     researchEntity.publicReferences.remove(referenceId);
-                    return new Promise(function(resolve) {researchEntity.save(function(err, u) {resolve();});});
+                    return new Promise(function (resolve) {
+                        researchEntity.save(function (err, u) {
+                            resolve();
+                        });
+                    });
                 })
-                .then(function() {
+                .then(function () {
                     return Reference.checkDeletion(referenceId);
                 });
     },
@@ -91,11 +132,16 @@ module.exports = {
             //sTODO: refactor
             ResearchEntity.getReferences(ResearchEntity, userId, [], 'verified')
         ])
-        .spread(function (maybeSuggestedReferences, authoredReferences) {
-            var similarityThreshold = .98;
-            //sTODO: add check on discarded references
-            return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
-        });
+                .spread(function (maybeSuggestedReferences, authoredReferences) {
+                    var similarityThreshold = .98;
+                    //sTODO: add check on discarded references
+                    return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
+                });
+    },
+    _config: {
+        actions: false,
+        shortcuts: false,
+        rest: false
     }
 };
 

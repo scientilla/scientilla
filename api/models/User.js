@@ -26,21 +26,21 @@ module.exports = _.merge({}, researchEntity, {
         },
         name: {
             type: 'STRING',
-//            required: true,
+            required: true,
             defaultsTo: ""
         },
         surname: {
             type: 'STRING',
-//            required: true,
+            required: true,
             defaultsTo: ""
         },
         slug: {
             type: 'STRING',
-//            unique: true,
-//            required: true,
+            unique: true,
+            required: true,
             alphanumericdashed: true,
-//            minLength: 3,
-//            maxLength: 30,
+            minLength: 3,
+            maxLength: 30,
             defaultsTo: ""
         },
         role: {
@@ -142,6 +142,7 @@ module.exports = _.merge({}, researchEntity, {
                     draft.draft = false;
                     draft.privateCoauthors.add(draftCreator);
                     draft.save();
+                    //STODO: return the new reference
                 });
     },
     getAdministeredGroups: function (userId) {
