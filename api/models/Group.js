@@ -45,6 +45,9 @@ module.exports = _.merge({}, researchEntity, {
         suggestedReferences: {
             collection: 'reference',
             via: 'suggestedGroups'
+        },
+        getType: function () {
+            return 'group';
         }
     },
     verifyDraft: function (referenceId) {

@@ -52,7 +52,9 @@ module.exports.routes = {
   'get /references/:id/suggestions' : 'Suggestion.find', //sTODO delete
   'get /references/:id/suggested-collaborators' : 'Reference.getSuggestedCollaborators',
   'get /users/:id/suggested-references' : 'User.getSuggestedReferences',
-  'get /users/:id/notifications' : 'User.getNotifications'
+  'get /users/:id/notifications' : 'User.getNotifications',
+  'get /users/:id/external-references' : 'User.getExternalReferences',
+  'get /groups/:id/external-references' : 'Group.getExternalReferences'
 
 //    'get /': {
 //        controller: 'index',

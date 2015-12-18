@@ -2,7 +2,12 @@
     <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')" style="position: absolute; top:64px; bottom:0">
         <md-toolbar class="md-theme-indigo">
             <h1 class="md-toolbar-tools">
-                <md-button ng-href="#/users/{{vm.user.idd}}/notifications">Notifications</md-button>
+                <md-button ng-href="#/users/{{vm.user.id}}/notifications">Notifications</md-button>
+            </h1>
+        </md-toolbar>
+        <md-toolbar class="md-theme-indigo">
+            <h1 class="md-toolbar-tools">
+                <md-button ng-href="#/users/{{vm.user.id}}/external">External Scources</md-button>
             </h1>
         </md-toolbar>
         <md-toolbar class="md-theme-indigo">

@@ -9,7 +9,8 @@
         'users',
         'references',
         'groups',
-        'notifications'
+        'notifications',
+        'external'
     ]);
 })();
 

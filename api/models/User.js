@@ -124,6 +124,9 @@ module.exports = _.merge({}, researchEntity, {
                 return a.toUpperCase();
             });
             return ucAliases;
+        },
+        getType: function () {
+            return 'user';
         }
     }),
     verifyDraft: function (researchEntityId, draftId) {

@@ -89,7 +89,7 @@ module.exports.connections = {
     host: 'localhost',
     user: 'postgres',
     password: '28UX5cjdGlhN7xVMHWVF',
-    database: 'scientilla'
+    database: 'scientilla_2'
   },
   
   test: {
