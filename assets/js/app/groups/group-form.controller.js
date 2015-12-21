@@ -36,6 +36,10 @@
                     rule: /^[a-zA-Z0-9-_]*$/,
                     message: 'The slug must contains only letters, number and dashes'
                 }
+            },
+            publicationsAcronym: {
+                inputType: 'text',
+                label: 'Publications: Group Acronym'
             }
         };
 

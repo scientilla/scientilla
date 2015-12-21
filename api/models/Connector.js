@@ -21,7 +21,12 @@ module.exports = {
     getPublicationsReferences: function (researchEntity) {
         var uri = 'http://backend.publications.iit.it/api/publications/getMatchingOnesAsJsonData';
         var researchEntityType = researchEntity.getType();
-        var query = researchEntityType === 'user' ? {author: researchEntity.surname} : {"research-structure": 'iit'};
+        var query;
+        if (researchEntityType === 'user') {
+            query = {author: researchEntity.surname};
+        } else {
+            query = {"research-structure": researchEntity.publicationsAcronym};
+        }
         var qs = {
             "page-size": 10,
             "page-number": 1
@@ -36,13 +41,13 @@ module.exports = {
             newReference.title = r.title;
             newReference.authors = r.authors.replace(/\*/g, '');
         };
-        
+
         var extractField = 'data';
-        
+
         return request.get(reqParams)
                 .then(function (res) {
                     var references = extractField ? res[extractField] : res;
-                    return _.map(references, function(r) {
+                    return _.map(references, function (r) {
                         var newReference = {};
                         transform(r, newReference);
                         return newReference;
