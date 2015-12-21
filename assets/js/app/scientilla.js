@@ -65,6 +65,11 @@ Scientilla.user = {
     },
     getNewReferenceUrl: function(){
         return "/users/" + this.id + "/references/new"; 
+    },
+    canUse: function(source) {
+        if (source === 'Publications')
+            return true;
+        return false;
     }
 };
 
@@ -177,5 +182,10 @@ Scientilla.group = {
     },
     getNewReferenceUrl: function(){
         return "/groups/" + this.id + "/references/new"; 
+    },
+    canUse: function(source) {
+        if (source === 'Publications' && this.publicationsAcronym)
+            return true;
+        return false;
     }
 };

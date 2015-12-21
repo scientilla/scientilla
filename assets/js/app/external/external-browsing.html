@@ -6,8 +6,8 @@
                     <md-input-container>
                         <label>Source</label>
                         <md-select ng-model="vm.source">
-                            <md-option ng-repeat="source in vm.sources" value="{{source}}">
-                                {{source}}
+                            <md-option ng-disabled="!researchEntity.canUse(source)" ng-repeat="source in vm.sources" value="{{source}}">
+                                {{source}} <span ng-hide="researchEntity.canUse(source)">- Not configured</span>
                             </md-option>
                         </md-select>
                     </md-input-container>
