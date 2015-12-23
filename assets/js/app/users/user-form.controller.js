@@ -43,6 +43,10 @@
                     rule: /^[a-zA-Z0-9-_]*$/,
                     message: 'The slug must contains only letters, number and dashes'
                 }
+            },
+            orcidId: {
+                inputType: 'text',
+                label: 'ORCID ID'
             }
         };
         
