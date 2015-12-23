@@ -1,38 +1,8 @@
 <div ng-show="vm.isLogged">
     <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')" style="position: absolute; top:64px; bottom:0">
-        <md-toolbar class="md-theme-indigo">
+        <md-toolbar class="md-theme-indigo" ng-repeat="menuItem in vm.menuItems">
             <h1 class="md-toolbar-tools">
-                <md-button ng-href="#/users/{{vm.user.id}}/notifications">Notifications</md-button>
-            </h1>
-        </md-toolbar>
-        <md-toolbar class="md-theme-indigo">
-            <h1 class="md-toolbar-tools">
-                <md-button ng-href="#/users/{{vm.user.id}}/external">External Scources</md-button>
-            </h1>
-        </md-toolbar>
-        <md-toolbar class="md-theme-indigo">
-            <h1 class="md-toolbar-tools">
-                <md-button ng-href="#/users/{{vm.user.id}}/references">Personal References</md-button>
-            </h1>
-        </md-toolbar>
-        <md-toolbar class="md-theme-indigo" ng-repeat="group in vm.user.admininstratedGroups">
-            <h1 class="md-toolbar-tools">
-                <md-button ng-href="#/groups/{{group.id}}/references">{{group.getDisplayName()}} References</md-button>
-            </h1>
-        </md-toolbar>
-        <md-toolbar class="md-theme-indigo">
-            <h1 class="md-toolbar-tools">
-                <md-button ng-href="#/users">Users</md-button>
-            </h1>
-        </md-toolbar>
-        <md-toolbar class="md-theme-indigo">
-            <h1 class="md-toolbar-tools">
-                <md-button ng-href="#/groups">Groups</md-button>
-            </h1>
-        </md-toolbar>
-        <md-toolbar class="md-theme-indigo">
-            <h1 class="md-toolbar-tools">
-                <md-button ng-href="#/users/{{vm.user.id}}/edit">Profile</md-button>
+                <md-button ng-href="{{menuItem.url}}">{{menuItem.title}}</md-button>
             </h1>
         </md-toolbar>
     </md-sidenav>
