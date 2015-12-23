@@ -68,8 +68,8 @@ Scientilla.user = {
     },
     getExternalConnectors: function() {
         var connectors = [];
-        var publicationConnector = {name: 'Publications', enabled: true};
-        connectors.push(publicationConnector);
+        var publicationsConnector = {name: 'Publications', enabled: true};
+        connectors.push(publicationsConnector);
         return connectors;
     }
 };
@@ -186,8 +186,8 @@ Scientilla.group = {
     },
     getExternalConnectors: function() {
         var connectors = [];
-        var publicationConnector = {name: 'Publications', enabled: !!this.publicationsAcronym};
-        connectors.push(publicationConnector);
+        var publicationsConnector = {name: 'Publications', enabled: !!this.publicationsAcronym};
+        connectors.push(publicationsConnector);
         return connectors;
     }
 };
