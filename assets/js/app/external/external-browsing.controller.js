@@ -16,8 +16,7 @@
         vm.STATUS_ERROR = 3;
         vm.copyReference = copyReference;
         vm.researchEntities = _.union([AuthService.user], AuthService.user.admininstratedGroups);
-        vm.sources = ['Publications'];
-        vm.sourceChanged = sourceChanged;
+        vm.connectorChanged = connectorChanged;
         vm.reset = reset;
         
         activate();
@@ -27,21 +26,20 @@
         }
         
         function reset() {
-            vm.source = undefined;
             vm.status = vm.STATUS_WAITING;
             vm.references = [];
         }
         
-        function sourceChanged(researchEntity, source) {
+        function connectorChanged(researchEntity, source) {
             vm.status = vm.STATUS_LOADING;
             return getExternalReferences(researchEntity, source).then(function () {
 
             });
         };
 
-        function getExternalReferences(researchEntity, source) {
+        function getExternalReferences(researchEntity, connector) {
             //sTODO move to a service
-            return researchEntity.getList('external-references', {source: source})
+            return researchEntity.getList('external-references', {connector: connector})
                     .then(function (references) {
                         vm.references = references;
                         vm.status = vm.STATUS_READY;

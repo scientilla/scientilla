@@ -66,10 +66,11 @@ Scientilla.user = {
     getNewReferenceUrl: function(){
         return "/users/" + this.id + "/references/new"; 
     },
-    canUse: function(source) {
-        if (source === 'Publications')
-            return true;
-        return false;
+    getExternalConnectors: function() {
+        var connectors = [];
+        var publicationConnector = {name: 'Publications', enabled: true};
+        connectors.push(publicationConnector);
+        return connectors;
     }
 };
 
@@ -183,9 +184,10 @@ Scientilla.group = {
     getNewReferenceUrl: function(){
         return "/groups/" + this.id + "/references/new"; 
     },
-    canUse: function(source) {
-        if (source === 'Publications' && this.publicationsAcronym)
-            return true;
-        return false;
+    getExternalConnectors: function() {
+        var connectors = [];
+        var publicationConnector = {name: 'Publications', enabled: !!this.publicationsAcronym};
+        connectors.push(publicationConnector);
+        return connectors;
     }
 };

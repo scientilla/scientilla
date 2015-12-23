@@ -60,14 +60,14 @@ module.exports = {
     },
     getExternalReferences: function (req, res) {
         var researchEntityId = req.params.id;
-        var source = req.query.source;
+        var connector = req.query.connector;
         var Model = getModel(req);
-        if (!source) {
-            sails.log.debug('No Source');
-            res.badRequest('A Source parameter is necessary');
+        if (!connector) {
+            sails.log.debug('No Connector');
+            res.badRequest('A Connector parameter is necessary');
             return;
         }
-        Connector.getReferences(Model, researchEntityId, source)
+        Connector.getReferences(Model, researchEntityId, connector)
                 .then(function (suggestedReferences) {
                     res.json(suggestedReferences);
                 });

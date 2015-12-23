@@ -11,7 +11,7 @@ var _ = require('lodash');
 module.exports = {
     attributes: {
     },
-    getReferences: function (ResearchEntity, researchEntityId, source) {
+    getReferences: function (ResearchEntity, researchEntityId, connector) {
         var self = this;
         return ResearchEntity.findOneById(researchEntityId)
                 .then(function (researchEntity) {

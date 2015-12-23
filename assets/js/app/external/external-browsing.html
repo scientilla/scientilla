@@ -3,15 +3,19 @@
         <md-tabs md-dynamic-height md-border-bottom class='notifications'>
             <md-tab md-on-select="vm.reset()" label="{{researchEntity.getDisplayName()}}" ng-repeat="researchEntity in vm.researchEntities">
                 <md-content class="md-padding">
-                    <md-input-container>
-                        <label>Source</label>
-                        <md-select ng-model="vm.source">
-                            <md-option ng-disabled="!researchEntity.canUse(source)" ng-repeat="source in vm.sources" value="{{source}}">
-                                {{source}} <span ng-hide="researchEntity.canUse(source)">- Not configured</span>
-                            </md-option>
-                        </md-select>
-                    </md-input-container>
-                    <md-button class="md-raised" ng-disabled="!vm.source" ng-click="vm.sourceChanged(researchEntity, vm.source)">Search</md-button>
+                    <div ng-init="connectors = researchEntity.getExternalConnectors()">
+                        <md-input-container>
+                            <label>Connector</label>
+                            <md-select ng-model="selectedConnectorName">
+                                <!--<md-select-label>{{selectedConnectorName}}</md-select-label>-->
+                                <md-option ng-disabled="!connector.enabled" ng-repeat="connector in connectors" value="{{connector.name}}">
+                                    {{connector.name}} 
+                                    <!--<span ng-hide="connector.enabled">- Not configured</span>-->
+                                </md-option>
+                            </md-select>
+                        </md-input-container>
+                    </div>
+                    <md-button class="md-raised" ng-disabled="!selectedConnectorName" ng-click="vm.connectorChanged(researchEntity, selectedConnectorName)">Search</md-button>
                     <md-progress-linear md-mode="indeterminate" ng-show="vm.status === vm.STATUS_LOADING"></md-progress-linear>
                     <div ng-show="vm.status === vm.STATUS_ERROR">
                         An error happened
