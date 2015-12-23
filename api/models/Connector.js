@@ -15,7 +15,12 @@ module.exports = {
         var self = this;
         return ResearchEntity.findOneById(researchEntityId)
                 .then(function (researchEntity) {
-                    var reqConfig = self.getPublicationsConfig(researchEntity);
+                    var reqConfig;
+                    if (connector === 'Publications')
+                        reqConfig = self.getPublicationsConfig(researchEntity);
+                    if (connector === 'ORCID')
+                        reqConfig = self.getOrcidConfig(researchEntity);
+                    //sTODO: error management
                     return self.makeRequest(reqConfig);
                 });
     },
@@ -55,6 +60,36 @@ module.exports = {
         };
 
         var extractField = 'data';
+
+        return {
+            reqParams: reqParams,
+            extractField: extractField,
+            transform: transform
+        };
+    },
+    getOrcidConfig: function (researchEntity) {
+        var uri = 'http://pub.orcid.org/' + researchEntity.orcidId + '/orcid-works';
+        var qs = {
+            "page-size": 10,
+            "page-number": 1
+        };
+        var reqParams = {
+            uri: uri,
+            headers: {
+                'Accept': 'application/json'
+            },
+            qs: qs,
+            json: true
+        };
+        var transform = function (r, newReference) {
+            newReference.title = _.get(r, 'work-title.title.value');
+            newReference.authors = _.map(_.get(r, 'work-contributors.contributor'), function (c) {
+                var authorStr = _.get(c, 'credit-name.value');
+                return authorStr.replace(/,/g, '');
+            }).join(', ');
+        };
+
+        var extractField = 'orcid-profile.orcid-activities.orcid-works.orcid-work';
 
         return {
             reqParams: reqParams,

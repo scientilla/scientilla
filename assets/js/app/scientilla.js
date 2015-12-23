@@ -69,7 +69,9 @@ Scientilla.user = {
     getExternalConnectors: function() {
         var connectors = [];
         var publicationsConnector = {name: 'Publications', enabled: true};
+        var orcidConnector = {name: 'ORCID', enabled: !!this.orcidId};
         connectors.push(publicationsConnector);
+        connectors.push(orcidConnector);
         return connectors;
     }
 };
