@@ -15,10 +15,22 @@ module.exports = {
         var self = this;
         return ResearchEntity.findOneById(researchEntityId)
                 .then(function (researchEntity) {
-                    return self.getPublicationsReferences(researchEntity);
+                    var reqConfig = self.getPublicationsConfig(researchEntity);
+                    return self.makeRequest(reqConfig);
                 });
     },
-    getPublicationsReferences: function (researchEntity) {
+    makeRequest: function (reqConfig) {
+        return request.get(reqConfig.reqParams)
+                .then(function (res) {
+                    var references = reqConfig.extractField ? _.get(res, reqConfig.extractField) : res;
+                    return _.map(references, function (r) {
+                        var newReference = {};
+                        reqConfig.transform(r, newReference);
+                        return newReference;
+                    });
+                });
+    },
+    getPublicationsConfig: function (researchEntity) {
         var uri = 'http://backend.publications.iit.it/api/publications/getMatchingOnesAsJsonData';
         var researchEntityType = researchEntity.getType();
         var query;
@@ -44,14 +56,10 @@ module.exports = {
 
         var extractField = 'data';
 
-        return request.get(reqParams)
-                .then(function (res) {
-                    var references = extractField ? res[extractField] : res;
-                    return _.map(references, function (r) {
-                        var newReference = {};
-                        transform(r, newReference);
-                        return newReference;
-                    });
-                });
+        return {
+            reqParams: reqParams,
+            extractField: extractField,
+            transform: transform
+        };
     }
 };
