@@ -11,17 +11,23 @@
  * 		https://github.com/tomusdrw/grunt-sync
  *
  */
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
-	grunt.config.set('sync', {
-		dev: {
-			files: [{
-				cwd: './assets',
-				src: ['**/*.!(coffee)'],
-				dest: '.tmp/public'
-			}]
-		}
-	});
+    grunt.config.set('sync', {
+        dev: {
+            files: [{
+                    cwd: './assets',
+                    src: ['**/*.!(coffee|less|html)'],
+                    dest: '.tmp/public'
+                }, {
+                    expand: true,
+                    cwd: './assets',
+                    src: ['js/app/*/*.html'],
+                    flatten: true,
+                    dest: '.tmp/public/partials'
+                }]
+        }
+    });
 
-	grunt.loadNpmTasks('grunt-sync');
+    grunt.loadNpmTasks('grunt-sync');
 };
