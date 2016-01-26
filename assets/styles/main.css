@@ -8,8 +8,16 @@ md-list-item.scientilla-main-list {
     margin-bottom: 20px;
 }
 
-.scientilla-main-list > div {
-    width: 600px;
+.scientilla-main-list > scientilla-document {
+    width: 560px;
+}
+
+.scientilla-main-list .md-secondary-container .md-button {
+    vertical-align: middle;
+    margin: 0;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
 }
 
 .scientilla-secondary-list > div {
@@ -43,6 +51,11 @@ md-tabs.notifications .md-tab.md-active {
     color: rgb(63,81,181);
 }
 
+h1 {
+    font-size: 30px;
+    line-height: 30px;
+    margin-bottom: 6px;
+}
 h3 {
     font-size: 24px;
     margin-bottom: 6px;
@@ -68,4 +81,21 @@ md-divider.top-divider {
 
 .scientilla-main-list > div > h3 {
     width: 600px;
+}
+
+scientilla-menu .md-button {
+    text-align: left;
+}
+
+scientilla-menu md-divider {
+    border-top-color: rgba(0,0,0,0.40);
+}
+
+scientilla-menu md-sidenav.md-locked-open {
+    min-width: 250px;
+    width: 250px;
+}
+
+scientilla-menu md-sidenav md-toolbar.active {
+    background-color: rgb(53,91,191);
 }
