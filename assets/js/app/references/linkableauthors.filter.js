@@ -1,13 +1,13 @@
 (function () {
     angular.module("references")
             .filter('linkableauthors', linkableAuthors);
-    
-    linkableAuthors.$inject = ['AuthService'];
 
-    function linkableAuthors(AuthService) {
+    function linkableAuthors() {
 
         function getLinkableAuthors(reference) {
             if (!reference.authors) return "";
+            if (!_.isFunction(reference.getAuthors))
+                return reference.authors;
 
             var authors = reference.getAuthors();
             var possibleMatches = reference.getAllCoauthors(); 
