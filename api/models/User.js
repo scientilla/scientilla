@@ -52,7 +52,7 @@ module.exports = _.merge({}, researchEntity, {
         orcidId: {
             type: 'STRING'
         },
-        draftReferences: {
+        drafts: {
             collection: 'Reference',
             via: 'draftCreator'
         },

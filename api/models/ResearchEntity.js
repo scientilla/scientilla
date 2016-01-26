@@ -15,7 +15,7 @@ module.exports = {
             return _.union(
                     this.publicReferences,
                     this.privateReferences,
-                    this.draftReferences);
+                    this.drafts);
         },
         getVerifiedReferences: function () {
             return _.union(
@@ -27,7 +27,7 @@ module.exports = {
         var query = ResearchEntity.findOneById(researchEntityId)
                 .populate('publicReferences')
                 .populate('privateReferences')
-                .populate('draftReferences');
+                .populate('drafts');
         _.forEach(populateFields, function (f) {
             query = query.populate(f);
         });
@@ -35,15 +35,15 @@ module.exports = {
                 .then(function (researchEntity) {
                     var publicReferencesId = _.map(researchEntity.publicReferences, 'id');
                     var privateReferencesId = _.map(researchEntity.privateReferences, 'id');
-                    var draftReferencesId = _.map(researchEntity.draftReferences, 'id');
+                    var draftsId = _.map(researchEntity.drafts, 'id');
                     return Promise.all([
                         researchEntity,
                         Reference.getByIdsWithAuthors(publicReferencesId),
                         Reference.getByIdsWithAuthors(privateReferencesId),
-                        Reference.getByIdsWithAuthors(draftReferencesId)
+                        Reference.getByIdsWithAuthors(draftsId)
                     ]);
                 })
-                .spread(function (researchEntity, publicReferences, privateReferences, draftReferences) {
+                .spread(function (researchEntity, publicReferences, privateReferences, drafts) {
                     //sTODO: refactor
                     _.forEach(publicReferences, function (r) {
                         r.status = Reference.PUBLIC;
@@ -51,13 +51,13 @@ module.exports = {
                     _.forEach(privateReferences, function (r) {
                         r.status = Reference.VERIFIED;
                     });   
-                    _.forEach(draftReferences, function (r) {
+                    _.forEach(drafts, function (r) {
                         r.status = Reference.DRAFT;
                     });   
                     delete researchEntity.publicReferences;
                     delete researchEntity.privateReferences;
-                    delete researchEntity.draftReferences;
-                    researchEntity.references = _.union(publicReferences, privateReferences, draftReferences);
+                    delete researchEntity.drafts;
+                    researchEntity.references = _.union(publicReferences, privateReferences, drafts);
                     return researchEntity;
                 });
     },
@@ -77,7 +77,7 @@ module.exports = {
         return researchEntityModel.findOneById(researchEntityId)
                 .populate('publicReferences')
                 .populate('privateReferences')
-                .populate('draftReferences')
+                .populate('drafts')
                 .then(function (researchEntity) {
                     var references = researchEntity[filterFunction]();
                     var referencesId = _.map(references, 'id');

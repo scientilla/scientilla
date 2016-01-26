@@ -27,7 +27,7 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'user',
             via: 'admininstratedGroups'
         },
-        draftReferences: {
+        drafts: {
             collection: 'Reference',
             via: 'draftGroupCreator'
         },
