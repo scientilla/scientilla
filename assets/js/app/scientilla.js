@@ -193,3 +193,16 @@ Scientilla.group = {
         return connectors;
     }
 };
+
+Scientilla.toDocumentsCollection = function(documents) {
+    _.each(documents, function(d) {
+        _.assign(d, Scientilla.reference);
+        Scientilla.toUsersCollection(d.privateCoauthors);
+    });
+};
+
+Scientilla.toUsersCollection = function(users) {
+    _.each(users, function(u) {
+        _.assign(u, Scientilla.user);
+    });
+};
