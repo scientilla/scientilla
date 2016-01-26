@@ -53,7 +53,7 @@
             //sTODO-urgent owner must be changed server-side
             //sTODO move to a service
             var newReference = Scientilla.reference.create(reference, researchEntity);
-            researchEntity.post('draftReferences', newReference)
+            researchEntity.post('drafts', newReference)
                     .then(function () {
                         _.remove(vm.references, reference);
                     });
