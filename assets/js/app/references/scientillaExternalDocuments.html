@@ -1,0 +1,35 @@
+<div>
+    <md-content>
+        <div ng-init="connectors = vm.researchEntity.getExternalConnectors()">
+            <md-input-container>
+                <label>Connector</label>
+                <md-select ng-model="selectedConnectorName">
+                    <!--<md-select-label>{{selectedConnectorName}}</md-select-label>-->
+                    <md-option ng-disabled="!connector.enabled" ng-repeat="connector in connectors" value="{{connector.name}}">
+                        {{connector.name}} 
+                        <!--<span ng-hide="connector.enabled">- Not configured</span>-->
+                    </md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+        <md-button class="md-raised" ng-disabled="!selectedConnectorName" ng-click="vm.connectorChanged(selectedConnectorName)">Search</md-button>
+        <md-progress-linear md-mode="indeterminate" ng-show="vm.status === vm.STATUS_LOADING"></md-progress-linear>
+        <div ng-show="vm.status === vm.STATUS_ERROR">
+            An error happened
+        </div>
+        <md-list ng-show="vm.status === vm.STATUS_READY">
+            <md-list-item class="md-3-line scientilla-main-list" ng-repeat="r in vm.references" >
+<!--                <div>
+                    <h3>
+                        <span ng-bind-html='r | title'></span>
+                    </h3>
+                    <div><i>{{r.authors}}</i></div>
+                </div>-->
+                <scientilla-document document="r"></scientilla-document>
+                <md-button class="list-elem-button md-icon-button" ng-click="vm.copyReference(r, researchEntity)" aria-label="Copy to draft">
+                    <ng-md-icon icon="content_copy"></ng-md-icon>
+                </md-button>
+            </md-list-item>
+        </md-list>
+    </md-content>
+</div>
