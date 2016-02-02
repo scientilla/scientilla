@@ -52,7 +52,7 @@
         }
 
         function verifyDocument(reference) {
-            return vm.researchEntity.one('references', reference.id).customPUT({}, 'verified')
+            return vm.researchEntity.one('drafts', reference.id).customPUT({}, 'verified')
                     .then(function (r) {
                         getDrafts();
                     });
