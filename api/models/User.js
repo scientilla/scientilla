@@ -194,7 +194,7 @@ module.exports = _.merge({}, researchEntity, {
         function generateSlug(user) {
             var name = user.name ? user.name : "";
             var surname = user.surname ? user.surname : "";
-            var fullName = _.trim(name + " " + surname)
+            var fullName = _.trim(name + " " + surname);
             var slug = fullName.toLowerCase().replace(/\s+/gi, '-');
             return slug;
         }
