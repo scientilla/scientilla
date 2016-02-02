@@ -1,12 +1,12 @@
 <div ng-show="vm.isLogged">
     <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')" style="position: absolute; top:64px; bottom:0">
         <div ng-repeat="menuItem in vm.menuItems">
-            <md-toolbar class="md-theme-indigo" ng-if="menuItem.type==='item'" ng-class="{active: menuItem.active}">
-                <h1 class="md-toolbar-tools">
-                    <md-button ng-click="vm.menuItemClicked(menuItem)" ng-href="{{menuItem.url}}">{{menuItem.title}}</md-button>
-                </h1>
+            <md-toolbar class="md-theme-indigo" ng-if="menuItem.type === 'item'" ng-class="{active: menuItem.active}">
+                <md-button ng-click="vm.menuItemClicked(menuItem)" ng-href="{{menuItem.url}}">
+                    {{menuItem.title}}
+                </md-button>
             </md-toolbar>
-            <md-divider ng-if="menuItem.type==='separator'"></md-divider>
+            <md-divider ng-if="menuItem.type === 'separator'"></md-divider>
         </div>
     </md-sidenav>
 </div>
