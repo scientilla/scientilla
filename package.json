@@ -39,7 +39,8 @@
   "scripts": {
     "debug": "node debug app.js",
     "start": "node app.js",
-    "test": "mocha test/bootstrap.test.js test/**/*.test.js --harmony_arrow_functions "
+    "test": "mocha test/bootstrap.test.js test/**/*.test.js --harmony_arrow_functions ",
+    "sailslift" : "sails lift"
   },
   "main": "app.js",
   "author": "github.com/iit-federico-bozzini",
