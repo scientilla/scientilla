@@ -57,7 +57,8 @@
                     controller: "ReferenceDetailsController",
                     controllerAs: 'vm',
                     resolve: {
-                        reference: getCurrentReference
+                        reference: getCurrentReference,
+                        researchEntity: getCurrentUser
                     },
                     access: {
                         noLogin: true
@@ -68,7 +69,7 @@
                     controller: "ReferenceFormController",
                     controllerAs: 'vm',
                     resolve: {
-                        ReferencesService: UserReferencesService
+                        document: UserReferencesService
                     }
                 });
     }

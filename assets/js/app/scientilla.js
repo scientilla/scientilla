@@ -73,7 +73,16 @@ Scientilla.user = {
         connectors.push(publicationsConnector);
         connectors.push(orcidConnector);
         return connectors;
+    },
+    getNewDocument: function () {
+        return {
+            title: "",
+            authors: "",
+            draftCreator: this.id,
+            draft: true
+        };
     }
+    
 };
 
 //sTodo: evaluating wheter to reformat in a constructor style
@@ -191,6 +200,14 @@ Scientilla.group = {
         var publicationsConnector = {name: 'Publications', enabled: !!this.publicationsAcronym};
         connectors.push(publicationsConnector);
         return connectors;
+    },
+    getNewDocument: function (groupId) {
+        return {
+            title: "",
+            authors: "",
+            draftGroupCreator: groupId,
+            draft: true
+        };
     }
 };
 

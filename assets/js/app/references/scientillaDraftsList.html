@@ -4,7 +4,8 @@
             <scientilla-document document="d"></scientilla-document>
             <div class="md-secondary-container">
                 <md-button class="list-elem-button md-icon-button" ng-href="#/references/{{d.id}}" aria-label="Details"><ng-md-icon icon="book"></ng-md-icon></md-button>
-                <md-button ng-show="d.draft" class="list-elem-button md-icon-button"  ng-href="#/references/{{d.id}}/edit" aria-label="Edit"><ng-md-icon icon="edit"></ng-md-icon></md-button>
+                <!--<md-button ng-show="d.draft" class="list-elem-button md-icon-button"  ng-href="#/references/{{d.id}}/edit" aria-label="Edit"><ng-md-icon icon="edit"></ng-md-icon></md-button>-->
+                <md-button ng-show="d.draft" class="list-elem-button md-icon-button"  ng-click="vm.openEditPopup($event, d)" aria-label="Edit"><ng-md-icon icon="edit"></ng-md-icon></md-button>
                 <md-button ng-show="d.draft" class="list-elem-button md-icon-button" ng-click="vm.verifyDocument(d)" aria-label="Verify"><ng-md-icon icon="done"></ng-md-icon></md-button>
                 <md-button class="list-elem-button md-icon-button" ng-click="vm.deleteDocument(d)" title="Delete" aria-label="Delete"><ng-md-icon icon="clear"></ng-md-icon></md-button>
             </div>

@@ -39,10 +39,6 @@ form.autosave.saved {
     border-left: 2px green solid;
 }
 
-form[form-for] {
-    width: 80%;
-}
-
 md-list-item {
     justify-content: flex-start !important;
 }

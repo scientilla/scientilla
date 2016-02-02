@@ -1,13 +1,3 @@
-<div>
-    <form form-for="vm.reference"
-          validation-rules="vm.validationAndViewRules"
-          form-for-builder
-          submit-with="vm.submit()"
-          class="autosave {{vm.status}}">
-        <!--<md-button ng-href="#/users/{{vm.userId}}/references">Cancel</md-button>-->
-        <md-button ng-click="vm.goToBrowsing()">Cancel</md-button>
-        <submit-button label="Save"></submit-button>
-    </form>
-
-
-</div>
+<md-dialog aria-label="Document edit"  ng-cloak>
+    <scientilla-document-form document="vm.document" research-entity="vm.researchEntity" on-cancel="vm.closeDialog" on-submit="vm.closeDialog"></scientilla-document-form>
+</md-dialog>
