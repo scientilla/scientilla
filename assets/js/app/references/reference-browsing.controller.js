@@ -6,10 +6,11 @@
     ReferenceBrowsingController.$inject = [
         'researchEntity',
         'ContextService',
-        '$mdDialog'
+        '$mdDialog',
+        '$rootScope'
     ];
 
-    function ReferenceBrowsingController(researchEntity, ContextService, $mdDialog) {
+    function ReferenceBrowsingController(researchEntity, ContextService, $mdDialog, $rootScope) {
         var vm = this;
 
         vm.researchEntity = researchEntity;
@@ -31,6 +32,8 @@
                     },
                     fullscreen: true,
                     clickOutsideToClose: true
+                }).then(function(draft) {
+                    $rootScope.$broadcast("draft.created", draft);
                 });
             });
         }

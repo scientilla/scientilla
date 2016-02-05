@@ -18,10 +18,11 @@
     }
 
     scientillaDrafsListController.$inject = [
-        '$mdDialog'
+        '$mdDialog',
+        '$scope'
     ];
 
-    function scientillaDrafsListController($mdDialog) {
+    function scientillaDrafsListController($mdDialog, $scope) {
         var vm = this;
 
         vm.deleteDocument = deleteDocument;
@@ -34,6 +35,7 @@
 
         function activate() {
             getDrafts();
+            $scope.$on("draft.created", getDrafts);
         }
 
         function getDrafts() {
