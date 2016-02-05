@@ -122,7 +122,11 @@ module.exports = {
         return ResearchEntity.findOneById(researchEntityId)
                 .then(function (researchEntity) {
                     researchEntity.privateReferences.add(referenceId);
-                    return researchEntity.save();
+                    return new Promise(function (resolve) {
+                        researchEntity.save(function (err, u) {
+                            resolve();
+                        });
+                    });
                 });
     },
     filterNecessaryReferences: function (userId, ResearchEntity, maybeSuggestedReferences) {
