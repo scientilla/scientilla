@@ -58,7 +58,6 @@
                     .then(function (draft) {
                         $rootScope.$broadcast("draft.verified", draft);
                         getDrafts();
-                        vm.researchEntity.getList('privateReferences',  {populate: ['privateCoauthors']});
                     });
         }
 
