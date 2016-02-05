@@ -19,10 +19,10 @@
 
     scientillaDrafsListController.$inject = [
         '$mdDialog',
-        '$scope'
+        '$rootScope'
     ];
 
-    function scientillaDrafsListController($mdDialog, $scope) {
+    function scientillaDrafsListController($mdDialog, $rootScope) {
         var vm = this;
 
         vm.deleteDocument = deleteDocument;
@@ -35,7 +35,7 @@
 
         function activate() {
             getDrafts();
-            $scope.$on("draft.created", getDrafts);
+            $rootScope.$on("draft.created", getDrafts);
         }
 
         function getDrafts() {
@@ -55,8 +55,10 @@
 
         function verifyDocument(reference) {
             return vm.researchEntity.one('drafts', reference.id).customPUT({}, 'verified')
-                    .then(function (r) {
+                    .then(function (draft) {
+                        $rootScope.$broadcast("draft.verified", draft);
                         getDrafts();
+                        vm.researchEntity.getList('privateReferences',  {populate: ['privateCoauthors']});
                     });
         }
 

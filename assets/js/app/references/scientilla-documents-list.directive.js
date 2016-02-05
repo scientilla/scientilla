@@ -17,7 +17,11 @@
         };
     }
 
-    function scientillaDocumentsListController() {
+    scientillaDocumentsListController.$inject = [
+        '$rootScope'
+    ];
+
+    function scientillaDocumentsListController($rootScope) {
         var vm = this;
         vm.documents = [];
         
@@ -29,6 +33,7 @@
         
         function activate() {
             getDocuments();
+            $rootScope.$on('draft.verified', getDocuments);
         }
         
         function getDocuments() {
