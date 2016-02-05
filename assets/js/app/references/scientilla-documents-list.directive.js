@@ -47,7 +47,7 @@
         function deleteDocument(reference) {
             vm.researchEntity.one('references', reference.id).remove()
                     .then(function () {
-                        _.remove(vm.researchEntity.references, reference);
+                        getDocuments();
                     });
         }
         
