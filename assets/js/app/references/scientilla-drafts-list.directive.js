@@ -49,7 +49,7 @@
         function deleteDocument(draft) {
             vm.researchEntity.one('drafts', draft.id).remove()
                     .then(function () {
-                        _.remove(vm.drafts, draft);
+                        getDrafts();
                     });
         }
 
