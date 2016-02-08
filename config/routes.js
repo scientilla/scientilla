@@ -31,9 +31,7 @@ module.exports.routes = {
      *                                                                          *
      ***************************************************************************/
 
-  '/': {
-    view: 'homepage'
-  },
+  '/': 'Homepage.default',
 
   'get r|^/users/(\\d+)$|id' : 'User.getOne',
   'get r|^/groups/(\\d+)$|id' : 'Group.getOne',
