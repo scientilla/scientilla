@@ -26,7 +26,7 @@ module.exports = function (grunt) {
             tasks: ['syncAssets', 'linkAssets']
         },
         options: {
-            livereload: true,
+            livereload: 35732,
         }
     });
 
