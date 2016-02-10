@@ -40,7 +40,6 @@
                         _.forEach(group.memberships, function(m) {
                             m.user = m.user.id;
                         });
-                        console.log(service);
                         return service.save(group).then(function (g) {
                             group.administrators = administrators;
                             group.memberships = memberships;
