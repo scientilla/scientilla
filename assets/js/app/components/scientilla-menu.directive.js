@@ -58,10 +58,6 @@
                         type: 'item',
                         title: 'Groups',
                         url: '#/groups'
-                    },{
-                        type: 'item',
-                        title: 'Profile',
-                        url: '#/users/' + vm.user.id + '/edit'
                     }]);
             }
         }
