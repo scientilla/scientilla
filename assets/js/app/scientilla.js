@@ -201,11 +201,11 @@ Scientilla.group = {
         connectors.push(publicationsConnector);
         return connectors;
     },
-    getNewDocument: function (groupId) {
+    getNewDocument: function () {
         return {
             title: "",
             authors: "",
-            draftGroupCreator: groupId,
+            draftGroupCreator: this.id,
             draft: true
         };
     }
