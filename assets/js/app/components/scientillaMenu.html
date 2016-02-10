@@ -1,5 +1,5 @@
 <div ng-show="vm.isLogged">
-    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')" style="position: absolute; top:64px; bottom:0">
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left" md-is-locked-open="$mdMedia('gt-sm')" style="background-color: rgb(63,81,181);; position: absolute; top:64px; bottom:0">
         <div ng-repeat="menuItem in vm.menuItems">
             <md-toolbar class="md-theme-indigo" ng-if="menuItem.type === 'item'" ng-class="{active: menuItem.active}">
                 <md-button ng-click="vm.menuItemClicked(menuItem)" ng-href="{{menuItem.url}}">
