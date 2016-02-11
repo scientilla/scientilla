@@ -5,14 +5,16 @@
 
     UserBrowsingController.$inject = [
         'UsersService', 
-        'AuthService'
+        'AuthService',
+        '$mdDialog'
     ];
 
-    function UserBrowsingController(UsersService, AuthService) {
+    function UserBrowsingController(UsersService, AuthService, $mdDialog) {
         var vm = this;
         
         vm.user = AuthService.user;
         vm.deleteUser = deleteUser;
+        vm.editUser = editUser;
 
         activate();
 
@@ -29,6 +31,24 @@
                 vm.users = data;
                 return vm.users;
             });
+        }
+
+        function editUser($event, user) {
+            $mdDialog.show({
+                controller: "UserFormController",
+                templateUrl: "partials/user-form.html",
+                controllerAs: "vm",
+                parent: angular.element(document.body),
+                targetEvent: $event,
+                locals: {
+                    user: user.clone()
+                },
+                fullscreen: true,
+                clickOutsideToClose: true
+            })
+                    .then(function () {
+                        getUsers();
+                    });
         }
 
         function deleteUser(user) {
