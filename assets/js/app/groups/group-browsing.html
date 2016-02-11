@@ -11,7 +11,7 @@
                     <h3>{{ g.getDisplayName()}}</h3>
                 </div>
                 <md-button class="list-elem-button md-icon-button" ng-href="#/groups/{{g.id}}" aria-label="Details"><ng-md-icon icon="group"></ng-md-icon></md-button>
-                <md-button class="list-elem-button md-icon-button" ng-show="vm.user.isAdmin() || vm.user.admins(g)" ng-href="#/groups/{{g.id}}/edit" aria-label="Edit"><ng-md-icon icon="edit"></ng-md-icon></md-button>
+                <md-button class="list-elem-button md-icon-button" ng-show="vm.user.isAdmin() || vm.user.admins(g)" ng-click="vm.editGroup($event, g)" aria-label="Edit"><ng-md-icon icon="edit"></ng-md-icon></md-button>
                 <md-button  ng-show="vm.user.isAdmin() || vm.user.admins(g)" class="list-elem-button md-icon-button" ng-click="vm.deleteGroup(g)" aria-label="Delete"><ng-md-icon icon="clear"></ng-md-icon></md-button>
             </md-list-item>
         </md-list>
