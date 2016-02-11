@@ -4,7 +4,7 @@
             <md-subheader class="md-no-sticky">
                 <h3>Users</h3>
             </md-subheader>
-            <md-button ng-show="vm.user.isAdmin()" ng-href="#/users/new" class="md-primary">Create New User</md-button>
+            <md-button ng-show="vm.user.isAdmin()" ng-click="vm.createNew($event)" class="md-primary">Create New User</md-button>
             <md-list-item class="md-2-line contact-item scientilla-main-list" ng-repeat="u in vm.users">
                 <md-divider class="top-divider"></md-divider> 
                 <div>

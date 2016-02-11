@@ -15,6 +15,7 @@
         vm.user = AuthService.user;
         vm.deleteUser = deleteUser;
         vm.editUser = editUser;
+        vm.createNew = createNew;
 
         activate();
 
@@ -31,6 +32,24 @@
                 vm.users = data;
                 return vm.users;
             });
+        }
+        
+        function createNew($event, user) {
+            $mdDialog.show({
+                controller: "UserFormController",
+                templateUrl: "partials/user-form.html",
+                controllerAs: "vm",
+                parent: angular.element(document.body),
+                targetEvent: $event,
+                locals: {
+                    user: UsersService.getNewUser()
+                },
+                fullscreen: true,
+                clickOutsideToClose: true
+            })
+                    .then(function () {
+                        getUsers();
+                    });
         }
 
         function editUser($event, user) {
