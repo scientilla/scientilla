@@ -10,15 +10,17 @@
         'group',
         'AuthService',
         '$window',
-        '$http'
+        '$http',
+        '$mdDialog'
     ];
 
-    function GroupFormController(GroupsService, FormForConfiguration, $scope, group, AuthService, $window, $http) {
+    function GroupFormController(GroupsService, FormForConfiguration, $scope, group, AuthService, $window, $http, $mdDialog) {
         var vm = this;
         vm.group = group;
         vm.getMembers = getMembers;
         vm.getUsersQuery = getUsersQuery;
         vm.userToMembership = userToMembership;
+        vm.closeDialog = function() {$mdDialog.hide();};
 
         vm.validationAndViewRules = {
             name: {
@@ -91,7 +93,7 @@
 
         function submit() {
             GroupsService.doSave(vm.group).then(function(){
-                $window.history.back();
+                $mdDialog.hide();
             });
         }
         

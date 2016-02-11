@@ -10,16 +10,18 @@
         'user',
         'AuthService',
         '$window',
-        'GroupsService'
+        'GroupsService',
+        '$mdDialog'
     ];
 
-    function UserFormController(UsersService, FormForConfiguration, $scope, user, AuthService, $window, GroupsService) {
+    function UserFormController(UsersService, FormForConfiguration, $scope, user, AuthService, $window, GroupsService, $mdDialog) {
         var vm = this;
         vm.user = user;
         vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.getGroupsQuery = GroupsService.getGroupsQuery;
         vm.groupToCollaboration = groupToCollaboration;
         vm.submit = submit;
+        vm.closeDialog = function() {$mdDialog.hide();};
 
         vm.validationAndViewRules = {
             name: {
@@ -90,7 +92,7 @@
 
         function submit() {
                 UsersService.doSave(vm.user).then(function(){
-                    $window.history.back();
+                    $mdDialog.hide();
                 });
         }
 

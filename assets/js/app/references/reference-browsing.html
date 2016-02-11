@@ -2,11 +2,11 @@
     <div layout="row">
         <h1 flex>
             {{vm.researchEntity.getDisplayName()}}
-            <md-button class="md-fab md-raised md-icon-button scientilla-fab" ng-href="#{{vm.editUrl}}" aria-label="Edit">
+            <md-button class="md-fab md-raised md-icon-button scientilla-fab" ng-click="vm.editProfile($event)" aria-label="Edit">
                 <ng-md-icon icon="settings"></ng-md-icon>
             </md-button>
         </h1>
-        <md-button flex="25" ng-click="vm.createNewDocument()" class="md-primary">Add New Document</md-button>
+        <md-button flex="25" ng-click="vm.createNewDocument($event)" class="md-primary">Add New Document</md-button>
     </div>
 </md-subheader>
 <md-tabs md-dynamic-height md-border-bottom class='notifications' md-selected="vm.tab">
