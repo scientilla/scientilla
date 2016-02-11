@@ -15,6 +15,7 @@
         vm.user = AuthService.user;
         vm.deleteGroup = deleteGroup;
         vm.editGroup = editGroup;
+        vm.createNew = createNew;
 
         activate();
 
@@ -22,6 +23,24 @@
             return getGroups().then(function () {
 
             });
+        }
+        
+        function createNew($event) {
+            $mdDialog.show({
+                controller: "GroupFormController",
+                templateUrl: "partials/group-form.html",
+                controllerAs: "vm",
+                parent: angular.element(document.body),
+                targetEvent: $event,
+                locals: {
+                    group: GroupsService.getNewGroup()
+                },
+                fullscreen: true,
+                clickOutsideToClose: true
+            })
+                    .then(function () {
+                        getGroups();
+                    });
         }
 
         function getGroups() {

@@ -4,7 +4,7 @@
             <md-subheader class="md-no-sticky">
                 <h3>Groups</h3>
             </md-subheader>
-            <md-button ng-href="#/groups/new" class="md-primary">Create New Group</md-button>
+            <md-button ng-click="vm.createNew($event)" class="md-primary">Create New Group</md-button>
             <md-list-item class="md-2-line scientilla-main-list" ng-repeat="g in vm.groups">
                 <md-divider class="top-divider"></md-divider> 
                 <div>
