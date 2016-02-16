@@ -26,18 +26,18 @@ module.exports = _.merge({}, researchEntity, {
         },
         name: {
             type: 'STRING',
-            required: true,
+//            required: true,
             defaultsTo: ""
         },
         surname: {
             type: 'STRING',
-            required: true,
+//            required: true,
             defaultsTo: ""
         },
         slug: {
             type: 'STRING',
             unique: true,
-            required: true,
+//            required: true,
             alphanumericdashed: true,
             minLength: 3,
             maxLength: 30,
@@ -47,7 +47,7 @@ module.exports = _.merge({}, researchEntity, {
             type: 'STRING',
             enum: [USER, ADMINISTRATOR],
             defaultsTo: USER,
-            required: true
+//            required: true
         },
         orcidId: {
             type: 'STRING'
@@ -190,47 +190,83 @@ module.exports = _.merge({}, researchEntity, {
                     return User.filterNecessaryReferences(userId, User, maybeSuggestedReferences)
                 });
     },
+    setSlug: function (user) {
+        var name = user.name ? user.name : "";
+        var surname = user.surname ? user.surname : "";
+        var fullName = _.trim(name + " " + surname);
+        var slug = fullName.toLowerCase().replace(/\s+/gi, '-');
+
+        return User
+                .findBySlug(slug)
+                .then(function (usersFound) {
+                    user.slug = usersFound.length ? slug + _.random(1, 999) : slug;
+
+                    return user;
+                });
+    },
     createCompleteUser: function (params) {
-        function generateSlug(user) {
-            var name = user.name ? user.name : "";
-            var surname = user.surname ? user.surname : "";
-            var fullName = _.trim(name + " " + surname);
-            var slug = fullName.toLowerCase().replace(/\s+/gi, '-');
-            return slug;
-        }
         var attributes = _.keys(User._attributes);
         var userObj = _.pick(params, attributes);
-        if (!userObj.slug) {
-            userObj.slug = generateSlug(userObj) + _.random(1, 999);
-        }
-        return User
-                .findByUsername(userObj.username)
-                .then(function (users) {
-                    if (users.length > 0) {
-                        throw new Error('Username already used');
-                    }
-                    return users;
-                })
-                .then(function (users) {
-                    return User.count();
-                })
-                .then(function (usersNum) {
-                    if (usersNum === 0) {
-                        userObj.role = ADMINISTRATOR;
-                    }
-                    return User.create(userObj);
-                })
+
+        return  Promise.resolve(userObj)
+                .then(User.checkUsername)
+                .then(User.create)
                 .then(function (user) {
-                    user.username = params.username;
-                    user.password = params.password;
-                    auth = user;
+                    var authAttributes = _.keys(Auth._attributes);
+                    var auth = _.pick(params, authAttributes);
                     return new Promise(function (resolve, reject) {
-                        waterlock.engine.attachAuthToUser(auth, user, function () {
-                            resolve(user);
-                        });
+                        waterlock.engine.attachAuthToUser(auth, user,
+                                function () {
+                                    resolve(user);
+                                });
                     });
                 });
     },
-    beforeCreate: require('waterlock').models.user.beforeCreate,
-    beforeUpdate: require('waterlock').models.user.beforeUpdate
+    setNewUserRole: function (user) {
+        return User
+                .count()
+                .then(function (usersNum) {
+                    usersNum === 0 ? user.role = ADMINISTRATOR : user.role = USER;
+                    return user;
+                });
+    },
+    checkUsername: function (user) {
+
+        if (_.endsWith(user.username, '@' + sails.config.scientilla.ldap.domain))
+            throw new Error('Cannot create domain users');
+
+        return User
+                .findByUsername(user.username)
+                .then(function (users) {
+                    if (users.length > 0)
+                        throw new Error('Username already used');
+
+                    return user;
+                });
+    },
+    copyAuthData: function (user) {
+        if (!user.auth)
+            return user;
+
+        return Auth
+                .findOneById(user.auth)
+                .then(function (auth) {
+                    user.username = auth.username;
+                    user.name = auth.name;
+                    user.surname = auth.surname;
+
+                    return user;
+                });
+
+    },
+    beforeCreate: function (user, cb) {
+        Promise.resolve(user)
+                .then(User.copyAuthData)
+                .then(User.setNewUserRole)
+                .then(User.setSlug)
+                .then(function () {
+                    cb();
+                });
+
+    }
 });

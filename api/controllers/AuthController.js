@@ -18,7 +18,16 @@ module.exports = require('waterlock').waterlocked({
                 .catch(function (err) {
                     sails.log.debug(err);
                     res.badRequest(err);
-                })
-    }
+                });
+    },
+    login: function (req, res) {
+        var login = require('waterlock').actions.waterlocked().login;
 
+        Auth
+                .findOneByUsername(req.body.username)
+                .then(function (auth) {
+                    req.query.type = (!auth || !auth.password) ? 'ldap' : 'local';
+                    login(req, res);
+                });
+    }
 });

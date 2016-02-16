@@ -1,4 +1,6 @@
 
+var conf = require('./scientilla.js');
+
 /**
  * waterlock
  *
@@ -20,68 +22,46 @@ module.exports.waterlock = {
     // file for more information on the attributes necessary. This is an example
     // of the local authentication method with password reset tokens disabled.
     authMethod: [
-    {
-      name:'waterlock-local-auth',
-      passwordReset:{
-        tokens: false,
-        mail: {
-          protocol: 'SMTP',
-          options:{
-            service: 'Gmail',
-            auth: {
-              user: 'gmail.user@gmail.com',
-              pass: 'userpass'
+        {
+             name: "waterlock-ldap-auth",
+            connection: conf.scientilla.ldap.connection,
+            attributes: {
+                givenName: {
+                    name: {
+                        type: 'string'
+                    }
+                },
+                sn: {
+                    surname: {
+                        type: 'string'
+                    }
+                }
             }
-          },
-          from: 'no-reply@domain.com',
-          subject: 'Your password reset!',
-          forwardUrl: 'http://localhost:1337'
         },
-        template:{
-          file: '../views/email.jade',
-          vars:{}
+        {
+            name: 'waterlock-local-auth',
+            passwordReset: {
+                tokens: false,
+                mail: {
+                    protocol: 'SMTP',
+                    options: {
+                        service: 'Gmail',
+                        auth: {
+                            user: 'gmail.user@gmail.com',
+                            pass: 'userpass'
+                        }
+                    },
+                    from: 'no-reply@domain.com',
+                    subject: 'Your password reset!',
+                    forwardUrl: 'http://localhost:1337'
+                },
+                template: {
+                    file: '../views/email.jade',
+                    vars: {}
+                }
+            },
+            createOnNotFound: false
         }
-      },
-      createOnNotFound: false
-    }
-//        {
-//            name: "waterlock-ldap-auth",
-//            connection: {
-//                url: "ldap://10.255.8.30:3268",
-//      bindDn: "federico.bozzini@iit.it",
-//      bindCredentials: "xxx",
-//                searchBase: "DC=iit,DC=local",
-//                searchFilter: "userprincipalname={{username}}",
-//                cache: true
-//            },
-//            attributes: {
-//                fullName: {
-//                    displayName: {
-//                        type: 'string'
-//                    }
-//                },
-//                username: {
-//                    displayName: {
-//                        type: 'string'
-//                    }
-//                },
-//                uid: {
-//                    displayName: {
-//                        type: 'string'
-//                    }
-//                },
-//                email: {
-//                    userPrincipalName: {
-//                        type: 'string'
-//                    }
-//                },
-//                uid: {
-//                    userPrincipalName: {
-//                        type: 'string'
-//                    }
-//                }
-//            }
-//        }
     ],
     // JSON Web Tokens
     //
@@ -129,7 +109,7 @@ module.exports.waterlock = {
             // obj - {controller: 'blog', action: 'post'}
             // string - 'custom json response string'
             // default - 'default'
-      success: 'default',
+            success: 'default',
 //            success: '/users/jwt',
             // This can be any one of the following
             //
@@ -179,4 +159,5 @@ module.exports.waterlock = {
             failure: 'default'
         }
     }
+
 };

@@ -17,7 +17,7 @@ module.exports = {
         password: {
             type: 'STRING',
             minLength: 1
-        },
+        }
     
   }),
   
