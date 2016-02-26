@@ -16,8 +16,12 @@
             }
         };
     }
+    
+    scientillaExternalDocumentsController.$inject =[
+        '$rootScope'
+    ];
 
-    function scientillaExternalDocumentsController() {
+    function scientillaExternalDocumentsController($rootScope) {
         var vm = this;
         vm.STATUS_WAITING = 0;
         vm.STATUS_LOADING = 1;
@@ -64,6 +68,7 @@
             var newReference = Scientilla.reference.create(reference, researchEntity);
             researchEntity.post('drafts', newReference)
                     .then(function () {
+                        $rootScope.$broadcast("draft.created", draft);
                         _.remove(vm.references, reference);
                     });
         }
