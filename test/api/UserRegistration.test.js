@@ -9,7 +9,7 @@ describe('User registration', function () {
 
     var url = test.getUrl();
     var profile = {
-        username: 'federico.bozzini@iit.it',
+        username: 'federico.bozzini@gmail.com',
         password: 'userpass',
         name: 'Federico',
         lastName: 'Bozzini'
@@ -32,7 +32,7 @@ describe('User registration', function () {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
                                 var newUser = res.body[0];
-                                newUser.username.should.equal('federico.bozzini@iit.it');
+                                newUser.username.should.equal('federico.bozzini@gmail.com');
                                 newUser.role.should.equal(User.ADMINISTRATOR);
                             });
                 })
