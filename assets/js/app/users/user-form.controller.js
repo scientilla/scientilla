@@ -91,8 +91,8 @@
         }
 
         function submit() {
-                UsersService.doSave(vm.user).then(function(){
-                    $mdDialog.hide();
+                UsersService.doSave(vm.user).then(function(user){
+                    $mdDialog.hide(user);
                 });
         }
 

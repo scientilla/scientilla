@@ -92,8 +92,8 @@
         }
 
         function submit() {
-            GroupsService.doSave(vm.group).then(function(){
-                $mdDialog.hide();
+            GroupsService.doSave(vm.group).then(function(group){
+                $mdDialog.hide(group);
             });
         }
         
