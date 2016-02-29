@@ -49,6 +49,9 @@ module.exports = _.merge({}, researchEntity, {
         },
         getType: function () {
             return 'group';
+        },
+        scopusId: {
+            type: 'STRING'
         }
     },
     verifyDraft: function (referenceId) {

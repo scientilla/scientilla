@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "keywords": [],
   "dependencies": {
-    "bluebird": "^3.0.5",
+    "bluebird": "^3.3.3",
     "ejs": "~0.8.4",
     "grunt": "0.4.2",
     "grunt-contrib-clean": "~0.5.0",
@@ -23,13 +23,14 @@
     "rc": "~0.5.0",
     "request": "^2.67.0",
     "request-promise": "^1.0.2",
-    "sails": "~0.11.2",
+    "sails": "~0.12.1",
     "sails-disk": "~0.10.0",
-    "sails-postgresql": "^0.10.16",
+    "sails-postgresql": "^0.11.3",
     "string-similarity": "^1.0.0",
     "waterlock": "~0.1.0",
     "waterlock-ldap-auth": "*",
-    "waterlock-local-auth": "*"
+    "waterlock-local-auth": "*",
+    "pixl-xml":"*"
   },
   "devDependencies": {
     "should": "*",

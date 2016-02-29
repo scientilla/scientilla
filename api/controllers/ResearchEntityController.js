@@ -67,10 +67,7 @@ module.exports = {
             res.badRequest('A Connector parameter is necessary');
             return;
         }
-        Connector.getReferences(Model, researchEntityId, connector)
-                .then(function (suggestedReferences) {
-                    res.json(suggestedReferences);
-                });
+        res.end(Connector.getReferences(Model, researchEntityId, connector));
     }
 };
 
