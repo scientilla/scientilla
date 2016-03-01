@@ -67,7 +67,7 @@ module.exports = {
             res.badRequest('A Connector parameter is necessary');
             return;
         }
-        res.end(Connector.getReferences(Model, researchEntityId, connector));
+        res.halt(Connector.getReferences(Model, researchEntityId, connector));
     }
 };
 
