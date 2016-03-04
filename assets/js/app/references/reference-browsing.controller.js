@@ -19,9 +19,15 @@
         vm.editUrl = vm.researchEntity.getProfileUrl();
         vm.createNewDocument = createNewDocument;
         vm.editProfile = editProfile;
+        vm.openMenu = openMenu;
+        vm.types = Scientilla.reference.getDocumentTypes();
 
-        function createNewDocument($event) {
-            var draft = researchEntity.getNewDocument();
+        function openMenu($mdOpenMenu, ev) {
+            $mdOpenMenu(ev);
+        }
+
+        function createNewDocument($event, type) {
+            var draft = researchEntity.getNewDocument(type);
             researchEntity.all('drafts').post(draft).then(function (draft) {
                 $mdDialog.show({
                     controller: "ReferenceFormController",

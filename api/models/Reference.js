@@ -26,6 +26,22 @@ module.exports = {
             type: 'STRING'
         },
         authors: 'STRING',
+        year: 'STRING',
+        journal: 'STRING',
+        issue: 'STRING',
+        volume: 'STRING',
+        pages: 'STRING',
+        articleNumber: 'STRING',
+        DOI: 'STRING',
+        chapterTitle: 'STRING',
+        editor: 'STRING',
+        publisher: 'STRING',
+        conferenceName: 'STRING',
+        conferenceLocation: 'STRING',
+        acronym: 'STRING',
+        
+        type: 'STRING',
+        sourceType: 'STRING',
         publicCoauthors: {
             collection: 'User',
             via: 'publicReferences'
