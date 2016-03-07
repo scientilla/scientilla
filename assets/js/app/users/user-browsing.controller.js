@@ -4,15 +4,17 @@
             .controller('UserBrowsingController', UserBrowsingController);
 
     UserBrowsingController.$inject = [
-        'UsersService', 
+        '$location',
+        'UsersService',
         'AuthService',
         '$mdDialog'
     ];
 
-    function UserBrowsingController(UsersService, AuthService, $mdDialog) {
+    function UserBrowsingController($location, UsersService, AuthService, $mdDialog) {
         var vm = this;
-        
+
         vm.user = AuthService.user;
+        vm.viewUser = viewUser;
         vm.deleteUser = deleteUser;
         vm.editUser = editUser;
         vm.createNew = createNew;
@@ -33,7 +35,7 @@
                 return vm.users;
             });
         }
-        
+
         function createNew($event, user) {
             $mdDialog.show({
                 controller: "UserFormController",
@@ -50,6 +52,10 @@
                     .then(function () {
                         getUsers();
                     });
+        }
+
+        function viewUser(user) {
+            $location.path('/users/'+user.id);
         }
 
         function editUser($event, user) {

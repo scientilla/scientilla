@@ -16,6 +16,7 @@
 //  to change `assets/styles/importer.less` instead.)
 var cssFilesToInject = [
     'styles/reset.css',
+    'styles/dependencies/bootstrap.min.css',
     'styles/**/*.css'
 ];
 
@@ -29,6 +30,7 @@ var jsFilesToInject = [
     // Dependencies like jQuery, or Angular are brought in here
     'js/dependencies/jquery.min.js',
     'js/dependencies/angular.min.js',
+    'js/dependencies/ui-bootstrap.min.js',
     
     'js/dependencies/**/*.js',
     

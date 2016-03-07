@@ -137,12 +137,12 @@ module.exports = {
                 json: true
             },
             fieldExtract: function (res) {
-                var entry = _.get(res, 'search-results.entry');
+                var error = _.get(res, 'search-results.entry[0].error');
 
-                if (_.has(entry[0], 'error'))
-                    throw new Error(entry.error);
+                if (error)
+                    throw new Error(error);
 
-                return entry;
+                return _.get(res, 'search-results.entry');
             },
             transform: function (r) {
                 return request
@@ -154,10 +154,10 @@ module.exports = {
                             }
                         })
                         .then(function (resXML) {
-      
-                            if(!resXML)
+
+                            if (!resXML)
                                 throw new Error("XML empty");
-                            
+
                             res = XML.parse(resXML);
 
                             return {

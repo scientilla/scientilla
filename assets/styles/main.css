@@ -2,6 +2,53 @@
     width: 100%;
 }
 
+
+
+/*****************************************/
+
+.scientilla-toolbar{
+    height: 50px;
+    color: #337ab7;
+    
+    border-bottom: 1px solid #337ab7;
+    margin-bottom: 20px;
+
+    padding-top: 0.75em;
+}
+
+.scientilla-toolbar a,
+.scientilla-toolbar a:visited,
+.scientilla-toolbar a:hover{
+    color: rgb(51, 122, 183);
+    text-decoration: none;
+    margin-right: 20px;
+
+    font-size: 1.5em;
+}
+
+.scientilla-right-menu{
+    font-size: 1.2em;
+}
+
+.nopadding {
+    padding: 0 !important;
+}
+
+.scrollable{
+     overflow-y: auto;
+}
+
+/*bootstrap*/
+.btn-primary{
+    background-color: #337ab7;
+}
+
+.divider,
+.divider:hover{
+    background-color: inherit !important;
+}
+/*****************************************/
+
 md-list-item.scientilla-main-list {
     align-items: center;
     position: relative;
