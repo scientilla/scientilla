@@ -67,7 +67,7 @@
             //sTODO move to a service
             var newReference = Scientilla.reference.create(reference, researchEntity);
             researchEntity.post('drafts', newReference)
-                    .then(function () {
+                    .then(function (draft) {
                         $rootScope.$broadcast("draft.created", draft);
                         _.remove(vm.references, reference);
                     });
