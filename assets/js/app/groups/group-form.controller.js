@@ -42,6 +42,10 @@
             publicationsAcronym: {
                 inputType: 'text',
                 label: 'Publications: Group Acronym'
+            },
+            scopusId: {
+                inputType: 'text',
+                label: 'Scopus ID'
             }
         };
 

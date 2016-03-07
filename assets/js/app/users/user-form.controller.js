@@ -49,6 +49,10 @@
             orcidId: {
                 inputType: 'text',
                 label: 'ORCID ID'
+            },
+            scopusId: {
+                inputType: 'text',
+                label: 'Scopus ID'
             }
         };
         
