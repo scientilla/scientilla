@@ -1,18 +1,22 @@
-<div >
-    <md-content>
-        <md-toolbar>
-            <div class="md-toolbar-tools">
-                <span flex></span>
-                <md-button ng-if="!vm.isLogged" ng-href="#/register" aria-label="Register">
-                    Register
-                </md-button>
-                <md-button ng-if="!vm.isLogged" ng-href="#/login" aria-label="Login">
-                    Login
-                </md-button>
-                <md-button ng-if="vm.isLogged" ng-href="#/logout" aria-label="Logout">
-                    Logout
-                </md-button>
-            </div>
-        </md-toolbar>
-    </md-content>
+<div class="row scientilla-toolbar">
+    <div class="col-sm-7">
+        <a href="">
+        Scientilla
+        </a>
+    </div>
+    <div class="col-sm-5 text-right">
+        <div ng-if="!vm.isLogged">
+            <a ng-href="#/register" aria-label="Register">
+                Register
+            </a>
+            <a ng-href="#/login" aria-label="Login">
+                Login
+            </a>
+        </div>
+        <div ng-if="vm.isLogged">
+            <a ng-href="#/logout" aria-label="Logout">
+                Logout
+            </a>
+        </div>
+    </div>
 </div>

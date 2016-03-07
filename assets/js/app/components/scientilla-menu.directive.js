@@ -25,12 +25,14 @@
         function refresh() {
             vm.isLogged = AuthService.isLogged;
             vm.user = AuthService.user;
-            
+
             if (vm.user) {
-                vm.menuItems = [{
+                vm.menuItems = [
+                    {
                         type: 'item',
                         title: 'Notifications',
-                        url: '#/users/' + vm.user.id + '/notifications'
+                        url: '#/users/' + vm.user.id + '/notifications',
+                        active: true
                     },
                     {
                         type: 'separator'
@@ -50,23 +52,28 @@
                 });
                 vm.menuItems = _.union(vm.menuItems, [{
                         type: 'separator'
-                    },{
+                    }, {
                         type: 'item',
                         title: 'People',
                         url: '#/users'
-                    },{
+                    }, {
                         type: 'item',
                         title: 'Groups',
                         url: '#/groups'
                     }]);
             }
         }
-            
+
         function menuItemClicked(item) {
-            _.each(vm.menuItems, function(i) {
-               i.active = false; 
+
+            if (item.type !== 'item')
+                return;
+
+            _.each(vm.menuItems, function (i) {
+                i.active = false;
             });
             item.active = true;
+
         }
     }
 

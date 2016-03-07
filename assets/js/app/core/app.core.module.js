@@ -11,7 +11,7 @@
         /* 3dr-pary modules */
 //        "ui.bootstrap",
         'formFor',
-        'formFor.materialTemplates',
+        'formFor.bootstrapTemplates',
         'restangular'
     ]);
 })();

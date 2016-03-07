@@ -26,20 +26,22 @@ module.exports = function (grunt) {
                     expand: true,
                     cwd: './bower_components',
                     src: [
-                        'angular/angular.min.js', 
-                        'lodash/lodash.min.js', 
-                        'angular-route/angular-route.min.js', 
-                        'angular-resource/angular-resource.min.js',
-                        'jquery/dist/jquery.min.js',
-                        'bootstrap/dist/js/bootstrap.min.js',
-                        'angular-material/angular-material.min.js',
+                        'angular/angular.min.js',
                         'angular-animate/angular-animate.min.js',
                         'angular-aria/angular-aria.min.js',
+                        'angular-bootstrap/ui-bootstrap.min.js',
+                        'angular-bootstrap/ui-bootstrap-tpls.min.js',
                         'angular-form-for/dist/form-for.min.js',
-                        'angular-form-for/dist/form-for.material-templates.js',
-                        'restangular/dist/restangular.min.js',
+                        'angular-form-for/dist/form-for.bootstrap-templates.js',
+                        'angular-material/angular-material.min.js',
                         'angular-material-icons/angular-material-icons.min.js',
-                        'angular-sanitize/angular-sanitize.min.js'
+                        'angular-resource/angular-resource.min.js',
+                        'angular-route/angular-route.min.js',
+                        'angular-sanitize/angular-sanitize.min.js',
+                        'bootstrap/dist/js/bootstrap.min.js',
+                        'jquery/dist/jquery.min.js',
+                        'lodash/lodash.min.js',
+                        'restangular/dist/restangular.min.js'
                     ],
                     flatten: true,
                     dest: '.tmp/public/js/dependencies'
@@ -47,14 +49,11 @@ module.exports = function (grunt) {
                     expand: true,
                     cwd: './bower_components',
                     src: [
-                        'bootstrap/dist/js/bootstrap.min.css',
                         'angular-material/angular-material.min.css',
-                        'angular-form-for/angular-material.min.css'
-//                        'angular-material-icons/angular-material-icons.css'
-//                        'angular-animate/angular-animate.min.css',
-//                        'angular-aria/angular-aria.min.css',
+                        'bootstrap/dist/css/bootstrap.min.css',
+                        'font-awesome/css/font-awesome.min.css',
+                        'font-awesome/fonts/*'
                     ],
-                    flatten: true,
                     dest: '.tmp/public/styles/dependencies'
                 },{
                     expand: true,

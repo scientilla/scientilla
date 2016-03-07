@@ -1,11 +1,11 @@
-<scientilla-toolbar></scientilla-toolbar>
-<div layout="column">
-    <section layout="row" flex>
-        <scientilla-menu></scientilla-menu>
-        <md-content flex layout-padding style="position: absolute; top:64px; bottom:0; left: 260px; width: 800px;">
-            <div layout="column" layout-fill layout-align="top center">
-                <div class="main-view" ng-view></div>
-            </div>
-        </md-content>
-  </section>
+<div class="container-fluid">
+    <scientilla-toolbar></scientilla-toolbar>
+    <div class="row">
+        <div class="col-md-2 nopadding">
+            <scientilla-menu></scientilla-menu>
+        </div>
+        <div class="col-md-8 nopadding">
+            <div class="main-view" ng-view></div>
+        </div>
+    </div>
 </div>

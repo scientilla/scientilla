@@ -4,6 +4,7 @@
         'app.core',
         'auth',
         'components',
+        'ui.bootstrap',
 
         /* Feature areas */
         'users',

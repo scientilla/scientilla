@@ -3,7 +3,7 @@
           validation-rules="vm.validationAndViewRules"
           form-for-builder
           class="autosave {{vm.status}}">
-        <md-button ng-click="vm.cancel()">Close</md-button>
-        <submit-button ng-click="vm.submit()" label="Save"></submit-button>
+        <button class="btn btn-primary" ng-click="vm.cancel()">Close</button>
+        <button class="btn btn-primary" ng-click="vm.submit()">Save</button>
     </form>
 </div>
