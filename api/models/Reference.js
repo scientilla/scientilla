@@ -107,9 +107,13 @@ module.exports = {
         },
         savePromise: function() {
             var self = this;
-            return new Promise(function (resolve) {
+            return new Promise(function (resolve, reject) {
                 self.save(function (err, re) {
-                    resolve(re);
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(re);
+                    }
                 });
             });
         }

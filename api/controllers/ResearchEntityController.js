@@ -33,11 +33,7 @@ module.exports = {
         var researchEntityId = req.params.id;
         var referenceId = req.params.referenceId;
         var Model = getModel(req);
-        Model
-                .verifyDraft(researchEntityId, referenceId)
-                .then(function (reference) {
-                    res.json(reference);
-                });
+        res.halt(Model.verifyDraft(researchEntityId, referenceId));
     },
     verifyReference: function (req, res) {
         var researchEntityId = req.params.id;
