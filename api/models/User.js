@@ -150,7 +150,7 @@ module.exports = _.merge({}, researchEntity, {
                     draft.draftCreator = null;
                     draft.draft = false;
                     draft.privateCoauthors.add(draftCreator);
-                    draft.save();
+                    return draft.savePromise();
                     //STODO: return the new reference
                 });
     },

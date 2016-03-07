@@ -8,6 +8,7 @@
 
 var _ = require('lodash');
 var stringSimilarity = require('string-similarity');
+var Promise = require('bluebird');
 
 //sTODO: evaluated whether convert the constants to numbers
 var VERIFIED = 'verified';
@@ -103,6 +104,14 @@ module.exports = {
                 similarity *= fieldSimilarity;
             }, this);
             return similarity;
+        },
+        savePromise: function() {
+            var self = this;
+            return new Promise(function (resolve) {
+                self.save(function (err, re) {
+                    resolve(re);
+                });
+            });
         }
     },
     checkDeletion: function (referenceId) {
