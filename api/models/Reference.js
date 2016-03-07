@@ -95,7 +95,7 @@ module.exports = {
             var similarity = 1;
             _.forEach(similarityFields, function (f) {
                 var fieldSimilarity;
-                if (!_.isNull(this[f]) && !_.isNull(ref[f])) {
+                if (!_.isUndefined(this[f]) && !_.isUndefined(ref[f]) && !_.isNull(this[f]) && !_.isNull(ref[f])) {
                     fieldSimilarity = stringSimilarity.compareTwoStrings(this[f], ref[f]);
                 } else {
                     fieldSimilarity = .999;
