@@ -54,14 +54,14 @@ module.exports = _.merge({}, researchEntity, {
             type: 'STRING'
         }
     },
-    verifyDraft: function (referenceId) {
+    verifyDraft: function (groupId, referenceId) {
         return Reference.findOneById(referenceId)
-                .then(function (r) {
-                    var draftGroupCreator = r.draftGroupCreator;
-                    r.draftGroupCreator = null;
-                    r.draft = false;
-                    r.privateGroups.add(draftGroupCreator);
-                    return r.save();
+                .then(function (draft) {
+                    var draftGroupCreator = draft.draftGroupCreator;
+                    draft.draftGroupCreator = null;
+                    draft.draft = false;
+                    draft.privateGroups.add(draftGroupCreator);
+                    return draft.savePromise();
                     //STODO: return the new reference
                 });
     },
