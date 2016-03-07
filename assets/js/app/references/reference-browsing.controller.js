@@ -28,21 +28,19 @@
 
         function createNewDocument($event, type) {
             var draft = researchEntity.getNewDocument(type);
-            researchEntity.all('drafts').post(draft).then(function (draft) {
-                $mdDialog.show({
-                    controller: "ReferenceFormController",
-                    templateUrl: "partials/reference-form.html",
-                    controllerAs: "vm",
-                    parent: angular.element(document.body),
-                    targetEvent: $event,
-                    locals: {
-                        document: draft.clone()
-                    },
-                    fullscreen: true,
-                    clickOutsideToClose: true
-                }).then(function (draft) {
-                    $rootScope.$broadcast("draft.created", draft);
-                });
+            $mdDialog.show({
+                controller: "ReferenceFormController",
+                templateUrl: "partials/reference-form.html",
+                controllerAs: "vm",
+                parent: angular.element(document.body),
+                targetEvent: $event,
+                locals: {
+                    document: draft
+                },
+                fullscreen: true,
+                clickOutsideToClose: true
+            }).then(function (draft) {
+                $rootScope.$broadcast("draft.created", draft);
             });
         }
 

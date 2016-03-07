@@ -55,7 +55,7 @@
                 $scope.$watch('vm.document.' + f, _.debounce(saveDocument, 3000), true);
             });
         }
-        
+
         function loadDocumentFields() {
             vm.validationAndViewRules = _.merge({
                 sourceType: {
@@ -73,10 +73,12 @@
             }, Scientilla.reference.getDocumentsFields(vm.document.sourceType));
             refreshForm();
         }
-        
+
         function refreshForm() {
             vm.formVisible = false;
-            $timeout(function() {vm.formVisible = true;}, 0);
+            $timeout(function () {
+                vm.formVisible = true;
+            }, 0);
         }
 
         function markModified(newValue, oldValue) {
@@ -90,9 +92,17 @@
                 return $q(function (resolve) {
                     resolve(vm.document);
                 });
-            return vm.document.save().then(function () {
-                vm.status = 'saved';
-            });
+            if (vm.document.id)
+                return vm.document.save().then(function () {
+                    vm.status = 'saved';
+                });
+            else
+                return vm.researchEntity.all('drafts')
+                        .post(vm.document)
+                        .then(function (draft) {
+                            vm.document = draft;
+                            vm.status = 'saved';
+                        });
         }
 
         function submit() {
