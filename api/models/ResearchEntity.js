@@ -21,6 +21,17 @@ module.exports = {
             return _.union(
                     this.publicReferences,
                     this.privateReferences);
+        },
+        savePromise: function() {
+            var self = this;
+            return new Promise(function (resolve, reject) {
+                self.save(function (err, re) {
+                    if (err)
+                        reject(err);
+                    else
+                        resolve(re);
+                });
+            });
         }
     },
     getOne: function (ResearchEntity, researchEntityId, populateFields) {
@@ -108,11 +119,7 @@ module.exports = {
                 .then(function (researchEntity) {
                     researchEntity.privateReferences.remove(referenceId);
                     researchEntity.publicReferences.remove(referenceId);
-                    return new Promise(function (resolve) {
-                        researchEntity.save(function (err, u) {
-                            resolve();
-                        });
-                    });
+                    return researchEntity.savePromise();
                 })
                 .then(function () {
                     return Reference.checkDeletion(referenceId);
@@ -122,11 +129,7 @@ module.exports = {
         return ResearchEntity.findOneById(researchEntityId)
                 .then(function (researchEntity) {
                     researchEntity.privateReferences.add(referenceId);
-                    return new Promise(function (resolve) {
-                        researchEntity.save(function (err, u) {
-                            resolve();
-                        });
-                    });
+                    return researchEntity.savePromise();
                 });
     },
     filterNecessaryReferences: function (userId, ResearchEntity, maybeSuggestedReferences) {
