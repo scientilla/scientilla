@@ -33,6 +33,7 @@ module.exports = function (grunt) {
                         'angular-bootstrap/ui-bootstrap-tpls.min.js',
                         'angular-form-for/dist/form-for.min.js',
                         'angular-form-for/dist/form-for.bootstrap-templates.js',
+                        'angular-local-storage/dist/angular-local-storage.min.js',
                         'angular-material/angular-material.min.js',
                         'angular-material-icons/angular-material-icons.min.js',
                         'angular-resource/angular-resource.min.js',
@@ -51,6 +52,7 @@ module.exports = function (grunt) {
                     src: [
                         'angular-material/angular-material.min.css',
                         'bootstrap/dist/css/bootstrap.min.css',
+                        'bootstrap/dist/fonts/*',
                         'font-awesome/css/font-awesome.min.css',
                         'font-awesome/fonts/*'
                     ],

@@ -1,18 +1,49 @@
 (function () {
     angular.module("auth").factory("AuthService",
-            ["$http", "Restangular", "UsersService", "$q", "$rootScope", function ($http, Restangular, UsersService, $q, $rootScope) {
+            ["$http", "Restangular", "UsersService", "$q", "$rootScope", "localStorageService",
+                function ($http, Restangular, UsersService, $q, $rootScope, localStorageService) {
+
                     var service = {
                         isLogged: false,
                         userId: null,
+                        username: null,
                         user: null,
+                        jwtToken: null
                     };
+
+                    var localData = localStorageService.get("authService");
+
+                    if (!!localData)
+                    {
+                        service = {
+                            isLogged: localData.isLogged,
+                            userId: localData.userId,
+                            username: localData.username,
+                            user: localData.user,
+                            jwtToken: localData.jwtToken
+                        };
+
+                        _.defaults(service.user, Scientilla.user);
+                        _.forEach(service.user.admininstratedGroups, function (g) {
+                            _.defaults(g, Scientilla.group);
+                        });
+
+
+                        Restangular.setDefaultHeaders({access_token: service.jwtToken});
+                        $http.defaults.headers.common.access_token = service.jwtToken;
+                        $rootScope.$broadcast("LOGIN");
+                        
+
+                    }
+
                     //sTODO: refactor
                     service.login = function (credentials) {
+
                         return authOp('/auths/login', credentials);
-                    },
+                    };
                     service.register = function (registrationData) {
                         return authOp('/auths/register', registrationData);
-                    },
+                    };
                     service.logout = function () {
                         return $http.get('/auths/logout').then(function () {
 
@@ -23,6 +54,9 @@
                             service.user = null;
                             service.userId = null;
                             $rootScope.$broadcast("LOGOUT");
+
+                            localStorageService.set("authService", null);
+
                         });
                     };
                     return service;
@@ -52,6 +86,14 @@
                                         Restangular.setDefaultHeaders({access_token: service.jwtToken});
                                         $http.defaults.headers.common.access_token = service.jwtToken;
 
+
+                                        localStorageService.set("authService", {
+                                            isLogged: service.isLogged,
+                                            userId: service.userId,
+                                            username: service.username,
+                                            user: service.user,
+                                            jwtToken: service.jwtToken
+                                        });
 
                                         $rootScope.$broadcast("LOGIN");
                                         resolve();

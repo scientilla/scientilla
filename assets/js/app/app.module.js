@@ -5,13 +5,13 @@
         'auth',
         'components',
         'ui.bootstrap',
+        'LocalStorageModule',
 
         /* Feature areas */
         'users',
         'references',
         'groups',
-        'notifications',
-        'external'
+        'notifications'
     ]);
 })();
 

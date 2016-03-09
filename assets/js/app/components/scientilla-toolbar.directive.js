@@ -3,7 +3,7 @@
 
     angular.module('components')
             .directive('scientillaToolbar', scientillaToolbar);
-    
+
     function scientillaToolbar() {
         return {
             restrict: 'E',
@@ -14,12 +14,18 @@
             }
         };
     }
-    
+
     function scientillaToolbarController($scope, AuthService) {
         var vm = this;
 
-        $scope.$on('LOGIN', refresh);
-        $scope.$on('LOGOUT', refresh);
+        activate();
+
+        function activate() {
+
+            $scope.$on('LOGIN', refresh);
+            $scope.$on('LOGOUT', refresh);
+            refresh();
+        }
 
         function refresh() {
             vm.isLogged = AuthService.isLogged;

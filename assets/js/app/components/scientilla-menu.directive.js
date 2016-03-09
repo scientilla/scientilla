@@ -19,8 +19,15 @@
         var vm = this;
 
         vm.menuItemClicked = menuItemClicked;
-        $scope.$on('LOGIN', refresh);
-        $scope.$on('LOGOUT', refresh);
+
+        activate();
+
+        function activate() {
+            $scope.$on('LOGIN', refresh);
+            $scope.$on('LOGOUT', refresh);
+
+            refresh();
+        }
 
         function refresh() {
             vm.isLogged = AuthService.isLogged;
