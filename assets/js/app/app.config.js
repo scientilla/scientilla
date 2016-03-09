@@ -4,9 +4,9 @@
             .config(configure)
             .run(run);
 
-    configure.$inject = ['RestangularProvider', '$routeProvider'];
+    configure.$inject = ['RestangularProvider', '$routeProvider', 'localStorageServiceProvider'];
 
-    function configure(RestangularProvider, $routeProvider) {
+    function configure(RestangularProvider, $routeProvider, localStorageServiceProvider) {
         $routeProvider
                 .when("/", {
                     template: "",
@@ -17,7 +17,12 @@
                 });
 
         //sTODO: set request error interceptor
+
+        localStorageServiceProvider
+                .setPrefix('scientilla');
     }
+
+    run.$inject = ['$rootScope', '$location', 'AuthService', 'Restangular'];
 
     function run($rootScope, $location, AuthService, Restangular) {
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
