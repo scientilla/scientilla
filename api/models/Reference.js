@@ -94,7 +94,7 @@ module.exports = {
         getSimilarity: function (ref) {
             var similarityFields = ['authors', 'title'];
             var similarity = 1;
-            _.forEach(similarityFields, function (f) {
+            _.forEach(similarityFields, _.bind(function (f) {
                 var fieldSimilarity;
                 if (!_.isUndefined(this[f]) && !_.isUndefined(ref[f]) && !_.isNull(this[f]) && !_.isNull(ref[f])) {
                     fieldSimilarity = stringSimilarity.compareTwoStrings(this[f], ref[f]);
@@ -102,7 +102,7 @@ module.exports = {
                     fieldSimilarity = .999;
                 }
                 similarity *= fieldSimilarity;
-            }, this);
+            }, this));
             return similarity;
         },
         savePromise: function() {
