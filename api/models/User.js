@@ -20,7 +20,7 @@ module.exports = _.merge({}, researchEntity, {
     attributes: require('waterlock').models.user.attributes({
         //Constants
         username: {
-            type: 'STRING',
+            type: 'email',
 //            required: true,
             defaultsTo: ""
         },
@@ -222,8 +222,11 @@ module.exports = _.merge({}, researchEntity, {
                     var auth = _.pick(params, authAttributes);
                     return new Promise(function (resolve, reject) {
                         waterlock.engine.attachAuthToUser(auth, user,
-                                function () {
-                                    resolve(user);
+                                function (err) {
+                                    if (err)
+                                        reject(err);
+                                    else
+                                        resolve(user);
                                 });
                     });
                 });
