@@ -161,14 +161,14 @@ module.exports = _.merge({}, researchEntity, {
                     return user.admininstratedGroups;
                 });
     },
-    getNotifications: function (userId, user) {
+    getNotifications: function (userId) {
         return User
                 .getAdministeredGroups(userId)
                 .then(function (administeredGroups) {
                     var suggestedReferencesFunctions = _.map(administeredGroups, function (g) {
                         return Group.getSuggestedReferences(g.id);
                     });
-                    suggestedReferencesFunctions.unshift(User.getSuggestedReferences(userId, user));
+                    suggestedReferencesFunctions.unshift(User.getSuggestedReferences(userId));
                     return Promise.all(suggestedReferencesFunctions)
                             .then(function (referencesGroups) {
                                 var userReferences = referencesGroups.shift();
@@ -187,8 +187,11 @@ module.exports = _.merge({}, researchEntity, {
                 });
     },
     //sTODO: add deep populate for other fields of the references
-    getSuggestedReferences: function (userId, user) {
-        return Reference.find({draft: false, authors: {contains: user.surname}})
+    getSuggestedReferences: function (userId) {
+        return User.findOneById(userId)
+                .then(function(user) {
+                    return Reference.find({draft: false, authors: {contains: user.surname}})
+                })
                 .then(function (maybeSuggestedReferences) {
                     return User.filterNecessaryReferences(userId, User, maybeSuggestedReferences)
                 });

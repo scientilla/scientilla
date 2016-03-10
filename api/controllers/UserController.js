@@ -52,8 +52,7 @@ module.exports = require('waterlock').actions.user(_.merge({}, researchEntityCon
     },
     getNotifications: function (req, res) {
         var userId = req.params.id;
-        var user = req.session.user;
-        User.getNotifications(userId, user)
+        User.getNotifications(userId)
                 .then(function (suggestedReferences) {
                     res.json(suggestedReferences);
                 });
