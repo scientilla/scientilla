@@ -82,16 +82,17 @@
         }
 
         function markModified(newValue, oldValue) {
-            if (newValue === oldValue)
+            if (newValue === oldValue || _.isUndefined(oldValue))
                 return;
             vm.status = 'unsaved';
         }
 
-        function saveDocument() {
+        function saveDocument(newValue, oldValue) {
+            if (newValue === oldValue || _.isUndefined(oldValue))
+                return $q.resolve(vm.document);
             if (vm.status === 'saved')
-                return $q(function (resolve) {
-                    resolve(vm.document);
-                });
+                return $q.resolve(vm.document);
+            
             if (vm.document.id)
                 return vm.document.save().then(function () {
                     vm.status = 'saved';

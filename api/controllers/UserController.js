@@ -33,14 +33,7 @@ module.exports = require('waterlock').actions.user(_.merge({}, researchEntityCon
     },
     create: function (req, res, next) {
         var params = waterlock._utils.allParams(req);
-        User.createCompleteUser(params)
-                .then(function (user) {
-                    res.json(user);
-                })
-                .catch(function (err) {
-                    sails.log.debug(err);
-                    res.badRequest(err);
-                });
+        res.halt(User.createCompleteUser(params));
     },
     getSuggestedReferences: function (req, res) {
         var userId = req.params.id;
@@ -52,8 +45,7 @@ module.exports = require('waterlock').actions.user(_.merge({}, researchEntityCon
     },
     getNotifications: function (req, res) {
         var userId = req.params.id;
-        var user = req.session.user;
-        User.getNotifications(userId, user)
+        User.getNotifications(userId)
                 .then(function (suggestedReferences) {
                     res.json(suggestedReferences);
                 });

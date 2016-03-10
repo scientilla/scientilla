@@ -83,7 +83,20 @@ Scientilla.user = {
             draftCreator: this.id,
             draft: true,
             type: documentTypeObj.key,
-            sourceType: documentTypeObj.defaultSource
+            sourceType: documentTypeObj.defaultSource,
+            year: '',
+            journal: '',
+            issue: '',
+            volume: '',
+            pages: '',
+            articleNumber: '',
+            DOI: '',
+            chapterTitle: '',
+            editor: '',
+            publisher: '',
+            conferenceName: '',
+            conferenceLocation: '',
+            acronym: ''
         };
     }
 
@@ -389,7 +402,20 @@ Scientilla.group = {
             draftGroupCreator: this.id,
             draft: true,
             type: documentTypeObj.key,
-            sourceType: documentTypeObj.defaultSource
+            sourceType: documentTypeObj.defaultSource,
+            year: '',
+            journal: '',
+            issue: '',
+            volume: '',
+            pages: '',
+            articleNumber: '',
+            DOI: '',
+            chapterTitle: '',
+            editor: '',
+            publisher: '',
+            conferenceName: '',
+            conferenceLocation: '',
+            acronym: ''
         };
     }
 };
