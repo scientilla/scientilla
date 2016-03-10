@@ -17,9 +17,20 @@
     </div>
 
 
-    <md-button class="md-raised" ng-disabled="!selectedConnectorName" ng-click="vm.connectorChanged(selectedConnectorName)">Search</md-button>
-    <md-progress-linear md-mode="indeterminate" ng-show="vm.status === vm.STATUS_LOADING"></md-progress-linear>
+    <button class="btn btn-primary"
+            ng-disabled="!selectedConnectorName"
+            ng-click="vm.connectorChanged(selectedConnectorName)"
+            ng-if="vm.status !== vm.STATUS_LOADING" >
+        Search
+    </button>
 
+    <div class="progress" ng-if="vm.status === vm.STATUS_LOADING">
+        <div class="progress-bar progress-bar-striped active" 
+             role="progressbar"
+             style="width: 100%">
+            Loading
+        </div>
+    </div>
 
     <div ng-show="vm.status === vm.STATUS_ERROR">
         An error happened
@@ -34,7 +45,7 @@
                 <div class="col-md-4 text-right">
                     <h3>
                         <button class="btn btn-primary"  ng-click="vm.copyReference(r, vm.researchEntity)" >
-                            <i class="fa fa-copy"></i>
+                            <span class="fa fa-copy"></span>
                             Copy
                         </button>
                     </h3>

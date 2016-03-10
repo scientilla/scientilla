@@ -4,15 +4,17 @@
             .controller('GroupBrowsingController', GroupBrowsingController);
 
     GroupBrowsingController.$inject = [
+        '$location',
         'GroupsService',
         'AuthService',
-        '$mdDialog'
+        '$uibModal'
     ];
 
-    function GroupBrowsingController(GroupsService, AuthService, $mdDialog) {
+    function GroupBrowsingController($location, GroupsService, AuthService, $uibModal) {
         var vm = this;
 
         vm.user = AuthService.user;
+        vm.viewGroup = viewGroup;
         vm.deleteGroup = deleteGroup;
         vm.editGroup = editGroup;
         vm.createNew = createNew;
@@ -25,22 +27,8 @@
             });
         }
         
-        function createNew($event) {
-            $mdDialog.show({
-                controller: "GroupFormController",
-                templateUrl: "partials/group-form.html",
-                controllerAs: "vm",
-                parent: angular.element(document.body),
-                targetEvent: $event,
-                locals: {
-                    group: GroupsService.getNewGroup()
-                },
-                fullscreen: true,
-                clickOutsideToClose: true
-            })
-                    .then(function () {
-                        getGroups();
-                    });
+        function createNew() {
+            openGroupForm();
         }
 
         function getGroups() {
@@ -50,6 +38,10 @@
                         return vm.groups;
                     });
         }
+        
+        function viewGroup(g) {
+            $location.path('/groups/'+g.id);
+        }
 
         function deleteGroup(group) {
             group.remove()
@@ -58,22 +50,31 @@
                     });
         }
 
-        function editGroup($event, group) {
-            $mdDialog.show({
-                controller: "GroupFormController",
-                templateUrl: "partials/group-form.html",
+        function editGroup(group) {
+            openGroupForm(group);
+        }
+        
+        
+        
+        // private
+        function openGroupForm(group) {
+
+            $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/group-form.html',
+                controller: 'GroupFormController',
                 controllerAs: "vm",
-                parent: angular.element(document.body),
-                targetEvent: $event,
-                locals: {
-                    group: group.clone()
-                },
-                fullscreen: true,
-                clickOutsideToClose: true
+                resolve: {
+                    group: function () {
+                        return !group ? GroupsService.getNewGroup() : group.clone();
+                    }
+                }
             })
+                    .result
                     .then(function () {
                         getGroups();
                     });
         }
+        
     }
 })();

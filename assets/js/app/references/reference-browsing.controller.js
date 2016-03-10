@@ -6,12 +6,12 @@
     ReferenceBrowsingController.$inject = [
         'researchEntity',
         'ContextService',
-        '$mdDialog',
+        '$uibModal',
         '$rootScope',
         'GroupsService'
     ];
 
-    function ReferenceBrowsingController(researchEntity, ContextService, $mdDialog, $rootScope, GroupsService) {
+    function ReferenceBrowsingController(researchEntity, ContextService, $uibModal, $rootScope, GroupsService) {
         var vm = this;
 
         vm.researchEntity = researchEntity;
@@ -26,54 +26,52 @@
             $mdOpenMenu(ev);
         }
 
-        function createNewDocument($event, type) {
+        function createNewDocument(type) {
             var draft = researchEntity.getNewDocument(type);
-            $mdDialog.show({
-                controller: "ReferenceFormController",
-                templateUrl: "partials/reference-form.html",
+
+            $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/reference-form.html',
+                controller: 'ReferenceFormController',
                 controllerAs: "vm",
-                parent: angular.element(document.body),
-                targetEvent: $event,
-                locals: {
-                    document: draft
-                },
-                fullscreen: true,
-                clickOutsideToClose: true
-            }).then(function (draft) {
-                $rootScope.$broadcast("draft.created", draft);
+                resolve: {
+                    document: function () {
+                        return draft;
+                    }
+                }
             });
         }
 
-        function editProfile($event) {
-            var getDialog;
+        function editProfile() {
+            
+            var modalInstance;
             if (researchEntity.getType() === 'user') {
-                getDialog = $mdDialog.show({
-                    controller: "UserFormController",
-                    templateUrl: "partials/user-form.html",
+                modalInstance = $uibModal.open({
+                    animation: true,
+                    templateUrl: 'partials/user-form.html',
+                    controller: 'UserFormController',
                     controllerAs: "vm",
-                    parent: angular.element(document.body),
-                    targetEvent: $event,
-                    locals: {
-                        user: vm.researchEntity.clone()
-                    },
-                    fullscreen: true,
-                    clickOutsideToClose: true
+                    resolve: {
+                        user: function () {
+                            return vm.researchEntity.clone();
+                        }
+                    }
                 });
             } else {
-                getDialog = $mdDialog.show({
-                    controller: "GroupFormController",
-                    templateUrl: "partials/group-form.html",
+                modalInstance = $uibModal.open({
+                    animation: true,
+                    templateUrl: 'partials/group-form.html',
+                    controller: 'GroupFormController',
                     controllerAs: "vm",
-                    parent: angular.element(document.body),
-                    targetEvent: $event,
-                    locals: {
-                        group: GroupsService.one(researchEntity.id).get({populate: ['memberships', 'administrators']})
-                    },
-                    fullscreen: true,
-                    clickOutsideToClose: true
+                    resolve: {
+                        group: function () {
+                            return GroupsService.one(researchEntity.id).get({populate: ['memberships', 'administrators']});
+                        }
+                    }
                 });
             }
-            getDialog
+            modalInstance
+                    .result
                     .then(function (researchEntity) {
                         vm.researchEntity = researchEntity;
                     });

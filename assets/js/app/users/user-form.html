@@ -1,20 +1,14 @@
-<md-dialog aria-label="Profile"  ng-cloak>
-    <md-dialog-content>
-        <div>
-            <form form-for="vm.user"
-                  validation-rules="vm.validationAndViewRules"
-                  form-for-builder>
-                <scientilla-multicomplete
-                    items="vm.user.collaborations"
-                    query="vm.getGroupsQuery"
-                    filter="vm.getCollaborationsFilter"
-                    transform="vm.groupToCollaboration"
-                    title="Collaborations"
-                    >
-                </scientilla-multicomplete> 
-                <button class="btn btn-primary" ng-click="vm.closeDialog()">Close</button>
-                <button class="btn btn-primary" type="submit" ng-click="vm.submit()">Save</button>
-            </form>
-        </div>
-    </md-dialog-content>
-</md-dialog>
+<form form-for="vm.user"
+      validation-rules="vm.validationAndViewRules"
+      form-for-builder>
+    <scientilla-multicomplete
+        items="vm.user.collaborations"
+        query="vm.getGroupsQuery"
+        filter="vm.getCollaborationsFilter"
+        transform="vm.groupToCollaboration"
+        title="Collaborations"
+        >
+    </scientilla-multicomplete> 
+    <button class="btn btn-primary" ng-click="vm.closeDialog()">Close</button>
+    <button class="btn btn-primary" type="submit" ng-click="vm.submit()">Save</button>
+</form>

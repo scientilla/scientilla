@@ -5,61 +5,40 @@
                 {{target.getDisplayName()}}
             </uib-tab-heading>
 
-            <h5>Suggested References</h5>
+            <h3>Suggested References</h3>
+            
+            <div ng-repeat="n in vm.notifications| filter: {type: 'reference', targetId: target.id, targetType: target.getType()}">
 
-            <ul class="list-group" >
-                <li class="list-group-item" ng-repeat="n in vm.notifications| filter: {type: 'reference', targetId: target.id, targetType: target.getType()} ">
-                    {{r = n.content.reference;""}}
-                    <h3>
-                        <span ng-bind-html='r | title'></span>
-                    </h3>
-                    <div><i><span ng-bind-html='r | linkableauthors'></span></i></div>
-
-                    <button class="btn btn-link" ng-href="#/references/{{r.id}}" aria-label="Details">
-                        <span class="glyphicon glyphicon-book" aria-hidden="true"></span>
-                    </button>
-                    <button class="btn btn-link" ng-click="vm.copyReference(n, target)" aria-label="Copy to draft">
-                        <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
-                    </button>
-                    <button class="btn btn-link" ng-click="vm.verifyReference(n, target)" aria-label="Verify reference">
-                        <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-                    </button>
-                </li>
-            </ul>
+                <div class="row">
+                    <div class="col-md-8">
+                        {{r = n.content.reference;""}}
+                        <scientilla-document document="r"></scientilla-document>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <h3>
+                            <div class="btn-group" uib-dropdown>
+                                <button  ng-click="vm.verifyReference(n, target)" type="button" class="btn btn-primary">
+                                    <span class="fa fa-check"></span>
+                                    Verify
+                                </button>
+                                <button type="button" class="btn btn-primary" uib-dropdown-toggle>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul uib-dropdown-menu >
+                                    <li>
+                                        <a ng-click="vm.copyReference(n, target)" href="javascript:void(0)">
+                                            <span class="fa fa-copy"></span>
+                                            Copy reference
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </h3>
+                    </div>
+                </div>
+                <hr>
+            </div>
 
         </uib-tab>
     </uib-tabset>
 </div>
-
-
-
-
-
-
-<!--
-
-
-        <md-list>
-                <md-subheader class="md-no-sticky">Suggested References</md-subheader>
-                <md-list-item class="md-3-line scientilla-main-list" ng-repeat="n in vm.notifications| filter: {type: 'reference', targetId: target.id, targetType: target.getType()} " >
-                    {{r = n.content.reference;""}}
-                    <div>
-                        <h3>
-                            <span ng-bind-html='r | title'></span>
-                        </h3>
-                        <div><i><span ng-bind-html='r | linkableauthors'></span></i></div>
-                    </div>
-                    <md-button class="list-elem-button md-icon-button" ng-href="#/references/{{r.id}}" aria-label="Details"><ng-md-icon icon="book"></ng-md-icon></md-button>
-                    <md-button class="list-elem-button md-icon-button" ng-click="vm.copyReference(n, target)" aria-label="Copy to draft">
-                        <ng-md-icon icon="content_copy"></ng-md-icon>
-                    </md-button>
-                    <md-button class="list-elem-button md-icon-button" ng-click="vm.verifyReference(n, target)" aria-label="Verify reference">
-                        <ng-md-icon icon="done"></ng-md-icon>
-                    </md-button>
-                </md-list-item>
-            </md-list>
- 
-
-
-
--->

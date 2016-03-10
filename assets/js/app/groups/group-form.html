@@ -1,28 +1,22 @@
-<md-dialog aria-label="Profile"  ng-cloak>
-    <md-dialog-content>
-        <div>
-            <form form-for="vm.group"
-                  validation-rules="vm.validationAndViewRules"
-                  form-for-builder>
-                <scientilla-multicomplete
-                    items="vm.group.memberships"
-                    query="vm.getUsersQuery"
-                    transform="vm.userToMembership"
-                    filter="vm.getMembers"
-                    title="Members"
-                    >
-                </scientilla-multicomplete> 
-                <scientilla-multicomplete
-                    items="vm.group.administrators"
-                    query="vm.getUsersQuery"
-                    filter="vm.group.administrators"
-                    title="Administrators"
-                    >
-                </scientilla-multicomplete> 
-                <md-button ng-click="vm.closeDialog()">Close</md-button>
-                <submit-button ng-click="vm.submit()" label="Save"></submit-button>
-            </form>
-        </div>
-    </md-dialog-content>
-</md-dialog>
+<form form-for="vm.group"
+      validation-rules="vm.validationAndViewRules"
+      form-for-builder>
+    <scientilla-multicomplete
+        items="vm.group.memberships"
+        query="vm.getUsersQuery"
+        transform="vm.userToMembership"
+        filter="vm.getMembers"
+        title="Members"
+        >
+    </scientilla-multicomplete> 
+    <scientilla-multicomplete
+        items="vm.group.administrators"
+        query="vm.getUsersQuery"
+        filter="vm.group.administrators"
+        title="Administrators"
+        >
+    </scientilla-multicomplete> 
+    <button ng-click="vm.closeDialog()" class="btn btn-primary">Close</button>
+    <button type="submit" ng-click="vm.submit()" class="btn btn-primary">Save</button>
+</form>
 

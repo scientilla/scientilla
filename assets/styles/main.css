@@ -26,6 +26,13 @@
     font-size: 1.5em;
 }
 
+.scientilla-document-title{
+    
+}
+.scientilla-authors{
+    font-style: italic;
+}
+
 .scientilla-right-menu{
     font-size: 1.2em;
 }
@@ -94,6 +101,7 @@ md-tabs.notifications .md-tab.md-active {
     color: rgb(63,81,181);
 }
 
+/*
 h1 {
     font-size: 30px;
     line-height: 30px;
@@ -107,7 +115,7 @@ h4 {
     font-size: 20px;
     margin-bottom: 2px;
 }
-
+*/
 i {
     font-style: italic;
 }

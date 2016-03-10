@@ -4,8 +4,8 @@
             <h1>
                 {{vm.researchEntity.getDisplayName()}}
                 &nbsp;
-                <button class="btn btn-primary" ng-click="vm.editProfile($event)" aria-label="Edit">
-                    <i class="fa fa-cog"></i>
+                <button class="btn btn-primary" ng-click="vm.editProfile()" aria-label="Edit">
+                    <span class="fa fa-cog"></span>
                 </button>
             </h1>
         </div>
@@ -17,7 +17,7 @@
                     </button>
                     <ul uib-dropdown-menu>
                         <li ng-repeat="type in vm.types">
-                            <a ng-click="vm.createNewDocument($event, type)" style="cursor: pointer">{{type.label}}</a>
+                            <a ng-click="vm.createNewDocument(type)" style="cursor: pointer">{{type.label}}</a>
                         </li>
                     </ul>
                 </div>

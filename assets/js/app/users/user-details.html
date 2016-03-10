@@ -20,12 +20,7 @@
         <div ng-repeat="r in vm.references">
             <div class="row">
                 <div class="col-md-8">
-                    <h4>
-                        <span ng-bind-html='r | title'></span>
-                    </h4>
-                    <small>
-                        <span ng-bind-html='r | linkableauthors'></span>
-                    </small>
+                    <scientilla-document document="r"></scientilla-document>
                 </div>
                 <div  class="col-md-4 text-right">
                     <h3>

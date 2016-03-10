@@ -11,17 +11,19 @@
         'AuthService',
         '$window',
         'GroupsService',
-        '$mdDialog'
+        '$uibModalInstance'
     ];
 
-    function UserFormController(UsersService, FormForConfiguration, $scope, user, AuthService, $window, GroupsService, $mdDialog) {
+    function UserFormController(UsersService, FormForConfiguration, $scope, user, AuthService, $window, GroupsService, $uibModalInstance) {
         var vm = this;
         vm.user = user;
         vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.getGroupsQuery = GroupsService.getGroupsQuery;
         vm.groupToCollaboration = groupToCollaboration;
         vm.submit = submit;
-        vm.closeDialog = function() {$mdDialog.hide();};
+        vm.closeDialog = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
 
         vm.validationAndViewRules = {
             name: {
@@ -55,7 +57,7 @@
                 label: 'Scopus ID'
             }
         };
-        
+
         if (!vm.user.id) {
             vm.validationAndViewRules.password = {
                 inputType: 'password',
@@ -95,9 +97,10 @@
         }
 
         function submit() {
-                UsersService.doSave(vm.user).then(function(user){
-                    $mdDialog.hide(user);
-                });
+            UsersService.doSave(vm.user)
+                    .then(function (user) {
+                        $uibModalInstance.close(user);
+                    });
         }
 
         function nameChanged() {
@@ -109,7 +112,7 @@
                 vm.user.aliasesStr = aliasesStr.join('; ');
             }
         }
-        
+
         //sTODO: move all this alias thing in the proper place.
         function initAliasesStr() {
             if (!vm.user || !vm.user.aliases) {
@@ -146,11 +149,11 @@
         function getCollaborationsFilter() {
             return vm.user.getCollaborationGroups();
         }
-        
+
         function groupToCollaboration(g) {
-                var collaboration = {group: g, user: vm.user.id};
-                _.defaults(collaboration, Scientilla.collaboration);
-                return collaboration;
+            var collaboration = {group: g, user: vm.user.id};
+            _.defaults(collaboration, Scientilla.collaboration);
+            return collaboration;
         }
 
     }

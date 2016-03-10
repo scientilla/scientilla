@@ -6,13 +6,13 @@
     ReferenceFormController.$inject = [
         'document',
         'ContextService',
-        '$mdDialog'
+        '$uibModalInstance'
     ];
 
-    function ReferenceFormController(document, ContextService, $mdDialog) {
+    function ReferenceFormController(document, ContextService, $uibModalInstance) {
         var vm = this;
         vm.document = document;
         vm.researchEntity = ContextService.getResearchEntity();
-        vm.closeDialog = function() {$mdDialog.hide();};
+        vm.closeDialog = function() {$uibModalInstance.dismiss('cancel');};
     }
 })();

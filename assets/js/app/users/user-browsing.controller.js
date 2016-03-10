@@ -7,10 +7,10 @@
         '$location',
         'UsersService',
         'AuthService',
-        '$mdDialog'
+        '$uibModal'
     ];
 
-    function UserBrowsingController($location, UsersService, AuthService, $mdDialog) {
+    function UserBrowsingController($location, UsersService, AuthService, $uibModal) {
         var vm = this;
 
         vm.user = AuthService.user;
@@ -36,44 +36,16 @@
             });
         }
 
-        function createNew($event, user) {
-            $mdDialog.show({
-                controller: "UserFormController",
-                templateUrl: "partials/user-form.html",
-                controllerAs: "vm",
-                parent: angular.element(document.body),
-                targetEvent: $event,
-                locals: {
-                    user: UsersService.getNewUser()
-                },
-                fullscreen: true,
-                clickOutsideToClose: true
-            })
-                    .then(function () {
-                        getUsers();
-                    });
+        function createNew() {
+            openUserForm();
         }
 
         function viewUser(user) {
-            $location.path('/users/'+user.id);
+            $location.path('/users/' + user.id);
         }
 
-        function editUser($event, user) {
-            $mdDialog.show({
-                controller: "UserFormController",
-                templateUrl: "partials/user-form.html",
-                controllerAs: "vm",
-                parent: angular.element(document.body),
-                targetEvent: $event,
-                locals: {
-                    user: user.clone()
-                },
-                fullscreen: true,
-                clickOutsideToClose: true
-            })
-                    .then(function () {
-                        getUsers();
-                    });
+        function editUser(user) {
+            openUserForm(user);
         }
 
         function deleteUser(user) {
@@ -82,5 +54,26 @@
                         _.remove(vm.users, user);
                     });
         }
+
+        // private
+        function openUserForm(user) {
+
+            $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/user-form.html',
+                controller: 'UserFormController',
+                controllerAs: "vm",
+                resolve: {
+                    user: function () {
+                        return !user ? UsersService.getNewUser() : user.clone();
+                    }
+                }
+            })
+                    .result
+                    .then(function () {
+                        getUsers();
+                    });
+        }
+
     }
 })();

@@ -18,11 +18,11 @@
     }
 
     scientillaDrafsListController.$inject = [
-        '$mdDialog',
+        '$uibModal',
         '$rootScope'
     ];
 
-    function scientillaDrafsListController($mdDialog, $rootScope) {
+    function scientillaDrafsListController($uibModal, $rootScope) {
         var vm = this;
 
         vm.deleteDocument = deleteDocument;
@@ -61,21 +61,24 @@
                     });
         }
 
-        function openEditPopup($event, document) {
-            $mdDialog.show({
-                controller: "ReferenceFormController",
-                templateUrl: "partials/reference-form.html",
+        function openEditPopup(document) {
+
+            $uibModal.open({
+                animation: true,
+                templateUrl: 'partials/reference-form.html',
+                controller: 'ReferenceFormController',
                 controllerAs: "vm",
-                parent: angular.element(document.body),
-                targetEvent: $event,
-                locals: {
-                    document: document.clone()
-                },
-                fullscreen: true,
-                clickOutsideToClose: true
-            }).then(function () {
-                getDrafts();
-            });
+                resolve: {
+                    document: function () {
+                        return document.clone();
+                    }
+                }
+            })
+                    .result
+                    .then(function () {
+                        getDrafts();
+                    });
+
         }
     }
 

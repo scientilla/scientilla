@@ -11,16 +11,18 @@
         'AuthService',
         '$window',
         '$http',
-        '$mdDialog'
+        '$uibModalInstance'
     ];
 
-    function GroupFormController(GroupsService, FormForConfiguration, $scope, group, AuthService, $window, $http, $mdDialog) {
+    function GroupFormController(GroupsService, FormForConfiguration, $scope, group, AuthService, $window, $http, $uibModalInstance) {
         var vm = this;
         vm.group = group;
         vm.getMembers = getMembers;
         vm.getUsersQuery = getUsersQuery;
         vm.userToMembership = userToMembership;
-        vm.closeDialog = function() {$mdDialog.hide();};
+        vm.closeDialog = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
 
         vm.validationAndViewRules = {
             name: {
@@ -56,7 +58,7 @@
 
         function activate() {
             FormForConfiguration.enableAutoLabels();
-            
+
             getFullMemberships();
 
             $scope.$watch('vm.group.name', nameChanged);
@@ -74,7 +76,7 @@
                     })
                     .then(function (result) {
                         group.memberships = result.data;
-                        _.forEach(group.memberships, function(m) {
+                        _.forEach(group.memberships, function (m) {
                             _.defaults(m, Scientilla.membership);
                             _.defaults(m.user, Scientilla.user);
                         });
@@ -96,23 +98,24 @@
         }
 
         function submit() {
-            GroupsService.doSave(vm.group).then(function(group){
-                $mdDialog.hide(group);
-            });
+            GroupsService.doSave(vm.group)
+                    .then(function (group) {
+                        $uibModalInstance.close(group);
+                    });
         }
-        
+
         function getUsersQuery(searchText) {
-            var qs = {where: { or: [{ name : {contains: searchText}}, { surname : {contains: searchText}}]}};
+            var qs = {where: {or: [{name: {contains: searchText}}, {surname: {contains: searchText}}]}};
             var model = 'users';
-            return {model: model, qs:qs};
+            return {model: model, qs: qs};
         }
-        
+
         function userToMembership(u) {
-                var membership = {group: vm.group.id, user: u};
-                _.defaults(membership, Scientilla.membership);
-                return membership;
+            var membership = {group: vm.group.id, user: u};
+            _.defaults(membership, Scientilla.membership);
+            return membership;
         }
-        
+
         function getMembers() {
             return _.map(vm.group.memberships, 'user');
         }
