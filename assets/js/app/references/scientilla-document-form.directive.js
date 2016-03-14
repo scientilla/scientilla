@@ -13,7 +13,7 @@
             bindToController: {
                 document: "=",
                 researchEntity: "=",
-                onCancel: "&",
+                onClose: "&",
                 onSubmit: "&"
             }
         };
@@ -21,15 +21,12 @@
 
     scientillaDocumentFormController.$inject = [
         'FormForConfiguration',
-        'Restangular',
         '$scope',
-        '$route',
-        '$location',
         '$q',
         '$timeout'
     ];
 
-    function scientillaDocumentFormController(FormForConfiguration, Restangular, $scope, $route, $location, $q, $timeout) {
+    function scientillaDocumentFormController(FormForConfiguration, $scope, $q, $timeout) {
         var vm = this;
         if (!vm.document)
             vm.document = vm.researchEntity.getNewDocument();
@@ -92,7 +89,7 @@
                 return $q.resolve(vm.document);
             if (vm.status === 'saved')
                 return $q.resolve(vm.document);
-            
+
             if (vm.document.id)
                 return vm.document.save().then(function () {
                     vm.status = 'saved';
@@ -108,13 +105,15 @@
 
         function submit() {
             saveDocument().then(function () {
-                vm.onSubmit()();
+                if (_.isFunction(vm.onSubmit()))
+                    vm.onSubmit()(vm.document);
             });
 
         }
 
         function cancel() {
-            vm.onCancel()();
+            if (_.isFunction(vm.onClose()))
+                vm.onClose()();
         }
     }
 })();

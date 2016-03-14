@@ -173,7 +173,7 @@ Scientilla.reference = {
             return this.draftCreator;
         return this.draftGroupCreator;
     },
-    getDocumentsFields: function(source) {
+    getDocumentsFields: function (source) {
         var fields;
         if (source === 'journal')
             fields = {
@@ -347,6 +347,27 @@ Scientilla.reference = {
                 defaultSource: 'conference'
             }
         ];
+    },
+    copyDocument: function (document, creator) {
+        
+        var excludedFields = ['draft', 'draftCreator', 'draftGroupCreator'];
+
+        var documentTypeObj = {
+            key: document.type,
+            defaultSource: document.sourceType
+        };
+
+        var newDoc = creator.getNewDocument(documentTypeObj);
+
+        _.forOwn(newDoc, function (value, key) {
+            if (_.includes(excludedFields, key))
+                return;
+
+            newDoc[key] = document[key];
+        });
+
+
+        return newDoc;
     }
 };
 

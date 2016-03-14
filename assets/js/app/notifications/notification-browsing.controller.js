@@ -6,10 +6,11 @@
     NotificationBrowsingController.$inject = [
         'AuthService',
         'Restangular',
-        'user'
+        'user',
+        'ModalService'
     ];
 
-    function NotificationBrowsingController(AuthService, Restangular, user) {
+    function NotificationBrowsingController(AuthService, Restangular, user, ModalService) {
         var vm = this;
         vm.copyReference = copyReference;
         vm.verifyReference = verifyReference;
@@ -40,19 +41,21 @@
                         });
                     });
         }
-
+        
         function copyReference(notification, target) {
-            //sTODO-urgent owner must be changed server-side
-            //sTODO move to a service
-            var reference = notification.content.reference;
-            var newReference = Scientilla.reference.create(reference, target);
-            target.post('drafts', newReference)
-                    .then(function () {
-                        _.remove(vm.notifications, notification);
+            ModalService
+                    .openScientillaDocumentForm(
+                    Scientilla.reference.copyDocument(notification.content.reference,target),
+                    target)
+                    .then(function (document) {
+                        if(document)
+                            _.remove(vm.notifications, notification);
                     });
+
         }
 
         function verifyReference(notification, target) {
+
             var reference = notification.content.reference;
             //sTODO move to a service
             target.post('privateReferences', {id: reference.id})

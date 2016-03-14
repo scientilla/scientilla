@@ -7,11 +7,11 @@
         'researchEntity',
         'ContextService',
         '$uibModal',
-        '$rootScope',
+        'ModalService',
         'GroupsService'
     ];
 
-    function ReferenceBrowsingController(researchEntity, ContextService, $uibModal, $rootScope, GroupsService) {
+    function ReferenceBrowsingController(researchEntity, ContextService, $uibModal, ModalService, GroupsService) {
         var vm = this;
 
         vm.researchEntity = researchEntity;
@@ -27,19 +27,9 @@
         }
 
         function createNewDocument(type) {
-            var draft = researchEntity.getNewDocument(type);
+            var draft = vm.researchEntity.getNewDocument(type);
 
-            $uibModal.open({
-                animation: true,
-                templateUrl: 'partials/reference-form.html',
-                controller: 'ReferenceFormController',
-                controllerAs: "vm",
-                resolve: {
-                    document: function () {
-                        return draft;
-                    }
-                }
-            });
+            ModalService.openScientillaDocumentForm(draft,vm.researchEntity);
         }
 
         function editProfile() {

@@ -18,11 +18,11 @@
     }
 
     scientillaDrafsListController.$inject = [
-        '$uibModal',
+        'ModalService',
         '$rootScope'
     ];
 
-    function scientillaDrafsListController($uibModal, $rootScope) {
+    function scientillaDrafsListController(ModalService, $rootScope) {
         var vm = this;
 
         vm.deleteDocument = deleteDocument;
@@ -62,23 +62,12 @@
         }
 
         function openEditPopup(document) {
-
-            $uibModal.open({
-                animation: true,
-                templateUrl: 'partials/reference-form.html',
-                controller: 'ReferenceFormController',
-                controllerAs: "vm",
-                resolve: {
-                    document: function () {
-                        return document.clone();
-                    }
-                }
-            })
-                    .result
+            
+            ModalService
+                    .openScientillaDocumentForm(document.clone(),vm.researchEntity)
                     .then(function () {
                         getDrafts();
                     });
-
         }
     }
 
