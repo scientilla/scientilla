@@ -28,8 +28,6 @@
 
     function scientillaDocumentFormController(FormForConfiguration, $scope, $q, $timeout) {
         var vm = this;
-        if (!vm.document)
-            vm.document = vm.researchEntity.getNewDocument();
         vm.submit = submit;
         vm.status = 'saved';
         vm.cancel = cancel;
@@ -49,7 +47,7 @@
             var fieldsToWatch = _.keys(vm.validationAndViewRules);
             _.forEach(fieldsToWatch, function (f) {
                 $scope.$watch('vm.document.' + f, markModified, true);
-                $scope.$watch('vm.document.' + f, _.debounce(saveDocument, 3000), true);
+                $scope.$watch('vm.document.' + f, prepareSave, true);
             });
         }
 
@@ -84,9 +82,13 @@
             vm.status = 'unsaved';
         }
 
-        function saveDocument(newValue, oldValue) {
+        function prepareSave(newValue, oldValue) {
             if (newValue === oldValue || _.isUndefined(oldValue))
-                return $q.resolve(vm.document);
+                return;
+            _.debounce(saveDocument, 3000)();
+        }
+
+        function saveDocument() {
             if (vm.status === 'saved')
                 return $q.resolve(vm.document);
 

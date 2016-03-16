@@ -1,10 +1,10 @@
 (function () {
     angular.module("components").factory("ModalService", ModalService);
 
-    ModalService.$inject = ['$uibModal', '$rootScope'];
+    ModalService.$inject = ['$uibModal'];
 
 
-    function ModalService($uibModal, $rootScope) {
+    function ModalService($uibModal) {
         var service = {
             modal: null
         };
@@ -22,12 +22,11 @@
 
 
         service.openScientillaDocumentForm = function (document, researchEntity) {
-
-            var modalScope = getScope({
+            var scopeVars = {
                 document: document,
                 researchEntity: researchEntity
-            });
-
+            };
+            
             service.modal = openModal(
                     '<scientilla-document-form\
                         document="vm.document"\
@@ -35,7 +34,7 @@
                         on-close="vm.onClose"\
                         on-submit="vm.onSubmit" >\
                     </scientilla-document-form>',
-                    modalScope
+                    scopeVars
                     );
 
             return service.modal.result;
@@ -81,26 +80,29 @@
 
 
         function openModal(template, scope) {
+            var callbacks = getDefaultCallbacks();
+            
+            _.defaults(scope,callbacks);
+            
+            var controller = function() {
+                _.assign(this, scope);
+            };
+            
             return $uibModal.open({
                 animation: true,
                 template: template,
-                scope: scope
+                controller: controller,
+                controllerAs: 'vm'
             });
         }
 
-        function getScope(params) {
-
-            var modalScope = $rootScope.$new();
-
+        function getDefaultCallbacks() {
             var callbacks = {
                 onClose: service.close,
                 onSubmit: service.close
-
             };
 
-            modalScope.vm = _.merge(callbacks, params);
-            return modalScope;
-
+            return callbacks;
         }
 
         return service;
