@@ -43,9 +43,9 @@
 
         service.openScientillaUserForm = function (user) {
 
-            var modalScope = getScope({
+            var scopeVars = {
                 user: user
-            });
+            };
 
             service.modal = openModal(
                     '<scientilla-user-form\
@@ -53,7 +53,7 @@
                         on-close="vm.onClose"\
                         on-submit="vm.onSubmit" >\
                     </scientilla-user-form>',
-                    modalScope
+                    scopeVars
                     );
 
             return service.modal.result;
@@ -62,9 +62,9 @@
 
         service.openScientillaGroupForm = function (group) {
 
-            var modalScope = getScope({
+            var scopeVars = {
                 group: group
-            });
+            };
 
             service.modal = openModal(
                     '<scientilla-group-form\
@@ -72,7 +72,7 @@
                         on-close="vm.onClose"\
                         on-submit="vm.onSubmit" >\
                     </scientilla-group-form>',
-                    modalScope
+                    scopeVars
                     );
 
             return service.modal.result;
