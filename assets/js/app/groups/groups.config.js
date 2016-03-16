@@ -10,15 +10,7 @@
                 .when("/groups", {
                     templateUrl: "partials/group-browsing.html",
                     controller: "GroupBrowsingController",
-                    controllerAs: 'vm',
-                })
-                .when("/groups/new", {
-                    templateUrl: "partials/group-form.html",
-                    controller: "GroupFormController",
-                    controllerAs: 'vm',
-                    resolve: {
-                        group: newGroup
-                    }
+                    controllerAs: 'vm'
                 })
                 .when("/groups/:id", {
                     templateUrl: "partials/group-details.html",
@@ -29,14 +21,6 @@
                     },
                     access: {
                         noLogin: true
-                    }
-                })
-                .when("/groups/:id/edit", {
-                    templateUrl: "partials/group-form.html",
-                    controller: "GroupFormController",
-                    controllerAs: 'vm',
-                    resolve: {
-                        group: currentGroup
                     }
                 });
     }

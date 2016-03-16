@@ -30,14 +30,6 @@
                     access: {
                         noLogin: true
                     }
-                })
-                .when("/users/:id/edit", {
-                    templateUrl: "partials/user-form.html",
-                    controller: "UserFormController",
-                    controllerAs: 'vm',
-                    resolve: {
-                        user: getCurrentUser
-                    }
                 });
     }
 

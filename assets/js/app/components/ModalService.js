@@ -42,6 +42,44 @@
         };
 
 
+        service.openScientillaUserForm = function (user) {
+
+            var modalScope = getScope({
+                user: user
+            });
+
+            service.modal = openModal(
+                    '<scientilla-user-form\
+                        user="vm.user"\
+                        on-close="vm.onClose"\
+                        on-submit="vm.onSubmit" >\
+                    </scientilla-user-form>',
+                    modalScope
+                    );
+
+            return service.modal.result;
+        };
+
+
+        service.openScientillaGroupForm = function (group) {
+
+            var modalScope = getScope({
+                group: group
+            });
+
+            service.modal = openModal(
+                    '<scientilla-group-form\
+                        group="vm.group"\
+                        on-close="vm.onClose"\
+                        on-submit="vm.onSubmit" >\
+                    </scientilla-group-form>',
+                    modalScope
+                    );
+
+            return service.modal.result;
+        };
+
+
         function openModal(template, scope) {
             return $uibModal.open({
                 animation: true,

@@ -1,28 +1,36 @@
 (function () {
+
     angular
             .module('users')
-            .controller('UserFormController', UserFormController);
+            .component('scientillaUserForm', {
+                templateUrl: 'partials/scientilla-user-form.html',
+                controller: UserFormController,
+                controllerAs: 'vm',
+                bindings: {
+                    user: "<",
+                    onClose: "&",
+                    onSubmit: "&"
+                }
+            });
+
 
     UserFormController.$inject = [
         'UsersService',
         'FormForConfiguration',
         '$scope',
-        'user',
         'AuthService',
-        '$window',
-        'GroupsService',
-        '$uibModalInstance'
+        'GroupsService'
     ];
 
-    function UserFormController(UsersService, FormForConfiguration, $scope, user, AuthService, $window, GroupsService, $uibModalInstance) {
+    function UserFormController(UsersService, FormForConfiguration, $scope, AuthService, GroupsService) {
         var vm = this;
-        vm.user = user;
         vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.getGroupsQuery = GroupsService.getGroupsQuery;
         vm.groupToCollaboration = groupToCollaboration;
         vm.submit = submit;
-        vm.closeDialog = function () {
-            $uibModalInstance.dismiss('cancel');
+        vm.close = function () {
+            if (_.isFunction(vm.onSubmit()))
+                vm.onClose()(vm.user);
         };
 
         vm.validationAndViewRules = {
@@ -99,7 +107,8 @@
         function submit() {
             UsersService.doSave(vm.user)
                     .then(function (user) {
-                        $uibModalInstance.close(user);
+                        if (_.isFunction(vm.onSubmit()))
+                            vm.onSubmit()(user);
                     });
         }
 
