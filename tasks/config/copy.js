@@ -41,7 +41,7 @@ module.exports = function (grunt) {
                         'angular-sanitize/angular-sanitize.min.js',
                         'bootstrap/dist/js/bootstrap.min.js',
                         'jquery/dist/jquery.min.js',
-                        'lodash/lodash.min.js',
+                        'lodash/dist/lodash.min.js',
                         'restangular/dist/restangular.min.js'
                     ],
                     flatten: true,
