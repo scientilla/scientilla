@@ -9,7 +9,7 @@
 .scientilla-toolbar{
     height: 50px;
     color: #337ab7;
-    
+
     border-bottom: 1px solid #337ab7;
     margin-bottom: 20px;
 
@@ -27,7 +27,7 @@
 }
 
 .scientilla-document-title{
-    
+
 }
 .scientilla-authors{
     font-style: italic;
@@ -42,7 +42,12 @@
 }
 
 .scrollable{
-     overflow-y: auto;
+    overflow-y: auto;
+}
+
+.scientilla-multiselect-list{
+    max-height: 100px;
+    overflow-y: scroll; 
 }
 
 /*bootstrap*/
