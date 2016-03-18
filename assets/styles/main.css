@@ -59,6 +59,23 @@
 .divider:hover{
     background-color: inherit !important;
 }
+
+.tab-content{
+    height: 820px;
+    overflow-y: scroll;
+    /*padding-right: 15px;*/
+    
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    
+    padding: 15px;
+}
+
+.modal-content{
+    padding: 15px;
+}
+
 /*****************************************/
 
 md-list-item.scientilla-main-list {
