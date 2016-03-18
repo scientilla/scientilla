@@ -6,8 +6,6 @@
     "angular-form-for": "*",
     "angular-resource": "*",
     "angular-route": "*",
-    "angular-material": "0.11.*",
-    "angular-material-icons": "*",
     "angular-animate": "*",
     "angular-aria": "*",
     "angular-sanitize": "*",
