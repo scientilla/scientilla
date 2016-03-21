@@ -6,12 +6,11 @@
     ReferenceBrowsingController.$inject = [
         'researchEntity',
         'ContextService',
-        '$uibModal',
         'ModalService',
         'GroupsService'
     ];
 
-    function ReferenceBrowsingController(researchEntity, ContextService, $uibModal, ModalService, GroupsService) {
+    function ReferenceBrowsingController(researchEntity, ContextService, ModalService, GroupsService) {
         var vm = this;
 
         vm.researchEntity = researchEntity;
@@ -53,10 +52,6 @@
 
 
             }
-            /*modalInstance
-             .then(function (researchEntity) {
-             vm.researchEntity = researchEntity;
-             });*/
         }
     }
 })();
