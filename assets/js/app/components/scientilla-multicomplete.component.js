@@ -24,8 +24,6 @@
 
     function scientillaMulticompleteController(Restangular) {
         var vm = this;
-        vm.items = this.items;
-        vm.suggestedItems = this.suggestedItems;
         vm.addItem = addItem;
         vm.search = search;
         vm.removeItem = removeItem;
