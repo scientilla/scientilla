@@ -14,7 +14,7 @@ module.exports.connections = {
     host: 'localhost',
     user: 'scientilla',
     password: 'scientillapassword',
-    database: 'scientilla-test'
+    database: 'scientillatest'
   }
 };
 
