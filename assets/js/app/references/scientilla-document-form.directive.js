@@ -85,13 +85,12 @@
         function prepareSave(newValue, oldValue) {
             if (newValue === oldValue || _.isUndefined(oldValue))
                 return;
+            if (vm.status === 'saved')
+                return;
             _.debounce(saveDocument, 3000)();
         }
 
         function saveDocument() {
-            if (vm.status === 'saved')
-                return $q.resolve(vm.document);
-
             if (vm.document.id)
                 return vm.document.save().then(function () {
                     vm.status = 'saved';
