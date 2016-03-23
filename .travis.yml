@@ -1,9 +1,9 @@
 language: node_js
 node_js:
-  - "4.1"
-  - "4.0"
-  - "0.12"
-sudo: false
+  - "4"
+sudo: true
+env:
+  - CXX=g++-4.8
 services:
   - postgresql
 before_script:
