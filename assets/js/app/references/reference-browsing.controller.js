@@ -29,42 +29,34 @@
         function createNewDocument(type) {
             var draft = vm.researchEntity.getNewDocument(type);
 
-            ModalService.openScientillaDocumentForm(draft,vm.researchEntity);
+            ModalService.openScientillaDocumentForm(draft, vm.researchEntity);
         }
 
         function editProfile() {
-            
+
             var modalInstance;
             if (researchEntity.getType() === 'user') {
-                modalInstance = $uibModal.open({
-                    animation: true,
-                    templateUrl: 'partials/user-form.html',
-                    controller: 'UserFormController',
-                    controllerAs: "vm",
-                    resolve: {
-                        user: function () {
-                            return vm.researchEntity.clone();
-                        }
-                    }
-                });
+
+                modalInstance = ModalService
+                        .openScientillaUserForm(vm.researchEntity)
+                        .then(function (researchEntity) {
+                            vm.researchEntity = researchEntity;
+                        });
             } else {
-                modalInstance = $uibModal.open({
-                    animation: true,
-                    templateUrl: 'partials/group-form.html',
-                    controller: 'GroupFormController',
-                    controllerAs: "vm",
-                    resolve: {
-                        group: function () {
-                            return GroupsService.one(researchEntity.id).get({populate: ['memberships', 'administrators']});
-                        }
-                    }
-                });
+                GroupsService
+                        .one(researchEntity.id)
+                        .get({populate: ['memberships', 'administrators']})
+                        .then(ModalService.openScientillaGroupForm)
+                        .then(function (researchEntity) {
+                            vm.researchEntity = researchEntity;
+                        });
+
+
             }
-            modalInstance
-                    .result
-                    .then(function (researchEntity) {
-                        vm.researchEntity = researchEntity;
-                    });
+            /*modalInstance
+             .then(function (researchEntity) {
+             vm.researchEntity = researchEntity;
+             });*/
         }
     }
 })();

@@ -4,8 +4,6 @@
         /* Angular modules */
         'ngResource',
         "ngRoute",
-        'ngMaterial',
-        'ngMdIcons',
         'ngSanitize',
         
         /* 3dr-pary modules */

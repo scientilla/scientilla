@@ -16,7 +16,7 @@
                 var ucAuthor = author.toUpperCase();
                 var matchingUser = _.find(possibleMatches, function (c) {
                     var aliases = c.getUcAliases();
-                    return _.contains(aliases, ucAuthor);
+                    return _.includes(aliases, ucAuthor);
                     
                 });
                 if (matchingUser) {

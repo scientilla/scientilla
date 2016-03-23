@@ -7,10 +7,10 @@
         '$location',
         'GroupsService',
         'AuthService',
-        '$uibModal'
+        'ModalService'
     ];
 
-    function GroupBrowsingController($location, GroupsService, AuthService, $uibModal) {
+    function GroupBrowsingController($location, GroupsService, AuthService, ModalService) {
         var vm = this;
 
         vm.user = AuthService.user;
@@ -22,11 +22,9 @@
         activate();
 
         function activate() {
-            return getGroups().then(function () {
-
-            });
+            return getGroups();
         }
-        
+
         function createNew() {
             openGroupForm();
         }
@@ -38,9 +36,9 @@
                         return vm.groups;
                     });
         }
-        
+
         function viewGroup(g) {
-            $location.path('/groups/'+g.id);
+            $location.path('/groups/' + g.id);
         }
 
         function deleteGroup(group) {
@@ -53,28 +51,17 @@
         function editGroup(group) {
             openGroupForm(group);
         }
-        
-        
-        
+
+
+
         // private
         function openGroupForm(group) {
-
-            $uibModal.open({
-                animation: true,
-                templateUrl: 'partials/group-form.html',
-                controller: 'GroupFormController',
-                controllerAs: "vm",
-                resolve: {
-                    group: function () {
-                        return !group ? GroupsService.getNewGroup() : group.clone();
-                    }
-                }
-            })
-                    .result
+            ModalService
+                    .openScientillaGroupForm(!group ? GroupsService.getNewGroup() : group.clone())
                     .then(function () {
                         getGroups();
                     });
         }
-        
+
     }
 })();

@@ -1,32 +1,31 @@
-<md-list>
-    <collection-label attribute="{{vm.title}}"
-                          label="{{vm.title}}"
-                          help="{{vm.title}}">
-    </collection-label>
-    <md-list-item class="md-1-line scientilla-secondary-list" ng-repeat="item in vm.items">
-        <div class="md-list-item-text">
-            <i>{{ item.getDisplayName()}}</i>
-        </div>
-        <ng-md-icon icon="clear" ng-click="vm.removeItem(item)" class="md-primary" ng-aria="delete"></ng-md-icon>
-    </md-list-item>
-</md-list>
-<md-autocomplete
-    md-items="item in vm.search(vm.searchText)"
-    md-selected-item-change="vm.addItem(item)"
-    md-search-text="vm.searchText"
-    md-item-text="item.display"
-    md-no-cache="true"
-    placeholder="Type here"
-    >
-    <md-item-template>
-        <span md-highlight-text="vm.searchText" md-highlight-flags="^i">{{item.getDisplayName()}}</span>
-    </md-item-template>
-</md-autocomplete>
-<md-list>
-    <md-list-item class="md-1-line scientilla-secondary-list" ng-repeat="item in vm.suggestedItems">
-        <div>
-            <i>{{ item.getDisplayName() }} </i>
-        </div>
-        <ng-md-icon icon="group_add" ng-click="vm.addItem(item)" class="md-primary"></ng-md-icon>
-    </md-list-item>
-</md-list>
+
+
+<script type="text/ng-template" id="customTemplate.html">
+    <a>{{match.model.getDisplayName()}}</a>
+</script>
+
+
+
+<label>{{vm.title}}</label>
+
+<input type="text"
+       ng-model="vm.searchValue"
+       placeholder="Search"
+       typeahead-template-url="customTemplate.html"
+       uib-typeahead="item as item.getDisplayName() for item in vm.search($viewValue)"
+       typeahead-on-select="vm.onSelect($item, $model, $label)"
+       typeahead-loading="loadingLocations"
+       typeahead-no-results="noResults"
+       class="form-control">
+<!--<div ng-show="loadingLocations">Loading</div>
+<div ng-show="noResults">No Results Found</div>-->
+
+
+<ul class="list-group scientilla-multiselect-list">
+    <li ng-repeat="item in vm.items" class="list-group-item">
+        <button ng-click="vm.removeItem(item)" class="badge btn-primary" >
+            <span class="fa fa-remove"></span>
+        </button>
+        {{item.getDisplayName()}}
+    </li>
+</ul>

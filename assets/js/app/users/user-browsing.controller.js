@@ -7,10 +7,10 @@
         '$location',
         'UsersService',
         'AuthService',
-        '$uibModal'
+        'ModalService'
     ];
 
-    function UserBrowsingController($location, UsersService, AuthService, $uibModal) {
+    function UserBrowsingController($location, UsersService, AuthService, ModalService) {
         var vm = this;
 
         vm.user = AuthService.user;
@@ -57,19 +57,8 @@
 
         // private
         function openUserForm(user) {
-
-            $uibModal.open({
-                animation: true,
-                templateUrl: 'partials/user-form.html',
-                controller: 'UserFormController',
-                controllerAs: "vm",
-                resolve: {
-                    user: function () {
-                        return !user ? UsersService.getNewUser() : user.clone();
-                    }
-                }
-            })
-                    .result
+            ModalService
+                    .openScientillaUserForm(!user ? UsersService.getNewUser() : user.clone())
                     .then(function () {
                         getUsers();
                     });

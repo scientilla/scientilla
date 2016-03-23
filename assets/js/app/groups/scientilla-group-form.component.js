@@ -1,27 +1,32 @@
 (function () {
+
     angular
             .module('groups')
-            .controller('GroupFormController', GroupFormController);
+            .component('scientillaGroupForm', {
+               templateUrl: 'partials/scientilla-group-form.html',
+                controller: GroupFormController,
+                controllerAs: 'vm',
+                bindings: {
+                    group: "<",
+                    onClose: "&",
+                    onSubmit: "&"
+                }
+            });
 
     GroupFormController.$inject = [
         'GroupsService',
         'FormForConfiguration',
         '$scope',
-        'group',
-        'AuthService',
-        '$window',
-        '$http',
-        '$uibModalInstance'
+        '$http'
     ];
 
-    function GroupFormController(GroupsService, FormForConfiguration, $scope, group, AuthService, $window, $http, $uibModalInstance) {
+    function GroupFormController(GroupsService, FormForConfiguration, $scope, $http) {
         var vm = this;
-        vm.group = group;
         vm.getMembers = getMembers;
         vm.getUsersQuery = getUsersQuery;
         vm.userToMembership = userToMembership;
         vm.closeDialog = function () {
-            $uibModalInstance.dismiss('cancel');
+            vm.onClose()(vm.group);
         };
 
         vm.validationAndViewRules = {
@@ -75,8 +80,8 @@
                         params: {group: vm.group.id, populate: 'user'}
                     })
                     .then(function (result) {
-                        group.memberships = result.data;
-                        _.forEach(group.memberships, function (m) {
+                        vm.group.memberships = result.data;
+                        _.forEach(vm.group.memberships, function (m) {
                             _.defaults(m, Scientilla.membership);
                             _.defaults(m.user, Scientilla.user);
                         });
@@ -100,7 +105,7 @@
         function submit() {
             GroupsService.doSave(vm.group)
                     .then(function (group) {
-                        $uibModalInstance.close(group);
+                        vm.onSubmit()(group);
                     });
         }
 

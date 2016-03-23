@@ -34,14 +34,12 @@ module.exports = function (grunt) {
                         'angular-form-for/dist/form-for.min.js',
                         'angular-form-for/dist/form-for.bootstrap-templates.js',
                         'angular-local-storage/dist/angular-local-storage.min.js',
-                        'angular-material/angular-material.min.js',
-                        'angular-material-icons/angular-material-icons.min.js',
                         'angular-resource/angular-resource.min.js',
                         'angular-route/angular-route.min.js',
                         'angular-sanitize/angular-sanitize.min.js',
                         'bootstrap/dist/js/bootstrap.min.js',
                         'jquery/dist/jquery.min.js',
-                        'lodash/lodash.min.js',
+                        'lodash/dist/lodash.min.js',
                         'restangular/dist/restangular.min.js'
                     ],
                     flatten: true,
@@ -50,7 +48,6 @@ module.exports = function (grunt) {
                     expand: true,
                     cwd: './bower_components',
                     src: [
-                        'angular-material/angular-material.min.css',
                         'bootstrap/dist/css/bootstrap.min.css',
                         'bootstrap/dist/fonts/*',
                         'font-awesome/css/font-awesome.min.css',
