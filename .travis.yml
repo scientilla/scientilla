@@ -14,7 +14,7 @@ services:
   - postgresql
 before_script:
   - "npm i -g mocha"
-  - "psql -c 'CREATE DATABASE scientilla-test;' -U postgres"
+  - "psql -c 'CREATE DATABASE \'scientilla-test\';' -U postgres"
   - "psql -c 'CREATE USER scientilla WITH PASSWORD \'scientillapassword\';'  -U postgres"
 script:
   - "npm test"
