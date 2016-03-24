@@ -172,3 +172,8 @@ scientilla-menu md-sidenav.md-locked-open {
 scientilla-menu md-sidenav md-toolbar.active {
     background-color: rgb(53,91,191);
 }
+
+.documents-header > div > * {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
