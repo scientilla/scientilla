@@ -1,14 +1,20 @@
 language: node_js
 node_js:
-  - "4.1"
-  - "4.0"
-  - "0.12"
-sudo: false
+  - "4"
+sudo: true
+env:
+  - CXX=g++-4.8
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+    packages:
+      - g++-4.8
 services:
   - postgresql
 before_script:
-  - "npm i -g mocha"
-  - "psql -c 'CREATE DATABASE scientilla-test;' -U postgres"
-  - "psql -c 'CREATE USER scientilla WITH PASSWORD \'scientillapassword\';'  -U postgres"
+  - npm i -g mocha
+  - psql -c "CREATE DATABASE scientillatest;" -U postgres
+  - psql -c "CREATE USER scientilla WITH PASSWORD 'scientillapassword';"  -U postgres
 script:
   - "npm test"
