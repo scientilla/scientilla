@@ -1,8 +1,9 @@
 <div>
-    <scientilla-search
-        form-structure="vm.searchForm"
-        on-search="vm.onSearch">
-    </scientilla-search>
+    <scientilla-filter
+        search-form-structure="vm.searchForm"
+        on-filter="vm.onFilter"
+        get-data="vm.getDocuments">
+    </scientilla-filter>
     <div ng-repeat="d in vm.documents">
         <div class="row">
             <div class="col-md-8">

@@ -1,0 +1,13 @@
+<scientilla-search
+    form-structure="vm.searchFormStructure"
+    on-search="vm.onSearch">
+</scientilla-search>
+
+
+
+<uib-pager
+    total-items="vm.totalItems"
+    items-per-page="vm.itemsPerPage"
+    ng-model="vm.currentPage"
+    ng-change="vm.onPageChange()">
+</uib-pager>

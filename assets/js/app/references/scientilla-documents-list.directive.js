@@ -28,10 +28,12 @@
 
         vm.deleteDocument = deleteDocument;
         vm.verifyDocument = verifyDocument;
+        vm.getDocuments = getDocuments;
         vm.createNewUrl = vm.researchEntity.getNewReferenceUrl();
 
+        vm.totalItems = 0;
 
-        vm.onSearch = onSearch;
+        vm.onFilter = onFilter;
 
 
         vm.years = [];
@@ -73,29 +75,25 @@
             }
         };
 
+        vm.lastQuery = {};
+
         activate();
 
         function activate() {
-            getDocuments();
-            $rootScope.$on('draft.verified', getDocuments);
+            $rootScope.$on('draft.verified', onVerify);
         }
 
-        function getDocuments(params) {
+        function getDocuments(query) {
 
-            researchEntityService
-                    .getDocuments(
-                            vm.researchEntity,
-                            params)
-                    .then(function (documents) {
-                        Scientilla.toDocumentsCollection(documents);
-                        vm.documents = documents;
-                    });
+            vm.lastQuery = query;
+
+            return researchEntityService.getDocuments(vm.researchEntity, query);
         }
 
         function deleteDocument(reference) {
             vm.researchEntity.one('references', reference.id).remove()
                     .then(function () {
-                        getDocuments();
+                        getDocuments(vm.lastQuery);
                     });
         }
 
@@ -106,11 +104,14 @@
             });
         }
 
-        function onSearch(where) {
-
-            getDocuments({
-                where: where
-            });
+        function onFilter(documents) {
+            Scientilla.toDocumentsCollection(documents);
+            vm.documents = documents;
+        }
+        
+        //private
+        function onVerify(){
+            getDocuments(vm.lastQuery);
         }
     }
 
