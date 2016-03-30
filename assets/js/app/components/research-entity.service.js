@@ -2,6 +2,10 @@
     angular.module("components").factory("researchEntityService",
             [function () {
                     var service = {};
+                    
+                    service.verify = function (researchEntity, reference) {
+                        return researchEntity.one('drafts', reference.id).customPUT({}, 'verified');
+                    };
 
                     service.getDocuments = function (researchEntity, query) {
 

@@ -19,10 +19,11 @@
 
     scientillaDrafsListController.$inject = [
         'ModalService',
+        'researchEntityService',
         '$rootScope'
     ];
 
-    function scientillaDrafsListController(ModalService, $rootScope) {
+    function scientillaDrafsListController(ModalService, researchEntityService, $rootScope) {
         var vm = this;
 
         vm.deleteDocument = deleteDocument;
@@ -54,7 +55,7 @@
         }
 
         function verifyDocument(reference) {
-            return vm.researchEntity.one('drafts', reference.id).customPUT({}, 'verified')
+            return researchEntityService.verify(vm.researchEntity, reference)
                     .then(function (draft) {
                         $rootScope.$broadcast("draft.verified", draft);
                         getDrafts();
