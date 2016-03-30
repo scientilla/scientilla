@@ -2,6 +2,6 @@
     'use strict';
 
     angular.module('components')
-            .constant('pageSize', 2);
+            .constant('pageSize', 10);
 
 })();

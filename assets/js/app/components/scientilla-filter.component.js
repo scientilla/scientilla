@@ -6,6 +6,7 @@
                 templateUrl: 'partials/scientillaFilter.html',
                 controller: scientillaFilter,
                 controllerAs: 'vm',
+                transclude: true,
                 bindings: {
                     onFilter: '&',
                     getData: '&',

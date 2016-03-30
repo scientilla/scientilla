@@ -27,20 +27,18 @@
         vm.documents = [];
 
         vm.deleteDocument = deleteDocument;
-        vm.verifyDocument = verifyDocument;
         vm.getDocuments = getDocuments;
         vm.createNewUrl = vm.researchEntity.getNewReferenceUrl();
 
         vm.totalItems = 0;
 
-        vm.onFilter = onFilter;
+        vm.onFilter = refreshList;
 
 
-        vm.years = [];
-
-        //TODO find better solution
-        for (var i = new Date().getFullYear(); i >= 2005; i--)
-            vm.years.push({value: i + '', label: i + ''});
+        var years = _.range(new Date().getFullYear(), 2005, -1);
+        var years_value = _.map(years, function(y){
+            return {value: y + '', label: y + ''};
+        });
 
         vm.searchForm = {
             title: {
@@ -58,7 +56,7 @@
             maxYear: {
                 inputType: 'select',
                 label: 'Year from',
-                values: vm.years,
+                values: years_value,
                 allowBlank: true,
                 preventDefaultOption: true,
                 matchColumn: 'year',
@@ -67,7 +65,7 @@
             minYear: {
                 inputType: 'select',
                 label: 'Year to',
-                values: vm.years,
+                values: years_value,
                 allowBlank: true,
                 preventDefaultOption: true,
                 matchColumn: 'year',
@@ -75,7 +73,7 @@
             }
         };
 
-        vm.lastQuery = {};
+        var query = {};
 
         activate();
 
@@ -83,9 +81,9 @@
             $rootScope.$on('draft.verified', onVerify);
         }
 
-        function getDocuments(query) {
+        function getDocuments(q) {
 
-            vm.lastQuery = query;
+            query = q;
 
             return researchEntityService.getDocuments(vm.researchEntity, query);
         }
@@ -93,25 +91,18 @@
         function deleteDocument(reference) {
             vm.researchEntity.one('references', reference.id).remove()
                     .then(function () {
-                        getDocuments(vm.lastQuery);
+                        getDocuments(query).then(refreshList);
                     });
         }
 
-        function verifyDocument(reference) {
-            return vm.researchEntity.one('references', reference.id).customPUT({}, 'verified').then(function (r) {
-                reference.draft = false;
-                reference.status = Scientilla.reference.VERIFIED;
-            });
-        }
-
-        function onFilter(documents) {
+        function refreshList(documents) {
             Scientilla.toDocumentsCollection(documents);
             vm.documents = documents;
         }
         
         //private
         function onVerify(){
-            getDocuments(vm.lastQuery);
+            getDocuments(query).then(getDocuments);
         }
     }
 
