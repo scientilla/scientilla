@@ -29,10 +29,22 @@
     function scientillaDocumentFormController(FormForConfiguration, $scope, $q, $timeout) {
         var vm = this;
         vm.submit = submit;
-        vm.status = 'saved';
+        vm.status = createStatus();
         vm.cancel = cancel;
         vm.formVisible = true;
         activate();
+        
+        function createStatus() {
+            var isSavedVar = true;
+            return {
+                isSaved: function() {
+                    return isSavedVar;
+                },
+                setSaved: function(isSaved) {
+                    isSavedVar = isSaved;
+                }
+            };
+        };
 
 
         function activate() {
@@ -79,13 +91,13 @@
         function markModified(newValue, oldValue) {
             if (newValue === oldValue || _.isUndefined(oldValue))
                 return;
-            vm.status = 'unsaved';
+            vm.status.setSaved(false);
         }
 
         function prepareSave(newValue, oldValue) {
             if (newValue === oldValue || _.isUndefined(oldValue))
                 return;
-            if (vm.status === 'saved')
+            if (vm.status.isSaved())
                 return;
             _.debounce(saveDocument, 3000)();
         }
@@ -93,14 +105,14 @@
         function saveDocument() {
             if (vm.document.id)
                 return vm.document.save().then(function () {
-                    vm.status = 'saved';
+                    vm.status.setSaved(true);
                 });
             else
                 return vm.researchEntity.all('drafts')
                         .post(vm.document)
                         .then(function (draft) {
                             vm.document = draft;
-                            vm.status = 'saved';
+                            vm.status.setSaved(true);
                         });
         }
 

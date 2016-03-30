@@ -2,7 +2,7 @@
       ng-if="vm.formVisible"
       validation-rules="vm.validationAndViewRules"
       form-for-builder
-      class="autosave {{vm.status}}">
+      class="autosave {{vm.status.isSaved() ? 'saved' : 'unsaved'}}">
     <button class="btn btn-primary" ng-click="vm.cancel()">Close</button>
     <button class="btn btn-primary" ng-click="vm.submit()">Save</button>
 </form>
