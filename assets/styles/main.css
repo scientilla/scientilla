@@ -172,3 +172,20 @@ scientilla-menu md-sidenav.md-locked-open {
 scientilla-menu md-sidenav md-toolbar.active {
     background-color: rgb(53,91,191);
 }
+
+.documents-header > div > * {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.scientilla-search-container > form > * > div.form-group {
+    display: inline-block;
+}
+
+.scientilla-search-container > form > text-field > div.form-group {
+    width: 300px;
+}
+
+.scientilla-search-container > form > select-field > div.form-group {
+    width: 80px;
+}

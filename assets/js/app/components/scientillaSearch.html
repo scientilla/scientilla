@@ -1,10 +1,9 @@
-
 <div class="scientilla-search-container well">
-    <h4>Search</h4>
     <form form-for="vm.searchValues"
           validation-rules="vm.validationAndViewRules"
           form-for-builder
           class="form-group-sm">
+        <br>
         <button class="btn btn-primary btn-sm" type="submit" ng-click="vm.search()">Search</button>
         <button class="btn btn-primary btn-sm" type="button" ng-click="vm.reset()">Reset</button>
     </form>

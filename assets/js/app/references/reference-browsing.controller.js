@@ -7,10 +7,11 @@
         'researchEntity',
         'ContextService',
         'ModalService',
-        'GroupsService'
+        'GroupsService',
+        '$rootScope'
     ];
 
-    function ReferenceBrowsingController(researchEntity, ContextService, ModalService, GroupsService) {
+    function ReferenceBrowsingController(researchEntity, ContextService, ModalService, GroupsService, $rootScope) {
         var vm = this;
 
         vm.researchEntity = researchEntity;
@@ -28,7 +29,11 @@
         function createNewDocument(type) {
             var draft = vm.researchEntity.getNewDocument(type);
 
-            ModalService.openScientillaDocumentForm(draft, vm.researchEntity);
+            ModalService
+                .openScientillaDocumentForm(draft, vm.researchEntity)
+                .finally(function() {
+                    $rootScope.$broadcast("draft.created", draft);
+                });
         }
 
         function editProfile() {

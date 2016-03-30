@@ -65,7 +65,7 @@
             
             ModalService
                     .openScientillaDocumentForm(document.clone(),vm.researchEntity)
-                    .then(function () {
+                    .finally(function () {
                         getDrafts();
                     });
         }

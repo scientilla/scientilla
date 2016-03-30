@@ -1,6 +1,6 @@
 <div>
-    <div class="row">
-        <div class="col-md-4">
+    <div class="row documents-header">
+        <div class="col-md-8">
             <h1>
                 {{vm.researchEntity.getDisplayName()}}
                 &nbsp;
@@ -9,19 +9,17 @@
                 </button>
             </h1>
         </div>
-        <div class="col-md-8 text-right">
-            <h1>
-                <div class="btn-group" uib-dropdown >
-                    <button id="single-button" type="button" class="btn btn-primary" uib-dropdown-toggle ng-disabled="disabled">
-                        Add New
-                    </button>
-                    <ul uib-dropdown-menu>
-                        <li ng-repeat="type in vm.types">
-                            <a ng-click="vm.createNewDocument(type)" style="cursor: pointer">{{type.label}}</a>
-                        </li>
-                    </ul>
-                </div>
-            </h1>
+        <div class="col-md-4 text-right">
+            <div class="btn-group" uib-dropdown >
+                <button id="single-button" type="button" class="btn btn-primary" uib-dropdown-toggle ng-disabled="disabled">
+                    Add New
+                </button>
+                <ul uib-dropdown-menu>
+                    <li ng-repeat="type in vm.types">
+                        <a ng-click="vm.createNewDocument(type)" style="cursor: pointer">{{type.label}}</a>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
     <uib-tabset active="active">
