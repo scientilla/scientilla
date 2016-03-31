@@ -43,7 +43,7 @@
                 required: true
             },
             username: {
-                inputType: 'email',
+                inputType: 'text',
                 required: true
             },
             slug: {
