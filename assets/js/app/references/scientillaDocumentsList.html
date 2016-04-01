@@ -1,22 +1,23 @@
 <div>
-    <scientilla-search
-        form-structure="vm.searchForm"
-        on-search="vm.onSearch">
-    </scientilla-search>
-    <div ng-repeat="d in vm.documents">
-        <div class="row">
-            <div class="col-md-8">
-                <scientilla-document document="d"></scientilla-document>
+    <scientilla-filter
+        search-form-structure="vm.searchForm"
+        on-filter="vm.onFilter"
+        get-data="vm.getDocuments">
+        <div ng-repeat="d in vm.documents">
+            <div class="row">
+                <div class="col-md-8">
+                    <scientilla-document document="d"></scientilla-document>
+                </div>
+                <div class="col-md-4 text-right">
+                    <h3>
+                        <button class="btn btn-primary"  ng-click="vm.deleteDocument(d)" >
+                            <span class="fa fa-remove"></span>
+                            Delete
+                        </button>
+                    </h3>
+                </div>
             </div>
-            <div class="col-md-4 text-right">
-                <h3>
-                    <button class="btn btn-primary"  ng-click="vm.deleteDocument(d)" >
-                        <span class="fa fa-remove"></span>
-                        Delete
-                    </button>
-                </h3>
-            </div>
+            <hr>
         </div>
-        <hr>
-    </div>
+    </scientilla-filter>
 </div>
