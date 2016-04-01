@@ -37,6 +37,7 @@
         function activate() {
             getDrafts();
             $rootScope.$on("draft.created", getDrafts);
+            $rootScope.$on("draft.verified", getDrafts);
         }
 
         function getDrafts() {
@@ -58,7 +59,6 @@
             return researchEntityService.verify(vm.researchEntity, reference)
                     .then(function (draft) {
                         $rootScope.$broadcast("draft.verified", draft);
-                        getDrafts();
                     });
         }
 
@@ -67,7 +67,6 @@
             ModalService
                     .openScientillaDocumentForm(document.clone(),vm.researchEntity)
                     .finally(function () {
-                        getDrafts();
                     });
         }
     }

@@ -5,4 +5,5 @@
       class="autosave {{vm.status.isSaved() ? 'saved' : 'unsaved'}}">
     <button class="btn btn-primary" ng-click="vm.cancel()">Close</button>
     <button class="btn btn-primary" ng-click="vm.submit()">Save</button>
+    <button ng-if="vm.document.draft" class="btn btn-primary" ng-click="vm.saveVerify()">Verify</button>
 </form>

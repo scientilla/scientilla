@@ -22,15 +22,17 @@
     scientillaDocumentFormController.$inject = [
         'FormForConfiguration',
         '$scope',
-        '$q',
-        '$timeout'
+        'researchEntityService',
+        '$timeout', 
+        '$rootScope'
     ];
 
-    function scientillaDocumentFormController(FormForConfiguration, $scope, $q, $timeout) {
+    function scientillaDocumentFormController(FormForConfiguration, $scope, researchEntityService, $timeout, $rootScope) {
         var vm = this;
         vm.submit = submit;
         vm.status = createStatus();
         vm.cancel = cancel;
+        vm.saveVerify = saveVerify;
         vm.formVisible = true;
         activate();
         
@@ -110,16 +112,14 @@
             else
                 return vm.researchEntity.all('drafts')
                         .post(vm.document)
-                        .then(function (draft) {
-                            vm.document = draft;
+                        .then(function () {
                             vm.status.setSaved(true);
                         });
         }
 
         function submit() {
             saveDocument().then(function () {
-                if (_.isFunction(vm.onSubmit()))
-                    vm.onSubmit()(vm.document);
+                callOnSubmit(vm.document);
             });
 
         }
@@ -127,6 +127,22 @@
         function cancel() {
             if (_.isFunction(vm.onClose()))
                 vm.onClose()();
+        }
+        
+        function callOnSubmit(doc) {
+            if (_.isFunction(vm.onSubmit()))
+                vm.onSubmit()(doc);
+        }
+        
+        function saveVerify() {
+            saveDocument()
+                .then(function() {
+                    return researchEntityService.verify(vm.researchEntity, vm.document);
+                })
+                .then(function(doc) {
+                    $rootScope.$broadcast("draft.verified");
+                    callOnSubmit(doc);
+                });
         }
     }
 })();
