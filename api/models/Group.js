@@ -1,3 +1,5 @@
+/* global Membership, User, Group, Reference */
+
 /**
  * Group.js
  *
@@ -65,25 +67,40 @@ module.exports = _.merge({}, researchEntity, {
                     //STODO: return the new reference
                 });
     },
-    //sTODO: add deep populate for other fields of the references
-    getSuggestedReferences: function (groupId) {
-        return Membership.find({group: groupId})
-                .then(function (memberships) {
-                    var memberIds = _.map(memberships, 'user');
-                    //sTODO: refactor
-                    var funs = _.map(memberIds, function (userId) {
-                        return User.getReferences(User, userId, ['privateCoauthors', 'publicCoauthors', 'privateGroups'], 'verified')
-                    })
-                    return Promise.all(funs);
-                })
-                //sTODO: sobstitute with spread operator
-                .then(function (referencesGroup) {
-                    var references = _.flatten(referencesGroup);
-                    return references;
-                })
-                .then(function (maybeSuggestedReferences) {
-                    return Group.filterNecessaryReferences(groupId, Group, maybeSuggestedReferences)
+    //sTODO: add deep populate for other fields of the documents
+    getSuggestedDocuments: function (groupId, query) {
+
+        var sql = '\
+SELECT	"reference_privateCoauthors"\n\
+FROM    (   SELECT	u1."id" id\n\
+            FROM        "user" u1\n\
+            JOIN	"membership" m\n\
+            ON		u1."id" = m."user"\n\
+            WHERE	"m"."group" = ' + groupId + '\n\
+        ) u\n\
+JOIN    "reference_privatecoauthors__user_privatereferences" rpup\n\
+ON	u."id" = "rpup"."user_privateReferences"\n\
+WHERE	"reference_privateCoauthors" NOT IN (\n\
+            SELECT	"reference_privateGroups"\n\
+            FROM        "group_privatereferences__reference_privategroups"\n\
+            WHERE	"group_privateReferences" = ' + groupId + '\n\
+        )';
+
+        return Promise
+                .promisify(Reference.query)(sql)
+                .then(function (result) {
+
+                    var q = {
+                        where: {
+                            id: _.map(result.rows, 'reference_privateCoauthors')
+                        }
+                    };
+
+                    q = _.merge({}, q, query, {sort: Reference.DEFAULT_SORTING});
+
+                    return Reference.find(q);
                 });
+
     }
 });
 

@@ -19,24 +19,21 @@
 
     scientillaDocumentsListController.$inject = [
         '$rootScope',
-        'researchEntityService'
+        'researchEntityService',
+        'yearsInterval'
     ];
 
-    function scientillaDocumentsListController($rootScope, researchEntityService) {
+    function scientillaDocumentsListController($rootScope, researchEntityService, yearsInterval) {
         var vm = this;
         vm.documents = [];
 
         vm.deleteDocument = deleteDocument;
-        vm.getDocuments = getDocuments;
         vm.createNewUrl = vm.researchEntity.getNewReferenceUrl();
-
-        vm.totalItems = 0;
-
+        
+        vm.getData = getDocuments;
         vm.onFilter = refreshList;
 
-
-        var years = _.range(new Date().getFullYear(), 2005, -1);
-        var years_value = _.map(years, function(y){
+        var years_value = _.map(yearsInterval, function (y) {
             return {value: y + '', label: y + ''};
         });
 
@@ -78,7 +75,7 @@
         activate();
 
         function activate() {
-            $rootScope.$on('draft.verified', onVerify);
+            $rootScope.$on('draft.verified', updateList);
         }
 
         function getDocuments(q) {
@@ -89,20 +86,20 @@
         }
 
         function deleteDocument(reference) {
-            vm.researchEntity.one('references', reference.id).remove()
-                    .then(function () {
-                        getDocuments(query).then(refreshList);
-                    });
+            vm.researchEntity
+                    .one('references', reference.id)
+                    .remove()
+                    .then(updateList);
         }
 
         function refreshList(documents) {
             Scientilla.toDocumentsCollection(documents);
             vm.documents = documents;
         }
-        
+
         //private
-        function onVerify(){
-            getDocuments(query).then(getDocuments);
+        function updateList() {
+            getDocuments(query).then(refreshList);
         }
     }
 

@@ -19,11 +19,16 @@
 
     scientillaDrafsListController.$inject = [
         'ModalService',
-        '$rootScope'
+        '$rootScope',
+        'researchEntityService',
+        'yearsInterval'
     ];
 
-    function scientillaDrafsListController(ModalService, $rootScope) {
+    function scientillaDrafsListController(ModalService, $rootScope, researchEntityService, yearsInterval) {
         var vm = this;
+
+        vm.getData = getDrafts;
+        vm.onFilter = refreshList;
 
         vm.deleteDocument = deleteDocument;
         vm.verifyDocument = verifyDocument;
@@ -31,25 +36,64 @@
         vm.editUrl = vm.researchEntity.getProfileUrl();
         vm.openEditPopup = openEditPopup;
 
+        var years_value = _.map(yearsInterval, function (y) {
+            return {value: y + '', label: y + ''};
+        });
+
+        vm.searchForm = {
+            title: {
+                inputType: 'text',
+                label: 'Title',
+                matchColumn: 'title',
+                matchRule: 'contains'
+            },
+            author: {
+                inputType: 'text',
+                label: 'Author',
+                matchColumn: 'authors',
+                matchRule: 'contains'
+            },
+            maxYear: {
+                inputType: 'select',
+                label: 'Year from',
+                values: years_value,
+                allowBlank: true,
+                preventDefaultOption: true,
+                matchColumn: 'year',
+                matchRule: '<='
+            },
+            minYear: {
+                inputType: 'select',
+                label: 'Year to',
+                values: years_value,
+                allowBlank: true,
+                preventDefaultOption: true,
+                matchColumn: 'year',
+                matchRule: '>='
+            }
+        };
+
+        var query = {};
+
         activate();
 
         function activate() {
-            getDrafts();
-            $rootScope.$on("draft.created", getDrafts);
+            $rootScope.$on("draft.created", updateList);
         }
 
-        function getDrafts() {
-            vm.researchEntity.getList('drafts')
-                    .then(function (drafts) {
-                        Scientilla.toDocumentsCollection(drafts);
-                        vm.drafts = drafts;
-                    });
+
+
+        function getDrafts(q) {
+
+            query = q;
+
+            return researchEntityService.getDrafts(vm.researchEntity, q);
         }
 
         function deleteDocument(draft) {
             vm.researchEntity.one('drafts', draft.id).remove()
                     .then(function () {
-                        getDrafts();
+                        updateList();
                     });
         }
 
@@ -57,17 +101,27 @@
             return vm.researchEntity.one('drafts', reference.id).customPUT({}, 'verified')
                     .then(function (draft) {
                         $rootScope.$broadcast("draft.verified", draft);
-                        getDrafts();
+                        updateList();
                     });
         }
 
         function openEditPopup(document) {
-            
+
             ModalService
-                    .openScientillaDocumentForm(document.clone(),vm.researchEntity)
+                    .openScientillaDocumentForm(document.clone(), vm.researchEntity)
                     .finally(function () {
-                        getDrafts();
+                        updateList();
                     });
+        }
+
+        function refreshList(drafts) {
+            Scientilla.toDocumentsCollection(drafts);
+            vm.drafts = drafts;
+        }
+        
+        // private
+        function updateList(){
+            getDrafts(query).then(refreshList);
         }
     }
 

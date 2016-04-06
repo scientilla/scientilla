@@ -5,62 +5,60 @@
 
     NotificationBrowsingController.$inject = [
         'AuthService',
-        'Restangular',
-        'user',
-        'ModalService'
+        'ModalService',
+        'researchEntityService'
     ];
 
-    function NotificationBrowsingController(AuthService, Restangular, user, ModalService) {
+    function NotificationBrowsingController(AuthService, ModalService, researchEntityService) {
+
         var vm = this;
         vm.copyReference = copyReference;
         vm.verifyReference = verifyReference;
-        vm.notificationTargets = _.union([AuthService.user], AuthService.user.admininstratedGroups);
+        vm.researchEntities = _.union([AuthService.user], AuthService.user.admininstratedGroups);
 
-        activate();
+        vm.listRefreshGenerator = listRefreshGenerator;
+        vm.getDataGenerator = getDataGenerator;
 
-        function activate() {
-            return getNotifications().then(function () {
 
-            });
+        function getDataGenerator(researchEntity) {
+            return function (query) {
+                return researchEntityService.getSuggestedDocuments(researchEntity, query);
+            };
         }
 
-        function getNotifications() {
-            //sTODO move to a service
-            return user.getList('notifications')
-                    .then(function (notifications) {
-                        vm.notifications = notifications;
-                        _.forEach(vm.notifications, function (n) {
-                            if (n.content.reference)
-                                _.defaults(n.content.reference, Scientilla.reference);
-                            _.forEach(n.content.reference.privateCoauthors, function (c) {
-                                _.defaults(c, Scientilla.user);
-                            });
-                            _.forEach(n.content.reference.publicCoauthors, function (c) {
-                                _.defaults(c, Scientilla.user);
-                            });
-                        });
+        function listRefreshGenerator(researchEntity) {
+
+            return function (documents) {              
+                researchEntity.documents = documents;
+                _.forEach(researchEntity.documents, function (d) {
+                    if (d)
+                        _.defaults(d, Scientilla.reference);
+                    _.forEach(d.privateCoauthors, function (c) {
+                        _.defaults(c, Scientilla.user);
                     });
+                    _.forEach(d.publicCoauthors, function (c) {
+                        _.defaults(c, Scientilla.user);
+                    });
+                });
+            };
         }
-        
-        function copyReference(notification, target) {
+
+
+        function copyReference(document, target) {
+            console.log(target);
             ModalService
                     .openScientillaDocumentForm(
-                    Scientilla.reference.copyDocument(notification.content.reference,target),
-                    target)
-                    .then(function (document) {
-                        if(document)
-                            _.remove(vm.notifications, notification);
+                            Scientilla.reference.copyDocument(document, target),
+                            target)
+                    .then(function () {
                     });
 
         }
 
-        function verifyReference(notification, target) {
-
-            var reference = notification.content.reference;
+        function verifyReference(document, target) {
             //sTODO move to a service
-            target.post('privateReferences', {id: reference.id})
+            target.post('privateReferences', {id: document.id})
                     .then(function () {
-                        _.remove(vm.notifications, notification);
                     });
         }
     }

@@ -21,6 +21,10 @@ module.exports = {
     VERIFIED: VERIFIED,
     DRAFT: DRAFT,
     PUBLIC: PUBLIC,
+    DEFAULT_SORTING:{
+                year: 0,
+                updatedAt: 0
+            },
     /* ATTRIBUTES */
     attributes: {
         title: {

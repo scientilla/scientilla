@@ -23,8 +23,8 @@
                     service.validateData = function (user) {
                         //validate user data
                     };
-                    
-                    service.save = function(user) {
+
+                    service.save = function (user) {
                         if (user.id)
                             return user.save();
                         else
@@ -53,7 +53,15 @@
                                     });
                                     return user;
                                 });
-                    }
+                    };
+
+                    service.getUsers = function (query) {
+                        var populate = {populate: ['memberships', 'references']};
+
+                        var q = _.merge({}, query, populate);
+
+                        return this.getList(q);
+                    };
 
                     return service;
                 }]);

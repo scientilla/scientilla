@@ -64,12 +64,19 @@ module.exports = {
             return;
         }
         res.halt(Connector.getReferences(Model, researchEntityId, connector));
+    },
+    getSuggestedDocuments: function (req, res) {
+        var Model = getModel(req);
+        var userId = req.params.id;
+        var user = req.session.user;
+        
+        res.halt(Model.getSuggestedDocuments(userId, req.query));
     }
 };
 
 function getModel(req) {
-    var model = req.options.model || req.options.controller;
-    var Model = req._sails.models[model];
+    var model_name = req.options.model || req.options.controller;
+    var Model = req._sails.models[model_name];
     return Model;
 }
 

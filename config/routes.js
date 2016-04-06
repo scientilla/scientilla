@@ -53,7 +53,8 @@ module.exports.routes = {
   'put /groups/:id/drafts/:referenceId/verified': 'Group.verifyDraft',
   'get /references/:id/suggestions' : 'Suggestion.find', //sTODO delete
   'get /references/:id/suggested-collaborators' : 'Reference.getSuggestedCollaborators',
-  'get /users/:id/suggested-references' : 'User.getSuggestedReferences',
+  'get /users/:id/suggested-documents' : 'User.getSuggestedDocuments',
+  'get /groups/:id/suggested-documents' : 'Group.getSuggestedDocuments',
   'get /users/:id/notifications' : 'User.getNotifications',
   'get /users/:id/external-references' : 'User.getExternalReferences',
   'get /groups/:id/external-references' : 'Group.getExternalReferences'
