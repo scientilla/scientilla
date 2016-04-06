@@ -163,31 +163,6 @@ module.exports = _.merge({}, researchEntity, {
                     return user.admininstratedGroups;
                 });
     },
-    getNotifications: function (userId) {
-        return User
-                .getAdministeredGroups(userId)
-                .then(function (administeredGroups) {
-                    var suggestedDocumentsFunctions = _.map(administeredGroups, function (g) {
-                        return Group.getSuggestedDocuments(g.id);
-                    });
-                    suggestedDocumentsFunctions.unshift(User.getSuggestedDocuments(userId));
-                    return Promise.all(suggestedDocumentsFunctions)
-                            .then(function (documentsGroups) {
-                                var userDocuments = documentsGroups.shift();
-                                var notifications = _.map(userDocuments, function (r) {
-                                    return {type: 'document', content: {document: r}, targetType: 'user', targetId: userId};
-                                });
-                                var groupNotifications = _.flatten(documentsGroups.map(function (documents, i) {
-                                    var group = administeredGroups[i];
-                                    return documents.map(function (r) {
-                                        return {type: 'document', content: {document: r}, targetType: 'group', targetId: group.id};
-                                    });
-                                }));
-                                notifications = _.union(notifications, groupNotifications);
-                                return notifications;
-                            });
-                });
-    },
     //sTODO: add deep populate for other fields of the references
     getSuggestedDocuments: function (userId, query) {
 

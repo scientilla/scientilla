@@ -34,20 +34,5 @@ module.exports = require('waterlock').actions.user(_.merge({}, researchEntityCon
     create: function (req, res, next) {
         var params = waterlock._utils.allParams(req);
         res.halt(User.createCompleteUser(params));
-    },/*
-    getSuggestedReferences: function (req, res) {
-        var userId = req.params.id;
-        var user = req.session.user;
-        User.getSuggestedReferences(userId, user)
-                .then(function (suggestedReferences) {
-                    res.json(suggestedReferences);
-                });
-    },*/
-    getNotifications: function (req, res) {
-        var userId = req.params.id;
-        User.getNotifications(userId)
-                .then(function (suggestedDocuments) {
-                    res.json(suggestedDocuments);
-                });
     }
 }));
