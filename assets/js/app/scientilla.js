@@ -91,7 +91,7 @@ Scientilla.user = {
             pages: '',
             articleNumber: '',
             DOI: '',
-            chapterTitle: '',
+            bookTitle: '',
             editor: '',
             publisher: '',
             conferenceName: '',
@@ -211,8 +211,8 @@ Scientilla.reference = {
                 title: {
                     inputType: 'text'
                 },
-                chapterTitle: {
-                    label: 'Chapter title',
+                bookTitle: {
+                    label: 'Book title',
                     inputType: 'text'
                 },
                 authors: {
@@ -431,7 +431,7 @@ Scientilla.group = {
             pages: '',
             articleNumber: '',
             DOI: '',
-            chapterTitle: '',
+            bookTitle: '',
             editor: '',
             publisher: '',
             conferenceName: '',

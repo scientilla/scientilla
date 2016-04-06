@@ -34,7 +34,7 @@ module.exports = {
         pages: 'STRING',
         articleNumber: 'STRING',
         DOI: 'STRING',
-        chapterTitle: 'STRING',
+        bookTitle: 'STRING',
         editor: 'STRING',
         publisher: 'STRING',
         conferenceName: 'STRING',
