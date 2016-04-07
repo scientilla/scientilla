@@ -6,10 +6,11 @@
     NotificationBrowsingController.$inject = [
         'AuthService',
         'ModalService',
+        'Restangular',
         'researchEntityService'
     ];
 
-    function NotificationBrowsingController(AuthService, ModalService, researchEntityService) {
+    function NotificationBrowsingController(AuthService, ModalService, Restangular, researchEntityService) {
 
         var vm = this;
         vm.copyReference = copyReference;
@@ -19,47 +20,73 @@
         vm.listRefreshGenerator = listRefreshGenerator;
         vm.getDataGenerator = getDataGenerator;
 
+        var query = {};
+
 
         function getDataGenerator(researchEntity) {
-            return function (query) {
-                return researchEntityService.getSuggestedDocuments(researchEntity, query);
+            return function (q) {
+                return getData(researchEntity, q);
             };
         }
 
         function listRefreshGenerator(researchEntity) {
-
-            return function (documents) {              
-                researchEntity.documents = documents;
-                _.forEach(researchEntity.documents, function (d) {
-                    if (d)
-                        _.defaults(d, Scientilla.reference);
-                    _.forEach(d.privateCoauthors, function (c) {
-                        _.defaults(c, Scientilla.user);
-                    });
-                    _.forEach(d.publicCoauthors, function (c) {
-                        _.defaults(c, Scientilla.user);
-                    });
-                });
+            return function (documents) {
+                listRefresh(researchEntity, documents);
             };
         }
 
 
         function copyReference(document, target) {
-            console.log(target);
+
+            var restType = target.getType() + 's';
+
+            var researchEntity = Restangular
+                    .one(restType, target.id);
+
             ModalService
                     .openScientillaDocumentForm(
                             Scientilla.reference.copyDocument(document, target),
-                            target)
+                            researchEntity)
                     .then(function () {
+                        reload(target);
                     });
 
         }
 
         function verifyReference(document, target) {
             //sTODO move to a service
-            target.post('privateReferences', {id: document.id})
+            researchEntityService.verifyDocument(target, document.id)
                     .then(function () {
+                        reload(target);
                     });
+        }
+
+
+        // private
+        function reload(target) {
+            getData(target, query).
+                    then(function (documents) {
+                        listRefresh(target, documents);
+                    });
+        }
+
+        function getData(researchEntity, q) {
+            query = q;
+            return researchEntityService.getSuggestedDocuments(researchEntity, query);
+        }
+
+        function listRefresh(researchEntity, documents) {
+            researchEntity.documents = documents;
+            _.forEach(researchEntity.documents, function (d) {
+                if (d)
+                    _.defaults(d, Scientilla.reference);
+                _.forEach(d.privateCoauthors, function (c) {
+                    _.defaults(c, Scientilla.user);
+                });
+                _.forEach(d.publicCoauthors, function (c) {
+                    _.defaults(c, Scientilla.user);
+                });
+            });
         }
     }
 })();
