@@ -5,13 +5,12 @@
 
     RegisterController.$inject = [
         'AuthService',
-        'UsersService',
         'FormForConfiguration',
-        '$scope',
+        'Notification',
         '$location'
     ];
 
-    function RegisterController(AuthService, UsersService, FormForConfiguration, $scope, $location) {
+    function RegisterController(AuthService, FormForConfiguration, Notification, $location) {
         var vm = this;
         vm.user = {
             name: "",
@@ -36,8 +35,8 @@
             },
             password: {
                 inputType: 'password',
-                required: true,
-            },
+                required: true
+            }
         };
 
         vm.submit = submit;
@@ -53,6 +52,8 @@
             AuthService.register(vm.user)
                     .then(function () {
                         $location.path("/");
+                    }).catch(function(){
+                        Notification.warning('Registration failed');
                     });
         }
     }
