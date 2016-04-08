@@ -69,11 +69,45 @@ module.exports = {
             fieldExtract: function (res) {
                 return _.get(res, 'data');
             },
-            transform: function (r) {
-                return {
-                    title: r.title,
-                    authors: r.authors.replace(/\*/g, '')
+            transform: function (d) {
+                var newDoc = {
+                    title: d.title,
+                    authors: d.authors.replace(/\*/g, ''),
+                    year: d.year,
+                    doi: d.doi,
+                    journal: d.journal,
+                    volume: d.volume,
+                    issue: d.issue,
+                    pages: /^\d+-\d+$/.test(d.pages) ? d.pages : '',
+                    articleNumber: '',
+                    bookTitle: d.bookTitle,
+                    editor: d.editor,
+                    publisher: d.publisher,
+                    conferenceName: d.conference,
+                    conferenceLocation: d.conferencePlace,
+                    acronym: d.conferenceAcronym
                 };
+                if (newDoc.conferenceName) 
+                    newDoc.sourceType = 'conference';
+                else if (newDoc.journal)
+                    newDoc.sourceType = 'journal';
+                else if (newDoc.bookTitle)
+                    newDoc.sourceType = 'book';
+                else
+                    newDoc.sourceType = null;
+                var typeMappings = {
+                    bookwhole: 'book',
+                    bookchapter: 'bookChapter',
+                    fullpapervolumeatreferredconference: 'conference_paper',
+                    shortpaperabstractatrefereedconference: 'abstract',
+                    nationaljournal: 'article',
+                    internationaljournal: 'article',
+                    correction: 'erraturm',
+                    editorial: 'editorial',
+                    supplementaryinformation: 'note'
+                };
+                newDoc.type = d.typeAlias in typeMappings ? typeMappings[d.typeAlias] : null;
+                return newDoc;
             }
         };
     },
