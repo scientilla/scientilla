@@ -1,18 +1,18 @@
 <div>
     <uib-tabset active="active">
-        <uib-tab index="$index + 1" ng-repeat="researchEntity in vm.researchEntities">
+        <uib-tab index="$index + 1" ng-repeat="target in vm.targets">
             <uib-tab-heading>
-                {{researchEntity.getDisplayName()}}
+                {{target.researchEntity.getDisplayName()}}
             </uib-tab-heading>
 
             <h3>Suggested References</h3>
 
 
             <scientilla-filter
-                on-filter="vm.listRefreshGenerator(researchEntity)"
-                get-data="vm.getDataGenerator(researchEntity)">
+                on-filter="vm.listRefreshGenerator(target)"
+                get-data="vm.getDataGenerator(target)">
 
-                <div ng-repeat="document in researchEntity.documents">
+                <div ng-repeat="document in target.documents">
 
                     <div class="row">
                         <div class="col-md-8">
@@ -21,7 +21,7 @@
                         <div class="col-md-4 text-right">
                             <h3>
                                 <div class="btn-group" uib-dropdown>
-                                    <button  ng-click="vm.verifyReference(document, researchEntity)" type="button" class="btn btn-primary">
+                                    <button  ng-click="vm.verifyReference(document, target)" type="button" class="btn btn-primary">
                                         <span class="fa fa-check"></span>
                                         Verify
                                     </button>
@@ -30,7 +30,7 @@
                                     </button>
                                     <ul uib-dropdown-menu >
                                         <li>
-                                            <a ng-click="vm.copyReference(document, researchEntity)" href="javascript:void(0)">
+                                            <a ng-click="vm.copyReference(document, target)" href="javascript:void(0)">
                                                 <span class="fa fa-copy"></span>
                                                 Copy reference
                                             </a>

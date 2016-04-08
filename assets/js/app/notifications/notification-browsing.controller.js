@@ -1,3 +1,5 @@
+/* global Scientilla */
+
 (function () {
     angular
             .module('notifications')
@@ -15,38 +17,46 @@
         var vm = this;
         vm.copyReference = copyReference;
         vm.verifyReference = verifyReference;
-        vm.researchEntities = _.union([AuthService.user], AuthService.user.admininstratedGroups);
+
+        vm.targets = _.map(_.union([AuthService.user], AuthService.user.admininstratedGroups),
+                function (reserarchEntity) {
+                    return {
+                        researchEntity: reserarchEntity,
+                        documents: [],
+                        query: {}
+                    };
+                });
 
         vm.listRefreshGenerator = listRefreshGenerator;
         vm.getDataGenerator = getDataGenerator;
 
-        var query = {};
 
-
-        function getDataGenerator(researchEntity) {
-            return function (q) {
-                return getData(researchEntity, q);
+        function getDataGenerator(target) {
+            return function (query) {
+                target.query = query;
+                return getData(target);
             };
         }
 
-        function listRefreshGenerator(researchEntity) {
+        function listRefreshGenerator(target) {
             return function (documents) {
-                listRefresh(researchEntity, documents);
+                target.documents = documents;
+                listRefresh(target);
             };
         }
 
 
         function copyReference(document, target) {
 
-            var restType = target.getType() + 's';
+            var restType = target.researchEntity.getType() + 's';
 
-            var researchEntity = Restangular
-                    .one(restType, target.id);
+            var restResearchEntity = Restangular
+                    .one(restType, target.researchEntity.id);
 
             ModalService
                     .openScientillaDocumentForm(
-                            Scientilla.reference.copyDocument(document, target),
-                            researchEntity)
+                            Scientilla.reference.copyDocument(document, target.researchEntity),
+                            restResearchEntity)
                     .then(function () {
                         reload(target);
                     });
@@ -55,7 +65,7 @@
 
         function verifyReference(document, target) {
             //sTODO move to a service
-            researchEntityService.verifyDocument(target, document.id)
+            researchEntityService.verifyDocument(target.researchEntity, document.id)
                     .then(function () {
                         reload(target);
                     });
@@ -64,20 +74,19 @@
 
         // private
         function reload(target) {
-            getData(target, query).
+            getData(target).
                     then(function (documents) {
-                        listRefresh(target, documents);
+                        target.documents = documents;
+                        listRefresh(target);
                     });
         }
 
-        function getData(researchEntity, q) {
-            query = q;
-            return researchEntityService.getSuggestedDocuments(researchEntity, query);
+        function getData(target) {
+            return researchEntityService.getSuggestedDocuments(target.researchEntity, target.query);
         }
 
-        function listRefresh(researchEntity, documents) {
-            researchEntity.documents = documents;
-            _.forEach(researchEntity.documents, function (d) {
+        function listRefresh(target) {
+            _.forEach(target.documents, function (d) {
                 if (d)
                     _.defaults(d, Scientilla.reference);
                 _.forEach(d.privateCoauthors, function (c) {
