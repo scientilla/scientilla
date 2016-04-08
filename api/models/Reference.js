@@ -33,7 +33,7 @@ module.exports = {
         volume: 'STRING',
         pages: 'STRING',
         articleNumber: 'STRING',
-        DOI: 'STRING',
+        doi: 'STRING',
         bookTitle: 'STRING',
         editor: 'STRING',
         publisher: 'STRING',

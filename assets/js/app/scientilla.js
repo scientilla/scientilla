@@ -90,7 +90,7 @@ Scientilla.user = {
             volume: '',
             pages: '',
             articleNumber: '',
-            DOI: '',
+            doi: '',
             bookTitle: '',
             editor: '',
             publisher: '',
@@ -114,7 +114,21 @@ Scientilla.reference = {
         var fields = [
             'authors',
             'title',
-            'status'
+            'year',
+            'journal',
+            'issue',
+            'volume',
+            'pages',
+            'articleNumber',
+            'doi',
+            'bookTitle',
+            'editor',
+            'publisher',
+            'conferenceName',
+            'conferenceLocation',
+            'acronym',
+            'type',
+            'sourceType'
         ];
         var reference = _.pick(referenceData, fields);
         if (creator.getType() === 'user')
@@ -202,7 +216,8 @@ Scientilla.reference = {
                     label: "Article number",
                     inputType: 'text'
                 },
-                DOI: {
+                doi: {
+                    label: "DOI",
                     inputType: 'text'
                 }
             };
@@ -430,7 +445,7 @@ Scientilla.group = {
             volume: '',
             pages: '',
             articleNumber: '',
-            DOI: '',
+            doi: '',
             bookTitle: '',
             editor: '',
             publisher: '',
