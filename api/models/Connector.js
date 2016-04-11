@@ -129,14 +129,54 @@ module.exports = {
             fieldExtract: function (res) {
                 return _.get(res, 'orcid-profile.orcid-activities.orcid-works.orcid-work');
             },
-            transform: function (r) {
-                return {
-                    title: _.get(r, 'work-title.title.value'),
-                    authors: _.map(_.get(r, 'work-contributors.contributor'), function (c) {
+            transform: function (d) {
+               function  getAttributeFromCitation(d, attribute){
+                   var citationData = _.get(d, 'work-citation.citation');
+                   var regex = new RegExp(attribute + '\\s=\\s{(.*?)}');
+                   return _.get(citationData.match(regex), '[1]');
+               }
+                var sourceTypeMappings = {
+                    JOURNAL_ARTICLE: 'journal',
+                    CONFERENCE_PAPER: 'conference',
+                    BOOK: 'book'
+                };
+                var sourceType = sourceTypeMappings[d['work-type']];
+                var newDoc = {
+                    title: _.get(d, 'work-title.title.value'),
+                    authors: _.map(_.get(d, 'work-contributors.contributor'), function (c) {
                         var authorStr = _.get(c, 'credit-name.value');
                         return authorStr.replace(/,/g, '');
-                    }).join(', ')
+                    }).join(', '),
+                    year: _.get(d, 'publication-date.year.value'),
+                    doi: _.get(
+                            _.get(d, 'work-external-identifiers.work-external-identifier')
+                            .find(function(wei) {
+                                return wei['work-external-identifier-type'] === 'DOI';
+                            }), 
+                            'work-external-identifier-id.value'
+                        ),
+                    sourceType: sourceType    
                 };
+                switch(newDoc.sourceType) {
+                    case 'journal': 
+                        newDoc.journal = getAttributeFromCitation(d, 'journal');
+                        newDoc.volume = getAttributeFromCitation(d, 'volume');
+                        newDoc.issue = getAttributeFromCitation(d, 'number');
+                        newDoc.pages = getAttributeFromCitation(d, 'pages');
+                        newDoc.articleNumber = null;
+                        break;
+                    case 'book':
+                        newDoc.bookTitle = getAttributeFromCitation(d, 'journal');
+                        newDoc.editor = null;
+                        newDoc.publisher = null;
+                    break;
+                    case 'conference':
+                        newDoc.conferenceName = getAttributeFromCitation(d, 'journal');
+                        newDoc.conferenceLocation = null;
+                        newDoc.acronym = null;
+                    break;
+                }
+                return newDoc;
             }
         };
     },
@@ -150,11 +190,8 @@ module.exports = {
             query = 'au-id(' + researchEntity.scopusId + ')';
         } else {
             query = 'AF-ID(' + researchEntity.scopusId + ')';
-            //query = 'AF-ID(7004326697)';
             uri += 'affiliation';
         }
-
-        //if()
 
         return {
             reqParams: {
