@@ -37,6 +37,7 @@ module.exports = function (grunt) {
                         'angular-resource/angular-resource.min.js',
                         'angular-route/angular-route.min.js',
                         'angular-sanitize/angular-sanitize.min.js',
+                        'angular-ui-notification/dist/angular-ui-notification.min.js',
                         'bootstrap/dist/js/bootstrap.min.js',
                         'jquery/dist/jquery.min.js',
                         'lodash/dist/lodash.min.js',
@@ -48,6 +49,7 @@ module.exports = function (grunt) {
                     expand: true,
                     cwd: './bower_components',
                     src: [
+                        'angular-ui-notification/dist/angular-ui-notification.min.css',
                         'bootstrap/dist/css/bootstrap.min.css',
                         'bootstrap/dist/fonts/*',
                         'font-awesome/css/font-awesome.min.css',

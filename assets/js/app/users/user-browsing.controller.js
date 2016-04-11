@@ -4,13 +4,14 @@
             .controller('UserBrowsingController', UserBrowsingController);
 
     UserBrowsingController.$inject = [
-        '$location',
         'UsersService',
+        'Notification',
         'AuthService',
-        'ModalService'
+        'ModalService',
+        '$location'
     ];
 
-    function UserBrowsingController($location, UsersService, AuthService, ModalService) {
+    function UserBrowsingController(UsersService, Notification, AuthService, ModalService, $location) {
         var vm = this;
 
         vm.user = AuthService.user;
@@ -59,10 +60,19 @@
         }
 
         function deleteUser(user) {
-            user.remove()
+            user
+                    .remove()
                     .then(function () {
-                        _.remove(vm.users, user);
+                        Notification.success("User deleted");
+                
+                        getUsers()
+                        .then(refreshList);
+
+                    })
+                    .catch(function () {
+                        Notification.warning("Failed to delete user");
                     });
+
         }
 
         // private
@@ -70,7 +80,8 @@
             ModalService
                     .openScientillaUserForm(!user ? UsersService.getNewUser() : user.clone())
                     .then(function () {
-                        getUsers();
+                        getUsers()
+                        .then(refreshList);
                     });
         }
 

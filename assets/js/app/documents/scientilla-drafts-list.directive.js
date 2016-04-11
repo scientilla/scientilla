@@ -1,3 +1,5 @@
+/* global Scientilla */
+
 (function () {
     'use strict';
 
@@ -19,12 +21,13 @@
 
     scientillaDrafsListController.$inject = [
         'ModalService',
+        'Notification',
         '$rootScope',
         'researchEntityService',
         'yearsInterval'
     ];
 
-    function scientillaDrafsListController(ModalService, $rootScope, researchEntityService, yearsInterval) {
+    function scientillaDrafsListController(ModalService, Notification, $rootScope, researchEntityService, yearsInterval) {
         var vm = this;
 
         vm.getData = getDrafts;
@@ -91,18 +94,31 @@
         }
 
         function deleteDocument(draft) {
-            vm.researchEntity.one('drafts', draft.id).remove()
-                    .then(function () {
+            vm.researchEntity
+                    .one('drafts', draft.id)
+                    .remove()
+                    .then(function (){
+                        Notification.success("Draft deleted");
                         updateList();
+                    })
+                    .catch(function () {
+                        Notification.warning("Failed to delete draft");
                     });
         }
 
         function verifyDocument(reference) {
-            return vm.researchEntity.one('drafts', reference.id).customPUT({}, 'verified')
+            return vm.researchEntity
+                    .one('drafts', reference.id)
+                    .customPUT({}, 'verified')
                     .then(function (draft) {
+                        Notification.success("Draft verified");
                         $rootScope.$broadcast("draft.verified", draft);
                         updateList();
+                    })
+                    .catch(function () {
+                        Notification.warning("Failed to verify draft");
                     });
+
         }
 
         function openEditPopup(document) {
@@ -118,9 +134,9 @@
             Scientilla.toDocumentsCollection(drafts);
             vm.drafts = drafts;
         }
-        
+
         // private
-        function updateList(){
+        function updateList() {
             getDrafts(query).then(refreshList);
         }
     }

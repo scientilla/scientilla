@@ -1,3 +1,5 @@
+/* global Scientilla */
+
 (function () {
     angular
             .module('references')
@@ -21,12 +23,13 @@
 
     scientillaDocumentFormController.$inject = [
         'FormForConfiguration',
+        'Notification',
         '$scope',
         '$q',
         '$timeout'
     ];
 
-    function scientillaDocumentFormController(FormForConfiguration, $scope, $q, $timeout) {
+    function scientillaDocumentFormController(FormForConfiguration, Notification, $scope, $q, $timeout) {
         var vm = this;
         vm.submit = submit;
         vm.status = 'saved';
@@ -105,10 +108,16 @@
         }
 
         function submit() {
-            saveDocument().then(function () {
-                if (_.isFunction(vm.onSubmit()))
-                    vm.onSubmit()(vm.document);
-            });
+            saveDocument()
+                    .then(function () {
+                        Notification.success("Document saved");
+
+                        if (_.isFunction(vm.onSubmit()))
+                            vm.onSubmit()(vm.document);
+                    })
+                    .catch(function () {
+                        Notification.warning("Failed to save document");
+                    });
 
         }
 

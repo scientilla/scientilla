@@ -4,13 +4,14 @@
             .controller('GroupBrowsingController', GroupBrowsingController);
 
     GroupBrowsingController.$inject = [
-        '$location',
         'GroupsService',
+        'Notification',
         'AuthService',
-        'ModalService'
+        'ModalService',
+        '$location'
     ];
 
-    function GroupBrowsingController($location, GroupsService, AuthService, ModalService) {
+    function GroupBrowsingController(GroupsService, Notification, AuthService, ModalService, $location) {
         var vm = this;
 
         vm.user = AuthService.user;
@@ -51,10 +52,19 @@
         }
 
         function deleteGroup(group) {
-            group.remove()
+            group
+                    .remove()
                     .then(function () {
-                        _.remove(vm.groups, group);
+                        Notification.success("User deleted");
+                        
+                        getGroups()
+                        .then(refreshList);
+
+                    })
+                    .catch(function () {
+                        Notification.warning("Failed to delete user");
                     });
+
         }
 
         function editGroup(group) {
@@ -68,7 +78,8 @@
             ModalService
                     .openScientillaGroupForm(!group ? GroupsService.getNewGroup() : group.clone())
                     .then(function () {
-                        getGroups();
+                        getGroups()
+                        .then(refreshList);
                     });
         }
 

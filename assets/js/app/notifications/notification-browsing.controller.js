@@ -9,14 +9,15 @@
         'AuthService',
         'ModalService',
         'Restangular',
-        'researchEntityService'
+        'researchEntityService',
+        'Notification'
     ];
 
-    function NotificationBrowsingController(AuthService, ModalService, Restangular, researchEntityService) {
+    function NotificationBrowsingController(AuthService, ModalService, Restangular, researchEntityService, Notification) {
 
         var vm = this;
-        vm.copyReference = copyReference;
-        vm.verifyReference = verifyReference;
+        vm.copyDocument = copyDocument;
+        vm.verifyDocument = verifyDocument;
 
         vm.targets = _.map(_.union([AuthService.user], AuthService.user.admininstratedGroups),
                 function (reserarchEntity) {
@@ -46,7 +47,7 @@
         }
 
 
-        function copyReference(document, target) {
+        function copyDocument(document, target) {
 
             var restType = target.researchEntity.getType() + 's';
 
@@ -63,11 +64,14 @@
 
         }
 
-        function verifyReference(document, target) {
+        function verifyDocument(document, target) {
             //sTODO move to a service
             researchEntityService.verifyDocument(target.researchEntity, document.id)
                     .then(function () {
+                        Notification.success('Document verified');
                         reload(target);
+                    }).catch(function(){
+                        Notification.warning('Failed to verify document');
                     });
         }
 

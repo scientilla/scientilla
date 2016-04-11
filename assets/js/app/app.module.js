@@ -5,6 +5,7 @@
         'auth',
         'components',
         'ui.bootstrap',
+        'ui-notification',
         'LocalStorageModule',
 
         /* Feature areas */
@@ -14,4 +15,3 @@
         'notifications'
     ]);
 })();
-
