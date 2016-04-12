@@ -3,7 +3,7 @@
     angular
             .module('groups')
             .component('scientillaGroupForm', {
-               templateUrl: 'partials/scientilla-group-form.html',
+                templateUrl: 'partials/scientilla-group-form.html',
                 controller: GroupFormController,
                 controllerAs: 'vm',
                 bindings: {
@@ -16,11 +16,12 @@
     GroupFormController.$inject = [
         'GroupsService',
         'FormForConfiguration',
+        'Notification',
         '$scope',
         '$http'
     ];
 
-    function GroupFormController(GroupsService, FormForConfiguration, $scope, $http) {
+    function GroupFormController(GroupsService, FormForConfiguration, Notification, $scope, $http) {
         var vm = this;
         vm.getMembers = getMembers;
         vm.getUsersQuery = getUsersQuery;
@@ -29,6 +30,7 @@
             vm.onClose()(vm.group);
         };
 
+        vm.submit = submit;
         vm.validationAndViewRules = {
             name: {
                 inputType: 'text',
@@ -56,7 +58,6 @@
             }
         };
 
-        vm.submit = submit;
 
         activate();
 
@@ -105,7 +106,12 @@
         function submit() {
             GroupsService.doSave(vm.group)
                     .then(function (group) {
-                        vm.onSubmit()(group);
+                        Notification.success("Group data saved");
+                        if (_.isFunction(vm.onSubmit()))
+                            vm.onSubmit()(group);
+                    })
+                    .catch(function () {
+                        Notification.warning("Failed to save group");
                     });
         }
 

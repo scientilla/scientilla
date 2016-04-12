@@ -1,3 +1,5 @@
+/* global User, Reference, sails, Auth */
+
 /**
  * User
  *
@@ -138,7 +140,7 @@ module.exports = _.merge({}, researchEntity, {
     verifyDraft: function (researchEntityId, draftId) {
         return Reference.findOneById(draftId)
                 .then(function (draft) {
-                    return Promise.all([draft, Reference.findOne({draft: false, title: draft.title, authors: draft.authors})])
+                    return Promise.all([draft, Reference.findOne({draft: false, title: draft.title, authors: draft.authors})]);
                 })
                 .spread(function (draft, sameReference) {
                     if (sameReference) {
@@ -161,39 +163,19 @@ module.exports = _.merge({}, researchEntity, {
                     return user.admininstratedGroups;
                 });
     },
-    getNotifications: function (userId) {
-        return User
-                .getAdministeredGroups(userId)
-                .then(function (administeredGroups) {
-                    var suggestedReferencesFunctions = _.map(administeredGroups, function (g) {
-                        return Group.getSuggestedReferences(g.id);
-                    });
-                    suggestedReferencesFunctions.unshift(User.getSuggestedReferences(userId));
-                    return Promise.all(suggestedReferencesFunctions)
-                            .then(function (referencesGroups) {
-                                var userReferences = referencesGroups.shift();
-                                var notifications = _.map(userReferences, function (r) {
-                                    return {type: 'reference', content: {reference: r}, targetType: 'user', targetId: userId};
-                                });
-                                var groupNotifications = _.flatten(referencesGroups.map(function (references, i) {
-                                    var group = administeredGroups[i];
-                                    return references.map(function (r) {
-                                        return {type: 'reference', content: {reference: r}, targetType: 'group', targetId: group.id};
-                                    });
-                                }));
-                                notifications = _.union(notifications, groupNotifications);
-                                return notifications;
-                            });
-                });
-    },
     //sTODO: add deep populate for other fields of the references
-    getSuggestedReferences: function (userId) {
+    getSuggestedDocuments: function (userId, query) {
+
         return User.findOneById(userId)
-                .then(function(user) {
-                    return Reference.find({draft: false, authors: {contains: user.surname}})
+                .then(function (user) {
+                    var q = _.merge({},
+                            query,
+                            {where: {draft: false, authors: {contains: user.surname}}},
+                            {sort: Reference.DEFAULT_SORTING});
+                    return Reference.find(q);
                 })
-                .then(function (maybeSuggestedReferences) {
-                    return User.filterNecessaryReferences(userId, User, maybeSuggestedReferences)
+                .then(function (maybeSuggestedDocuments) {
+                    return User.filterNecessaryReferences(userId, User, maybeSuggestedDocuments);
                 });
     },
     setSlug: function (user) {

@@ -2,7 +2,7 @@
     <scientilla-filter
         search-form-structure="vm.searchForm"
         on-filter="vm.onFilter"
-        get-data="vm.getDocuments">
+        get-data="vm.getData">
         <div ng-repeat="d in vm.documents">
             <div class="row">
                 <div class="col-md-8">
@@ -10,9 +10,9 @@
                 </div>
                 <div class="col-md-4 text-right">
                     <h3>
-                        <button class="btn btn-primary"  ng-click="vm.deleteDocument(d)" >
+                        <button class="btn btn-primary"  ng-click="vm.unverifyDocument(d)" >
                             <span class="fa fa-remove"></span>
-                            Delete
+                            Unverify
                         </button>
                     </h3>
                 </div>
@@ -20,4 +20,10 @@
             <hr>
         </div>
     </scientilla-filter>
+    
+    
+    <div ng-if="!vm.documents.length">
+        <h3>No documents found</h3>
+    </div>
+    
 </div>

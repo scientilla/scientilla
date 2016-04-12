@@ -1,4 +1,5 @@
 <scientilla-search
+    ng-if="!!vm.searchFormStructure"
     form-structure="vm.searchFormStructure"
     on-search="vm.onSearch">
 </scientilla-search>
@@ -6,6 +7,7 @@
 
 
 <uib-pager
+    ng-if="vm.totalItems"
     total-items="vm.totalItems"
     items-per-page="vm.itemsPerPage"
     ng-model="vm.currentPage"

@@ -4,13 +4,14 @@
             .controller('UserBrowsingController', UserBrowsingController);
 
     UserBrowsingController.$inject = [
-        '$location',
         'UsersService',
+        'Notification',
         'AuthService',
-        'ModalService'
+        'ModalService',
+        '$location'
     ];
 
-    function UserBrowsingController($location, UsersService, AuthService, ModalService) {
+    function UserBrowsingController(UsersService, Notification, AuthService, ModalService, $location) {
         var vm = this;
 
         vm.user = AuthService.user;
@@ -19,21 +20,31 @@
         vm.editUser = editUser;
         vm.createNew = createNew;
 
-        activate();
+        vm.getData = getUsers;
+        vm.onFilter = refreshList;
 
-        function activate() {
-            return getUsers().then(function () {
+        vm.searchForm = {
+            name: {
+                inputType: 'text',
+                label: 'Name',
+                matchColumn: 'name',
+                matchRule: 'contains'
+            },
+            surname: {
+                inputType: 'text',
+                label: 'Surname',
+                matchColumn: 'surname',
+                matchRule: 'contains'
+            }
+        };
 
-            });
+        function getUsers(q) {
+            return UsersService.getUsers(q);
         }
 
-        function getUsers() {
-            return UsersService.getList({
-                populate: ['memberships', 'references']
-            }).then(function (data) {
-                vm.users = data;
-                return vm.users;
-            });
+        function refreshList(users) {
+            vm.users = users;
+            return vm.users;
         }
 
         function createNew() {
@@ -49,10 +60,19 @@
         }
 
         function deleteUser(user) {
-            user.remove()
+            user
+                    .remove()
                     .then(function () {
-                        _.remove(vm.users, user);
+                        Notification.success("User deleted");
+                
+                        getUsers()
+                        .then(refreshList);
+
+                    })
+                    .catch(function () {
+                        Notification.warning("Failed to delete user");
                     });
+
         }
 
         // private
@@ -60,7 +80,8 @@
             ModalService
                     .openScientillaUserForm(!user ? UsersService.getNewUser() : user.clone())
                     .then(function () {
-                        getUsers();
+                        getUsers()
+                        .then(refreshList);
                     });
         }
 

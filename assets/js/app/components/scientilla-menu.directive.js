@@ -15,7 +15,13 @@
         };
     }
 
-    function scientillaMenuController($scope, AuthService) {
+    scientillaMenuController.$inject = [
+        'AuthService',
+        '$scope',
+        '$location'
+    ];
+
+    function scientillaMenuController(AuthService, $scope, $location) {
         var vm = this;
 
         vm.menuItemClicked = menuItemClicked;
@@ -38,8 +44,7 @@
                     {
                         type: 'item',
                         title: 'Notifications',
-                        url: '#/users/' + vm.user.id + '/notifications',
-                        active: true
+                        url: '#/users/' + vm.user.id + '/notifications'
                     },
                     {
                         type: 'separator'
@@ -69,18 +74,28 @@
                         url: '#/groups'
                     }]);
             }
+
+            _.each(vm.menuItems, function (i) {
+                if (i.url === '#' + $location.path())
+                    i.active = true;
+            });
         }
 
         function menuItemClicked(item) {
 
             if (item.type !== 'item')
                 return;
+            
+            resetSelection();
+            
+            item.active = true;
 
+        }
+        
+        function resetSelection(){
             _.each(vm.menuItems, function (i) {
                 i.active = false;
             });
-            item.active = true;
-
         }
     }
 

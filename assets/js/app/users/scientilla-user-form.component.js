@@ -1,3 +1,5 @@
+/* global Scientilla */
+
 (function () {
 
     angular
@@ -17,12 +19,13 @@
     UserFormController.$inject = [
         'UsersService',
         'FormForConfiguration',
+        'Notification',
         '$scope',
         'AuthService',
         'GroupsService'
     ];
 
-    function UserFormController(UsersService, FormForConfiguration, $scope, AuthService, GroupsService) {
+    function UserFormController(UsersService, FormForConfiguration, Notification, $scope, AuthService, GroupsService) {
         var vm = this;
         vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.getGroupsQuery = GroupsService.getGroupsQuery;
@@ -43,7 +46,7 @@
                 required: true
             },
             username: {
-                inputType: 'email',
+                inputType: 'text',
                 required: true
             },
             slug: {
@@ -69,7 +72,7 @@
         if (!vm.user.id) {
             vm.validationAndViewRules.password = {
                 inputType: 'password',
-                required: true,
+                required: true
             };
         }
 
@@ -105,10 +108,15 @@
         }
 
         function submit() {
-            UsersService.doSave(vm.user)
+            UsersService
+                    .doSave(vm.user)
                     .then(function (user) {
+                        Notification.success("User data saved");
                         if (_.isFunction(vm.onSubmit()))
                             vm.onSubmit()(user);
+                    })
+                    .catch(function () {
+                        Notification.warning("Failed to save user");
                     });
         }
 

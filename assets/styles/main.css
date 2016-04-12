@@ -61,9 +61,8 @@
 }
 
 .tab-content{
-    height: 820px;
-    overflow-y: scroll;
-    /*padding-right: 15px;*/
+    /*height: 820px;*/
+    /*overflow-y: scroll;*/
     
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;

@@ -1,3 +1,5 @@
+/* global Scientilla */
+
 (function () {
     angular
             .module('references')
@@ -21,20 +23,20 @@
 
     scientillaDocumentFormController.$inject = [
         'FormForConfiguration',
+        'Notification',
         '$scope',
-        'researchEntityService',
-        '$timeout', 
-        '$rootScope'
+        '$timeout'
     ];
 
-    function scientillaDocumentFormController(FormForConfiguration, $scope, researchEntityService, $timeout, $rootScope) {
+    function scientillaDocumentFormController(FormForConfiguration, Notification, $scope, $timeout) {
         var vm = this;
         vm.submit = submit;
         vm.status = createStatus();
         vm.cancel = cancel;
-        vm.saveVerify = saveVerify;
         vm.formVisible = true;
         activate();
+        
+        
         
         function createStatus() {
             var isSavedVar = true;
@@ -112,37 +114,29 @@
             else
                 return vm.researchEntity.all('drafts')
                         .post(vm.document)
-                        .then(function () {
+                        .then(function (draft) {
+                            vm.document = draft;
                             vm.status.setSaved(true);
                         });
         }
 
         function submit() {
-            saveDocument().then(function () {
-                callOnSubmit(vm.document);
-            });
+            saveDocument()
+                    .then(function () {
+                        Notification.success("Document saved");
+
+                        if (_.isFunction(vm.onSubmit()))
+                            vm.onSubmit()(vm.document);
+                    })
+                    .catch(function () {
+                        Notification.warning("Failed to save document");
+                    });
 
         }
 
         function cancel() {
             if (_.isFunction(vm.onClose()))
                 vm.onClose()();
-        }
-        
-        function callOnSubmit(doc) {
-            if (_.isFunction(vm.onSubmit()))
-                vm.onSubmit()(doc);
-        }
-        
-        function saveVerify() {
-            saveDocument()
-                .then(function() {
-                    return researchEntityService.verify(vm.researchEntity, vm.document);
-                })
-                .then(function(doc) {
-                    $rootScope.$broadcast("draft.verified");
-                    callOnSubmit(doc);
-                });
         }
     }
 })();

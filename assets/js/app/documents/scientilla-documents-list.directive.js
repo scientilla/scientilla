@@ -1,3 +1,5 @@
+/* global Scientilla */
+
 (function () {
     'use strict';
 
@@ -19,24 +21,22 @@
 
     scientillaDocumentsListController.$inject = [
         '$rootScope',
-        'researchEntityService'
+        'Notification',
+        'researchEntityService',
+        'yearsInterval'
     ];
 
-    function scientillaDocumentsListController($rootScope, researchEntityService) {
+    function scientillaDocumentsListController($rootScope, Notification, researchEntityService, yearsInterval) {
         var vm = this;
         vm.documents = [];
 
-        vm.deleteDocument = deleteDocument;
-        vm.getDocuments = getDocuments;
+        vm.unverifyDocument = unverifyDocument;
         vm.createNewUrl = vm.researchEntity.getNewReferenceUrl();
 
-        vm.totalItems = 0;
-
+        vm.getData = getDocuments;
         vm.onFilter = refreshList;
 
-
-        var years = _.range(new Date().getFullYear(), 2005, -1);
-        var years_value = _.map(years, function(y){
+        var years_value = _.map(yearsInterval, function (y) {
             return {value: y + '', label: y + ''};
         });
 
@@ -78,20 +78,24 @@
         activate();
 
         function activate() {
-            $rootScope.$on('draft.verified', onVerify);
+            $rootScope.$on('draft.verified', updateList);
         }
 
         function getDocuments(q) {
-
             query = q;
-
             return researchEntityService.getDocuments(vm.researchEntity, query);
         }
 
-        function deleteDocument(reference) {
-            vm.researchEntity.one('references', reference.id).remove()
-                    .then(function () {
-                        getDocuments(query).then(refreshList);
+        function unverifyDocument(reference) {
+            vm.researchEntity
+                    .one('references', reference.id)
+                    .remove()
+                    .then(function (documents) {
+                        Notification.success("Document succesfully unverified");
+                        updateList(documents);
+                    })
+                    .catch(function () {
+                        Notification.warning("Failed to unverify document");
                     });
         }
 
@@ -99,10 +103,10 @@
             Scientilla.toDocumentsCollection(documents);
             vm.documents = documents;
         }
-        
+
         //private
-        function onVerify(){
-            getDocuments(query).then(getDocuments);
+        function updateList() {
+            getDocuments(query).then(refreshList);
         }
     }
 

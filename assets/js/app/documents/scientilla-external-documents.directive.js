@@ -1,3 +1,5 @@
+/* global Scientilla */
+
 (function () {
     'use strict';
 
@@ -16,12 +18,13 @@
             }
         };
     }
-    
-    scientillaExternalDocumentsController.$inject =[
+
+    scientillaExternalDocumentsController.$inject = [
+        'Notification',
         '$rootScope'
     ];
 
-    function scientillaExternalDocumentsController($rootScope) {
+    function scientillaExternalDocumentsController(Notification, $rootScope) {
         var vm = this;
         vm.STATUS_WAITING = 0;
         vm.STATUS_LOADING = 1;
@@ -48,7 +51,6 @@
 
             });
         }
-        ;
 
         function getExternalReferences(researchEntity, connector) {
             //sTODO move to a service
@@ -58,6 +60,7 @@
                         vm.status = vm.STATUS_READY;
                     })
                     .catch(function (err) {
+                        Notification.error("External reference error");
                         vm.status = vm.STATUS_ERROR;
                     });
         }
@@ -66,10 +69,16 @@
             //sTODO-urgent owner must be changed server-side
             //sTODO move to a service
             var newReference = Scientilla.reference.create(reference, researchEntity);
-            researchEntity.post('drafts', newReference)
+            researchEntity
+                    .post('drafts', newReference)
                     .then(function (draft) {
+                        Notification.success("Draft copied");
+                
                         $rootScope.$broadcast("draft.created", draft);
                         _.remove(vm.references, reference);
+                    })
+                    .catch(function () {
+                        Notification.warning("Failed to copy draft");
                     });
         }
     }
