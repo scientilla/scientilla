@@ -1,3 +1,5 @@
+/* global Reference, sails, User */
+
 /**
  * Reference.js
  *
@@ -21,10 +23,10 @@ module.exports = {
     VERIFIED: VERIFIED,
     DRAFT: DRAFT,
     PUBLIC: PUBLIC,
-    DEFAULT_SORTING:{
-                year: 0,
-                updatedAt: 0
-            },
+    DEFAULT_SORTING: {
+        year: 'desc',
+        updatedAt: 'desc'
+    },
     /* ATTRIBUTES */
     attributes: {
         title: {
@@ -44,7 +46,6 @@ module.exports = {
         conferenceName: 'STRING',
         conferenceLocation: 'STRING',
         acronym: 'STRING',
-        
         type: 'STRING',
         sourceType: 'STRING',
         publicCoauthors: {
@@ -109,7 +110,7 @@ module.exports = {
             }, this));
             return similarity;
         },
-        savePromise: function() {
+        savePromise: function () {
             var self = this;
             return new Promise(function (resolve, reject) {
                 self.save(function (err, re) {
@@ -187,6 +188,6 @@ module.exports = {
     getVerifiedAndPublicReferences: function (references) {
         return _.filter(references, function (r) {
             return _.includes([VERIFIED, PUBLIC], r.status);
-        })
+        });
     }
 };
