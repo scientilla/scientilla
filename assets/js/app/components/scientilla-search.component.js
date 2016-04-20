@@ -28,10 +28,11 @@
         vm.searchValues = {};
 
         _.forEach(vm.formStructure, function (value, key) {
-            if (value.defaultValue)
+            if (!_.isUndefined(value.defaultValue))
                 vm.searchValues[key] = value.defaultValue;
         });
 
+        vm.search();
 
         function search() {
 
