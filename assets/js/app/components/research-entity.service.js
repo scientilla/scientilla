@@ -13,6 +13,7 @@
         service.getDrafts = getDrafts;
         service.getSuggestedDocuments = getSuggestedDocuments;
         service.verifyDocument = verifyDocument;
+        service.discardDocument = discardDocument;
 
         function getDocuments(researchEntity, query) {
 
@@ -45,6 +46,14 @@
             return Restangular
                     .one(restType, researchEntity.id)
                     .post('privateReferences', {id: id});
+        }
+
+        function discardDocument(researchEntity, documentId) {
+            var restType = researchEntity.getType() + 's';
+            
+            return Restangular
+                    .one(restType, researchEntity.id)
+                    .post('discarded-document', {documentId: documentId});
         }
 
         return service;

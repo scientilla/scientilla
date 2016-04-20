@@ -9,6 +9,7 @@
 
 
             <scientilla-filter
+                search-form-structure="vm.searchForm"
                 on-filter="vm.listRefreshGenerator(target)"
                 get-data="vm.getDataGenerator(target)">
 
@@ -33,6 +34,12 @@
                                             <a ng-click="vm.copyDocument(document, target)" href="javascript:void(0)">
                                                 <span class="fa fa-copy"></span>
                                                 Copy reference
+                                            </a>
+                                        </li>
+                                        <li ng-if="!document.discarded">
+                                            <a ng-click="vm.discardDocument(document, target)" href="javascript:void(0)">
+                                                <span class="fa fa-ban"></span>
+                                                Discard
                                             </a>
                                         </li>
                                     </ul>

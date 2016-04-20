@@ -1,4 +1,4 @@
-/* global User, Reference, sails, Auth */
+/* global User, Reference, sails, Auth, SqlService */
 
 /**
  * User
@@ -23,23 +23,19 @@ module.exports = _.merge({}, researchEntity, {
         //Constants
         username: {
             type: 'email',
-//            required: true,
             defaultsTo: ""
         },
         name: {
             type: 'STRING',
-//            required: true,
             defaultsTo: ""
         },
         surname: {
             type: 'STRING',
-//            required: true,
             defaultsTo: ""
         },
         slug: {
             type: 'STRING',
             unique: true,
-//            required: true,
             alphanumericdashed: true,
             minLength: 3,
             maxLength: 30,
@@ -48,8 +44,7 @@ module.exports = _.merge({}, researchEntity, {
         role: {
             type: 'STRING',
             enum: [USER, ADMINISTRATOR],
-            defaultsTo: USER,
-//            required: true
+            defaultsTo: USER
         },
         orcidId: {
             type: 'STRING'
@@ -71,7 +66,8 @@ module.exports = _.merge({}, researchEntity, {
         },
         discardedReferences: {
             collection: 'Reference',
-            via: 'discardedCoauthors'
+            via: 'discardedCoauthors',
+            dominant: true
         },
         jsonWebTokens: {
             collection: 'jwt',
@@ -168,15 +164,73 @@ module.exports = _.merge({}, researchEntity, {
 
         return User.findOneById(userId)
                 .then(function (user) {
-                    var q = _.merge({},
-                            query,
-                            {where: {draft: false, authors: {contains: user.surname}}},
-                            {sort: Reference.DEFAULT_SORTING});
-                    return Reference.find(q);
-                })
-                .then(function (maybeSuggestedDocuments) {
-                    return User.filterNecessaryReferences(userId, User, maybeSuggestedDocuments);
+
+                    var q = {
+                        select: '*',
+                        from: {
+                            select: [
+                                'reference.*',
+                                'user_discardedReferences as discarded'
+                            ],
+                            from: {
+                                select: '*',
+                                from: 'reference_discardedcoauthors__user_discardedreferences',
+                                where: {
+                                    'reference_discardedcoauthors__user_discardedreferences.user_discardedReferences': userId
+                                },
+                                as: 'rdud'
+                            },
+                            rightJoin: [
+                                {
+                                    from: 'reference',
+                                    on: {
+                                        'reference': 'id',
+                                        'rdud': 'reference_discardedCoauthors'
+                                    }
+                                }
+                            ],
+                            where: {
+                                'reference.draft': false,
+                                'reference.authors': {
+                                    'ilike': '%' + user.surname + '%'
+                                },
+                                'reference.id': {
+                                    'not in': {
+                                        select: 'reference_privateCoauthors',
+                                        from: 'reference_privatecoauthors__user_privatereferences',
+                                        where: {
+                                            'user_privateReferences': userId
+                                        }
+                                    }
+                                }
+                            },
+                            as: 'ref'
+                        }
+                    };
+
+                    q.where = _.merge({}, q.where, query.where);
+                    q.orderBy = Reference.DEFAULT_SORTING;
+                    q.skip = query.skip;
+                    q.limit = query.limit;
+
+
+                    return SqlService
+                            .generateFromJson(q)
+                            .then(SqlService.query);
                 });
+//        
+//        return User.findOneById(userId)
+//                .then(function (user) {
+//                    var q = _.merge({},
+//                            query,
+//                            {where: {draft: false, authors: {contains: user.surname}}},
+//                            {sort: Reference.DEFAULT_SORTING});
+//                    return Reference.find(q);
+//                })
+//                .then(function (maybeSuggestedDocuments) {
+//                    return User.filterNecessaryReferences(userId, User, maybeSuggestedDocuments);
+//                });
+
     },
     setSlug: function (user) {
         var name = user.name ? user.name : "";
