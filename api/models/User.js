@@ -165,47 +165,54 @@ module.exports = _.merge({}, researchEntity, {
         return User.findOneById(userId)
                 .then(function (user) {
 
+                    var userDiscardedDocuments = {
+                        select: '*',
+                        from: 'reference_discardedcoauthors__user_discardedreferences',
+                        where: {
+                            'reference_discardedcoauthors__user_discardedreferences.user_discardedReferences': userId
+                        },
+                        as: 'userDiscardedDocuments'
+                    };
+
+                    var userDocumentIds = {
+                        select: 'reference_privateCoauthors',
+                        from: 'reference_privatecoauthors__user_privatereferences',
+                        where: {
+                            'user_privateReferences': userId
+                        }
+                    };
+
+
+                    var userSuggestedDocuments = {
+                        select: [
+                            'reference.*',
+                            'user_discardedReferences as discarded'
+                        ],
+                        from: userDiscardedDocuments,
+                        rightJoin: [
+                            {
+                                from: 'reference',
+                                on: {
+                                    'reference': 'id',
+                                    'userDiscardedDocuments': 'reference_discardedCoauthors'
+                                }
+                            }
+                        ],
+                        where: {
+                            'reference.draft': false,
+                            'reference.authors': {
+                                'ilike': '%' + user.surname + '%'
+                            },
+                            'reference.id': {
+                                'not in': userDocumentIds
+                            }
+                        },
+                        as: 'suggestedDocuments'
+                    };
+
                     var q = {
                         select: '*',
-                        from: {
-                            select: [
-                                'reference.*',
-                                'user_discardedReferences as discarded'
-                            ],
-                            from: {
-                                select: '*',
-                                from: 'reference_discardedcoauthors__user_discardedreferences',
-                                where: {
-                                    'reference_discardedcoauthors__user_discardedreferences.user_discardedReferences': userId
-                                },
-                                as: 'rdud'
-                            },
-                            rightJoin: [
-                                {
-                                    from: 'reference',
-                                    on: {
-                                        'reference': 'id',
-                                        'rdud': 'reference_discardedCoauthors'
-                                    }
-                                }
-                            ],
-                            where: {
-                                'reference.draft': false,
-                                'reference.authors': {
-                                    'ilike': '%' + user.surname + '%'
-                                },
-                                'reference.id': {
-                                    'not in': {
-                                        select: 'reference_privateCoauthors',
-                                        from: 'reference_privatecoauthors__user_privatereferences',
-                                        where: {
-                                            'user_privateReferences': userId
-                                        }
-                                    }
-                                }
-                            },
-                            as: 'ref'
-                        }
+                        from: userSuggestedDocuments
                     };
 
                     q.where = _.merge({}, q.where, query.where);
@@ -216,20 +223,14 @@ module.exports = _.merge({}, researchEntity, {
 
                     return SqlService
                             .generateFromJson(q)
-                            .then(SqlService.query);
+                            .then(SqlService.query)
+                            .then(function (rows) {
+                                rows.forEach(function (row) {
+                                    row.discarded = !!row.discarded;
+                                });
+                                return rows;
+                            });
                 });
-//        
-//        return User.findOneById(userId)
-//                .then(function (user) {
-//                    var q = _.merge({},
-//                            query,
-//                            {where: {draft: false, authors: {contains: user.surname}}},
-//                            {sort: Reference.DEFAULT_SORTING});
-//                    return Reference.find(q);
-//                })
-//                .then(function (maybeSuggestedDocuments) {
-//                    return User.filterNecessaryReferences(userId, User, maybeSuggestedDocuments);
-//                });
 
     },
     setSlug: function (user) {

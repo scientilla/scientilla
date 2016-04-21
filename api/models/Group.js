@@ -69,67 +69,75 @@ module.exports = _.merge({}, researchEntity, {
     //sTODO: add deep populate for other fields of the documents
     getSuggestedDocuments: function (groupId, query) {
 
+        var groupDocumentsIds = {
+            select: 'reference_privateGroups',
+            from: 'group_privatereferences__reference_privategroups',
+            where: {
+                'group_privateReferences': groupId
+            }
+        };
+        
+        var groupUsers = {
+                select: ['user.id'],
+                from: 'user',
+                join: [
+                    {
+                        from: 'membership',
+                        on: {
+                            'user': 'id',
+                            'membership': 'user'
+                        }
+                    }
+                ],
+                where: {'group': groupId},
+                as: 'groupUsers'
+            };
+
+        var groupSuggestedDocumentIds = {
+            select: ['reference_privateCoauthors'],
+            from: groupUsers,
+            join: [
+                {
+                    from: 'reference_privatecoauthors__user_privatereferences',
+                    on: {
+                        'groupUsers': 'id',
+                        'reference_privatecoauthors__user_privatereferences': 'user_privateReferences'
+                    }
+                }
+            ],
+            where: {
+                'reference_privateCoauthors': {
+                    'not in': groupDocumentsIds
+                }
+            }
+        };
+
+        var groupSuggestedDocuments = {
+            select: [
+                'reference.*',
+                'reference_discardedGroups as discarded'
+            ],
+            from: 'reference',
+            leftJoin: [
+                {
+                    from: 'group_discardedreferences__reference_discardedgroups',
+                    on: {
+                        'reference': 'id',
+                        'group_discardedreferences__reference_discardedgroups': 'reference_discardedGroups'
+                    }
+                }
+            ],
+            where: {
+                'reference.id': {
+                    in: groupSuggestedDocumentIds
+                }
+            },
+            as: 'groupSuggestedDocuments'
+        };
+
         var q = {
             select: '*',
-            from: {
-                select: [
-                    'reference.*',
-                    'reference_discardedGroups as discarded'
-                ],
-                from: 'reference',
-                leftJoin: [
-                    {
-                        from: 'group_discardedreferences__reference_discardedgroups',
-                        on: {
-                            'reference': 'id',
-                            'group_discardedreferences__reference_discardedgroups': 'reference_discardedGroups'
-                        }
-                    }
-                ],
-                where: {
-                    'reference.id': {
-                        in: {
-                            select: ['reference_privateCoauthors'],
-                            from: {
-                                select: ['user.id'],
-                                from: 'user',
-                                join: [
-                                    {
-                                        from: 'membership',
-                                        on: {
-                                            'user': 'id',
-                                            'membership': 'user'
-                                        }
-                                    }
-                                ],
-                                where: {'group': groupId},
-                                as: 'u'
-                            },
-                            join: [
-                                {
-                                    from: 'reference_privatecoauthors__user_privatereferences',
-                                    on: {
-                                        'u': 'id',
-                                        'reference_privatecoauthors__user_privatereferences': 'user_privateReferences'
-                                    }
-                                }
-                            ],
-                            where: {
-                                'reference_privateCoauthors': {
-                                    'not in': {
-                                        select: 'reference_privateGroups',
-                                        from: 'group_privatereferences__reference_privategroups',
-                                        where: {
-                                            'group_privateReferences': groupId
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                as: 'ref'
-            }
+            from: groupSuggestedDocuments
         };
 
         q.where = _.merge({}, q.where, query.where);
@@ -140,6 +148,12 @@ module.exports = _.merge({}, researchEntity, {
 
         return SqlService
                 .generateFromJson(q)
-                .then(SqlService.query);
+                .then(SqlService.query)
+                .then(function (rows) {
+                    rows.forEach(function (row) {
+                        row.discarded = !!row.discarded;
+                    });
+                    return rows;
+                });
     }
 });
