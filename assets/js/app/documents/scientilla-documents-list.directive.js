@@ -36,9 +36,11 @@
         vm.getData = getDocuments;
         vm.onFilter = refreshList;
 
-        var years_value = _.map(yearsInterval, function (y) {
-            return {value: y + '', label: y + ''};
-        });
+        var years_value = _.concat(
+                [{value: "?", label: 'Select'}],
+                _.map(yearsInterval, function (y) {
+                    return {value: y + '', label: y + ''};
+                }));
 
         vm.searchForm = {
             title: {
@@ -57,8 +59,6 @@
                 inputType: 'select',
                 label: 'Year from',
                 values: years_value,
-                allowBlank: true,
-                preventDefaultOption: true,
                 matchColumn: 'year',
                 matchRule: '>='
             },
@@ -66,8 +66,6 @@
                 inputType: 'select',
                 label: 'Year to',
                 values: years_value,
-                allowBlank: true,
-                preventDefaultOption: true,
                 matchColumn: 'year',
                 matchRule: '<='
             }
