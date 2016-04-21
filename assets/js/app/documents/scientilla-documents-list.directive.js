@@ -60,7 +60,7 @@
                 allowBlank: true,
                 preventDefaultOption: true,
                 matchColumn: 'year',
-                matchRule: '<='
+                matchRule: '>='
             },
             minYear: {
                 inputType: 'select',
@@ -69,7 +69,7 @@
                 allowBlank: true,
                 preventDefaultOption: true,
                 matchColumn: 'year',
-                matchRule: '>='
+                matchRule: '<='
             }
         };
 
