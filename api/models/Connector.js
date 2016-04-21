@@ -215,13 +215,22 @@ module.exports = {
 
                 return _.get(res, 'search-results.entry');
             },
-            transform: function (r) {
+            transform: function (d1) {
+                function getConferenceLocation(d) {
+                    var venuePath = 'xocs:item.item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.conflocation.venue';
+                    var cityPath = 'xocs:item.item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.conflocation.city';
+                    var venue = _.get(d, venuePath);
+                    var city = _.get(d, cityPath);
+                    var conferenceLocationArray = _.compact([venue, city]);
+                    var conferenceLocation = conferenceLocationArray.join(', ');
+                    return conferenceLocation;
+                }
                 return request
                         .get({
                             uri: 'http://msapi.scivalanalytics.com/REST',
                             qs: {
                                 'clientKey': '8fa985e47a9d6f1bd3bbb75427442f6b',
-                                'retrieve': _.get(r, 'eid')
+                                'retrieve': _.get(d1, 'eid')
                             }
                         })
                         .then(function (resXML) {
@@ -229,18 +238,60 @@ module.exports = {
                             if (!resXML)
                                 throw new Error("XML empty");
 
-                            res = XML.parse(resXML);
-
-                            return {
-                                title: _.get(res, 'xocs:item.item.bibrecord.head.citation-title.titletext._Data'),
+                            var d2 = XML.parse(resXML);
+                            var sourceTypeMappings = {
+                                'Journal': 'journal',
+                                'Conference Proceeding': 'conference',
+                                'Book Series': 'book'
+                            };
+                            var sourceType = sourceTypeMappings[d1['prism:aggregationType']];
+                            
+                            var newDoc = {
+                                title: _.get(d2, 'xocs:item.item.bibrecord.head.citation-title.titletext._Data'),
                                 authors: _.map(
-                                        _.get(res, 'xocs:meta.cto:unique-author'),
+                                        _.get(d2, 'xocs:meta.cto:unique-author'),
                                         function (c) {
                                             return _.get(c, 'cto:auth-indexed-name');
-                                        }).join(', ')
+                                        }).join(', '),
+                                year: _.get(d2, 'xocs:meta.xocs:pub-year'),
+                                doi: _.get(d2, 'xocs:meta.xocs:doi'),
+                                sourceType: sourceType
                             };
+                            
+                            
+                            switch(newDoc.sourceType) {
+                                case 'journal': 
+                                    newDoc.journal = d1['prism:publicationName'];
+                                    newDoc.volume = d1['prism:volume'];
+                                    newDoc.issue = d1['prism:issueIdentifier'];
+                                    newDoc.pages = d1['prism:pageRange'];
+                                    newDoc.articleNumber = null;
+                                    break;
+                                case 'book':
+                                    newDoc.pages = d1['prism:pageRange'];
+                                    newDoc.bookTitle = d1['prism:publicationName'];
+                                    newDoc.editor = null;
+                                    newDoc.publisher = _.get(d2, 'xocs:item.item.bibrecord.head.source.publisher.publishername');
+                                break;
+                                case 'conference':
+                                    newDoc.conferenceName = d1['prism:publicationName'];
+                                    newDoc.conferenceLocation = getConferenceLocation(d2);
+                                    newDoc.acronym = null;
+                                break;
+                            }
+                            
+                            var typeMappings = {
+                                re: 'review',
+                                ip: 'article_in_press',
+                                ed: 'editorial',
+                                ar: 'article',
+                                cp: 'conference_paper'
+                            };
+                            
+                            newDoc.type = typeMappings[d1['subtype']];
+                
+                            return newDoc;
                         });
-
             }
         };
     }
