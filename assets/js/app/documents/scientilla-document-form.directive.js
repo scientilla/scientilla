@@ -36,8 +36,6 @@
         vm.formVisible = true;
         activate();
         
-        
-        
         function createStatus() {
             var isSavedVar = true;
             return {
@@ -68,6 +66,13 @@
         }
 
         function loadDocumentFields() {
+            var types = Scientilla.reference.getDocumentTypes()
+                    .map(function(t) {
+                        return {
+                            value: t.key,
+                            label: t.label
+                        };
+                    });
             vm.validationAndViewRules = _.merge({
                 sourceType: {
                     inputType: 'select',
@@ -80,6 +85,14 @@
                         {value: 'book', label: 'Book'},
                         {value: 'conference', label: 'Conference'}
                     ]
+                },
+                type: {
+                    inputType: 'select',
+                    label: 'Type',
+                    allowBlank: true,
+                    preventDefaultOption: true,
+                    required: true,
+                    values: types
                 }
             }, Scientilla.reference.getDocumentsFields(vm.document.sourceType));
             refreshForm();
