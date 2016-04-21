@@ -27,6 +27,12 @@
 
         vm.searchValues = {};
 
+        _.forEach(vm.formStructure, function (value, key) {
+            if (!_.isUndefined(value.defaultValue))
+                vm.searchValues[key] = value.defaultValue;
+        });
+
+        vm.search();
 
         function search() {
 
@@ -38,9 +44,14 @@
                         var struct = vm.formStructure[key];
 
                         var whereAdd = {};
-                        whereAdd[struct.matchColumn] = {};
-                        whereAdd[struct.matchColumn][struct.matchRule] = value;
 
+                        if (struct.matchRule === 'is null') {
+                            if (!value)
+                                whereAdd[struct.matchColumn] = null;
+                        } else {
+                            whereAdd[struct.matchColumn] = {};
+                            whereAdd[struct.matchColumn][struct.matchRule] = value;
+                        }
                         where = _.merge(where, whereAdd);
                     });
             vm.onSearch()(where);
@@ -49,7 +60,12 @@
         function reset() {
             _.forEach(this.searchValues,
                     function (value, key) {
-                        vm.searchValues[key] = '';
+
+                        var struct = vm.formStructure[key];
+                        if (struct.defaultValue)
+                            vm.searchValues[key] = struct.defaultValue;
+                        else
+                            vm.searchValues[key] = '';
                     });
             vm.search();
         }

@@ -18,6 +18,7 @@
         var vm = this;
         vm.copyDocument = copyDocument;
         vm.verifyDocument = verifyDocument;
+        vm.discardDocument = discardDocument;
 
         vm.targets = _.map(_.union([AuthService.user], AuthService.user.admininstratedGroups),
                 function (reserarchEntity) {
@@ -31,6 +32,15 @@
         vm.listRefreshGenerator = listRefreshGenerator;
         vm.getDataGenerator = getDataGenerator;
 
+        vm.searchForm = {
+            rejected: {
+                inputType: 'checkbox',
+                label: 'Include discarded documents',
+                defaultValue: false,
+                matchColumn: 'discarded',
+                matchRule: 'is null'
+            }
+        };
 
         function getDataGenerator(target) {
             return function (query) {
@@ -66,12 +76,27 @@
 
         function verifyDocument(document, target) {
             //sTODO move to a service
-            researchEntityService.verifyDocument(target.researchEntity, document.id)
+            researchEntityService
+                    .verifyDocument(target.researchEntity, document.id)
                     .then(function () {
                         Notification.success('Document verified');
                         reload(target);
-                    }).catch(function(){
+                    })
+                    .catch(function () {
                         Notification.warning('Failed to verify document');
+                    });
+        }
+
+        function discardDocument(document, target) {
+            //sTODO move to a service
+            researchEntityService
+                    .discardDocument(target.researchEntity, document.id)
+                    .then(function () {
+                        Notification.success('Document discarded');
+                        reload(target);
+                    })
+                    .catch(function () {
+                        Notification.warning('Failed to discard document');
                     });
         }
 

@@ -20,11 +20,20 @@
     function scientillaDocumentController() {
         var vm = this;
         
+        vm.isDiscarded = isDiscarded;
+        
         activate();
+        
+        function isDiscarded(){
+            return !!vm.document.discarded;
+        }
+        
+        
 
         function activate() {
             
         }
+        
     }
 
 })();

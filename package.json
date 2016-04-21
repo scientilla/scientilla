@@ -30,7 +30,8 @@
     "waterlock": "~0.1.0",
     "waterlock-ldap-auth": "*",
     "waterlock-local-auth": "*",
-    "pixl-xml":"*"
+    "pixl-xml": "*",
+    "waterline-query-builder": "particlebanana/waterline-query-builder"
   },
   "devDependencies": {
     "should": "*",

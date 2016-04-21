@@ -1,3 +1,5 @@
+/* global Reference, sails, User */
+
 /**
  * Reference.js
  *
@@ -22,8 +24,8 @@ module.exports = {
     DRAFT: DRAFT,
     PUBLIC: PUBLIC,
     DEFAULT_SORTING: {
-        year: 0,
-        updatedAt: 0
+        year: 'desc',
+        updatedAt: 'desc'
     },
     /* ATTRIBUTES */
     attributes: {
@@ -186,6 +188,6 @@ module.exports = {
     getVerifiedAndPublicReferences: function (references) {
         return _.filter(references, function (r) {
             return _.includes([VERIFIED, PUBLIC], r.status);
-        })
+        });
     }
 };

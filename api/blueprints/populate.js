@@ -1,3 +1,5 @@
+/* global sails */
+
 /**
  * Module dependencies
  */
@@ -59,10 +61,7 @@ module.exports = function expand(req, res) {
     var where = childPk ? {id: [childPk]} : actionUtil.parseCriteria(req);
 
     var populate = sails.util.objCompact({
-        where: where,
-        skip: actionUtil.parseSkip(req),
-        limit: actionUtil.parseLimit(req),
-        sort: actionUtil.parseSort(req)
+        where: where
     });
 
     delete populate.where.populate;
@@ -70,7 +69,7 @@ module.exports = function expand(req, res) {
     Model
             .findOne(parentPk)
             .populate(relation, populate)
-            .exec(function found(err, matchingRecord) {
+            .exec(function (err, matchingRecord) {
                 if (err)
                     return res.serverError(err);
                 if (!matchingRecord)
@@ -84,20 +83,33 @@ module.exports = function expand(req, res) {
                 if (populateFields && !_.isArray(populateFields))
                     populateFields = [populateFields];
 
+
+                var sort = actionUtil.parseSort(req);
+
+                if (_.isEmpty(sort) && relationModel.DEFAULT_SORTING) {
+                    sort = relationModel.DEFAULT_SORTING;
+                }
+
                 //sTODO add check for non-exstinting pupulate fields
                 //sTODO add support for deep populate
                 var query = relationModel
-                        .find(recordsId);
+                        .find({
+                            where: {'id': recordsId},
+                            sort: sort,
+                            limit: actionUtil.parseLimit(req),
+                            skip: actionUtil.parseSkip(req)
+                        });
 
-                _.forEach(populateFields, function(f) {
-                   query = query.populate(f);
+                _.forEach(populateFields, function (f) {
+                    query = query.populate(f);
                 });
 
 //                query = actionUtil.populateRequest(query, req);
 //                query = actionUtil.populateEach(query, req);
 
                 query.exec(function (err, matchingRecords) {
-                    if (err) return res.serverError(err);
+                    if (err)
+                        return res.serverError(err);
 
                     //sTODO add pubsub handling
 

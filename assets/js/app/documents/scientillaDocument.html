@@ -1,5 +1,7 @@
 <div class="scientilla-document">
+
     <h3>
+        <small><span ng-if="vm.isDiscarded()" class="scientilla-document-discarded label label-danger">Discarded</span></small>
         <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
     </h3>
     <small class="scientilla-authors"><span ng-bind-html='vm.document | linkableauthors'></span></small>

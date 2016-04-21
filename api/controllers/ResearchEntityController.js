@@ -1,9 +1,14 @@
+/* global Connector, sails */
+
 /**
  * ResearchEntityController
  *
  * @description :: Server-side logic for managing Researchentities
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
+
+
+var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 
 module.exports = {
     getReferences: function (req, res) {
@@ -45,6 +50,12 @@ module.exports = {
                     res.json(reference);
                 });
     },
+    discardDocument: function (req, res) {
+        var researchEntityId = req.params.id;
+        var documentId = req.param('documentId');
+        var Model = getModel(req);
+        res.halt(Model.discardDocument(researchEntityId, documentId));
+    },
     getOne: function (req, res) {
         var researchEntityId = req.params.id;
         var populate = getPopulateFields(req);
@@ -68,9 +79,14 @@ module.exports = {
     getSuggestedDocuments: function (req, res) {
         var Model = getModel(req);
         var userId = req.params.id;
-        var user = req.session.user;
-        
-        res.halt(Model.getSuggestedDocuments(userId, req.query));
+
+        var query = {
+            limit: actionUtil.parseLimit(req),
+            skip: actionUtil.parseSkip(req),
+            where: JSON.parse(req.query.where || '{}')
+        };
+
+        res.halt(Model.getSuggestedDocuments(userId, query));
     }
 };
 

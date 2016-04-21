@@ -1,3 +1,5 @@
+/* global ResearchEntity, Reference */
+
 /**
  * ResearchEntity.js
  *
@@ -22,7 +24,7 @@ module.exports = {
                     this.publicReferences,
                     this.privateReferences);
         },
-        savePromise: function() {
+        savePromise: function () {
             var self = this;
             return new Promise(function (resolve, reject) {
                 self.save(function (err, re) {
@@ -58,13 +60,13 @@ module.exports = {
                     //sTODO: refactor
                     _.forEach(publicReferences, function (r) {
                         r.status = Reference.PUBLIC;
-                    });   
+                    });
                     _.forEach(privateReferences, function (r) {
                         r.status = Reference.VERIFIED;
-                    });   
+                    });
                     _.forEach(drafts, function (r) {
                         r.status = Reference.DRAFT;
-                    });   
+                    });
                     delete researchEntity.publicReferences;
                     delete researchEntity.privateReferences;
                     delete researchEntity.drafts;
@@ -144,6 +146,18 @@ module.exports = {
                     //sTODO: add check on discarded references
                     return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
                 });
+    },
+    discardDocument: function (researchEntityId, documentId) {
+        return this
+                .findOneById(researchEntityId)
+                .then(function (researchEntity) {
+                    researchEntity
+                            .discardedReferences
+                            .add(documentId);
+
+                    return researchEntity.savePromise();
+                });
+
     },
     _config: {
         actions: false,

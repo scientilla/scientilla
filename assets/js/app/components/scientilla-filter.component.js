@@ -31,7 +31,6 @@
 
         var searchQuery = {};
 
-        refreshList();
 
         function onSearch(searchWhere) {
             vm.currentPage = 1;

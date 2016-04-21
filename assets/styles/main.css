@@ -27,8 +27,12 @@
 }
 
 .scientilla-document-title{
-
 }
+
+.scientilla-document-discarded{
+    margin-top:-10px
+}
+
 .scientilla-authors{
     font-style: italic;
 }
@@ -63,11 +67,11 @@
 .tab-content{
     /*height: 820px;*/
     /*overflow-y: scroll;*/
-    
+
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
-    
+
     padding: 15px;
 }
 
