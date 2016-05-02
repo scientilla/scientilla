@@ -26,6 +26,14 @@
     font-size: 1.5em;
 }
 
+.scientilla-login-form{
+    width: 40%;
+    margin: 0 15%;
+}
+.scientilla-register-form{
+    width: 40%;
+    margin: 0 15%;
+}
 
 .scientilla-document{
     margin-left: 20px;
@@ -56,6 +64,7 @@
     margin-top: 5px;
 }
 .scientilla-document-discarded{
+    margin-right: 5px;
 }
 .scientilla-document-source{
     font-style: italic;
