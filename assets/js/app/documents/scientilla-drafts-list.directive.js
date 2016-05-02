@@ -24,10 +24,10 @@
         'Notification',
         '$rootScope',
         'researchEntityService',
-        'yearsInterval'
+        'documentSearchForm'
     ];
 
-    function scientillaDrafsListController(ModalService, Notification, $rootScope, researchEntityService, yearsInterval) {
+    function scientillaDrafsListController(ModalService, Notification, $rootScope, researchEntityService, documentSearchForm) {
         var vm = this;
 
         vm.getData = getDrafts;
@@ -39,42 +39,7 @@
         vm.editUrl = vm.researchEntity.getProfileUrl();
         vm.openEditPopup = openEditPopup;
 
-        var years_value = _.map(yearsInterval, function (y) {
-            return {value: y + '', label: y + ''};
-        });
-
-        vm.searchForm = {
-            title: {
-                inputType: 'text',
-                label: 'Title',
-                matchColumn: 'title',
-                matchRule: 'contains'
-            },
-            author: {
-                inputType: 'text',
-                label: 'Author',
-                matchColumn: 'authors',
-                matchRule: 'contains'
-            },
-            maxYear: {
-                inputType: 'select',
-                label: 'Year from',
-                values: years_value,
-                allowBlank: true,
-                preventDefaultOption: true,
-                matchColumn: 'year',
-                matchRule: '<='
-            },
-            minYear: {
-                inputType: 'select',
-                label: 'Year to',
-                values: years_value,
-                allowBlank: true,
-                preventDefaultOption: true,
-                matchColumn: 'year',
-                matchRule: '>='
-            }
-        };
+        vm.searchForm = documentSearchForm;
 
         var query = {};
 

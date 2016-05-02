@@ -2,11 +2,48 @@
     'use strict';
 
 
-    var years = _.range(new Date().getFullYear(), 2005, -1);
+    var yearsInterval = _.range(new Date().getFullYear(), 2005, -1);
+
+
+
+    var years_value = _.concat(
+            [{value: "?", label: 'Select'}],
+            _.map(yearsInterval, function (y) {
+                return {value: y + '', label: y + ''};
+            }));
+    var documentSearchForm = {
+        title: {
+            inputType: 'text',
+            label: 'Title',
+            matchColumn: 'title',
+            matchRule: 'contains'
+        },
+        author: {
+            inputType: 'text',
+            label: 'Author',
+            matchColumn: 'authors',
+            matchRule: 'contains'
+        },
+        maxYear: {
+            inputType: 'select',
+            label: 'Year from',
+            values: years_value,
+            matchColumn: 'year',
+            matchRule: '>='
+        },
+        minYear: {
+            inputType: 'select',
+            label: 'Year to',
+            values: years_value,
+            matchColumn: 'year',
+            matchRule: '<='
+        }
+    };
+
 
 
     angular.module('components')
             .constant('pageSize', 10)
-            .constant('yearsInterval', years);
-
+            .constant('yearsInterval', yearsInterval)
+            .constant('documentSearchForm', documentSearchForm);
 })();
