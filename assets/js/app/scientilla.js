@@ -383,6 +383,9 @@ Scientilla.reference = {
 
 
         return newDoc;
+    },
+    isDiscarded: function() {
+        return !!this.discarded;
     }
 };
 
