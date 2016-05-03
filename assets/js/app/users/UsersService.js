@@ -1,3 +1,5 @@
+/* global Scientilla */
+
 (function () {
     angular.module("users").factory("UsersService",
             ["Restangular", "$q", function (Restangular, $q) {
@@ -50,6 +52,8 @@
                                     _.forEach(user.collaborations, function (c) {
                                         _.defaults(c, Scientilla.collaboration);
                                         _.defaults(c.group, Scientilla.group);
+
+                                        c.group.link = '#/groups/' + c.group.id;
                                     });
                                     return user;
                                 });

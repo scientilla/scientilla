@@ -8,7 +8,7 @@
                 <div class="col-md-8">
                     <scientilla-document document="d"></scientilla-document>
                 </div>
-                <div class="col-md-4 text-right">
+                <div ng-if="editable" class="col-md-4 text-right">
                     <h3>
                         <button class="btn btn-primary"  ng-click="vm.unverifyDocument(d)" >
                             <span class="fa fa-remove"></span>
