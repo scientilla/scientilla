@@ -4,7 +4,7 @@
     'use strict';
 
 
-    angular.module('components')
+    angular.module('references')
             .component('scientillaDocumentsList', {
                 templateUrl: 'partials/scientillaDocumentsList.html',
                 controller: scientillaDocumentsList,
