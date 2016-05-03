@@ -3,30 +3,27 @@
 (function () {
     'use strict';
 
-    angular.module('references')
-            .directive('scientillaDocumentsList', scientillaDocumentsList);
 
-    function scientillaDocumentsList() {
-        return {
-            restrict: 'E',
-            templateUrl: 'partials/scientillaDocumentsList.html',
-            controller: scientillaDocumentsListController,
-            controllerAs: 'vm',
-            scope: {},
-            bindToController: {
-                researchEntity: "="
-            }
-        };
-    }
+    angular.module('components')
+            .component('scientillaDocumentsList', {
+                templateUrl: 'partials/scientillaDocumentsList.html',
+                controller: scientillaDocumentsList,
+                controllerAs: 'vm',
+                bindings: {
+                    researchEntity: "=",
+                    editable: "="
+                }
+            });
 
-    scientillaDocumentsListController.$inject = [
+
+    scientillaDocumentsList.$inject = [
         '$rootScope',
         'Notification',
         'researchEntityService',
         'documentSearchForm'
     ];
 
-    function scientillaDocumentsListController($rootScope, Notification, researchEntityService, documentSearchForm) {
+    function scientillaDocumentsList($rootScope, Notification, researchEntityService, documentSearchForm) {
         var vm = this;
         vm.documents = [];
 
