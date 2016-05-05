@@ -1,6 +1,8 @@
+/* global Scientilla */
+
 (function () {
     angular.module("groups").factory("GroupsService",
-            ["Restangular", "AuthService", function (Restangular, AuthService) {
+            ["Restangular", "AuthService", "$http", function (Restangular, AuthService, $http) {
                     var service = Restangular.service("groups");
 
                     service.getNewGroup = function () {
@@ -54,6 +56,23 @@
                         var q = _.merge({}, query, populate);
 
                         return this.getList(q);
+                    };
+
+                    service.getGroupMemebers = function (groupId) {
+                        if (!groupId)
+                            return;
+                        
+                        return $http.get('/memberships',
+                                {params: {group: groupId, populate: 'user'}})
+                                .then(function (result) {
+                                    var memberships = result.data;
+                                    _.forEach(memberships, function (m) {
+                                        _.defaults(m, Scientilla.membership);
+                                        _.defaults(m.user, Scientilla.user);
+                                    });
+                                    
+                                    return memberships;
+                                });
                     };
 
 
