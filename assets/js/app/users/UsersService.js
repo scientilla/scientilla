@@ -52,8 +52,6 @@
                                     _.forEach(user.collaborations, function (c) {
                                         _.defaults(c, Scientilla.collaboration);
                                         _.defaults(c.group, Scientilla.group);
-
-                                        c.group.link = '#/groups/' + c.group.id;
                                     });
                                     return user;
                                 });

@@ -364,7 +364,7 @@ Scientilla.reference = {
         ];
     },
     copyDocument: function (document, creator) {
-        
+
         var excludedFields = ['draft', 'draftCreator', 'draftGroupCreator'];
 
         var documentTypeObj = {
@@ -384,7 +384,7 @@ Scientilla.reference = {
 
         return newDoc;
     },
-    isDiscarded: function() {
+    isDiscarded: function () {
         return !!this.discarded;
     }
 };
@@ -456,6 +456,9 @@ Scientilla.group = {
             conferenceLocation: '',
             acronym: ''
         };
+    },
+    getLink: function () {
+        return '#/groups/' + this.id;
     }
 };
 
