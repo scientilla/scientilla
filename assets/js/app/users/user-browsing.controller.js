@@ -64,9 +64,9 @@
                     .remove()
                     .then(function () {
                         Notification.success("User deleted");
-                
+
                         getUsers()
-                        .then(refreshList);
+                                .then(refreshList);
 
                     })
                     .catch(function () {
@@ -80,9 +80,9 @@
             ModalService
                     .openScientillaUserForm(!user ? UsersService.getNewUser() : user.clone())
                     .then(function () {
-                        getUsers()
-                        .then(refreshList);
-                    });
+                        return getUsers();
+                    })
+                    .then(refreshList);
         }
 
     }
