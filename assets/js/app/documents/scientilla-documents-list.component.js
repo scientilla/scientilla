@@ -28,7 +28,6 @@
         vm.documents = [];
 
         vm.unverifyDocument = unverifyDocument;
-        vm.createNewUrl = vm.researchEntity.getNewReferenceUrl();
 
         vm.getData = getDocuments;
         vm.onFilter = refreshList;

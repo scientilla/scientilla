@@ -44,7 +44,7 @@
             <uib-tab-heading>Collaborations</uib-tab-heading>
             <h3>Groups</h3>
             <div ng-repeat="c in vm.user.collaborations">
-                <a ng-href="{{c.group.getLink()}}">
+                <a ng-href="#{{c.group.getProfileUrl()}}">
                     {{c.getDisplayName()}}
                 </a>
             </div>

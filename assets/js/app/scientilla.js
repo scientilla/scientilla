@@ -60,12 +60,6 @@ Scientilla.user = {
     getReferenceBrowsingUrl: function () {
         return '/users/' + this.id + '/references';
     },
-    getProfileUrl: function () {
-        return '/users/' + this.id + '/edit';
-    },
-    getNewReferenceUrl: function () {
-        return "/users/" + this.id + "/references/new";
-    },
     getExternalConnectors: function () {
         var connectors = [];
         var publicationsConnector = {name: 'Publications', enabled: true};
@@ -98,6 +92,9 @@ Scientilla.user = {
             conferenceLocation: '',
             acronym: ''
         };
+    },
+    getProfileUrl: function () {
+        return '/users/' + this.id;
     }
 
 };
@@ -420,12 +417,6 @@ Scientilla.group = {
     getReferenceBrowsingUrl: function () {
         return '/groups/' + this.id + '/references';
     },
-    getProfileUrl: function () {
-        return '/groups/' + this.id + '/edit';
-    },
-    getNewReferenceUrl: function () {
-        return "/groups/" + this.id + "/references/new";
-    },
     getExternalConnectors: function () {
         var connectors = [];
         var publicationsConnector = {name: 'Publications', enabled: !!this.publicationsAcronym};
@@ -457,8 +448,8 @@ Scientilla.group = {
             acronym: ''
         };
     },
-    getLink: function () {
-        return '#/groups/' + this.id;
+    getProfileUrl: function () {
+        return '/groups/' + this.id;
     }
 };
 

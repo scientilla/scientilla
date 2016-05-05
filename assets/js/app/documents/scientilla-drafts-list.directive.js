@@ -35,8 +35,6 @@
 
         vm.deleteDocument = deleteDocument;
         vm.verifyDocument = verifyDocument;
-        vm.createNewUrl = vm.researchEntity.getNewReferenceUrl();
-        vm.editUrl = vm.researchEntity.getProfileUrl();
         vm.openEditPopup = openEditPopup;
 
         vm.searchForm = documentSearchForm;
