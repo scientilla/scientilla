@@ -16,7 +16,6 @@
 
         vm.researchEntity = researchEntity;
         ContextService.setResearchEntity(researchEntity);
-        vm.editUrl = vm.researchEntity.getProfileUrl();
         vm.createNewDocument = createNewDocument;
         vm.editProfile = editProfile;
         vm.openMenu = openMenu;

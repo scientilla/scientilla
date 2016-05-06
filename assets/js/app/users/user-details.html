@@ -1,34 +1,64 @@
 <div>
     <h1>{{vm.user.getDisplayName()}}</h1>
     <small>{{vm.user.username}}</small>
+</div>
+<br/>
+<div>
+    <uib-tabset active="active">
+        <uib-tab index="0">
+            <uib-tab-heading>Personal info</uib-tab-heading>
 
-    <hr>
+            <table class="table-striped table-condensed">
+                <tr>
+                    <td>Name:</td>
+                    <td>{{vm.user.name}}</td>
+                </tr>
+                <tr>
+                    <td>Surname:</td>
+                    <td>{{vm.user.surname}}</td>
+                </tr>
+                <tr>
+                    <td>E&#8209;mail:</td>
+                    <td>{{vm.user.username}}</td>
+                </tr>
+                <tr ng-if="vm.user.scopusId">
+                    <td>Scopus</td>
+                    <td>
+                        <a ng-href="https://www.scopus.com/authid/detail.uri?origin=resultslist&authorId={{vm.user.scopusId}}&zone=" target="_blank" >
+                            profile
+                        </a>
+                    </td>
+                </tr>
+                <tr ng-if="vm.user.orcidId">
+                    <td>ORCID</td>
+                    <td>
+                        <a ng-href="http://orcid.org/{{vm.user.orcidId}}" target="_blank" >
+                            profile
+                        </a>
+                    </td>
+                </tr>
+            </table>
 
-    <div ng-if="vm.user.collaborations.length">
-        <h2>Career</h2>
-        <div ng-repeat="c in vm.user.collaborations">
-            <h4>
-                {{c.getDisplayName()}}
-            </h4>
-            <hr>
-        </div>
-    </div>
-    <div ng-if="vm.references.length">
-        <h2>
-            References List
-        </h2>
-        <div ng-repeat="r in vm.references">
-            <div class="row">
-                <div class="col-md-8">
-                    <scientilla-document document="r"></scientilla-document>
+        </uib-tab>
+        <uib-tab index="1">
+            <uib-tab-heading>Collaborations</uib-tab-heading>
+            <div ng-repeat="c in vm.user.collaborations">
+                <div class="row">
+                    <div class="col-md-8">
+                        <a ng-href="#{{c.group.getProfileUrl()}}">
+                            {{c.getDisplayName()}}
+                        </a>
+                    </div>
+                    <div  class="col-md-4 text-right">
+                    </div>
                 </div>
-                <div  class="col-md-4 text-right">
-                    <h3>
-                        <!-- buttons -->
-                    </h3>
-                </div>
+                <hr>
             </div>
-            <hr>
-        </div>
-    </div>
+            <div ng-if="vm.user.collaborations.length === 0">No groups</div>
+        </uib-tab>
+        <uib-tab index="2">
+            <uib-tab-heading>Documents</uib-tab-heading>
+            <scientilla-documents-list research-entity="vm.user" editable="false" ></scientilla-documents-list>
+        </uib-tab>
+    </uib-tabset>
 </div>

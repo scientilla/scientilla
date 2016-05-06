@@ -43,6 +43,9 @@
 
                         var struct = vm.formStructure[key];
 
+                        if (struct.inputType === 'select' && vm.searchValues[key] === "?")
+                            return;
+
                         var whereAdd = {};
 
                         if (struct.matchRule === 'is null') {
@@ -62,10 +65,15 @@
                     function (value, key) {
 
                         var struct = vm.formStructure[key];
-                        if (struct.defaultValue)
-                            vm.searchValues[key] = struct.defaultValue;
-                        else
-                            vm.searchValues[key] = '';
+                        if (struct.inputType === 'select') {
+                            vm.searchValues[key] = "?";
+                        } else {
+
+                            if (struct.defaultValue)
+                                vm.searchValues[key] = struct.defaultValue;
+                            else
+                                vm.searchValues[key] = '';
+                        }
                     });
             vm.search();
         }

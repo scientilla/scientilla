@@ -3,7 +3,11 @@
             .filter('fullname', function () {
 
                 function getUsername(user) {
-                    return user.getDisplayName();
+                    
+                    if(_.isFunction(user.getDisplayName))
+                        return user.getDisplayName();
+                    else
+                        return '';
                 }
 
                 return getUsername;

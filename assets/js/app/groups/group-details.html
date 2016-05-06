@@ -1,24 +1,35 @@
 <div>
     <h1>{{vm.group.getDisplayName()}}</h1>
-
-    <hr>
-    
-    <div ng-if="vm.references.length">
-        <h2>
-            Document List
-        </h2>
-        <div ng-repeat="r in vm.references">
-            <div class="row">
-                <div class="col-md-8">
-                    <scientilla-document document="r"></scientilla-document>
+    <small>
+        <a ng-href="https://www.scopus.com/affil/profile.uri?afid={{vm.group.scopusId}}" target="_blank" >
+            Scopus
+        </a>
+    </small>
+</div>
+<br/>
+<div>
+    <uib-tabset active="active">
+        <uib-tab index="0">
+            <uib-tab-heading>Members</uib-tab-heading>
+            <div ng-repeat="m in vm.group.memberships">
+                <div class="row">
+                    <div class="col-md-8">
+                            <a ng-href="#{{m.user.getProfileUrl()}}">
+                                {{m.user| fullname}}
+                            </a>
+                        <small>{{m.user.username}}</small>
+                    </div>
+                    <div  class="col-md-4 text-right">
+                    </div>
                 </div>
-                <div  class="col-md-4 text-right">
-                    <h3>
-                        <!-- buttons -->
-                    </h3>
-                </div>
+                <hr>
             </div>
-            <hr>
-        </div>
-    </div>
+            <div ng-if="vm.group.memberships.length === 0">No Members</div>
+
+        </uib-tab>
+        <uib-tab index="1">
+            <uib-tab-heading>Documents</uib-tab-heading>
+            <scientilla-documents-list research-entity="vm.group" editable="false" ></scientilla-documents-list>
+        </uib-tab>
+    </uib-tabset>
 </div>

@@ -72,21 +72,15 @@
 
         //sTODO: to be removed with deep populate
         function getFullMemberships() {
-            if (!vm.group || !vm.group.id) {
+            if (!vm.group.id)
                 return;
-            }
-            var url = '/memberships';
-            $http.get(url,
-                    {
-                        params: {group: vm.group.id, populate: 'user'}
-                    })
-                    .then(function (result) {
-                        vm.group.memberships = result.data;
-                        _.forEach(vm.group.memberships, function (m) {
-                            _.defaults(m, Scientilla.membership);
-                            _.defaults(m.user, Scientilla.user);
-                        });
+
+            GroupsService
+                    .getGroupMemebers(vm.group.id)
+                    .then(function (memberships) {
+                        vm.group.memberships = memberships;
                     });
+
         }
 
         function nameChanged() {

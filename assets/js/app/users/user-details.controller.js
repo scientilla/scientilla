@@ -5,29 +5,20 @@
 
     UserDetailsController.$inject = [
         'UsersService',
-        'user'
+        'user',
+        '$location'
     ];
 
-    function UserDetailsController(UsersService, user) {
-        var vm = this;        
+    function UserDetailsController(UsersService, user, $location) {
+        var vm = this;
         vm.user = user;
 
         activate();
 
         function activate() {
-            return getReferences().then(function () {
-                getCollaborations();
-            });
+            getCollaborations();
         }
 
-        function getReferences() {
-            return user.getList('references', {filter: 'verified', populate: ['publicCoauthors', 'privateCoauthors', 'privateGroups', 'publicGroups']})
-                    .then(function (references) {
-                        vm.references = references;
-                        return vm.references;
-            });
-        }
-        
         function getCollaborations() {
             return UsersService.getCollaborations(vm.user);
         }

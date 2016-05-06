@@ -1,3 +1,5 @@
+/* global Scientilla */
+
 (function () {
     angular.module("users").factory("UsersService",
             ["Restangular", "$q", function (Restangular, $q) {

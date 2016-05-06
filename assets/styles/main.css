@@ -26,15 +26,53 @@
     font-size: 1.5em;
 }
 
+.scientilla-login-form{
+    width: 40%;
+    margin: 0 15%;
+}
+.scientilla-register-form{
+    width: 40%;
+    margin: 0 15%;
+}
+
+.scientilla-document{
+    margin-left: 20px;
+    padding-left: 10px;
+    
+    border-left: 3px solid #337ab7;
+}
+
+
+.scientilla-document-year{
+    position: absolute;
+    top: 10px;
+    left: 0px;
+    font-size: 16px;
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    transform: rotate(-90deg);
+    -webkit-transform-origin: 50% 50%;
+    -moz-transform-origin: 50% 50%;
+    -ms-transform-origin: 50% 50%;
+    -o-transform-origin: 50% 50%;
+    transform-origin: 50% 50%;
+}
 .scientilla-document-title{
+    font-size: 20px;
+    margin-top: 5px;
 }
-
 .scientilla-document-discarded{
-    margin-top:-10px
+    margin-right: 5px;
 }
-
-.scientilla-authors{
+.scientilla-document-source{
     font-style: italic;
+}
+.scientilla-document-authors{
+    font-weight: bold;
+}
+.scientilla-document-doi{
 }
 
 .scientilla-right-menu{
