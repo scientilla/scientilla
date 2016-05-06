@@ -55,9 +55,6 @@ module.exports = _.merge({}, researchEntity, {
             type: 'STRING'
         }
     },
-    verifyDraft: function (groupId, draftId) {
-        return Group.verifyAll(groupId, [draftId]);
-    },
     verifyAll: function (researchEntityId, draftIds) {
         //sTODO: 2 equals documents should be merged
         return Reference.findById(draftIds)

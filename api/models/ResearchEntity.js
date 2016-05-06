@@ -159,6 +159,9 @@ module.exports = {
                 });
 
     },
+    verifyDraft: function (ResearchEntity, researchEntityId, draftId) {
+        return ResearchEntity.verifyAll(researchEntityId, [draftId]);
+    },
     _config: {
         actions: false,
         shortcuts: false,

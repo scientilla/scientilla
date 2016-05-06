@@ -133,9 +133,6 @@ module.exports = _.merge({}, researchEntity, {
             return 'user';
         }
     }),
-    verifyDraft: function (researchEntityId, draftId) {
-        return User.verifyAll(researchEntityId, [draftId]);
-    },
     verifyAll: function (researchEntityId, draftIds) {
         //sTODO: 2 equals documents should be merged
         return Reference.findById(draftIds)
