@@ -42,11 +42,17 @@
         </uib-tab>
         <uib-tab index="1">
             <uib-tab-heading>Collaborations</uib-tab-heading>
-            <h3>Groups</h3>
             <div ng-repeat="c in vm.user.collaborations">
-                <a ng-href="#{{c.group.getProfileUrl()}}">
-                    {{c.getDisplayName()}}
-                </a>
+                <div class="row">
+                    <div class="col-md-8">
+                        <a ng-href="#{{c.group.getProfileUrl()}}">
+                            {{c.getDisplayName()}}
+                        </a>
+                    </div>
+                    <div  class="col-md-4 text-right">
+                    </div>
+                </div>
+                <hr>
             </div>
             <div ng-if="vm.user.collaborations.length === 0">No groups</div>
         </uib-tab>

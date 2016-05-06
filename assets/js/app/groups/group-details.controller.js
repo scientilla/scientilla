@@ -4,27 +4,27 @@
             .controller('GroupDetailsController', GroupDetailsController);
 
     GroupDetailsController.$inject = [
-        'group'
+        'group',
+        'GroupsService',
+        '$location'
     ];
 
-    function GroupDetailsController(group) {
-        var vm = this;        
+    function GroupDetailsController(group, GroupsService, $location) {
+        var vm = this;
         vm.group = group;
 
         activate();
 
         function activate() {
-            return getReferences().then(function () {
+            if (!vm.group.id)
+                return;
 
-            });
+            GroupsService
+                    .getGroupMemebers(vm.group.id)
+                    .then(function (memberships) {
+                        vm.group.memberships = memberships;
+                    });
         }
 
-        function getReferences() {
-            return group.getList('references', {filter: 'verified', populate: ['publicCoauthors', 'privateCoauthors', 'privateGroups', 'publicGroups']})
-                    .then(function (references) {
-                        vm.references = references;
-                        return vm.references;
-            });
-        }
     }
 })();
