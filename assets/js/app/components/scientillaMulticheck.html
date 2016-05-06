@@ -1,0 +1,10 @@
+<div class="row scientila-multicheck-commands-row">
+    <div class="col-md-6">
+        <input id="selectAll" title="Select all" type="checkbox" ng-model="vm.allSelected" ng-change="vm.selectAll()"/> 
+    </div>
+    <div class="col-md-6 text-right">
+        <div ng-transclude="buttons"></div>
+    </div>
+</div>
+<hr/>
+<div ng-transclude="item-list"></div>
