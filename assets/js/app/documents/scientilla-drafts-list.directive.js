@@ -38,6 +38,28 @@
         vm.createNewUrl = vm.researchEntity.getNewReferenceUrl();
         vm.editUrl = vm.researchEntity.getProfileUrl();
         vm.openEditPopup = openEditPopup;
+        vm.verifyAll = function(drafts){
+            var draftIds = _.map(drafts, 'id');
+            researchEntityService
+                    .verifyAll(vm.researchEntity, draftIds)
+                    .then(function(drafts) {
+                        Notification.success(drafts.length + " drafts verified");
+                        $rootScope.$broadcast("draft.verified", drafts);
+                    })
+                    .catch(function(err) {
+                        $rootScope.$broadcast("draft.verified", []);
+                        Notification.warning("An error happened");
+                    });
+        };
+        vm.bulkButtons = [
+            {
+                label: 'Verify all',
+                action: function(ids) {
+                    return researchEntityService.verifyAll(ids);
+                },
+                icon: 'fa-check'
+            }  
+        ];
 
         var years_value = _.map(yearsInterval, function (y) {
             return {value: y + '', label: y + ''};
@@ -82,6 +104,7 @@
 
         function activate() {
             $rootScope.$on("draft.created", updateList);
+            $rootScope.$on("draft.verified", updateList);
         }
 
 

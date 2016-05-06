@@ -15,6 +15,7 @@
         service.verifyDocument = verifyDocument;
         service.discardDocument = discardDocument;
         service.verify = verify;
+        service.verifyAll = verifyAll;
 
         function getDocuments(researchEntity, query) {
 
@@ -59,6 +60,14 @@
             return Restangular
                     .one(restType, researchEntity.id)
                     .post('discarded-document', {documentId: documentId});
+        }
+        
+        function verifyAll(researchEntity, draftIds) {
+            var restType = researchEntity.getType() + 's';
+            return Restangular
+                    .one(restType, researchEntity.id)
+                    .all('drafts')
+                    .customPUT({draftIds: draftIds}, 'verify-all');
         }
 
         return service;
