@@ -1,3 +1,3 @@
-<button  ng-click="vm.executeOnClick()" type="button" class="btn btn-sm btn-primary">
+<button  ng-click="vm.executeOnClick()" type="button" class="btn btn-sm btn-primary" ng-disabled="!vm.areElementsSelected()">
     <span ng-transclude></span>
 </button>
