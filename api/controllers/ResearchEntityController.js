@@ -15,7 +15,7 @@ module.exports = {
         var researchEntityId = req.params.researchEntityId;
         var draftData = req.body;
         var Model = getModel(req);
-        return res.halt(Model.createDraft(researchEntityId, draftData));
+        return res.halt(Model.createDraft(Model, researchEntityId, draftData));
     },
     getReferences: function (req, res) {
         var researchEntity = req.params.id;

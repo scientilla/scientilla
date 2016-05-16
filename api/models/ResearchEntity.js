@@ -101,6 +101,17 @@ module.exports = {
                     return query;
                 });
     },
+    createDraft: function (ResearchEntityModel, researchEntityId, draftData) {
+        draftData.draft = true;
+        return Promise.all([
+            ResearchEntityModel.findOneById(researchEntityId).populate('drafts'),
+            Reference.create(draftData)
+        ])
+                .spread(function (researchEntity, draft) {
+                    researchEntity.drafts.add(draft);
+                    return researchEntity.savePromise();
+                });
+    },
     //sTODO: only drafts can be deleted
     deleteReference: function (ResearchEntity, researchEntityId, referenceId) {
         return Reference
