@@ -11,6 +11,12 @@
 var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 
 module.exports = {
+    createDraft: function (req, res) {
+        var researchEntityId = req.params.researchEntityId;
+        var draftData = req.body;
+        var Model = getModel(req);
+        return res.halt(Model.createDraft(researchEntityId, draftData));
+    },
     getReferences: function (req, res) {
         var researchEntity = req.params.id;
         var populate = getPopulateFields(req);

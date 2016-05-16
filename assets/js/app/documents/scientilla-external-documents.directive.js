@@ -65,20 +65,19 @@
                     });
         }
 
-        function copyReference(reference, researchEntity) {
-            //sTODO-urgent owner must be changed server-side
+        function copyReference(externalDocument, researchEntity) {
             //sTODO move to a service
-            var newReference = Scientilla.reference.create(reference, researchEntity);
+            var draftData = Scientilla.reference.create(externalDocument);
             researchEntity
-                    .post('drafts', newReference)
+                    .post('drafts', draftData)
                     .then(function (draft) {
-                        Notification.success("Draft copied");
+                        Notification.success("External Document copied");
                 
                         $rootScope.$broadcast("draft.created", draft);
-                        _.remove(vm.references, reference);
+                        _.remove(vm.references, externalDocument);
                     })
                     .catch(function () {
-                        Notification.warning("Failed to copy draft");
+                        Notification.warning("Failed to copy External Document");
                     });
         }
     }
