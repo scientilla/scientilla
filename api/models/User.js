@@ -90,10 +90,6 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'group',
             via: 'administrators'
         },
-        createReference: function (r) {
-            r.owner = this;
-            this.references.add(r);
-        },
         //sTODO: move this methods to a isomorphic component
         //sTODO: aliases are managed through a specific association.
         getAliases: function () {
