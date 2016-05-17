@@ -32,11 +32,13 @@
         vm.STATUS_ERROR = 3;
         vm.copyReference = copyReference;
         vm.connectorChanged = connectorChanged;
+        vm.selectedConnectorName = undefined;
         vm.reset = reset;
 
         activate();
 
         function activate() {
+            vm.connectors = vm.researchEntity.getExternalConnectors();
             reset();
         }
 
@@ -70,10 +72,10 @@
             var draftData = Scientilla.reference.create(externalDocument);
             researchEntity
                     .post('drafts', draftData)
-                    .then(function (draft) {
+                    .then(function () {
                         Notification.success("External Document copied");
                 
-                        $rootScope.$broadcast("draft.created", draft);
+                        $rootScope.$broadcast("draft.created", {});
                         _.remove(vm.references, externalDocument);
                     })
                     .catch(function () {
