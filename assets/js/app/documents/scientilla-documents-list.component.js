@@ -48,9 +48,7 @@
         }
 
         function unverifyDocument(reference) {
-            vm.researchEntity
-                    .one('references', reference.id)
-                    .remove()
+            researchEntityService.unverify(vm.researchEntity, reference)
                     .then(function (documents) {
                         Notification.success("Document succesfully unverified");
                         updateList(documents);

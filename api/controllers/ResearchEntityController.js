@@ -30,12 +30,12 @@ module.exports = {
                     res.json(references);
                 });
     },
-    deleteReference: function (req, res) {
+    unverifyDocument: function (req, res) {
         var researcEntityId = req.params.id;
         var referenceId = req.params.referenceId;
         var Model = getModel(req);
         Model
-                .deleteReference(Model, researcEntityId, referenceId)
+                .unverifyDocument(Model, researcEntityId, referenceId)
                 .then(function (r) {
                     res.json();
                 });

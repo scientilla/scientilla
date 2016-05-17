@@ -113,15 +113,11 @@ module.exports = {
                 });
     },
     //sTODO: only drafts can be deleted
-    deleteReference: function (ResearchEntity, researchEntityId, referenceId) {
+    unverifyDocument: function (ResearchEntity, researchEntityId, referenceId) {
         return Reference
                 .findOneById(referenceId)
                 .then(function (reference) {
-                    if (reference.draft) {
-                        return Reference.destroy({id: referenceId});
-                    } else {
-                        return ResearchEntity.removeReference(ResearchEntity, researchEntityId, referenceId);
-                    }
+                    return ResearchEntity.removeReference(ResearchEntity, researchEntityId, referenceId);
                 });
     },
     removeReference: function (ResearchEntity, userId, referenceId) {
