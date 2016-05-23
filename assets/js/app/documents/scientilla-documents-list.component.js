@@ -19,11 +19,12 @@
     scientillaDocumentsList.$inject = [
         '$rootScope',
         'Notification',
+        'ModalService',
         'researchEntityService',
         'documentSearchForm'
     ];
 
-    function scientillaDocumentsList($rootScope, Notification, researchEntityService, documentSearchForm) {
+    function scientillaDocumentsList($rootScope, Notification, ModalService, researchEntityService, documentSearchForm) {
         var vm = this;
         vm.documents = [];
 
@@ -40,6 +41,7 @@
 
         function activate() {
             $rootScope.$on('draft.verified', updateList);
+            $rootScope.$on('draft.unverified', updateList);
         }
 
         function getDocuments(q) {
@@ -47,14 +49,23 @@
             return researchEntityService.getDocuments(vm.researchEntity, query);
         }
 
-        function unverifyDocument(reference) {
-            researchEntityService.unverify(vm.researchEntity, reference)
-                    .then(function (documents) {
+        function unverifyDocument(document) {
+            researchEntityService.unverify(vm.researchEntity, document)
+                    .then(function (draft) {
                         Notification.success("Document succesfully unverified");
-                        updateList(documents);
+                        $rootScope.$broadcast('draft.unverified', {});
+                        openEditPopup(draft);
                     })
                     .catch(function () {
                         Notification.warning("Failed to unverify document");
+                    });
+        }
+
+        function openEditPopup(draft) {
+            ModalService
+                    .openScientillaDocumentForm(draft.clone(), vm.researchEntity)
+                    .finally(function () {
+                        updateList();
                     });
         }
 

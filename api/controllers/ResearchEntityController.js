@@ -34,11 +34,7 @@ module.exports = {
         var researcEntityId = req.params.id;
         var referenceId = req.params.referenceId;
         var Model = getModel(req);
-        Model
-                .unverifyDocument(Model, researcEntityId, referenceId)
-                .then(function (r) {
-                    res.json();
-                });
+        res.halt(Model.unverifyDocument(Model, researcEntityId, referenceId));
     },
     verifyDraft: function (req, res) {
         var researchEntityId = req.params.id;

@@ -102,6 +102,8 @@ module.exports = {
                 });
     },
     createDraft: function (ResearchEntityModel, researchEntityId, draftData) {
+        var fields = Reference.getFields();
+        var draftData = _.pick(draftData, fields);
         draftData.draft = true;
         return Promise.all([
             ResearchEntityModel.findOneById(researchEntityId).populate('drafts'),
@@ -109,20 +111,19 @@ module.exports = {
         ])
                 .spread(function (researchEntity, draft) {
                     researchEntity.drafts.add(draft);
-                    return researchEntity.savePromise();
+                    return Promise.all([
+                        draft.id,
+                        researchEntity.savePromise()
+                    ]);
+                })
+                .spread(function (draftId) {
+                    return Reference.findOneById(draftId);
                 });
     },
     //sTODO: only drafts can be deleted
-    unverifyDocument: function (ResearchEntity, researchEntityId, referenceId) {
-        return Reference
-                .findOneById(referenceId)
-                .then(function (reference) {
-                    return ResearchEntity.removeReference(ResearchEntity, researchEntityId, referenceId);
-                });
-    },
-    removeReference: function (ResearchEntity, userId, referenceId) {
-        return ResearchEntity
-                .findOneById(userId)
+    unverifyDocument: function (ResearchEntityModel, researchEntityId, referenceId) {
+        return ResearchEntityModel
+                .findOneById(researchEntityId)
                 .populate('privateReferences')
                 .populate('publicReferences')
                 .then(function (researchEntity) {
@@ -131,7 +132,10 @@ module.exports = {
                     return researchEntity.savePromise();
                 })
                 .then(function () {
-                    return Reference.checkDeletion(referenceId);
+                    return Reference.deleteIfNotVerified(referenceId);
+                })
+                .then(function (document) {
+                    return ResearchEntityModel.createDraft(ResearchEntityModel, researchEntityId, document);
                 });
     },
     verifyReference: function (ResearchEntity, researchEntityId, referenceId) {
