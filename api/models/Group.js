@@ -1,4 +1,4 @@
-/* global Reference, SqlService */
+/* global Reference, SqlService, Promise */
 
 /**
  * Group.js
@@ -55,15 +55,21 @@ module.exports = _.merge({}, researchEntity, {
             type: 'STRING'
         }
     },
-    verifyDraft: function (groupId, referenceId) {
-        return Reference.findOneById(referenceId)
-                .then(function (draft) {
-                    var draftGroupCreator = draft.draftGroupCreator;
-                    draft.draftGroupCreator = null;
-                    draft.draft = false;
-                    draft.privateGroups.add(draftGroupCreator);
-                    return draft.savePromise();
-                    //STODO: return the new reference
+    verifyAll: function (researchEntityId, draftIds) {
+        //sTODO: 2 equals documents should be merged
+        return Reference.findById(draftIds)
+                .then(function (drafts) {
+                    var draftSavingPromise = drafts.map(function (draft) {
+                        draft.draftGroupCreator = null;
+                        draft.draft = false;
+                        draft.privateGroups.add(researchEntityId);
+                        return draft
+                                .savePromise()
+                                .then(function () {
+                                    return draft;
+                                });
+                    });
+                    return Promise.all(draftSavingPromise);
                 });
     },
     //sTODO: add deep populate for other fields of the documents

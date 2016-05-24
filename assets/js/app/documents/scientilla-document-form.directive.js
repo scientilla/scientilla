@@ -24,16 +24,19 @@
     scientillaDocumentFormController.$inject = [
         'FormForConfiguration',
         'Notification',
+        'researchEntityService',
         '$scope',
+        '$rootScope',
         '$timeout'
     ];
 
-    function scientillaDocumentFormController(FormForConfiguration, Notification, $scope, $timeout) {
+    function scientillaDocumentFormController(FormForConfiguration, Notification, researchEntityService, $scope, $rootScope, $timeout) {
         var vm = this;
         vm.submit = submit;
         vm.status = createStatus();
         vm.cancel = cancel;
         vm.formVisible = true;
+        vm.saveVerify = saveVerify;
         activate();
         
         function createStatus() {
@@ -132,14 +135,19 @@
                             vm.status.setSaved(true);
                         });
         }
+        
+        function executeOnSubmit() {
+            if (_.isFunction(vm.onSubmit()))
+                vm.onSubmit()(vm.document);
+            
+        }
 
         function submit() {
             saveDocument()
                     .then(function () {
                         Notification.success("Document saved");
+                        executeOnSubmit();
 
-                        if (_.isFunction(vm.onSubmit()))
-                            vm.onSubmit()(vm.document);
                     })
                     .catch(function () {
                         Notification.warning("Failed to save document");
@@ -150,6 +158,21 @@
         function cancel() {
             if (_.isFunction(vm.onClose()))
                 vm.onClose()();
+        }
+        
+        function saveVerify() {
+            saveDocument()
+                    .then(function(){
+                        return researchEntityService.verify(vm.researchEntity, vm.document);
+                    })
+                    .then(function (draft) {
+                        Notification.success("Draft verified");
+                        executeOnSubmit();
+                        $rootScope.$broadcast("draft.verified", draft);
+                    })
+                    .catch(function () {
+                        Notification.warning("Failed to verify draft");
+                    });
         }
     }
 })();

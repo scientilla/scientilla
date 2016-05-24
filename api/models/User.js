@@ -133,23 +133,21 @@ module.exports = _.merge({}, researchEntity, {
             return 'user';
         }
     }),
-    verifyDraft: function (researchEntityId, draftId) {
-        return Reference.findOneById(draftId)
-                .then(function (draft) {
-                    return Promise.all([draft, Reference.findOne({draft: false, title: draft.title, authors: draft.authors})]);
-                })
-                .spread(function (draft, sameReference) {
-                    if (sameReference) {
-                        sameReference.privateCoauthors.add(researchEntityId);
-                        sameReference.save();
-                        return Reference.destroy({id: draft.id});
-                    }
-                    var draftCreator = draft.draftCreator;
-                    draft.draftCreator = null;
-                    draft.draft = false;
-                    draft.privateCoauthors.add(draftCreator);
-                    return draft.savePromise();
-                    //STODO: return the new reference
+    verifyAll: function (researchEntityId, draftIds) {
+        //sTODO: 2 equals documents should be merged
+        return Reference.findById(draftIds)
+                .then(function (drafts) {
+                    var draftSavingPromise = drafts.map(function (draft) {
+                        draft.draftCreator = null;
+                        draft.draft = false;
+                        draft.privateCoauthors.add(researchEntityId);
+                        return draft
+                                .savePromise()
+                                .then(function () {
+                                    return draft;
+                                });
+                    });
+                    return Promise.all(draftSavingPromise);
                 });
     },
     getAdministeredGroups: function (userId) {

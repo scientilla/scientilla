@@ -27,11 +27,11 @@ module.exports = {
         savePromise: function () {
             var self = this;
             return new Promise(function (resolve, reject) {
-                self.save(function (err, re) {
+                self.save(function (err) {
                     if (err)
                         reject(err);
                     else
-                        resolve(re);
+                        resolve();
                 });
             });
         }
@@ -158,6 +158,9 @@ module.exports = {
                     return researchEntity.savePromise();
                 });
 
+    },
+    verifyDraft: function (ResearchEntity, researchEntityId, draftId) {
+        return ResearchEntity.verifyAll(researchEntityId, [draftId]);
     },
     _config: {
         actions: false,

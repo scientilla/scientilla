@@ -113,11 +113,11 @@ module.exports = {
         savePromise: function () {
             var self = this;
             return new Promise(function (resolve, reject) {
-                self.save(function (err, re) {
+                self.save(function (err) {
                     if (err) {
                         reject(err);
                     } else {
-                        resolve(re);
+                        resolve();
                     }
                 });
             });

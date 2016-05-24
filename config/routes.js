@@ -40,6 +40,8 @@ module.exports.routes = {
   'post /groups/:userId/references': 'Reference.create',
   'post /users/:userId/drafts': 'Reference.create',
   'post /groups/:userId/drafts': 'Reference.create',
+  'put /users/:id/drafts/verify-all': 'User.verifyAll',
+  'put /groups/:id/drafts/verify-all': 'Group.verifyAll',
   'put /users/:userId/drafts/:id': 'Reference.update',
   'put /groups/:userId/drafts/:id': 'Reference.update',
   'put /users/:userId/references/:id': 'Reference.update',

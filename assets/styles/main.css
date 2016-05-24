@@ -248,3 +248,9 @@ scientilla-menu md-sidenav md-toolbar.active {
 .tooltip.scientilla-tooltip.bottom .tooltip-arrow{
     border-bottom-color: #4e4e4e;
 }
+
+scientilla-multicheck .scientila-multicheck-commands-row {
+    height: 38px;
+    line-height: 38px;
+}
+
