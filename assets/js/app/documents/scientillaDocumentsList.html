@@ -10,8 +10,13 @@
                 </div>
                 <div ng-if="vm.editable" class="col-md-4 text-right">
                     <h3>
-                        <button class="btn btn-primary"  ng-click="vm.unverifyDocument(d)" >
-                            <span class="fa fa-remove"></span>
+                        <button class="btn btn-primary"
+                                ng-click="vm.unverifyDocument(d)"
+                                type="button"
+                                uib-tooltip="Unlink the document from your profile"
+                                tooltip-placement="top"
+                                tooltip-class="scientilla-tooltip" >
+                                <span class="fa fa-remove"></span>
                             Unverify
                         </button>
                     </h3>
@@ -20,10 +25,10 @@
             <hr>
         </div>
     </scientilla-filter>
-    
-    
+
+
     <div ng-if="!vm.documents.length">
         <h3>No documents found</h3>
     </div>
-    
+
 </div>
