@@ -133,6 +133,7 @@
                         .then(function (draft) {
                             vm.document = draft;
                             vm.status.setSaved(true);
+                            $rootScope.$broadcast('draft.updated', {});
                         });
         }
         
