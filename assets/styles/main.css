@@ -254,3 +254,6 @@ scientilla-multicheck .scientila-multicheck-commands-row {
     line-height: 38px;
 }
 
+scientilla-external-documents .row {
+    margin-top: 10px;
+}

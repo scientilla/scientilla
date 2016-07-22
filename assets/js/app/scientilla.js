@@ -107,7 +107,7 @@ Scientilla.reference = {
     DRAFT: 'draft',
     VERIFIED: 'verified',
     PUBLIC: 'public',
-    create: function (referenceData, creator) {
+    create: function (referenceData) {
         var fields = [
             'authors',
             'title',
@@ -128,11 +128,6 @@ Scientilla.reference = {
             'sourceType'
         ];
         var reference = _.pick(referenceData, fields);
-        if (creator.getType() === 'user')
-            reference.draftCreator = creator.id;
-        else
-            reference.draftGroupCreator = creator.id;
-        reference.draft = true;
         _.extend(reference, Scientilla.reference);
         return reference;
     },

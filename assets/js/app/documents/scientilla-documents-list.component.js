@@ -41,6 +41,7 @@
 
         function activate() {
             $rootScope.$on('draft.verified', updateList);
+            $rootScope.$on('draft.unverified', updateList);
         }
 
         function getDocuments(q) {
@@ -64,6 +65,14 @@
                                     Notification.warning("Failed to unverify document");
                                 });
 
+                    });
+        }
+
+        function openEditPopup(draft) {
+            ModalService
+                    .openScientillaDocumentForm(draft.clone(), vm.researchEntity)
+                    .finally(function () {
+                        updateList();
                     });
         }
 

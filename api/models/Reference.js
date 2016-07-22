@@ -123,15 +123,51 @@ module.exports = {
             });
         }
     },
-    checkDeletion: function (referenceId) {
-        return Reference.findOneById(referenceId)
+    getFields: function() {
+        var fields = [
+            'authors',
+            'title',
+            'year',
+            'journal',
+            'issue',
+            'volume',
+            'pages',
+            'articleNumber',
+            'doi',
+            'bookTitle',
+            'editor',
+            'publisher',
+            'conferenceName',
+            'conferenceLocation',
+            'acronym',
+            'type',
+            'sourceType'
+        ];
+        return fields;
+    },
+    deleteIfNotVerified: function (documentId) {
+        function countAuthorsAndGroups(document) {
+            return document.privateCoauthors.length +
+                    document.publicCoauthors.length +
+                    document.privateGroups.length +
+                    document.publicGroups.length;
+        }
+        return Reference.findOneById(documentId)
                 .populate('privateCoauthors')
                 .populate('publicCoauthors')
-                .then(function (reference) {
-                    if (reference.privateCoauthors.length + reference.publicCoauthors.length === 0) {
-                        sails.log.debug('Reference ' + referenceId + ' will be deleted');
-                        return Reference.destroy({id: referenceId});
+                .populate('privateGroups')
+                .populate('publicGroups')
+                .then(function (document) {
+                    if (countAuthorsAndGroups(document) === 0) {
+                        sails.log.debug('Document ' + documentId + ' will be deleted');
+                        return Reference.destroy({id: documentId});
                     }
+                    return document;
+                })
+                .then(function(document) {
+                    if (_.isArray(document))
+                        return document[0];
+                    return document;
                 });
     },
     getByIdsWithAuthors: function (referenceIds) {

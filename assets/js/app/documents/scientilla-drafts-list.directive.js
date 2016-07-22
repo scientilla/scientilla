@@ -68,6 +68,7 @@
         function activate() {
             $rootScope.$on("draft.created", updateList);
             $rootScope.$on("draft.verified", updateList);
+            $rootScope.$on('draft.unverified', updateList);
         }
 
 
@@ -106,7 +107,6 @@
         }
 
         function openEditPopup(document) {
-
             ModalService
                     .openScientillaDocumentForm(document.clone(), vm.researchEntity)
                     .finally(function () {

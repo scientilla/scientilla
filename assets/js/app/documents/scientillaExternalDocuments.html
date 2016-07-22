@@ -1,59 +1,65 @@
 <div>
-    <div ng-init="connectors = vm.researchEntity.getExternalConnectors()">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>
+                <select ng-model="vm.selectedConnectorName" class="form-control">
+                    <option value="" disabled selected hidden >Connector</option>
+                    <option ng-repeat="connector in vm.connectors"
+                            value = "{{connector.name}}"
+                            ng-disabled="!connector.enabled">
+                        {{connector.name}}
+                    </option>
+                </select>
 
-        <h3>
-            <select ng-model="selectedConnectorName" class="form-control">
-                <option value="" disabled selected hidden >Connector</option>
-                <option ng-repeat="connector in connectors"
-                        value = "{{connector.name}}"
-                        ng-disabled="!connector.enabled">
-                    {{connector.name}}
-                </option>
-            </select>
-
-        </h3>
-
-
-    </div>
-
-
-    <button class="btn btn-primary"
-            ng-disabled="!selectedConnectorName"
-            ng-click="vm.connectorChanged(selectedConnectorName)"
-            ng-if="vm.status !== vm.STATUS_LOADING" >
-        Search
-    </button>
-
-    <div class="progress" ng-if="vm.status === vm.STATUS_LOADING">
-        <div class="progress-bar progress-bar-striped active" 
-             role="progressbar"
-             style="width: 100%">
-            Loading
+            </h3>
         </div>
     </div>
 
-    <div ng-show="vm.status === vm.STATUS_ERROR">
-        An error happened
+
+    <div class="row">
+        <div class="col-md-12">
+            <button class="btn btn-primary"
+                    ng-disabled="!vm.selectedConnectorName"
+                    ng-click="vm.connectorChanged(vm.selectedConnectorName)"
+                    ng-if="vm.status !== vm.STATUS_LOADING" >
+                Search
+            </button>
+        </div>
     </div>
 
-    <div ng-show="vm.status === vm.STATUS_READY">
-        <div ng-repeat="r in vm.references">
-            <div class="row">
-                <div class="col-md-8">
-                    <scientilla-document document="r"></scientilla-document>
-                </div>
-                <div class="col-md-4 text-right">
-                    <h3>
-                        <button class="btn btn-primary"  ng-click="vm.copyReference(r, vm.researchEntity)" >
-                            <span class="fa fa-copy"></span>
-                            Copy
-                        </button>
-                    </h3>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="progress" ng-if="vm.status === vm.STATUS_LOADING">
+                <div class="progress-bar progress-bar-striped active" 
+                     role="progressbar"
+                     style="width: 100%">
+                    Loading
                 </div>
             </div>
-            <hr>
-        </div>
 
+            <div ng-show="vm.status === vm.STATUS_ERROR">
+                An error happened
+            </div>
+
+            <div ng-show="vm.status === vm.STATUS_READY">
+                <div ng-repeat="r in vm.references">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <scientilla-document document="r"></scientilla-document>
+                        </div>
+                        <div class="col-md-4 text-right">
+                            <h3>
+                                <button class="btn btn-primary"  ng-click="vm.copyReference(r, vm.researchEntity)" >
+                                    <span class="fa fa-copy"></span>
+                                    Copy
+                                </button>
+                            </h3>
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+            </div>
+        </div>
     </div>
 
 

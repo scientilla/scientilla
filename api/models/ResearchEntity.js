@@ -101,21 +101,29 @@ module.exports = {
                     return query;
                 });
     },
-    //sTODO: only drafts can be deleted
-    deleteReference: function (ResearchEntity, researchEntityId, referenceId) {
-        return Reference
-                .findOneById(referenceId)
-                .then(function (reference) {
-                    if (reference.draft) {
-                        return Reference.destroy({id: referenceId});
-                    } else {
-                        return ResearchEntity.removeReference(ResearchEntity, researchEntityId, referenceId);
-                    }
+    createDraft: function (ResearchEntityModel, researchEntityId, draftData) {
+        var fields = Reference.getFields();
+        var draftData = _.pick(draftData, fields);
+        draftData.draft = true;
+        return Promise.all([
+            ResearchEntityModel.findOneById(researchEntityId).populate('drafts'),
+            Reference.create(draftData)
+        ])
+                .spread(function (researchEntity, draft) {
+                    researchEntity.drafts.add(draft);
+                    return Promise.all([
+                        draft.id,
+                        researchEntity.savePromise()
+                    ]);
+                })
+                .spread(function (draftId) {
+                    return Reference.findOneById(draftId);
                 });
     },
-    removeReference: function (ResearchEntity, userId, referenceId) {
-        return ResearchEntity
-                .findOneById(userId)
+    //sTODO: only drafts can be deleted
+    unverifyDocument: function (ResearchEntityModel, researchEntityId, referenceId) {
+        return ResearchEntityModel
+                .findOneById(researchEntityId)
                 .populate('privateReferences')
                 .populate('publicReferences')
                 .then(function (researchEntity) {
@@ -124,7 +132,10 @@ module.exports = {
                     return researchEntity.savePromise();
                 })
                 .then(function () {
-                    return Reference.checkDeletion(referenceId);
+                    return Reference.deleteIfNotVerified(referenceId);
+                })
+                .then(function (document) {
+                    return ResearchEntityModel.createDraft(ResearchEntityModel, researchEntityId, document);
                 });
     },
     verifyReference: function (ResearchEntity, researchEntityId, referenceId) {

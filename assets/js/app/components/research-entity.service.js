@@ -15,6 +15,7 @@
         service.verifyDocument = verifyDocument;
         service.discardDocument = discardDocument;
         service.verify = verify;
+        service.unverify = unverify;
         service.verifyAll = verifyAll;
 
         function getDocuments(researchEntity, query) {
@@ -52,6 +53,10 @@
         
         function verify(researchEntity, reference) {
             return researchEntity.one('drafts', reference.id).customPUT({}, 'verified');
+        };
+        
+        function unverify(researchEntity, reference) {
+            return researchEntity.one('references', reference.id).customPUT({}, 'unverified');
         };
 
         function discardDocument(researchEntity, documentId) {

@@ -10,5 +10,4 @@ module.exports.scientilla = {
         },
         domain: 'iit.it'
     }
-
 };
