@@ -5,17 +5,23 @@
 
     LogoutController.$inject = [
         'AuthService',
-        '$location'
+        '$location',
+        'Notification'
     ];
 
-    function LogoutController(AuthService, $location) {
+    function LogoutController(AuthService, $location, Notification) {
 
         activate();
 
         function activate() {
-            AuthService.logout().then(function() {
-                $location.path('/');
-            })
+            AuthService
+                    .logout()
+                    .then(function () {
+                        $location.path("/");
+                    })
+                    .catch(function () {
+                        Notification.warning('An error happened');
+                    });
         }
     }
 
