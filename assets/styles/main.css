@@ -38,7 +38,7 @@
 .scientilla-document{
     margin-left: 20px;
     padding-left: 10px;
-    
+
     border-left: 3px solid #337ab7;
 }
 
@@ -229,6 +229,24 @@ scientilla-menu md-sidenav md-toolbar.active {
 
 .scientilla-search-container > form > select-field > div.form-group {
     width: 80px;
+}
+
+
+.tooltip.scientilla-tooltip .tooltip-inner {
+    color: #ffffff;
+    background-color: #4e4e4e;
+}
+.tooltip.scientilla-tooltip.top .tooltip-arrow {
+    border-top-color: #4e4e4e;
+}
+.tooltip.right.scientilla-tooltip .tooltip-arrow{
+    border-right-color: #4e4e4e;
+}
+.tooltip.left.scientilla-tooltip .tooltip-arrow{
+    border-left-color: #4e4e4e;
+}
+.tooltip.scientilla-tooltip.bottom .tooltip-arrow{
+    border-bottom-color: #4e4e4e;
 }
 
 scientilla-multicheck .scientila-multicheck-commands-row {

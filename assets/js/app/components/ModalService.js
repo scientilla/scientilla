@@ -26,7 +26,7 @@
                 document: document,
                 researchEntity: researchEntity
             };
-            
+
             service.modal = openModal(
                     '<scientilla-document-form\
                         document="vm.document"\
@@ -79,15 +79,54 @@
         };
 
 
+        service.confirm = function (title, message) {
+
+            var ret = new Promise(function (resolve, reject) {
+
+                var scope = {
+                    title: title,
+                    message: message,
+                    ok: function () {
+                        this.onSubmit();
+                        resolve();
+                    },
+                    cancel: function () {
+                        this.onClose();
+                        reject();
+                    }
+                };
+
+                service.modal = openModal('\
+                        <div>\
+                            <h3 ng-if="vm.title">{{vm.title}}</h3>\
+                            <div ng-if="vm.message">{{vm.message}}</div>\
+                        </div>\
+                        <hr>\
+                        <button ng-click="vm.ok()" class="btn btn-primary">Ok</button>\
+                        <button ng-click="vm.cancel()" class="btn btn-warning">Cancel</button>',
+                        scope);
+
+                service.modal.result.catch(function () {
+                    reject();
+                });
+            });
+
+            return ret;
+
+        };
+
+        return service;
+
+        // private
         function openModal(template, scope) {
             var callbacks = getDefaultCallbacks();
-            
-            _.defaults(scope,callbacks);
-            
-            var controller = function() {
+
+            _.defaults(scope, callbacks);
+
+            var controller = function () {
                 _.assign(this, scope);
             };
-            
+
             return $uibModal.open({
                 animation: true,
                 template: template,
@@ -104,8 +143,6 @@
 
             return callbacks;
         }
-
-        return service;
     }
 
 }());

@@ -1,4 +1,4 @@
-/* global Reference, SqlService */
+/* global Reference, SqlService, Promise */
 
 /**
  * Group.js
