@@ -22,19 +22,14 @@
 
     function scientillaMulticheckButtonController() {
         var vm = this;
-        
+
         vm.executeOnClick = executeOnClick;
-        vm.areElementsSelected = areElementsSelected;
-        
-        function executeOnClick(){
+
+        function executeOnClick() {
             var checkedItems = vm.scientillaMulticheck.getCheckedItems();
             vm.onClick()(checkedItems);
         }
-        
-        function areElementsSelected() {
-            return this.scientillaMulticheck.getCheckedItems().length > 0;
-        }
-        
+
     }
-    
+
 })();

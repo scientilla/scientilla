@@ -24,6 +24,7 @@
         var vm = this;
         vm.registerCheckable = registerCheckable;
         vm.getCheckedItems = getCheckedItems;
+        vm.areElementsSelected = areElementsSelected;
         vm.selectAll = selectAll;
         vm.allSelected = false;
 
@@ -56,6 +57,11 @@
                 setAllCheckables(true);
             if (! vm.allSelected && allCheckablesSelected)
                 setAllCheckables(false);
+        }
+        
+        
+        function areElementsSelected() {
+            return getCheckedItems().length > 0;
         }
     }
 
