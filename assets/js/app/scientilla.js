@@ -134,7 +134,7 @@ Scientilla.reference = {
         if (!this.authors)
             return [];
 
-        return this.authors.replace(/\s+et all\s*$/i, '').split(',').map(_.trim);
+        return this.authors.replace(/\s+et all\s*$/i, '').split(/,|\sand\s/).map(_.trim);
     },
     getUcAuthors: function () {
         var authors = this.getAuthors();
