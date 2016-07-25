@@ -41,7 +41,7 @@
             if (researchEntity.getType() === 'user') {
 
                 modalInstance = ModalService
-                        .openScientillaUserForm(vm.researchEntity)
+                        .openScientillaUserForm(vm.researchEntity.clone())
                         .then(function (researchEntity) {
                             vm.researchEntity = researchEntity;
                         });
