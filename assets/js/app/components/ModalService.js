@@ -95,13 +95,15 @@
                     buttonLabels: buttonLabels
                 };
                 service.modal = openModal('\
-                        <div>\
-                            <h3 ng-if="vm.title">{{vm.title}}</h3>\
-                            <div ng-if="vm.message">{{vm.message}}</div>\
-                        </div>\
-                        <hr>\\' +
-                        scope.buttonLabels.map(function(b, i) { return '<button ng-click="vm.ok('+i+')" class="btn btn-primary">'+b+'</button>\\';}) + 
-                        '<button ng-click="vm.cancel()" class="btn btn-warning">Cancel</button>',
+                        <div class="scientilla-modal">\
+                            <div>\
+                                <h3 ng-if="vm.title">{{vm.title}}</h3>\
+                                <div ng-if="vm.message">{{vm.message}}</div>\
+                            </div>\
+                            <hr>' +
+                            scope.buttonLabels.map(function(b, i) { return '<button ng-click="vm.ok('+i+')" class="btn btn-primary">'+b+'</button>';}).join('') + 
+                            '<button ng-click="vm.cancel()" class="btn btn-warning">Cancel</button>\
+                        <div>',
                         scope);
 
                 service.modal.result.catch(function () {
