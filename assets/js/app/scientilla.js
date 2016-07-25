@@ -233,6 +233,10 @@ Scientilla.reference = {
                 publisher: {
                     inputType: 'text'
                 },
+                doi: {
+                    label: "DOI",
+                    inputType: 'text'
+                },
                 scopusId: {
                     label: "Scopus ID",
                     inputType: 'text'
