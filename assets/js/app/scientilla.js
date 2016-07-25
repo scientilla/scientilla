@@ -268,6 +268,23 @@ Scientilla.reference = {
                 acronym: {
                     inputType: 'text'
                 },
+                volume: {
+                    inputType: 'text'
+                },
+                issue: {
+                    inputType: 'text'
+                },
+                pages: {
+                    inputType: 'text'
+                },
+                articleNumber: {
+                    label: "Article number",
+                    inputType: 'text'
+                },
+                doi: {
+                    label: "DOI",
+                    inputType: 'text'
+                },
                 scopusId: {
                     label: "Scopus ID",
                     inputType: 'text'
