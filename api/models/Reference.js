@@ -48,6 +48,8 @@ module.exports = {
         acronym: 'STRING',
         type: 'STRING',
         sourceType: 'STRING',
+        scopusId: 'STRING',
+        wosId: 'STRING',
         publicCoauthors: {
             collection: 'User',
             via: 'publicReferences'
@@ -141,7 +143,9 @@ module.exports = {
             'conferenceLocation',
             'acronym',
             'type',
-            'sourceType'
+            'sourceType',
+            'scopusId',
+            'wosId'
         ];
         return fields;
     },

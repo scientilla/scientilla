@@ -90,7 +90,9 @@ Scientilla.user = {
             publisher: '',
             conferenceName: '',
             conferenceLocation: '',
-            acronym: ''
+            acronym: '',
+            scopusId: '',
+            wosId: ''
         };
     },
     getProfileUrl: function () {
@@ -125,7 +127,9 @@ Scientilla.reference = {
             'conferenceLocation',
             'acronym',
             'type',
-            'sourceType'
+            'sourceType',
+            'scopusId',
+            'wosId'
         ];
         var reference = _.pick(referenceData, fields);
         _.extend(reference, Scientilla.reference);
@@ -211,6 +215,14 @@ Scientilla.reference = {
                 doi: {
                     label: "DOI",
                     inputType: 'text'
+                },
+                scopusId: {
+                    label: "Scopus ID",
+                    inputType: 'text'
+                },
+                wosId: {
+                    label: "WOS ID",
+                    inputType: 'text'
                 }
             };
         if (source === 'book')
@@ -236,6 +248,14 @@ Scientilla.reference = {
                 },
                 publisher: {
                     inputType: 'text'
+                },
+                scopusId: {
+                    label: "Scopus ID",
+                    inputType: 'text'
+                },
+                wosId: {
+                    label: "WOS ID",
+                    inputType: 'text'
                 }
             };
         if (source === 'conference')
@@ -259,6 +279,14 @@ Scientilla.reference = {
                 },
                 acronym: {
                     inputType: 'text'
+                },
+                scopusId: {
+                    label: "Scopus ID",
+                    inputType: 'text'
+                },
+                wosId: {
+                    label: "WOS ID",
+                    inputType: 'text'
                 }
             };
         if (!source) {
@@ -270,6 +298,14 @@ Scientilla.reference = {
                     inputType: 'text'
                 },
                 year: {
+                    inputType: 'text'
+                },
+                scopusId: {
+                    label: "Scopus ID",
+                    inputType: 'text'
+                },
+                wosId: {
+                    label: "WOS ID",
                     inputType: 'text'
                 }
             };
@@ -440,7 +476,9 @@ Scientilla.group = {
             publisher: '',
             conferenceName: '',
             conferenceLocation: '',
-            acronym: ''
+            acronym: '',
+            scopusId: '',
+            wosId: ''
         };
     },
     getProfileUrl: function () {
