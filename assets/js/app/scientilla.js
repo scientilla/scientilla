@@ -183,10 +183,10 @@ Scientilla.reference = {
                 journal: {
                     inputType: 'text'
                 },
-                issue: {
+                volume: {
                     inputType: 'text'
                 },
-                volume: {
+                issue: {
                     inputType: 'text'
                 },
                 pages: {
