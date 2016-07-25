@@ -71,29 +71,13 @@ Scientilla.user = {
         return connectors;
     },
     getNewDocument: function (documentTypeObj) {
-        return {
-            title: "",
-            authors: "",
+        var documentData = {
             draftCreator: this.id,
             draft: true,
             type: documentTypeObj.key,
-            sourceType: documentTypeObj.defaultSource,
-            year: '',
-            journal: '',
-            issue: '',
-            volume: '',
-            pages: '',
-            articleNumber: '',
-            doi: '',
-            bookTitle: '',
-            editor: '',
-            publisher: '',
-            conferenceName: '',
-            conferenceLocation: '',
-            acronym: '',
-            scopusId: '',
-            wosId: ''
+            sourceType: documentTypeObj.defaultSource
         };
+        return Scientilla.reference.create(documentData);
     },
     getProfileUrl: function () {
         return '/users/' + this.id;
@@ -457,29 +441,13 @@ Scientilla.group = {
         return connectors;
     },
     getNewDocument: function (documentTypeObj) {
-        return {
-            title: "",
-            authors: "",
-            draftGroupCreator: this.id,
+        var documentData = {
+            draftCreator: this.id,
             draft: true,
             type: documentTypeObj.key,
-            sourceType: documentTypeObj.defaultSource,
-            year: '',
-            journal: '',
-            issue: '',
-            volume: '',
-            pages: '',
-            articleNumber: '',
-            doi: '',
-            bookTitle: '',
-            editor: '',
-            publisher: '',
-            conferenceName: '',
-            conferenceLocation: '',
-            acronym: '',
-            scopusId: '',
-            wosId: ''
+            sourceType: documentTypeObj.defaultSource
         };
+        return Scientilla.reference.create(documentData);
     },
     getProfileUrl: function () {
         return '/groups/' + this.id;
