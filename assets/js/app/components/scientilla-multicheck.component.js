@@ -23,15 +23,22 @@
     function scientillaMulticheckController() {
         var vm = this;
         vm.registerCheckable = registerCheckable;
+        vm.registerButton = registerButton;
         vm.getCheckedItems = getCheckedItems;
         vm.areElementsSelected = areElementsSelected;
+        vm.areButtonsRegistered = areButtonsRegistered;
         vm.selectAll = selectAll;
         vm.allSelected = false;
 
         var checkables = [];
+        var buttons = [];
         
         function registerCheckable(checkable) {
             checkables.push(checkable);
+        }
+        
+        function registerButton(button) {
+            buttons.push(button);
         }
         
         function getCheckedItems() {
@@ -62,6 +69,10 @@
         
         function areElementsSelected() {
             return getCheckedItems().length > 0;
+        }
+        
+        function areButtonsRegistered() {
+            return buttons.length > 0;
         }
     }
 

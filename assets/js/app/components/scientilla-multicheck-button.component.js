@@ -25,6 +25,10 @@
 
         vm.executeOnClick = executeOnClick;
 
+        this.$onInit = function() {
+            this.scientillaMulticheck.registerButton(vm);
+        };
+
         function executeOnClick() {
             var checkedItems = vm.scientillaMulticheck.getCheckedItems();
             vm.onClick()(checkedItems);

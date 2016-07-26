@@ -4,7 +4,7 @@
     </div>
     <div class="col-md-6 text-right">
 
-        <div class="btn-group" uib-dropdown>
+        <div ng-show="vm.areButtonsRegistered()" class="btn-group" uib-dropdown>
             <button ng-disabled="!vm.areElementsSelected()" type="button" class="btn btn-primary" uib-dropdown-toggle>
                 On selected
                 <span class="caret"></span>
