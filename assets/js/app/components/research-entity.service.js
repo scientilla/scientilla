@@ -14,9 +14,9 @@
         service.getSuggestedDocuments = getSuggestedDocuments;
         service.verifyDocument = verifyDocument;
         service.discardDocument = discardDocument;
-        service.verify = verify;
+        service.verifyDraft = verifyDraft;
         service.unverify = unverify;
-        service.verifyAll = verifyAll;
+        service.verifyAllDrafts = verifyAllDrafts;
 
         function getDocuments(researchEntity, query) {
 
@@ -51,7 +51,7 @@
                     .post('privateReferences', {id: id});
         }
         
-        function verify(researchEntity, reference) {
+        function verifyDraft(researchEntity, reference) {
             return researchEntity.one('drafts', reference.id).customPUT({}, 'verified');
         };
         
@@ -67,7 +67,7 @@
                     .post('discarded-document', {documentId: documentId});
         }
         
-        function verifyAll(researchEntity, draftIds) {
+        function verifyAllDrafts(researchEntity, draftIds) {
             var restType = researchEntity.getType() + 's';
             return Restangular
                     .one(restType, researchEntity.id)

@@ -5,9 +5,9 @@
 
     <scientilla-multicheck >
         <buttons>
-            <scientilla-multicheck-button on-click="vm.verifyAll">
+            <scientilla-multicheck-button on-click="vm.verifyAllDrafts">
                 <span class="fa fa-check"></span>
-                Verify Selected
+                Verify
             </scientilla-multicheck-button>
         </buttons>
         <item-list>
@@ -28,13 +28,13 @@
                                 </button>
                                 <ul uib-dropdown-menu >
                                     <li>
-                                        <a ng-click="vm.verifyDocument(d)" href="javascript:void(0)">
+                                        <a ng-click="vm.verifyDraft(d)" href="javascript:void(0)">
                                             <span class="fa fa-check"></span>
                                             Verify
                                         </a>
                                     </li>
                                     <li>
-                                        <a ng-click="vm.deleteDocument(d)" href="javascript:void(0)">
+                                        <a ng-click="vm.deleteDraft(d)" href="javascript:void(0)">
                                             <span class="fa fa-remove"></span>
                                             Delete
                                         </a>

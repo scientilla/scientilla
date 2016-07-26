@@ -33,10 +33,10 @@
         vm.getData = getDrafts;
         vm.onFilter = refreshList;
 
-        vm.deleteDocument = deleteDocument;
-        vm.verifyDocument = verifyDocument;
+        vm.deleteDraft = deleteDraft;
+        vm.verifyDraft = verifyDraft;
         vm.openEditPopup = openEditPopup;
-        vm.verifyAll = verifyAll;
+        vm.verifyAllDrafts = verifyAllDrafts;
 
         vm.searchForm = documentSearchForm;
 
@@ -59,7 +59,7 @@
             return researchEntityService.getDrafts(vm.researchEntity, q);
         }
 
-        function deleteDocument(draft) {
+        function deleteDraft(draft) {
             vm.researchEntity
                     .one('drafts', draft.id)
                     .remove()
@@ -72,10 +72,10 @@
                     });
         }
 
-        function verifyAll(drafts) {
+        function verifyAllDrafts(drafts) {
             var draftIds = _.map(drafts, 'id');
             researchEntityService
-                    .verifyAll(vm.researchEntity, draftIds)
+                    .verifyAllDrafts(vm.researchEntity, draftIds)
                     .then(function (drafts) {
                         Notification.success(drafts.length + " drafts verified");
                         $rootScope.$broadcast("draft.verified", drafts);
@@ -86,8 +86,9 @@
                     });
         }
 
-        function verifyDocument(reference) {
-            return researchEntityService.verify(vm.researchEntity, reference)
+        function verifyDraft(reference) {
+            return researchEntityService
+                    .verifyDraft(vm.researchEntity, reference)
                     .then(function (draft) {
                         Notification.success("Draft verified");
                         $rootScope.$broadcast("draft.verified", draft);
