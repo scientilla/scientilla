@@ -1,34 +1,39 @@
-<div>
-    <scientilla-filter
-        search-form-structure="vm.searchForm"
-        on-filter="vm.onFilter"
-        get-data="vm.getData">
-        <div ng-repeat="d in vm.documents">
-            <div class="row">
-                <div class="col-md-8">
-                    <scientilla-document document="d"></scientilla-document>
-                </div>
-                <div ng-if="vm.editable" class="col-md-4 text-right">
-                    <h3>
-                        <button class="btn btn-primary"
-                                ng-click="vm.unverifyDocument(d)"
-                                type="button"
-                                uib-tooltip="Unlink the document from your profile"
-                                tooltip-placement="top"
-                                tooltip-class="scientilla-tooltip" >
+<scientilla-filter
+    search-form-structure="vm.searchForm"
+    on-filter="vm.onFilter"
+    get-data="vm.getData">
+
+
+    <scientilla-multicheck >
+        <buttons>
+        </buttons>
+        <item-list>
+            <scientilla-checkable ng-repeat="d in vm.documents" item="d">
+                <div class="row">
+                    <div class="col-md-8">
+                        <scientilla-document document="d"></scientilla-document>
+                    </div>
+                    <div ng-if="vm.editable" class="col-md-4 text-right">
+                        <h3>
+                            <button class="btn btn-primary"
+                                    ng-click="vm.unverifyDocument(d)"
+                                    type="button"
+                                    uib-tooltip="Unlink the document from your profile"
+                                    tooltip-placement="top"
+                                    tooltip-class="scientilla-tooltip" >
                                 <span class="fa fa-remove"></span>
-                            Unverify
-                        </button>
-                    </h3>
+                                Unverify
+                            </button>
+                        </h3>
+                    </div>
                 </div>
-            </div>
-            <hr>
-        </div>
-    </scientilla-filter>
+            </scientilla-checkable>
+        </item-list>
+    </scientilla-multicheck>
+
+</scientilla-filter>
 
 
-    <div ng-if="!vm.documents.length">
-        <h3>No documents found</h3>
-    </div>
-
+<div ng-if="!vm.documents.length">
+    <h3>No documents found</h3>
 </div>
