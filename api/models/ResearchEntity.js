@@ -167,7 +167,7 @@ module.exports = {
                 });
 
     },
-    verifyAll: function (Model, researchEntityId, draftIds) {
+    verifyDrafts: function (Model, researchEntityId, draftIds) {
         return Promise.all(draftIds.map(function (draftId) {
             return Model.verifyDraft(researchEntityId, draftId);
         }));

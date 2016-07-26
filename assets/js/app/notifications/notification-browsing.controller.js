@@ -19,6 +19,8 @@
         vm.copyDocument = copyDocument;
         vm.verifyDocument = verifyDocument;
         vm.discardDocument = discardDocument;
+        vm.getVerifyAllDocuments = getVerifyAllDocuments;
+        vm.getDiscardAllDocuments = getDiscardAllDocuments;
 
         vm.targets = _.map(_.union([AuthService.user], AuthService.user.admininstratedGroups),
                 function (reserarchEntity) {
@@ -73,6 +75,12 @@
                     });
 
         }
+        
+        function getVerifyAllDocuments(researchEntity){
+            return function(documents){
+                
+            };
+        }
 
         function verifyDocument(document, target) {
             //sTODO move to a service
@@ -85,6 +93,12 @@
                     .catch(function () {
                         Notification.warning('Failed to verify document');
                     });
+        }
+        
+        function getDiscardAllDocuments(researchEntity){
+            return function(documents){
+                
+            };
         }
 
         function discardDocument(document, target) {

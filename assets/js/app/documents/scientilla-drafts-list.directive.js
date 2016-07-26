@@ -33,35 +33,10 @@
         vm.getData = getDrafts;
         vm.onFilter = refreshList;
 
-        vm.deleteDocument = deleteDocument;
-        vm.verifyDocument = verifyDocument;
+        vm.deleteDraft = deleteDraft;
+        vm.verifyDraft = verifyDraft;
         vm.openEditPopup = openEditPopup;
-        vm.verifyAll = function(drafts){
-            var draftIds = _.map(drafts, 'id');
-            researchEntityService
-                    .verifyAll(vm.researchEntity, draftIds)
-                    .then(function(allDocs) {
-                        var partitions = _.partition(allDocs, 'draft');
-                        var drafts = partitions[0];
-                        var documents = partitions[1];
-                        Notification.success(documents.length + " draft(s) verified");
-                        Notification.warning(drafts.length + " is/are not complete and cannot be notified");
-                        $rootScope.$broadcast("draft.verified", documents);
-                    })
-                    .catch(function(err) {
-                        $rootScope.$broadcast("draft.verified", []);
-                        Notification.warning("An error happened");
-                    });
-        };
-        vm.bulkButtons = [
-            {
-                label: 'Verify all',
-                action: function(ids) {
-                    return researchEntityService.verifyAll(ids);
-                },
-                icon: 'fa-check'
-            }  
-        ];
+        vm.verifyDrafts = verifyDrafts;
 
         vm.searchForm = documentSearchForm;
 
@@ -83,7 +58,7 @@
             return researchEntityService.getDrafts(vm.researchEntity, q);
         }
 
-        function deleteDocument(draft) {
+        function deleteDraft(draft) {
             vm.researchEntity
                     .one('drafts', draft.id)
                     .remove()
@@ -96,11 +71,29 @@
                     });
         }
 
-        function verifyDocument(reference) {
-            return researchEntityService.verify(vm.researchEntity, reference)
+        function verifyDrafts(drafts) {
+            var draftIds = _.map(drafts, 'id');
+            researchEntityService
+                    .verifyDrafts(vm.researchEntity, draftIds)
+                    .then(function(allDocs) {
+                        var partitions = _.partition(allDocs, 'draft');
+                        var drafts = partitions[0];
+                        var documents = partitions[1];
+                        Notification.success(documents.length + " draft(s) verified");
+                        Notification.warning(drafts.length + " is/are not valid and cannot be verified");
+                        $rootScope.$broadcast("draft.verified", documents);
+                    })
+                    .catch(function(err) {
+                        $rootScope.$broadcast("draft.verified", []);
+                        Notification.warning("An error happened");
+                    });
+        };
+        
+        function verifyDraft(reference) {
+            return researchEntityService.verifyDraft(vm.researchEntity, reference)
                     .then(function (document) {
                         if (document.draft) {
-                            Notification.warning("Draft is incompleted and cannot be verified");
+                            Notification.warning("Draft is not valid and cannot be verified");
                         }
                         else {
                             Notification.success("Draft verified");

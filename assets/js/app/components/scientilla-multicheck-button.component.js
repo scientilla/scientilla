@@ -18,23 +18,31 @@
 
 
     scientillaMulticheckButtonController.$inject = [
+        'ModalService'
     ];
 
-    function scientillaMulticheckButtonController() {
+    function scientillaMulticheckButtonController(ModalService) {
         var vm = this;
-        
+
         vm.executeOnClick = executeOnClick;
-        vm.areElementsSelected = areElementsSelected;
-        
-        function executeOnClick(){
+
+        this.$onInit = function () {
+            this.scientillaMulticheck.registerButton(vm);
+        };
+
+        function executeOnClick() {
             var checkedItems = vm.scientillaMulticheck.getCheckedItems();
-            vm.onClick()(checkedItems);
+
+            ModalService
+                    .confirm("", "Apply this action to " + checkedItems.length + " elements?")
+                    .then(function () {
+                        vm.onClick()(checkedItems);
+                    });
+
+
+
         }
-        
-        function areElementsSelected() {
-            return this.scientillaMulticheck.getCheckedItems().length > 0;
-        }
-        
+
     }
-    
+
 })();
