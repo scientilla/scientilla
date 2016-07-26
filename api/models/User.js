@@ -129,22 +129,12 @@ module.exports = _.merge({}, researchEntity, {
             return 'user';
         }
     }),
-    verifyAll: function (researchEntityId, draftIds) {
-        //sTODO: 2 equals documents should be merged
-        return Reference.findById(draftIds)
-                .then(function (drafts) {
-                    var draftSavingPromise = drafts.map(function (draft) {
-                        draft.draftCreator = null;
-                        draft.draft = false;
-                        draft.privateCoauthors.add(researchEntityId);
-                        return draft
-                                .savePromise()
-                                .then(function () {
-                                    return draft;
-                                });
-                    });
-                    return Promise.all(draftSavingPromise);
-                });
+    verifyDraft: function (researchEntityId, draftId) {
+        function userDraftToDocument(draft) {
+            draft.draftCreator = null;
+            draft.privateCoauthors.add(researchEntityId);
+        }
+        return Reference.verifyDraft(draftId, userDraftToDocument);
     },
     getAdministeredGroups: function (userId) {
         return User.findOneById(userId)

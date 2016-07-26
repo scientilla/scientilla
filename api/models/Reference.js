@@ -85,6 +85,33 @@ module.exports = {
             collection: 'Group',
             via: 'suggestedReferences'
         },
+        isValid: function () {
+            var requiredFields = [
+                'authors',
+                'title',
+                'year',
+                'type',
+                'sourceType'
+            ];
+            var requiredFieldsTable = {
+                conference: [
+                    'conferenceName',
+                    'conferenceLocation'
+                ],
+                book: [
+                    'bookTitle',
+                    'editor',
+                    'publisher'
+                ],
+                journal: [
+                    'journal'
+                ]
+            };
+            var otherRequiredFields = requiredFieldsTable[this.sourceType];
+            requiredFields = _.union(requiredFields, otherRequiredFields);
+            var requiredValues =_.pick(this, requiredFields);
+            return _.every(requiredValues, function(v) {return v;});
+        },
         getAuthors: function () {
             if (!this.authors)
                 return [];
@@ -125,7 +152,7 @@ module.exports = {
             });
         }
     },
-    getFields: function() {
+    getFields: function () {
         var fields = [
             'authors',
             'title',
@@ -168,7 +195,7 @@ module.exports = {
                     }
                     return document;
                 })
-                .then(function(document) {
+                .then(function (document) {
                     if (_.isArray(document))
                         return document[0];
                     return document;
@@ -229,5 +256,21 @@ module.exports = {
         return _.filter(references, function (r) {
             return _.includes([VERIFIED, PUBLIC], r.status);
         });
+    },
+    verifyDraft: function(draftId, draftToDocument) {
+        //sTODO: 2 equals documents should be merged
+        return Reference.findOneById(draftId)
+                .then(function(draft) {
+                    if (!draft.isValid()) {
+                        return draft;
+                    }
+                    draft.draft = false;
+                    draftToDocument(draft);
+                    return draft
+                            .savePromise()
+                            .then(function () {
+                                return draft;
+                            });
+                });
     }
 };

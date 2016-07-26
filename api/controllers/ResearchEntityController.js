@@ -38,15 +38,15 @@ module.exports = {
     },
     verifyDraft: function (req, res) {
         var researchEntityId = req.params.id;
-        var referenceId = req.params.referenceId;
+        var draftId = req.params.draftId;
         var Model = getModel(req);
-        res.halt(Model.verifyDraft(Model, researchEntityId, referenceId));
+        res.halt(Model.verifyDraft(researchEntityId, draftId));
     },
     verifyAll: function (req, res) {
         var researchEntityId = req.params.id;
         var draftIds = req.param('draftIds');
         var Model = getModel(req);
-        res.halt(Model.verifyAll(researchEntityId, draftIds));
+        res.halt(Model.verifyAll(Model, researchEntityId, draftIds));
     },
     verifyReference: function (req, res) {
         var researchEntityId = req.params.id;

@@ -55,22 +55,12 @@ module.exports = _.merge({}, researchEntity, {
             type: 'STRING'
         }
     },
-    verifyAll: function (researchEntityId, draftIds) {
-        //sTODO: 2 equals documents should be merged
-        return Reference.findById(draftIds)
-                .then(function (drafts) {
-                    var draftSavingPromise = drafts.map(function (draft) {
-                        draft.draftGroupCreator = null;
-                        draft.draft = false;
-                        draft.privateGroups.add(researchEntityId);
-                        return draft
-                                .savePromise()
-                                .then(function () {
-                                    return draft;
-                                });
-                    });
-                    return Promise.all(draftSavingPromise);
-                });
+    verifyDraft: function (researchEntityId, draftId) {
+        function groupDraftToDocument(draft) {
+            draft.draftGroupCreator = null;
+            draft.privateGroups.add(researchEntityId);
+        }
+        return Reference.verifyDraft(draftId, groupDraftToDocument);
     },
     //sTODO: add deep populate for other fields of the documents
     getSuggestedDocuments: function (groupId, query) {

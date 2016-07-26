@@ -40,9 +40,13 @@
             var draftIds = _.map(drafts, 'id');
             researchEntityService
                     .verifyAll(vm.researchEntity, draftIds)
-                    .then(function(drafts) {
-                        Notification.success(drafts.length + " drafts verified");
-                        $rootScope.$broadcast("draft.verified", drafts);
+                    .then(function(allDocs) {
+                        var partitions = _.partition(allDocs, 'draft');
+                        var drafts = partitions[0];
+                        var documents = partitions[1];
+                        Notification.success(documents.length + " draft(s) verified");
+                        Notification.warning(drafts.length + " is/are not complete and cannot be notified");
+                        $rootScope.$broadcast("draft.verified", documents);
                     })
                     .catch(function(err) {
                         $rootScope.$broadcast("draft.verified", []);
@@ -72,8 +76,6 @@
             $rootScope.$on('draft.unverified', updateList);
         }
 
-
-
         function getDrafts(q) {
 
             query = q;
@@ -96,10 +98,15 @@
 
         function verifyDocument(reference) {
             return researchEntityService.verify(vm.researchEntity, reference)
-                    .then(function (draft) {
-                        Notification.success("Draft verified");
-                        $rootScope.$broadcast("draft.verified", draft);
-                        updateList();
+                    .then(function (document) {
+                        if (document.draft) {
+                            Notification.warning("Draft is incompleted and cannot be verified");
+                        }
+                        else {
+                            Notification.success("Draft verified");
+                            $rootScope.$broadcast("draft.verified", document);
+                            updateList();
+                        }
                     })
                     .catch(function () {
                         Notification.warning("Failed to verify draft");
