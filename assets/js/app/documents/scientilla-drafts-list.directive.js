@@ -45,6 +45,7 @@
         activate();
 
         function activate() {
+            $rootScope.$on("draft.updated", updateList);
             $rootScope.$on("draft.created", updateList);
             $rootScope.$on("draft.verified", updateList);
             $rootScope.$on('draft.unverified', updateList);

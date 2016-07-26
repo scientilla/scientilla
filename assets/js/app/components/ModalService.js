@@ -77,6 +77,42 @@
 
             return service.modal.result;
         };
+        
+        service.multipleChoiceConfirm = function(title, message, buttonLabels) {
+            buttonLabels = buttonLabels || [];
+            var ret = new Promise(function (resolve, reject) {
+                var scope = {
+                    title: title,
+                    message: message,
+                    cancel: function () {
+                        this.onClose();
+                        reject();
+                    },
+                    ok: function (i) {
+                        this.onSubmit();
+                        resolve(i);
+                    },
+                    buttonLabels: buttonLabels
+                };
+                service.modal = openModal('\
+                        <div class="scientilla-modal">\
+                            <div>\
+                                <h3 ng-if="vm.title">{{vm.title}}</h3>\
+                                <div ng-if="vm.message">{{vm.message}}</div>\
+                            </div>\
+                            <hr>' +
+                            scope.buttonLabels.map(function(b, i) { return '<button ng-click="vm.ok('+i+')" class="btn btn-primary">'+b+'</button>';}).join('') + 
+                            '<button ng-click="vm.cancel()" class="btn btn-warning">Cancel</button>\
+                        <div>',
+                        scope);
+
+                service.modal.result.catch(function () {
+                    reject();
+                });
+            });
+
+            return ret;
+        };
 
 
         service.confirm = function (title, message) {

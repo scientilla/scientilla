@@ -6,7 +6,7 @@
 
         <div class="col-md-4 text-right">
             <h1>
-                <button ng-click="vm.createNew()"
+                <button ng-if="vm.user.isAdmin()" ng-click="vm.createNew()"
                         class="btn btn-primary">
                     Create New Group
                 </button>

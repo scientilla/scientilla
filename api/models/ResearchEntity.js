@@ -133,9 +133,6 @@ module.exports = {
                 })
                 .then(function () {
                     return Reference.deleteIfNotVerified(referenceId);
-                })
-                .then(function (document) {
-                    return ResearchEntityModel.createDraft(ResearchEntityModel, researchEntityId, document);
                 });
     },
     verifyReference: function (ResearchEntity, researchEntityId, referenceId) {

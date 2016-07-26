@@ -71,27 +71,13 @@ Scientilla.user = {
         return connectors;
     },
     getNewDocument: function (documentTypeObj) {
-        return {
-            title: "",
-            authors: "",
+        var documentData = {
             draftCreator: this.id,
             draft: true,
             type: documentTypeObj.key,
-            sourceType: documentTypeObj.defaultSource,
-            year: '',
-            journal: '',
-            issue: '',
-            volume: '',
-            pages: '',
-            articleNumber: '',
-            doi: '',
-            bookTitle: '',
-            editor: '',
-            publisher: '',
-            conferenceName: '',
-            conferenceLocation: '',
-            acronym: ''
+            sourceType: documentTypeObj.defaultSource
         };
+        return Scientilla.reference.create(documentData);
     },
     getProfileUrl: function () {
         return '/users/' + this.id;
@@ -125,7 +111,9 @@ Scientilla.reference = {
             'conferenceLocation',
             'acronym',
             'type',
-            'sourceType'
+            'sourceType',
+            'scopusId',
+            'wosId'
         ];
         var reference = _.pick(referenceData, fields);
         _.extend(reference, Scientilla.reference);
@@ -146,7 +134,7 @@ Scientilla.reference = {
         if (!this.authors)
             return [];
 
-        return this.authors.replace(/\s+et all\s*$/i, '').split(',').map(_.trim);
+        return this.authors.replace(/\s+et all\s*$/i, '').split(/,|\sand\s/).map(_.trim);
     },
     getUcAuthors: function () {
         var authors = this.getAuthors();
@@ -195,10 +183,10 @@ Scientilla.reference = {
                 journal: {
                     inputType: 'text'
                 },
-                issue: {
+                volume: {
                     inputType: 'text'
                 },
-                volume: {
+                issue: {
                     inputType: 'text'
                 },
                 pages: {
@@ -210,6 +198,14 @@ Scientilla.reference = {
                 },
                 doi: {
                     label: "DOI",
+                    inputType: 'text'
+                },
+                scopusId: {
+                    label: "Scopus ID",
+                    inputType: 'text'
+                },
+                wosId: {
+                    label: "WOS ID",
                     inputType: 'text'
                 }
             };
@@ -236,6 +232,18 @@ Scientilla.reference = {
                 },
                 publisher: {
                     inputType: 'text'
+                },
+                doi: {
+                    label: "DOI",
+                    inputType: 'text'
+                },
+                scopusId: {
+                    label: "Scopus ID",
+                    inputType: 'text'
+                },
+                wosId: {
+                    label: "WOS ID",
+                    inputType: 'text'
                 }
             };
         if (source === 'conference')
@@ -259,6 +267,31 @@ Scientilla.reference = {
                 },
                 acronym: {
                     inputType: 'text'
+                },
+                volume: {
+                    inputType: 'text'
+                },
+                issue: {
+                    inputType: 'text'
+                },
+                pages: {
+                    inputType: 'text'
+                },
+                articleNumber: {
+                    label: "Article number",
+                    inputType: 'text'
+                },
+                doi: {
+                    label: "DOI",
+                    inputType: 'text'
+                },
+                scopusId: {
+                    label: "Scopus ID",
+                    inputType: 'text'
+                },
+                wosId: {
+                    label: "WOS ID",
+                    inputType: 'text'
                 }
             };
         if (!source) {
@@ -270,6 +303,14 @@ Scientilla.reference = {
                     inputType: 'text'
                 },
                 year: {
+                    inputType: 'text'
+                },
+                scopusId: {
+                    label: "Scopus ID",
+                    inputType: 'text'
+                },
+                wosId: {
+                    label: "WOS ID",
                     inputType: 'text'
                 }
             };
@@ -421,27 +462,13 @@ Scientilla.group = {
         return connectors;
     },
     getNewDocument: function (documentTypeObj) {
-        return {
-            title: "",
-            authors: "",
-            draftGroupCreator: this.id,
+        var documentData = {
+            draftCreator: this.id,
             draft: true,
             type: documentTypeObj.key,
-            sourceType: documentTypeObj.defaultSource,
-            year: '',
-            journal: '',
-            issue: '',
-            volume: '',
-            pages: '',
-            articleNumber: '',
-            doi: '',
-            bookTitle: '',
-            editor: '',
-            publisher: '',
-            conferenceName: '',
-            conferenceLocation: '',
-            acronym: ''
+            sourceType: documentTypeObj.defaultSource
         };
+        return Scientilla.reference.create(documentData);
     },
     getProfileUrl: function () {
         return '/groups/' + this.id;

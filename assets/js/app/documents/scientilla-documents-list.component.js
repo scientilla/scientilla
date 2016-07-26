@@ -49,22 +49,31 @@
             return researchEntityService.getDocuments(vm.researchEntity, query);
         }
 
-        function unverifyDocument(reference) {
+        function unverifyDocument(document) {
             ModalService
-                    .confirm('Unverifying','Do you want to unverify the document?')
-                    .then(function () {
+                    .multipleChoiceConfirm('Unverifying','Do you want to unverify the document?', ['Create New Version', 'Unverify'])
+                    .then(function (buttonIndex) {
 
-                        vm.researchEntity
-                                .one('references', reference.id)
-                                .remove()
-                                .then(function (documents) {
-                                    Notification.success("Document succesfully unverified");
-                                    updateList(documents);
+                        researchEntityService.unverify(vm.researchEntity, document)
+                                .then(function (draft) {
+                                    draft.id = false;
+                                    $rootScope.$broadcast('draft.unverified', {});
+                                    switch(buttonIndex) {
+                                        case 0: 
+                                            openEditPopup(draft);
+                                            break;
+                                        case 1:
+                                            Notification.success("Document succesfully unverified");
+                                            break;
+                                    }
+                                    
                                 })
                                 .catch(function () {
                                     Notification.warning("Failed to unverify document");
                                 });
 
+                    })
+                    .catch(function () {
                     });
         }
 
