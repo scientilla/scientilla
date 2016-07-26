@@ -72,7 +72,7 @@
             return Restangular
                     .one(restType, researchEntity.id)
                     .all('drafts')
-                    .customPUT({draftIds: draftIds}, 'verify-all');
+                    .customPUT({draftIds: draftIds}, 'verify-all-drafts');
         }
 
         return service;

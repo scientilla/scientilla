@@ -42,11 +42,11 @@ module.exports = {
         var Model = getModel(req);
         res.halt(Model.verifyDraft(Model, researchEntityId, referenceId));
     },
-    verifyAll: function (req, res) {
+    verifyAllDrafts: function (req, res) {
         var researchEntityId = req.params.id;
         var draftIds = req.param('draftIds');
         var Model = getModel(req);
-        res.halt(Model.verifyAll(researchEntityId, draftIds));
+        res.halt(Model.verifyAllDrafts(researchEntityId, draftIds));
     },
     verifyReference: function (req, res) {
         var researchEntityId = req.params.id;
