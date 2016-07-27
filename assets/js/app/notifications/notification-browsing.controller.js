@@ -18,9 +18,9 @@
         var vm = this;
         vm.copyDocument = copyDocument;
         vm.verifyDocument = verifyDocument;
+        vm.getVerifyDocuments = getVerifyDocuments;
         vm.discardDocument = discardDocument;
-        vm.getVerifyAllDocuments = getVerifyAllDocuments;
-        vm.getDiscardAllDocuments = getDiscardAllDocuments;
+        vm.getDiscardDocuments = getDiscardDocuments;
 
         vm.targets = _.map(_.union([AuthService.user], AuthService.user.admininstratedGroups),
                 function (reserarchEntity) {
@@ -75,12 +75,6 @@
                     });
 
         }
-        
-        function getVerifyAllDocuments(researchEntity){
-            return function(documents){
-                
-            };
-        }
 
         function verifyDocument(document, target) {
             //sTODO move to a service
@@ -94,10 +88,20 @@
                         Notification.warning('Failed to verify document');
                     });
         }
-        
-        function getDiscardAllDocuments(researchEntity){
-            return function(documents){
-                
+
+        function getVerifyDocuments(target) {
+            return function (documents) {
+                var documentIds = _.map(documents, 'id');
+                researchEntityService
+                        .verifyDocuments(target.researchEntity, documentIds)
+                        .then(function (allDocs) {
+                            Notification.success(allDocs.length + " document(s) verified");
+                            reload(target);
+                        })
+                        .catch(function (err) {
+                            Notification.warning("An error happened");
+                        });
+
             };
         }
 
@@ -112,6 +116,25 @@
                     .catch(function () {
                         Notification.warning('Failed to discard document');
                     });
+        }
+
+        function getDiscardDocuments(target) {
+            return function (documents) {
+                var documentIds = _.map(documents, 'id');
+                researchEntityService
+                        .discardDocuments(target.researchEntity, documentIds)
+                        .then(function (results) {
+                            var resultPartitioned = _.partition(results, function (o) {
+                                return o;
+                            });
+                            Notification.success(resultPartitioned[0].length + " document(s) discarded");
+                            reload(target);
+                        })
+                        .catch(function (err) {
+                            Notification.warning("An error happened");
+                        });
+
+            };
         }
 
 

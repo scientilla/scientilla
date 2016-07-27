@@ -46,6 +46,8 @@ module.exports.routes = {
   'put /groups/:userId/drafts/:id': 'Reference.update',
   'put /users/:userId/references/:id': 'Reference.update',
   'put /groups/:userId/references/:id': 'Reference.update',
+  'put /users/:id/verify-documents': 'User.verifyDocuments',
+  'put /groups/:id/verify-documents': 'Group.verifyDocuments',
   'get /users/:id/references': 'User.getReferences',
   'get /groups/:id/references': 'Group.getReferences',
   'put /users/:id/references/:referenceId/unverified': 'User.unverifyDocument',
@@ -53,6 +55,8 @@ module.exports.routes = {
   'post /users/:id/privateReferences/': 'User.verifyReference',
   'post /users/:id/discarded-document': 'User.discardDocument',
   'post /groups/:id/discarded-document': 'Group.discardDocument',
+  'post /users/:id/discarded-documents': 'User.discardDocuments',
+  'post /groups/:id/discarded-documents': 'Group.discardDocuments',
   'put /users/:id/drafts/:draftId/verified': 'User.verifyDraft',
   'put /groups/:id/drafts/:draftId/verified': 'Group.verifyDraft',
   'get /references/:id/suggestions' : 'Suggestion.find', //sTODO delete

@@ -142,6 +142,11 @@ module.exports = {
                     return researchEntity.savePromise();
                 });
     },
+    verifyDocuments: function (Model, researchEntityId, documentIds) {
+        return Promise.all(documentIds.map(function (documentId) {
+            return Model.verifyReference(Model, researchEntityId, documentId);
+        }));
+    },
     filterNecessaryReferences: function (userId, ResearchEntity, maybeSuggestedReferences) {
         var maybeSuggestedReferencesId = _.map(maybeSuggestedReferences, 'id');
         return Promise.all([
@@ -158,14 +163,30 @@ module.exports = {
     discardDocument: function (researchEntityId, documentId) {
         return this
                 .findOneById(researchEntityId)
+                .populate('discardedReferences')
                 .then(function (researchEntity) {
+
+                    var doc = _.find(
+                            researchEntity.discardedReferences,
+                            {id: documentId});
+
+                    if (doc)
+                        return false;
+
                     researchEntity
                             .discardedReferences
                             .add(documentId);
 
-                    return researchEntity.savePromise();
+                    return researchEntity
+                            .savePromise()
+                            .then(function(){return true;});
                 });
 
+    },
+    discardDocuments: function (Model, researchEntityId, documentIds) {
+        return Promise.all(documentIds.map(function (documentId) {
+            return Model.discardDocument(researchEntityId, documentId);
+        }));
     },
     verifyDrafts: function (Model, researchEntityId, draftIds) {
         return Promise.all(draftIds.map(function (draftId) {

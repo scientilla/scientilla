@@ -58,11 +58,23 @@ module.exports = {
                     res.json(reference);
                 });
     },
+    verifyDocuments: function (req, res) {
+        var researchEntityId = req.params.id;
+        var documentIds = req.param('documentIds');
+        var Model = getModel(req);
+        res.halt(Model.verifyDocuments(Model, researchEntityId, documentIds));
+    },
     discardDocument: function (req, res) {
         var researchEntityId = req.params.id;
         var documentId = req.param('documentId');
         var Model = getModel(req);
         res.halt(Model.discardDocument(researchEntityId, documentId));
+    },
+    discardDocuments: function (req, res) {
+        var researchEntityId = req.params.id;
+        var documentIds = req.param('documentIds');
+        var Model = getModel(req);
+        res.halt(Model.discardDocuments(Model, researchEntityId, documentIds));
     },
     getOne: function (req, res) {
         var researchEntityId = req.params.id;
