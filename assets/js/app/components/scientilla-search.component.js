@@ -47,11 +47,14 @@
                             return;
 
                         var whereAdd = {};
-
-                        if (struct.matchRule === 'is null') {
+                        if (!struct.matchRule) {
+                            whereAdd[struct.matchColumn] = value;
+                        }
+                        else if (struct.matchRule === 'is null') {
                             if (!value)
                                 whereAdd[struct.matchColumn] = null;
-                        } else {
+                        }
+                        else {
                             whereAdd[struct.matchColumn] = {};
                             whereAdd[struct.matchColumn][struct.matchRule] = value;
                         }
@@ -67,7 +70,8 @@
                         var struct = vm.formStructure[key];
                         if (struct.inputType === 'select') {
                             vm.searchValues[key] = "?";
-                        } else {
+                        }
+                        else {
 
                             if (struct.defaultValue)
                                 vm.searchValues[key] = struct.defaultValue;
