@@ -32,8 +32,7 @@
         vm.STATUS_LOADING = 1;
         vm.STATUS_READY = 2;
         vm.STATUS_ERROR = 3;
-        vm.copyReference = copyReference;
-        vm.reset = reset;
+        vm.copyDocument = copyDocument;
         vm.getData = getExternalReferences;
         vm.onFilter = refreshExternalDocuments;
 
@@ -78,7 +77,7 @@
             vm.status = vm.STATUS_READY;
         }
 
-        function copyReference(externalDocument, researchEntity) {
+        function copyDocument(externalDocument, researchEntity) {
             //sTODO move to a service
             var draftData = Scientilla.reference.create(externalDocument);
             researchEntity
