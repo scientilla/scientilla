@@ -146,12 +146,12 @@
         function submit() {
             saveDocument()
                     .then(function () {
-                        Notification.success("Document saved");
+                        Notification.success("Draft saved");
                         executeOnSubmit();
 
                     })
                     .catch(function () {
-                        Notification.warning("Failed to save document");
+                        Notification.warning("Failed to save draft");
                     });
 
         }
