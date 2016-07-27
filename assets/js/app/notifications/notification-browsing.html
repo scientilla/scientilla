@@ -15,17 +15,17 @@
 
             <scientilla-multicheck >
                 <buttons>
-                    <scientilla-multicheck-button on-click="vm.getVerifyAllDocuments(target)">
+                    <scientilla-multicheck-button on-click="vm.getVerifyDocuments(target)">
                         <span class="fa fa-check"></span>
                         Verify
                     </scientilla-multicheck-button>
-                    <scientilla-multicheck-button on-click="vm.getDiscardAllDocuments(target)">
+                    <scientilla-multicheck-button on-click="vm.getDiscardDocuments(target)">
                         <span class="fa fa-ban"></span>
                         Discard
                     </scientilla-multicheck-button>
                 </buttons>
                 <item-list>
-                    <scientilla-checkable ng-repeat="document in target.documents" item="d">
+                    <scientilla-checkable ng-repeat="document in target.documents" item="document">
                         <div class="row">
                             <div class="col-md-8">
                                 <scientilla-document document="document"></scientilla-document>
