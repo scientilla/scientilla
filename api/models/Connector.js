@@ -13,8 +13,12 @@ var Promise = require("bluebird");
 module.exports = {
     attributes: {
     },
-    getReferences: function (ResearchEntity, researchEntityId, connector) {
+    getReferences: function (ResearchEntity, researchEntityId, query) {
+        
         var self = this;
+        var connector = query.where.connector;
+        if (!connector)
+            throw new Error('A Connector parameter is necessary');
         return ResearchEntity.findOneById(researchEntityId)
                 .then(function (researchEntity) {
                     var reqConfig;

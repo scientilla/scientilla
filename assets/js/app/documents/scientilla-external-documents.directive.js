@@ -21,10 +21,12 @@
 
     scientillaExternalDocumentsController.$inject = [
         'Notification',
-        '$rootScope'
+        '$rootScope',
+        'researchEntityService',
+        '$q'
     ];
 
-    function scientillaExternalDocumentsController(Notification, $rootScope) {
+    function scientillaExternalDocumentsController(Notification, $rootScope, researchEntityService, $q) {
         var vm = this;
         vm.STATUS_WAITING = 0;
         vm.STATUS_LOADING = 1;
@@ -34,17 +36,30 @@
         vm.connectorChanged = connectorChanged;
         vm.selectedConnectorName = undefined;
         vm.reset = reset;
+        vm.getData = getExternalReferences;
+        vm.onFilter = refreshExternalDocuments;
 
         activate();
 
         function activate() {
             vm.connectors = vm.researchEntity.getExternalConnectors();
+            var values = _.concat({value: '?', label: 'Select'}, vm.connectors.map(function (c) {
+                return {value: c.name, label: c.name};
+            }));
+            vm.searchForm = {
+                connector: {
+                    inputType: 'select',
+                    label: 'Connector',
+                    values: values,
+                    matchColumn: 'connector'
+                }
+            };
             reset();
         }
 
         function reset() {
             vm.status = vm.STATUS_WAITING;
-            vm.references = [];
+            vm.documents = [];
         }
 
         function connectorChanged(connector) {
@@ -54,17 +69,21 @@
             });
         }
 
-        function getExternalReferences(researchEntity, connector) {
-            //sTODO move to a service
-            return researchEntity.getList('external-references', {connector: connector})
-                    .then(function (references) {
-                        vm.references = references;
-                        vm.status = vm.STATUS_READY;
-                    })
+        function getExternalReferences(q) {
+            var connector = q.where.connector;
+            if (!connector)
+                return $q.resolve([]);
+
+            return researchEntityService.getExternalDrafts(vm.researchEntity, q)
                     .catch(function (err) {
                         Notification.error("External reference error");
                         vm.status = vm.STATUS_ERROR;
                     });
+        }
+
+        function refreshExternalDocuments(documents) {
+            vm.documents = documents;
+            vm.status = vm.STATUS_READY;
         }
 
         function copyReference(externalDocument, researchEntity) {
@@ -74,9 +93,9 @@
                     .post('drafts', draftData)
                     .then(function () {
                         Notification.success("External Document copied");
-                
+
                         $rootScope.$broadcast("draft.created", {});
-                        _.remove(vm.references, externalDocument);
+                        _.remove(vm.documents, externalDocument);
                     })
                     .catch(function () {
                         Notification.warning("Failed to copy External Document");

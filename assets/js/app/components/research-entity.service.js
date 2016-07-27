@@ -17,6 +17,7 @@
         service.verifyDraft = verifyDraft;
         service.unverify = unverify;
         service.verifyDrafts = verifyDrafts;
+        service.getExternalDrafts = getExternalDrafts;
 
         function getDocuments(researchEntity, query) {
 
@@ -33,6 +34,14 @@
 
             return researchEntity.getList('drafts', query);
         }
+
+        function getExternalDrafts(researchEntity, query) {
+            if (!query)
+                query = {};
+
+            return researchEntity.getList('external-references', query);
+        }
+
 
         function getSuggestedDocuments(researchEntity, query) {
 
