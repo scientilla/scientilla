@@ -33,8 +33,6 @@
         vm.STATUS_READY = 2;
         vm.STATUS_ERROR = 3;
         vm.copyReference = copyReference;
-        vm.connectorChanged = connectorChanged;
-        vm.selectedConnectorName = undefined;
         vm.reset = reset;
         vm.getData = getExternalReferences;
         vm.onFilter = refreshExternalDocuments;
@@ -62,15 +60,9 @@
             vm.documents = [];
         }
 
-        function connectorChanged(connector) {
-            vm.status = vm.STATUS_LOADING;
-            return getExternalReferences(vm.researchEntity, connector).then(function () {
-
-            });
-        }
-
         function getExternalReferences(q) {
             var connector = q.where.connector;
+            vm.status = vm.STATUS_LOADING;
             if (!connector)
                 return $q.resolve([]);
 
