@@ -18,18 +18,23 @@
 
 
     scientillaCheckable.$inject = [
+        '$scope'
     ];
 
-    function scientillaCheckable() {
+    function scientillaCheckable($scope) {
 
         var vm = this;
         vm.isChecked = false;
         this.getItem = getItem;
-        
-        this.$onInit = function() {
+
+        this.$onInit = function () {
             this.scientillaMulticheck.registerCheckable(vm);
         };
-        
+
+        $scope.$on('$destroy', function () {
+            vm.scientillaMulticheck.deRegisterCheckable(vm);
+        });
+
         function getItem() {
             return vm.item;
         }
