@@ -23,7 +23,7 @@
     function scientillaMulticheckController() {
         var vm = this;
         vm.registerCheckable = registerCheckable;
-        vm.deRegisterCheckable = deRegisterCheckable;
+        vm.unregisterCheckable = unregisterCheckable;
         vm.registerButton = registerButton;
         vm.getCheckedItems = getCheckedItems;
         vm.areElementsSelected = areElementsSelected;
@@ -38,9 +38,8 @@
             checkables.push(checkable);
         }
 
-        function deRegisterCheckable(checkable) {
-            var index = checkables.indexOf(checkable);
-            checkables.splice(index, 1);
+        function unregisterCheckable(checkable) {
+            _.remove(checkables, checkable);
         }
 
         function registerButton(button) {

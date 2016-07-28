@@ -32,7 +32,7 @@
         };
 
         $scope.$on('$destroy', function () {
-            vm.scientillaMulticheck.deRegisterCheckable(vm);
+            vm.scientillaMulticheck.unregisterCheckable(vm);
         });
 
         function getItem() {
