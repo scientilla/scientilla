@@ -9,6 +9,10 @@
                 <span class="fa fa-check"></span>
                 Verify
             </scientilla-multicheck-button>
+            <scientilla-multicheck-button on-click="vm.deleteDrafts">
+                <span class="fa fa-remove"></span>
+                Delete
+            </scientilla-multicheck-button>
         </buttons>
         <item-list>
             <scientilla-checkable ng-repeat="d in vm.drafts" item="d">

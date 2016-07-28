@@ -64,7 +64,8 @@ module.exports.routes = {
   'get /users/:id/suggested-documents' : 'User.getSuggestedDocuments',
   'get /groups/:id/suggested-documents' : 'Group.getSuggestedDocuments',
   'get /users/:id/external-references' : 'User.getExternalReferences',
-  'get /groups/:id/external-references' : 'Group.getExternalReferences'
+  'get /groups/:id/external-references' : 'Group.getExternalReferences',
+  'delete /references/delete':'Reference.deleteDrafts'
 
 //    'get /': {
 //        controller: 'index',

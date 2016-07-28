@@ -33,6 +33,7 @@
         vm.getData = getDrafts;
         vm.onFilter = refreshList;
 
+        vm.deleteDrafts = deleteDrafts;
         vm.deleteDraft = deleteDraft;
         vm.verifyDraft = verifyDraft;
         vm.openEditPopup = openEditPopup;
@@ -58,10 +59,22 @@
             return researchEntityService.getDrafts(vm.researchEntity, q);
         }
 
+        function deleteDrafts(drafts) {
+            var draftIds = _.map(drafts, 'id');
+            researchEntityService
+                    .deleteDrafts(vm.researchEntity, draftIds)
+                    .then(function (results) {
+                        Notification.success(results.length + " draft(s) deleted");
+                        updateList();
+                    })
+                    .catch(function (err) {
+                        Notification.warning("An error happened");
+                    });
+        }
+
         function deleteDraft(draft) {
-            vm.researchEntity
-                    .one('drafts', draft.id)
-                    .remove()
+            researchEntityService
+                    .deleteDraft(vm.researchEntity,  draft.id)
                     .then(function () {
                         Notification.success("Draft deleted");
                         updateList();
@@ -75,27 +88,28 @@
             var draftIds = _.map(drafts, 'id');
             researchEntityService
                     .verifyDrafts(vm.researchEntity, draftIds)
-                    .then(function(allDocs) {
+                    .then(function (allDocs) {
                         var partitions = _.partition(allDocs, 'draft');
                         var drafts = partitions[0];
                         var documents = partitions[1];
-                        Notification.success(documents.length + " draft(s) verified");
-                        Notification.warning(drafts.length + " is/are not valid and cannot be verified");
+                        if (documents.length)
+                            Notification.success(documents.length + " draft(s) verified");
+                        if (drafts.length)
+                            Notification.warning(drafts.length + " is/are not valid and cannot be verified");
                         $rootScope.$broadcast("draft.verified", documents);
                     })
-                    .catch(function(err) {
+                    .catch(function (err) {
                         $rootScope.$broadcast("draft.verified", []);
                         Notification.warning("An error happened");
                     });
-        };
-        
+        }
+
         function verifyDraft(reference) {
             return researchEntityService.verifyDraft(vm.researchEntity, reference)
                     .then(function (document) {
                         if (document.draft) {
                             Notification.warning("Draft is not valid and cannot be verified");
-                        }
-                        else {
+                        } else {
                             Notification.success("Draft verified");
                             $rootScope.$broadcast("draft.verified", document);
                             updateList();

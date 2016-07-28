@@ -19,6 +19,8 @@
         service.verifyDocuments = verifyDocuments;
         service.discardDocuments = discardDocuments;
         service.verifyDrafts = verifyDrafts;
+        service.deleteDraft = deleteDraft;
+        service.deleteDrafts = deleteDrafts;
 
         function getDocuments(researchEntity, query) {
 
@@ -52,43 +54,55 @@
                     .one(restType, researchEntity.id)
                     .post('privateReferences', {id: id});
         }
-        
+
         function verifyDraft(researchEntity, reference) {
             return researchEntity.one('drafts', reference.id).customPUT({}, 'verified');
-        };
-        
+        }
+
         function unverify(researchEntity, reference) {
             return researchEntity.one('references', reference.id).customPUT({}, 'unverified');
-        };
+        }
 
         function discardDocument(researchEntity, documentId) {
             var restType = researchEntity.getType() + 's';
-            
+
             return Restangular
                     .one(restType, researchEntity.id)
                     .post('discarded-document', {documentId: documentId});
         }
-        
+
         function verifyDocuments(researchEntity, documentIds) {
             var restType = researchEntity.getType() + 's';
             return Restangular
                     .one(restType, researchEntity.id)
                     .customPUT({documentIds: documentIds}, 'verify-documents');
         }
-        
+
         function discardDocuments(researchEntity, documentIds) {
             var restType = researchEntity.getType() + 's';
             return Restangular
                     .one(restType, researchEntity.id)
                     .customPOST({documentIds: documentIds}, 'discarded-documents');
         }
-        
+
         function verifyDrafts(researchEntity, draftIds) {
             var restType = researchEntity.getType() + 's';
             return Restangular
                     .one(restType, researchEntity.id)
                     .all('drafts')
                     .customPUT({draftIds: draftIds}, 'verify-drafts');
+        }
+
+        function deleteDraft(researchEntity, draftId) {
+            return researchEntity
+                    .one('drafts', draftId)
+                    .remove();
+        }
+
+        function deleteDrafts(researchEntity, draftIds) {
+            return Restangular
+                    .all('references')
+                    .customDELETE('delete', {}, {}, {draftIds: draftIds});
         }
 
         return service;
