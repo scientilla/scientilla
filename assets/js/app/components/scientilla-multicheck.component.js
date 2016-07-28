@@ -40,8 +40,8 @@
 
         function unregisterCheckable(checkable) {
             _.remove(checkables, checkable);
-            
-            vm.allSelected &= areElementsSelected();
+
+            vm.allSelected = vm.allSelected && areElementsSelected();
         }
 
         function registerButton(button) {
