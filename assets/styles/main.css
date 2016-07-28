@@ -117,6 +117,14 @@
     padding: 15px;
 }
 
+.scientilla-dropdown-btn{
+    width: 166px;
+}
+.scientilla-dropdown-caret-btn{
+    width: 136px;
+}
+
+
 /*****************************************/
 
 md-list-item.scientilla-main-list {
