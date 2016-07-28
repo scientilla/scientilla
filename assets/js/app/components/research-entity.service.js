@@ -19,6 +19,7 @@
         service.verifyDocuments = verifyDocuments;
         service.discardDocuments = discardDocuments;
         service.verifyDrafts = verifyDrafts;
+        service.getExternalDrafts = getExternalDrafts;
         service.deleteDraft = deleteDraft;
         service.deleteDrafts = deleteDrafts;
 
@@ -37,6 +38,14 @@
 
             return researchEntity.getList('drafts', query);
         }
+
+        function getExternalDrafts(researchEntity, query) {
+            if (!query)
+                query = {};
+
+            return researchEntity.getList('external-references', query);
+        }
+
 
         function getSuggestedDocuments(researchEntity, query) {
 

@@ -87,25 +87,14 @@ module.exports = {
     },
     getExternalReferences: function (req, res) {
         var researchEntityId = req.params.id;
-        var connector = req.query.connector;
+        var query = getQuery(req);
         var Model = getModel(req);
-        if (!connector) {
-            sails.log.debug('No Connector');
-            res.badRequest('A Connector parameter is necessary');
-            return;
-        }
-        res.halt(Connector.getReferences(Model, researchEntityId, connector));
+        res.halt(Connector.getReferences(Model, researchEntityId, query));
     },
     getSuggestedDocuments: function (req, res) {
         var Model = getModel(req);
         var userId = req.params.id;
-
-        var query = {
-            limit: actionUtil.parseLimit(req),
-            skip: actionUtil.parseSkip(req),
-            where: JSON.parse(req.query.where || '{}')
-        };
-
+        var query = getQuery(req);
         res.halt(Model.getSuggestedDocuments(userId, query));
     }
 };
@@ -121,5 +110,14 @@ function getPopulateFields(req) {
     if (_.isString(populate))
         populate = [populate];
     return populate;
+}
+
+function getQuery(req) {
+    var query = {
+        limit: actionUtil.parseLimit(req),
+        skip: actionUtil.parseSkip(req),
+        where: JSON.parse(req.query.where || '{}')
+    };
+    return query;
 }
 

@@ -146,12 +146,12 @@
         function submit() {
             saveDocument()
                     .then(function () {
-                        Notification.success("Document saved");
+                        Notification.success("Draft saved");
                         executeOnSubmit();
 
                     })
                     .catch(function () {
-                        Notification.warning("Failed to save document");
+                        Notification.warning("Failed to save draft");
                     });
 
         }
@@ -164,12 +164,17 @@
         function saveVerify() {
             saveDocument()
                     .then(function(){
-                        return researchEntityService.verify(vm.researchEntity, vm.document);
+                        return researchEntityService.verifyDraft(vm.researchEntity, vm.document);
                     })
-                    .then(function (draft) {
-                        Notification.success("Draft verified");
-                        executeOnSubmit();
-                        $rootScope.$broadcast("draft.verified", draft);
+                    .then(function (document) {
+                        if (document.draft) {
+                            Notification.warning("Draft is not valid and cannot be verified");
+                        }
+                        else {
+                            executeOnSubmit();
+                            Notification.success("Draft verified");
+                            $rootScope.$broadcast("draft.verified", document);
+                        }
                     })
                     .catch(function () {
                         Notification.warning("Failed to verify draft");

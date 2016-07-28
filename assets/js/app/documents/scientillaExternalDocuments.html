@@ -1,32 +1,7 @@
-<div>
-    <div class="row">
-        <div class="col-md-12">
-            <h3>
-                <select ng-model="vm.selectedConnectorName" class="form-control">
-                    <option value="" disabled selected hidden >Connector</option>
-                    <option ng-repeat="connector in vm.connectors"
-                            value = "{{connector.name}}"
-                            ng-disabled="!connector.enabled">
-                        {{connector.name}}
-                    </option>
-                </select>
-
-            </h3>
-        </div>
-    </div>
-
-
-    <div class="row">
-        <div class="col-md-12">
-            <button class="btn btn-primary"
-                    ng-disabled="!vm.selectedConnectorName"
-                    ng-click="vm.connectorChanged(vm.selectedConnectorName)"
-                    ng-if="vm.status !== vm.STATUS_LOADING" >
-                Search
-            </button>
-        </div>
-    </div>
-
+<scientilla-filter
+    search-form-structure="vm.searchForm"
+    on-filter="vm.onFilter"
+    get-data="vm.getData">
     <div class="row">
         <div class="col-md-12">
             <div class="progress" ng-if="vm.status === vm.STATUS_LOADING">
@@ -42,14 +17,14 @@
             </div>
 
             <div ng-show="vm.status === vm.STATUS_READY">
-                <div ng-repeat="r in vm.references">
+                <div ng.if="vm.documents.lenght>0" ng-repeat="r in vm.documents">
                     <div class="row">
                         <div class="col-md-8">
                             <scientilla-document document="r"></scientilla-document>
                         </div>
                         <div class="col-md-4 text-right">
                             <h3>
-                                <button class="btn btn-primary"  ng-click="vm.copyReference(r, vm.researchEntity)" >
+                                <button class="btn btn-primary"  ng-click="vm.copyDocument(r, vm.researchEntity)" >
                                     <span class="fa fa-copy"></span>
                                     Copy
                                 </button>
@@ -58,10 +33,10 @@
                     </div>
                     <hr>
                 </div>
+                <div ng-if="vm.documents.length==0">
+                    No documents
+                </div>
             </div>
         </div>
     </div>
-
-
-
-</div>
+</scientilla-filter>

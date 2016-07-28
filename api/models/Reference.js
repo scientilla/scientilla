@@ -95,8 +95,7 @@ module.exports = {
             ];
             var requiredFieldsTable = {
                 conference: [
-                    'conferenceName',
-                    'conferenceLocation'
+                    'conferenceName'
                 ],
                 book: [
                     'bookTitle',

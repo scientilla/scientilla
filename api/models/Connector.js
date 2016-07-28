@@ -13,20 +13,24 @@ var Promise = require("bluebird");
 module.exports = {
     attributes: {
     },
-    getReferences: function (ResearchEntity, researchEntityId, connector) {
+    getReferences: function (ResearchEntity, researchEntityId, query) {
+
         var self = this;
+        var connector = query.where.connector;
+        if (!connector)
+            throw new Error('A Connector parameter is necessary');
         return ResearchEntity.findOneById(researchEntityId)
                 .then(function (researchEntity) {
                     var reqConfig;
                     switch (connector) {
                         case'Publications':
-                            reqConfig = self.getPublicationsConfig(researchEntity);
+                            reqConfig = self.getPublicationsConfig(researchEntity, query);
                             break;
                         case'ORCID':
-                            reqConfig = self.getOrcidConfig(researchEntity);
+                            reqConfig = self.getOrcidConfig(researchEntity, query);
                             break;
                         case'Scopus':
-                            reqConfig = self.getScopusConfig(researchEntity);
+                            reqConfig = self.getScopusConfig(researchEntity, query);
                             break;
                         default:
                             //sTODO: error management
@@ -46,17 +50,19 @@ module.exports = {
                     }));
                 });
     },
-    getPublicationsConfig: function (researchEntity) {
+    getPublicationsConfig: function (researchEntity, configQuery) {
         var researchEntityType = researchEntity.getType();
         var query;
         if (researchEntityType === 'user') {
             query = {author: researchEntity.surname};
-        } else {
+        }
+        else {
             query = {"research-structure": researchEntity.publicationsAcronym};
         }
+        
         var qs = {
-            "page-size": 10,
-            "page-number": 1
+            limit: configQuery.limit,
+            skip: configQuery.skip
         };
         qs = _.merge(qs, query);
 
@@ -87,7 +93,7 @@ module.exports = {
                     conferenceLocation: d.conferencePlace,
                     acronym: d.conferenceAcronym
                 };
-                if (newDoc.conferenceName) 
+                if (newDoc.conferenceName)
                     newDoc.sourceType = 'conference';
                 else if (newDoc.journal)
                     newDoc.sourceType = 'journal';
@@ -111,7 +117,7 @@ module.exports = {
             }
         };
     },
-    getOrcidConfig: function (researchEntity) {
+    getOrcidConfig: function (researchEntity, configQuery) {
 
         return {
             reqParams: {
@@ -119,22 +125,26 @@ module.exports = {
                 headers: {
                     'Accept': 'application/json'
                 },
+                /*Pagination does not work in this way*/
                 qs: {
-                    "page-size": 10,
-                    "page-number": 1
+                    limit: configQuery.limit,
+                    skip: configQuery.skip
                 },
                 json: true
 
             },
             fieldExtract: function (res) {
-                return _.get(res, 'orcid-profile.orcid-activities.orcid-works.orcid-work');
+                /* To be fixed */
+                var allDocuments = _.get(res, 'orcid-profile.orcid-activities.orcid-works.orcid-work');
+                var documentsSubset = _.slice(allDocuments, configQuery.skip, configQuery.skip + configQuery.limit);
+                return documentsSubset;
             },
             transform: function (d) {
-               function  getAttributeFromCitation(d, attribute){
-                   var citationData = _.get(d, 'work-citation.citation');
-                   var regex = new RegExp(attribute + '\\s=\\s{(.*?)}');
-                   return _.get(citationData.match(regex), '[1]');
-               }
+                function  getAttributeFromCitation(d, attribute) {
+                    var citationData = _.get(d, 'work-citation.citation');
+                    var regex = new RegExp(attribute + '\\s=\\s{(.*?)}');
+                    return _.get(citationData.match(regex), '[1]');
+                }
                 var sourceTypeMappings = {
                     JOURNAL_ARTICLE: 'journal',
                     CONFERENCE_PAPER: 'conference',
@@ -150,15 +160,15 @@ module.exports = {
                     year: _.get(d, 'publication-date.year.value'),
                     doi: _.get(
                             _.get(d, 'work-external-identifiers.work-external-identifier')
-                            .find(function(wei) {
+                            .find(function (wei) {
                                 return wei['work-external-identifier-type'] === 'DOI';
-                            }), 
+                            }),
                             'work-external-identifier-id.value'
-                        ),
-                    sourceType: sourceType    
+                            ),
+                    sourceType: sourceType
                 };
-                switch(newDoc.sourceType) {
-                    case 'journal': 
+                switch (newDoc.sourceType) {
+                    case 'journal':
                         newDoc.journal = getAttributeFromCitation(d, 'journal');
                         newDoc.volume = getAttributeFromCitation(d, 'volume');
                         newDoc.issue = getAttributeFromCitation(d, 'number');
@@ -169,18 +179,18 @@ module.exports = {
                         newDoc.bookTitle = getAttributeFromCitation(d, 'journal');
                         newDoc.editor = null;
                         newDoc.publisher = null;
-                    break;
+                        break;
                     case 'conference':
                         newDoc.conferenceName = getAttributeFromCitation(d, 'journal');
                         newDoc.conferenceLocation = null;
                         newDoc.acronym = null;
-                    break;
+                        break;
                 }
                 return newDoc;
             }
         };
     },
-    getScopusConfig: function (researchEntity) {
+    getScopusConfig: function (researchEntity, configQuery) {
 
         var researchEntityType = researchEntity.getType();
         var uri = 'https://api.elsevier.com/content/search/scopus';
@@ -188,7 +198,8 @@ module.exports = {
 
         if (researchEntityType === 'user') {
             query = 'au-id(' + researchEntity.scopusId + ')';
-        } else {
+        }
+        else {
             query = 'AF-ID(' + researchEntity.scopusId + ')';
             uri += 'affiliation';
         }
@@ -201,8 +212,8 @@ module.exports = {
                     'X-ELS-Insttoken': 'ed64a720836a40cee4e3bf99ee066c67'
                 },
                 qs: {
-                    'page-size': 10,
-                    'page-number': 1,
+                    start: configQuery.skip,
+                    count: configQuery.limit,
                     query: query
                 },
                 json: true
@@ -245,7 +256,7 @@ module.exports = {
                                 'Book Series': 'book'
                             };
                             var sourceType = sourceTypeMappings[d1['prism:aggregationType']];
-                            
+
                             var newDoc = {
                                 title: _.get(d2, 'xocs:item.item.bibrecord.head.citation-title.titletext._Data'),
                                 authors: _.map(
@@ -257,10 +268,10 @@ module.exports = {
                                 doi: _.get(d2, 'xocs:meta.xocs:doi'),
                                 sourceType: sourceType
                             };
-                            
-                            
-                            switch(newDoc.sourceType) {
-                                case 'journal': 
+
+
+                            switch (newDoc.sourceType) {
+                                case 'journal':
                                     newDoc.journal = d1['prism:publicationName'];
                                     newDoc.volume = d1['prism:volume'];
                                     newDoc.issue = d1['prism:issueIdentifier'];
@@ -272,14 +283,14 @@ module.exports = {
                                     newDoc.bookTitle = d1['prism:publicationName'];
                                     newDoc.editor = null;
                                     newDoc.publisher = _.get(d2, 'xocs:item.item.bibrecord.head.source.publisher.publishername');
-                                break;
+                                    break;
                                 case 'conference':
                                     newDoc.conferenceName = d1['prism:publicationName'];
                                     newDoc.conferenceLocation = getConferenceLocation(d2);
                                     newDoc.acronym = null;
-                                break;
+                                    break;
                             }
-                            
+
                             var typeMappings = {
                                 re: 'review',
                                 ip: 'article_in_press',
@@ -287,9 +298,9 @@ module.exports = {
                                 ar: 'article',
                                 cp: 'conference_paper'
                             };
-                            
+
                             newDoc.type = typeMappings[d1['subtype']];
-                
+
                             return newDoc;
                         });
             }
