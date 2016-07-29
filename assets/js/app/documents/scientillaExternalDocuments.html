@@ -17,14 +17,14 @@
             </div>
 
             <div ng-show="vm.status === vm.STATUS_READY">
-                <div ng.if="vm.documents.lenght>0" ng-repeat="r in vm.documents">
+                <div ng.if="vm.documents.lenght>0" ng-repeat="d in vm.documents">
                     <div class="row">
                         <div class="col-md-8">
-                            <scientilla-document document="r"></scientilla-document>
+                            <scientilla-document document="d"></scientilla-document>
                         </div>
                         <div class="col-md-4 text-right">
                             <h3>
-                                <button class="btn btn-primary"  ng-click="vm.copyDocument(r, vm.researchEntity)" >
+                                <button ng-disabled="d.tags.includes('copied')" class="btn btn-primary"  ng-click="vm.copyDocument(d, vm.researchEntity)" >
                                     <span class="fa fa-copy"></span>
                                     Copy
                                 </button>

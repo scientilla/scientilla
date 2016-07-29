@@ -73,6 +73,7 @@
         }
 
         function refreshExternalDocuments(documents) {
+            Scientilla.toDocumentsCollection(documents);
             vm.documents = documents;
             vm.status = vm.STATUS_READY;
         }
@@ -86,7 +87,7 @@
                         Notification.success("External Document copied");
 
                         $rootScope.$broadcast("draft.created", {});
-                        _.remove(vm.documents, externalDocument);
+                        externalDocument.tags.push('copied');
                     })
                     .catch(function () {
                         Notification.warning("Failed to copy External Document");

@@ -293,4 +293,8 @@ scientilla-document-label {
     vertical-align: super;
 }
 
+.scientilla-document-label-copied {
+    background-color: #ff9933;
+}
+
 /******************************************************************************/
