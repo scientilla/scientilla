@@ -15,7 +15,7 @@
             bindToController: {
                 document: "=",
                 researchEntity: "=",
-                onClose: "&",
+                onFailure: "&",
                 onSubmit: "&"
             }
         };
@@ -137,28 +137,21 @@
                         });
         }
         
-        function executeOnSubmit() {
-            if (_.isFunction(vm.onSubmit()))
-                vm.onSubmit()(vm.document);
-            
+        function cancel() {
+            executeOnSubmit(0); 
         }
 
         function submit() {
             saveDocument()
                     .then(function () {
                         Notification.success("Draft saved");
-                        executeOnSubmit();
-
+                        executeOnSubmit(1);
                     })
                     .catch(function () {
                         Notification.warning("Failed to save draft");
+                        executeOnFailure();
                     });
 
-        }
-
-        function cancel() {
-            if (_.isFunction(vm.onClose()))
-                vm.onClose()();
         }
         
         function saveVerify() {
@@ -171,14 +164,25 @@
                             Notification.warning("Draft is not valid and cannot be verified");
                         }
                         else {
-                            executeOnSubmit();
+                            executeOnSubmit(2);
                             Notification.success("Draft verified");
                             $rootScope.$broadcast("draft.verified", document);
                         }
                     })
                     .catch(function () {
                         Notification.warning("Failed to verify draft");
+                        executeOnFailure();
                     });
+        }
+        
+        function executeOnSubmit(i) {
+            if (_.isFunction(vm.onSubmit()))
+                vm.onSubmit()(i);
+        }
+
+        function executeOnFailure() {
+            if (_.isFunction(vm.onFailure()))
+                vm.onFailure()();
         }
     }
 })();

@@ -8,7 +8,7 @@
                 controllerAs: 'vm',
                 bindings: {
                     group: "<",
-                    onClose: "&",
+                    onFailure: "&",
                     onSubmit: "&"
                 }
             });
@@ -26,9 +26,7 @@
         vm.getMembers = getMembers;
         vm.getUsersQuery = getUsersQuery;
         vm.userToMembership = userToMembership;
-        vm.closeDialog = function () {
-            vm.onClose()(vm.group);
-        };
+        vm.cancel = cancel;
 
         vm.submit = submit;
         vm.validationAndViewRules = {
@@ -102,10 +100,11 @@
                     .then(function (group) {
                         Notification.success("Group data saved");
                         if (_.isFunction(vm.onSubmit()))
-                            vm.onSubmit()(group);
+                            vm.onSubmit()(1);
                     })
                     .catch(function () {
                         Notification.warning("Failed to save group");
+                        executeOnFailure();
                     });
         }
 
@@ -123,6 +122,20 @@
 
         function getMembers() {
             return _.map(vm.group.memberships, 'user');
+        }
+        
+        function cancel() {
+            executeOnSubmit(0); 
+        }
+        
+        function executeOnSubmit(i) {
+            if (_.isFunction(vm.onSubmit()))
+                vm.onSubmit()(i);
+        }
+
+        function executeOnFailure() {
+            if (_.isFunction(vm.onFailure()))
+                vm.onFailure()();
         }
     }
 })();

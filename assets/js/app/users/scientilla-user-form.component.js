@@ -10,7 +10,7 @@
                 controllerAs: 'vm',
                 bindings: {
                     user: "<",
-                    onClose: "&",
+                    onFailure: "&",
                     onSubmit: "&"
                 }
             });
@@ -31,10 +31,7 @@
         vm.getGroupsQuery = GroupsService.getGroupsQuery;
         vm.groupToCollaboration = groupToCollaboration;
         vm.submit = submit;
-        vm.close = function () {
-            if (_.isFunction(vm.onSubmit()))
-                vm.onClose()(vm.user);
-        };
+        vm.cancel = cancel;
 
         vm.validationAndViewRules = {
             name: {
@@ -113,10 +110,11 @@
                     .then(function (user) {
                         Notification.success("User data saved");
                         if (_.isFunction(vm.onSubmit()))
-                            vm.onSubmit()(user);
+                            vm.onSubmit()(1);
                     })
                     .catch(function () {
                         Notification.warning("Failed to save user");
+                        executeOnFailure();
                     });
         }
 
@@ -171,6 +169,20 @@
             var collaboration = {group: g, user: vm.user.id};
             _.defaults(collaboration, Scientilla.collaboration);
             return collaboration;
+        }
+        
+        function cancel() {
+            executeOnSubmit(0); 
+        }
+        
+        function executeOnSubmit(i) {
+            if (_.isFunction(vm.onSubmit()))
+                vm.onSubmit()(i);
+        }
+
+        function executeOnFailure() {
+            if (_.isFunction(vm.onFailure()))
+                vm.onFailure()();
         }
 
     }
