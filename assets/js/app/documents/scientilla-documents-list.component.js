@@ -79,10 +79,7 @@
 
         function openEditPopup(draft) {
             ModalService
-                    .openScientillaDocumentForm(draft.clone(), vm.researchEntity)
-                    .finally(function () {
-                        updateList();
-                    });
+                    .openScientillaDocumentForm(draft.clone(), vm.researchEntity);
         }
 
         function refreshList(documents) {
