@@ -71,8 +71,9 @@
                     .openScientillaDocumentForm(
                             Scientilla.reference.copyDocument(document, target.researchEntity),
                             restResearchEntity)
-                    .then(function () {
-                        reload(target);
+                    .then(function (i) {
+                        if (i>0)
+                            document.addTag('copied');
                     });
 
         }
