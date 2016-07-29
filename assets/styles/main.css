@@ -117,11 +117,11 @@
     padding: 15px;
 }
 
-.scientilla-dropdown-btn{
-    width: 166px;
-}
-.scientilla-dropdown-caret-btn{
-    width: 136px;
+.scientilla-dropdown-align-right{}
+.scientilla-dropdown-align-right > .dropdown-menu {
+
+    right: 0;
+    left: auto;
 }
 
 
