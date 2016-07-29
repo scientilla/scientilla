@@ -144,6 +144,7 @@
         function submit() {
             saveDocument()
                     .then(function () {
+                        $rootScope.$broadcast("draft.updated", vm.document);
                         Notification.success("Draft saved");
                         executeOnSubmit(1);
                     })

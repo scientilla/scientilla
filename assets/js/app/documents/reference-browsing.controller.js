@@ -29,10 +29,7 @@
             var draft = vm.researchEntity.getNewDocument(type);
 
             ModalService
-                .openScientillaDocumentForm(draft, vm.researchEntity)
-                .finally(function() {
-                    $rootScope.$broadcast("draft.created", draft);
-                });
+                .openScientillaDocumentForm(draft, vm.researchEntity);
         }
 
         function editProfile() {

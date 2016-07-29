@@ -46,6 +46,7 @@
         activate();
 
         function activate() {
+            $rootScope.$on("draft.deleted", updateList);
             $rootScope.$on("draft.updated", updateList);
             $rootScope.$on("draft.created", updateList);
             $rootScope.$on("draft.verified", updateList);
@@ -65,7 +66,7 @@
                     .deleteDrafts(vm.researchEntity, draftIds)
                     .then(function (results) {
                         Notification.success(results.length + " draft(s) deleted");
-                        updateList();
+                        $rootScope.$broadcast("draft.deleted", results);
                     })
                     .catch(function (err) {
                         Notification.warning("An error happened");
@@ -75,9 +76,9 @@
         function deleteDraft(draft) {
             researchEntityService
                     .deleteDraft(vm.researchEntity,  draft.id)
-                    .then(function () {
+                    .then(function (d) {
                         Notification.success("Draft deleted");
-                        updateList();
+                        $rootScope.$broadcast("draft.deleted", d);
                     })
                     .catch(function () {
                         Notification.warning("Failed to delete draft");
@@ -112,7 +113,6 @@
                         } else {
                             Notification.success("Draft verified");
                             $rootScope.$broadcast("draft.verified", document);
-                            updateList();
                         }
                     })
                     .catch(function () {
@@ -123,10 +123,7 @@
 
         function openEditPopup(document) {
             ModalService
-                    .openScientillaDocumentForm(document.clone(), vm.researchEntity)
-                    .finally(function () {
-                        updateList();
-                    });
+                    .openScientillaDocumentForm(document.clone(), vm.researchEntity);
         }
 
         function refreshList(drafts) {
