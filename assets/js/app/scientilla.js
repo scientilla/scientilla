@@ -94,29 +94,29 @@ Scientilla.reference = {
     VERIFIED: 'verified',
     PUBLIC: 'public',
     tags: [],
+    fields: [
+        'authors',
+        'title',
+        'year',
+        'journal',
+        'issue',
+        'volume',
+        'pages',
+        'articleNumber',
+        'doi',
+        'bookTitle',
+        'editor',
+        'publisher',
+        'conferenceName',
+        'conferenceLocation',
+        'acronym',
+        'type',
+        'sourceType',
+        'scopusId',
+        'wosId'
+    ],
     create: function (referenceData) {
-        var fields = [
-            'authors',
-            'title',
-            'year',
-            'journal',
-            'issue',
-            'volume',
-            'pages',
-            'articleNumber',
-            'doi',
-            'bookTitle',
-            'editor',
-            'publisher',
-            'conferenceName',
-            'conferenceLocation',
-            'acronym',
-            'type',
-            'sourceType',
-            'scopusId',
-            'wosId'
-        ];
-        var reference = _.pick(referenceData, fields);
+        var reference = _.pick(referenceData, Scientilla.reference.fields);
         _.extend(reference, Scientilla.reference);
         return reference;
     },
@@ -398,7 +398,6 @@ Scientilla.reference = {
         ];
     },
     copyDocument: function (document, creator) {
-
         var excludedFields = ['draft', 'draftCreator', 'draftGroupCreator'];
 
         var documentTypeObj = {
@@ -408,24 +407,23 @@ Scientilla.reference = {
 
         var newDoc = creator.getNewDocument(documentTypeObj);
 
-        _.forOwn(newDoc, function (value, key) {
+        _.forEach(Scientilla.reference.fields, function (key) {
             if (_.includes(excludedFields, key))
                 return;
 
             newDoc[key] = document[key];
         });
 
-
         return newDoc;
     },
-    addTag: function(tag) {
+    addTag: function (tag) {
         if (!this.tags.includes(tag))
             this.tags.push(tag);
     },
-    removeTag: function(tag) {
+    removeTag: function (tag) {
         _.remove(this.tags, tag);
     }
-    
+
 };
 
 Scientilla.membership = {
