@@ -113,7 +113,6 @@
                         } else {
                             Notification.success("Draft verified");
                             $rootScope.$broadcast("draft.verified", document);
-                            updateList();
                         }
                     })
                     .catch(function () {
