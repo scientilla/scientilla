@@ -108,8 +108,10 @@ module.exports = {
             };
             var otherRequiredFields = requiredFieldsTable[this.sourceType];
             requiredFields = _.union(requiredFields, otherRequiredFields);
-            var requiredValues =_.pick(this, requiredFields);
-            return _.every(requiredValues, function(v) {return v;});
+            var requiredValues = _.pick(this, requiredFields);
+            return _.every(requiredValues, function (v) {
+                return v;
+            });
         },
         getAuthors: function () {
             if (!this.authors)
@@ -256,10 +258,10 @@ module.exports = {
             return _.includes([VERIFIED, PUBLIC], r.status);
         });
     },
-    verifyDraft: function(draftId, draftToDocument) {
+    verifyDraft: function (draftId, draftToDocument) {
         //sTODO: 2 equals documents should be merged
         return Reference.findOneById(draftId)
-                .then(function(draft) {
+                .then(function (draft) {
                     if (!draft.isValid()) {
                         return draft;
                     }
@@ -271,5 +273,10 @@ module.exports = {
                                 return draft;
                             });
                 });
+    },
+    deleteDrafts: function (draftIds) {
+        return Promise.all(draftIds.map(function (documentId) {
+            return Reference.destroy({id: documentId});
+        }));
     }
 };

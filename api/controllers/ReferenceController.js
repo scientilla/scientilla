@@ -1,3 +1,5 @@
+/* global Reference */
+
 /**
  * ReferenceController
  *
@@ -13,6 +15,10 @@ module.exports = {
                 .then(function (suggestion) {
                     res.json(suggestion);
                 });
+    },
+    deleteDrafts: function (req, res) {
+        var draftIds = req.param('draftIds');
+        res.halt(Reference.deleteDrafts(draftIds));
     }
 };
 
