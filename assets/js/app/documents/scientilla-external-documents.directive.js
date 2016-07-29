@@ -36,6 +36,7 @@
         vm.copyDocument = copyDocument;
         vm.getData = getExternalReferences;
         vm.onFilter = refreshExternalDocuments;
+        vm.copyDocuments = copyDocuments;
 
         activate();
 
@@ -85,10 +86,26 @@
                             Scientilla.reference.copyDocument(externalDocument, researchEntity),
                             researchEntity)
                     .then(function (i) {
-                        if (i>0) {
+                        if (i > 0) {
                             externalDocument.tags.push('copied');
                         }
                     });
         }
+
+        function copyDocuments(documents) {
+            researchEntityService
+                    .copyDocuments(vm.researchEntity, documents)
+                    .then(function (drafts) {
+                        Notification.success(drafts.length + "draft(s) created");
+                        documents.forEach(function (d) {
+                            d.addTag('copied');
+                        });
+                        $rootScope.$broadcast("draft.created", drafts);
+                    })
+                    .catch(function (err) {
+                        Notification.warning("An error happened");
+                    });
+        }
+
     }
 })();

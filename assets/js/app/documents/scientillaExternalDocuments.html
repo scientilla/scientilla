@@ -12,22 +12,32 @@
             </div>
 
             <div ng-show="vm.status === vm.STATUS_READY">
-                <div ng.if="vm.documents.lenght>0" ng-repeat="d in vm.documents">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <scientilla-document document="d"></scientilla-document>
-                        </div>
-                        <div class="col-md-4 text-right">
-                            <h3>
-                                <button ng-disabled="d.tags.includes('copied')" class="btn btn-primary"  ng-click="vm.copyDocument(d, vm.researchEntity)" >
-                                    <span class="fa fa-copy"></span>
-                                    Copy
-                                </button>
-                            </h3>
-                        </div>
-                    </div>
-                    <hr>
-                </div>
+                <scientilla-multicheck>
+                    <buttons>
+                    <scientilla-multicheck-button on-click="vm.copyDocuments">
+                        <span class="fa fa-copy"></span>
+                        Copy
+                    </scientilla-multicheck-button>
+                    </buttons>
+                    <item-list>
+                        <scientilla-checkable ng-repeat="d in vm.documents" item="d">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <scientilla-document document="d"></scientilla-document>
+                                </div>
+                                <div class="col-md-4 text-right">
+                                    <h3>
+                                        <button ng-disabled="d.tags.includes('copied')" class="btn btn-primary"  ng-click="vm.copyDocument(d, vm.researchEntity)" >
+                                            <span class="fa fa-copy"></span>
+                                            Copy
+                                        </button>
+                                    </h3>
+                                </div>
+                            </div>
+                            <hr>
+                        </scientilla-checkable>
+                    </item-list>
+                </scientilla-multicheck>
             </div>
         </div>
     </div>
