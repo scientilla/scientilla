@@ -76,6 +76,12 @@ module.exports = {
         var Model = getModel(req);
         res.halt(Model.discardDocuments(Model, researchEntityId, documentIds));
     },
+    copyDrafts: function (req, res) {
+        var researchEntityId = req.params.id;
+        var documents = req.param('documents');
+        var Model = getModel(req);
+        res.halt(Model.copyDrafts(Model, researchEntityId, documents));
+    },
     getOne: function (req, res) {
         var researchEntityId = req.params.id;
         var populate = getPopulateFields(req);

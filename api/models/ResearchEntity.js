@@ -147,6 +147,11 @@ module.exports = {
             return Model.verifyReference(Model, researchEntityId, documentId);
         }));
     },
+    copyDrafts: function (Model, researchEntityId, documents) {
+        return Promise.all(documents.map(function (document) {
+            return Model.copyDraft(researchEntityId, document);
+        }));
+    },
     filterNecessaryReferences: function (userId, ResearchEntity, maybeSuggestedReferences) {
         var maybeSuggestedReferencesId = _.map(maybeSuggestedReferences, 'id');
         return Promise.all([

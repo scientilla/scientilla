@@ -20,6 +20,7 @@
         vm.verifyDocument = verifyDocument;
         vm.getVerifyDocuments = getVerifyDocuments;
         vm.discardDocument = discardDocument;
+        vm.getCopyDocuments = getCopyDocuments;
         vm.getDiscardDocuments = getDiscardDocuments;
 
         vm.targets = _.map(_.union([AuthService.user], AuthService.user.admininstratedGroups),
@@ -129,6 +130,22 @@
                             });
                             Notification.success(resultPartitioned[0].length + " document(s) discarded");
                             reload(target);
+                        })
+                        .catch(function (err) {
+                            Notification.warning("An error happened");
+                        });
+
+            };
+        }
+        function getCopyDocuments(target) {
+            return function (documents) {
+                researchEntityService
+                        .copyDocuments(target.researchEntity, documents)
+                        .then(function (drafts) {
+                            Notification.success(drafts.length + "draft(s) created");
+                            documents.forEach(function (d) {
+                                d.addTag('copied');
+                            });
                         })
                         .catch(function (err) {
                             Notification.warning("An error happened");

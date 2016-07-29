@@ -13,7 +13,7 @@
             get-data="vm.getDataGenerator(target)">
 
 
-            <scientilla-multicheck >
+            <scientilla-multicheck>
                 <buttons>
                     <scientilla-multicheck-button on-click="vm.getVerifyDocuments(target)">
                         <span class="fa fa-check"></span>
@@ -22,6 +22,10 @@
                     <scientilla-multicheck-button on-click="vm.getDiscardDocuments(target)">
                         <span class="fa fa-ban"></span>
                         Discard
+                    </scientilla-multicheck-button>
+                    <scientilla-multicheck-button on-click="vm.getCopyDocuments(target)">
+                        <span class="fa fa-copy"></span>
+                        Copy
                     </scientilla-multicheck-button>
                 </buttons>
                 <item-list>

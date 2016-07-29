@@ -62,6 +62,12 @@ module.exports = _.merge({}, researchEntity, {
         }
         return Reference.verifyDraft(draftId, groupDraftToDocument);
     },
+    copyDraft: function(userId, draftData) {
+        var draftData = _.pick(document, Reference.getFields());
+        draftData.draft = true;
+        draftData.draftGroupCreator = userId;
+        return Reference.create(draftData);
+    },
     //sTODO: add deep populate for other fields of the documents
     getSuggestedDocuments: function (groupId, query) {
 

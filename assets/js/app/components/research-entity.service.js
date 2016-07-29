@@ -19,6 +19,7 @@
         service.verifyDocuments = verifyDocuments;
         service.discardDocuments = discardDocuments;
         service.verifyDrafts = verifyDrafts;
+        service.copyDocuments = copyDocuments;
         service.getExternalDrafts = getExternalDrafts;
         service.deleteDraft = deleteDraft;
         service.deleteDrafts = deleteDrafts;
@@ -92,6 +93,14 @@
             return Restangular
                     .one(restType, researchEntity.id)
                     .customPOST({documentIds: documentIds}, 'discarded-documents');
+        }
+
+        function copyDocuments(researchEntity, documents) {
+            documents = documents.map(d => d.plain());
+            var restType = researchEntity.getType() + 's';
+            return Restangular
+                    .one(restType, researchEntity.id)
+                    .customPOST({documents: documents}, 'copy-drafts');
         }
 
         function verifyDrafts(researchEntity, draftIds) {
