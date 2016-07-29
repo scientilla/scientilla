@@ -23,10 +23,11 @@
         'Notification',
         '$rootScope',
         'researchEntityService',
+        'ModalService',
         '$q'
     ];
 
-    function scientillaExternalDocumentsController(Notification, $rootScope, researchEntityService, $q) {
+    function scientillaExternalDocumentsController(Notification, $rootScope, researchEntityService, ModalService, $q) {
         var vm = this;
         vm.STATUS_WAITING = 0;
         vm.STATUS_LOADING = 1;
@@ -79,18 +80,14 @@
         }
 
         function copyDocument(externalDocument, researchEntity) {
-            //sTODO move to a service
-            var draftData = Scientilla.reference.create(externalDocument);
-            researchEntity
-                    .post('drafts', draftData)
-                    .then(function () {
-                        Notification.success("External Document copied");
-
-                        $rootScope.$broadcast("draft.created", {});
-                        externalDocument.tags.push('copied');
-                    })
-                    .catch(function () {
-                        Notification.warning("Failed to copy External Document");
+            ModalService
+                    .openScientillaDocumentForm(
+                            Scientilla.reference.copyDocument(externalDocument, researchEntity),
+                            researchEntity)
+                    .then(function (i) {
+                        if (i>0) {
+                            externalDocument.tags.push('copied');
+                        }
                     });
         }
     }
