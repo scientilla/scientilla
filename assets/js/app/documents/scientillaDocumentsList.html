@@ -1,7 +1,8 @@
 <scientilla-filter
     search-form-structure="vm.searchForm"
     on-filter="vm.onFilter"
-    get-data="vm.getData">
+    get-data="vm.getData"
+    empty-list-message="'No documents found'">
 
 
     <scientilla-multicheck >
@@ -32,8 +33,3 @@
     </scientilla-multicheck>
 
 </scientilla-filter>
-
-
-<div ng-if="!vm.documents.length">
-    <h3>No documents found</h3>
-</div>

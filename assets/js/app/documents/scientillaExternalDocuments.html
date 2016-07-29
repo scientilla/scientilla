@@ -1,16 +1,11 @@
 <scientilla-filter
     search-form-structure="vm.searchForm"
     on-filter="vm.onFilter"
-    get-data="vm.getData">
+    get-data="vm.getData"
+    empty-list-message="'No documents'"
+    filter-label="'Search'">
     <div class="row">
         <div class="col-md-12">
-            <div class="progress" ng-if="vm.status === vm.STATUS_LOADING">
-                <div class="progress-bar progress-bar-striped active" 
-                     role="progressbar"
-                     style="width: 100%">
-                    Loading
-                </div>
-            </div>
 
             <div ng-show="vm.status === vm.STATUS_ERROR">
                 An error happened
@@ -32,9 +27,6 @@
                         </div>
                     </div>
                     <hr>
-                </div>
-                <div ng-if="vm.documents.length==0">
-                    No documents
                 </div>
             </div>
         </div>

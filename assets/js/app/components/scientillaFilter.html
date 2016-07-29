@@ -1,7 +1,8 @@
 <scientilla-search
     ng-if="!!vm.searchFormStructure"
     form-structure="vm.searchFormStructure"
-    on-search="vm.onSearch">
+    on-search="vm.onSearch"
+    filter-label='vm.filterLabel'>
 </scientilla-search>
 
 
@@ -13,6 +14,21 @@
     ng-model="vm.currentPage"
     ng-change="vm.onPageChange()">
 </uib-pager>
+
+<div class="scientilla-filter-status-container">
+
+    <div ng-if="vm.onStatus(vm.STATUS_LOADING)"
+         class="progress-bar progress-bar-striped active" 
+         role="progressbar"
+         style="width: 100%">
+        Loading
+    </div>
+
+    <div ng-if="vm.onStatus(vm.STATUS_WAITING)">
+        <h3>{{vm.message}}</h3>
+    </div>
+</div>
+
 
 <div ng-transclude></div>
 

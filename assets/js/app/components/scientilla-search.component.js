@@ -8,7 +8,8 @@
                 controllerAs: 'vm',
                 bindings: {
                     formStructure: '<',
-                    onSearch: '&'
+                    onSearch: '&',
+                    filterLabel: '<?'
                 }
             });
 
@@ -31,7 +32,12 @@
             if (!_.isUndefined(value.defaultValue))
                 vm.searchValues[key] = value.defaultValue;
         });
-
+        
+        if (vm.filterLabel === undefined)
+            vm.filterLabelstring = "Filter";
+        else
+            vm.filterLabelstring = vm.filterLabel;
+        
         vm.search();
 
         function search() {

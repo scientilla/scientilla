@@ -1,7 +1,9 @@
 <div class="row">
     <div class="col-md-1">
         <h3>
-            <label><input type="checkbox" ng-model="vm.isChecked"/></label>
+            <label ng-if="vm.areButtonsRegistered()">
+                <input type="checkbox" ng-model="vm.isChecked"/>
+            </label>
         </h3>
     </div>
     <div class="col-md-11">
