@@ -1,4 +1,4 @@
-<div class="scientilla-document">
+<div class="scientilla-document" ng-class="{disabled: vm.document.tags.indexOf('copied') >= 0}">
     <div class="scientilla-document-year">{{vm.document.year}}</div>
     <div>
         <small class="scientilla-document-authors">
@@ -6,9 +6,7 @@
         </small>
     </div>
     <div>
-        <span ng-if="vm.document.isDiscarded()" class ="scientilla-document-discarded label label-danger">
-            Discarded
-        </span>
+        <scientilla-document-label ng-repeat="t in vm.document.tags" tag="t"></scientilla-document-label>
         <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
     </div>
     <div ng-if="vm.document.journal">

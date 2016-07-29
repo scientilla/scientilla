@@ -31,7 +31,7 @@
                     '<scientilla-document-form\
                         document="vm.document"\
                         research-entity="vm.researchEntity"\
-                        on-close="vm.onClose"\
+                        on-failure="vm.onFailure"\
                         on-submit="vm.onSubmit" >\
                     </scientilla-document-form>',
                     scopeVars
@@ -50,12 +50,12 @@
             service.modal = openModal(
                     '<scientilla-user-form\
                         user="vm.user"\
-                        on-close="vm.onClose"\
+                        on-failure="vm.onFailure"\
                         on-submit="vm.onSubmit" >\
                     </scientilla-user-form>',
                     scopeVars
                     );
-
+            
             return service.modal.result;
         };
 
@@ -69,7 +69,7 @@
             service.modal = openModal(
                     '<scientilla-group-form\
                         group="vm.group"\
-                        on-close="vm.onClose"\
+                        on-failure="vm.onFailure"\
                         on-submit="vm.onSubmit" >\
                     </scientilla-group-form>',
                     scopeVars
@@ -173,7 +173,7 @@
 
         function getDefaultCallbacks() {
             var callbacks = {
-                onClose: service.close,
+                onFailure: function(){},
                 onSubmit: service.close
             };
 

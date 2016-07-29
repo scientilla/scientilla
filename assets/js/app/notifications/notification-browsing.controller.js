@@ -152,16 +152,7 @@
         }
 
         function listRefresh(target) {
-            _.forEach(target.documents, function (d) {
-                if (d)
-                    _.defaults(d, Scientilla.reference);
-                _.forEach(d.privateCoauthors, function (c) {
-                    _.defaults(c, Scientilla.user);
-                });
-                _.forEach(d.publicCoauthors, function (c) {
-                    _.defaults(c, Scientilla.user);
-                });
-            });
+            Scientilla.toDocumentsCollection(target.documents);
         }
     }
 })();

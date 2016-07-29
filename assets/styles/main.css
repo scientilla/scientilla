@@ -295,3 +295,22 @@ scientilla-external-documents .row {
     background-color: #f5f5f5
 }
 /*Bootstrap dropdown fix*/
+
+
+/******************************************************************************/
+/*Scientilla document labels*/
+
+scientilla-document-label {
+    display: inline-block;
+    vertical-align: super;
+}
+
+.scientilla-document-label-copied {
+    background-color: #ff9933;
+}
+
+.scientilla-document-label-discarded {
+    background-color: #d9534f;
+}
+
+/******************************************************************************/

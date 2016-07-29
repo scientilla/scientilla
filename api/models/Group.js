@@ -72,22 +72,22 @@ module.exports = _.merge({}, researchEntity, {
                 'group_privateReferences': groupId
             }
         };
-        
+
         var groupUsers = {
-                select: ['user.id'],
-                from: 'user',
-                join: [
-                    {
-                        from: 'membership',
-                        on: {
-                            'user': 'id',
-                            'membership': 'user'
-                        }
+            select: ['user.id'],
+            from: 'user',
+            join: [
+                {
+                    from: 'membership',
+                    on: {
+                        'user': 'id',
+                        'membership': 'user'
                     }
-                ],
-                where: {'group': groupId},
-                as: 'groupUsers'
-            };
+                }
+            ],
+            where: {'group': groupId},
+            as: 'groupUsers'
+        };
 
         var groupSuggestedDocumentIds = {
             select: ['reference_privateCoauthors'],
@@ -147,7 +147,10 @@ module.exports = _.merge({}, researchEntity, {
                 .then(SqlService.query)
                 .then(function (rows) {
                     rows.forEach(function (row) {
-                        row.discarded = !!row.discarded;
+                        row.tags = [];
+                        if (row.discarded)
+                            row.tags.push('discarded');
+                        delete row.discarded;
                     });
                     return rows;
                 });
