@@ -420,7 +420,15 @@ Scientilla.reference = {
     },
     isDiscarded: function() {
         return !!this.discarded;
+    },
+    addTag: function(tag) {
+        if (!this.tags.includes(tag))
+            this.tags.push(tag);
+    },
+    removeTag: function(tag) {
+        _.remove(this.tags, tag);
     }
+    
 };
 
 Scientilla.membership = {
