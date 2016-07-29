@@ -37,9 +37,8 @@
                     .confirm("", "Apply this action to " + checkedItems.length + " elements?")
                     .then(function () {
                         vm.onClick()(checkedItems);
-                    });
-
-
+                    })
+                    .catch(function () {});
 
         }
 

@@ -174,7 +174,8 @@
         function getDefaultCallbacks() {
             var callbacks = {
                 onFailure: function(){},
-                onSubmit: service.close
+                onSubmit: service.close,
+                onClose: service.close
             };
 
             return callbacks;
