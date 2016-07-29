@@ -28,6 +28,7 @@
         vm.getCheckedItems = getCheckedItems;
         vm.areElementsSelected = areElementsSelected;
         vm.areButtonsRegistered = areButtonsRegistered;
+        vm.areCheckablesRegistered = areCheckablesRegistered;
         vm.selectAll = selectAll;
         vm.allSelected = false;
 
@@ -80,6 +81,10 @@
 
         function areButtonsRegistered() {
             return buttons.length > 0;
+        }
+
+        function areCheckablesRegistered() {
+            return checkables.length > 0;
         }
     }
 

@@ -25,7 +25,8 @@
 
         var vm = this;
         vm.isChecked = false;
-        this.getItem = getItem;
+        vm.getItem = getItem;
+        vm.areButtonsRegistered = areButtonsRegistered;
 
         this.$onInit = function () {
             this.scientillaMulticheck.registerCheckable(vm);
@@ -37,6 +38,10 @@
 
         function getItem() {
             return vm.item;
+        }
+        
+        function areButtonsRegistered(){
+            return vm.scientillaMulticheck.areButtonsRegistered();
         }
 
     }
