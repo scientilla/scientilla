@@ -93,6 +93,7 @@ Scientilla.reference = {
     DRAFT: 'draft',
     VERIFIED: 'verified',
     PUBLIC: 'public',
+    tags: [],
     create: function (referenceData) {
         var fields = [
             'authors',
