@@ -10,7 +10,9 @@
                 bindings: {
                     onFilter: '&',
                     getData: '&',
-                    searchFormStructure: '<'
+                    searchFormStructure: '<',
+                    emptyListMessage: '<?',
+                    filterLabel: '<?'
                 }
             });
 
@@ -21,13 +23,23 @@
 
     function scientillaFilter(pageSize) {
         var vm = this;
-
+        
         vm.onSearch = onSearch;
         vm.onPageChange = onPageChange;
+        vm.onStatus = onStatus;
 
         vm.itemsPerPage = pageSize;
         vm.currentPage = 1;
         vm.totalItems = 0;
+
+        // statuses
+        vm.STATUS_WAITING = 0;
+        vm.STATUS_LOADING = 1;
+
+        vm.status = vm.STATUS_WAITING;
+
+        if (vm.emptyListMessage === undefined)
+            vm.emptyListMessage = "No results found";
 
         var searchQuery = {};
 
@@ -42,9 +54,16 @@
             refreshList();
         }
 
+
+        function onStatus(status) {
+            return vm.status === status;
+        }
+
         // private
 
         function refreshList() {
+            setStatus(vm.STATUS_LOADING);
+
             var query = getQuery();
 
             vm.getData()(query).then(function (list) {
@@ -55,6 +74,9 @@
                     list.pop();
 
                 vm.onFilter()(list);
+
+                vm.message = list.length === 0 ? vm.emptyListMessage : "";
+                setStatus(vm.STATUS_WAITING);
             });
 
         }
@@ -67,6 +89,10 @@
 
 
             return _.merge({}, paginationQuery, searchQuery);
+        }
+
+        function setStatus(status) {
+            return vm.status = status;
         }
 
     }

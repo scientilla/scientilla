@@ -1,7 +1,8 @@
 <scientilla-filter
     search-form-structure="vm.searchForm"
     on-filter="vm.onFilter"
-    get-data="vm.getData">
+    get-data="vm.getData"
+    empty-list-message="'No drafts found'">
 
     <scientilla-multicheck >
         <buttons>
@@ -51,9 +52,5 @@
             </scientilla-checkable>
         </item-list>
     </scientilla-multicheck>
-
-    <div ng-if="!vm.drafts.length">
-        <h3>No drafts found</h3>
-    </div>
 
 </scientilla-filter>
