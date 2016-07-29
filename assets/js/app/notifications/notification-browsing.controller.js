@@ -10,10 +10,11 @@
         'ModalService',
         'Restangular',
         'researchEntityService',
-        'Notification'
+        'Notification',
+        '$rootScope'
     ];
 
-    function NotificationBrowsingController(AuthService, ModalService, Restangular, researchEntityService, Notification) {
+    function NotificationBrowsingController(AuthService, ModalService, Restangular, researchEntityService, Notification, $rootScope) {
 
         var vm = this;
         vm.copyDocument = copyDocument;
@@ -143,10 +144,11 @@
                 researchEntityService
                         .copyDocuments(target.researchEntity, documents)
                         .then(function (drafts) {
-                            Notification.success(drafts.length + "draft(s) created");
+                            Notification.success(drafts.length + " draft(s) created");
                             documents.forEach(function (d) {
                                 d.addTag('copied');
                             });
+                            $rootScope.$broadcast("draft.created", drafts);
                         })
                         .catch(function (err) {
                             Notification.warning("An error happened");
