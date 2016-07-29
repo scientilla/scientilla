@@ -210,7 +210,10 @@ module.exports = _.merge({}, researchEntity, {
                             .then(SqlService.query)
                             .then(function (rows) {
                                 rows.forEach(function (row) {
-                                    row.discarded = !!row.discarded;
+                                    row.tags = [];
+                                    if (row.discarded)
+                                        row.tags.push('discarded');
+                                        delete row.discarded;
                                 });
                                 return rows;
                             });

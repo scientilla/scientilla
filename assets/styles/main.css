@@ -305,4 +305,8 @@ scientilla-document-label {
     background-color: #ff9933;
 }
 
+.scientilla-document-label-discarded {
+    background-color: #d9534f;
+}
+
 /******************************************************************************/

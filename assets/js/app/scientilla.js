@@ -418,9 +418,6 @@ Scientilla.reference = {
 
         return newDoc;
     },
-    isDiscarded: function() {
-        return !!this.discarded;
-    },
     addTag: function(tag) {
         if (!this.tags.includes(tag))
             this.tags.push(tag);

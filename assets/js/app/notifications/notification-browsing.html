@@ -47,7 +47,7 @@
                                                     Copy reference
                                                 </a>
                                             </li>
-                                            <li ng-if="!document.discarded">
+                                            <li ng-if="!document.tags.includes('discarded')">
                                                 <a ng-click="vm.discardDocument(document, target)" href="javascript:void(0)">
                                                     <span class="fa fa-ban"></span>
                                                     Discard
