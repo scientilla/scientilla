@@ -123,10 +123,7 @@
 
         function openEditPopup(document) {
             ModalService
-                    .openScientillaDocumentForm(document.clone(), vm.researchEntity)
-                    .finally(function () {
-                        updateList();
-                    });
+                    .openScientillaDocumentForm(document.clone(), vm.researchEntity);
         }
 
         function refreshList(drafts) {
