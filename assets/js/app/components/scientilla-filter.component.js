@@ -11,8 +11,8 @@
                     onFilter: '&',
                     getData: '&',
                     searchFormStructure: '<',
-                    emptyListMessage: '<?',
-                    filterLabel: '<?'
+                    emptyListMessage: '@?',
+                    filterLabel: '@?'
                 }
             });
 
