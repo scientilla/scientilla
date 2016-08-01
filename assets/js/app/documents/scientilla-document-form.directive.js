@@ -32,11 +32,11 @@
 
     function scientillaDocumentFormController(FormForConfiguration, Notification, researchEntityService, $scope, $rootScope, $timeout) {
         var vm = this;
-        vm.submit = submit;
+        vm.save = save;
         vm.status = createStatus();
         vm.cancel = cancel;
         vm.formVisible = true;
-        vm.saveVerify = saveVerify;
+        vm.verify = verify;
         activate();
         
         function createStatus() {
@@ -141,7 +141,7 @@
             executeOnSubmit(0); 
         }
 
-        function submit() {
+        function save() {
             saveDocument()
                     .then(function () {
                         $rootScope.$broadcast("draft.updated", vm.document);
@@ -155,7 +155,7 @@
 
         }
         
-        function saveVerify() {
+        function verify() {
             saveDocument()
                     .then(function(){
                         return researchEntityService.verifyDraft(vm.researchEntity, vm.document);

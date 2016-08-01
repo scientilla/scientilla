@@ -101,8 +101,8 @@
                                 <div ng-if="vm.message">{{vm.message}}</div>\
                             </div>\
                             <hr>' +
-                            scope.buttonLabels.map(function(b, i) { return '<button ng-click="vm.ok('+i+')" class="btn btn-primary">'+b+'</button>';}).join('') + 
-                            '<button ng-click="vm.cancel()" class="btn btn-warning">Cancel</button>\
+                            scope.buttonLabels.map(function(b, i) { return '<scientilla-button ng-click="vm.ok('+i+')">'+b+'</scientilla-button>';}).join('') + 
+                            '<scientilla-button ng-click="vm.cancel()" type="cancel">Cancel</scientilla-button>\
                         <div>',
                         scope);
 
@@ -116,39 +116,7 @@
 
 
         service.confirm = function (title, message) {
-
-            var ret = new Promise(function (resolve, reject) {
-
-                var scope = {
-                    title: title,
-                    message: message,
-                    ok: function () {
-                        this.onSubmit();
-                        resolve();
-                    },
-                    cancel: function () {
-                        this.onClose();
-                        reject();
-                    }
-                };
-
-                service.modal = openModal('\
-                        <div>\
-                            <h3 ng-if="vm.title">{{vm.title}}</h3>\
-                            <div ng-if="vm.message">{{vm.message}}</div>\
-                        </div>\
-                        <hr>\
-                        <button ng-click="vm.ok()" class="btn btn-primary">Ok</button>\
-                        <button ng-click="vm.cancel()" class="btn btn-warning">Cancel</button>',
-                        scope);
-
-                service.modal.result.catch(function () {
-                    reject();
-                });
-            });
-
-            return ret;
-
+            return service.multipleChoiceConfirm(title, message, ['Ok']);
         };
 
         return service;

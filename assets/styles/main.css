@@ -314,3 +314,17 @@ scientilla-document-label {
 }
 
 /******************************************************************************/
+
+/******************************************************************************/
+/*Scientilla buttons*/
+
+scientilla-button > button.btn-cancel {
+    background-color: #f4f4f4;
+}
+/******************************************************************************/
+
+
+/*Fix for form-for default button*/
+[form-for] submit-button[label="Submit"] {
+    display: none;
+}
