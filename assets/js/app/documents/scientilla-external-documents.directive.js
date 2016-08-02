@@ -96,7 +96,7 @@
             researchEntityService
                     .copyDocuments(vm.researchEntity, documents)
                     .then(function (drafts) {
-                        Notification.success(drafts.length + "draft(s) created");
+                        Notification.success(drafts.length + " draft(s) created");
                         documents.forEach(function (d) {
                             d.addTag('copied');
                         });
