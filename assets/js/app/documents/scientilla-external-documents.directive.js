@@ -93,8 +93,15 @@
         }
 
         function copyDocuments(documents) {
+            var notCopiedCocuments = documents.filter(function (d) {
+                return !d.tags.includes('copied');
+            });
+            if (notCopiedCocuments.length === 0) {
+                Notification.success("No documents to copy");
+                return;
+            }
             researchEntityService
-                    .copyDocuments(vm.researchEntity, documents)
+                    .copyDocuments(vm.researchEntity, notCopiedCocuments)
                     .then(function (drafts) {
                         Notification.success(drafts.length + " draft(s) created");
                         documents.forEach(function (d) {
