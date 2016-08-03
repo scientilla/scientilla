@@ -36,44 +36,6 @@ module.exports = {
             });
         }
     },
-    getOne: function (ResearchEntity, researchEntityId, populateFields) {
-        var query = ResearchEntity.findOneById(researchEntityId)
-                .populate('publicReferences')
-                .populate('privateReferences')
-                .populate('drafts');
-        _.forEach(populateFields, function (f) {
-            query = query.populate(f);
-        });
-        return query
-                .then(function (researchEntity) {
-                    var publicReferencesId = _.map(researchEntity.publicReferences, 'id');
-                    var privateReferencesId = _.map(researchEntity.privateReferences, 'id');
-                    var draftsId = _.map(researchEntity.drafts, 'id');
-                    return Promise.all([
-                        researchEntity,
-                        Reference.getByIdsWithAuthors(publicReferencesId),
-                        Reference.getByIdsWithAuthors(privateReferencesId),
-                        Reference.getByIdsWithAuthors(draftsId)
-                    ]);
-                })
-                .spread(function (researchEntity, publicReferences, privateReferences, drafts) {
-                    //sTODO: refactor
-                    _.forEach(publicReferences, function (r) {
-                        r.status = Reference.PUBLIC;
-                    });
-                    _.forEach(privateReferences, function (r) {
-                        r.status = Reference.VERIFIED;
-                    });
-                    _.forEach(drafts, function (r) {
-                        r.status = Reference.DRAFT;
-                    });
-                    delete researchEntity.publicReferences;
-                    delete researchEntity.privateReferences;
-                    delete researchEntity.drafts;
-                    researchEntity.references = _.union(publicReferences, privateReferences, drafts);
-                    return researchEntity;
-                });
-    },
     getSearchFilterFunction: function (filterKey) {
         //sTODO: use map
         var filters = {
