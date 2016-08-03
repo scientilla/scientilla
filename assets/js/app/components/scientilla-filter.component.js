@@ -29,14 +29,16 @@
         vm.onStatus = onStatus;
         vm.search = search;
         vm.reset = reset;
-
-        vm.itemsPerPage = pageSize;
+        vm.pageSizes = [10, 20, 50, 100, 500];
         vm.currentPage = 1;
         vm.totalItems = 0;
 
         // statuses
         vm.STATUS_WAITING = 0;
         vm.STATUS_LOADING = 1;
+        vm.advancedOpen = false;
+        vm.advancedText = getAdvancedText(vm.advancedOpen);
+        vm.toggleAdvanced = toggleAdvanced;
 
         var searchQuery = {};
 
@@ -104,10 +106,16 @@
                     });
             vm.search();
         }
+        
+        function toggleAdvanced() {
+            vm.advancedOpen = !vm.advancedOpen;
+            vm.advancedText = getAdvancedText(vm.advancedOpen) 
+        }
 
         // private
 
         function activate() {
+            vm.itemsPerPage = pageSize;
             vm.status = vm.STATUS_WAITING;
 
             if (_.isUndefined(vm.emptyListMessage))
@@ -120,6 +128,10 @@
 
             vm.search();
         }
+        
+        function getAdvancedText(open) {
+            return open ? '<' : '>';
+        }
 
         function refreshList() {
             setStatus(vm.STATUS_LOADING);
@@ -128,9 +140,9 @@
 
             vm.getData()(query).then(function (list) {
 
-                vm.totalItems = (vm.currentPage - 1) * pageSize + list.length;
+                vm.totalItems = (vm.currentPage - 1) * vm.itemsPerPage + list.length;
 
-                if (list.length > pageSize)
+                if (list.length > vm.itemsPerPage)
                     list.pop();
 
                 vm.onFilter()(list);
@@ -142,8 +154,8 @@
 
         function getQuery() {
             var paginationQuery = {
-                skip: (vm.currentPage - 1) * pageSize,
-                limit: pageSize + 1
+                skip: (vm.currentPage - 1) * vm.itemsPerPage,
+                limit: vm.itemsPerPage + 1
             };
 
             return _.merge({}, paginationQuery, searchQuery);

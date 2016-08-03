@@ -6,6 +6,11 @@
         <br>
         <scientilla-button size="small" ng-click="vm.search()">{{vm.filterLabel}}</scientilla-button>
         <scientilla-button size="small" ng-click="vm.reset()">Reset</scientilla-button>
+        <scientilla-button size="small" type="link" ng-click="vm.toggleAdvanced()">{{vm.advancedText}}</scientilla-button>
+        <div class="scientilla-filter-config form-inline advanced-open-{{vm.advancedOpen}}">
+            <label>Items per page: </label>
+            <select class="form-control" ng-model="vm.itemsPerPage" ng-options="s*1 as s for s in vm.pageSizes"></select>
+        </div>
     </form>
 </div>
 

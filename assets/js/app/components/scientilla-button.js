@@ -28,7 +28,8 @@
         function getClasses() {
             var typeClassesTable = {
                 submit: 'btn-primary',
-                cancel: 'btn-default btn-cancel'
+                cancel: 'btn-default btn-cancel',
+                link: 'btn-link'
             };
             var sizeClassesTable = {
                 small: 'btn-sm',
