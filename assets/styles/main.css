@@ -163,9 +163,14 @@ form.autosave {
 form.autosave.unsaved {
     border-left: 2px red solid;
 }
-
 form.autosave.saved {
     border-left: 2px green solid;
+}
+form.autosave.default {
+    border-left: 2px white solid;
+}
+.scientilla-document-form-message{
+    font-size: 24px;
 }
 
 md-list-item {

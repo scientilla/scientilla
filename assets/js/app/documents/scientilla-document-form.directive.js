@@ -32,24 +32,38 @@
 
     function scientillaDocumentFormController(FormForConfiguration, Notification, researchEntityService, $scope, $rootScope, $timeout) {
         var vm = this;
-        vm.save = save;
+        //vm.save = save;
         vm.status = createStatus();
         vm.cancel = cancel;
+        vm.deleteDocument = deleteDocument;
         vm.formVisible = true;
         vm.verify = verify;
+
+        var debounceTimeout = null;
+
         activate();
-        
+
         function createStatus() {
-            var isSavedVar = true;
+            var isSavedVar = false;
             return {
-                isSaved: function() {
+                isSaved: function () {
                     return isSavedVar;
                 },
-                setSaved: function(isSaved) {
+                setSaved: function (isSaved) {
                     isSavedVar = isSaved;
-                }
+
+                    if (isSavedVar) {
+                        this.class = "saved";
+                        this.message = "Saved";
+                    } else {
+                        this.class = "unsaved";
+                        this.message = "Saving";
+                    }
+                },
+                message: "",
+                class: "default"
             };
-        };
+        }
 
 
         function activate() {
@@ -63,14 +77,13 @@
             $scope.$watch('vm.document.sourceType', loadDocumentFields, true);
             var fieldsToWatch = _.keys(vm.validationAndViewRules);
             _.forEach(fieldsToWatch, function (f) {
-                $scope.$watch('vm.document.' + f, markModified, true);
                 $scope.$watch('vm.document.' + f, prepareSave, true);
             });
         }
 
         function loadDocumentFields() {
             var types = Scientilla.reference.getDocumentTypes()
-                    .map(function(t) {
+                    .map(function (t) {
                         return {
                             value: t.key,
                             label: t.label
@@ -108,24 +121,28 @@
             }, 0);
         }
 
-        function markModified(newValue, oldValue) {
-            if (newValue === oldValue || _.isUndefined(oldValue))
-                return;
-            vm.status.setSaved(false);
-        }
 
         function prepareSave(newValue, oldValue) {
-            if (newValue === oldValue || _.isUndefined(oldValue))
+            var isChanged = (newValue === oldValue);
+            var isNewAndEmpty = ((_.isNil(oldValue)) && newValue === "");
+            var isStillEmpty = (_.isNil(oldValue) && _.isNil(newValue) );
+
+            if (isChanged || isNewAndEmpty || isStillEmpty)
                 return;
-            if (vm.status.isSaved())
-                return;
-            _.debounce(saveDocument, 3000)();
+
+            vm.status.setSaved(false);
+
+            if (debounceTimeout !== null)
+                $timeout.cancel(debounceTimeout);
+
+            debounceTimeout = $timeout(saveDocument, 3000);
         }
 
         function saveDocument() {
             if (vm.document.id)
                 return vm.document.save().then(function () {
                     vm.status.setSaved(true);
+                    $rootScope.$broadcast("draft.updated", vm.document);
                 });
             else
                 return vm.researchEntity.all('drafts')
@@ -133,38 +150,49 @@
                         .then(function (draft) {
                             vm.document = draft;
                             vm.status.setSaved(true);
-                            $rootScope.$broadcast('draft.updated', {});
+                            $rootScope.$broadcast("draft.updated", vm.document);
                         });
         }
-        
+
         function cancel() {
-            executeOnSubmit(0); 
+
+            if (vm.document.id)
+                saveDocument()
+                        .then(function () {
+                            Notification.success("Draft saved");
+                            executeOnSubmit(1);
+                        })
+                        .catch(function () {
+                            Notification.warning("Failed to save draft");
+                            executeOnFailure();
+                        });
+
+            executeOnSubmit(0);
         }
 
-        function save() {
-            saveDocument()
-                    .then(function () {
-                        $rootScope.$broadcast("draft.updated", vm.document);
-                        Notification.success("Draft saved");
-                        executeOnSubmit(1);
-                    })
-                    .catch(function () {
-                        Notification.warning("Failed to save draft");
-                        executeOnFailure();
-                    });
-
+        function deleteDocument() {
+            if (vm.document.id)
+                researchEntityService
+                        .deleteDraft(vm.researchEntity, vm.document.id)
+                        .then(function (d) {
+                            Notification.success("Draft deleted");
+                            $rootScope.$broadcast("draft.deleted", d);
+                            executeOnSubmit(0);
+                        })
+                        .catch(function () {
+                            Notification.warning("Failed to delete draft");
+                        });
         }
-        
+
         function verify() {
             saveDocument()
-                    .then(function(){
+                    .then(function () {
                         return researchEntityService.verifyDraft(vm.researchEntity, vm.document);
                     })
                     .then(function (document) {
                         if (document.draft) {
                             Notification.warning("Draft is not valid and cannot be verified");
-                        }
-                        else {
+                        } else {
                             executeOnSubmit(2);
                             Notification.success("Draft verified");
                             $rootScope.$broadcast("draft.verified", document);
@@ -175,7 +203,7 @@
                         executeOnFailure();
                     });
         }
-        
+
         function executeOnSubmit(i) {
             if (_.isFunction(vm.onSubmit()))
                 vm.onSubmit()(i);
