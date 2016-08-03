@@ -116,7 +116,8 @@ Scientilla.reference = {
         'wosId'
     ],
     create: function (referenceData) {
-        var reference = _.pick(referenceData, Scientilla.reference.fields);
+        var fields = _.union(['draft', 'draftCreator', 'draftGroupCreator'], Scientilla.reference.fields);
+        var reference = _.pick(referenceData, fields);
         _.extend(reference, Scientilla.reference);
         return reference;
     },

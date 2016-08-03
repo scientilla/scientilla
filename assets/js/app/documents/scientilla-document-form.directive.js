@@ -32,7 +32,6 @@
 
     function scientillaDocumentFormController(FormForConfiguration, Notification, researchEntityService, $scope, $rootScope, $timeout) {
         var vm = this;
-        //vm.save = save;
         vm.status = createStatus();
         vm.cancel = cancel;
         vm.deleteDocument = deleteDocument;

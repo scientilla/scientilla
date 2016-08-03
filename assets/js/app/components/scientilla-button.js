@@ -7,9 +7,9 @@
                 controller: scientillaButtonController,
                 controllerAs: 'vm',
                 bindings: {
-                    'type': '@?',
-                    'size': '@?',
-                    'ng-click': '&'
+                    type: '@?',
+                    size: '@?',
+                    ngDisabled: '<'
                 },
                 transclude: true
             });

@@ -4,8 +4,8 @@
       form-for-builder
       class="autosave {{vm.status.class}}"
       submit-with="">
-    <scientilla-button ng-if="vm.document.draft" ng-click="vm.verify()">Verify</scientilla-button>
-    <scientilla-button ng-if="vm.document.draft" ng-click="vm.deleteDocument()">Delete</scientilla-button>
+    <scientilla-button ng-disabled="!vm.document.id" ng-click="vm.verify()">Verify</scientilla-button>
+    <scientilla-button ng-disabled="!vm.document.id" ng-click="vm.deleteDocument()">Delete</scientilla-button>
     <scientilla-button type="cancel" ng-click="vm.cancel()">Close</scientilla-button>
     <div class="scientilla-document-form-message pull-right">{{vm.status.message}}</div>
 </form>
