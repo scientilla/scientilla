@@ -33,8 +33,6 @@ module.exports.routes = {
 
   '/': 'Homepage.default',
 
-  'get r|^/users/(\\d+)$|id' : 'User.getOne',
-  'get r|^/groups/(\\d+)$|id' : 'Group.getOne',
   'post /auths/register' : 'Auth.register',
   'post /users/:userId/references': 'Reference.create',
   'post /groups/:userId/references': 'Reference.create',

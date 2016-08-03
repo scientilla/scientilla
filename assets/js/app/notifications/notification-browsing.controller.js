@@ -73,7 +73,7 @@
                             Scientilla.reference.copyDocument(document, target.researchEntity),
                             restResearchEntity)
                     .then(function (i) {
-                        if (i>0)
+                        if (i > 0)
                             document.addTag('copied');
                     });
 
@@ -141,8 +141,15 @@
         }
         function getCopyDocuments(target) {
             return function (documents) {
+                var notCopiedCocuments = documents.filter(function (d) {
+                    return !d.tags.includes('copied');
+                });
+                if (notCopiedCocuments.length === 0) {
+                    Notification.success("No documents to copy");
+                    return;
+                }
                 researchEntityService
-                        .copyDocuments(target.researchEntity, documents)
+                        .copyDocuments(target.researchEntity, notCopiedCocuments)
                         .then(function (drafts) {
                             Notification.success(drafts.length + " draft(s) created");
                             documents.forEach(function (d) {

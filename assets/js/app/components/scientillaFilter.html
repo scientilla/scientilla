@@ -1,11 +1,18 @@
-<scientilla-search
-    ng-if="!!vm.searchFormStructure"
-    form-structure="vm.searchFormStructure"
-    on-search="vm.onSearch"
-    filter-label='vm.filterLabel'>
-</scientilla-search>
-
-
+<div class="scientilla-search-container well">
+    <form form-for="vm.searchValues"
+          validation-rules="vm.searchFormStructure"
+          form-for-builder
+          class="form-group-sm">
+        <br>
+        <scientilla-button size="small" ng-click="vm.search()">{{vm.filterLabel}}</scientilla-button>
+        <scientilla-button size="small" ng-click="vm.reset()">Reset</scientilla-button>
+        <scientilla-button size="small" type="link" ng-click="vm.toggleAdvanced()">{{vm.advancedText}}</scientilla-button>
+        <div class="scientilla-filter-config form-inline advanced-open-{{vm.advancedOpen}}">
+            <label>Items per page: </label>
+            <select class="form-control" ng-model="vm.itemsPerPage" ng-options="s*1 as s for s in vm.pageSizes"></select>
+        </div>
+    </form>
+</div>
 
 <uib-pager
     ng-if="vm.totalItems"

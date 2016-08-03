@@ -82,15 +82,6 @@ module.exports = {
         var Model = getModel(req);
         res.halt(Model.copyDrafts(Model, researchEntityId, documents));
     },
-    getOne: function (req, res) {
-        var researchEntityId = req.params.id;
-        var populate = getPopulateFields(req);
-        var Model = getModel(req);
-        Model.getOne(Model, researchEntityId, populate)
-                .then(function (researchEntity) {
-                    res.json(researchEntity);
-                });
-    },
     getExternalReferences: function (req, res) {
         var researchEntityId = req.params.id;
         var query = getQuery(req);

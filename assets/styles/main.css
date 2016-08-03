@@ -333,3 +333,22 @@ scientilla-button > button.btn-cancel {
 [form-for] submit-button[label="Submit"] {
     display: none;
 }
+
+.scientilla-filter-config {
+    display: inline-block;
+}
+
+.advanced-open-false.scientilla-filter-config {
+    visibility: hidden;
+} 
+
+.btn.btn-link:focus {
+    outline: none;
+    outline: none;
+    outline-offset: none;
+    text-decoration: none;
+}
+
+.btn.btn-link:hover {
+    text-decoration: none;
+}

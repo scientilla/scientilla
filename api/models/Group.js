@@ -62,7 +62,7 @@ module.exports = _.merge({}, researchEntity, {
         }
         return Reference.verifyDraft(draftId, groupDraftToDocument);
     },
-    copyDraft: function(userId, draftData) {
+    copyDraft: function(userId, document) {
         var draftData = _.pick(document, Reference.getFields());
         draftData.draft = true;
         draftData.draftGroupCreator = userId;
