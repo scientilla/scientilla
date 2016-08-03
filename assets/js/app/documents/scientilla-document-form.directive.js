@@ -157,15 +157,7 @@
         function cancel() {
 
             if (vm.document.id)
-                saveDocument()
-                        .then(function () {
-                            Notification.success("Draft saved");
-                            executeOnSubmit(1);
-                        })
-                        .catch(function () {
-                            Notification.warning("Failed to save draft");
-                            executeOnFailure();
-                        });
+                saveDocument();
 
             executeOnSubmit(0);
         }
