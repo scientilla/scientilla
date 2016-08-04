@@ -39,6 +39,7 @@
         vm.verify = verify;
 
         var debounceTimeout = null;
+        var debounceTime = 2000;
 
         activate();
 
@@ -139,7 +140,7 @@
             if (debounceTimeout !== null)
                 $timeout.cancel(debounceTimeout);
 
-            debounceTimeout = $timeout(saveDocument, 3000);
+            debounceTimeout = $timeout(saveDocument, debounceTime);
         }
 
         function saveDocument() {
