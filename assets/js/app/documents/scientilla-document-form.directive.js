@@ -44,17 +44,23 @@
 
         function createStatus() {
             var isSavedVar = false;
+            var isSavingVar = false;
             return {
                 isSaved: function () {
                     return isSavedVar;
                 },
+                isSaving: function () {
+                    return isSavingVar;
+                },
                 setSaved: function (isSaved) {
                     isSavedVar = isSaved;
+                    isSavingVar = !isSaved;
 
                     if (isSavedVar) {
                         this.class = "saved";
                         this.message = "Saved";
-                    } else {
+                    }
+                    else {
                         this.class = "unsaved";
                         this.message = "Saving";
                     }
@@ -119,12 +125,11 @@
                 vm.formVisible = true;
             }, 0);
         }
-
-
+        
         function prepareSave(newValue, oldValue) {
             var isChanged = (newValue === oldValue);
             var isNewAndEmpty = ((_.isNil(oldValue)) && newValue === "");
-            var isStillEmpty = (_.isNil(oldValue) && _.isNil(newValue) );
+            var isStillEmpty = (_.isNil(oldValue) && _.isNil(newValue));
 
             if (isChanged || isNewAndEmpty || isStillEmpty)
                 return;
@@ -154,8 +159,10 @@
         }
 
         function cancel() {
-
-            if (vm.document.id)
+            if (debounceTimeout !== null) {
+                $timeout.cancel(debounceTimeout);
+            }
+            if (vm.status.isSaving())
                 saveDocument();
 
             executeOnSubmit(0);
@@ -168,7 +175,7 @@
                         .then(function (d) {
                             Notification.success("Draft deleted");
                             $rootScope.$broadcast("draft.deleted", d);
-                            executeOnSubmit(0);
+                            executeOnSubmit(1);
                         })
                         .catch(function () {
                             Notification.warning("Failed to delete draft");
@@ -183,7 +190,8 @@
                     .then(function (document) {
                         if (document.draft) {
                             Notification.warning("Draft is not valid and cannot be verified");
-                        } else {
+                        }
+                        else {
                             executeOnSubmit(2);
                             Notification.success("Draft verified");
                             $rootScope.$broadcast("draft.verified", document);
