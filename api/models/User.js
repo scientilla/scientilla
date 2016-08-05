@@ -150,7 +150,7 @@ module.exports = _.merge({}, researchEntity, {
                 });
     },
     //sTODO: add deep populate for other fields of the references
-    getSuggestedDocuments: function (userId, query) {
+    getSuggestedDocumentsQuery: function (userId, query) {
 
         return User.findOneById(userId)
                 .then(function (user) {
@@ -211,18 +211,7 @@ module.exports = _.merge({}, researchEntity, {
                     q.limit = query.limit;
 
 
-                    return SqlService
-                            .generateFromJson(q)
-                            .then(SqlService.query)
-                            .then(function (rows) {
-                                rows.forEach(function (row) {
-                                    row.tags = [];
-                                    if (row.discarded)
-                                        row.tags.push('discarded');
-                                        delete row.discarded;
-                                });
-                                return rows;
-                            });
+                    return q;
                 });
 
     },

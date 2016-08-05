@@ -69,7 +69,7 @@ module.exports = _.merge({}, researchEntity, {
         return Reference.create(draftData);
     },
     //sTODO: add deep populate for other fields of the documents
-    getSuggestedDocuments: function (groupId, query) {
+    getSuggestedDocumentsQuery: function (groupId, query) {
 
         var groupDocumentsIds = {
             select: 'reference_privateGroups',
@@ -147,18 +147,6 @@ module.exports = _.merge({}, researchEntity, {
         q.skip = query.skip;
         q.limit = query.limit;
 
-
-        return SqlService
-                .generateFromJson(q)
-                .then(SqlService.query)
-                .then(function (rows) {
-                    rows.forEach(function (row) {
-                        row.tags = [];
-                        if (row.discarded)
-                            row.tags.push('discarded');
-                        delete row.discarded;
-                    });
-                    return rows;
-                });
+        return Promise.resolve(q);
     }
 });

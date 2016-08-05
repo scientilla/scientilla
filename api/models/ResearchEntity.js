@@ -1,4 +1,4 @@
-/* global ResearchEntity, Reference */
+/* global ResearchEntity, Reference, SqlService */
 
 /**
  * ResearchEntity.js
@@ -146,7 +146,9 @@ module.exports = {
 
                     return researchEntity
                             .savePromise()
-                            .then(function(){return true;});
+                            .then(function () {
+                                return true;
+                            });
                 });
 
     },
@@ -159,6 +161,55 @@ module.exports = {
         return Promise.all(draftIds.map(function (draftId) {
             return Model.verifyDraft(researchEntityId, draftId);
         }));
+    },
+    getAllDocuments: function (ResearchEntity, researchEntityid) {
+        return ResearchEntity
+                .findOneById(researchEntityid)
+                .populate('drafts')
+                .populate('privateReferences')
+                .then(function (researchEntity) {
+                    return _.union(
+                            researchEntity.drafts,
+                            researchEntity.privateReferences
+                            );
+                });
+    },
+    checkCopiedDocuments: function (ResearchEntity, researchEntityId, suggestedDocuments) {
+        var threeshold = .50;
+        return ResearchEntity.getAllDocuments(ResearchEntity, researchEntityId)
+                .then(function (documents) {
+                    suggestedDocuments.forEach(function (suggestedDoc) {
+                        var isCopied = _.some(documents, function (d) {
+                            return d.isSimilar(suggestedDoc, threeshold);
+                        });
+                        if (!suggestedDoc.tags)
+                            suggestedDoc.tags = [];
+                        if (isCopied)
+                            suggestedDoc.tags.push('copied');
+                    });
+                    return suggestedDocuments;
+                });
+    },
+    getSuggestedDocuments: function (ResearchEntity, researchEntityId, query) {
+        function checkDiscardedRows(rows) {
+            rows.forEach(function (row) {
+                if (!row.tags)
+                    row.tags = [];
+                if (row.discarded)
+                    row.tags.push('discarded');
+                delete row.discarded;
+            });
+            return rows;
+        }
+
+        return ResearchEntity.getSuggestedDocumentsQuery(researchEntityId, query)
+                .then(SqlService.generateFromJson)
+                .then(SqlService.query)
+                .then(checkDiscardedRows)
+                .then(function (rows) {
+                    return ResearchEntity.checkCopiedDocuments(ResearchEntity, researchEntityId, rows);
+                });
+
     },
     _config: {
         actions: false,

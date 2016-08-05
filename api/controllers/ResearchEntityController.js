@@ -90,9 +90,9 @@ module.exports = {
     },
     getSuggestedDocuments: function (req, res) {
         var Model = getModel(req);
-        var userId = req.params.id;
+        var researchEntityId = req.params.id;
         var query = getQuery(req);
-        res.halt(Model.getSuggestedDocuments(userId, query));
+        res.halt(Model.getSuggestedDocuments(Model, researchEntityId, query));
     }
 };
 

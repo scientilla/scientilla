@@ -1,4 +1,4 @@
-/* global Reference, sails, User */
+/* global Reference, sails, User, ObjectComparer */
 
 /**
  * Reference.js
@@ -9,7 +9,6 @@
 
 
 var _ = require('lodash');
-var stringSimilarity = require('string-similarity');
 var Promise = require('bluebird');
 
 //sTODO: evaluated whether convert the constants to numbers
@@ -126,19 +125,17 @@ module.exports = {
             });
             return ucAuthors;
         },
-        getSimilarity: function (ref) {
-            var similarityFields = ['authors', 'title'];
+        isSimilar: function (doc, threeshold) {
+            var similarityFields = Reference.getFields();
             var similarity = 1;
-            _.forEach(similarityFields, _.bind(function (f) {
-                var fieldSimilarity;
-                if (!_.isUndefined(this[f]) && !_.isUndefined(ref[f]) && !_.isNull(this[f]) && !_.isNull(ref[f])) {
-                    fieldSimilarity = stringSimilarity.compareTwoStrings(this[f], ref[f]);
-                } else {
-                    fieldSimilarity = .999;
-                }
+            var self = this;
+            _.forEach(similarityFields, function (f) {
+                var fieldSimilarity = ObjectComparer.compareStrings(self[f], doc[f]);
                 similarity *= fieldSimilarity;
-            }, this));
-            return similarity;
+                if (similarity < threeshold)
+                    return false;
+            });
+            return similarity >= threeshold;
         },
         savePromise: function () {
             var self = this;
