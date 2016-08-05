@@ -126,7 +126,7 @@
                 vm.formVisible = true;
             }, 0);
         }
-        
+
         function prepareSave(newValue, oldValue) {
             var isChanged = (newValue === oldValue);
             var isNewAndEmpty = ((_.isNil(oldValue)) && newValue === "");
@@ -150,8 +150,8 @@
                     $rootScope.$broadcast("draft.updated", vm.document);
                 });
             else
-                return vm.researchEntity.all('drafts')
-                        .post(vm.document)
+                return researchEntityService
+                        .copyDocument(vm.researchEntity, vm.document)
                         .then(function (draft) {
                             vm.document = draft;
                             vm.status.setSaved(true);

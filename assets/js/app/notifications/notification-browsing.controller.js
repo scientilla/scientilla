@@ -62,20 +62,23 @@
 
 
         function copyDocument(document, target) {
-
             var restType = target.researchEntity.getType() + 's';
 
             var restResearchEntity = Restangular
                     .one(restType, target.researchEntity.id);
 
-            ModalService
-                    .openScientillaDocumentForm(
-                            Scientilla.reference.copyDocument(document, target.researchEntity),
-                            restResearchEntity)
-                    .then(function (i) {
-                        if (i > 0)
-                            document.addTag('copied');
-                    });
+            researchEntityService
+                    .copyDocument(restResearchEntity, document)
+                    .then(function (draft) {
+                        Notification.success('Document copied');
+                        $rootScope.$broadcast("draft.created", draft);
+                        document.addTag('copied');
+                        ModalService
+                                .openScientillaDocumentForm(
+                                        draft.clone(),
+                                        restResearchEntity
+                                        )
+                    })
 
         }
 

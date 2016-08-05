@@ -81,15 +81,18 @@
         }
 
         function copyDocument(externalDocument, researchEntity) {
-            ModalService
-                    .openScientillaDocumentForm(
-                            Scientilla.reference.copyDocument(externalDocument, researchEntity),
-                            researchEntity)
-                    .then(function (i) {
-                        if (i > 0) {
-                            externalDocument.tags.push('copied');
-                        }
-                    });
+            researchEntityService
+                    .copyDocument(researchEntity, externalDocument)
+                    .then(function (draft) {
+                        Notification.success('Document copied');
+                        $rootScope.$broadcast("draft.created", draft);
+                        externalDocument.tags.push('copied');
+                        return ModalService
+                                .openScientillaDocumentForm(
+                                        draft.clone(),
+                                        researchEntity
+                                        )
+                    })
         }
 
         function copyDocuments(documents) {
