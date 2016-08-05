@@ -36,7 +36,10 @@ module.exports = {
                             //sTODO: error management
                     }
 
-                    return self.makeRequest(reqConfig);
+                    return self.makeRequest(reqConfig)
+                            .then(function(externalDocuments) {
+                               return ResearchEntity.checkCopiedDocuments(ResearchEntity, researchEntityId, externalDocuments); 
+                            });
                 });
     },
     makeRequest: function (reqConfig) {
