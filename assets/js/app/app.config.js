@@ -97,5 +97,10 @@
 //        Restangular.extendModel('collaborations', function (collaboration) {
 //            return collaboration;
 //        });
+
+        Restangular.extendCollection('suggested-documents', function(documents) {
+            Scientilla.toDocumentsCollection(documents);
+            return documents;
+        });
     }
 })();
