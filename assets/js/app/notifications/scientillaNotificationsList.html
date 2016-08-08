@@ -1,0 +1,62 @@
+<h3>Suggested References</h3>
+
+<scientilla-filter
+    search-form-structure="vm.searchForm"
+    on-filter="vm.refreshList"
+    get-data="vm.getData">
+
+
+    <scientilla-multicheck>
+        <buttons>
+            <scientilla-multicheck-button on-click="vm.verifyDocuments">
+                <span class="fa fa-check"></span>
+                Verify
+            </scientilla-multicheck-button>
+            <scientilla-multicheck-button on-click="vm.discardDocuments">
+                <span class="fa fa-ban"></span>
+                Discard
+            </scientilla-multicheck-button>
+            <scientilla-multicheck-button on-click="vm.copyDocuments">
+                <span class="fa fa-copy"></span>
+                Copy
+            </scientilla-multicheck-button>
+        </buttons>
+        <item-list>
+            <scientilla-checkable ng-repeat="document in vm.documents" item="document">
+                <div class="row">
+                    <div class="col-md-8">
+                        <scientilla-document document="document"></scientilla-document>
+                    </div>
+                    <div class="col-md-4 text-right">
+                        <h3>
+                            <div class="btn-group scientilla-dropdown-align-right" uib-dropdown>
+                                <button  ng-click="vm.verifyDocument(document)" type="button" class="btn btn-primary">
+                                    <span class="fa fa-check"></span>
+                                    Verify
+                                </button>
+                                <button type="button" class="btn btn-primary" uib-dropdown-toggle>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul uib-dropdown-menu >
+                                    <li>
+                                        <a ng-click="vm.copyDocument(document)" href="javascript:void(0)">
+                                            <span class="fa fa-copy"></span>
+                                            Copy
+                                        </a>
+                                    </li>
+                                    <li ng-if="!document.tags.includes('discarded')">
+                                        <a ng-click="vm.discardDocument(document)" href="javascript:void(0)">
+                                            <span class="fa fa-ban"></span>
+                                            Discard
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </h3>
+                    </div>
+                </div>
+            </scientilla-checkable>
+        </item-list>
+    </scientilla-multicheck>
+
+</scientilla-filter>
