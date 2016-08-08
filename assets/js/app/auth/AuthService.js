@@ -14,11 +14,15 @@
             user: null,
             jwtToken: null
         };
+        
+        activate();
+        
+        function activate() {
+            var localData = localStorageService.get("authService");
 
-        var localData = localStorageService.get("authService");
+            if (!localData)
+                return;
 
-        if (!!localData)
-        {
             service = {
                 isLogged: localData.isLogged,
                 userId: localData.userId,
@@ -26,6 +30,8 @@
                 user: localData.user,
                 jwtToken: localData.jwtToken
             };
+            
+            service.user = Restangular.copy(service.user);
 
             _.defaults(service.user, Scientilla.user);
             _.forEach(service.user.admininstratedGroups, function (g) {
@@ -36,9 +42,9 @@
             Restangular.setDefaultHeaders({access_token: service.jwtToken});
             $http.defaults.headers.common.access_token = service.jwtToken;
             $rootScope.$broadcast("LOGIN");
-
-
         }
+
+
 
         //sTODO: refactor
         service.login = function (credentials) {
