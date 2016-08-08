@@ -24,7 +24,8 @@ module.exports = {
     PUBLIC: PUBLIC,
     DEFAULT_SORTING: {
         year: 'desc',
-        updatedAt: 'desc'
+        updatedAt: 'desc',
+        title: 'asc'
     },
     /* ATTRIBUTES */
     attributes: {
