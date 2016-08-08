@@ -125,17 +125,15 @@ module.exports = {
             });
             return ucAuthors;
         },
-        isSimilar: function (doc, threeshold) {
+        getSimiliarity: function (doc) {
             var similarityFields = Reference.getFields();
             var similarity = 1;
             var self = this;
             _.forEach(similarityFields, function (f) {
                 var fieldSimilarity = ObjectComparer.compareStrings(self[f], doc[f]);
                 similarity *= fieldSimilarity;
-                if (similarity < threeshold)
-                    return false;
             });
-            return similarity >= threeshold;
+            return similarity;
         },
         savePromise: function () {
             var self = this;

@@ -180,7 +180,7 @@ module.exports = {
                 .then(function (documents) {
                     suggestedDocuments.forEach(function (suggestedDoc) {
                         var isCopied = _.some(documents, function (d) {
-                            return d.isSimilar(suggestedDoc, threeshold);
+                            return d.getSimiliarity(suggestedDoc) >= threeshold;
                         });
                         if (!suggestedDoc.tags)
                             suggestedDoc.tags = [];
