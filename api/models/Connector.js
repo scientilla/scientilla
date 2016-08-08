@@ -37,18 +37,16 @@ module.exports = {
                     }
 
                     return self.makeRequest(reqConfig)
-                            .then(function(externalDocuments) {
-                               return ResearchEntity.checkCopiedDocuments(ResearchEntity, researchEntityId, externalDocuments); 
+                            .then(function (externalDocuments) {
+                                return ResearchEntity.checkCopiedDocuments(ResearchEntity, researchEntityId, externalDocuments);
                             });
                 });
     },
     makeRequest: function (reqConfig) {
-
         return request.get(reqConfig.reqParams)
                 .then(function (res) {
-                    var references = reqConfig.fieldExtract(res);
-
-                    return Promise.all(_.map(references, function (r) {
+                    var documents = reqConfig.fieldExtract(res);
+                    return Promise.all(_.map(documents, function (r) {
                         return reqConfig.transform(r);
                     }));
                 });
@@ -62,7 +60,7 @@ module.exports = {
         else {
             query = {"research-structure": researchEntity.publicationsAcronym};
         }
-        
+
         var qs = {
             limit: configQuery.limit,
             skip: configQuery.skip
@@ -217,7 +215,8 @@ module.exports = {
                 qs: {
                     start: configQuery.skip,
                     count: configQuery.limit,
-                    query: query
+                    query: query,
+                    sort: '-pubyear'
                 },
                 json: true
             },
@@ -248,11 +247,14 @@ module.exports = {
                             }
                         })
                         .then(function (resXML) {
+                            var d2;
 
-                            if (!resXML)
-                                throw new Error("XML empty");
+                            try {
+                                d2 = XML.parse(resXML);
+                            } catch (e) {
+                                d2 = undefined;
+                            }
 
-                            var d2 = XML.parse(resXML);
                             var sourceTypeMappings = {
                                 'Journal': 'journal',
                                 'Conference Proceeding': 'conference',
@@ -261,7 +263,7 @@ module.exports = {
                             var sourceType = sourceTypeMappings[d1['prism:aggregationType']];
 
                             var newDoc = {
-                                title: _.get(d2, 'xocs:item.item.bibrecord.head.citation-title.titletext._Data'),
+                                title: _.get(d1, 'dc:title'),
                                 authors: _.map(
                                         _.get(d2, 'xocs:meta.cto:unique-author'),
                                         function (c) {
