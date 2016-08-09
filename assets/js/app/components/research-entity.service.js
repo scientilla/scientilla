@@ -50,56 +50,45 @@
 
 
         function getSuggestedDocuments(researchEntity, query) {
-            var restType = researchEntity.getType() + 's';
-
-            return Restangular
-                    .one(restType, researchEntity.id)
+            return researchEntity
                     .getList('suggested-documents', query);
         }
 
         function verifyDocument(researchEntity, id) {
-            var restType = researchEntity.getType() + 's';
-
-            return Restangular
-                    .one(restType, researchEntity.id)
+            return researchEntity
                     .post('privateReferences', {id: id});
         }
 
         function verifyDraft(researchEntity, reference) {
-            return researchEntity.one('drafts', reference.id).customPUT({}, 'verified');
+            return researchEntity.one('drafts', reference.id)
+                    .customPUT({}, 'verified');
         }
 
         function unverify(researchEntity, reference) {
-            return researchEntity.one('references', reference.id).customPUT({}, 'unverified');
+            return researchEntity.one('references', reference.id)
+                    .customPUT({}, 'unverified');
         }
 
         function discardDocument(researchEntity, documentId) {
-            var restType = researchEntity.getType() + 's';
-
-            return Restangular
-                    .one(restType, researchEntity.id)
+            return researchEntity
                     .post('discarded-document', {documentId: documentId});
         }
 
         function verifyDocuments(researchEntity, documentIds) {
-            var restType = researchEntity.getType() + 's';
-            return Restangular
-                    .one(restType, researchEntity.id)
+            return researchEntity
                     .customPUT({documentIds: documentIds}, 'verify-documents');
         }
 
         function discardDocuments(researchEntity, documentIds) {
-            var restType = researchEntity.getType() + 's';
-            return Restangular
-                    .one(restType, researchEntity.id)
+            return researchEntity
                     .customPOST({documentIds: documentIds}, 'discarded-documents');
         }
 
         function copyDocuments(researchEntity, documents) {
-            documents = documents.map(function(d) {return d.plain();});
-            var restType = researchEntity.getType() + 's';
-            return Restangular
-                    .one(restType, researchEntity.id)
+            documents = documents.map(function (d) {
+                return d.plain();
+            });
+            return researchEntity
                     .customPOST({documents: documents}, 'copy-drafts');
         }
 
@@ -108,9 +97,7 @@
         }
 
         function verifyDrafts(researchEntity, draftIds) {
-            var restType = researchEntity.getType() + 's';
-            return Restangular
-                    .one(restType, researchEntity.id)
+            return researchEntity
                     .all('drafts')
                     .customPUT({draftIds: draftIds}, 'verify-drafts');
         }
