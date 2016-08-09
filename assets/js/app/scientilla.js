@@ -485,10 +485,12 @@ Scientilla.toDocumentsCollection = function (documents) {
         _.defaultsDeep(d, Scientilla.reference);
         Scientilla.toUsersCollection(d.privateCoauthors);
     });
+    return documents;
 };
 
 Scientilla.toUsersCollection = function (users) {
     _.each(users, function (u) {
         _.defaultsDeep(u, Scientilla.user);
     });
+    return users;
 };

@@ -83,7 +83,6 @@
         }
 
         function refreshList(documents) {
-            Scientilla.toDocumentsCollection(documents);
             vm.documents = documents;
         }
 

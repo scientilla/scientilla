@@ -127,7 +127,6 @@
         }
 
         function refreshList(drafts) {
-            Scientilla.toDocumentsCollection(drafts);
             vm.drafts = drafts;
         }
 

@@ -98,9 +98,8 @@
 //            return collaboration;
 //        });
 
-        Restangular.extendCollection('suggested-documents', function(documents) {
-            Scientilla.toDocumentsCollection(documents);
-            return documents;
-        });
+        Restangular.extendCollection('privateReferences', Scientilla.toDocumentsCollection);
+        Restangular.extendCollection('suggested-documents', Scientilla.toDocumentsCollection);
+        Restangular.extendCollection('drafts', Scientilla.toDocumentsCollection);
     }
 })();
