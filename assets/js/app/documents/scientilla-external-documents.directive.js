@@ -76,7 +76,6 @@
         }
 
         function refreshExternalDocuments(documents) {
-            Scientilla.toDocumentsCollection(documents);
             vm.documents = documents;
             vm.status = vm.STATUS_READY;
         }
