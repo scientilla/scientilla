@@ -20,25 +20,26 @@
     }
 
     scientillaDrafsListController.$inject = [
-        'ModalService',
-        'Notification',
+        'DocumentsServiceFactory',
         '$rootScope',
         'researchEntityService',
         'documentSearchForm'
     ];
 
-    function scientillaDrafsListController(ModalService, Notification, $rootScope, researchEntityService, documentSearchForm) {
+    function scientillaDrafsListController(DocumentsServiceFactory, $rootScope, researchEntityService, documentSearchForm) {
         var vm = this;
+        
+        var DocumentsService = DocumentsServiceFactory.create(vm.researchEntity);
 
         vm.getData = getDrafts;
         vm.onFilter = refreshList;
-
-        vm.deleteDrafts = deleteDrafts;
-        vm.deleteDraft = deleteDraft;
-        vm.verifyDraft = verifyDraft;
-        vm.openEditPopup = openEditPopup;
-        vm.verifyDrafts = verifyDrafts;
-
+        
+        vm.deleteDraft = DocumentsService.deleteDraft;
+        vm.verifyDraft = DocumentsService.verifyDraft;
+        vm.openEditPopup = DocumentsService.openEditPopup;
+        vm.deleteDrafts = DocumentsService.deleteDrafts;
+        vm.verifyDrafts = DocumentsService.verifyDrafts;
+        
         vm.searchForm = documentSearchForm;
 
         var query = {};
@@ -54,76 +55,9 @@
         }
 
         function getDrafts(q) {
-
             query = q;
 
             return researchEntityService.getDrafts(vm.researchEntity, q);
-        }
-
-        function deleteDrafts(drafts) {
-            var draftIds = _.map(drafts, 'id');
-            researchEntityService
-                    .deleteDrafts(vm.researchEntity, draftIds)
-                    .then(function (results) {
-                        Notification.success(results.length + " draft(s) deleted");
-                        $rootScope.$broadcast("draft.deleted", results);
-                    })
-                    .catch(function (err) {
-                        Notification.warning("An error happened");
-                    });
-        }
-
-        function deleteDraft(draft) {
-            researchEntityService
-                    .deleteDraft(vm.researchEntity,  draft.id)
-                    .then(function (d) {
-                        Notification.success("Draft deleted");
-                        $rootScope.$broadcast("draft.deleted", d);
-                    })
-                    .catch(function () {
-                        Notification.warning("Failed to delete draft");
-                    });
-        }
-
-        function verifyDrafts(drafts) {
-            var draftIds = _.map(drafts, 'id');
-            researchEntityService
-                    .verifyDrafts(vm.researchEntity, draftIds)
-                    .then(function (allDocs) {
-                        var partitions = _.partition(allDocs, 'draft');
-                        var drafts = partitions[0];
-                        var documents = partitions[1];
-                        if (documents.length)
-                            Notification.success(documents.length + " draft(s) verified");
-                        if (drafts.length)
-                            Notification.warning(drafts.length + " is/are not valid and cannot be verified");
-                        $rootScope.$broadcast("draft.verified", documents);
-                    })
-                    .catch(function (err) {
-                        $rootScope.$broadcast("draft.verified", []);
-                        Notification.warning("An error happened");
-                    });
-        }
-
-        function verifyDraft(reference) {
-            return researchEntityService.verifyDraft(vm.researchEntity, reference)
-                    .then(function (document) {
-                        if (document.draft) {
-                            Notification.warning("Draft is not valid and cannot be verified");
-                        } else {
-                            Notification.success("Draft verified");
-                            $rootScope.$broadcast("draft.verified", document);
-                        }
-                    })
-                    .catch(function () {
-                        Notification.warning("Failed to verify draft");
-                    });
-
-        }
-
-        function openEditPopup(document) {
-            ModalService
-                    .openScientillaDocumentForm(document.clone(), vm.researchEntity);
         }
 
         function refreshList(drafts) {

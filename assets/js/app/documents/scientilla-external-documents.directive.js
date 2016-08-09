@@ -21,22 +21,23 @@
 
     scientillaExternalDocumentsController.$inject = [
         'Notification',
-        '$rootScope',
+        'DocumentsServiceFactory',
         'researchEntityService',
-        'ModalService',
         '$q'
     ];
 
-    function scientillaExternalDocumentsController(Notification, $rootScope, researchEntityService, ModalService, $q) {
+    function scientillaExternalDocumentsController(Notification, DocumentsServiceFactory, researchEntityService, $q) {
         var vm = this;
+        
+        var DocumentService = DocumentsServiceFactory.create(vm.researchEntity);
         vm.STATUS_WAITING = 0;
         vm.STATUS_LOADING = 1;
         vm.STATUS_READY = 2;
         vm.STATUS_ERROR = 3;
-        vm.copyDocument = copyDocument;
+        vm.copyDocument = DocumentService.copyDocument;
         vm.getData = getExternalReferences;
         vm.onFilter = refreshExternalDocuments;
-        vm.copyDocuments = copyDocuments;
+        vm.copyDocuments = DocumentService.copyDocuments;
 
         activate();
 
@@ -78,43 +79,6 @@
             Scientilla.toDocumentsCollection(documents);
             vm.documents = documents;
             vm.status = vm.STATUS_READY;
-        }
-
-        function copyDocument(externalDocument, researchEntity) {
-            researchEntityService
-                    .copyDocument(researchEntity, externalDocument)
-                    .then(function (draft) {
-                        Notification.success('Document copied');
-                        $rootScope.$broadcast("draft.created", draft);
-                        externalDocument.tags.push('copied');
-                        return ModalService
-                                .openScientillaDocumentForm(
-                                        draft.clone(),
-                                        researchEntity
-                                        )
-                    })
-        }
-
-        function copyDocuments(documents) {
-            var notCopiedCocuments = documents.filter(function (d) {
-                return !d.tags.includes('copied');
-            });
-            if (notCopiedCocuments.length === 0) {
-                Notification.success("No documents to copy");
-                return;
-            }
-            researchEntityService
-                    .copyDocuments(vm.researchEntity, notCopiedCocuments)
-                    .then(function (drafts) {
-                        Notification.success(drafts.length + " draft(s) created");
-                        documents.forEach(function (d) {
-                            d.addTag('copied');
-                        });
-                        $rootScope.$broadcast("draft.created", drafts);
-                    })
-                    .catch(function (err) {
-                        Notification.warning("An error happened");
-                    });
         }
 
     }

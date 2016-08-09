@@ -13,20 +13,21 @@
             });
 
     ScientillaNotificationsListController.$inject = [
-        'ModalService',
+        'DocumentsServiceFactory',
         'researchEntityService',
-        'Notification',
         '$rootScope'
     ];
 
-    function ScientillaNotificationsListController(ModalService, researchEntityService, Notification, $rootScope) {
+    function ScientillaNotificationsListController(DocumentsServiceFactory, researchEntityService, $rootScope) {
         var vm = this;
-        vm.copyDocument = copyDocument;
-        vm.verifyDocument = verifyDocument;
-        vm.verifyDocuments = verifyDocuments;
-        vm.discardDocument = discardDocument;
-        vm.copyDocuments = copyDocuments;
-        vm.discardDocuments = discardDocuments;
+        
+        var DocumentsService = DocumentsServiceFactory.create(vm.researchEntity);
+        vm.copyDocument = DocumentsService.copyDocument;
+        vm.verifyDocument = DocumentsService.verifyDocument;
+        vm.verifyDocuments = DocumentsService.verifyDocuments;
+        vm.discardDocument = DocumentsService.discardDocument;
+        vm.copyDocuments = DocumentsService.copyDocuments;
+        vm.discardDocuments = DocumentsService.discardDocuments;
         var query = {};
         vm.documents = [];
 
@@ -42,6 +43,13 @@
                 matchRule: 'is null'
             }
         };
+        
+        activate();
+        
+        function activate() {
+            $rootScope.$on('notification.accepted', reload);
+            $rootScope.$on('notification.discarded', reload);
+        }
 
         function getData(q) {
             query = q;
@@ -52,101 +60,9 @@
             vm.documents = documents;
         }
 
-        function copyDocument(document) {
-            researchEntityService
-                    .copyDocument(vm.researchEntity, document)
-                    .then(function (draft) {
-                        Notification.success('Document copied');
-                        $rootScope.$broadcast("draft.created", draft);
-                        document.addTag('copied');
-                        ModalService
-                                .openScientillaDocumentForm(
-                                        draft.clone(),
-                                        vm.researchEntity
-                                        );
-                    });
-        }
-
-        function copyDocuments(documents) {
-            var notCopiedCocuments = documents.filter(function (d) {
-                return !d.tags.includes('copied');
-            });
-            if (notCopiedCocuments.length === 0) {
-                Notification.success("No documents to copy");
-                return;
-            }
-            researchEntityService
-                    .copyDocuments(vm.researchEntity, notCopiedCocuments)
-                    .then(function (drafts) {
-                        Notification.success(drafts.length + " draft(s) created");
-                        documents.forEach(function (d) {
-                            d.addTag('copied');
-                        });
-                        $rootScope.$broadcast("draft.created", drafts);
-                    })
-                    .catch(function (err) {
-                        Notification.warning("An error happened");
-                    });
-        }
-
-        function verifyDocument(document) {
-            //sTODO move to a service
-            researchEntityService
-                    .verifyDocument(vm.researchEntity, document.id)
-                    .then(function () {
-                        Notification.success('Document verified');
-                        reload();
-                    })
-                    .catch(function () {
-                        Notification.warning('Failed to verify document');
-                    });
-        }
-
-        function verifyDocuments(documents) {
-            var documentIds = _.map(documents, 'id');
-            researchEntityService
-                    .verifyDocuments(vm.researchEntity, documentIds)
-                    .then(function (allDocs) {
-                        Notification.success(allDocs.length + " document(s) verified");
-                        reload();
-                    })
-                    .catch(function (err) {
-                        Notification.warning("An error happened");
-                    });
-        }
-
-        function discardDocument(document) {
-            researchEntityService
-                    .discardDocument(vm.researchEntity, document.id)
-                    .then(function () {
-                        Notification.success('Document discarded');
-                        reload();
-                    })
-                    .catch(function () {
-                        Notification.warning('Failed to discard document');
-                    });
-        }
-
-        function discardDocuments(documents) {
-            var documentIds = _.map(documents, 'id');
-            researchEntityService
-                    .discardDocuments(vm.researchEntity, documentIds)
-                    .then(function (results) {
-                        var resultPartitioned = _.partition(results, function (o) {
-                            return o;
-                        });
-                        Notification.success(resultPartitioned[0].length + " document(s) discarded");
-                        reload();
-                    })
-                    .catch(function (err) {
-                        Notification.warning("An error happened");
-                    });
-        }
-
         // private
         function reload() {
-            getData(query)
-                    .then(refreshList);
+            getData(query).then(refreshList);
         }
     }
 })();

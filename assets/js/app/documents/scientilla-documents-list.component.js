@@ -18,17 +18,19 @@
 
     scientillaDocumentsList.$inject = [
         '$rootScope',
-        'Notification',
+        'DocumentsServiceFactory',
         'researchEntityService',
-        'documentSearchForm',
-        'ModalService'
+        'documentSearchForm'
     ];
 
-    function scientillaDocumentsList($rootScope, Notification, researchEntityService, documentSearchForm, ModalService) {
+    function scientillaDocumentsList($rootScope, DocumentsServiceFactory, researchEntityService, documentSearchForm) {
         var vm = this;
+        
+        var DocumentsService = DocumentsServiceFactory.create(vm.researchEntity);
+        
         vm.documents = [];
 
-        vm.unverifyDocument = unverifyDocument;
+        vm.unverifyDocument = DocumentsService.unverifyDocument;
 
         vm.getData = getDocuments;
         vm.onFilter = refreshList;
@@ -47,39 +49,6 @@
         function getDocuments(q) {
             query = q;
             return researchEntityService.getDocuments(vm.researchEntity, query);
-        }
-
-        function unverifyDocument(document) {
-            ModalService
-                    .multipleChoiceConfirm('Unverifying','Do you want to unverify the document?', ['Create New Version', 'Unverify'])
-                    .then(function (buttonIndex) {
-
-                        researchEntityService.unverify(vm.researchEntity, document)
-                                .then(function (draft) {
-                                    draft.id = false;
-                                    $rootScope.$broadcast('draft.unverified', {});
-                                    switch(buttonIndex) {
-                                        case 0: 
-                                            openEditPopup(draft);
-                                            break;
-                                        case 1:
-                                            Notification.success("Document succesfully unverified");
-                                            break;
-                                    }
-                                    
-                                })
-                                .catch(function () {
-                                    Notification.warning("Failed to unverify document");
-                                });
-
-                    })
-                    .catch(function () {
-                    });
-        }
-
-        function openEditPopup(draft) {
-            ModalService
-                    .openScientillaDocumentForm(draft.clone(), vm.researchEntity);
         }
 
         function refreshList(documents) {
