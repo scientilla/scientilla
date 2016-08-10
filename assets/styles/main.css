@@ -124,8 +124,8 @@
     left: auto;
 }
 
-.scientilla-filter-status-container{
-    height: 20px;
+.scientilla-filter-results{
+    min-height: 20px;
 }
 
 
@@ -236,15 +236,15 @@ scientilla-menu md-sidenav md-toolbar.active {
     margin-bottom: 10px;
 }
 
-.scientilla-search-container > form > * > div.form-group {
+.scientilla-filter-form > form > * > div.form-group {
     display: inline-block;
 }
 
-.scientilla-search-container > form > text-field > div.form-group {
+.scientilla-filter-form > form > text-field > div.form-group {
     width: 300px;
 }
 
-.scientilla-search-container > form > select-field > div.form-group {
+.scientilla-filter-form > form > select-field > div.form-group {
     min-width: 80px;
 }
 

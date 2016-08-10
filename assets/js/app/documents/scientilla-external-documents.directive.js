@@ -28,12 +28,9 @@
 
     function scientillaExternalDocumentsController(Notification, DocumentsServiceFactory, researchEntityService, $q) {
         var vm = this;
-        
+
         var DocumentService = DocumentsServiceFactory.create(vm.researchEntity);
-        vm.STATUS_WAITING = 0;
-        vm.STATUS_LOADING = 1;
-        vm.STATUS_READY = 2;
-        vm.STATUS_ERROR = 3;
+
         vm.copyDocument = DocumentService.copyDocument;
         vm.getData = getExternalReferences;
         vm.onFilter = refreshExternalDocuments;
@@ -58,26 +55,19 @@
         }
 
         function reset() {
-            vm.status = vm.STATUS_WAITING;
             vm.documents = [];
         }
 
         function getExternalReferences(q) {
             var connector = q.where.connector;
-            vm.status = vm.STATUS_LOADING;
             if (!connector)
                 return $q.resolve([]);
 
-            return researchEntityService.getExternalDrafts(vm.researchEntity, q)
-                    .catch(function (err) {
-                        Notification.error("External reference error");
-                        vm.status = vm.STATUS_ERROR;
-                    });
+            return researchEntityService.getExternalDrafts(vm.researchEntity, q);
         }
 
         function refreshExternalDocuments(documents) {
             vm.documents = documents;
-            vm.status = vm.STATUS_READY;
         }
 
     }

@@ -32,10 +32,12 @@
         vm.pageSizes = [10, 20, 50, 100, 500];
         vm.currentPage = 1;
         vm.totalItems = 0;
+        vm.elements = [];
 
         // statuses
         vm.STATUS_WAITING = 0;
         vm.STATUS_LOADING = 1;
+        vm.STATUS_ERROR = 2;
         vm.advancedOpen = false;
         vm.advancedText = getAdvancedText(vm.advancedOpen);
         vm.toggleAdvanced = toggleAdvanced;
@@ -106,10 +108,10 @@
                     });
             vm.search();
         }
-        
+
         function toggleAdvanced() {
             vm.advancedOpen = !vm.advancedOpen;
-            vm.advancedText = getAdvancedText(vm.advancedOpen) 
+            vm.advancedText = getAdvancedText(vm.advancedOpen);
         }
 
         // private
@@ -128,7 +130,7 @@
 
             vm.search();
         }
-        
+
         function getAdvancedText(open) {
             return open ? '<' : '>';
         }
@@ -138,18 +140,23 @@
 
             var query = getQuery();
 
-            vm.getData()(query).then(function (list) {
+            vm.getData()(query)
+                    .then(function (list) {
 
-                vm.totalItems = (vm.currentPage - 1) * vm.itemsPerPage + list.length;
+                        vm.totalItems = (vm.currentPage - 1) * vm.itemsPerPage + list.length;
 
-                if (list.length > vm.itemsPerPage)
-                    list.pop();
+                        if (list.length > vm.itemsPerPage)
+                            list.pop();
 
-                vm.onFilter()(list);
+                        vm.elements = list;
+                        vm.onFilter()(list);
 
-                vm.message = list.length === 0 ? vm.emptyListMessage : "";
-                setStatus(vm.STATUS_WAITING);
-            });
+                        setStatus(vm.STATUS_WAITING);
+                    })
+                    .catch(function (err) {
+                        vm.elements = [];
+                        setStatus(vm.STATUS_ERROR);
+                    });
         }
 
         function getQuery() {

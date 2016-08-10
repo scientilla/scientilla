@@ -1,4 +1,4 @@
-<div class="scientilla-search-container well">
+<div class="scientilla-filter-form well">
     <form form-for="vm.searchValues"
           validation-rules="vm.searchFormStructure"
           form-for-builder
@@ -9,21 +9,12 @@
         <scientilla-button size="small" type="link" ng-click="vm.toggleAdvanced()">{{vm.advancedText}}</scientilla-button>
         <div class="scientilla-filter-config form-inline advanced-open-{{vm.advancedOpen}}">
             <label>Items per page: </label>
-            <select class="form-control" ng-model="vm.itemsPerPage" ng-options="s*1 as s for s in vm.pageSizes"></select>
+            <select class="form-control" ng-model="vm.itemsPerPage" ng-options="s *   1 as s for s in vm.pageSizes"></select>
         </div>
     </form>
 </div>
 
-<uib-pager
-    ng-if="vm.totalItems"
-    total-items="vm.totalItems"
-    items-per-page="vm.itemsPerPage"
-    ng-model="vm.currentPage"
-    ng-change="vm.onPageChange()">
-</uib-pager>
-
-<div class="scientilla-filter-status-container">
-
+<div class="scientilla-filter-results">    
     <div ng-if="vm.onStatus(vm.STATUS_LOADING)"
          class="progress-bar progress-bar-striped active" 
          role="progressbar"
@@ -32,17 +23,28 @@
     </div>
 
     <div ng-if="vm.onStatus(vm.STATUS_WAITING)">
-        <h3>{{vm.message}}</h3>
+        <h3 ng-if="vm.elements.length === 0">{{vm.emptyListMessage}}</h3>
+        <div ng-if="vm.elements.length > 0">
+            <uib-pager
+                ng-if="vm.totalItems"
+                total-items="vm.totalItems"
+                items-per-page="vm.itemsPerPage"
+                ng-model="vm.currentPage"
+                ng-change="vm.onPageChange()">
+            </uib-pager>
+            <div ng-transclude></div>
+            <uib-pager
+                ng-if="vm.totalItems"
+                total-items="vm.totalItems"
+                items-per-page="vm.itemsPerPage"
+                ng-model="vm.currentPage"
+                ng-change="vm.onPageChange()">
+            </uib-pager>
+        </div>
+
+    </div>
+
+    <div ng-if="vm.onStatus(vm.STATUS_ERROR)">
+        <h3>An error happened</h3>
     </div>
 </div>
-
-
-<div ng-transclude></div>
-
-<uib-pager
-    ng-if="vm.totalItems"
-    total-items="vm.totalItems"
-    items-per-page="vm.itemsPerPage"
-    ng-model="vm.currentPage"
-    ng-change="vm.onPageChange()">
-</uib-pager>
