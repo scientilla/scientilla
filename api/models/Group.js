@@ -59,9 +59,6 @@ module.exports = _.merge({}, researchEntity, {
         draft.draftGroupCreator = null;
         draft.privateGroups.add(researchEntityId);
     },
-    verifyDraft: function (researchEntityId, draftId) {
-        return Reference.verifyDraft(draftId, Group, researchEntityId);
-    },
     copyDraft: function(userId, document) {
         var draftData = _.pick(document, Reference.getFields());
         draftData.draft = true;

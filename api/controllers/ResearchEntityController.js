@@ -40,7 +40,7 @@ module.exports = {
         var researchEntityId = req.params.id;
         var draftId = req.params.draftId;
         var Model = getModel(req);
-        res.halt(Model.verifyDraft(researchEntityId, draftId));
+        res.halt(Model.verifyDraft(Model, researchEntityId, draftId));
     },
     verifyDrafts: function (req, res) {
         var researchEntityId = req.params.id;
