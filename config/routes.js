@@ -51,6 +51,7 @@ module.exports.routes = {
   'put /users/:id/references/:referenceId/unverified': 'User.unverifyDocument',
   'put /groups/:id/references/:referenceId/unverified': 'Group.unverifyDocument',
   'post /users/:id/privateReferences/': 'User.verifyReference',
+  'post /groups/:id/privateReferences/': 'Group.verifyReference',
   'post /users/:id/discarded-document': 'User.discardDocument',
   'post /groups/:id/discarded-document': 'Group.discardDocument',
   'post /users/:id/discarded-documents': 'User.discardDocuments',
