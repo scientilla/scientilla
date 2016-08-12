@@ -31,7 +31,7 @@ module.exports = {
                     if (err)
                         reject(err);
                     else
-                        resolve();
+                        resolve(self);
                 });
             });
         }
@@ -101,7 +101,11 @@ module.exports = {
         return ResearchEntity.findOneById(researchEntityId)
                 .then(function (researchEntity) {
                     researchEntity.privateReferences.add(referenceId);
-                    return researchEntity.savePromise();
+                    return researchEntity
+                            .savePromise();
+                })
+                .then(function () {
+                    return Reference.findOneById(referenceId);
                 });
     },
     verifyDocuments: function (Model, researchEntityId, documentIds) {
