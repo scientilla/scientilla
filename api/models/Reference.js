@@ -278,7 +278,7 @@ module.exports = {
                                             var doc = documents[0];
                                             sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
                                             return ResearchEntityModel
-                                                    .verifyReference(ResearchEntityModel, researchEntityId, doc.id);
+                                                    .verifyDocument(ResearchEntityModel, researchEntityId, doc.id);
                                         });
                             })
                 });

@@ -97,7 +97,7 @@ module.exports = {
                     return Reference.deleteIfNotVerified(referenceId);
                 });
     },
-    verifyReference: function (ResearchEntity, researchEntityId, referenceId) {
+    verifyDocument: function (ResearchEntity, researchEntityId, referenceId) {
         return ResearchEntity.findOneById(researchEntityId)
                 .then(function (researchEntity) {
                     researchEntity.privateReferences.add(referenceId);
@@ -110,7 +110,7 @@ module.exports = {
     },
     verifyDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(function (documentId) {
-            return Model.verifyReference(Model, researchEntityId, documentId);
+            return Model.verifyDocument(Model, researchEntityId, documentId);
         }));
     },
     copyDrafts: function (Model, researchEntityId, documents) {

@@ -48,12 +48,12 @@ module.exports = {
         var Model = getModel(req);
         res.halt(Model.verifyDrafts(Model, researchEntityId, draftIds));
     },
-    verifyReference: function (req, res) {
+    verifyDocument: function (req, res) {
         var researchEntityId = req.params.id;
         var referenceId = req.params.options.values.id;
         var Model = getModel(req);
         Model
-                .verifyReference(researchEntityId, referenceId)
+                .verifyDocument(researchEntityId, referenceId)
                 .then(function (reference) {
                     res.json(reference);
                 });
