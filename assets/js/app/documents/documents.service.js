@@ -97,11 +97,17 @@
 
                                 researchEntityService.unverify(researchEntity, document)
                                         .then(function (draft) {
-                                            draft.id = false;
+                                            delete draft.id;
                                             $rootScope.$broadcast('draft.unverified', {});
                                             switch (buttonIndex) {
                                                 case 0:
-                                                    openEditPopup(researchEntity, draft);
+                                                    researchEntityService
+                                                            .copyDocument(researchEntity, draft)
+                                                            .then(function (draft) {
+                                                                $rootScope.$broadcast("draft.created", draft);
+                                                                return draft;
+                                                            })
+                                                            .then(openEditPopup);
                                                     break;
                                                 case 1:
                                                     Notification.success("Document succesfully unverified");
@@ -125,7 +131,7 @@
                                 Notification.success('Document copied');
                                 $rootScope.$broadcast("draft.created", draft);
                                 document.addTag('copied');
-                                openEditPopup(researchEntity, document);
+                                openEditPopup(document);
                             });
                 }
 
