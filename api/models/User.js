@@ -129,14 +129,11 @@ module.exports = _.merge({}, researchEntity, {
             return 'user';
         }
     }),
-    verifyDraft: function (researchEntityId, draftId) {
-        function userDraftToDocument(draft) {
-            draft.draftCreator = null;
-            draft.privateCoauthors.add(researchEntityId);
-        }
-        return Reference.verifyDraft(draftId, userDraftToDocument);
+    draftToDocument: function (draft, researchEntityId) {
+        draft.draftCreator = null;
+        draft.privateCoauthors.add(researchEntityId);
     },
-    copyDraft: function(userId, document) {
+    copyDraft: function (userId, document) {
         var draftData = _.pick(document, Reference.getFields());
         draftData.draft = true;
         draftData.draftCreator = userId;

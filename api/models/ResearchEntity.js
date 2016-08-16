@@ -31,7 +31,7 @@ module.exports = {
                     if (err)
                         reject(err);
                     else
-                        resolve();
+                        resolve(self);
                 });
             });
         }
@@ -97,16 +97,20 @@ module.exports = {
                     return Reference.deleteIfNotVerified(referenceId);
                 });
     },
-    verifyReference: function (ResearchEntity, researchEntityId, referenceId) {
+    verifyDocument: function (ResearchEntity, researchEntityId, referenceId) {
         return ResearchEntity.findOneById(researchEntityId)
                 .then(function (researchEntity) {
                     researchEntity.privateReferences.add(referenceId);
-                    return researchEntity.savePromise();
+                    return researchEntity
+                            .savePromise();
+                })
+                .then(function () {
+                    return Reference.findOneById(referenceId);
                 });
     },
     verifyDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(function (documentId) {
-            return Model.verifyReference(Model, researchEntityId, documentId);
+            return Model.verifyDocument(Model, researchEntityId, documentId);
         }));
     },
     copyDrafts: function (Model, researchEntityId, documents) {
@@ -157,9 +161,12 @@ module.exports = {
             return Model.discardDocument(researchEntityId, documentId);
         }));
     },
-    verifyDrafts: function (Model, researchEntityId, draftIds) {
+    verifyDraft: function (ResearchEntityModel, researchEntityId, draftId) {
+        return Reference.verifyDraft(draftId, ResearchEntityModel, researchEntityId);
+    },
+    verifyDrafts: function (ResearchEntityModel, researchEntityId, draftIds) {
         return Promise.all(draftIds.map(function (draftId) {
-            return Model.verifyDraft(researchEntityId, draftId);
+            return ResearchEntityModel.verifyDraft(ResearchEntityModel, researchEntityId, draftId);
         }));
     },
     getAllDocuments: function (ResearchEntity, researchEntityid) {

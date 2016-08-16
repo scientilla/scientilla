@@ -1,4 +1,4 @@
-/* global Reference, SqlService, Promise */
+/* global Reference, SqlService, Promise, Group */
 
 /**
  * Group.js
@@ -55,12 +55,9 @@ module.exports = _.merge({}, researchEntity, {
             type: 'STRING'
         }
     },
-    verifyDraft: function (researchEntityId, draftId) {
-        function groupDraftToDocument(draft) {
-            draft.draftGroupCreator = null;
-            draft.privateGroups.add(researchEntityId);
-        }
-        return Reference.verifyDraft(draftId, groupDraftToDocument);
+    draftToDocument: function (draft, researchEntityId) {
+        draft.draftGroupCreator = null;
+        draft.privateGroups.add(researchEntityId);
     },
     copyDraft: function(userId, document) {
         var draftData = _.pick(document, Reference.getFields());

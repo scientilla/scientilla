@@ -142,8 +142,9 @@ module.exports = {
                 self.save(function (err) {
                     if (err) {
                         reject(err);
-                    } else {
-                        resolve();
+                    }
+                    else {
+                        resolve(self);
                     }
                 });
             });
@@ -254,7 +255,7 @@ module.exports = {
             return _.includes([VERIFIED, PUBLIC], r.status);
         });
     },
-    verifyDraft: function (draftId, draftToDocument) {
+    verifyDraft: function (draftId, ResearchEntityModel, researchEntityId) {
         //sTODO: 2 equals documents should be merged
         return Reference.findOneById(draftId)
                 .then(function (draft) {
@@ -262,17 +263,34 @@ module.exports = {
                         return draft;
                     }
                     draft.draft = false;
-                    draftToDocument(draft);
-                    return draft
-                            .savePromise()
-                            .then(function () {
-                                return draft;
-                            });
+                    ResearchEntityModel.draftToDocument(draft, researchEntityId);
+                    return Reference.findCopies(draft)
+                            .then(function (documents) {
+                                var n = documents.length;
+                                if (n === 0)
+                                    return draft
+                                            .savePromise();
+                                if (n > 1)
+                                    sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
+                                return draft
+                                        .destroy()
+                                        .then(function () {
+                                            var doc = documents[0];
+                                            sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
+                                            return ResearchEntityModel
+                                                    .verifyDocument(ResearchEntityModel, researchEntityId, doc.id);
+                                        });
+                            })
                 });
     },
     deleteDrafts: function (draftIds) {
         return Promise.all(draftIds.map(function (documentId) {
             return Reference.destroy({id: documentId});
         }));
+    },
+    findCopies: function (doc) {
+        var query = _.pick(doc, Reference.getFields());
+        query.draft = false;
+        return Reference.find(query);
     }
 };
