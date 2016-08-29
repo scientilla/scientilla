@@ -131,7 +131,7 @@
                                 Notification.success('Document copied');
                                 $rootScope.$broadcast("draft.created", draft);
                                 document.addTag('copied');
-                                openEditPopup(document);
+                                openEditPopup(draft);
                             });
                 }
 
