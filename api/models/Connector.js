@@ -142,7 +142,7 @@ module.exports = {
             },
             transform: function (d) {
                 function  getAttributeFromCitation(d, attribute) {
-                    var citationData = _.get(d, 'work-citation.citation');
+                    var citationData = _.get(d, 'work-citation.citation', '');
                     var regex = new RegExp(attribute + '\\s=\\s{(.*?)}');
                     return _.get(citationData.match(regex), '[1]');
                 }
