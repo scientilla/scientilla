@@ -82,7 +82,6 @@ module.exports = {
                     return Reference.findOneById(draftId);
                 });
     },
-    //sTODO: only drafts can be deleted
     unverifyDocument: function (ResearchEntityModel, researchEntityId, referenceId) {
         return ResearchEntityModel
                 .findOneById(researchEntityId)

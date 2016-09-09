@@ -187,6 +187,9 @@ module.exports = {
                 .populate('privateGroups')
                 .populate('publicGroups')
                 .then(function (document) {
+                    if(!document)
+                        return null;
+
                     if (countAuthorsAndGroups(document) === 0) {
                         sails.log.debug('Document ' + documentId + ' will be deleted');
                         return Reference.destroy({id: documentId});
