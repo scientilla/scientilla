@@ -12,7 +12,8 @@
                     getData: '&',
                     searchFormStructure: '<',
                     emptyListMessage: '@?',
-                    filterLabel: '@?'
+                    filterLabel: '@?',
+                    elements: '<?'
                 }
             });
 
@@ -32,7 +33,6 @@
         vm.pageSizes = [10, 20, 50, 100, 500];
         vm.currentPage = 1;
         vm.totalItems = 0;
-        vm.elements = [];
 
         // statuses
         vm.STATUS_WAITING = 0;
