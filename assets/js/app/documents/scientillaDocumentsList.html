@@ -19,6 +19,7 @@
                         <h3>
                             <button class="btn btn-primary"
                                     ng-click="vm.unverifyDocument(d)"
+                                    ng-disabled="d.tags.includes('unverifying')"
                                     type="button"
                                     uib-tooltip="Unlink the document from your profile"
                                     tooltip-placement="top"

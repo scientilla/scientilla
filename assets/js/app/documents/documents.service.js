@@ -91,6 +91,7 @@
                 }
 
                 function unverifyDocument(document) {
+                    document.tags.push('unverifying')
                     ModalService
                             .multipleChoiceConfirm('Unverifying', 'Do you want to unverify the document?', ['Create New Version', 'Unverify'])
                             .then(function (buttonIndex) {
@@ -121,6 +122,9 @@
 
                             })
                             .catch(function () {
+                                _.remove(document.tags, function (t) {
+                                    return t === 'unverifying';
+                                });
                             });
                 }
 
