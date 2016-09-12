@@ -2,8 +2,8 @@
 
 (function () {
     angular
-            .module('references')
-            .directive('scientillaDocumentForm', scientillaDocumentForm);
+        .module('references')
+        .directive('scientillaDocumentForm', scientillaDocumentForm);
 
     function scientillaDocumentForm() {
         return {
@@ -25,12 +25,12 @@
         'FormForConfiguration',
         'Notification',
         'researchEntityService',
+        'EventsService',
         '$scope',
-        '$rootScope',
         '$timeout'
     ];
 
-    function scientillaDocumentFormController(FormForConfiguration, Notification, researchEntityService, $scope, $rootScope, $timeout) {
+    function scientillaDocumentFormController(FormForConfiguration, Notification, researchEntityService, EventsService, $scope, $timeout) {
         var vm = this;
         vm.status = createStatus();
         vm.cancel = cancel;
@@ -89,12 +89,12 @@
 
         function loadDocumentFields() {
             var types = Scientilla.reference.getDocumentTypes()
-                    .map(function (t) {
-                        return {
-                            value: t.key,
-                            label: t.label
-                        };
-                    });
+                .map(function (t) {
+                    return {
+                        value: t.key,
+                        label: t.label
+                    };
+                });
             vm.validationAndViewRules = _.merge({
                 sourceType: {
                     inputType: 'select',
@@ -147,16 +147,16 @@
             if (vm.document.id)
                 return vm.document.save().then(function () {
                     vm.status.setSaved(true);
-                    $rootScope.$broadcast("draft.updated", vm.document);
+                    EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
                 });
             else
                 return researchEntityService
-                        .copyDocument(vm.researchEntity, vm.document)
-                        .then(function (draft) {
-                            vm.document = draft;
-                            vm.status.setSaved(true);
-                            $rootScope.$broadcast("draft.updated", vm.document);
-                        });
+                    .copyDocument(vm.researchEntity, vm.document)
+                    .then(function (draft) {
+                        vm.document = draft;
+                        vm.status.setSaved(true);
+                        EventsService.publish(EventsService.DRAFT_UPDATED, vm.document );
+                    });
         }
 
         function cancel() {
@@ -172,36 +172,36 @@
         function deleteDocument() {
             if (vm.document.id)
                 researchEntityService
-                        .deleteDraft(vm.researchEntity, vm.document.id)
-                        .then(function (d) {
-                            Notification.success("Draft deleted");
-                            $rootScope.$broadcast("draft.deleted", d);
-                            executeOnSubmit(1);
-                        })
-                        .catch(function () {
-                            Notification.warning("Failed to delete draft");
-                        });
+                    .deleteDraft(vm.researchEntity, vm.document.id)
+                    .then(function (d) {
+                        Notification.success("Draft deleted");
+                        EventsService.publish(EventsService.DRAFT_DELETED, d);
+                        executeOnSubmit(1);
+                    })
+                    .catch(function () {
+                        Notification.warning("Failed to delete draft");
+                    });
         }
 
         function verify() {
             saveDocument()
-                    .then(function () {
-                        return researchEntityService.verifyDraft(vm.researchEntity, vm.document);
-                    })
-                    .then(function (document) {
-                        if (document.draft) {
-                            Notification.warning("Draft is not valid and cannot be verified");
-                        }
-                        else {
-                            executeOnSubmit(2);
-                            Notification.success("Draft verified");
-                            $rootScope.$broadcast("draft.verified", document);
-                        }
-                    })
-                    .catch(function () {
-                        Notification.warning("Failed to verify draft");
-                        executeOnFailure();
-                    });
+                .then(function () {
+                    return researchEntityService.verifyDraft(vm.researchEntity, vm.document);
+                })
+                .then(function (document) {
+                    if (document.draft) {
+                        Notification.warning("Draft is not valid and cannot be verified");
+                    }
+                    else {
+                        executeOnSubmit(2);
+                        Notification.success("Draft verified");
+                        EventsService.publish(EventsService.DRAFT_VERIFIED, document);
+                    }
+                })
+                .catch(function () {
+                    Notification.warning("Failed to verify draft");
+                    executeOnFailure();
+                });
         }
 
         function executeOnSubmit(i) {

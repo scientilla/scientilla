@@ -17,13 +17,13 @@
 
 
     scientillaDocumentsList.$inject = [
-        '$rootScope',
         'DocumentsServiceFactory',
         'researchEntityService',
-        'documentSearchForm'
+        'documentSearchForm',
+        'EventsService'
     ];
 
-    function scientillaDocumentsList($rootScope, DocumentsServiceFactory, researchEntityService, documentSearchForm) {
+    function scientillaDocumentsList(DocumentsServiceFactory, researchEntityService, documentSearchForm,EventsService) {
         var vm = this;
         
         var DocumentsService = DocumentsServiceFactory.create(vm.researchEntity);
@@ -39,12 +39,16 @@
 
         var query = {};
 
-        activate();
+        vm.$onInit = function () {
+            EventsService.subscribeAll(vm, [
+                EventsService.DRAFT_VERIFIED,
+                EventsService.DRAFT_UNVERIFIED
+            ], updateList);
+        };
 
-        function activate() {
-            $rootScope.$on('draft.verified', updateList);
-            $rootScope.$on('draft.unverified', updateList);
-        }
+        vm.$onDestroy = function () {
+            EventsService.unsubscribeAll(vm);
+        };
 
         function getDocuments(q) {
             query = q;

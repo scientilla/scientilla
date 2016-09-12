@@ -2,38 +2,36 @@
     'use strict';
 
     angular.module('components')
-            .directive('scientillaMenu', scientillaMenu);
-
-    function scientillaMenu() {
-        return {
-            restrict: 'E',
+        .component('scientillaMenu', {
             templateUrl: 'partials/scientillaMenu.html',
-            controller: scientillaMenuController,
-            controllerAs: 'vm',
-            scope: {
-            }
-        };
-    }
+            controller: scientillaMenu,
+            controllerAs: 'vm'
+        });
 
-    scientillaMenuController.$inject = [
+    scientillaMenu.$inject = [
         'AuthService',
-        '$scope',
+        'EventsService',
         '$location'
     ];
 
-    function scientillaMenuController(AuthService, $scope, $location) {
+    function scientillaMenu(AuthService, EventsService, $location) {
         var vm = this;
 
         vm.menuItemClicked = menuItemClicked;
 
-        activate();
+        vm.$onInit = function () {
 
-        function activate() {
-            $scope.$on('LOGIN', refresh);
-            $scope.$on('LOGOUT', refresh);
+            EventsService.subscribeAll(vm, [
+                EventsService.AUTH_LOGIN,
+                EventsService.AUTH_LOGOUT
+            ], refresh);
 
             refresh();
-        }
+        };
+
+        vm.$onDestroy = function () {
+            EventsService.unsubscribeAll(vm);
+        };
 
         function refresh() {
             vm.isLogged = AuthService.isLogged;
@@ -63,16 +61,16 @@
                     });
                 });
                 vm.menuItems = _.union(vm.menuItems, [{
-                        type: 'separator'
-                    }, {
-                        type: 'item',
-                        title: 'People',
-                        url: '#/users'
-                    }, {
-                        type: 'item',
-                        title: 'Groups',
-                        url: '#/groups'
-                    }]);
+                    type: 'separator'
+                }, {
+                    type: 'item',
+                    title: 'People',
+                    url: '#/users'
+                }, {
+                    type: 'item',
+                    title: 'Groups',
+                    url: '#/groups'
+                }]);
             }
 
             _.each(vm.menuItems, function (i) {
@@ -85,14 +83,14 @@
 
             if (item.type !== 'item')
                 return;
-            
+
             resetSelection();
-            
+
             item.active = true;
 
         }
-        
-        function resetSelection(){
+
+        function resetSelection() {
             _.each(vm.menuItems, function (i) {
                 i.active = false;
             });
