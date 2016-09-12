@@ -65,6 +65,12 @@
                         return this.getList(q);
                     };
 
+                    service.getProfile = function (userId) {
+                        return this
+                                .one(userId)
+                                .get();
+                    };
+
                     return service;
                 }]);
 }());

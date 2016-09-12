@@ -1,3 +1,5 @@
+/* global Scientilla */
+
 (function () {
     angular
             .module('references')
@@ -8,10 +10,11 @@
         'ContextService',
         'ModalService',
         'GroupsService',
+        'UsersService',
         '$rootScope'
     ];
 
-    function ReferenceBrowsingController(researchEntity, ContextService, ModalService, GroupsService, $rootScope) {
+    function ReferenceBrowsingController(researchEntity, ContextService, ModalService, GroupsService, UsersService, $rootScope) {
         var vm = this;
 
         vm.researchEntity = researchEntity;
@@ -29,30 +32,32 @@
             var draft = vm.researchEntity.getNewDocument(type);
 
             ModalService
-                .openScientillaDocumentForm(draft, vm.researchEntity);
+                    .openScientillaDocumentForm(draft, vm.researchEntity);
         }
 
         function editProfile() {
-
-            var modalInstance;
+            var openForm;
+            var researchEntityService;
             if (researchEntity.getType() === 'user') {
-
-                modalInstance = ModalService
-                        .openScientillaUserForm(vm.researchEntity.clone())
-                        .then(function (researchEntity) {
-                            vm.researchEntity = researchEntity;
-                        });
-            } else {
-                GroupsService
-                        .one(researchEntity.id)
-                        .get({populate: ['memberships', 'administrators']})
-                        .then(ModalService.openScientillaGroupForm)
-                        .then(function (researchEntity) {
-                            vm.researchEntity = researchEntity;
-                        });
-
-
+                openForm = ModalService.openScientillaUserForm;
+                researchEntityService = UsersService;
             }
+            else {
+                openForm = ModalService.openScientillaGroupForm;
+                researchEntityService = GroupsService;
+            }
+            
+            researchEntityService
+                    .getProfile(researchEntity.id)
+                    .then(openForm)
+                    .then(function (status) {
+                        if (status !== 1)
+                            return vm.researchEntity;
+                        return researchEntityService.getProfile(researchEntity.id);
+                    })
+                    .then(function (researchEntity) {
+                        vm.researchEntity = researchEntity;
+                    });
         }
     }
 })();

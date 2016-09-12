@@ -26,7 +26,6 @@
         <h3 ng-if="vm.elements.length === 0">{{vm.emptyListMessage}}</h3>
         <div ng-if="vm.elements.length > 0">
             <uib-pager
-                ng-if="vm.totalItems"
                 total-items="vm.totalItems"
                 items-per-page="vm.itemsPerPage"
                 ng-model="vm.currentPage"
@@ -34,7 +33,6 @@
             </uib-pager>
             <div ng-transclude></div>
             <uib-pager
-                ng-if="vm.totalItems"
                 total-items="vm.totalItems"
                 items-per-page="vm.itemsPerPage"
                 ng-model="vm.currentPage"
