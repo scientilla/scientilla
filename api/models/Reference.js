@@ -100,8 +100,6 @@ module.exports = {
                 ],
                 book: [
                     'bookTitle',
-                    'editor',
-                    'publisher'
                 ],
                 journal: [
                     'journal'
