@@ -1,3 +1,4 @@
+/* global sails */
 
 module.exports = function halt(promise, options) {
     var res = this.res;
