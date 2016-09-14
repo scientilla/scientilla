@@ -93,6 +93,7 @@
                 }
 
                 function unverifyDocument(document) {
+                    document.tags.push('unverifying')
                     ModalService
                         .multipleChoiceConfirm('Unverifying', 'Do you want to unverify the document?', ['Create New Version', 'Unverify'])
                         .then(function (buttonIndex) {
@@ -121,9 +122,12 @@
                                     Notification.warning("Failed to unverify document");
                                 });
 
-                        })
-                        .catch(function () {
-                        });
+                            })
+                            .catch(function () {
+                                _.remove(document.tags, function (t) {
+                                    return t === 'unverifying';
+                                });
+                            });
                 }
 
                 function copyDocument(document) {

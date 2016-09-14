@@ -9,10 +9,11 @@
         <scientilla-document-label ng-repeat="t in vm.document.tags" tag="t"></scientilla-document-label>
         <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
     </div>
-    <div ng-if="vm.document.journal">
-        <!-- TODO add other types of source -->
+    <div>
         <small class="scientilla-document-source">
-            {{vm.document.journal}}
+            <span  ng-if="vm.document.sourceType === 'journal' ">{{vm.document.journal}}</span>
+            <span  ng-if="vm.document.sourceType === 'conference' ">{{vm.document.conferenceName}}</span>
+            <span  ng-if="vm.document.sourceType === 'book' ">{{vm.document.bookTitle}}</span>
         </small>
     </div>
     <div ng-if="vm.document.doi">

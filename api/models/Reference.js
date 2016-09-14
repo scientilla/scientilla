@@ -50,6 +50,7 @@ module.exports = {
         sourceType: 'STRING',
         scopusId: 'STRING',
         wosId: 'STRING',
+        abstract: 'TEXT',
         publicCoauthors: {
             collection: 'User',
             via: 'publicReferences'
@@ -99,8 +100,6 @@ module.exports = {
                 ],
                 book: [
                     'bookTitle',
-                    'editor',
-                    'publisher'
                 ],
                 journal: [
                     'journal'
@@ -167,6 +166,7 @@ module.exports = {
             'conferenceName',
             'conferenceLocation',
             'acronym',
+            'abstract',
             'type',
             'sourceType',
             'scopusId',

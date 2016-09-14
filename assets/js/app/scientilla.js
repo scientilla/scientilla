@@ -110,6 +110,7 @@ Scientilla.reference = {
         'conferenceName',
         'conferenceLocation',
         'acronym',
+        'abstract',
         'type',
         'sourceType',
         'scopusId',
@@ -202,6 +203,10 @@ Scientilla.reference = {
                     label: "DOI",
                     inputType: 'text'
                 },
+                abstract: {
+                    inputType: 'text',
+                    multiline: true
+                },
                 scopusId: {
                     label: "Scopus ID",
                     inputType: 'text'
@@ -238,6 +243,10 @@ Scientilla.reference = {
                 doi: {
                     label: "DOI",
                     inputType: 'text'
+                },
+                abstract: {
+                    inputType: 'text',
+                    multiline: true
                 },
                 scopusId: {
                     label: "Scopus ID",
@@ -286,6 +295,10 @@ Scientilla.reference = {
                 doi: {
                     label: "DOI",
                     inputType: 'text'
+                },
+                abstract: {
+                    inputType: 'text',
+                    multiline: true
                 },
                 scopusId: {
                     label: "Scopus ID",
