@@ -3,9 +3,9 @@
 (function () {
     angular.module("auth").factory("AuthService", AuthService);
 
-    AuthService.$inject = ["$http", "Restangular", "UsersService", "$q", "$rootScope", "localStorageService"];
+    AuthService.$inject = ["$http", "Restangular", "UsersService", "$q", "localStorageService", "EventsService"];
 
-    function AuthService($http, Restangular, UsersService, $q, $rootScope, localStorageService) {
+    function AuthService($http, Restangular, UsersService, $q, localStorageService, EventsService) {
 
         var service = {
             isLogged: false,
@@ -14,9 +14,9 @@
             user: null,
             jwtToken: null
         };
-        
+
         activate();
-        
+
         function activate() {
             var localData = localStorageService.get("authService");
 
@@ -30,7 +30,7 @@
                 user: localData.user,
                 jwtToken: localData.jwtToken
             };
-            
+
             service.user = Restangular.copy(service.user);
 
             _.defaults(service.user, Scientilla.user);
@@ -41,9 +41,8 @@
 
             Restangular.setDefaultHeaders({access_token: service.jwtToken});
             $http.defaults.headers.common.access_token = service.jwtToken;
-            $rootScope.$broadcast("LOGIN");
+            EventsService.publish(EventsService.AUTH_LOGIN);
         }
-
 
 
         //sTODO: refactor
@@ -63,7 +62,7 @@
                 service.isLogged = false;
                 service.user = null;
                 service.userId = null;
-                $rootScope.$broadcast("LOGOUT");
+                EventsService.publish(EventsService.AUTH_LOGOUT);
 
                 localStorageService.set("authService", null);
 
@@ -74,43 +73,43 @@
         function authOp(url, data) {
             return $q(function (resolve, reject) {
                 $http.post(url, data)
-                        .then(function (result) {
-                            service.userId = result.data.id;
-                            service.username = result.data.username;
-                            return UsersService.one(result.data.id).get({populate: ['admininstratedGroups']});
-                        })
-                        .then(function (user) {
-                            service.user = user;
-                            _.defaults(service.user, Scientilla.user);
-                            _.forEach(service.user.admininstratedGroups, function (g) {
-                                _.defaults(g, Scientilla.group);
-                            });
-                            user.admininstratedGroups = Restangular.restangularizeCollection(null, user.admininstratedGroups, 'groups');
-                            return $http.get('/users/jwt');
-                        })
-                        .then(function (result) {
-
-                            //sTODO: move to the proper place
-                            service.isLogged = true;
-                            service.jwtToken = result.data.token;
-                            Restangular.setDefaultHeaders({access_token: service.jwtToken});
-                            $http.defaults.headers.common.access_token = service.jwtToken;
-
-
-                            localStorageService.set("authService", {
-                                isLogged: service.isLogged,
-                                userId: service.userId,
-                                username: service.username,
-                                user: service.user,
-                                jwtToken: service.jwtToken
-                            });
-
-                            $rootScope.$broadcast("LOGIN");
-                            resolve();
-                        })
-                        .catch(function (result) {
-                            reject();
+                    .then(function (result) {
+                        service.userId = result.data.id;
+                        service.username = result.data.username;
+                        return UsersService.one(result.data.id).get({populate: ['admininstratedGroups']});
+                    })
+                    .then(function (user) {
+                        service.user = user;
+                        _.defaults(service.user, Scientilla.user);
+                        _.forEach(service.user.admininstratedGroups, function (g) {
+                            _.defaults(g, Scientilla.group);
                         });
+                        user.admininstratedGroups = Restangular.restangularizeCollection(null, user.admininstratedGroups, 'groups');
+                        return $http.get('/users/jwt');
+                    })
+                    .then(function (result) {
+
+                        //sTODO: move to the proper place
+                        service.isLogged = true;
+                        service.jwtToken = result.data.token;
+                        Restangular.setDefaultHeaders({access_token: service.jwtToken});
+                        $http.defaults.headers.common.access_token = service.jwtToken;
+
+
+                        localStorageService.set("authService", {
+                            isLogged: service.isLogged,
+                            userId: service.userId,
+                            username: service.username,
+                            user: service.user,
+                            jwtToken: service.jwtToken
+                        });
+
+                        EventsService.publish(EventsService.AUTH_LOGIN);
+                        resolve();
+                    })
+                    .catch(function (result) {
+                        reject();
+                    });
 
             });
         }

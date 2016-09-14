@@ -15,10 +15,10 @@
     ScientillaNotificationsListController.$inject = [
         'DocumentsServiceFactory',
         'researchEntityService',
-        '$rootScope'
+        'EventsService'
     ];
 
-    function ScientillaNotificationsListController(DocumentsServiceFactory, researchEntityService, $rootScope) {
+    function ScientillaNotificationsListController(DocumentsServiceFactory, researchEntityService, EventsService) {
         var vm = this;
         
         var DocumentsService = DocumentsServiceFactory.create(vm.researchEntity);
@@ -43,13 +43,17 @@
                 matchRule: 'is null'
             }
         };
-        
-        activate();
-        
-        function activate() {
-            $rootScope.$on('notification.accepted', reload);
-            $rootScope.$on('notification.discarded', reload);
-        }
+
+        vm.$onInit = function () {
+            EventsService.subscribeAll(vm, [
+                EventsService.NOTIFICATION_ACCEPTED,
+                EventsService.NOTIFICATION_DISCARDED
+            ], reload);
+        };
+
+        vm.$onDestroy = function () {
+            EventsService.unsubscribeAll(vm);
+        };
 
         function getData(q) {
             query = q;

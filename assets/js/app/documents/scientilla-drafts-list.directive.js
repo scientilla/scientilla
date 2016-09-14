@@ -4,7 +4,7 @@
     'use strict';
 
     angular.module('references')
-            .directive('scientillaDraftsList', scientillaDraftsList);
+        .directive('scientillaDraftsList', scientillaDraftsList);
 
     function scientillaDraftsList() {
         return {
@@ -21,38 +21,42 @@
 
     scientillaDrafsListController.$inject = [
         'DocumentsServiceFactory',
-        '$rootScope',
         'researchEntityService',
-        'documentSearchForm'
+        'documentSearchForm',
+        'EventsService'
     ];
 
-    function scientillaDrafsListController(DocumentsServiceFactory, $rootScope, researchEntityService, documentSearchForm) {
+    function scientillaDrafsListController(DocumentsServiceFactory, researchEntityService, documentSearchForm, EventsService) {
         var vm = this;
-        
+
         var DocumentsService = DocumentsServiceFactory.create(vm.researchEntity);
 
         vm.getData = getDrafts;
         vm.onFilter = refreshList;
-        
+
         vm.deleteDraft = DocumentsService.deleteDraft;
         vm.verifyDraft = DocumentsService.verifyDraft;
         vm.openEditPopup = DocumentsService.openEditPopup;
         vm.deleteDrafts = DocumentsService.deleteDrafts;
         vm.verifyDrafts = DocumentsService.verifyDrafts;
-        
+
         vm.searchForm = documentSearchForm;
 
         var query = {};
 
-        activate();
+        vm.$onInit = function () {
+            EventsService.subscribeAll(vm, [
+                EventsService.DRAFT_DELETED,
+                EventsService.DRAFT_UPDATED,
+                EventsService.DRAFT_CREATED,
+                EventsService.DRAFT_VERIFIED,
+                EventsService.DRAFT_UNVERIFIED
+            ], updateList);
+        };
 
-        function activate() {
-            $rootScope.$on("draft.deleted", updateList);
-            $rootScope.$on("draft.updated", updateList);
-            $rootScope.$on("draft.created", updateList);
-            $rootScope.$on("draft.verified", updateList);
-            $rootScope.$on('draft.unverified', updateList);
-        }
+        vm.$onDestroy = function () {
+            EventsService.unsubscribeAll(vm);
+        };
 
         function getDrafts(q) {
             query = q;

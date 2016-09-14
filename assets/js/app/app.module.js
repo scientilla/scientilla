@@ -7,6 +7,7 @@
         'ui.bootstrap',
         'ui-notification',
         'LocalStorageModule',
+        'services',
 
         /* Feature areas */
         'users',
