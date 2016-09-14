@@ -257,6 +257,10 @@ module.exports = {
                             },
                             json: true
                         })
+                        .catch(function () {
+                            sails.log.debug('Scopus request failed. Scopus Id = ' + scopusId);
+                            return {};
+                        })
                         .then(function (res) {
 
                             var d2 = _.get(res, 'abstracts-retrieval-response', {});
