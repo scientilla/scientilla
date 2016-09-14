@@ -262,7 +262,6 @@ module.exports = {
                             return {};
                         })
                         .then(function (res) {
-
                             var d2 = _.get(res, 'abstracts-retrieval-response', {});
 
                             var sourceTypeMappings = {
@@ -281,7 +280,8 @@ module.exports = {
                                 year: _.get(d2, 'item.bibrecord.head.source.publicationdate.year'),
                                 doi: _.get(d2, 'coredata.prism:doi'),
                                 sourceType: sourceType,
-                                scopusId: scopusId
+                                scopusId: scopusId,
+                                abstract: _.trim(_.get(d2, 'coredata.dc:description'))
                             };
 
                             switch (newDoc.sourceType) {
