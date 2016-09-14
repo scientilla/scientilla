@@ -314,7 +314,8 @@ module.exports = {
                                 ip: 'article_in_press',
                                 ed: 'editorial',
                                 ar: 'article',
-                                cp: 'conference_paper'
+                                cp: 'conference_paper',
+                                no: 'note'
                             };
 
                             newDoc.type = typeMappings[d1['subtype']];
