@@ -1,20 +1,13 @@
-/**
- * Connector.js
- *
- * @description :: TODO: You might write a short summary of how this model works and what it represents here.
- * @docs        :: http://sailsjs.org/#!documentation/models
- */
+/* global sails */
 
 var request = require('request-promise');
 var _ = require('lodash');
-var XML = require('pixl-xml');
 var Promise = require("bluebird");
 
 module.exports = {
     attributes: {
     },
     getReferences: function (ResearchEntity, researchEntityId, query) {
-
         var self = this;
         var connector = query.where.connector;
         if (!connector)
@@ -192,7 +185,6 @@ module.exports = {
         };
     },
     getScopusConfig: function (researchEntity, configQuery) {
-
         var researchEntityType = researchEntity.getType();
         var uri = 'https://api.elsevier.com/content/search/scopus';
         var query = '';
@@ -230,30 +222,44 @@ module.exports = {
             },
             transform: function (d1) {
                 function getConferenceLocation(d) {
-                    var venuePath = 'xocs:item.item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.conflocation.venue';
-                    var cityPath = 'xocs:item.item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.conflocation.city';
+                    var venuePath = 'item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.conflocation.venue';
+                    var cityPath = 'item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.conflocation.city';
                     var venue = _.get(d, venuePath);
                     var city = _.get(d, cityPath);
                     var conferenceLocationArray = _.compact([venue, city]);
                     var conferenceLocation = conferenceLocationArray.join(', ');
                     return conferenceLocation;
                 }
+                function getConferenceAcronym(d) {
+                    var confinfo = _.get(d, 'item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.confname');
+                    var confAcronym = confinfo.split(', ')[1];
+                    return confAcronym;
+                }
+                function getScopusId(d) {
+                    var identifier = d1['dc:identifier'];
+                    if (_.startsWith(identifier, 'SCOPUS_ID:')) {
+                        return _.replace(identifier, 'SCOPUS_ID:', '');
+                    }
+                    var eid = d['eid'];
+                    if (_.startsWith(eid, '2-s2.0-')) {
+                        return _.trimStart(eid, '2-s2.0-');
+                    }
+                    return null;
+                }
+                var scopusId = getScopusId(d1);
                 return request
                         .get({
-                            uri: 'http://msapi.scivalanalytics.com/REST',
-                            qs: {
-                                'clientKey': '8fa985e47a9d6f1bd3bbb75427442f6b',
-                                'retrieve': _.get(d1, 'eid')
-                            }
+                            uri: 'https://api.elsevier.com/content/abstract/scopus_id/' + scopusId,
+                            headers: {
+                                'X-ELS-APIKey': 'c3afacc73d9bbfb5c50c58a4a58e07cc',
+                                'X-ELS-Insttoken': 'ed64a720836a40cee4e3bf99ee066c67',
+                                Accept: 'application/json'
+                            },
+                            json: true
                         })
-                        .then(function (resXML) {
-                            var d2;
+                        .then(function (res) {
 
-                            try {
-                                d2 = XML.parse(resXML);
-                            } catch (e) {
-                                d2 = undefined;
-                            }
+                            var d2 = _.get(res, 'abstracts-retrieval-response', {});
 
                             var sourceTypeMappings = {
                                 'Journal': 'journal',
@@ -261,19 +267,18 @@ module.exports = {
                                 'Book Series': 'book'
                             };
                             var sourceType = sourceTypeMappings[d1['prism:aggregationType']];
-
                             var newDoc = {
                                 title: _.get(d1, 'dc:title'),
                                 authors: _.map(
-                                        _.get(d2, 'xocs:meta.cto:unique-author'),
+                                        _.get(d2, 'authors.author'),
                                         function (c) {
-                                            return _.get(c, 'cto:auth-indexed-name');
+                                            return _.get(c, 'ce:indexed-name');
                                         }).join(', '),
-                                year: _.get(d2, 'xocs:meta.xocs:pub-year'),
-                                doi: _.get(d2, 'xocs:meta.xocs:doi'),
-                                sourceType: sourceType
+                                year: _.get(d2, 'item.bibrecord.head.source.publicationdate.year'),
+                                doi: _.get(d2, 'coredata.prism:doi'),
+                                sourceType: sourceType,
+                                scopusId: scopusId
                             };
-
 
                             switch (newDoc.sourceType) {
                                 case 'journal':
@@ -281,18 +286,22 @@ module.exports = {
                                     newDoc.volume = d1['prism:volume'];
                                     newDoc.issue = d1['prism:issueIdentifier'];
                                     newDoc.pages = d1['prism:pageRange'];
-                                    newDoc.articleNumber = null;
+                                    newDoc.articleNumber = _.get(d2, 'item.bibrecord.head.source.article-number');
                                     break;
                                 case 'book':
                                     newDoc.pages = d1['prism:pageRange'];
                                     newDoc.bookTitle = d1['prism:publicationName'];
                                     newDoc.editor = null;
-                                    newDoc.publisher = _.get(d2, 'xocs:item.item.bibrecord.head.source.publisher.publishername');
+                                    newDoc.publisher = _.get(d2, 'item.bibrecord.head.source.publisher.publishername');
                                     break;
                                 case 'conference':
                                     newDoc.conferenceName = d1['prism:publicationName'];
                                     newDoc.conferenceLocation = getConferenceLocation(d2);
-                                    newDoc.acronym = null;
+                                    newDoc.acronym = getConferenceAcronym(d2);
+                                    newDoc.volume = d1['prism:volume'];
+                                    newDoc.issue = d1['prism:issueIdentifier'];
+                                    newDoc.pages = d1['prism:pageRange'];
+                                    newDoc.articleNumber = _.get(d2, 'item.bibrecord.head.source.article-number');
                                     break;
                             }
 
