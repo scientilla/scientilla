@@ -135,10 +135,19 @@ module.exports = {
                 return documentsSubset;
             },
             transform: function (d) {
-                function  getAttributeFromCitation(d, attribute) {
+                function getAttributeFromCitation(d, attribute) {
                     var citationData = _.get(d, 'work-citation.citation', '');
                     var regex = new RegExp(attribute + '\\s=\\s{(.*?)}');
                     return _.get(citationData.match(regex), '[1]');
+                }
+                function getEternalId(d, attributeName) {
+                    return _.get(
+                            _.get(d, 'work-external-identifiers.work-external-identifier')
+                            .find(function (wei) {
+                                return wei['work-external-identifier-type'] === attributeName;
+                            }),
+                            'work-external-identifier-id.value'
+                            );
                 }
                 var sourceTypeMappings = {
                     JOURNAL_ARTICLE: 'journal',
@@ -153,13 +162,8 @@ module.exports = {
                         return authorStr.replace(/,/g, '');
                     }).join(', '),
                     year: _.get(d, 'publication-date.year.value'),
-                    doi: _.get(
-                            _.get(d, 'work-external-identifiers.work-external-identifier')
-                            .find(function (wei) {
-                                return wei['work-external-identifier-type'] === 'DOI';
-                            }),
-                            'work-external-identifier-id.value'
-                            ),
+                    doi: getEternalId(d, 'DOI'),
+                    scopusId: _.trimStart(getEternalId(d, 'EID'), '2-s2.0-'),
                     sourceType: sourceType
                 };
                 switch (newDoc.sourceType) {
