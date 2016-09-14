@@ -130,7 +130,8 @@ module.exports = {
             fieldExtract: function (res) {
                 /* To be fixed */
                 var allDocuments = _.get(res, 'orcid-profile.orcid-activities.orcid-works.orcid-work');
-                var documentsSubset = _.slice(allDocuments, configQuery.skip, configQuery.skip + configQuery.limit);
+                var sortedDocuments = _.orderBy(allDocuments, ['publication-date.year.value'], ['desc']);
+                var documentsSubset = _.slice(sortedDocuments, configQuery.skip, configQuery.skip + configQuery.limit);
                 return documentsSubset;
             },
             transform: function (d) {
