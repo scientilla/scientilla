@@ -82,18 +82,20 @@ module.exports = {
                     return Reference.findOneById(draftId);
                 });
     },
-    unverifyDocument: function (ResearchEntityModel, researchEntityId, referenceId) {
+    unverifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
         return ResearchEntityModel
                 .findOneById(researchEntityId)
                 .populate('privateReferences')
                 .populate('publicReferences')
                 .then(function (researchEntity) {
-                    researchEntity.privateReferences.remove(referenceId);
-                    researchEntity.publicReferences.remove(referenceId);
+                    if (!_.some(researchEntity.privateReferences, {id: parseInt(documentId)}))
+                        throw new Error('Document ' + documentId + ' does not exist');
+                    researchEntity.privateReferences.remove(documentId);
+                    researchEntity.publicReferences.remove(documentId);
                     return researchEntity.savePromise();
                 })
                 .then(function () {
-                    return Reference.deleteIfNotVerified(referenceId);
+                    return Reference.deleteIfNotVerified(documentId);
                 });
     },
     verifyDocument: function (ResearchEntity, researchEntityId, referenceId) {
