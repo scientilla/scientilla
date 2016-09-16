@@ -6,10 +6,10 @@
         <br>
         <scientilla-button size="small" ng-click="vm.search()">{{vm.filterLabel}}</scientilla-button>
         <scientilla-button size="small" ng-click="vm.reset()">Reset</scientilla-button>
-        <scientilla-button size="small" type="link" ng-click="vm.toggleAdvanced()">{{vm.advancedText}}</scientilla-button>
-        <div class="scientilla-filter-config form-inline advanced-open-{{vm.advancedOpen}}">
+        <!-- <scientilla-button size="small" type="link" ng-click="vm.toggleAdvanced()">{{vm.advancedText}}</scientilla-button> -->
+        <div class="scientilla-filter-config form-inline">
             <label>Items per page: </label>
-            <select class="form-control" ng-model="vm.itemsPerPage" ng-options="s *   1 as s for s in vm.pageSizes"></select>
+            <select class="form-control" ng-model="vm.itemsPerPage" ng-change="vm.search()" ng-options="s * 1 as s for s in vm.pageSizes"></select>
         </div>
     </form>
 </div>
@@ -25,19 +25,19 @@
     <div ng-if="vm.onStatus(vm.STATUS_WAITING)">
         <h3 ng-if="vm.elements.length === 0">{{vm.emptyListMessage}}</h3>
         <div ng-if="vm.elements.length > 0">
-            <uib-pager
+            <ul uib-pager
                 total-items="vm.totalItems"
                 items-per-page="vm.itemsPerPage"
                 ng-model="vm.currentPage"
                 ng-change="vm.onPageChange()">
-            </uib-pager>
+            </ul>
             <div ng-transclude></div>
-            <uib-pager
+            <ul uib-pager
                 total-items="vm.totalItems"
                 items-per-page="vm.itemsPerPage"
                 ng-model="vm.currentPage"
                 ng-change="vm.onPageChange()">
-            </uib-pager>
+            </ul>
         </div>
 
     </div>

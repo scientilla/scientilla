@@ -30,7 +30,7 @@
         vm.onStatus = onStatus;
         vm.search = search;
         vm.reset = reset;
-        vm.pageSizes = [10, 20, 50, 100, 500];
+        vm.pageSizes = [10, 20, 50, 100, 200];
         vm.currentPage = 1;
         vm.totalItems = 0;
 
