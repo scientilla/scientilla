@@ -2,7 +2,6 @@
     angular.module('app.core', [
         
         /* Angular modules */
-        'ngResource',
         "ngRoute",
         'ngSanitize',
         
