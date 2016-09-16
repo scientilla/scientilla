@@ -87,6 +87,7 @@ module.exports = {
             via: 'suggestedReferences'
         },
         isValid: function () {
+            var self = this;
             var requiredFields = [
                 'authors',
                 'title',
@@ -99,7 +100,7 @@ module.exports = {
                     'conferenceName'
                 ],
                 book: [
-                    'bookTitle',
+                    'bookTitle'
                 ],
                 journal: [
                     'journal'
@@ -107,9 +108,8 @@ module.exports = {
             };
             var otherRequiredFields = requiredFieldsTable[this.sourceType];
             requiredFields = _.union(requiredFields, otherRequiredFields);
-            var requiredValues = _.pick(this, requiredFields);
-            return _.every(requiredValues, function (v) {
-                return v;
+            return _.every(requiredFields, function (v) {
+                return self[v];
             });
         },
         getAuthors: function () {
