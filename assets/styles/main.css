@@ -253,6 +253,10 @@ scientilla-menu md-sidenav md-toolbar.active {
     margin-bottom: 10px;
 }
 
+
+/******************************************************************************/
+/*Scientilla filter*/
+/******************************************************************************/
 .scientilla-filter-form > form > * > div.form-group {
     display: inline-block;
 }
@@ -264,6 +268,7 @@ scientilla-menu md-sidenav md-toolbar.active {
 .scientilla-filter-form > form > select-field > div.form-group {
     min-width: 80px;
 }
+/******************************************************************************/
 
 .tooltip.scientilla-tooltip .tooltip-inner {
     color: #ffffff;

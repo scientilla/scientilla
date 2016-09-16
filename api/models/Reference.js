@@ -87,6 +87,7 @@ module.exports = {
             via: 'suggestedReferences'
         },
         isValid: function () {
+            var self = this;
             var requiredFields = [
                 'authors',
                 'title',
@@ -99,7 +100,7 @@ module.exports = {
                     'conferenceName'
                 ],
                 book: [
-                    'bookTitle',
+                    'bookTitle'
                 ],
                 journal: [
                     'journal'
@@ -107,9 +108,8 @@ module.exports = {
             };
             var otherRequiredFields = requiredFieldsTable[this.sourceType];
             requiredFields = _.union(requiredFields, otherRequiredFields);
-            var requiredValues = _.pick(this, requiredFields);
-            return _.every(requiredValues, function (v) {
-                return v;
+            return _.every(requiredFields, function (v) {
+                return self[v];
             });
         },
         getAuthors: function () {
@@ -187,9 +187,8 @@ module.exports = {
                 .populate('privateGroups')
                 .populate('publicGroups')
                 .then(function (document) {
-                    if(!document)
-                        return null;
-
+                    if (!document)
+                        throw new Error('Document ' + documentId + ' does not exist');
                     if (countAuthorsAndGroups(document) === 0) {
                         sails.log.debug('Document ' + documentId + ' will be deleted');
                         return Reference.destroy({id: documentId});
@@ -262,6 +261,9 @@ module.exports = {
         //sTODO: 2 equals documents should be merged
         return Reference.findOneById(draftId)
                 .then(function (draft) {
+                    if (!draft || !draft.draft) {
+                        throw new Error('Draft ' + draftId + ' does not exist');
+                    }
                     if (!draft.isValid()) {
                         return draft;
                     }
@@ -283,7 +285,7 @@ module.exports = {
                                             return ResearchEntityModel
                                                     .verifyDocument(ResearchEntityModel, researchEntityId, doc.id);
                                         });
-                            })
+                            });
                 });
     },
     deleteDrafts: function (draftIds) {

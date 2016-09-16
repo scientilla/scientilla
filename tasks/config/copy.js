@@ -34,7 +34,6 @@ module.exports = function (grunt) {
                         'angular-form-for/dist/form-for.min.js',
                         'angular-form-for/dist/form-for.bootstrap-templates.js',
                         'angular-local-storage/dist/angular-local-storage.min.js',
-                        'angular-resource/angular-resource.min.js',
                         'angular-route/angular-route.min.js',
                         'angular-sanitize/angular-sanitize.min.js',
                         'angular-ui-notification/dist/angular-ui-notification.min.js',
