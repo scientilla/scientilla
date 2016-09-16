@@ -261,6 +261,9 @@ module.exports = {
         //sTODO: 2 equals documents should be merged
         return Reference.findOneById(draftId)
                 .then(function (draft) {
+                    if (!draft || !draft.draft) {
+                        throw new Error('Draft ' + draftId + ' does not exist');
+                    }
                     if (!draft.isValid()) {
                         return draft;
                     }
@@ -282,7 +285,7 @@ module.exports = {
                                             return ResearchEntityModel
                                                     .verifyDocument(ResearchEntityModel, researchEntityId, doc.id);
                                         });
-                            })
+                            });
                 });
     },
     deleteDrafts: function (draftIds) {
