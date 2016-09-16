@@ -17,13 +17,20 @@
         };
     }
 
-    function scientillaDocumentController() {
+    function scientillaDocumentController(ModalService) {
         var vm = this;
+        vm.openDetails = openDetails;
         
         activate();
         
         function activate() {
             
+        }
+
+        function openDetails() {
+            console.log(vm.document);
+            ModalService
+                .openScientillaDocumentDetails(vm.document);
         }
         
     }

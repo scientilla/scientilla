@@ -2,11 +2,18 @@
     width: 100%;
 }
 
-
-
 /*****************************************/
 
-.scientilla-toolbar{
+.scientilla-clickable {
+    cursor: pointer;
+}
+
+.scientilla-clickable:hover {
+
+    text-decoration: underline;
+}
+
+.scientilla-toolbar {
     height: 50px;
     color: #337ab7;
 
@@ -18,7 +25,7 @@
 
 .scientilla-toolbar a,
 .scientilla-toolbar a:visited,
-.scientilla-toolbar a:hover{
+.scientilla-toolbar a:hover {
     color: rgb(51, 122, 183);
     text-decoration: none;
     margin-right: 20px;
@@ -26,24 +33,24 @@
     font-size: 1.5em;
 }
 
-.scientilla-login-form{
-    width: 40%;
-    margin: 0 15%;
-}
-.scientilla-register-form{
+.scientilla-login-form {
     width: 40%;
     margin: 0 15%;
 }
 
-.scientilla-document{
+.scientilla-register-form {
+    width: 40%;
+    margin: 0 15%;
+}
+
+.scientilla-document {
     margin-left: 20px;
     padding-left: 10px;
 
     border-left: 3px solid #337ab7;
 }
 
-
-.scientilla-document-year{
+.scientilla-document-year {
     position: absolute;
     top: 10px;
     left: 0px;
@@ -59,23 +66,28 @@
     -o-transform-origin: 50% 50%;
     transform-origin: 50% 50%;
 }
-.scientilla-document-title{
+
+.scientilla-document-title {
     font-size: 20px;
     margin-top: 5px;
 }
-.scientilla-document-discarded{
+
+.scientilla-document-discarded {
     margin-right: 5px;
 }
-.scientilla-document-source{
+
+.scientilla-document-source {
     font-style: italic;
 }
-.scientilla-document-authors{
+
+.scientilla-document-authors {
     font-weight: bold;
 }
-.scientilla-document-doi{
+
+.scientilla-document-doi {
 }
 
-.scientilla-right-menu{
+.scientilla-right-menu {
     font-size: 1.2em;
 }
 
@@ -83,26 +95,26 @@
     padding: 0 !important;
 }
 
-.scrollable{
+.scrollable {
     overflow-y: auto;
 }
 
-.scientilla-multiselect-list{
+.scientilla-multiselect-list {
     max-height: 100px;
-    overflow-y: scroll; 
+    overflow-y: scroll;
 }
 
 /*bootstrap*/
-.btn-primary{
+.btn-primary {
     background-color: #337ab7;
 }
 
 .divider,
-.divider:hover{
+.divider:hover {
     background-color: inherit !important;
 }
 
-.tab-content{
+.tab-content {
     /*height: 820px;*/
     /*overflow-y: scroll;*/
 
@@ -113,21 +125,22 @@
     padding: 15px;
 }
 
-.modal-content{
+.modal-content {
     padding: 15px;
 }
 
-.scientilla-dropdown-align-right{}
+.scientilla-dropdown-align-right {
+}
+
 .scientilla-dropdown-align-right > .dropdown-menu {
 
     right: 0;
     left: auto;
 }
 
-.scientilla-filter-results{
+.scientilla-filter-results {
     min-height: 20px;
 }
-
 
 /*****************************************/
 
@@ -160,16 +173,20 @@ form[form-for] a.md-button {
 form.autosave {
     padding-left: 5px;
 }
+
 form.autosave.unsaved {
     border-left: 2px red solid;
 }
+
 form.autosave.saved {
     border-left: 2px green solid;
 }
+
 form.autosave.default {
     border-left: 2px white solid;
 }
-.scientilla-document-form-message{
+
+.scientilla-document-form-message {
     font-size: 24px;
 }
 
@@ -178,7 +195,7 @@ md-list-item {
 }
 
 md-tabs.notifications .md-tab.md-active {
-    color: rgb(63,81,181);
+    color: rgb(63, 81, 181);
 }
 
 /*
@@ -219,7 +236,7 @@ scientilla-menu .md-button {
 }
 
 scientilla-menu md-divider {
-    border-top-color: rgba(0,0,0,0.40);
+    border-top-color: rgba(0, 0, 0, 0.40);
 }
 
 scientilla-menu md-sidenav.md-locked-open {
@@ -228,7 +245,7 @@ scientilla-menu md-sidenav.md-locked-open {
 }
 
 scientilla-menu md-sidenav md-toolbar.active {
-    background-color: rgb(53,91,191);
+    background-color: rgb(53, 91, 191);
 }
 
 .documents-header > div > * {
@@ -248,21 +265,24 @@ scientilla-menu md-sidenav md-toolbar.active {
     min-width: 80px;
 }
 
-
 .tooltip.scientilla-tooltip .tooltip-inner {
     color: #ffffff;
     background-color: #4e4e4e;
 }
+
 .tooltip.scientilla-tooltip.top .tooltip-arrow {
     border-top-color: #4e4e4e;
 }
-.tooltip.right.scientilla-tooltip .tooltip-arrow{
+
+.tooltip.right.scientilla-tooltip .tooltip-arrow {
     border-right-color: #4e4e4e;
 }
-.tooltip.left.scientilla-tooltip .tooltip-arrow{
+
+.tooltip.left.scientilla-tooltip .tooltip-arrow {
     border-left-color: #4e4e4e;
 }
-.tooltip.scientilla-tooltip.bottom .tooltip-arrow{
+
+.tooltip.scientilla-tooltip.bottom .tooltip-arrow {
     border-bottom-color: #4e4e4e;
 }
 
@@ -279,12 +299,9 @@ scientilla-external-documents .row {
     margin-right: 5px;
 }
 
-
-
-
 /******************************************************************************/
 /*Bootstrap dropdown fix*/
-.dropdown-menu li>a {
+.dropdown-menu li > a {
     display: block;
     padding: 3px 20px;
     clear: both;
@@ -294,13 +311,13 @@ scientilla-external-documents .row {
     white-space: nowrap
 }
 
-.dropdown-menu li>a:focus,.dropdown-menu li>a:hover {
+.dropdown-menu li > a:focus, .dropdown-menu li > a:hover {
     color: #262626;
     text-decoration: none;
     background-color: #f5f5f5
 }
-/*Bootstrap dropdown fix*/
 
+/*Bootstrap dropdown fix*/
 
 /******************************************************************************/
 /*Scientilla document labels*/
@@ -326,8 +343,8 @@ scientilla-document-label {
 scientilla-button > button.btn-cancel {
     background-color: #f4f4f4;
 }
-/******************************************************************************/
 
+/******************************************************************************/
 
 /*Fix for form-for default button*/
 [form-for] submit-button[label="Submit"] {
@@ -340,7 +357,7 @@ scientilla-button > button.btn-cancel {
 
 .advanced-open-false.scientilla-filter-config {
     visibility: hidden;
-} 
+}
 
 .btn.btn-link:focus {
     outline: none;

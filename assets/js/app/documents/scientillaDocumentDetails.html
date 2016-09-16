@@ -1,0 +1,74 @@
+<div class="scientilla-document-details-title">
+    <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
+</div>
+<div  class="scientilla-document-details-authors">
+    <small class="scientilla-document-authors">
+        <span ng-bind-html='vm.document | linkableauthors'></span>
+    </small>
+</div>
+
+<div ng-if="vm.document.abstract"  class="scientilla-document-details-abstract">
+    <hr>
+    <h4>Abstract</h4>
+    {{vm.document.abstract}}
+</div>
+
+<div class="scientilla-document-details-source">
+    <hr>
+    <div>
+        <small class="scientilla-document-source">
+            <span ng-if="vm.document.sourceType === 'journal' ">{{vm.document.journal}}</span>
+            <span ng-if="vm.document.sourceType === 'conference' ">{{vm.document.acronym}} {{vm.document.conferenceName}} {{vm.document.conferenceLocation}}</span>
+            <span ng-if="vm.document.sourceType === 'book' ">{{vm.document.bookTitle}}</span>
+        </small>
+    </div>
+
+    <small ng-if="vm.document.issue">
+        issue {{vm.document.issue}},
+    </small>
+
+    <small ng-if="vm.document.year">
+        year {{vm.document.year}},
+    </small>
+
+    <small ng-if="vm.document.editor">
+        editor {{vm.document.editor}},
+    </small>
+
+    <small ng-if="vm.document.publisher">
+        editor {{vm.document.publisher}},
+    </small>
+
+    <small ng-if="vm.document.articleNumber">
+        article number {{vm.document.articleNumber}},
+    </small>
+
+    <small ng-if="vm.document.volume">
+        volume {{vm.document.volume}},
+    </small>
+
+    <small ng-if="vm.document.pages">
+        {{vm.document.pages}} pages,
+    </small>
+
+    <small ng-if="vm.document.type">
+        type {{vm.document.type}}
+    </small>
+</div>
+
+<hr>
+
+<div class="scientilla-document-details-ids">
+    <small ng-if="vm.document.doi" class="scientilla-document-doi">
+        <span ng-bind-html='vm.document | doi'></span>
+    </small>
+    <small ng-if="vm.document.scopusId">
+        <label>scopus id:</label> {{vm.document.scopusId}}
+    </small>
+    <small ng-if="vm.document.wosId">
+        <label>WOS id:</label> {{vm.document.wosId}}
+    </small>
+    <small ng-if="vm.document.sourceType">
+        <label>Source type:</label> {{vm.document.sourceType}}
+    </small>
+</div>

@@ -7,13 +7,13 @@
     </div>
     <div>
         <scientilla-document-label ng-repeat="t in vm.document.tags" tag="t"></scientilla-document-label>
-        <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
+        <span class="scientilla-document-title scientilla-clickable" ng-click="vm.openDetails()" ng-bind-html='vm.document | title'></span>
     </div>
     <div>
         <small class="scientilla-document-source">
-            <span  ng-if="vm.document.sourceType === 'journal' ">{{vm.document.journal}}</span>
-            <span  ng-if="vm.document.sourceType === 'conference' ">{{vm.document.conferenceName}}</span>
-            <span  ng-if="vm.document.sourceType === 'book' ">{{vm.document.bookTitle}}</span>
+            <span ng-if="vm.document.sourceType === 'journal' ">{{vm.document.journal}}</span>
+            <span ng-if="vm.document.sourceType === 'conference' ">{{vm.document.acronym}} {{vm.document.conferenceName}} {{vm.document.conferenceLocation}}</span>
+            <span ng-if="vm.document.sourceType === 'book' ">{{vm.document.bookTitle}}</span>
         </small>
     </div>
     <div ng-if="vm.document.doi">

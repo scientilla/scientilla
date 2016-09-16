@@ -32,10 +32,26 @@
                         document="vm.document"\
                         research-entity="vm.researchEntity"\
                         on-failure="vm.onFailure"\
-                        on-submit="vm.onSubmit" >\
-                    </scientilla-document-form>',
+                        on-submit="vm.onSubmit" \
+                    ></scientilla-document-form>',
                     scopeVars
                     );
+
+            return service.modal.result;
+        };
+
+        service.openScientillaDocumentDetails = function (document){
+            var scopeVars = {
+                document: document
+            };
+
+            service.modal = openModal(
+                '<scientilla-document-details\
+                    document="vm.document"\
+                ></scientilla-document-details>',
+                scopeVars,
+                {size: 'lg'}
+            );
 
             return service.modal.result;
         };
@@ -51,11 +67,11 @@
                     '<scientilla-user-form\
                         user="vm.user"\
                         on-failure="vm.onFailure"\
-                        on-submit="vm.onSubmit" >\
-                    </scientilla-user-form>',
+                        on-submit="vm.onSubmit"\
+                    ></scientilla-user-form>',
                     scopeVars
                     );
-            
+
             return service.modal.result;
         };
 
@@ -70,14 +86,14 @@
                     '<scientilla-group-form\
                         group="vm.group"\
                         on-failure="vm.onFailure"\
-                        on-submit="vm.onSubmit" >\
-                    </scientilla-group-form>',
+                        on-submit="vm.onSubmit"\
+                     ></scientilla-group-form>',
                     scopeVars
                     );
 
             return service.modal.result;
         };
-        
+
         service.multipleChoiceConfirm = function(title, message, buttonLabels) {
             buttonLabels = buttonLabels || [];
             var ret = new Promise(function (resolve, reject) {
@@ -101,7 +117,7 @@
                                 <div ng-if="vm.message">{{vm.message}}</div>\
                             </div>\
                             <hr>' +
-                            scope.buttonLabels.map(function(b, i) { return '<scientilla-button ng-click="vm.ok('+i+')">'+b+'</scientilla-button>';}).join('') + 
+                            scope.buttonLabels.map(function(b, i) { return '<scientilla-button ng-click="vm.ok('+i+')">'+b+'</scientilla-button>';}).join('') +
                             '<scientilla-button ng-click="vm.cancel()" type="cancel">Cancel</scientilla-button>\
                         <div>',
                         scope);
@@ -122,7 +138,7 @@
         return service;
 
         // private
-        function openModal(template, scope) {
+        function openModal(template, scope, args) {
             var callbacks = getDefaultCallbacks();
 
             _.defaults(scope, callbacks);
@@ -131,12 +147,14 @@
                 _.assign(this, scope);
             };
 
-            return $uibModal.open({
-                animation: true,
-                template: template,
-                controller: controller,
-                controllerAs: 'vm'
-            });
+            return $uibModal.open(
+                _.defaults({
+                    animation: true,
+                    template: template,
+                    controller: controller,
+                    controllerAs: 'vm'
+                }, args)
+            );
         }
 
         function getDefaultCallbacks() {
