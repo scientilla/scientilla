@@ -14,8 +14,8 @@ describe('Draft creation', function () {
     var documentData = test.getDocuments()[0];
     var user;
 
-    it('there should be no drafts for a new user', function (done) {
-        request(url)
+    it('there should be no drafts for a new user', function () {
+        return request(url)
                 .get('/users')
                 .expect(200, [])
                 .then(function (res) {
@@ -32,12 +32,10 @@ describe('Draft creation', function () {
                     return request(url)
                             .get('/users/' + user.id + '/drafts')
                             .expect(200, []);
-                })
-                .then(_ => done())
-                .catch(done);
+                });
     });
 
-    it('creating draft should be possible', function (done) {
+    it('creating draft should be possible', function () {
         return request(url)
                 .post('/users/' + user.id + '/drafts')
                 .send(documentData)
@@ -53,9 +51,7 @@ describe('Draft creation', function () {
                                 draft.draft.should.be.true;
                                 draft.draftCreator.should.equal(user.id);
                             });
-                })
-                .then(_ => done())
-                .catch(done);
+                });
     });
 
 });

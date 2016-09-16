@@ -16,8 +16,8 @@ describe('Draft Verification', function () {
     var user;
     var draft;
 
-    it('there should be no verified documents for a new user', function (done) {
-        request(url)
+    it('there should be no verified documents for a new user', function () {
+        return request(url)
                 .get('/users')
                 .expect(200, [])
                 .then(function (res) {
@@ -34,12 +34,10 @@ describe('Draft Verification', function () {
                     return request(url)
                             .get('/users/' + user.id + '/privateReferences')
                             .expect(200, []);
-                })
-                .then(_ => done())
-                .catch(done);
+                });
     });
 
-    it('verifying a complete draft should be possible', function (done) {
+    it('verifying a complete draft should be possible', function () {
         return request(url)
                 .post('/users/' + user.id + '/drafts')
                 .send(documentData)
@@ -72,21 +70,17 @@ describe('Draft Verification', function () {
                                 document.privateCoauthors.should.have.length(1);
                                 document.privateCoauthors[0].username.should.equal(user.username);
                             });
-                })
-                .then(_ => done())
-                .catch(done);
+                });
     });
 
-    it('verifying a complete draft twice should give an error', function (done) {
-                    return request(url)
-                            .put('/users/' + user.id + '/drafts/' + draft.id + '/verified')
-                            .send(documentData)
-                            .expect(400)
-                .then(_ => done())
-                .catch(done);
+    it('verifying a complete draft twice should give an error', function () {
+        return request(url)
+                .put('/users/' + user.id + '/drafts/' + draft.id + '/verified')
+                .send(documentData)
+                .expect(400);
     });
-    
-    it('verifying a non complete draft should not be possible', function (done) {
+
+    it('verifying a non complete draft should not be possible', function () {
         return request(url)
                 .post('/users/' + user.id + '/drafts')
                 .send(incompleteDocumentData)
@@ -119,18 +113,14 @@ describe('Draft Verification', function () {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
                             });
-                })
-                .then(_ => done())
-                .catch(done);
+                });
     });
-    
-    it('verifying a nonexsting document should give an error', function (done) {
+
+    it('verifying a nonexsting document should give an error', function () {
         return request(url)
                 .put('/users/' + user.id + '/drafts/' + 10000 + '/verified')
                 .send(documentData)
-                .expect(400)
-                .then(_ => done())
-                .catch(done);
+                .expect(400);
     });
 
 });

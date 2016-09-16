@@ -12,8 +12,8 @@ describe('User registration', function () {
     var url = test.getUrl();
     var userData = test.getUsers()[0];
 
-    it('should be able to register new user when there is no users', function (done) {
-        request(url)
+    it('should be able to register new user when there is no users', function () {
+        return request(url)
                 .get('/users')
                 .expect(200, [])
                 .then(function (res) {
@@ -32,18 +32,14 @@ describe('User registration', function () {
                                 newUser.username.should.equal(userData.username);
                                 newUser.role.should.equal(User.ADMINISTRATOR);
                             });
-                })
-                .then(_ => done())
-                .catch(done);
+                });
     });
 
-    it('should not be able to register a user with an already used username', function (done) {
-        request(url)
+    it('should not be able to register a user with an already used username', function () {
+        return request(url)
                 .post('/auths/register')
                 .send(userData)
-                .expect(400)
-                .then(_ => done())
-                .catch(done);
+                .expect(400);
     });
 
 });
