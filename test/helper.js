@@ -1,14 +1,15 @@
+/* global User, Promise, Auth, Reference */
+
 module.exports = {
     cleanDb: function (done) {
-        async.map(
-                [User],
-                function (model, cb) {
-                    model.destroy(cb);
-                },
-                function (err, res) {
-                    return done(err);
-                    done();
+        var models = [Auth, User, Reference];
+        var destroyFns =
+                models.map(function (model) {
+                    return model.destroy();
                 });
+        Promise.all(destroyFns)
+                .then(_ => done())
+                .catch(done);
     },
     finalCheck: function (done) {
         return function (err) {
@@ -17,8 +18,18 @@ module.exports = {
             done();
         };
     },
-    getUrl: function(){
+    getUrl: function () {
         //sTODO: get real host.
         return 'http://localhost:1338';
+    },
+    getUsers: function () {
+        return users;
     }
 };
+
+var users = [{
+        username: 'federico.bozzini@gmail.com',
+        password: 'userpass',
+        name: 'Federico',
+        lastName: 'Bozzini'
+    }];

@@ -1,3 +1,5 @@
+/* global User */
+
 var should = require('should');
 var assert = require('assert');
 var request = require('supertest-as-promised');
@@ -8,12 +10,7 @@ describe('User registration', function () {
     after(test.cleanDb);
 
     var url = test.getUrl();
-    var profile = {
-        username: 'federico.bozzini@gmail.com',
-        password: 'userpass',
-        name: 'Federico',
-        lastName: 'Bozzini'
-    };
+    var userData = test.getUsers()[0];
 
     it('should be able to register new user when there is no users', function (done) {
         request(url)
@@ -22,7 +19,7 @@ describe('User registration', function () {
                 .then(function (res) {
                     return request(url)
                             .post('/auths/register')
-                            .send(profile)
+                            .send(userData)
                             .expect(200);
                 })
                 .then(function (res) {
@@ -32,21 +29,21 @@ describe('User registration', function () {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
                                 var newUser = res.body[0];
-                                newUser.username.should.equal('federico.bozzini@gmail.com');
+                                newUser.username.should.equal(userData.username);
                                 newUser.role.should.equal(User.ADMINISTRATOR);
                             });
                 })
-                .then(res => done())
-                .catch(err => done(err));
+                .then(_ => done())
+                .catch(done);
     });
 
     it('should not be able to register a user with an already used username', function (done) {
         request(url)
                 .post('/auths/register')
-                .send(profile)
+                .send(userData)
                 .expect(400)
-                .then(res => done())
-                .catch(err => done(err));
+                .then(_ => done())
+                .catch(done);
     });
 
 });
