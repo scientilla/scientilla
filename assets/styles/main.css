@@ -6,10 +6,10 @@
 
 .scientilla-clickable {
     cursor: pointer;
+    color: #337ab7;
 }
 
 .scientilla-clickable:hover {
-
     text-decoration: underline;
 }
 
