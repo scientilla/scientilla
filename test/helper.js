@@ -11,6 +11,9 @@ module.exports = {
                 .then(_ => done())
                 .catch(done);
     },
+    createModel: function(Model, data) {
+        return _.defaults(data, Model.attributes);
+    },
     finalCheck: function (done) {
         return function (err) {
             if (err)
