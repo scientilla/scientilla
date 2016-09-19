@@ -14,7 +14,7 @@ module.exports = {
                 .then(_ => done())
                 .catch(done);
     },
-    createModel: function(Model, data) {
+    createModel: function (Model, data) {
         return _.defaults(data, Model.attributes);
     },
     finalCheck: function (done) {
@@ -37,15 +37,20 @@ module.exports = {
 };
 
 var users = [{
-        username: 'federico.bozzini@gmail.com',
+        username: 'federico.bozzini@example.com',
         password: 'userpass',
         name: 'Federico',
         lastName: 'Bozzini'
+    }, {
+        username: 'federico.semprini@example.com',
+        password: 'userpass',
+        name: 'Federico',
+        lastName: 'Semprini'
     }];
 
 var documents = [{
         title: "A Bayesian approach towards affordance learning in artificial agents",
-        authors: "Stramandinoli F., Tikhanoff V., Pattacini U., Nori F. and Bozzini F.",
+        authors: "Semprini F., Tikhanoff V., Pattacini U., Nori F. and Bozzini F.",
         year: "2015",
         journal: null,
         issue: null,
@@ -64,7 +69,7 @@ var documents = [{
         scopusId: "84962170621",
         wosId: null,
         abstract: "Inspired by recent advances proposed in the ecological psychology community, many developmental robotics studies have started to investigate the modeling and learning of affordances in humanoid robots. In this paper we leverage a probabilistic graphical model in place of the Least Square Support Vector Machine (LSSVM) used in a previous experiment, for testing the Bayesian approach towards affordance learning in the iCub robot. We present two experiments related to the learning of the effect consequent from the tapping of objects from several directions and to the pulling of out-of-reach objects by choosing the appropriate tool. The proposed probabilistic graphical model w.r.t the LSSVM not only identifies a regression function for the prediction of the effects of actions but it provides information on the reliability of the predicted values as well."
-    },{
+    }, {
         title: "A Bayesian approach towards affordance learning in artificial agents",
         authors: "Stramandinoli F., Tikhanoff V., Pattacini U., Nori F. and Bozzini F.",
         year: "2015",
