@@ -4,25 +4,16 @@ var should = require('should');
 var assert = require('assert');
 
 module.exports = {
-    cleanDb: function (done) {
+    cleanDb: function () {
         var models = [Auth, User, Reference];
         var destroyFns =
                 models.map(function (model) {
                     return model.destroy();
                 });
         Promise.all(destroyFns)
-                .then(_ => done())
-                .catch(done);
     },
     createModel: function (Model, data) {
         return _.defaults(data, Model.attributes);
-    },
-    finalCheck: function (done) {
-        return function (err) {
-            if (err)
-                return done(err);
-            done();
-        };
     },
     getUrl: function () {
         //sTODO: get real host.
