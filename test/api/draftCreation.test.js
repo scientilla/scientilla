@@ -8,7 +8,7 @@ describe('Draft creation', function () {
     after(test.cleanDb);
 
     var url = test.getUrl();
-    var userData = test.getUsers()[0];
+    var userData = test.getAllUserData()[0];
     var documentData = test.getDocuments()[0];
     var user;
 

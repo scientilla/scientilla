@@ -19,7 +19,7 @@ module.exports = {
         //sTODO: get real host.
         return 'http://localhost:1338';
     },
-    getUsers: function () {
+    getAllUserData: function () {
         return users;
     },
     getDocuments: function () {

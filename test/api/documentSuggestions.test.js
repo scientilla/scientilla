@@ -9,9 +9,9 @@ describe('Document Suggestions', function () {
     after(test.cleanDb);
 
     var url = test.getUrl();
-    var user1Data = test.getUsers()[0];
-    var user2Data = test.getUsers()[1];
-    var user3Data = test.getUsers()[2];
+    var user1Data = test.getAllUserData()[0];
+    var user2Data = test.getAllUserData()[1];
+    var user3Data = test.getAllUserData()[2];
     var documentData = test.getDocuments()[0];
     var user1;
     var user2;

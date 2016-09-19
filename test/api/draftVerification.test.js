@@ -9,8 +9,8 @@ describe('Draft Verification', function () {
     after(test.cleanDb);
 
     var url = test.getUrl();
-    var user1Data = test.getUsers()[0];
-    var user2Data = test.getUsers()[1];
+    var user1Data = test.getAllUserData()[0];
+    var user2Data = test.getAllUserData()[1];
     var documentData = test.getDocuments()[0];
     var incompleteDocumentData = test.getDocuments()[1];
     var user1;

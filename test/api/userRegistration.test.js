@@ -8,18 +8,18 @@ describe('User registration', function () {
     after(test.cleanDb);
 
     var url = test.getUrl();
-    var userData = test.getUsers()[0];
+    var userData = test.getAllUserData()[0];
 
-    it('should be able to register new user when there is no users', function () {
+    it('by default there should be no users', function () {
         return request(url)
                 .get('/users')
-                .expect(200, [])
-                .then(function (res) {
-                    return request(url)
-                            .post('/auths/register')
-                            .send(userData)
-                            .expect(200);
-                })
+                .expect(200, []);
+    });
+    it('should be able to register new user when there is no users', function () {
+        return request(url)
+                .post('/auths/register')
+                .send(userData)
+                .expect(200)
                 .then(function (res) {
                     return request(url)
                             .get('/users')
