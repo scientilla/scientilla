@@ -1,10 +1,6 @@
-/* global User */
+/* global Reference */
 
-var should = require('should');
-var assert = require('assert');
-var request = require('supertest-as-promised');
 var test = require('./../helper.js');
-var Reference = require('../../api/models/Reference');
 
 describe('Document model', function () {
     

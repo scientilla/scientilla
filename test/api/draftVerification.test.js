@@ -1,7 +1,6 @@
 /* global User */
 
 var should = require('should');
-var assert = require('assert');
 var request = require('supertest-as-promised');
 var test = require('./../helper.js');
 

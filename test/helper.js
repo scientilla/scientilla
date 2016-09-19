@@ -1,5 +1,8 @@
 /* global User, Promise, Auth, Reference */
 
+var should = require('should');
+var assert = require('assert');
+
 module.exports = {
     cleanDb: function (done) {
         var models = [Auth, User, Reference];
