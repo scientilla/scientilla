@@ -10,7 +10,7 @@ module.exports = {
                 models.map(function (model) {
                     return model.destroy();
                 });
-        Promise.all(destroyFns)
+        return Promise.all(destroyFns);
     },
     createModel: function (Model, data) {
         return _.defaults(data, Model.attributes);
@@ -31,12 +31,17 @@ var users = [{
         username: 'federico.bozzini@example.com',
         password: 'userpass',
         name: 'Federico',
-        lastName: 'Bozzini'
+        surname: 'Bozzini'
     }, {
         username: 'federico.semprini@example.com',
         password: 'userpass',
         name: 'Federico',
-        lastName: 'Semprini'
+        surname: 'Semprini'
+    }, {
+        username: 'elisa.molinari@example.com',
+        password: 'userpass',
+        name: 'Elisa',
+        surname: 'Molinari'
     }];
 
 var documents = [{
