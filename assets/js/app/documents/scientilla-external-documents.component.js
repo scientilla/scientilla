@@ -1,32 +1,23 @@
-/* global Scientilla */
-
 (function () {
     'use strict';
 
     angular.module('references')
-            .directive('scientillaExternalDocuments', scientillaExternalDocuments);
-
-    function scientillaExternalDocuments() {
-        return {
-            restrict: 'E',
+        .component('scientillaExternalDocuments', {
             templateUrl: 'partials/scientillaExternalDocuments.html',
-            controller: scientillaExternalDocumentsController,
+            controller: scientillaExternalDocuments,
             controllerAs: 'vm',
-            scope: {},
-            bindToController: {
+            bindings: {
                 researchEntity: "="
             }
-        };
-    }
+        });
 
-    scientillaExternalDocumentsController.$inject = [
-        'Notification',
+    scientillaExternalDocuments.$inject = [
         'DocumentsServiceFactory',
         'researchEntityService',
         '$q'
     ];
 
-    function scientillaExternalDocumentsController(Notification, DocumentsServiceFactory, researchEntityService, $q) {
+    function scientillaExternalDocuments(DocumentsServiceFactory, researchEntityService, $q) {
         var vm = this;
 
         var DocumentService = DocumentsServiceFactory.create(vm.researchEntity);
@@ -36,9 +27,9 @@
         vm.onFilter = refreshExternalDocuments;
         vm.copyDocuments = DocumentService.copyDocuments;
 
-        activate();
 
-        function activate() {
+
+        vm.$onInit = function () {
             vm.connectors = vm.researchEntity.getExternalConnectors();
             var values = _.concat({value: '?', label: 'Select'}, vm.connectors.map(function (c) {
                 return {value: c.name, label: c.name};
@@ -52,7 +43,7 @@
                 }
             };
             reset();
-        }
+        };
 
         function reset() {
             vm.documents = [];
