@@ -1,18 +1,16 @@
 /* global User */
 
 var should = require('should');
-var request = require('supertest-as-promised');
 var test = require('./../helper.js');
 
 describe('Draft Verification', function () {
     before(test.cleanDb);
     after(test.cleanDb);
 
-    var url = test.getUrl();
     var user1Data = test.getAllUserData()[0];
     var user2Data = test.getAllUserData()[1];
-    var documentData = test.getDocuments()[0];
-    var incompleteDocumentData = test.getDocuments()[1];
+    var documentData = test.getAllDocumentData()[0];
+    var incompleteDocumentData = test.getAllDocumentData()[1];
     var user1;
     var user2;
     var user1Draft1;
@@ -20,49 +18,37 @@ describe('Draft Verification', function () {
     var user2Draft1;
 
     it('there should be no verified documents for a new user', function () {
-        return request(url)
-                .get('/users')
-                .expect(200, [])
-                .then(function (res) {
-                    return request(url)
-                            .post('/auths/register')
-                            .send(user1Data)
-                            .expect(200);
-                })
+        return test
+                .registerUser(user1Data)
                 .then(function (res) {
                     user1 = res.body;
                     return res;
                 })
                 .then(function (res) {
-                    return request(url)
-                            .get('/users/' + user1.id + '/privateReferences')
+                    test
+                            .getDocuments(user1)
                             .expect(200, []);
                 });
     });
 
     it('verifying a complete draft should be possible', function () {
-        return request(url)
-                .post('/users/' + user1.id + '/drafts')
-                .send(documentData)
-                .expect(200)
+        return test
+                .createDraft(user1, documentData)
                 .then(function (res) {
                     user1Draft1 = res.body;
                     return res;
                 })
                 .then(function (res) {
-                    return request(url)
-                            .put('/users/' + user1.id + '/drafts/' + user1Draft1.id + '/verified')
-                            .send(documentData)
-                            .expect(200);
+                    return test.verifyDraft(user1, user1Draft1);
                 })
                 .then(function (res) {
-                    return request(url)
-                            .get('/users/' + user1.id + '/drafts')
+                    return test
+                            .getDrafts(user1)
                             .expect(200, []);
                 })
                 .then(function (res) {
-                    return request(url)
-                            .get('/users/' + user1.id + '/privateReferences?populate=privateCoauthors')
+                    return test
+                            .getDocuments(user1)
                             .expect(function (res) {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
@@ -77,41 +63,37 @@ describe('Draft Verification', function () {
     });
 
     it('verifying a complete draft twice should give an error', function () {
-        return request(url)
-                .put('/users/' + user1.id + '/drafts/' + user1Draft1.id + '/verified')
-                .send(documentData)
+        return test
+                .verifyDraft(user1, user1Draft1)
                 .expect(400);
     });
 
     it('verifying a non complete draft should not be possible', function () {
-        return request(url)
-                .post('/users/' + user1.id + '/drafts')
-                .send(incompleteDocumentData)
-                .expect(200)
+        return test
+                .createDraft(user1, incompleteDocumentData)
                 .then(function (res) {
                     user1Draft2 = res.body;
                     return res;
                 })
                 .then(function (res) {
-                    return request(url)
-                            .put('/users/' + user1.id + '/drafts/' + user1Draft2.id + '/verified')
-                            .send(documentData)
+                    return test
+                            .verifyDraft(user1, user1Draft2)
                             .expect(function (res) {
                                 res.status.should.equal(200);
                                 res.body.draft.should.be.true;
                             });
                 })
                 .then(function (res) {
-                    return request(url)
-                            .get('/users/' + user1.id + '/drafts')
+                    return test
+                            .getDrafts(user1)
                             .expect(function (res) {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
                             });
                 })
                 .then(function (res) {
-                    return request(url)
-                            .get('/users/' + user1.id + '/privateReferences')
+                    return test
+                            .getDocuments(user1)
                             .expect(function (res) {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
@@ -120,25 +102,21 @@ describe('Draft Verification', function () {
     });
 
     it('verifying a nonexsting document should give an error', function () {
-        return request(url)
-                .put('/users/' + user1.id + '/drafts/' + 10000 + '/verified')
-                .send(documentData)
+        return test
+                .verifyDraft(user1, {id: 1000})
                 .expect(400);
     });
 
     it('verifying two identical documents should merge them', function () {
-        return request(url)
-                .post('/auths/register')
-                .send(user2Data)
-                .expect(200)
+        return test.
+                registerUser(user2Data)
                 .then(function (res) {
                     user2 = res.body;
                     return res;
                 })
                 .then(function (res) {
-                    return request(url)
-                            .post('/users/' + user2.id + '/drafts')
-                            .send(documentData)
+                    return test
+                            .createDraft(user2, documentData)
                             .expect(200);
                 })
                 .then(function (res) {
@@ -146,14 +124,13 @@ describe('Draft Verification', function () {
                     return res;
                 })
                 .then(function (res) {
-                    return request(url)
-                            .put('/users/' + user2.id + '/drafts/' + user2Draft1.id + '/verified')
-                            .send(documentData)
+                    return test
+                            .verifyDraft(user2, user2Draft1)
                             .expect(200);
                 })
                 .then(function (res) {
-                    return request(url)
-                            .get('/users/' + user2.id + '/privateReferences?populate=privateCoauthors')
+                    return test
+                            .getDocuments(user2)
                             .expect(function (res) {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);

@@ -1,28 +1,24 @@
 /* global User */
 
-var request = require('supertest-as-promised');
 var test = require('./../helper.js');
 
 describe('User registration', function () {
     before(test.cleanDb);
     after(test.cleanDb);
 
-    var url = test.getUrl();
     var userData = test.getAllUserData()[0];
 
     it('by default there should be no users', function () {
-        return request(url)
-                .get('/users')
+        return test
+                .getUsers()
                 .expect(200, []);
     });
     it('should be able to register new user when there is no users', function () {
-        return request(url)
-                .post('/auths/register')
-                .send(userData)
-                .expect(200)
+        return test
+                .registerUser(userData)
                 .then(function (res) {
-                    return request(url)
-                            .get('/users')
+                    return test
+                            .getUsers()
                             .expect(function (res) {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
@@ -34,9 +30,8 @@ describe('User registration', function () {
     });
 
     it('should not be able to register a user with an already used username', function () {
-        return request(url)
-                .post('/auths/register')
-                .send(userData)
+        return test
+                .registerUser(userData)
                 .expect(400);
     });
 

@@ -2,30 +2,78 @@
 
 var should = require('should');
 var assert = require('assert');
+var request = require('supertest-as-promised');
 
-module.exports = {
-    cleanDb: function () {
-        var models = [Auth, User, Reference];
-        var destroyFns =
-                models.map(function (model) {
-                    return model.destroy();
-                });
-        return Promise.all(destroyFns);
-    },
-    createModel: function (Model, data) {
-        return _.defaults(data, Model.attributes);
-    },
-    getUrl: function () {
-        //sTODO: get real host.
-        return 'http://localhost:1338';
-    },
-    getAllUserData: function () {
-        return users;
-    },
-    getDocuments: function () {
-        return documents;
-    }
-};
+module.exports = (function () {
+    var obj = {
+        cleanDb: function () {
+            var models = [Auth, User, Reference];
+            var destroyFns =
+                    models.map(function (model) {
+                        return model.destroy();
+                    });
+            return Promise.all(destroyFns);
+        },
+        createModel: function (Model, data) {
+            return _.defaults(data, Model.attributes);
+        },
+        getUrl: function () {
+            //sTODO: get real host.
+            return 'http://localhost:1338';
+        },
+        getAllUserData: function () {
+            return users;
+        },
+        getAllDocumentData: function () {
+            return documents;
+        },
+        getUsers: function () {
+            return request(url)
+                    .get('/users');
+        },
+        registerUser: function (userData) {
+            return request(url)
+                    .post('/auths/register')
+                    .send(userData);
+        },
+        getDocuments: function (user) {
+            return request(url)
+                    .get('/users/' + user.id + '/privateReferences?populate=privateCoauthors');
+        },
+        getSuggestedDocuments: function (user) {
+            return request(url)
+                    .get('/users/' + user.id + '/suggested-documents');
+        },
+        getDrafts: function (user) {
+            return request(url)
+                    .get('/users/' + user.id + '/drafts');
+        },
+        createDraft: function (user, draftData) {
+            return request(url)
+                    .post('/users/' + user.id + '/drafts')
+                    .send(draftData);
+        },
+        verifyDraft: function (user, draftData) {
+            return request(url)
+                    .put('/users/' + user.id + '/drafts/' + draftData.id + '/verified');
+        },
+        unverifyDocument: function (user, document) {
+            return request(url)
+                            .put('/users/' + user.id + '/references/' + document.id + '/unverified');
+        },
+        verifyDocument: function (user, document) {
+            return request(url)
+                    .post('/users/' + user.id + '/privateReferences')
+                    .send({id: document.id});
+        },
+        getDocument: function(documentId) {
+            return request(url)
+                    .get('/references/' + documentId);
+        }
+    };
+    var url = obj.getUrl();
+    return obj;
+})();
 
 var users = [{
         username: 'federico.bozzini@example.com',
