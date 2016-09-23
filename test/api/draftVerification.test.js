@@ -49,7 +49,7 @@ describe('Draft Verification', function () {
                 })
                 .then(function (res) {
                     return test
-                            .getDocuments(user1)
+                            .getDocuments(user1, 'privateCoauthors')
                             .expect(function (res) {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
@@ -131,7 +131,7 @@ describe('Draft Verification', function () {
                 })
                 .then(function (res) {
                     return test
-                            .getDocuments(user2)
+                            .getDocuments(user2, 'privateCoauthors')
                             .expect(function (res) {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
