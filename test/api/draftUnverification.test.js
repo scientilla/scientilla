@@ -1,82 +1,66 @@
 /* global User */
 
 var should = require('should');
-var request = require('supertest-as-promised');
 var test = require('./../helper.js');
 
 describe('Draft Unverification', function () {
     before(test.cleanDb);
     after(test.cleanDb);
 
-    var url = test.getUrl();
-    var user1Data = test.getUsers()[0];
-    var user2Data = test.getUsers()[1];
-    var documentData = test.getDocuments()[0];
+    var user1Data = test.getAllUserData()[0];
+    var user2Data = test.getAllUserData()[1];
+    var documentData = test.getAllDocumentData()[0];
     var user1;
     var user2;
     var document;
 
     it('it should be possible to unverify a document', function () {
 
-        return request(url)
-                .post('/auths/register')
-                .send(user1Data)
-                .expect(200)
+        return test
+                .registerUser(user1Data)
                 .then(function (res) {
                     user1 = res.body;
                     return res;
                 })
                 .then(function (res) {
-                    return request(url)
-                            .post('/users/' + user1.id + '/drafts')
-                            .send(documentData)
-                            .expect(200);
+                    return test
+                            .createDraft(user1, documentData);
                 })
                 .then(function (res) {
                     document = res.body;
                     return res;
                 })
                 .then(function (res) {
-                    return request(url)
-                            .put('/users/' + user1.id + '/drafts/' + document.id + '/verified')
-                            .send(documentData)
-                            .expect(200);
+                    return test.verifyDraft(user1, document);
                 })
                 .then(function (res) {
-                    return request(url)
-                            .post('/auths/register')
-                            .send(user2Data)
-                            .expect(200);
+                    return test.registerUser(user2Data);
                 })
                 .then(function (res) {
                     user2 = res.body;
                     return res;
                 })
                 .then(function (res) {
-                    return request(url)
-                            .post('/users/' + user2.id + '/privateReferences')
-                            .send({id: document.id})
+                    return test.verifyDocument(user2, document);
+                })
+                .then(function (res) {
+                    return test
+                            .unverifyDocument(user1, document)
                             .expect(200);
                 })
                 .then(function (res) {
-                    return request(url)
-                            .put('/users/' + user1.id + '/references/' + document.id + '/unverified')
-                            .send(documentData)
-                            .expect(200);
-                })
-                .then(function (res) {
-                    return request(url)
-                            .get('/users/' + user1.id + '/privateReferences?populate=privateCoauthors')
+                    return test
+                            .getDocuments(user1)
                             .expect(200, []);
                 })
                 .then(function (res) {
-                    return request(url)
-                            .get('/users/' + user1.id + '/drafts')
+                    return test
+                            .getDrafts(user1)
                             .expect(200, []);
                 })
                 .then(function (res) {
-                    return request(url)
-                            .get('/users/' + user2.id + '/privateReferences?populate=privateCoauthors')
+                    return test
+                            .getDocuments(user2)
                             .expect(function (res) {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
@@ -88,23 +72,23 @@ describe('Draft Unverification', function () {
     });
 
     it('a document unverified by all the authors should be deleted', function () {
-        return request(url)
-                .put('/users/' + user2.id + '/references/' + document.id + '/unverified')
+        return test
+                .unverifyDocument(user2, document)
                 .expect(200)
                 .then(function (res) {
-                    return request(url)
-                            .post('/users/' + user2.id + '/drafts')
+                    return test
+                            .getDrafts(user2)
                             .send(documentData)
                             .expect(200);
                 })
                 .then(function (res) {
-                    return request(url)
-                            .get('/users/' + user2.id + '/privateReferences?populate=privateCoauthors')
+                    return test
+                            .getDocuments(user2)
                             .expect(200, []);
                 })
                 .then(function (res) {
-                    return request(url)
-                            .get('/references/' + document.id)
+                    return test
+                            .getDocument(document.id)
                             .expect(404);
                 });
     });
