@@ -2,27 +2,29 @@
     'use strict';
 
     angular.module('components')
-            .component('scientillaFilter', {
-                templateUrl: 'partials/scientillaFilter.html',
-                controller: scientillaFilter,
-                controllerAs: 'vm',
-                transclude: true,
-                bindings: {
-                    onFilter: '&',
-                    getData: '&',
-                    searchFormStructure: '<',
-                    emptyListMessage: '@?',
-                    filterLabel: '@?',
-                    elements: '<?'
-                }
-            });
+        .component('scientillaFilter', {
+            templateUrl: 'partials/scientillaFilter.html',
+            controller: scientillaFilter,
+            controllerAs: 'vm',
+            transclude: true,
+            bindings: {
+                onFilter: '&',
+                getData: '&',
+                searchFormStructure: '<',
+                emptyListMessage: '@?',
+                filterLabel: '@?',
+                elements: '<?'
+            }
+        });
 
 
     scientillaFilter.$inject = [
-        'pageSize'
+        'pageSize',
+        '$scope',
+        '$timeout'
     ];
 
-    function scientillaFilter(pageSize) {
+    function scientillaFilter(pageSize, $scope, $timeout) {
         var vm = this;
 
         vm.onSearch = onSearch;
@@ -33,6 +35,7 @@
         vm.pageSizes = [10, 20, 50, 100, 200];
         vm.currentPage = 1;
         vm.totalItems = 0;
+        vm.searchValues = {};
 
         // statuses
         vm.STATUS_WAITING = 0;
@@ -42,9 +45,33 @@
         vm.advancedText = getAdvancedText(vm.advancedOpen);
         vm.toggleAdvanced = toggleAdvanced;
 
-        var searchQuery = {};
+        vm.formVisible = true;
 
-        activate();
+        var searchQuery = {};
+        var onChangeWatchesDeregisters = [];
+        var formStructureDeregisterer = null;
+
+        vm.$onInit = function () {
+            vm.itemsPerPage = pageSize;
+            vm.status = vm.STATUS_WAITING;
+
+            if (_.isUndefined(vm.emptyListMessage))
+                vm.emptyListMessage = "No results found";
+
+            if (_.isUndefined(vm.filterLabel))
+                vm.filterLabel = "Filter";
+
+            initSearchValues();
+
+            formStructureDeregisterer = $scope.$watch('vm.searchFormStructure', refreshForm, true);
+
+            vm.search();
+        };
+
+        vm.$onDestroy = function () {
+            deregisterOnChanges();
+            formStructureDeregisterer();
+        };
 
         function onSearch(searchWhere) {
             vm.currentPage = 1;
@@ -66,46 +93,46 @@
             var where = {};
 
             _.forEach(this.searchValues,
-                    function (value, key) {
+                function (value, key) {
 
-                        var struct = vm.searchFormStructure[key];
+                    var struct = vm.searchFormStructure[key];
 
-                        if (struct.inputType === 'select' && vm.searchValues[key] === "?")
-                            return;
+                    if (struct.inputType === 'select' && vm.searchValues[key] === "?")
+                        return;
 
-                        var whereAdd = {};
-                        if (!struct.matchRule) {
-                            whereAdd[struct.matchColumn] = value;
-                        }
-                        else if (struct.matchRule === 'is null') {
-                            if (!value)
-                                whereAdd[struct.matchColumn] = null;
-                        }
-                        else {
-                            whereAdd[struct.matchColumn] = {};
-                            whereAdd[struct.matchColumn][struct.matchRule] = value;
-                        }
-                        where = _.merge(where, whereAdd);
-                    });
+                    var whereAdd = {};
+                    if (!struct.matchRule) {
+                        whereAdd[struct.matchColumn] = value;
+                    }
+                    else if (struct.matchRule === 'is null') {
+                        if (!value)
+                            whereAdd[struct.matchColumn] = null;
+                    }
+                    else {
+                        whereAdd[struct.matchColumn] = {};
+                        whereAdd[struct.matchColumn][struct.matchRule] = value;
+                    }
+                    where = _.merge(where, whereAdd);
+                });
             vm.onSearch(where);
         }
 
         function reset() {
             _.forEach(this.searchValues,
-                    function (value, key) {
+                function (value, key) {
 
-                        var struct = vm.searchFormStructure[key];
-                        if (struct.inputType === 'select') {
-                            vm.searchValues[key] = "?";
-                        }
-                        else {
+                    var struct = vm.searchFormStructure[key];
+                    if (struct.inputType === 'select') {
+                        vm.searchValues[key] = "?";
+                    }
+                    else {
 
-                            if (struct.defaultValue)
-                                vm.searchValues[key] = struct.defaultValue;
-                            else
-                                vm.searchValues[key] = '';
-                        }
-                    });
+                        if (struct.defaultValue)
+                            vm.searchValues[key] = struct.defaultValue;
+                        else
+                            vm.searchValues[key] = '';
+                    }
+                });
             vm.search();
         }
 
@@ -115,21 +142,6 @@
         }
 
         // private
-
-        function activate() {
-            vm.itemsPerPage = pageSize;
-            vm.status = vm.STATUS_WAITING;
-
-            if (_.isUndefined(vm.emptyListMessage))
-                vm.emptyListMessage = "No results found";
-
-            if (_.isUndefined(vm.filterLabel))
-                vm.filterLabel = "Filter";
-
-            vm.searchValues = getSearchValues();
-
-            vm.search();
-        }
 
         function getAdvancedText(open) {
             return open ? '<' : '>';
@@ -141,22 +153,22 @@
             var query = getQuery();
 
             vm.getData()(query)
-                    .then(function (list) {
+                .then(function (list) {
 
-                        vm.totalItems = (vm.currentPage - 1) * vm.itemsPerPage + list.length;
+                    vm.totalItems = (vm.currentPage - 1) * vm.itemsPerPage + list.length;
 
-                        if (list.length > vm.itemsPerPage)
-                            list.pop();
+                    if (list.length > vm.itemsPerPage)
+                        list.pop();
 
-                        vm.elements = list;
-                        vm.onFilter()(list);
+                    vm.elements = list;
+                    vm.onFilter()(list);
 
-                        setStatus(vm.STATUS_WAITING);
-                    })
-                    .catch(function (err) {
-                        vm.elements = [];
-                        setStatus(vm.STATUS_ERROR);
-                    });
+                    setStatus(vm.STATUS_WAITING);
+                })
+                .catch(function (err) {
+                    vm.elements = [];
+                    setStatus(vm.STATUS_ERROR);
+                });
         }
 
         function getQuery() {
@@ -172,17 +184,37 @@
             return vm.status = status;
         }
 
-        function getSearchValues() {
-            var searchValues = {};
+        function initSearchValues() {
+            deregisterOnChanges();
+
+            var oldSearchValues = _.cloneDeep(vm.searchValues);
+            vm.searchValues = {};
 
             _.forEach(vm.searchFormStructure, function (value, key) {
-                if (!_.isUndefined(value.defaultValue))
-                    searchValues[key] = value.defaultValue;
+                if(!_.isUndefined(oldSearchValues[key]))
+                    vm.searchValues[key] = oldSearchValues[key];
+                else if (!_.isUndefined(value.defaultValue))
+                    vm.searchValues[key] = value.defaultValue;
+                if (!_.isUndefined(value.onChange))
+                    onChangeWatchesDeregisters.push($scope.$watch('vm.searchValues.' + key, value.onChange));
             });
-
-            return searchValues;
-
         }
 
+        function deregisterOnChanges() {
+            _.forEach(onChangeWatchesDeregisters, function (deregister) {
+                deregister();
+            });
+            onChangeWatchesDeregisters = [];
+        }
+
+        function refreshForm() {
+
+            initSearchValues();
+
+            vm.formVisible = false;
+            $timeout(function () {
+                vm.formVisible = true;
+            }, 0);
+        }
     }
 })();

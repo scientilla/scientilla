@@ -2,7 +2,8 @@
     <form form-for="vm.searchValues"
           validation-rules="vm.searchFormStructure"
           form-for-builder
-          class="form-group-sm">
+          class="form-group-sm"
+          ng-if="vm.formVisible">
         <br>
         <scientilla-button size="small" ng-click="vm.search()">{{vm.filterLabel}}</scientilla-button>
         <scientilla-button size="small" ng-click="vm.reset()">Reset</scientilla-button>

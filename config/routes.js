@@ -64,8 +64,8 @@ module.exports.routes = {
   'get /references/:id/suggested-collaborators' : 'Reference.getSuggestedCollaborators',
   'get /users/:id/suggested-documents' : 'User.getSuggestedDocuments',
   'get /groups/:id/suggested-documents' : 'Group.getSuggestedDocuments',
-  'get /users/:id/external-references' : 'User.getExternalReferences',
-  'get /groups/:id/external-references' : 'Group.getExternalReferences',
+  'get /users/:id/external-documents' : 'User.getExternalDocuments',
+  'get /groups/:id/external-documents' : 'Group.getExternalDocuments',
   'delete /references/delete':'Reference.deleteDrafts'
 
 //    'get /': {

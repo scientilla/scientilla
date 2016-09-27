@@ -5,50 +5,57 @@ var _ = require('lodash');
 var Promise = require("bluebird");
 
 module.exports = {
-    attributes: {
-    },
-    getReferences: function (ResearchEntity, researchEntityId, query) {
+    attributes: {},
+    getDocuments: function (ResearchEntity, researchEntityId, query) {
         var self = this;
         var connector = query.where.connector;
         if (!connector)
             throw new Error('A Connector parameter is necessary');
         return ResearchEntity.findOneById(researchEntityId)
-                .then(function (researchEntity) {
-                    var reqConfig;
-                    switch (connector) {
-                        case'Publications':
-                            reqConfig = self.getPublicationsConfig(researchEntity, query);
-                            break;
-                        case'ORCID':
-                            reqConfig = self.getOrcidConfig(researchEntity, query);
-                            break;
-                        case'Scopus':
-                            reqConfig = self.getScopusConfig(researchEntity, query);
-                            break;
-                        default:
-                            //sTODO: error management
-                    }
+            .then(function (researchEntity) {
+                var reqConfig;
+                switch (connector) {
+                    case'Publications':
+                        reqConfig = self.getPublicationsConfig(researchEntity, query);
+                        break;
+                    case'ORCID':
+                        reqConfig = self.getOrcidConfig(researchEntity, query);
+                        break;
+                    case'Scopus':
+                        reqConfig = self.getScopusConfig(researchEntity, query);
+                        break;
+                    default:
+                    //sTODO: error management
+                }
 
-                    return self.makeRequest(reqConfig)
-                            .then(function (externalDocuments) {
-                                return ResearchEntity.checkCopiedDocuments(ResearchEntity, researchEntityId, externalDocuments);
-                            });
-                });
+                return self.makeRequest(reqConfig)
+                    .then(function (externalDocuments) {
+                        return ResearchEntity.checkCopiedDocuments(ResearchEntity, researchEntityId, externalDocuments);
+                    });
+            });
     },
     makeRequest: function (reqConfig) {
         return request.get(reqConfig.reqParams)
-                .then(function (res) {
-                    var documents = reqConfig.fieldExtract(res);
-                    return Promise.all(_.map(documents, function (r) {
-                        return reqConfig.transform(r);
-                    }));
-                });
+            .then(function (res) {
+                var documents = reqConfig.fieldExtract(res);
+                return Promise.all(_.map(documents, function (r) {
+                    return reqConfig.transform(r);
+                }));
+            });
     },
     getPublicationsConfig: function (researchEntity, configQuery) {
         var researchEntityType = researchEntity.getType();
         var query;
         if (researchEntityType === 'user') {
-            query = {author: researchEntity.surname};
+            var opts = {
+                'username': {'author-email': researchEntity.username},
+                'surname': {author: researchEntity.surname}
+            };
+
+            if(configQuery.where.field in opts)
+                query = opts[configQuery.where.field];
+            else
+                throw "ExternalDocument error: field not selected";
         }
         else {
             query = {"research-structure": researchEntity.publicationsAcronym};
@@ -140,15 +147,17 @@ module.exports = {
                     var regex = new RegExp(attribute + '\\s=\\s{(.*?)}');
                     return _.get(citationData.match(regex), '[1]');
                 }
+
                 function getEternalId(d, attributeName) {
                     return _.get(
-                            _.get(d, 'work-external-identifiers.work-external-identifier')
+                        _.get(d, 'work-external-identifiers.work-external-identifier')
                             .find(function (wei) {
                                 return wei['work-external-identifier-type'] === attributeName;
                             }),
-                            'work-external-identifier-id.value'
-                            );
+                        'work-external-identifier-id.value'
+                    );
                 }
+
                 var sourceTypeMappings = {
                     JOURNAL_ARTICLE: 'journal',
                     CONFERENCE_PAPER: 'conference',
@@ -195,7 +204,17 @@ module.exports = {
         var query = '';
 
         if (researchEntityType === 'user') {
-            query = 'au-id(' + researchEntity.scopusId + ')';
+
+            var opts = {
+                'surname': 'AUTHNAME(' + researchEntity.surname + ')',
+                'scopusId': 'au-id(' + researchEntity.scopusId + ')'
+            };
+
+            if(configQuery.where.field in opts)
+                query = opts[configQuery.where.field];
+            else
+                throw "ExternalDocument error: field not selected";
+
         }
         else {
             query = 'AF-ID(' + researchEntity.scopusId + ')';
@@ -235,11 +254,13 @@ module.exports = {
                     var conferenceLocation = conferenceLocationArray.join(', ');
                     return conferenceLocation;
                 }
+
                 function getConferenceAcronym(d) {
                     var confinfo = _.get(d, 'item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.confname');
                     var confAcronym = confinfo.split(', ')[1];
                     return confAcronym;
                 }
+
                 function getScopusId(d) {
                     var identifier = d1['dc:identifier'];
                     if (_.startsWith(identifier, 'SCOPUS_ID:')) {
@@ -251,82 +272,83 @@ module.exports = {
                     }
                     return null;
                 }
+
                 var scopusId = getScopusId(d1);
                 return request
-                        .get({
-                            uri: 'https://api.elsevier.com/content/abstract/scopus_id/' + scopusId,
-                            headers: {
-                                'X-ELS-APIKey': 'c3afacc73d9bbfb5c50c58a4a58e07cc',
-                                'X-ELS-Insttoken': 'ed64a720836a40cee4e3bf99ee066c67',
-                                Accept: 'application/json'
-                            },
-                            json: true
-                        })
-                        .catch(function () {
-                            sails.log.debug('Scopus request failed. Scopus Id = ' + scopusId);
-                            return {};
-                        })
-                        .then(function (res) {
-                            var d2 = _.get(res, 'abstracts-retrieval-response', {});
+                    .get({
+                        uri: 'https://api.elsevier.com/content/abstract/scopus_id/' + scopusId,
+                        headers: {
+                            'X-ELS-APIKey': 'c3afacc73d9bbfb5c50c58a4a58e07cc',
+                            'X-ELS-Insttoken': 'ed64a720836a40cee4e3bf99ee066c67',
+                            Accept: 'application/json'
+                        },
+                        json: true
+                    })
+                    .catch(function () {
+                        sails.log.debug('Scopus request failed. Scopus Id = ' + scopusId);
+                        return {};
+                    })
+                    .then(function (res) {
+                        var d2 = _.get(res, 'abstracts-retrieval-response', {});
 
-                            var sourceTypeMappings = {
-                                'Journal': 'journal',
-                                'Conference Proceeding': 'conference',
-                                'Book Series': 'book'
-                            };
-                            var sourceType = sourceTypeMappings[d1['prism:aggregationType']];
-                            var newDoc = {
-                                title: _.get(d1, 'dc:title'),
-                                authors: _.map(
-                                        _.get(d2, 'authors.author'),
-                                        function (c) {
-                                            return _.get(c, 'ce:indexed-name');
-                                        }).join(', '),
-                                year: _.get(d2, 'item.bibrecord.head.source.publicationdate.year'),
-                                doi: _.get(d2, 'coredata.prism:doi'),
-                                sourceType: sourceType,
-                                scopusId: scopusId,
-                                abstract: _.trim(_.get(d2, 'coredata.dc:description'))
-                            };
+                        var sourceTypeMappings = {
+                            'Journal': 'journal',
+                            'Conference Proceeding': 'conference',
+                            'Book Series': 'book'
+                        };
+                        var sourceType = sourceTypeMappings[d1['prism:aggregationType']];
+                        var newDoc = {
+                            title: _.get(d1, 'dc:title'),
+                            authors: _.map(
+                                _.get(d2, 'authors.author'),
+                                function (c) {
+                                    return _.get(c, 'ce:indexed-name');
+                                }).join(', '),
+                            year: _.get(d2, 'item.bibrecord.head.source.publicationdate.year'),
+                            doi: _.get(d2, 'coredata.prism:doi'),
+                            sourceType: sourceType,
+                            scopusId: scopusId,
+                            abstract: _.trim(_.get(d2, 'coredata.dc:description'))
+                        };
 
-                            switch (newDoc.sourceType) {
-                                case 'journal':
-                                    newDoc.journal = d1['prism:publicationName'];
-                                    newDoc.volume = d1['prism:volume'];
-                                    newDoc.issue = d1['prism:issueIdentifier'];
-                                    newDoc.pages = d1['prism:pageRange'];
-                                    newDoc.articleNumber = _.get(d2, 'item.bibrecord.head.source.article-number');
-                                    break;
-                                case 'book':
-                                    newDoc.pages = d1['prism:pageRange'];
-                                    newDoc.bookTitle = d1['prism:publicationName'];
-                                    newDoc.editor = null;
-                                    newDoc.publisher = _.get(d2, 'item.bibrecord.head.source.publisher.publishername');
-                                    break;
-                                case 'conference':
-                                    newDoc.conferenceName = d1['prism:publicationName'];
-                                    newDoc.conferenceLocation = getConferenceLocation(d2);
-                                    newDoc.acronym = getConferenceAcronym(d2);
-                                    newDoc.volume = d1['prism:volume'];
-                                    newDoc.issue = d1['prism:issueIdentifier'];
-                                    newDoc.pages = d1['prism:pageRange'];
-                                    newDoc.articleNumber = _.get(d2, 'item.bibrecord.head.source.article-number');
-                                    break;
-                            }
+                        switch (newDoc.sourceType) {
+                            case 'journal':
+                                newDoc.journal = d1['prism:publicationName'];
+                                newDoc.volume = d1['prism:volume'];
+                                newDoc.issue = d1['prism:issueIdentifier'];
+                                newDoc.pages = d1['prism:pageRange'];
+                                newDoc.articleNumber = _.get(d2, 'item.bibrecord.head.source.article-number');
+                                break;
+                            case 'book':
+                                newDoc.pages = d1['prism:pageRange'];
+                                newDoc.bookTitle = d1['prism:publicationName'];
+                                newDoc.editor = null;
+                                newDoc.publisher = _.get(d2, 'item.bibrecord.head.source.publisher.publishername');
+                                break;
+                            case 'conference':
+                                newDoc.conferenceName = d1['prism:publicationName'];
+                                newDoc.conferenceLocation = getConferenceLocation(d2);
+                                newDoc.acronym = getConferenceAcronym(d2);
+                                newDoc.volume = d1['prism:volume'];
+                                newDoc.issue = d1['prism:issueIdentifier'];
+                                newDoc.pages = d1['prism:pageRange'];
+                                newDoc.articleNumber = _.get(d2, 'item.bibrecord.head.source.article-number');
+                                break;
+                        }
 
-                            var typeMappings = {
-                                re: 'review',
-                                ip: 'article_in_press',
-                                ed: 'editorial',
-                                ar: 'article',
-                                cp: 'conference_paper',
-                                no: 'note'
-                            };
+                        var typeMappings = {
+                            re: 'review',
+                            ip: 'article_in_press',
+                            ed: 'editorial',
+                            ar: 'article',
+                            cp: 'conference_paper',
+                            no: 'note'
+                        };
 
-                            newDoc.type = typeMappings[d1['subtype']];
+                        newDoc.type = typeMappings[d1['subtype']];
 
-                            return newDoc;
-                        });
+                        return newDoc;
+                    });
             }
         };
     }

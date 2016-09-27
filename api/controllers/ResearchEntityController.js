@@ -82,11 +82,11 @@ module.exports = {
         var Model = getModel(req);
         res.halt(Model.copyDrafts(Model, researchEntityId, documents));
     },
-    getExternalReferences: function (req, res) {
+    getExternalDocuments: function (req, res) {
         var researchEntityId = req.params.id;
         var query = getQuery(req);
         var Model = getModel(req);
-        res.halt(Connector.getReferences(Model, researchEntityId, query));
+        res.halt(Connector.getDocuments(Model, researchEntityId, query));
     },
     getSuggestedDocuments: function (req, res) {
         var Model = getModel(req);
