@@ -1,4 +1,5 @@
 /* global User, Promise, Auth, Reference */
+'use strict';
 
 var should = require('should');
 var assert = require('assert');
@@ -41,6 +42,9 @@ module.exports = (function () {
                     .get('/users/' + user.id + '/privateReferences')
                     .query({populate: populateFields})
                     .query(qs);
+        },
+        getDocumentsWithAuthors: function(user) {
+            return this.getDocuments(user, 'privateCoauthors');
         },
         getSuggestedDocuments: function (user) {
             return request(url)

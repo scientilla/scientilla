@@ -60,7 +60,7 @@ describe('Draft Unverification', function () {
                 })
                 .then(function (res) {
                     return test
-                            .getDocuments(user2, 'privateCoauthors')
+                            .getDocumentsWithAuthors(user2)
                             .expect(function (res) {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
