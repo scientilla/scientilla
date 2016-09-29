@@ -6,10 +6,13 @@
         'Notification',
         'researchEntityService',
         'ModalService',
-        'EventsService'
+        'EventsService',
+        'UsersService',
+        'GroupsService',
+        '$q'
     ];
 
-    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService) {
+    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, UsersService, GroupsService, $q) {
         return {
             create: function (researchEntity) {
                 var service = {};
@@ -26,6 +29,7 @@
                 service.discardDocuments = discardDocuments;
                 service.copyDocument = copyDocument;
                 service.copyDocuments = copyDocuments;
+                service.getExternalDocuments = getExternalDocuments;
 
                 return service;
 
@@ -93,7 +97,7 @@
                 }
 
                 function unverifyDocument(document) {
-                    document.tags.push('unverifying')
+                    document.tags.push('unverifying');
                     ModalService
                         .multipleChoiceConfirm('Unverifying', 'Do you want to unverify the document?', ['Create New Version', 'Unverify'])
                         .then(function (buttonIndex) {
@@ -122,12 +126,12 @@
                                     Notification.warning("Failed to unverify document");
                                 });
 
-                            })
-                            .catch(function () {
-                                _.remove(document.tags, function (t) {
-                                    return t === 'unverifying';
-                                });
+                        })
+                        .catch(function () {
+                            _.remove(document.tags, function (t) {
+                                return t === 'unverifying';
                             });
+                        });
                 }
 
                 function copyDocument(document) {
@@ -220,6 +224,33 @@
                 function openEditPopup(draft) {
                     ModalService
                         .openScientillaDocumentForm(draft.clone(), researchEntity);
+                }
+
+                function getExternalDocuments(query) {
+                    var connector = query.where.connector;
+                    if (!connector)
+                        return $q.resolve([]);
+
+                    var service;
+
+                    if (researchEntity.getType() === 'user')
+                        service = UsersService;
+                    else
+                        service = GroupsService;
+
+                    return service
+                        .getProfile(researchEntity.id)
+                        .then(function (resEntity) {
+
+                            if (!resEntity[query.where.field]) {
+                                var msg = "Warning<br>" + query.where.field + " empty<br>update your profile";
+                                Notification.warning(msg);
+                                throw msg;
+                            }
+
+                            return researchEntityService.getExternalDocuments(researchEntity, query);
+
+                        });
                 }
             }
         };

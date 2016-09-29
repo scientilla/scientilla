@@ -61,6 +61,8 @@ Scientilla.user = {
         return '/users/' + this.id + '/references';
     },
     getExternalConnectors: function () {
+
+
         var connectors = [];
         var publicationsConnector = {name: 'Publications', enabled: true};
         var orcidConnector = {name: 'ORCID', enabled: !!this.orcidId};

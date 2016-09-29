@@ -21,7 +21,7 @@
         service.verifyDrafts = verifyDrafts;
         service.copyDocument = copyDocument;
         service.copyDocuments = copyDocuments;
-        service.getExternalDrafts = getExternalDrafts;
+        service.getExternalDocuments = getExternalDocuments;
         service.deleteDraft = deleteDraft;
         service.deleteDrafts = deleteDrafts;
 
@@ -41,11 +41,11 @@
             return researchEntity.getList('drafts', query);
         }
 
-        function getExternalDrafts(researchEntity, query) {
+        function getExternalDocuments(researchEntity, query) {
             if (!query)
                 query = {};
 
-            return researchEntity.getList('external-references', query);
+            return researchEntity.getList('external-documents', query);
         }
 
 

@@ -128,11 +128,11 @@
         }
 
         function prepareSave(newValue, oldValue) {
-            var isChanged = (newValue === oldValue);
+            var isNotChanged = (newValue === oldValue);
             var isNewAndEmpty = ((_.isNil(oldValue)) && newValue === "");
             var isStillEmpty = (_.isNil(oldValue) && _.isNil(newValue));
 
-            if (isChanged || isNewAndEmpty || isStillEmpty)
+            if (isNotChanged || isNewAndEmpty || isStillEmpty)
                 return;
 
             vm.status.setSaved(false);
