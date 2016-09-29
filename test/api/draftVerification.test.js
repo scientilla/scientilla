@@ -11,6 +11,7 @@ describe('Draft Verification', function () {
     var user2Data = test.getAllUserData()[1];
     var documentData = test.getAllDocumentData()[0];
     var incompleteDocumentData = test.getAllDocumentData()[1];
+    var nonExistentDocument =  {id: 1000};
     var user1;
     var user2;
     var user1Draft1;
@@ -48,7 +49,7 @@ describe('Draft Verification', function () {
                 })
                 .then(function (res) {
                     return test
-                            .getDocuments(user1)
+                            .getDocumentsWithAuthors(user1)
                             .expect(function (res) {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
@@ -103,7 +104,7 @@ describe('Draft Verification', function () {
 
     it('verifying a nonexsting document should give an error', function () {
         return test
-                .verifyDraft(user1, {id: 1000})
+                .verifyDraft(user1, nonExistentDocument)
                 .expect(400);
     });
 
@@ -130,7 +131,7 @@ describe('Draft Verification', function () {
                 })
                 .then(function (res) {
                     return test
-                            .getDocuments(user2)
+                            .getDocumentsWithAuthors(user2)
                             .expect(function (res) {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);

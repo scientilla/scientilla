@@ -82,6 +82,9 @@ module.exports = function expand(req, res) {
                 var populateFields = req.param('populate');
                 if (populateFields && !_.isArray(populateFields))
                     populateFields = [populateFields];
+                populateFields = _.filter(populateFields, function(f) {
+                    return _.some(relationModel.associations, {alias: f});
+                });
 
 
                 var sort = actionUtil.parseSort(req);
@@ -103,7 +106,7 @@ module.exports = function expand(req, res) {
                 _.forEach(populateFields, function (f) {
                     query = query.populate(f);
                 });
-
+                
 //                query = actionUtil.populateRequest(query, req);
 //                query = actionUtil.populateEach(query, req);
 

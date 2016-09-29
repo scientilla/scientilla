@@ -28,7 +28,6 @@
         }
 
         function openDetails() {
-            console.log(vm.document);
             ModalService
                 .openScientillaDocumentDetails(vm.document);
         }
