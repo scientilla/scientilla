@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  db-test:
+    image: postgres:9.6
+    environment:
+      POSTGRES_DB: scientillatest
+      POSTGRES_USER: scientilla
+      POSTGRES_PASSWORD: scientillapassword
+  node-test:
+    build: ./docker/node
+    volumes:
+      - .:/usr/src/app
+    command: bash -c "npm install && npm test"
