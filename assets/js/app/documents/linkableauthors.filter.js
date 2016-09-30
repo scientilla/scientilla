@@ -5,13 +5,13 @@
     function linkableAuthors() {
 
         function getLinkableAuthors(reference) {
-            if (!reference.authors) return "";
+            if (!reference.authorsStr) return "";
             if (!_.isFunction(reference.getAuthors))
-                return reference.authors;
+                return reference.authorsStr;
 
             var authors = reference.getAuthors();
             var possibleMatches = reference.getAllCoauthors(); 
-            var linkedAuthorsStr = reference.authors;
+            var linkedAuthorsStr = reference.authorsStr;
             authors.forEach(function (author) {
                 var ucAuthor = author.toUpperCase();
                 var matchingUser = _.find(possibleMatches, function (c) {

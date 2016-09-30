@@ -13,7 +13,7 @@
             service.getNewReference = function () {
                 return {
                     title: "",
-                    authors: "",
+                    authorsStr: "",
                     owner: userId,
                     status: Scientilla.reference.DRAFT
                 };

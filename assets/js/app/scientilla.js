@@ -136,13 +136,13 @@ Scientilla.reference = {
             return this.UNKNOWN_REFERENCE;
     },
     getAuthors: function () {
-        if (!this.authors)
+        if (!this.authorsStr)
             return [];
 
-        return this.authors.replace(/\s+et all\s*$/i, '').split(/,|\sand\s/).map(_.trim);
+        return this.authorsStr.replace(/\s+et all\s*$/i, '').split(/,|\sand\s/).map(_.trim);
     },
     getUcAuthors: function () {
-        var authors = this.getAuthors();
+        var authorsStr = this.getAuthors();
         var ucAuthors = _.map(authors, function (a) {
             return a.toUpperCase();
         });
@@ -154,7 +154,7 @@ Scientilla.reference = {
     getNewGroupReference: function (groupId) {
         return {
             title: "",
-            authors: "",
+            authorsStr: "",
             draftGroupCreator: groupId,
             draft: true
         };
@@ -162,7 +162,7 @@ Scientilla.reference = {
     getNewDraftReference: function (userId) {
         return {
             title: "",
-            authors: "",
+            authorsStr: "",
             draftCreator: userId,
             draft: true
         };
@@ -179,8 +179,9 @@ Scientilla.reference = {
                 title: {
                     inputType: 'text'
                 },
-                authors: {
-                    inputType: 'text'
+                authorsStr: {
+                    inputType: 'text',
+                    label: "Authors",
                 },
                 year: {
                     inputType: 'text'
@@ -227,8 +228,9 @@ Scientilla.reference = {
                     label: 'Book title',
                     inputType: 'text'
                 },
-                authors: {
-                    inputType: 'text'
+                authorsStr: {
+                    inputType: 'text',
+                    label: "Authors",
                 },
                 year: {
                     inputType: 'text'
@@ -264,8 +266,9 @@ Scientilla.reference = {
                 title: {
                     inputType: 'text'
                 },
-                authors: {
-                    inputType: 'text'
+                authorsStr: {
+                    inputType: 'text',
+                    label: "Authors",
                 },
                 year: {
                     inputType: 'text'
@@ -316,8 +319,9 @@ Scientilla.reference = {
                 title: {
                     inputType: 'text'
                 },
-                authors: {
-                    inputType: 'text'
+                authorsStr: {
+                    inputType: 'text',
+                    label: "Authors",
                 },
                 year: {
                     inputType: 'text'

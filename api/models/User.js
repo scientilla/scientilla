@@ -187,7 +187,7 @@ module.exports = _.merge({}, researchEntity, {
                         ],
                         where: {
                             'reference.draft': false,
-                            'reference.authors': {
+                            'reference.authorsStr': {
                                 'ilike': '%' + user.surname + '%'
                             },
                             'reference.id': {

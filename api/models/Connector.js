@@ -79,7 +79,7 @@ module.exports = {
             transform: function (d) {
                 var newDoc = {
                     title: d.title,
-                    authors: d.authors.replace(/\*/g, ''),
+                    authorsStr: d.authors.replace(/\*/g, ''),
                     year: d.year,
                     doi: d.doi,
                     journal: d.journal,
@@ -166,7 +166,7 @@ module.exports = {
                 var sourceType = sourceTypeMappings[d['work-type']];
                 var newDoc = {
                     title: _.get(d, 'work-title.title.value'),
-                    authors: _.map(_.get(d, 'work-contributors.contributor'), function (c) {
+                    authorsStr: _.map(_.get(d, 'work-contributors.contributor'), function (c) {
                         var authorStr = _.get(c, 'credit-name.value');
                         return authorStr.replace(/,/g, '');
                     }).join(', '),
@@ -299,7 +299,7 @@ module.exports = {
                         var sourceType = sourceTypeMappings[d1['prism:aggregationType']];
                         var newDoc = {
                             title: _.get(d1, 'dc:title'),
-                            authors: _.map(
+                            authorsStr: _.map(
                                 _.get(d2, 'authors.author'),
                                 function (c) {
                                     return _.get(c, 'ce:indexed-name');

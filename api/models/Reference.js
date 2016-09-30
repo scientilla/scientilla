@@ -19,9 +19,6 @@ var PUBLIC = 'public';
 
 module.exports = {
     /* CONSTANTS */
-    VERIFIED: VERIFIED,
-    DRAFT: DRAFT,
-    PUBLIC: PUBLIC,
     DEFAULT_SORTING: {
         year: 'desc',
         updatedAt: 'desc',
@@ -32,7 +29,7 @@ module.exports = {
         title: {
             type: 'STRING'
         },
-        authors: 'STRING',
+        authorsStr: 'STRING',
         year: 'STRING',
         journal: 'STRING',
         issue: 'STRING',
@@ -51,6 +48,7 @@ module.exports = {
         scopusId: 'STRING',
         wosId: 'STRING',
         abstract: 'TEXT',
+        draft: 'BOOLEAN',
         publicCoauthors: {
             collection: 'User',
             via: 'publicReferences'
@@ -75,7 +73,6 @@ module.exports = {
             collection: 'Group',
             via: 'discardedReferences'
         },
-        draft: 'BOOLEAN',
         draftCreator: {
             model: 'User'
         },
@@ -89,7 +86,7 @@ module.exports = {
         isValid: function () {
             var self = this;
             var requiredFields = [
-                'authors',
+                'authorsStr',
                 'title',
                 'year',
                 'type',
@@ -113,9 +110,9 @@ module.exports = {
             });
         },
         getAuthors: function () {
-            if (!this.authors)
+            if (!this.authorsStr)
                 return [];
-            var authors = this.authors.replace(/\s+et all\s*/i, '').split(',').map(_.trim);
+            var authors = this.authorsStr.replace(/\s+et all\s*/i, '').split(',').map(_.trim);
             return authors;
         },
         getUcAuthors: function () {
@@ -151,7 +148,7 @@ module.exports = {
     },
     getFields: function () {
         var fields = [
-            'authors',
+            'authorsStr',
             'title',
             'year',
             'journal',
@@ -177,66 +174,66 @@ module.exports = {
     deleteIfNotVerified: function (documentId) {
         function countAuthorsAndGroups(document) {
             return document.privateCoauthors.length +
-                    document.publicCoauthors.length +
-                    document.privateGroups.length +
-                    document.publicGroups.length;
+                document.publicCoauthors.length +
+                document.privateGroups.length +
+                document.publicGroups.length;
         }
         return Reference.findOneById(documentId)
-                .populate('privateCoauthors')
-                .populate('publicCoauthors')
-                .populate('privateGroups')
-                .populate('publicGroups')
-                .then(function (document) {
-                    if (!document)
-                        throw new Error('Document ' + documentId + ' does not exist');
-                    if (countAuthorsAndGroups(document) === 0) {
-                        sails.log.debug('Document ' + documentId + ' will be deleted');
-                        return Reference.destroy({id: documentId});
-                    }
-                    return document;
-                })
-                .then(function (document) {
-                    if (_.isArray(document))
-                        return document[0];
-                    return document;
-                });
+            .populate('privateCoauthors')
+            .populate('publicCoauthors')
+            .populate('privateGroups')
+            .populate('publicGroups')
+            .then(function (document) {
+                if (!document)
+                    throw new Error('Document ' + documentId + ' does not exist');
+                if (countAuthorsAndGroups(document) === 0) {
+                    sails.log.debug('Document ' + documentId + ' will be deleted');
+                    return Reference.destroy({id: documentId});
+                }
+                return document;
+            })
+            .then(function (document) {
+                if (_.isArray(document))
+                    return document[0];
+                return document;
+            });
     },
     getByIdsWithAuthors: function (referenceIds) {
         return Reference.findById(referenceIds)
-                .populate('privateCoauthors')
-                .populate('publicCoauthors')
-                .populate('privateGroups')
-                .populate('publicGroups');
+            .populate('privateCoauthors')
+            .populate('publicCoauthors')
+            .populate('privateGroups')
+            .populate('publicGroups');
     },
     getSuggestedCollaborators: function (referenceId) {
         return Promise.all([
             Reference.findOne(referenceId).populate('collaborators'),
             User.find()
         ])
-                .then(function (results) {
-                    var reference = results[0];
-                    var users = results[1];
-                    var authors = reference.getUcAuthors();
-                    var possibleAuthors = _.filter(
-                            users,
-                            function (u) {
-                                var aliases = u.getUcAliases();
-                                return !_.isEmpty(_.intersection(aliases, authors));
-                            }
-                    );
-                    var collaboratorsId = _.map(reference.collaborators, "id");
-                    var suggestedUsers = _.reject(
-                            possibleAuthors,
-                            function (u) {
-                                return u.id === reference.owner
-                                        || _.includes(collaboratorsId, u.id);
-                            }
-                    );
+            .then(function (results) {
+                var reference = results[0];
+                var users = results[1];
+                var authors = reference.getUcAuthors();
+                var possibleAuthors = _.filter(
+                    users,
+                    function (u) {
+                        var aliases = u.getUcAliases();
+                        return !_.isEmpty(_.intersection(aliases, authors));
+                    }
+                );
+                var collaboratorsId = _.map(reference.collaborators, "id");
+                var suggestedUsers = _.reject(
+                    possibleAuthors,
+                    function (u) {
+                        return u.id === reference.owner
+                            || _.includes(collaboratorsId, u.id);
+                    }
+                );
 
-                    //TODO: search by aliases directly in the db
-                    //select *  from reference where authors ilike any (select '%' || str || '%' from alias)
-                    return suggestedUsers;
-                });
+                //TODO: search by aliases directly in the db
+                //select *  from reference where authors ilike any (select '%' || str || '%' from alias)
+                return suggestedUsers;
+            });
 
     },
     filterSuggested: function (maybeSuggestedReferences, toBeDiscardedReferences, similarityThreshold) {
@@ -260,33 +257,33 @@ module.exports = {
     verifyDraft: function (draftId, ResearchEntityModel, researchEntityId) {
         //sTODO: 2 equals documents should be merged
         return Reference.findOneById(draftId)
-                .then(function (draft) {
-                    if (!draft || !draft.draft) {
-                        throw new Error('Draft ' + draftId + ' does not exist');
-                    }
-                    if (!draft.isValid()) {
-                        return draft;
-                    }
-                    draft.draft = false;
-                    ResearchEntityModel.draftToDocument(draft, researchEntityId);
-                    return Reference.findCopies(draft)
-                            .then(function (documents) {
-                                var n = documents.length;
-                                if (n === 0)
-                                    return draft
-                                            .savePromise();
-                                if (n > 1)
-                                    sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
-                                return draft
-                                        .destroy()
-                                        .then(function () {
-                                            var doc = documents[0];
-                                            sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
-                                            return ResearchEntityModel
-                                                    .verifyDocument(ResearchEntityModel, researchEntityId, doc.id);
-                                        });
+            .then(function (draft) {
+                if (!draft || !draft.draft) {
+                    throw new Error('Draft ' + draftId + ' does not exist');
+                }
+                if (!draft.isValid()) {
+                    return draft;
+                }
+                draft.draft = false;
+                ResearchEntityModel.draftToDocument(draft, researchEntityId);
+                return Reference.findCopies(draft)
+                    .then(function (documents) {
+                        var n = documents.length;
+                        if (n === 0)
+                            return draft
+                                .savePromise();
+                        if (n > 1)
+                            sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
+                        return draft
+                            .destroy()
+                            .then(function () {
+                                var doc = documents[0];
+                                sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
+                                return ResearchEntityModel
+                                    .verifyDocument(ResearchEntityModel, researchEntityId, doc.id);
                             });
-                });
+                    });
+            });
     },
     deleteDrafts: function (draftIds) {
         return Promise.all(draftIds.map(function (documentId) {

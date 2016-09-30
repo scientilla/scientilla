@@ -21,7 +21,7 @@
         author: {
             inputType: 'text',
             label: 'Author',
-            matchColumn: 'authors',
+            matchColumn: 'authorsStr',
             matchRule: 'contains'
         },
         maxYear: {
