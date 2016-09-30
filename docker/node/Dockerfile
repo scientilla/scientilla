@@ -2,6 +2,7 @@ FROM node:4.4
 
 RUN apt-get update & apt-get install git
 
+RUN npm install -g mocha
 RUN npm install -g sails
 RUN npm install -g bower
 RUN npm install -g grunt
