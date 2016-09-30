@@ -254,8 +254,7 @@ module.exports = {
             return _.includes([VERIFIED, PUBLIC], r.status);
         });
     },
-    verifyDraft: function (draftId, ResearchEntityModel, researchEntityId) {
-        //sTODO: 2 equals documents should be merged
+    verifyDraft: function (draftId, ResearchEntityModel, researchEntityId, position) {
         return Reference.findOneById(draftId)
             .then(function (draft) {
                 if (!draft || !draft.draft) {
@@ -264,25 +263,22 @@ module.exports = {
                 if (!draft.isValid()) {
                     return draft;
                 }
-                draft.draft = false;
-                ResearchEntityModel.draftToDocument(draft, researchEntityId);
                 return Reference.findCopies(draft)
                     .then(function (documents) {
                         var n = documents.length;
-                        if (n === 0)
-                            return draft
-                                .savePromise();
+                        if (n === 0) {
+                            draft.draft = false;
+                            draft.draftCreator = null;
+                            draft.draftGroupCreator = null;
+                            return draft.savePromise();
+                        }
                         if (n > 1)
                             sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
-                        return draft
-                            .destroy()
-                            .then(function () {
-                                var doc = documents[0];
-                                sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
-                                return ResearchEntityModel
-                                    .verifyDocument(ResearchEntityModel, researchEntityId, doc.id);
-                            });
-                    });
+                        var doc = documents[0];
+                        sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
+                        return Reference.destroy({id:draft.id}).then(_ => doc);
+                    })
+                    .then(d => ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, d.id));
             });
     },
     deleteDrafts: function (draftIds) {
