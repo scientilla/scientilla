@@ -49,6 +49,11 @@ module.exports = {
         wosId: 'STRING',
         abstract: 'TEXT',
         draft: 'BOOLEAN',
+        authors: {
+            collection: 'user',
+            via: 'documents',
+            through: 'authorship'
+        },
         publicCoauthors: {
             collection: 'User',
             via: 'publicReferences'
@@ -178,6 +183,7 @@ module.exports = {
                 document.privateGroups.length +
                 document.publicGroups.length;
         }
+
         return Reference.findOneById(documentId)
             .populate('privateCoauthors')
             .populate('publicCoauthors')
@@ -276,7 +282,7 @@ module.exports = {
                             sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
                         var doc = documents[0];
                         sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
-                        return Reference.destroy({id:draft.id}).then(_ => doc);
+                        return Reference.destroy({id: draft.id}).then(_ => doc);
                     })
                     .then(d => ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, d.id));
             });

@@ -56,6 +56,11 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'Reference',
             via: 'draftCreator'
         },
+        documents: {
+            collection: 'reference',
+            via: 'users',
+            through: 'authorship'
+        },
         privateReferences: {
             collection: 'Reference',
             via: 'privateCoauthors'
