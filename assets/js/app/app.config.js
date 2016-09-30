@@ -99,7 +99,7 @@
 //        });
 
         Restangular.extendCollection('privateReferences', Scientilla.toDocumentsCollection);
-        Restangular.extendCollection('external-references', Scientilla.toDocumentsCollection);
+        Restangular.extendCollection('external-documents', Scientilla.toDocumentsCollection);
         Restangular.extendCollection('suggested-documents', Scientilla.toDocumentsCollection);
         Restangular.extendCollection('drafts', Scientilla.toDocumentsCollection);
     }
