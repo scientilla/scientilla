@@ -27,11 +27,11 @@
 
         function getDocuments(researchEntity, query) {
 
-            var populate = {populate: ['privateCoauthors']};
+            var populate = {populate: ['authors']};
 
             var q = _.merge({}, query, populate);
 
-            return researchEntity.getList('privateReferences', q);
+            return researchEntity.getList('documents', q);
         }
 
         function getDrafts(researchEntity, query) {
@@ -56,7 +56,7 @@
 
         function verifyDocument(researchEntity, id) {
             return researchEntity
-                    .post('privateReferences', {id: id});
+                    .post('documents', {id: id});
         }
 
         function verifyDraft(researchEntity, reference) {
@@ -65,7 +65,7 @@
         }
 
         function unverify(researchEntity, reference) {
-            return researchEntity.one('references', reference.id)
+            return researchEntity.one('documents', reference.id)
                     .customPUT({}, 'unverified');
         }
 

@@ -50,10 +50,10 @@ module.exports = {
     },
     verifyDocument: function (req, res) {
         var researchEntityId = req.params.id;
-        var referenceId = req.params.options.values.id;
+        var documentId = req.body.id;
         var Model = getModel(req);
         Model
-                .verifyDocument(researchEntityId, referenceId)
+                .verifyDocument(Model, researchEntityId, documentId)
                 .then(function (reference) {
                     res.json(reference);
                 });

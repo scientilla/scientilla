@@ -65,8 +65,8 @@ describe('Draft Unverification', function () {
                                 res.status.should.equal(200);
                                 res.body.should.have.length(1);
                                 var document = res.body[0];
-                                document.privateCoauthors.should.have.length(1);
-                                document.privateCoauthors[0].username.should.equal(user2.username);
+                                document.authors.should.have.length(1);
+                                document.authors[0].username.should.equal(user2.username);
                             });
                 });
     });

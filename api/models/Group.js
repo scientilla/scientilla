@@ -32,6 +32,11 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'Reference',
             via: 'draftGroupCreator'
         },
+        documents: {
+            collection: 'reference',
+            via: 'groups',
+            through: 'authorshipgroup'
+        },
         privateReferences: {
             collection: 'Reference',
             via: 'privateGroups'
@@ -69,10 +74,10 @@ module.exports = _.merge({}, researchEntity, {
     getSuggestedDocumentsQuery: function (groupId, query) {
 
         var groupDocumentsIds = {
-            select: 'reference_privateGroups',
-            from: 'group_privatereferences__reference_privategroups',
+            select: 'document',
+            from: 'authorshipgroup',
             where: {
-                'group_privateReferences': groupId
+                'researchEntity': groupId
             }
         };
 
@@ -93,19 +98,19 @@ module.exports = _.merge({}, researchEntity, {
         };
 
         var groupSuggestedDocumentIds = {
-            select: ['reference_privateCoauthors'],
+            select: ['document'],
             from: groupUsers,
             join: [
                 {
-                    from: 'reference_privatecoauthors__user_privatereferences',
+                    from: 'authorship',
                     on: {
                         'groupUsers': 'id',
-                        'reference_privatecoauthors__user_privatereferences': 'user_privateReferences'
+                        'authorship': 'researchEntity'
                     }
                 }
             ],
             where: {
-                'reference_privateCoauthors': {
+                'document': {
                     'not in': groupDocumentsIds
                 }
             }

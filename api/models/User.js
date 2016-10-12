@@ -167,10 +167,10 @@ module.exports = _.merge({}, researchEntity, {
                     };
 
                     var userDocumentIds = {
-                        select: 'reference_privateCoauthors',
-                        from: 'reference_privatecoauthors__user_privatereferences',
+                        select: 'document',
+                        from: 'authorship',
                         where: {
-                            'user_privateReferences': userId
+                            'researchEntity': userId
                         }
                     };
 

@@ -8,7 +8,7 @@ var request = require('supertest-as-promised');
 module.exports = (function () {
     var obj = {
         cleanDb: function () {
-            var models = [Auth, User, Reference];
+            var models = [Auth, User, Reference, Authorship];
             var destroyFns =
                     models.map(function (model) {
                         return model.destroy();
@@ -39,12 +39,12 @@ module.exports = (function () {
         },
         getDocuments: function (user, populateFields, qs) {
             return request(url)
-                    .get('/users/' + user.id + '/privateReferences')
+                    .get('/users/' + user.id + '/documents')
                     .query({populate: populateFields})
                     .query(qs);
         },
         getDocumentsWithAuthors: function(user) {
-            return this.getDocuments(user, 'privateCoauthors', {});
+            return this.getDocuments(user, 'authors', {});
         },
         getSuggestedDocuments: function (user) {
             return request(url)
@@ -65,11 +65,11 @@ module.exports = (function () {
         },
         unverifyDocument: function (user, document) {
             return request(url)
-                            .put('/users/' + user.id + '/references/' + document.id + '/unverified');
+                            .put('/users/' + user.id + '/documents/' + document.id + '/unverified');
         },
         verifyDocument: function (user, document) {
             return request(url)
-                    .post('/users/' + user.id + '/privateReferences')
+                    .post('/users/' + user.id + '/documents')
                     .send({id: document.id});
         },
         getDocument: function(documentId) {

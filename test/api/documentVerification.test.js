@@ -53,9 +53,9 @@ describe('Document Verification', function () {
                                 d.title.should.equal(documentData.title);
                                 d.draft.should.be.false;
                                 should(d.draftCreator).be.null;
-                                d.privateCoauthors.should.have.length(2);
-                                d.privateCoauthors[0].username.should.equal(user1.username);
-                                d.privateCoauthors[1].username.should.equal(user2.username);
+                                d.authors.should.have.length(2);
+                                d.authors[0].username.should.equal(user1.username);
+                                d.authors[1].username.should.equal(user2.username);
                             });
                 });
     });

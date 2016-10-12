@@ -65,8 +65,8 @@ describe('Draft Verification', function () {
                         document.title.should.equal(documentData.title);
                         document.draft.should.be.false;
                         should(document.draftCreator).be.null;
-                        document.privateCoauthors.should.have.length(1);
-                        document.privateCoauthors[0].username.should.equal(user1.username);
+                        document.authors.should.have.length(1);
+                        document.authors[0].username.should.equal(user1.username);
                     });
             });
     });
@@ -154,8 +154,8 @@ describe('Draft Verification', function () {
                         document.title.should.equal(documentData.title);
                         document.draft.should.be.false;
                         should(document.draftCreator).be.null;
-                        document.privateCoauthors[0].username.should.equal(user1.username);
-                        document.privateCoauthors[1].username.should.equal(user2.username);
+                        document.authors[0].username.should.equal(user1.username);
+                        document.authors[1].username.should.equal(user2.username);
                     });
             });
     });

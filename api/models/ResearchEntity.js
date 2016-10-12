@@ -1,5 +1,6 @@
 /* global ResearchEntity, Reference, SqlService */
 
+"use strict";
 /**
  * ResearchEntity.js
  *
@@ -83,30 +84,24 @@ module.exports = {
                 });
     },
     unverifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
-        return ResearchEntityModel
-                .findOneById(researchEntityId)
-                .populate('privateReferences')
-                .populate('publicReferences')
-                .then(function (researchEntity) {
-                    if (!_.some(researchEntity.privateReferences, {id: parseInt(documentId)}))
-                        throw new Error('Document ' + documentId + ' does not exist');
-                    researchEntity.privateReferences.remove(documentId);
-                    researchEntity.publicReferences.remove(documentId);
-                    return researchEntity.savePromise();
+        var authorshipModel = getAuthorshipModel(ResearchEntityModel);
+        return authorshipModel
+                .findOne({researchEntity: researchEntityId, document: documentId})
+                .then(function (authorship) {
+                    if (!authorship)
+                        throw new Error('Authorship ' + documentId + ' does not exist');
+                    return authorship.destroy();
                 })
                 .then(function () {
                     return Reference.deleteIfNotVerified(documentId);
                 });
     },
-    verifyDocument: function (ResearchEntity, researchEntityId, referenceId) {
-        return ResearchEntity.findOneById(researchEntityId)
-                .then(function (researchEntity) {
-                    researchEntity.privateReferences.add(referenceId);
-                    return researchEntity.savePromise();
-                })
-                .then(function () {
-                    return Reference.findOneById(referenceId);
-                });
+    verifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
+        var authorshipModel = getAuthorshipModel(ResearchEntityModel);
+        return authorshipModel.create({researchEntity: researchEntityId, document: documentId})
+            .then(function () {
+                return Reference.findOneById(documentId);
+            });
     },
     verifyDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(function (documentId) {
@@ -225,3 +220,7 @@ module.exports = {
     }
 };
 
+function getAuthorshipModel(ResearchEntityModel) {
+    var authorshipModelName =  ResearchEntityModel._attributes.documents.through;
+    return sails.models[authorshipModelName];
+}

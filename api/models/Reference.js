@@ -54,6 +54,11 @@ module.exports = {
             via: 'documents',
             through: 'authorship'
         },
+        groups: {
+            collection: 'group',
+            via: 'documents',
+            through: 'authorshipgroup'
+        },
         publicCoauthors: {
             collection: 'User',
             via: 'publicReferences'
@@ -178,17 +183,13 @@ module.exports = {
     },
     deleteIfNotVerified: function (documentId) {
         function countAuthorsAndGroups(document) {
-            return document.privateCoauthors.length +
-                document.publicCoauthors.length +
-                document.privateGroups.length +
-                document.publicGroups.length;
+            return document.authors.length +
+                document.groups.length;
         }
 
         return Reference.findOneById(documentId)
-            .populate('privateCoauthors')
-            .populate('publicCoauthors')
-            .populate('privateGroups')
-            .populate('publicGroups')
+            .populate('authors')
+            .populate('groups')
             .then(function (document) {
                 if (!document)
                     throw new Error('Document ' + documentId + ' does not exist');
