@@ -20,7 +20,7 @@
     "grunt-sync": "~0.0.4",
     "include-all": "~0.1.3",
     "lodash": "^4.15.0",
-    "machinepack-sql-builder": "github:particlebanana/waterline-query-builder",
+    "waterline-sql-builder": "github:treelinehq/waterline-sql-builder",
     "rc": "~0.5.0",
     "request": "^2.67.0",
     "request-promise": "^1.0.2",
