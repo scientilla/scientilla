@@ -125,7 +125,7 @@ Scientilla.reference = {
         return reference;
     },
     getAllCoauthors: function () {
-        return _.union(this.privateCoauthors, this.publicCoauthors);
+        return this.authors;
     },
     getType: function () {
         if (!!this.owner)
@@ -502,7 +502,7 @@ Scientilla.group = {
 Scientilla.toDocumentsCollection = function (documents) {
     _.each(documents, function (d) {
         _.defaultsDeep(d, Scientilla.reference);
-        Scientilla.toUsersCollection(d.privateCoauthors);
+        Scientilla.toUsersCollection(d.authors);
     });
     return documents;
 };

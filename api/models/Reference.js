@@ -59,25 +59,9 @@ module.exports = {
             via: 'documents',
             through: 'authorshipgroup'
         },
-        publicCoauthors: {
-            collection: 'User',
-            via: 'publicReferences'
-        },
-        privateCoauthors: {
-            collection: 'User',
-            via: 'privateReferences'
-        },
         discardedCoauthors: {
             collection: 'User',
             via: 'discardedReferences'
-        },
-        publicGroups: {
-            collection: 'Group',
-            via: 'publicReferences'
-        },
-        privateGroups: {
-            collection: 'Group',
-            via: 'privateReferences'
         },
         discardedGroups: {
             collection: 'Group',
@@ -204,13 +188,6 @@ module.exports = {
                     return document[0];
                 return document;
             });
-    },
-    getByIdsWithAuthors: function (referenceIds) {
-        return Reference.findById(referenceIds)
-            .populate('privateCoauthors')
-            .populate('publicCoauthors')
-            .populate('privateGroups')
-            .populate('publicGroups');
     },
     getSuggestedCollaborators: function (referenceId) {
         return Promise.all([

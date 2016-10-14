@@ -61,14 +61,6 @@ module.exports = _.merge({}, researchEntity, {
             via: 'users',
             through: 'authorship'
         },
-        privateReferences: {
-            collection: 'Reference',
-            via: 'privateCoauthors'
-        },
-        publicReferences: {
-            collection: 'Reference',
-            via: 'publicCoauthors'
-        },
         discardedReferences: {
             collection: 'Reference',
             via: 'discardedCoauthors',
@@ -134,10 +126,6 @@ module.exports = _.merge({}, researchEntity, {
             return 'user';
         }
     }),
-    draftToDocument: function (draft, researchEntityId) {
-        draft.draftCreator = null;
-        draft.privateCoauthors.add(researchEntityId);
-    },
     copyDraft: function (userId, document) {
         var draftData = _.pick(document, Reference.getFields());
         draftData.draft = true;

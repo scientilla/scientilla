@@ -43,32 +43,12 @@
             });
             _.forEach(user.references, function (r) {
                 _.defaults(r, Scientilla.reference);
-                _.forEach(r.privateCoauthors, function (c) {
-                    _.assign(c, Scientilla.user);
-                });
-                _.forEach(r.publicCoauthors, function (c) {
+                _.forEach(r.authors, function (c) {
                     _.assign(c, Scientilla.user);
                 });
             });
 //            user.references = Restangular.restangularizeCollection(null, user.references, 'references');
             return user;
-        });
-
-        Restangular.extendModel('references', function (reference) {
-            //sTODO: refactor
-            _.assign(reference, Scientilla.reference);
-            if (reference.draftCreator)
-                _.assign(reference.draftCreator, Scientilla.user);
-            if (reference.draftGroupCreator)
-                _.assign(reference.draftGroupCreator, Scientilla.group);
-            _.forEach(reference.privateCoauthors, function (c) {
-                _.assign(c, Scientilla.user);
-            });
-            _.forEach(reference.publicCoauthors, function (c) {
-                _.assign(c, Scientilla.user);
-            });
-
-            return reference;
         });
 
         Restangular.extendModel('groups', function (group) {
@@ -83,10 +63,7 @@
             });
             _.forEach(group.references, function (r) {
                 _.defaults(r, Scientilla.reference);
-                _.forEach(r.privateCoauthors, function (c) {
-                    _.assign(c, Scientilla.user);
-                });
-                _.forEach(r.publicCoauthors, function (c) {
+                _.forEach(r.authors, function (c) {
                     _.assign(c, Scientilla.user);
                 });
             });

@@ -10,7 +10,7 @@
                 return reference.authorsStr;
 
             var authors = reference.getAuthors();
-            var possibleMatches = reference.getAllCoauthors(); 
+            var possibleMatches = reference.getAllCoauthors();
             var linkedAuthorsStr = reference.authorsStr;
             authors.forEach(function (author) {
                 var ucAuthor = author.toUpperCase();

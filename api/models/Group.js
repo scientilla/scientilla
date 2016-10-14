@@ -37,14 +37,6 @@ module.exports = _.merge({}, researchEntity, {
             via: 'groups',
             through: 'authorshipgroup'
         },
-        privateReferences: {
-            collection: 'Reference',
-            via: 'privateGroups'
-        },
-        publicReferences: {
-            collection: 'Reference',
-            via: 'publicGroups'
-        },
         discardedReferences: {
             collection: 'Reference',
             via: 'discardedGroups'
@@ -59,10 +51,6 @@ module.exports = _.merge({}, researchEntity, {
         scopusId: {
             type: 'STRING'
         }
-    },
-    draftToDocument: function (draft, researchEntityId) {
-        draft.draftGroupCreator = null;
-        draft.privateGroups.add(researchEntityId);
     },
     copyDraft: function(userId, document) {
         var draftData = _.pick(document, Reference.getFields());

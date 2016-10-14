@@ -14,17 +14,6 @@ var Promise = require("bluebird");
 
 module.exports = {
     attributes: {
-        getAllReferences: function () {
-            return _.union(
-                    this.publicReferences,
-                    this.privateReferences,
-                    this.drafts);
-        },
-        getVerifiedReferences: function () {
-            return _.union(
-                    this.publicReferences,
-                    this.privateReferences);
-        },
         savePromise: function () {
             var self = this;
             return new Promise(function (resolve, reject) {
@@ -36,33 +25,6 @@ module.exports = {
                 });
             });
         }
-    },
-    getSearchFilterFunction: function (filterKey) {
-        //sTODO: use map
-        var filters = {
-            'all': 'getAllReferences',
-            'verified': 'getVerifiedReferences'
-        };
-        if (filterKey in filters)
-            return filters[filterKey];
-        else
-            return filters['all'];
-    },
-    getReferences: function (researchEntityModel, researchEntityId, populateFields, filterKey) {
-        var filterFunction = this.getSearchFilterFunction(filterKey);
-        return researchEntityModel.findOneById(researchEntityId)
-                .populate('publicReferences')
-                .populate('privateReferences')
-                .populate('drafts')
-                .then(function (researchEntity) {
-                    var references = researchEntity[filterFunction]();
-                    var referencesId = _.map(references, 'id');
-                    var query = Reference.findById(referencesId);
-                    _.forEach(populateFields, function (f) {
-                        query = query.populate(f);
-                    });
-                    return query;
-                });
     },
     createDraft: function (ResearchEntityModel, researchEntityId, draftData) {
         var fields = Reference.getFields();
@@ -113,19 +75,6 @@ module.exports = {
             return Model.copyDraft(researchEntityId, document);
         }));
     },
-    filterNecessaryReferences: function (userId, ResearchEntity, maybeSuggestedReferences) {
-        var maybeSuggestedReferencesId = _.map(maybeSuggestedReferences, 'id');
-        return Promise.all([
-            Reference.getByIdsWithAuthors(maybeSuggestedReferencesId),
-            //sTODO: refactor
-            ResearchEntity.getReferences(ResearchEntity, userId, [], 'verified')
-        ])
-                .spread(function (maybeSuggestedReferences, authoredReferences) {
-                    var similarityThreshold = .98;
-                    //sTODO: add check on discarded references
-                    return Reference.filterSuggested(maybeSuggestedReferences, authoredReferences, similarityThreshold);
-                });
-    },
     discardDocument: function (researchEntityId, documentId) {
         return this
                 .findOneById(researchEntityId)
@@ -168,11 +117,11 @@ module.exports = {
         return ResearchEntity
                 .findOneById(researchEntityid)
                 .populate('drafts')
-                .populate('privateReferences')
+                .populate('documents')
                 .then(function (researchEntity) {
                     return _.union(
                             researchEntity.drafts,
-                            researchEntity.privateReferences
+                            researchEntity.documents
                             );
                 });
     },

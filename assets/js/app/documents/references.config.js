@@ -52,18 +52,6 @@
                         researchEntity: getCurrentGroup
                     }
                 })
-                .when("/references/:id", {
-                    templateUrl: "partials/reference-details.html",
-                    controller: "ReferenceDetailsController",
-                    controllerAs: 'vm',
-                    resolve: {
-                        reference: getCurrentReference,
-                        researchEntity: getCurrentUser
-                    },
-                    access: {
-                        noLogin: true
-                    }
-                })
                 .when("/references/:id/edit", {
                     templateUrl: "partials/reference-form.html",
                     controller: "ReferenceFormController",
@@ -86,17 +74,6 @@
     function UserReferencesService(ReferenceServiceFactory, AuthService) {
         return ReferenceServiceFactory(AuthService.userId);
     }
-
-
-    getCurrentReference.$inject = ['$route', 'Restangular'];
-
-    function getCurrentReference($route, Restangular) {
-        var referenceId = $route.current.params.id;
-        return Restangular
-            .one('references', referenceId)
-            .get({populate: ['privateCoauthors', 'publicCoauthors', 'draftCreator', 'draftGroupCreator']});
-    }
-
 
     newReference.$inject = ['$routeParams', 'AuthService'];
 
