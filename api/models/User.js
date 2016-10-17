@@ -61,6 +61,10 @@ module.exports = _.merge({}, researchEntity, {
             via: 'users',
             through: 'authorship'
         },
+        authorships: {
+            collection: 'authorship',
+            via: 'researchEntity',
+        },
         discardedReferences: {
             collection: 'Reference',
             via: 'discardedCoauthors',

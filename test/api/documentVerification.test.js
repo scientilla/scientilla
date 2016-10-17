@@ -13,6 +13,8 @@ describe('Document Verification', function () {
     var user1;
     var user2;
     var document;
+    var user1Doc1position = 4;
+    var user2Doc1position = 0;
 
     it('it should be possible to verify an already verified document', function () {
         return test.registerUser(user1Data)
@@ -28,7 +30,7 @@ describe('Document Verification', function () {
                     return res;
                 })
                 .then(function (res) {
-                    return test.verifyDraft(user1, document);
+                    return test.verifyDraft(user1, document, user1Doc1position);
                 })
                 .then(function (res) {
                     return test.registerUser(user2Data);
@@ -39,7 +41,7 @@ describe('Document Verification', function () {
                 })
                 .then(function (res) {
                     return test
-                            .verifyDocument(user2, document)
+                            .verifyDocument(user2, document, user2Doc1position)
                             .expect(200);
                 })
                 .then(function (res) {
@@ -56,6 +58,9 @@ describe('Document Verification', function () {
                                 d.authors.should.have.length(2);
                                 d.authors[0].username.should.equal(user1.username);
                                 d.authors[1].username.should.equal(user2.username);
+                                d.authorships.should.have.length(2);
+                                d.authorships[0].position.should.equal(user1Doc1position);
+                                d.authorships[1].position.should.equal(user2Doc1position);
                             });
                 });
     });

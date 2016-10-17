@@ -44,7 +44,7 @@ module.exports = (function () {
                     .query(qs);
         },
         getDocumentsWithAuthors: function(user) {
-            return this.getDocuments(user, 'authors', {});
+            return this.getDocuments(user, ['authors', 'authorships'], {});
         },
         getSuggestedDocuments: function (user) {
             return request(url)
@@ -59,18 +59,19 @@ module.exports = (function () {
                     .post('/users/' + user.id + '/drafts')
                     .send(draftData);
         },
-        verifyDraft: function (user, draftData) {
+        verifyDraft: function (user, draftData, position) {
             return request(url)
-                    .put('/users/' + user.id + '/drafts/' + draftData.id + '/verified');
+                    .put('/users/' + user.id + '/drafts/' + draftData.id + '/verified')
+                    .send({position: position});
         },
         unverifyDocument: function (user, document) {
             return request(url)
                             .put('/users/' + user.id + '/documents/' + document.id + '/unverified');
         },
-        verifyDocument: function (user, document) {
+        verifyDocument: function (user, document, position) {
             return request(url)
                     .post('/users/' + user.id + '/documents')
-                    .send({id: document.id});
+                    .send({id: document.id, position: position});
         },
         getDocument: function(documentId) {
             return request(url)

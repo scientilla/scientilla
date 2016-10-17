@@ -39,8 +39,9 @@ module.exports = {
     verifyDraft: function (req, res) {
         var researchEntityId = req.params.id;
         var draftId = req.params.draftId;
+        var position = req.body.position;
         var Model = getModel(req);
-        res.halt(Model.verifyDraft(Model, researchEntityId, draftId));
+        res.halt(Model.verifyDraft(Model, researchEntityId, draftId, position));
     },
     verifyDrafts: function (req, res) {
         var researchEntityId = req.params.id;
@@ -51,12 +52,9 @@ module.exports = {
     verifyDocument: function (req, res) {
         var researchEntityId = req.params.id;
         var documentId = req.body.id;
+        var position = req.body.position;
         var Model = getModel(req);
-        Model
-                .verifyDocument(Model, researchEntityId, documentId)
-                .then(function (reference) {
-                    res.json(reference);
-                });
+        res.halt(Model.verifyDocument(Model, researchEntityId, documentId, position));
     },
     verifyDocuments: function (req, res) {
         var researchEntityId = req.params.id;

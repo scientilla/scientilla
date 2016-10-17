@@ -58,9 +58,10 @@ module.exports = {
                     return Reference.deleteIfNotVerified(documentId);
                 });
     },
-    verifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
+    verifyDocument: function (ResearchEntityModel, researchEntityId, documentId, position) {
         var authorshipModel = getAuthorshipModel(ResearchEntityModel);
-        return authorshipModel.create({researchEntity: researchEntityId, document: documentId})
+        var authorship = {researchEntity: researchEntityId, document: documentId, position: position};
+        return authorshipModel.create(authorship)
             .then(function () {
                 return Reference.findOneById(documentId);
             });
@@ -129,7 +130,7 @@ module.exports = {
                         sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
                         return Reference.destroy({id: draft.id}).then(_ => doc);
                     })
-                    .then(d => ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, d.id));
+                    .then(d => ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, d.id, position));
             });
     },
     verifyDrafts: function (ResearchEntityModel, researchEntityId, draftIds) {

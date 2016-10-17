@@ -17,6 +17,8 @@ describe('Draft Verification', function () {
     var user1Draft1;
     var user1Draft2;
     var user2Draft1;
+    var user1Doc1Position = 4;
+    var user2Doc1Position = 0;
 
     it('there should be no verified documents for a new user', function () {
         return test
@@ -41,7 +43,7 @@ describe('Draft Verification', function () {
             })
             .then(function (res) {
                 return test
-                    .verifyDraft(user1, user1Draft1)
+                    .verifyDraft(user1, user1Draft1, user1Doc1Position)
                     .expect(function (res) {
                         res.status.should.equal(200);
                         var document = res.body;
@@ -67,6 +69,8 @@ describe('Draft Verification', function () {
                         should(document.draftCreator).be.null;
                         document.authors.should.have.length(1);
                         document.authors[0].username.should.equal(user1.username);
+                        document.authorships.should.have.length(1);
+                        document.authorships[0].position.should.equal(user1Doc1Position);
                     });
             });
     });
@@ -134,7 +138,7 @@ describe('Draft Verification', function () {
             })
             .then(function (res) {
                 return test
-                    .verifyDraft(user2, user2Draft1)
+                    .verifyDraft(user2, user2Draft1, user2Doc1Position)
                     .expect(function (res) {
                     res.status.should.equal(200);
                     var document = res.body;
@@ -156,6 +160,9 @@ describe('Draft Verification', function () {
                         should(document.draftCreator).be.null;
                         document.authors[0].username.should.equal(user1.username);
                         document.authors[1].username.should.equal(user2.username);
+                        document.authorships.should.have.length(2);
+                        document.authorships[0].position.should.equal(user1Doc1Position);
+                        document.authorships[1].position.should.equal(user2Doc1Position);
                     });
             });
     });

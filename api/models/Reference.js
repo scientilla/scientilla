@@ -59,6 +59,10 @@ module.exports = {
             via: 'documents',
             through: 'authorshipgroup'
         },
+        authorships: {
+            collection: 'authorship',
+            via: 'document'
+        },
         discardedCoauthors: {
             collection: 'User',
             via: 'discardedReferences'
