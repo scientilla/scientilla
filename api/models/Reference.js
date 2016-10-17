@@ -238,33 +238,6 @@ module.exports = {
             return _.includes([VERIFIED, PUBLIC], r.status);
         });
     },
-    verifyDraft: function (draftId, ResearchEntityModel, researchEntityId, position) {
-        return Reference.findOneById(draftId)
-            .then(function (draft) {
-                if (!draft || !draft.draft) {
-                    throw new Error('Draft ' + draftId + ' does not exist');
-                }
-                if (!draft.isValid()) {
-                    return draft;
-                }
-                return Reference.findCopies(draft)
-                    .then(function (documents) {
-                        var n = documents.length;
-                        if (n === 0) {
-                            draft.draft = false;
-                            draft.draftCreator = null;
-                            draft.draftGroupCreator = null;
-                            return draft.savePromise();
-                        }
-                        if (n > 1)
-                            sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
-                        var doc = documents[0];
-                        sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
-                        return Reference.destroy({id: draft.id}).then(_ => doc);
-                    })
-                    .then(d => ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, d.id));
-            });
-    },
     deleteDrafts: function (draftIds) {
         return Promise.all(draftIds.map(function (documentId) {
             return Reference.destroy({id: documentId});
