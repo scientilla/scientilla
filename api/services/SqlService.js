@@ -1,30 +1,39 @@
-/* global User */
-
 // SqlService.js - in api/services
 
+"use strict";
 
-var _ = require('lodash');
-var Promise = require("bluebird");
-var GeneratorFn = require('waterline-sql-builder');
+const _ = require('lodash');
+const Promise = require("bluebird");
+const GeneratorFn = require('waterline-sql-builder');
+const pgp = require('pg-promise')();
+
+const env = sails.config.environment;
+const connectionParams = sails.config.connections[env];
+const connectionStr = [
+    'postgres://', connectionParams.user, ':', connectionParams.password,
+    '@', connectionParams.host, ':', connectionParams.port, '/', connectionParams.database
+].join('');
+
+var db = pgp(connectionStr);
 
 module.exports = {
     dialect: 'postgresql',
-    generateFromJson: function (query) {
-        var dialect = this.dialect;
-        var generator = GeneratorFn({ dialect: dialect });
+    generateFromJson: query => {
+        const dialect = this.dialect;
+        const generator = GeneratorFn({dialect: dialect});
 
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             try {
-                var result = generator.generate(query);
-                var sql = result.sql;
+                const result = generator.generate(query);
+                let sql = result.sql;
 
-                _.forEach(result.bindings, function (binding, i) {
-                    var key = '\\$' + (i + 1);
-                    var regex = new RegExp('([\\s(]){1}' + key + '([\\s,)]|$){1}');
+                _.forEach(result.bindings, (binding, i) => {
+                    const key = '\\$' + (i + 1);
+                    const regex = new RegExp('([\\s(]){1}' + key + '([\\s,)]|$){1}');
 
                     // TODO escape binding
-                    var value;
-                    var uppercaseBinding = _.upperCase(binding);
+                    let value;
+                    const uppercaseBinding = _.upperCase(binding);
                     if (_.includes(['FALSE', 'TRUE'], uppercaseBinding))
                         value = uppercaseBinding === "TRUE";
                     else
@@ -33,26 +42,20 @@ module.exports = {
                     sql = _.replace(sql, regex, '$1' + value + '$2');
                 });
                 resolve(sql);
-            } catch(e) {
+            } catch (e) {
                 reject(e);
             }
         });
 
-
-        return generateSql(query)
-                .then(function (result) {
-                });
     },
-    query: function (sql) {
-        return Promise
-                .promisify(User.query)(sql)
-                .then(function (result) {
-                    return result.rows;
-                })
-                .catch(function (err) {
-                    sails.log.debug('The following query generated an error');
-                    sails.log.debug(sql);
-                    sails.log.debug(err);
-                });
+    query: sql => {
+
+        return db
+            .query(sql)
+            .catch(err => {
+                sails.log.debug('The following query generated an error');
+                sails.log.debug(sql);
+                sails.log.debug(err);
+            });
     }
 };
