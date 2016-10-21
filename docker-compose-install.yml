@@ -1,0 +1,8 @@
+version: '2'
+
+services:
+  node:
+    build: ./docker/node
+    volumes:
+      - .:/usr/src/app
+    command: bash -c "npm install && bower install --allow-root"
