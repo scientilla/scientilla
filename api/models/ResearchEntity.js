@@ -58,9 +58,9 @@ module.exports = {
                     return Reference.deleteIfNotVerified(documentId);
                 });
     },
-    verifyDocument: function (ResearchEntityModel, researchEntityId, documentId, position) {
+    verifyDocument: function (ResearchEntityModel, researchEntityId, documentId, position, affiliationInstituteIds) {
         var authorshipModel = getAuthorshipModel(ResearchEntityModel);
-        var authorship = {researchEntity: researchEntityId, document: documentId, position: position};
+        var authorship = {researchEntity: researchEntityId, document: documentId, position: position, affiliations: affiliationInstituteIds};
         return authorshipModel.create(authorship)
             .then(function () {
                 return Reference.findOneById(documentId);
@@ -106,7 +106,7 @@ module.exports = {
             return Model.discardDocument(researchEntityId, documentId);
         }));
     },
-    verifyDraft: function (ResearchEntityModel, researchEntityId, draftId, position) {
+    verifyDraft: function (ResearchEntityModel, researchEntityId, draftId, position, affiliationInstituteIds) {
         return Reference.findOneById(draftId)
             .then(function (draft) {
                 if (!draft || !draft.draft) {
@@ -130,7 +130,7 @@ module.exports = {
                         sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
                         return Reference.destroy({id: draft.id}).then(_ => doc);
                     })
-                    .then(d => ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, d.id, position));
+                    .then(d => ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, d.id, position, affiliationInstituteIds));
             });
     },
     verifyDrafts: function (ResearchEntityModel, researchEntityId, draftIds) {

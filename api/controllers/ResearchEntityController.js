@@ -40,8 +40,9 @@ module.exports = {
         var researchEntityId = req.params.id;
         var draftId = req.params.draftId;
         var position = req.body.position;
+        var affiliationInstituteIds = req.body.affiliations;
         var Model = getModel(req);
-        res.halt(Model.verifyDraft(Model, researchEntityId, draftId, position));
+        res.halt(Model.verifyDraft(Model, researchEntityId, draftId, position, affiliationInstituteIds));
     },
     verifyDrafts: function (req, res) {
         var researchEntityId = req.params.id;
@@ -53,8 +54,9 @@ module.exports = {
         var researchEntityId = req.params.id;
         var documentId = req.body.id;
         var position = req.body.position;
+        var affiliationInstituteIds = req.body.affiliations;
         var Model = getModel(req);
-        res.halt(Model.verifyDocument(Model, researchEntityId, documentId, position));
+        res.halt(Model.verifyDocument(Model, researchEntityId, documentId, position, affiliationInstituteIds));
     },
     verifyDocuments: function (req, res) {
         var researchEntityId = req.params.id;

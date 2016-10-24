@@ -11,6 +11,8 @@ describe('Draft Verification', function () {
     var user2Data = test.getAllUserData()[1];
     var documentData = test.getAllDocumentData()[0];
     var incompleteDocumentData = test.getAllDocumentData()[1];
+    var iitInstituteData = test.getAllInstituteData()[0];
+    var unigeInstituteData = test.getAllInstituteData()[1];
     var nonExistentDocument =  {id: 1000};
     var user1;
     var user2;
@@ -19,12 +21,28 @@ describe('Draft Verification', function () {
     var user2Draft1;
     var user1Doc1Position = 4;
     var user2Doc1Position = 0;
+    var iitInstitute;
+    var unigeInstitute;
 
     it('there should be no verified documents for a new user', function () {
         return test
             .registerUser(user1Data)
             .then(function (res) {
                 user1 = res.body;
+                return res;
+            })
+            .then(function (res) {
+                return test.createInstitute(iitInstituteData);
+            })
+            .then(function (res) {
+                iitInstitute = res.body;
+                return res;
+            })
+            .then(function (res) {
+                return test.createInstitute(unigeInstituteData);
+            })
+            .then(function (res) {
+                unigeInstitute = res.body;
                 return res;
             })
             .then(function (res) {
@@ -42,8 +60,9 @@ describe('Draft Verification', function () {
                 return res;
             })
             .then(function (res) {
+                const affiliations = [iitInstitute.id];
                 return test
-                    .verifyDraft(user1, user1Draft1, user1Doc1Position)
+                    .verifyDraft(user1, user1Draft1, user1Doc1Position, affiliations)
                     .expect(function (res) {
                         res.status.should.equal(200);
                         var document = res.body;
@@ -71,6 +90,8 @@ describe('Draft Verification', function () {
                         document.authors[0].username.should.equal(user1.username);
                         document.authorships.should.have.length(1);
                         document.authorships[0].position.should.equal(user1Doc1Position);
+                        document.affiliations.should.have.length(1);
+                        document.affiliations[0].institute.should.equal(iitInstitute.id);
                     });
             });
     });
@@ -138,7 +159,7 @@ describe('Draft Verification', function () {
             })
             .then(function (res) {
                 return test
-                    .verifyDraft(user2, user2Draft1, user2Doc1Position)
+                    .verifyDraft(user2, user2Draft1, user2Doc1Position, [iitInstitute.id, unigeInstitute.id])
                     .expect(function (res) {
                     res.status.should.equal(200);
                     var document = res.body;
@@ -163,6 +184,10 @@ describe('Draft Verification', function () {
                         document.authorships.should.have.length(2);
                         document.authorships[0].position.should.equal(user1Doc1Position);
                         document.authorships[1].position.should.equal(user2Doc1Position);
+                        document.affiliations.should.have.length(3);
+                        document.affiliations[0].institute.should.equal(iitInstitute.id);
+                        document.affiliations[1].institute.should.equal(iitInstitute.id);
+                        document.affiliations[2].institute.should.equal(unigeInstitute.id);
                     });
             });
     });

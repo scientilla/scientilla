@@ -63,6 +63,10 @@ module.exports = {
             collection: 'authorship',
             via: 'document'
         },
+        affiliations: {
+            collection: 'affiliation',
+            via: 'document',
+        },
         discardedCoauthors: {
             collection: 'User',
             via: 'discardedReferences'

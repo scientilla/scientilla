@@ -7,15 +7,20 @@
 
 module.exports = {
 
-  attributes: {
+    attributes: {
         researchEntity: {
             model: 'User',
         },
         document: {
             model: 'Reference'
         },
+        affiliations: {
+            collection: 'institute',
+            via: 'authorships',
+            through: 'affiliation'
+        },
         position: 'integer',
         public: 'boolean'
-  }
+    }
 };
 

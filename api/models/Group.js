@@ -54,6 +54,9 @@ module.exports = _.merge({}, researchEntity, {
         },
         scopusId: {
             type: 'STRING'
+        },
+        institute: {
+            model: 'institute'
         }
     },
     copyDraft: function(userId, document) {
