@@ -3,9 +3,9 @@
 (function () {
     angular.module("auth").factory("AuthService", AuthService);
 
-    AuthService.$inject = ["$http", "Restangular", "UsersService", "$q", "localStorageService", "EventsService"];
+    AuthService.$inject = ["$http", "Restangular", "UsersService", "$q", "localStorageService", "EventsService", "Prototyper"];
 
-    function AuthService($http, Restangular, UsersService, $q, localStorageService, EventsService) {
+    function AuthService($http, Restangular, UsersService, $q, localStorageService, EventsService, Prototyper) {
 
         var service = {
             isLogged: false,
@@ -33,11 +33,7 @@
 
             service.user = Restangular.copy(service.user);
 
-            _.defaults(service.user, Scientilla.user);
-            _.forEach(service.user.admininstratedGroups, function (g) {
-                _.defaults(g, Scientilla.group);
-            });
-
+            Prototyper.toUserModel(service.user);
 
             Restangular.setDefaultHeaders({access_token: service.jwtToken});
             $http.defaults.headers.common.access_token = service.jwtToken;
@@ -80,10 +76,7 @@
                     })
                     .then(function (user) {
                         service.user = user;
-                        _.defaults(service.user, Scientilla.user);
-                        _.forEach(service.user.admininstratedGroups, function (g) {
-                            _.defaults(g, Scientilla.group);
-                        });
+                        Prototyper.toUserModel(service.user);
                         user.admininstratedGroups = Restangular.restangularizeCollection(null, user.admininstratedGroups, 'groups');
                         return $http.get('/users/jwt');
                     })
