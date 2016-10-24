@@ -3,7 +3,6 @@
     angular.module("components").factory("researchEntityService", ResearchEntityServiceFactory);
 
 
-
     ResearchEntityServiceFactory.$inject = ['Restangular'];
 
     function ResearchEntityServiceFactory(Restangular) {
@@ -12,6 +11,7 @@
         service.getDocuments = getDocuments;
         service.getDrafts = getDrafts;
         service.getSuggestedDocuments = getSuggestedDocuments;
+        service.getDiscardedDocuments = getDiscardedDocuments;
         service.verifyDocument = verifyDocument;
         service.discardDocument = discardDocument;
         service.verifyDraft = verifyDraft;
@@ -50,38 +50,54 @@
 
 
         function getSuggestedDocuments(researchEntity, query) {
+            var populate = {populate: ['authors']};
+
+            var q = _.merge({}, query, populate);
+
+            return researchEntity.getList('suggestedDocuments', q);
+        }
+
+        function getDiscardedDocuments(researchEntity, query) {
+            var populate = {populate: ['authors']};
+
+            var q = _.merge({}, query, populate);
+
             return researchEntity
-                    .getList('suggested-documents', query);
+                .getList('discardedReferences', q)
+                .then(list =>
+                    _.forEach(list, d =>
+                        d.addTag('discarded'))
+                );
         }
 
         function verifyDocument(researchEntity, id) {
             return researchEntity
-                    .post('documents', {id: id});
+                .post('documents', {id: id});
         }
 
         function verifyDraft(researchEntity, reference) {
             return researchEntity.one('drafts', reference.id)
-                    .customPUT({}, 'verified');
+                .customPUT({}, 'verified');
         }
 
         function unverify(researchEntity, reference) {
             return researchEntity.one('documents', reference.id)
-                    .customPUT({}, 'unverified');
+                .customPUT({}, 'unverified');
         }
 
         function discardDocument(researchEntity, documentId) {
             return researchEntity
-                    .post('discarded-document', {documentId: documentId});
+                .post('discarded-document', {documentId: documentId});
         }
 
         function verifyDocuments(researchEntity, documentIds) {
             return researchEntity
-                    .customPUT({documentIds: documentIds}, 'verify-documents');
+                .customPUT({documentIds: documentIds}, 'verify-documents');
         }
 
         function discardDocuments(researchEntity, documentIds) {
             return researchEntity
-                    .customPOST({documentIds: documentIds}, 'discarded-documents');
+                .customPOST({documentIds: documentIds}, 'discarded-documents');
         }
 
         function copyDocuments(researchEntity, documents) {
@@ -89,7 +105,7 @@
                 return d.plain();
             });
             return researchEntity
-                    .customPOST({documents: documents}, 'copy-drafts');
+                .customPOST({documents: documents}, 'copy-drafts');
         }
 
         function copyDocument(researchEntity, document) {
@@ -98,20 +114,20 @@
 
         function verifyDrafts(researchEntity, draftIds) {
             return researchEntity
-                    .all('drafts')
-                    .customPUT({draftIds: draftIds}, 'verify-drafts');
+                .all('drafts')
+                .customPUT({draftIds: draftIds}, 'verify-drafts');
         }
 
         function deleteDraft(researchEntity, draftId) {
             return researchEntity
-                    .one('drafts', draftId)
-                    .remove();
+                .one('drafts', draftId)
+                .remove();
         }
 
         function deleteDrafts(researchEntity, draftIds) {
             return Restangular
-                    .all('references')
-                    .customDELETE('delete', {}, {}, {draftIds: draftIds});
+                .all('references')
+                .customDELETE('delete', {}, {}, {draftIds: draftIds});
         }
 
         return service;

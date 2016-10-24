@@ -141,27 +141,6 @@ module.exports = {
                     return suggestedDocuments;
                 });
     },
-    getSuggestedDocuments: function (ResearchEntity, researchEntityId, query) {
-        function checkDiscardedRows(rows) {
-            rows.forEach(function (row) {
-                if (!row.tags)
-                    row.tags = [];
-                if (row.discarded)
-                    row.tags.push('discarded');
-                delete row.discarded;
-            });
-            return rows;
-        }
-
-        return ResearchEntity.getSuggestedDocumentsQuery(researchEntityId, query)
-                .then(SqlService.generateFromJson)
-                .then(SqlService.query)
-                .then(checkDiscardedRows)
-                .then(function (rows) {
-                    return ResearchEntity.checkCopiedDocuments(ResearchEntity, researchEntityId, rows);
-                });
-
-    },
     _config: {
         actions: false,
         shortcuts: false,

@@ -87,12 +87,6 @@ module.exports = {
         var query = getQuery(req);
         var Model = getModel(req);
         res.halt(Connector.getDocuments(Model, researchEntityId, query));
-    },
-    getSuggestedDocuments: function (req, res) {
-        var Model = getModel(req);
-        var researchEntityId = req.params.id;
-        var query = getQuery(req);
-        res.halt(Model.getSuggestedDocuments(Model, researchEntityId, query));
     }
 };
 

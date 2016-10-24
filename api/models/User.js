@@ -61,6 +61,11 @@ module.exports = _.merge({}, researchEntity, {
             via: 'users',
             through: 'authorship'
         },
+        suggestedDocuments: {
+            collection: 'reference',
+            via: 'users',
+            through: 'documentsuggestion'
+        },
         discardedReferences: {
             collection: 'Reference',
             via: 'discardedCoauthors',
@@ -138,72 +143,6 @@ module.exports = _.merge({}, researchEntity, {
                 .then(function (user) {
                     return user.admininstratedGroups;
                 });
-    },
-    //sTODO: add deep populate for other fields of the references
-    getSuggestedDocumentsQuery: function (userId, query) {
-
-        return User.findOneById(userId)
-                .then(function (user) {
-
-                    var userDiscardedDocuments = {
-                        select: '*',
-                        from: 'reference_discardedcoauthors__user_discardedreferences',
-                        where: {
-                            'reference_discardedcoauthors__user_discardedreferences.user_discardedReferences': userId
-                        },
-                        as: 'userDiscardedDocuments'
-                    };
-
-                    var userDocumentIds = {
-                        select: 'document',
-                        from: 'authorship',
-                        where: {
-                            'researchEntity': userId
-                        }
-                    };
-
-
-                    var userSuggestedDocuments = {
-                        select: [
-                            'reference.*',
-                            'user_discardedReferences as discarded'
-                        ],
-                        from: userDiscardedDocuments,
-                        rightJoin: [
-                            {
-                                from: 'reference',
-                                on: {
-                                    'reference': 'id',
-                                    'userDiscardedDocuments': 'reference_discardedCoauthors'
-                                }
-                            }
-                        ],
-                        where: {
-                            'reference.draft': false,
-                            'reference.authorsStr': {
-                                'ilike': '%' + user.surname + '%'
-                            },
-                            'reference.id': {
-                                'not in': userDocumentIds
-                            }
-                        },
-                        as: 'suggestedDocuments'
-                    };
-
-                    var q = {
-                        select: '*',
-                        from: userSuggestedDocuments
-                    };
-
-                    q.where = _.merge({}, q.where, query.where);
-                    q.orderBy = Reference.DEFAULT_SORTING;
-                    q.skip = query.skip;
-                    q.limit = query.limit;
-
-
-                    return q;
-                });
-
     },
     setSlug: function (user) {
         var name = user.name ? user.name : "";

@@ -45,6 +45,11 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'reference',
             via: 'suggestedGroups'
         },
+        suggestedDocuments: {
+            collection: 'reference',
+            via: 'groups',
+            through: 'documentsuggestiongroup'
+        },
         getType: function () {
             return 'group';
         },
@@ -57,86 +62,5 @@ module.exports = _.merge({}, researchEntity, {
         draftData.draft = true;
         draftData.draftGroupCreator = userId;
         return Reference.create(draftData);
-    },
-    //sTODO: add deep populate for other fields of the documents
-    getSuggestedDocumentsQuery: function (groupId, query) {
-
-        var groupDocumentsIds = {
-            select: 'document',
-            from: 'authorshipgroup',
-            where: {
-                'researchEntity': groupId
-            }
-        };
-
-        var groupUsers = {
-            select: ['user.id'],
-            from: 'user',
-            join: [
-                {
-                    from: 'membership',
-                    on: {
-                        'user': 'id',
-                        'membership': 'user'
-                    }
-                }
-            ],
-            where: {'group': groupId},
-            as: 'groupUsers'
-        };
-
-        var groupSuggestedDocumentIds = {
-            select: ['document'],
-            from: groupUsers,
-            join: [
-                {
-                    from: 'authorship',
-                    on: {
-                        'groupUsers': 'id',
-                        'authorship': 'researchEntity'
-                    }
-                }
-            ],
-            where: {
-                'document': {
-                    'not in': groupDocumentsIds
-                }
-            }
-        };
-
-        var groupSuggestedDocuments = {
-            select: [
-                'reference.*',
-                'reference_discardedGroups as discarded'
-            ],
-            from: 'reference',
-            leftJoin: [
-                {
-                    from: 'group_discardedreferences__reference_discardedgroups',
-                    on: {
-                        'reference': 'id',
-                        'group_discardedreferences__reference_discardedgroups': 'reference_discardedGroups'
-                    }
-                }
-            ],
-            where: {
-                'reference.id': {
-                    in: groupSuggestedDocumentIds
-                }
-            },
-            as: 'groupSuggestedDocuments'
-        };
-
-        var q = {
-            select: '*',
-            from: groupSuggestedDocuments
-        };
-
-        q.where = _.merge({}, q.where, query.where);
-        q.orderBy = Reference.DEFAULT_SORTING;
-        q.skip = query.skip;
-        q.limit = query.limit;
-
-        return Promise.resolve(q);
     }
 });

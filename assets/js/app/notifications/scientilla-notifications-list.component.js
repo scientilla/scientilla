@@ -2,15 +2,15 @@
 
 (function () {
     angular
-            .module('groups')
-            .component('scientillaNotificationsList', {
-                templateUrl: 'partials/scientillaNotificationsList.html',
-                controller: ScientillaNotificationsListController,
-                controllerAs: 'vm',
-                bindings: {
-                    researchEntity: "<"
-                }
-            });
+        .module('groups')
+        .component('scientillaNotificationsList', {
+            templateUrl: 'partials/scientillaNotificationsList.html',
+            controller: ScientillaNotificationsListController,
+            controllerAs: 'vm',
+            bindings: {
+                researchEntity: "<"
+            }
+        });
 
     ScientillaNotificationsListController.$inject = [
         'DocumentsServiceFactory',
@@ -20,7 +20,7 @@
 
     function ScientillaNotificationsListController(DocumentsServiceFactory, researchEntityService, EventsService) {
         var vm = this;
-        
+
         var DocumentsService = DocumentsServiceFactory.create(vm.researchEntity);
         vm.copyDocument = DocumentsService.copyDocument;
         vm.verifyDocument = DocumentsService.verifyDocument;
@@ -37,10 +37,9 @@
         vm.searchForm = {
             rejected: {
                 inputType: 'checkbox',
-                label: 'Include discarded documents',
+                label: 'Show discarded documents',
                 defaultValue: false,
-                matchColumn: 'discarded',
-                matchRule: 'is null'
+                matchColumn: 'discarded'
             }
         };
 
@@ -56,8 +55,18 @@
         };
 
         function getData(q) {
-            query = q;
-            return researchEntityService.getSuggestedDocuments(vm.researchEntity, query);
+
+            var discarded = false;
+            if (!_.isEmpty(q)) {
+                discarded = q.where.discarded;
+                delete q.where.discarded;
+                query = q;
+            }
+
+            if (!discarded)
+                return researchEntityService.getSuggestedDocuments(vm.researchEntity, query);
+            else
+                return researchEntityService.getDiscardedDocuments(vm.researchEntity, query);
         }
 
         function refreshList(documents) {

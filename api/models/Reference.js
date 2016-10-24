@@ -54,6 +54,16 @@ module.exports = {
             via: 'documents',
             through: 'authorship'
         },
+        suggestions: {
+            collection: 'user',
+            via: 'documents',
+            through: 'documentsuggestion'
+        },
+        groupSuggestions: {
+            collection: 'group',
+            via: 'documents',
+            through: 'documentsuggestiongroup'
+        },
         groups: {
             collection: 'group',
             via: 'documents',

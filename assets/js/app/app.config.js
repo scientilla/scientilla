@@ -77,7 +77,8 @@
 
         Restangular.extendCollection('documents', Scientilla.toDocumentsCollection);
         Restangular.extendCollection('external-documents', Scientilla.toDocumentsCollection);
-        Restangular.extendCollection('suggested-documents', Scientilla.toDocumentsCollection);
+        Restangular.extendCollection('suggestedDocuments', Scientilla.toDocumentsCollection);
+        Restangular.extendCollection('discardedReferences', Scientilla.toDocumentsCollection);
         Restangular.extendCollection('drafts', Scientilla.toDocumentsCollection);
     }
 })();

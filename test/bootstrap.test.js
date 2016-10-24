@@ -6,6 +6,7 @@ var test = require('./helper.js');
 before(function (done) {
 
     var testConfig = {
+        environment: 'test',
         models: {
             connection: 'test',
             migrate: 'drop'

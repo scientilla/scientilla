@@ -48,7 +48,7 @@ module.exports = (function () {
         },
         getSuggestedDocuments: function (user) {
             return request(url)
-                    .get('/users/' + user.id + '/suggested-documents');
+                    .get('/users/' + user.id + '/suggestedDocuments');
         },
         getDrafts: function (user) {
             return request(url)
