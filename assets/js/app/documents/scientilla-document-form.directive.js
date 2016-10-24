@@ -27,10 +27,11 @@
         'researchEntityService',
         'EventsService',
         '$scope',
-        '$timeout'
+        '$timeout',
+        'DocumentTypesService'
     ];
 
-    function scientillaDocumentFormController(FormForConfiguration, Notification, researchEntityService, EventsService, $scope, $timeout) {
+    function scientillaDocumentFormController(FormForConfiguration, Notification, researchEntityService, EventsService, $scope, $timeout, DocumentTypesService) {
         var vm = this;
         vm.status = createStatus();
         vm.cancel = cancel;
@@ -88,7 +89,7 @@
         }
 
         function loadDocumentFields() {
-            var types = Scientilla.reference.getDocumentTypes()
+            var types = DocumentTypesService.getDocumentTypes()
                 .map(function (t) {
                     return {
                         value: t.key,
@@ -116,7 +117,7 @@
                     required: true,
                     values: types
                 }
-            }, Scientilla.reference.getDocumentsFields(vm.document.sourceType));
+            }, DocumentTypesService.getDocumentsFields(vm.document.sourceType));
             refreshForm();
         }
 

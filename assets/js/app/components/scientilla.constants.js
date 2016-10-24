@@ -40,10 +40,18 @@
         }
     };
 
+    var userConstants = {
+        role: {
+            USER: 'user',
+            ADMINISTRATOR: 'administrator',
+        }
+    }
+
 
 
     angular.module('components')
             .constant('pageSize', 10)
             .constant('yearsInterval', yearsInterval)
-            .constant('documentSearchForm', documentSearchForm);
+            .constant('documentSearchForm', documentSearchForm)
+            .constant('userConstants', userConstants);
 })();

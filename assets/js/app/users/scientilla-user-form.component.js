@@ -22,10 +22,12 @@
         'Notification',
         '$scope',
         'AuthService',
-        'GroupsService'
+        'GroupsService',
+        'Prototyper',
+        'userConstants'
     ];
 
-    function UserFormController(UsersService, FormForConfiguration, Notification, $scope, AuthService, GroupsService) {
+    function UserFormController(UsersService, FormForConfiguration, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants) {
         var vm = this;
         vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.getGroupsQuery = GroupsService.getGroupsQuery;
@@ -73,15 +75,15 @@
             };
         }
 
-        if (AuthService.user.role === Scientilla.user.ADMINISTRATOR)
+        if (AuthService.user.role === userConstants.role.ADMINISTRATOR)
             vm.validationAndViewRules.role = {
                 allowBlank: false,
                 inputType: 'select',
                 label: 'Role',
                 required: true,
                 values: [
-                    {label: 'User', value: Scientilla.user.USER},
-                    {label: 'Administrator', value: Scientilla.user.ADMINISTRATOR}
+                    {label: 'User', value: userConstants.role.USER},
+                    {label: 'Administrator', value: userConstants.role.ADMINISTRATOR}
                 ]
             };
 
@@ -167,7 +169,7 @@
 
         function groupToCollaboration(g) {
             var collaboration = {group: g, user: vm.user.id};
-            _.defaults(collaboration, Scientilla.collaboration);
+            Prototyper.toCollaborationModel(collaboration);
             return collaboration;
         }
         

@@ -12,7 +12,6 @@
                     controller: "ReferenceBrowsingController",
                     controllerAs: 'vm',
                     resolve: {
-                        ReferencesService: RouteReferencesService,
                         researchEntity: getCurrentUser
                     }
                 })
@@ -21,73 +20,9 @@
                     controller: "ReferenceBrowsingController",
                     controllerAs: 'vm',
                     resolve: {
-                        ReferencesService: RouteReferencesService,
                         researchEntity: getCurrentGroup
-                    }
-                })
-                .when("/references/new", {
-                    template: "",
-                    controller: "ReferenceCreationController",
-                    resolve: {
-                        ReferencesService: UserReferencesService,
-                        reference: newReference,
-                        researchEntity: getCurrentUser
-                    }
-                })
-                .when("/users/:id/references/new", {
-                    template: "",
-                    controller: "ReferenceCreationController",
-                    resolve: {
-                        ReferencesService: UserReferencesService,
-                        reference: newReference,
-                        researchEntity: getCurrentUser
-                    }
-                })
-                .when("/groups/:id/references/new", {
-                    template: "",
-                    controller: "ReferenceCreationController",
-                    resolve: {
-                        ReferencesService: UserReferencesService,
-                        reference: newGroupReference,
-                        researchEntity: getCurrentGroup
-                    }
-                })
-                .when("/references/:id/edit", {
-                    templateUrl: "partials/reference-form.html",
-                    controller: "ReferenceFormController",
-                    controllerAs: 'vm',
-                    resolve: {
-                        document: UserReferencesService
                     }
                 });
-    }
-
-    RouteReferencesService.$inject = ['ReferenceServiceFactory', '$route'];
-
-    function RouteReferencesService(ReferenceServiceFactory, $route) {
-        return ReferenceServiceFactory($route.current.params.id);
-    }
-
-
-    UserReferencesService.$inject = ['ReferenceServiceFactory', 'AuthService'];
-
-    function UserReferencesService(ReferenceServiceFactory, AuthService) {
-        return ReferenceServiceFactory(AuthService.userId);
-    }
-
-    newReference.$inject = ['$routeParams', 'AuthService'];
-
-    function newReference($routeParams, AuthService) {
-        var userId = $routeParams.id;
-        return Scientilla.reference.getNewDraftReference(userId);
-    }
-
-    newGroupReference.$inject = ['$routeParams'];
-
-    function newGroupReference($routeParams) {
-        //sTODO: refactor
-        var groupId = $routeParams.id;
-        return Scientilla.reference.getNewGroupReference(groupId);
     }
 
     //sTODO: move this function to the UsersService

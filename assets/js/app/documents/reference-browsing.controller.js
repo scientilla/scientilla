@@ -11,10 +11,10 @@
         'ModalService',
         'GroupsService',
         'UsersService',
-        '$rootScope'
+        'DocumentTypesService'
     ];
 
-    function ReferenceBrowsingController(researchEntity, ContextService, ModalService, GroupsService, UsersService, $rootScope) {
+    function ReferenceBrowsingController(researchEntity, ContextService, ModalService, GroupsService, UsersService, DocumentTypesService) {
         var vm = this;
 
         vm.researchEntity = researchEntity;
@@ -22,7 +22,7 @@
         vm.createNewDocument = createNewDocument;
         vm.editProfile = editProfile;
         vm.openMenu = openMenu;
-        vm.types = Scientilla.reference.getDocumentTypes();
+        vm.types = DocumentTypesService.getDocumentTypes();
 
         function openMenu($mdOpenMenu, ev) {
             $mdOpenMenu(ev);

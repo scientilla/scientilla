@@ -22,9 +22,9 @@
                 .setPrefix('scientilla');
     }
 
-    run.$inject = ['$rootScope', '$location', 'AuthService', 'Restangular'];
+    run.$inject = ['$rootScope', '$location', 'AuthService', 'Restangular', 'Prototyper'];
 
-    function run($rootScope, $location, AuthService, Restangular) {
+    function run($rootScope, $location, AuthService, Restangular, Prototyper) {
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             if (!AuthService.isLogged) {
                 if (next.access && next.access.noLogin) {
@@ -35,50 +35,12 @@
             }
         });
 
-        Restangular.extendModel('users', function (user) {
-            _.assign(user, Scientilla.user);
-            _.forEach(user.collaborations, function (c) {
-                _.defaults(c, Scientilla.collaboration);
-                _.defaults(c.group, Scientilla.group);
-            });
-            _.forEach(user.references, function (r) {
-                _.defaults(r, Scientilla.reference);
-                _.forEach(r.authors, function (c) {
-                    _.assign(c, Scientilla.user);
-                });
-            });
-//            user.references = Restangular.restangularizeCollection(null, user.references, 'references');
-            return user;
-        });
-
-        Restangular.extendModel('groups', function (group) {
-            //sTODO: refactor
-            _.assign(group, Scientilla.group);
-            _.forEach(group.memberships, function (m) {
-                _.defaults(m, Scientilla.membership);
-                _.defaults(m.user, Scientilla.user);
-            });
-            _.forEach(group.administrators, function (a) {
-                _.defaults(a, Scientilla.user);
-            });
-            _.forEach(group.references, function (r) {
-                _.defaults(r, Scientilla.reference);
-                _.forEach(r.authors, function (c) {
-                    _.assign(c, Scientilla.user);
-                });
-            });
-//            group.references = Restangular.restangularizeCollection(null, group.references, 'references');
-
-            return group;
-        });
-//        Restangular.extendModel('collaborations', function (collaboration) {
-//            return collaboration;
-//        });
-
-        Restangular.extendCollection('documents', Scientilla.toDocumentsCollection);
-        Restangular.extendCollection('external-documents', Scientilla.toDocumentsCollection);
-        Restangular.extendCollection('suggestedDocuments', Scientilla.toDocumentsCollection);
-        Restangular.extendCollection('discardedReferences', Scientilla.toDocumentsCollection);
-        Restangular.extendCollection('drafts', Scientilla.toDocumentsCollection);
+        Restangular.extendModel('users', Prototyper.toUserModel);
+        Restangular.extendModel('groups', Prototyper.toGroupModel);
+        Restangular.extendCollection('documents', Prototyper.toDocumentsCollection);
+        Restangular.extendCollection('external-documents', Prototyper.toDocumentsCollection);
+        Restangular.extendCollection('suggestedDocuments', Prototyper.toDocumentsCollection);
+        Restangular.extendCollection('discardedReferences', Prototyper.toDocumentsCollection);
+        Restangular.extendCollection('drafts', Prototyper.toDocumentsCollection);
     }
 })();

@@ -58,9 +58,10 @@ module.exports = {
                     return Reference.deleteIfNotVerified(documentId);
                 });
     },
-    verifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
+    verifyDocument: function (ResearchEntityModel, researchEntityId, documentId, position, affiliationInstituteIds) {
         var authorshipModel = getAuthorshipModel(ResearchEntityModel);
-        return authorshipModel.create({researchEntity: researchEntityId, document: documentId})
+        var authorship = {researchEntity: researchEntityId, document: documentId, position: position, affiliations: affiliationInstituteIds};
+        return authorshipModel.create(authorship)
             .then(function () {
                 return Reference.findOneById(documentId);
             });
@@ -105,8 +106,32 @@ module.exports = {
             return Model.discardDocument(researchEntityId, documentId);
         }));
     },
-    verifyDraft: function (ResearchEntityModel, researchEntityId, draftId) {
-        return Reference.verifyDraft(draftId, ResearchEntityModel, researchEntityId);
+    verifyDraft: function (ResearchEntityModel, researchEntityId, draftId, position, affiliationInstituteIds) {
+        return Reference.findOneById(draftId)
+            .then(function (draft) {
+                if (!draft || !draft.draft) {
+                    throw new Error('Draft ' + draftId + ' does not exist');
+                }
+                if (!draft.isValid()) {
+                    return draft;
+                }
+                return Reference.findCopies(draft)
+                    .then(function (documents) {
+                        var n = documents.length;
+                        if (n === 0) {
+                            draft.draft = false;
+                            draft.draftCreator = null;
+                            draft.draftGroupCreator = null;
+                            return draft.savePromise();
+                        }
+                        if (n > 1)
+                            sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
+                        var doc = documents[0];
+                        sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
+                        return Reference.destroy({id: draft.id}).then(_ => doc);
+                    })
+                    .then(d => ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, d.id, position, affiliationInstituteIds));
+            });
     },
     verifyDrafts: function (ResearchEntityModel, researchEntityId, draftIds) {
         return Promise.all(draftIds.map(function (draftId) {

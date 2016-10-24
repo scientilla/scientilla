@@ -18,10 +18,11 @@
         'FormForConfiguration',
         'Notification',
         '$scope',
-        '$http'
+        '$http',
+        'Prototyper'
     ];
 
-    function GroupFormController(GroupsService, FormForConfiguration, Notification, $scope, $http) {
+    function GroupFormController(GroupsService, FormForConfiguration, Notification, $scope, $http, Prototyper) {
         var vm = this;
         vm.getMembers = getMembers;
         vm.getUsersQuery = getUsersQuery;
@@ -116,7 +117,7 @@
 
         function userToMembership(u) {
             var membership = {group: vm.group.id, user: u};
-            _.defaults(membership, Scientilla.membership);
+            Prototyper.toMembershipModel(membership);
             return membership;
         }
 

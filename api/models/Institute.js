@@ -1,5 +1,5 @@
 /**
- * Authorship.js
+ * Institute.js
  *
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
@@ -8,19 +8,19 @@
 module.exports = {
 
     attributes: {
-        researchEntity: {
-            model: 'User',
+        name: 'STRING',
+        country: 'STRING',
+        city: 'STRING',
+        shortname: 'STRING',
+        scopusId: 'STRING',
+        group: {
+            model: 'group'
         },
-        document: {
-            model: 'Reference'
-        },
-        affiliations: {
-            collection: 'institute',
-            via: 'authorships',
+        authorships: {
+            collection: 'authorship',
+            via: 'affiliations',
             through: 'affiliation'
-        },
-        position: 'integer',
-        public: 'boolean'
+        }
     }
 };
 

@@ -5,9 +5,9 @@
     angular.module("groups")
             .factory("GroupsService", GroupService);
 
-    GroupService.$inject = ["Restangular", "AuthService", "$http"];
+    GroupService.$inject = ["Restangular", "AuthService", "$http", "Prototyper"];
 
-    function GroupService(Restangular, AuthService, $http) {
+    function GroupService(Restangular, AuthService, $http, Prototyper) {
         var service = Restangular.service("groups");
 
         service.getNewGroup = getNewGroup;
@@ -83,11 +83,7 @@
                     {params: {group: groupId, populate: 'user'}})
                     .then(function (result) {
                         var memberships = result.data;
-                        _.forEach(memberships, function (m) {
-                            _.defaults(m, Scientilla.membership);
-                            _.defaults(m.user, Scientilla.user);
-                        });
-
+                        Prototyper.toMembershipsCollection(memberships);
                         return memberships;
                     });
         }
