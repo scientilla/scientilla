@@ -9,14 +9,12 @@ describe('Document Verification', function () {
 
     var user1Data = test.getAllUserData()[0];
     var user2Data = test.getAllUserData()[1];
-    var iitInstituteData = test.getAllInstituteData()[1];
     var documentData = test.getAllDocumentData()[0];
     var iitInstituteData = test.getAllInstituteData()[0];
     var unigeInstituteData = test.getAllInstituteData()[1];
     var user1;
     var user2;
     var document;
-    var iitInstitute;
     var user1Doc1position = 4;
     var user2Doc1position = 0;
     var iitInstitute;
@@ -84,8 +82,8 @@ describe('Document Verification', function () {
                         d.authorships[1].position.should.equal(user2Doc1position);
                         d.affiliations.should.have.length(3);
                         d.affiliations[0].institute.should.equal(iitInstitute.id);
-                        d.affiliations[2].institute.should.equal(unigeInstitute.id);
-                        d.affiliations[1].institute.should.equal(iitInstitute.id);
+                        d.affiliations[1].institute.should.equal(unigeInstitute.id);
+                        d.affiliations[2].institute.should.equal(iitInstitute.id);
                     });
             });
     });
