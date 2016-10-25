@@ -150,8 +150,8 @@ module.exports = {
 
                 function getEternalId(d, attributeName) {
                     return _.get(
-                        _.get(d, 'work-external-identifiers.work-external-identifier')
-                            .find(function (wei) {
+                        _.find(_.get(d, 'work-external-identifiers.work-external-identifier'),
+                            function (wei) {
                                 return wei['work-external-identifier-type'] === attributeName;
                             }),
                         'work-external-identifier-id.value'
