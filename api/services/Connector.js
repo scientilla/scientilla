@@ -1,6 +1,5 @@
 /* global sails */
 
-var conf = require('./scientilla.js');
 var request = require('request-promise');
 var _ = require('lodash');
 var Promise = require("bluebird");
@@ -226,8 +225,8 @@ module.exports = {
             reqParams: {
                 uri: uri,
                 headers: {
-                    'X-ELS-APIKey': conf.scopus.apiKey,
-                    'X-ELS-Insttoken': conf.scopus.token,
+                    'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
+                    'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
                 },
                 qs: {
                     start: configQuery.skip,
@@ -279,8 +278,8 @@ module.exports = {
                     .get({
                         uri: 'https://api.elsevier.com/content/abstract/scopus_id/' + scopusId,
                         headers: {
-                            'X-ELS-APIKey': 'c3afacc73d9bbfb5c50c58a4a58e07cc',
-                            'X-ELS-Insttoken': 'ed64a720836a40cee4e3bf99ee066c67',
+                            'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
+                            'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
                             Accept: 'application/json'
                         },
                         json: true
