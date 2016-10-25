@@ -1,4 +1,5 @@
 /* global User */
+'use strict';
 
 var should = require('should');
 var test = require('./../helper.js');
@@ -23,6 +24,7 @@ describe('Draft Verification', function () {
     var user2Doc1Position = 0;
     var iitInstitute;
     var unigeInstitute;
+    let author2affiliationInstitutes;
 
     it('there should be no verified documents for a new user', function () {
         return test
@@ -158,8 +160,9 @@ describe('Draft Verification', function () {
                 return res;
             })
             .then(function (res) {
+                author2affiliationInstitutes = [unigeInstitute.id, iitInstitute.id];
                 return test
-                    .verifyDraft(user2, user2Draft1, user2Doc1Position, [iitInstitute.id, unigeInstitute.id])
+                    .verifyDraft(user2, user2Draft1, user2Doc1Position, author2affiliationInstitutes)
                     .expect(function (res) {
                     res.status.should.equal(200);
                     var document = res.body;
@@ -174,20 +177,21 @@ describe('Draft Verification', function () {
                     .expect(function (res) {
                         res.status.should.equal(200);
                         res.body.should.have.length(1);
-                        var document = res.body[0];
-                        document.id.should.equal(user1Draft1.id);
-                        document.title.should.equal(documentData.title);
-                        document.draft.should.be.false;
-                        should(document.draftCreator).be.null;
-                        document.authors[0].username.should.equal(user1.username);
-                        document.authors[1].username.should.equal(user2.username);
-                        document.authorships.should.have.length(2);
-                        document.authorships[0].position.should.equal(user1Doc1Position);
-                        document.authorships[1].position.should.equal(user2Doc1Position);
-                        document.affiliations.should.have.length(3);
-                        document.affiliations[0].institute.should.equal(iitInstitute.id);
-                        document.affiliations[1].institute.should.equal(iitInstitute.id);
-                        document.affiliations[2].institute.should.equal(unigeInstitute.id);
+                        var d = res.body[0];
+                        d.id.should.equal(user1Draft1.id);
+                        d.title.should.equal(documentData.title);
+                        d.draft.should.be.false;
+                        should(d.draftCreator).be.null;
+                        d.authors[0].username.should.equal(user1.username);
+                        d.authors[1].username.should.equal(user2.username);
+                        d.authorships.should.have.length(2);
+                        d.authorships[0].position.should.equal(user1Doc1Position);
+                        d.authorships[1].position.should.equal(user2Doc1Position);
+                        d.affiliations.should.have.length(3);
+                        d.affiliations[0].institute.should.equal(iitInstitute.id);
+                        const author2affiliations = d.affiliations.filter(a => a.authorship === d.authorships[1].id);
+                        const author2affiliationInstitutesActual = _.map(author2affiliations, 'institute');
+                        author2affiliationInstitutesActual.should.containDeep(author2affiliationInstitutes);
                     });
             });
     });

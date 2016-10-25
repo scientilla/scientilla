@@ -1,4 +1,5 @@
 /* global User */
+'use strict';
 
 var should = require('should');
 var test = require('./../helper.js');
@@ -19,6 +20,7 @@ describe('Document Verification', function () {
     var user2Doc1position = 0;
     var iitInstitute;
     var unigeInstitute;
+    let author2affiliationInstitutes;
 
 
     it('it should be possible to verify an already verified document', function () {
@@ -59,8 +61,9 @@ describe('Document Verification', function () {
                 return res;
             })
             .then(function (res) {
+                author2affiliationInstitutes = [unigeInstitute.id, iitInstitute.id];
                 return test
-                    .verifyDocument(user2, document, user2Doc1position, [unigeInstitute.id, iitInstitute.id])
+                    .verifyDocument(user2, document, user2Doc1position, author2affiliationInstitutes)
                     .expect(200);
             })
             .then(function (res) {
@@ -82,8 +85,9 @@ describe('Document Verification', function () {
                         d.authorships[1].position.should.equal(user2Doc1position);
                         d.affiliations.should.have.length(3);
                         d.affiliations[0].institute.should.equal(iitInstitute.id);
-                        d.affiliations[1].institute.should.equal(unigeInstitute.id);
-                        d.affiliations[2].institute.should.equal(iitInstitute.id);
+                        const author2affiliations = d.affiliations.filter(a => a.authorship === d.authorships[1].id);
+                        const author2affiliationInstitutesActual = _.map(author2affiliations, 'institute');
+                        author2affiliationInstitutesActual.should.containDeep(author2affiliationInstitutes);
                     });
             });
     });
