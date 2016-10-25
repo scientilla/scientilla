@@ -9,5 +9,9 @@ module.exports.scientilla = {
             cache: true
         },
         domain: 'iit.it'
+    },
+    scopusAPI: {
+        apiKey: '',
+        token: ''
     }
 };
