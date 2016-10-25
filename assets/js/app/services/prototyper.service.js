@@ -10,15 +10,15 @@
     function Prototyper(userConstants) {
         const service = {
             toUserModel: toUserModel,
-            toUsersCollection: toUsersCollection,
+            toUsersCollection: applyToAll(toUserModel),
             toGroupModel: toGroupModel,
-            toGroupsCollection: toGroupsCollection,
+            toGroupsCollection: applyToAll(toGroupModel),
             toDocumentModel: toDocumentModel,
-            toDocumentsCollection: toDocumentsCollection,
+            toDocumentsCollection: applyToAll(toDocumentModel),
             toCollaborationModel: toCollaborationModel,
-            toCollaborationsCollection: toCollaborationsCollection,
+            toCollaborationsCollection: applyToAll(toCollaborationModel),
             toMembershipModel: toMembershipModel,
-            toMembershipsCollection: toMembershipsCollection
+            toMembershipsCollection: applyToAll(toMembershipModel)
         };
         const userPrototype = {
             getAliases: function () {
@@ -131,9 +131,6 @@
             UNKNOWN_REFERENCE: 0,
             USER_REFERENCE: 1,
             GROUP_REFERENCE: 2,
-            DRAFT: 'draft',
-            VERIFIED: 'verified',
-            PUBLIC: 'public',
             tags: [],
             fields: [
                 'authors',
@@ -260,63 +257,45 @@
             }
         };
 
-        function applyToAll(elems, fun) {
-            _.forEach(elems, fun);
-            return elems;
+        function applyToAll(fun) {
+            return function (elems) {
+                _.forEach(elems, fun);
+                return elems;
+            }
         }
 
         function toUserModel(user) {
             _.defaultsDeep(user, userPrototype);
-            toDocumentsCollection(user.documents);
-            toGroupsCollection(user.admininstratedGroups);
-            toCollaborationsCollection(user.collaborations);
+            service.toDocumentsCollection(user.documents);
+            service.toGroupsCollection(user.admininstratedGroups);
+            service.toCollaborationsCollection(user.collaborations);
             return user;
         }
 
         function toGroupModel(group) {
             _.defaultsDeep(group, groupPrototype);
-            toMembershipsCollection(group.memberships)
-            toUsersCollection(group.administrators);
-            toDocumentsCollection(group.documents);
+            service.toMembershipsCollection(group.memberships);
+            service.toUsersCollection(group.administrators);
+            service.toDocumentsCollection(group.documents);
             return group;
         }
 
         function toDocumentModel(document) {
             _.defaultsDeep(document, documentPrototype);
-            toUsersCollection(document.authors);
+            service.toUsersCollection(document.authors);
             return document;
         }
 
         function toMembershipModel(membership) {
             _.defaultsDeep(membership, membershipPrototype);
-            toUserModel(membership.user);
+            service.toUserModel(membership.user);
             return membership
         }
 
         function toCollaborationModel(collaboration) {
             _.defaultsDeep(collaboration, collaborationPrototype);
-            toGroupModel(collaboration.group);
+            service.toGroupModel(collaboration.group);
             return collaboration;
-        }
-
-        function toUsersCollection(users) {
-            return applyToAll(users, toUserModel);
-        }
-
-        function toGroupsCollection(groups) {
-            return applyToAll(groups, toGroupModel);
-        }
-
-        function toDocumentsCollection(documents) {
-            return applyToAll(documents, toDocumentModel);
-        }
-
-        function toMembershipsCollection(membership) {
-            return applyToAll(membership, toMembershipModel);
-        }
-
-        function toCollaborationsCollection(collaboration) {
-            return applyToAll(collaboration, toCollaborationModel);
         }
 
         return service;
