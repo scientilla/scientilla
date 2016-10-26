@@ -226,8 +226,8 @@ module.exports = {
             reqParams: {
                 uri: uri,
                 headers: {
-                    'X-ELS-APIKey': sails.config.scientilla.scopusAPI.apiKey,
-                    'X-ELS-Insttoken': sails.config.scientilla.scopusAPI.token,
+                    'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
+                    'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
                 },
                 qs: {
                     start: configQuery.skip,
@@ -279,8 +279,8 @@ module.exports = {
                     .get({
                         uri: 'https://api.elsevier.com/content/abstract/scopus_id/' + scopusId,
                         headers: {
-                            'X-ELS-APIKey': sails.config.scientilla.scopusAPI.apiKey,
-                            'X-ELS-Insttoken': sails.config.scientilla.scopusAPI.token,
+                            'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
+                            'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
                             Accept: 'application/json'
                         },
                         json: true
