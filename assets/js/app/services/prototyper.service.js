@@ -257,6 +257,15 @@
             }
         };
 
+        function initializeAffiliations(document) {
+            _.forEach(document.authorships, a => {
+                if (a.affiliations)
+                    return;
+                const affiliations = _.filter(document.affiliations, {authorship: a.id});
+                a.affiliations = _.map(affiliations, 'institute');
+            })
+        }
+
         function applyToAll(fun) {
             return function (elems) {
                 _.forEach(elems, fun);
@@ -281,6 +290,7 @@
         }
 
         function toDocumentModel(document) {
+            initializeAffiliations(document);
             _.defaultsDeep(document, documentPrototype);
             service.toUsersCollection(document.authors);
             return document;
