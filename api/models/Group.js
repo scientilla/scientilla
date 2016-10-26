@@ -14,6 +14,7 @@ module.exports = _.merge({}, researchEntity, {
     attributes: {
         name: 'STRING',
         slug: 'STRING',
+        shortname: 'TEXT',
         description: 'TEXT',
         publicationsAcronym: 'TEXT',
         memberships: {

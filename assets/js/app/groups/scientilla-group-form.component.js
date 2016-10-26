@@ -47,6 +47,14 @@
                     message: 'The slug must contains only letters, number and dashes'
                 }
             },
+            shortname: {
+                inputType: 'text',
+                label: 'Short Name'
+            },
+            description: {
+                inputType: 'text',
+                multiline: true
+            },
             publicationsAcronym: {
                 inputType: 'text',
                 label: 'Publications: Group Acronym'
