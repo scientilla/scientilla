@@ -1,6 +1,6 @@
 /* global sails */
+"use strict";
 
-var conf = require('./scientilla.js');
 var request = require('request-promise');
 var _ = require('lodash');
 var Promise = require("bluebird");
@@ -226,8 +226,8 @@ module.exports = {
             reqParams: {
                 uri: uri,
                 headers: {
-                    'X-ELS-APIKey': conf.scopus.apiKey,
-                    'X-ELS-Insttoken': conf.scopus.token,
+                    'X-ELS-APIKey': sails.config.scientilla.scopusAPI.apiKey,
+                    'X-ELS-Insttoken': sails.config.scientilla.scopusAPI.token,
                 },
                 qs: {
                     start: configQuery.skip,
@@ -279,8 +279,8 @@ module.exports = {
                     .get({
                         uri: 'https://api.elsevier.com/content/abstract/scopus_id/' + scopusId,
                         headers: {
-                            'X-ELS-APIKey': 'c3afacc73d9bbfb5c50c58a4a58e07cc',
-                            'X-ELS-Insttoken': 'ed64a720836a40cee4e3bf99ee066c67',
+                            'X-ELS-APIKey': sails.config.scientilla.scopusAPI.apiKey,
+                            'X-ELS-Insttoken': sails.config.scientilla.scopusAPI.token,
                             Accept: 'application/json'
                         },
                         json: true
@@ -348,6 +348,36 @@ module.exports = {
 
                         newDoc.type = typeMappings[d1['subtype']];
 
+                        const scopusInstitutes = _.map(d2.affiliation, a => ({
+                            name: a.affilname,
+                            city: a['affiliation-city'],
+                            country: a['affiliation-country'],
+                            scopusId: a['@id']
+                        }));
+                        
+                        const institutesCreationFns = _.map(
+                            scopusInstitutes,
+                            i => Institute.findOrCreate({scopusId: i.scopusId}, i)
+                        );
+
+                        return Promise.all(institutesCreationFns)
+                            .then(newInstitutes => [d2, newDoc, newInstitutes]);
+                    })
+                    .spread(function(d2, newDoc, newInstitutes) {
+                        const scopusAuthorships =_.get(d2, 'authors.author');
+
+                        newDoc.authorships = _.map(scopusAuthorships, (a, i) => {
+                            const affiliationArray = _.isArray(a.affiliation) ? a.affiliation : [a.affiliation];
+                            const affiliationInstitutes = _.map(
+                                affiliationArray,
+                                aff => _.find(newInstitutes, {scopusId: aff['@id']}).id
+                            );
+                            const newAuthorship = {
+                                position: i,
+                                affiliations: affiliationInstitutes
+                            }
+                            return newAuthorship;
+                        });
                         return newDoc;
                     });
             }
