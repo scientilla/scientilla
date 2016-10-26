@@ -32,7 +32,7 @@ module.exports = {
         selectedDraftData.draft = true;
         return Promise.all([
             ResearchEntityModel.findOneById(researchEntityId).populate('drafts'),
-            Reference.create(draftData)
+            Reference.create(selectedDraftData)
         ])
                 .spread(function (researchEntity, draft) {
                     researchEntity.drafts.add(draft);
