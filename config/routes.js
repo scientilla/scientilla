@@ -56,8 +56,8 @@ module.exports.routes = {
   'post /groups/:id/discarded-document': 'Group.discardDocument',
   'post /users/:id/discarded-documents': 'User.discardDocuments',
   'post /groups/:id/discarded-documents': 'Group.discardDocuments',
-  'post /users/:id/copy-drafts': 'User.copyDrafts',
-  'post /groups/:id/copy-drafts': 'Group.copyDrafts',
+  'post /users/:id/copy-drafts': 'User.createDrafts',
+  'post /groups/:id/copy-drafts': 'Group.createDrafts',
   'put /users/:id/drafts/:draftId/verified': 'User.verifyDraft',
   'put /groups/:id/drafts/:draftId/verified': 'Group.verifyDraft',
   'get /references/:id/suggestions' : 'Suggestion.find', //sTODO delete

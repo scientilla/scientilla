@@ -135,12 +135,6 @@ module.exports = _.merge({}, researchEntity, {
             return 'user';
         }
     }),
-    copyDraft: function (userId, document) {
-        var draftData = _.pick(document, Reference.getFields());
-        draftData.draft = true;
-        draftData.draftCreator = userId;
-        return Reference.create(draftData);
-    },
     getAdministeredGroups: function (userId) {
         return User.findOneById(userId)
                 .populate('admininstratedGroups')
