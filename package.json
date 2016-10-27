@@ -42,6 +42,8 @@
     "debug": "node debug app.js",
     "start": "node app.js",
     "test": "mocha test/bootstrap.test.js test/**/*.test.js",
+    "docker-start": "docker-compose up",
+    "docker-node-restart": "docker-compose restart node && docker-compose logs --tail 0 -f node",
     "docker-test": "docker-compose -f docker-compose-test.yml restart node-test && docker-compose -f docker-compose-test.yml logs --tail 0 -f node-test",
     "docker-test-init": "docker-compose -f docker-compose-test.yml up -d",
     "sailslift": "sails lift"
