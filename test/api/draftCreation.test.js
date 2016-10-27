@@ -2,52 +2,70 @@
 
 'use strict';
 
-var test = require('./../helper.js');
+const test = require('./../helper.js');
 
-describe('Draft creation', function () {
+describe('Draft Creation: ', () => {
     before(test.cleanDb);
     after(test.cleanDb);
 
-    var userData = test.getAllUserData()[0];
-    var draftData = test.getAllDocumentData()[0];
-    var user;
-    var draft;
-    let authorship;
-    let affiliation;
+    const usersData = test.getAllUserData();
+    const documentsData = test.getAllDocumentData();
+    const groupsData = test.getAllGroupData();
 
-    it('there should be no drafts for a new user', function () {
-        return test
-            .registerUser(userData)
-            .then(function (res) {
-                user = res.body;
-                return res;
-            })
-            .then(function (res) {
-                return test
-                    .getDrafts(user)
-                    .expect(200, []);
-            });
-    });
+    const draftsData = [documentsData[0], documentsData[1]];
 
-    it('creating draft should be possible', function () {
-        return test
-            .createDraft(user, draftData)
+    let user;
+    let group;
+
+    it('there should be no drafts for a new user', () =>
+        test.registerUser(usersData[0])
+            .then(res => user = res.body)
+            .then(() => test.getUserDrafts(user)
+                .expect(200, [])
+            )
+    );
+
+    it('creating user draft should be possible', () =>
+        test.userCreateDraft(user, draftsData[0])
             .expect(200)
-            .then(function (res) {
-                draft = res.body;
-                return res;
-            })
-            .then(function (res) {
-                return test
-                    .getDrafts(user)
-                    .expect(function (res) {
+            .then(() => {
+                return test.getUserDrafts(user)
+                    .expect(res => {
                         res.status.should.equal(200);
                         res.body.should.have.length(1);
-                        var d = res.body[0];
-                        d.title.should.equal(draftData.title);
-                        d.draft.should.be.true;
-                        d.draftCreator.should.equal(user.id);
+                        checkDraft(user, draftsData[0], res.body[0]);
                     });
-            });
-    });
+            })
+    );
+
+    it('there should be no drafts for a new group', () =>
+        test.createGroup(groupsData[0])
+            .then(res => group = res.body)
+            .then(() => test.getGroupDrafts(group)
+                .expect(200, [])
+            )
+    );
+
+    it('creating group draft should be possible', () =>
+        test
+            .groupCreateDraft(group, draftsData[1])
+            .expect(200)
+            .then(() => test.getGroupDrafts(group)
+                .expect(res => {
+                    res.status.should.equal(200);
+                    res.body.should.have.length(1);
+                    checkDraft(group, draftsData[1], res.body[0]);
+                })
+            )
+    );
+
+    function checkDraft(researchEntity, draftData, draft) {
+        draft.title.should.equal(draftData.title);
+        draft.draft.should.be.true;
+        if (draft.draftCreator)
+            draft.draftCreator.should.equal(researchEntity.id);
+        else
+            draft.draftGroupCreator.should.equal(researchEntity.id);
+    }
+
 });
