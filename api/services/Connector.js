@@ -1,4 +1,5 @@
 /* global sails */
+"use strict";
 
 var request = require('request-promise');
 var _ = require('lodash');
@@ -347,6 +348,36 @@ module.exports = {
 
                         newDoc.type = typeMappings[d1['subtype']];
 
+                        const scopusInstitutes = _.map(d2.affiliation, a => ({
+                            name: a.affilname,
+                            city: a['affiliation-city'],
+                            country: a['affiliation-country'],
+                            scopusId: a['@id']
+                        }));
+                        
+                        const institutesCreationFns = _.map(
+                            scopusInstitutes,
+                            i => Institute.findOrCreate({scopusId: i.scopusId}, i)
+                        );
+
+                        return Promise.all(institutesCreationFns)
+                            .then(newInstitutes => [d2, newDoc, newInstitutes]);
+                    })
+                    .spread(function(d2, newDoc, newInstitutes) {
+                        const scopusAuthorships =_.get(d2, 'authors.author');
+
+                        newDoc.authorships = _.map(scopusAuthorships, (a, i) => {
+                            const affiliationArray = _.isArray(a.affiliation) ? a.affiliation : [a.affiliation];
+                            const affiliationInstitutes = _.map(
+                                affiliationArray,
+                                aff => _.find(newInstitutes, {scopusId: aff['@id']}).id
+                            );
+                            const newAuthorship = {
+                                position: i,
+                                affiliations: affiliationInstitutes
+                            }
+                            return newAuthorship;
+                        });
                         return newDoc;
                     });
             }

@@ -14,6 +14,7 @@ module.exports = _.merge({}, researchEntity, {
     attributes: {
         name: 'STRING',
         slug: 'STRING',
+        shortname: 'TEXT',
         description: 'TEXT',
         publicationsAcronym: 'TEXT',
         memberships: {
@@ -63,11 +64,5 @@ module.exports = _.merge({}, researchEntity, {
         institute: {
             model: 'institute'
         }
-    },
-    copyDraft: function(userId, document) {
-        var draftData = _.pick(document, Reference.getFields());
-        draftData.draft = true;
-        draftData.draftGroupCreator = userId;
-        return Reference.create(draftData);
     }
 });

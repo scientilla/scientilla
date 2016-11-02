@@ -27,7 +27,7 @@
 
         function getDocuments(researchEntity, query) {
 
-            var populate = {populate: ['authors']};
+            var populate = {populate: ['authors', 'authorships', 'affiliations']};
 
             var q = _.merge({}, query, populate);
 
@@ -35,10 +35,11 @@
         }
 
         function getDrafts(researchEntity, query) {
-            if (!query)
-                query = {};
+            var populate = {populate: ['authorships', 'affiliations']};
 
-            return researchEntity.getList('drafts', query);
+            var q = _.defaultsDeep({}, query, populate);
+
+            return researchEntity.getList('drafts', q);
         }
 
         function getExternalDocuments(researchEntity, query) {

@@ -27,18 +27,27 @@ module.exports = {
         }
     },
     createDraft: function (ResearchEntityModel, researchEntityId, draftData) {
-        var fields = Reference.getFields();
-        var draftData = _.pick(draftData, fields);
-        draftData.draft = true;
+        const documentFields = Reference.getFields();
+        const selectedDraftData = _.pick(draftData, documentFields);
+        selectedDraftData.draft = true;
         return Promise.all([
             ResearchEntityModel.findOneById(researchEntityId).populate('drafts'),
-            Reference.create(draftData)
+            Reference.create(selectedDraftData)
         ])
                 .spread(function (researchEntity, draft) {
                     researchEntity.drafts.add(draft);
                     return Promise.all([
                         draft.id,
                         researchEntity.savePromise()
+                    ]);
+                })
+                .spread(function (draftId) {
+                    const authorshipFields = ['position', 'affiliations'];
+                    const authorships = _.map(draftData.authorships, a => _.pick(a, authorshipFields));
+                    _.forEach(authorships, a => a.document = draftId);
+                    return Promise.all([
+                        draftId,
+                        Authorship.create(authorships)
                     ]);
                 })
                 .spread(function (draftId) {
@@ -71,9 +80,9 @@ module.exports = {
             return Model.verifyDocument(Model, researchEntityId, documentId);
         }));
     },
-    copyDrafts: function (Model, researchEntityId, documents) {
+    createDrafts: function (Model, researchEntityId, documents) {
         return Promise.all(documents.map(function (document) {
-            return Model.copyDraft(researchEntityId, document);
+            return Model.createDraft(Model, researchEntityId, document);
         }));
     },
     discardDocument: function (researchEntityId, documentId) {

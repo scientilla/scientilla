@@ -13,5 +13,12 @@ module.exports.scientilla = {
     scopus: {
         apiKey: '',
         token: ''
+    },
+    institute: {
+        name: "Istituto Italiano di Tecnologia",
+        shortname: "IIT",
+        country: "Italy",
+        city: "Genoa",
+        scopusId: "60102151"
     }
 };
