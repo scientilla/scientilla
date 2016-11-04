@@ -9,23 +9,12 @@
  */
 
 
-var Promise = require("bluebird");
+const Promise = require("bluebird");
+const BaseModel = require("../lib/BaseModel.js");
 
 
-module.exports = {
-    attributes: {
-        savePromise: function () {
-            var self = this;
-            return new Promise(function (resolve, reject) {
-                self.save(function (err) {
-                    if (err)
-                        reject(err);
-                    else
-                        resolve(self);
-                });
-            });
-        }
-    },
+module.exports = _.merge({}, BaseModel, {
+    attributes: {},
     createDraft: function (ResearchEntityModel, researchEntityId, draftData) {
         const documentFields = Reference.getFields();
         const selectedDraftData = _.pick(draftData, documentFields);
@@ -180,7 +169,7 @@ module.exports = {
         shortcuts: false,
         rest: false
     }
-};
+});
 
 function getAuthorshipModel(ResearchEntityModel) {
     var authorshipModelName =  ResearchEntityModel._attributes.documents.through;

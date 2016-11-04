@@ -8,16 +8,17 @@
  */
 
 
-var _ = require('lodash');
-var Promise = require('bluebird');
+const _ = require('lodash');
+const Promise = require('bluebird');
+const BaseModel = require("../lib/BaseModel.js");
 
 //sTODO: evaluated whether convert the constants to numbers
-var VERIFIED = 'verified';
-var DRAFT = 'draft';
-var PUBLIC = 'public';
+const VERIFIED = 'verified';
+const DRAFT = 'draft';
+const PUBLIC = 'public';
 
 
-module.exports = {
+module.exports = _.merge({}, BaseModel, {
     /* CONSTANTS */
     DEFAULT_SORTING: {
         year: 'desc',
@@ -143,19 +144,6 @@ module.exports = {
                 similarity *= fieldSimilarity;
             });
             return similarity;
-        },
-        savePromise: function () {
-            var self = this;
-            return new Promise(function (resolve, reject) {
-                self.save(function (err) {
-                    if (err) {
-                        reject(err);
-                    }
-                    else {
-                        resolve(self);
-                    }
-                });
-            });
         }
     },
     getFields: function () {
@@ -266,4 +254,4 @@ module.exports = {
         query.draft = false;
         return Reference.find(query);
     }
-};
+});
