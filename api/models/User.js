@@ -108,10 +108,9 @@ module.exports = _.merge({}, researchEntity, {
             var capitalize = function (string) {
                 if (!string)
                     return "";
-                return _.capitalize(string.toLowerCase());
-//                return str.replace(/\w\S*/g, function (txt) {
-//                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-//                });
+                return string.replace(/\w\S*/g, function (txt) {
+                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                });
             };
             var aliases = [];
             var first_name = capitalize(this.name);
@@ -137,10 +136,10 @@ module.exports = _.merge({}, researchEntity, {
     }),
     getAdministeredGroups: function (userId) {
         return User.findOneById(userId)
-                .populate('admininstratedGroups')
-                .then(function (user) {
-                    return user.admininstratedGroups;
-                });
+            .populate('admininstratedGroups')
+            .then(function (user) {
+                return user.admininstratedGroups;
+            });
     },
     setSlug: function (user) {
         var name = user.name ? user.name : "";
@@ -149,41 +148,41 @@ module.exports = _.merge({}, researchEntity, {
         var slug = fullName.toLowerCase().replace(/\s+/gi, '-');
 
         return User
-                .findBySlug(slug)
-                .then(function (usersFound) {
-                    user.slug = usersFound.length ? slug + _.random(1, 999) : slug;
+            .findBySlug(slug)
+            .then(function (usersFound) {
+                user.slug = usersFound.length ? slug + _.random(1, 999) : slug;
 
-                    return user;
-                });
+                return user;
+            });
     },
     createCompleteUser: function (params) {
         var attributes = _.keys(User._attributes);
         var userObj = _.pick(params, attributes);
 
-        return  Promise.resolve(userObj)
-                .then(User.checkUsername)
-                .then(User.create)
-                .then(function (user) {
-                    var authAttributes = _.keys(Auth._attributes);
-                    var auth = _.pick(params, authAttributes);
-                    return new Promise(function (resolve, reject) {
-                        waterlock.engine.attachAuthToUser(auth, user,
-                                function (err) {
-                                    if (err)
-                                        reject(err);
-                                    else
-                                        resolve(user);
-                                });
-                    });
+        return Promise.resolve(userObj)
+            .then(User.checkUsername)
+            .then(User.create)
+            .then(function (user) {
+                var authAttributes = _.keys(Auth._attributes);
+                var auth = _.pick(params, authAttributes);
+                return new Promise(function (resolve, reject) {
+                    waterlock.engine.attachAuthToUser(auth, user,
+                        function (err) {
+                            if (err)
+                                reject(err);
+                            else
+                                resolve(user);
+                        });
                 });
+            });
     },
     setNewUserRole: function (user) {
         return User
-                .count()
-                .then(function (usersNum) {
-                    usersNum === 0 ? user.role = ADMINISTRATOR : user.role = USER;
-                    return user;
-                });
+            .count()
+            .then(function (usersNum) {
+                usersNum === 0 ? user.role = ADMINISTRATOR : user.role = USER;
+                return user;
+            });
     },
     checkUsername: function (user) {
 
@@ -191,37 +190,69 @@ module.exports = _.merge({}, researchEntity, {
             throw new Error('Cannot create domain users');
 
         return User
-                .findByUsername(user.username)
-                .then(function (users) {
-                    if (users.length > 0)
-                        throw new Error('Username already used');
+            .findByUsername(user.username)
+            .then(function (users) {
+                if (users.length > 0)
+                    throw new Error('Username already used');
 
-                    return user;
-                });
+                return user;
+            });
     },
     copyAuthData: function (user) {
         if (!user.auth)
             return user;
 
         return Auth
-                .findOneById(user.auth)
-                .then(function (auth) {
-                    user.username = auth.username;
-                    user.name = auth.name;
-                    user.surname = auth.surname;
+            .findOneById(user.auth)
+            .then(function (auth) {
+                user.username = auth.username;
+                user.name = auth.name;
+                user.surname = auth.surname;
 
-                    return user;
-                });
+                return user;
+            });
 
+    },
+    verifyDocument: function (researchEntityId, documentId, newPosition, newAffiliationInstituteIds) {
+        return Promise.all([
+            Reference.findOneById(documentId)
+                .populate('affiliations')
+                .populate('authorships'),
+            User.findOneById(researchEntityId)
+            //TODO .populate('aliases')
+        ])
+            .spread((document, user) => {
+                const position = !_.isNil(newPosition) ? newPosition : document.getAuthorIndex(user);
+                const affiliationInstituteIds = newAffiliationInstituteIds || document.getAuthorshipAffiliationsByPosition(position);
+
+                if (_.isEmpty(affiliationInstituteIds) || _.isNil(position))
+                    throw "Document Verify fail: affiliation or position not specified";
+
+                const newAuthorship = {
+                    researchEntity: researchEntityId,
+                    document: document.id,
+                    position: position,
+                    affiliations: affiliationInstituteIds
+                };
+
+                // could be already created an empty user authorship by external imports
+                return Authorship
+                    .findOrCreate({document: newAuthorship.document, position: newAuthorship.position}, newAuthorship)
+                    .then((authorship)=> {
+                        _.assign(authorship, newAuthorship);
+                        return authorship.savePromise()
+                            .then(()=>document);
+                    });
+            })
     },
     beforeCreate: function (user, cb) {
         Promise.resolve(user)
-                .then(User.copyAuthData)
-                .then(User.setNewUserRole)
-                .then(User.setSlug)
-                .then(function () {
-                    cb();
-                });
+            .then(User.copyAuthData)
+            .then(User.setNewUserRole)
+            .then(User.setSlug)
+            .then(function () {
+                cb();
+            });
 
     }
 });

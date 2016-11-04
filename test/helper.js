@@ -97,12 +97,38 @@ module.exports = (function () {
                 .put('/users/' + user.id + '/drafts/' + draftData.id + '/verified')
                 .send({position: position, 'affiliations': affiliations});
         },
+        userVerifyDrafts: function (user, drafts) {
+            return request(url)
+                .put('/users/' + user.id + '/drafts/verify-drafts')
+                .send({draftIds: drafts.map(d=>d.id)});
+        },
+        addAuthorship: function (document, user, position, pub) {
+            return request(url)
+                .post('/authorships')
+                .send({
+                    researchEntity: user.id,
+                    document: document.id,
+                    position: position,
+                    public: pub
+                });
+        },
+        getAuthorships: function (document, populateFields, qs) {
+            return request(url).get('/references/' + document.id + '/authorships')
+                .query({populate: populateFields})
+                .query(qs);
+        },
+        addAffiliation: function (authorship, user, institute) {
+            return request(url)
+                .post('/affiliations')
+                .send({
+                    authorship: authorship.id,
+                    user: user.id,
+                    institute: institute.id
+                });
+        },
         userUnverifyDocument: function (user, document) {
             return request(url)
                 .put('/users/' + user.id + '/documents/' + document.id + '/unverified');
-        },
-        addAffiliation: function (user, authorship) {
-
         },
         userVerifyDocument: function (user, document, position, affiliations) {
             return request(url)

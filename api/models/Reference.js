@@ -144,6 +144,21 @@ module.exports = _.merge({}, BaseModel, {
                 similarity *= fieldSimilarity;
             });
             return similarity;
+        },
+        getAuthorIndex: function (author) {
+            return _.findIndex(this.getAuthors(), a => _.includes(author.getAliases(), a));
+        },
+        getAuthorshipAffiliationsByPosition: function (position) {
+            if(_.isNil(this.authorships))
+                throw 'getAuthorshipAffiliations: authorships missing';
+            if(_.isNil(this.affiliations))
+                throw 'getAuthorshipAffiliations: affiliations missing';
+            const authorship = this.authorships.find(a => a.position == position);
+            if(!authorship) return [];
+
+            return this.affiliations
+                .filter(a => a.authorship == authorship.id)
+                .map(a => a.institute);
         }
     },
     getFields: function () {

@@ -2,6 +2,7 @@
 'use strict';
 
 const should = require('should');
+const _ = require('lodash');
 const test = require('./../helper.js');
 
 describe('Draft Verification', () => {
@@ -146,5 +147,63 @@ describe('Draft Verification', () => {
                     author2affiliationInstitutesActual.should.containDeep(author2affiliationInstitutes);
                 }))
     );
+
+    it('verifying in bulk should verify only draft with at least an affiliation associated to the user', () => {
+        const users = [];
+        const institutes = [];
+        let drafts;
+        return test
+            .cleanDb()
+            .then(()=>test.registerUser(usersData[0])
+                .then(res => users.push(res.body)))
+
+            .then(() => test.createInstitute(institutesData[0])
+                .then(res => institutes.push(res.body)))
+            .then(() => test.createInstitute(institutesData[1])
+                .then(res => institutes.push(res.body)))
+
+            .then(() => test.userCreateDrafts(users[0], [
+                    _.merge({},
+                        documentsData[2], {
+                            authorships: [{
+                                position: 1,
+                                affiliations: [institutes[0].id, institutes[1].id]
+                            }]
+                        }),
+                    _.merge({},
+                        documentsData[3], {
+                            authorships: [{
+                                position: 0,
+                                affiliations: [institutes[1].id]
+                            }]
+                        }),
+                    _.merge({},
+                        documentsData[4], {
+                            authorships: [{
+                                position: 4,
+                                affiliations: []
+                            }]
+                        })
+                ]).then(res => drafts = res.body)
+            )
+            .then(() => test.userVerifyDrafts(users[0], drafts)
+                .then(res => {
+                    res.status.should.equal(200);
+                    const verifiedDocuments = res.body;
+                    verifiedDocuments.should.have.length(2);
+                    const documentsIds = verifiedDocuments.map(d=>d.id);
+                    documentsIds.should.containDeep([drafts[0], drafts[1]].map(d=>d.id));
+                    documentsIds.should.not.containDeep([drafts[2]].map(d=>d.id));
+                }))
+            .then(() => test.getUserDocuments(users[0])
+                .then((res) => {
+                        const documents = res.body;
+                        documents.should.have.length(2);
+                        const documentsIds = documents.map(d=>d.id);
+                        documentsIds.should.containDeep([drafts[0], drafts[1]].map(d=>d.id));
+                        documentsIds.should.not.containDeep([drafts[2]].map(d=>d.id));
+                    }
+                ));
+    });
 
 });

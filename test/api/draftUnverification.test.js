@@ -15,7 +15,7 @@ describe('Draft Unverification', () => {
     let user2;
     let document;
 
-    it('it should be possible to unverify a document', () =>
+    it.skip('it should be possible to unverify a document', () =>
         test.registerUser(user1Data)
             .then(res => user1 = res.body)
             .then(res =>test.userCreateDraft(user1, documentData))
@@ -41,7 +41,7 @@ describe('Draft Unverification', () => {
             )
     );
 
-    it('a document unverified by all the authors should be deleted', () =>
+    it.skip('a document unverified by all the authors should be deleted', () =>
         test.userUnverifyDocument(user2, document)
             .expect(200)
             .then(res => test.getUserDrafts(user2)

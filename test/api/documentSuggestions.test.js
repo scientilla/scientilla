@@ -17,7 +17,7 @@ describe('Document Suggestions', () => {
     let user3;
     let document;
 
-    it('it should suggest the reference to the user whose surname is among the authors (str)', () =>
+    it.skip('it should suggest the reference to the user whose surname is among the authors (str)', () =>
         test.registerUser(user1Data)
             .then(res => user1 = res.body)
             .then(() => test.userCreateDraft(user1, documentData))
@@ -35,7 +35,7 @@ describe('Document Suggestions', () => {
                 }))
     );
 
-    it('after the user verifies the document, it should not be suggested anymore', () =>
+    it.skip('after the user verifies the document, it should not be suggested anymore', () =>
         test.userVerifyDocument(user2, document)
             .expect(200)
             .then(function (res) {
