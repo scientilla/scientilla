@@ -22,5 +22,11 @@ CREATE OR REPLACE VIEW documentsuggestiongroup AS
             FROM "group_discardedreferences__reference_discardedgroups"
             WHERE "group_discardedReferences" = "groupMembership"."group"
           )
+          AND
+          "verifiedDocument"."id" NOT IN (
+            SELECT "authorshipgroup"."document"
+            FROM "authorshipgroup"
+            WHERE "authorshipgroup"."researchEntity" = "groupMembership"."group"
+          )
   )
 
