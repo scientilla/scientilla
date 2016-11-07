@@ -82,6 +82,12 @@ module.exports = {
         var Model = getModel(req);
         res.halt(Model.createDrafts(Model, researchEntityId, documents));
     },
+    updateDraft: function (req, res) {
+        var draftId = req.params.id;
+        var draftData = req.body;
+        var Model = getModel(req);
+        res.halt(Model.updateDraft(Model, draftId, draftData));
+    },
     getExternalDocuments: function (req, res) {
         var researchEntityId = req.params.id;
         var query = getQuery(req);

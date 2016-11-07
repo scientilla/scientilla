@@ -147,6 +147,11 @@ module.exports = {
             return ResearchEntityModel.verifyDraft(ResearchEntityModel, researchEntityId, draftId);
         }));
     },
+    updateDraft: function(ResearchEntityModel, draftId, draftData) {
+        const documentFields = Reference.getFields();
+        const selectedDraftData = _.pick(draftData, documentFields);
+        return Reference.update({id: draftId}, selectedDraftData)
+    },
     getAllDocuments: function (ResearchEntity, researchEntityid) {
         return ResearchEntity
                 .findOneById(researchEntityid)
