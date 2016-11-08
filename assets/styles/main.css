@@ -144,31 +144,6 @@
 
 /*****************************************/
 
-md-list-item.scientilla-main-list {
-    align-items: center;
-    position: relative;
-    margin-bottom: 20px;
-}
-
-.scientilla-main-list > scientilla-document {
-    width: 560px;
-}
-
-.scientilla-main-list .md-secondary-container .md-button {
-    vertical-align: middle;
-    margin: 0;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-}
-
-.scientilla-secondary-list > div {
-    width: 200px;
-}
-
-form[form-for] a.md-button {
-    display: inline;
-}
 
 form.autosave {
     padding-left: 5px;
@@ -190,62 +165,8 @@ form.autosave.default {
     font-size: 24px;
 }
 
-md-list-item {
-    justify-content: flex-start !important;
-}
-
-md-tabs.notifications .md-tab.md-active {
-    color: rgb(63, 81, 181);
-}
-
-/*
-h1 {
-    font-size: 30px;
-    line-height: 30px;
-    margin-bottom: 6px;
-}
-h3 {
-    font-size: 24px;
-    margin-bottom: 6px;
-}
-h4 {
-    font-size: 20px;
-    margin-bottom: 2px;
-}
-*/
 i {
     font-style: italic;
-}
-
-.md-button.md-fab.scientilla-fab {
-    height: 42px;
-    width: 42px;
-}
-
-md-divider.top-divider {
-    top: 0;
-    bottom: auto;
-}
-
-.scientilla-main-list > div > h3 {
-    width: 600px;
-}
-
-scientilla-menu .md-button {
-    text-align: left;
-}
-
-scientilla-menu md-divider {
-    border-top-color: rgba(0, 0, 0, 0.40);
-}
-
-scientilla-menu md-sidenav.md-locked-open {
-    min-width: 250px;
-    width: 250px;
-}
-
-scientilla-menu md-sidenav md-toolbar.active {
-    background-color: rgb(53, 91, 191);
 }
 
 .documents-header > div > * {
