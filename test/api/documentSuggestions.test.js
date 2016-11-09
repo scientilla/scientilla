@@ -49,6 +49,6 @@ describe('Document Suggestions', () => {
         test.registerUser(user3Data)
             .then(res => user3 = res.body)
             .then(()=> test.getUserSuggestedDocuments(user3)
-                .expect(200, []))
+                .expect(200, {count: 0, items: []}))
     )
 });

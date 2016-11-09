@@ -8,16 +8,26 @@
         <scientilla-button size="small" ng-click="vm.search()">{{vm.filterLabel}}</scientilla-button>
         <scientilla-button size="small" ng-click="vm.reset()">Reset</scientilla-button>
         <!-- <scientilla-button size="small" type="link" ng-click="vm.toggleAdvanced()">{{vm.advancedText}}</scientilla-button> -->
+        <label>Found items: {{vm.totalItems}},</label>
         <div class="scientilla-filter-config form-inline">
-            <label>Items per page: </label>
-            <select class="form-control" ng-model="vm.itemsPerPage" ng-change="vm.search()" ng-options="s * 1 as s for s in vm.pageSizes"></select>
+            <label>per page: </label>
+            <select class="form-control" ng-model="vm.itemsPerPage" ng-change="vm.search()"
+                    ng-options="s * 1 as s for s in vm.pageSizes"></select>
         </div>
     </form>
 </div>
+<ul uib-pagination
+    ng-change="vm.onPageChange()"
+    total-items="vm.totalItems"
+    ng-model="vm.currentPage"
+    items-per-page="vm.itemsPerPage"
+    max-size="5"
+    class="pagination-sm"
+    boundary-link-numbers="true"></ul>
 
-<div class="scientilla-filter-results">    
+<div class="scientilla-filter-results">
     <div ng-if="vm.onStatus(vm.STATUS_LOADING)"
-         class="progress-bar progress-bar-striped active" 
+         class="progress-bar progress-bar-striped active"
          role="progressbar"
          style="width: 100%">
         Loading
@@ -26,19 +36,7 @@
     <div ng-if="vm.onStatus(vm.STATUS_WAITING)">
         <h3 ng-if="vm.elements.length === 0">{{vm.emptyListMessage}}</h3>
         <div ng-if="vm.elements.length > 0">
-            <ul uib-pager
-                total-items="vm.totalItems"
-                items-per-page="vm.itemsPerPage"
-                ng-model="vm.currentPage"
-                ng-change="vm.onPageChange()">
-            </ul>
             <div ng-transclude></div>
-            <ul uib-pager
-                total-items="vm.totalItems"
-                items-per-page="vm.itemsPerPage"
-                ng-model="vm.currentPage"
-                ng-change="vm.onPageChange()">
-            </ul>
         </div>
 
     </div>

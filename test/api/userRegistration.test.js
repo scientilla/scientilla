@@ -11,7 +11,7 @@ describe('User registration', () => {
 
     it('by default there should be no users', () =>
         test.getUsers()
-            .expect(200, [])
+            .expect(200, {count: 0, items: []})
     );
 
     it('should be able to register new user when there is no users', ()=>
@@ -21,8 +21,11 @@ describe('User registration', () => {
                     .getUsers()
                     .expect(function (res) {
                         res.status.should.equal(200);
-                        res.body.should.have.length(1);
-                        const newUser = res.body[0];
+                        const count = res.body.count;
+                        const documents = res.body.items;
+                        count.should.be.equal(1);
+                        documents.should.have.length(1);
+                        const newUser = documents[0];
                         newUser.username.should.equal(userData.username);
                         newUser.role.should.equal(User.ADMINISTRATOR);
                     });

@@ -45,8 +45,11 @@ describe('Document Verification', () => {
                 .getUserDocumentsWithAuthors(user2)
                 .expect(res => {
                     res.status.should.equal(200);
-                    res.body.should.have.length(1);
-                    const d = res.body[0];
+                    const count = res.body.count;
+                    const documents = res.body.items;
+                    count.should.be.equal(1);
+                    documents.should.have.length(1);
+                    const d = documents[0];
                     d.id.should.equal(document.id);
                     d.title.should.equal(documentData.title);
                     d.draft.should.be.false;

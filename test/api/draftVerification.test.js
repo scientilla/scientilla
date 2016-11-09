@@ -40,7 +40,7 @@ describe('Draft Verification', () => {
             .then(() =>test.createInstitute(unigeInstituteData))
             .then(res =>unigeInstitute = res.body)
             .then(() => test.getUserDocuments(user1)
-                .expect(200, []))
+                .expect(200, {count: 0, items: []}))
     );
 
     it('verifying a complete draft should be possible', () =>
@@ -59,13 +59,16 @@ describe('Draft Verification', () => {
                     });
             })
             .then(() =>test.getUserDrafts(user1)
-                .expect(200, []))
+                .expect(200, {count: 0, items: []}))
             .then(() =>test
                 .getUserDocumentsWithAuthors(user1)
                 .expect(res => {
                     res.status.should.equal(200);
-                    res.body.should.have.length(1);
-                    const document = res.body[0];
+                    const count = res.body.count;
+                    const documents = res.body.items;
+                    count.should.be.equal(1);
+                    documents.should.have.length(1);
+                    const document = documents[0];
                     document.title.should.equal(documentData.title);
                     document.draft.should.be.false;
                     should(document.draftCreator).be.null;
@@ -95,12 +98,12 @@ describe('Draft Verification', () => {
             .then(() => test.getUserDrafts(user1)
                 .expect(res => {
                     res.status.should.equal(200);
-                    res.body.should.have.length(1);
+                    res.body.items.should.have.length(1);
                 }))
             .then(() => test.getUserDocuments(user1)
                 .expect(res => {
                     res.status.should.equal(200);
-                    res.body.should.have.length(1);
+                    res.body.items.should.have.length(1);
                 }))
     );
 
@@ -129,8 +132,11 @@ describe('Draft Verification', () => {
             .then(() =>test.getUserDocumentsWithAuthors(user2)
                 .expect(res => {
                     res.status.should.equal(200);
-                    res.body.should.have.length(1);
-                    const d = res.body[0];
+                    const count = res.body.count;
+                    const documents = res.body.items;
+                    count.should.be.equal(1);
+                    documents.should.have.length(1);
+                    const d = documents[0];
                     d.id.should.equal(user1Draft1.id);
                     d.title.should.equal(documentData.title);
                     d.draft.should.be.false;
@@ -197,7 +203,9 @@ describe('Draft Verification', () => {
                 }))
             .then(() => test.getUserDocuments(users[0])
                 .then((res) => {
-                        const documents = res.body;
+                        const count = res.body.count;
+                        const documents = res.body.items;
+                        count.should.be.equal(2);
                         documents.should.have.length(2);
                         const documentsIds = documents.map(d=>d.id);
                         documentsIds.should.containDeep([drafts[0], drafts[1]].map(d=>d.id));

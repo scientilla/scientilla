@@ -224,6 +224,18 @@ scientilla-external-documents .row {
 .scientilla-modal .btn {
     margin-right: 5px;
 }
+/******************************************************************************/
+/*Bootstrap ovveride*/
+
+.well{
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.pagination-sm{
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
 
 /******************************************************************************/
 /*Bootstrap dropdown fix*/

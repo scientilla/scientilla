@@ -42,5 +42,14 @@
         Restangular.extendCollection('suggestedDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('discardedReferences', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('drafts', Prototyper.toDocumentsCollection);
+
+        Restangular.addResponseInterceptor(function (response, operation) {
+            if (operation === 'getList') {
+                var newResponse = response.items;
+                newResponse.count = response.count;
+                return newResponse;
+            }
+            return response;
+        });
     }
 })();

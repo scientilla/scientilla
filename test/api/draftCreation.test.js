@@ -21,7 +21,7 @@ describe('Draft Creation: ', () => {
         test.registerUser(usersData[0])
             .then(res => user = res.body)
             .then(() => test.getUserDrafts(user)
-                .expect(200, [])
+                .expect(200, {count: 0, items: []})
             )
     );
 
@@ -32,8 +32,11 @@ describe('Draft Creation: ', () => {
                 return test.getUserDrafts(user)
                     .expect(res => {
                         res.status.should.equal(200);
-                        res.body.should.have.length(1);
-                        checkDraft(user, draftsData[0], res.body[0]);
+                        const count = res.body.count;
+                        const drafts = res.body.items;
+                        count.should.be.equal(1);
+                        drafts.should.have.length(1);
+                        checkDraft(user, draftsData[0], drafts[0]);
                     });
             })
     );
@@ -42,7 +45,7 @@ describe('Draft Creation: ', () => {
         test.createGroup(groupsData[0])
             .then(res => group = res.body)
             .then(() => test.getGroupDrafts(group)
-                .expect(200, [])
+                .expect(200, {count: 0, items: []})
             )
     );
 
@@ -53,8 +56,11 @@ describe('Draft Creation: ', () => {
             .then(() => test.getGroupDrafts(group)
                 .expect(res => {
                     res.status.should.equal(200);
-                    res.body.should.have.length(1);
-                    checkDraft(group, draftsData[1], res.body[0]);
+                    const count = res.body.count;
+                    const drafts = res.body.items;
+                    count.should.be.equal(1);
+                    drafts.should.have.length(1);
+                    checkDraft(group, draftsData[1], drafts[0]);
                 })
             )
     );

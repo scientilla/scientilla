@@ -28,8 +28,11 @@ describe('Draft Bulk Creation: ', () => {
                 .getUserDrafts(user)
                 .expect(res => {
                     res.status.should.equal(200);
-                    res.body.should.have.length(3);
-                    checkDrafts(user, draftsData, res.body);
+                    const count = res.body.count;
+                    const documents = res.body.items;
+                    count.should.be.equal(3);
+                    documents.should.have.length(3);
+                    checkDrafts(user, draftsData, documents);
                 })
             );
     });
@@ -50,8 +53,11 @@ describe('Draft Bulk Creation: ', () => {
                 .getGroupDrafts(group)
                 .expect(res => {
                     res.status.should.equal(200);
-                    res.body.should.have.length(3);
-                    checkDrafts(group, draftsData, res.body);
+                    const count = res.body.count;
+                    const documents = res.body.items;
+                    count.should.be.equal(3);
+                    documents.should.have.length(3);
+                    checkDrafts(group, draftsData, documents);
                 })
             );
 
