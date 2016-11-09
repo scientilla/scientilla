@@ -1,16 +1,13 @@
 /* global sails */
+'use strict';
 
 module.exports = function halt(promise, options) {
-    var res = this.res;
+    const res = this.res;
     
-    promise
-            .then(function (suggestedReferences) {
-                res.json(suggestedReferences);
-            })
-            .catch(function (err) {
+    promise.then(data => res.json(data))
+            .catch(err => {
                 sails.log.debug(err);
                 res.badRequest(err);
             });
-
 };
 
