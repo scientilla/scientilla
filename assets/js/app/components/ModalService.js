@@ -33,6 +33,7 @@
                         research-entity="vm.researchEntity"\
                         on-failure="vm.onFailure"\
                         on-submit="vm.onSubmit" \
+                        close-fn="vm.onClose" \
                     ></scientilla-document-form>',
                     scopeVars
                     );
@@ -90,6 +91,27 @@
                      ></scientilla-group-form>',
                     scopeVars
                     );
+
+            return service.modal.result;
+        };
+
+        service.openDocumentVerificationForm = function(document, verificationFn) {
+
+            var scopeVars = {
+                document: document,
+                verificationFn: verificationFn
+            };
+
+            service.modal = openModal(
+                '<scientilla-document-verification-form\
+                    document="vm.document"\
+                    verification-fn="vm.verificationFn"\
+                    on-failure="vm.onFailure"\
+                    on-submit="vm.onSubmit"\
+                ></scientilla-document-verification-form>',
+                scopeVars,
+                {size: 'lg'}
+            );
 
             return service.modal.result;
         };

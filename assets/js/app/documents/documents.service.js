@@ -14,22 +14,20 @@
 
     function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, UsersService, GroupsService, $q) {
         return {
-            create: function (researchEntity) {
+            create: function (researchEntity, reService) {
                 var service = {};
 
                 service.unverifyDocument = unverifyDocument;
                 service.deleteDraft = deleteDraft;
                 service.deleteDrafts = deleteDrafts;
-                service.verifyDraft = verifyDraft;
                 service.verifyDrafts = verifyDrafts;
                 service.openEditPopup = openEditPopup;
-                service.verifyDocument = verifyDocument;
                 service.discardDocument = discardDocument;
                 service.verifyDocuments = verifyDocuments;
                 service.discardDocuments = discardDocuments;
                 service.copyDocument = copyDocument;
                 service.copyDocuments = copyDocuments;
-                service.getExternalDocuments = getExternalDocuments;
+                service.getExternalDocuments = _.partialRight(getExternalDocuments, reService);
 
                 return service;
 
@@ -79,23 +77,6 @@
                         });
                 }
 
-                function verifyDraft(draft) {
-                    return researchEntityService.verifyDraft(researchEntity, draft)
-                        .then(function (document) {
-                            if (document.draft) {
-                                Notification.warning("Draft is not valid and cannot be verified");
-                            }
-                            else {
-                                Notification.success("Draft verified");
-                                EventsService.publish(EventsService.DRAFT_VERIFIED, document);
-                            }
-                        })
-                        .catch(function () {
-                            Notification.warning("Failed to verify draft");
-                        });
-
-                }
-
                 function unverifyDocument(document) {
                     document.tags.push('unverifying');
                     ModalService
@@ -137,6 +118,9 @@
                 function copyDocument(document) {
                     researchEntityService
                         .copyDocument(researchEntity, document)
+                        .then(function(draft) {
+                            return researchEntityService.getDraft(researchEntity, draft.id);
+                        })
                         .then(function (draft) {
                             Notification.success('Document copied');
                             EventsService.publish(EventsService.DRAFT_CREATED, draft);
@@ -164,19 +148,6 @@
                         })
                         .catch(function (err) {
                             Notification.warning("An error happened");
-                        });
-                }
-
-                function verifyDocument(document) {
-                    //sTODO move to a service
-                    researchEntityService
-                        .verifyDocument(researchEntity, document.id)
-                        .then(function () {
-                            Notification.success('Document verified');
-                            EventsService.publish(EventsService.NOTIFICATION_ACCEPTED, document);
-                        })
-                        .catch(function () {
-                            Notification.warning('Failed to verify document');
                         });
                 }
 
@@ -226,17 +197,10 @@
                         .openScientillaDocumentForm(draft.clone(), researchEntity);
                 }
 
-                function getExternalDocuments(query) {
+                function getExternalDocuments(query, service) {
                     var connector = query.where.connector;
                     if (!connector)
                         return $q.resolve([]);
-
-                    var service;
-
-                    if (researchEntity.getType() === 'user')
-                        service = UsersService;
-                    else
-                        service = GroupsService;
 
                     return service
                         .getProfile(researchEntity.id)

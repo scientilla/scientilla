@@ -13,15 +13,16 @@
         });
 
     ScientillaNotificationsListController.$inject = [
-        'DocumentsServiceFactory',
+        'context',
         'researchEntityService',
         'EventsService'
     ];
 
-    function ScientillaNotificationsListController(DocumentsServiceFactory, researchEntityService, EventsService) {
+    function ScientillaNotificationsListController(context, researchEntityService, EventsService) {
         var vm = this;
 
-        var DocumentsService = DocumentsServiceFactory.create(vm.researchEntity);
+        var DocumentsService = context.getDocumentService();
+
         vm.copyDocument = DocumentsService.copyDocument;
         vm.verifyDocument = DocumentsService.verifyDocument;
         vm.verifyDocuments = DocumentsService.verifyDocuments;

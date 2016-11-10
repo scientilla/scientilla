@@ -41,14 +41,6 @@
                 vm.menuItems = [
                     {
                         type: 'item',
-                        title: 'Notifications',
-                        url: '#/users/' + vm.user.id + '/notifications'
-                    },
-                    {
-                        type: 'separator'
-                    },
-                    {
-                        type: 'item',
                         title: 'Personal documents',
                         url: '#/users/' + vm.user.id + '/references'
                     }

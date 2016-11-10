@@ -374,3 +374,7 @@ scientilla-button > button.btn-cancel {
 .btn.btn-link:hover {
     text-decoration: none;
 }
+
+.verification-form {
+    margin-top: 20px;
+}

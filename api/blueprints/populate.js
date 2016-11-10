@@ -116,6 +116,9 @@ module.exports = function expand(req, res) {
 
                     //sTODO add pubsub handling
 
+                    if (childPk)
+                        matchingRecords = matchingRecords[0];
+
                     return res.ok(matchingRecords);
                 });
 

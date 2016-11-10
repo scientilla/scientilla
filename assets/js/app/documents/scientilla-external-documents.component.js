@@ -12,14 +12,14 @@
         });
 
     scientillaExternalDocuments.$inject = [
-        'DocumentsServiceFactory',
+        'context',
         'ResearchEntityFormsFactory'
     ];
 
-    function scientillaExternalDocuments(DocumentsServiceFactory, ResearchEntityFormsFactory) {
+    function scientillaExternalDocuments(context, ResearchEntityFormsFactory) {
         var vm = this;
 
-        var DocumentService = DocumentsServiceFactory.create(vm.researchEntity);
+        var DocumentService = context.getDocumentService();
 
         vm.copyDocument = DocumentService.copyDocument;
         vm.getData = DocumentService.getExternalDocuments;

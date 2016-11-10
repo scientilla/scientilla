@@ -17,17 +17,17 @@
 
 
     scientillaDocumentsList.$inject = [
-        'DocumentsServiceFactory',
+        'context',
         'researchEntityService',
         'documentSearchForm',
         'EventsService'
     ];
 
-    function scientillaDocumentsList(DocumentsServiceFactory, researchEntityService, documentSearchForm,EventsService) {
+    function scientillaDocumentsList(context, researchEntityService, documentSearchForm,EventsService) {
         var vm = this;
-        
-        var DocumentsService = DocumentsServiceFactory.create(vm.researchEntity);
-        
+
+        var DocumentsService = context.getDocumentService();
+
         vm.documents = [];
 
         vm.unverifyDocument = DocumentsService.unverifyDocument;

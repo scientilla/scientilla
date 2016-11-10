@@ -9,12 +9,14 @@
         var service = {};
 
         service.getDocuments = getDocuments;
+        service.getDraft = getDraft;
         service.getDrafts = getDrafts;
         service.getSuggestedDocuments = getSuggestedDocuments;
         service.getDiscardedDocuments = getDiscardedDocuments;
         service.verifyDocument = verifyDocument;
         service.discardDocument = discardDocument;
-        service.verifyDraft = verifyDraft;
+        service.verifyDraftAsGroup = verifyDraftAsGroup;
+        service.verifyDraftAsUser = verifyDraftAsUser;
         service.unverify = unverify;
         service.verifyDocuments = verifyDocuments;
         service.discardDocuments = discardDocuments;
@@ -26,12 +28,17 @@
         service.deleteDrafts = deleteDrafts;
 
         function getDocuments(researchEntity, query) {
-
             var populate = {populate: ['authors', 'authorships', 'affiliations']};
 
             var q = _.merge({}, query, populate);
 
             return researchEntity.getList('documents', q);
+        }
+
+        function getDraft(researchEntity, draftId) {
+            var populate = {populate: ['authorships', 'affiliations']};
+
+            return researchEntity.one('drafts', draftId).get();
         }
 
         function getDrafts(researchEntity, query) {
@@ -43,23 +50,22 @@
         }
 
         function getExternalDocuments(researchEntity, query) {
-            if (!query)
-                query = {};
+            var q = _.merge({}, query);
 
             return researchEntity.getList('external-documents', query);
         }
 
 
         function getSuggestedDocuments(researchEntity, query) {
-            var populate = {populate: ['authors']};
+            var populate = {populate: ['authors', 'authorships', 'affiliations']};
 
-            var q = _.merge({}, query, populate);
+            var q = _.defaultsDeep({}, query, populate);
 
             return researchEntity.getList('suggestedDocuments', q);
         }
 
         function getDiscardedDocuments(researchEntity, query) {
-            var populate = {populate: ['authors']};
+            var populate = {populate: ['authors', 'authorships', 'affiliations']};
 
             var q = _.merge({}, query, populate);
 
@@ -76,9 +82,16 @@
                 .post('documents', {id: id});
         }
 
-        function verifyDraft(researchEntity, reference) {
-            return researchEntity.one('drafts', reference.id)
+        function verifyDraftAsGroup(researchEntity, draftId) {
+            return researchEntity.one('drafts', draftId)
                 .customPUT({}, 'verified');
+        }
+
+        function verifyDraftAsUser(researchEntity, draftId, verificationData) {
+            var verificationFields = ['position', 'affiliations'];
+            verificationData = _.pick(verificationData, verificationFields);
+            return researchEntity.one('drafts', draftId)
+                .customPUT(verificationData, 'verified');
         }
 
         function unverify(researchEntity, reference) {

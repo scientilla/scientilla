@@ -20,16 +20,16 @@
     }
 
     scientillaDrafsListController.$inject = [
-        'DocumentsServiceFactory',
+        'context',
         'researchEntityService',
         'documentSearchForm',
         'EventsService'
     ];
 
-    function scientillaDrafsListController(DocumentsServiceFactory, researchEntityService, documentSearchForm, EventsService) {
+    function scientillaDrafsListController(context, researchEntityService, documentSearchForm, EventsService) {
         var vm = this;
 
-        var DocumentsService = DocumentsServiceFactory.create(vm.researchEntity);
+        var DocumentsService = context.getDocumentService();
 
         vm.getData = getDrafts;
         vm.onFilter = refreshList;

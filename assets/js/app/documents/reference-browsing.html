@@ -24,14 +24,18 @@
     </div>
     <uib-tabset active="active">
         <uib-tab index="0">
-            <uib-tab-heading>Documents</uib-tab-heading>
-            <scientilla-documents-list research-entity="vm.researchEntity" editable="true"></scientilla-documents-list>
+            <uib-tab-heading>Suggested</uib-tab-heading>
+            <scientilla-notifications-list research-entity="vm.researchEntity"></scientilla-notifications-list>
         </uib-tab>
         <uib-tab index="1">
+            <uib-tab-heading>Verified</uib-tab-heading>
+            <scientilla-documents-list research-entity="vm.researchEntity" editable="true"></scientilla-documents-list>
+        </uib-tab>
+        <uib-tab index="2">
             <uib-tab-heading>Drafts</uib-tab-heading>
             <scientilla-drafts-list research-entity="vm.researchEntity"></scientilla-drafts-list>
         </uib-tab>
-        <uib-tab index="2">
+        <uib-tab index="3">
             <uib-tab-heading>External</uib-tab-heading>
             <scientilla-external-documents research-entity="vm.researchEntity"></scientilla-external-documents>
         </uib-tab>

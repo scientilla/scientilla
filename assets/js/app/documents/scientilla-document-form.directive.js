@@ -16,7 +16,8 @@
                 document: "=",
                 researchEntity: "=",
                 onFailure: "&",
-                onSubmit: "&"
+                onSubmit: "&",
+                closeFn: "&"
             }
         };
     }
@@ -28,10 +29,11 @@
         'EventsService',
         '$scope',
         '$timeout',
-        'DocumentTypesService'
+        'DocumentTypesService',
+        'context'
     ];
 
-    function scientillaDocumentFormController(FormForConfiguration, Notification, researchEntityService, EventsService, $scope, $timeout, DocumentTypesService) {
+    function scientillaDocumentFormController(FormForConfiguration, Notification, researchEntityService, EventsService, $scope, $timeout, DocumentTypesService, context) {
         var vm = this;
         vm.status = createStatus();
         vm.cancel = cancel;
@@ -41,6 +43,7 @@
 
         var debounceTimeout = null;
         var debounceTime = 2000;
+        var documentService = context.getDocumentService();
 
         activate();
 
@@ -167,7 +170,7 @@
             if (vm.status.isSaving())
                 saveDocument();
 
-            executeOnSubmit(0);
+            close();
         }
 
         function deleteDocument() {
@@ -186,22 +189,9 @@
 
         function verify() {
             saveDocument()
-                .then(function () {
-                    return researchEntityService.verifyDraft(vm.researchEntity, vm.document);
-                })
-                .then(function (document) {
-                    if (document.draft) {
-                        Notification.warning("Draft is not valid and cannot be verified");
-                    }
-                    else {
-                        executeOnSubmit(2);
-                        Notification.success("Draft verified");
-                        EventsService.publish(EventsService.DRAFT_VERIFIED, document);
-                    }
-                })
-                .catch(function () {
-                    Notification.warning("Failed to verify draft");
-                    executeOnFailure();
+                .then(function() {return close();})
+                .then(function() {
+                    return documentService.verifyDraft(vm.document);
                 });
         }
 
@@ -213,6 +203,13 @@
         function executeOnFailure() {
             if (_.isFunction(vm.onFailure()))
                 vm.onFailure()();
+        }
+
+        function close() {
+            if (_.isFunction(vm.closeFn()))
+            if (_.isFunction(vm.closeFn()))
+                return vm.closeFn()();
+            return Promise.reject('no close function');
         }
     }
 })();

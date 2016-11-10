@@ -37,10 +37,13 @@
 
         Restangular.extendModel('users', Prototyper.toUserModel);
         Restangular.extendModel('groups', Prototyper.toGroupModel);
+        Restangular.extendModel('drafts', Prototyper.toDocumentModel);
         Restangular.extendCollection('documents', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('external-documents', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('suggestedDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('discardedReferences', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('drafts', Prototyper.toDocumentsCollection);
+        Restangular.extendCollection('authorships', Prototyper.toAuthorshipsCollection);
+        Restangular.extendCollection('institutes', Prototyper.toInstitutesCollection);
     }
 })();

@@ -6,23 +6,22 @@
             .controller('ReferenceBrowsingController', ReferenceBrowsingController);
 
     ReferenceBrowsingController.$inject = [
-        'researchEntity',
-        'ContextService',
+        'context',
         'ModalService',
         'GroupsService',
         'UsersService',
         'DocumentTypesService'
     ];
 
-    function ReferenceBrowsingController(researchEntity, ContextService, ModalService, GroupsService, UsersService, DocumentTypesService) {
+    function ReferenceBrowsingController(context, ModalService, GroupsService, UsersService, DocumentTypesService) {
         var vm = this;
 
-        vm.researchEntity = researchEntity;
-        ContextService.setResearchEntity(researchEntity);
+        vm.researchEntity = context.getResearchEntity();
         vm.createNewDocument = createNewDocument;
         vm.editProfile = editProfile;
         vm.openMenu = openMenu;
         vm.types = DocumentTypesService.getDocumentTypes();
+
 
         function openMenu($mdOpenMenu, ev) {
             $mdOpenMenu(ev);
@@ -38,7 +37,7 @@
         function editProfile() {
             var openForm;
             var researchEntityService;
-            if (researchEntity.getType() === 'user') {
+            if (vm.researchEntity.getType() === 'user') {
                 openForm = ModalService.openScientillaUserForm;
                 researchEntityService = UsersService;
             }
@@ -48,12 +47,12 @@
             }
             
             researchEntityService
-                    .getProfile(researchEntity.id)
+                    .getProfile(vm.researchEntity.id)
                     .then(openForm)
                     .then(function (status) {
                         if (status !== 1)
                             return vm.researchEntity;
-                        return researchEntityService.getProfile(researchEntity.id);
+                        return researchEntityService.getProfile(vm.researchEntity.id);
                     })
                     .then(function (researchEntity) {
                         vm.researchEntity = researchEntity;

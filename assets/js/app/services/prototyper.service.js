@@ -18,7 +18,11 @@
             toCollaborationModel: toCollaborationModel,
             toCollaborationsCollection: applyToAll(toCollaborationModel),
             toMembershipModel: toMembershipModel,
-            toMembershipsCollection: applyToAll(toMembershipModel)
+            toMembershipsCollection: applyToAll(toMembershipModel),
+            toAuthorshipModel: toAuthorshipModel,
+            toAuthorshipsCollection: applyToAll(toAuthorshipModel),
+            toInstituteModel: toInstituteModel,
+            toInstitutesCollection: applyToAll(toInstituteModel)
         };
         const userPrototype = {
             getAliases: function () {
@@ -187,6 +191,10 @@
             getDisplayName: function () {
                 return this.getDisplayName();
             },
+            getUserIndex: function(user) {
+                var index = _.findIndex(this.getAuthors(), a => user.getAliases().includes(a));
+                return index;
+            },
             getNewGroupReference: function (groupId) {
                 return {
                     title: "",
@@ -239,7 +247,6 @@
 
         const membershipPrototype = {
             getDisplayName: function () {
-                //sTODO: to be removed when deep populate is implemented
                 if (_.isFunction(this.user.getDisplayName))
                     return this.user.getDisplayName();
                 else
@@ -249,11 +256,19 @@
 
         const collaborationPrototype = {
             getDisplayName: function () {
-                //sTODO: to be removed when deep populate is implemented
                 if (_.isFunction(this.group.getDisplayName))
                     return this.group.getDisplayName();
                 else
                     return '';
+            }
+        };
+
+        const authorshipPrototype = {
+        };
+
+        const institutePrototype = {
+            getDisplayName: function () {
+                    return this.name;
             }
         };
 
@@ -306,6 +321,17 @@
             _.defaultsDeep(collaboration, collaborationPrototype);
             service.toGroupModel(collaboration.group);
             return collaboration;
+        }
+
+        function toAuthorshipModel(authorship) {
+            _.defaultsDeep(authorship, authorshipPrototype);
+            service.toInstitutesCollection(authorship.affiliations);
+
+        }
+
+        function toInstituteModel(institute) {
+            _.defaultsDeep(institute, institutePrototype);
+            return institute;
         }
 
         return service;
