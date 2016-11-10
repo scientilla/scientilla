@@ -42,6 +42,7 @@
         vm.$onInit = function () {
             EventsService.subscribeAll(vm, [
                 EventsService.DRAFT_VERIFIED,
+                EventsService.DOCUMENT_VERIFIED,
                 EventsService.DRAFT_UNVERIFIED
             ], updateList);
         };

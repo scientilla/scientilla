@@ -43,6 +43,7 @@
                         .verifyDocument(researchEntity, document.id)
                         .then(function () {
                             Notification.success('Document verified');
+                            EventsService.publish(EventsService.DOCUMENT_VERIFIED, document);
                             EventsService.publish(EventsService.NOTIFICATION_ACCEPTED, document);
                         })
                         .catch(function () {

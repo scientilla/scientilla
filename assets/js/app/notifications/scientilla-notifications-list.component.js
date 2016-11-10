@@ -47,7 +47,9 @@
         vm.$onInit = function () {
             EventsService.subscribeAll(vm, [
                 EventsService.NOTIFICATION_ACCEPTED,
-                EventsService.NOTIFICATION_DISCARDED
+                EventsService.NOTIFICATION_DISCARDED,
+                EventsService.DRAFT_UNVERIFIED,
+                EventsService.DOCUMENT_VERIFIED
             ], reload);
         };
 

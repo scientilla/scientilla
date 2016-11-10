@@ -157,6 +157,7 @@
                         .verifyDocuments(researchEntity, documentIds)
                         .then(function (allDocs) {
                             Notification.success(allDocs.length + " document(s) verified");
+                            EventsService.publish(EventsService.DOCUMENT_VERIFIED, allDocs);
                             EventsService.publish(EventsService.NOTIFICATION_ACCEPTED, documents);
                         })
                         .catch(function (err) {

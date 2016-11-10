@@ -18,6 +18,8 @@
             DRAFT_VERIFIED: 'draft.verified',
             DRAFT_UNVERIFIED: 'draft.unverified',
 
+            DOCUMENT_VERIFIED: 'document.verified',
+
             NOTIFICATION_ACCEPTED: 'notification.accepted',
             NOTIFICATION_DISCARDED: 'notification.discarded'
         };
