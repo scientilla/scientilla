@@ -85,12 +85,11 @@
 
                             researchEntityService.unverify(researchEntity, document)
                                 .then(function (draft) {
-                                    delete draft.id;
                                     EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
                                     switch (buttonIndex) {
                                         case 0:
-                                            researchEntityService
-                                                .copyDocument(researchEntity, draft)
+                                            return researchEntityService
+                                                .copyDocument(researchEntity, document)
                                                 .then(function (draft) {
                                                     EventsService.publish(EventsService.DRAFT_CREATED, draft);
                                                     return draft;
@@ -118,7 +117,7 @@
                 function copyDocument(document) {
                     researchEntityService
                         .copyDocument(researchEntity, document)
-                        .then(function(draft) {
+                        .then(function (draft) {
                             return researchEntityService.getDraft(researchEntity, draft.id);
                         })
                         .then(function (draft) {
