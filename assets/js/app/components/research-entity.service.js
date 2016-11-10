@@ -77,9 +77,12 @@
                 );
         }
 
-        function verifyDocument(researchEntity, id) {
+        function verifyDocument(researchEntity, id, verificationData) {
+            var verificationFields = ['position', 'affiliations'];
+            verificationData = _.pick(verificationData, verificationFields);
+            verificationData.id = id;
             return researchEntity
-                .post('documents', {id: id});
+                .post('documents', verificationData);
         }
 
         function verifyDraftAsGroup(researchEntity, draftId) {
