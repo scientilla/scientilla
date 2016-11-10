@@ -118,9 +118,6 @@
                     researchEntityService
                         .copyDocument(researchEntity, document)
                         .then(function (draft) {
-                            return researchEntityService.getDraft(researchEntity, draft.id);
-                        })
-                        .then(function (draft) {
                             Notification.success('Document copied');
                             EventsService.publish(EventsService.DRAFT_CREATED, draft);
                             document.addTag('copied');
