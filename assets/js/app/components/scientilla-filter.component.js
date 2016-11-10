@@ -149,16 +149,12 @@
 
         function refreshList() {
             setStatus(vm.STATUS_LOADING);
-
             var query = getQuery();
 
             vm.getData()(query)
                 .then(function (list) {
 
-                    vm.totalItems = (vm.currentPage - 1) * vm.itemsPerPage + list.length;
-
-                    if (list.length > vm.itemsPerPage)
-                        list.pop();
+                    vm.totalItems = list.count || 0;
 
                     vm.elements = list;
                     vm.onFilter()(list);
@@ -174,7 +170,7 @@
         function getQuery() {
             var paginationQuery = {
                 skip: (vm.currentPage - 1) * vm.itemsPerPage,
-                limit: vm.itemsPerPage + 1
+                limit: vm.itemsPerPage
             };
 
             return _.merge({}, paginationQuery, searchQuery);
@@ -191,7 +187,7 @@
             vm.searchValues = {};
 
             _.forEach(vm.searchFormStructure, function (value, key) {
-                if(!_.isUndefined(oldSearchValues[key]))
+                if (!_.isUndefined(oldSearchValues[key]))
                     vm.searchValues[key] = oldSearchValues[key];
                 else if (!_.isUndefined(value.defaultValue))
                     vm.searchValues[key] = value.defaultValue;

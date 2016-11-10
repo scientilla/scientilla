@@ -35,6 +35,15 @@
             }
         });
 
+        Restangular.addResponseInterceptor(function (response, operation) {
+            if (operation === 'getList') {
+                var newResponse = response.items;
+                newResponse.count = response.count;
+                return newResponse;
+            }
+            return response;
+        });
+
         Restangular.extendModel('users', Prototyper.toUserModel);
         Restangular.extendModel('groups', Prototyper.toGroupModel);
         Restangular.extendModel('drafts', Prototyper.toDocumentModel);

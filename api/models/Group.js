@@ -64,5 +64,17 @@ module.exports = _.merge({}, researchEntity, {
         institute: {
             model: 'institute'
         }
+    },
+    verifyDocument: function (researchEntityId, documentId) {
+        return Reference.findOneById(documentId)
+            .then(document => {
+                const authorship = {
+                    researchEntity: researchEntityId,
+                    document: document.id
+                };
+                return AuthorshipGroup
+                    .create(authorship)
+                    .then(()=>document);
+            })
     }
 });

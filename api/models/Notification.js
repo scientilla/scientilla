@@ -6,10 +6,8 @@
  */
 
 module.exports = {
-    attributes: {
-        
-        
-    },
+    migrate: 'safe',
+    attributes: {},
     getUserNotifications: function (userId) {
         var notifications = {};
         return User.find({id: userId}).populate('coauthors')

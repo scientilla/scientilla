@@ -30,18 +30,24 @@ module.exports = {
                 }
 
                 return self.makeRequest(reqConfig)
-                    .then(function (externalDocuments) {
-                        return ResearchEntity.checkCopiedDocuments(ResearchEntity, researchEntityId, externalDocuments);
-                    });
+                    .then(res => ResearchEntity.checkCopiedDocuments(ResearchEntity, researchEntityId, res.documents)
+                        .then(documents =>
+                            ({
+                                count: res.count,
+                                items: documents,
+                            }))
+                    )
             });
     },
     makeRequest: function (reqConfig) {
         return request.get(reqConfig.reqParams)
-            .then(function (res) {
-                var documents = reqConfig.fieldExtract(res);
-                return Promise.all(_.map(documents, function (r) {
-                    return reqConfig.transform(r);
-                }));
+            .then(res => {
+                const extracted = reqConfig.fieldExtract(res);
+                return Promise.all(_.map(extracted.documents, r => reqConfig.transform(r)))
+                    .then(documents => ({
+                        documents: documents,
+                        count: extracted.count
+                    }));
             });
     },
     getPublicationsConfig: function (researchEntity, configQuery) {
@@ -53,7 +59,7 @@ module.exports = {
                 'surname': {author: researchEntity.surname}
             };
 
-            if(configQuery.where.field in opts)
+            if (configQuery.where.field in opts)
                 query = opts[configQuery.where.field];
             else
                 throw "ExternalDocument error: field not selected";
@@ -74,10 +80,11 @@ module.exports = {
                 qs: qs,
                 json: true
             },
-            fieldExtract: function (res) {
-                return _.get(res, 'data');
-            },
-            transform: function (d) {
+            fieldExtract: res =>({
+                documents: _.get(res, 'data'),
+                count: _.get(res, 'items_count')
+            }),
+            transform: d => {
                 var newDoc = {
                     title: d.title,
                     authorsStr: d.authors.replace(/\*/g, ''),
@@ -120,7 +127,6 @@ module.exports = {
         };
     },
     getOrcidConfig: function (researchEntity, configQuery) {
-
         return {
             reqParams: {
                 uri: 'http://pub.orcid.org/' + researchEntity.orcidId + '/orcid-works',
@@ -135,14 +141,15 @@ module.exports = {
                 json: true
 
             },
-            fieldExtract: function (res) {
-                /* To be fixed */
-                var allDocuments = _.get(res, 'orcid-profile.orcid-activities.orcid-works.orcid-work');
-                var sortedDocuments = _.orderBy(allDocuments, ['publication-date.year.value'], ['desc']);
-                var documentsSubset = _.slice(sortedDocuments, configQuery.skip, configQuery.skip + configQuery.limit);
-                return documentsSubset;
+            fieldExtract: res => {
+                /* Fake pagination: To be fixed */
+                const allDocuments = _.get(res, 'orcid-profile.orcid-activities.orcid-works.orcid-work');
+                const sortedDocuments = _.orderBy(allDocuments, ['publication-date.year.value'], ['desc']);
+                const documents = _.slice(sortedDocuments, configQuery.skip, configQuery.skip + configQuery.limit);
+                const count = allDocuments.length;
+                return {documents, count};
             },
-            transform: function (d) {
+            transform: d => {
                 function getAttributeFromCitation(d, attribute) {
                     var citationData = _.get(d, 'work-citation.citation', '');
                     var regex = new RegExp(attribute + '\\s=\\s{(.*?)}');
@@ -211,7 +218,7 @@ module.exports = {
                 'scopusId': 'au-id(' + researchEntity.scopusId + ')'
             };
 
-            if(configQuery.where.field in opts)
+            if (configQuery.where.field in opts)
                 query = opts[configQuery.where.field];
             else
                 throw "ExternalDocument error: field not selected";
@@ -237,15 +244,17 @@ module.exports = {
                 },
                 json: true
             },
-            fieldExtract: function (res) {
-                var error = _.get(res, 'search-results.entry[0].error');
+            fieldExtract: res => {
+                const error = _.get(res, 'search-results.entry[0].error');
 
                 if (error)
                     throw new Error(error);
 
-                return _.get(res, 'search-results.entry');
+                const count = _.get(res, 'search-results.opensearch:totalResults');
+                const documents = _.get(res, 'search-results.entry');
+                return {documents, count};
             },
-            transform: function (d1) {
+            transform: d1 => {
                 function getConferenceLocation(d) {
                     var venuePath = 'item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.conflocation.venue';
                     var cityPath = 'item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.conflocation.city';
@@ -258,7 +267,7 @@ module.exports = {
 
                 function getConferenceAcronym(d) {
                     var confinfo = _.get(d, 'item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.confname');
-                    var confAcronym = confinfo.split(', ')[1];
+                    var confAcronym = _.isNil(confinfo) ? "" : confinfo.split(', ')[1];
                     return confAcronym;
                 }
 
@@ -365,8 +374,8 @@ module.exports = {
                         return Promise.all(institutesCreationFns)
                             .then(newInstitutes => [d2, newDoc, newInstitutes]);
                     })
-                    .spread(function(d2, newDoc, newInstitutes) {
-                        const scopusAuthorships =_.get(d2, 'authors.author');
+                    .spread(function (d2, newDoc, newInstitutes) {
+                        const scopusAuthorships = _.get(d2, 'authors.author');
 
                         newDoc.authorships = _.map(scopusAuthorships, (a, i) => {
                             const affiliationArray = toArray(a.affiliation);

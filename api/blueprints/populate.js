@@ -1,11 +1,12 @@
 /* global sails */
+'use strict';
 
 /**
  * Module dependencies
  */
-var util = require('util');
-var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
-
+const actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
+const util = require('util');
+const Promise = require("bluebird");
 
 /**
  * Populate (or "expand") an association
@@ -27,101 +28,85 @@ var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 module.exports = function expand(req, res) {
 
     function getRelationModel(relation) {
-        var association = _.find(req.options.associations, {alias: relation});
-        var collection = association.collection;
-        var model = req._sails.models[collection];
+        const association = _.find(req.options.associations, {alias: relation});
+        const collection = association.collection;
+        const model = req._sails.models[collection];
         return model;
     }
 
-    var Model = actionUtil.parseModel(req);
-    var relation = req.options.alias;
+    const Model = actionUtil.parseModel(req);
+    const relation = req.options.alias;
     if (!relation || !Model)
         return res.serverError();
 
-    var relationModel = getRelationModel(relation);
+    const relationModel = getRelationModel(relation);
 
     // Allow customizable blacklist for params.
     req.options.criteria = req.options.criteria || {};
     req.options.criteria.blacklist = req.options.criteria.blacklist || ['limit', 'skip', 'sort', 'id', 'parentid'];
 
-    var parentPk = req.param('parentid');
+    const parentPk = req.param('parentid');
 
     // Determine whether to populate using a criteria, or the
     // specified primary key of the child record, or with no
     // filter at all.
-    var childPk = actionUtil.parsePk(req);
+    let childPk = actionUtil.parsePk(req);
 
     // Coerce the child PK to an integer if necessary
-    if (childPk) {
-        if (Model.attributes[Model.primaryKey].type == 'integer') {
-            childPk = +childPk || 0;
-        }
-    }
+    if (childPk && Model.attributes[Model.primaryKey].type == 'integer')
+        childPk = +childPk || 0;
 
-    var where = childPk ? {id: [childPk]} : actionUtil.parseCriteria(req);
+    const where = childPk ? {id: [childPk]} : actionUtil.parseCriteria(req);
 
-    var populate = sails.util.objCompact({
-        where: where
-    });
+    const populate = sails.util.objCompact({where: where});
 
     delete populate.where.populate;
 
-    Model
-            .findOne(parentPk)
-            .populate(relation, populate)
-            .exec(function (err, matchingRecord) {
-                if (err)
-                    return res.serverError(err);
-                if (!matchingRecord)
-                    return res.notFound('No record found with the specified id.');
-                if (!matchingRecord[relation])
-                    return res.notFound(util.format('Specified record (%s) is missing relation `%s`', parentPk, relation));
+    Model.findOne(parentPk)
+        .populate(relation, populate)
+        .then(matchingRecord => {
+            if (!matchingRecord)
+                return res.notFound('No record found with the specified id.');
+            if (!matchingRecord[relation])
+                return res.notFound(util.format('Specified record (%s) is missing relation `%s`', parentPk, relation));
 
-                var recordsId = _.map(matchingRecord[relation], 'id');
+            const recordsId = _.map(matchingRecord[relation], 'id');
 
-                var populateFields = req.param('populate');
-                if (populateFields && !_.isArray(populateFields))
-                    populateFields = [populateFields];
-                populateFields = _.filter(populateFields, function(f) {
-                    return _.some(relationModel.associations, {alias: f});
-                });
+            let populateFields = req.param('populate');
+            if (populateFields && !_.isArray(populateFields))
+                populateFields = [populateFields];
+            populateFields = _.filter(populateFields, f => _.some(relationModel.associations, {alias: f}));
 
+            let sort = actionUtil.parseSort(req);
 
-                var sort = actionUtil.parseSort(req);
+            if (_.isEmpty(sort) && relationModel.DEFAULT_SORTING)
+                sort = relationModel.DEFAULT_SORTING;
 
-                if (_.isEmpty(sort) && relationModel.DEFAULT_SORTING) {
-                    sort = relationModel.DEFAULT_SORTING;
-                }
+            //sTODO add check for non-exstinting pupulate fields
+            //sTODO add support for deep populate
+            const limit = actionUtil.parseLimit(req);
+            const skip = actionUtil.parseSkip(req);
+            const where = {'id': recordsId};
+            let query = relationModel.find({where, sort, limit, skip});
+            _.forEach(populateFields, f=> query = query.populate(f));
 
-                //sTODO add check for non-exstinting pupulate fields
-                //sTODO add support for deep populate
-                var query = relationModel
-                        .find({
-                            where: {'id': recordsId},
-                            sort: sort,
-                            limit: actionUtil.parseLimit(req),
-                            skip: actionUtil.parseSkip(req)
-                        });
+            const countQuery = relationModel.count({where});
 
-                _.forEach(populateFields, function (f) {
-                    query = query.populate(f);
-                });
-                
-//                query = actionUtil.populateRequest(query, req);
-//                query = actionUtil.populateEach(query, req);
-
-                query.exec(function (err, matchingRecords) {
-                    if (err)
-                        return res.serverError(err);
-
-                    //sTODO add pubsub handling
+            return Promise.all([query, countQuery])
+                .spread((matchingRecords, count)=> {
 
                     if (childPk)
-                        matchingRecords = matchingRecords[0];
+                        if (matchingRecords.length)
+                            return res.ok(matchingRecords);
+                        else
+                            return res.notFound();
+                    return res.ok({
+                        count: count,
+                        items: matchingRecords
+                    });
+                })
+                .catch(err => res.serverError(err));
 
-                    return res.ok(matchingRecords);
-                });
-
-
-            });
+        })
+        .catch(err => res.serverError(err));
 };
