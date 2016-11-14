@@ -23,7 +23,6 @@
     }
 
     scientillaDocumentFormController.$inject = [
-        'FormForConfiguration',
         'Notification',
         'researchEntityService',
         'EventsService',
@@ -33,13 +32,14 @@
         'context'
     ];
 
-    function scientillaDocumentFormController(FormForConfiguration, Notification, researchEntityService, EventsService, $scope, $timeout, DocumentTypesService, context) {
+    function scientillaDocumentFormController(Notification, researchEntityService, EventsService, $scope, $timeout, DocumentTypesService, context) {
         var vm = this;
         vm.status = createStatus();
         vm.cancel = cancel;
         vm.deleteDocument = deleteDocument;
         vm.formVisible = true;
         vm.verify = verify;
+        vm.documentTypes = DocumentTypesService.getDocumentTypes()
 
         var debounceTimeout = null;
         var debounceTime = 2000;
@@ -77,58 +77,15 @@
 
 
         function activate() {
-            FormForConfiguration.enableAutoLabels();
 
-            loadDocumentFields();
             watchDocument();
         }
 
         function watchDocument() {
-            $scope.$watch('vm.document.sourceType', loadDocumentFields, true);
             var fieldsToWatch = _.keys(vm.validationAndViewRules);
             _.forEach(fieldsToWatch, function (f) {
                 $scope.$watch('vm.document.' + f, prepareSave, true);
             });
-        }
-
-        function loadDocumentFields() {
-            var types = DocumentTypesService.getDocumentTypes()
-                .map(function (t) {
-                    return {
-                        value: t.key,
-                        label: t.label
-                    };
-                });
-            vm.validationAndViewRules = _.merge({
-                sourceType: {
-                    inputType: 'select',
-                    label: 'Source type',
-                    allowBlank: true,
-                    preventDefaultOption: true,
-                    required: true,
-                    values: [
-                        {value: 'journal', label: 'Journal'},
-                        {value: 'book', label: 'Book'},
-                        {value: 'conference', label: 'Conference'}
-                    ]
-                },
-                type: {
-                    inputType: 'select',
-                    label: 'Type',
-                    allowBlank: true,
-                    preventDefaultOption: true,
-                    required: true,
-                    values: types
-                }
-            }, DocumentTypesService.getDocumentsFields(vm.document.sourceType));
-            refreshForm();
-        }
-
-        function refreshForm() {
-            vm.formVisible = false;
-            $timeout(function () {
-                vm.formVisible = true;
-            }, 0);
         }
 
         function prepareSave(newValue, oldValue) {
@@ -206,7 +163,6 @@
         }
 
         function close() {
-            if (_.isFunction(vm.closeFn()))
             if (_.isFunction(vm.closeFn()))
                 return vm.closeFn()();
             return Promise.reject('no close function');

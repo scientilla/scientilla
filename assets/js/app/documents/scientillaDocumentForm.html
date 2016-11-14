@@ -1,9 +1,86 @@
-<form form-for="vm.document"
-      ng-if="vm.formVisible"
-      validation-rules="vm.validationAndViewRules"
-      form-for-builder
-      class="autosave {{vm.status.class}}"
-      submit-with="">
+<form ng-if="vm.formVisible" class="autosave {{vm.status.class}}">
+    <div class="form-group">
+        <label for="sourceType">Source Type</label>
+        <select class="form-control" id="sourceType" placeholder="Source Type" ng-model="vm.document.sourceType">
+            <option value="">--Not Selected--</option>
+            <option value="journal">Journal</option>
+            <option value="book">Book</option>
+            <option value="conference">Conference</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="documentType">Document Type</label>
+        <select class="form-control" id="documentType" placeholder="Document Type" ng-model="vm.document.type"
+                ng-options="option.key as option.label for option in vm.documentTypes">
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" class="form-control" id="title" placeholder="Title" ng-model="vm.document.title">
+    </div>
+    <div class="form-group">
+        <label for="authors">Authors</label>
+        <input type="text" class="form-control" id="authors" placeholder="Authors" ng-model="vm.document.authorsStr">
+    </div>
+    <div class="form-group">
+        <label for="year">Year</label>
+        <input type="text" class="form-control" id="year" placeholder="Year" ng-model="vm.document.year">
+    </div>
+    <div class="form-group" ng-if="vm.document.sourceType == 'journal'">
+        <label for="volume">Journal</label>
+        <input type="text" class="form-control" id="journal" placeholder="Journal" ng-model="vm.document.journal">
+    </div>
+    <div class="form-group" ng-if="vm.document.sourceType == 'book'">
+        <label for="bookTitle">Book Title</label>
+        <input type="text" class="form-control" id="bookTitle" placeholder="Book Title"
+               ng-model="vm.document.bookTitle">
+    </div>
+    <div class="form-group" ng-if="vm.document.sourceType == 'editor'">
+        <label for="editor">Editor</label>
+        <input type="text" class="form-control" id="editor" placeholder="Editor" ng-model="vm.document.editor">
+    </div>
+    <div class="form-group" ng-if="vm.document.sourceType == 'publisher'">
+        <label for="publisher">Publisher</label>
+        <input type="text" class="form-control" id="publisher" placeholder="Publisher" ng-model="vm.document.publisher">
+    </div>
+    <div class="form-group" ng-if="vm.document.sourceType == 'conference'">
+        <label for="conferenceName">Conference Name</label>
+        <input type="text" class="form-control" id="conferenceName" placeholder="Conference Name"
+               ng-model="vm.document.conferenceName">
+    </div>
+    <div class="form-group" ng-if="vm.document.sourceType == 'journal'">
+        <label for="volume">Volume</label>
+        <input type="text" class="form-control" id="volume" placeholder="Volume" ng-model="vm.document.volume">
+    </div>
+    <div class="form-group" ng-if="['journal', 'conference'].includes(vm.document.sourceType)">
+        <label for="issue">Issue</label>
+        <input type="text" class="form-control" id="issue" placeholder="Issue" ng-model="vm.document.issue">
+    </div>
+    <div class="form-group" ng-if="['journal', 'conference'].includes(vm.document.sourceType)">
+        <label for="pages">Pages</label>
+        <input type="text" class="form-control" id="pages" placeholder="Pages" ng-model="vm.document.pages">
+    </div>
+    <div class="form-group" ng-if="['journal', 'conference'].includes(vm.document.sourceType)">
+        <label for="articleNumber">Article Number</label>
+        <input type="text" class="form-control" id="articleNumber" placeholder="Article Number"
+               ng-model="vm.document.articleNumber">
+    </div>
+    <div class="form-group">
+        <label for="doi">DOI</label>
+        <input type="text" class="form-control" id="doi" placeholder="DOI" ng-model="vm.document.doi">
+    </div>
+    <div class="form-group">
+        <label for="abstract">Abstract</label>
+        <input type="text" class="form-control" id="abstract" placeholder="Abstract" ng-model="vm.document.abstract">
+    </div>
+    <div class="form-group">
+        <label for="scopusid">Scopus ID</label>
+        <input type="text" class="form-control" id="scopusid" placeholder="Scopus ID" ng-model="vm.document.scopusId">
+    </div>
+    <div class="form-group">
+        <label for="scopusid">WoS ID</label>
+        <input type="text" class="form-control" id="wosid" placeholder="Wos ID" ng-model="vm.document.wosId">
+    </div>
     <scientilla-button ng-disabled="!vm.document.id" ng-click="vm.verify()">Verify</scientilla-button>
     <scientilla-button ng-disabled="!vm.document.id" ng-click="vm.deleteDocument()">Delete</scientilla-button>
     <scientilla-button type="cancel" ng-click="vm.cancel()">Close</scientilla-button>
