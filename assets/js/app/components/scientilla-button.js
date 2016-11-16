@@ -28,6 +28,7 @@
         function getClasses() {
             var typeClassesTable = {
                 submit: 'btn-primary',
+                secondary: 'btn btn-default',
                 cancel: 'btn-default btn-cancel',
                 link: 'btn-link'
             };
