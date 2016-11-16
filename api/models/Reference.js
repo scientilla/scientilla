@@ -218,6 +218,8 @@ module.exports = _.merge({}, BaseModel, {
         return Reference.findOneById(documentId)
             .populate('authors')
             .populate('groups')
+            .populate('authorships')
+            .populate('affiliations')
             .then(function (document) {
                 if (!document)
                     throw new Error('Document ' + documentId + ' does not exist');

@@ -41,7 +41,10 @@ module.exports = _.merge({}, BaseModel, {
                 ]);
             })
             .spread(function (draftId) {
-                return Reference.findOneById(draftId);
+                return Reference.findOneById(draftId)
+                    .populate('authorships')
+                    .populate('affiliations')
+                    .populate('authors');
             });
     },
     unverifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
