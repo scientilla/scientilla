@@ -33,7 +33,6 @@
         vm.submit = submit;
         vm.cancel = cancel;
         vm.verificationData = {};
-        vm.affiliations = [];
 
         var user = AuthService.user;
 
@@ -75,8 +74,11 @@
         }
 
         function submit() {
-            vm.verificationData.affiliations = _.map(vm.affiliations, 'id');
-            return verify(user, vm.document.id, vm.verificationData)
+            var data = {
+                affiliations: _.map(vm.verificationData.affiliations, 'id'),
+                position: vm.verificationData.position
+            };
+            return verify(user, vm.document.id, data)
                 .then(function (user) {
                     executeOnSubmit(1);
                 })
@@ -87,7 +89,7 @@
 
         function userSelectedChanged() {
             getInstitutes().then(function (institutes) {
-                vm.affiliations = _.map(institutes, 'id');
+                vm.verificationData.affiliations = institutes;
             });
         }
 
