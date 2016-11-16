@@ -168,7 +168,7 @@
                             var part = _.partition(allDocs, function (d) {
                                 return !d.error;
                             });
-                            var verifiedDocs = part[0].map();
+                            var verifiedDocs = part[0];
                             var unverifiedDocs = part[1];
                             if (verifiedDocs.length)
                                 Notification.success(verifiedDocs.length + " document(s) verified");
