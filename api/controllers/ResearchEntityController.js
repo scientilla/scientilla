@@ -17,19 +17,6 @@ module.exports = {
         var Model = getModel(req);
         return res.halt(Model.createDraft(Model, researchEntityId, draftData));
     },
-    getReferences: function (req, res) {
-        var researchEntity = req.params.id;
-        var populate = getPopulateFields(req);
-        var filter = req.query.filter || 'all';
-        var model = req.options.model || req.options.controller;
-        if (!_.contains(['group', 'user'], model))
-            return res.err('error');
-        var Model = req._sails.models[model];
-        Model.getReferences(Model, researchEntity, populate, filter)
-                .then(function (references) {
-                    res.json(references);
-                });
-    },
     unverifyDocument: function (req, res) {
         var researcEntityId = req.params.id;
         var documentId = req.params.documentId;

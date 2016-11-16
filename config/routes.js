@@ -34,8 +34,6 @@ module.exports.routes = {
   '/': 'Homepage.default',
 
   'post /auths/register' : 'Auth.register',
-  //'post /users/:userId/documents': 'Document.create',
-  //'post /groups/:userId/documents': 'Document.create',
   'post /users/:researchEntityId/drafts': 'User.createDraft',
   'post /groups/:researchEntityId/drafts': 'Group.createDraft',
   'put /users/:id/drafts/verify-drafts': 'User.verifyDrafts',
@@ -46,8 +44,6 @@ module.exports.routes = {
   'put /groups/:userId/documents/:id': 'Document.update',
   'put /users/:id/verify-documents': 'User.verifyDocuments',
   'put /groups/:id/verify-documents': 'Group.verifyDocuments',
-  //'get /users/:id/references': 'User.getReferences',
-  //'get /groups/:id/references': 'Group.getReferences',
   'put /users/:id/documents/:documentId/unverified': 'User.unverifyDocument',
   'put /groups/:id/documents/:documentId/unverified': 'Group.unverifyDocument',
   'post /users/:id/documents': 'User.verifyDocument',
@@ -66,10 +62,6 @@ module.exports.routes = {
   'get /groups/:id/external-documents' : 'Group.getExternalDocuments',
   'delete /documents/delete':'Document.deleteDrafts'
 
-//    'get /': {
-//        controller: 'index',
-//        action: 'index'
-//    }
 
     /***************************************************************************
      *                                                                          *
