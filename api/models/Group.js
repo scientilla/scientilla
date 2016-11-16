@@ -47,10 +47,6 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'Reference',
             via: 'discardedGroups'
         },
-        suggestedReferences: {
-            collection: 'reference',
-            via: 'suggestedGroups'
-        },
         suggestedDocuments: {
             collection: 'reference',
             via: 'groups',
