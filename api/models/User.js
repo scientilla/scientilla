@@ -12,7 +12,7 @@
 var _ = require('lodash');
 var waterlock = require('waterlock');
 var Promise = require("bluebird");
-var researchEntity = require('./ResearchEntity');
+var researchEntity = require('../lib/ResearchEntity');
 
 var USER = 'user';
 var ADMINISTRATOR = 'administrator';

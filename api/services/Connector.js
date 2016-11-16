@@ -7,12 +7,12 @@ var Promise = require("bluebird");
 
 module.exports = {
     attributes: {},
-    getDocuments: function (ResearchEntity, researchEntityId, query) {
+    getDocuments: function (ResearchEntityModel, researchEntityId, query) {
         var self = this;
         var connector = query.where.connector;
         if (!connector)
             throw new Error('A Connector parameter is necessary');
-        return ResearchEntity.findOneById(researchEntityId)
+        return ResearchEntityModel.findOneById(researchEntityId)
             .then(function (researchEntity) {
                 var reqConfig;
                 switch (connector) {
@@ -30,7 +30,7 @@ module.exports = {
                 }
 
                 return self.makeRequest(reqConfig)
-                    .then(res => ResearchEntity.checkCopiedDocuments(ResearchEntity, researchEntityId, res.documents)
+                    .then(res => ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.documents)
                         .then(documents =>
                             ({
                                 count: res.count,

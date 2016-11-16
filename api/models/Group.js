@@ -9,7 +9,7 @@
  */
 
 var _ = require('lodash');
-var researchEntity = require('./ResearchEntity');
+var researchEntity = require('../lib/ResearchEntity');
 
 module.exports = _.merge({}, researchEntity, {
     attributes: {

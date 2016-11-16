@@ -11,7 +11,7 @@
 
 const Promise = require("bluebird");
 const _ = require("lodash");
-const BaseModel = require("../lib/BaseModel.js");
+const BaseModel = require("./BaseModel.js");
 
 
 module.exports = _.merge({}, BaseModel, {
@@ -195,8 +195,8 @@ module.exports = _.merge({}, BaseModel, {
         const selectedDraftData = _.pick(draftData, documentFields);
         return Document.update({id: draftId}, selectedDraftData)
     },
-    getAllDocuments: function (ResearchEntity, researchEntityid) {
-        return ResearchEntity
+    getAllDocuments: function (ResearchEntityModel, researchEntityid) {
+        return ResearchEntityModel
             .findOneById(researchEntityid)
             .populate('drafts')
             .populate('documents')
@@ -207,9 +207,9 @@ module.exports = _.merge({}, BaseModel, {
                 );
             });
     },
-    checkCopiedDocuments: function (ResearchEntity, researchEntityId, documentsToCheck) {
+    checkCopiedDocuments: function (ResearchEntityModel, researchEntityId, documentsToCheck) {
         var threeshold = .50;
-        return ResearchEntity.getAllDocuments(ResearchEntity, researchEntityId)
+        return ResearchEntityModel.getAllDocuments(ResearchEntityModel, researchEntityId)
             .then(function (documents) {
                 documentsToCheck.forEach(function (docToCheck) {
                     var isCopied = _.some(documents, function (d) {
