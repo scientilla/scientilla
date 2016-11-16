@@ -84,16 +84,23 @@ describe('Draft Verification', () => {
 
     it('verifying a complete draft twice should give an error', ()=>
         test.userVerifyDraft(user1, user1Draft1)
-            .expect(400)
+            .expect(res => {
+                res.status.should.equal(200);
+                res.body.should.have.property('error');
+                res.body.should.have.property('item');
+                res.body.item.should.equal(user1Draft1.id + '');
+            })
     );
 
-    it('verifying a non complete draft should not be possible', () =>
+    it.skip('verifying a non complete draft should not be possible', () =>
         test.userCreateDraft(user1, incompleteDocumentData)
             .then(res => user1Draft2 = res.body)
-            .then(() =>test.userVerifyDraft(user1, user1Draft2)
+            .then(() =>test.userVerifyDraft(user1, user1Draft2, 4, [iitInstitute.id])
                 .expect(res => {
                     res.status.should.equal(200);
-                    res.body.draft.should.be.true;
+                    res.body.should.have.property('error');
+                    res.body.should.have.property('item');
+                    res.body.item.should.equal(user1Draft2.id + '');
                 }))
             .then(() => test.getUserDrafts(user1)
                 .expect(res => {
@@ -109,7 +116,11 @@ describe('Draft Verification', () => {
 
     it('verifying a nonexsting document should give an error', () =>
         test.userVerifyDraft(user1, nonExistentDocument)
-            .expect(400)
+            .expect(res => {
+                res.status.should.equal(200);
+                res.body.should.have.property('error');
+                res.body.item.should.equal(nonExistentDocument.id + '');
+            })
     );
 
     it('verifying two identical documents should merge them', () =>
@@ -195,7 +206,7 @@ describe('Draft Verification', () => {
             .then(() => test.userVerifyDrafts(users[0], drafts)
                 .then(res => {
                     res.status.should.equal(200);
-                    const verifiedDocuments = res.body;
+                    const verifiedDocuments = res.body.filter(d=> !d.error);
                     verifiedDocuments.should.have.length(2);
                     const documentsIds = verifiedDocuments.map(d=>d.id);
                     documentsIds.should.containDeep([drafts[0], drafts[1]].map(d=>d.id));

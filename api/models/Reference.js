@@ -1,4 +1,5 @@
 /* global Reference, sails, User, ObjectComparer */
+'use strict';
 
 /**
  * Reference.js
@@ -149,16 +150,38 @@ module.exports = _.merge({}, BaseModel, {
             return _.findIndex(this.getAuthors(), a => _.includes(author.getAliases(), a));
         },
         getAuthorshipAffiliationsByPosition: function (position) {
-            if(_.isNil(this.authorships))
-                throw 'getAuthorshipAffiliations: authorships missing';
-            if(_.isNil(this.affiliations))
+            if (_.isNil(this.affiliations))
                 throw 'getAuthorshipAffiliations: affiliations missing';
-            const authorship = this.authorships.find(a => a.position == position);
-            if(!authorship) return [];
+
+            const authorship = this.getAuthorshipByPosition(position);
+            if (!authorship) return [];
 
             return this.affiliations
                 .filter(a => a.authorship == authorship.id)
                 .map(a => a.institute);
+        },
+        isPositionVerified: function (position) {
+            if (!this.authorships)
+                return false;
+
+            const authorship = this.getAuthorshipByPosition(position);
+
+            return !!authorship && !_.isNil(authorship.researchEntity);
+        },
+        getAuthorshipByPosition: function (position) {
+            if (_.isNil(this.authorships))
+                throw 'getAuthorshipByPosition: authorships missing';
+
+            return this.authorships.find(a=> a.position === position);
+        },
+        getFullAuthorships: function () {
+            if (_.isEmpty(this.affiliations) || _.isEmpty(this.authorships))
+                return [];
+
+            return this.authorships.map(authorship => {
+                authorship.affiliations = this.affiliations.filter(affiliation => authorship.id === affiliation.authorship);
+                return authorship;
+            });
         }
     },
     getFields: function () {
@@ -264,9 +287,50 @@ module.exports = _.merge({}, BaseModel, {
             return Reference.destroy({id: documentId});
         }));
     },
-    findCopies: function (doc) {
-        var query = _.pick(doc, Reference.getFields());
+    findCopies: function (verifyingDraft, verifyingPosition) {
+        const query = _.pick(verifyingDraft, Reference.getFields());
         query.draft = false;
-        return Reference.find(query);
+        return Reference.find(query)
+            .populate('authorships')
+            .populate('affiliations')
+            .then(similarDocs => {
+                const draftFullAuthorships = verifyingDraft.getFullAuthorships();
+                const copies = similarDocs.filter(d=> {
+                    let isCopy = true;
+                    const copyFullAuthorships = d.getFullAuthorships();
+
+                    copyFullAuthorships.forEach(cfa => {
+                        if (cfa.position === verifyingPosition)
+                            return;
+                        if (!_.isNil(cfa.researchEntity))
+                            return;
+                        const dfa = draftFullAuthorships.find(dfa=> dfa.position === cfa.position);
+
+                        if (!_.isEqual(
+                                _.map(cfa.affiliations, 'institute').sort(),
+                                _.map(dfa.affiliations, 'institute').sort()))
+                            isCopy = false;
+                    });
+
+                    if (!isCopy) return false;
+
+                    draftFullAuthorships.forEach(dfa => {
+                        if (dfa.position === verifyingPosition)
+                            return;
+                        const cfa = draftFullAuthorships.find(cfa=> cfa.position === dfa.position);
+                        if (!_.isNil(cfa.researchEntity))
+                            return;
+
+                        if (!_.isEqual(
+                                _.map(cfa.affiliations, 'institute').sort(),
+                                _.map(dfa.affiliations, 'institute').sort()))
+                            isCopy = false;
+                    });
+                    return isCopy;
+                });
+
+                return copies;
+            });
     }
-});
+})
+;

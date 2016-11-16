@@ -57,7 +57,7 @@ module.exports = {
         var affiliationInstituteIds = req.body.affiliations;
         var Model = getModel(req);
         // TODO in case of failed verify give response with details instead of 400
-        res.halt(Model.verifyDocument(researchEntityId, documentId, position, affiliationInstituteIds));
+        res.halt(Model.verifyDocument(Model, researchEntityId, documentId, position, affiliationInstituteIds));
     },
     verifyDocuments: function (req, res) {
         var researchEntityId = req.params.id;

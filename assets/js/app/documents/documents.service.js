@@ -61,15 +61,23 @@
                     researchEntityService
                         .verifyDrafts(researchEntity, draftIds)
                         .then(function (allDocs) {
-                            var partitions = _.partition(allDocs, 'draft');
-                            var drafts = partitions[0];
-                            var documents = partitions[1];
-                            if (documents.length)
-                                Notification.success(documents.length + " draft(s) verified");
-                            if (drafts.length)
-                                Notification.warning(drafts.length + " is/are not valid and cannot be verified");
 
-                            EventsService.publish(EventsService.DRAFT_VERIFIED, documents);
+                            function docMapper(doc) {
+                                return doc.item;
+                            }
+
+                            var part = _.partition(allDocs, function (d) {
+                                return !d.error && !d.draft;
+                            });
+                            var verifiedDrafts = part[0];
+                            var unverifiedDrafts = part[1];
+
+                            if (verifiedDrafts.length)
+                                Notification.success(verifiedDrafts.length + " draft(s) verified");
+                            if (unverifiedDrafts.length)
+                                Notification.warning(unverifiedDrafts.length + " draft(s) is/are not valid and cannot be verified");
+
+                            EventsService.publish(EventsService.DRAFT_VERIFIED, verifiedDrafts.map(docMapper));
                         })
                         .catch(function (err) {
                             EventsService.publish(EventsService.DRAFT_VERIFIED, []);
@@ -155,8 +163,21 @@
                     researchEntityService
                         .verifyDocuments(researchEntity, documentIds)
                         .then(function (allDocs) {
-                            Notification.success(allDocs.length + " document(s) verified");
-                            EventsService.publish(EventsService.DOCUMENT_VERIFIED, allDocs);
+
+                            function docMapper(doc) {
+                                return doc.item;
+                            }
+
+                            var part = _.partition(allDocs, function (d) {
+                                return !d.error;
+                            });
+                            var verifiedDocs = part[0].map();
+                            var unverifiedDocs = part[1];
+                            if (verifiedDocs.length)
+                                Notification.success(verifiedDocs.length + " document(s) verified");
+                            if (unverifiedDocs.length)
+                                Notification.warning(unverifiedDocs.length + " document(s) not verified");
+                            EventsService.publish(EventsService.DOCUMENT_VERIFIED, verifiedDocs.map(docMapper));
                             EventsService.publish(EventsService.NOTIFICATION_ACCEPTED, documents);
                         })
                         .catch(function (err) {

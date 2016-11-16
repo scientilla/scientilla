@@ -33,6 +33,7 @@
         vm.submit = submit;
         vm.cancel = cancel;
         vm.verificationData = {};
+        vm.affiliations = [];
 
         var user = AuthService.user;
 
@@ -42,7 +43,7 @@
                 inputType: 'select',
                 label: 'Who are you?',
                 required: true,
-                values: vm.document.getAuthors().map(function(a, i) {
+                values: vm.document.getAuthors().map(function (a, i) {
                     return {
                         label: a,
                         value: i
@@ -74,6 +75,7 @@
         }
 
         function submit() {
+            vm.verificationData.affiliations = _.map(vm.affiliations, 'id');
             return verify(user, vm.document.id, vm.verificationData)
                 .then(function (user) {
                     executeOnSubmit(1);
@@ -84,16 +86,19 @@
         }
 
         function userSelectedChanged() {
-            getInstitutes().then(function(institutes) {
-                vm.verificationData.affiliations = institutes;
+            getInstitutes().then(function (institutes) {
+                vm.affiliations = _.map(institutes, 'id');
             });
         }
 
         function getInstitutes() {
             if (_.isNil(vm.verificationData.position) || vm.verificationData.position < 0)
                 return Promise.resolve([]);
-            var qs = {where: {document: vm.document.id, position:vm.verificationData.position}, populate: 'affiliations'};
-            return Restangular.all('authorships').getList(qs).then(function(authorships) {
+            var qs = {
+                where: {document: vm.document.id, position: vm.verificationData.position},
+                populate: 'affiliations'
+            };
+            return Restangular.all('authorships').getList(qs).then(function (authorships) {
                 if (_.isEmpty(authorships))
                     return [];
                 var authorship = authorships[0];

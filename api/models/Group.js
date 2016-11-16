@@ -1,4 +1,5 @@
 /* global Reference, SqlService, Promise, Group */
+'use strict';
 
 /**
  * Group.js
@@ -65,16 +66,18 @@ module.exports = _.merge({}, researchEntity, {
             model: 'institute'
         }
     },
-    verifyDocument: function (researchEntityId, documentId) {
-        return Reference.findOneById(documentId)
-            .then(document => {
-                const authorship = {
-                    researchEntity: researchEntityId,
-                    document: document.id
-                };
-                return AuthorshipGroup
-                    .create(authorship)
-                    .then(()=>document);
-            })
+    getAuthorshipsData: function (document) {
+        return Promise.resolve({
+            isVerifiable: true,
+            document: document
+        });
+    },
+    doVerifyDocument: function (document, researchEntityId) {
+        const authorship = {
+            researchEntity: researchEntityId,
+            document: document.id
+        };
+        return AuthorshipGroup.create(authorship)
+            .then(()=>document);
     }
 });

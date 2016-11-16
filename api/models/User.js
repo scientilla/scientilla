@@ -1,4 +1,5 @@
 /* global User, Reference, sails, Auth, SqlService */
+'use strict';
 
 /**
  * User
@@ -213,37 +214,51 @@ module.exports = _.merge({}, researchEntity, {
             });
 
     },
-    verifyDocument: function (researchEntityId, documentId, newPosition, newAffiliationInstituteIds) {
-        return Promise.all([
-            Reference.findOneById(documentId)
-                .populate('affiliations')
-                .populate('authorships'),
-            User.findOneById(researchEntityId)
-            //TODO .populate('aliases')
-        ])
-            .spread((document, user) => {
+    getAuthorshipsData: function (document, researchEntityId, newPosition, newAffiliationInstituteIds) {
+        //TODO .populate('aliases')
+        return User.findOneById(researchEntityId)
+            .then(user => {
+                if (!user)
+                    return {
+                        isVerifiable: false,
+                        error: 'User not found',
+                        item: researchEntityId
+                    };
+
                 const position = !_.isNil(newPosition) ? newPosition : document.getAuthorIndex(user);
-                const affiliationInstituteIds = newAffiliationInstituteIds || document.getAuthorshipAffiliationsByPosition(position);
+                const affiliationInstituteIds = !_.isEmpty(newAffiliationInstituteIds) ? newAffiliationInstituteIds : document.getAuthorshipAffiliationsByPosition(position);
 
                 if (_.isEmpty(affiliationInstituteIds) || _.isNil(position))
-                    throw "Document Verify fail: affiliation or position not specified";
+                    return {
+                        isVerifiable: false,
+                        error: "Document Verify fail: affiliation or position not specified",
+                        document: document
+                    };
 
-                const newAuthorship = {
-                    researchEntity: researchEntityId,
-                    document: document.id,
-                    position: position,
-                    affiliations: affiliationInstituteIds
-                };
 
-                // could be already created an empty user authorship by external imports
-                return Authorship
-                    .findOrCreate({document: newAuthorship.document, position: newAuthorship.position}, newAuthorship)
-                    .then((authorship)=> {
-                        _.assign(authorship, newAuthorship);
-                        return authorship.savePromise()
-                            .then(()=>document);
-                    });
+                return {
+                    isVerifiable: true,
+                    position,
+                    affiliationInstituteIds,
+                    document
+                }
             })
+    },
+    doVerifyDocument: function (document, researchEntityId, position, affiliationInstituteIds) {
+        const newAuthorship = {
+            researchEntity: researchEntityId,
+            document: document.id,
+            position: position,
+            affiliations: affiliationInstituteIds
+        };
+
+        // could be already created an empty user authorship by external imports
+        return Authorship
+            .findOrCreate({document: newAuthorship.document, position: newAuthorship.position}, newAuthorship)
+            .then((authorship)=> {
+                _.assign(authorship, newAuthorship);
+                return authorship.savePromise();
+            }).then(()=>document);
     },
     beforeCreate: function (user, cb) {
         Promise.resolve(user)
