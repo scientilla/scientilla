@@ -176,7 +176,6 @@ i {
 }
 
 .documents-header > div > * {
-    margin-top: 20px;
     margin-bottom: 10px;
 }
 
@@ -241,6 +240,10 @@ scientilla-external-documents .row {
 .pagination-sm{
     margin-bottom: 5px;
     margin-top: 5px;
+}
+
+h1{
+    margin-top:0px;
 }
 
 /******************************************************************************/
