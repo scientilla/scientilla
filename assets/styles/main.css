@@ -317,3 +317,7 @@ scientilla-button > button.btn-cancel {
 .verification-form {
     margin-top: 20px;
 }
+
+[uib-popover-template-popup] {
+    width: 400px;
+}

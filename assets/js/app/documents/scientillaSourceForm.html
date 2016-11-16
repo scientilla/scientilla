@@ -1,0 +1,33 @@
+<form class="internal-form" ng-click="$event.stopPropagation();">
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input type="text" class="form-control" id="title" placeholder="Title" ng-model="vm.newSource.title"/>
+    </div>
+    <div class="form-group" ng-if="['conference', 'journal'].includes(vm.document.sourceType)">
+        <label for="issn">ISSN</label>
+        <input type="text" class="form-control" id="issn" placeholder="ISSN" ng-model="vm.newSource.issn"/>
+    </div>
+    <div class="form-group" ng-if="['conference', 'journal'].includes(vm.document.sourceType)">
+        <label for="eissn">E-ISSN</label>
+        <input type="text" class="form-control" id="eissn" placeholder="E-ISSN" ng-model="vm.newSource.eissn"/>
+    </div>
+    <div class="form-group" ng-if="['conference', 'journal'].includes(vm.document.sourceType)">
+        <label for="acronym">Acronym</label>
+        <input type="text" class="form-control" id="acronym" placeholder="Acronym" ng-model="vm.newSource.acronym"/>
+    </div>
+    <div class="form-group" ng-if="['conference'].includes(vm.document.sourceType)">
+        <label for="year">Year</label>
+        <input type="text" class="form-control" id="year" placeholder="Year" ng-model="vm.newSource.year"/>
+    </div>
+    <div class="form-group" ng-if="['book'].includes(vm.document.sourceType)">
+        <label for="isbn">ISBN</label>
+        <input type="text" class="form-control" id="isbn" placeholder="ISBN" ng-model="vm.newSource.isbn"/>
+    </div>
+    <div class="form-group" ng-if="['book'].includes(vm.document.sourceType)">
+        <label for="publisher">Publisher</label>
+        <input type="text" class="form-control" id="publisher" placeholder="Publisher"
+               ng-model="vm.newSource.publisher"/>
+    </div>
+    <scientilla-button type="secondary" ng-click="vm.createSource()">Create {{vm.sourceLabel}}</scientilla-button>
+</form>
+

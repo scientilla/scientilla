@@ -28,7 +28,7 @@
         service.deleteDrafts = deleteDrafts;
 
         function getDocuments(researchEntity, query) {
-            var populate = {populate: ['authors', 'authorships', 'affiliations']};
+            var populate = {populate: ['source', 'authors', 'authorships', 'affiliations']};
 
             var q = _.merge({}, query, populate);
 
@@ -36,13 +36,13 @@
         }
 
         function getDraft(researchEntity, draftId) {
-            var populate = {populate: ['authorships', 'affiliations']};
+            var populate = {populate: ['source', 'authorships', 'affiliations']};
 
-            return researchEntity.one('drafts', draftId).get();
+            return researchEntity.one('drafts', draftId).get(populate);
         }
 
         function getDrafts(researchEntity, query) {
-            var populate = {populate: ['authorships', 'affiliations']};
+            var populate = {populate: ['source', 'authorships', 'affiliations']};
 
             var q = _.defaultsDeep({}, query, populate);
 
@@ -57,7 +57,7 @@
 
 
         function getSuggestedDocuments(researchEntity, query) {
-            var populate = {populate: ['authors', 'authorships', 'affiliations']};
+            var populate = {populate: ['source', 'authors', 'authorships', 'affiliations']};
 
             var q = _.defaultsDeep({}, query, populate);
 
@@ -65,7 +65,7 @@
         }
 
         function getDiscardedDocuments(researchEntity, query) {
-            var populate = {populate: ['authors', 'authorships', 'affiliations']};
+            var populate = {populate: ['source', 'authors', 'authorships', 'affiliations']};
 
             var q = _.merge({}, query, populate);
 

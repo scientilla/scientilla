@@ -32,24 +32,20 @@ module.exports = _.merge({}, BaseModel, {
         },
         authorsStr: 'STRING',
         year: 'STRING',
-        journal: 'STRING',
         issue: 'STRING',
         volume: 'STRING',
         pages: 'STRING',
         articleNumber: 'STRING',
         doi: 'STRING',
-        bookTitle: 'STRING',
-        editor: 'STRING',
-        publisher: 'STRING',
-        conferenceName: 'STRING',
-        conferenceLocation: 'STRING',
-        acronym: 'STRING',
         type: 'STRING',
         sourceType: 'STRING',
         scopusId: 'STRING',
         wosId: 'STRING',
         abstract: 'TEXT',
         draft: 'BOOLEAN',
+        source: {
+            model: 'source'
+        },
         authors: {
             collection: 'user',
             via: 'documents',
@@ -103,21 +99,9 @@ module.exports = _.merge({}, BaseModel, {
                 'title',
                 'year',
                 'type',
-                'sourceType'
+                'sourceType',
+                'source'
             ];
-            var requiredFieldsTable = {
-                conference: [
-                    'conferenceName'
-                ],
-                book: [
-                    'bookTitle'
-                ],
-                journal: [
-                    'journal'
-                ]
-            };
-            var otherRequiredFields = requiredFieldsTable[this.sourceType];
-            requiredFields = _.union(requiredFields, otherRequiredFields);
             return _.every(requiredFields, function (v) {
                 return self[v];
             });
@@ -166,18 +150,12 @@ module.exports = _.merge({}, BaseModel, {
             'authorsStr',
             'title',
             'year',
-            'journal',
+            'source',
             'issue',
             'volume',
             'pages',
             'articleNumber',
             'doi',
-            'bookTitle',
-            'editor',
-            'publisher',
-            'conferenceName',
-            'conferenceLocation',
-            'acronym',
             'abstract',
             'type',
             'sourceType',

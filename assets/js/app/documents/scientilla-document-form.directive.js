@@ -29,17 +29,27 @@
         '$scope',
         '$timeout',
         'DocumentTypesService',
-        'context'
+        'context',
+        'Restangular'
     ];
 
-    function scientillaDocumentFormController(Notification, researchEntityService, EventsService, $scope, $timeout, DocumentTypesService, context) {
+    function scientillaDocumentFormController(Notification, researchEntityService, EventsService, $scope, $timeout, DocumentTypesService, context, Restangular) {
         var vm = this;
         vm.status = createStatus();
         vm.cancel = cancel;
         vm.deleteDocument = deleteDocument;
         vm.formVisible = true;
         vm.verify = verify;
-        vm.documentTypes = DocumentTypesService.getDocumentTypes()
+        vm.documentTypes = DocumentTypesService.getDocumentTypes();
+        vm.getSources = getSources;
+        vm.createSource = createSource;
+        vm.closePopover = closePopover;
+        var sourceLabels = {
+            book: 'Book',
+            journal: 'Journal',
+            conference: 'Conference',
+            '': 'Source'
+        };
 
         var debounceTimeout = null;
         var debounceTime = 2000;
@@ -77,14 +87,24 @@
 
 
         function activate() {
-
             watchDocument();
+            watchDocumentSourceType();
         }
 
         function watchDocument() {
-            var fieldsToWatch = _.keys(vm.validationAndViewRules);
+            var fieldsToWatch = vm.document.fields;
             _.forEach(fieldsToWatch, function (f) {
                 $scope.$watch('vm.document.' + f, prepareSave, true);
+            });
+        }
+
+        function watchDocumentSourceType() {
+            $scope.$watch('vm.document.sourceType', function(newValue, oldValue) {
+                vm.sourceLabel = sourceLabels[vm.document.sourceType];
+                if (newValue == oldValue)
+                    return;
+                closePopover();
+                vm.document.source = null;
             });
         }
 
@@ -142,6 +162,25 @@
                     .catch(function () {
                         Notification.warning("Failed to delete draft");
                     });
+        }
+
+        function getSources(searchText) {
+            var qs = {where: {title: {contains: searchText}, type: vm.document.sourceType}};
+            return Restangular.all('sources').getList(qs);
+        }
+
+        function createSource() {
+            vm.newSource.type = vm.document.sourceType;
+            return Restangular.all('sources').post(vm.newSource)
+                .then(function(source) {
+                    vm.document.source = source;
+                    vm.newSource = {};
+                    closePopover();
+                });
+        }
+
+        function closePopover() {
+            vm["popover-is-open"] = false;
         }
 
         function verify() {

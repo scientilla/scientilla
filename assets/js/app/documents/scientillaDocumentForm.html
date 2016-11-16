@@ -1,4 +1,4 @@
-<form ng-if="vm.formVisible" class="autosave {{vm.status.class}}">
+<form ng-if="vm.formVisible" class="autosave {{vm.status.class}}" autocomplete="off" ng-click="vm.closePopover()">
     <div class="form-group">
         <label for="sourceType">Source Type</label>
         <select class="form-control" id="sourceType" placeholder="Source Type" ng-model="vm.document.sourceType">
@@ -26,22 +26,18 @@
         <label for="year">Year</label>
         <input type="text" class="form-control" id="year" placeholder="Year" ng-model="vm.document.year">
     </div>
-    <div class="form-group" ng-if="vm.document.sourceType == 'journal'">
-        <label for="volume">Journal</label>
-        <input type="text" class="form-control" id="journal" placeholder="Journal" ng-model="vm.document.journal">
-    </div>
-    <div class="form-group" ng-if="vm.document.sourceType == 'book'">
-        <label for="bookTitle">Book Title</label>
-        <input type="text" class="form-control" id="bookTitle" placeholder="Book Title"
-               ng-model="vm.document.bookTitle">
-    </div>
-    <div class="form-group" ng-if="vm.document.sourceType == 'editor'">
-        <label for="editor">Editor</label>
-        <input type="text" class="form-control" id="editor" placeholder="Editor" ng-model="vm.document.editor">
-    </div>
-    <div class="form-group" ng-if="vm.document.sourceType == 'publisher'">
-        <label for="publisher">Publisher</label>
-        <input type="text" class="form-control" id="publisher" placeholder="Publisher" ng-model="vm.document.publisher">
+    <div class="form-group">
+        <label for="source">{{vm.sourceLabel}}</label>
+        <div class="input-group">
+            <input id="source" type="text" ng-model="vm.document.source" placeholder="{{vm.sourceLabel}}"
+                   uib-typeahead="source as source.title for source in vm.getSources($viewValue)"
+                   typeahead-loading="searching" typeahead-no-results="noResults" class="form-control">
+            <span class="input-group-btn">
+                <button popover-is-open="vm['popover-is-open']"
+                        uib-popover-template="'partials/scientillaSourceForm.html'" popover-title="Add New {{vm.sourceLabel}}"
+                        type="button" class="btn btn-default">Add New</button>
+        </span>
+        </div>
     </div>
     <div class="form-group" ng-if="vm.document.sourceType == 'conference'">
         <label for="conferenceName">Conference Name</label>
@@ -71,7 +67,7 @@
     </div>
     <div class="form-group">
         <label for="abstract">Abstract</label>
-        <input type="text" class="form-control" id="abstract" placeholder="Abstract" ng-model="vm.document.abstract">
+        <textarea rows="6" class="form-control" id="abstract" placeholder="Abstract" ng-model="vm.document.abstract"></textarea>
     </div>
     <div class="form-group">
         <label for="scopusid">Scopus ID</label>
