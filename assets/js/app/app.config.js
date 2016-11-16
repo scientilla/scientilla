@@ -50,7 +50,7 @@
         Restangular.extendCollection('documents', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('external-documents', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('suggestedDocuments', Prototyper.toDocumentsCollection);
-        Restangular.extendCollection('discardedReferences', Prototyper.toDocumentsCollection);
+        Restangular.extendCollection('discardedDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('drafts', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('authorships', Prototyper.toAuthorshipsCollection);
         Restangular.extendCollection('institutes', Prototyper.toInstitutesCollection);

@@ -2,10 +2,10 @@
 
 (function () {
     angular
-            .module('references')
-            .controller('ReferenceBrowsingController', ReferenceBrowsingController);
+            .module('documents')
+            .controller('DocumentBrowsingController', DocumentBrowsingController);
 
-    ReferenceBrowsingController.$inject = [
+    DocumentBrowsingController.$inject = [
         'context',
         'ModalService',
         'GroupsService',
@@ -13,7 +13,7 @@
         'DocumentTypesService'
     ];
 
-    function ReferenceBrowsingController(context, ModalService, GroupsService, UsersService, DocumentTypesService) {
+    function DocumentBrowsingController(context, ModalService, GroupsService, UsersService, DocumentTypesService) {
         var vm = this;
 
         vm.researchEntity = context.getResearchEntity();

@@ -132,9 +132,9 @@
         };
 
         const documentPrototype = {
-            UNKNOWN_REFERENCE: 0,
-            USER_REFERENCE: 1,
-            GROUP_REFERENCE: 2,
+            UNKNOWN_DOCUMENT: 0,
+            USER_DOCUMENT: 1,
+            GROUP_DOCUMENT: 2,
             tags: [],
             fields: [
                 'authors',
@@ -158,22 +158,22 @@
                 'scopusId',
                 'wosId'
             ],
-            create: function (referenceData) {
+            create: function (documentData) {
                 var fields = _.union(['draft', 'draftCreator', 'draftGroupCreator'], documentPrototype.fields);
-                var reference = _.pick(referenceData, fields);
-                _.extend(reference, documentPrototype);
-                return reference;
+                var document = _.pick(documentData, fields);
+                _.extend(document, documentPrototype);
+                return document;
             },
             getAllCoauthors: function () {
                 return this.authors;
             },
             getType: function () {
                 if (!!this.owner)
-                    return this.USER_REFERENCE;
+                    return this.USER_DOCUMENT;
                 else if (!!this.groupOwner)
-                    return this.GROUP_REFERENCE;
+                    return this.GROUP_DOCUMENT;
                 else
-                    return this.UNKNOWN_REFERENCE;
+                    return this.UNKNOWN_DOCUMENT;
             },
             getAuthors: function () {
                 if (!this.authorsStr)
@@ -195,7 +195,7 @@
                 var index = _.findIndex(this.getAuthors(), a => user.getAliases().includes(a));
                 return index;
             },
-            getNewGroupReference: function (groupId) {
+            getNewGroupDocument: function (groupId) {
                 return {
                     title: "",
                     authorsStr: "",
@@ -203,7 +203,7 @@
                     draft: true
                 };
             },
-            getNewDraftReference: function (userId) {
+            getNewDraftDocument: function (userId) {
                 return {
                     title: "",
                     authorsStr: "",

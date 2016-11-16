@@ -8,9 +8,9 @@
 module.exports = {
         find: function (req, res) {
             console.log('find!!');
-            var referenceId = req.params.id;
+            var documentId = req.params.id;
             Suggestion
-                    .getSuggestion(referenceId)
+                    .getSuggestion(documentId)
                     .then(function(suggestion){
                         console.log(suggestion);
                         res.json(suggestion);

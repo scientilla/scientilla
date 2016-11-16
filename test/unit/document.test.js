@@ -1,4 +1,4 @@
-/* global Reference */
+/* global Document */
 'use strict';
 
 var test = require('./../helper.js');
@@ -9,13 +9,13 @@ describe('Document model', () => {
 
         it('should be able to validate a document that is complete', () => {
             const documentData = test.getAllDocumentData()[0];
-            const document = test.createModel(Reference, documentData);
+            const document = test.createModel(Document, documentData);
             document.isValid().should.be.true;
         });
 
         it('should be able to reject a document that is not complete', () => {
             const documentData = test.getAllDocumentData()[1];
-            const document = test.createModel(Reference, documentData);
+            const document = test.createModel(Document, documentData);
             document.isValid().should.be.false;
         });
 
@@ -25,7 +25,7 @@ describe('Document model', () => {
 
         it('should return empty array with empty affiliations and authorships', () => {
             const documentData = test.getAllDocumentData()[0];
-            const document = test.createModel(Reference, documentData);
+            const document = test.createModel(Document, documentData);
             document.authorships = [];
             document.affiliations = [];
 
@@ -34,7 +34,7 @@ describe('Document model', () => {
 
         it('should return a consistent structure', () => {
             const documentData = test.getAllDocumentData()[0];
-            const document = test.createModel(Reference, documentData);
+            const document = test.createModel(Document, documentData);
             document.authorships = [
                 {id: 103, position: 0},
                 {id: 105, position: 1},
@@ -134,7 +134,7 @@ describe('Document model', () => {
                     doc.draftGroupCreator = null;
                     return doc.savePromise();
                 })
-                .then(doc=> Reference.findOneById(doc.id)
+                .then(doc=> Document.findOneById(doc.id)
                     .populate('authorships')
                     .populate('affiliations'))
                 .then(doc=> {
@@ -168,10 +168,10 @@ describe('Document model', () => {
                         ]
                     });
                     return User.createDraft(User, users[1].id, draftData);
-                }).then(d=> Reference.findOneById(d.id)
+                }).then(d=> Document.findOneById(d.id)
                     .populate('authorships')
                     .populate('affiliations'))
-                .then(d => Reference.findCopies(d, 1))
+                .then(d => Document.findCopies(d, 1))
                 .then(copies => {
                     copies.should.have.length(1);
                     copies[0].id.should.be.equal(document.id);
@@ -201,10 +201,10 @@ describe('Document model', () => {
             });
 
             return User.createDraft(User, users[1].id, docData)
-                .then(d=> Reference.findOneById(d.id)
+                .then(d=> Document.findOneById(d.id)
                     .populate('authorships')
                     .populate('affiliations'))
-                .then(d =>Reference.findCopies(d, 1))
+                .then(d =>Document.findCopies(d, 1))
                 .then(copies => copies.should.have.length(0));
         });
 
@@ -230,10 +230,10 @@ describe('Document model', () => {
             });
 
             return User.createDraft(User, users[1].id, docData)
-                .then(d=> Reference.findOneById(d.id)
+                .then(d=> Document.findOneById(d.id)
                     .populate('authorships')
                     .populate('affiliations'))
-                .then(d => Reference.findCopies(d, 1))
+                .then(d => Document.findCopies(d, 1))
                 .then(copies => copies.should.have.length(0));
         });
 

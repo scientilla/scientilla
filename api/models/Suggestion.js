@@ -11,16 +11,16 @@ var _ = require('lodash');
 module.exports = {
     attributes: {
     },
-    getSuggestion: function (referenceId) {
+    getSuggestion: function (documentId) {
         return Promise.all([
-            Reference.findOne(referenceId).populate('collaborators'),
+            Document.findOne(documentId).populate('collaborators'),
             User.find()
         ])
                 .then(function (results) {
                     console.log('ok');
-                    var reference = results[0];
+                    var document = results[0];
                     var users = results[1];
-                    var authors = reference.getUcAuthors();
+                    var authors = document.getUcAuthors();
                     console.log(authors);
                     var possibleAuthors = _.filter(
                             users,
@@ -30,19 +30,19 @@ module.exports = {
                             }
                     );
                     console.log(possibleAuthors);
-                    var collaboratorsId = _.map(reference.collaborators, "id");
+                    var collaboratorsId = _.map(document.collaborators, "id");
                     console.log(collaboratorsId);
                     var suggestedUsers = _.reject(
                             possibleAuthors,
                             function (u) {
-                                return u.id === reference.owner
+                                return u.id === document.owner
                                         || _.includes(collaboratorsId, u.id);
                             }
                     );
                     console.log(suggestedUsers);
                     
                     //TODO: search by aliases
-                    //select *  from reference where authors ilike any (select '%' || str || '%' from alias)
+                    //select *  from document where authors ilike any (select '%' || str || '%' from alias)
                     return {users: suggestedUsers};
                 });
 

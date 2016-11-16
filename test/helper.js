@@ -1,4 +1,4 @@
-/* global Auth, User, Group, Reference, Authorship, AuthorshipGroup, Affiliation, Institute */
+/* global Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute */
 'use strict';
 
 const should = require('should');
@@ -13,7 +13,7 @@ const institutes = require('./data/institutes');
 module.exports = (function () {
     var obj = {
         cleanDb: function () {
-            var models = [Auth, User, Group, Reference, Authorship, AuthorshipGroup, Affiliation, Institute];
+            var models = [Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute];
             var destroyFns =
                 models.map(function (model) {
                     return model.destroy();
@@ -113,7 +113,7 @@ module.exports = (function () {
                 });
         },
         getAuthorships: function (document, populateFields, qs) {
-            return request(url).get('/references/' + document.id + '/authorships')
+            return request(url).get('/documents/' + document.id + '/authorships')
                 .query({populate: populateFields})
                 .query(qs);
         },
@@ -154,7 +154,7 @@ module.exports = (function () {
 
         getDocument: function (documentId) {
             return request(url)
-                .get('/references/' + documentId);
+                .get('/documents/' + documentId);
         }
     };
     var url = obj.getUrl();

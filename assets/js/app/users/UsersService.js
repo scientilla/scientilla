@@ -63,7 +63,7 @@
         };
 
         service.getUsers = function (query) {
-            var populate = {populate: ['memberships', 'references']};
+            var populate = {populate: ['memberships', 'documents']};
 
             var q = _.merge({}, query, populate);
 

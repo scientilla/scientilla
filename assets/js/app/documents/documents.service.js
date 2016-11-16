@@ -1,6 +1,6 @@
 (function () {
 
-    angular.module("references").factory("DocumentsServiceFactory", DocumentsServiceFactory);
+    angular.module("documents").factory("DocumentsServiceFactory", DocumentsServiceFactory);
 
     DocumentsServiceFactory.$inject = [
         'Notification',

@@ -1,7 +1,7 @@
 "use strict";
 (function () {
 
-    angular.module("references").factory("DocumentTypesService", DocumentTypesService);
+    angular.module("documents").factory("DocumentTypesService", DocumentTypesService);
 
     function DocumentTypesService() {
 

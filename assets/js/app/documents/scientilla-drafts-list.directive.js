@@ -3,7 +3,7 @@
 (function () {
     'use strict';
 
-    angular.module('references')
+    angular.module('documents')
         .directive('scientillaDraftsList', scientillaDraftsList);
 
     function scientillaDraftsList() {

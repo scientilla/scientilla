@@ -12,7 +12,7 @@ module.exports = {
             model: 'authorship'
         },
         document: {
-            model: 'reference'
+            model: 'document'
         },
         institute: {
             model: 'institute'

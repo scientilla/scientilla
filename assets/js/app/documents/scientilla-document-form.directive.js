@@ -2,7 +2,7 @@
 
 (function () {
     angular
-        .module('references')
+        .module('documents')
         .directive('scientillaDocumentForm', scientillaDocumentForm);
 
     function scientillaDocumentForm() {

@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('references')
+    angular.module('documents')
             .component('scientillaDocumentLabel', {
                 templateUrl: 'partials/scientillaDocumentLabel.html',
                 controller: scientillaDocumentLabel,

@@ -32,9 +32,9 @@ module.exports = {
     },
     unverifyDocument: function (req, res) {
         var researcEntityId = req.params.id;
-        var referenceId = req.params.referenceId;
+        var documentId = req.params.documentId;
         var Model = getModel(req);
-        res.halt(Model.unverifyDocument(Model, researcEntityId, referenceId));
+        res.halt(Model.unverifyDocument(Model, researcEntityId, documentId));
     },
     verifyDraft: function (req, res) {
         var researchEntityId = req.params.id;

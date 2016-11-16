@@ -1,6 +1,6 @@
 (function () {
 
-    angular.module("references").factory("GroupDocumentsServiceFactory", GroupDocumentsServiceFactory);
+    angular.module("documents").factory("GroupDocumentsServiceFactory", GroupDocumentsServiceFactory);
 
     GroupDocumentsServiceFactory.$inject = [
         'DocumentsServiceFactory',

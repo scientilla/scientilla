@@ -1,13 +1,13 @@
 (function () {
-    angular.module("references")
+    angular.module("documents")
             .filter('title', title);
     
     title.$inject = ['$sce', 'AuthService'];
 
     function title($sce, AuthService) {
 
-        function getTitle(reference) {
-            var title = reference.title;
+        function getTitle(document) {
+            var title = document.title;
             var titleStr = title ? title : '<i> < No title > </i>'
             return titleStr;
         }

@@ -1,4 +1,4 @@
-/* global User, Reference, sails, Auth, SqlService */
+/* global User, Document, sails, Auth, SqlService */
 'use strict';
 
 /**
@@ -54,16 +54,16 @@ module.exports = _.merge({}, researchEntity, {
             type: 'STRING'
         },
         drafts: {
-            collection: 'Reference',
+            collection: 'Document',
             via: 'draftCreator'
         },
         documents: {
-            collection: 'reference',
+            collection: 'Document',
             via: 'users',
             through: 'authorship'
         },
         suggestedDocuments: {
-            collection: 'reference',
+            collection: 'Document',
             via: 'users',
             through: 'documentsuggestion'
         },
@@ -71,8 +71,8 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'authorship',
             via: 'researchEntity',
         },
-        discardedReferences: {
-            collection: 'Reference',
+        discardedDocuments: {
+            collection: 'Document',
             via: 'discardedCoauthors',
             dominant: true
         },

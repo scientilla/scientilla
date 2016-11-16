@@ -1,5 +1,5 @@
 (function () {
-    angular.module("references")
+    angular.module("documents")
             .filter('linkableauthors', linkableAuthors);
 
     function linkableAuthors() {

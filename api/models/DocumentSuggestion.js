@@ -2,7 +2,7 @@
 module.exports = {
     attributes: {
         document: {
-            model: 'reference',
+            model: 'document',
             primaryKey: true
         },
         researchEntity: {

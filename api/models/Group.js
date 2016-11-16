@@ -1,4 +1,4 @@
-/* global Reference, SqlService, Promise, Group */
+/* global Document, SqlService, Promise, Group */
 'use strict';
 
 /**
@@ -31,11 +31,11 @@ module.exports = _.merge({}, researchEntity, {
             via: 'admininstratedGroups'
         },
         drafts: {
-            collection: 'Reference',
+            collection: 'Document',
             via: 'draftGroupCreator'
         },
         documents: {
-            collection: 'reference',
+            collection: 'document',
             via: 'groups',
             through: 'authorshipgroup'
         },
@@ -43,12 +43,12 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'authorshipGroup',
             via: 'researchEntity',
         },
-        discardedReferences: {
-            collection: 'Reference',
+        discardedDocuments: {
+            collection: 'Document',
             via: 'discardedGroups'
         },
         suggestedDocuments: {
-            collection: 'reference',
+            collection: 'document',
             via: 'groups',
             through: 'documentsuggestiongroup'
         },

@@ -1,4 +1,4 @@
-/* global ResearchEntity, Reference, SqlService */
+/* global ResearchEntity, Document, SqlService */
 'use strict';
 
 /**
@@ -17,12 +17,12 @@ const BaseModel = require("../lib/BaseModel.js");
 module.exports = _.merge({}, BaseModel, {
     attributes: {},
     createDraft: function (ResearchEntityModel, researchEntityId, draftData) {
-        const documentFields = Reference.getFields();
+        const documentFields = Document.getFields();
         const selectedDraftData = _.pick(draftData, documentFields);
         selectedDraftData.draft = true;
         return Promise.all([
             ResearchEntityModel.findOneById(researchEntityId).populate('drafts'),
-            Reference.create(selectedDraftData)
+            Document.create(selectedDraftData)
         ])
             .spread(function (researchEntity, draft) {
                 researchEntity.drafts.add(draft);
@@ -41,7 +41,7 @@ module.exports = _.merge({}, BaseModel, {
                 ]);
             })
             .spread(function (draftId) {
-                return Reference.findOneById(draftId)
+                return Document.findOneById(draftId)
                     .populate('authorships')
                     .populate('affiliations')
                     .populate('authors');
@@ -57,7 +57,7 @@ module.exports = _.merge({}, BaseModel, {
                 return authorship.destroy();
             })
             .then(function () {
-                return Reference.deleteIfNotVerified(documentId);
+                return Document.deleteIfNotVerified(documentId);
             });
     },
     createDrafts: function (Model, researchEntityId, documents) {
@@ -68,18 +68,18 @@ module.exports = _.merge({}, BaseModel, {
     discardDocument: function (researchEntityId, documentId) {
         return this
             .findOneById(researchEntityId)
-            .populate('discardedReferences')
+            .populate('discardedDocuments')
             .then(function (researchEntity) {
 
                 var doc = _.find(
-                    researchEntity.discardedReferences,
+                    researchEntity.discardedDocuments,
                     {id: documentId});
 
                 if (doc)
                     return false;
 
                 researchEntity
-                    .discardedReferences
+                    .discardedDocuments
                     .add(documentId);
 
                 return researchEntity
@@ -101,7 +101,7 @@ module.exports = _.merge({}, BaseModel, {
         );
     },
     verifyDraft: function (ResearchEntityModel, researchEntityId, draftId, position, affiliationInstituteIds) {
-        return Reference.findOneById(draftId)
+        return Document.findOneById(draftId)
             .populate('authorships')
             .populate('affiliations')
             .then(draft => {
@@ -124,7 +124,7 @@ module.exports = _.merge({}, BaseModel, {
                                 item: authorshipData.document
                             };
 
-                        return Reference.findCopies(draft, authorshipData.position)
+                        return Document.findCopies(draft, authorshipData.position)
                             .then(documents => {
                                 var n = documents.length;
                                 if (n === 0) return draft;
@@ -139,7 +139,7 @@ module.exports = _.merge({}, BaseModel, {
                                     };
 
                                 sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
-                                return Reference.destroy({id: draft.id}).then(_ => doc);
+                                return Document.destroy({id: draft.id}).then(_ => doc);
                             })
                             .then(d => {
                                 d.draft = false;
@@ -159,7 +159,7 @@ module.exports = _.merge({}, BaseModel, {
         return Promise.all(documentIds.map(documentId => Model.verifyDocument(Model, researchEntityId, documentId)));
     },
     verifyDocument: function (Model, researchEntityId, documentId, position, affiliationInstituteIds) {
-        return Reference.findOneById(documentId)
+        return Document.findOneById(documentId)
             .populate('affiliations')
             .populate('authorships')
             .then(document => {
@@ -191,9 +191,9 @@ module.exports = _.merge({}, BaseModel, {
             }));
     },
     updateDraft: function (ResearchEntityModel, draftId, draftData) {
-        const documentFields = Reference.getFields();
+        const documentFields = Document.getFields();
         const selectedDraftData = _.pick(draftData, documentFields);
-        return Reference.update({id: draftId}, selectedDraftData)
+        return Document.update({id: draftId}, selectedDraftData)
     },
     getAllDocuments: function (ResearchEntity, researchEntityid) {
         return ResearchEntity

@@ -42,14 +42,14 @@
                     {
                         type: 'item',
                         title: 'Personal documents',
-                        url: '#/users/' + vm.user.id + '/references'
+                        url: '#/users/' + vm.user.id + '/documents'
                     }
                 ];
                 _.forEach(vm.user.admininstratedGroups, function (g) {
                     vm.menuItems.push({
                         type: 'item',
                         title: g.getDisplayName() + ' Documents',
-                        url: '#/groups/' + g.id + '/references'
+                        url: '#/groups/' + g.id + '/documents'
                     });
                 });
                 vm.menuItems = _.union(vm.menuItems, [{
