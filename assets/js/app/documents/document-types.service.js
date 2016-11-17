@@ -250,11 +250,6 @@
                     key: 'short_survey',
                     label: 'Short Survey',
                     defaultSource: null
-                },
-                {
-                    key: 'paper',
-                    label: 'Paper',
-                    defaultSource: 'conference'
                 }
             ];
         }
