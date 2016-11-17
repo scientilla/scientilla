@@ -16,7 +16,9 @@ module.exports = {
         year: 'int',
         publisher: 'string',
         isbn: 'string',
+        website: 'string',
         type: 'string',
+        scopusId: 'string',
         documents: {
             collection: 'document',
             via: 'source'
