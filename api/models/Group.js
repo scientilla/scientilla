@@ -1,4 +1,5 @@
-/* global Reference, SqlService, Promise, Group */
+/* global Document, SqlService, Promise, Group */
+'use strict';
 
 /**
  * Group.js
@@ -8,7 +9,7 @@
  */
 
 var _ = require('lodash');
-var researchEntity = require('./ResearchEntity');
+var researchEntity = require('../lib/ResearchEntity');
 
 module.exports = _.merge({}, researchEntity, {
     attributes: {
@@ -30,11 +31,11 @@ module.exports = _.merge({}, researchEntity, {
             via: 'admininstratedGroups'
         },
         drafts: {
-            collection: 'Reference',
+            collection: 'Document',
             via: 'draftGroupCreator'
         },
         documents: {
-            collection: 'reference',
+            collection: 'document',
             via: 'groups',
             through: 'authorshipgroup'
         },
@@ -42,16 +43,12 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'authorshipGroup',
             via: 'researchEntity',
         },
-        discardedReferences: {
-            collection: 'Reference',
+        discardedDocuments: {
+            collection: 'Document',
             via: 'discardedGroups'
         },
-        suggestedReferences: {
-            collection: 'reference',
-            via: 'suggestedGroups'
-        },
         suggestedDocuments: {
-            collection: 'reference',
+            collection: 'document',
             via: 'groups',
             through: 'documentsuggestiongroup'
         },
@@ -65,16 +62,18 @@ module.exports = _.merge({}, researchEntity, {
             model: 'institute'
         }
     },
-    verifyDocument: function (researchEntityId, documentId) {
-        return Reference.findOneById(documentId)
-            .then(document => {
-                const authorship = {
-                    researchEntity: researchEntityId,
-                    document: document.id
-                };
-                return AuthorshipGroup
-                    .create(authorship)
-                    .then(()=>document);
-            })
+    getAuthorshipsData: function (document) {
+        return Promise.resolve({
+            isVerifiable: true,
+            document: document
+        });
+    },
+    doVerifyDocument: function (document, researchEntityId) {
+        const authorship = {
+            researchEntity: researchEntityId,
+            document: document.id
+        };
+        return AuthorshipGroup.create(authorship)
+            .then(()=>document);
     }
 });

@@ -7,7 +7,7 @@ CREATE OR REPLACE VIEW documentsuggestiongroup AS
          FROM "membership"
        ) AS "groupMembership",
     (SELECT *
-     FROM "reference"
+     FROM "document"
      WHERE "draft" = FALSE) AS "verifiedDocument"
   WHERE "verifiedDocument"."id" IN (
     SELECT "document"
@@ -18,9 +18,9 @@ CREATE OR REPLACE VIEW documentsuggestiongroup AS
       WHERE "group" = "groupMembership"."id")
           AND
           "verifiedDocument"."id" NOT IN (
-            SELECT "reference_discardedGroups"
-            FROM "group_discardedreferences__reference_discardedgroups"
-            WHERE "group_discardedReferences" = "groupMembership"."group"
+            SELECT "document_discardedGroups"
+            FROM "document_discardedgroups__group_discardeddocuments"
+            WHERE "group_discardedDocuments" = "groupMembership"."group"
           )
           AND
           "verifiedDocument"."id" NOT IN (

@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('references')
+    angular.module('documents')
         .component('scientillaDocumentDetails', {
             templateUrl: 'partials/scientillaDocumentDetails.html',
             controller: scientillaDocumentsDetails,

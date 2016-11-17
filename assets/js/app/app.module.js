@@ -11,7 +11,7 @@
 
         /* Feature areas */
         'users',
-        'references',
+        'documents',
         'groups',
         'notifications'
     ]);

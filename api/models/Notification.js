@@ -12,7 +12,7 @@ module.exports = {
         var notifications = {};
         return User.find({id: userId}).populate('coauthors')
                 .then(function (user) {
-                    notifications.references = user.coauthors;
+                    notifications.documents = user.coauthors;
                     return notifications;
                 });
     }

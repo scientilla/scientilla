@@ -13,7 +13,7 @@ var researchEntityController = require('./ResearchEntityController');
 
 module.exports = require('waterlock').actions.user(_.merge({}, researchEntityController, {
     //sTODO: move this function to the user model
-    //sTODO: delete references or set the owner to null
+    //sTODO: delete documents or set the owner to null
     //sTODO: refactor
     destroy: function (req, res) {
         var userId = req.params.id;

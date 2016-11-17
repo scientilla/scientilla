@@ -1,23 +1,23 @@
 (function () {
     angular
-        .module('references')
+        .module('documents')
         .config(configure);
 
     configure.$inject = ['$routeProvider'];
 
     function configure($routeProvider) {
         $routeProvider
-            .when("/users/:id/references", {
-                templateUrl: "partials/reference-browsing.html",
-                controller: "ReferenceBrowsingController",
+            .when("/users/:id/documents", {
+                templateUrl: "partials/document-browsing.html",
+                controller: "DocumentBrowsingController",
                 controllerAs: 'vm',
                 resolve: {
                     context: getUserContext
                 }
             })
-            .when("/groups/:id/references", {
-                templateUrl: "partials/reference-browsing.html",
-                controller: "ReferenceBrowsingController",
+            .when("/groups/:id/documents", {
+                templateUrl: "partials/document-browsing.html",
+                controller: "DocumentBrowsingController",
                 controllerAs: 'vm',
                 resolve: {
                     context: getGroupContext

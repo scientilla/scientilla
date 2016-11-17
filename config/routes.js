@@ -34,22 +34,18 @@ module.exports.routes = {
   '/': 'Homepage.default',
 
   'post /auths/register' : 'Auth.register',
-  'post /users/:userId/references': 'Reference.create',
-  'post /groups/:userId/references': 'Reference.create',
   'post /users/:researchEntityId/drafts': 'User.createDraft',
   'post /groups/:researchEntityId/drafts': 'Group.createDraft',
   'put /users/:id/drafts/verify-drafts': 'User.verifyDrafts',
   'put /groups/:id/drafts/verify-drafts': 'Group.verifyDrafts',
   'put /users/:userId/drafts/:id': 'User.updateDraft',
   'put /groups/:userId/drafts/:id': 'Group.updateDraft',
-  'put /users/:userId/references/:id': 'Reference.update',
-  'put /groups/:userId/references/:id': 'Reference.update',
+  'put /users/:userId/documents/:id': 'Document.update',
+  'put /groups/:userId/documents/:id': 'Document.update',
   'put /users/:id/verify-documents': 'User.verifyDocuments',
   'put /groups/:id/verify-documents': 'Group.verifyDocuments',
-  'get /users/:id/references': 'User.getReferences',
-  'get /groups/:id/references': 'Group.getReferences',
-  'put /users/:id/documents/:referenceId/unverified': 'User.unverifyDocument',
-  'put /groups/:id/documents/:referenceId/unverified': 'Group.unverifyDocument',
+  'put /users/:id/documents/:documentId/unverified': 'User.unverifyDocument',
+  'put /groups/:id/documents/:documentId/unverified': 'Group.unverifyDocument',
   'post /users/:id/documents': 'User.verifyDocument',
   'post /groups/:id/documents': 'Group.verifyDocument',
   'post /users/:id/discarded-document': 'User.discardDocument',
@@ -60,16 +56,12 @@ module.exports.routes = {
   'post /groups/:id/copy-drafts': 'Group.createDrafts',
   'put /users/:id/drafts/:draftId/verified': 'User.verifyDraft',
   'put /groups/:id/drafts/:draftId/verified': 'Group.verifyDraft',
-  'get /references/:id/suggestions' : 'Suggestion.find', //sTODO delete
-  'get /references/:id/suggested-collaborators' : 'Reference.getSuggestedCollaborators',
+  'get /documents/:id/suggestions' : 'Suggestion.find', //sTODO delete
+  'get /documents/:id/suggested-collaborators' : 'Document.getSuggestedCollaborators',
   'get /users/:id/external-documents' : 'User.getExternalDocuments',
   'get /groups/:id/external-documents' : 'Group.getExternalDocuments',
-  'delete /references/delete':'Reference.deleteDrafts'
+  'delete /documents/delete':'Document.deleteDrafts'
 
-//    'get /': {
-//        controller: 'index',
-//        action: 'index'
-//    }
 
     /***************************************************************************
      *                                                                          *

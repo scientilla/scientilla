@@ -17,24 +17,11 @@ module.exports = {
         var Model = getModel(req);
         return res.halt(Model.createDraft(Model, researchEntityId, draftData));
     },
-    getReferences: function (req, res) {
-        var researchEntity = req.params.id;
-        var populate = getPopulateFields(req);
-        var filter = req.query.filter || 'all';
-        var model = req.options.model || req.options.controller;
-        if (!_.contains(['group', 'user'], model))
-            return res.err('error');
-        var Model = req._sails.models[model];
-        Model.getReferences(Model, researchEntity, populate, filter)
-                .then(function (references) {
-                    res.json(references);
-                });
-    },
     unverifyDocument: function (req, res) {
         var researcEntityId = req.params.id;
-        var referenceId = req.params.referenceId;
+        var documentId = req.params.documentId;
         var Model = getModel(req);
-        res.halt(Model.unverifyDocument(Model, researcEntityId, referenceId));
+        res.halt(Model.unverifyDocument(Model, researcEntityId, documentId));
     },
     verifyDraft: function (req, res) {
         var researchEntityId = req.params.id;
@@ -57,7 +44,7 @@ module.exports = {
         var affiliationInstituteIds = req.body.affiliations;
         var Model = getModel(req);
         // TODO in case of failed verify give response with details instead of 400
-        res.halt(Model.verifyDocument(researchEntityId, documentId, position, affiliationInstituteIds));
+        res.halt(Model.verifyDocument(Model, researchEntityId, documentId, position, affiliationInstituteIds));
     },
     verifyDocuments: function (req, res) {
         var researchEntityId = req.params.id;

@@ -17,7 +17,7 @@ describe('Document Suggestions', () => {
     let user3;
     let document;
 
-    it.skip('it should suggest the reference to the user whose surname is among the authors (str)', () =>
+    it.skip('it should suggest the document to the user whose surname is among the authors (str)', () =>
         test.registerUser(user1Data)
             .then(res => user1 = res.body)
             .then(() => test.userCreateDraft(user1, documentData))

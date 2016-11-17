@@ -1,7 +1,7 @@
 (function () {
     'use strict';
 
-    angular.module('references')
+    angular.module('documents')
             .directive('scientillaDocument', scientillaDocument);
 
     function scientillaDocument() {

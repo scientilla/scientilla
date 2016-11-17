@@ -70,7 +70,7 @@
             var q = _.merge({}, query, populate);
 
             return researchEntity
-                .getList('discardedReferences', q)
+                .getList('discardedDocuments', q)
                 .then(list =>
                     _.forEach(list, d =>
                         d.addTag('discarded'))
@@ -97,8 +97,8 @@
                 .customPUT(verificationData, 'verified');
         }
 
-        function unverify(researchEntity, reference) {
-            return researchEntity.one('documents', reference.id)
+        function unverify(researchEntity, document) {
+            return researchEntity.one('documents', document.id)
                 .customPUT({}, 'unverified');
         }
 
@@ -143,7 +143,7 @@
 
         function deleteDrafts(researchEntity, draftIds) {
             return Restangular
-                .all('references')
+                .all('documents')
                 .customDELETE('delete', {}, {}, {draftIds: draftIds});
         }
 

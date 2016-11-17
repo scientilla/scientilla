@@ -1,0 +1,43 @@
+<div>
+    <div class="row documents-header">
+        <div class="col-md-8">
+            <h1>
+                {{vm.researchEntity.getDisplayName()}}
+                &nbsp;
+                <button class="btn btn-sm btn-primary" ng-click="vm.editProfile()" aria-label="Edit">
+                    <span class="fa fa-cog"></span>
+                </button>
+            </h1>
+        </div>
+        <div class="col-md-4 text-right">
+            <div class="btn-group scientilla-dropdown-align-right" uib-dropdown >
+                <button id="single-button" type="button" class="btn btn-primary" uib-dropdown-toggle ng-disabled="disabled">
+                    Add New
+                </button>
+                <ul uib-dropdown-menu>
+                    <li ng-repeat="type in vm.types">
+                        <a ng-click="vm.createNewDocument(type)" style="cursor: pointer">{{type.label}}</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <uib-tabset active="active">
+        <uib-tab index="0">
+            <uib-tab-heading>Suggested</uib-tab-heading>
+            <scientilla-notifications-list research-entity="vm.researchEntity"></scientilla-notifications-list>
+        </uib-tab>
+        <uib-tab index="1">
+            <uib-tab-heading>Verified</uib-tab-heading>
+            <scientilla-documents-list research-entity="vm.researchEntity" editable="true"></scientilla-documents-list>
+        </uib-tab>
+        <uib-tab index="2">
+            <uib-tab-heading>Drafts</uib-tab-heading>
+            <scientilla-drafts-list research-entity="vm.researchEntity"></scientilla-drafts-list>
+        </uib-tab>
+        <uib-tab index="3">
+            <uib-tab-heading>External</uib-tab-heading>
+            <scientilla-external-documents research-entity="vm.researchEntity"></scientilla-external-documents>
+        </uib-tab>
+    </uib-tabset>
+</div>

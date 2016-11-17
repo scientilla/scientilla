@@ -1,20 +1,20 @@
 CREATE OR REPLACE VIEW documentsuggestion AS
   SELECT
-    "reference"."id" AS "document",
+    "document"."id" AS "document",
     "user"."id"      AS "researchEntity"
   FROM "user"
-    JOIN "reference"
-      ON "reference"."authorsStr" ILIKE '%' :: TEXT || "user"."surname" || '%' :: TEXT
-  WHERE "reference"."draft" = FALSE
+    JOIN "document"
+      ON "document"."authorsStr" ILIKE '%' :: TEXT || "user"."surname" || '%' :: TEXT
+  WHERE "document"."draft" = FALSE
         AND
-        "reference"."id" NOT IN (
+        "document"."id" NOT IN (
           SELECT "authorship"."document"
           FROM "authorship"
           WHERE "authorship"."researchEntity" = "user"."id"
         )
         AND
-        "reference"."id" NOT IN (
-          SELECT "reference_discardedcoauthors__user_discardedreferences"."reference_discardedCoauthors"
-          FROM "reference_discardedcoauthors__user_discardedreferences"
-          WHERE "reference_discardedcoauthors__user_discardedreferences"."user_discardedReferences" = "user"."id"
+        "document"."id" NOT IN (
+          SELECT "document_discardedcoauthors__user_discardeddocuments"."document_discardedCoauthors"
+          FROM "document_discardedcoauthors__user_discardeddocuments"
+          WHERE "document_discardedcoauthors__user_discardeddocuments"."user_discardedDocuments" = "user"."id"
         )

@@ -12,7 +12,7 @@ module.exports = {
             model: 'Group',
         },
         document: {
-            model: 'Reference'
+            model: 'Document'
         },
         position: 'integer',
         public: 'boolean'

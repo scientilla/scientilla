@@ -1,6 +1,6 @@
 (function () {
 
-    angular.module("references").factory("UserDocumentsServiceFactory", UserDocumentsServiceFactory);
+    angular.module("documents").factory("UserDocumentsServiceFactory", UserDocumentsServiceFactory);
 
     UserDocumentsServiceFactory.$inject = [
         'DocumentsServiceFactory',
@@ -25,17 +25,16 @@
                 function verifyDraft(draft) {
                     function verificationCallback(user, documentId, verificationData) {
                         return researchEntityService.verifyDraftAsUser(user, documentId, verificationData)
-                            .then(function (document) {
-                                if (document.draft) {
-                                    Notification.warning("Draft is not valid and cannot be verified");
-                                }
-                                else {
-                                    Notification.success("Draft verified");
-                                    EventsService.publish(EventsService.DRAFT_VERIFIED, document);
-                                }
+                            .then(function (res) {
+                                if (res.error)
+                                    throw res.error;
+
+                                Notification.success("Draft verified");
+                                EventsService.publish(EventsService.DRAFT_VERIFIED, res);
+
                             })
-                            .catch(function () {
-                                Notification.warning("Failed to verify draft");
+                            .catch(function (error) {
+                                Notification.warning(error);
                             });
                     }
 
@@ -46,13 +45,17 @@
                 function verifyDocument(document) {
                     function verificationCallback(user, documentId, verificationData) {
                         return researchEntityService.verifyDocument(user, documentId, verificationData)
-                            .then(function () {
+                            .then(function (res) {
+                                if (res.error)
+                                    throw res.error;
+
                                 Notification.success('Document verified');
                                 EventsService.publish(EventsService.DOCUMENT_VERIFIED, document);
                                 EventsService.publish(EventsService.NOTIFICATION_ACCEPTED, document);
+
                             })
-                            .catch(function () {
-                                Notification.warning('Failed to verify document');
+                            .catch(function (error) {
+                                Notification.warning(error);
                             });
                     }
 

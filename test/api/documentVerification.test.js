@@ -39,7 +39,8 @@ describe('Document Verification', () => {
                 author2affiliationInstitutes = [unigeInstitute.id, iitInstitute.id];
                 return test
                     .userVerifyDocument(user2, document, user2Doc1position, author2affiliationInstitutes)
-                    .expect(200);
+                    //.expect(200);
+                    .expect(res => console.log(res.status))
             })
             .then(() => test
                 .getUserDocumentsWithAuthors(user2)

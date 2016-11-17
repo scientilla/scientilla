@@ -14,7 +14,7 @@ module.exports = _.merge({}, BaseModel, {
             model: 'User',
         },
         document: {
-            model: 'Reference'
+            model: 'Document'
         },
         affiliations: {
             collection: 'institute',
