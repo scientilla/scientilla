@@ -15,7 +15,7 @@
         <label for="acronym">Acronym</label>
         <input type="text" class="form-control" id="acronym" placeholder="Acronym" ng-model="vm.newSource.acronym"/>
     </div>
-    <div class="form-group" ng-if="['conference'].includes(vm.document.sourceType)">
+    <div class="form-group" ng-if="['conference', 'book'].includes(vm.document.sourceType)">
         <label for="year">Year</label>
         <input type="text" class="form-control" id="year" placeholder="Year" ng-model="vm.newSource.year"/>
     </div>
