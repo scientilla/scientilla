@@ -299,15 +299,40 @@ module.exports = {
                         return {};
                     })
                     .then(function (res) {
-                        var d2 = _.get(res, 'abstracts-retrieval-response', {});
+                        function getConditionalField(obj, path, type) {
+                            const vals = toArray(_.get(obj, path));
+                            return _.get(_.find(vals, {'@type': type}), '$');
+                        }
 
-                        var sourceTypeMappings = {
-                            'Journal': 'journal',
-                            'Conference Proceeding': 'conference',
-                            'Book Series': 'book'
+                        const d2 = _.get(res, 'abstracts-retrieval-response', {});
+                        const scopusSource = _.get(d2, 'item.bibrecord.head.source');
+
+                        const sourceTypeMappings = {
+                            'j': 'journal',
+                            'p': 'conference',
+                            'b': 'book',
+                            'r': 'report',
+                            'k': 'bookseries'
                         };
-                        var sourceType = sourceTypeMappings[d1['prism:aggregationType']];
-                        var newDoc = {
+
+                        var typeMappings = {
+                            ar: 'article',
+                            ab: 'abstract_report',
+                            ip: 'article_in_press',
+                            bk: 'book',
+                            ch: 'book_chapter',
+                            cp: 'conference_paper',
+                            cr: 'conference_review',
+                            ed: 'editorial',
+                            er: 'erratum',
+                            le: 'letter',
+                            no: 'note',
+                            re: 'review',
+                            sh: 'short_survey'
+                        };
+
+                        var sourceType = sourceTypeMappings[scopusSource['@type']];
+                        var documentData = {
                             title: _.get(d1, 'dc:title'),
                             authorsStr: _.map(
                                 _.get(d2, 'authors.author'),
@@ -318,44 +343,28 @@ module.exports = {
                             doi: _.get(d2, 'coredata.prism:doi'),
                             sourceType: sourceType,
                             scopusId: scopusId,
-                            abstract: _.trim(_.get(d2, 'coredata.dc:description'))
+                            abstract: _.trim(_.get(d2, 'coredata.dc:description')),
+                            articleNumber: _.get(d2, 'item.bibrecord.head.source.article-number'),
+                            journal: d1['prism:publicationName'],
+                            volume: d1['prism:volume'],
+                            issue: d1['prism:issueIdentifier'],
+                            pages: d1['prism:pageRange'],
+                            type: typeMappings[d1['subtype']]
                         };
 
-                        switch (newDoc.sourceType) {
-                            case 'journal':
-                                newDoc.journal = d1['prism:publicationName'];
-                                newDoc.volume = d1['prism:volume'];
-                                newDoc.issue = d1['prism:issueIdentifier'];
-                                newDoc.pages = d1['prism:pageRange'];
-                                newDoc.articleNumber = _.get(d2, 'item.bibrecord.head.source.article-number');
-                                break;
-                            case 'book':
-                                newDoc.pages = d1['prism:pageRange'];
-                                newDoc.bookTitle = d1['prism:publicationName'];
-                                newDoc.editor = null;
-                                newDoc.publisher = _.get(d2, 'item.bibrecord.head.source.publisher.publishername');
-                                break;
-                            case 'conference':
-                                newDoc.conferenceName = d1['prism:publicationName'];
-                                newDoc.conferenceLocation = getConferenceLocation(d2);
-                                newDoc.acronym = getConferenceAcronym(d2);
-                                newDoc.volume = d1['prism:volume'];
-                                newDoc.issue = d1['prism:issueIdentifier'];
-                                newDoc.pages = d1['prism:pageRange'];
-                                newDoc.articleNumber = _.get(d2, 'item.bibrecord.head.source.article-number');
-                                break;
-                        }
-
-                        var typeMappings = {
-                            re: 'review',
-                            ip: 'article_in_press',
-                            ed: 'editorial',
-                            ar: 'article',
-                            cp: 'conference_paper',
-                            no: 'note'
+                        const sourceData = {
+                            type: sourceType,
+                            scopusId: _.get(scopusSource, '@srcid'),
+                            title: _.get(scopusSource, 'sourcetitle'),
+                            issn: getConditionalField(scopusSource, 'issn', 'print'),
+                            eissn: getConditionalField(scopusSource, 'issn', 'electronic'),
+                            isbn: getConditionalField(scopusSource, 'isbn', 'print'),
+                            publisher: _.get(scopusSource, 'publisher.publishername'),
+                            year: _.get(scopusSource, 'publicationyear.@first'),
+                            website: getConditionalField(scopusSource, 'website.ce:e-address', 'email'),
+                            location: getConferenceLocation(d2),
+                            acronym: getConferenceAcronym(d2)
                         };
-
-                        newDoc.type = typeMappings[d1['subtype']];
 
                         const allAffiliations = toArray(d2.affiliation);
 
@@ -371,10 +380,13 @@ module.exports = {
                             i => Institute.findOrCreate({scopusId: i.scopusId}, i)
                         );
 
-                        return Promise.all(institutesCreationFns)
-                            .then(newInstitutes => [d2, newDoc, newInstitutes]);
+                        return Promise.all([
+                            Source.findOrCreate({scopusId: sourceData.scopusId}, sourceData),
+                            Promise.all(institutesCreationFns)
+                        ])
+                            .spread((newSource, newInstitutes) => [d2, documentData, newInstitutes, newSource]);
                     })
-                    .spread(function (d2, newDoc, newInstitutes) {
+                    .spread(function (d2, newDoc, newInstitutes, newSource) {
                         const scopusAuthorships = _.get(d2, 'authors.author');
 
                         newDoc.authorships = _.map(scopusAuthorships, (a, i) => {
@@ -389,6 +401,7 @@ module.exports = {
                             };
                             return newAuthorship;
                         });
+                        newDoc.source = newSource;
                         return newDoc;
                     });
             }
