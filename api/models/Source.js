@@ -18,7 +18,7 @@ module.exports = {
         isbn: 'string',
         type: 'string',
         documents: {
-            collection: 'reference',
+            collection: 'document',
             via: 'source'
         }
     }
