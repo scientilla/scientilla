@@ -31,8 +31,7 @@
 
         var DocumentsService = context.getDocumentService();
 
-        vm.getData = getDrafts;
-        vm.onFilter = refreshList;
+        vm.onFilter = onFilter;
 
         vm.deleteDraft = DocumentsService.deleteDraft;
         vm.verifyDraft = DocumentsService.verifyDraft;
@@ -58,20 +57,19 @@
             EventsService.unsubscribeAll(vm);
         };
 
-        function getDrafts(q) {
+        function updateList() {
+            onFilter(query);
+        }
+
+        function onFilter(q) {
             query = q;
 
-            return researchEntityService.getDrafts(vm.researchEntity, q);
+            return researchEntityService.getDrafts(vm.researchEntity, q)
+                .then(function (documents) {
+                    vm.drafts = documents;
+                });
         }
 
-        function refreshList(drafts) {
-            vm.drafts = drafts;
-        }
-
-        // private
-        function updateList() {
-            getDrafts(query).then(refreshList);
-        }
     }
 
 })();

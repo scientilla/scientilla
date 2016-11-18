@@ -1,7 +1,7 @@
 (function () {
     angular
-            .module('users')
-            .controller('UserBrowsingController', UserBrowsingController);
+        .module('users')
+        .controller('UserBrowsingController', UserBrowsingController);
 
     UserBrowsingController.$inject = [
         'UsersService',
@@ -20,8 +20,8 @@
         vm.editUser = editUser;
         vm.createNew = createNew;
 
-        vm.getData = getUsers;
-        vm.onFilter = refreshList;
+        vm.onFilter = onFilter;
+        var query = {};
 
         vm.searchForm = {
             name: {
@@ -38,13 +38,14 @@
             }
         };
 
-        function getUsers(q) {
-            return UsersService.getUsers(q);
-        }
+        function onFilter(q) {
+            query = q;
 
-        function refreshList(users) {
-            vm.users = users;
-            return vm.users;
+            return UsersService.getUsers(query)
+                .then(function (users) {
+                    vm.users = users;
+                    return vm.users;
+                });
         }
 
         function createNew() {
@@ -60,29 +61,28 @@
         }
 
         function deleteUser(user) {
-            user
-                    .remove()
-                    .then(function () {
-                        Notification.success("User deleted");
+            user.remove()
+                .then(function () {
+                    Notification.success("User deleted");
 
-                        getUsers()
-                                .then(refreshList);
+                    getUsers()
+                        .then(refreshList);
 
-                    })
-                    .catch(function () {
-                        Notification.warning("Failed to delete user");
-                    });
+                })
+                .catch(function () {
+                    Notification.warning("Failed to delete user");
+                });
 
         }
 
         // private
         function openUserForm(user) {
             ModalService
-                    .openScientillaUserForm(!user ? UsersService.getNewUser() : user.clone())
-                    .then(function () {
-                        return getUsers();
-                    })
-                    .then(refreshList);
+                .openScientillaUserForm(!user ? UsersService.getNewUser() : user.clone())
+                .then(function () {
+                    return getUsers();
+                })
+                .then(refreshList);
         }
 
     }

@@ -29,11 +29,10 @@
         vm.discardDocument = DocumentsService.discardDocument;
         vm.copyDocuments = DocumentsService.copyDocuments;
         vm.discardDocuments = DocumentsService.discardDocuments;
-        var query = {};
         vm.documents = [];
+        var query = {};
 
-        vm.refreshList = refreshList;
-        vm.getData = getData;
+        vm.onFilter = onFilter;
 
         vm.searchForm = {
             rejected: {
@@ -50,21 +49,30 @@
                 EventsService.NOTIFICATION_DISCARDED,
                 EventsService.DRAFT_UNVERIFIED,
                 EventsService.DOCUMENT_VERIFIED
-            ], reload);
+            ], updateList);
         };
 
         vm.$onDestroy = function () {
             EventsService.unsubscribeAll(vm);
         };
 
-        function getData(q) {
+        function updateList() {
+            onFilter(query);
+        }
 
-            var discarded = false;
-            if (!_.isEmpty(q)) {
-                discarded = q.where.discarded;
-                delete q.where.discarded;
-                query = q;
-            }
+        function onFilter(q) {
+            return getData(q)
+                .then(function (documents) {
+                    vm.documents = documents;
+                });
+        }
+
+        //private
+        function getData(q) {
+            var discarded = q.where.discarded;
+            delete q.where.discarded;
+            query = q;
+
 
             if (!discarded)
                 return researchEntityService.getSuggestedDocuments(vm.researchEntity, query);
@@ -72,13 +80,5 @@
                 return researchEntityService.getDiscardedDocuments(vm.researchEntity, query);
         }
 
-        function refreshList(documents) {
-            vm.documents = documents;
-        }
-
-        // private
-        function reload() {
-            getData(query).then(refreshList);
-        }
     }
 })();

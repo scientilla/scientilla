@@ -1,7 +1,7 @@
 (function () {
     angular
-            .module('groups')
-            .controller('GroupBrowsingController', GroupBrowsingController);
+        .module('groups')
+        .controller('GroupBrowsingController', GroupBrowsingController);
 
     GroupBrowsingController.$inject = [
         'GroupsService',
@@ -20,9 +20,8 @@
         vm.editGroup = editGroup;
         vm.createNew = createNew;
 
-
-        vm.getData = getGroups;
-        vm.onFilter = refreshList;
+        vm.onFilter = onFilter;
+        var query = {};
 
         vm.searchForm = {
             name: {
@@ -38,12 +37,14 @@
             openGroupForm();
         }
 
-        function getGroups(q) {
-            return GroupsService.getGroups(q);
-        }
-        function refreshList(groups) {
-            vm.groups = groups;
-            return vm.groups;
+        function onFilter(q) {
+            query = q;
+
+            return GroupsService.getGroups(query)
+                .then(function (groups) {
+                    vm.groups = groups;
+                    return vm.groups;
+                });
         }
 
 
@@ -53,17 +54,17 @@
 
         function deleteGroup(group) {
             group
-                    .remove()
-                    .then(function () {
-                        Notification.success("User deleted");
-                        
-                        getGroups()
+                .remove()
+                .then(function () {
+                    Notification.success("User deleted");
+
+                    getGroups()
                         .then(refreshList);
 
-                    })
-                    .catch(function () {
-                        Notification.warning("Failed to delete user");
-                    });
+                })
+                .catch(function () {
+                    Notification.warning("Failed to delete user");
+                });
 
         }
 
@@ -72,15 +73,14 @@
         }
 
 
-
         // private
         function openGroupForm(group) {
             ModalService
-                    .openScientillaGroupForm(!group ? GroupsService.getNewGroup() : group.clone())
-                    .then(function () {
-                        getGroups()
+                .openScientillaGroupForm(!group ? GroupsService.getNewGroup() : group.clone())
+                .then(function () {
+                    getGroups()
                         .then(refreshList);
-                    });
+                });
         }
 
     }
