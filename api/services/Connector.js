@@ -151,12 +151,12 @@ module.exports = {
             },
             transform: d => {
                 function getAttributeFromCitation(d, attribute) {
-                    var citationData = _.get(d, 'work-citation.citation', '');
-                    var regex = new RegExp(attribute + '\\s=\\s{(.*?)}');
+                    const citationData = _.get(d, 'work-citation.citation', '');
+                    const regex = new RegExp(attribute + '\\s=\\s{(.*?)}');
                     return _.get(citationData.match(regex), '[1]');
                 }
 
-                function getEternalId(d, attributeName) {
+                function getExternalId(d, attributeName) {
                     return _.get(
                         _.find(_.get(d, 'work-external-identifiers.work-external-identifier'),
                             function (wei) {
@@ -166,43 +166,41 @@ module.exports = {
                     );
                 }
 
-                var sourceTypeMappings = {
+                const sourceTypeMappings = {
                     JOURNAL_ARTICLE: 'journal',
                     CONFERENCE_PAPER: 'conference',
                     BOOK: 'book'
                 };
-                var sourceType = sourceTypeMappings[d['work-type']];
-                var newDoc = {
+                const sourceType = sourceTypeMappings[d['work-type']];
+                const newDoc = {
                     title: _.get(d, 'work-title.title.value'),
                     authorsStr: _.map(_.get(d, 'work-contributors.contributor'), function (c) {
                         var authorStr = _.get(c, 'credit-name.value');
                         return authorStr.replace(/,/g, '');
                     }).join(', '),
                     year: _.get(d, 'publication-date.year.value'),
-                    doi: getEternalId(d, 'DOI'),
-                    scopusId: _.trimStart(getEternalId(d, 'EID'), '2-s2.0-'),
+                    volume: getAttributeFromCitation(d, 'volume'),
+                    issue: getAttributeFromCitation(d, 'number'),
+                    pages: getAttributeFromCitation(d, 'pages'),
+                    doi: getExternalId(d, 'DOI'),
+                    scopusId: _.trimStart(getExternalId(d, 'EID'), '2-s2.0-'),
+                    wodId: _.trimStart(getExternalId(d, 'OTHER_ID'), 'WOS:'),
                     sourceType: sourceType
                 };
-                switch (newDoc.sourceType) {
-                    case 'journal':
-                        newDoc.journal = getAttributeFromCitation(d, 'journal');
-                        newDoc.volume = getAttributeFromCitation(d, 'volume');
-                        newDoc.issue = getAttributeFromCitation(d, 'number');
-                        newDoc.pages = getAttributeFromCitation(d, 'pages');
-                        newDoc.articleNumber = null;
-                        break;
-                    case 'book':
-                        newDoc.bookTitle = getAttributeFromCitation(d, 'journal');
-                        newDoc.editor = null;
-                        newDoc.publisher = null;
-                        break;
-                    case 'conference':
-                        newDoc.conferenceName = getAttributeFromCitation(d, 'journal');
-                        newDoc.conferenceLocation = null;
-                        newDoc.acronym = null;
-                        break;
-                }
-                return newDoc;
+                const newSource = {
+                    type: sourceType,
+                    title: getAttributeFromCitation(d, 'journal') || _.get(d, 'journal-title.value'),
+                    issn: getExternalId(d, 'ISSN'),
+                    isbn: getExternalId(d, 'ISBN'),
+                };
+
+                if (!newSource.title)
+                    return newDoc;
+                return Source.findOneByTitle(newSource.title)
+                    .then(source => {
+                        newDoc.source = source ? source : newSource;
+                        return newDoc;
+                    });
             }
         };
     },

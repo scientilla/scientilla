@@ -44,7 +44,8 @@ module.exports = _.merge({}, BaseModel, {
                 return Document.findOneById(draftId)
                     .populate('authorships')
                     .populate('affiliations')
-                    .populate('authors');
+                    .populate('authors')
+                    .populate('source');
             });
     },
     unverifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
