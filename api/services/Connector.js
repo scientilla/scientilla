@@ -90,23 +90,16 @@ module.exports = {
                     authorsStr: d.authors.replace(/\*/g, ''),
                     year: d.year,
                     doi: d.doi,
-                    journal: d.journal,
                     volume: d.volume,
                     issue: d.issue,
                     pages: /^\d+-\d+$/.test(d.pages) ? d.pages : '',
-                    articleNumber: '',
-                    bookTitle: d.bookTitle,
-                    editor: d.editor,
-                    publisher: d.publisher,
-                    conferenceName: d.conference,
-                    conferenceLocation: d.conferencePlace,
-                    acronym: d.conferenceAcronym
+                    articleNumber: ''
                 };
-                if (newDoc.conferenceName)
+                if (d.conference)
                     newDoc.sourceType = 'conference';
-                else if (newDoc.journal)
+                else if (d.journal)
                     newDoc.sourceType = 'journal';
-                else if (newDoc.bookTitle)
+                else if (d.bookTitle)
                     newDoc.sourceType = 'book';
                 else
                     newDoc.sourceType = null;
@@ -122,7 +115,14 @@ module.exports = {
                     supplementaryinformation: 'note'
                 };
                 newDoc.type = d.typeAlias in typeMappings ? typeMappings[d.typeAlias] : null;
-                return newDoc;
+
+                var newSource = {
+                    title: d.journal || d.conference || d.bookTitle,
+                    publisher: d.publisher,
+                    acronym: d.conferenceAcronym,
+                    location: d.conferencePlace
+                };
+                return mergeDocAndSource(newDoc, newSource);
             }
         };
     },
@@ -194,13 +194,7 @@ module.exports = {
                     isbn: getExternalId(d, 'ISBN'),
                 };
 
-                if (!newSource.title)
-                    return newDoc;
-                return Source.findOneByTitle(newSource.title)
-                    .then(source => {
-                        newDoc.source = source ? source : newSource;
-                        return newDoc;
-                    });
+                return mergeDocAndSource(newDoc, newSource);
             }
         };
     },
@@ -413,4 +407,14 @@ function toArray(val) {
     if (!_.isArray(val))
         return [val];
     return val;
+}
+
+function mergeDocAndSource(newDoc, newSource) {
+    if (!newSource.title)
+        return newDoc;
+    return Source.findOneByTitle(newSource.title)
+        .then(source => {
+            newDoc.source = source ? source : newSource;
+            return newDoc;
+        });
 }
