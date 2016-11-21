@@ -32,8 +32,6 @@
             var ResearchEntityForms = ResearchEntityFormsFactory(vm);
 
             ResearchEntityForms.setExternalForm();
-
-            reset();
         };
 
         function onFilter(q) {
