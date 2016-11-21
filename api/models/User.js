@@ -74,7 +74,7 @@ module.exports = _.merge({}, researchEntity, {
         discardedDocuments: {
             collection: 'Document',
             via: 'discardedCoauthors',
-            dominant: true
+            through: 'discarded'
         },
         jsonWebTokens: {
             collection: 'jwt',
@@ -268,6 +268,8 @@ module.exports = _.merge({}, researchEntity, {
             .then(function () {
                 cb();
             });
-
+    },
+    discardDocument: function (researchEntityId, documentId) {
+        return Discarded.findOrCreate({researchEntity: researchEntityId, document: documentId});
     }
 });

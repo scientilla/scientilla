@@ -45,7 +45,8 @@ module.exports = _.merge({}, researchEntity, {
         },
         discardedDocuments: {
             collection: 'Document',
-            via: 'discardedGroups'
+            via: 'discardedGroups',
+            through: 'discardedgroup'
         },
         suggestedDocuments: {
             collection: 'document',
@@ -75,5 +76,8 @@ module.exports = _.merge({}, researchEntity, {
         };
         return AuthorshipGroup.create(authorship)
             .then(()=>document);
+    },
+    discardDocument: function (researchEntityId, documentId) {
+        return DiscardedGroup.findOrCreate({researchEntity: researchEntityId, document: documentId});
     }
 });

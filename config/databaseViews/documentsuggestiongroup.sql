@@ -18,9 +18,9 @@ CREATE OR REPLACE VIEW documentsuggestiongroup AS
       WHERE "group" = "groupMembership"."id")
           AND
           "verifiedDocument"."id" NOT IN (
-            SELECT "document_discardedGroups"
-            FROM "document_discardedgroups__group_discardeddocuments"
-            WHERE "group_discardedDocuments" = "groupMembership"."group"
+            SELECT "document"
+            FROM "discardedgroup"
+            WHERE "researchEntity" = "groupMembership"."group"
           )
           AND
           "verifiedDocument"."id" NOT IN (
