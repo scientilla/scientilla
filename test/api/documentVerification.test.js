@@ -3,6 +3,7 @@
 
 const should = require('should');
 const test = require('./../helper.js');
+const _ = require('lodash');
 
 describe('Document Verification', () => {
     before(test.cleanDb);
@@ -13,9 +14,11 @@ describe('Document Verification', () => {
     const documentData = test.getAllDocumentData()[0];
     const iitInstituteData = test.getAllInstituteData()[0];
     const unigeInstituteData = test.getAllInstituteData()[1];
+    const journalData = test.getAllSourceData()[0];
     let user1;
     let user2;
     let document;
+    let journal;
     const user1Doc1position = 4;
     const user2Doc1position = 0;
     let iitInstitute;
@@ -30,7 +33,9 @@ describe('Document Verification', () => {
             .then(res => iitInstitute = res.body)
             .then(() => test.createInstitute(unigeInstituteData))
             .then(res => unigeInstitute = res.body)
-            .then(() => test.userCreateDraft(user1, documentData))
+            .then(() => test.createSource(journalData))
+            .then(res => journal = res.body)
+            .then(() => test.userCreateDraft(user1, _.merge({}, documentData, {source: journal.id})))
             .then(res => document = res.body)
             .then(() => test.userVerifyDraft(user1, document, user1Doc1position, [iitInstitute.id]))
             .then(() => test.registerUser(user2Data))
@@ -39,8 +44,7 @@ describe('Document Verification', () => {
                 author2affiliationInstitutes = [unigeInstitute.id, iitInstitute.id];
                 return test
                     .userVerifyDocument(user2, document, user2Doc1position, author2affiliationInstitutes)
-                    //.expect(200);
-                    .expect(res => console.log(res.status))
+                    .expect(200);
             })
             .then(() => test
                 .getUserDocumentsWithAuthors(user2)

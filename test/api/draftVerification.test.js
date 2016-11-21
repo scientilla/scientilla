@@ -12,7 +12,7 @@ describe('Draft Verification', () => {
     const usersData = test.getAllUserData();
     const documentsData = test.getAllDocumentData();
     const institutesData = test.getAllInstituteData();
-
+    const sourcesData = test.getAllSourceData();
     const user1Data = usersData[0];
     const user2Data = usersData[1];
     const documentData = documentsData[0];
@@ -25,6 +25,7 @@ describe('Draft Verification', () => {
     let user1Draft1;
     let user1Draft2;
     let user2Draft1;
+    let journal;
     const user1Doc1Position = 4;
     const user2Doc1Position = 0;
     let iitInstitute;
@@ -32,19 +33,20 @@ describe('Draft Verification', () => {
     let author2affiliationInstitutes;
 
     it('there should be no verified documents for a new user', () =>
-        test
-            .registerUser(user1Data)
+        test.registerUser(user1Data)
             .then(res =>user1 = res.body)
             .then(() =>test.createInstitute(iitInstituteData))
             .then(res => iitInstitute = res.body)
             .then(() =>test.createInstitute(unigeInstituteData))
             .then(res =>unigeInstitute = res.body)
+            .then(() => test.createSource(sourcesData[0]))
+            .then(res => journal = res.body)
             .then(() => test.getUserDocuments(user1)
                 .expect(200, {count: 0, items: []}))
     );
 
     it('verifying a complete draft should be possible', () =>
-        test.userCreateDraft(user1, documentData)
+        test.userCreateDraft(user1, _.merge({}, documentData, {source: journal.id}))
             .then(res => user1Draft1 = res.body)
             .then(() => {
                 const affiliations = [iitInstitute.id];
@@ -126,7 +128,7 @@ describe('Draft Verification', () => {
     it('verifying two identical documents should merge them', () =>
         test.registerUser(user2Data)
             .then(res =>user2 = res.body)
-            .then(() =>test.userCreateDraft(user2, documentData)
+            .then(() =>test.userCreateDraft(user2, _.merge({}, documentData, {source: journal.id}))
                 .expect(200))
             .then(res => user2Draft1 = res.body)
             .then(() => {
@@ -181,21 +183,21 @@ describe('Draft Verification', () => {
 
             .then(() => test.userCreateDrafts(users[0], [
                     _.merge({},
-                        documentsData[2], {
+                        _.merge({}, documentsData[2], {source: journal.id}), {
                             authorships: [{
                                 position: 1,
                                 affiliations: [institutes[0].id, institutes[1].id]
                             }]
                         }),
                     _.merge({},
-                        documentsData[3], {
+                        _.merge({}, documentsData[3], {source: journal.id}), {
                             authorships: [{
                                 position: 0,
                                 affiliations: [institutes[1].id]
                             }]
                         }),
                     _.merge({},
-                        documentsData[4], {
+                        _.merge({}, documentsData[4], {source: journal.id}), {
                             authorships: [{
                                 position: 4,
                                 affiliations: []
