@@ -94,7 +94,8 @@ module.exports = _.merge({}, researchEntity, {
         },
         administratedGroups: {
             collection: 'group',
-            via: 'administrators'
+            via: 'administrators',
+            through: 'groupadministrator'
         },
         //sTODO: move this methods to a isomorphic component
         //sTODO: aliases are managed through a specific association.

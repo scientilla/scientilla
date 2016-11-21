@@ -28,7 +28,8 @@ module.exports = _.merge({}, researchEntity, {
         },
         administrators: {
             collection: 'user',
-            via: 'administratedGroups'
+            via: 'administratedGroups',
+            through: 'groupadministrator'
         },
         drafts: {
             collection: 'Document',
