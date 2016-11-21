@@ -92,8 +92,7 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'alias',
             via: 'user'
         },
-        //STODO: typo, correct
-        admininstratedGroups: {
+        administratedGroups: {
             collection: 'group',
             via: 'administrators'
         },
@@ -137,9 +136,9 @@ module.exports = _.merge({}, researchEntity, {
     }),
     getAdministeredGroups: function (userId) {
         return User.findOneById(userId)
-            .populate('admininstratedGroups')
+            .populate('administratedGroups')
             .then(function (user) {
-                return user.admininstratedGroups;
+                return user.administratedGroups;
             });
     },
     setSlug: function (user) {
