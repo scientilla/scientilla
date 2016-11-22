@@ -45,7 +45,7 @@
                         url: '#/users/' + vm.user.id + '/documents'
                     }
                 ];
-                _.forEach(vm.user.admininstratedGroups, function (g) {
+                _.forEach(vm.user.administratedGroups, function (g) {
                     vm.menuItems.push({
                         type: 'item',
                         title: g.getDisplayName() + ' Documents',

@@ -77,11 +77,13 @@ module.exports = _.merge({}, BaseModel, {
         },
         discardedCoauthors: {
             collection: 'User',
-            via: 'discardedDocuments'
+            via: 'discardedDocuments',
+            through: 'discarded'
         },
         discardedGroups: {
             collection: 'Group',
-            via: 'discardedDocuments'
+            via: 'discardedDocuments',
+            through: 'discardedgroup'
         },
         draftCreator: {
             model: 'User'

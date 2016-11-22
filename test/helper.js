@@ -9,6 +9,7 @@ const users = require('./data/users');
 const groups = require('./data/groups');
 const documents = require('./data/documents');
 const institutes = require('./data/institutes');
+const sources = require('./data/sources');
 
 module.exports = (function () {
     var obj = {
@@ -39,6 +40,9 @@ module.exports = (function () {
         getAllDocumentData: function () {
             return documents;
         },
+        getAllSourceData: function () {
+            return sources;
+        },
         getUsers: function () {
             return request(url)
                 .get('/users');
@@ -52,6 +56,11 @@ module.exports = (function () {
             return request(url)
                 .post('/institutes')
                 .send(instituteData);
+        },
+        createSource: function (sourceData) {
+            return request(url)
+                .post('/sources')
+                .send(sourceData);
         },
         registerUser: function (userData) {
             return request(url)

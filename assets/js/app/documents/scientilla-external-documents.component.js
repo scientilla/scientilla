@@ -22,28 +22,26 @@
         var DocumentService = context.getDocumentService();
 
         vm.copyDocument = DocumentService.copyDocument;
-        vm.getData = DocumentService.getExternalDocuments;
-        vm.onFilter = refreshExternalDocuments;
-        vm.copyDocuments = DocumentService.copyDocuments;
+        vm.onFilter = onFilter;
+
+        vm.documents = [];
+        var query = {};
 
 
         vm.$onInit = function () {
             var ResearchEntityForms = ResearchEntityFormsFactory(vm);
 
             ResearchEntityForms.setExternalForm();
-
-            reset();
         };
 
-        function refreshExternalDocuments(documents) {
-            vm.documents = documents;
-        }
+        function onFilter(q) {
+            query = q;
 
-        //private
-        function reset() {
-            vm.documents = [];
+            return DocumentService.getExternalDocuments(query)
+                .then(function (documents) {
+                    vm.documents = documents;
+                });
         }
-
 
     }
 })();

@@ -66,31 +66,6 @@ module.exports = _.merge({}, BaseModel, {
             return Model.createDraft(Model, researchEntityId, document);
         }));
     },
-    discardDocument: function (researchEntityId, documentId) {
-        return this
-            .findOneById(researchEntityId)
-            .populate('discardedDocuments')
-            .then(function (researchEntity) {
-
-                var doc = _.find(
-                    researchEntity.discardedDocuments,
-                    {id: documentId});
-
-                if (doc)
-                    return false;
-
-                researchEntity
-                    .discardedDocuments
-                    .add(documentId);
-
-                return researchEntity
-                    .savePromise()
-                    .then(function () {
-                        return true;
-                    });
-            });
-
-    },
     discardDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(function (documentId) {
             return Model.discardDocument(researchEntityId, documentId);

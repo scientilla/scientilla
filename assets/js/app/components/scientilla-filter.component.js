@@ -9,7 +9,6 @@
             transclude: true,
             bindings: {
                 onFilter: '&',
-                getData: '&',
                 searchFormStructure: '<',
                 emptyListMessage: '@?',
                 filterLabel: '@?',
@@ -34,7 +33,6 @@
         vm.reset = reset;
         vm.pageSizes = [10, 20, 50, 100, 200];
         vm.currentPage = 1;
-        vm.totalItems = 0;
         vm.searchValues = {};
 
         // statuses
@@ -50,6 +48,7 @@
         var searchQuery = {};
         var onChangeWatchesDeregisters = [];
         var formStructureDeregisterer = null;
+        var onDataChangeDeregisterer = null;
 
         vm.$onInit = function () {
             vm.itemsPerPage = pageSize;
@@ -61,9 +60,13 @@
             if (_.isUndefined(vm.filterLabel))
                 vm.filterLabel = "Filter";
 
+            if (_.isUndefined(vm.elements))
+                vm.elements = [];
+
             initSearchValues();
 
             formStructureDeregisterer = $scope.$watch('vm.searchFormStructure', refreshForm, true);
+            onDataChangeDeregisterer = $scope.$watch('vm.elements', onDataChange, true);
 
             vm.search();
         };
@@ -71,6 +74,7 @@
         vm.$onDestroy = function () {
             deregisterOnChanges();
             formStructureDeregisterer();
+            onDataChangeDeregisterer();
         };
 
         function onSearch(searchWhere) {
@@ -147,18 +151,16 @@
             return open ? '<' : '>';
         }
 
+        function onDataChange() {
+            vm.totalItems = vm.elements.count || 0;
+        }
+
         function refreshList() {
             setStatus(vm.STATUS_LOADING);
             var query = getQuery();
 
-            vm.getData()(query)
-                .then(function (list) {
-
-                    vm.totalItems = list.count || 0;
-
-                    vm.elements = list;
-                    vm.onFilter()(list);
-
+            vm.onFilter()(query)
+                .then(function () {
                     setStatus(vm.STATUS_WAITING);
                 })
                 .catch(function (err) {

@@ -5,15 +5,15 @@
 
 
     angular.module('documents')
-            .component('scientillaDocumentsList', {
-                templateUrl: 'partials/scientillaDocumentsList.html',
-                controller: scientillaDocumentsList,
-                controllerAs: 'vm',
-                bindings: {
-                    researchEntity: "=",
-                    editable: "<"
-                }
-            });
+        .component('scientillaDocumentsList', {
+            templateUrl: 'partials/scientillaDocumentsList.html',
+            controller: scientillaDocumentsList,
+            controllerAs: 'vm',
+            bindings: {
+                researchEntity: "=",
+                editable: "<"
+            }
+        });
 
 
     scientillaDocumentsList.$inject = [
@@ -23,7 +23,7 @@
         'EventsService'
     ];
 
-    function scientillaDocumentsList(context, researchEntityService, documentSearchForm,EventsService) {
+    function scientillaDocumentsList(context, researchEntityService, documentSearchForm, EventsService) {
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
@@ -32,8 +32,7 @@
 
         vm.unverifyDocument = DocumentsService.unverifyDocument;
 
-        vm.getData = getDocuments;
-        vm.onFilter = refreshList;
+        vm.onFilter = onFilter;
 
         vm.searchForm = documentSearchForm;
 
@@ -51,18 +50,17 @@
             EventsService.unsubscribeAll(vm);
         };
 
-        function getDocuments(q) {
-            query = q;
-            return researchEntityService.getDocuments(vm.researchEntity, query);
-        }
-
-        function refreshList(documents) {
-            vm.documents = documents;
-        }
-
-        //private
         function updateList() {
-            getDocuments(query).then(refreshList);
+            onFilter(query);
+        }
+
+        function onFilter(q) {
+            query = q;
+
+            return researchEntityService.getDocuments(vm.researchEntity, query)
+                .then(function (documents) {
+                    vm.documents = documents;
+                });
         }
     }
 

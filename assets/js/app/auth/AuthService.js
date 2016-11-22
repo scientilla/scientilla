@@ -72,12 +72,12 @@
                     .then(function (result) {
                         service.userId = result.data.id;
                         service.username = result.data.username;
-                        return UsersService.one(result.data.id).get({populate: ['admininstratedGroups']});
+                        return UsersService.one(result.data.id).get({populate: ['administratedGroups']});
                     })
                     .then(function (user) {
                         service.user = user;
                         Prototyper.toUserModel(service.user);
-                        user.admininstratedGroups = Restangular.restangularizeCollection(null, user.admininstratedGroups, 'groups');
+                        user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
                         return $http.get('/users/jwt');
                     })
                     .then(function (result) {

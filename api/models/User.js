@@ -74,7 +74,7 @@ module.exports = _.merge({}, researchEntity, {
         discardedDocuments: {
             collection: 'Document',
             via: 'discardedCoauthors',
-            dominant: true
+            through: 'discarded'
         },
         jsonWebTokens: {
             collection: 'jwt',
@@ -92,10 +92,10 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'alias',
             via: 'user'
         },
-        //STODO: typo, correct
-        admininstratedGroups: {
+        administratedGroups: {
             collection: 'group',
-            via: 'administrators'
+            via: 'administrators',
+            through: 'groupadministrator'
         },
         //sTODO: move this methods to a isomorphic component
         //sTODO: aliases are managed through a specific association.
@@ -137,9 +137,9 @@ module.exports = _.merge({}, researchEntity, {
     }),
     getAdministeredGroups: function (userId) {
         return User.findOneById(userId)
-            .populate('admininstratedGroups')
+            .populate('administratedGroups')
             .then(function (user) {
-                return user.admininstratedGroups;
+                return user.administratedGroups;
             });
     },
     setSlug: function (user) {
@@ -268,6 +268,8 @@ module.exports = _.merge({}, researchEntity, {
             .then(function () {
                 cb();
             });
-
+    },
+    discardDocument: function (researchEntityId, documentId) {
+        return Discarded.findOrCreate({researchEntity: researchEntityId, document: documentId});
     }
 });

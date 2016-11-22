@@ -24,12 +24,12 @@
 
                 function verifyDraft(draft) {
                     return researchEntityService.verifyDraftAsGroup(researchEntity, draft.id)
-                        .then(function (document) {
+                        .then(function (res) {
                             if (res.error)
                                 throw res.error;
 
                             Notification.success("Draft verified");
-                            EventsService.publish(EventsService.DRAFT_VERIFIED, document);
+                            EventsService.publish(EventsService.DRAFT_VERIFIED, res);
 
                         })
                         .catch(function (error) {

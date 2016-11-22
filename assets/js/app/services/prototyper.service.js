@@ -75,7 +75,7 @@
                 return this.role === userConstants.role.ADMINISTRATOR;
             },
             admins: function (group) {
-                var administeredGroupsId = _.map(this.admininstratedGroups, 'id');
+                var administeredGroupsId = _.map(this.administratedGroups, 'id');
                 return _.includes(administeredGroupsId, group.id);
             },
             getExternalConnectors: function () {
@@ -285,7 +285,7 @@
         function toUserModel(user) {
             _.defaultsDeep(user, userPrototype);
             service.toDocumentsCollection(user.documents);
-            service.toGroupsCollection(user.admininstratedGroups);
+            service.toGroupsCollection(user.administratedGroups);
             service.toCollaborationsCollection(user.collaborations);
             return user;
         }

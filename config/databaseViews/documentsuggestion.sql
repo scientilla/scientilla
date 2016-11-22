@@ -14,7 +14,7 @@ CREATE OR REPLACE VIEW documentsuggestion AS
         )
         AND
         "document"."id" NOT IN (
-          SELECT "document_discardedcoauthors__user_discardeddocuments"."document_discardedCoauthors"
-          FROM "document_discardedcoauthors__user_discardeddocuments"
-          WHERE "document_discardedcoauthors__user_discardeddocuments"."user_discardedDocuments" = "user"."id"
+          SELECT "discarded"."document"
+          FROM "discarded"
+          WHERE "discarded"."researchEntity" = "user"."id"
         )
