@@ -18,11 +18,10 @@
         'FormForConfiguration',
         'Notification',
         '$scope',
-        '$http',
         'Prototyper'
     ];
 
-    function GroupFormController(GroupsService, FormForConfiguration, Notification, $scope, $http, Prototyper) {
+    function GroupFormController(GroupsService, FormForConfiguration, Notification, $scope, Prototyper) {
         var vm = this;
         vm.getMembers = getMembers;
         vm.getUsersQuery = getUsersQuery;
