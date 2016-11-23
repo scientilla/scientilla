@@ -17,6 +17,7 @@
         service.save = save;
         service.doSave = doSave;
         service.getGroups = getGroups;
+        service.getGroup = getGroup;
         service.getGroupMemebers = getGroupMemebers;
         service.getProfile = getProfile;
 
@@ -66,6 +67,12 @@
         }
 
 
+        function getGroup(groupId) {
+            var populate = {populate: ['members', 'administrators']};
+
+            return this.one(groupId).get(populate);
+        }
+
         function getGroups(query) {
             var populate = {populate: ['members', 'administrators']};
 
@@ -88,9 +95,7 @@
         }
 
         function getProfile(groupId) {
-            return this
-                    .one(groupId)
-                    .get({populate: ['members', 'administrators']});
+            return getGroup(groupId);
         }
 
         return service;
