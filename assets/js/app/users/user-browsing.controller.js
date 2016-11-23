@@ -65,8 +65,7 @@
                 .then(function () {
                     Notification.success("User deleted");
 
-                    getUsers()
-                        .then(refreshList);
+                    refreshList();
 
                 })
                 .catch(function () {
@@ -79,10 +78,11 @@
         function openUserForm(user) {
             ModalService
                 .openScientillaUserForm(!user ? UsersService.getNewUser() : user.clone())
-                .then(function () {
-                    return getUsers();
-                })
                 .then(refreshList);
+        }
+
+        function refreshList() {
+            onFilter(query);
         }
 
     }
