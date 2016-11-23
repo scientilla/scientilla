@@ -22,6 +22,7 @@
         var DocumentService = context.getDocumentService();
 
         vm.copyDocument = DocumentService.copyDocument;
+        vm.copyDocuments = DocumentService.copyDocuments;
         vm.onFilter = onFilter;
 
         vm.documents = [];
