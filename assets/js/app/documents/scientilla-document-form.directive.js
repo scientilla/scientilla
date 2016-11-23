@@ -38,7 +38,6 @@
         vm.status = createStatus();
         vm.cancel = cancel;
         vm.deleteDocument = deleteDocument;
-        vm.formVisible = true;
         vm.verify = verify;
         vm.documentTypes = DocumentTypesService.getDocumentTypes();
         vm.getSources = getSources;
