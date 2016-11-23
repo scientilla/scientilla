@@ -285,6 +285,7 @@
         function toUserModel(user) {
             _.defaultsDeep(user, userPrototype);
             service.toDocumentsCollection(user.documents);
+            service.toGroupsCollection(user.memberships);
             service.toGroupsCollection(user.administratedGroups);
             service.toCollaborationsCollection(user.collaborations);
             return user;
@@ -292,7 +293,7 @@
 
         function toGroupModel(group) {
             _.defaultsDeep(group, groupPrototype);
-            service.toMembershipsCollection(group.memberships);
+            service.toUsersCollection(group.members);
             service.toUsersCollection(group.administrators);
             service.toDocumentsCollection(group.documents);
             return group;

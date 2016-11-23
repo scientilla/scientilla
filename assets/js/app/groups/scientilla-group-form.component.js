@@ -1,17 +1,17 @@
 (function () {
 
     angular
-            .module('groups')
-            .component('scientillaGroupForm', {
-                templateUrl: 'partials/scientilla-group-form.html',
-                controller: GroupFormController,
-                controllerAs: 'vm',
-                bindings: {
-                    group: "<",
-                    onFailure: "&",
-                    onSubmit: "&"
-                }
-            });
+        .module('groups')
+        .component('scientillaGroupForm', {
+            templateUrl: 'partials/scientilla-group-form.html',
+            controller: GroupFormController,
+            controllerAs: 'vm',
+            bindings: {
+                group: "<",
+                onFailure: "&",
+                onSubmit: "&"
+            }
+        });
 
     GroupFormController.$inject = [
         'GroupsService',
@@ -70,23 +70,7 @@
 
         function activate() {
             FormForConfiguration.enableAutoLabels();
-
-            getFullMemberships();
-
             $scope.$watch('vm.group.name', nameChanged);
-        }
-
-        //sTODO: to be removed with deep populate
-        function getFullMemberships() {
-            if (!vm.group.id)
-                return;
-
-            GroupsService
-                    .getGroupMemebers(vm.group.id)
-                    .then(function (memberships) {
-                        vm.group.memberships = memberships;
-                    });
-
         }
 
         function nameChanged() {
@@ -105,15 +89,15 @@
 
         function submit() {
             GroupsService.doSave(vm.group)
-                    .then(function (group) {
-                        Notification.success("Group data saved");
-                        if (_.isFunction(vm.onSubmit()))
-                            vm.onSubmit()(1);
-                    })
-                    .catch(function () {
-                        Notification.warning("Failed to save group");
-                        executeOnFailure();
-                    });
+                .then(function (group) {
+                    Notification.success("Group data saved");
+                    if (_.isFunction(vm.onSubmit()))
+                        vm.onSubmit()(1);
+                })
+                .catch(function () {
+                    Notification.warning("Failed to save group");
+                    executeOnFailure();
+                });
         }
 
         function getUsersQuery(searchText) {
@@ -123,19 +107,17 @@
         }
 
         function userToMembership(u) {
-            var membership = {group: vm.group.id, user: u};
-            Prototyper.toMembershipModel(membership);
-            return membership;
+            return u;
         }
 
         function getMembers() {
-            return _.map(vm.group.memberships, 'user');
+            return vm.group.members;
         }
-        
+
         function cancel() {
-            executeOnSubmit(0); 
+            executeOnSubmit(0);
         }
-        
+
         function executeOnSubmit(i) {
             if (_.isFunction(vm.onSubmit()))
                 vm.onSubmit()(i);

@@ -26,7 +26,7 @@
             return {
                 name: "",
                 administrators: [AuthService.user],
-                memberships: []
+                members: []
             };
         }
 
@@ -55,20 +55,19 @@
             var administrators = group.administrators;
             group.administrators = _.map(group.administrators, 'id');
 
-            var memberships = _.cloneDeep(group.memberships);
-            _.forEach(group.memberships, function (m) {
-                m.user = m.user.id;
-            });
+            var members = group.members;
+            group.members = _.map(group.members, 'id');
+
             return service.save(group).then(function (g) {
                 group.administrators = administrators;
-                group.memberships = memberships;
+                group.members = members;
                 return group;
             });
         }
 
 
         function getGroups(query) {
-            var populate = {populate: ['memberships', 'administrators']};
+            var populate = {populate: ['members', 'administrators']};
 
             var q = _.merge({}, query, populate);
 
@@ -91,7 +90,7 @@
         function getProfile(groupId) {
             return this
                     .one(groupId)
-                    .get({populate: ['memberships', 'administrators']});
+                    .get({populate: ['members', 'administrators']});
         }
 
         return service;

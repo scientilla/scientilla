@@ -54,5 +54,7 @@
         Restangular.extendCollection('drafts', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('authorships', Prototyper.toAuthorshipsCollection);
         Restangular.extendCollection('institutes', Prototyper.toInstitutesCollection);
+        Restangular.extendCollection('users', Prototyper.toUsersCollection);
+        Restangular.extendCollection('groups', Prototyper.toGroupsCollection);
     }
 })();

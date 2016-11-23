@@ -18,10 +18,6 @@ module.exports = _.merge({}, researchEntity, {
         shortname: 'TEXT',
         description: 'TEXT',
         publicationsAcronym: 'TEXT',
-        memberships: {
-            collection: 'membership',
-            via: 'group'
-        },
         collaborations: {
             collection: 'collaboration',
             via: 'group'
@@ -30,6 +26,11 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'user',
             via: 'administratedGroups',
             through: 'groupadministrator'
+        },
+        members: {
+            collection: 'User',
+            via: 'memberships',
+            through: 'membership'
         },
         drafts: {
             collection: 'Document',
