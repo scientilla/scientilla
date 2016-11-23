@@ -18,14 +18,13 @@
 
 
     DocumentVerificationController.$inject = [
-        'FormForConfiguration',
         'AuthService',
         '$scope',
         'Restangular',
         'researchEntityService'
     ];
 
-    function DocumentVerificationController(FormForConfiguration, AuthService, $scope, Restangular, researchEntityService) {
+    function DocumentVerificationController(AuthService, $scope, Restangular, researchEntityService) {
         var vm = this;
         vm.instituteToId = instituteToId;
         vm.getInstitutesFilter = getInstitutesFilter;
@@ -36,28 +35,11 @@
 
         var user = AuthService.user;
 
-        vm.validationAndViewRules = {
-            position: {
-                allowBlank: true,
-                inputType: 'select',
-                label: 'Who are you?',
-                required: true,
-                values: vm.document.getAuthors().map(function (a, i) {
-                    return {
-                        label: a,
-                        value: i
-                    };
-                })
-            }
-        };
-
 
         activate();
 
 
         function activate() {
-            FormForConfiguration.enableAutoLabels();
-
             vm.verificationData.position = vm.document.getUserIndex(user);
 
             $scope.$watch('vm.verificationData.position', userSelectedChanged);
