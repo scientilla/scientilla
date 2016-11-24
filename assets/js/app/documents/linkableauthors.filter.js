@@ -29,8 +29,19 @@
                     return author;
                 return author + '<a href="#/groups/1"><sup class="superscript">IIT</sup></a>';
             });
+            var authorsWithCorresponding = _.map(authorsWithMainGroup, function(author, i) {
+                var authorship = _.find(document.authorships, function(a) {
+                    return a.position == i;
+                });
 
-            return authorsWithMainGroup.join(', ');
+                if (authorship && authorship.corresponding)
+                    return '*' + author;
+                return author;
+            });
+
+            var authorList = authorsWithCorresponding;
+
+            return authorList.join(', ');
         }
 
         return getLinkableAuthors;
