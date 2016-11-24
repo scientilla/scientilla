@@ -5,12 +5,11 @@
     var yearsInterval = _.range(new Date().getFullYear(), 2005, -1);
 
 
-
     var years_value = _.concat(
-            [{value: "?", label: 'Select'}],
-            _.map(yearsInterval, function (y) {
-                return {value: y + '', label: y + ''};
-            }));
+        [{value: "?", label: 'Select'}],
+        _.map(yearsInterval, function (y) {
+            return {value: y + '', label: y + ''};
+        }));
     var documentSearchForm = {
         title: {
             inputType: 'text',
@@ -48,17 +47,18 @@
     };
 
     // TODO change to configuration webservice
-    var mainInstitute = {
-        id: 1,
-        shortname: 'IIT'
+    var config = {
+        mainInstitute: {
+            id: 1,
+            shortname: 'IIT'
+        }
     };
 
 
-
     angular.module('components')
-            .constant('pageSize', 10)
-            .constant('yearsInterval', yearsInterval)
-            .constant('documentSearchForm', documentSearchForm)
-            .constant('userConstants', userConstants)
-            .constant('mainInstitute', mainInstitute);
+        .constant('pageSize', 10)
+        .constant('yearsInterval', yearsInterval)
+        .constant('documentSearchForm', documentSearchForm)
+        .constant('userConstants', userConstants)
+        .constant('config', config);
 })();

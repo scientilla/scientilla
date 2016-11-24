@@ -3,10 +3,10 @@
         .filter('linkableauthors', linkableAuthors);
 
     mainInstitute.$inject = [
-        'mainInstitute'
+        'config'
     ];
 
-    function linkableAuthors(mainInstitute) {
+    function linkableAuthors(config) {
 
         function getLinkableAuthors(document) {
             if (!document.authorsStr) return "";
@@ -28,9 +28,9 @@
             });
             var authorsWithMainGroup = _.map(linkedAuthors, function (author, i) {
                 var authorship = _.find(document.authorships, a => a.position === i);
-                if (!authorship || !authorship.affiliations.includes(mainInstitute.id))
+                if (!authorship || !authorship.affiliations.includes(config.mainInstitute.id))
                     return author;
-                return author + '<a href="#/groups/' + mainInstitute.id + '"><sup class="superscript">' + mainInstitute.shortname + '</sup></a>';
+                return author + '<a href="#/groups/' + config.mainInstitute.id + '"><sup class="superscript">' + config.mainInstitute.shortname + '</sup></a>';
             });
 
             return authorsWithMainGroup.join(', ');
