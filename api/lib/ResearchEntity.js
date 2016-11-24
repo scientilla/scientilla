@@ -32,7 +32,7 @@ module.exports = _.merge({}, BaseModel, {
                 ]);
             })
             .spread(function (draftId) {
-                const authorshipFields = ['position', 'affiliations'];
+                const authorshipFields = ['position', 'affiliations', 'corresponding'];
                 const authorships = _.map(draftData.authorships, a => _.pick(a, authorshipFields));
                 _.forEach(authorships, a => a.document = draftId);
                 return Promise.all([
@@ -76,7 +76,7 @@ module.exports = _.merge({}, BaseModel, {
             draftIds.map(draftId => ResearchEntityModel.verifyDraft(ResearchEntityModel, researchEntityId, draftId))
         );
     },
-    verifyDraft: function (ResearchEntityModel, researchEntityId, draftId, position, affiliationInstituteIds) {
+    verifyDraft: function (ResearchEntityModel, researchEntityId, draftId, position, affiliationInstituteIds, corresponding) {
         return Document.findOneById(draftId)
             .populate('authorships')
             .populate('affiliations')
@@ -91,8 +91,7 @@ module.exports = _.merge({}, BaseModel, {
                         error: 'Draft not valid for verification',
                         item: draft
                     };
-
-                return ResearchEntityModel.getAuthorshipsData(draft, researchEntityId, position, affiliationInstituteIds)
+                return ResearchEntityModel.getAuthorshipsData(draft, researchEntityId, position, affiliationInstituteIds, corresponding)
                     .then(authorshipData => {
                         if (!authorshipData.isVerifiable)
                             throw {
@@ -123,13 +122,17 @@ module.exports = _.merge({}, BaseModel, {
                                 d.draftGroupCreator = null;
                                 return d.savePromise();
                             })
-                            .then(d => ResearchEntityModel.doVerifyDocument(d, researchEntityId, authorshipData.position, authorshipData.affiliationInstituteIds));
+                            .then(d => ResearchEntityModel.doVerifyDocument(d, researchEntityId, authorshipData));
                     });
             })
-            .catch(e => ({
-                error: e.error,
-                item: e.item
-            }));
+            .catch(e => {
+                if (e.error)
+                    return {
+                        error: e.error,
+                        item: e.item
+                    }
+                throw e;
+            });
     },
     verifyDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(documentId => Model.verifyDocument(Model, researchEntityId, documentId)));
@@ -159,7 +162,7 @@ module.exports = _.merge({}, BaseModel, {
                         error: "The position is already verified",
                         item: authorshipData.document
                     };
-                return Model.doVerifyDocument(authorshipData.document, researchEntityId, authorshipData.position, authorshipData.affiliationInstituteIds);
+                return Model.doVerifyDocument(authorshipData.document, researchEntityId, authorshipData);
             })
             .catch(e => ({
                 error: e.error,

@@ -24,12 +24,13 @@ module.exports = {
         res.halt(Model.unverifyDocument(Model, researcEntityId, documentId));
     },
     verifyDraft: function (req, res) {
-        var researchEntityId = req.params.id;
-        var draftId = req.params.draftId;
-        var position = req.body.position;
-        var affiliationInstituteIds = req.body.affiliations;
-        var Model = getModel(req);
-        res.halt(Model.verifyDraft(Model, researchEntityId, draftId, position, affiliationInstituteIds));
+        const researchEntityId = req.params.id;
+        const draftId = req.params.draftId;
+        const position = req.body.position;
+        const corresponding = req.body.corresponding;
+        const affiliationInstituteIds = req.body.affiliations;
+        const Model = getModel(req);
+        res.halt(Model.verifyDraft(Model, researchEntityId, draftId, position, affiliationInstituteIds, corresponding));
     },
     verifyDrafts: function (req, res) {
         var researchEntityId = req.params.id;

@@ -214,7 +214,7 @@ module.exports = _.merge({}, researchEntity, {
             });
 
     },
-    getAuthorshipsData: function (document, researchEntityId, newPosition, newAffiliationInstituteIds) {
+    getAuthorshipsData: function (document, researchEntityId, newPosition, newAffiliationInstituteIds, newCorresponding) {
         //TODO .populate('aliases')
         return User.findOneById(researchEntityId)
             .then(user => {
@@ -227,7 +227,7 @@ module.exports = _.merge({}, researchEntity, {
 
                 const position = !_.isNil(newPosition) ? newPosition : document.getAuthorIndex(user);
                 const affiliationInstituteIds = !_.isEmpty(newAffiliationInstituteIds) ? newAffiliationInstituteIds : document.getAuthorshipAffiliationsByPosition(position);
-
+                const corresponding = !_.isNil(newCorresponding) ? newCorresponding : document.getAuthorshipByPosition(position).corresponding;
                 if (_.isEmpty(affiliationInstituteIds) || _.isNil(position))
                     return {
                         isVerifiable: false,
@@ -240,21 +240,29 @@ module.exports = _.merge({}, researchEntity, {
                     isVerifiable: true,
                     position,
                     affiliationInstituteIds,
+                    corresponding,
                     document
-                }
+                };
             })
     },
-    doVerifyDocument: function (document, researchEntityId, position, affiliationInstituteIds) {
+    doVerifyDocument: function (document, researchEntityId, authorshipData) {
         const newAuthorship = {
             researchEntity: researchEntityId,
             document: document.id,
-            position: position,
-            affiliations: affiliationInstituteIds
+            position: authorshipData.position,
+            affiliations: authorshipData.affiliationInstituteIds,
+            corresponding: authorshipData.corresponding
         };
 
         // could be already created an empty user authorship by external imports
-        return Authorship
-            .findOrCreate({document: newAuthorship.document, position: newAuthorship.position}, newAuthorship)
+        let promise;
+        if (authorshipData.corresponding)
+            promise = Authorship.update({document: newAuthorship.document}, {corresponding: false});
+        else
+            promise = Promise.resolve();
+
+        return promise
+            .then(() => Authorship.findOrCreate({document: newAuthorship.document, position: newAuthorship.position}, newAuthorship))
             .then((authorship)=> {
                 _.assign(authorship, newAuthorship);
                 return authorship.savePromise();
