@@ -53,12 +53,9 @@
     </small>
 
     <small ng-if="vm.document.pages">
-        {{vm.document.pages}} pages,
+        {{vm.document.pages}} pages
     </small>
 
-    <small ng-if="vm.document.source.type">
-        type {{vm.document.source.type}}
-    </small>
 </div>
 
 <hr>
@@ -75,5 +72,8 @@
     </small>
     <small ng-if="vm.document.sourceType">
         <label>Source type:</label> {{vm.document.sourceType}}
+    </small>
+    <small ng-if="vm.document.type">
+        <label>Type:</label> {{vm.document.type}}
     </small>
 </div>
