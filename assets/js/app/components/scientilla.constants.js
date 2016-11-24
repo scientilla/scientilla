@@ -45,7 +45,13 @@
             USER: 'user',
             ADMINISTRATOR: 'administrator',
         }
-    }
+    };
+
+    // TODO change to configuration webservice
+    var mainInstitute = {
+        id: 1,
+        shortname: 'IIT'
+    };
 
 
 
@@ -53,5 +59,6 @@
             .constant('pageSize', 10)
             .constant('yearsInterval', yearsInterval)
             .constant('documentSearchForm', documentSearchForm)
-            .constant('userConstants', userConstants);
+            .constant('userConstants', userConstants)
+            .constant('mainInstitute', mainInstitute);
 })();
