@@ -53,19 +53,14 @@
         }
 
         function deleteGroup(group) {
-            group
-                .remove()
+            group.remove()
                 .then(function () {
-                    Notification.success("User deleted");
-
-                    getGroups()
-                        .then(refreshList);
-
+                    Notification.success("Group deleted");
+                    refreshList();
                 })
                 .catch(function () {
-                    Notification.warning("Failed to delete user");
+                    Notification.warning("Failed to delete group");
                 });
-
         }
 
         function editGroup(group) {
@@ -78,9 +73,12 @@
             ModalService
                 .openScientillaGroupForm(!group ? GroupsService.getNewGroup() : group.clone())
                 .then(function () {
-                    getGroups()
-                        .then(refreshList);
+                    refreshList();
                 });
+        }
+
+        function refreshList(){
+            onFilter(query);
         }
 
     }

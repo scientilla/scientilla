@@ -80,10 +80,6 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'jwt',
             via: 'owner'
         },
-        memberships: {
-            collection: 'membership',
-            via: 'user'
-        },
         collaborations: {
             collection: 'collaboration',
             via: 'user'
@@ -96,6 +92,11 @@ module.exports = _.merge({}, researchEntity, {
             collection: 'group',
             via: 'administrators',
             through: 'groupadministrator'
+        },
+        memberships: {
+            collection: 'Group',
+            via: 'members',
+            through: 'membership'
         },
         //sTODO: move this methods to a isomorphic component
         //sTODO: aliases are managed through a specific association.

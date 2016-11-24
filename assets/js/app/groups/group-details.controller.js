@@ -4,12 +4,10 @@
             .controller('GroupDetailsController', GroupDetailsController);
 
     GroupDetailsController.$inject = [
-        'group',
-        'GroupsService',
-        '$location'
+        'group'
     ];
 
-    function GroupDetailsController(group, GroupsService, $location) {
+    function GroupDetailsController(group) {
         var vm = this;
         vm.group = group;
 
@@ -18,12 +16,6 @@
         function activate() {
             if (!vm.group.id)
                 return;
-
-            GroupsService
-                    .getGroupMemebers(vm.group.id)
-                    .then(function (memberships) {
-                        vm.group.memberships = memberships;
-                    });
         }
 
     }

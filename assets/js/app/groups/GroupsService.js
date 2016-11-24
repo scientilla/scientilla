@@ -17,6 +17,7 @@
         service.save = save;
         service.doSave = doSave;
         service.getGroups = getGroups;
+        service.getGroup = getGroup;
         service.getGroupMemebers = getGroupMemebers;
         service.getProfile = getProfile;
 
@@ -26,7 +27,7 @@
             return {
                 name: "",
                 administrators: [AuthService.user],
-                memberships: []
+                members: []
             };
         }
 
@@ -48,31 +49,36 @@
             if (group.id)
                 return group.save();
             else
-                return this.post(group);
+                return service.post(group);
         }
 
         function doSave(group) {
             var administrators = group.administrators;
             group.administrators = _.map(group.administrators, 'id');
 
-            var memberships = _.cloneDeep(group.memberships);
-            _.forEach(group.memberships, function (m) {
-                m.user = m.user.id;
-            });
+            var members = group.members;
+            group.members = _.map(group.members, 'id');
+
             return service.save(group).then(function (g) {
                 group.administrators = administrators;
-                group.memberships = memberships;
+                group.members = members;
                 return group;
             });
         }
 
 
+        function getGroup(groupId) {
+            var populate = {populate: ['members', 'administrators']};
+
+            return service.one(groupId).get(populate);
+        }
+
         function getGroups(query) {
-            var populate = {populate: ['memberships', 'administrators']};
+            var populate = {populate: ['members', 'administrators']};
 
             var q = _.merge({}, query, populate);
 
-            return this.getList(q);
+            return service.getList(q);
         }
 
         function getGroupMemebers(groupId) {
@@ -89,9 +95,7 @@
         }
 
         function getProfile(groupId) {
-            return this
-                    .one(groupId)
-                    .get({populate: ['memberships', 'administrators']});
+            return getGroup(groupId);
         }
 
         return service;

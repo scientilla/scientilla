@@ -46,7 +46,8 @@
             },
             username: {
                 inputType: 'text',
-                required: true
+                required: true,
+                label: 'Email/Username'
             },
             slug: {
                 inputType: 'text',
