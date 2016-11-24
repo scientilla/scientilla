@@ -286,8 +286,9 @@ module.exports = {
                         },
                         json: true
                     })
-                    .catch(function () {
+                    .catch(function (err) {
                         sails.log.debug('Scopus request failed. Scopus Id = ' + scopusId);
+                        sails.log.debug(err);
                         return {};
                     })
                     .then(function (res) {
@@ -381,6 +382,8 @@ module.exports = {
                     .spread(function (d2, newDoc, newInstitutes, newSource) {
                         const scopusAuthorships = _.get(d2, 'authors.author');
 
+                        const correspondingAuthorIndexedName = _.get(d2, 'item.bibrecord.head.correspondence.person.ce:indexed-name');
+                        const correspondingIndex = _.findIndex(newDoc.authorsStr.split(', '), correspondingAuthorIndexedName);
                         newDoc.authorships = _.map(scopusAuthorships, (a, i) => {
                             const affiliationArray = toArray(a.affiliation);
                             const affiliationInstitutes = _.map(
@@ -389,6 +392,7 @@ module.exports = {
                             );
                             const newAuthorship = {
                                 position: i,
+                                corresponding: correspondingIndex === i,
                                 affiliations: affiliationInstitutes
                             };
                             return newAuthorship;
