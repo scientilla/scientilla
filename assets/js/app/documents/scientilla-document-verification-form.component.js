@@ -35,7 +35,6 @@
 
         var user = AuthService.user;
 
-
         activate();
 
 
@@ -58,7 +57,8 @@
         function submit() {
             var data = {
                 affiliations: _.map(vm.verificationData.affiliations, 'id'),
-                position: vm.verificationData.position
+                position: vm.verificationData.position,
+                corresponding: vm.verificationData.corresponding
             };
             return verify(user, vm.document.id, data)
                 .then(function (user) {
@@ -70,6 +70,13 @@
         }
 
         function userSelectedChanged() {
+            var authorship = vm.document.authorships[vm.verificationData.position];
+            if (authorship)
+                vm.verificationData.corresponding = authorship.corresponding;
+            vm.correspondingAlreadySet = _.some(vm.document.authorships, function(a) {
+                return a.corresponding && a.researchEntity;
+            });
+
             getInstitutes().then(function (institutes) {
                 vm.verificationData.affiliations = institutes;
             });

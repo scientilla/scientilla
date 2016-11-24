@@ -78,7 +78,7 @@
         }
 
         function verifyDocument(researchEntity, id, verificationData) {
-            var verificationFields = ['position', 'affiliations'];
+            var verificationFields = ['position', 'affiliations', 'corresponding'];
             verificationData = _.pick(verificationData, verificationFields);
             verificationData.id = id;
             return researchEntity
@@ -91,7 +91,7 @@
         }
 
         function verifyDraftAsUser(researchEntity, draftId, verificationData) {
-            var verificationFields = ['position', 'affiliations'];
+            var verificationFields = ['position', 'affiliations', 'corresponding'];
             verificationData = _.pick(verificationData, verificationFields);
             return researchEntity.one('drafts', draftId)
                 .customPUT(verificationData, 'verified');
