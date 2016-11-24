@@ -2,7 +2,7 @@
     'use strict';
 
     angular.module('documents')
-            .directive('scientillaDocument', scientillaDocument);
+        .directive('scientillaDocument', scientillaDocument);
 
     function scientillaDocument() {
         return {
@@ -17,21 +17,33 @@
         };
     }
 
-    function scientillaDocumentController(ModalService) {
+    scientillaDocumentController.$inject = [
+        'ModalService',
+        'config'
+    ];
+
+    function scientillaDocumentController(ModalService, config) {
         var vm = this;
         vm.openDetails = openDetails;
-        
+        vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
+
         activate();
-        
+
         function activate() {
-            
+
         }
 
         function openDetails() {
             ModalService
                 .openScientillaDocumentDetails(vm.document);
         }
-        
+
+        function hasMainGroupAffiliation() {
+            return _.some(vm.document.affiliations, function (a) {
+                return a.institute === config.mainInstitute.id
+            });
+        }
     }
+
 
 })();
