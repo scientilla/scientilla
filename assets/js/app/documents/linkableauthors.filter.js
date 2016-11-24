@@ -2,7 +2,7 @@
     angular.module("documents")
         .filter('linkableauthors', linkableAuthors);
 
-    mainInstitute.$inject = [
+    linkableAuthors.$inject = [
         'config'
     ];
 
