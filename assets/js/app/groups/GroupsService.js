@@ -49,7 +49,7 @@
             if (group.id)
                 return group.save();
             else
-                return this.post(group);
+                return service.post(group);
         }
 
         function doSave(group) {
@@ -70,7 +70,7 @@
         function getGroup(groupId) {
             var populate = {populate: ['members', 'administrators']};
 
-            return this.one(groupId).get(populate);
+            return service.one(groupId).get(populate);
         }
 
         function getGroups(query) {
@@ -78,7 +78,7 @@
 
             var q = _.merge({}, query, populate);
 
-            return this.getList(q);
+            return service.getList(q);
         }
 
         function getGroupMemebers(groupId) {
