@@ -21,6 +21,7 @@ module.exports = _.merge({}, BaseModel, {
             via: 'authorships',
             through: 'affiliation'
         },
+        corresponding: 'boolean',
         position: 'integer',
         public: 'boolean'
     }
