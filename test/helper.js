@@ -4,6 +4,7 @@
 const should = require('should');
 const assert = require('assert');
 const request = require('supertest-as-promised');
+const _ = require('lodash');
 
 const users = require('./data/users');
 const groups = require('./data/groups');
@@ -29,19 +30,19 @@ module.exports = (function () {
             return 'http://localhost:1338';
         },
         getAllUserData: function () {
-            return users;
+            return _.cloneDeep(users);
         },
         getAllGroupData: function () {
-            return groups;
+            return _.cloneDeep(groups);
         },
         getAllInstituteData: function () {
-            return institutes;
+            return _.cloneDeep(institutes);
         },
         getAllDocumentData: function () {
-            return documents;
+            return _.cloneDeep(documents);
         },
         getAllSourceData: function () {
-            return sources;
+            return _.cloneDeep(sources);
         },
         getUsers: function () {
             return request(url)
@@ -164,7 +165,8 @@ module.exports = (function () {
         getDocument: function (documentId) {
             return request(url)
                 .get('/documents/' + documentId);
-        }
+        },
+        EMPTY_RES: { count: 0, items: [] }
     };
     var url = obj.getUrl();
     return obj;
