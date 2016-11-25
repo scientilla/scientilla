@@ -8,7 +8,6 @@
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
-
 const _ = require('lodash');
 const Promise = require('bluebird');
 const BaseModel = require("../lib/BaseModel.js");
@@ -130,17 +129,6 @@ module.exports = _.merge({}, BaseModel, {
         },
         getAuthorIndex: function (author) {
             return _.findIndex(this.getAuthors(), a => _.includes(author.getAliases(), a));
-        },
-        getAuthorshipAffiliationsByPosition: function (position) {
-            if (_.isNil(this.affiliations))
-                throw 'getAuthorshipAffiliations: affiliations missing';
-
-            const authorship = this.getAuthorshipByPosition(position);
-            if (!authorship) return [];
-
-            return this.affiliations
-                .filter(a => a.authorship == authorship.id)
-                .map(a => a.institute);
         },
         isPositionVerified: function (position) {
             if (!this.authorships)

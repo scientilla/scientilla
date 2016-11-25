@@ -9,6 +9,7 @@
  * @docs        :: http://waterlock.ninja/documentation
  */
 
+const assert = require('assert');
 var _ = require('lodash');
 var waterlock = require('waterlock');
 var Promise = require("bluebird");
@@ -227,8 +228,17 @@ module.exports = _.merge({}, researchEntity, {
                     };
 
                 const position = !_.isNil(newPosition) ? newPosition : document.getAuthorIndex(user);
-                const affiliationInstituteIds = !_.isEmpty(newAffiliationInstituteIds) ? newAffiliationInstituteIds : document.getAuthorshipAffiliationsByPosition(position);
-                const corresponding = !_.isNil(newCorresponding) ? newCorresponding : document.getAuthorshipByPosition(position).corresponding;
+                const authorship = document.getAuthorshipByPosition(position) || Authorship.getEmpty();
+                //TODO: [Accrocchio] remove when deep populate is added to waterline
+                assert(!_.isNil(document.affiliations), 'getAuthorshipAffiliations: affiliations missing');
+
+                const affiliations = document.affiliations
+                    .filter(a => a.authorship == authorship.id)
+                    .map(a => a.institute);
+                //[/Accrocchio]
+
+                const affiliationInstituteIds = !_.isEmpty(newAffiliationInstituteIds) ? newAffiliationInstituteIds : affiliations;
+                const corresponding = !_.isNil(newCorresponding) ? newCorresponding : authorship.corresponding;
                 if (_.isEmpty(affiliationInstituteIds) || _.isNil(position))
                     return {
                         isVerifiable: false,
@@ -263,7 +273,10 @@ module.exports = _.merge({}, researchEntity, {
             promise = Promise.resolve();
 
         return promise
-            .then(() => Authorship.findOrCreate({document: newAuthorship.document, position: newAuthorship.position}, newAuthorship))
+            .then(() => Authorship.findOrCreate({
+                document: newAuthorship.document,
+                position: newAuthorship.position
+            }, newAuthorship))
             .then((authorship)=> {
                 _.assign(authorship, newAuthorship);
                 return authorship.savePromise();

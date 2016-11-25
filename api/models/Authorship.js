@@ -24,6 +24,12 @@ module.exports = _.merge({}, BaseModel, {
         corresponding: 'boolean',
         position: 'integer',
         public: 'boolean'
+    },
+    getEmpty: function() {
+        return {
+            corresponding: false,
+            affiliations: []
+        };
     }
 });
 
