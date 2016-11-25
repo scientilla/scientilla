@@ -265,21 +265,26 @@ module.exports = _.merge({}, researchEntity, {
             corresponding: authorshipData.corresponding
         };
 
-        // could be already created an empty user authorship by external imports
         let promise;
         if (authorshipData.corresponding)
             promise = Authorship.update({document: newAuthorship.document}, {corresponding: false});
         else
             promise = Promise.resolve();
 
+        const authorshipFindCriteria = {
+            document: newAuthorship.document,
+            position: newAuthorship.position
+        };
+
         return promise
-            .then(() => Authorship.findOrCreate({
-                document: newAuthorship.document,
-                position: newAuthorship.position
-            }, newAuthorship))
+            .then(()=> Authorship.destroy(authorshipFindCriteria))
+            .then(oldAuthorship=> Affiliation.destroy({authorship: oldAuthorship.id}))
+            .then(()=> Authorship.create(newAuthorship))
             .then((authorship)=> {
+
                 _.assign(authorship, newAuthorship);
                 return authorship.savePromise();
+
             }).then(()=>document);
     },
     beforeCreate: function (user, cb) {
