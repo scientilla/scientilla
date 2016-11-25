@@ -35,7 +35,10 @@ describe('Document Verification', () => {
             .then(res => unigeInstitute = res.body)
             .then(() => test.createSource(journalData))
             .then(res => journal = res.body)
-            .then(() => test.userCreateDraft(user1, _.merge({}, documentData, {source: journal.id})))
+            .then(() => {
+                documentData.source = journal;
+                return test.userCreateDraft(user1, documentData)
+            })
             .then(res => document = res.body)
             .then(() => test.userVerifyDraft(user1, document, user1Doc1position, [iitInstitute.id]))
             .then(() => test.registerUser(user2Data))
