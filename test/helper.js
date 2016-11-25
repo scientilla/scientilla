@@ -101,10 +101,10 @@ module.exports = (function () {
                 .put('/users/' + user.id + '/drafts/' + draftData.id)
                 .send(draftData);
         },
-        userVerifyDraft: function (user, draftData, position, affiliations) {
+        userVerifyDraft: function (user, draftData, position, affiliations, corresponding) {
             return request(url)
                 .put('/users/' + user.id + '/drafts/' + draftData.id + '/verified')
-                .send({position: position, 'affiliations': affiliations});
+                .send({position: position, 'affiliations': affiliations, 'corresponding': corresponding});
         },
         userVerifyDrafts: function (user, drafts) {
             return request(url)
@@ -139,10 +139,10 @@ module.exports = (function () {
             return request(url)
                 .put('/users/' + user.id + '/documents/' + document.id + '/unverified');
         },
-        userVerifyDocument: function (user, document, position, affiliations) {
+        userVerifyDocument: function (user, document, position, affiliations, corresponding) {
             return request(url)
                 .post('/users/' + user.id + '/documents')
-                .send({id: document.id, position: position, 'affiliations': affiliations});
+                .send({id: document.id, position: position, 'affiliations': affiliations, 'corresponding': corresponding});
         },
         getGroupDrafts: function (group, populateFields, qs) {
             return request(url)
