@@ -94,7 +94,7 @@ describe('Draft Verification', () => {
             })
     );
 
-    it.skip('verifying a non complete draft should not be possible', () =>
+    it('verifying a non complete draft should not be possible', () =>
         test.userCreateDraft(user1, incompleteDocumentData)
             .then(res => user1Draft2 = res.body)
             .then(() =>test.userVerifyDraft(user1, user1Draft2, 4, [iitInstitute.id])
@@ -102,7 +102,7 @@ describe('Draft Verification', () => {
                     res.status.should.equal(200);
                     res.body.should.have.property('error');
                     res.body.should.have.property('item');
-                    res.body.item.should.equal(user1Draft2.id + '');
+                    res.body.item.title.should.equal(incompleteDocumentData.title);
                 }))
             .then(() => test.getUserDrafts(user1)
                 .expect(res => {
