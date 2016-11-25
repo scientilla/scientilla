@@ -13,7 +13,7 @@ describe('Document fetching', () => {
             .then(res => user = res.body)
             .then(() =>test
                 .getUserDocuments(user, 'non-existent-relation')
-                .expect(200, {count: 0, items: []}))
+                .expect(200, test.EMPTY_RES))
     );
 
 });

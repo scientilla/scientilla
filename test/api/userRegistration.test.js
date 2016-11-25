@@ -11,7 +11,7 @@ describe('User registration', () => {
 
     it('by default there should be no users', () =>
         test.getUsers()
-            .expect(200, {count: 0, items: []})
+            .expect(200, test.EMPTY_RES)
     );
 
     it('should be able to register new user when there is no users', ()=>

@@ -42,7 +42,7 @@ describe('Draft Verification', () => {
             .then(() => test.createSource(sourcesData[0]))
             .then(res => journal = res.body)
             .then(() => test.getUserDocuments(user1)
-                .expect(200, {count: 0, items: []}))
+                .expect(200, test.EMPTY_RES))
     );
 
     it('verifying a complete draft should be possible', () =>
@@ -61,7 +61,7 @@ describe('Draft Verification', () => {
                     });
             })
             .then(() =>test.getUserDrafts(user1)
-                .expect(200, {count: 0, items: []}))
+                .expect(200, test.EMPTY_RES))
             .then(() =>test
                 .getUserDocumentsWithAuthors(user1)
                 .expect(res => {

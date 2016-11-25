@@ -21,7 +21,7 @@ describe('Draft Creation: ', () => {
         test.registerUser(usersData[0])
             .then(res => user = res.body)
             .then(() => test.getUserDrafts(user)
-                .expect(200, {count: 0, items: []})
+                .expect(200, test.EMPTY_RES)
             )
     );
 
@@ -45,7 +45,7 @@ describe('Draft Creation: ', () => {
         test.createGroup(groupsData[0])
             .then(res => group = res.body)
             .then(() => test.getGroupDrafts(group)
-                .expect(200, {count: 0, items: []})
+                .expect(200, test.EMPTY_RES)
             )
     );
 
