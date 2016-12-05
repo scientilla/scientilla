@@ -177,6 +177,11 @@ module.exports = _.merge({}, researchEntity, {
                                 resolve(user);
                         });
                 });
+            })
+            .then(user => {
+                return Group.getDefaultGroup()
+                    .then(group => Group.addMember(group, user))
+                    .then(() => user)
             });
     },
     setNewUserRole: function (user) {

@@ -81,5 +81,14 @@ module.exports = _.merge({}, researchEntity, {
     },
     discardDocument: function (researchEntityId, documentId) {
         return DiscardedGroup.findOrCreate({researchEntity: researchEntityId, document: documentId});
+    },
+    getDefaultGroup: function () {
+        //TODO: id must be read from settings
+        const id = 1;
+        return Group.findOneById(id).populate('members');
+    },
+    addMember: function(group, user) {
+        group.members.add(user);
+        return group.save();
     }
 });
