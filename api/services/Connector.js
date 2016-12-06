@@ -332,6 +332,11 @@ module.exports = {
                                 function (c) {
                                     return _.get(c, 'ce:indexed-name');
                                 }).join(', '),
+                            authorKeywords: _.map(
+                                _.get(d2, 'authkeywords.author-keyword'),
+                                function (c) {
+                                    return _.get(c, '$');
+                                }).join(', '),
                             year: _.get(d2, 'item.bibrecord.head.source.publicationdate.year'),
                             doi: _.get(d2, 'coredata.prism:doi'),
                             sourceType: sourceType,
