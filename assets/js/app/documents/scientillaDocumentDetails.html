@@ -15,18 +15,7 @@
 
 <div class="scientilla-document-details-source">
     <hr>
-    <div ng-if="vm.document.source">
-        <small class="scientilla-document-source">
-            <div class="scientilla-document-icon-container">
-                <span ng-if="vm.document.source.type==='journal'" class="fa fa-lg fa-fw fa-file-text-o"></span>
-                <span ng-if="vm.document.source.type==='conference'" class="fa fa-lg fa-fw fa-comment-o"></span>
-                <span ng-if="vm.document.source.type==='book'" class="fa fa-lg fa-fw fa-book"></span>
-                <span ng-if="vm.document.source.type==='bookseries'" class="fa fa-lg fa-fw fa-book"></span>
-                <span ng-if="vm.document.source.type==='report'" class="fa fa-lg fa-fw fa-address-card-o"></span>
-            </div>
-            <span>{{vm.document.source.title}}</span>
-        </small>
-    </div>
+    <scientilla-document-source document="vm.document"></scientilla-document-source>
 
     <small ng-if="vm.document.issue">
         issue {{vm.document.issue}},

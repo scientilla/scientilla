@@ -98,6 +98,12 @@
     font-style: italic;
 }
 
+.scientilla-in-press{
+    text-decoration: underline;
+    color: #ff5555;
+    font-weight: bold;
+}
+
 .scientilla-document-icon-container{
     display: inline-block;
 }
