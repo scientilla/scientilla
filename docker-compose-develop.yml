@@ -7,7 +7,7 @@ services:
     volumes:
       - .:/usr/src/app
     ports:
-      - "8084:1337"
+      - "1337:1337"
       - "35732:35732"
       - "5858:5858"
     command: bash -c "sails debug --expose_debug_as=v8debug > ./logs/sailslog"
