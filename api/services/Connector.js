@@ -201,7 +201,7 @@ module.exports = {
     getScopusConfig: function (researchEntity, configQuery) {
         var researchEntityType = researchEntity.getType();
         var uri = 'https://api.elsevier.com/content/search/scopus';
-        var query = '';
+        var query = [];
 
         if (researchEntityType === 'user') {
 
@@ -211,15 +211,25 @@ module.exports = {
             };
 
             if (configQuery.where.field in opts)
-                query = opts[configQuery.where.field];
+                query.push(opts[configQuery.where.field]);
             else
                 throw "ExternalDocument error: field not selected";
 
         }
         else {
-            query = 'AF-ID(' + researchEntity.scopusId + ')';
+            query.push('AF-ID(' + researchEntity.scopusId + ')');
             uri += 'affiliation';
         }
+
+        var additionalOpts = {
+            'year': 'PUBYEAR IS %val'
+        };
+
+        if (Array.isArray(configQuery.where.additionalFields))
+            query = query.concat(
+                configQuery.where.additionalFields
+                    .map(f => additionalOpts[f.field].replace(/%val/, f.value))
+            );
 
         return {
             reqParams: {
@@ -231,7 +241,7 @@ module.exports = {
                 qs: {
                     start: configQuery.skip,
                     count: configQuery.limit,
-                    query: query,
+                    query: query.join(' AND '),
                     sort: '-pubyear'
                 },
                 json: true
