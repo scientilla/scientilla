@@ -10,12 +10,24 @@
  */
 'use strict';
 
+const _ = require('lodash');
+
 module.exports.bootstrap = function (cb) {
     // It's very important to trigger this callback method when you are finished
     // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
     initializeInstitutes()
         .then(initializeGroups)
+        .then(importDocuments)
         .then(_ => cb());
+
+    function importDocuments(group) {
+        if (_.isNil(group) || !sails.config.scientilla.mainInstituteImport.enabled)
+            return;
+
+        sails.log.info('Importing document from scopus ');
+        return Importer.mainInstituteDocumentsImport();
+
+    }
 
     function initializeGroups() {
         const fields = ['name', 'shortname', 'scopusId'];

@@ -20,5 +20,9 @@ module.exports.scientilla = {
         country: "Italy",
         city: "Genoa",
         scopusId: "60102151"
+    },
+    mainInstituteImport: {
+        enabled: false,
+        startingYear: 1970
     }
 };
