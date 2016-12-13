@@ -4,8 +4,6 @@
 
 const _ = require('lodash');
 
-const env = sails.config.environment;
-
 const startingYear = sails.config.scientilla.mainInstituteImport.startingYear;
 
 module.exports = {
@@ -17,12 +15,11 @@ module.exports = {
         return Group.findOneByName(sails.config.scientilla.institute.name)
             .then(i => {
                 institute = i;
-                return Importer.getScopusDocuments(institute)
+                return Importer.importScopusDocuments(institute)
             })
-            .then(documents => Group.createDrafts(Group, institute.id, documents))
-            .then(documents => Group.verifyDrafts(Group, institute.id, documents.map(d=>d.id)))
+            .then(unused=>true);
     },
-    getScopusDocuments: function (institute) {
+    importScopusDocuments: function (institute) {
 
         return scopusYearLoop(startingYear);
 
@@ -45,40 +42,40 @@ module.exports = {
 
             sails.log.info('Importing documents from ' + year);
 
-            return Importer.scopusLoop(Group, institute.id, query)
-                .then(items => next(items))
+            return scopusLoop(Group, institute.id, query)
+                .then(items => next(year))
                 .catch(err => {
                     sails.log.debug(err);
-                    return next([]);
+                    return next(year);
                 });
+        }
 
-            function next(items) {
+        function next(year) {
+            if (year >= (new Date()).getFullYear() + 1)
+                return;
 
-
-                const documents = _.isArray(items) ? items : [];
-
-                if (year >= (new Date()).getFullYear() + 1)
-                    return documents;
-
-                return scopusYearLoop(year + 1)
-                    .then(nextItems => documents.concat(nextItems))
-            }
+            return scopusYearLoop(year + 1);
         }
 
 
-    },
-    scopusLoop: function (researchEntityModel, researchEntityId, query) {
+        function scopusLoop(researchEntityModel, researchEntityId, query) {
 
-        return Connector.getDocuments(researchEntityModel, researchEntityId, query)
-            .then(result => {
-                if (result.count <= (query.limit + query.skip))
-                    return result.items;
+            return Connector.getDocuments(researchEntityModel, researchEntityId, query, true)
+                .then(result => {
+                    const documents = result.items;
+                    Group.createDrafts(Group, institute.id, documents)
+                        .then(docs => Group.verifyDrafts(Group, institute.id, docs.map(d=>d.id)));
 
-                const newQuery = _.cloneDeep(query);
-                newQuery.skip += query.limit;
+                    if (result.count <= (query.limit + query.skip))
+                        return;
 
-                return this.scopusLoop(researchEntityModel, researchEntityId, newQuery)
-                    .then(nextItems => result.items.concat(nextItems));
-            })
+                    const newQuery = _.cloneDeep(query);
+                    newQuery.skip += query.limit;
+
+                    return scopusLoop(researchEntityModel, researchEntityId, newQuery);
+                })
+        }
+
+
     }
 };
