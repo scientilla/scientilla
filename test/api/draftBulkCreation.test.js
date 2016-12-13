@@ -10,7 +10,9 @@ describe('Draft Bulk Creation: ', () => {
 
     const usersData = test.getAllUserData();
     const documentsData = test.getAllDocumentData();
-    const groupsData = test.getAllGroupData();
+    const iitGroupData = test.getAllGroupData()[0];
+    const iitInstituteData = test.getAllInstituteData()[0];
+    let iitGroup;
 
     it('creating multiple drafts should be possible for an user', () => {
 
@@ -18,8 +20,10 @@ describe('Draft Bulk Creation: ', () => {
 
         let user;
 
-        return test
-            .registerUser(usersData[0])
+        return test.createGroup(iitGroupData)
+            .then(res => iitGroup = res.body)
+            .then(() => test.createInstitute(iitInstituteData))
+            .then(() => test.registerUser(usersData[0]))
             .then(res => user = res.body)
             .then(()=>
                 test.userCreateDrafts(user, draftsData)
@@ -41,23 +45,16 @@ describe('Draft Bulk Creation: ', () => {
 
         const draftsData = [documentsData[0], documentsData[1], documentsData[2]];
 
-        let group;
-
-        return test
-            .createGroup(groupsData[0])
-            .then(res => group = res.body)
-            .then(()=>
-                test.groupCreateDrafts(group, draftsData)
-                    .expect(200))
+        return test.groupCreateDrafts(iitGroup, draftsData)
             .then(() => test
-                .getGroupDrafts(group)
+                .getGroupDrafts(iitGroup)
                 .expect(res => {
                     res.status.should.equal(200);
                     const count = res.body.count;
                     const documents = res.body.items;
                     count.should.be.equal(3);
                     documents.should.have.length(3);
-                    checkDrafts(group, draftsData, documents);
+                    checkDrafts(iitGroup, draftsData, documents);
                 })
             );
 

@@ -13,6 +13,7 @@ describe('Draft Verification', () => {
     const documentsData = test.getAllDocumentData();
     const institutesData = test.getAllInstituteData();
     const sourcesData = test.getAllSourceData();
+    const groupsData = test.getAllGroupData();
     const user1Data = usersData[0];
     const user2Data = usersData[1];
     const documentData = documentsData[0];
@@ -20,12 +21,14 @@ describe('Draft Verification', () => {
     const iitInstituteData = institutesData[0];
     const unigeInstituteData = institutesData[1];
     const nonExistentDocument = {id: 1000};
+    const iitGroupData = groupsData[0];
     let user1;
     let user2;
     let user1Draft1;
     let user1Draft2;
     let user2Draft1;
     let journal;
+    let iitGroup;
     const user1Doc1Position = 4;
     const user2Doc1Position = 0;
     let iitInstitute;
@@ -33,7 +36,9 @@ describe('Draft Verification', () => {
     let author2affiliationInstitutes;
 
     it('there should be no verified documents for a new user', () =>
-        test.registerUser(user1Data)
+        test.createGroup(iitGroupData)
+            .then(res => iitGroup = res.body)
+            .then(() => test.registerUser(user1Data))
             .then(res =>user1 = res.body)
             .then(() =>test.createInstitute(iitInstituteData))
             .then(res => iitInstitute = res.body)
@@ -178,6 +183,8 @@ describe('Draft Verification', () => {
         let drafts;
         return test
             .cleanDb()
+            .then(() => test.createGroup(iitGroupData))
+            .then(res => iitGroup = res.body)
             .then(()=>test.registerUser(usersData[0]))
             .then(res => users.push(res.body))
             .then(() => test.createInstitute(institutesData[0]))

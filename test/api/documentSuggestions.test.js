@@ -13,24 +13,29 @@ describe('Document Suggestions', () => {
     const user3Data = test.getAllUserData()[2];
     const documentData = test.getAllDocumentData()[0];
     const sourcesData = test.getAllSourceData();
+    const groupsData = test.getAllGroupData();
     const institutesData = test.getAllInstituteData();
     const iitInstituteData = institutesData[0];
+    const iitGroupData = groupsData[0];
     let user1;
     let user2;
     let user3;
     let document;
     let journal;
+    let iitGroup;
     const user1Doc1Position = 4;
     const user2Doc1Position = 0;
     let iitInstitute;
 
     it('it should suggest the document to the user whose surname is among the authors (str)', () =>
-        test.registerUser(user1Data)
-            .then(res => user1 = res.body)
-            .then(() =>test.createInstitute(iitInstituteData))
+        test.createGroup(iitGroupData)
+            .then(res => iitGroup = res.body)
+            .then(() => test.createInstitute(iitInstituteData))
             .then(res => iitInstitute = res.body)
             .then(() => test.createSource(sourcesData[0]))
             .then(res => journal = res.body)
+            .then(() => test.registerUser(user1Data))
+            .then(res => user1 = res.body)
             .then(() => {
                 documentData.source = journal;
                 return test.userCreateDraft(user1, documentData)

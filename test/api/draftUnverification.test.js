@@ -12,18 +12,23 @@ describe('Draft Unverification', () => {
     const user2Data = test.getAllUserData()[1];
     const documentData = test.getAllDocumentData()[0];
     const institutesData = test.getAllInstituteData();
+    const groupsData = test.getAllGroupData();
     const iitInstituteData = institutesData[0];
     const sourcesData = test.getAllSourceData();
+    const iitGroupData = groupsData[0];
     let user1;
     let user2;
     let document;
     let journal;
+    let iitGroup;
     const user1Doc1Position = 4;
     const user2Doc1Position = 0;
     let iitInstitute;
 
     it('it should be possible to unverify a document', () =>
-        test.registerUser(user1Data)
+        test.createGroup(iitGroupData)
+            .then(res => iitGroup = res.body)
+            .then(() => test.registerUser(user1Data))
             .then(res => user1 = res.body)
             .then(() =>test.createInstitute(iitInstituteData))
             .then(res => iitInstitute = res.body)
