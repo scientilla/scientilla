@@ -31,6 +31,7 @@ module.exports = _.merge({}, BaseModel, {
             type: 'STRING'
         },
         authorsStr: 'STRING',
+        authorKeywords: 'STRING',
         year: 'STRING',
         issue: 'STRING',
         volume: 'STRING',
@@ -157,6 +158,7 @@ module.exports = _.merge({}, BaseModel, {
     getFields: function () {
         var fields = [
             'authorsStr',
+            'authorKeywords',
             'title',
             'year',
             'source',

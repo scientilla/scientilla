@@ -19,7 +19,17 @@ module.exports.bootstrap = function (cb) {
     initializeInstitutes()
         .then(initializeGroups)
         .then(initializeSources)
+        .then(importDocuments)
         .then(_ => cb());
+
+    function importDocuments(group) {
+        if (_.isNil(group) || !sails.config.scientilla.mainInstituteImport.enabled)
+            return;
+
+        sails.log.info('Importing document from scopus ');
+        return Importer.mainInstituteDocumentsImport();
+
+    }
 
     function initializeGroups() {
         return Group.count()
