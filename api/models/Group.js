@@ -84,8 +84,8 @@ module.exports = _.merge({}, researchEntity, {
     },
     getDefaultGroup: function () {
         //TODO: id must be read from settings
-        const id = 1;
-        return Group.findOneById(id).populate('members');
+        const defaultInstituteName = sails.config.scientilla.institute.name;
+        return Group.findOneByName(defaultInstituteName).populate('members');
     },
     addMember: function(group, user) {
         group.members.add(user);
