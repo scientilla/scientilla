@@ -15,7 +15,7 @@ const sources = require('./data/sources');
 module.exports = (function () {
     var obj = {
         cleanDb: function () {
-            var models = [Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute];
+            var models = [Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source];
             var destroyFns =
                 models.map(function (model) {
                     return model.destroy();

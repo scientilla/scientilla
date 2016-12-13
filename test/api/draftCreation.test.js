@@ -11,6 +11,11 @@ describe('Draft Creation: ', () => {
     const usersData = test.getAllUserData();
     const documentsData = test.getAllDocumentData();
     const groupsData = test.getAllGroupData();
+    const institutesData = test.getAllInstituteData();
+    const iitInstituteData = institutesData[0];
+    const iitGroupData = groupsData[0];
+    let iitInstitute;
+    let iitGroup;
 
     const draftsData = [documentsData[0], documentsData[1]];
 
@@ -18,7 +23,9 @@ describe('Draft Creation: ', () => {
     let group;
 
     it('there should be no drafts for a new user', () =>
-        test.registerUser(usersData[0])
+        test.createGroup(iitGroupData)
+            .then(res => iitGroup = res.body)
+            .then(() => test.registerUser(usersData[0]))
             .then(res => user = res.body)
             .then(() => test.getUserDrafts(user)
                 .expect(200, test.EMPTY_RES)

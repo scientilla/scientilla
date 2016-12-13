@@ -8,6 +8,9 @@ describe('User registration', () => {
     after(test.cleanDb);
 
     const userData = test.getAllUserData()[0];
+    const institutesData = test.getAllInstituteData();
+    const iitInstituteData = institutesData[0];
+    let iitInstitute;
 
     it('by default there should be no users', () =>
         test.getUsers()
@@ -15,7 +18,9 @@ describe('User registration', () => {
     );
 
     it('should be able to register new user when there is no users', ()=>
-        test.registerUser(userData)
+        test.createInstitute(iitInstituteData)
+            .then(res => iitInstitute = res.body)
+            .then(() => test.registerUser(userData))
             .then(function (res) {
                 return test
                     .getUsers()

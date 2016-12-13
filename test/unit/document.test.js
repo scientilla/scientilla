@@ -92,15 +92,19 @@ describe('Document model', () => {
     const usersData = test.getAllUserData();
     const documentsData = test.getAllDocumentData();
     const institutesData = test.getAllInstituteData();
+    const iitGroupData = test.getAllGroupData()[0];
     let users = [];
     let document;
     let institutes;
+    let iitGroup;
 
     describe('findCopies', () => {
         it('should only find verified documents with same data and affiliations', () => {
 
             //TODO move db initialization to a more suitable place
-            return User.createCompleteUser(usersData[0])
+            return Group.create(iitGroupData)
+                .then(res => iitGroup = res)
+                .then(() => User.createCompleteUser(usersData[0]))
                 .then(u=> users.push(u))
                 .then(()=>User.createCompleteUser(usersData[1]))
                 .then(u=> users.push(u))

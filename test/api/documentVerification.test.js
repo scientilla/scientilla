@@ -14,7 +14,9 @@ describe('Document Verification', () => {
     const documentData = test.getAllDocumentData()[0];
     const iitInstituteData = test.getAllInstituteData()[0];
     const unigeInstituteData = test.getAllInstituteData()[1];
+    const groupsData = test.getAllGroupData();
     const journalData = test.getAllSourceData()[0];
+    const iitGroupData = groupsData[0];
     let user1;
     let user2;
     let document;
@@ -23,18 +25,21 @@ describe('Document Verification', () => {
     const user2Doc1position = 0;
     let iitInstitute;
     let unigeInstitute;
+    let iitGroup;
     let author2affiliationInstitutes;
 
 
     it('it should be possible to verify an already verified document', () =>
-        test.registerUser(user1Data)
-            .then(res => user1 = res.body)
+        test.createGroup(iitGroupData)
+            .then(res => iitGroup = res.body)
             .then(() => test.createInstitute(iitInstituteData))
             .then(res => iitInstitute = res.body)
             .then(() => test.createInstitute(unigeInstituteData))
             .then(res => unigeInstitute = res.body)
             .then(() => test.createSource(journalData))
             .then(res => journal = res.body)
+            .then(() => test.registerUser(user1Data))
+            .then(res => user1 = res.body)
             .then(() => {
                 documentData.source = journal;
                 return test.userCreateDraft(user1, documentData)
