@@ -7,7 +7,7 @@ var Promise = require("bluebird");
 
 module.exports = {
     attributes: {},
-    getDocuments: function (ResearchEntityModel, researchEntityId, query) {
+    getDocuments: function (ResearchEntityModel, researchEntityId, query, skipCopiedCheck) {
         var self = this;
         var connector = query.where.connector;
         if (!connector)
@@ -30,13 +30,12 @@ module.exports = {
                 }
 
                 return self.makeRequest(reqConfig)
-                    .then(res => ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.documents)
-                        .then(documents =>
-                            ({
-                                count: res.count,
-                                items: documents,
-                            }))
-                    )
+                    .then(res => {
+                        if(!skipCopiedCheck)
+                            return ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.items)
+
+                        return res;
+                    });
             });
     },
     makeRequest: function (reqConfig) {
@@ -45,7 +44,7 @@ module.exports = {
                 const extracted = reqConfig.fieldExtract(res);
                 return Promise.all(_.map(extracted.documents, r => reqConfig.transform(r)))
                     .then(documents => ({
-                        documents: documents,
+                        items: documents,
                         count: extracted.count
                     }));
             });
@@ -421,7 +420,7 @@ module.exports = {
                             }
 
                             sails.log.debug('Scopus request failed. Scopus Id = ' + scopusId);
-                            sails.log.debug(err);
+                            sails.log.debug(err.error);
 
                             return {};
                         });
