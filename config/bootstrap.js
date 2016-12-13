@@ -16,14 +16,23 @@ const fs = require('fs');
 module.exports.bootstrap = function (cb) {
     // It's very important to trigger this callback method when you are finished
     // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
-    initializeInstitutes()
+
+    let firstRun = false;
+
+    checkFirstRun()
+        .then(initializeInstitutes)
         .then(initializeGroups)
         .then(initializeSources)
         .then(importDocuments)
         .then(_ => cb());
 
-    function importDocuments(group) {
-        if (_.isNil(group) || !sails.config.scientilla.mainInstituteImport.enabled)
+    function checkFirstRun() {
+        return Group.count()
+            .then(groupsNum => firstRun = !groupsNum);
+    }
+
+    function importDocuments() {
+        if (!firstRun || !sails.config.scientilla.mainInstituteImport.enabled)
             return;
 
         sails.log.info('Importing document from scopus ');
@@ -32,37 +41,25 @@ module.exports.bootstrap = function (cb) {
     }
 
     function initializeGroups() {
-        return Group.count()
-            .then(groupsNum => {
-                if (groupsNum)
-                    return;
-                const fields = ['name', 'shortname', 'scopusId'];
-                const groupData = _.pick(sails.config.scientilla.institute, fields);
-                sails.log.info('Creating group ' + groupData.name);
-                return Group.create(groupData);
-            });
+        if (!firstRun) return;
+        const fields = ['name', 'shortname', 'scopusId'];
+        const groupData = _.pick(sails.config.scientilla.institute, fields);
+        sails.log.info('Creating group ' + groupData.name);
+        return Group.create(groupData);
     }
 
     function initializeInstitutes() {
-        return Institute.count()
-            .then(institutesNum => {
-                if (institutesNum)
-                    return;
-                const instituteData = sails.config.scientilla.institute;
-                sails.log.info('Creating institute ' + instituteData.name);
-                return Institute.create(instituteData);
-            })
+        if (!firstRun) return;
+        const instituteData = sails.config.scientilla.institute;
+        sails.log.info('Creating institute ' + instituteData.name);
+        return Institute.create(instituteData);
     }
 
     function initializeSources() {
-        return Source.count()
-            .then(sourcesNum => {
-                if (sourcesNum)
-                    return;
-                const sources = readFromExcel();
-                sails.log.info('Inserting ' + sources.length + ' new sources');
-                return Source.create(sources);
-            });
+        if (!firstRun) return;
+        const sources = readFromExcel();
+        sails.log.info('Inserting ' + sources.length + ' new sources');
+        return Source.create(sources);
 
         function readFromExcel() {
 
@@ -157,8 +154,8 @@ module.exports.bootstrap = function (cb) {
 
             const allSourceData = _.union(journalsAndBookSeries, newConferences, oldConferences, books);
 
-            const sanitazedSourceData =  allSourceData.map(s => {
-                s.scopusId = ''+s.scopusId;
+            const sanitazedSourceData = allSourceData.map(s => {
+                s.scopusId = '' + s.scopusId;
                 return s;
             });
             return sanitazedSourceData;
