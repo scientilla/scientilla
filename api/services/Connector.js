@@ -300,6 +300,17 @@ module.exports = {
                             },
                             json: true
                         })
+                        .catch(function (err) {
+                            if (attempt < 3) {
+                                sails.log.debug('Error: Scopus Id: ' + scopusId + ', trying again, attempt n. ' + (attempt + 1));
+                                return singleRequest(attempt + 1);
+                            }
+
+                            sails.log.debug('Scopus request failed. Scopus Id = ' + scopusId);
+                            sails.log.debug(err.error);
+
+                            return {};
+                        })
                         .then(function (res) {
                             function getConditionalField(obj, path, type) {
                                 const vals = toArray(_.get(obj, path));
@@ -415,13 +426,8 @@ module.exports = {
                             return newDoc;
                         })
                         .catch(function (err) {
-                            if (attempt < 3) {
-                                sails.log.debug('Error: Scopus Id: ' + scopusId + ', trying again, attempt n. ' + (attempt + 1));
-                                return singleRequest(attempt + 1);
-                            }
-
-                            sails.log.debug('Scopus request failed. Scopus Id = ' + scopusId);
-                            sails.log.debug(err.error);
+                            sails.log.debug('Document failed. Scopus Id = ' + scopusId);
+                            sails.log.debug(err);
 
                             return {};
                         });
