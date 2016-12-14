@@ -89,7 +89,6 @@ module.exports.bootstrap = function (cb) {
                     const mappedSourceData = mapFn(sourceData);
                     if (filterFn(mappedSourceData))
                         sources.push(mappedSourceData);
-                    // console.log(mappedSourceData);
                 }
                 return sources;
             }
@@ -162,11 +161,6 @@ module.exports.bootstrap = function (cb) {
 
             const allSourceData = _.union(journalsAndBookSeries, newConferences, oldConferences, books);
 
-            // const sanitazedSourceData = allSourceData.map(s => {
-            //     s.scopusId = '' + s.scopusId;
-            //     return s;
-            // });
-            // _.take(sanitazedSourceData, 100).forEach(console.log);
             return allSourceData;
         }
     }
