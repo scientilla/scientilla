@@ -94,7 +94,7 @@ module.exports = function expand(req, res) {
 
             return Promise.all([query, countQuery])
                 .spread((matchingRecords, count)=> {
-
+                    //if asking for a single related entity
                     if (childPk)
                         if (matchingRecords.length)
                             return res.ok(matchingRecords);

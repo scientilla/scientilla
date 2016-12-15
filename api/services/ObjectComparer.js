@@ -6,7 +6,7 @@ var _ = require('lodash');
 
 module.exports = {
     compareStrings: function(a, b) {
-        if (_.isNil(a) || _.isNil(b))
+        if (_.isNil(a) || _.isNil(b) || !_.isString(a) || !_.isString(b))
             return .999;
         a = '' + a;
         b = '' + b;
