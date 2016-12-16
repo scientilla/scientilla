@@ -12,6 +12,8 @@ module.exports = {
         b = '' + b;
         if (a.length <=1 && b.length <=1)
             return (a==b) ? 1 : .8;
+        if (a.length >=200 || b.length >=200)
+            return (a==b) ? 1 : .8;
         return stringSimilarity.compareTwoStrings(a, b);
     }
 };
