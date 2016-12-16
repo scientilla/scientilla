@@ -88,22 +88,25 @@ module.exports = function expand(req, res) {
             const skip = actionUtil.parseSkip(req);
             const where = {'id': recordsId};
             let query = relationModel.find({where, sort, limit, skip});
-            _.forEach(populateFields, f=> query = query.populate(f));
+            _.forEach(populateFields, f => query = query.populate(f));
 
             const countQuery = relationModel.count({where});
 
             return Promise.all([query, countQuery])
-                .spread((matchingRecords, count)=> {
+                .spread((matchingRecords, count) => {
                     //if asking for a single related entity
                     if (childPk)
                         if (matchingRecords.length)
                             return res.ok(matchingRecords);
                         else
                             return res.notFound();
-                    return res.ok({
-                        count: count,
-                        items: matchingRecords
-                    });
+                    const postPopulate = _.get(Model, '_attributes.'+relation+'._postPopulate') || ((xs, id) => Promise.resolve(xs));
+
+                    return postPopulate(matchingRecords, parentPk)
+                        .then(newRecords => res.ok({
+                            count: count,
+                            items: newRecords
+                        }));
                 })
                 .catch(err => res.serverError(err));
 

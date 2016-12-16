@@ -4,6 +4,7 @@
 var request = require('request-promise');
 var _ = require('lodash');
 var Promise = require("bluebird");
+const ResearchEntity = require('../lib/ResearchEntity');
 
 module.exports = {
     attributes: {},
@@ -32,7 +33,7 @@ module.exports = {
                 return self.makeRequest(reqConfig)
                     .then(res => {
                         if (!skipCopiedCheck)
-                            return ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.items)
+                            return ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.items, ResearchEntity.getAllVerifiedDocuments)
                                 .then(documents => ({items: documents, count: res.count}));
 
                         return res;

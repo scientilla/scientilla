@@ -8,10 +8,16 @@
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
 
-var _ = require('lodash');
-var researchEntity = require('../lib/ResearchEntity');
+const _ = require('lodash');
+const ResearchEntity = require('../lib/ResearchEntity');
 
-module.exports = _.merge({}, researchEntity, {
+function buildCheckDuplicatedDocuments(checkAgainstFunction) {
+    return function(documents, researchEntityId) {
+        return ResearchEntity.checkCopiedDocuments(Group, researchEntityId, documents, checkAgainstFunction);
+    }
+}
+
+module.exports = _.merge({}, ResearchEntity, {
     attributes: {
         name: 'STRING',
         slug: 'STRING',
@@ -34,12 +40,14 @@ module.exports = _.merge({}, researchEntity, {
         },
         drafts: {
             collection: 'Document',
-            via: 'draftGroupCreator'
+            via: 'draftGroupCreator',
+            _postPopulate: buildCheckDuplicatedDocuments(ResearchEntity.getAllDocuments)
         },
         documents: {
             collection: 'document',
             via: 'groups',
-            through: 'authorshipgroup'
+            through: 'authorshipgroup',
+            _postPopulate: buildCheckDuplicatedDocuments(ResearchEntity.getAllVerifiedDocuments)
         },
         authorships: {
             collection: 'authorshipGroup',
@@ -48,12 +56,14 @@ module.exports = _.merge({}, researchEntity, {
         discardedDocuments: {
             collection: 'Document',
             via: 'discardedGroups',
-            through: 'discardedgroup'
+            through: 'discardedgroup',
+            _postPopulate: buildCheckDuplicatedDocuments(ResearchEntity.getAllDocuments)
         },
         suggestedDocuments: {
             collection: 'document',
             via: 'groups',
-            through: 'documentsuggestiongroup'
+            through: 'documentsuggestiongroup',
+            _postPopulate: buildCheckDuplicatedDocuments(ResearchEntity.getAllDocuments)
         },
         getType: function () {
             return 'group';

@@ -186,11 +186,20 @@ module.exports = _.merge({}, BaseModel, {
                 );
             });
     },
-    checkCopiedDocuments: function (ResearchEntityModel, researchEntityId, documentsToCheck) {
+    getAllVerifiedDocuments: function (ResearchEntityModel, researchEntityid) {
+        return ResearchEntityModel
+            .findOneById(researchEntityid)
+            .populate('documents')
+            .then(function (researchEntity) {
+                return researchEntity.documents;
+            });
+    },
+    checkCopiedDocuments: function (ResearchEntityModel, researchEntityId, documentsToCheck, checkAgainstFunction) {
         var threeshold = .50;
-        return ResearchEntityModel.getAllDocuments(ResearchEntityModel, researchEntityId)
+        return checkAgainstFunction(ResearchEntityModel, researchEntityId)
             .then(function (documents) {
                 documentsToCheck.forEach(function (docToCheck) {
+                    documents = documents.filter(d => d.id !== docToCheck.id);
                     var isCopied = _.some(documents, function (d) {
                         return d.getSimiliarity(docToCheck) >= threeshold;
                     });
