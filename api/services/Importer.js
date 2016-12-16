@@ -60,12 +60,18 @@ module.exports = {
         }
 
 
-        function scopusLoop(researchEntityModel, researchEntityId, query) {
+        function scopusLoop(researchEntityModel, instituteId, query) {
 
-            return Connector.getDocuments(researchEntityModel, researchEntityId, query, true)
+            return Connector.getDocuments(researchEntityModel, instituteId, query, true)
                 .then(result => {
                     const documents = result.items;
-                    Group.createDrafts(Group, institute.id, documents)
+
+                    const toImport = documents.filter(
+                        d => d.authorships.filter(
+                            a => a.affiliations.includes(instituteId)
+                        ).length);
+
+                    Group.createDrafts(Group, institute.id, toImport)
                         .then(docs => Group.verifyDrafts(Group, institute.id, docs.map(d => d.id)));
 
                     if (result.count <= (query.limit + query.skip))
@@ -74,7 +80,7 @@ module.exports = {
                     const newQuery = _.cloneDeep(query);
                     newQuery.skip += query.limit;
 
-                    return scopusLoop(researchEntityModel, researchEntityId, newQuery);
+                    return scopusLoop(researchEntityModel, instituteId, newQuery);
                 })
         }
 
