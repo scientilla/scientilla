@@ -1,19 +1,16 @@
 // ObjectComparer.js - in api/services
 
 
-var stringSimilarity = require('string-similarity');
+var levenshtein = require('fast-levenshtein');
 var _ = require('lodash');
 
 module.exports = {
     compareStrings: function(a, b) {
         if (_.isNil(a) || _.isNil(b) || !_.isString(a) || !_.isString(b))
-            return .999;
-        a = '' + a;
-        b = '' + b;
-        if (a.length <=1 && b.length <=1)
-            return (a==b) ? 1 : .8;
-        if (a.length >=200 || b.length >=200)
-            return (a==b) ? 1 : .8;
-        return stringSimilarity.compareTwoStrings(a, b);
+            return .6;
+        if (a.length >=200 || b.length >=200 || a.length == 0 || b.length == 0)
+            return (a==b) ? 1 : .6;
+        const l = Math.max(a.length, b.length);
+        return 1-(levenshtein.get(a, b)/l);
     }
 };

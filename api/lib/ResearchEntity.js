@@ -195,14 +195,12 @@ module.exports = _.merge({}, BaseModel, {
             });
     },
     checkCopiedDocuments: function (ResearchEntityModel, researchEntityId, documentsToCheck, checkAgainstFunction) {
-        var threeshold = .50;
+        var threeshold = .85;
         return checkAgainstFunction(ResearchEntityModel, researchEntityId)
             .then(function (documents) {
                 documentsToCheck.forEach(function (docToCheck) {
-                    documents = documents.filter(d => d.id !== docToCheck.id);
-                    var isCopied = _.some(documents, function (d) {
-                        return d.getSimiliarity(docToCheck) >= threeshold;
-                    });
+                    const compareWith = documents.filter(d => d.id !== docToCheck.id);
+                    var isCopied = _.some(compareWith, d => d.getSimiliarity(docToCheck) >= threeshold);
                     if (!docToCheck.tags)
                         docToCheck.tags = [];
                     if (isCopied)
