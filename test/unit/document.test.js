@@ -1,9 +1,16 @@
 /* global Document */
 'use strict';
 
-var test = require('./../helper.js');
+const test = require('./../helper.js');
+const _ = require('lodash');
+
+let Doc;
 
 describe('Document model', () => {
+
+    before(() => {
+        Doc = _.partial(test.createModel, Document);
+    });
 
     describe('isValid', () => {
 
@@ -105,12 +112,12 @@ describe('Document model', () => {
             return Group.create(iitGroupData)
                 .then(res => iitGroup = res)
                 .then(() => User.createCompleteUser(usersData[0]))
-                .then(u=> users.push(u))
-                .then(()=>User.createCompleteUser(usersData[1]))
-                .then(u=> users.push(u))
-                .then(()=>Institute.create(institutesData))
-                .then(i=> institutes = i)
-                .then(()=> {
+                .then(u => users.push(u))
+                .then(() => User.createCompleteUser(usersData[1]))
+                .then(u => users.push(u))
+                .then(() => Institute.create(institutesData))
+                .then(i => institutes = i)
+                .then(() => {
                     const docData = _.merge({}, documentsData[5], {
                         authorships: [
                             {
@@ -132,26 +139,26 @@ describe('Document model', () => {
                     });
                     return User.createDraft(User, users[0].id, docData);
                 })
-                .then(doc=> {
+                .then(doc => {
                     doc.draft = false;
                     doc.draftCreator = null;
                     doc.draftGroupCreator = null;
                     return doc.savePromise();
                 })
-                .then(doc=> Document.findOneById(doc.id)
+                .then(doc => Document.findOneById(doc.id)
                     .populate('authorships')
                     .populate('affiliations'))
-                .then(doc=> {
+                .then(doc => {
                     document = doc;
 
-                    const authorship = doc.authorships.find(a=>a.position === 0);
+                    const authorship = doc.authorships.find(a => a.position === 0);
                     return Authorship.findOneById(authorship.id)
-                        .then(a=> {
+                        .then(a => {
                             a.researchEntity = users[0].id;
                             return a.savePromise();
                         })
                 })
-                .then(()=> {
+                .then(() => {
                     const draftData = _.merge({}, documentsData[5], {
                         authorships: [
                             {
@@ -172,7 +179,7 @@ describe('Document model', () => {
                         ]
                     });
                     return User.createDraft(User, users[1].id, draftData);
-                }).then(d=> Document.findOneById(d.id)
+                }).then(d => Document.findOneById(d.id)
                     .populate('authorships')
                     .populate('affiliations'))
                 .then(d => Document.findCopies(d, 1))
@@ -205,10 +212,10 @@ describe('Document model', () => {
             });
 
             return User.createDraft(User, users[1].id, docData)
-                .then(d=> Document.findOneById(d.id)
+                .then(d => Document.findOneById(d.id)
                     .populate('authorships')
                     .populate('affiliations'))
-                .then(d =>Document.findCopies(d, 1))
+                .then(d => Document.findCopies(d, 1))
                 .then(copies => copies.should.have.length(0));
         });
 
@@ -234,13 +241,38 @@ describe('Document model', () => {
             });
 
             return User.createDraft(User, users[1].id, docData)
-                .then(d=> Document.findOneById(d.id)
+                .then(d => Document.findOneById(d.id)
                     .populate('authorships')
                     .populate('affiliations'))
                 .then(d => Document.findCopies(d, 1))
                 .then(copies => copies.should.have.length(0));
         });
 
+
+    });
+
+    describe('getSimilarity', function () {
+        const sameDocumentThreeshold = .95;
+        const similarDocumentThreeshold = .80;
+        const differentDocumentThreeshold = .5;
+        const documentsData = test.getAllDocumentData();
+
+        it('two equal documents should have a very high similiarity', () => {
+            const document0 = Doc(documentsData[0]);
+            document0.getSimiliarity(document0).should.be.above(sameDocumentThreeshold);
+        });
+
+        it('two different documents should have a low similiarity', () => {
+            const document0 = Doc(documentsData[0]);
+            const document2 = Doc(documentsData[2]);
+            document0.getSimiliarity(document2).should.be.below(differentDocumentThreeshold);
+        });
+
+        it('two similar documents should have a high similiarity', () => {
+            const document0 = Doc(documentsData[0]);
+            const document1 = Doc(documentsData[1]);
+            document0.getSimiliarity(document1).should.be.above(similarDocumentThreeshold);
+        });
 
     });
 
