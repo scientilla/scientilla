@@ -12,6 +12,8 @@
 const _ = require('lodash');
 
 module.exports.bootstrap = function (cb) {
+    const env = sails.config.environment;
+    const isTest = env == 'test';
     // It's very important to trigger this callback method when you are finished
     // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
 
@@ -45,7 +47,7 @@ module.exports.bootstrap = function (cb) {
     }
 
     function importDocuments() {
-        if (!sails.config.scientilla.mainInstituteImport.enabled)
+        if (!sails.config.scientilla.mainInstituteImport.enabled || isTest)
             return Promise.resolve();
         return Document.count()
             .then(documentsNum => {
@@ -57,6 +59,8 @@ module.exports.bootstrap = function (cb) {
     }
 
     function initializeSources() {
+        if (isTest)
+            return Promise.resolve();
         return Source.count()
             .then(sourcesNum => {
                 if (sourcesNum)
