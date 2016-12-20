@@ -30,6 +30,12 @@ module.exports = _.merge({}, BaseModel, {
             corresponding: false,
             affiliations: []
         };
+    },
+    createDraftAuthorships: function(draftId, draftData){
+        const authorshipFields = ['position', 'affiliations', 'corresponding'];
+        const authorships = _.map(draftData.authorships, a => _.pick(a, authorshipFields));
+        _.forEach(authorships, a => a.document = draftId);
+        return Authorship.create(authorships);
     }
 });
 
