@@ -17,9 +17,7 @@ const BaseModel = require("./BaseModel.js");
 module.exports = _.merge({}, BaseModel, {
     attributes: {},
     createDraft: function (ResearchEntityModel, researchEntityId, draftData) {
-        const documentFields = Document.getFields();
-        const selectedDraftData = _.pick(draftData, documentFields);
-        selectedDraftData.draft = true;
+        const selectedDraftData = Document.selectDraftData(draftData);
         return Promise.all([
             ResearchEntityModel.findOneById(researchEntityId).populate('drafts'),
             Document.create(selectedDraftData)
@@ -32,12 +30,9 @@ module.exports = _.merge({}, BaseModel, {
                 ]);
             })
             .spread(function (draftId) {
-                const authorshipFields = ['position', 'affiliations', 'corresponding'];
-                const authorships = _.map(draftData.authorships, a => _.pick(a, authorshipFields));
-                _.forEach(authorships, a => a.document = draftId);
                 return Promise.all([
                     draftId,
-                    Authorship.create(authorships)
+                    Authorship.createDraftAuthorships(draftId, draftData)
                 ]);
             })
             .spread(function (draftId) {
@@ -116,12 +111,7 @@ module.exports = _.merge({}, BaseModel, {
                                 sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
                                 return Document.destroy({id: draft.id}).then(_ => doc);
                             })
-                            .then(d => {
-                                d.draft = false;
-                                d.draftCreator = null;
-                                d.draftGroupCreator = null;
-                                return d.savePromise();
-                            })
+                            .then(d => d.draftToDocument())
                             .then(d => ResearchEntityModel.doVerifyDocument(d, researchEntityId, authorshipData));
                     });
             })
@@ -130,7 +120,7 @@ module.exports = _.merge({}, BaseModel, {
                     return {
                         error: e.error,
                         item: e.item
-                    }
+                    };
                 throw e;
             });
     },

@@ -122,6 +122,12 @@ module.exports = _.merge({}, BaseModel, {
                 return self[v];
             });
         },
+        draftToDocument: function () {
+            this.draft = false;
+            this.draftCreator = null;
+            this.draftGroupCreator = null;
+            return this.savePromise();
+        },
         getAuthors: function () {
             if (!this.authorsStr)
                 return [];
@@ -174,6 +180,12 @@ module.exports = _.merge({}, BaseModel, {
     },
     getFields: function () {
         return fields.map(f => f.name);
+    },
+    selectDraftData: function (draftData) {
+        const documentFields = Document.getFields();
+        const selectedDraftData = _.pick(draftData, documentFields);
+        selectedDraftData.draft = true;
+        return selectedDraftData;
     },
     deleteIfNotVerified: function (documentId) {
         function countAuthorsAndGroups(document) {

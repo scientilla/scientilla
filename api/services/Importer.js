@@ -60,13 +60,19 @@ module.exports = {
         }
 
 
-        function scopusLoop(researchEntityModel, researchEntityId, query) {
+        function scopusLoop(researchEntityModel, instituteId, query) {
 
-            return Connector.getDocuments(researchEntityModel, researchEntityId, query, true)
+            return Connector.getDocuments(researchEntityModel, instituteId, query, true)
                 .then(result => {
                     const documents = result.items;
-                    Group.createDrafts(Group, institute.id, documents)
-                        .then(docs => Group.verifyDrafts(Group, institute.id, docs.map(d => d.id)));
+
+                    const toImport = documents.filter(
+                        d => d.authorships.filter(
+                            a => a.affiliations.includes(instituteId)
+                        ).length);
+
+                    Promise.all(toImport.map(draftData => fastCreateDraft(draftData)))
+                        .then(drafts => drafts.forEach(draft => fastVerifyDraft(draft, instituteId)));
 
                     if (result.count <= (query.limit + query.skip))
                         return;
@@ -74,8 +80,28 @@ module.exports = {
                     const newQuery = _.cloneDeep(query);
                     newQuery.skip += query.limit;
 
-                    return scopusLoop(researchEntityModel, researchEntityId, newQuery);
+                    return scopusLoop(researchEntityModel, instituteId, newQuery);
                 })
+        }
+
+        function fastCreateDraft(draftData) {
+            const selectedDraftData = Document.selectDraftData(draftData);
+            selectedDraftData.draftGroupCreator = institute.id;
+            return Document.create(selectedDraftData)
+                .then(draft =>
+                    Promise.all([
+                        draft,
+                        Authorship.createDraftAuthorships(draft.id, draftData)
+                    ]))
+                .spread(draft=>draft);
+        }
+
+        function fastVerifyDraft(draft, instituteId) {
+            if (draft.isValid()) {
+                draft.draftToDocument();
+                Group.doVerifyDocument(draft, instituteId)
+            }
+
         }
 
     },
