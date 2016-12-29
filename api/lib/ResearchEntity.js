@@ -127,7 +127,7 @@ module.exports = _.merge({}, BaseModel, {
     verifyDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(documentId => Model.verifyDocument(Model, researchEntityId, documentId)));
     },
-    verifyDocument: function (Model, researchEntityId, documentId, position, affiliationInstituteIds) {
+    verifyDocument: function (Model, researchEntityId, documentId, position, affiliationInstituteIds, corresponding) {
         return Document.findOneById(documentId)
             .populate('affiliations')
             .populate('authorships')
@@ -137,7 +137,7 @@ module.exports = _.merge({}, BaseModel, {
                         error: 'Document not found',
                         item: researchEntityId
                     };
-                return Model.getAuthorshipsData(document, researchEntityId, position, affiliationInstituteIds)
+                return Model.getAuthorshipsData(document, researchEntityId, position, affiliationInstituteIds, corresponding)
             })
             .then(authorshipData => {
                 if (!authorshipData.isVerifiable)
