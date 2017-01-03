@@ -31,9 +31,9 @@ module.exports = {
 
                 return self.makeRequest(reqConfig)
                     .then(res => {
-                        /*if (!skipCopiedCheck)
+                        if (!skipCopiedCheck)
                          return ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.items)
-                         .then(documents => ({items: documents, count: res.count}));*/
+                         .then(documents => ({items: documents, count: res.count}));
 
                         return res;
                     });
