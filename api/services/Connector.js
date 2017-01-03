@@ -31,9 +31,9 @@ module.exports = {
 
                 return self.makeRequest(reqConfig)
                     .then(res => {
-                        if (!skipCopiedCheck)
-                            return ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.items)
-                                .then(documents => ({items: documents, count: res.count}));
+                        /*if (!skipCopiedCheck)
+                         return ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.items)
+                         .then(documents => ({items: documents, count: res.count}));*/
 
                         return res;
                     });
@@ -256,9 +256,7 @@ module.exports = {
                 const documents = _.get(res, 'search-results.entry');
                 return {documents, count};
             },
-            transform: d1 => {
-                return scoupsSingleRequest(d1, 0);
-            }
+            transform: scopusTransform
         };
     }
 };
@@ -291,165 +289,14 @@ function getScopusId(d) {
     return null;
 }
 
-function scoupsSingleRequest(d1, attempt) {
+function scopusTransform(d1) {
     var scopusId = getScopusId(d1);
-    return request
-        .get({
-            uri: 'https://api.elsevier.com/content/abstract/scopus_id/' + scopusId,
-            headers: {
-                'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
-                'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
-                Accept: 'application/json'
-            },
-            json: true
-        })
-        .catch(function (err) {
-            if (attempt < 3) {
-                sails.log.debug('Error: Scopus Id: ' + scopusId + ', trying again, attempt n. ' + (attempt + 1));
-                return scoupsSingleRequest(d1, attempt + 1);
-            }
-
-            sails.log.debug('Scopus request failed. Scopus Id = ' + scopusId);
-            sails.log.debug(err.error);
-
-            return {};
-        })
-        .then(function (res) {
-            function getConditionalField(obj, path, type) {
-                const vals = toArray(_.get(obj, path));
-                return _.get(_.find(vals, {'@type': type}), '$');
-            }
-
-            const d2 = _.get(res, 'abstracts-retrieval-response', {});
-            const scopusSource = _.get(d2, 'item.bibrecord.head.source');
-
-            const sourceTypeMappings = {
-                'j': 'journal',
-                'p': 'conference',
-                'b': 'book',
-                'r': 'report',
-                'k': 'bookseries'
-            };
-
-            var typeMappings = {
-                ar: 'article',
-                ab: 'abstract_report',
-                ip: 'article_in_press',
-                bk: 'book',
-                ch: 'book_chapter',
-                cp: 'conference_paper',
-                cr: 'conference_review',
-                ed: 'editorial',
-                er: 'erratum',
-                le: 'letter',
-                no: 'note',
-                re: 'review',
-                sh: 'short_survey'
-            };
-
-            var sourceType = sourceTypeMappings[getDollars(scopusSource, '@type')];
-            var documentData = {
-                title: _.get(d1, 'dc:title'),
-                authorsStr: _.map(
-                    _.get(d2, 'authors.author'),
-                    function (c) {
-                        return _.get(c, 'ce:indexed-name');
-                    }).join(', '),
-                authorKeywords: _.map(
-                    _.get(d2, 'authkeywords.author-keyword'),
-                    function (c) {
-                        return _.get(c, '$');
-                    }).join(', '),
-                year: _.get(d2, 'item.bibrecord.head.source.publicationdate.year'),
-                doi: _.get(d2, 'coredata.prism:doi'),
-                sourceType: sourceType,
-                scopusId: scopusId,
-                abstract: _.trim(_.get(d2, 'coredata.dc:description')),
-                articleNumber: _.get(d2, 'item.bibrecord.head.source.article-number'),
-                journal: d1['prism:publicationName'],
-                volume: d1['prism:volume'],
-                issue: d1['prism:issueIdentifier'],
-                pages: d1['prism:pageRange'],
-                type: typeMappings[d1['subtype']]
-            };
-
-            if (_.isEmpty(documentData.authorsStr))
-                throw {
-                    error: 'Document field missing',
-                    retry: true,
-                    d1: d1,
-                    scopusId: scopusId
-                };
-
-
-            const sourceData = {
-                type: sourceType,
-                scopusId: _.get(scopusSource, '@srcid'),
-                title: getDollars(scopusSource, 'sourcetitle'),
-                issn: getConditionalField(scopusSource, 'issn', 'print'),
-                eissn: getConditionalField(scopusSource, 'issn', 'electronic'),
-                isbn: getConditionalField(scopusSource, 'isbn', 'print'),
-                publisher: _.get(scopusSource, 'publisher.publishername'),
-                year: _.get(scopusSource, 'publicationyear.@first'),
-                website: getConditionalField(scopusSource, 'website.ce:e-address', 'email'),
-                location: getConferenceLocation(d2),
-                acronym: getConferenceAcronym(d2)
-            };
-
-            const allAffiliations = toArray(d2.affiliation);
-
-            const scopusInstitutes = _.map(allAffiliations, a => ({
-                name: a.affilname,
-                city: a['affiliation-city'],
-                country: a['affiliation-country'],
-                scopusId: a['@id']
-            }));
-
-            const scopusInstituteError = scopusInstitutes.filter(si => (!si.name || !si.scopusId)).length;
-            if (scopusInstituteError)
-                throw {
-                    error: 'Affiliation field missing',
-                    retry: true,
-                    d1: d1,
-                    scopusId: scopusId
-                };
-
-            const institutesCreationFns = _.map(
-                scopusInstitutes,
-                i => Institute.findOrCreate({scopusId: i.scopusId}, i)
-            );
-
-            return Promise.all([
-                Source.findOrCreate({scopusId: sourceData.scopusId}, sourceData),
-                Promise.all(institutesCreationFns)
-            ])
-                .spread((newSource, newInstitutes) => [d2, documentData, newInstitutes, newSource]);
-        })
-        .spread(function (d2, newDoc, newInstitutes, newSource) {
-            const scopusAuthorships = _.get(d2, 'authors.author');
-
-            const correspondingAuthorIndexedName = _.get(d2, 'item.bibrecord.head.correspondence.person.ce:indexed-name');
-            const correspondingIndex = _.findIndex(newDoc.authorsStr.split(', '), correspondingAuthorIndexedName);
-            newDoc.authorships = _.map(scopusAuthorships, (a, i) => {
-                const affiliationArray = toArray(a.affiliation);
-                const affiliationInstitutes = _.map(
-                    affiliationArray,
-                    aff => _.find(newInstitutes, {scopusId: aff['@id']}).id
-                );
-
-                return {
-                    position: i,
-                    corresponding: correspondingIndex === i,
-                    affiliations: affiliationInstitutes
-                };
-            });
-            newDoc.source = newSource;
-            return newDoc;
-        })
-        .catch(function (err) {
+    return makeRequest(d1, 0)
+        .then(generateDocument)
+        .catch(err => {
             if (err.retry) {
-                sails.log.debug(err.error);
-                return scoupsSingleRequest(err.d1, 0);
+                sails.log.debug(err.message);
+                return scopusTransform(d1);
             }
 
             sails.log.debug('Document failed. Scopus Id = ' + scopusId);
@@ -457,6 +304,169 @@ function scoupsSingleRequest(d1, attempt) {
 
             return {};
         });
+
+
+    function makeRequest(d1, attempt) {
+        return request
+            .get({
+                uri: 'https://api.elsevier.com/content/abstract/scopus_id/' + scopusId,
+                headers: {
+                    'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
+                    'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
+                    Accept: 'application/json'
+                },
+                json: true
+            })
+            .catch(err => {
+                if (attempt < 3) {
+                    sails.log.debug('Error: Scopus Id: ' + scopusId + ', trying again, attempt n. ' + (attempt + 1));
+                    return makeRequest(d1, attempt + 1);
+                }
+
+                sails.log.debug('Scopus request failed. Scopus Id = ' + scopusId);
+
+                return {error: err.error};
+            });
+    }
+
+    function generateDocument(res) {
+        const scopusId = getScopusId(d1);
+
+        if (_.has(res, 'error'))
+            throw res.error;
+
+        function getConditionalField(obj, path, type) {
+            const vals = toArray(_.get(obj, path));
+            return _.get(_.find(vals, {'@type': type}), '$');
+        }
+
+        const d2 = _.get(res, 'abstracts-retrieval-response', {});
+        const scopusSource = _.get(d2, 'item.bibrecord.head.source');
+
+        const sourceTypeMappings = {
+            'j': 'journal',
+            'p': 'conference',
+            'b': 'book',
+            'r': 'report',
+            'k': 'bookseries'
+        };
+
+        var typeMappings = {
+            ar: 'article',
+            ab: 'abstract_report',
+            ip: 'article_in_press',
+            bk: 'book',
+            ch: 'book_chapter',
+            cp: 'conference_paper',
+            cr: 'conference_review',
+            ed: 'editorial',
+            er: 'erratum',
+            le: 'letter',
+            no: 'note',
+            re: 'review',
+            sh: 'short_survey'
+        };
+
+        var sourceType = sourceTypeMappings[getDollars(scopusSource, '@type')];
+        var documentData = {
+            title: _.get(d1, 'dc:title'),
+            authorsStr: _.map(
+                _.get(d2, 'authors.author'),
+                function (c) {
+                    return _.get(c, 'ce:indexed-name');
+                }).join(', '),
+            authorKeywords: _.map(
+                _.get(d2, 'authkeywords.author-keyword'),
+                function (c) {
+                    return _.get(c, '$');
+                }).join(', '),
+            year: _.get(d2, 'item.bibrecord.head.source.publicationdate.year'),
+            doi: _.get(d2, 'coredata.prism:doi'),
+            sourceType: sourceType,
+            scopusId: scopusId,
+            abstract: _.trim(_.get(d2, 'coredata.dc:description')),
+            articleNumber: _.get(d2, 'item.bibrecord.head.source.article-number'),
+            journal: d1['prism:publicationName'],
+            volume: d1['prism:volume'],
+            issue: d1['prism:issueIdentifier'],
+            pages: d1['prism:pageRange'],
+            type: typeMappings[d1['subtype']]
+        };
+
+        if (_.isEmpty(documentData.authorsStr)) {
+            throw {
+                message: 'Document field missing',
+                retry: true,
+                scopusId: scopusId
+            };
+        }
+
+
+        const sourceData = {
+            type: sourceType,
+            scopusId: _.get(scopusSource, '@srcid'),
+            title: getDollars(scopusSource, 'sourcetitle'),
+            issn: getConditionalField(scopusSource, 'issn', 'print'),
+            eissn: getConditionalField(scopusSource, 'issn', 'electronic'),
+            isbn: getConditionalField(scopusSource, 'isbn', 'print'),
+            publisher: _.get(scopusSource, 'publisher.publishername'),
+            year: _.get(scopusSource, 'publicationyear.@first'),
+            website: getConditionalField(scopusSource, 'website.ce:e-address', 'email'),
+            location: getConferenceLocation(d2),
+            acronym: getConferenceAcronym(d2)
+        };
+
+        const allAffiliations = toArray(d2.affiliation);
+
+        const scopusInstitutes = _.map(allAffiliations, a => ({
+            name: a.affilname,
+            city: a['affiliation-city'],
+            country: a['affiliation-country'],
+            scopusId: a['@id']
+        }));
+
+        const scopusInstituteError = scopusInstitutes.filter(si => (!si.name || !si.scopusId)).length;
+        if (scopusInstituteError)
+            throw {
+                message: 'Affiliation field missing',
+                retry: true,
+                scopusId: scopusId
+            };
+
+        const institutesCreationFns = _.map(
+            scopusInstitutes,
+            i => Institute.findOrCreate({scopusId: i.scopusId}, i)
+        );
+
+        return Promise.all([
+            Source.findOrCreate({scopusId: sourceData.scopusId}, sourceData),
+            Promise.all(institutesCreationFns)
+        ])
+            .spread((newSource, newInstitutes) => [d2, documentData, newInstitutes, newSource])
+            .spread(function (d2, newDoc, newInstitutes, newSource) {
+                const scopusAuthorships = _.get(d2, 'authors.author');
+
+                const correspondingAuthorIndexedName = _.get(d2, 'item.bibrecord.head.correspondence.person.ce:indexed-name');
+                const correspondingIndex = _.findIndex(newDoc.authorsStr.split(', '), correspondingAuthorIndexedName);
+                newDoc.authorships = _.map(scopusAuthorships, (a, i) => {
+                    const affiliationArray = toArray(a.affiliation);
+                    const affiliationInstitutes = _.map(
+                        affiliationArray,
+                        aff => _.find(newInstitutes, {scopusId: aff['@id']}).id
+                    );
+
+                    return {
+                        position: i,
+                        corresponding: correspondingIndex === i,
+                        affiliations: affiliationInstitutes
+                    };
+                });
+                newDoc.source = newSource;
+                return newDoc;
+            })
+    }
+
+
 }
 
 function getDollars(obj, path) {
