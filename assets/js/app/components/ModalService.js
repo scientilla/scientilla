@@ -77,6 +77,25 @@
         };
 
 
+        service.openScientillaTagForm = function (document) {
+
+            var scopeVars = {
+                document: document
+            };
+
+            service.modal = openModal(
+                '<scientilla-tag-form\
+                    document="vm.document"\
+                    on-submit="vm.onSubmit" \
+                    close-fn="vm.onClose" \
+                 ></scientilla-tag-form>',
+                scopeVars
+            );
+
+            return service.modal.result;
+        };
+
+
         service.openScientillaGroupForm = function (group) {
 
             var scopeVars = {
@@ -84,13 +103,13 @@
             };
 
             service.modal = openModal(
-                    '<scientilla-group-form\
-                        group="vm.group"\
-                        on-failure="vm.onFailure"\
-                        on-submit="vm.onSubmit"\
-                     ></scientilla-group-form>',
-                    scopeVars
-                    );
+                '<scientilla-group-form\
+                    group="vm.group"\
+                    on-failure="vm.onFailure"\
+                    on-submit="vm.onSubmit"\
+                 ></scientilla-group-form>',
+                scopeVars
+            );
 
             return service.modal.result;
         };

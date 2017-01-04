@@ -75,6 +75,15 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'affiliation',
             via: 'document',
         },
+        userTags: {
+            collection: 'tag',
+            via: 'document'
+        },
+        tagLabels: {
+            collection: 'tagLabel',
+            via: 'documents',
+            through: 'tag'
+        },
         discardedCoauthors: {
             collection: 'User',
             via: 'discardedDocuments',

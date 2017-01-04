@@ -19,13 +19,16 @@
 
     scientillaDocumentController.$inject = [
         'ModalService',
-        'config'
+        'config',
+        'context'
     ];
 
-    function scientillaDocumentController(ModalService, config) {
+    function scientillaDocumentController(ModalService, config, context) {
         var vm = this;
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
+        vm.editTags = editTags;
+        vm.isUserTagsShowable = isUserTagsShowable;
 
         activate();
 
@@ -42,6 +45,14 @@
             return _.some(vm.document.affiliations, function (a) {
                 return a.institute === config.mainInstitute.id
             });
+        }
+
+        function isUserTagsShowable() {
+            return context.getResearchEntity().getType() === 'user';
+        }
+
+        function editTags() {
+            ModalService.openScientillaTagForm(vm.document);
         }
     }
 

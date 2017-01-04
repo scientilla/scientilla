@@ -48,7 +48,8 @@
                 EventsService.NOTIFICATION_ACCEPTED,
                 EventsService.NOTIFICATION_DISCARDED,
                 EventsService.DRAFT_UNVERIFIED,
-                EventsService.DOCUMENT_VERIFIED
+                EventsService.DOCUMENT_VERIFIED,
+                EventsService.DOCUMENT_USER_TAGS_UPDATED
             ], updateList);
         };
 

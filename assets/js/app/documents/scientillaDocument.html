@@ -26,4 +26,8 @@
             <span ng-bind-html='vm.document | doi'></span>
         </small>
     </div>
+    <div ng-if="vm.isUserTagsShowable()">
+        <span ng-bind-html='vm.document | documentusertags'></span>
+        <span ng-click="vm.editTags()" class="fa fa-edit scientilla-clickable"></span>
+    </div>
 </div>
