@@ -2,20 +2,21 @@
     'use strict';
 
     angular.module('components')
-            .component('scientillaMulticomplete', {
-                templateUrl: 'partials/scientillaMulticomplete.html',
-                controller: scientillaMulticompleteController,
-                controllerAs: 'vm',
-                bindings: {
-                    items: "=",
-                    query: "&",
-                    filter: "&",
-                    transform: "&",
-                    title: "@",
-                    suggestedItems: "="
-                }
-            });
-
+        .component('scientillaMulticomplete', {
+            templateUrl: 'partials/scientillaMulticomplete.html',
+            controller: scientillaMulticompleteController,
+            controllerAs: 'vm',
+            bindings: {
+                items: "=",
+                query: "&",
+                filter: "&",
+                transform: "&",
+                title: "@",
+                suggestedItems: "=",
+                addNotFound: "<?",
+                itemContructor: "&?"
+            }
+        });
 
 
     scientillaMulticompleteController.$inject = [
@@ -33,17 +34,19 @@
             var info = this.query()(searchText);
             var filter = this.filter();
             return Restangular.all(info.model).getList(info.qs)
-                    .then(function (result) {
-                        var displayItems = result;
-                        var elementsToDiscard;
-                        if (_.isFunction(filter))
-                            elementsToDiscard = filter();
-                        if (_.isArray(filter))
-                            elementsToDiscard = filter;
-                        if (_.isArray(elementsToDiscard))
-                            displayItems = filterOutUsedElemsById(displayItems, elementsToDiscard);
-                        return displayItems;
-                    });
+                .then(function (result) {
+                    var displayItems = result;
+                    var elementsToDiscard;
+                    if (_.isFunction(filter))
+                        elementsToDiscard = filter();
+                    if (_.isArray(filter))
+                        elementsToDiscard = filter;
+                    if (_.isArray(elementsToDiscard))
+                        displayItems = filterOutUsedElemsById(displayItems, elementsToDiscard);
+                    if (!displayItems.length && vm.addNotFound)
+                        displayItems.push(vm.itemContructor()(searchText));
+                    return displayItems;
+                });
         }
 
         function addItem(item) {
@@ -75,8 +78,7 @@
         }
 
 
-        function onSelect ($item, $model, $label, $event) {
-            
+        function onSelect($item, $model, $label, $event) {
             vm.addItem($item);
             vm.searchValue = '';
         }
