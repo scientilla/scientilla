@@ -18,21 +18,21 @@ const DRAFT = 'draft';
 const PUBLIC = 'public';
 
 const fields = [
-    {name: 'authorsStr', weight: 0.8},
-    {name: 'authorKeywords', weight: 0.1},
+    {name: 'authorsStr', weight: 0.4},
+    {name: 'authorKeywords', weight: 0},
     {name: 'title', weight: 1},
-    {name: 'year', weight: .9},
+    {name: 'year', weight: .6},
     {name: 'source', weight: 0},
-    {name: 'issue', weight: 0.1},
-    {name: 'volume', weight: 0.1},
-    {name: 'pages', weight: 0.1},
-    {name: 'articleNumber', weight: 0.1},
-    {name: 'doi', weight: 0.8},
-    {name: 'abstract', weight: 0.2},
-    {name: 'type', weight: 0.4},
-    {name: 'sourceType', weight: 0.4},
-    {name: 'scopusId', weight: 0.8},
-    {name: 'wosId', weight: 0.2}
+    {name: 'issue', weight: 0},
+    {name: 'volume', weight: 0},
+    {name: 'pages', weight: 0},
+    {name: 'articleNumber', weight: 0},
+    {name: 'doi', weight: 0.5},
+    {name: 'abstract', weight: 0.1},
+    {name: 'type', weight: 0.2},
+    {name: 'sourceType', weight: 0.2},
+    {name: 'scopusId', weight: 0.6},
+    {name: 'wosId', weight: 0.1}
 ];
 
 module.exports = _.merge({}, BaseModel, {
@@ -144,7 +144,10 @@ module.exports = _.merge({}, BaseModel, {
         getSimiliarity: function (doc, minThreeshold = 0) {
             const p = 2;
             var self = this;
-            const tmp = _.reduce(fields, function (sum, f) {
+            if (ObjectComparer.compareStrings(self.title, doc.title) < .6)
+                return .45;
+            const comparisonFields = fields.filter(f => f.weight);
+            const tmp = _.reduce(comparisonFields, function (sum, f) {
                 var fieldSimilarity = ObjectComparer.compareStrings(self[f.name], doc[f.name]);
                 return sum + Math.pow(fieldSimilarity, p) * f.weight;
             }, 0);
