@@ -18,9 +18,9 @@ const ResearchEntity = require('../lib/ResearchEntity');
 const USER = 'user';
 const ADMINISTRATOR = 'administrator';
 
-function buildCheckDuplicatedDocuments(checkAgainstFunction) {
+function buildCheckDuplicatedDocuments(includeDrafts = true) {
     return function(documents, researchEntityId) {
-        return ResearchEntity.checkCopiedDocuments(User, researchEntityId, documents, checkAgainstFunction);
+        return ResearchEntity.checkCopiedDocuments(User, researchEntityId, documents, includeDrafts);
     }
 }
 
@@ -63,19 +63,19 @@ module.exports = _.merge({}, ResearchEntity, {
         drafts: {
             collection: 'Document',
             via: 'draftCreator',
-            _postPopulate: buildCheckDuplicatedDocuments(ResearchEntity.getAllDocuments)
+            _postPopulate: buildCheckDuplicatedDocuments()
         },
         documents: {
             collection: 'Document',
             via: 'users',
             through: 'authorship',
-            _postPopulate: buildCheckDuplicatedDocuments(ResearchEntity.getAllVerifiedDocuments)
+            _postPopulate: buildCheckDuplicatedDocuments(false)
         },
         suggestedDocuments: {
             collection: 'Document',
             via: 'users',
             through: 'documentsuggestion',
-            _postPopulate: buildCheckDuplicatedDocuments(ResearchEntity.getAllDocuments)
+            _postPopulate: buildCheckDuplicatedDocuments()
         },
         authorships: {
             collection: 'authorship',
@@ -85,7 +85,7 @@ module.exports = _.merge({}, ResearchEntity, {
             collection: 'Document',
             via: 'discardedCoauthors',
             through: 'discarded',
-            _postPopulate: buildCheckDuplicatedDocuments(ResearchEntity.getAllDocuments)
+            _postPopulate: buildCheckDuplicatedDocuments()
         },
         jsonWebTokens: {
             collection: 'jwt',
