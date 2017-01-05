@@ -62,6 +62,17 @@ module.exports = function expand(req, res) {
 
     delete populate.where.populate;
 
+    let sort = actionUtil.parseSort(req);
+
+    if (_.isEmpty(sort) && relationModel.DEFAULT_SORTING)
+        sort = relationModel.DEFAULT_SORTING;
+    const hardLimit = 1500;
+    const skip = actionUtil.parseSkip(req);
+    const limit = hardLimit + skip;
+    populate.sort = sort;
+    populate.limit = limit;
+    populate.skip = skip;
+
     Model.findOne(parentPk)
         .populate(relation, populate)
         .then(matchingRecord => {
@@ -70,29 +81,25 @@ module.exports = function expand(req, res) {
             if (!matchingRecord[relation])
                 return res.notFound(util.format('Specified record (%s) is missing relation `%s`', parentPk, relation));
 
-            const recordsId = _.map(matchingRecord[relation], 'id');
+            const count = matchingRecord[relation].length + skip;
+            const l = actionUtil.parseLimit(req);
+            // const l = 1;
+            const recs = _.slice(matchingRecord[relation], 0, l);
+            const recordsId = _.slice(_.map(matchingRecord[relation], 'id'), actionUtil.parseLimit(req));
 
             let populateFields = req.param('populate');
             if (populateFields && !_.isArray(populateFields))
                 populateFields = [populateFields];
             populateFields = _.filter(populateFields, f => _.some(relationModel.associations, {alias: f}));
-
-            let sort = actionUtil.parseSort(req);
-
-            if (_.isEmpty(sort) && relationModel.DEFAULT_SORTING)
-                sort = relationModel.DEFAULT_SORTING;
-
             //sTODO add check for non-exstinting pupulate fields
             //sTODO add support for deep populate
-            const limit = actionUtil.parseLimit(req);
-            const skip = actionUtil.parseSkip(req);
             const where = {'id': recordsId};
             let query = relationModel.find({where, sort, limit, skip});
             _.forEach(populateFields, f => query = query.populate(f));
 
             const countQuery = relationModel.count({where});
 
-            return Promise.all([query, countQuery])
+            return Promise.all([recs, count])
                 .spread((matchingRecords, count) => {
                     //if asking for a single related entity
                     if (childPk)
@@ -100,13 +107,14 @@ module.exports = function expand(req, res) {
                             return res.ok(matchingRecords);
                         else
                             return res.notFound();
-                    const postPopulate = _.get(Model, '_attributes.'+relation+'._postPopulate') || ((xs, id) => Promise.resolve(xs));
+                    const postPopulate = _.get(Model, '_attributes.' + relation + '._postPopulate') || ((xs, id) => Promise.resolve(xs));
 
                     return postPopulate(matchingRecords, parentPk)
                         .then(newRecords => res.ok({
-                            count: count,
-                            items: newRecords
-                        }));
+                                count: count,
+                                items: newRecords
+                            })
+                        );
                 })
                 .catch(err => res.serverError(err));
 
