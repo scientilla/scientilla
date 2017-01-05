@@ -6,10 +6,14 @@ var _ = require('lodash');
 
 module.exports = {
     compareStrings: function(a, b) {
-        if (_.isNil(a) || _.isNil(b) || !_.isString(a) || !_.isString(b))
-            return .6;
-        if (a.length >=200 || b.length >=200 || a.length == 0 || b.length == 0)
-            return (a==b) ? 1 : .6;
+        if (_.isNil(a) || _.isNumber(a))
+            a = _.toString(a);
+        if (_.isNil(b) || _.isNumber(b))
+            b = _.toString(b);
+         if (a.length == 0 || b.length == 0)
+            return .7;
+        if (a.length >=200 || b.length >=200)
+            return (a==b) ? 1 : .7;
         const l = Math.max(a.length, b.length);
         return 1-(levenshtein.get(a, b)/l);
     }
