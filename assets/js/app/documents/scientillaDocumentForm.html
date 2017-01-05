@@ -1,17 +1,17 @@
 <form class="autosave {{vm.status.class}}" autocomplete="off" ng-click="vm.closePopover()">
     <div class="form-group">
+        <label for="documentType">Document Type</label>
+        <select class="form-control" id="documentType" placeholder="Document Type" ng-model="vm.document.type"
+                ng-options="option.key as option.label for option in vm.documentTypes">
+        </select>
+    </div>
+    <div class="form-group">
         <label for="sourceType">Source Type</label>
         <select class="form-control" id="sourceType" placeholder="Source Type" ng-model="vm.document.sourceType">
             <option value="">--Not Selected--</option>
             <option value="journal">Journal</option>
             <option value="book">Book</option>
             <option value="conference">Conference</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="documentType">Document Type</label>
-        <select class="form-control" id="documentType" placeholder="Document Type" ng-model="vm.document.type"
-                ng-options="option.key as option.label for option in vm.documentTypes">
         </select>
     </div>
     <div class="form-group">
@@ -26,7 +26,7 @@
         <label for="year">Year</label>
         <input type="text" class="form-control" id="year" placeholder="Year" ng-model="vm.document.year">
     </div>
-    <div class="form-group">
+    <div class="form-group" ng-if="vm.document.sourceType">
         <label for="source">{{vm.sourceLabel}}</label>
         <div class="input-group">
             <input id="source" type="text" ng-model="vm.document.source" placeholder="{{vm.sourceLabel}}"
