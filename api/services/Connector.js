@@ -324,6 +324,7 @@ function scoupsSingleRequest(d1, attempt) {
             const scopusSource = _.get(d2, 'item.bibrecord.head.source');
 
             const sourceTypeMappings = {
+                'd': 'journal', //trade journal
                 'j': 'journal',
                 'p': 'conference',
                 'b': 'book',
