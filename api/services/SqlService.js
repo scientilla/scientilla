@@ -17,9 +17,8 @@ const connectionStr = [
 var db = pgp(connectionStr);
 
 module.exports = {
-    dialect: 'postgresql',
     generateFromJson: query => {
-        const dialect = this.dialect;
+        const dialect = 'postgresql';
         const generator = GeneratorFn({dialect: dialect});
 
         return new Promise((resolve, reject) => {
@@ -36,8 +35,10 @@ module.exports = {
                     const uppercaseBinding = _.upperCase(binding);
                     if (_.includes(['FALSE', 'TRUE'], uppercaseBinding))
                         value = uppercaseBinding === "TRUE";
+                    else if (/^\w+\.?\w*$/.test(binding))
+                        value = parseInt(binding, 10)
                     else
-                        value = parseInt(binding, 10) || "'" + binding + "'";
+                        value = "'" + binding + "'";
 
                     sql = _.replace(sql, regex, '$1' + value + '$2');
                 });
