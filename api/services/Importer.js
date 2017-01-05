@@ -67,9 +67,10 @@ module.exports = {
                     const documents = result.items;
 
                     const toImport = documents.filter(
-                        d => d.authorships.filter(
+                        d => !_.isEmpty(d) && d.authorships.filter(
                             a => a.affiliations.includes(instituteId)
-                        ).length);
+                        ).length
+                    );
 
                     Promise.all(toImport.map(draftData => fastCreateDraft(draftData)))
                         .then(drafts => drafts.forEach(draft => fastVerifyDraft(draft, instituteId)));

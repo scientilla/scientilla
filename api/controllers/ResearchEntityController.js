@@ -39,13 +39,14 @@ module.exports = {
         res.halt(Model.verifyDrafts(Model, researchEntityId, draftIds));
     },
     verifyDocument: function (req, res) {
-        var researchEntityId = req.params.id;
-        var documentId = req.body.id;
-        var position = req.body.position;
-        var affiliationInstituteIds = req.body.affiliations;
-        var Model = getModel(req);
+        const researchEntityId = req.params.id;
+        const documentId = req.body.id;
+        const position = req.body.position;
+        const affiliationInstituteIds = req.body.affiliations;
+        const corresponding = req.body.corresponding;
+        const Model = getModel(req);
         // TODO in case of failed verify give response with details instead of 400
-        res.halt(Model.verifyDocument(Model, researchEntityId, documentId, position, affiliationInstituteIds));
+        res.halt(Model.verifyDocument(Model, researchEntityId, documentId, position, affiliationInstituteIds, corresponding));
     },
     verifyDocuments: function (req, res) {
         var researchEntityId = req.params.id;

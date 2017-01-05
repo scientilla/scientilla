@@ -22,7 +22,9 @@
             toAuthorshipModel: toAuthorshipModel,
             toAuthorshipsCollection: applyToAll(toAuthorshipModel),
             toInstituteModel: toInstituteModel,
-            toInstitutesCollection: applyToAll(toInstituteModel)
+            toInstitutesCollection: applyToAll(toInstituteModel),
+            toTagLabelModel: toTagLabelModel,
+            toTagLabelsCollection: applyToAll(toTagLabelModel),
         };
         const userPrototype = {
             getAliases: function () {
@@ -185,9 +187,23 @@
             getDisplayName: function () {
                 return this.getDisplayName();
             },
-            getUserIndex: function(user) {
+            getUserIndex: function (user) {
                 var index = _.findIndex(this.getAuthors(), a => user.getAliases().includes(a));
                 return index;
+            },
+            getUsersTagByUser: function (user) {
+                if (!this.tagLabels || !this.userTags)
+                    return [];
+
+                var filteredUserTags = this.userTags.filter(function (ut) {
+                    return ut.researchEntity === user.id;
+                });
+
+                return this.tagLabels.filter(function (tagLabel) {
+                    return !!filteredUserTags.find(function (ut) {
+                        return tagLabel.id === ut.tagLabel;
+                    });
+                });
             },
             getNewGroupDocument: function (groupId) {
                 return {
@@ -257,12 +273,17 @@
             }
         };
 
-        const authorshipPrototype = {
-        };
+        const authorshipPrototype = {};
 
         const institutePrototype = {
             getDisplayName: function () {
-                    return this.name;
+                return this.name;
+            }
+        };
+
+        const tagLabelPrototype = {
+            getDisplayName: function () {
+                return this.value;
             }
         };
 
@@ -303,6 +324,7 @@
             initializeAffiliations(document);
             _.defaultsDeep(document, documentPrototype);
             service.toUsersCollection(document.authors);
+            service.toTagLabelsCollection(document.tagLabels);
             return document;
         }
 
@@ -327,6 +349,11 @@
         function toInstituteModel(institute) {
             _.defaultsDeep(institute, institutePrototype);
             return institute;
+        }
+
+        function toTagLabelModel(tagLabel) {
+            _.defaultsDeep(tagLabel, tagLabelPrototype);
+            return tagLabel;
         }
 
         return service;

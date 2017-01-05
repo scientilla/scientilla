@@ -56,5 +56,6 @@
         Restangular.extendCollection('institutes', Prototyper.toInstitutesCollection);
         Restangular.extendCollection('users', Prototyper.toUsersCollection);
         Restangular.extendCollection('groups', Prototyper.toGroupsCollection);
+        Restangular.extendCollection('taglabels', Prototyper.toTagLabelsCollection);
     }
 })();

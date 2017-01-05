@@ -14,37 +14,33 @@
                 return document.authorsStr;
 
             var authors = document.getAuthors();
-            var possibleMatches = document.getAllCoauthors();
-            var linkedAuthors = authors.map(function (author) {
-                var ucAuthor = author.toUpperCase();
-                var matchingUser = _.find(possibleMatches, function (c) {
-                    var aliases = c.getUcAliases();
-                    return _.includes(aliases, ucAuthor);
+            var verifiedAuthors = document.getAllCoauthors();
 
-                });
-                if (!matchingUser)
-                    return author;
-                return '<a href="#/users/' + matchingUser.id + '">' + author + '</a>';
-            });
-            var authorsWithMainGroup = _.map(linkedAuthors, function (author, i) {
-                var authorship = _.find(document.authorships, a => a.position === i);
-                if (!authorship || !authorship.affiliations.includes(config.mainInstitute.id))
-                    return author;
-                return author + '<a href="#/groups/' + config.mainInstitute.id + '"><sup class="superscript">' + config.mainInstitute.shortname + '</sup></a>';
-            });
-            var authorsWithCorresponding = _.map(authorsWithMainGroup, function(author, i) {
-                var authorship = _.find(document.authorships, function(a) {
-                    return a.position == i;
+            return authors.map(function (author, index) {
+                var htmlAuthor = author;
+
+                var authorship = _.find(document.authorships, function (a) {
+                    return a.position === index;
                 });
 
-                if (authorship && authorship.corresponding)
-                    return '*' + author;
-                return author;
-            });
+                if (authorship) {
+                    if (authorship.researchEntity) {
+                        var user = _.find(verifiedAuthors, function (va) {
+                            return va.id === authorship.researchEntity
+                        });
+                        htmlAuthor = '<a href="#/users/' + user.id + '">' + author + '</a>';
+                    }
 
-            var authorList = authorsWithCorresponding;
+                    if (authorship.corresponding)
+                        htmlAuthor = '*' + htmlAuthor;
 
-            return authorList.join(', ');
+                    if (authorship.affiliations.includes(config.mainInstitute.id))
+                        htmlAuthor = htmlAuthor + '<a href="#/groups/' + config.mainInstitute.id + '"><sup class="superscript">' + config.mainInstitute.shortname + '</sup></a>';
+                }
+
+                return htmlAuthor;
+
+            }).join(', ');
         }
 
         return getLinkableAuthors;

@@ -46,6 +46,7 @@ module.exports.routes = {
   'put /groups/:id/verify-documents': 'Group.verifyDocuments',
   'put /users/:id/documents/:documentId/unverified': 'User.unverifyDocument',
   'put /groups/:id/documents/:documentId/unverified': 'Group.unverifyDocument',
+  'post /users/:id/documents/:documentId/tags' : 'User.addTags',
   'post /users/:id/documents': 'User.verifyDocument',
   'post /groups/:id/documents': 'Group.verifyDocument',
   'post /users/:id/discarded-document': 'User.discardDocument',
