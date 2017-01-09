@@ -169,9 +169,8 @@ module.exports = _.merge({}, BaseModel, {
         var threeshold = .85;
         return Promise.all(_.map(documentsToCheck, function (docToCheck) {
             return getSimilarDocuments(ResearchEntityModel, researchEntityId, docToCheck, includeDrafts)
-                .then(function (documents) {
-                    const compareWith = documents;
-                    var isCopied = _.some(compareWith, d => d.getSimiliarity(docToCheck) >= threeshold);
+                .then(function (documentsToCompare) {
+                    var isCopied = _.some(documentsToCompare, d => d.getSimiliarity(docToCheck) >= threeshold);
                     if (!docToCheck.tags)
                         docToCheck.tags = [];
                     if (isCopied)
@@ -203,7 +202,7 @@ function getSimilarDocuments(ResearchEntityModel, researchEntityid, doc, include
     if (doc.scopusId)
         criteria.or.push({scopusId: doc.scopusId});
     if (doc.authorsStr)
-        criteria.or.push({authorsStr: doc.authorsStr.split(', ')});
+        criteria.or.push(...doc.authorsStr.split(', ').map( author => ({authorsStr: { contains: author}})));
 
     let q = ResearchEntityModel
         .findOneById(researchEntityid)
