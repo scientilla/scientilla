@@ -250,6 +250,11 @@
                     key: 'short_survey',
                     label: 'Short Survey',
                     defaultSource: null
+                },
+                {
+                    key: 'invited_talk',
+                    label: 'Invited Talk',
+                    defaultSource: null
                 }
             ];
         }

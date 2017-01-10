@@ -12,6 +12,7 @@
             <option value="journal">Journal</option>
             <option value="book">Book</option>
             <option value="conference">Conference</option>
+            <option value="institute">Institute</option>
         </select>
     </div>
     <div class="form-group">
@@ -26,7 +27,7 @@
         <label for="year">Year</label>
         <input type="text" class="form-control" id="year" placeholder="Year" ng-model="vm.document.year">
     </div>
-    <div class="form-group" ng-if="vm.document.sourceType">
+    <div class="form-group" ng-if="vm.document.sourceType && !['invited_talk'].includes(vm.document.type)">
         <label for="source">{{vm.sourceLabel}}</label>
         <div class="input-group">
             <input id="source" type="text" ng-model="vm.document.source" placeholder="{{vm.sourceLabel}}"
@@ -39,36 +40,42 @@
         </span>
         </div>
     </div>
-    <div class="form-group" ng-if="vm.document.sourceType == 'journal'">
+    <div class="form-group" ng-if="vm.document.type == 'invited_talk' && vm.document.sourceType">
+        <label for="source">{{vm.sourceLabel}}</label>
+        <input id="source" type="text" ng-model="vm.document.itSource" placeholder="{{vm.sourceLabel}}"
+               uib-typeahead="source.title || source.name for source in vm.getItSources($viewValue)"
+               typeahead-loading="searching" typeahead-no-results="noResults" class="form-control">
+    </div>
+    <div class="form-group" ng-if="vm.document.sourceType == 'journal' && !['invited_talk'].includes(vm.document.type)">
         <label for="volume">Volume</label>
         <input type="text" class="form-control" id="volume" placeholder="Volume" ng-model="vm.document.volume">
     </div>
-    <div class="form-group" ng-if="['journal', 'conference'].includes(vm.document.sourceType)">
+    <div class="form-group" ng-if="['journal', 'conference'].includes(vm.document.sourceType) && !['invited_talk'].includes(vm.document.type)">
         <label for="issue">Issue</label>
         <input type="text" class="form-control" id="issue" placeholder="Issue" ng-model="vm.document.issue">
     </div>
-    <div class="form-group" ng-if="['journal', 'conference'].includes(vm.document.sourceType)">
+    <div class="form-group" ng-if="['journal', 'conference'].includes(vm.document.sourceType) && !['invited_talk'].includes(vm.document.type)">
         <label for="pages">Pages</label>
         <input type="text" class="form-control" id="pages" placeholder="Pages" ng-model="vm.document.pages">
     </div>
-    <div class="form-group" ng-if="['journal', 'conference'].includes(vm.document.sourceType)">
+    <div class="form-group" ng-if="['journal', 'conference'].includes(vm.document.sourceType) && !['invited_talk'].includes(vm.document.type)">
         <label for="articleNumber">Article Number</label>
         <input type="text" class="form-control" id="articleNumber" placeholder="Article Number"
                ng-model="vm.document.articleNumber">
     </div>
-    <div class="form-group">
+    <div class="form-group" ng-if="!['invited_talk'].includes(vm.document.type)">
         <label for="doi">DOI</label>
         <input type="text" class="form-control" id="doi" placeholder="DOI" ng-model="vm.document.doi">
     </div>
-    <div class="form-group">
+    <div class="form-group" ng-if="!['invited_talk'].includes(vm.document.type)">
         <label for="abstract">Abstract</label>
         <textarea rows="6" class="form-control" id="abstract" placeholder="Abstract" ng-model="vm.document.abstract"></textarea>
     </div>
-    <div class="form-group">
+    <div class="form-group" ng-if="!['invited_talk'].includes(vm.document.type)">
         <label for="scopusid">Scopus ID</label>
         <input type="text" class="form-control" id="scopusid" placeholder="Scopus ID" ng-model="vm.document.scopusId">
     </div>
-    <div class="form-group">
+    <div class="form-group" ng-if="!['invited_talk'].includes(vm.document.type)">
         <label for="scopusid">WoS ID</label>
         <input type="text" class="form-control" id="wosid" placeholder="Wos ID" ng-model="vm.document.wosId">
     </div>

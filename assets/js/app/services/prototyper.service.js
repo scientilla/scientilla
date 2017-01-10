@@ -142,6 +142,7 @@
                 'authors',
                 'title',
                 'year',
+                'itSource',
                 'source',
                 'issue',
                 'volume',
