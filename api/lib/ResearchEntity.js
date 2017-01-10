@@ -203,7 +203,8 @@ function getSimilarDocuments(ResearchEntityModel, researchEntityid, doc, include
         criteria.or.push({scopusId: doc.scopusId});
     if (doc.authorsStr)
         criteria.or.push(...doc.authorsStr.split(', ').map( author => ({authorsStr: { contains: author}})));
-
+    if (_.isEmpty(criteria.or))
+        delete criteria.or;
     let q = ResearchEntityModel
         .findOneById(researchEntityid)
         .populate('documents', criteria);
