@@ -82,24 +82,20 @@ module.exports = function expand(req, res) {
                 return res.notFound(util.format('Specified record (%s) is missing relation `%s`', parentPk, relation));
 
             const count = matchingRecord[relation].length + skip;
-            const l = actionUtil.parseLimit(req);
-            // const l = 1;
-            const recs = _.slice(matchingRecord[relation], 0, l);
-            const recordsId = _.slice(_.map(matchingRecord[relation], 'id'), actionUtil.parseLimit(req));
+            const relationsRecords = matchingRecord[relation];
+            const limit = actionUtil.parseLimit(req);
+            const recordsId = _.slice(_.map(relationsRecords, 'id'), 0, limit);
 
             let populateFields = req.param('populate');
             if (populateFields && !_.isArray(populateFields))
                 populateFields = [populateFields];
             populateFields = _.filter(populateFields, f => _.some(relationModel.associations, {alias: f}));
-            //sTODO add check for non-exstinting pupulate fields
             //sTODO add support for deep populate
             const where = {'id': recordsId};
-            let query = relationModel.find({where, sort, limit, skip});
+            let query = relationModel.find({where, sort});
             _.forEach(populateFields, f => query = query.populate(f));
 
-            const countQuery = relationModel.count({where});
-
-            return Promise.all([recs, count])
+            return Promise.all([query, count])
                 .spread((matchingRecords, count) => {
                     //if asking for a single related entity
                     if (childPk)
