@@ -164,33 +164,19 @@ module.exports = _.merge({}, BaseModel, {
         const selectedDraftData = _.pick(draftData, documentFields);
         return Document.update({id: draftId}, selectedDraftData)
     },
-    getAllDocuments: function (ResearchEntityModel, researchEntityid) {
-        return ResearchEntityModel
-            .findOneById(researchEntityid)
-            .populate('drafts')
-            .populate('documents')
-            .then(function (researchEntity) {
-                return _.union(
-                    researchEntity.drafts,
-                    researchEntity.documents
-                );
-            });
-    },
-    checkCopiedDocuments: function (ResearchEntityModel, researchEntityId, documentsToCheck) {
-        var threeshold = .50;
-        return ResearchEntityModel.getAllDocuments(ResearchEntityModel, researchEntityId)
-            .then(function (documents) {
-                documentsToCheck.forEach(function (docToCheck) {
-                    var isCopied = _.some(documents, function (d) {
-                        return d.getSimiliarity(docToCheck) >= threeshold;
-                    });
+    checkCopiedDocuments: function (ResearchEntityModel, researchEntityId, documentsToCheck, includeDrafts) {
+        var threeshold = .85;
+        return Promise.all(_.map(documentsToCheck, function (docToCheck) {
+            return getSimilarDocuments(ResearchEntityModel, researchEntityId, docToCheck, includeDrafts)
+                .then(function (documentsToCompare) {
+                    var isCopied = _.some(documentsToCompare, d => d.getSimiliarity(docToCheck) >= threeshold);
                     if (!docToCheck.tags)
                         docToCheck.tags = [];
                     if (isCopied)
                         docToCheck.tags.push('copied');
+                    return docToCheck;
                 });
-                return documentsToCheck;
-            });
+        }));
     },
     _config: {
         actions: false,
@@ -202,4 +188,33 @@ module.exports = _.merge({}, BaseModel, {
 function getAuthorshipModel(ResearchEntityModel) {
     var authorshipModelName = ResearchEntityModel._attributes.documents.through;
     return sails.models[authorshipModelName];
+}
+
+function getSimilarDocuments(ResearchEntityModel, researchEntityid, doc, includeDrafts) {
+    const criteria = {or: []};
+    if (doc.id)
+        criteria.id = {'!': doc.id};
+    if (doc.title)
+        criteria.or.push({title: doc.title});
+    if (doc.doi)
+        criteria.or.push({doi: doc.doi});
+    if (doc.scopusId)
+        criteria.or.push({scopusId: doc.scopusId});
+    if (doc.authorsStr)
+        criteria.or.push(...doc.authorsStr.split(', ').map( author => ({authorsStr: { contains: author}})));
+    if (_.isEmpty(criteria.or))
+        delete criteria.or;
+    let q = ResearchEntityModel
+        .findOneById(researchEntityid)
+        .populate('documents', criteria);
+
+    if (includeDrafts)
+        q = q.populate('drafts', criteria);
+
+    return q.then(function (researchEntity) {
+        return _.union(
+            researchEntity.drafts,
+            researchEntity.documents
+        );
+    });
 }

@@ -10,15 +10,21 @@
  */
 
 const assert = require('assert');
-var _ = require('lodash');
-var waterlock = require('waterlock');
-var Promise = require("bluebird");
-var researchEntity = require('../lib/ResearchEntity');
+const _ = require('lodash');
+const waterlock = require('waterlock');
+const Promise = require("bluebird");
+const ResearchEntity = require('../lib/ResearchEntity');
 
-var USER = 'user';
-var ADMINISTRATOR = 'administrator';
+const USER = 'user';
+const ADMINISTRATOR = 'administrator';
 
-module.exports = _.merge({}, researchEntity, {
+function buildCheckDuplicatedDocuments(includeDrafts = true) {
+    return function(documents, researchEntityId) {
+        return ResearchEntity.checkCopiedDocuments(User, researchEntityId, documents, includeDrafts);
+    }
+}
+
+module.exports = _.merge({}, ResearchEntity, {
     USER: USER,
     ADMINISTRATOR: ADMINISTRATOR,
     attributes: require('waterlock').models.user.attributes({
@@ -56,17 +62,20 @@ module.exports = _.merge({}, researchEntity, {
         },
         drafts: {
             collection: 'Document',
-            via: 'draftCreator'
+            via: 'draftCreator',
+            _postPopulate: buildCheckDuplicatedDocuments()
         },
         documents: {
             collection: 'Document',
             via: 'users',
-            through: 'authorship'
+            through: 'authorship',
+            _postPopulate: buildCheckDuplicatedDocuments(false)
         },
         suggestedDocuments: {
             collection: 'Document',
             via: 'users',
-            through: 'documentsuggestion'
+            through: 'documentsuggestion',
+            _postPopulate: buildCheckDuplicatedDocuments()
         },
         authorships: {
             collection: 'authorship',
@@ -75,7 +84,8 @@ module.exports = _.merge({}, researchEntity, {
         discardedDocuments: {
             collection: 'Document',
             via: 'discardedCoauthors',
-            through: 'discarded'
+            through: 'discarded',
+            _postPopulate: buildCheckDuplicatedDocuments()
         },
         jsonWebTokens: {
             collection: 'jwt',
@@ -193,7 +203,6 @@ module.exports = _.merge({}, researchEntity, {
             });
     },
     checkUsername: function (user) {
-
         if (_.endsWith(user.username, '@' + sails.config.scientilla.ldap.domain))
             throw new Error('Cannot create domain users');
 

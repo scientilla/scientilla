@@ -41,12 +41,14 @@
         vm.verify = verify;
         vm.documentTypes = DocumentTypesService.getDocumentTypes();
         vm.getSources = getSources;
+        vm.getItSources = getItSources;
         vm.createSource = createSource;
         vm.closePopover = closePopover;
         var sourceLabels = {
             book: 'Book',
             journal: 'Journal',
             conference: 'Conference',
+            institute: 'Institute',
             '': 'Source'
         };
 
@@ -167,6 +169,16 @@
             var qs = {where: {title: {contains: searchText}, type: vm.document.sourceType}};
             return Restangular.all('sources').getList(qs);
         }
+
+        function getItSources(searchText) {
+            var sourceType = vm.document.sourceType;
+            var qs = sourceType == 'institute'
+                ? {where: {name: {contains: searchText}}}
+                : {where: {title: {contains: searchText}, type: vm.document.sourceType}};
+            var model = sourceType == 'institute' ? 'institutes' : 'sources';
+            return Restangular.all(model).getList(qs);
+        }
+
 
         function createSource() {
             vm.newSource.type = vm.document.sourceType;

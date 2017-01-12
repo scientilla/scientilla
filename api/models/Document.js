@@ -17,6 +17,24 @@ const VERIFIED = 'verified';
 const DRAFT = 'draft';
 const PUBLIC = 'public';
 
+const fields = [
+    {name: 'authorsStr', weight: 0.4},
+    {name: 'authorKeywords', weight: 0},
+    {name: 'title', weight: 1},
+    {name: 'year', weight: .6},
+    {name: 'source', weight: 0},
+    {name: 'itSource', weight: 0},
+    {name: 'issue', weight: 0},
+    {name: 'volume', weight: 0},
+    {name: 'pages', weight: 0},
+    {name: 'articleNumber', weight: 0},
+    {name: 'doi', weight: 0.5},
+    {name: 'abstract', weight: 0.1},
+    {name: 'type', weight: 0.2},
+    {name: 'sourceType', weight: 0.2},
+    {name: 'scopusId', weight: 0.6},
+    {name: 'wosId', weight: 0.1}
+];
 
 module.exports = _.merge({}, BaseModel, {
     /* CONSTANTS */
@@ -40,6 +58,7 @@ module.exports = _.merge({}, BaseModel, {
         doi: 'STRING',
         type: 'STRING',
         sourceType: 'STRING',
+        itSource: 'STRING',
         scopusId: 'STRING',
         wosId: 'STRING',
         abstract: 'TEXT',
@@ -133,14 +152,17 @@ module.exports = _.merge({}, BaseModel, {
             });
             return ucAuthors;
         },
-        getSimiliarity: function (doc) {
-            var similarityFields = Document.getFields();
-            var similarity = 1;
+        getSimiliarity: function (doc, minThreeshold = 0) {
+            const p = 2;
             var self = this;
-            _.forEach(similarityFields, function (f) {
-                var fieldSimilarity = ObjectComparer.compareStrings(self[f], doc[f]);
-                similarity *= fieldSimilarity;
-            });
+            if (ObjectComparer.compareStrings(self.title, doc.title) < .6)
+                return .45;
+            const comparisonFields = fields.filter(f => f.weight);
+            const tmp = _.reduce(comparisonFields, function (sum, f) {
+                var fieldSimilarity = ObjectComparer.compareStrings(self[f.name], doc[f.name]);
+                return sum + Math.pow(fieldSimilarity, p) * f.weight;
+            }, 0);
+            const similarity = Math.pow(tmp / _.sumBy(fields, 'weight'), 1/p);
             return similarity;
         },
         getAuthorIndex: function (author) {
@@ -158,7 +180,7 @@ module.exports = _.merge({}, BaseModel, {
             if (_.isNil(this.authorships))
                 throw 'getAuthorshipByPosition: authorships missing';
 
-            return this.authorships.find(a=> a.position === position);
+            return this.authorships.find(a => a.position === position);
         },
         getFullAuthorships: function () {
             if (_.isEmpty(this.affiliations) || _.isEmpty(this.authorships))
@@ -171,24 +193,7 @@ module.exports = _.merge({}, BaseModel, {
         }
     },
     getFields: function () {
-        var fields = [
-            'authorsStr',
-            'authorKeywords',
-            'title',
-            'year',
-            'source',
-            'issue',
-            'volume',
-            'pages',
-            'articleNumber',
-            'doi',
-            'abstract',
-            'type',
-            'sourceType',
-            'scopusId',
-            'wosId'
-        ];
-        return fields;
+        return fields.map(f => f.name);
     },
     selectDraftData: function (draftData) {
         const documentFields = Document.getFields();
@@ -284,7 +289,7 @@ module.exports = _.merge({}, BaseModel, {
             .populate('affiliations')
             .then(similarDocs => {
                 const draftFullAuthorships = verifyingDraft.getFullAuthorships();
-                const copies = similarDocs.filter(d=> {
+                const copies = similarDocs.filter(d => {
                     let isCopy = true;
                     const copyFullAuthorships = d.getFullAuthorships();
 
@@ -293,7 +298,7 @@ module.exports = _.merge({}, BaseModel, {
                             return;
                         if (!_.isNil(cfa.researchEntity))
                             return;
-                        const dfa = draftFullAuthorships.find(dfa=> dfa.position === cfa.position);
+                        const dfa = draftFullAuthorships.find(dfa => dfa.position === cfa.position);
 
                         if (!_.isEqual(
                                 _.map(cfa.affiliations, 'institute').sort(),
@@ -306,7 +311,7 @@ module.exports = _.merge({}, BaseModel, {
                     draftFullAuthorships.forEach(dfa => {
                         if (dfa.position === verifyingPosition)
                             return;
-                        const cfa = draftFullAuthorships.find(cfa=> cfa.position === dfa.position);
+                        const cfa = draftFullAuthorships.find(cfa => cfa.position === dfa.position);
                         if (!_.isNil(cfa.researchEntity))
                             return;
 
