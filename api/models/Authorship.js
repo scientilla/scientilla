@@ -23,7 +23,11 @@ module.exports = _.merge({}, BaseModel, {
         },
         corresponding: 'boolean',
         position: 'integer',
-        public: 'boolean'
+        public: 'boolean',
+        unverify: function(){
+            this.researchEntity = null;
+            return this.savePromise();
+        }
     },
     getEmpty: function() {
         return {
