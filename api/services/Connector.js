@@ -85,25 +85,16 @@ module.exports = {
                 count: _.get(res, 'items_count')
             }),
             transform: d => {
-                var newDoc = {
-                    title: d.title,
-                    authorsStr: d.authors.replace(/\*/g, ''),
-                    year: d.year,
-                    doi: d.doi,
-                    volume: d.volume,
-                    issue: d.issue,
-                    pages: /^\d+-\d+$/.test(d.pages) ? d.pages : '',
-                    articleNumber: ''
-                };
+                let sourceType;
                 if (d.conference)
-                    newDoc.sourceType = 'conference';
+                    sourceType = 'conference';
                 else if (d.journal)
-                    newDoc.sourceType = 'journal';
+                    sourceType = 'journal';
                 else if (d.bookTitle)
-                    newDoc.sourceType = 'book';
+                    sourceType = 'book';
                 else
-                    newDoc.sourceType = null;
-                var typeMappings = {
+                    sourceType = null;
+                const typeMappings = {
                     bookwhole: 'book',
                     bookchapter: 'bookChapter',
                     fullpapervolumeatreferredconference: 'conference_paper',
@@ -114,13 +105,25 @@ module.exports = {
                     editorial: 'editorial',
                     supplementaryinformation: 'note'
                 };
-                newDoc.type = d.typeAlias in typeMappings ? typeMappings[d.typeAlias] : null;
-
-                var newSource = {
+                const documentType = d.typeAlias in typeMappings ? typeMappings[d.typeAlias] : null;
+                var newDoc = {
+                    title: d.title,
+                    authorsStr: d.authors.replace(/\*/g, ''),
+                    year: d.year,
+                    doi: d.doi,
+                    volume: d.volume,
+                    issue: d.issue,
+                    pages: /^\d+-\d+$/.test(d.pages) ? d.pages : '',
+                    articleNumber: '',
+                    sourceType: sourceType,
+                    type: documentType
+                };
+                const newSource = {
                     title: d.journal || d.conference || d.bookTitle,
                     publisher: d.publisher,
                     acronym: d.conferenceAcronym,
-                    location: d.conferencePlace
+                    location: d.conferencePlace,
+                    type: sourceType
                 };
                 return mergeDocAndSource(newDoc, newSource);
             }
