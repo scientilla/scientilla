@@ -171,12 +171,20 @@
         }
 
         function getItSources(searchText) {
-            var sourceType = vm.document.sourceType;
-            var qs = sourceType == 'institute'
-                ? {where: {name: {contains: searchText}}}
-                : {where: {title: {contains: searchText}, type: vm.document.sourceType}};
-            var model = sourceType == 'institute' ? 'institutes' : 'sources';
-            return Restangular.all(model).getList(qs);
+            var sourcesData = {
+                'institute' : {
+                    query: {where: {name: {contains: searchText}}},
+                    model: 'institutes'
+                },
+                'conference' : {
+                    query: {where: {title: {contains: searchText}, type: vm.document.sourceType}},
+                    model: 'sources'
+                }
+            };
+            var sourceData = sourcesData[vm.document.sourceType];
+            if (!sourceData)
+                return [];
+            return Restangular.all(sourceData.model).getList(sourceData.query);
         }
 
 
