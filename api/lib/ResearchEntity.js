@@ -50,8 +50,7 @@ module.exports = _.merge({}, BaseModel, {
             .then(function (authorship) {
                 if (!authorship)
                     throw new Error('Authorship ' + documentId + ' does not exist');
-                authorship.researchEntity = null;
-                return authorship.savePromise();
+                return authorship.unverify();
             })
             .then(function () {
                 return Document.deleteIfNotVerified(documentId);
