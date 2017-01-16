@@ -44,16 +44,7 @@
         vm.getItSources = getItSources;
         vm.createSource = createSource;
         vm.closePopover = closePopover;
-        var sourceLabels = {
-            book: 'Book',
-            journal: 'Journal',
-            conference: 'Conference',
-            institute: 'Institute',
-            bookseries: 'Book Series',
-            workshop: 'Workshop',
-            school: 'School',
-            '': 'Source'
-        };
+        var allSourceTypes = DocumentTypesService.getSourceTypes();
 
         var debounceTimeout = null;
         var debounceTime = 2000;
@@ -93,6 +84,7 @@
         function activate() {
             watchDocument();
             watchDocumentSourceType();
+            watchDocumentType();
         }
 
         function watchDocument() {
@@ -104,11 +96,22 @@
 
         function watchDocumentSourceType() {
             $scope.$watch('vm.document.sourceType', function(newValue, oldValue) {
-                vm.sourceLabel = sourceLabels[vm.document.sourceType];
                 if (newValue == oldValue)
                     return;
                 closePopover();
+                if (!newValue)
+                    return;
+                vm.sourceLabel = _.find(allSourceTypes, {id: newValue}).label;
                 vm.document.source = null;
+                vm.document.itSource = null;
+            });
+        }
+
+        function watchDocumentType() {
+            $scope.$watch('vm.document.type', function(newValue) {
+                closePopover();
+                var allowedSources = _.find(vm.documentTypes, {key: newValue}).allowedSources;
+                vm.sourceTypes = _.filter(allSourceTypes, function(s) { return allowedSources.includes(s.id);});
             });
         }
 

@@ -7,17 +7,13 @@
     </div>
     <div class="form-group">
         <label for="sourceType">Source Type</label>
-        <select class="form-control" id="sourceType" placeholder="Source Type" ng-model="vm.document.sourceType">
+        <select class="form-control" id="sourceType"
+                placeholder="Source Type" ng-model="vm.document.sourceType"
+                ng-options="item.id as item.label for item in vm.sourceTypes track by item.id">
             <option value="">--Not Selected--</option>
-            <option value="journal">Journal</option>
-            <option value="book">Book</option>
-            <option value="bookseries">Book Series</option>
-            <option value="conference">Conference</option>
-            <option value="institute">Institute</option>
-            <option value="school">School</option>
-            <option value="workshop">Workshop</option>
         </select>
     </div>
+    {{vm.document.sourceType}}
     <div class="form-group">
         <label for="title">Title</label>
         <input type="text" class="form-control" id="title" placeholder="Title" ng-model="vm.document.title">

@@ -7,10 +7,24 @@
 
         var service = {
             getDocumentsFields: getDocumentsFields,
-            getDocumentTypes: getDocumentTypes
+            getDocumentTypes: getDocumentTypes,
+            getSourceTypes: getSourceTypes
         };
 
         return service;
+
+        function getSourceTypes() {
+            var sources = [
+                {id: 'book', label: 'Book'},
+                {id: 'journal', label: 'Journal'},
+                {id: 'conference', label: 'Conference'},
+                {id: 'institute', label: 'Institute'},
+                {id: 'bookseries', label: 'Book Series'},
+                {id: 'workshop', label: 'Workshop'},
+                {id: 'school', label: 'School'}
+            ];
+          return sources;
+        }
 
         function getDocumentsFields(source) {
             var fields;
@@ -180,81 +194,98 @@
         }
 
         function getDocumentTypes() {
+            var defaultSources = ['journal', 'conference', 'book', 'bookseries'];
+            var invitedTalkSources = ['institute', 'conference', 'workshop', 'school'];
             return [
                 {
                     key: 'article',
                     label: 'Article',
-                    defaultSource: 'journal'
+                    defaultSource: 'journal',
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'article_in_press',
                     label: 'Article in Press',
-                    defaultSource: 'journal'
+                    defaultSource: 'journal',
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'abstract_report',
                     label: 'Abstract Report',
-                    defaultSource: null
+                    defaultSource: null,
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'book',
                     label: 'Book',
-                    defaultSource: 'book'
+                    defaultSource: 'book',
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'book_chapter',
                     label: 'Book Chapter',
-                    defaultSource: 'book'
+                    defaultSource: 'book',
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'conference_paper',
                     label: 'Conference Paper',
-                    defaultSource: 'conference'
+                    defaultSource: 'conference',
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'conference_review',
                     label: 'Conference Review',
-                    defaultSource: 'conference'
+                    defaultSource: 'conference',
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'editorial',
                     label: 'Editorial',
-                    defaultSource: null
+                    defaultSource: null,
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'erratum',
                     label: 'Erratum',
-                    defaultSource: null
+                    defaultSource: null,
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'letter',
                     label: 'Letter',
-                    defaultSource: null
+                    defaultSource: null,
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'note',
                     label: 'Note',
-                    defaultSource: null
+                    defaultSource: null,
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'report',
                     label: 'Report',
-                    defaultSource: null
+                    defaultSource: null,
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'review',
                     label: 'Review',
-                    defaultSource: 'journal'
+                    defaultSource: 'journal',
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'short_survey',
                     label: 'Short Survey',
-                    defaultSource: null
+                    defaultSource: null,
+                    allowedSources: defaultSources
                 },
                 {
                     key: 'invited_talk',
                     label: 'Invited Talk',
-                    defaultSource: null
+                    defaultSource: null,
+                    allowedSources: invitedTalkSources
                 }
             ];
         }
