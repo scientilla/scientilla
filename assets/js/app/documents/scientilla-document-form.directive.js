@@ -49,6 +49,9 @@
             journal: 'Journal',
             conference: 'Conference',
             institute: 'Institute',
+            bookseries: 'Book Series',
+            workshop: 'Workshop',
+            school: 'School',
             '': 'Source'
         };
 
