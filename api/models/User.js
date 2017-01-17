@@ -187,11 +187,6 @@ module.exports = _.merge({}, ResearchEntity, {
                                 resolve(user);
                         });
                 });
-            })
-            .then(user => {
-                return Group.getDefaultGroup()
-                    .then(group => Group.addMember(group, user))
-                    .then(() => user)
             });
     },
     setNewUserRole: function (user) {
@@ -306,6 +301,13 @@ module.exports = _.merge({}, ResearchEntity, {
             .then(User.copyAuthData)
             .then(User.setNewUserRole)
             .then(User.setSlug)
+            .then(function () {
+                cb();
+            });
+    },
+    afterCreate: function (user, cb) {
+        Promise.resolve(user)
+            .then(Group.addUserToDefaultGroup)
             .then(function () {
                 cb();
             });

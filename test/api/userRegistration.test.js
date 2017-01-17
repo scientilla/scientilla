@@ -9,8 +9,11 @@ describe('User registration', () => {
 
     const userData = test.getAllUserData()[0];
     const institutesData = test.getAllInstituteData();
+    const groupsData = test.getAllGroupData();
     const iitInstituteData = institutesData[0];
+    const iitGroupData = groupsData[0];
     let iitInstitute;
+    let iitGroup;
 
     it('by default there should be no users', () =>
         test.getUsers()
@@ -18,8 +21,11 @@ describe('User registration', () => {
     );
 
     it('should be able to register new user when there is no users', ()=>
-        test.createInstitute(iitInstituteData)
+        Promise.resolve()
+            .then(() => test.createInstitute(iitInstituteData))
             .then(res => iitInstitute = res.body)
+            .then(() => test.createGroup(iitGroupData))
+            .then(res => iitGroup = res.body)
             .then(() => test.registerUser(userData))
             .then(function (res) {
                 return test

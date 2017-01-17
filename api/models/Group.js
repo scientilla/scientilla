@@ -95,10 +95,23 @@ module.exports = _.merge({}, ResearchEntity, {
     getDefaultGroup: function () {
         //TODO: id must be read from settings
         const defaultInstituteName = sails.config.scientilla.institute.name;
-        return Group.findOneByName(defaultInstituteName).populate('members');
+        return Group.findOneByName(defaultInstituteName)
+            .populate('members')
+            .populate('administrators');
     },
     addMember: function(group, user) {
         group.members.add(user);
-        return group.save();
+        return group.savePromise();
+    },
+    addAdministrator: function(group, user) {
+        if (group.administrators.length == 0)
+            group.administrators.add(user);
+        return group.savePromise();
+    },
+    addUserToDefaultGroup: function(user) {
+        return Group.getDefaultGroup()
+            .then(group => Group.addAdministrator(group, user))
+            .then(group => Group.addMember(group, user))
+            .then(() => user);
     }
 });
