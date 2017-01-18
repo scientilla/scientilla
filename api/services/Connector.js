@@ -92,6 +92,8 @@ module.exports = {
                     sourceType = 'journal';
                 else if (d.bookTitle)
                     sourceType = 'book';
+                else if (d.type.title = "Invited Talks")
+                    sourceType = 'invited_talk';
                 else
                     sourceType = null;
                 const typeMappings = {
@@ -118,6 +120,10 @@ module.exports = {
                     sourceType: sourceType,
                     type: documentType
                 };
+                if (sourceType == 'invited_talk') {
+                    newDoc.itSource = d.publication;
+                    return newDoc;
+                }
                 const newSource = {
                     title: d.journal || d.conference || d.bookTitle,
                     publisher: d.publisher,
