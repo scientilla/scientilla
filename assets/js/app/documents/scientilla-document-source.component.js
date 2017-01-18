@@ -23,12 +23,11 @@
             'book': 'fa fa-lg fa-fw fa-book',
             'bookseries': 'fa fa-lg fa-fw fa-book',
             'report': 'fa fa-lg fa-fw fa-address-card-o',
+            'invited_talk': 'fa fa-lg fa-fw fa-microphone',
         };
 
         vm.$onInit = function () {
-
-            if (vm.document.source)
-                vm.iconClass = iconClasses[vm.document.source.type];
+            vm.iconClass = iconClasses[vm.document.sourceType];
 
         };
     }

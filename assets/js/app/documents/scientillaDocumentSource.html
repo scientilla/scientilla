@@ -1,4 +1,4 @@
-<div ng-if="vm.document.source">
+<div ng-if="(vm.document.sourceType != 'invited_talk' && vm.document.source) || (vm.document.sourceType == 'invited_talk' && vm.document.itSource)">
     <small class="scientilla-document-source">
         <div class="scientilla-document-icon-container">
             <span class="{{vm.iconClass}}"></span>
@@ -6,6 +6,7 @@
         <small>
             <span ng-if="vm.document.type === 'article_in_press'" class="scientilla-in-press">IN PRESS</span>
         </small>
-        <span>{{vm.document.source.title}}</span>
+        <span ng-if="vm.document.sourceType != 'invited_talk'">{{vm.document.source.title}}</span>
+        <span ng-if="vm.document.sourceType == 'invited_talk'">{{vm.document.itSource}}</span>
     </small>
 </div>
