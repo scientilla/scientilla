@@ -426,7 +426,7 @@ function scoupsSingleRequest(d1, attempt) {
 
             const institutesCreationFns = _.map(
                 scopusInstitutes,
-                i => Institute.findOrCreate({scopusId: i.scopusId}, i)
+                i => Institute.findOrCreateRealInstitute(i)
             );
 
             return Promise.all([
