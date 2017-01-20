@@ -14,6 +14,12 @@
                         Copy
                     </scientilla-multicheck-button>
                 </buttons>
+                <buttons>
+                    <scientilla-multicheck-button on-click="vm.copyUncopiedDocuments">
+                        <span class="fa fa-copy"></span>
+                        Copy uncopied documents
+                    </scientilla-multicheck-button>
+                </buttons>
                 <item-list>
                     <scientilla-checkable ng-repeat="d in vm.documents" item="d">
                         <div class="row">

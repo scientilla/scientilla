@@ -27,6 +27,7 @@
                 service.discardDocuments = discardDocuments;
                 service.copyDocument = copyDocument;
                 service.copyDocuments = copyDocuments;
+                service.copyUncopiedDocuments = copyUncopiedDocuments;
                 service.getExternalDocuments = _.partialRight(getExternalDocuments, reService);
 
                 return service;
@@ -133,16 +134,20 @@
                         });
                 }
 
-                function copyDocuments(documents) {
+                function copyUncopiedDocuments(documents) {
                     var notCopiedCocuments = documents.filter(function (d) {
                         return !d.tags.includes('copied');
                     });
-                    if (notCopiedCocuments.length === 0) {
+                    return copyDocuments(notCopiedCocuments)
+                }
+
+                function copyDocuments(documents) {
+                    if (documents.length === 0) {
                         Notification.success("No documents to copy");
                         return;
                     }
                     researchEntityService
-                        .copyDocuments(researchEntity, notCopiedCocuments)
+                        .copyDocuments(researchEntity, documents)
                         .then(function (drafts) {
                             Notification.success(drafts.length + " draft(s) created");
                             documents.forEach(function (d) {

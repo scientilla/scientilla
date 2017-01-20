@@ -23,6 +23,7 @@
 
         vm.copyDocument = DocumentService.copyDocument;
         vm.copyDocuments = DocumentService.copyDocuments;
+        vm.copyUncopiedDocuments = DocumentService.copyUncopiedDocuments;
         vm.onFilter = onFilter;
 
         vm.documents = [];
