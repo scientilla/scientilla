@@ -32,8 +32,8 @@ module.exports = {
                 return self.makeRequest(reqConfig)
                     .then(res => {
                         if (!skipCopiedCheck)
-                         return ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.items, true)
-                         .then(documents => ({items: documents, count: res.count}));
+                            return ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.items, true)
+                                .then(documents => ({items: documents, count: res.count}));
 
                         return res;
                     });
@@ -51,10 +51,10 @@ module.exports = {
             });
     },
     getPublicationsConfig: function (researchEntity, configQuery) {
-        var researchEntityType = researchEntity.getType();
-        var query;
+        const researchEntityType = researchEntity.getType();
+        let query;
         if (researchEntityType === 'user') {
-            var opts = {
+            const opts = {
                 'username': {'author-email': researchEntity.username},
                 'surname': {author: researchEntity.surname}
             };
@@ -63,12 +63,15 @@ module.exports = {
                 query = opts[configQuery.where.field];
             else
                 throw "ExternalDocument error: field not selected";
+
+            if (configQuery.where.type && configQuery.where.type !== "all")
+                query = _.merge({type: configQuery.where.type}, query);
         }
         else {
             query = {"research-structure": researchEntity.publicationsAcronym};
         }
 
-        var qs = {
+        let qs = {
             limit: configQuery.limit,
             skip: configQuery.skip
         };
@@ -97,9 +100,9 @@ module.exports = {
 
                 const typeMappings = {
                     bookwhole: 'book',
-                    bookchapter: 'bookChapter',
+                    bookchapter: 'book_chapter',
                     fullpapervolumeatreferredconference: 'conference_paper',
-                    shortpaperabstractatrefereedconference: 'abstract',
+                    shortpaperabstractatrefereedconference: 'abstract_report',
                     nationaljournal: 'article',
                     internationaljournal: 'article',
                     correction: 'erraturm',
