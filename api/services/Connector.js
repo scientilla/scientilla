@@ -92,10 +92,9 @@ module.exports = {
                     sourceType = 'journal';
                 else if (d.bookTitle)
                     sourceType = 'book';
-                else if (d.type.title = "Invited Talks")
-                    sourceType = 'invited_talk';
                 else
                     sourceType = null;
+
                 const typeMappings = {
                     bookwhole: 'book',
                     bookchapter: 'bookChapter',
@@ -105,7 +104,8 @@ module.exports = {
                     internationaljournal: 'article',
                     correction: 'erraturm',
                     editorial: 'editorial',
-                    supplementaryinformation: 'note'
+                    supplementaryinformation: 'note',
+                    talk: 'invited_talk'
                 };
                 const documentType = d.typeAlias in typeMappings ? typeMappings[d.typeAlias] : null;
                 var newDoc = {
@@ -120,7 +120,7 @@ module.exports = {
                     sourceType: sourceType,
                     type: documentType
                 };
-                if (sourceType == 'invited_talk') {
+                if (documentType == 'invited_talk') {
                     newDoc.itSource = d.publication;
                     return newDoc;
                 }
@@ -426,7 +426,7 @@ function scoupsSingleRequest(d1, attempt) {
 
             const institutesCreationFns = _.map(
                 scopusInstitutes,
-                i => Institute.findOrCreate({scopusId: i.scopusId}, i)
+                i => Institute.findOrCreateRealInstitute(i)
             );
 
             return Promise.all([
