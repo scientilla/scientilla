@@ -20,7 +20,18 @@ module.exports = {
             collection: 'authorship',
             via: 'affiliations',
             through: 'affiliation'
+        },
+        aliasOf: {
+            model: 'institute'
         }
+    },
+    findOrCreateRealInstitute: function(i) {
+        return Institute.findOrCreate({scopusId: i.scopusId}, i)
+            .then(i => {
+                if (!i.aliasOf)
+                    return i;
+                return findOneById(i.aliasOf);
+            });
     }
 };
 
