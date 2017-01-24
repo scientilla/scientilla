@@ -90,25 +90,25 @@ module.exports = {
             transform: d => {
                 let sourceType;
                 if (d.conference)
-                    sourceType = 'conference';
+                    sourceType = SourceTypes.CONFERENCE;
                 else if (d.journal)
-                    sourceType = 'journal';
+                    sourceType = SourceTypes.JOURNAL;
                 else if (d.bookTitle)
-                    sourceType = 'book';
+                    sourceType = SourceTypes.BOOK;
                 else
                     sourceType = null;
 
                 const typeMappings = {
-                    bookwhole: 'book',
-                    bookchapter: 'book_chapter',
-                    fullpapervolumeatreferredconference: 'conference_paper',
-                    shortpaperabstractatrefereedconference: 'abstract_report',
-                    nationaljournal: 'article',
-                    internationaljournal: 'article',
-                    correction: 'erraturm',
-                    editorial: 'editorial',
-                    supplementaryinformation: 'note',
-                    talk: 'invited_talk'
+                    bookwhole: DocumentTypes.BOOK,
+                    bookchapter: DocumentTypes.BOOK_CHAPTER,
+                    fullpapervolumeatreferredconference: DocumentTypes.CONFERENCE_PAPER,
+                    shortpaperabstractatrefereedconference: DocumentTypes.ABSTRACT_REPORT,
+                    nationaljournal: DocumentTypes.ARTICLE,
+                    internationaljournal: DocumentTypes.ARTICLE,
+                    correction: DocumentTypes.ERRATUM,
+                    editorial: DocumentTypes.EDITORIAL,
+                    supplementaryinformation: DocumentTypes.NOTE,
+                    talk: DocumentTypes.INVITED_TALK
                 };
                 const documentType = d.typeAlias in typeMappings ? typeMappings[d.typeAlias] : null;
                 var newDoc = {
@@ -123,7 +123,7 @@ module.exports = {
                     sourceType: sourceType,
                     type: documentType
                 };
-                if (documentType == 'invited_talk') {
+                if (documentType == DocumentTypes.INVITED_TALK) {
                     newDoc.itSource = d.publication;
                     return newDoc;
                 }
@@ -179,9 +179,9 @@ module.exports = {
                 }
 
                 const sourceTypeMappings = {
-                    JOURNAL_ARTICLE: 'journal',
-                    CONFERENCE_PAPER: 'conference',
-                    BOOK: 'book'
+                    JOURNAL_ARTICLE: SourceType.JOURNAL,
+                    CONFERENCE_PAPER: SourceType.conference,
+                    BOOK: SourceType.BOOK
                 };
                 const sourceType = sourceTypeMappings[d['work-type']];
                 const newDoc = {
@@ -336,28 +336,28 @@ function scoupsSingleRequest(d1, attempt) {
             const scopusSource = _.get(d2, 'item.bibrecord.head.source');
 
             const sourceTypeMappings = {
-                'd': 'journal', //trade journal
-                'j': 'journal',
-                'p': 'conference',
-                'b': 'book',
-                'r': 'report',
-                'k': 'bookseries'
+                'd': SourceType.JOURNAL, //trade journal
+                'j': SourceType.JOURNAL,
+                'p': SourceType.CONFERENCE,
+                'b': SourceType.BOOK,
+                'r': SourceType.REPORT,
+                'k': SourceType.BOOKSERIES
             };
 
             var typeMappings = {
-                ar: 'article',
-                ab: 'abstract_report',
-                ip: 'article_in_press',
-                bk: 'book',
-                ch: 'book_chapter',
-                cp: 'conference_paper',
-                cr: 'conference_review',
-                ed: 'editorial',
-                er: 'erratum',
-                le: 'letter',
-                no: 'note',
-                re: 'review',
-                sh: 'short_survey'
+                ar: DocumentTypes.ARTICLE,
+                ab: DocumentTypes.ABSTRACT_REPORT,
+                ip: DocumentTypes.ARTICLE_IN_PRESS,
+                bk: DocumentTypes.BOOK,
+                ch: DocumentTypes.BOOK_CHAPTER,
+                cp: DocumentTypes.CONFERENCE_PAPER,
+                cr: DocumentTypes.CONFERENCE_REVIEW,
+                ed: DocumentTypes.EDITORIAL,
+                er: DocumentTypes.ERRATUM,
+                le: DocumentTypes.LETTER,
+                no: DocumentTypes.NOTE,
+                re: DocumentTypes.REVIEW,
+                sh: DocumentTypes.SHORT_SURVEY
             };
 
             var sourceType = sourceTypeMappings[getDollars(scopusSource, '@type')];
