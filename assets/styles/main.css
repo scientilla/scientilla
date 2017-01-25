@@ -217,8 +217,10 @@ i {
 /******************************************************************************/
 /*Scientilla filter*/
 /******************************************************************************/
-.scientilla-filter-form > form > * > div.form-group {
+.scientilla-filter-form > form > text-field, .scientilla-filter-form > form > select-field {
     display: inline-block;
+    vertical-align: top;
+    margin-right: 5px;
 }
 
 .scientilla-filter-form > form > text-field > div.form-group {
