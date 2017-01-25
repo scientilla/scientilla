@@ -1,9 +1,11 @@
 /* global sails */
 "use strict";
 
-var request = require('request-promise');
-var _ = require('lodash');
-var Promise = require("bluebird");
+const request = require('request-promise');
+const _ = require('lodash');
+const Promise = require("bluebird");
+const SourceType = require("./SourceTypes");
+const DocumentTypes = require("./DocumentTypes");
 
 module.exports = {
     attributes: {},
@@ -261,8 +263,12 @@ module.exports = {
             fieldExtract: res => {
                 const error = _.get(res, 'search-results.entry[0].error');
 
-                if (error)
-                    throw new Error(error);
+                if (error) {
+                    if (error === 'Result set was empty')
+                        return {count: 0, documents: []};
+                    else
+                        throw new Error(error);
+                }
 
                 const count = _.get(res, 'search-results.opensearch:totalResults');
                 const documents = _.get(res, 'search-results.entry');
