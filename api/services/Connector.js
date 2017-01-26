@@ -4,7 +4,7 @@
 const request = require('request-promise');
 const _ = require('lodash');
 const Promise = require("bluebird");
-const SourceType = require("./SourceTypes");
+const SourceTypes = require("./SourceTypes");
 const DocumentTypes = require("./DocumentTypes");
 
 module.exports = {
@@ -181,9 +181,9 @@ module.exports = {
                 }
 
                 const sourceTypeMappings = {
-                    JOURNAL_ARTICLE: SourceType.JOURNAL,
-                    CONFERENCE_PAPER: SourceType.conference,
-                    BOOK: SourceType.BOOK
+                    JOURNAL_ARTICLE: SourceTypes.JOURNAL,
+                    CONFERENCE_PAPER: SourceTypes.CONFERENCE,
+                    BOOK: SourceTypes.BOOK
                 };
                 const sourceType = sourceTypeMappings[d['work-type']];
                 const newDoc = {
@@ -342,12 +342,12 @@ function scoupsSingleRequest(d1, attempt) {
             const scopusSource = _.get(d2, 'item.bibrecord.head.source');
 
             const sourceTypeMappings = {
-                'd': SourceType.JOURNAL, //trade journal
-                'j': SourceType.JOURNAL,
-                'p': SourceType.CONFERENCE,
-                'b': SourceType.BOOK,
-                'r': SourceType.REPORT,
-                'k': SourceType.BOOKSERIES
+                'd': SourceTypes.JOURNAL, //trade journal
+                'j': SourceTypes.JOURNAL,
+                'p': SourceTypes.CONFERENCE,
+                'b': SourceTypes.BOOK,
+                'r': SourceTypes.REPORT,
+                'k': SourceTypes.BOOKSERIES
             };
 
             var typeMappings = {
