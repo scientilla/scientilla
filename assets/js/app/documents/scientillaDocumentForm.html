@@ -9,7 +9,7 @@
         <label for="sourceType">Source Type</label>
         <select class="form-control" id="sourceType"
                 placeholder="Source Type" ng-model="vm.document.sourceType"
-                ng-options="item.id as item.label for item in vm.sourceTypes track by item.id">
+                ng-options="option.id as option.label for option in vm.sourceTypes">
             <option value="">--Not Selected--</option>
         </select>
     </div>
