@@ -2,28 +2,21 @@
     'use strict';
 
     angular.module('documents')
-        .directive('scientillaDocument', scientillaDocument);
-
-    function scientillaDocument() {
-        return {
-            restrict: 'E',
+        .component('scientillaDocument', {
             templateUrl: 'partials/scientillaDocument.html',
-            controller: scientillaDocumentController,
+            controller: scientillaDocument,
             controllerAs: 'vm',
-            scope: {},
-            bindToController: {
-                document: "="
+            bindings: {
+                document: "<"
             }
-        };
-    }
+        });
 
-    scientillaDocumentController.$inject = [
+    scientillaDocument.$inject = [
         'ModalService',
-        'config',
-        'context'
+        'config'
     ];
 
-    function scientillaDocumentController(ModalService, config, context) {
+    function scientillaDocument(ModalService, config) {
         var vm = this;
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
