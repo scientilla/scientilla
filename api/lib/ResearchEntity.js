@@ -178,6 +178,20 @@ module.exports = _.merge({}, BaseModel, {
                 });
         }));
     },
+    addTags: function (TagModel, userId, documentId, tags) {
+        return TagModel.destroy({researchEntity: userId, document: documentId})
+            .then(()=>
+                tags.forEach(t =>
+                    TagLabel
+                        .findOrCreate({value: t})
+                        .then(tl => TagModel.create({
+                            document: documentId,
+                            researchEntity: userId,
+                            tagLabel: tl.id
+                        }))
+                )
+            )
+    },
     _config: {
         actions: false,
         shortcuts: false,

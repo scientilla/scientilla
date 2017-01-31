@@ -43,7 +43,7 @@
                 EventsService.DRAFT_VERIFIED,
                 EventsService.DOCUMENT_VERIFIED,
                 EventsService.DRAFT_UNVERIFIED,
-                EventsService.DOCUMENT_USER_TAGS_UPDATED
+                EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED
             ], updateList);
         };
 

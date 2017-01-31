@@ -26,8 +26,9 @@
         service.getExternalDocuments = getExternalDocuments;
         service.deleteDraft = deleteDraft;
         service.deleteDrafts = deleteDrafts;
+        service.setPrivateTags = setPrivateTags;
 
-        var documentPopulates = ['source', 'authors', 'authorships', 'affiliations', 'userTags', 'tagLabels'];
+        var documentPopulates = ['source', 'authors', 'authorships', 'affiliations', 'userTags', 'tagLabels', 'groupTags', 'groupTagLabels'];
 
         function getDocuments(researchEntity, query) {
             var populate = {populate: documentPopulates};
@@ -147,6 +148,11 @@
             return Restangular
                 .all('documents')
                 .customDELETE('delete', {}, {}, {draftIds: draftIds});
+        }
+
+        function setPrivateTags(researchEntity, document, tags) {
+            return researchEntity.one('documents', document.id)
+                .customPUT({tags: tags}, 'tags')
         }
 
         return service;

@@ -19,7 +19,7 @@
             DRAFT_UNVERIFIED: 'draft.unverified',
 
             DOCUMENT_VERIFIED: 'document.verified',
-            DOCUMENT_USER_TAGS_UPDATED: 'document.userTagsUpdated',
+            DOCUMENT_PRIVATE_TAGS_UPDATED: 'document.privateTagsUpdated',
 
             NOTIFICATION_ACCEPTED: 'notification.accepted',
             NOTIFICATION_DISCARDED: 'notification.discarded'

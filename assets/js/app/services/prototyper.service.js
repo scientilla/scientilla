@@ -101,6 +101,20 @@
             },
             getProfileUrl: function () {
                 return '/users/' + this.id;
+            },
+            getTagsByDocument: function (document) {
+                if (!document.tagLabels || !document.userTags)
+                    return [];
+
+                var filteredUserTags = document.userTags.filter(function (ut) {
+                    return ut.researchEntity === this.id;
+                }.bind(this));
+
+                return document.tagLabels.filter(function (tagLabel) {
+                    return !!filteredUserTags.find(function (ut) {
+                        return tagLabel.id === ut.tagLabel;
+                    });
+                });
             }
 
         };
@@ -130,6 +144,20 @@
             },
             getProfileUrl: function () {
                 return '/groups/' + this.id;
+            },
+            getTagsByDocument: function (document) {
+                if (!document.groupTagLabels || !document.groupTags)
+                    return [];
+
+                var filteredGroupTags = document.groupTags.filter(function (gt) {
+                    return gt.researchEntity === this.id;
+                }.bind(this));
+
+                return document.groupTagLabels.filter(function (tagLabel) {
+                    return !!filteredGroupTags.find(function (gt) {
+                        return tagLabel.id === gt.tagLabel;
+                    });
+                });
             }
         };
 
@@ -191,20 +219,6 @@
             getUserIndex: function (user) {
                 var index = _.findIndex(this.getAuthors(), a => user.getAliases().includes(a));
                 return index;
-            },
-            getUsersTagByUser: function (user) {
-                if (!this.tagLabels || !this.userTags)
-                    return [];
-
-                var filteredUserTags = this.userTags.filter(function (ut) {
-                    return ut.researchEntity === user.id;
-                });
-
-                return this.tagLabels.filter(function (tagLabel) {
-                    return !!filteredUserTags.find(function (ut) {
-                        return tagLabel.id === ut.tagLabel;
-                    });
-                });
             },
             getNewGroupDocument: function (groupId) {
                 return {
@@ -326,6 +340,7 @@
             _.defaultsDeep(document, documentPrototype);
             service.toUsersCollection(document.authors);
             service.toTagLabelsCollection(document.tagLabels);
+            service.toTagLabelsCollection(document.groupTagLabels);
             return document;
         }
 

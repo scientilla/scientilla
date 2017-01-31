@@ -28,7 +28,7 @@
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
         vm.editTags = editTags;
-        vm.isUserTagsShowable = isUserTagsShowable;
+        vm.arePrivateTagsShowable = arePrivateTagsShowable;
 
         activate();
 
@@ -47,8 +47,8 @@
             });
         }
 
-        function isUserTagsShowable() {
-            return context.getResearchEntity().getType() === 'user';
+        function arePrivateTagsShowable() {
+            return true;
         }
 
         function editTags() {

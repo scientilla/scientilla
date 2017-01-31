@@ -39,6 +39,6 @@ module.exports = require('waterlock').actions.user(_.merge({}, researchEntityCon
         var documentId = req.params.documentId;
         var userId = req.params.id;
         var tags = req.param('tags');
-        res.halt(User.addTags(userId, documentId, tags));
+        res.halt( User.addTags(Tag, userId, documentId, tags));
     }
 }));

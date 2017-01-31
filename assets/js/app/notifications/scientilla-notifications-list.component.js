@@ -49,7 +49,7 @@
                 EventsService.NOTIFICATION_DISCARDED,
                 EventsService.DRAFT_UNVERIFIED,
                 EventsService.DOCUMENT_VERIFIED,
-                EventsService.DOCUMENT_USER_TAGS_UPDATED
+                EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED
             ], updateList);
         };
 

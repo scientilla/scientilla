@@ -314,19 +314,5 @@ module.exports = _.merge({}, ResearchEntity, {
     },
     discardDocument: function (researchEntityId, documentId) {
         return Discarded.findOrCreate({researchEntity: researchEntityId, document: documentId});
-    },
-    addTags: function (userId, documentId, tags) {
-        return Tag.destroy({researchEntity: userId, document: documentId})
-            .then(()=>
-                tags.forEach(t =>
-                    TagLabel
-                        .findOrCreate({value: t})
-                        .then(tl => Tag.create({
-                            document: documentId,
-                            researchEntity: userId,
-                            tagLabel: tl.id
-                        }))
-                )
-            )
     }
 });

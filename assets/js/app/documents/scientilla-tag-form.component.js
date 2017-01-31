@@ -14,13 +14,13 @@
         });
 
     scientillaTagForm.$inject = [
-        'Restangular',
         'Prototyper',
         'EventsService',
-        'context'
+        'context',
+        'researchEntityService'
     ];
 
-    function scientillaTagForm(Restangular, Prototyper, EventsService, context) {
+    function scientillaTagForm(Prototyper, EventsService, context, researchEntityService) {
         var vm = this;
 
         var researchEntity = context.getResearchEntity();
@@ -31,7 +31,7 @@
         vm.close = close;
 
         vm.$onInit = function () {
-            vm.tags = vm.document.getUsersTagByUser(researchEntity) || [];
+            vm.tags = researchEntity.getTagsByDocument(vm.document) || [];
         };
 
         vm.$onDestroy = function () {
@@ -48,13 +48,9 @@
         }
 
         function save() {
-            var tags = vm.tags.map(t => t.value);
-
-            Restangular.one('users', researchEntity.id)
-                .one('documents', vm.document.id)
-                .post('tags', {tags: tags})
-                .then(function(){
-                    EventsService.publish(EventsService.DOCUMENT_USER_TAGS_UPDATED, vm.document);
+            researchEntityService.setPrivateTags(researchEntity, vm.document, vm.tags.map(t => t.value))
+                .then(function () {
+                    EventsService.publish(EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED, vm.document);
                 });
 
             if (_.isFunction(vm.onSubmit()))

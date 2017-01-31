@@ -103,6 +103,15 @@ module.exports = _.merge({}, BaseModel, {
             via: 'documents',
             through: 'tag'
         },
+        groupTags: {
+            collection: 'taggroup',
+            via: 'document'
+        },
+        groupTagLabels: {
+            collection: 'tagLabel',
+            via: 'documents',
+            through: 'taggroup'
+        },
         discardedCoauthors: {
             collection: 'User',
             via: 'discardedDocuments',
