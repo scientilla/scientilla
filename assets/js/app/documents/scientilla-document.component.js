@@ -7,7 +7,8 @@
             controller: scientillaDocument,
             controllerAs: 'vm',
             bindings: {
-                document: "<"
+                document: "<",
+                showPrivateTags: "<?"
             }
         });
 
@@ -21,13 +22,10 @@
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
         vm.editTags = editTags;
-        vm.arePrivateTagsShowable = arePrivateTagsShowable;
 
-        activate();
-
-        function activate() {
-
-        }
+        vm.$onInit = function () {
+            vm.showPrivateTags = vm.showPrivateTags || false;
+        };
 
         function openDetails() {
             ModalService
@@ -38,10 +36,6 @@
             return _.some(vm.document.affiliations, function (a) {
                 return a.institute === config.mainInstitute.id
             });
-        }
-
-        function arePrivateTagsShowable() {
-            return true;
         }
 
         function editTags() {

@@ -36,6 +36,8 @@
 
         vm.searchForm = documentSearchForm;
 
+        vm.showPrivateTags = vm.editable;
+
         var query = {};
 
         vm.$onInit = function () {
