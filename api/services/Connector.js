@@ -65,13 +65,13 @@ module.exports = {
                 query = opts[configQuery.where.field];
             else
                 throw "ExternalDocument error: field not selected";
-
-            if (configQuery.where.type && configQuery.where.type !== "all")
-                query = _.merge({type: configQuery.where.type}, query);
         }
         else {
             query = {"research-structure": researchEntity.publicationsAcronym};
         }
+
+        if (configQuery.where.type && configQuery.where.type !== "all")
+            query = _.merge({type: configQuery.where.type}, query);
 
         let qs = {
             limit: configQuery.limit,
