@@ -1,5 +1,5 @@
 (function () {
-    angular.module("users")
+    angular.module("services")
         .factory("ResearchEntityFormsFactory", ResearchEntityFormsFactory);
 
     ResearchEntityFormsFactory.$inject = [

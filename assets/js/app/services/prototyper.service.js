@@ -1,7 +1,8 @@
 "use strict";
 (function () {
 
-    angular.module("components").factory("Prototyper", Prototyper);
+    angular.module("services")
+        .factory("Prototyper", Prototyper);
 
     Prototyper.$inject = [
         'userConstants'

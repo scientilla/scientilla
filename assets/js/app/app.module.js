@@ -7,12 +7,12 @@
         'ui.bootstrap',
         'ui-notification',
         'LocalStorageModule',
-        'services',
 
         /* Feature areas */
         'users',
         'documents',
         'groups',
-        'notifications'
+        'notifications',
+        'services'
     ]);
 })();

@@ -1,5 +1,6 @@
 (function () {
-    angular.module("services").factory("EventsService", ModalService);
+    angular.module("services")
+        .factory("EventsService", ModalService);
 
     ModalService.$inject = [
         '$rootScope'
