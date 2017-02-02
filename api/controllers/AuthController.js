@@ -10,6 +10,8 @@
 
 module.exports = require('waterlock').waterlocked({
     register: function (req, res) {
+        if (!sails.config.scientilla.registerEnabled)
+            return res.badRequest('Registering is currently disabled');
         var params = waterlock._utils.allParams(req);
         User.createCompleteUser(params)
                 .then(function (user) {
