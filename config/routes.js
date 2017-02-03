@@ -62,7 +62,8 @@ module.exports.routes = {
     'get /documents/:id/suggested-collaborators': 'Document.getSuggestedCollaborators',
     'get /users/:id/external-documents': 'User.getExternalDocuments',
     'get /groups/:id/external-documents': 'Group.getExternalDocuments',
-    'delete /documents/delete': 'Document.deleteDrafts'
+    'delete /documents/delete': 'Document.deleteDrafts',
+    'get /settings': 'Settings.getSettings'
 
 
     /***************************************************************************

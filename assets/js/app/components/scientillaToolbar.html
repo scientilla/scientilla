@@ -6,7 +6,7 @@
     </div>
     <div class="col-sm-5 text-right">
         <div ng-if="!vm.isLogged">
-            <a ng-href="#/register" aria-label="Register">
+            <a ng-href="#/register" aria-label="Register" ng-if="vm.isRegisterEnabled">
                 Register
             </a>
             <a ng-href="#/login" aria-label="Login">

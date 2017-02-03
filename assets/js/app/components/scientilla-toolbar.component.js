@@ -10,11 +10,13 @@
 
     scientillaToolbar.$inject = [
         'EventsService',
-        'AuthService'
+        'AuthService',
+        'Settings'
     ];
 
-    function scientillaToolbar(EventsService, AuthService) {
+    function scientillaToolbar(EventsService, AuthService, Settings) {
         var vm = this;
+        vm.isRegisterEnabled = false;
 
         vm.$onInit = function () {
 
@@ -33,6 +35,10 @@
         function refresh() {
             vm.isLogged = AuthService.isLogged;
             vm.userId = AuthService.userId;
+            Settings.getSettings()
+                .then(function (settings) {
+                    vm.isRegisterEnabled = settings.registerEnabled;
+                });
         }
     }
 
