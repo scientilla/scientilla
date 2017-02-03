@@ -85,7 +85,7 @@ module.exports = {
                 qs: qs,
                 json: true
             },
-            fieldExtract: res =>({
+            fieldExtract: res => ({
                 documents: _.get(res, 'data'),
                 count: _.get(res, 'items_count')
             }),
@@ -446,19 +446,21 @@ function scoupsSingleRequest(d1, attempt) {
         })
         .spread(function (d2, newDoc, newInstitutes, newSource) {
             const scopusAuthorships = _.get(d2, 'authors.author');
+            const scopusAuthorGroups = toArray(_.get(d2, 'item.bibrecord.head.author-group'));
+            const scopusAuthors = _.flatMap(scopusAuthorGroups, 'author');
 
-            const correspondingAuthorIndexedName = _.get(d2, 'item.bibrecord.head.correspondence.person.ce:indexed-name');
-            const correspondingIndex = _.findIndex(newDoc.authorsStr.split(', '), correspondingAuthorIndexedName);
             newDoc.authorships = _.map(scopusAuthorships, (a, i) => {
                 const affiliationArray = toArray(a.affiliation);
                 const affiliationInstitutes = _.map(
                     affiliationArray,
                     aff => _.find(newInstitutes, {scopusId: aff['@id']}).id
                 );
+                const author = _.find(scopusAuthors, {'@auid': a['@auid']});
+                const corresponding = !!author['ce:e-address'];
 
                 return {
                     position: i,
-                    corresponding: correspondingIndex === i,
+                    corresponding: corresponding,
                     affiliations: affiliationInstitutes
                 };
             });
