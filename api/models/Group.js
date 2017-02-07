@@ -90,7 +90,9 @@ module.exports = _.merge({}, ResearchEntity, {
             .then(()=>document);
     },
     discardDocument: function (researchEntityId, documentId) {
-        return DiscardedGroup.findOrCreate({researchEntity: researchEntityId, document: documentId});
+        return ResearchEntity
+            .doUnverifyDocument(Group, researchEntityId, documentId)
+            .then(() => DiscardedGroup.findOrCreate({researchEntity: researchEntityId, document: documentId}));
     },
     getDefaultGroup: function () {
         //TODO: id must be read from settings

@@ -44,16 +44,20 @@ module.exports = _.merge({}, BaseModel, {
             });
     },
     unverifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
+        return this
+            .doUnverifyDocument(ResearchEntityModel, researchEntityId, documentId)
+            .then(function () {
+                return Document.deleteIfNotVerified(documentId);
+            });
+    },
+    doUnverifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
         var authorshipModel = getAuthorshipModel(ResearchEntityModel);
         return authorshipModel
             .findOne({researchEntity: researchEntityId, document: documentId})
             .then(function (authorship) {
                 if (!authorship)
-                    throw new Error('Authorship ' + documentId + ' does not exist');
+                    return;
                 return authorship.unverify();
-            })
-            .then(function () {
-                return Document.deleteIfNotVerified(documentId);
             });
     },
     createDrafts: function (Model, researchEntityId, documents) {

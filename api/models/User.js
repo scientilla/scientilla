@@ -313,6 +313,8 @@ module.exports = _.merge({}, ResearchEntity, {
             });
     },
     discardDocument: function (researchEntityId, documentId) {
-        return Discarded.findOrCreate({researchEntity: researchEntityId, document: documentId});
+        return ResearchEntity
+            .doUnverifyDocument(User, researchEntityId, documentId)
+            .then(() => Discarded.findOrCreate({researchEntity: researchEntityId, document: documentId}))
     }
 });

@@ -91,30 +91,34 @@
                     ModalService
                         .multipleChoiceConfirm('Unverifying', 'Do you want to unverify the document?', ['Create New Version', 'Unverify'])
                         .then(function (buttonIndex) {
-
-                            researchEntityService.unverify(researchEntity, document)
-                                .then(function (draft) {
-                                    EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
-                                    switch (buttonIndex) {
-                                        case 0:
+                            switch (buttonIndex) {
+                                case 0:
+                                    researchEntityService.unverify(researchEntity, document)
+                                        .then(function (draft) {
+                                            EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
                                             return researchEntityService
                                                 .copyDocument(researchEntity, document)
                                                 .then(function (draft) {
                                                     EventsService.publish(EventsService.DRAFT_CREATED, draft);
                                                     return draft;
                                                 })
-                                                .then(openEditPopup);
-                                            break;
-                                        case 1:
+                                                .then(openEditPopup)
+                                                .catch(function () {
+                                                    Notification.warning("Failed to unverify document");
+                                                });
+                                        });
+                                    break;
+                                case 1:
+                                    researchEntityService.discardDocument(researchEntity, document.id)
+                                        .then(function (draft) {
+                                            EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
                                             Notification.success("Document succesfully unverified");
-                                            break;
-                                    }
-
-                                })
-                                .catch(function () {
-                                    Notification.warning("Failed to unverify document");
-                                });
-
+                                        })
+                                        .catch(function () {
+                                            Notification.warning("Failed to unverify document");
+                                        });
+                                    break;
+                            }
                         })
                         .catch(function () {
                             _.remove(document.tags, function (t) {
