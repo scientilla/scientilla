@@ -149,12 +149,15 @@ module.exports = {
             };
 
             const mapJournal = (s) => {
-                if (s.type == 'Book Series')
-                    s.type = 'bookseries';
+                const sourceMappingTable = {
+                    'Book Series' : SourceTypes.BOOKSERIES,
+                    'Journal': SourceTypes.JOURNAL
+                };
+                s.type = sourceMappingTable[s.type];
                 return s;
             };
 
-            const filterJournals = (s) => s.type != 'Trade Journal';
+            const filterJournals = (s) => s.type;
 
             journalsAndBookSeries = readWorksheet(journalWorksheet, journalMappingsTable, mapJournal, filterJournals);
 
@@ -165,7 +168,7 @@ module.exports = {
                 "issn": 'D'
             };
             const mapConference = s => {
-                s.type = 'conference';
+                s.type = SourceTypes.CONFERENCE;
                 return s;
             };
             newConferences = readWorksheet(newConferencesWorksheet, newConferencesMappingsTable, mapConference);
