@@ -5,7 +5,9 @@
 const _ = require('lodash');
 const Promise = require("bluebird");
 const GeneratorFn = require('waterline-sql-builder');
-const pgp = require('pg-promise')();
+const pgp = require('pg-promise')({
+    noWarnings: true
+});
 
 const env = sails.config.environment;
 const connectionParams = sails.config.connections[env];
