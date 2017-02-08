@@ -274,19 +274,12 @@ module.exports = _.merge({}, ResearchEntity, {
             corresponding: authorshipData.corresponding
         };
 
-        let promise;
-        if (authorshipData.corresponding)
-            promise = Authorship.update({document: newAuthorship.document}, {corresponding: false});
-        else
-            promise = Promise.resolve();
-
         const authorshipFindCriteria = {
             document: newAuthorship.document,
             position: newAuthorship.position
         };
 
-        return promise
-            .then(()=> Authorship.destroy(authorshipFindCriteria))
+        return Authorship.destroy(authorshipFindCriteria)
             .then(oldAuthorship=> Affiliation.destroy({authorship: oldAuthorship.id}))
             .then(()=> Authorship.create(newAuthorship))
             .then((authorship)=> {
