@@ -198,7 +198,7 @@ module.exports = _.merge({}, ResearchEntity, {
             });
     },
     checkUsername: function (user) {
-        if (_.endsWith(user.username, '@' + sails.config.scientilla.ldap.domain))
+        if (User.isInternalUser(user))
             throw new Error('Cannot create domain users');
 
         return User
@@ -300,14 +300,20 @@ module.exports = _.merge({}, ResearchEntity, {
     },
     afterCreate: function (user, cb) {
         Promise.resolve(user)
-            .then(Group.addUserToDefaultGroup)
-            .then(function () {
-                cb();
-            });
+            .then(user => {
+                if (User.isInternalUser(user))
+                    return Group.addUserToDefaultGroup(user);
+                else
+                    return user;
+            })
+            .then(() => cb());
     },
     discardDocument: function (researchEntityId, documentId) {
         return ResearchEntity
             .doUnverifyDocument(User, researchEntityId, documentId)
             .then(() => Discarded.findOrCreate({researchEntity: researchEntityId, document: documentId}))
+    },
+    isInternalUser: function(user) {
+        return _.endsWith(user.username, '@' + sails.config.scientilla.ldap.domain);
     }
 });
