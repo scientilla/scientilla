@@ -36,7 +36,7 @@
                     values: values,
                     matchColumn: 'connector',
                     onChange: onConnectorChange
-                }
+                };
             }
 
             function onConnectorChange(newValue, oldValue) {
@@ -65,7 +65,7 @@
 
             }
 
-        }
+        };
     }
 
 }());

@@ -1,5 +1,5 @@
-"use strict";
 (function () {
+    "use strict";
     angular.module("services")
         .factory("Settings", Settings);
 

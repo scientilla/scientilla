@@ -179,7 +179,7 @@
         }
 
         function setStatus(status) {
-            return vm.status = status;
+            vm.status = status;
         }
 
         function initSearchValues() {

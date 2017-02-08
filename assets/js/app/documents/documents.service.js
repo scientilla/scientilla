@@ -142,7 +142,7 @@
                     var notCopiedCocuments = documents.filter(function (d) {
                         return !d.tags.includes('copied');
                     });
-                    return copyDocuments(notCopiedCocuments)
+                    return copyDocuments(notCopiedCocuments);
                 }
 
                 function copyDocuments(documents) {

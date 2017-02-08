@@ -26,7 +26,7 @@
                 if (authorship) {
                     if (authorship.researchEntity) {
                         var user = _.find(verifiedAuthors, function (va) {
-                            return va.id === authorship.researchEntity
+                            return va.id === authorship.researchEntity;
                         });
                         htmlAuthor = '<a href="#/users/' + user.id + '">' + author + '</a>';
                     }

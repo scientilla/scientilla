@@ -6,5 +6,5 @@ angular.module('app.core')
         }
 
         return input;
-    }
+    };
 });

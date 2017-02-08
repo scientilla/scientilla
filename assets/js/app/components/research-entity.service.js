@@ -152,7 +152,7 @@
 
         function setPrivateTags(researchEntity, document, tags) {
             return researchEntity.one('documents', document.id)
-                .customPUT({tags: tags}, 'tags')
+                .customPUT({tags: tags}, 'tags');
         }
 
         return service;

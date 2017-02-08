@@ -96,7 +96,7 @@
 
         function watchDocumentSourceType() {
             $scope.$watch('vm.document.sourceType', function(newValue, oldValue) {
-                if (newValue == oldValue)
+                if (newValue === oldValue)
                     return;
                 closePopover();
                 if (!newValue)

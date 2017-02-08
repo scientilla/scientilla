@@ -1,5 +1,5 @@
-"use strict";
 (function () {
+    "use strict";
 
     angular.module("services")
         .factory("Prototyper", Prototyper);
@@ -208,7 +208,7 @@
                 return this.authorsStr.replace(/\s+et all\s*$/i, '').split(/,|\sand\s/).map(_.trim);
             },
             getUcAuthors: function () {
-                var authorsStr = this.getAuthors();
+                var authors = this.getAuthors();
                 var ucAuthors = _.map(authors, function (a) {
                     return a.toUpperCase();
                 });
@@ -309,14 +309,14 @@
                     return;
                 const affiliations = _.filter(document.affiliations, {authorship: a.id});
                 a.affiliations = _.map(affiliations, 'institute');
-            })
+            });
         }
 
         function applyToAll(fun) {
             return function (elems) {
                 _.forEach(elems, fun);
                 return elems;
-            }
+            };
         }
 
         function toUserModel(user) {
@@ -348,7 +348,7 @@
         function toMembershipModel(membership) {
             _.defaultsDeep(membership, membershipPrototype);
             service.toUserModel(membership.user);
-            return membership
+            return membership;
         }
 
         function toCollaborationModel(collaboration) {

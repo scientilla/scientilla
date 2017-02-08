@@ -94,7 +94,7 @@
                     return [];
                 var authorship = authorships[0];
                 return authorship.affiliations;
-            })
+            });
         }
 
         function getInstitutesFilter() {

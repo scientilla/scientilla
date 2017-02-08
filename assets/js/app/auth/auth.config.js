@@ -29,7 +29,7 @@
                 .when("/logout", {
                     template: "",
                     controller: "LogoutController"
-                })
+                });
     }
 
 

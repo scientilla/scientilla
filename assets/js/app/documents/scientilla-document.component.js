@@ -34,7 +34,7 @@
 
         function hasMainGroupAffiliation() {
             return _.some(vm.document.affiliations, function (a) {
-                return a.institute === config.mainInstitute.id
+                return a.institute === config.mainInstitute.id;
             });
         }
 

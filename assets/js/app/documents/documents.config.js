@@ -34,7 +34,7 @@
                 var documentService = UserDocumentsServiceFactory.create(user, UsersService);
                 context.setDocumentService(documentService);
                 return context;
-            })
+            });
     }
     getGroupContext.$inject = ['context', 'GroupsService', '$route', 'GroupDocumentsServiceFactory'];
 
@@ -45,7 +45,7 @@
                 var documentService = GroupDocumentsServiceFactory.create(group, GroupsService);
                 context.setDocumentService(documentService);
                 return context;
-            })
+            });
     }
 
     getCurrentUser.$inject = ['UsersService', '$route'];

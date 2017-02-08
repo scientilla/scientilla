@@ -8,7 +8,7 @@
 
         function getTitle(document) {
             var title = document.title;
-            var titleStr = title ? title : '<i> < No title > </i>'
+            var titleStr = title ? title : '<i> < No title > </i>';
             return titleStr;
         }
 

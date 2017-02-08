@@ -1,4 +1,3 @@
-"use strict";
 (function () {
 
     angular.module("documents").factory("DocumentTypesService", DocumentTypesService);
