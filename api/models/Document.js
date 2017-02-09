@@ -171,7 +171,7 @@ module.exports = _.merge({}, BaseModel, {
                 var fieldSimilarity = ObjectComparer.compareStrings(self[f.name], doc[f.name]);
                 return sum + Math.pow(fieldSimilarity, p) * f.weight;
             }, 0);
-            const similarity = Math.pow(tmp / _.sumBy(fields, 'weight'), 1/p);
+            const similarity = Math.pow(tmp / _.sumBy(fields, 'weight'), 1 / p);
             return similarity;
         },
         getAuthorIndex: function (author) {
@@ -213,7 +213,9 @@ module.exports = _.merge({}, BaseModel, {
     deleteIfNotVerified: function (documentId) {
         function countAuthorsAndGroups(document) {
             return document.authors.length +
-                document.groups.length;
+                document.groups.length +
+                document.discardedCoauthors.length +
+                document.discardedGroups.length;
         }
 
         return Document.findOneById(documentId)
@@ -221,10 +223,12 @@ module.exports = _.merge({}, BaseModel, {
             .populate('groups')
             .populate('authorships')
             .populate('affiliations')
+            .populate('discardedCoauthors')
+            .populate('discardedGroups')
             .then(function (document) {
                 if (!document)
                     throw new Error('Document ' + documentId + ' does not exist');
-                if (countAuthorsAndGroups(document) === 0) {
+                if (countAuthorsAndGroups(document) == 0) {
                     sails.log.debug('Document ' + documentId + ' will be deleted');
                     return Document.destroy({id: documentId});
                 }
