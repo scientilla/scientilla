@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-git revert --hard
+git reset --hard
 git pull
 bower install
 npm install
