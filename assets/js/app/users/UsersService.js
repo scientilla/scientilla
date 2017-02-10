@@ -42,6 +42,7 @@
         };
 
         service.doSave = function (user) {
+            delete user.documents;
             return this.save(user).then(function (u) {
                 return user;
             });
