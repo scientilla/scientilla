@@ -132,9 +132,12 @@ module.exports = _.merge({}, BaseModel, {
         return Promise.all(documentIds.map(documentId => Model.verifyDocument(Model, researchEntityId, documentId)));
     },
     verifyDocument: function (Model, researchEntityId, documentId, position, affiliationInstituteIds, corresponding) {
-        return Document.findOneById(documentId)
-            .populate('affiliations')
-            .populate('authorships')
+        const DiscardedModel = getDiscardedModel(Model);
+        return DiscardedModel.destroy({document: documentId})
+            .then(() => Document.findOneById(documentId)
+                .populate('affiliations')
+                .populate('authorships')
+            )
             .then(document => {
                 if (!document)
                     throw {
@@ -184,7 +187,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     addTags: function (TagModel, userId, documentId, tags) {
         return TagModel.destroy({researchEntity: userId, document: documentId})
-            .then(()=>
+            .then(() =>
                 tags.forEach(t =>
                     TagLabel
                         .findOrCreate({value: t})
@@ -208,6 +211,11 @@ function getAuthorshipModel(ResearchEntityModel) {
     return sails.models[authorshipModelName];
 }
 
+function getDiscardedModel(ResearchEntityModel) {
+    var discardedModelName = ResearchEntityModel._attributes.discardedDocuments.through;
+    return sails.models[discardedModelName];
+}
+
 function getSimilarDocuments(ResearchEntityModel, researchEntityid, doc, includeDrafts) {
     const criteria = {or: []};
     if (doc.id)
@@ -219,7 +227,7 @@ function getSimilarDocuments(ResearchEntityModel, researchEntityid, doc, include
     if (doc.scopusId)
         criteria.or.push({scopusId: doc.scopusId});
     if (doc.authorsStr)
-        criteria.or.push(...doc.authorsStr.split(', ').map( author => ({authorsStr: { contains: author}})));
+        criteria.or.push(...doc.authorsStr.split(', ').map(author => ({authorsStr: {contains: author}})));
     if (_.isEmpty(criteria.or))
         delete criteria.or;
     let q = ResearchEntityModel
