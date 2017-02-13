@@ -206,14 +206,17 @@ module.exports = _.merge({}, BaseModel, {
     }
 });
 
+function getThroughModel(ResearchEntityModel, fieldName) {
+    var throughModelName = ResearchEntityModel._attributes[fieldName].through;
+    return sails.models[throughModelName];
+}
+
 function getAuthorshipModel(ResearchEntityModel) {
-    var authorshipModelName = ResearchEntityModel._attributes.documents.through;
-    return sails.models[authorshipModelName];
+    return getThroughModel(ResearchEntityModel, 'documents');
 }
 
 function getDiscardedModel(ResearchEntityModel) {
-    var discardedModelName = ResearchEntityModel._attributes.discardedDocuments.through;
-    return sails.models[discardedModelName];
+    return getThroughModel(ResearchEntityModel, 'discardedDocuments');
 }
 
 function getSimilarDocuments(ResearchEntityModel, researchEntityid, doc, includeDrafts) {
