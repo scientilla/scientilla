@@ -3,22 +3,22 @@
 (function () {
     angular
         .module('documents')
-        .component('scientillaNotificationsList', {
+        .component('scientillaSuggestedDocuments', {
             templateUrl: 'partials/scientillaSuggestedDocuments.html',
-            controller: ScientillaNotificationsListController,
+            controller: scientillaSuggestedDocumentsController,
             controllerAs: 'vm',
             bindings: {
                 researchEntity: "<"
             }
         });
 
-    ScientillaNotificationsListController.$inject = [
+    scientillaSuggestedDocumentsController.$inject = [
         'context',
         'researchEntityService',
         'EventsService'
     ];
 
-    function ScientillaNotificationsListController(context, researchEntityService, EventsService) {
+    function scientillaSuggestedDocumentsController(context, researchEntityService, EventsService) {
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
