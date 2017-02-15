@@ -12,7 +12,7 @@
         'users',
         'documents',
         'groups',
-        'notifications',
+        // 'notifications',
         'services'
     ]);
 })();

@@ -2,9 +2,9 @@
 
 (function () {
     angular
-        .module('groups')
+        .module('documents')
         .component('scientillaNotificationsList', {
-            templateUrl: 'partials/scientillaNotificationsList.html',
+            templateUrl: 'partials/scientillaSuggestedDocuments.html',
             controller: ScientillaNotificationsListController,
             controllerAs: 'vm',
             bindings: {
