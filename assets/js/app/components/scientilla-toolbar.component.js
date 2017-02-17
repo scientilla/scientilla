@@ -69,7 +69,7 @@
 
         function redirectToHomepage() {
             //TODO: should become dynamic
-            const researchEntityHompeage = '/suggested';
+            const researchEntityHompeage = '/';
             path.goTo(researchEntityHompeage);
         }
     }

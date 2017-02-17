@@ -8,7 +8,7 @@
     ];
 
     function path($location) {
-        var current = '/suggested';
+        var current = '/';
         var service = {
             current: current,
             goTo: goTo
