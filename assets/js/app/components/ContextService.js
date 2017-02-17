@@ -11,37 +11,42 @@
                      UserDocumentsServiceFactory,
                      GroupDocumentsServiceFactory) {
 
-        var service = { researchEntity: null};
-
-        service.setResearchEntity = setResearchEntity;
-        service.getResearchEntity = getResearchEntity;
-        service.getDocumentService = getDocumentService;
+        let researchEntity, documentService;
+        const service = {
+            setResearchEntity: setResearchEntity,
+            getResearchEntity: getResearchEntity,
+            reset: reset,
+            getDocumentService: getDocumentService
+        };
 
         return service;
 
         function getResearchEntity(){
-            return service.researchEntity;
+            return researchEntity;
         }
 
-        function setResearchEntity(researchEntity){
-            service.researchEntity = researchEntity;
-            let documentService;
+        function setResearchEntity(re){
+            researchEntity = re;
             if (researchEntity.getType() === 'user')
                 documentService = UserDocumentsServiceFactory.create(researchEntity);
             else
                 documentService = GroupDocumentsServiceFactory.create(researchEntity);
-            setDocumentService(documentService);
 
 
             EventsService.publish(EventsService.CONTEXT_CHANGE);
         }
 
-        function setDocumentService(documentService) {
-            service.documentService = documentService;
+        function setDocumentService(ds) {
+            documentService = ds;
+        }
+
+        function reset( ) {
+            researchEntity = null;
+            documentService = null;
         }
 
         function getDocumentService() {
-            return service.documentService;
+            return documentService;
         }
     }
 }());

@@ -68,7 +68,7 @@
                 service.isLogged = false;
                 service.user = null;
                 service.userId = null;
-                context.setResearchEntity(null);
+                context.reset();
                 EventsService.publish(EventsService.AUTH_LOGOUT);
 
                 localStorageService.set("authService", null);
@@ -107,6 +107,7 @@
                             user: service.user,
                             jwtToken: service.jwtToken
                         });
+                        context.setResearchEntity(service.user);
 
                         EventsService.publish(EventsService.AUTH_LOGIN);
                         resolve();
