@@ -9,7 +9,7 @@
         activate();
 
         function activate() {
-            var homeUrl = '/users/' + AuthService.userId + '/documents';
+            var homeUrl = '/suggested';
             $location.path(homeUrl);
         }
     }
