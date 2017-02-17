@@ -22,9 +22,9 @@
                 .setPrefix('scientilla');
     }
 
-    run.$inject = ['$rootScope', '$location', 'AuthService', 'Restangular', 'Prototyper'];
+    run.$inject = ['$rootScope', '$location', 'AuthService', 'Restangular', 'Prototyper', 'path'];
 
-    function run($rootScope, $location, AuthService, Restangular, Prototyper) {
+    function run($rootScope, $location, AuthService, Restangular, Prototyper, path) {
         $rootScope.$on("$routeChangeStart", function (event, next, current) {
             if (!AuthService.isLogged) {
                 if (next.access && next.access.noLogin) {
@@ -34,6 +34,8 @@
                 }
             }
         });
+
+        $rootScope.$on('$locationChangeSuccess', (event, current) => path.current = current.replace(/https?:\/\/[^\/]+\//i, ""));
 
         Restangular.addResponseInterceptor(function (response, operation) {
             if (operation === 'getList') {

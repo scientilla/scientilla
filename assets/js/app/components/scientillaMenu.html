@@ -2,8 +2,8 @@
     <ul class="nav nav-pills nav-stacked">
         <li ng-repeat="menuItem in vm.menuItems"
             role="presentation"
-            ng-class="{active: menuItem.active, 'nav-divider': menuItem.type === 'separator' }">
-            <a ng-click="vm.menuItemClicked(menuItem)" ng-href="{{menuItem.url}}">{{menuItem.title}}</a>
+            ng-class="{active: vm.isActive(menuItem), 'nav-divider': menuItem.type === 'separator', 'menu-label': menuItem.type === 'label' }">
+            <a ng-href="{{menuItem.url}}">{{menuItem.title}}</a>
         </li>
     </ul>
 </div>

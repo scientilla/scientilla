@@ -23,7 +23,9 @@
             DOCUMENT_PRIVATE_TAGS_UPDATED: 'document.privateTagsUpdated',
 
             NOTIFICATION_ACCEPTED: 'notification.accepted',
-            NOTIFICATION_DISCARDED: 'notification.discarded'
+            NOTIFICATION_DISCARDED: 'notification.discarded',
+
+            CONTEXT_CHANGE: 'context.change'
         };
 
         service.publish = function (event, args) {

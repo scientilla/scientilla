@@ -5,9 +5,9 @@
     angular.module("groups")
             .factory("GroupsService", GroupService);
 
-    GroupService.$inject = ["Restangular", "AuthService", "$http", "Prototyper"];
+    GroupService.$inject = ["Restangular", "$http", "Prototyper"];
 
-    function GroupService(Restangular, AuthService, $http, Prototyper) {
+    function GroupService(Restangular, $http, Prototyper) {
         var service = Restangular.service("groups");
 
         service.getNewGroup = getNewGroup;
@@ -26,7 +26,7 @@
         function getNewGroup() {
             return {
                 name: "",
-                administrators: [AuthService.user],
+                administrators: [],
                 members: []
             };
         }

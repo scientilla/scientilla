@@ -11,11 +11,7 @@
             restrict: 'E',
             templateUrl: 'partials/scientillaDraftsList.html',
             controller: scientillaDrafsListController,
-            controllerAs: 'vm',
-            scope: {},
-            bindToController: {
-                researchEntity: "="
-            }
+            controllerAs: 'vm'
         };
     }
 
@@ -30,6 +26,7 @@
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
+        vm.researchEntity = context.getResearchEntity();
 
         vm.onFilter = onFilter;
 

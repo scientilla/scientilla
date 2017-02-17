@@ -3,9 +3,18 @@
 (function () {
     angular.module("auth").factory("AuthService", AuthService);
 
-    AuthService.$inject = ["$http", "Restangular", "UsersService", "$q", "localStorageService", "EventsService", "Prototyper"];
+    AuthService.$inject = [
+        "$http",
+        "Restangular",
+        "UsersService",
+        "$q",
+        "localStorageService",
+        "EventsService",
+        "Prototyper",
+        "context"
+    ];
 
-    function AuthService($http, Restangular, UsersService, $q, localStorageService, EventsService, Prototyper) {
+    function AuthService($http, Restangular, UsersService, $q, localStorageService, EventsService, Prototyper, context) {
 
         var service = {
             isLogged: false,
@@ -34,6 +43,7 @@
             service.user = Restangular.copy(service.user);
 
             Prototyper.toUserModel(service.user);
+            context.setResearchEntity(service.user);
 
             Restangular.setDefaultHeaders({access_token: service.jwtToken});
             $http.defaults.headers.common.access_token = service.jwtToken;
@@ -58,6 +68,7 @@
                 service.isLogged = false;
                 service.user = null;
                 service.userId = null;
+                context.setResearchEntity(null);
                 EventsService.publish(EventsService.AUTH_LOGOUT);
 
                 localStorageService.set("authService", null);

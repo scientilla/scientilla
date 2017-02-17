@@ -11,13 +11,13 @@
     scientillaMenu.$inject = [
         'AuthService',
         'EventsService',
-        '$location'
+        'path'
     ];
 
-    function scientillaMenu(AuthService, EventsService, $location) {
+    function scientillaMenu(AuthService, EventsService, path) {
         var vm = this;
 
-        vm.menuItemClicked = menuItemClicked;
+        vm.isActive = isActive;
 
         vm.$onInit = function () {
 
@@ -38,20 +38,26 @@
             vm.user = AuthService.user;
 
             if (vm.user) {
-                vm.menuItems = [
-                    {
-                        type: 'item',
-                        title: 'Personal documents',
-                        url: '#/users/' + vm.user.id + '/documents'
-                    }
-                ];
-                _.forEach(vm.user.administratedGroups, function (g) {
-                    vm.menuItems.push({
-                        type: 'item',
-                        title: g.getDisplayName() + ' Documents',
-                        url: '#/groups/' + g.id + '/documents'
-                    });
-                });
+                vm.menuItems = [{
+                    type: 'label',
+                    title: 'Documents'
+                }, {
+                    type: 'item',
+                    title: 'Suggested',
+                    url: '#/suggested'
+                }, {
+                    type: 'item',
+                    title: 'Verified',
+                    url: '#/verified'
+                }, {
+                    type: 'item',
+                    title: 'Drafts',
+                    url: '#/drafts'
+                }, {
+                    type: 'item',
+                    title: 'External',
+                    url: '#/external'
+                }];
                 vm.menuItems = _.union(vm.menuItems, [{
                     type: 'separator'
                 }, {
@@ -64,28 +70,10 @@
                     url: '#/groups'
                 }]);
             }
-
-            _.each(vm.menuItems, function (i) {
-                if (i.url === '#' + $location.path())
-                    i.active = true;
-            });
         }
 
-        function menuItemClicked(item) {
-
-            if (item.type !== 'item')
-                return;
-
-            resetSelection();
-
-            item.active = true;
-
-        }
-
-        function resetSelection() {
-            _.each(vm.menuItems, function (i) {
-                i.active = false;
-            });
+        function isActive(menuItem) {
+            return _.startsWith(path.current, menuItem.url);
         }
     }
 

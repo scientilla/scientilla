@@ -1,8 +1,25 @@
 <div class="row scientilla-toolbar">
-    <div class="col-sm-7">
+    <div class="col-sm-1">
         <a href="">
             Scientilla
         </a>
+    </div>
+    <div class="col-sm-6">
+        <span class="displayname">{{vm.researchEntity.getDisplayName()}}</span>
+        <div uib-dropdown class="btn-group" is-open="status.isopen">
+            <button id="single-button" type="button" class="btn" uib-dropdown-toggle ng-disabled="disabled">
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                <li role="menuitem">
+                    <a ng-click="vm.changeContextToUser(vm.user)">{{vm.user.getDisplayName()}}</a>
+                </li>
+                <li role="menuitem" ng-repeat="g in vm.user.administratedGroups">
+                    <a ng-click="vm.changeContextToGroup(g)">{{g.getDisplayName()}}</a>
+                </li>
+            </ul>
+        </div>
+
     </div>
     <div class="col-sm-5 text-right">
         <div ng-if="!vm.isLogged">

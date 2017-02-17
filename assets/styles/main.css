@@ -40,6 +40,12 @@
     font-size: 1.5em;
 }
 
+.scientilla-toolbar .displayname {
+    color: black;
+    font-size: 22px;
+    margin-left: 15px;
+}
+
 .scientilla-login-form {
     width: 40%;
     margin: 0 15%;
@@ -362,4 +368,18 @@ scientilla-button > button.btn-cancel {
 
 [uib-popover-template-popup] {
     width: 400px;
+}
+
+/******************************************************************************/
+
+/*Scientilla-menu*/
+scientilla-menu .menu-label > a {
+    color: grey;
+    padding-left: 0px;
+    margin-left: 0px;
+    text-align: left;
+}
+
+scientilla-menu .menu-label > a:hover {
+    background-color: transparent;
 }
