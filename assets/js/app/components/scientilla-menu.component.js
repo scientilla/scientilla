@@ -18,6 +18,36 @@
         var vm = this;
 
         vm.isActive = isActive;
+        vm.menuItems = [{
+            type: 'label',
+            title: 'Documents'
+        }, {
+            type: 'item',
+            title: 'Suggested',
+            url: '#/suggested'
+        }, {
+            type: 'item',
+            title: 'Verified',
+            url: '#/verified'
+        }, {
+            type: 'item',
+            title: 'Drafts',
+            url: '#/drafts'
+        }, {
+            type: 'item',
+            title: 'External',
+            url: '#/external'
+        },{
+            type: 'separator'
+        }, {
+            type: 'item',
+            title: 'People',
+            url: '#/users'
+        }, {
+            type: 'item',
+            title: 'Groups',
+            url: '#/groups'
+        }];
 
         vm.$onInit = function () {
 
@@ -33,43 +63,11 @@
             EventsService.unsubscribeAll(vm);
         };
 
+
+
         function refresh() {
             vm.isLogged = AuthService.isLogged;
             vm.user = AuthService.user;
-
-            if (vm.user) {
-                vm.menuItems = [{
-                    type: 'label',
-                    title: 'Documents'
-                }, {
-                    type: 'item',
-                    title: 'Suggested',
-                    url: '#/suggested'
-                }, {
-                    type: 'item',
-                    title: 'Verified',
-                    url: '#/verified'
-                }, {
-                    type: 'item',
-                    title: 'Drafts',
-                    url: '#/drafts'
-                }, {
-                    type: 'item',
-                    title: 'External',
-                    url: '#/external'
-                }];
-                vm.menuItems = _.union(vm.menuItems, [{
-                    type: 'separator'
-                }, {
-                    type: 'item',
-                    title: 'People',
-                    url: '#/users'
-                }, {
-                    type: 'item',
-                    title: 'Groups',
-                    url: '#/groups'
-                }]);
-            }
         }
 
         function isActive(menuItem) {
