@@ -44,9 +44,6 @@
 
         function submit() {
             AuthService.login(vm.formData)
-                    .then(function () {
-                        $location.path("/");
-                    })
                     .catch(function () {
                         Notification.warning('Login failed');
                         vm.formData.password = "";

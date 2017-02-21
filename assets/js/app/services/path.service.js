@@ -4,19 +4,28 @@
         .factory("path", path);
 
     path.$inject = [
-        '$location'
+        '$location',
+        'EventsService',
+        '$route'
     ];
 
-    function path($location) {
+    function path($location, EventsService, $route) {
         var current = '/';
         var service = {
             current: current,
-            goTo: goTo
+            goTo: goTo,
+            getUrlPath: getUrlPath
         };
 
+        EventsService.subscribe(service, EventsService.AUTH_LOGIN, () => goTo('/'));
+
         function goTo(path) {
-            // service.current = path;
             $location.path(path);
+            $route.reload();
+        }
+
+        function getUrlPath(url) {
+            return url.replace(/https?:\/\/[^\/]+\//, "");
         }
 
         return service;

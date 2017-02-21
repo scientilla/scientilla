@@ -8,10 +8,10 @@
 
     function configure(RestangularProvider, $routeProvider, localStorageServiceProvider) {
         $routeProvider
-                .when("/", {
-                    template: "",
-                    controller: "HomeController"
-                })
+            .when("/", {
+                template: "",
+                controller: "HomeController"
+            })
                 .otherwise({
                     redirectTo: "/"
                 });
@@ -22,22 +22,30 @@
                 .setPrefix('scientilla');
     }
 
-    run.$inject = ['$rootScope', '$location', 'AuthService', 'Restangular', 'Prototyper', 'path'];
+    run.$inject = ['$rootScope', 'AuthService', 'Restangular', 'Prototyper', 'path'];
 
-    function run($rootScope, $location, AuthService, Restangular, Prototyper, path) {
-        $rootScope.$on("$routeChangeStart", function (event, next, current) {
+    function run($rootScope, AuthService, Restangular, Prototyper, path) {
+
+        $rootScope.$on("$routeChangeStart", (event, next, current) => {
             if (!AuthService.isLogged) {
                 if (next.access && next.access.noLogin) {
 
                 } else {
-                    $location.path("/login");
+                    path.goTo("/login");
                 }
             }
         });
 
-        $rootScope.$on('$locationChangeSuccess', (event, current) => path.current = current.replace(/https?:\/\/[^\/]+\//i, ""));
+        $rootScope.$on('$locationChangeSuccess', (event, current) =>
+            path.current = path.getUrlPath(current)
+        );
 
-        Restangular.addResponseInterceptor(function (response, operation) {
+        $rootScope.$on('$viewContentLoaded', () => {
+            if (!AuthService.isLogged)
+                AuthService.loadAuthenticationData();
+        });
+
+        Restangular.addResponseInterceptor((response, operation) => {
             if (operation === 'getList') {
                 var newResponse = response.items;
                 newResponse.count = response.count;

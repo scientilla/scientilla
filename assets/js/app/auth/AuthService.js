@@ -10,44 +10,41 @@
         "$q",
         "localStorageService",
         "EventsService",
-        "Prototyper",
-        "context"
+        "Prototyper"
     ];
 
-    function AuthService($http, Restangular, UsersService, $q, localStorageService, EventsService, Prototyper, context) {
+    function AuthService($http,
+                         Restangular,
+                         UsersService,
+                         $q,
+                         localStorageService,
+                         EventsService,
+                         Prototyper) {
 
         var service = {
             isLogged: false,
             userId: null,
             username: null,
             user: null,
-            jwtToken: null
+            jwtToken: null,
+            loadAuthenticationData: loadAuthenticationData
         };
 
-        activate();
+        function loadAuthenticationData() {
+            var localAuthenticationData = localStorageService.get("authService");
 
-        function activate() {
-            var localData = localStorageService.get("authService");
-
-            if (!localData)
+            if (!localAuthenticationData)
                 return;
 
-            service = {
-                isLogged: localData.isLogged,
-                userId: localData.userId,
-                username: localData.username,
-                user: localData.user,
-                jwtToken: localData.jwtToken
-            };
+            _.assign(service, localAuthenticationData);
 
             service.user = Restangular.copy(service.user);
 
             Prototyper.toUserModel(service.user);
-            context.setResearchEntity(service.user);
 
             Restangular.setDefaultHeaders({access_token: service.jwtToken});
             $http.defaults.headers.common.access_token = service.jwtToken;
-            EventsService.publish(EventsService.AUTH_LOGIN);
+            EventsService.publish(EventsService.AUTH_LOGIN, service.user);
         }
 
 
@@ -68,7 +65,6 @@
                 service.isLogged = false;
                 service.user = null;
                 service.userId = null;
-                context.reset();
                 EventsService.publish(EventsService.AUTH_LOGOUT);
 
                 localStorageService.set("authService", null);
@@ -107,9 +103,8 @@
                             user: service.user,
                             jwtToken: service.jwtToken
                         });
-                        context.setResearchEntity(service.user);
 
-                        EventsService.publish(EventsService.AUTH_LOGIN);
+                        EventsService.publish(EventsService.AUTH_LOGIN, service.user);
                         resolve();
                     })
                     .catch(function (result) {

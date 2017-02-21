@@ -3,14 +3,14 @@
             .module('components')
             .controller('HomeController', HomeController);
 
-    HomeController.$inject = ['AuthService', '$location'];
+    HomeController.$inject = ['path'];
 
-    function HomeController(AuthService, $location) {
+    function HomeController(path) {
         activate();
 
         function activate() {
             var homeUrl = '/suggested';
-            $location.path(homeUrl);
+            path.goTo(homeUrl);
         }
     }
 })();

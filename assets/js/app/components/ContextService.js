@@ -19,6 +19,9 @@
             getDocumentService: getDocumentService
         };
 
+        EventsService.subscribe(service, EventsService.AUTH_LOGIN, (e, re) => setResearchEntity(re));
+        EventsService.subscribe(service, EventsService.AUTH_LOGOUT, () =>  reset());
+
         return service;
 
         function getResearchEntity(){
