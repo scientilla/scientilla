@@ -31,7 +31,9 @@ var jsFilesToInject = [
     'js/dependencies/jquery.min.js',
     'js/dependencies/angular.min.js',
     'js/dependencies/ui-bootstrap.min.js',
-    
+    'js/dependencies/d3.js',
+    'js/dependencies/nv.d3.js',
+
     'js/dependencies/**/*.js',
     
     'js/**/*.module.js',
@@ -62,10 +64,11 @@ var templateFilesToInject = [
 module.exports.cssFilesToInject = cssFilesToInject.map(function (path) {
     return '.tmp/public/' + path;
 });
-console.log(jsFilesToInject);
+
 module.exports.jsFilesToInject = jsFilesToInject.map(function (path) {
     return '.tmp/public/' + path;
 });
+
 module.exports.templateFilesToInject = templateFilesToInject.map(function (path) {
     return 'assets/' + path;
 });

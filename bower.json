@@ -14,6 +14,8 @@
     "restangular": "^1.5.2",
     "jquery": "^3.1.0",
     "angular-local-storage": "^0.2.5",
-    "angular-ui-notification": "^0.1.0"
+    "angular-ui-notification": "^0.1.0",
+    "angular-nvd3": "^1.0.9"
+
   }
 }

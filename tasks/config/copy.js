@@ -40,7 +40,10 @@ module.exports = function (grunt) {
                         'bootstrap/dist/js/bootstrap.min.js',
                         'jquery/dist/jquery.min.js',
                         'lodash/dist/lodash.min.js',
-                        'restangular/dist/restangular.min.js'
+                        'restangular/dist/restangular.min.js',
+                        'd3/d3.js',
+                        'nvd3/build/nv.d3.js',
+                        'angular-nvd3/dist/angular-nvd3.min.js'
                     ],
                     flatten: true,
                     dest: '.tmp/public/js/dependencies'
@@ -52,7 +55,8 @@ module.exports = function (grunt) {
                         'bootstrap/dist/css/bootstrap.min.css',
                         'bootstrap/dist/fonts/*',
                         'font-awesome/css/font-awesome.min.css',
-                        'font-awesome/fonts/*'
+                        'font-awesome/fonts/*',
+                        'nvd3/build/nv.d3.css'
                     ],
                     dest: '.tmp/public/styles/dependencies'
                 },{

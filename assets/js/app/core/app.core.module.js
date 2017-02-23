@@ -9,6 +9,7 @@
 //        "ui.bootstrap",
         'formFor',
         'formFor.bootstrapTemplates',
-        'restangular'
+        'restangular',
+        'nvd3'
     ]);
 })();
