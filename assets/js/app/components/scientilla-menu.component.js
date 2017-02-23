@@ -77,7 +77,7 @@
         }
 
         function isActive(menuItem) {
-            return path.current == menuItem.url;
+            return path.current === menuItem.url;
         }
     }
 
