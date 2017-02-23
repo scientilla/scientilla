@@ -19,6 +19,12 @@
 
         vm.isActive = isActive;
         vm.menuItems = [{
+            type: 'item',
+            title: 'Summary',
+            url: '#/'
+        },{
+            type: 'separator'
+        }, {
             type: 'label',
             title: 'Documents'
         }, {
@@ -71,7 +77,7 @@
         }
 
         function isActive(menuItem) {
-            return _.startsWith(path.current, menuItem.url);
+            return path.current == menuItem.url;
         }
     }
 

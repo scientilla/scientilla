@@ -63,7 +63,9 @@ module.exports.routes = {
     'get /users/:id/external-documents': 'User.getExternalDocuments',
     'get /groups/:id/external-documents': 'Group.getExternalDocuments',
     'delete /documents/delete': 'Document.deleteDrafts',
-    'get /settings': 'Settings.getSettings'
+    'get /settings': 'Settings.getSettings',
+    'get /users/:id/charts': 'User.getChartsData',
+    'get /groups/:id/charts': 'Group.getChartsData'
 
 
     /***************************************************************************

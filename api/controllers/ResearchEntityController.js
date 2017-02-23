@@ -83,6 +83,11 @@ module.exports = {
         var query = getQuery(req);
         var Model = getModel(req);
         res.halt(Connector.getDocuments(Model, researchEntityId, query));
+    },
+    getChartsData: function(req, res) {
+        var modelName = req.options.model || req.options.controller;
+        var id = req.params.id;
+        res.halt(Chart.getChartsData(id, modelName));
     }
 };
 

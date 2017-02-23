@@ -8,6 +8,7 @@ const GeneratorFn = require('waterline-sql-builder');
 const pgp = require('pg-promise')({
     noWarnings: true
 });
+const fs = require('fs');
 
 const env = sails.config.environment;
 const connectionParams = sails.config.connections[env];
@@ -49,7 +50,9 @@ module.exports = {
                 reject(e);
             }
         });
-
+    },
+    readQueryFromFs: (filePath) => {
+        return fs.readFileSync(filePath, 'utf-8');
     },
     query: sql => {
 

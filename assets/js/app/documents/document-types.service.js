@@ -7,6 +7,7 @@
         var service = {
             getDocumentsFields: getDocumentsFields,
             getDocumentTypes: getDocumentTypes,
+            getDocumentTypeLabel: getDocumentTypeLabel,
             getSourceTypes: getSourceTypes
         };
 
@@ -287,6 +288,11 @@
                     allowedSources: invitedTalkSources
                 }
             ];
+        }
+
+        function getDocumentTypeLabel (documentTypeKey) {
+            const documentTypes = getDocumentTypes();
+            return _.find(documentTypes, {key: documentTypeKey}).label;
         }
     }
 })();

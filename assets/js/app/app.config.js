@@ -9,8 +9,7 @@
     function configure(RestangularProvider, $routeProvider, localStorageServiceProvider) {
         $routeProvider
             .when("/", {
-                template: "",
-                controller: "HomeController"
+                template: "<profile-summary></profile-summary>"
             })
                 .otherwise({
                     redirectTo: "/"
