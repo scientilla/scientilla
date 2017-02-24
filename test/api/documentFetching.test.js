@@ -17,7 +17,7 @@ describe('Document fetching', () => {
     it('it should be possible to ask for non-existent relations. They should be ignored.', async () => {
         iitGroup = (await test.createGroup(iitGroupData)).body;
         user = (await test.registerUser(userData)).body;
-        test.getUserDocuments(user, 'non-existent-relation')
+        await test.getUserDocuments(user, 'non-existent-relation')
             .expect(200, test.EMPTY_RES);
 
     });

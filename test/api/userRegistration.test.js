@@ -24,7 +24,7 @@ describe('User registration', () => {
         iitInstitute = (await test.createInstitute(iitInstituteData)).body;
         iitGroup = (await test.createGroup(iitGroupData)).body;
         await test.registerUser(userData);
-        test
+        await test
             .getUsers()
             .expect((res) => {
                 res.status.should.equal(200);
@@ -39,8 +39,8 @@ describe('User registration', () => {
     }
     );
 
-    it('should not be able to register a user with an already used username', () =>
-        test.registerUser(userData)
+    it('should not be able to register a user with an already used username', async () =>
+        await test.registerUser(userData)
             .expect(400)
     );
 
