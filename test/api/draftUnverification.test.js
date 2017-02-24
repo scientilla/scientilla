@@ -25,57 +25,44 @@ describe('Draft Unverification', () => {
     const user2Doc1Position = 0;
     let iitInstitute;
 
-    it('it should be possible to unverify a document', () =>
-        test.createGroup(iitGroupData)
-            .then(res => iitGroup = res.body)
-            .then(() => test.registerUser(user1Data))
-            .then(res => user1 = res.body)
-            .then(() =>test.createInstitute(iitInstituteData))
-            .then(res => iitInstitute = res.body)
-            .then(() => test.createSource(sourcesData[0]))
-            .then(res => journal = res.body)
-            .then(res => {
-                documentData.source = journal;
-                return test.userCreateDraft(user1, documentData)
-            })
-            .then(res => document = res.body)
-            .then(() => {
-                const affiliations = [iitInstitute.id];
-                return test.userVerifyDraft(user1, document, user1Doc1Position, affiliations);
-            })
-            .then(() => test.registerUser(user2Data))
-            .then(res => user2 = res.body)
-            .then(res => {
-                const affiliations = [iitInstitute.id];
-                return test.userVerifyDocument(user2, document, user2Doc1Position, affiliations);
-            })
-            .then(() => test.userUnverifyDocument(user1, document)
-                    .expect(200))
-                .then(res => test.getUserDocuments(user1)
-                    .expect(200, test.EMPTY_RES))
-                .then(res => test.getUserDrafts(user1)
-                    .expect(200, test.EMPTY_RES))
-                .then(res => test.getUserDocumentsWithAuthors(user2)
-                    .expect(res => {
-                        res.status.should.equal(200);
-                        res.body.items.should.have.length(1);
-                        const document = res.body.items[0];
-                        document.authors.should.have.length(1);
-                        document.authors[0].username.should.equal(user2.username);
-                    })
-                )
-            );
+    it('it should be possible to unverify a document', async () => {
+        iitGroup = (await test.createGroup(iitGroupData)).body;
+        iitInstitute = (await test.createInstitute(iitInstituteData)).body;
+        journal = (await test.createSource(sourcesData[0])).body;
+        user1 = (await test.registerUser(user1Data)).body;
+        documentData.source = journal;
+        document = (await test.userCreateDraft(user1, documentData)).body;
+        const affiliations = [iitInstitute.id];
+        await test.userVerifyDraft(user1, document, user1Doc1Position, affiliations);
+        user2 = (await test.registerUser(user2Data)).body;
+        const affiliations2 = [iitInstitute.id];
+        await test.userVerifyDocument(user2, document, user2Doc1Position, affiliations2);
+        await test.userUnverifyDocument(user1, document)
+            .expect(200);
+        await test.getUserDocuments(user1)
+            .expect(200, test.EMPTY_RES);
+        await test.getUserDrafts(user1)
+            .expect(200, test.EMPTY_RES);
+        await test.getUserDocumentsWithAuthors(user2)
+            .expect(res => {
+                res.status.should.equal(200);
+                res.body.items.should.have.length(1);
+                const document = res.body.items[0];
+                document.authors.should.have.length(1);
+                document.authors[0].username.should.equal(user2.username);
+            });
+    });
 
-    it('a document unverified by all the authors should be deleted', () =>
-        test.userUnverifyDocument(user2, document)
-            .expect(200)
-            .then(res => test.getUserDrafts(user2)
-                .send(documentData)
-                .expect(200))
-            .then(res => test.getUserDocuments(user2)
-                .expect(200, test.EMPTY_RES))
-            .then(res => test.getDocument(document.id)
-                .expect(404))
-    );
+    it('a document unverified by all the authors should be deleted', async () => {
+        await test.userUnverifyDocument(user2, document)
+            .expect(200);
+        await test.getUserDrafts(user2)
+            .send(documentData)
+            .expect(200);
+        await test.getUserDocuments(user2)
+            .expect(200, test.EMPTY_RES);
+        await test.getDocument(document.id)
+            .expect(404);
+    });
 
 });
