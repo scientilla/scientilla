@@ -22,55 +22,49 @@ describe('Draft Creation: ', () => {
     let user;
     let group;
 
-    it('there should be no drafts for a new user', () =>
-        test.createGroup(iitGroupData)
-            .then(res => iitGroup = res.body)
-            .then(() => test.registerUser(usersData[0]))
-            .then(res => user = res.body)
-            .then(() => test.getUserDrafts(user)
-                .expect(200, test.EMPTY_RES)
-            )
-    );
+    it('there should be no drafts for a new user', async() => {
+        iitGroup = (await test.createGroup(iitGroupData)).body;
+        user = (await test.registerUser(usersData[0])).body;
+        test.getUserDrafts(user)
+            .expect(200, test.EMPTY_RES);
+    });
 
     it('creating user draft should be possible', () =>
         test.userCreateDraft(user, draftsData[0])
             .expect(200)
-            .then(() => {
-                return test.getUserDrafts(user)
-                    .expect(res => {
-                        res.status.should.equal(200);
-                        const count = res.body.count;
-                        const drafts = res.body.items;
-                        count.should.be.equal(1);
-                        drafts.should.have.length(1);
-                        checkDraft(user, draftsData[0], drafts[0]);
-                    });
-            })
-    );
-
-    it('there should be no drafts for a new group', () =>
-        test.createGroup(groupsData[0])
-            .then(res => group = res.body)
-            .then(() => test.getGroupDrafts(group)
-                .expect(200, test.EMPTY_RES)
-            )
-    );
-
-    it('creating group draft should be possible', () =>
-        test
-            .groupCreateDraft(group, draftsData[1])
-            .expect(200)
-            .then(() => test.getGroupDrafts(group)
+            .then(() => test
+                .getUserDrafts(user)
                 .expect(res => {
                     res.status.should.equal(200);
                     const count = res.body.count;
                     const drafts = res.body.items;
                     count.should.be.equal(1);
                     drafts.should.have.length(1);
-                    checkDraft(group, draftsData[1], drafts[0]);
+                    checkDraft(user, draftsData[0], drafts[0]);
                 })
             )
     );
+
+    it('there should be no drafts for a new group', async() => {
+        group = (await test.createGroup(groupsData[0])).body;
+        test.getGroupDrafts(group)
+            .expect(200, test.EMPTY_RES);
+    });
+
+    it('creating group draft should be possible', async() => {
+        await test
+            .groupCreateDraft(group, draftsData[1])
+            .expect(200);
+        test.getGroupDrafts(group)
+            .expect(res => {
+                res.status.should.equal(200);
+                const count = res.body.count;
+                const drafts = res.body.items;
+                count.should.be.equal(1);
+                drafts.should.have.length(1);
+                checkDraft(group, draftsData[1], drafts[0]);
+            });
+    });
 
     function checkDraft(researchEntity, draftData, draft) {
         draft.title.should.equal(draftData.title);
