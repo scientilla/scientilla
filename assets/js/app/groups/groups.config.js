@@ -31,15 +31,7 @@
     function currentGroup(GroupsService, $route, context, GroupDocumentsServiceFactory) {
         var groupId = $route.current.params.id;
 
-        return GroupsService.getGroup(groupId)
-            .then(function (group) {
-
-                context.setResearchEntity(group);
-                var documentService = GroupDocumentsServiceFactory.create(group, GroupsService);
-                context.setDocumentService(documentService);
-
-                return group;
-            });
+        return GroupsService.getGroup(groupId);
     }
 
 
