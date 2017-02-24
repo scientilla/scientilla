@@ -29,21 +29,20 @@ describe('Draft Creation: ', () => {
             .expect(200, test.EMPTY_RES);
     });
 
-    it('creating user draft should be possible', () =>
-        test.userCreateDraft(user, draftsData[0])
+    it('creating user draft should be possible', async() => {
+        await test.userCreateDraft(user, draftsData[0])
             .expect(200)
-            .then(() => test
-                .getUserDrafts(user)
-                .expect(res => {
-                    res.status.should.equal(200);
-                    const count = res.body.count;
-                    const drafts = res.body.items;
-                    count.should.be.equal(1);
-                    drafts.should.have.length(1);
-                    checkDraft(user, draftsData[0], drafts[0]);
-                })
-            )
-    );
+        await test
+            .getUserDrafts(user)
+            .expect(res => {
+                res.status.should.equal(200);
+                const count = res.body.count;
+                const drafts = res.body.items;
+                count.should.be.equal(1);
+                drafts.should.have.length(1);
+                checkDraft(user, draftsData[0], drafts[0]);
+            });
+    });
 
     it('there should be no drafts for a new group', async() => {
         group = (await test.createGroup(groupsData[0])).body;
