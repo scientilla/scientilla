@@ -21,7 +21,7 @@
 }
 
 .scientilla-toolbar {
-    height: 50px;
+    height: 60px;
     color: #337ab7;
 
     border-bottom: 1px solid #337ab7;
@@ -32,11 +32,9 @@
 
 .scientilla-toolbar a,
 .scientilla-toolbar a:visited,
-.scientilla-toolbar a:hover {
+.scientilla-toolbar a:hover{
     color: rgb(51, 122, 183);
     text-decoration: none;
-    margin-right: 20px;
-
     font-size: 1.5em;
 }
 

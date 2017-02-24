@@ -15,6 +15,7 @@
         'context',
         'GroupsService',
         'UsersService',
+        'ModalService',
         'path'
     ];
 
@@ -24,11 +25,13 @@
                                context,
                                GroupsService,
                                UsersService,
+                               ModalService,
                                path) {
         var vm = this;
         vm.isRegisterEnabled = false;
         vm.changeContextToGroup = changeContextToGroup;
         vm.changeContextToUser = changeContextToUser;
+        vm.editProfile = editProfile;
 
         vm.$onInit = function () {
 
@@ -71,6 +74,31 @@
             //TODO: should become dynamic
             const researchEntityHompeage = '/';
             path.goTo(researchEntityHompeage);
+        }
+
+        function editProfile() {
+            var openForm;
+            var researchEntityService;
+            if (vm.researchEntity.getType() === 'user') {
+                openForm = ModalService.openScientillaUserForm;
+                researchEntityService = UsersService;
+            }
+            else {
+                openForm = ModalService.openScientillaGroupForm;
+                researchEntityService = GroupsService;
+            }
+
+            researchEntityService
+                .getProfile(vm.researchEntity.id)
+                .then(openForm)
+                .then(function (status) {
+                    if (status !== 1)
+                        return vm.researchEntity;
+                    return researchEntityService.getProfile(vm.researchEntity.id);
+                })
+                .then(function (researchEntity) {
+                    vm.researchEntity = researchEntity;
+                });
         }
     }
 
