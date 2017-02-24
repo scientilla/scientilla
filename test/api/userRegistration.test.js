@@ -20,27 +20,23 @@ describe('User registration', () => {
             .expect(200, test.EMPTY_RES)
     );
 
-    it('should be able to register new user when there is no users', ()=>
-        Promise.resolve()
-            .then(() => test.createInstitute(iitInstituteData))
-            .then(res => iitInstitute = res.body)
-            .then(() => test.createGroup(iitGroupData))
-            .then(res => iitGroup = res.body)
-            .then(() => test.registerUser(userData))
-            .then(function (res) {
-                return test
-                    .getUsers()
-                    .expect(function (res) {
-                        res.status.should.equal(200);
-                        const count = res.body.count;
-                        const documents = res.body.items;
-                        count.should.be.equal(1);
-                        documents.should.have.length(1);
-                        const newUser = documents[0];
-                        newUser.username.should.equal(userData.username);
-                        newUser.role.should.equal(User.ADMINISTRATOR);
-                    });
-            })
+    it('should be able to register new user when there is no users', async ()=> {
+        iitInstitute = (await test.createInstitute(iitInstituteData)).body;
+        iitGroup = (await test.createGroup(iitGroupData)).body;
+        await test.registerUser(userData);
+        test
+            .getUsers()
+            .expect((res) => {
+                res.status.should.equal(200);
+                const count = res.body.count;
+                const documents = res.body.items;
+                count.should.be.equal(1);
+                documents.should.have.length(1);
+                const newUser = documents[0];
+                newUser.username.should.equal(userData.username);
+                newUser.role.should.equal(User.ADMINISTRATOR);
+            });
+    }
     );
 
     it('should not be able to register a user with an already used username', () =>
