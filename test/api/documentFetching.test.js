@@ -14,14 +14,12 @@ describe('Document fetching', () => {
     let iitInstitute;
     let iitGroup;
 
-    it('it should be possible to ask for non-existent relations. They should be ignored.', () =>
-        test.createGroup(iitGroupData)
-            .then(res => iitGroup = res.body)
-            .then(() => test.registerUser(userData))
-            .then(res => user = res.body)
-            .then(() =>test
-                .getUserDocuments(user, 'non-existent-relation')
-                .expect(200, test.EMPTY_RES))
-    );
+    it('it should be possible to ask for non-existent relations. They should be ignored.', async () => {
+        iitGroup = (await test.createGroup(iitGroupData)).body;
+        user = (await test.registerUser(userData)).body;
+        test.getUserDocuments(user, 'non-existent-relation')
+            .expect(200, test.EMPTY_RES);
+
+    });
 
 });
