@@ -19,6 +19,9 @@
 
         vm.isActive = isActive;
         vm.menuItems = [{
+            type: 'label',
+            title: 'Personal'
+        }, {
             type: 'item',
             title: 'Summary',
             url: '#/'
@@ -45,6 +48,9 @@
             url: '#/external'
         },{
             type: 'separator'
+        }, {
+            type: 'label',
+            title: 'System'
         }, {
             type: 'item',
             title: 'People',
