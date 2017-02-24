@@ -29,56 +29,44 @@ describe('Document Verification', () => {
     let author2affiliationInstitutes;
 
 
-    it('it should be possible to verify an already verified document', () =>
-        test.createGroup(iitGroupData)
-            .then(res => iitGroup = res.body)
-            .then(() => test.createInstitute(iitInstituteData))
-            .then(res => iitInstitute = res.body)
-            .then(() => test.createInstitute(unigeInstituteData))
-            .then(res => unigeInstitute = res.body)
-            .then(() => test.createSource(journalData))
-            .then(res => journal = res.body)
-            .then(() => test.registerUser(user1Data))
-            .then(res => user1 = res.body)
-            .then(() => {
-                documentData.source = journal;
-                return test.userCreateDraft(user1, documentData)
-            })
-            .then(res => document = res.body)
-            .then(() => test.userVerifyDraft(user1, document, user1Doc1position, [iitInstitute.id]))
-            .then(() => test.registerUser(user2Data))
-            .then(res => user2 = res.body)
-            .then(() => {
-                author2affiliationInstitutes = [unigeInstitute.id, iitInstitute.id];
-                return test
-                    .userVerifyDocument(user2, document, user2Doc1position, author2affiliationInstitutes)
-                    .expect(200);
-            })
-            .then(() => test
-                .getUserDocumentsWithAuthors(user2)
-                .expect(res => {
-                    res.status.should.equal(200);
-                    const count = res.body.count;
-                    const documents = res.body.items;
-                    count.should.be.equal(1);
-                    documents.should.have.length(1);
-                    const d = documents[0];
-                    d.id.should.equal(document.id);
-                    d.title.should.equal(documentData.title);
-                    d.draft.should.be.false;
-                    should(d.draftCreator).be.null;
-                    d.authors.should.have.length(2);
-                    d.authors[0].username.should.equal(user1.username);
-                    d.authors[1].username.should.equal(user2.username);
-                    d.authorships.should.have.length(2);
-                    d.authorships[0].position.should.equal(user1Doc1position);
-                    d.authorships[1].position.should.equal(user2Doc1position);
-                    d.affiliations.should.have.length(3);
-                    d.affiliations[0].institute.should.equal(iitInstitute.id);
-                    const author2affiliations = d.affiliations.filter(a => a.authorship === d.authorships[1].id);
-                    const author2affiliationInstitutesActual = _.map(author2affiliations, 'institute');
-                    author2affiliationInstitutesActual.should.containDeep(author2affiliationInstitutes);
-                })
-            )
-    );
+    it('it should be possible to verify an already verified document', async () => {
+        iitGroup = (await test.createGroup(iitGroupData)).body;
+        iitInstitute = (await test.createInstitute(iitInstituteData)).body;
+        unigeInstitute = (await test.createInstitute(unigeInstituteData)).body;
+        journal = (await test.createSource(journalData)).body;
+        user1 = (await test.registerUser(user1Data)).body;
+        documentData.source = journal;
+        document = (await test.userCreateDraft(user1, documentData)).body;
+        await test.userVerifyDraft(user1, document, user1Doc1position, [iitInstitute.id]);
+        user2 = (await test.registerUser(user2Data)).body;
+        author2affiliationInstitutes = [unigeInstitute.id, iitInstitute.id];
+        await test
+            .userVerifyDocument(user2, document, user2Doc1position, author2affiliationInstitutes)
+            .expect(200);
+        await test
+            .getUserDocumentsWithAuthors(user2)
+            .expect(res => {
+                res.status.should.equal(200);
+                const count = res.body.count;
+                const documents = res.body.items;
+                count.should.be.equal(1);
+                documents.should.have.length(1);
+                const d = documents[0];
+                d.id.should.equal(document.id);
+                d.title.should.equal(documentData.title);
+                d.draft.should.be.false;
+                should(d.draftCreator).be.null;
+                d.authors.should.have.length(2);
+                d.authors[0].username.should.equal(user1.username);
+                d.authors[1].username.should.equal(user2.username);
+                d.authorships.should.have.length(2);
+                d.authorships[0].position.should.equal(user1Doc1position);
+                d.authorships[1].position.should.equal(user2Doc1position);
+                d.affiliations.should.have.length(3);
+                d.affiliations[0].institute.should.equal(iitInstitute.id);
+                const author2affiliations = d.affiliations.filter(a => a.authorship === d.authorships[1].id);
+                const author2affiliationInstitutesActual = _.map(author2affiliations, 'institute');
+                author2affiliationInstitutesActual.should.containDeep(author2affiliationInstitutes);
+            });
+    });
 });
