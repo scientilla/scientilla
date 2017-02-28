@@ -10,6 +10,7 @@
             controller: scientillaDocumentsList,
             controllerAs: 'vm',
             bindings: {
+                researchEntity: '<',
                 editable: "<"
             }
         });
@@ -26,7 +27,6 @@
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
-        vm.researchEntity = context.getResearchEntity();
 
         vm.documents = [];
 

@@ -7,7 +7,10 @@
         .component('scientillaDraftsList', {
             templateUrl: 'partials/scientillaDraftsList.html',
             controller: scientillaDrafsList,
-            controllerAs: 'vm'
+            controllerAs: 'vm',
+            bindings: {
+                researchEntity: '<'
+            }
         });
 
     scientillaDrafsList.$inject = [
@@ -21,7 +24,6 @@
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
-        vm.researchEntity = context.getResearchEntity();
 
         vm.onFilter = onFilter;
 
