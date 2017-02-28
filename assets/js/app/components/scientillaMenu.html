@@ -1,9 +1,41 @@
 <div ng-show="vm.isLogged" class="scientilla-right-menu fill-height">
     <ul class="nav nav-pills nav-stacked">
-        <li ng-repeat="menuItem in vm.menuItems"
-            role="presentation"
-            ng-class="{active: vm.isActive(menuItem), 'nav-divider': menuItem.type === 'separator', 'menu-label': menuItem.type === 'label' }">
-            <a ng-href="{{menuItem.url}}">{{menuItem.title}}</a>
+        <!--<li ng-repeat="menuItem in vm.menuItems"-->
+            <!--role="presentation"-->
+            <!--ng-class="{active: vm.isActive(menuItem), 'nav-divider': menuItem.type === 'separator', 'menu-label': menuItem.type === 'label' }">-->
+            <!--<a ng-href="{{menuItem.url}}">{{menuItem.title}}</a>-->
+            <!--<div ng-bind-html="menuItem.other | trust"></div>-->
+        <!--</li>-->
+        <li ng-class="{active: vm.isActive('#/')}">
+            <a ng-href="#/">Summary</a>
+        <li class="nav-divider">
+        </li>
+        <li class="menu-label">
+            Documents
+            <scientilla-button-new-document></scientilla-button-new-document>
+        </li>
+        <li ng-class="{active: vm.isActive('#/suggested')}">
+            <a ng-href="#/suggested">Suggested</a>
+        </li>
+        <li ng-class="{active: vm.isActive('#/verified')}">
+            <a ng-href="#/verified">Verified</a>
+        </li>
+        <li ng-class="{active: vm.isActive('#/drafts')}">
+            <a ng-href="#/drafts">Drafts</a>
+        </li>
+        <li ng-class="{active: vm.isActive('#/external')}">
+            <a ng-href="#/external">External</a>
+        </li>
+        <li class="nav-divider">
+        </li>
+        <li class="menu-label">
+            System
+        </li>
+        <li ng-class="{active: vm.isActive('#/users')}">
+            <a ng-href="#/users">People</a>
+        </li>
+        <li ng-class="{active: vm.isActive('#/groups')}">
+            <a ng-href="#/groups">Groups</a>
         </li>
     </ul>
 </div>
