@@ -369,13 +369,13 @@ scientilla-button > button.btn-cancel {
 /******************************************************************************/
 
 /*Scientilla-menu*/
-scientilla-menu .menu-label > a {
+scientilla-menu .menu-label {
     color: grey;
     padding-left: 0px;
     margin-left: 0px;
     text-align: left;
 }
 
-scientilla-menu .menu-label > a:hover {
+scientilla-menu .menu-label {
     background-color: transparent;
 }
