@@ -10,15 +10,20 @@ services:
       - "1337:1337"
       - "35732:35732"
       - "5858:5858"
+    environment:
+      NODE_ENV: development
     command: bash -c "sails debug --expose_debug_as=v8debug > ./logs/sailslog"
   db:
     image: postgres:9.6
     restart: always
     volumes:
-      - ./docker/db/data:/var/lib/postgresql/data
+      - scientillapgdata:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       POSTGRES_DB: scientilla
       POSTGRES_USER: scientilla
       POSTGRES_PASSWORD: scientillapassword
+
+volumes:
+  scientillapgdata:

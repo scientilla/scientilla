@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  npm:
+    build: ./docker/node
+    entrypoint: npm
+    volumes:
+      - .:/usr/src/app
+  bower:
+    build: ./docker/node
+    entrypoint: bower
+    volumes:
+      - .:/usr/src/app
+  bower:
+    build: ./docker/node
+    entrypoint: bower
+    volumes:
+      - .:/usr/src/app
+  mocha:
+    build: ./docker/node
+    entrypoint: mocha
+    volumes:
+      - .:/usr/src/app
