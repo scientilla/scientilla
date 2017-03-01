@@ -6,7 +6,10 @@
         .component('scientillaSuggestedDocuments', {
             templateUrl: 'partials/scientillaSuggestedDocuments.html',
             controller: scientillaSuggestedDocumentsController,
-            controllerAs: 'vm'
+            controllerAs: 'vm',
+            bindings: {
+                researchEntity: '<'
+            }
         });
 
     scientillaSuggestedDocumentsController.$inject = [
@@ -19,7 +22,6 @@
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
-        vm.researchEntity = context.getResearchEntity();
 
         vm.copyDocument = DocumentsService.copyDocument;
         vm.verifyDocument = DocumentsService.verifyDocument;

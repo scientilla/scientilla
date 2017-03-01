@@ -5,7 +5,10 @@
         .component('scientillaExternalDocuments', {
             templateUrl: 'partials/scientillaExternalDocuments.html',
             controller: scientillaExternalDocuments,
-            controllerAs: 'vm'
+            controllerAs: 'vm',
+            bindings: {
+                researchEntity: '<'
+            }
         });
 
     scientillaExternalDocuments.$inject = [
@@ -17,7 +20,6 @@
         var vm = this;
 
         var DocumentService = context.getDocumentService();
-        vm.researchEntity = context.getResearchEntity();
 
         vm.copyDocument = DocumentService.copyDocument;
         vm.copyDocuments = DocumentService.copyDocuments;

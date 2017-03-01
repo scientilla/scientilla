@@ -18,48 +18,6 @@
         var vm = this;
 
         vm.isActive = isActive;
-        vm.menuItems = [{
-            type: 'label',
-            title: 'Personal'
-        }, {
-            type: 'item',
-            title: 'Summary',
-            url: '#/'
-        },{
-            type: 'separator'
-        }, {
-            type: 'label',
-            title: 'Documents'
-        }, {
-            type: 'item',
-            title: 'Suggested',
-            url: '#/suggested'
-        }, {
-            type: 'item',
-            title: 'Verified',
-            url: '#/verified'
-        }, {
-            type: 'item',
-            title: 'Drafts',
-            url: '#/drafts'
-        }, {
-            type: 'item',
-            title: 'External',
-            url: '#/external'
-        },{
-            type: 'separator'
-        }, {
-            type: 'label',
-            title: 'System'
-        }, {
-            type: 'item',
-            title: 'People',
-            url: '#/users'
-        }, {
-            type: 'item',
-            title: 'Groups',
-            url: '#/groups'
-        }];
 
         vm.$onInit = function () {
 
@@ -82,8 +40,8 @@
             vm.user = AuthService.user;
         }
 
-        function isActive(menuItem) {
-            return path.current === menuItem.url;
+        function isActive(linkUrl) {
+            return path.current === linkUrl;
         }
     }
 

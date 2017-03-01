@@ -12,14 +12,6 @@
                     controller: "UserBrowsingController",
                     controllerAs: 'vm',
                 })
-                .when("/users/new", {
-                    templateUrl: "partials/user-form.html",
-                    controller: "UserFormController",
-                    controllerAs: 'vm',
-                    resolve: {
-                        user: getNewUser
-                    }
-                })
                 .when("/users/:id", {
                     templateUrl: "partials/user-details.html",
                     controller: "UserDetailsController",
@@ -33,13 +25,6 @@
                 });
     }
 
-    getNewUser.$inject = ['UsersService'];
-
-    function getNewUser(UsersService) {
-        return UsersService.getNewUser();
-    }
-
-    //sTODO: move this function to the UsersService
     getCurrentUser.$inject = ['UsersService', '$route'];
 
     function getCurrentUser(UsersService, $route) {

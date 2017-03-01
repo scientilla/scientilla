@@ -4,29 +4,26 @@
     'use strict';
 
     angular.module('documents')
-        .directive('scientillaDraftsList', scientillaDraftsList);
-
-    function scientillaDraftsList() {
-        return {
-            restrict: 'E',
+        .component('scientillaDraftsList', {
             templateUrl: 'partials/scientillaDraftsList.html',
-            controller: scientillaDrafsListController,
-            controllerAs: 'vm'
-        };
-    }
+            controller: scientillaDrafsList,
+            controllerAs: 'vm',
+            bindings: {
+                researchEntity: '<'
+            }
+        });
 
-    scientillaDrafsListController.$inject = [
+    scientillaDrafsList.$inject = [
         'context',
         'researchEntityService',
         'documentSearchForm',
         'EventsService'
     ];
 
-    function scientillaDrafsListController(context, researchEntityService, documentSearchForm, EventsService) {
+    function scientillaDrafsList(context, researchEntityService, documentSearchForm, EventsService) {
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
-        vm.researchEntity = context.getResearchEntity();
 
         vm.onFilter = onFilter;
 
