@@ -11,11 +11,6 @@ services:
     entrypoint: bower
     volumes:
       - .:/usr/src/app
-  bower:
-    build: ./docker/node
-    entrypoint: bower
-    volumes:
-      - .:/usr/src/app
   mocha:
     build: ./docker/node
     entrypoint: mocha
