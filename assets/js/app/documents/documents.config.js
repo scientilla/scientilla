@@ -15,19 +15,19 @@
             })
             .when("/verified", {
                 template: params => '' +
-                '<scientilla-documents-list research-entity="$resolve.researchEntity"> editable="true">' +
+                '<scientilla-documents-list research-entity="$resolve.researchEntity" editable="true">' +
                 '</scientilla-documents-list>',
                 resolve: {researchEntity: getResearchEntity}
             })
             .when("/drafts", {
                 template: params => '' +
-                '<scientilla-drafts-list research-entity="$resolve.researchEntity">>' +
+                '<scientilla-drafts-list research-entity="$resolve.researchEntity">' +
                 '</scientilla-drafts-list>',
                 resolve: {researchEntity: getResearchEntity}
             })
             .when("/external", {
                 template: params => '' +
-                '<scientilla-external-documents research-entity="$resolve.researchEntity">>' +
+                '<scientilla-external-documents research-entity="$resolve.researchEntity">' +
                 '</scientilla-external-documents>',
                 resolve: {researchEntity: getResearchEntity}
             });
