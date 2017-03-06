@@ -5,10 +5,11 @@
         .factory("Prototyper", Prototyper);
 
     Prototyper.$inject = [
-        'userConstants'
+        'userConstants',
+        'ClientTags'
     ];
 
-    function Prototyper(userConstants) {
+    function Prototyper(userConstants, ClientTags) {
         const service = {
             toUserModel: toUserModel,
             toUsersCollection: applyToAll(toUserModel),
@@ -267,6 +268,13 @@
             },
             removeTag: function (tag) {
                 _.remove(this.tags, tag);
+            },
+            isDiscarded: function () {
+                return this.tags.includes(ClientTags.DISCARDED);
+            },
+            isUnverifying: function(){
+                return this.tags.includes(ClientTags.UVERIFYING);
+
             }
 
         };

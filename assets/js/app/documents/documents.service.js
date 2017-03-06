@@ -7,12 +7,11 @@
         'researchEntityService',
         'ModalService',
         'EventsService',
-        'UsersService',
-        'GroupsService',
+        'ClientTags',
         '$q'
     ];
 
-    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, UsersService, GroupsService, $q) {
+    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, ClientTags, $q) {
         return {
             create: function (researchEntity, reService) {
                 var service = {};
@@ -87,7 +86,7 @@
                 }
 
                 function unverifyDocument(document) {
-                    document.tags.push('unverifying');
+                    document.tags.push(ClientTags.UVERIFYING);
                     ModalService
                         .multipleChoiceConfirm('Unverifying', 'Do you want to unverify the document?', ['Create New Version', 'Unverify'])
                         .then(function (buttonIndex) {
@@ -122,7 +121,7 @@
                         })
                         .catch(function () {
                             _.remove(document.tags, function (t) {
-                                return t === 'unverifying';
+                                return t === ClientTags.UVERIFYING;
                             });
                         });
                 }
@@ -133,14 +132,14 @@
                         .then(function (draft) {
                             Notification.success('Document copied');
                             EventsService.publish(EventsService.DRAFT_CREATED, draft);
-                            document.addTag('copied');
+                            document.addTag(ClientTags.DUPLICATE);
                             openEditPopup(draft);
                         });
                 }
 
                 function copyUncopiedDocuments(documents) {
                     var notCopiedCocuments = documents.filter(function (d) {
-                        return !d.tags.includes('copied');
+                        return !d.tags.includes(ClientTags.DUPLICATE);
                     });
                     return copyDocuments(notCopiedCocuments);
                 }
@@ -155,7 +154,7 @@
                         .then(function (drafts) {
                             Notification.success(drafts.length + " draft(s) created");
                             documents.forEach(function (d) {
-                                d.addTag('copied');
+                                d.addTag(ClientTags.DUPLICATE);
                             });
                             EventsService.publish(EventsService.DRAFT_CREATED, drafts);
                         })

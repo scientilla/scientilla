@@ -114,11 +114,18 @@
         //{value:'patent', label: 'Patent'},
     ];
 
+    var ClientTags = {
+        DUPLICATE: 'duplicate?',
+        DISCARDED: 'discarded',
+        UVERIFYING: 'unverifying'
+    };
+
     angular.module('components')
         .constant('pageSize', 10)
         .constant('yearsInterval', yearsInterval)
         .constant('documentSearchForm', documentSearchForm)
         .constant('userConstants', userConstants)
         .constant('config', config)
-        .constant('publicationTypes', publicationTypes);
+        .constant('publicationTypes', publicationTypes)
+        .constant('ClientTags', ClientTags);
 })();

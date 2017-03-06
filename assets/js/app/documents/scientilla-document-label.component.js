@@ -13,6 +13,7 @@
 
     function scientillaDocumentLabel() {
         var vm = this;
+        vm.tagNormalized = vm.tag.replace('?','');
         
         activate();
         

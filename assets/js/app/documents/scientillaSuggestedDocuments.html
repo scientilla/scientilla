@@ -42,7 +42,7 @@
                                             Copy
                                         </a>
                                     </li>
-                                    <li ng-if="!document.tags.includes('discarded')">
+                                    <li ng-if="!document.isDiscarded()">
                                         <a ng-click="vm.discardDocument(document)" href="javascript:void(0)">
                                             <span class="fa fa-ban"></span>
                                             Discard

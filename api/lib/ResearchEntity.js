@@ -180,7 +180,7 @@ module.exports = _.merge({}, BaseModel, {
                     if (!docToCheck.tags)
                         docToCheck.tags = [];
                     if (isCopied)
-                        docToCheck.tags.push('copied');
+                        docToCheck.tags.push(ClientTags.DUPLICATE);
                     return docToCheck;
                 });
         }));

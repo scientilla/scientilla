@@ -14,14 +14,16 @@
 
     scientillaDocument.$inject = [
         'ModalService',
-        'config'
+        'config',
+        'ClientTags'
     ];
 
-    function scientillaDocument(ModalService, config) {
+    function scientillaDocument(ModalService, config, ClientTags) {
         var vm = this;
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
         vm.editTags = editTags;
+        vm.isDisabled = isDisabled;
 
         vm.$onInit = function () {
             vm.showPrivateTags = vm.showPrivateTags || false;
@@ -40,6 +42,10 @@
 
         function editTags() {
             ModalService.openScientillaTagForm(vm.document);
+        }
+
+        function isDisabled(){
+            return vm.document.tags.indexOf(ClientTags.DUPLICATE) >= 0;
         }
     }
 

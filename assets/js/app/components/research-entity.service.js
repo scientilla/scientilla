@@ -3,9 +3,12 @@
     angular.module("components").factory("researchEntityService", ResearchEntityServiceFactory);
 
 
-    ResearchEntityServiceFactory.$inject = ['Restangular'];
+    ResearchEntityServiceFactory.$inject = [
+        'Restangular',
+        'ClientTags'
+    ];
 
-    function ResearchEntityServiceFactory(Restangular) {
+    function ResearchEntityServiceFactory(Restangular, ClientTags) {
         var service = {};
 
         service.getDocuments = getDocuments;
@@ -76,7 +79,7 @@
                 .getList('discardedDocuments', q)
                 .then(list =>
                     _.forEach(list, d =>
-                        d.addTag('discarded'))
+                        d.addTag(ClientTags.DISCARDED))
                 );
         }
 
