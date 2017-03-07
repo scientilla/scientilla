@@ -129,6 +129,19 @@ module.exports = {
                     newDoc.itSource = d.publication;
                     return newDoc;
                 }
+
+                //TODO accrocchio mainInstituteId assumed equal 1
+                const mainInstituteId = 1;
+                newDoc.authorships = d.authors.split(',').map((author, i) => {
+                        const affiliations = author.includes('*') ? [mainInstituteId] : [];
+                        return {
+                            position: i,
+                            corresponding: false,
+                            affiliations: affiliations
+                        }
+                    }
+                );
+
                 const newSource = {
                     title: d.journal || d.conference || d.bookTitle,
                     publisher: d.publisher,
