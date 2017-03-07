@@ -199,13 +199,6 @@ module.exports = _.merge({}, BaseModel, {
                 authorship.affiliations = this.affiliations.filter(affiliation => authorship.id === affiliation.authorship);
                 return authorship;
             });
-        },
-        addLabel: function (label) {
-            if (!this.labels)
-                this.labels = [];
-
-            if (!this.labels.includes(label))
-                this.labels.push(label);
         }
     },
     getFields: function () {
