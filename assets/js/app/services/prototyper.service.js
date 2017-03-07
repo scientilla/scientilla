@@ -267,14 +267,18 @@
                     this.tags.push(tag);
             },
             removeTag: function (tag) {
-                _.remove(this.tags, tag);
+                _.remove(this.tags, function (t) {
+                    return t === tag;
+                });
+            },
+            hasTag: function(tag){
+                return this.tags.includes(tag);
             },
             isDiscarded: function () {
-                return this.tags.includes(ClientTags.DISCARDED);
+                return this.hasTag(ClientTags.DISCARDED);
             },
             isUnverifying: function(){
-                return this.tags.includes(ClientTags.UVERIFYING);
-
+                return this.hasTag(ClientTags.UVERIFYING);
             }
 
         };

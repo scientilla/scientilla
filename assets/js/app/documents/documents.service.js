@@ -86,7 +86,7 @@
                 }
 
                 function unverifyDocument(document) {
-                    document.tags.push(ClientTags.UVERIFYING);
+                    document.addTag(ClientTags.UVERIFYING); //.tags.push(ClientTags.UVERIFYING);
                     ModalService
                         .multipleChoiceConfirm('Unverifying', 'Do you want to unverify the document?', ['Create New Version', 'Unverify'])
                         .then(function (buttonIndex) {
@@ -120,9 +120,7 @@
                             }
                         })
                         .catch(function () {
-                            _.remove(document.tags, function (t) {
-                                return t === ClientTags.UVERIFYING;
-                            });
+                            document.removeTag(ClientTags.UVERIFYING);
                         });
                 }
 
@@ -139,7 +137,7 @@
 
                 function copyUncopiedDocuments(documents) {
                     var notCopiedCocuments = documents.filter(function (d) {
-                        return !d.tags.includes(ClientTags.DUPLICATE);
+                        return !d.hasTag(ClientTags.DUPLICATE);
                     });
                     return copyDocuments(notCopiedCocuments);
                 }
