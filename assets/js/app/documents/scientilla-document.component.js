@@ -15,10 +15,10 @@
     scientillaDocument.$inject = [
         'ModalService',
         'config',
-        'ClientTags'
+        'DocumentLabels'
     ];
 
-    function scientillaDocument(ModalService, config, ClientTags) {
+    function scientillaDocument(ModalService, config, DocumentLabels) {
         var vm = this;
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
@@ -45,7 +45,7 @@
         }
 
         function isDisabled(){
-            return vm.document.tags.indexOf(ClientTags.DUPLICATE) >= 0;
+            return vm.document.hasLabel(DocumentLabels.DUPLICATE);
         }
     }
 

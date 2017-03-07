@@ -114,7 +114,7 @@
         //{value:'patent', label: 'Patent'},
     ];
 
-    var ClientTags = {
+    var DocumentLabels = {
         DUPLICATE: 'duplicate?',
         DISCARDED: 'discarded',
         UVERIFYING: 'unverifying'
@@ -127,5 +127,5 @@
         .constant('userConstants', userConstants)
         .constant('config', config)
         .constant('publicationTypes', publicationTypes)
-        .constant('ClientTags', ClientTags);
+        .constant('DocumentLabels', DocumentLabels);
 })();

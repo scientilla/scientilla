@@ -176,11 +176,9 @@ module.exports = _.merge({}, BaseModel, {
         return Promise.all(_.map(documentsToCheck, function (docToCheck) {
             return getSimilarDocuments(ResearchEntityModel, researchEntityId, docToCheck, includeDrafts)
                 .then(function (documentsToCompare) {
-                    var isCopied = _.some(documentsToCompare, d => d.getSimiliarity(docToCheck) >= threeshold);
-                    if (!docToCheck.tags)
-                        docToCheck.tags = [];
-                    if (isCopied)
-                        docToCheck.tags.push(ClientTags.DUPLICATE);
+                    var isDuplicate = _.some(documentsToCompare, d => d.getSimiliarity(docToCheck) >= threeshold);
+                    if (isDuplicate)
+                        docToCheck.addLabel(DocumentLabels.DUPLICATE);
                     return docToCheck;
                 });
         }));

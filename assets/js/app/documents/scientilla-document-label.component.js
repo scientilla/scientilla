@@ -7,13 +7,13 @@
                 controller: scientillaDocumentLabel,
                 controllerAs: 'vm',
                 bindings: {
-                    tag: "<"
+                    label: "<"
                 }
             });
 
     function scientillaDocumentLabel() {
         var vm = this;
-        vm.tagNormalized = vm.tag.replace('?','');
+        vm.labelNormalized = vm.label.replace('?','');
         
         activate();
         

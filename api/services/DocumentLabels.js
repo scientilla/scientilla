@@ -1,4 +1,4 @@
-// ClientTags.js - in api/services
+// DocumentLabels.js - in api/services
 
 "use strict";
 
