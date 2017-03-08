@@ -125,10 +125,6 @@ module.exports = {
                     sourceType: sourceType,
                     type: documentType
                 };
-                if (documentType == DocumentTypes.INVITED_TALK) {
-                    newDoc.itSource = d.publication;
-                    return newDoc;
-                }
 
                 //TODO accrocchio mainInstituteId assumed equal 1
                 const mainInstituteId = 1;
@@ -141,6 +137,11 @@ module.exports = {
                         }
                     }
                 );
+
+                if (documentType == DocumentTypes.INVITED_TALK) {
+                    newDoc.itSource = d.publication;
+                    return newDoc;
+                }
 
                 const newSource = {
                     title: d.journal || d.conference || d.bookTitle,
