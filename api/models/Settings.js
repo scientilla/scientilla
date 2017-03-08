@@ -10,7 +10,8 @@ module.exports = {
     attributes: {},
     getSettings: function () {
         const settings = {
-            registerEnabled: sails.config.scientilla.registerEnabled
+            registerEnabled: sails.config.scientilla.registerEnabled,
+            institute: sails.config.scientilla.institute
         };
         return Promise.resolve(settings);
     }
