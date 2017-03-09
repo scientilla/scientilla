@@ -10,7 +10,8 @@
         "$q",
         "localStorageService",
         "EventsService",
-        "Prototyper"
+        "Prototyper",
+        "context"
     ];
 
     function AuthService($http,
@@ -19,7 +20,8 @@
                          $q,
                          localStorageService,
                          EventsService,
-                         Prototyper) {
+                         Prototyper,
+                         context) {
 
         var service = {
             isLogged: false,
@@ -81,9 +83,11 @@
                         service.username = result.data.username;
                         return UsersService.one(result.data.id).get({populate: ['administratedGroups']});
                     })
-                    .then(function (user) {
+                    .then(function(user){
                         service.user = user;
                         Prototyper.toUserModel(service.user);
+                        context.setResearchEntity(user);
+
                         user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
                         return $http.get('/users/jwt');
                     })
