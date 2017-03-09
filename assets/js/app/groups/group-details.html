@@ -1,35 +1,37 @@
-<div>
-    <h1>{{vm.group.getDisplayName()}}</h1>
-    <small>
-        <a ng-href="https://www.scopus.com/affil/profile.uri?afid={{vm.group.scopusId}}" target="_blank" >
-            Scopus
-        </a>
-    </small>
-</div>
-<br/>
-<div>
-    <uib-tabset active="active">
-        <uib-tab index="0">
-            <uib-tab-heading>Members</uib-tab-heading>
-            <div ng-repeat="m in vm.group.members">
-                <div class="row">
-                    <div class="col-md-8">
+<scientilla-backend-skelethon>
+    <div>
+        <h1>{{vm.group.getDisplayName()}}</h1>
+        <small>
+            <a ng-href="https://www.scopus.com/affil/profile.uri?afid={{vm.group.scopusId}}" target="_blank">
+                Scopus
+            </a>
+        </small>
+    </div>
+    <br/>
+    <div>
+        <uib-tabset active="active">
+            <uib-tab index="0">
+                <uib-tab-heading>Members</uib-tab-heading>
+                <div ng-repeat="m in vm.group.members">
+                    <div class="row">
+                        <div class="col-md-8">
                             <a ng-href="#{{m.getProfileUrl()}}">
                                 {{m| fullname}}
                             </a>
-                        <small>{{m.username}}</small>
+                            <small>{{m.username}}</small>
+                        </div>
+                        <div class="col-md-4 text-right">
+                        </div>
                     </div>
-                    <div  class="col-md-4 text-right">
-                    </div>
+                    <hr>
                 </div>
-                <hr>
-            </div>
-            <div ng-if="vm.group.members.length === 0">No Members</div>
+                <div ng-if="vm.group.members.length === 0">No Members</div>
 
-        </uib-tab>
-        <uib-tab index="1">
-            <uib-tab-heading>Documents</uib-tab-heading>
-            <scientilla-documents-list research-entity="vm.group" editable="false" ></scientilla-documents-list>
-        </uib-tab>
-    </uib-tabset>
-</div>
+            </uib-tab>
+            <uib-tab index="1">
+                <uib-tab-heading>Documents</uib-tab-heading>
+                <scientilla-documents-list research-entity="vm.group" editable="false"></scientilla-documents-list>
+            </uib-tab>
+        </uib-tabset>
+    </div>
+</scientilla-backend-skelethon>
