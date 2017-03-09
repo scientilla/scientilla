@@ -1,5 +1,5 @@
 (function () {
-    angular.module("components").factory("context", context);
+    angular.module("services").factory("context", context);
 
     context.$inject = [
         'EventsService',
