@@ -138,6 +138,10 @@ module.exports = _.merge({}, BaseModel, {
                 'sourceType',
                 'source'
             ];
+            //TODO make different arrays for each types
+            if (this.type === DocumentTypes.INVITED_TALK)
+                _.pull(requiredFields, 'source');
+
             return _.every(requiredFields, function (v) {
                 return self[v];
             });
