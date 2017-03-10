@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('components')
-        .component('scientillaBackendSkelethon', {
-            templateUrl: 'partials/scientilla-backend-skelethon.html',
+        .component('scientillaBackendSkeleton', {
+            templateUrl: 'partials/scientilla-backend-skeleton.html',
             controller: scientillaBackendSkelethon,
             controllerAs: 'vm',
             transclude: true
