@@ -10,8 +10,7 @@
         "$q",
         "localStorageService",
         "EventsService",
-        "Prototyper",
-        "context"
+        "Prototyper"
     ];
 
     function AuthService($http,
