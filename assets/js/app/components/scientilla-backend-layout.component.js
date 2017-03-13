@@ -2,16 +2,16 @@
     'use strict';
 
     angular.module('components')
-        .component('scientillaBackendSkeleton', {
-            templateUrl: 'partials/scientilla-backend-skeleton.html',
-            controller: scientillaBackendSkelethon,
+        .component('scientillaBackendLayout', {
+            templateUrl: 'partials/scientilla-backend-layout.html',
+            controller: scientillaBackendLayout,
             controllerAs: 'vm',
             transclude: true
         });
 
-    scientillaBackendSkelethon.$inject = [];
+    scientillaBackendLayout.$inject = [];
 
-    function scientillaBackendSkelethon() {
+    function scientillaBackendLayout() {
         var vm = this;
 
         vm.$onInit = function () {
