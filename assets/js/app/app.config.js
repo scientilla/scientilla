@@ -1,8 +1,8 @@
 (function () {
     angular
-            .module('app')
-            .config(configure)
-            .run(run);
+        .module('app')
+        .config(configure)
+        .run(run);
 
     configure.$inject = ['RestangularProvider', '$routeProvider', 'localStorageServiceProvider'];
 
@@ -11,17 +11,18 @@
             .when("/", {
                 template: "<profile-summary></profile-summary>"
             })
-                .otherwise({
-                    redirectTo: "/"
-                });
+            .otherwise({
+                redirectTo: "/"
+            });
 
         //sTODO: set request error interceptor
 
         localStorageServiceProvider
-                .setPrefix('scientilla');
+            .setPrefix('scientilla');
     }
 
-    run.$inject = ['$rootScope', 'AuthService', 'Restangular', 'Prototyper', 'path'];
+    // unused services are injected for initialization purpose
+    run.$inject = ['$rootScope', 'AuthService', 'Restangular', 'Prototyper', 'path', 'context'];
 
     function run($rootScope, AuthService, Restangular, Prototyper, path) {
 

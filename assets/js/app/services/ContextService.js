@@ -39,10 +39,6 @@
             EventsService.publish(EventsService.CONTEXT_CHANGE);
         }
 
-        function setDocumentService(ds) {
-            documentService = ds;
-        }
-
         function reset( ) {
             researchEntity = null;
             documentService = null;
