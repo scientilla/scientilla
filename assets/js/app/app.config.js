@@ -22,7 +22,9 @@
     }
 
     // unused services are injected for initialization purpose
-    run.$inject = ['$rootScope', 'AuthService', 'Restangular', 'Prototyper', 'path', 'context'];
+    const servicesToInit = ['context'];
+    const services = ['$rootScope', 'AuthService', 'Restangular', 'Prototyper', 'path'];
+    run.$inject = _.union(services, servicesToInit);
 
     function run($rootScope, AuthService, Restangular, Prototyper, path) {
 
