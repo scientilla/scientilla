@@ -1,23 +1,22 @@
 (function () {
     angular.module('documents')
-        .filter('documentusertags', linkableAuthors);
+        .filter('documentusertags', documentusertags);
 
-    linkableAuthors.$inject = [
+    documentusertags.$inject = [
         'context'
     ];
 
-    function linkableAuthors(context) {
+    function documentusertags(context) {
 
-        function getDocumentUserTags(document) {
+        return function(document) {
             var researchEntity = context.getResearchEntity();
             var tags = researchEntity.getTagsByDocument(document);
 
             return tags.map(function (tag) {
                 return "<span class='label label-primary'>"+tag.value+"</span>";
             }).join(' ');
-        }
+        };
 
-        return getDocumentUserTags;
     }
 
 })();
