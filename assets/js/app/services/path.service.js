@@ -18,7 +18,7 @@
         };
 
         EventsService.subscribe(service, EventsService.AUTH_LOGIN,
-            () => current !== '/login' ? goTo(current) : goTo('/')
+            () => current === '/login' ? goTo('/') : goTo(current)
         );
 
         function goTo(path) {
