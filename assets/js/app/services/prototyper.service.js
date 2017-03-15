@@ -322,9 +322,15 @@
             _.forEach(document.authorships, a => {
                 if (a.affiliations)
                     return;
-                const affiliations = _.filter(document.affiliations, {authorship: a.id});
-                a.affiliations = _.map(affiliations, 'institute');
+                const authorships = _.filter(document.affiliations, {authorship: a.id});
+                const institutes = document.institutes.filter(i => authorships.some(a => a.institute === i.id));
+                a.affiliations = institutes;
             });
+        }
+
+        function addLettersToInstitutes(institutes=[]) {
+            var alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+            institutes.forEach((institute, i) => institute.letter = alphabet[i]);
         }
 
         function applyToAll(fun) {
@@ -353,6 +359,7 @@
 
         function toDocumentModel(document) {
             initializeAffiliations(document);
+            addLettersToInstitutes(document.institutes)
             _.defaultsDeep(document, documentPrototype);
             service.toUsersCollection(document.authors);
             service.toTagLabelsCollection(document.tagLabels);
@@ -375,7 +382,7 @@
         function toAuthorshipModel(authorship) {
             _.defaultsDeep(authorship, authorshipPrototype);
             service.toInstitutesCollection(authorship.affiliations);
-
+            return authorship;
         }
 
         function toInstituteModel(institute) {

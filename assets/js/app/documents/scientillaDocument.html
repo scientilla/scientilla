@@ -12,7 +12,7 @@
 
     <div>
         <small class="scientilla-document-authors">
-            <span ng-bind-html='vm.document | linkableauthors'></span>
+            <span ng-bind-html='vm.document.authorsStr | authorsCorresponding:vm.document | authorsVerified:vm.document | authorsMainGroup:vm.document'></span>
         </small>
     </div>
     <div>

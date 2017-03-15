@@ -1,9 +1,14 @@
+<div  class="scientilla-document-details-authors">
+    <small class="scientilla-document-authors">
+        <span ng-bind-html='vm.document.authorsStr | authorsCorresponding:vm.document | authorsVerified:vm.document | authorsAffiliations:vm.document'></span>
+    </small>
+</div>
 <div class="scientilla-document-details-title">
     <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
 </div>
-<div  class="scientilla-document-details-authors">
-    <small class="scientilla-document-authors">
-        <span ng-bind-html='vm.document | linkableauthors'></span>
+<div>
+    <small class="scientilla-document-institutes">
+        <div ng-repeat='institute in vm.document.institutes'>{{institute.letter}} - {{institute.name}}</div>
     </small>
 </div>
 

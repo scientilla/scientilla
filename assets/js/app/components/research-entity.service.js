@@ -31,7 +31,7 @@
         service.deleteDrafts = deleteDrafts;
         service.setPrivateTags = setPrivateTags;
 
-        var documentPopulates = ['source', 'authors', 'authorships', 'affiliations', 'userTags', 'tagLabels', 'groupTags', 'groupTagLabels'];
+        var documentPopulates = ['source', 'authors', 'authorships', 'affiliations', 'userTags', 'tagLabels', 'groupTags', 'groupTagLabels', 'institutes'];
 
         function getDocuments(researchEntity, query) {
             var populate = {populate: documentPopulates};

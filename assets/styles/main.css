@@ -379,3 +379,15 @@ scientilla-menu .menu-label {
 scientilla-menu .menu-label {
     background-color: transparent;
 }
+
+
+/*scientilla-document-institutes*/
+
+.scientilla-document-institutes > div {
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+.scientilla-document-affiliations {
+    font-style: italic;
+}
