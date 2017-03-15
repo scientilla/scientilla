@@ -94,6 +94,11 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'affiliation',
             via: 'document',
         },
+        institutes: {
+            collection: 'institute',
+            via: 'document',
+            through: 'affiliation'
+        },
         userTags: {
             collection: 'tag',
             via: 'document'

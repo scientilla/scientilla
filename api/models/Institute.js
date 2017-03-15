@@ -23,7 +23,12 @@ module.exports = {
         },
         aliasOf: {
             model: 'institute'
-        }
+        },
+        documents: {
+            collection: 'document',
+            via: 'institutes',
+            through: 'affiliation'
+        },
     },
     findOrCreateRealInstitute: function(i) {
         return Institute.findOrCreate({scopusId: i.scopusId}, i)
