@@ -17,7 +17,7 @@
 
                 if (authorship) {
                     htmlAuthor += '<sup class="superscript scientilla-document-affiliations">' +
-                        authorship.affiliations.map(a => a.letter).join(',') +
+                        authorship.affiliations.map(a => a.getLetter()).join(',') +
                         '</sup>';
                 }
                 return htmlAuthor;

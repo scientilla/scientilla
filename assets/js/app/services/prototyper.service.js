@@ -330,7 +330,7 @@
 
         function addLettersToInstitutes(institutes=[]) {
             var alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
-            institutes.forEach((institute, i) => institute.letter = alphabet[i]);
+            institutes.forEach((institute, i) => institute.getLetter = () => alphabet[i]);
         }
 
         function applyToAll(fun) {
