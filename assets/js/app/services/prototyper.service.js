@@ -359,11 +359,12 @@
 
         function toDocumentModel(document) {
             initializeAffiliations(document);
-            addLettersToInstitutes(document.institutes)
+            addLettersToInstitutes(document.institutes);
             _.defaultsDeep(document, documentPrototype);
             service.toUsersCollection(document.authors);
             service.toTagLabelsCollection(document.tagLabels);
             service.toTagLabelsCollection(document.groupTagLabels);
+            service.toAuthorshipsCollection(document.authorships);
             return document;
         }
 
