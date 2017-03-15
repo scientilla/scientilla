@@ -73,9 +73,6 @@
             var authorship = vm.document.authorships[vm.verificationData.position];
             if (authorship)
                 vm.verificationData.corresponding = authorship.corresponding;
-            vm.correspondingAlreadySet = _.some(vm.document.authorships, function(a) {
-                return a.corresponding && a.researchEntity;
-            });
 
             getInstitutes().then(function (institutes) {
                 vm.verificationData.affiliations = institutes;
