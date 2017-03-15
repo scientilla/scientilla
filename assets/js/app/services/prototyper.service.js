@@ -183,7 +183,10 @@
                 'type',
                 'sourceType',
                 'scopusId',
-                'wosId'
+                'wosId',
+                'authorships',
+                'affiliations',
+                'institutes'
             ],
             create: function (documentData) {
                 var fields = _.union(['draft', 'draftCreator', 'draftGroupCreator'], documentPrototype.fields);
