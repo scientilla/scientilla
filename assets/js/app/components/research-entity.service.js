@@ -5,10 +5,10 @@
 
     ResearchEntityServiceFactory.$inject = [
         'Restangular',
-        'ClientTags'
+        'DocumentLabels'
     ];
 
-    function ResearchEntityServiceFactory(Restangular, ClientTags) {
+    function ResearchEntityServiceFactory(Restangular, DocumentLabels) {
         var service = {};
 
         service.getDocuments = getDocuments;
@@ -79,7 +79,7 @@
                 .getList('discardedDocuments', q)
                 .then(list =>
                     _.forEach(list, d =>
-                        d.addTag(ClientTags.DISCARDED))
+                        d.addLabel(DocumentLabels.DISCARDED))
                 );
         }
 

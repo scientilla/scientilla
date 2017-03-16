@@ -1,16 +1,18 @@
-<div class="row">
-    <div class="col-md-5">
-        <div class="text-center">
-            <h3>Documents by year</h3>
-            <nvd3 options="vm.documentsByYear.options" data="vm.documentsByYear.data"></nvd3>
+<scientilla-backend-layout>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="text-center">
+                <h3>Documents by year</h3>
+                <nvd3 options="vm.documentsByYear.options" data="vm.documentsByYear.data"></nvd3>
+            </div>
+        </div>
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-5">
+            <div class="text-center">
+                <h3>Documents by Type</h3>
+                <nvd3 options="vm.documentsByType.options" data="vm.documentsByType.data"></nvd3>
+            </div>
         </div>
     </div>
-    <div class="col-md-1">
-    </div>
-    <div class="col-md-5">
-        <div class="text-center">
-            <h3>Documents by Type</h3>
-            <nvd3 options="vm.documentsByType.options" data="vm.documentsByType.data"></nvd3>
-        </div>
-    </div>
-</div>
+</scientilla-backend-layout>

@@ -27,8 +27,8 @@
         };
 
         vm.$onInit = function () {
-            vm.iconClass = iconClasses[vm.document.sourceType];
-
+            var key = vm.document.type === 'invited_talk' ? vm.document.type : vm.document.sourceType;
+            vm.iconClass = iconClasses[key];
         };
     }
 

@@ -1,5 +1,5 @@
 (function () {
-    angular.module("components").factory("context", context);
+    angular.module("services").factory("context", context);
 
     context.$inject = [
         'EventsService',
@@ -37,10 +37,6 @@
 
 
             EventsService.publish(EventsService.CONTEXT_CHANGE);
-        }
-
-        function setDocumentService(ds) {
-            documentService = ds;
         }
 
         function reset( ) {

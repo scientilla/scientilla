@@ -1,5 +1,5 @@
 (function () {
-    angular.module("components").factory("ModalService", ModalService);
+    angular.module("services").factory("ModalService", ModalService);
 
     ModalService.$inject = ['$uibModal'];
 

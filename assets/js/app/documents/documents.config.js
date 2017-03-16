@@ -15,8 +15,8 @@
             })
             .when("/verified", {
                 template: params => '' +
-                '<scientilla-documents-list research-entity="$resolve.researchEntity" editable="true">' +
-                '</scientilla-documents-list>',
+                '<scientilla-verified-list research-entity="$resolve.researchEntity">' +
+                '</scientilla-verified-list>',
                 resolve: {researchEntity: getResearchEntity}
             })
             .when("/drafts", {

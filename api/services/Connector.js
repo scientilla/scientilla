@@ -125,10 +125,24 @@ module.exports = {
                     sourceType: sourceType,
                     type: documentType
                 };
+
+                //TODO accrocchio mainInstituteId assumed equal 1
+                const mainInstituteId = 1;
+                newDoc.authorships = d.authors.split(',').map((author, i) => {
+                        const affiliations = author.includes('*') ? [mainInstituteId] : [];
+                        return {
+                            position: i,
+                            corresponding: false,
+                            affiliations: affiliations
+                        }
+                    }
+                );
+
                 if (documentType == DocumentTypes.INVITED_TALK) {
                     newDoc.itSource = d.publication;
                     return newDoc;
                 }
+
                 const newSource = {
                     title: d.journal || d.conference || d.bookTitle,
                     publisher: d.publisher,

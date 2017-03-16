@@ -1,43 +1,46 @@
-<scientilla-filter
-    search-form-structure="vm.searchForm"
-    on-filter="vm.onFilter"
-    elements="vm.documents"
-    empty-list-message="No documents"
-    filter-label="Search">
-    
-    <div class="row">
-        <div class="col-md-12">
-            <scientilla-multicheck>
-                <buttons>
-                    <scientilla-multicheck-button on-click="vm.copyDocuments">
-                        <span class="fa fa-copy"></span>
-                        Copy
-                    </scientilla-multicheck-button>
-                </buttons>
-                <buttons>
-                    <scientilla-multicheck-button on-click="vm.copyUncopiedDocuments">
-                        <span class="fa fa-copy"></span>
-                        Copy (no duplicates)
-                    </scientilla-multicheck-button>
-                </buttons>
-                <item-list>
-                    <scientilla-checkable ng-repeat="d in vm.documents" item="d">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <scientilla-document document="d"></scientilla-document>
+<scientilla-backend-layout>
+    <scientilla-filter
+            search-form-structure="vm.searchForm"
+            on-filter="vm.onFilter"
+            elements="vm.documents"
+            empty-list-message="No documents"
+            filter-label="Search">
+
+        <div class="row">
+            <div class="col-md-12">
+                <scientilla-multicheck>
+                    <buttons>
+                        <scientilla-multicheck-button on-click="vm.copyDocuments">
+                            <span class="fa fa-copy"></span>
+                            Copy
+                        </scientilla-multicheck-button>
+                    </buttons>
+                    <buttons>
+                        <scientilla-multicheck-button on-click="vm.copyUncopiedDocuments">
+                            <span class="fa fa-copy"></span>
+                            Copy (no duplicates)
+                        </scientilla-multicheck-button>
+                    </buttons>
+                    <item-list>
+                        <scientilla-checkable ng-repeat="d in vm.documents" item="d">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <scientilla-document document="d"></scientilla-document>
+                                </div>
+                                <div class="col-md-4 text-right">
+                                    <h3>
+                                        <button class="btn btn-primary"
+                                                ng-click="vm.copyDocument(d, vm.researchEntity)">
+                                            <span class="fa fa-copy"></span>
+                                            Copy
+                                        </button>
+                                    </h3>
+                                </div>
                             </div>
-                            <div class="col-md-4 text-right">
-                                <h3>
-                                    <button class="btn btn-primary"  ng-click="vm.copyDocument(d, vm.researchEntity)" >
-                                        <span class="fa fa-copy"></span>
-                                        Copy
-                                    </button>
-                                </h3>
-                            </div>
-                        </div>
-                    </scientilla-checkable>
-                </item-list>
-            </scientilla-multicheck>
+                        </scientilla-checkable>
+                    </item-list>
+                </scientilla-multicheck>
+            </div>
         </div>
-    </div>
-</scientilla-filter>
+    </scientilla-filter>
+</scientilla-backend-layout>

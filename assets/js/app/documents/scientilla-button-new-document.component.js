@@ -20,20 +20,15 @@
     function ScientillaButtonNewDocument(context, ModalService, DocumentTypesService) {
         var vm = this;
 
-        vm.researchEntity = context.getResearchEntity();
         vm.createNewDocument = createNewDocument;
         vm.types = DocumentTypesService.getDocumentTypes();
 
-
-        function openMenu($mdOpenMenu, ev) {
-            $mdOpenMenu(ev);
-        }
-
         function createNewDocument(type) {
-            var draft = vm.researchEntity.getNewDocument(type);
+            var researchEntity = context.getResearchEntity();
+            var draft = researchEntity.getNewDocument(type);
 
             ModalService
-                .openScientillaDocumentForm(draft, vm.researchEntity);
+                .openScientillaDocumentForm(draft, researchEntity);
         }
     }
 })();

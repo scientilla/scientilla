@@ -172,15 +172,14 @@ module.exports = _.merge({}, BaseModel, {
         return Document.update({id: draftId}, selectedDraftData)
     },
     checkCopiedDocuments: function (ResearchEntityModel, researchEntityId, documentsToCheck, includeDrafts) {
-        var threeshold = .85;
+        const threeshold = .85;
         return Promise.all(_.map(documentsToCheck, function (docToCheck) {
             return getSimilarDocuments(ResearchEntityModel, researchEntityId, docToCheck, includeDrafts)
                 .then(function (documentsToCompare) {
-                    var isCopied = _.some(documentsToCompare, d => d.getSimiliarity(docToCheck) >= threeshold);
-                    if (!docToCheck.tags)
-                        docToCheck.tags = [];
-                    if (isCopied)
-                        docToCheck.tags.push(ClientTags.DUPLICATE);
+                    const isDuplicate = _.some(documentsToCompare, d => d.getSimiliarity(docToCheck) >= threeshold);
+                    if (isDuplicate)
+                        DocumentLabels.addLabel(docToCheck, DocumentLabels.DUPLICATE);
+
                     return docToCheck;
                 });
         }));

@@ -46,7 +46,7 @@
 
 .scientilla-login-form {
     width: 40%;
-    margin: 0 15%;
+    margin: 0 auto;
 }
 
 .scientilla-register-form {
@@ -260,10 +260,6 @@ i {
 scientilla-multicheck .scientila-multicheck-commands-row {
     height: 38px;
     line-height: 38px;
-}
-
-scientilla-external-documents .row {
-    margin-top: 10px;
 }
 
 .scientilla-modal .btn {

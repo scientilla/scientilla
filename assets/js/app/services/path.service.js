@@ -10,14 +10,16 @@
     ];
 
     function path($location, EventsService, $route) {
-        var current = '/';
+        var current =  $location.url();
         var service = {
             current: current,
             goTo: goTo,
             getUrlPath: getUrlPath
         };
 
-        EventsService.subscribe(service, EventsService.AUTH_LOGIN, () => goTo('/'));
+        EventsService.subscribe(service, EventsService.AUTH_LOGIN,
+            () => current === '/login' ? goTo('/') : goTo(current)
+        );
 
         function goTo(path) {
             $location.path(path);

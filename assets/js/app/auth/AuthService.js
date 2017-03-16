@@ -84,6 +84,7 @@
                     .then(function (user) {
                         service.user = user;
                         Prototyper.toUserModel(service.user);
+
                         user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
                         return $http.get('/users/jwt');
                     })
