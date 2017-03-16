@@ -6,10 +6,10 @@
 
     Prototyper.$inject = [
         'userConstants',
-        'ClientTags'
+        'DocumentLabels'
     ];
 
-    function Prototyper(userConstants, ClientTags) {
+    function Prototyper(userConstants, DocumentLabels) {
         const service = {
             toUserModel: toUserModel,
             toUsersCollection: applyToAll(toUserModel),
@@ -167,7 +167,7 @@
             UNKNOWN_DOCUMENT: 0,
             USER_DOCUMENT: 1,
             GROUP_DOCUMENT: 2,
-            tags: [],
+            labels: [],
             fields: [
                 'authors',
                 'title',
@@ -265,23 +265,23 @@
 
                 return newDoc;
             },
-            addTag: function (tag) {
-                if (!this.tags.includes(tag))
-                    this.tags.push(tag);
+            addLabel: function (label) {
+                if (!this.hasLabel(label))
+                    this.labels.push(label);
             },
-            removeTag: function (tag) {
-                _.remove(this.tags, function (t) {
-                    return t === tag;
+            removeLabel: function (label) {
+                _.remove(this.labels, function (t) {
+                    return t === label;
                 });
             },
-            hasTag: function(tag){
-                return this.tags.includes(tag);
+            hasLabel: function(label){
+                return this.labels.includes(label);
             },
             isDiscarded: function () {
-                return this.hasTag(ClientTags.DISCARDED);
+                return this.hasLabel(DocumentLabels.DISCARDED);
             },
             isUnverifying: function(){
-                return this.hasTag(ClientTags.UVERIFYING);
+                return this.hasLabel(DocumentLabels.UVERIFYING);
             },
             getInstituteIdentifier: function(instituteIndex) {
                 var alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
@@ -332,11 +332,6 @@
             });
         }
 
-        function addLettersToInstitutes(institutes=[]) {
-            var alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
-            institutes.forEach((institute, i) => institute.getLetter = () => alphabet[i]);
-        }
-
         function applyToAll(fun) {
             return function (elems) {
                 _.forEach(elems, fun);
@@ -363,7 +358,6 @@
 
         function toDocumentModel(document) {
             initializeAffiliations(document);
-            addLettersToInstitutes(document.institutes);
             _.defaultsDeep(document, documentPrototype);
             service.toUsersCollection(document.authors);
             service.toTagLabelsCollection(document.tagLabels);
