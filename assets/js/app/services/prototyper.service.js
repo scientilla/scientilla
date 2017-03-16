@@ -282,6 +282,10 @@
             },
             isUnverifying: function(){
                 return this.hasTag(ClientTags.UVERIFYING);
+            },
+            getInstituteIdentifier: function(instituteIndex) {
+                var alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+                return alphabet[instituteIndex];
             }
 
         };

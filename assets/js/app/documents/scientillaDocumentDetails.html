@@ -8,7 +8,7 @@
 </div>
 <div>
     <small class="scientilla-document-institutes">
-        <div ng-repeat='institute in vm.document.institutes'>{{institute.letter}} - {{institute.name}}</div>
+        <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} - {{institute.name}}</div>
     </small>
 </div>
 
