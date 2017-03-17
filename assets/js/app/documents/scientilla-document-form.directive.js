@@ -49,6 +49,7 @@
         var debounceTimeout = null;
         var debounceTime = 2000;
         var documentService = context.getDocumentService();
+        vm.openDocumentAffiliationForm = openDocumentAffiliationsForm;
 
         activate();
 
@@ -207,6 +208,15 @@
         function closePopover() {
             vm["popover-is-open"] = false;
         }
+
+        function openDocumentAffiliationsForm() {
+            return saveDocument()
+                .then(function() {return close();})
+                .then(function() {
+                    return documentService.openDocumentAffiliationForm(vm.document);
+                });
+        }
+
 
         function verify() {
             saveDocument()
