@@ -478,6 +478,7 @@ function scoupsSingleRequest(d1, attempt) {
                     affiliations: affiliationInstitutes
                 };
             });
+            newDoc.institutes = newInstitutes;
             newDoc.source = newSource;
             return newDoc;
         })
