@@ -332,7 +332,7 @@
                 if (a.affiliations)
                     return;
                 const authorships = _.filter(document.affiliations, {authorship: a.id});
-                const institutes = document.institutes.filter(i => authorships.some(a => a.institute === i.id));
+                const institutes = _.filter(document.institutes, i => authorships.some(a => a.institute === i.id));
                 a.affiliations = institutes;
             });
         }
