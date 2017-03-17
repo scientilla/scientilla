@@ -284,8 +284,13 @@
                 return this.hasLabel(DocumentLabels.UVERIFYING);
             },
             getInstituteIdentifier: function(instituteIndex) {
-                var alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
-                return alphabet[instituteIndex];
+                const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
+                if (instituteIndex < alphabet.length)
+                    return alphabet[instituteIndex];
+                const getBaseLog = (y, x) => Math.log(y) / Math.log(x);
+                const firstLetter = alphabet [Math.floor(getBaseLog(instituteIndex, alphabet.length))-1];
+                const secondLetter = alphabet [instituteIndex % alphabet.length];
+                return firstLetter + secondLetter;
             }
 
         };
