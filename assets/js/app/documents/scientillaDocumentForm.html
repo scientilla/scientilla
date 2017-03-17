@@ -78,7 +78,7 @@
         <input type="text" class="form-control" id="wosid" placeholder="Wos ID" ng-model="vm.document.wosId">
     </div>
     <scientilla-button ng-disabled="!vm.document.id" ng-click="vm.verify()">Verify</scientilla-button>
-    <scientilla-button ng-disabled="!vm.document.id" ng-click="vm.openDocumentAffiliationForm()">Edit Affiliations</scientilla-button>
+    <!--<scientilla-button ng-disabled="!vm.document.id" ng-click="vm.openDocumentAffiliationForm()">Edit Affiliations</scientilla-button>-->
     <scientilla-button ng-disabled="!vm.document.id" ng-click="vm.deleteDocument()">Delete</scientilla-button>
     <scientilla-button type="cancel" ng-click="vm.cancel()">Close</scientilla-button>
     <div class="scientilla-document-form-message pull-right">{{vm.status.message}}</div>
