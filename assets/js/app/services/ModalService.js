@@ -28,20 +28,21 @@
             };
 
             service.modal = openModal(
-                    '<scientilla-document-form\
-                        document="vm.document"\
-                        research-entity="vm.researchEntity"\
-                        on-failure="vm.onFailure"\
-                        on-submit="vm.onSubmit" \
-                        close-fn="vm.onClose" \
-                    ></scientilla-document-form>',
-                    scopeVars
-                    );
+                '<scientilla-document-form\
+                    document="vm.document"\
+                    research-entity="vm.researchEntity"\
+                    on-failure="vm.onFailure"\
+                    on-submit="vm.onSubmit" \
+                    close-fn="vm.onClose" \
+                ></scientilla-document-form>',
+                scopeVars,
+                {size: 'lg'}
+            );
 
             return service.modal.result;
         };
 
-        service.openScientillaDocumentDetails = function (document){
+        service.openScientillaDocumentDetails = function (document) {
             var scopeVars = {
                 document: document
             };
@@ -65,13 +66,13 @@
             };
 
             service.modal = openModal(
-                    '<scientilla-user-form\
-                        user="vm.user"\
-                        on-failure="vm.onFailure"\
-                        on-submit="vm.onSubmit"\
-                    ></scientilla-user-form>',
-                    scopeVars
-                    );
+                '<scientilla-user-form\
+                    user="vm.user"\
+                    on-failure="vm.onFailure"\
+                    on-submit="vm.onSubmit"\
+                ></scientilla-user-form>',
+                scopeVars
+            );
 
             return service.modal.result;
         };
@@ -114,7 +115,7 @@
             return service.modal.result;
         };
 
-        service.openDocumentAffiliationForm = function(document) {
+        service.openDocumentAffiliationForm = function (document) {
             var scopeVars = {
                 document: document
             };
@@ -132,7 +133,7 @@
             return service.modal.result;
         };
 
-        service.openDocumentVerificationForm = function(document, verificationFn) {
+        service.openDocumentVerificationForm = function (document, verificationFn) {
 
             var scopeVars = {
                 document: document,
@@ -153,7 +154,7 @@
             return service.modal.result;
         };
 
-        service.multipleChoiceConfirm = function(title, message, buttonLabels) {
+        service.multipleChoiceConfirm = function (title, message, buttonLabels) {
             buttonLabels = buttonLabels || [];
             var ret = new Promise(function (resolve, reject) {
                 var scope = {
@@ -176,10 +177,12 @@
                                 <div ng-if="vm.message">{{vm.message}}</div>\
                             </div>\
                             <hr>' +
-                            scope.buttonLabels.map(function(b, i) { return '<scientilla-button ng-click="vm.ok('+i+')">'+b+'</scientilla-button>';}).join('') +
-                            '<scientilla-button ng-click="vm.cancel()" type="cancel">Cancel</scientilla-button>\
-                        <div>',
-                        scope);
+                    scope.buttonLabels.map(function (b, i) {
+                        return '<scientilla-button ng-click="vm.ok(' + i + ')">' + b + '</scientilla-button>';
+                    }).join('') +
+                    '<scientilla-button ng-click="vm.cancel()" type="cancel">Cancel</scientilla-button>\
+                <div>',
+                    scope);
 
                 service.modal.result.catch(function () {
                     reject();
@@ -218,7 +221,7 @@
 
         function getDefaultCallbacks() {
             var callbacks = {
-                onFailure: function(){},
+                onFailure: _.noop,
                 onSubmit: service.close,
                 onClose: service.close
             };
