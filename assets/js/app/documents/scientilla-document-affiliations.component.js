@@ -32,7 +32,7 @@
         vm.$onInit = () => {
             $scope.$watch('vm.position', userSelectedChanged);
             $scope.$watch('vm.authorship.affiliations', resetInstitutes, true);
-        }
+        };
 
         function getInstitutesQuery(searchText) {
             var qs = {where: {name: {contains: searchText}}};
