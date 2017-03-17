@@ -33,6 +33,7 @@
         function search(searchText) {
             var info = this.query()(searchText);
             var filter = this.filter();
+            info.qs.limit = info.qs.limit || 10;
             return Restangular.all(info.model).getList(info.qs)
                 .then(function (result) {
                     var displayItems = result;
