@@ -114,6 +114,24 @@
             return service.modal.result;
         };
 
+        service.openDocumentAffiliationForm = function(document) {
+            var scopeVars = {
+                document: document
+            };
+
+            service.modal = openModal(
+                '<scientilla-document-affiliations\
+                    document="vm.document"\
+                    on-failure="vm.onFailure"\
+                    on-submit="vm.onSubmit"\
+                ></scientilla-document-affiliations>',
+                scopeVars,
+                {size: 'lg'}
+            );
+
+            return service.modal.result;
+        };
+
         service.openDocumentVerificationForm = function(document, verificationFn) {
 
             var scopeVars = {

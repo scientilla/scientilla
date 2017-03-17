@@ -30,6 +30,7 @@
         vm.deleteDraft = DocumentsService.deleteDraft;
         vm.verifyDraft = DocumentsService.verifyDraft;
         vm.openEditPopup = DocumentsService.openEditPopup;
+        vm.openDocumentAffiliationForm = DocumentsService.openDocumentAffiliationForm;
         vm.deleteDrafts = DocumentsService.deleteDrafts;
         vm.verifyDrafts = DocumentsService.verifyDrafts;
 

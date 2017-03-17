@@ -198,6 +198,12 @@ module.exports = _.merge({}, BaseModel, {
                 )
             )
     },
+    setAuthorships: async function(ResearchEntityModel, researchEntityId, draftId, authorshipsData) {
+        authorshipsData.forEach(a => delete a.id);
+        const deleteAuthorships = await Authorship.destroy({document: draftId});
+        await Affiliation.destroy({authorship: deleteAuthorships.map(a => a.id)});
+        return Authorship.create(authorshipsData);
+    },
     _config: {
         actions: false,
         shortcuts: false,

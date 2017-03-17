@@ -65,7 +65,9 @@ module.exports.routes = {
     'delete /documents/delete': 'Document.deleteDrafts',
     'get /settings': 'Settings.getSettings',
     'get /users/:id/charts': 'User.getChartsData',
-    'get /groups/:id/charts': 'Group.getChartsData'
+    'get /groups/:id/charts': 'Group.getChartsData',
+    'put /groups/:researchEntityId/drafts/:documentId/authorships': 'Group.setAuthorhips',
+    'put /users/:researchEntityId/drafts/:documentId/authorships': 'User.setAuthorhips'
 
 
     /***************************************************************************

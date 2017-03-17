@@ -21,6 +21,7 @@
                 service.deleteDrafts = deleteDrafts;
                 service.verifyDrafts = verifyDrafts;
                 service.openEditPopup = openEditPopup;
+                service.openDocumentAffiliationForm = openDocumentAffiliationForm;
                 service.discardDocument = discardDocument;
                 service.verifyDocuments = verifyDocuments;
                 service.discardDocuments = discardDocuments;
@@ -219,6 +220,17 @@
                 function openEditPopup(draft) {
                     ModalService
                         .openScientillaDocumentForm(draft.clone(), researchEntity);
+                }
+
+                function openDocumentAffiliationForm(draft) {
+                    return ModalService
+                        .openDocumentAffiliationForm(draft.clone())
+                        .then(i => {
+                            if (i === 1) {
+                                EventsService.publish(EventsService.DRAFT_UPDATED, draft);
+                                Notification.success("Affiliations has been updated");
+                            }
+                        });
                 }
 
                 function getExternalDocuments(query, service) {

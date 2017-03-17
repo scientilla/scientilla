@@ -1,0 +1,61 @@
+<h1>Document affiliations</h1>
+<div>
+    <small class="scientilla-document-authors">
+        <span ng-bind-html='vm.document.authorsStr | authorsCorresponding:vm.document | authorsVerified:vm.document | authorsAffiliations:vm.document'></span>
+    </small>
+</div>
+<div>
+    <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
+</div>
+<div>
+    <small class="scientilla-document-institutes">
+        <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} - {{institute.name}}</div>
+    </small>
+</div>
+<div>
+    <small class="scientilla-document-source">
+        <span ng-if="vm.document.sourceType === 'journal' ">
+            {{vm.document.journal}}
+        </span>
+        <span ng-if="vm.document.sourceType === 'conference' ">
+            {{vm.document.acronym}} {{vm.document.conferenceName}} {{vm.document.conferenceLocation}}
+        </span>
+        <span ng-if="vm.document.sourceType === 'book' ">
+            {{vm.document.bookTitle}}
+        </span>
+    </small>
+</div>
+<form>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="form-group">
+                <label for="position">Author</label>
+                <select class="form-control" id="position"
+                        ng-model="vm.position"
+                        ng-options="+index as author for (index, author) in vm.document.getAuthors()">
+                </select>
+            </div>
+        </div>
+        <div class="panel-body" ng-if="vm.author">
+            <div class="form-group">
+                <scientilla-multicomplete
+                        items="vm.authorship.affiliations"
+                        query="vm.getInstitutesQuery"
+                        filter="vm.getInstitutesFilter"
+                        title="Affiliations of {{vm.author}}">
+                </scientilla-multicomplete>
+            </div>
+            <div class="form-group">
+                <label for="corresponding">
+                    Corresponding author
+                    <input id="corresponding"
+                           type="checkbox"
+                           style="display:block;"
+                           ng-model="vm.authorship.corresponding"/>
+                </label>
+            </div>
+        </div>
+    </div>
+    <scientilla-button type="primary" ng-click="vm.submit()">Save</scientilla-button>
+    <scientilla-button type="cancel" ng-click="vm.cancel()">Close</scientilla-button>
+</form>

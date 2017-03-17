@@ -88,6 +88,13 @@ module.exports = {
         var modelName = req.options.model || req.options.controller;
         var id = req.params.id;
         res.halt(Chart.getChartsData(id, modelName));
+    },
+    setAuthorhips: function(req, res) {
+        var researchEntityId = req.params.researchEntityId;
+        var draftId = req.params.documentId;
+        var authorshipsData = req.body;
+        var Model = getModel(req);
+        res.halt(Model.setAuthorships(Model, researchEntityId, draftId, authorshipsData));
     }
 };
 
