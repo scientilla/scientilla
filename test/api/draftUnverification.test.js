@@ -26,43 +26,41 @@ describe('Draft Unverification', () => {
     let iitInstitute;
 
     it('it should be possible to unverify a document', async () => {
-        iitGroup = (await test.createGroup(iitGroupData)).body;
-        iitInstitute = (await test.createInstitute(iitInstituteData)).body;
-        journal = (await test.createSource(sourcesData[0])).body;
-        user1 = (await test.registerUser(user1Data)).body;
+        iitGroup = await test.createGroup(iitGroupData);
+        iitInstitute = await test.createInstitute(iitInstituteData);
+        journal = await test.createSource(sourcesData[0]);
+        user1 = await test.registerUser(user1Data);
         documentData.source = journal;
-        document = (await test.userCreateDraft(user1, documentData)).body;
+        document = await test.userCreateDraft(user1, documentData);
         const affiliations = [iitInstitute.id];
         await test.userVerifyDraft(user1, document, user1Doc1Position, affiliations);
-        user2 = (await test.registerUser(user2Data)).body;
+        user2 = await test.registerUser(user2Data);
         const affiliations2 = [iitInstitute.id];
         await test.userVerifyDocument(user2, document, user2Doc1Position, affiliations2);
-        await test.userUnverifyDocument(user1, document)
-            .expect(200);
-        await test.getUserDocuments(user1)
-            .expect(200, test.EMPTY_RES);
-        await test.getUserDrafts(user1)
-            .expect(200, test.EMPTY_RES);
-        await test.getUserDocumentsWithAuthors(user2)
-            .expect(res => {
-                res.status.should.equal(200);
-                res.body.items.should.have.length(1);
-                const document = res.body.items[0];
-                document.authors.should.have.length(1);
-                document.authors[0].username.should.equal(user2.username);
-            });
+        await test.userUnverifyDocument(user1, document);
+        const userDocsBody = await test.getUserDocuments(user1);
+        // expect
+        userDocsBody.should.be.eql(test.EMPTY_RES);
+
+        const userDraftsBody = await test.getUserDrafts(user1);
+        // expect
+        userDraftsBody.should.be.eql(test.EMPTY_RES);
+
+        const body = await test.getUserDocumentsWithAuthors(user2);
+        // expect
+        body.items.should.have.length(1);
+        const d = body.items[0];
+        d.authors.should.have.length(1);
+        d.authors[0].username.should.equal(user2.username);
     });
 
     it('a document unverified by all the authors should be deleted', async () => {
-        await test.userUnverifyDocument(user2, document)
-            .expect(200);
-        await test.getUserDrafts(user2)
-            .send(documentData)
-            .expect(200);
-        await test.getUserDocuments(user2)
-            .expect(200, test.EMPTY_RES);
-        await test.getDocument(document.id)
-            .expect(404);
+        await test.userUnverifyDocument(user2, document);
+        const userDraftsBody = await test.getUserDrafts(user2);
+        userDraftsBody.should.be.eql(test.EMPTY_RES);
+        const userDocumentsBody = await test.getUserDocuments(user2);
+        userDocumentsBody.should.be.eql(test.EMPTY_RES);
+        await test.getDocument(document.id, 404);
     });
 
 });

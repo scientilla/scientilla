@@ -44,73 +44,99 @@ module.exports = (function () {
         getAllSourceData: function () {
             return _.cloneDeep(sources);
         },
-        getUsers: function () {
-            return request(url)
+        getUsers: async function (respCode = 200) {
+            const res = await request(url)
                 .get('/users');
+            return res.body;
         },
-        createGroup: function (groupData) {
-            return request(url)
+        createGroup: async function (groupData, respCode = 201) {
+            const res = await request(url)
                 .post('/groups')
-                .send(groupData);
+                .send(groupData)
+                .expect(respCode);
+            return res.body;
         },
-        createInstitute: function (instituteData) {
-            return request(url)
+        createInstitute: async function (instituteData, respCode = 201) {
+            const res = await request(url)
                 .post('/institutes')
-                .send(instituteData);
+                .send(instituteData)
+                .expect(respCode);
+            return res.body;
         },
-        createSource: function (sourceData) {
-            return request(url)
+        createSource: async function (sourceData, respCode = 201) {
+            const res = await request(url)
                 .post('/sources')
-                .send(sourceData);
+                .send(sourceData)
+                .expect(respCode);
+            return res.body;
         },
-        registerUser: function (userData) {
-            return request(url)
+        registerUser: async function (userData, respCode = 200) {
+            const res = await request(url)
                 .post('/auths/register')
-                .send(userData);
+                .send(userData)
+                .expect(respCode);
+            return res.body;
+
         },
-        getUserDocuments: function (user, populateFields, qs) {
-            return request(url)
+        getUserDocuments: async function (user, populateFields, qs, respCode = 200) {
+            const res = await request(url)
                 .get('/users/' + user.id + '/documents')
                 .query({populate: populateFields})
-                .query(qs);
+                .query(qs)
+                .expect(respCode);
+            return res.body;
         },
         getUserDocumentsWithAuthors: function (user) {
             return this.getUserDocuments(user, ['authors', 'authorships', 'affiliations'], {});
         },
-        getUserSuggestedDocuments: function (user) {
-            return request(url)
-                .get('/users/' + user.id + '/suggestedDocuments');
+        getUserSuggestedDocuments: async function (user, respCode = 200) {
+            const res = await request(url)
+                .get('/users/' + user.id + '/suggestedDocuments')
+                .expect(respCode);
+            return res.body;
         },
-        getUserDrafts: function (user, populateFields, qs) {
-            return request(url)
+        getUserDrafts: async function (user, populateFields, qs, respCode = 200) {
+            const res = await request(url)
                 .get('/users/' + user.id + '/drafts')
                 .query({populate: populateFields})
-                .query(qs);
+                .query(qs)
+                .expect(respCode);
+            return res.body;
         },
-        userCreateDraft: function (user, draftData) {
-            return request(url)
+        userCreateDraft: async function (user, draftData, respCode = 200) {
+            const res = await request(url)
                 .post('/users/' + user.id + '/drafts')
-                .send(draftData);
+                .send(draftData)
+                .expect(respCode);
+            return res.body;
         },
-        userCreateDrafts: function (user, draftsData) {
-            return request(url)
+        userCreateDrafts: async function (user, draftsData, respCode = 200) {
+            const res = await request(url)
                 .post('/users/' + user.id + '/copy-drafts')
-                .send({documents: draftsData});
+                .send({documents: draftsData})
+                .expect(respCode);
+            return res.body;
         },
-        userUpdateDraft: function (user, draftData) {
-            return request(url)
+        userUpdateDraft: async function (user, draftData, respCode = 200) {
+            const res = await request(url)
                 .put('/users/' + user.id + '/drafts/' + draftData.id)
-                .send(draftData);
+                .send(draftData)
+                .expect(respCode);
+            return res.body;
         },
-        userVerifyDraft: function (user, draftData, position, affiliations, corresponding) {
-            return request(url)
+        userVerifyDraft: async function (user, draftData, position, affiliations, corresponding, respCode = 200) {
+            const res = await request(url)
                 .put('/users/' + user.id + '/drafts/' + draftData.id + '/verified')
-                .send({position: position, 'affiliations': affiliations, 'corresponding': corresponding});
+                .send({position: position, 'affiliations': affiliations, 'corresponding': corresponding})
+                .expect(respCode);
+            return res.body;
         },
-        userVerifyDrafts: function (user, drafts) {
-            return request(url)
+        userVerifyDrafts: async function (user, drafts, respCode = 200) {
+            const res = await request(url)
                 .put('/users/' + user.id + '/drafts/verify-drafts')
-                .send({draftIds: drafts.map(d=>d.id)});
+                .send({draftIds: drafts.map(d => d.id)})
+                .expect(respCode);
+            return res.body;
         },
         addAuthorship: function (document, user, position, pub) {
             return request(url)
@@ -136,25 +162,38 @@ module.exports = (function () {
                     institute: institute.id
                 });
         },
-        userUnverifyDocument: function (user, document) {
-            return request(url)
-                .put('/users/' + user.id + '/documents/' + document.id + '/unverified');
+        userUnverifyDocument: async function (user, document, respCode = 200) {
+            const res = await request(url)
+                .put('/users/' + user.id + '/documents/' + document.id + '/unverified')
+                .expect(respCode);
+            return res.body;
         },
-        userVerifyDocument: function (user, document, position, affiliations, corresponding) {
-            return request(url)
+        userVerifyDocument: async function (user, document, position, affiliations, corresponding, respCode = 200) {
+            const res = await request(url)
                 .post('/users/' + user.id + '/documents')
-                .send({id: document.id, position: position, 'affiliations': affiliations, 'corresponding': corresponding});
+                .send({
+                    id: document.id,
+                    position: position,
+                    'affiliations': affiliations,
+                    'corresponding': corresponding
+                })
+                .expect(respCode);
+            return res.body;
         },
-        getGroupDrafts: function (group, populateFields, qs) {
-            return request(url)
+        getGroupDrafts: async function (group, populateFields, qs, respCode = 200) {
+            const res = await request(url)
                 .get('/groups/' + group.id + '/drafts')
                 .query({populate: populateFields})
-                .query(qs);
+                .query(qs)
+                .expect(respCode);
+            return res.body;
         },
-        groupCreateDraft: function (group, draftData) {
-            return request(url)
+        groupCreateDraft: async function (group, draftData, respCode = 200) {
+            const res = await request(url)
                 .post('/groups/' + group.id + '/drafts')
-                .send(draftData);
+                .send(draftData)
+                .expect(respCode);
+            return res.body;
         },
         groupCreateDrafts: function (group, draftsData) {
             return request(url)
@@ -162,11 +201,13 @@ module.exports = (function () {
                 .send({documents: draftsData});
         },
 
-        getDocument: function (documentId) {
-            return request(url)
-                .get('/documents/' + documentId);
+        getDocument: async function (documentId, respCode = 200) {
+            const res = await request(url)
+                .get('/documents/' + documentId)
+                .expect(respCode);
+            return res.body;
         },
-        EMPTY_RES: { count: 0, items: [] }
+        EMPTY_RES: {count: 0, items: []}
     };
     var url = obj.getUrl();
     return obj;

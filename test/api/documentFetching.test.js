@@ -15,11 +15,10 @@ describe('Document fetching', () => {
     let iitGroup;
 
     it('it should be possible to ask for non-existent relations. They should be ignored.', async () => {
-        iitGroup = (await test.createGroup(iitGroupData)).body;
-        user = (await test.registerUser(userData)).body;
-        await test.getUserDocuments(user, 'non-existent-relation')
-            .expect(200, test.EMPTY_RES);
-
+        iitGroup = await test.createGroup(iitGroupData);
+        user = await test.registerUser(userData);
+        const body = await test.getUserDocuments(user, 'non-existent-relation');
+        body.should.be.eql(test.EMPTY_RES);
     });
 
 });

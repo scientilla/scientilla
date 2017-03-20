@@ -28,39 +28,32 @@ describe('Document Suggestions', () => {
     let iitInstitute;
 
     it('it should suggest the document to the user whose surname is among the authors (str)', async() => {
-        iitGroup = (await test.createGroup(iitGroupData)).body;
-        iitInstitute = (await test.createInstitute(iitInstituteData)).body;
-        journal = (await test.createSource(sourcesData[0])).body;
-        user1 = (await test.registerUser(user1Data)).body;
+        iitGroup = await test.createGroup(iitGroupData);
+        iitInstitute = await test.createInstitute(iitInstituteData);
+        journal = await test.createSource(sourcesData[0]);
+        user1 = await test.registerUser(user1Data);
         documentData.source = journal;
-        document = (await test.userCreateDraft(user1, documentData)).body;
+        document = await test.userCreateDraft(user1, documentData);
         const affiliations = [iitInstitute.id];
-        await test.userVerifyDraft(user1, document, user1Doc1Position, affiliations);
-        user2 = (await test.registerUser(user2Data)).body;
-        await test
-            .getUserSuggestedDocuments(user2)
-            .expect(function (res) {
-                res.status.should.equal(200);
-                res.body.items.should.have.length(1);
-                const d = res.body.items[0];
-                d.id.should.equal(document.id);
-            });
+        await test.userVerifyDraft(user1, document, user1Doc1Position, affiliations, true);
+        user2 = await test.registerUser(user2Data);
+        const body = await test.getUserSuggestedDocuments(user2);
+        // expect
+        body.items.should.have.length(1);
+        const d = body.items[0];
+        d.id.should.equal(document.id);
     });
 
     it('after the user verifies the document, it should not be suggested anymore', async() => {
         const affiliations = [iitInstitute.id];
-        await test
-            .userVerifyDocument(user2, document, user2Doc1Position, affiliations)
-            .expect(200);
-        await test
-            .getUserSuggestedDocuments(user2)
-            .expect(200, test.EMPTY_RES);
+        await test.userVerifyDocument(user2, document, user2Doc1Position, affiliations);
+        const body = await test.getUserSuggestedDocuments(user2);
+        body.should.be.eql(test.EMPTY_RES);
     });
 
     it('if the surname of the user is not included in the author string, the document is not suggested', async () => {
-        user3 = (await test.registerUser(user3Data)).body;
-        await test
-            .getUserSuggestedDocuments(user3)
-            .expect(200, test.EMPTY_RES);
+        user3 = await test.registerUser(user3Data);
+        const body = await test.getUserSuggestedDocuments(user3);
+        body.should.be.eql(test.EMPTY_RES);
     });
 });

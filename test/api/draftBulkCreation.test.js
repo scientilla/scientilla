@@ -17,37 +17,28 @@ describe('Draft Bulk Creation: ', () => {
 
     it('creating multiple drafts should be possible for an user', async() => {
         const draftsData = [documentsData[2], documentsData[3], documentsData[4]];
-        iitGroup = (await test.createGroup(iitGroupData)).body;
+        iitGroup = await test.createGroup(iitGroupData);
         await test.createInstitute(iitInstituteData);
-        user = (await test.registerUser(usersData[0])).body;
-        await test
-            .userCreateDrafts(user, draftsData)
-            .expect(200);
-        await test
-            .getUserDrafts(user)
-            .expect(res => {
-                res.status.should.equal(200);
-                const count = res.body.count;
-                const documents = res.body.items;
-                count.should.be.equal(3);
-                documents.should.have.length(3);
-                checkDrafts(user, draftsData, documents);
-            });
+        user = await test.registerUser(usersData[0]);
+        await test.userCreateDrafts(user, draftsData);
+        const body = await test.getUserDrafts(user);
+        // expect
+        const count = body.count;
+        const documents = body.items;
+        count.should.be.equal(3);
+        documents.should.have.length(3);
     });
 
     it('creating multiple drafts should be possible for a group', async() => {
         const draftsData = [documentsData[0], documentsData[1], documentsData[2]];
-        await test.groupCreateDrafts(iitGroup, draftsData)
-        await test
-            .getGroupDrafts(iitGroup)
-            .expect(res => {
-                res.status.should.equal(200);
-                const count = res.body.count;
-                const documents = res.body.items;
-                count.should.be.equal(3);
-                documents.should.have.length(3);
-                checkDrafts(iitGroup, draftsData, documents);
-            });
+        await test.groupCreateDrafts(iitGroup, draftsData);
+        const body = await test.getGroupDrafts(iitGroup);
+        // expect
+        const count = body.count;
+        const documents = body.items;
+        count.should.be.equal(3);
+        documents.should.have.length(3);
+        checkDrafts(iitGroup, draftsData, documents);
     });
 
 

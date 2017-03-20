@@ -15,33 +15,31 @@ describe('User registration', () => {
     let iitInstitute;
     let iitGroup;
 
-    it('by default there should be no users', () =>
-        test.getUsers()
-            .expect(200, test.EMPTY_RES)
+    it('by default there should be no users', async() => {
+            const body = await test.getUsers();
+            body.should.be.eql(test.EMPTY_RES);
+        }
     );
 
-    it('should be able to register new user when there is no users', async ()=> {
-        iitInstitute = (await test.createInstitute(iitInstituteData)).body;
-        iitGroup = (await test.createGroup(iitGroupData)).body;
-        await test.registerUser(userData);
-        await test
-            .getUsers()
-            .expect((res) => {
-                res.status.should.equal(200);
-                const count = res.body.count;
-                const documents = res.body.items;
-                count.should.be.equal(1);
-                documents.should.have.length(1);
-                const newUser = documents[0];
-                newUser.username.should.equal(userData.username);
-                newUser.role.should.equal(User.ADMINISTRATOR);
-            });
-    }
+    it('should be able to register new user when there is no users', async() => {
+            iitInstitute = await test.createInstitute(iitInstituteData);
+            iitGroup = await test.createGroup(iitGroupData);
+            await test.registerUser(userData);
+            const body = await test.getUsers();
+            //expect
+            const count = body.count;
+            const documents = body.items;
+            count.should.be.equal(1);
+            documents.should.have.length(1);
+            const newUser = documents[0];
+            newUser.username.should.equal(userData.username);
+            newUser.role.should.equal(User.ADMINISTRATOR);
+        }
     );
 
-    it('should not be able to register a user with an already used username', async () =>
-        await test.registerUser(userData)
-            .expect(400)
+    it('should not be able to register a user with an already used username', async() => {
+            await test.registerUser(userData, 400);
+        }
     );
 
 });

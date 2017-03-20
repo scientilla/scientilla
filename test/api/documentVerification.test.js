@@ -30,43 +30,38 @@ describe('Document Verification', () => {
 
 
     it('it should be possible to verify an already verified document', async () => {
-        iitGroup = (await test.createGroup(iitGroupData)).body;
-        iitInstitute = (await test.createInstitute(iitInstituteData)).body;
-        unigeInstitute = (await test.createInstitute(unigeInstituteData)).body;
-        journal = (await test.createSource(journalData)).body;
-        user1 = (await test.registerUser(user1Data)).body;
+        iitGroup = await test.createGroup(iitGroupData);
+        iitInstitute = await test.createInstitute(iitInstituteData);
+        unigeInstitute = await test.createInstitute(unigeInstituteData);
+        journal = await test.createSource(journalData);
+        user1 = await test.registerUser(user1Data);
         documentData.source = journal;
-        document = (await test.userCreateDraft(user1, documentData)).body;
+        document = await test.userCreateDraft(user1, documentData);
         await test.userVerifyDraft(user1, document, user1Doc1position, [iitInstitute.id]);
-        user2 = (await test.registerUser(user2Data)).body;
+        user2 = await test.registerUser(user2Data);
         author2affiliationInstitutes = [unigeInstitute.id, iitInstitute.id];
-        await test
-            .userVerifyDocument(user2, document, user2Doc1position, author2affiliationInstitutes)
-            .expect(200);
-        await test
-            .getUserDocumentsWithAuthors(user2)
-            .expect(res => {
-                res.status.should.equal(200);
-                const count = res.body.count;
-                const documents = res.body.items;
-                count.should.be.equal(1);
-                documents.should.have.length(1);
-                const d = documents[0];
-                d.id.should.equal(document.id);
-                d.title.should.equal(documentData.title);
-                d.draft.should.be.false;
-                should(d.draftCreator).be.null;
-                d.authors.should.have.length(2);
-                d.authors[0].username.should.equal(user1.username);
-                d.authors[1].username.should.equal(user2.username);
-                d.authorships.should.have.length(2);
-                d.authorships[0].position.should.equal(user1Doc1position);
-                d.authorships[1].position.should.equal(user2Doc1position);
-                d.affiliations.should.have.length(3);
-                d.affiliations[0].institute.should.equal(iitInstitute.id);
-                const author2affiliations = d.affiliations.filter(a => a.authorship === d.authorships[1].id);
-                const author2affiliationInstitutesActual = _.map(author2affiliations, 'institute');
-                author2affiliationInstitutesActual.should.containDeep(author2affiliationInstitutes);
-            });
+        await test.userVerifyDocument(user2, document, user2Doc1position, author2affiliationInstitutes);
+        const body = await test.getUserDocumentsWithAuthors(user2);
+        // expect
+        const count = body.count;
+        const documents = body.items;
+        count.should.be.equal(1);
+        documents.should.have.length(1);
+        const d = documents[0];
+        d.id.should.equal(document.id);
+        d.title.should.equal(documentData.title);
+        d.draft.should.be.false;
+        should(d.draftCreator).be.null;
+        d.authors.should.have.length(2);
+        d.authors[0].username.should.equal(user1.username);
+        d.authors[1].username.should.equal(user2.username);
+        d.authorships.should.have.length(2);
+        d.authorships[0].position.should.equal(user1Doc1position);
+        d.authorships[1].position.should.equal(user2Doc1position);
+        d.affiliations.should.have.length(3);
+        d.affiliations[0].institute.should.equal(iitInstitute.id);
+        const author2affiliations = d.affiliations.filter(a => a.authorship === d.authorships[1].id);
+        const author2affiliationInstitutesActual = _.map(author2affiliations, 'institute');
+        author2affiliationInstitutesActual.should.containDeep(author2affiliationInstitutes);
     });
 });
