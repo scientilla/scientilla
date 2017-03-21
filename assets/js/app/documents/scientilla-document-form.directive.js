@@ -45,6 +45,7 @@
         vm.createSource = createSource;
         vm.closePopover = closePopover;
         var allSourceTypes = DocumentTypesService.getSourceTypes();
+        vm.sourceLabel = _.find(allSourceTypes, {id: vm.document.sourceType}).label;
 
         var debounceTimeout = null;
         var debounceTime = 2000;
