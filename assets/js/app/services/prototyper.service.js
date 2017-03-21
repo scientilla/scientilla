@@ -169,7 +169,7 @@
             GROUP_DOCUMENT: 2,
             labels: [],
             fields: [
-                'authors',
+                'authorsStr',
                 'title',
                 'year',
                 'itSource',
