@@ -194,6 +194,26 @@
                 _.extend(document, documentPrototype);
                 return document;
             },
+            isValid: function() {
+                var self = this;
+                var requiredFields = [
+                    'authorsStr',
+                    'title',
+                    'year',
+                    'type',
+                    'sourceType'
+                ];
+                // TODO: refactor, invited_talk should be read by a service;
+                const invitedTalkType = 'invited_talk';
+                if (this.type === invitedTalkType)
+                    requiredFields.push('itSource');
+                else
+                    requiredFields.push('source');
+
+                return _.every(requiredFields, function (v) {
+                    return self[v];
+                });
+            },
             getAllCoauthors: function () {
                 return this.authors;
             },

@@ -1,4 +1,4 @@
-<div class="scientilla-document" ng-class="{disabled: vm.isDisabled()}">
+<div class="scientilla-document" ng-class="{disabled: vm.isDisabled(), invalid: !vm.document.isValid()}">
     <div class="scientilla-document-left-col">
         <div class="scientilla-document-year">
             {{vm.document.year}}

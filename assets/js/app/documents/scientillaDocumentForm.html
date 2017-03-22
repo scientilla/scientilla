@@ -1,62 +1,90 @@
-<form class="autosave {{vm.status.class}}" autocomplete="off" ng-click="vm.closePopover()">
+<form name="form" class="autosave {{vm.status.class}}" autocomplete="off" ng-click="vm.closePopover()">
     <div class="form-group">
         <label for="documentType">Document Type</label>
         <select class="form-control" id="documentType" placeholder="Document Type" ng-model="vm.document.type"
                 ng-options="option.key as option.label for option in vm.documentTypes">
         </select>
     </div>
-    <div class="form-group">
+    <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.sourceType.$invalid}">
         <label for="sourceType">Source Type</label>
-        <select class="form-control" id="sourceType"
+        <select class="form-control" id="sourceType" name="sourceType" required
                 placeholder="Source Type" ng-model="vm.document.sourceType"
                 ng-options="option.id as option.label for option in vm.sourceTypes">
             <option value="">--Not Selected--</option>
         </select>
+        <span ng-show="!vm.document.id && form.sourceType.$invalid"
+              class="fa fa-exclamation-circle form-control-feedback" aria-hidden="true">
+        </span>
     </div>
-    <div class="form-group">
+    <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.title.$invalid}">
         <label for="title">Title</label>
-        <input type="text" class="form-control" id="title" placeholder="Title" ng-model="vm.document.title">
+        <input name="title" type="text" class="form-control" id="title" placeholder="Title" ng-model="vm.document.title"
+               data-ng-required="true"
+        >
+        <span ng-show="vm.document.id && form.title.$invalid"
+              class="fa fa-exclamation-circle form-control-feedback" aria-hidden="true">
+        </span>
     </div>
-    <div class="form-group">
-        <label for="authors">Authors</label>
-        <input type="text" class="form-control" id="authors" placeholder="Authors" ng-model="vm.document.authorsStr">
+    <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.authors.$invalid}">
+        <label for="authors">Authors (must be in the form "Doe J., Smith Simpson J. V.")</label>
+        <input type="text" name="authors" class="form-control" id="authors" placeholder="Authors"
+               ng-model="vm.document.authorsStr" ng-pattern="/^(\w+(\s\w+)*(\s\w\.)+)(,\s\w+(\s\w+)*(\s\w\.)+)*$/"
+               data-ng-required="true">
+        <span ng-show="vm.document.id && form.authors.$invalid"
+              class="fa fa-exclamation-circle form-control-feedback" aria-hidden="true"
+              title="Author string is not valid. It should be in the form 'E. Molinari, F. Bozzini, F. Semprini'">
+        </span>
     </div>
-    <div class="form-group">
-        <label for="year">Year</label>
-        <input type="text" class="form-control" id="year" placeholder="Year" ng-model="vm.document.year">
+    <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.year.$invalid}">
+        <label for="year">Year (YYYY format)</label>
+        <input type="text" name="year" class="form-control" id="year" placeholder="Year" ng-model="vm.document.year"
+               data-ng-required="true" ng-pattern="/^\d{4}$/"
+        >
+        <span ng-show="vm.document.id && form.year.$invalid"
+              class="fa fa-exclamation-circle form-control-feedback" aria-hidden="true">
+        </span>
     </div>
-    <div class="form-group" ng-if="vm.document.sourceType && !['invited_talk'].includes(vm.document.type)">
+    <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.source.$invalid}"
+         ng-if="vm.document.sourceType && !['invited_talk'].includes(vm.document.type)">
         <label for="source">{{vm.sourceLabel}}</label>
         <div class="input-group">
-            <input id="source" type="text" ng-model="vm.document.source" placeholder="{{vm.sourceLabel}}"
+            <input id="source" name="source" type="text" ng-model="vm.document.source"
                    uib-typeahead="source as source.title for source in vm.getSources($viewValue)"
-                   typeahead-loading="searching" typeahead-no-results="noResults" class="form-control">
+                   typeahead-loading="searching" typeahead-no-results="noResults" class="form-control"
+                   data-ng-required="true" placeholder="{{vm.sourceLabel}}"
+            >
             <span class="input-group-btn">
                 <button popover-is-open="vm['popover-is-open']"
-                        uib-popover-template="'partials/scientillaSourceForm.html'" popover-title="Add New {{vm.sourceLabel}}"
+                        uib-popover-template="'partials/scientillaSourceForm.html'"
+                        popover-title="Add New {{vm.sourceLabel}}"
                         type="button" class="btn btn-default">Add New</button>
         </span>
         </div>
     </div>
-    <div class="form-group" ng-if="vm.document.type == 'invited_talk' && vm.document.sourceType">
+    <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.itSource.$invalid}"
+         ng-if="vm.document.type == 'invited_talk' && vm.document.sourceType">
         <label for="source">{{vm.sourceLabel}}</label>
-        <input id="source" type="text" ng-model="vm.document.itSource" placeholder="{{vm.sourceLabel}}"
+        <input id="itSource" name="itSource" type="text" ng-model="vm.document.itSource"
                uib-typeahead="source.title || source.name for source in vm.getItSources($viewValue)"
-               typeahead-loading="searching" typeahead-no-results="noResults" class="form-control">
+               typeahead-loading="searching" typeahead-no-results="noResults" class="form-control"
+               data-ng-required="true" placeholder="{{vm.sourceLabel}}">
     </div>
     <div class="form-group" ng-if="vm.document.sourceType == 'journal' && !['invited_talk'].includes(vm.document.type)">
         <label for="volume">Volume</label>
         <input type="text" class="form-control" id="volume" placeholder="Volume" ng-model="vm.document.volume">
     </div>
-    <div class="form-group" ng-if="['journal', 'conference'].includes(vm.document.sourceType) && !['invited_talk'].includes(vm.document.type)">
+    <div class="form-group"
+         ng-if="['journal', 'conference'].includes(vm.document.sourceType) && !['invited_talk'].includes(vm.document.type)">
         <label for="issue">Issue</label>
         <input type="text" class="form-control" id="issue" placeholder="Issue" ng-model="vm.document.issue">
     </div>
-    <div class="form-group" ng-if="['journal', 'conference'].includes(vm.document.sourceType) && !['invited_talk'].includes(vm.document.type)">
+    <div class="form-group"
+         ng-if="['journal', 'conference'].includes(vm.document.sourceType) && !['invited_talk'].includes(vm.document.type)">
         <label for="pages">Pages</label>
         <input type="text" class="form-control" id="pages" placeholder="Pages" ng-model="vm.document.pages">
     </div>
-    <div class="form-group" ng-if="['journal', 'conference'].includes(vm.document.sourceType) && !['invited_talk'].includes(vm.document.type)">
+    <div class="form-group"
+         ng-if="['journal', 'conference'].includes(vm.document.sourceType) && !['invited_talk'].includes(vm.document.type)">
         <label for="articleNumber">Article Number</label>
         <input type="text" class="form-control" id="articleNumber" placeholder="Article Number"
                ng-model="vm.document.articleNumber">
@@ -67,7 +95,8 @@
     </div>
     <div class="form-group" ng-if="!['invited_talk'].includes(vm.document.type)">
         <label for="abstract">Abstract</label>
-        <textarea rows="6" class="form-control" id="abstract" placeholder="Abstract" ng-model="vm.document.abstract"></textarea>
+        <textarea rows="6" class="form-control" id="abstract" placeholder="Abstract"
+                  ng-model="vm.document.abstract"></textarea>
     </div>
     <div class="form-group" ng-if="!['invited_talk'].includes(vm.document.type)">
         <label for="scopusid">Scopus ID</label>
@@ -77,7 +106,8 @@
         <label for="scopusid">WoS ID</label>
         <input type="text" class="form-control" id="wosid" placeholder="Wos ID" ng-model="vm.document.wosId">
     </div>
-    <scientilla-button ng-disabled="!vm.document.id" ng-click="vm.verify()">Verify</scientilla-button>
+    <scientilla-button ng-disabled="!vm.document.id || !vm.document.isValid()" ng-click="vm.verify()">Verify
+    </scientilla-button>
     <!--<scientilla-button ng-disabled="!vm.document.id" ng-click="vm.openDocumentAffiliationForm()">Edit Affiliations</scientilla-button>-->
     <scientilla-button ng-disabled="!vm.document.id" ng-click="vm.deleteDocument()">Delete</scientilla-button>
     <scientilla-button type="cancel" ng-click="vm.cancel()">Close</scientilla-button>

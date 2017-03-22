@@ -61,6 +61,10 @@
     border-left: 3px solid #337ab7;
 }
 
+.scientilla-document.invalid {
+    border-left: 3px solid #a94442;
+}
+
 .scientilla-document-left-col {
     position: absolute;
     top: 5px;
@@ -194,7 +198,7 @@ form.autosave {
 }
 
 form.autosave.unsaved {
-    border-left: 2px red solid;
+    border-left: 2px #a94442 solid;
 }
 
 form.autosave.saved {
@@ -395,4 +399,10 @@ scientilla-menu .menu-label {
 
 scientilla-filter [uib-dropdown] .btn-link{
     color: black;
+}
+
+/* scientilla-document-form*/
+
+scientilla-document-form .has-feedback label~.form-control-feedback.fa {
+    top: 35px;
 }
