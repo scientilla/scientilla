@@ -257,6 +257,9 @@ i {
     border-bottom-color: #4e4e4e;
 }
 
+/******************************************************************************/
+/*Bootstrap checkable*/
+
 scientilla-multicheck .scientila-multicheck-commands-row {
     height: 38px;
     line-height: 38px;
@@ -386,4 +389,10 @@ scientilla-menu .menu-label {
 
 .scientilla-document-affiliations {
     font-style: italic;
+}
+
+/*scientilla-filter*/
+
+scientilla-filter [uib-dropdown] .btn-link{
+    color: black;
 }

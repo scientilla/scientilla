@@ -40,16 +40,16 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-right">
                                         <li>
-                                            <a ng-click="vm.copyDocument(document)" href="javascript:void(0)">
+                                            <button class="btn btn-link" ng-click="vm.copyDocument(document)" href="javascript:void(0)">
                                                 <span class="fa fa-copy"></span>
                                                 Copy
-                                            </a>
+                                            </button>
                                         </li>
                                         <li ng-if="!document.isDiscarded()">
-                                            <a ng-click="vm.discardDocument(document)" href="javascript:void(0)">
+                                            <button class="btn btn-link" ng-click="vm.discardDocument(document)" href="javascript:void(0)">
                                                 <span class="fa fa-ban"></span>
                                                 Discard
-                                            </a>
+                                            </button>
                                         </li>
                                     </ul>
                                 </div>
