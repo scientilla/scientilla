@@ -406,3 +406,21 @@ scientilla-filter [uib-dropdown] .btn-link{
 scientilla-document-form .has-feedback label~.form-control-feedback.fa {
     top: 35px;
 }
+
+/* scientilla-document-type */
+
+scientilla-document-type small {
+    border: 1px solid darkgrey;
+    border-radius: 99px;
+    text-align: center;
+    display: inline-block;
+    width: 14px;
+    min-height: 14px;
+    font-size: 6px;
+    vertical-align: middle;
+    line-height: 14px;
+    background-color: #337ab7;
+    color: white;
+    font-weight: 700;
+    cursor: default;
+}
