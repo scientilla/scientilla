@@ -8,7 +8,7 @@
     <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.sourceType.$invalid}">
         <label for="sourceType">Source Type</label>
         <select class="form-control" id="sourceType" name="sourceType" required
-                placeholder="Source Type" ng-model="vm.document.sourceType"
+                placeholder="Source Type" ng-model="vm.document.sourceType" ng-model-options="{ allowInvalid: true }"
                 ng-options="option.id as option.label for option in vm.sourceTypes">
             <option value="">--Not Selected--</option>
         </select>
@@ -29,7 +29,7 @@
         <label for="authors">Authors (must be in the form "Doe J., Smith Simpson J. V.")</label>
         <input type="text" name="authors" class="form-control" id="authors" placeholder="Authors"
                ng-model="vm.document.authorsStr" ng-pattern="/^(\w+(\s\w+)*(\s\w\.)+)(,\s\w+(\s\w+)*(\s\w\.)+)*$/"
-               data-ng-required="true">
+               data-ng-required="true" ng-model-options="{ allowInvalid: true }" >
         <span ng-show="vm.document.id && form.authors.$invalid"
               class="fa fa-exclamation-circle form-control-feedback" aria-hidden="true"
               title="Author string is not valid. It should be in the form 'E. Molinari, F. Bozzini, F. Semprini'">
@@ -38,7 +38,7 @@
     <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.year.$invalid}">
         <label for="year">Year (YYYY format)</label>
         <input type="text" name="year" class="form-control" id="year" placeholder="Year" ng-model="vm.document.year"
-               data-ng-required="true" ng-pattern="/^\d{4}$/"
+               data-ng-required="true" ng-pattern="/^\d{4}$/" ng-model-options="{ allowInvalid: true }"
         >
         <span ng-show="vm.document.id && form.year.$invalid"
               class="fa fa-exclamation-circle form-control-feedback" aria-hidden="true">
@@ -51,7 +51,7 @@
             <input id="source" name="source" type="text" ng-model="vm.document.source"
                    uib-typeahead="source as source.title for source in vm.getSources($viewValue)"
                    typeahead-loading="searching" typeahead-no-results="noResults" class="form-control"
-                   data-ng-required="true" placeholder="{{vm.sourceLabel}}"
+                   data-ng-required="true" placeholder="{{vm.sourceLabel}}" ng-model-options="{ allowInvalid: true }"
             >
             <span class="input-group-btn">
                 <button popover-is-open="vm['popover-is-open']"
@@ -67,7 +67,7 @@
         <input id="itSource" name="itSource" type="text" ng-model="vm.document.itSource"
                uib-typeahead="source.title || source.name for source in vm.getItSources($viewValue)"
                typeahead-loading="searching" typeahead-no-results="noResults" class="form-control"
-               data-ng-required="true" placeholder="{{vm.sourceLabel}}">
+               data-ng-required="true" placeholder="{{vm.sourceLabel}}" ng-model-options="{ allowInvalid: true }" >
     </div>
     <div class="form-group" ng-if="vm.document.sourceType == 'journal' && !['invited_talk'].includes(vm.document.type)">
         <label for="volume">Volume</label>
