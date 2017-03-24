@@ -7,10 +7,11 @@
 
     function authorsVerified() {
 
-        return function(authors, document) {
+        return function(authorsStr, document) {
+            authorsStr = authorsStr || '';
             var verifiedAuthors = document.getAllCoauthors();
 
-            return authors.split(/,\s?/).map(function (author, index) {
+            return authorsStr.split(/,\s?/).map(function (author, index) {
                 let htmlAuthor = author;
 
                 const authorship = _.find(document.authorships, a => a.position === index);
