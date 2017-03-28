@@ -28,7 +28,7 @@
     <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.authors.$invalid}">
         <label for="authors">Authors (must be in the form "Doe J., Smith Simpson J. V.")</label>
         <input type="text" name="authors" class="form-control" id="authors" placeholder="Authors"
-               ng-model="vm.document.authorsStr" ng-pattern="/^(\w+(\s\w+)*(\s\w\.)+)(,\s\w+(\s\w+)*(\s\w\.)+)*$/"
+               ng-model="vm.document.authorsStr" ng-pattern="/^((\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)(,\s(\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)*$/"
                data-ng-required="true" ng-model-options="{ allowInvalid: true }" >
         <span ng-show="vm.document.id && form.authors.$invalid"
               class="fa fa-exclamation-circle form-control-feedback" aria-hidden="true"
