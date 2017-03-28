@@ -410,16 +410,15 @@ scientilla-document-form .has-feedback label~.form-control-feedback.fa {
 /* scientilla-document-type */
 
 scientilla-document-type small {
-    border: 1px solid darkgrey;
     border-radius: 99px;
     text-align: center;
     display: inline-block;
-    width: 14px;
-    min-height: 14px;
-    font-size: 6px;
+    width: 22px;
+    min-height: 22px;
+    font-size: 11px;
     vertical-align: middle;
-    line-height: 14px;
-    background-color: #337ab7;
+    line-height: 22px;
+    background-color: mediumpurple;
     color: white;
     font-weight: 700;
     cursor: default;
