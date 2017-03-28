@@ -134,8 +134,9 @@ module.exports = _.merge({}, BaseModel, {
             model: 'Group'
         },
         isValid: function () {
-            var self = this;
-            var requiredFields = [
+            const authorsStrRegex = /^((\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)(,\s(\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)*$/;
+            const self = this;
+            const requiredFields = [
                 'authorsStr',
                 'title',
                 'year',
@@ -149,7 +150,7 @@ module.exports = _.merge({}, BaseModel, {
 
             return _.every(requiredFields, function (v) {
                 return self[v];
-            });
+            }) && authorsStrRegex.test(self.authorsStr);
         },
         draftToDocument: function () {
             this.draft = false;

@@ -195,8 +195,9 @@
                 return document;
             },
             isValid: function() {
-                var self = this;
-                var requiredFields = [
+                const authorsStrRegex = /^((\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)(,\s(\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)*$/;
+                const self = this;
+                const requiredFields = [
                     'authorsStr',
                     'title',
                     'year',
@@ -212,7 +213,7 @@
 
                 return _.every(requiredFields, function (v) {
                     return self[v];
-                });
+                }) && authorsStrRegex.test(self.authorsStr);
             },
             getAllCoauthors: function () {
                 return this.authors;
