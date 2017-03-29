@@ -18,14 +18,14 @@
                 {id: 'book', label: 'Book'},
                 {id: 'journal', label: 'Journal'},
                 {id: 'conference', label: 'Conference'},
-                {id: 'scientific_conference', label: 'Scientific Conference'},
-                {id: 'institute', label: 'Institute'},
                 {id: 'bookseries', label: 'Book Series'},
-                {id: 'workshop', label: 'Workshop'},
-                {id: 'school', label: 'School'},
-                {id: 'media', label: 'Media'},
-                {id: 'public_event', label: 'Public Event'},
-                {id: 'outreach', label: 'Outreach'}
+                {id: 'scientific_conference', label: 'Conference', section: 'Scientific Event'},
+                {id: 'institute', label: 'Institute', section: 'Scientific Event'},
+                {id: 'workshop', label: 'Workshop', section: 'Scientific Event'},
+                {id: 'school', label: 'School (Summer school, ...)', section: 'Scientific Event'},
+                {id: 'media', label: 'Media', section: 'Dissemination'},
+                {id: 'public_event', label: 'Public Event', section: 'Dissemination'},
+                {id: 'outreach', label: 'Outreach', section: 'Dissemination'}
             ];
             return sources;
         }

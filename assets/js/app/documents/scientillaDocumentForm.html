@@ -9,7 +9,7 @@
         <label for="sourceType">Source Type</label>
         <select class="form-control" id="sourceType" name="sourceType" required
                 placeholder="Source Type" ng-model="vm.document.sourceType" ng-model-options="{ allowInvalid: true }"
-                ng-options="option.id as option.label for option in vm.sourceTypes">
+                ng-options="option.id as option.label group by option.section for option in vm.sourceTypes">
             <option value="">--Not Selected--</option>
         </select>
         <span ng-show="!vm.document.id && form.sourceType.$invalid"
