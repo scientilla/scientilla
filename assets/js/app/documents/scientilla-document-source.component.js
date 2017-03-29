@@ -31,9 +31,10 @@
         vm.$onInit = function () {
             var key = vm.document.type === 'invited_talk' ? vm.document.type : vm.document.sourceType;
             vm.iconClass = iconClasses[key];
-            vm.iconTitle = key === 'invited_talk' ?
-                _.find(DocumentTypesService.getDocumentTypes(), {key: key}).label :
-                _.find(DocumentTypesService.getSourceTypes(), {id: key}).label;
+            if (key)
+                vm.iconTitle = key === 'invited_talk' ?
+                    _.find(DocumentTypesService.getDocumentTypes(), {key: key}).label :
+                    _.find(DocumentTypesService.getSourceTypes(), {id: key}).label;
         };
     }
 

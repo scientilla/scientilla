@@ -18,12 +18,16 @@
                 {id: 'book', label: 'Book'},
                 {id: 'journal', label: 'Journal'},
                 {id: 'conference', label: 'Conference'},
+                {id: 'scientific_conference', label: 'Scientific Conference'},
                 {id: 'institute', label: 'Institute'},
                 {id: 'bookseries', label: 'Book Series'},
                 {id: 'workshop', label: 'Workshop'},
-                {id: 'school', label: 'School'}
+                {id: 'school', label: 'School'},
+                {id: 'media', label: 'Media'},
+                {id: 'public_event', label: 'Public Event'},
+                {id: 'outreach', label: 'Outreach'}
             ];
-          return sources;
+            return sources;
         }
 
         function getDocumentsFields(source) {
@@ -195,7 +199,15 @@
 
         function getDocumentTypes() {
             var defaultSources = ['journal', 'conference', 'book', 'bookseries'];
-            var invitedTalkSources = ['institute', 'conference', 'workshop', 'school'];
+            var invitedTalkSources = [
+                'institute',
+                'scientific_conference',
+                'workshop',
+                'school',
+                'media',
+                'public_event',
+                'outreach'
+            ];
             return [
                 {
                     key: 'article',
@@ -305,7 +317,7 @@
             ];
         }
 
-        function getDocumentTypeLabel (documentTypeKey) {
+        function getDocumentTypeLabel(documentTypeKey) {
             const documentTypes = getDocumentTypes();
             return _.find(documentTypes, {key: documentTypeKey}).label;
         }
