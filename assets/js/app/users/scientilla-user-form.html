@@ -1,6 +1,43 @@
-<form form-for="vm.user"
-      validation-rules="vm.validationAndViewRules"
-      form-for-builder>
+<form>
+    <div class="form-group">
+        <label for="username">Username (Email)</label>
+        <input type="text" class="form-control" id="username" placeholder="Username (Email)"
+               ng-model="vm.user.username" ng-disabled="!vm.userIsAdmin">
+    </div>
+    <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" id="name" placeholder="Name"
+               ng-model="vm.user.name" ng-disabled="!vm.userIsAdmin">
+    </div>
+    <div class="form-group">
+        <label for="surname">Surname</label>
+        <input type="text" class="form-control" id="surname" placeholder="Surname"
+               ng-model="vm.user.surname" ng-disabled="!vm.userIsAdmin">
+    </div>
+    <div class="form-group">
+        <label for="slug">Slug</label>
+        <input type="text" class="form-control" id="slug" placeholder="Slug" ng-model="vm.user.slug"
+               ng-pattern="/^[a-zA-Z0-9-_]*$/" ng-required="true" ng-minlength="3" ng-maxlength="40"
+               ng-disabled="!vm.userIsAdmin">
+    </div>
+    <div class="form-group">
+        <label for="orcidid">Orcid ID</label>
+        <input type="text" class="form-control" id="orcidid" placeholder="Orcid ID" ng-model="vm.user.orcidid">
+    </div>
+    <div class="form-group">
+        <label for="scopusid">Scopus ID</label>
+        <input type="text" class="form-control" id="scopusid" placeholder="Scopus ID" ng-model="vm.user.scopusid">
+    </div>
+    <div class="form-group" ng-if="vm.userIsAdmin">
+        <label for="password">Password</label>
+        <input type="text" class="form-control" id="password" placeholder="Password" ng-model="vm.user.password">
+    </div>
+    <div class="form-group" ng-if="vm.userIsAdmin">
+        <label for="role">Role</label>
+        <select class="form-control" id="role" ng-model="vm.document.type">
+                ng-options="option.key as option.label for option in vm.roleSelectOptions">
+        </select>
+    </div>
     <scientilla-multicomplete
         items="vm.user.collaborations"
         query="vm.getGroupsQuery"

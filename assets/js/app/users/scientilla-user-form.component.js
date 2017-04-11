@@ -3,22 +3,21 @@
 (function () {
 
     angular
-            .module('users')
-            .component('scientillaUserForm', {
-                templateUrl: 'partials/scientilla-user-form.html',
-                controller: UserFormController,
-                controllerAs: 'vm',
-                bindings: {
-                    user: "<",
-                    onFailure: "&",
-                    onSubmit: "&"
-                }
-            });
+        .module('users')
+        .component('scientillaUserForm', {
+            templateUrl: 'partials/scientilla-user-form.html',
+            controller: UserFormController,
+            controllerAs: 'vm',
+            bindings: {
+                user: "<",
+                onFailure: "&",
+                onSubmit: "&"
+            }
+        });
 
 
     UserFormController.$inject = [
         'UsersService',
-        'FormForConfiguration',
         'Notification',
         '$scope',
         'AuthService',
@@ -27,73 +26,23 @@
         'userConstants'
     ];
 
-    function UserFormController(UsersService, FormForConfiguration, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants) {
+    function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants) {
         var vm = this;
         vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.getGroupsQuery = GroupsService.getGroupsQuery;
         vm.groupToCollaboration = groupToCollaboration;
         vm.submit = submit;
         vm.cancel = cancel;
-
-        vm.validationAndViewRules = {
-            name: {
-                inputType: 'text',
-                required: true
-            },
-            surname: {
-                inputType: 'text',
-                required: true
-            },
-            username: {
-                inputType: 'text',
-                required: true,
-                label: 'Email/Username'
-            },
-            slug: {
-                inputType: 'text',
-                required: true,
-                minlength: 3,
-                maxlength: 40,
-                pattern: {
-                    rule: /^[a-zA-Z0-9-_]*$/,
-                    message: 'The slug must contains only letters, number and dashes'
-                }
-            },
-            orcidId: {
-                inputType: 'text',
-                label: 'ORCID ID'
-            },
-            scopusId: {
-                inputType: 'text',
-                label: 'Scopus ID'
-            }
-        };
-
-        if (!vm.user.id) {
-            vm.validationAndViewRules.password = {
-                inputType: 'password',
-                required: true
-            };
-        }
-
-        if (AuthService.user.role === userConstants.role.ADMINISTRATOR)
-            vm.validationAndViewRules.role = {
-                allowBlank: false,
-                inputType: 'select',
-                label: 'Role',
-                required: true,
-                values: [
-                    {label: 'User', value: userConstants.role.USER},
-                    {label: 'Administrator', value: userConstants.role.ADMINISTRATOR}
-                ]
-            };
+        vm.userIsAdmin = AuthService.user.role === userConstants.role.ADMINISTRATOR;
+        vm.roleSelectOptions = [
+            {label: 'User', value: userConstants.role.USER},
+            {label: 'Administrator', value: userConstants.role.ADMINISTRATOR}
+        ];
 
         activate();
 
 
         function activate() {
-            FormForConfiguration.enableAutoLabels();
-
             $scope.$watch('vm.user.name', nameChanged);
             $scope.$watch('vm.user.surname', nameChanged);
             $scope.$watch('vm.user.aliasesStr', aliasesStrChanged);
@@ -109,16 +58,16 @@
 
         function submit() {
             UsersService
-                    .doSave(vm.user)
-                    .then(function (user) {
-                        Notification.success("User data saved");
-                        if (_.isFunction(vm.onSubmit()))
-                            vm.onSubmit()(1);
-                    })
-                    .catch(function () {
-                        Notification.warning("Failed to save user");
-                        executeOnFailure();
-                    });
+                .doSave(vm.user)
+                .then(function (user) {
+                    Notification.success("User data saved");
+                    if (_.isFunction(vm.onSubmit()))
+                        vm.onSubmit()(1);
+                })
+                .catch(function () {
+                    Notification.warning("Failed to save user");
+                    executeOnFailure();
+                });
         }
 
         function nameChanged() {
@@ -173,11 +122,11 @@
             Prototyper.toCollaborationModel(collaboration);
             return collaboration;
         }
-        
+
         function cancel() {
-            executeOnSubmit(0); 
+            executeOnSubmit(0);
         }
-        
+
         function executeOnSubmit(i) {
             if (_.isFunction(vm.onSubmit()))
                 vm.onSubmit()(i);
