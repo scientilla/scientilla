@@ -29,7 +29,7 @@
                         <div class="col-md-4 text-right">
                             <h3>
                                 <div class="btn-group scientilla-dropdown-align-right" uib-dropdown>
-                                    <button ng-click="vm.verifyDocument(document)" type="button"
+                                    <button ng-disabled="!document.isValid()" ng-click="vm.verifyDocument(document)" type="button"
                                             class="btn btn-primary">
                                         <span class="fa fa-check"></span>
                                         Verify
