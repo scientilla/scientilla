@@ -14,7 +14,7 @@
         <input type="text" class="form-control" id="surname" placeholder="Surname"
                ng-model="vm.user.surname" ng-disabled="!vm.userIsAdmin">
     </div>
-    <div class="form-group">
+    <div class="form-group" ng-if="false" >
         <label for="slug">Slug</label>
         <input type="text" class="form-control" id="slug" placeholder="Slug" ng-model="vm.user.slug"
                ng-pattern="/^[a-zA-Z0-9-_]*$/" ng-required="true" ng-minlength="3" ng-maxlength="40"
@@ -22,19 +22,19 @@
     </div>
     <div class="form-group">
         <label for="orcidid">Orcid ID</label>
-        <input type="text" class="form-control" id="orcidid" placeholder="Orcid ID" ng-model="vm.user.orcidid">
+        <input type="text" class="form-control" id="orcidid" placeholder="Orcid ID" ng-model="vm.user.orcidId">
     </div>
     <div class="form-group">
         <label for="scopusid">Scopus ID</label>
-        <input type="text" class="form-control" id="scopusid" placeholder="Scopus ID" ng-model="vm.user.scopusid">
+        <input type="text" class="form-control" id="scopusid" placeholder="Scopus ID" ng-model="vm.user.scopusId">
     </div>
-    <div class="form-group" ng-if="vm.userIsAdmin">
+    <div class="form-group" ng-if="vm.false">
         <label for="password">Password</label>
         <input type="text" class="form-control" id="password" placeholder="Password" ng-model="vm.user.password">
     </div>
     <div class="form-group" ng-if="vm.userIsAdmin">
         <label for="role">Role</label>
-        <select class="form-control" id="role" ng-model="vm.document.type">
+        <select class="form-control" id="role" ng-model="vm.document.type"
                 ng-options="option.key as option.label for option in vm.roleSelectOptions">
         </select>
     </div>
@@ -44,6 +44,7 @@
         filter="vm.getCollaborationsFilter"
         transform="vm.groupToCollaboration"
         title="Collaborations"
+        ng-if="false"
         >
     </scientilla-multicomplete> 
     <scientilla-button ng-click="vm.submit()">Save</scientilla-button>
