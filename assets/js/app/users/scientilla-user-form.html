@@ -34,8 +34,8 @@
     </div>
     <div class="form-group" ng-if="vm.userIsAdmin">
         <label for="role">Role</label>
-        <select class="form-control" id="role" ng-model="vm.document.type"
-                ng-options="option.key as option.label for option in vm.roleSelectOptions">
+        <select class="form-control" id="role" ng-model="vm.user.role"
+                ng-options="option.value as option.label for option in vm.roleSelectOptions">
         </select>
     </div>
     <scientilla-multicomplete
