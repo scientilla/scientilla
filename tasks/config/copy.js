@@ -62,6 +62,11 @@ module.exports = function (grunt) {
             }, {
                 expand: true,
                 cwd: './assets',
+                src: ['*'],
+                dest: '.tmp/public'
+            }, {
+                expand: true,
+                cwd: './assets',
                 src: ['js/app/*/*.html'],
                 flatten: true,
                 dest: '.tmp/public/partials'
