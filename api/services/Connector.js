@@ -360,7 +360,7 @@ function scoupsSingleRequest(d1, attempt) {
                 'j': SourceTypes.JOURNAL,
                 'p': SourceTypes.CONFERENCE,
                 'b': SourceTypes.BOOK,
-                'r': SourceTypes.REPORT,
+                'r': SourceTypes.JOURNAL, // report
                 'k': SourceTypes.BOOKSERIES
             };
 
