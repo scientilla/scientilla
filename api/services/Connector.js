@@ -228,7 +228,7 @@ module.exports = {
     },
     getScopusConfig: function (researchEntity, configQuery) {
         var researchEntityType = researchEntity.getType();
-        var uri = 'https://api.elsevier.com/content/search/scopus';
+        var uri = sails.config.scientilla.scopus.url + '/content/search/scopus';
         var query = [];
 
         if (researchEntityType === 'user') {
@@ -327,7 +327,7 @@ function scoupsSingleRequest(d1, attempt) {
     var scopusId = getScopusId(d1);
     return request
         .get({
-            uri: 'https://api.elsevier.com/content/abstract/scopus_id/' + scopusId,
+            uri: sails.config.scientilla.scopus.url + '/content/abstract/scopus_id/' + scopusId,
             headers: {
                 'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
                 'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
@@ -353,6 +353,14 @@ function scoupsSingleRequest(d1, attempt) {
             }
 
             const d2 = _.get(res, 'abstracts-retrieval-response', {});
+            if (_.isEmpty(d2))
+                throw {
+                    error: 'empty document ' + scopusId,
+                    retry: false,
+                    d1: res,
+                    scopusId: scopusId
+                };
+
             const scopusSource = _.get(d2, 'item.bibrecord.head.source');
 
             const sourceTypeMappings = {
@@ -408,7 +416,7 @@ function scoupsSingleRequest(d1, attempt) {
 
             if (_.isEmpty(documentData.authorsStr))
                 throw {
-                    error: 'Document field missing',
+                    error: 'Document field missing ' + scopusId,
                     retry: true,
                     d1: d1,
                     scopusId: scopusId

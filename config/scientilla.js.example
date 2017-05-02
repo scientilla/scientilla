@@ -11,6 +11,7 @@ module.exports.scientilla = {
         domain: 'iit.it'
     },
     scopus: {
+        url: 'https://api.elsevier.com',
         apiKey: '',
         token: ''
     },
