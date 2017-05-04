@@ -7,7 +7,8 @@ module.exports = function (grunt) {
         Sails.load({}, async () => {
             try {
                 const methods = {
-                    'people': Importer.importPeople
+                    'people': Importer.importPeople,
+                    'groups': Importer.importGroups
                 };
                 const importTask = methods[arg];
                 if (!_.isFunction(importTask)){

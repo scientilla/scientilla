@@ -6,6 +6,7 @@ const xlsx = require('xlsx');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request-promise');
+const loadJsonFile = require('load-json-file');
 
 const startingYear = sails.config.scientilla.mainInstituteImport.startingYear;
 
@@ -250,5 +251,18 @@ module.exports = {
             const percentage = _.toString((i+1) / decPercentage) + '0%';
                 console.log('Import completed ' + percentage);
         }
+    },
+    importGroups: async () => {
+        console.log('Import started');
+        const groupsPath = 'data/groups.json';
+        const groupNames = await loadJsonFile(groupsPath);
+        console.log(groupNames.length + ' entries found');
+        for (let groupName of groupNames) {
+            const group = await Group.findOneByName(groupName);
+            if (group)
+                continue;
+            await Group.create({name: groupName});
+        }
+        console.log('Import finished');
     }
 };

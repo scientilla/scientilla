@@ -148,3 +148,6 @@ logs/
 
 config/init/*
 !config/init/.gitkeep
+
+data/*
+!data/.gitkeep
