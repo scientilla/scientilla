@@ -189,6 +189,13 @@ module.exports = _.merge({}, ResearchEntity, {
                 });
             });
     },
+    registerUser: function(user) {
+        if (User.isInternalUser(user)) {
+            const err = 'Cannot create domain users';
+            throw err;
+        }
+        return User.createCompleteUser(user);
+    },
     setNewUserRole: function (user) {
         return User
             .count()
@@ -197,18 +204,12 @@ module.exports = _.merge({}, ResearchEntity, {
                 return user;
             });
     },
-    checkUsername: function (user) {
-        if (User.isInternalUser(user))
-            throw new Error('Cannot create domain users');
+    checkUsername: async function (user) {
+        const sameUsernameUsers =  await User.findByUsername(user.username);
+        if (sameUsernameUsers.length > 0)
+            throw new Error('Username already used');
 
-        return User
-            .findByUsername(user.username)
-            .then(function (users) {
-                if (users.length > 0)
-                    throw new Error('Username already used');
-
-                return user;
-            });
+        return user;
     },
     copyAuthData: function (user) {
         if (!user.auth)
