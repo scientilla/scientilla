@@ -11,8 +11,12 @@ module.exports = sails => {
 
     return {
         initialize: (next) => {
-            sails.after('hook:blueprints:loaded', () => {
+            if (sails.config.models.migrate === 'safe') {
+                next();
+                return;
+            }
 
+            sails.after('hook:blueprints:loaded', () => {
                 const dropQuery = views.map(view => 'DROP VIEW IF EXISTS ' + view + ';').join(' ');
                 SqlService.query(dropQuery)
                     .then(res => {

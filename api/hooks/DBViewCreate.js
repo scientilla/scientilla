@@ -7,6 +7,10 @@ module.exports = sails => {
 
     return {
         initialize: next => {
+            if (sails.config.models.migrate === 'safe') {
+                next();
+                return;
+            }
             sails.after('hook:orm:loaded', () => {
                 const createQuery = fs.readdirSync(viewPath)
                     .map(view => fs.readFileSync(viewPath + '/' + view, 'utf-8'))
