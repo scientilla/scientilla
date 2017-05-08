@@ -24,7 +24,8 @@ module.exports.scientilla = {
     },
     mainInstituteImport: {
         enabled: false,
-        startingYear: 1970
+        startingYear: 1970,
+        userImportUrl: 'http://example.com/users'
     },
     registerEnabled: true
 };

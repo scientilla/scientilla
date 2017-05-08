@@ -5,6 +5,8 @@
 const xlsx = require('xlsx');
 const _ = require('lodash');
 const fs = require('fs');
+const request = require('request-promise');
+const loadJsonFile = require('load-json-file');
 
 const startingYear = sails.config.scientilla.mainInstituteImport.startingYear;
 
@@ -94,7 +96,7 @@ module.exports = {
                         draft,
                         Authorship.createDraftAuthorships(draft.id, draftData)
                     ]))
-                .spread(draft=>draft);
+                .spread(draft => draft);
         }
 
         function fastVerifyDraft(draft, instituteId) {
@@ -150,7 +152,7 @@ module.exports = {
 
             const mapJournal = (s) => {
                 const sourceMappingTable = {
-                    'Book Series' : SourceTypes.BOOKSERIES,
+                    'Book Series': SourceTypes.BOOKSERIES,
                     'Journal': SourceTypes.JOURNAL
                 };
                 s.type = sourceMappingTable[s.type];
@@ -204,5 +206,63 @@ module.exports = {
         const allSourceData = _.union(journalsAndBookSeries, newConferences, oldConferences, books);
 
         return allSourceData;
+    },
+    importPeople: async () => {
+        try {
+            console.log('Import started');
+            const url = sails.config.scientilla.mainInstituteImport.userImportUrl;
+            const reqOptions = {
+                uri: url,
+                json: true
+            };
+
+            const people = await request(reqOptions);
+            console.log(people.length + ' entries found');
+            for (let [i,p] of people.entries()) {
+                const groupSearchCriteria = {or: p.groups.map(g => ({name: g}))};
+                const groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
+                if (!groups)
+                    continue;
+                const criteria = {username: p.username};
+                let user = await User.findOne(criteria);
+                if (user) {
+                    await User.update(criteria, p);
+                }
+                else {
+                    user = await User.createCompleteUser(p);
+                }
+
+                for (let g of groups) {
+                    g.members.add(user.id);
+                    if (p.pi)
+                        g.administrators.add(user.id);
+                    await g.savePromise();
+                }
+                checkStatus(people, i);
+            }
+            console.log('Import finished');
+        } catch (err) {
+            console.log(err);
+        }
+        function checkStatus(people, i) {
+            const decPercentage = Math.floor(people.length/10);
+            if ((i+1) % decPercentage !== 0)
+                return;
+            const percentage = _.toString((i+1) / decPercentage) + '0%';
+                console.log('Import completed ' + percentage);
+        }
+    },
+    importGroups: async () => {
+        console.log('Import started');
+        const groupsPath = 'data/groups.json';
+        const groupNames = await loadJsonFile(groupsPath);
+        console.log(groupNames.length + ' entries found');
+        for (let groupName of groupNames) {
+            const group = await Group.findOneByName(groupName);
+            if (group)
+                continue;
+            await Group.create({name: groupName});
+        }
+        console.log('Import finished');
     }
 };
