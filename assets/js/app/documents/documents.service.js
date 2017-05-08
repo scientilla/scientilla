@@ -8,10 +8,11 @@
         'ModalService',
         'EventsService',
         'DocumentLabels',
+        'DocumentKinds',
         '$q'
     ];
 
-    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, DocumentLabels, $q) {
+    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, DocumentLabels, DocumentKinds, $q) {
         return {
             create: function (researchEntity, reService) {
                 var service = {};
@@ -68,7 +69,7 @@
                             }
 
                             var part = _.partition(allDocs, function (d) {
-                                return !d.error && !d.draft;
+                                return !d.error && d.kind !== DocumentKinds.DRAFT;
                             });
                             var verifiedDrafts = part[0];
                             var unverifiedDrafts = part[1];

@@ -18,6 +18,7 @@ module.exports = _.merge({}, BaseModel, {
     attributes: {},
     createDraft: function (ResearchEntityModel, researchEntityId, draftData) {
         const selectedDraftData = Document.selectDraftData(draftData);
+        selectedDraftData.kind = DocumentKinds.DRAFT;
         return Promise.all([
             ResearchEntityModel.findOneById(researchEntityId).populate('drafts'),
             Document.create(selectedDraftData)
@@ -80,7 +81,7 @@ module.exports = _.merge({}, BaseModel, {
             .populate('authorships')
             .populate('affiliations')
             .then(draft => {
-                if (!draft || !draft.draft)
+                if (!draft || draft.kind !== DocumentKinds.DRAFT)
                     throw {
                         error: 'Draft not found',
                         item: draftId
@@ -198,7 +199,7 @@ module.exports = _.merge({}, BaseModel, {
                 )
             )
     },
-    setAuthorships: async function(ResearchEntityModel, researchEntityId, draftId, authorshipsData) {
+    setAuthorships: async function (ResearchEntityModel, researchEntityId, draftId, authorshipsData) {
         authorshipsData.forEach(a => delete a.id);
         const deleteAuthorships = await Authorship.destroy({document: draftId});
         await Affiliation.destroy({authorship: deleteAuthorships.map(a => a.id)});

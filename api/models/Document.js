@@ -12,11 +12,6 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const BaseModel = require("../lib/BaseModel.js");
 
-//sTODO: evaluated whether convert the constants to numbers
-const VERIFIED = 'verified';
-const DRAFT = 'draft';
-const PUBLIC = 'public';
-
 const fields = [
     {name: 'authorsStr', weight: 0.4},
     {name: 'authorKeywords', weight: 0},
@@ -45,9 +40,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     /* ATTRIBUTES */
     attributes: {
-        title: {
-            type: 'STRING'
-        },
+        title: 'STRING',
         authorsStr: 'STRING',
         authorKeywords: 'STRING',
         year: 'STRING',
@@ -62,7 +55,7 @@ module.exports = _.merge({}, BaseModel, {
         scopusId: 'STRING',
         wosId: 'STRING',
         abstract: 'TEXT',
-        draft: 'BOOLEAN',
+        kind: 'STRING',
         source: {
             model: 'source'
         },
@@ -149,11 +142,11 @@ module.exports = _.merge({}, BaseModel, {
                 requiredFields.push('source');
 
             return _.every(requiredFields, function (v) {
-                return self[v];
-            }) && authorsStrRegex.test(self.authorsStr);
+                    return self[v];
+                }) && authorsStrRegex.test(self.authorsStr);
         },
         draftToDocument: function () {
-            this.draft = false;
+            this.kind = DocumentKinds.VERIFIED;
             this.draftCreator = null;
             this.draftGroupCreator = null;
             return this.savePromise();
@@ -294,11 +287,6 @@ module.exports = _.merge({}, BaseModel, {
         });
         return suggestedDocuments;
     },
-    getVerifiedAndPublicDocuments: function (documents) {
-        return _.filter(documents, function (r) {
-            return _.includes([VERIFIED, PUBLIC], r.status);
-        });
-    },
     deleteDrafts: function (draftIds) {
         return Promise.all(draftIds.map(function (documentId) {
             return Document.destroy({id: documentId});
@@ -306,7 +294,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     findCopies: function (verifyingDraft, verifyingPosition) {
         const query = _.pick(verifyingDraft, Document.getFields());
-        query.draft = false;
+        query.kind = {'!': DocumentKinds.DRAFT};
         return Document.find(query)
             .populate('authorships')
             .populate('affiliations')

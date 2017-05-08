@@ -140,7 +140,7 @@ describe('Document model', () => {
                     return User.createDraft(User, users[0].id, docData);
                 })
                 .then(doc => {
-                    doc.draft = false;
+                    doc.kind = 'v';
                     doc.draftCreator = null;
                     doc.draftGroupCreator = null;
                     return doc.savePromise();
