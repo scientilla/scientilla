@@ -209,7 +209,7 @@ module.exports = {
     },
     importPeople: async () => {
         try {
-            console.log('Import started');
+            sails.log.info('Import started');
             const url = sails.config.scientilla.mainInstituteImport.userImportUrl;
             const reqOptions = {
                 uri: url,
@@ -217,12 +217,18 @@ module.exports = {
             };
 
             const people = await request(reqOptions);
-            console.log(people.length + ' entries found');
+            sails.log.info(people.length + ' entries found');
             for (let [i,p] of people.entries()) {
                 const groupSearchCriteria = {or: p.groups.map(g => ({name: g}))};
-                const groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
-                if (!groups)
-                    continue;
+                let groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
+                if (groups.length != p.groups.length) {
+                    const missingGroupNames = p.groups.filter(g => !groups.some(g2 => g == g2.name));
+                    const groupObjs = missingGroupNames.map(g => ({name:g}));
+                    sails.log.info('inserting groups: ' + missingGroupNames.join(', '));
+                    await Group.create(groupObjs);
+                    groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
+                    console.assert(groups.length == p.groups.length);
+                }
                 const criteria = {username: p.username};
                 let user = await User.findOne(criteria);
                 if (user) {
@@ -238,31 +244,23 @@ module.exports = {
                         g.administrators.add(user.id);
                     await g.savePromise();
                 }
-                checkStatus(people, i);
             }
-            console.log('Import finished');
+            sails.log.info('Import finished');
         } catch (err) {
-            console.log(err);
-        }
-        function checkStatus(people, i) {
-            const decPercentage = Math.floor(people.length/10);
-            if ((i+1) % decPercentage !== 0)
-                return;
-            const percentage = _.toString((i+1) / decPercentage) + '0%';
-                console.log('Import completed ' + percentage);
+            sails.log.error(err);
         }
     },
     importGroups: async () => {
-        console.log('Import started');
+        sails.log.info('Import started');
         const groupsPath = 'data/groups.json';
         const groupNames = await loadJsonFile(groupsPath);
-        console.log(groupNames.length + ' entries found');
+        sails.log.info(groupNames.length + ' entries found');
         for (let groupName of groupNames) {
             const group = await Group.findOneByName(groupName);
             if (group)
                 continue;
             await Group.create({name: groupName});
         }
-        console.log('Import finished');
+        sails.log.info('Import finished');
     }
 };
