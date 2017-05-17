@@ -60,7 +60,7 @@ describe('Draft Creation: ', () => {
 
     function checkDraft(researchEntity, draftData, draft) {
         draft.title.should.equal(draftData.title);
-        draft.draft.should.be.true;
+        draft.kind.should.be.equal('d');
         if (draft.draftCreator)
             draft.draftCreator.should.equal(researchEntity.id);
         else

@@ -45,7 +45,7 @@ describe('Draft Bulk Creation: ', () => {
     function checkDrafts(researchEntity, draftsData, drafts) {
         drafts.forEach(draft => {
             draft.title.should.equalOneOf(draftsData.map(d => d.title));
-            draft.draft.should.be.true;
+            draft.kind.should.be.equal('d');
             if (draft.draftCreator)
                 draft.draftCreator.should.equal(researchEntity.id);
             else

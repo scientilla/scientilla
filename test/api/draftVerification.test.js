@@ -53,7 +53,7 @@ describe('Draft Verification', () => {
             const doc = await test.userVerifyDraft(user1, user1Draft1, user1Doc1Position, affiliations);
             // expect
             doc.title.should.equal(documentData.title);
-            doc.draft.should.be.false;
+            doc.kind.should.be.equal('v');
             should(doc.draftCreator).be.null;
 
             const userDrafts = await test.getUserDrafts(user1);
@@ -67,7 +67,7 @@ describe('Draft Verification', () => {
             documents.should.have.length(1);
             const document = documents[0];
             document.title.should.equal(documentData.title);
-            document.draft.should.be.false;
+            document.kind.should.be.equal('v');
             should(document.draftCreator).be.null;
             document.authors.should.have.length(1);
             document.authors[0].username.should.equal(user1.username);
@@ -121,7 +121,7 @@ describe('Draft Verification', () => {
             const document = await test.userVerifyDraft(user2, user2Draft1, user2Doc1Position, author2affiliationInstitutes);
             // expect
             document.title.should.equal(documentData.title);
-            document.draft.should.be.false;
+            document.kind.should.be.equal('v');
             should(document.draftCreator).be.null;
 
             const body = await test.getUserDocumentsWithAuthors(user2);
@@ -133,7 +133,7 @@ describe('Draft Verification', () => {
             const d = documents[0];
             d.id.should.equal(user1Draft1.id);
             d.title.should.equal(documentData.title);
-            d.draft.should.be.false;
+            d.kind.should.be.equal('v');
             should(d.draftCreator).be.null;
             d.authors[0].username.should.equal(user1.username);
             d.authors[1].username.should.equal(user2.username);

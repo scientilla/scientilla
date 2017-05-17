@@ -50,7 +50,7 @@ describe('Document Verification', () => {
         const d = documents[0];
         d.id.should.equal(document.id);
         d.title.should.equal(documentData.title);
-        d.draft.should.be.false;
+        d.kind.should.be.equal('v');
         should(d.draftCreator).be.null;
         d.authors.should.have.length(2);
         d.authors[0].username.should.equal(user1.username);

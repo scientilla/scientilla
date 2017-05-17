@@ -6,10 +6,11 @@
 
     Prototyper.$inject = [
         'userConstants',
-        'DocumentLabels'
+        'DocumentLabels',
+        'DocumentKinds'
     ];
 
-    function Prototyper(userConstants, DocumentLabels) {
+    function Prototyper(userConstants, DocumentLabels, DocumentKinds) {
         const service = {
             toUserModel: toUserModel,
             toUsersCollection: applyToAll(toUserModel),
@@ -95,7 +96,7 @@
             getNewDocument: function (documentTypeObj) {
                 var documentData = {
                     draftCreator: this.id,
-                    draft: true,
+                    kind: DocumentKinds.DRAFT,
                     type: documentTypeObj.key,
                     sourceType: documentTypeObj.defaultSource
                 };
@@ -138,7 +139,7 @@
             getNewDocument: function (documentTypeObj) {
                 var documentData = {
                     draftCreator: this.id,
-                    draft: true,
+                    kind: DocumentKinds.DRAFT,
                     type: documentTypeObj.key,
                     sourceType: documentTypeObj.defaultSource
                 };
@@ -189,12 +190,12 @@
                 'institutes'
             ],
             create: function (documentData) {
-                var fields = _.union(['draft', 'draftCreator', 'draftGroupCreator'], documentPrototype.fields);
+                var fields = _.union(['kind', 'draftCreator', 'draftGroupCreator'], documentPrototype.fields);
                 var document = _.pick(documentData, fields);
                 _.extend(document, documentPrototype);
                 return document;
             },
-            isValid: function() {
+            isValid: function () {
                 const authorsStrRegex = /^((\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)(,\s(\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)*$/;
                 const self = this;
                 const requiredFields = [
@@ -212,8 +213,8 @@
                     requiredFields.push('source');
 
                 return _.every(requiredFields, function (v) {
-                    return self[v];
-                }) && authorsStrRegex.test(self.authorsStr);
+                        return self[v];
+                    }) && authorsStrRegex.test(self.authorsStr);
             },
             getAllCoauthors: function () {
                 return this.authors;
@@ -246,29 +247,8 @@
                 var index = _.findIndex(this.getAuthors(), a => user.getAliases().includes(a));
                 return index;
             },
-            getNewGroupDocument: function (groupId) {
-                return {
-                    title: "",
-                    authorsStr: "",
-                    draftGroupCreator: groupId,
-                    draft: true
-                };
-            },
-            getNewDraftDocument: function (userId) {
-                return {
-                    title: "",
-                    authorsStr: "",
-                    draftCreator: userId,
-                    draft: true
-                };
-            },
-            getDraftCreator: function () {
-                if (this.draftCreator)
-                    return this.draftCreator;
-                return this.draftGroupCreator;
-            },
             copyDocument: function (document, creator) {
-                var excludedFields = ['draft', 'draftCreator', 'draftGroupCreator'];
+                var excludedFields = ['kind', 'draftCreator', 'draftGroupCreator'];
 
                 var documentTypeObj = {
                     key: document.type,
@@ -295,21 +275,21 @@
                     return t === label;
                 });
             },
-            hasLabel: function(label){
+            hasLabel: function (label) {
                 return this.labels.includes(label);
             },
             isDiscarded: function () {
                 return this.hasLabel(DocumentLabels.DISCARDED);
             },
-            isUnverifying: function(){
+            isUnverifying: function () {
                 return this.hasLabel(DocumentLabels.UVERIFYING);
             },
-            getInstituteIdentifier: function(instituteIndex) {
+            getInstituteIdentifier: function (instituteIndex) {
                 const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
                 if (instituteIndex < alphabet.length)
                     return alphabet[instituteIndex];
                 const getBaseLog = (y, x) => Math.log(y) / Math.log(x);
-                const firstLetter = alphabet [Math.floor(getBaseLog(instituteIndex, alphabet.length))-1];
+                const firstLetter = alphabet [Math.floor(getBaseLog(instituteIndex, alphabet.length)) - 1];
                 const secondLetter = alphabet [instituteIndex % alphabet.length];
                 return firstLetter + secondLetter;
             }
