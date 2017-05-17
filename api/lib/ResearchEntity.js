@@ -171,18 +171,17 @@ module.exports = _.merge({}, BaseModel, {
         const selectedDraftData = _.pick(draftData, documentFields);
         return Document.update({id: draftId}, selectedDraftData)
     },
-    checkCopiedDocuments: function (ResearchEntityModel, researchEntityId, documentsToCheck, includeDrafts) {
+    checkCopiedDocuments: async function (ResearchEntityModel, researchEntityId, documentsToCheck, includeDrafts) {
         const threeshold = .85;
-        return Promise.all(_.map(documentsToCheck, function (docToCheck) {
-            return getSimilarDocuments(ResearchEntityModel, researchEntityId, docToCheck, includeDrafts)
-                .then(function (documentsToCompare) {
-                    const isDuplicate = _.some(documentsToCompare, d => d.getSimiliarity(docToCheck) >= threeshold);
-                    if (isDuplicate)
-                        DocumentLabels.addLabel(docToCheck, DocumentLabels.DUPLICATE);
+        const res = await Promise.all(_.map(documentsToCheck, async function (docToCheck, i) {
+            const documentsToCompare = await getSimilarDocuments(ResearchEntityModel, researchEntityId, docToCheck, includeDrafts);
+            const isDuplicate = _.some(documentsToCompare, d => d.getSimiliarity(docToCheck) >= threeshold);
+            if (isDuplicate)
+                DocumentLabels.addLabel(docToCheck, DocumentLabels.DUPLICATE);
 
-                    return docToCheck;
-                });
+            return docToCheck;
         }));
+        return res;
     },
     addTags: function (TagModel, userId, documentId, tags) {
         return TagModel.destroy({researchEntity: userId, document: documentId})
@@ -198,7 +197,7 @@ module.exports = _.merge({}, BaseModel, {
                 )
             )
     },
-    setAuthorships: async function(ResearchEntityModel, researchEntityId, draftId, authorshipsData) {
+    setAuthorships: async function (ResearchEntityModel, researchEntityId, draftId, authorshipsData) {
         authorshipsData.forEach(a => delete a.id);
         const deleteAuthorships = await Authorship.destroy({document: draftId});
         await Affiliation.destroy({authorship: deleteAuthorships.map(a => a.id)});
@@ -235,7 +234,7 @@ function getSimilarDocuments(ResearchEntityModel, researchEntityid, doc, include
     if (doc.scopusId)
         criteria.or.push({scopusId: doc.scopusId});
     if (doc.authorsStr)
-        criteria.or.push(...doc.authorsStr.split(', ').map(author => ({authorsStr: {contains: author}})));
+        criteria.or.push({authorsStr: doc.authorsStr});
     if (_.isEmpty(criteria.or))
         delete criteria.or;
     let q = ResearchEntityModel
