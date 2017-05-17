@@ -39,13 +39,16 @@ module.exports = function findRecords(req, res) {
 
     const limit = actionUtil.parseLimit(req);
     const skip = actionUtil.parseSkip(req);
+    let sort = actionUtil.parseSort(req);
+    if (_.isEmpty(sort) && Model.DEFAULT_SORTING)
+        sort = Model.DEFAULT_SORTING;
 
     // Lookup for records that match the specified criteria
     let query = Model.find()
         .where(actionUtil.parseCriteria(req))
         .limit(limit)
         .skip(skip)
-        .sort(actionUtil.parseSort(req));
+        .sort(sort);
     query = actionUtil.populateRequest(query, req);
 
     const countQuery = Model.count()

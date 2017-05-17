@@ -25,6 +25,11 @@ function buildCheckDuplicatedDocuments(includeDrafts = true) {
 }
 
 module.exports = _.merge({}, ResearchEntity, {
+    DEFAULT_SORTING: {
+        surname: 'asc',
+        name: 'asc',
+        updatedAt: 'desc'
+    },
     USER: USER,
     ADMINISTRATOR: ADMINISTRATOR,
     attributes: require('waterlock').models.user.attributes({

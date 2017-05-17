@@ -18,6 +18,10 @@ function buildCheckDuplicatedDocuments(includeDrafts = true) {
 }
 
 module.exports = _.merge({}, ResearchEntity, {
+    DEFAULT_SORTING: {
+        name: 'asc',
+        updatedAt: 'desc'
+    },
     attributes: {
         name: 'STRING',
         slug: 'STRING',
