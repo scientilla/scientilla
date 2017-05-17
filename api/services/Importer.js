@@ -208,47 +208,43 @@ module.exports = {
         return allSourceData;
     },
     importPeople: async () => {
-        try {
-            sails.log.info('Import started');
-            const url = sails.config.scientilla.mainInstituteImport.userImportUrl;
-            const reqOptions = {
-                uri: url,
-                json: true
-            };
+        sails.log.info('Import started');
+        const url = sails.config.scientilla.mainInstituteImport.userImportUrl;
+        const reqOptions = {
+            uri: url,
+            json: true
+        };
 
-            const people = await request(reqOptions);
-            sails.log.info(people.length + ' entries found');
-            for (let [i,p] of people.entries()) {
-                const groupSearchCriteria = {or: p.groups.map(g => ({name: g}))};
-                let groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
-                if (groups.length != p.groups.length) {
-                    const missingGroupNames = p.groups.filter(g => !groups.some(g2 => g == g2.name));
-                    const groupObjs = missingGroupNames.map(g => ({name:g}));
-                    sails.log.info('inserting groups: ' + missingGroupNames.join(', '));
-                    await Group.create(groupObjs);
-                    groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
-                    console.assert(groups.length == p.groups.length);
-                }
-                const criteria = {username: p.username};
-                let user = await User.findOne(criteria);
-                if (user) {
-                    await User.update(criteria, p);
-                }
-                else {
-                    user = await User.createCompleteUser(p);
-                }
-
-                for (let g of groups) {
-                    g.members.add(user.id);
-                    if (p.pi)
-                        g.administrators.add(user.id);
-                    await g.savePromise();
-                }
+        const people = await request(reqOptions);
+        sails.log.info(people.length + ' entries found');
+        for (let [i, p] of people.entries()) {
+            //groups are loaded in memory because waterline doesn't allow case-insensitive queries with postegres
+            const allGroups = await Group.find();
+            const groupsToBeInserted = p.groups.filter(g => !allGroups.some(g2 => _.toLower(g2.name) == _.toLower(g)));
+            if (groupsToBeInserted.length) {
+                const groupObjs = groupsToBeInserted.map(g => ({name: g}));
+                sails.log.info('inserting groups: ' + groupsToBeInserted.join(', '));
+                await Group.create(groupObjs);
             }
-            sails.log.info('Import finished');
-        } catch (err) {
-            sails.log.error(err);
+            const groupSearchCriteria = {or: p.groups.map(g => ({name: g}))};
+            const groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
+            const criteria = {username: p.username};
+            let user = await User.findOne(criteria);
+            if (user) {
+                await User.update(criteria, p);
+            }
+            else {
+                user = await User.createCompleteUser(p);
+            }
+
+            for (let g of groups) {
+                g.members.add(user.id);
+                if (p.pi)
+                    g.administrators.add(user.id);
+                await g.savePromise();
+            }
         }
+        sails.log.info('Import finished');
     },
     importGroups: async () => {
         sails.log.info('Import started');
