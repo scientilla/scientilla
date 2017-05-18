@@ -8,7 +8,8 @@ module.exports = function (grunt) {
             try {
                 const methods = {
                     'people': Importer.importPeople,
-                    'groups': Importer.importGroups
+                    'groups': Importer.importGroups,
+                    'documents': Importer.importDocuments
                 };
                 const importTask = methods[arg];
                 if (!_.isFunction(importTask)){
@@ -24,6 +25,6 @@ module.exports = function (grunt) {
                 return 1;
             }
             done();
-        })
+        });
     });
 };

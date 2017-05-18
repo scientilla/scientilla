@@ -10,13 +10,18 @@ const loadJsonFile = require('load-json-file');
 
 
 module.exports = {
-    mainInstituteDocumentsImport,
+    importDocuments,
     readSourcesFromExcel,
     importPeople,
     importGroups
 };
 
-async function mainInstituteDocumentsImport() {
+async function importDocuments() {
+    const n = await Document.count();
+    if (n>0) {
+        sails.log.info('document import cannot be executed if some documents have already been inserted');
+        return;
+    }
     const institute = await Group.findOneByName(sails.config.scientilla.institute.name);
     await importScopusDocuments(institute);
 }
