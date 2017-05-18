@@ -1,7 +1,7 @@
 /* global sails,PublicationsConnector,OrcidConnector,ScopusConnector */
 "use strict";
 
-const request = require('request-promise');
+const request = require('requestretry');
 const _ = require('lodash');
 const Promise = require("bluebird");
 
@@ -41,8 +41,14 @@ module.exports = {
 };
 
 async function makeRequest(reqConfig) {
-    const res = await request.get(reqConfig.reqParams);
-    const extracted = reqConfig.fieldExtract(res);
+    const res = await request.get(
+        Object.assign({
+                maxAttempts: 5,
+                retryDelay: 500
+            },
+            reqConfig.reqParams)
+    );
+    const extracted = reqConfig.fieldExtract(res.body);
     const documents = await Promise.all(_.map(extracted.documents, r => reqConfig.transform(r)));
 
     return {
