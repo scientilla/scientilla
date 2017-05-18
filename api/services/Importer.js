@@ -11,7 +11,7 @@ const loadJsonFile = require('load-json-file');
 
 module.exports = {
     importDocuments,
-    readSourcesFromExcel,
+    importSources,
     importPeople,
     importGroups
 };
@@ -113,7 +113,7 @@ function importScopusDocuments(institute) {
 
 }
 
-function readSourcesFromExcel() {
+async function importSources() {
 
     function readWorksheet(worksheet, mappingsTable, mapFn = _.identity, filterFn = _.stubTrue) {
         function readSourceRow(r) {
@@ -207,9 +207,10 @@ function readSourcesFromExcel() {
         books = readWorksheet(bookWorksheet, bookMappingsTable, mapBook);
     }
 
-    const allSourceData = _.union(journalsAndBookSeries, newConferences, oldConferences, books);
+    const sources = _.union(journalsAndBookSeries, newConferences, oldConferences, books);
 
-    return allSourceData;
+    sails.log.info('Inserting ' + sources.length + ' new sources');
+    await Source.create(sources);
 }
 
 async function importPeople() {

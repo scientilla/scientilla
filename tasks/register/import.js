@@ -9,7 +9,8 @@ module.exports = function (grunt) {
                 const methods = {
                     'people': Importer.importPeople,
                     'groups': Importer.importGroups,
-                    'documents': Importer.importDocuments
+                    'documents': Importer.importDocuments,
+                    'sources': Importer.importSources
                 };
                 const importTask = methods[arg];
                 if (!_.isFunction(importTask)){
