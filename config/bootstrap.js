@@ -19,8 +19,6 @@ module.exports.bootstrap = function (cb) {
 
     return initializeInstitutes()
         .then(initializeGroups)
-        .then(initializeSources)
-        .then(importDocuments)
         .then(_ => cb());
 
     function initializeInstitutes() {
@@ -43,31 +41,6 @@ module.exports.bootstrap = function (cb) {
                 const groupData = _.pick(sails.config.scientilla.institute, fields);
                 sails.log.info('Creating group ' + groupData.name);
                 return Group.create(groupData);
-            });
-    }
-
-    function importDocuments() {
-        if (!sails.config.scientilla.mainInstituteImport.enabled || isTest)
-            return Promise.resolve();
-        return Document.count()
-            .then(documentsNum => {
-                if (documentsNum)
-                    return;
-                sails.log.info('Importing document from scopus ');
-                return Importer.mainInstituteDocumentsImport();
-            });
-    }
-
-    function initializeSources() {
-        if (isTest)
-            return Promise.resolve();
-        return Source.count()
-            .then(sourcesNum => {
-                if (sourcesNum)
-                    return;
-                const sources = Importer.readSourcesFromExcel();
-                sails.log.info('Inserting ' + sources.length + ' new sources');
-                return Source.create(sources);
             });
     }
 };

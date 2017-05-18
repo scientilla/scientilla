@@ -21,6 +21,10 @@
                ng-disabled="!vm.userIsAdmin">
     </div>
     <div class="form-group">
+        <label for="jobtitle">Job Title</label>
+        <input type="text" class="form-control" id="jobtitle" placeholder="job Title" ng-model="vm.user.jobTitle">
+    </div>
+    <div class="form-group">
         <label for="orcidid">Orcid ID</label>
         <input type="text" class="form-control" id="orcidid" placeholder="Orcid ID" ng-model="vm.user.orcidId">
     </div>

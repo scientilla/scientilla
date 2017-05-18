@@ -65,6 +65,9 @@ module.exports = _.merge({}, ResearchEntity, {
         scopusId: {
             type: 'STRING'
         },
+        jobTitle: {
+            type: 'STRING'
+        },
         drafts: {
             collection: 'Document',
             via: 'draftCreator',
