@@ -1,4 +1,4 @@
-/* global sails,Source,Institute */
+/* global sails,Source,Institute,Group,User */
 "use strict";
 
 const request = require('requestretry');
@@ -9,25 +9,17 @@ const DocumentTypes = require("./DocumentTypes");
 
 module.exports = {
     getConfig: function (researchEntity, configQuery) {
+        let query;
         const researchEntityType = researchEntity.getType();
         let uri = sails.config.scientilla.scopus.url + '/content/search/scopus';
-        let query = [];
 
-        if (researchEntityType === 'user') {
-            const opts = {
-                'surname': 'AUTHNAME(' + researchEntity.surname + ')',
-                'scopusId': 'au-id(' + researchEntity.scopusId + ')'
-            };
-
-            if (configQuery.where.field in opts)
-                query.push(opts[configQuery.where.field]);
-            else
-                throw "ExternalDocument error: field not selected";
-        }
-        else {
-            query.push('AF-ID(' + researchEntity.scopusId + ')');
+        if (researchEntityType === 'group')
             uri += 'affiliation';
-        }
+
+        if (researchEntityType === 'user')
+            query = ['au-id(' + researchEntity.scopusId + ')'];
+        else
+            query = ['AF-ID(' + researchEntity.scopusId + ')'];
 
         const additionalOpts = {
             'year': 'PUBYEAR IS %val'
@@ -69,41 +61,19 @@ module.exports = {
                 return {documents, count};
             },
             transform: d1 => {
-                return scoupsSingleRequest(d1, 0);
+                return getDocument(getScopusId(d1));
             }
         };
-    }
+    },
+    getDocument
 };
 
-function getConferenceLocation(d) {
-    const venuePath = 'item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.conflocation.venue';
-    const cityPath = 'item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.conflocation.city';
-    const venue = _.get(d, venuePath);
-    const city = _.get(d, cityPath);
-    const conferenceLocationArray = _.compact([venue, city]);
-    return conferenceLocationArray.join(', ');
+function getDocument(scopusId) {
+    return scoupsSingleRequest(scopusId, 0);
 }
 
-function getConferenceAcronym(d) {
-    const confinfo = _.get(d, 'item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.confname');
-    return _.isNil(confinfo) ? "" : confinfo.split(', ')[1];
-}
-
-function getScopusId(d) {
-    const identifier = d['dc:identifier'];
-    if (_.startsWith(identifier, 'SCOPUS_ID:')) {
-        return _.replace(identifier, 'SCOPUS_ID:', '');
-    }
-    const eid = d['eid'];
-    if (_.startsWith(eid, '2-s2.0-')) {
-        return _.trimStart(eid, '2-s2.0-');
-    }
-    return null;
-}
-
-async function scoupsSingleRequest(d1, attempt) {
+async function scoupsSingleRequest(scopusId, attempt) {
     let res, documentData;
-    const scopusId = getScopusId(d1);
     const requestParams = {
         uri: sails.config.scientilla.scopus.url + '/content/abstract/scopus_id/' + scopusId,
         headers: {
@@ -111,6 +81,7 @@ async function scoupsSingleRequest(d1, attempt) {
             'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
             Accept: 'application/json'
         },
+        qs: {view: 'FULL'},
         json: true,
         fullResponse: true,
         maxAttempts: 5,
@@ -125,30 +96,24 @@ async function scoupsSingleRequest(d1, attempt) {
         return {};
     }
 
-    function getConditionalField(obj, path, type) {
-        const vals = toArray(_.get(obj, path));
-        return _.get(_.find(vals, {'@type': type}), '$');
-    }
-
     try {
-
         const body = res.body;
 
         if (_.get(body, 'service-error'))
             onError({
                 message: _.get(body, 'service-error.status.statusCode'),
                 res: body
-            }, d1, 3);
+            }, scopusId, 3);
 
-        const d2 = _.get(body, 'abstracts-retrieval-response', {});
+        const scopusDocumentData = _.get(body, 'abstracts-retrieval-response', {});
 
-        if (_.isEmpty(d2))
+        if (_.isEmpty(scopusDocumentData))
             onError({
                 message: 'Empty document',
                 res: body
-            }, d1, 3);
+            }, scopusId, 3);
 
-        const scopusSource = _.get(d2, 'item.bibrecord.head.source');
+        const scopusSource = _.get(scopusDocumentData, 'item.bibrecord.head.source');
 
         const sourceTypeMappings = {
             'd': SourceTypes.JOURNAL, //trade journal
@@ -177,32 +142,32 @@ async function scoupsSingleRequest(d1, attempt) {
 
         const sourceType = sourceTypeMappings[getDollars(scopusSource, '@type')];
         documentData = {
-            title: _.get(d1, 'dc:title'),
+            title: _.get(scopusDocumentData, 'coredata.dc:title'),
             authorsStr: _.map(
-                _.get(d2, 'authors.author'),
+                _.get(scopusDocumentData, 'authors.author'),
                 function (c) {
                     return _.get(c, 'ce:indexed-name');
                 }).join(', '),
             authorKeywords: _.map(
-                _.get(d2, 'authkeywords.author-keyword'),
+                _.get(scopusDocumentData, 'authkeywords.author-keyword'),
                 function (c) {
                     return _.get(c, '$');
                 }).join(', '),
-            year: _.get(d2, 'item.bibrecord.head.source.publicationdate.year'),
-            doi: _.get(d2, 'coredata.prism:doi'),
+            year: _.get(scopusDocumentData, 'item.bibrecord.head.source.publicationdate.year'),
+            doi: _.get(scopusDocumentData, 'coredata.prism:doi'),
             sourceType: sourceType,
             scopusId: scopusId,
-            abstract: _.trim(_.get(d2, 'coredata.dc:description')),
-            articleNumber: _.get(d2, 'item.bibrecord.head.source.article-number'),
-            journal: d1['prism:publicationName'],
-            volume: d1['prism:volume'],
-            issue: d1['prism:issueIdentifier'],
-            pages: d1['prism:pageRange'],
-            type: typeMappings[d1['subtype']]
+            abstract: _.trim(_.get(scopusDocumentData, 'coredata.dc:description')),
+            articleNumber: _.get(scopusDocumentData, 'item.bibrecord.head.source.article-number'),
+            journal: _.get(scopusDocumentData, 'coredata.prism:publicationName'),
+            volume: _.get(scopusDocumentData, 'coredata.prism:volume'),
+            issue: _.get(scopusDocumentData, 'coredata.prism:issueIdentifier'),
+            pages: _.get(scopusDocumentData, 'coredata.prism:pageRange'),
+            type: typeMappings[_.get(scopusDocumentData, 'item.bibrecord.head.citation-info.citation-type.@code')]
         };
 
         if (_.isEmpty(documentData.authorsStr))
-            onError('Document field missing', d1, attempt);
+            onError('Document field missing', scopusId, attempt);
 
 
         const sourceData = {
@@ -215,11 +180,11 @@ async function scoupsSingleRequest(d1, attempt) {
             publisher: _.get(scopusSource, 'publisher.publishername'),
             year: _.get(scopusSource, 'publicationyear.@first'),
             website: getConditionalField(scopusSource, 'website.ce:e-address', 'email'),
-            location: getConferenceLocation(d2),
-            acronym: getConferenceAcronym(d2)
+            location: getConferenceLocation(scopusDocumentData),
+            acronym: getConferenceAcronym(scopusDocumentData)
         };
 
-        const allAffiliations = toArray(d2.affiliation);
+        const allAffiliations = toArray(scopusDocumentData.affiliation);
 
         const scopusInstitutes = _.map(allAffiliations, a => ({
             name: a.affilname,
@@ -230,7 +195,7 @@ async function scoupsSingleRequest(d1, attempt) {
 
         const scopusInstituteError = scopusInstitutes.filter(si => (!si.name || !si.scopusId)).length;
         if (scopusInstituteError)
-            onError('Affiliation field missing', d1, attempt);
+            onError('Affiliation field missing', scopusId, attempt);
 
         const institutesCreationFns = _.map(
             scopusInstitutes,
@@ -246,8 +211,8 @@ async function scoupsSingleRequest(d1, attempt) {
         const newSource = arr[0];
         const newInstitutes = arr[1];
 
-        const scopusAuthorships = _.get(d2, 'authors.author');
-        const scopusAuthorGroups = toArray(_.get(d2, 'item.bibrecord.head.author-group'));
+        const scopusAuthorships = _.get(scopusDocumentData, 'authors.author');
+        const scopusAuthorGroups = toArray(_.get(scopusDocumentData, 'item.bibrecord.head.author-group'));
         const scopusAuthors = _.flatMap(scopusAuthorGroups, 'author');
 
         documentData.authorships = _.map(scopusAuthorships, (a, i) => {
@@ -279,6 +244,37 @@ async function scoupsSingleRequest(d1, attempt) {
     return documentData;
 }
 
+function getConferenceLocation(d) {
+    const venuePath = 'item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.conflocation.venue';
+    const cityPath = 'item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.conflocation.city';
+    const venue = _.get(d, venuePath);
+    const city = _.get(d, cityPath);
+    const conferenceLocationArray = _.compact([venue, city]);
+    return conferenceLocationArray.join(', ');
+}
+
+function getConferenceAcronym(d) {
+    const confinfo = _.get(d, 'item.bibrecord.head.source.additional-srcinfo.conferenceinfo.confevent.confname');
+    return _.isNil(confinfo) ? "" : confinfo.split(', ')[1];
+}
+
+function getScopusId(d) {
+    const identifier = d['dc:identifier'];
+    if (_.startsWith(identifier, 'SCOPUS_ID:')) {
+        return _.replace(identifier, 'SCOPUS_ID:', '');
+    }
+    const eid = d['eid'];
+    if (_.startsWith(eid, '2-s2.0-')) {
+        return _.trimStart(eid, '2-s2.0-');
+    }
+    return null;
+}
+
+function getConditionalField(obj, path, type) {
+    const vals = toArray(_.get(obj, path));
+    return _.get(_.find(vals, {'@type': type}), '$');
+}
+
 function getDollars(obj, path) {
     return _.get(obj, path + '.$') || _.get(obj, path);
 }
@@ -291,10 +287,10 @@ function toArray(val) {
     return val;
 }
 
-function onError(err, d, attempt) {
+function onError(err, scopusId, attempt) {
     if (attempt < 3) {
         sails.log.debug(err);
-        return scoupsSingleRequest(d, attempt + 1);
+        return scoupsSingleRequest(scopusId, attempt + 1);
     }
 
     throw err;

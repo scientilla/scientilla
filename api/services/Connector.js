@@ -6,53 +6,58 @@ const _ = require('lodash');
 const Promise = require("bluebird");
 
 module.exports = {
-    getDocuments: async function (ResearchEntityModel, researchEntityId, query, skipCopiedCheck) {
-        const connector = query.where.connector;
-        if (!connector)
-            throw new Error('A Connector parameter is necessary');
-        const researchEntity = await ResearchEntityModel.findOneById(researchEntityId);
-
-        let reqConfig;
-        switch (connector) {
-            case 'Publications':
-                reqConfig = PublicationsConnector.getConfig(researchEntity, query);
-                break;
-            case 'ORCID':
-                reqConfig = OrcidConnector.getConfig(researchEntity, query);
-                break;
-            case 'Scopus':
-                reqConfig = ScopusConnector.getConfig(researchEntity, query);
-                break;
-            default:
-                throw 'Connector not found';
-        }
-
-        let res = await makeRequest(reqConfig);
-
-        if (!skipCopiedCheck) {
-            return {
-                items: await ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.items, true),
-                count: res.count
-            };
-        }
-
-        return res;
-    }
+    getDocuments,
+    getConfig,
+    makeRequest
 };
 
-async function makeRequest(reqConfig) {
-    const res = await request.get(
+async function getDocuments(ResearchEntityModel, researchEntityId, query, skipCopiedCheck) {
+    const reqConfig = await getConfig(ResearchEntityModel, researchEntityId, query);
+
+    let res = await makeRequest(reqConfig);
+
+    const extracted = reqConfig.fieldExtract(res.body);
+    const documents = await Promise.all(_.map(extracted.documents, r => reqConfig.transform(r)));
+
+    res = {
+        items: documents,
+        count: extracted.count
+    };
+
+    if (!skipCopiedCheck) {
+        return {
+            items: await ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.items, true),
+            count: res.count
+        };
+    }
+
+    return res;
+}
+
+async function getConfig(ResearchEntityModel, researchEntityId, query) {
+    const connector = query.where.connector;
+    if (!connector)
+        throw new Error('A Connector parameter is necessary');
+    const researchEntity = await ResearchEntityModel.findOneById(researchEntityId);
+
+    switch (connector) {
+        case 'Publications':
+            return PublicationsConnector.getConfig(researchEntity, query);
+        case 'ORCID':
+            return OrcidConnector.getConfig(researchEntity, query);
+        case 'Scopus':
+            return ScopusConnector.getConfig(researchEntity, query);
+        default:
+            throw 'Connector not found';
+    }
+}
+
+function makeRequest(reqConfig) {
+    return request.get(
         Object.assign({
                 maxAttempts: 5,
                 retryDelay: 500
             },
             reqConfig.reqParams)
     );
-    const extracted = reqConfig.fieldExtract(res.body);
-    const documents = await Promise.all(_.map(extracted.documents, r => reqConfig.transform(r)));
-
-    return {
-        items: documents,
-        count: extracted.count
-    };
 }
