@@ -9,7 +9,7 @@ const DocumentTypes = require("./DocumentTypes");
 
 module.exports = {
     getConfig: function (researchEntity, configQuery) {
-        let query;
+        let query = [];
         const researchEntityType = researchEntity.getType();
         let uri = sails.config.scientilla.scopus.url + '/content/search/scopus';
 
@@ -17,9 +17,9 @@ module.exports = {
             uri += 'affiliation';
 
         if (researchEntityType === 'user')
-            query = ['au-id(' + researchEntity.scopusId + ')'];
+            query.push('au-id(' + researchEntity.scopusId + ')');
         else
-            query = ['AF-ID(' + researchEntity.scopusId + ')'];
+            query.push('AF-ID(' + researchEntity.scopusId + ')');
 
         const additionalOpts = {
             'year': 'PUBYEAR IS %val'
