@@ -11,12 +11,6 @@
 const _ = require('lodash');
 const ResearchEntity = require('../lib/ResearchEntity');
 
-function buildCheckDuplicatedDocuments(includeDrafts = true) {
-    return function(documents, researchEntityId) {
-        return ResearchEntity.checkCopiedDocuments(Group, researchEntityId, documents, includeDrafts);
-    }
-}
-
 module.exports = _.merge({}, ResearchEntity, {
     DEFAULT_SORTING: {
         name: 'asc',
@@ -44,14 +38,12 @@ module.exports = _.merge({}, ResearchEntity, {
         },
         drafts: {
             collection: 'Document',
-            via: 'draftGroupCreator',
-            _postPopulate: buildCheckDuplicatedDocuments()
+            via: 'draftGroupCreator'
         },
         documents: {
             collection: 'document',
             via: 'groups',
-            through: 'authorshipgroup',
-            _postPopulate: buildCheckDuplicatedDocuments(false)
+            through: 'authorshipgroup'
         },
         authorships: {
             collection: 'authorshipGroup',
@@ -60,14 +52,12 @@ module.exports = _.merge({}, ResearchEntity, {
         discardedDocuments: {
             collection: 'Document',
             via: 'discardedGroups',
-            through: 'discardedgroup',
-            _postPopulate: buildCheckDuplicatedDocuments()
+            through: 'discardedgroup'
         },
         suggestedDocuments: {
             collection: 'document',
             via: 'groups',
-            through: 'documentsuggestiongroup',
-            _postPopulate: buildCheckDuplicatedDocuments()
+            through: 'documentsuggestiongroup'
         },
         getType: function () {
             return 'group';

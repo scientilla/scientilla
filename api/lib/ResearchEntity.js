@@ -223,32 +223,3 @@ function getAuthorshipModel(ResearchEntityModel) {
 function getDiscardedModel(ResearchEntityModel) {
     return getThroughModel(ResearchEntityModel, 'discardedDocuments');
 }
-
-function getSimilarDocuments(ResearchEntityModel, researchEntityid, doc, includeDrafts) {
-    const criteria = {or: []};
-    if (doc.id)
-        criteria.id = {'!': doc.id};
-    if (doc.title)
-        criteria.or.push({title: doc.title});
-    if (doc.doi)
-        criteria.or.push({doi: doc.doi});
-    if (doc.scopusId)
-        criteria.or.push({scopusId: doc.scopusId});
-    if (doc.authorsStr)
-        criteria.or.push({authorsStr: doc.authorsStr});
-    if (_.isEmpty(criteria.or))
-        delete criteria.or;
-    let q = ResearchEntityModel
-        .findOneById(researchEntityid)
-        .populate('documents', criteria);
-
-    if (includeDrafts)
-        q = q.populate('drafts', criteria);
-
-    return q.then(function (researchEntity) {
-        return _.union(
-            researchEntity.drafts,
-            researchEntity.documents
-        );
-    });
-}

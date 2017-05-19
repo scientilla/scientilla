@@ -92,6 +92,11 @@ module.exports = _.merge({}, BaseModel, {
             via: 'document',
             through: 'affiliation'
         },
+        duplicates: {
+            collection: 'document',
+            via: 'duplicate',
+            through: 'documentduplicate'
+        },
         userTags: {
             collection: 'tag',
             via: 'document'
@@ -163,19 +168,6 @@ module.exports = _.merge({}, BaseModel, {
                 return a.toUpperCase();
             });
             return ucAuthors;
-        },
-        getSimiliarity: function (doc, minThreeshold = 0) {
-            const p = 2;
-            var self = this;
-            if (ObjectComparer.compareStrings(self.title, doc.title) < .6)
-                return .45;
-            const comparisonFields = fields.filter(f => f.weight);
-            const tmp = _.reduce(comparisonFields, function (sum, f) {
-                var fieldSimilarity = ObjectComparer.compareStrings(self[f.name], doc[f.name]);
-                return sum + Math.pow(fieldSimilarity, p) * f.weight;
-            }, 0);
-            const similarity = Math.pow(tmp / _.sumBy(fields, 'weight'), 1 / p);
-            return similarity;
         },
         getAuthorIndex: function (author) {
             return _.findIndex(this.getAuthors(), a => _.includes(author.getAliases(), a));

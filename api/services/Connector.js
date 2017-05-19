@@ -6,7 +6,7 @@ const _ = require('lodash');
 const Promise = require("bluebird");
 
 module.exports = {
-    getDocuments: async function (ResearchEntityModel, researchEntityId, query, skipCopiedCheck) {
+    getDocuments: async function (ResearchEntityModel, researchEntityId, query) {
         const connector = query.where.connector;
         if (!connector)
             throw new Error('A Connector parameter is necessary');
@@ -28,14 +28,6 @@ module.exports = {
         }
 
         let res = await makeRequest(reqConfig);
-
-        if (!skipCopiedCheck) {
-            return {
-                items: await ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.items, true),
-                count: res.count
-            };
-        }
-
         return res;
     }
 };
