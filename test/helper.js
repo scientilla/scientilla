@@ -3,7 +3,7 @@
 
 const should = require('should');
 const assert = require('assert');
-const request = require('supertest-as-promised');
+const request = require('supertest');
 const _ = require('lodash');
 
 const users = require('./data/users');
