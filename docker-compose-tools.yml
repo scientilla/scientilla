@@ -16,3 +16,8 @@ services:
     entrypoint: mocha
     volumes:
       - .:/usr/src/app
+  grunt:
+    build: ./docker/node
+    entrypoint: grunt
+    volumes:
+      - .:/usr/src/app
