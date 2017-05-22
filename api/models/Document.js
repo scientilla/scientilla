@@ -94,7 +94,7 @@ module.exports = _.merge({}, BaseModel, {
         },
         duplicates: {
             collection: 'document',
-            via: 'duplicate',
+            via: 'document',
             through: 'documentduplicate'
         },
         userTags: {

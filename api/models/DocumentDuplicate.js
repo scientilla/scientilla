@@ -8,11 +8,11 @@
 module.exports = {
 
     attributes: {
-        document: {
+        duplicate: {
             model: 'document',
             primaryKey: true
         },
-        duplicate: {
+        document: {
             model: 'document',
             primaryKey: true
         }
