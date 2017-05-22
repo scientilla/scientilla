@@ -7,6 +7,7 @@
 const actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 const util = require('util');
 const Promise = require("bluebird");
+const _ = require('lodash');
 
 /**
  * Populate (or "expand") an association
@@ -86,14 +87,12 @@ module.exports = function expand(req, res) {
             const limit = actionUtil.parseLimit(req);
             const recordsId = _.slice(_.map(relationsRecords, 'id'), 0, limit);
 
-            let populateFields = req.param('populate');
-            if (populateFields && !_.isArray(populateFields))
-                populateFields = [populateFields];
-            populateFields = _.filter(populateFields, f => _.some(relationModel.associations, {alias: f}));
+            const populateFieldNames = _.castArray(req.param('populate')).filter(_.identity);
+            const populateFields = _.filter(relationModel.associations, f => populateFieldNames.some(f2 => f.alias == f2));
             //sTODO add support for deep populate
             const where = {'id': recordsId};
             let query = relationModel.find({where, sort});
-            _.forEach(populateFields, f => query = query.populate(f));
+            _.forEach(populateFields, f => query = query.populate(f.alias));
 
             return Promise.all([query, count])
                 .spread((matchingRecords, count) => {
