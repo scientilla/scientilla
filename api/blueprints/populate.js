@@ -76,7 +76,7 @@ module.exports = function expand(req, res) {
 
     Model.findOne(parentPk)
         .populate(relation, populate)
-        .then(matchingRecord => {
+        .then(async matchingRecord => {
             if (!matchingRecord)
                 return res.notFound('No record found with the specified id.');
             if (!matchingRecord[relation])
@@ -92,7 +92,11 @@ module.exports = function expand(req, res) {
             //sTODO add support for deep populate
             const where = {'id': recordsId};
             let query = relationModel.find({where, sort});
-            _.forEach(populateFields, f => query = query.populate(f.alias));
+            for (let f of populateFields)  {
+                const fieldAttribute = relationModel._attributes[f.alias];
+                const criteria = _.get(fieldAttribute, 'getCriteria') ? await fieldAttribute.getCriteria(req) : {};
+                query = query.populate(f.alias, criteria);
+            };
 
             return Promise.all([query, count])
                 .spread((matchingRecords, count) => {

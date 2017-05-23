@@ -9,13 +9,15 @@ module.exports = {
 
     attributes: {
         duplicate: {
-            model: 'document',
-            primaryKey: true
+            model: 'document'
         },
         document: {
-            model: 'document',
-            primaryKey: true
-        }
+            model: 'document'
+        },
+        researchEntity : {
+            model: 'user'
+        },
+        type: 'string'
     },
 
     migrate: 'safe',

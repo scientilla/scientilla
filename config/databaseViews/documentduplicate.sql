@@ -1,33 +1,51 @@
 CREATE OR REPLACE VIEW documentduplicate AS
-  SELECT DISTINCT
-    d.id AS document,
-    dd.id AS duplicate
-  FROM document d
-    LEFT JOIN authorship a
-      ON d.id = a.document
-    LEFT JOIN "user" u
-      ON a."researchEntity" = u.id
-         OR d."draftCreator" = u.id
-    LEFT JOIN authorshipgroup ag
-      ON d.id = ag.document
-    LEFT JOIN "group" g
-      ON ag."researchEntity" = g.id
-         OR d."draftGroupCreator" = g.id
-    LEFT JOIN authorship a2
-      ON u.id = a2."researchEntity"
-    LEFT JOIN authorshipgroup ag2
-      ON g.id = ag2."researchEntity"
-    JOIN document dd
-      ON a2.document = dd.id
-         OR ag2.document = dd.id
-         OR u.id = dd."draftCreator"
-         OR g.id = dd."draftGroupCreator"
-  WHERE ((d.doi = dd.doi) :: INT
-         + (d."authorsStr" = dd."authorsStr") :: INT
-         + (d.title = dd.title) :: INT
-         + (d."scopusId" = dd."scopusId") :: INT > 1)
-        AND d.id <> dd.id
-        AND (
-          (d.kind = 'd' AND dd.kind IN ('d', 'v'))
-          OR
-          (d.kind = 'v' AND dd.kind = 'v'))
+  SELECT
+    document         AS document,
+    duplicate        AS duplicate,
+    "researchEntity" AS "researchEntity",
+    ROW_NUMBER() OVER () AS id,
+    "researchEntityType" as "researchEntityType"
+  FROM (SELECT
+          d.id    AS document,
+          dd.id   AS duplicate,
+          u.id    AS "researchEntity",
+          'user' AS "researchEntityType"
+        FROM document d,
+              "user" u
+          LEFT JOIN authorship a
+            ON u.id = a."researchEntity"
+          JOIN document dd
+            ON a.document = dd.id
+               OR u.id = dd."draftCreator"
+        WHERE ((d.doi = dd.doi) :: INT
+               + (d."authorsStr" = dd."authorsStr") :: INT
+               + (d.title = dd.title) :: INT
+               + (d."scopusId" = dd."scopusId") :: INT > 1)
+              AND d.id <> dd.id
+              AND (
+                (d.kind = 'd' AND dd.kind IN ('d', 'v'))
+                OR
+                (d.kind = 'v' AND dd.kind = 'v'))
+    UNION
+        SELECT
+          d.id    AS document,
+          dd.id   AS duplicate,
+          g.id    AS "researchEntity",
+          'group' AS "researchEntityType"
+        FROM document d,
+              "group" g
+          LEFT JOIN authorshipgroup a
+            ON g.id = a."researchEntity"
+          JOIN document dd
+            ON a.document = dd.id
+               OR g.id = dd."draftGroupCreator"
+        WHERE ((d.doi = dd.doi) :: INT
+               + (d."authorsStr" = dd."authorsStr") :: INT
+               + (d.title = dd.title) :: INT
+               + (d."scopusId" = dd."scopusId") :: INT > 1)
+              AND d.id <> dd.id
+              AND (
+                (d.kind = 'd' AND dd.kind IN ('d', 'v'))
+                OR
+                (d.kind = 'v' AND dd.kind = 'v'))
+       ) tmp

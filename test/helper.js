@@ -78,7 +78,7 @@ module.exports = (function () {
             return res.body;
 
         },
-        getUserDocuments: async function (user, populateFields, qs, respCode = 200) {
+        getUserDocuments: async function (user, populateFields, qs = {}, respCode = 200) {
             const res = await request(url)
                 .get('/users/' + user.id + '/documents')
                 .query({populate: populateFields})
@@ -95,7 +95,7 @@ module.exports = (function () {
                 .expect(respCode);
             return res.body;
         },
-        getUserDrafts: async function (user, populateFields, qs, respCode = 200) {
+        getUserDrafts: async function (user, populateFields, qs = {}, respCode = 200) {
             const res = await request(url)
                 .get('/users/' + user.id + '/drafts')
                 .query({populate: populateFields})
@@ -124,7 +124,7 @@ module.exports = (function () {
                 .expect(respCode);
             return res.body;
         },
-        userVerifyDraft: async function (user, draftData, position, affiliations, corresponding, respCode = 200) {
+        userVerifyDraft: async function (user, draftData, position, affiliations, corresponding = false, respCode = 200) {
             const res = await request(url)
                 .put('/users/' + user.id + '/drafts/' + draftData.id + '/verified')
                 .send({position: position, 'affiliations': affiliations, 'corresponding': corresponding})
@@ -148,7 +148,7 @@ module.exports = (function () {
                     public: pub
                 });
         },
-        getAuthorships: function (document, populateFields, qs) {
+        getAuthorships: function (document, populateFields, qs = {}) {
             return request(url).get('/documents/' + document.id + '/authorships')
                 .query({populate: populateFields})
                 .query(qs);
@@ -168,7 +168,7 @@ module.exports = (function () {
                 .expect(respCode);
             return res.body;
         },
-        userVerifyDocument: async function (user, document, position, affiliations, corresponding, respCode = 200) {
+        userVerifyDocument: async function (user, document, position, affiliations, corresponding = false, respCode = 200) {
             const res = await request(url)
                 .post('/users/' + user.id + '/documents')
                 .send({
@@ -180,7 +180,7 @@ module.exports = (function () {
                 .expect(respCode);
             return res.body;
         },
-        getGroupDrafts: async function (group, populateFields, qs, respCode = 200) {
+        getGroupDrafts: async function (group, populateFields, qs = {}, respCode = 200) {
             const res = await request(url)
                 .get('/groups/' + group.id + '/drafts')
                 .query({populate: populateFields})

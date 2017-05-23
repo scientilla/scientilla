@@ -47,8 +47,7 @@ describe('Draft Verification', () => {
             allUserDrafts.items.forEach(d => {
                 d.duplicates.should.be.ok;
                 d.duplicates.length.should.be.above(0);
-                d.duplicates[0].title.should.equal(d.title);
-                d.duplicates[0].id.should.not.equal(d.id);
+                d.duplicates[0].duplicate.should.not.equal(d.id);
             });
 
             const doc1 = allUserDocs.items[0];

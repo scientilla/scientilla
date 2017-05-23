@@ -11,6 +11,7 @@
 const _ = require('lodash');
 const Promise = require('bluebird');
 const BaseModel = require("../lib/BaseModel.js");
+const actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 
 const fields = [
     {name: 'authorsStr', weight: 0.4},
@@ -93,9 +94,16 @@ module.exports = _.merge({}, BaseModel, {
             through: 'affiliation'
         },
         duplicates: {
-            collection: 'document',
+            collection: 'documentduplicate',
             via: 'document',
-            through: 'documentduplicate'
+            getCriteria: async function(req) {
+                const researchEntityId = req.param('parentid');
+                const researchEntityType = req.path.includes('user') ? 'user' : 'group';
+                return {
+                    'researchEntity' : researchEntityId,
+                    'researchEntityType': researchEntityType
+                };
+            }
         },
         userTags: {
             collection: 'tag',
