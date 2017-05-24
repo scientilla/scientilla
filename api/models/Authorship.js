@@ -24,18 +24,25 @@ module.exports = _.merge({}, BaseModel, {
         corresponding: 'boolean',
         position: 'integer',
         public: 'boolean',
-        unverify: function(){
+        unverify: function () {
             this.researchEntity = null;
             return this.savePromise();
         }
     },
-    getEmpty: function() {
+    beforeDestroy: async function (criteria, cb) {
+        const authorships = await Authorship.find(criteria);
+        for (let a of authorships)
+            await Affiliation.destroy({authorship: a.id});
+
+        cb();
+    },
+    getEmpty: function () {
         return {
             corresponding: false,
             affiliations: []
         };
     },
-    createDraftAuthorships: function(draftId, draftData){
+    createDraftAuthorships: function (draftId, draftData) {
         const authorshipFields = ['position', 'affiliations', 'corresponding'];
         const authorships = _.map(draftData.authorships, a => _.pick(a, authorshipFields));
         _.forEach(authorships, a => a.document = draftId);
