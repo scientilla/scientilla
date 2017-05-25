@@ -85,11 +85,7 @@
             },
             getExternalConnectors: function () {
                 var connectors = [];
-                var publicationsConnector = {name: 'Publications', enabled: true};
-                var orcidConnector = {name: 'ORCID', enabled: !!this.orcidId};
                 var scopusConnector = {name: 'Scopus', enabled: !!this.scopusId};
-                connectors.push(publicationsConnector);
-                connectors.push(orcidConnector);
                 connectors.push(scopusConnector);
                 return connectors;
             },
@@ -130,9 +126,7 @@
             },
             getExternalConnectors: function () {
                 var connectors = [];
-                var publicationsConnector = {name: 'Publications', enabled: !!this.publicationsAcronym};
                 var scopusConnector = {name: 'Scopus', enabled: !!this.scopusId};
-                connectors.push(publicationsConnector);
                 connectors.push(scopusConnector);
                 return connectors;
             },

@@ -92,13 +92,13 @@ function importScopusDocuments(institute) {
     }
 
     function fastCreateDraft(draftData) {
-        const selectedDraftData = Document.selectDraftData(draftData);
+        const selectedDraftData = Document.selectData(draftData);
         selectedDraftData.draftGroupCreator = institute.id;
         return Document.create(selectedDraftData)
             .then(draft =>
                 Promise.all([
                     draft,
-                    Authorship.createDraftAuthorships(draft.id, draftData)
+                    Authorship.createEmptyAuthorships(draft.id, draftData)
                 ]))
             .spread(draft => draft);
     }

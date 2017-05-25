@@ -1,4 +1,4 @@
-/* global Document, sails, User, ObjectComparer */
+/* global Document, sails, User, ObjectComparer, Authorship, DocumentKinds */
 'use strict';
 
 /**
@@ -28,7 +28,9 @@ const fields = [
     {name: 'type', weight: 0.2},
     {name: 'sourceType', weight: 0.2},
     {name: 'scopusId', weight: 0.6},
-    {name: 'wosId', weight: 0.1}
+    {name: 'wosId', weight: 0.1},
+    {name: 'origin'},
+    {name: 'kind'}
 ];
 
 module.exports = _.merge({}, BaseModel, {
@@ -56,6 +58,11 @@ module.exports = _.merge({}, BaseModel, {
         wosId: 'STRING',
         abstract: 'TEXT',
         kind: 'STRING',
+        origin: 'STRING',
+        editedAfterImport: {
+            type: "BOOLEAN",
+            defaultsTo: false
+        },
         source: {
             model: 'source'
         },
@@ -68,6 +75,16 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'user',
             via: 'documents',
             through: 'documentsuggestion'
+        },
+        externalUsers: {
+            collection: 'user',
+            via: 'document',
+            through: 'externaldocument'
+        },
+        externalGroups: {
+            collection: 'group',
+            via: 'document',
+            through: 'externaldocumentgroup'
         },
         groupSuggestions: {
             collection: 'group',
@@ -207,11 +224,9 @@ module.exports = _.merge({}, BaseModel, {
     getFields: function () {
         return fields.map(f => f.name);
     },
-    selectDraftData: function (draftData) {
+    selectData: function (draftData) {
         const documentFields = Document.getFields();
-        const selectedDraftData = _.pick(draftData, documentFields);
-        selectedDraftData.draft = true;
-        return selectedDraftData;
+        return _.pick(draftData, documentFields);
     },
     deleteIfNotVerified: function (documentId) {
         function countAuthorsAndGroups(document) {
@@ -336,6 +351,20 @@ module.exports = _.merge({}, BaseModel, {
 
                 return copies;
             });
+    },
+    createOrUpdate: async function (criteria, documentData) {
+        const selectedData = Document.selectData(documentData);
+
+        let doc = await Document.findOne(criteria);
+        if (doc)
+            await Document.update(criteria, selectedData);
+        else
+            await Document.create(selectedData);
+
+        if (documentData.authorships) {
+            doc = await Document.findOne(criteria);
+            await Authorship.destroy({document: doc.id});
+            await Authorship.createEmptyAuthorships(doc.id, documentData);
+        }
     }
-})
-;
+});

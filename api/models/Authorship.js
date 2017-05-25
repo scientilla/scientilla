@@ -1,3 +1,4 @@
+/* global Authorship, Affiliation*/
 /**
  * Authorship.js
  *
@@ -42,10 +43,10 @@ module.exports = _.merge({}, BaseModel, {
             affiliations: []
         };
     },
-    createDraftAuthorships: function (draftId, draftData) {
+    createEmptyAuthorships: function (docId, docData) {
         const authorshipFields = ['position', 'affiliations', 'corresponding'];
-        const authorships = _.map(draftData.authorships, a => _.pick(a, authorshipFields));
-        _.forEach(authorships, a => a.document = draftId);
+        const authorships = _.map(docData.authorships, a => _.pick(a, authorshipFields));
+        _.forEach(authorships, a => a.document = docId);
         return Authorship.create(authorships);
     }
 });

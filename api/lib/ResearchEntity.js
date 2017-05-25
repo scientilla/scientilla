@@ -17,7 +17,7 @@ const BaseModel = require("./BaseModel.js");
 module.exports = _.merge({}, BaseModel, {
     attributes: {},
     createDraft: function (ResearchEntityModel, researchEntityId, draftData) {
-        const selectedDraftData = Document.selectDraftData(draftData);
+        const selectedDraftData = Document.selectData(draftData);
         selectedDraftData.kind = DocumentKinds.DRAFT;
         return Promise.all([
             ResearchEntityModel.findOneById(researchEntityId).populate('drafts'),
@@ -33,7 +33,7 @@ module.exports = _.merge({}, BaseModel, {
             .spread(function (draftId) {
                 return Promise.all([
                     draftId,
-                    Authorship.createDraftAuthorships(draftId, draftData)
+                    Authorship.createEmptyAuthorships(draftId, draftData)
                 ]);
             })
             .spread(function (draftId) {

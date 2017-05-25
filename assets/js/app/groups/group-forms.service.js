@@ -12,25 +12,6 @@
 
         service.getExternalNewFileds = function (selection) {
             var opts = {
-                'publications': {
-                    publicationsField: {
-                        inputType: 'select',
-                        label: 'Search key',
-                        matchColumn: 'field',
-                        values: [
-                            {value: 'name', label: 'Acronym'}
-                        ]
-                    },
-                    source_type: {
-                        inputType: 'select',
-                        label: 'Publications type',
-                        matchColumn: 'type',
-                        values: _.concat(
-                            {value: 'all', label: 'All'},
-                            publicationTypes
-                        )
-                    }
-                },
                 'scopus': {
                     scopusField: {
                         inputType: 'select',

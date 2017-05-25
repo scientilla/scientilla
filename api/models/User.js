@@ -85,6 +85,11 @@ module.exports = _.merge({}, ResearchEntity, {
             through: 'documentsuggestion',
             _postPopulate: buildCheckDuplicatedDocuments()
         },
+        externalDocuments: {
+            collection: 'document',
+            via: 'researchEntity',
+            through: 'externaldocument'
+        },
         authorships: {
             collection: 'authorship',
             via: 'researchEntity',

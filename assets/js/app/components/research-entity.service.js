@@ -56,9 +56,13 @@
         }
 
         function getExternalDocuments(researchEntity, query) {
-            var q = _.merge({}, query);
+            const populate = {populate: documentPopulates};
+            const q = _.merge({
+                limit: query.limit,
+                skip: query.skip
+            }, populate);
 
-            return researchEntity.getList('external-documents', query);
+            return researchEntity.getList('externalDocuments', q);
         }
 
 
