@@ -5,8 +5,8 @@
 var test = require('./../helper.js');
 
 describe('Draft Bulk Creation: ', () => {
-    before(test.cleanDb);
-    after(test.cleanDb);
+    before(test.clean);
+    after(test.clean);
 
     const usersData = test.getAllUserData();
     const documentsData = test.getAllDocumentData();
@@ -16,10 +16,10 @@ describe('Draft Bulk Creation: ', () => {
     let user;
 
     it('creating multiple drafts should be possible for an user', async() => {
+        user = await test.registerUser(usersData[0]);
         const draftsData = [documentsData[2], documentsData[3], documentsData[4]];
         iitGroup = await test.createGroup(iitGroupData);
         await test.createInstitute(iitInstituteData);
-        user = await test.registerUser(usersData[0]);
         await test.userCreateDrafts(user, draftsData);
         const body = await test.getUserDrafts(user);
         // expect

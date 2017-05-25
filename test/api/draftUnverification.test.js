@@ -5,8 +5,8 @@ const should = require('should');
 const test = require('./../helper.js');
 
 describe('Draft Unverification', () => {
-    before(test.cleanDb);
-    after(test.cleanDb);
+    before(test.clean);
+    after(test.clean);
 
     const user1Data = test.getAllUserData()[0];
     const user2Data = test.getAllUserData()[1];
@@ -26,10 +26,10 @@ describe('Draft Unverification', () => {
     let iitInstitute;
 
     it('it should be possible to unverify a document', async () => {
+        user1 = await test.registerUser(user1Data);
         iitGroup = await test.createGroup(iitGroupData);
         iitInstitute = await test.createInstitute(iitInstituteData);
         journal = await test.createSource(sourcesData[0]);
-        user1 = await test.registerUser(user1Data);
         documentData.source = journal;
         document = await test.userCreateDraft(user1, documentData);
         const affiliations = [iitInstitute.id];

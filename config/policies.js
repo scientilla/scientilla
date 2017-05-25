@@ -16,50 +16,100 @@
  * http://sailsjs.org/#!/documentation/reference/sails.config/sails.config.policies.html
  */
 
+const _ = require('lodash');
+
+const isLogged = ['isLogged'];
+const isAdmin = ['isAdmin'];
+const isActivityOwner = ['isActivityOwner']
+const isGroupOwner = ['isGroupOwner']
+
+const defaultPolicy = {
+    '*': isLogged,
+    findOne: true,
+    find: true,
+    populate: true,
+    delete: isAdmin,
+    create: isAdmin,
+    update: isAdmin
+};
 
 module.exports.policies = {
 
-  /***************************************************************************
-  *                                                                          *
-  * Default policy for all controllers and actions (`true` allows public     *
-  * access)                                                                  *
-  *                                                                          *
-  ***************************************************************************/
+    /***************************************************************************
+     *                                                                          *
+     * Default policy for all controllers and actions (`true` allows public     *
+     * access)                                                                  *
+     *                                                                          *
+     ***************************************************************************/
 
-   '*': true,
-//   '*': 'hasJsonWebToken',
-//   '/users/*': 'hasJsonWebToken',
-//   '/users': true,
+    '*': true,
 
-  /***************************************************************************
-  *                                                                          *
-  * Here's an example of mapping some policies to run before a controller    *
-  * and its actions                                                          *
-  *                                                                          *
-  ***************************************************************************/
-        UserController: {
-            '*':  true,
-            create: true,
-        },
-        AuthController: {
-            '*': true
-        },
-        UserController: {
-            'jwt': true
-        }
-        
-	// RabbitController: {
+    /***************************************************************************
+     *                                                                          *
+     * Here's an example of mapping some policies to run before a controller    *
+     * and its actions                                                          *
+     *                                                                          *
+     ***************************************************************************/
 
-		// Apply the `false` policy as the default for all of RabbitController's actions
-		// (`false` prevents all access, which ensures that nothing bad happens to our rabbits)
-		// '*': false,
+    AuthController: {
+        '*': true
+    },
+    AliasController: defaultPolicy,
 
-		// For the action `nurture`, apply the 'isRabbitMother' policy
-		// (this overrides `false` above)
-		// nurture	: 'isRabbitMother',
+    AuthorshipController: defaultPolicy,
 
-		// Apply the `isNiceToAnimals` AND `hasRabbitFood` policies
-		// before letting any users feed our rabbits
-		// feed : ['isNiceToAnimals', 'hasRabbitFood']
-	// }
+    AuthorshipGroupController: defaultPolicy,
+
+    CollaborationGroupController: defaultPolicy,
+
+    GroupController: _.defaults({
+        getExternalDocuments: true,
+        getChartsData: true,
+        update: isGroupOwner,
+        createDraft: isGroupOwner,
+        createDrafts: isGroupOwner,
+        verifyDraft: isGroupOwner,
+        verifyDrafts: isGroupOwner,
+        verifyDocument: isGroupOwner,
+        verifyDocuments: isGroupOwner,
+        discardDocument: isGroupOwner,
+        discardDocuments: isGroupOwner,
+        unverifyDocument: isGroupOwner,
+        updateDraft: isGroupOwner,
+        setAuthorhips: isGroupOwner,
+    }, defaultPolicy),
+
+    InstituteController: _.defaults({
+        create: isLogged,
+    }, defaultPolicy),
+
+    MembershipController: defaultPolicy,
+
+    SettingsController: _.defaults({
+        getSettings: true,
+    }, defaultPolicy),
+
+    SourceController: _.defaults({
+        create: isLogged,
+    }, defaultPolicy),
+
+    TaglabelController: defaultPolicy,
+
+    UserController: _.defaults({
+        jwt: true,
+        getExternalDocuments: true,
+        getChartsData: true,
+        update: isActivityOwner,
+        createDraft: isActivityOwner,
+        createDrafts: isActivityOwner,
+        verifyDraft: isActivityOwner,
+        verifyDrafts: isActivityOwner,
+        verifyDocument: isActivityOwner,
+        verifyDocuments: isActivityOwner,
+        discardDocument: isActivityOwner,
+        discardDocuments: isActivityOwner,
+        unverifyDocument: isActivityOwner,
+        updateDraft: isActivityOwner,
+        setAuthorhips: isActivityOwner,
+    }, defaultPolicy),
 };

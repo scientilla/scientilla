@@ -6,8 +6,8 @@ const _ = require('lodash');
 const test = require('./../helper.js');
 
 describe('Draft Verification', () => {
-    before(test.cleanDb);
-    after(test.cleanDb);
+    before(test.clean);
+    after(test.clean);
 
     const usersData = test.getAllUserData();
     const documentsData = test.getAllDocumentData();
@@ -36,11 +36,11 @@ describe('Draft Verification', () => {
     let author2affiliationInstitutes;
 
     it('there should be no verified documents for a new user', async() => {
+            user1 = await test.registerUser(user1Data);
             iitGroup = await test.createGroup(iitGroupData);
             iitInstitute = await test.createInstitute(iitInstituteData);
             unigeInstitute = await test.createInstitute(unigeInstituteData);
             journal = await test.createSource(sourcesData[0]);
-            user1 = await test.registerUser(user1Data);
             const body = await test.getUserDocuments(user1);
             body.should.be.eql(test.EMPTY_RES);
         }
@@ -149,12 +149,12 @@ describe('Draft Verification', () => {
     );
 
     it('verifying in bulk should verify only draft with at least an affiliation associated to the user', async() => {
-        await test.cleanDb();
+        await test.clean();
+        user1 = await test.registerUser(user1Data);
         iitGroup = await test.createGroup(iitGroupData);
         iitInstitute = await test.createInstitute(iitInstituteData);
         unigeInstitute = await test.createInstitute(unigeInstituteData);
         journal = await test.createSource(sourcesData[0]);
-        user1 = await test.registerUser(user1Data);
         documentsData[2].source = journal;
         documentsData[2].authorships = [{
             position: 1,

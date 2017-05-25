@@ -9,7 +9,7 @@ var researchEntityController = require('./ResearchEntityController');
 module.exports = _.merge({}, researchEntityController, {
     addTags: function (req, res) {
         var documentId = req.params.documentId;
-        var groupId = req.params.id;
+        var groupId = req.params.researchEntityId;
         var tags = req.param('tags');
         res.halt(Group.addTags(TagGroup, groupId, documentId, tags));
     }

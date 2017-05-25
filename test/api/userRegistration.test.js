@@ -4,8 +4,8 @@
 const test = require('./../helper.js');
 
 describe('User registration', () => {
-    before(test.cleanDb);
-    after(test.cleanDb);
+    before(test.clean);
+    after(test.clean);
 
     const userData = test.getAllUserData()[0];
     const institutesData = test.getAllInstituteData();
@@ -22,9 +22,9 @@ describe('User registration', () => {
     );
 
     it('should be able to register new user when there is no users', async() => {
+            await test.registerUser(userData);
             iitInstitute = await test.createInstitute(iitInstituteData);
             iitGroup = await test.createGroup(iitGroupData);
-            await test.registerUser(userData);
             const body = await test.getUsers();
             //expect
             const count = body.count;

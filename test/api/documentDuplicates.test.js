@@ -6,8 +6,8 @@ const _ = require('lodash');
 const test = require('./../helper.js');
 
 describe('Draft Verification', () => {
-    before(test.cleanDb);
-    after(test.cleanDb);
+    before(test.clean);
+    after(test.clean);
 
     const usersData = test.getAllUserData();
     const documentsData = test.getAllDocumentData().slice(2, 4);
@@ -27,10 +27,10 @@ describe('Draft Verification', () => {
     let iitInstitute;
 
     it('there should be duplicates for some documents', async () => {
+            user = await test.registerUser(userData);
             iitGroup = await test.createGroup(iitGroupData);
             iitInstitute = await test.createInstitute(iitInstituteData);
             journal = await test.createSource(sourcesData[0]);
-            user = await test.registerUser(userData);
 
             documentsData.forEach(d => d.source = journal);
 
