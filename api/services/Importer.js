@@ -68,7 +68,7 @@ function importScopusDocuments(institute) {
 
     function scopusLoop(researchEntityModel, instituteId, query) {
 
-        return Connector.getDocuments(researchEntityModel, instituteId, query, true)
+        return Connector.getDocuments(researchEntityModel, instituteId, query)
             .then(result => {
                 const documents = result.items;
 

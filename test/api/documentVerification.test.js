@@ -6,8 +6,8 @@ const test = require('./../helper.js');
 const _ = require('lodash');
 
 describe('Document Verification', () => {
-    before(test.cleanDb);
-    after(test.cleanDb);
+    before(test.clean);
+    after(test.clean);
 
     const user1Data = test.getAllUserData()[0];
     const user2Data = test.getAllUserData()[1];
@@ -30,11 +30,11 @@ describe('Document Verification', () => {
 
 
     it('it should be possible to verify an already verified document', async () => {
+        user1 = await test.registerUser(user1Data);
         iitGroup = await test.createGroup(iitGroupData);
         iitInstitute = await test.createInstitute(iitInstituteData);
         unigeInstitute = await test.createInstitute(unigeInstituteData);
         journal = await test.createSource(journalData);
-        user1 = await test.registerUser(user1Data);
         documentData.source = journal;
         document = await test.userCreateDraft(user1, documentData);
         await test.userVerifyDraft(user1, document, user1Doc1position, [iitInstitute.id]);

@@ -5,8 +5,8 @@
 const test = require('./../helper.js');
 
 describe('Draft Creation: ', () => {
-    before(test.cleanDb);
-    after(test.cleanDb);
+    before(test.clean);
+    after(test.clean);
 
     const usersData = test.getAllUserData();
     const documentsData = test.getAllDocumentData();
@@ -23,8 +23,8 @@ describe('Draft Creation: ', () => {
     let group;
 
     it('there should be no drafts for a new user', async() => {
-        iitGroup = await test.createGroup(iitGroupData);
         user = await test.registerUser(usersData[0]);
+        iitGroup = await test.createGroup(iitGroupData);
         const body = await test.getUserDrafts(user);
         body.should.be.eql(test.EMPTY_RES);
     });

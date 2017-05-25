@@ -18,12 +18,6 @@ const ResearchEntity = require('../lib/ResearchEntity');
 const USER = 'user';
 const ADMINISTRATOR = 'administrator';
 
-function buildCheckDuplicatedDocuments(includeDrafts = true) {
-    return function(documents, researchEntityId) {
-        return ResearchEntity.checkCopiedDocuments(User, researchEntityId, documents, includeDrafts);
-    }
-}
-
 module.exports = _.merge({}, ResearchEntity, {
     DEFAULT_SORTING: {
         surname: 'asc',
@@ -70,20 +64,17 @@ module.exports = _.merge({}, ResearchEntity, {
         },
         drafts: {
             collection: 'Document',
-            via: 'draftCreator',
-            _postPopulate: buildCheckDuplicatedDocuments()
+            via: 'draftCreator'
         },
         documents: {
             collection: 'Document',
             via: 'users',
-            through: 'authorship',
-            _postPopulate: buildCheckDuplicatedDocuments(false)
+            through: 'authorship'
         },
         suggestedDocuments: {
             collection: 'Document',
             via: 'users',
-            through: 'documentsuggestion',
-            _postPopulate: buildCheckDuplicatedDocuments()
+            through: 'documentsuggestion'
         },
         externalDocuments: {
             collection: 'document',
@@ -97,8 +88,7 @@ module.exports = _.merge({}, ResearchEntity, {
         discardedDocuments: {
             collection: 'Document',
             via: 'discardedCoauthors',
-            through: 'discarded',
-            _postPopulate: buildCheckDuplicatedDocuments()
+            through: 'discarded'
         },
         jsonWebTokens: {
             collection: 'jwt',

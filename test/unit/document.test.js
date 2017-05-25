@@ -251,29 +251,4 @@ describe('Document model', () => {
 
     });
 
-    describe('getSimilarity', function () {
-        const sameDocumentThreeshold = .95;
-        const similarDocumentThreeshold = .80;
-        const differentDocumentThreeshold = .5;
-        const documentsData = test.getAllDocumentData();
-
-        it('two equal documents should have a very high similiarity', () => {
-            const document0 = Doc(documentsData[0]);
-            document0.getSimiliarity(document0).should.be.above(sameDocumentThreeshold);
-        });
-
-        it('two different documents should have a low similiarity', () => {
-            const document0 = Doc(documentsData[0]);
-            const document2 = Doc(documentsData[2]);
-            document0.getSimiliarity(document2).should.be.below(differentDocumentThreeshold);
-        });
-
-        it('two similar documents should have a high similiarity', () => {
-            const document0 = Doc(documentsData[0]);
-            const document1 = Doc(documentsData[1]);
-            document0.getSimiliarity(document1).should.be.above(similarDocumentThreeshold);
-        });
-
-    });
-
 });

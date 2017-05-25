@@ -13,6 +13,11 @@ module.exports = {
                 sails.log.debug(err);
                 res.badRequest(err);
             });
+    },
+    _config: {
+        actions: false,
+        shortcuts: false,
+        rest: false
     }
 };
 

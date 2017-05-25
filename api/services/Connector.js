@@ -11,7 +11,7 @@ module.exports = {
     makeRequest
 };
 
-async function getDocuments(ResearchEntityModel, researchEntityId, query, skipCopiedCheck) {
+async function getDocuments(ResearchEntityModel, researchEntityId, query) {
     const reqConfig = await getConfig(ResearchEntityModel, researchEntityId, query);
 
     let res = await makeRequest(reqConfig);
@@ -23,13 +23,6 @@ async function getDocuments(ResearchEntityModel, researchEntityId, query, skipCo
         items: documents,
         count: extracted.count
     };
-
-    if (!skipCopiedCheck) {
-        return {
-            items: await ResearchEntityModel.checkCopiedDocuments(ResearchEntityModel, researchEntityId, res.items, true),
-            count: res.count
-        };
-    }
 
     return res;
 }

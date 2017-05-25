@@ -170,19 +170,7 @@ module.exports = _.merge({}, BaseModel, {
     updateDraft: function (ResearchEntityModel, draftId, draftData) {
         const documentFields = Document.getFields();
         const selectedDraftData = _.pick(draftData, documentFields);
-        return Document.update({id: draftId}, selectedDraftData)
-    },
-    checkCopiedDocuments: async function (ResearchEntityModel, researchEntityId, documentsToCheck, includeDrafts) {
-        const threeshold = .85;
-        const res = await Promise.all(_.map(documentsToCheck, async function (docToCheck, i) {
-            const documentsToCompare = await getSimilarDocuments(ResearchEntityModel, researchEntityId, docToCheck, includeDrafts);
-            const isDuplicate = _.some(documentsToCompare, d => d.getSimiliarity(docToCheck) >= threeshold);
-            if (isDuplicate)
-                DocumentLabels.addLabel(docToCheck, DocumentLabels.DUPLICATE);
-
-            return docToCheck;
-        }));
-        return res;
+        return Document.update({id: draftId}, selectedDraftData);
     },
     addTags: function (TagModel, userId, documentId, tags) {
         return TagModel.destroy({researchEntity: userId, document: documentId})
@@ -222,33 +210,4 @@ function getAuthorshipModel(ResearchEntityModel) {
 
 function getDiscardedModel(ResearchEntityModel) {
     return getThroughModel(ResearchEntityModel, 'discardedDocuments');
-}
-
-function getSimilarDocuments(ResearchEntityModel, researchEntityid, doc, includeDrafts) {
-    const criteria = {or: []};
-    if (doc.id)
-        criteria.id = {'!': doc.id};
-    if (doc.title)
-        criteria.or.push({title: doc.title});
-    if (doc.doi)
-        criteria.or.push({doi: doc.doi});
-    if (doc.scopusId)
-        criteria.or.push({scopusId: doc.scopusId});
-    if (doc.authorsStr)
-        criteria.or.push({authorsStr: doc.authorsStr});
-    if (_.isEmpty(criteria.or))
-        delete criteria.or;
-    let q = ResearchEntityModel
-        .findOneById(researchEntityid)
-        .populate('documents', criteria);
-
-    if (includeDrafts)
-        q = q.populate('drafts', criteria);
-
-    return q.then(function (researchEntity) {
-        return _.union(
-            researchEntity.drafts,
-            researchEntity.documents
-        );
-    });
 }
