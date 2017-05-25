@@ -67,7 +67,10 @@ async function updateGroupProfiles() {
 }
 
 async function importProfileIds(externalIdModel, researchEntityModel, researchEntity) {
-    await externalIdModel.destroy({researchEntity: researchEntity.scopusId});
+    await externalIdModel.destroy({
+        researchEntity: researchEntity.scopusId,
+        origin: DocumentOrigins.SCOPUS
+    });
 
     const researchEntityId = researchEntity.id;
     const researchEntityScopusId = researchEntity.scopusId;
@@ -137,13 +140,13 @@ async function importProfileIds(externalIdModel, researchEntityModel, researchEn
         const res = await Connector.makeRequest(config);
         return config.fieldExtract(res.body);
     }
-}
 
-async function getDocumentsTotal(query) {
-    const countQuery = _.cloneDeep(query);
-    countQuery.limit = 1;
-    const res = await scopusRequest(countQuery);
-    return res.count;
+    async function getDocumentsTotal(query) {
+        const countQuery = _.cloneDeep(query);
+        countQuery.limit = 1;
+        const res = await scopusRequest(countQuery);
+        return res.count;
+    }
 }
 
 function getScopusId(d) {
@@ -200,7 +203,8 @@ async function createOrUpdateDocument(documentData) {
         origin: DocumentOrigins.SCOPUS,
         kind: DocumentKinds.EXTERNAL
     };
-    documentData.source = documentData.source.id;
+    if(documentData.source)
+        documentData.source = documentData.source.id;
     documentData.origin = DocumentOrigins.SCOPUS;
     documentData.kind = DocumentKinds.EXTERNAL;
 
