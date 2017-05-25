@@ -9,7 +9,7 @@
  */
 
 var _ = require('lodash');
-var researchEntityController = require('./ResearchEntityController');
+var researchEntityController = require('../lib/ResearchEntityController');
 
 module.exports = require('waterlock').actions.user(_.merge({}, researchEntityController, {
     //sTODO: move this function to the user model
