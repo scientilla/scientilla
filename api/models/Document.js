@@ -14,22 +14,22 @@ const BaseModel = require("../lib/BaseModel.js");
 const actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 
 const fields = [
-    {name: 'authorsStr', weight: 0.4},
-    {name: 'authorKeywords', weight: 0},
-    {name: 'title', weight: 1},
-    {name: 'year', weight: .6},
-    {name: 'source', weight: 0},
-    {name: 'itSource', weight: 0},
-    {name: 'issue', weight: 0},
-    {name: 'volume', weight: 0},
-    {name: 'pages', weight: 0},
-    {name: 'articleNumber', weight: 0},
-    {name: 'doi', weight: 0.5},
-    {name: 'abstract', weight: 0.1},
-    {name: 'type', weight: 0.2},
-    {name: 'sourceType', weight: 0.2},
-    {name: 'scopusId', weight: 0.6},
-    {name: 'wosId', weight: 0.1}
+    {name: 'authorsStr'},
+    {name: 'authorKeywords'},
+    {name: 'title'},
+    {name: 'year'},
+    {name: 'source'},
+    {name: 'itSource'},
+    {name: 'issue'},
+    {name: 'volume'},
+    {name: 'pages'},
+    {name: 'articleNumber'},
+    {name: 'doi'},
+    {name: 'abstract'},
+    {name: 'type'},
+    {name: 'sourceType'},
+    {name: 'scopusId'},
+    {name: 'wosId'}
 ];
 
 module.exports = _.merge({}, BaseModel, {
@@ -96,11 +96,11 @@ module.exports = _.merge({}, BaseModel, {
         duplicates: {
             collection: 'documentduplicate',
             via: 'document',
-            getCriteria: async function(req) {
+            getCriteria: async function (req) {
                 const researchEntityId = req.param('parentid');
                 const researchEntityType = req.path.includes('user') ? 'user' : 'group';
                 return {
-                    'researchEntity' : researchEntityId,
+                    'researchEntity': researchEntityId,
                     'researchEntityType': researchEntityType
                 };
             }
@@ -243,37 +243,6 @@ module.exports = _.merge({}, BaseModel, {
                 return document;
             });
     },
-    getSuggestedCollaborators: function (documentId) {
-        return Promise.all([
-            Document.findOne(documentId).populate('collaborators'),
-            User.find()
-        ])
-            .then(function (results) {
-                var document = results[0];
-                var users = results[1];
-                var authors = document.getUcAuthors();
-                var possibleAuthors = _.filter(
-                    users,
-                    function (u) {
-                        var aliases = u.getUcAliases();
-                        return !_.isEmpty(_.intersection(aliases, authors));
-                    }
-                );
-                var collaboratorsId = _.map(document.collaborators, "id");
-                var suggestedUsers = _.reject(
-                    possibleAuthors,
-                    function (u) {
-                        return u.id === document.owner
-                            || _.includes(collaboratorsId, u.id);
-                    }
-                );
-
-                //TODO: search by aliases directly in the db
-                //select *  from document where authors ilike any (select '%' || str || '%' from alias)
-                return suggestedUsers;
-            });
-
-    },
     filterSuggested: function (maybeSuggestedDocuments, toBeDiscardedDocuments, similarityThreshold) {
         var suggestedDocuments = [];
         _.forEach(maybeSuggestedDocuments, function (r1) {
@@ -337,5 +306,4 @@ module.exports = _.merge({}, BaseModel, {
                 return copies;
             });
     }
-})
-;
+});
