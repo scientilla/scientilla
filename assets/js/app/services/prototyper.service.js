@@ -88,7 +88,6 @@
                 var publicationsConnector = {name: 'Publications', enabled: true};
                 var scopusConnector = {name: 'Scopus', enabled: !!this.scopusId};
                 connectors.push(publicationsConnector);
-                connectors.push(orcidConnector);
                 connectors.push(scopusConnector);
                 return connectors;
             },
