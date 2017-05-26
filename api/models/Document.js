@@ -30,6 +30,7 @@ const fields = [
     {name: 'sourceType'},
     {name: 'scopusId'},
     {name: 'wosId'},
+    {name: 'iitPublicationsId'},
     {name: 'origin'},
     {name: 'kind'}
 ];
@@ -57,6 +58,7 @@ module.exports = _.merge({}, BaseModel, {
         itSource: 'STRING',
         scopusId: 'STRING',
         wosId: 'STRING',
+        iitPublicationsId: 'STRING',
         abstract: 'TEXT',
         kind: 'STRING',
         origin: 'STRING',

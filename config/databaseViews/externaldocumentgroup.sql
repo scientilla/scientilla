@@ -4,7 +4,8 @@ CREATE OR REPLACE VIEW externaldocumentgroup AS
     d.id AS "document"
   FROM "externalidgroup" ei
     JOIN "document" d
-      ON d."scopusId" = ei.document
+      ON (ei.origin = 'scopus' AND d."scopusId" = ei.document)
+         OR (ei.origin = 'publications' AND d."iitPublicationsId" = ei.document)
     JOIN "group" g
       ON (ei.origin = 'scopus' AND g."scopusId" = ei."researchEntity")
          OR (ei.origin = 'publications' AND g."publicationsAcronym" = ei."researchEntity")
