@@ -6,13 +6,18 @@
           ng-if="vm.formVisible"
           ng-submit="vm.search()">
         <br>
-        <scientilla-button size="small">{{vm.filterLabel}}</scientilla-button>
-        <scientilla-button size="small" ng-click="vm.reset()">Reset</scientilla-button>
+        <scientilla-button size="small" ng-disabled="vm.onStatus(vm.STATUS_LOADING)">
+            {{vm.filterLabel}}
+        </scientilla-button>
+        <scientilla-button size="small" ng-click="vm.reset()" ng-disabled="vm.onStatus(vm.STATUS_LOADING)">
+            Reset
+        </scientilla-button>
         <!-- <scientilla-button size="small" type="link" ng-click="vm.toggleAdvanced()">{{vm.advancedText}}</scientilla-button> -->
         <div class="scientilla-filter-config form-inline">
             <label>Items per page: </label>
             <select class="form-control" ng-model="vm.itemsPerPage" ng-change="vm.search()"
-                    ng-options="s * 1 as s for s in vm.pageSizes"></select>
+                    ng-options="s * 1 as s for s in vm.pageSizes"
+                    ng-disabled="vm.onStatus(vm.STATUS_LOADING)"></select>
         </div>
     </form>
 </div>
