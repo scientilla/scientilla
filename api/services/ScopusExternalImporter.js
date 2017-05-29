@@ -1,4 +1,4 @@
-/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalId, ExternalIdGroup, ScopusConnector, User, Group, Authorship */
+/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship */
 // ScopusExternalImporter.js - in api/services
 
 "use strict";
@@ -13,68 +13,56 @@ module.exports = {
             sails.log.info('ScopusExternalImporter: user ' + user.username + ' empty scopusId');
             return;
         }
-
-        await importProfileIds(ExternalId, User, user);
-        const userDocsIdsRows = await ExternalId.find({
-            researchEntity: user.scopusId,
-            origin: DocumentOrigins.SCOPUS
-        });
-        const userDocsIds = userDocsIdsRows.map(i => i.document);
-        await updateDocuments(userDocsIds);
-        sails.log.info('updated/inserted ' + userDocsIds.length + ' external documents of user ' + user.username);
-
+        const total = await updateResearchEntityProfile(ExternalDocument, User, user);
+        sails.log.info('updated/inserted ' + total + ' external documents of user ' + user.username);
     },
     updateGroup: async (group) => {
-        await importProfileIds(ExternalIdGroup, Group, group);
-        const groupDocsIdsRows = await ExternalIdGroup.find({
-            researchEntity: group.scopusId,
-            origin: DocumentOrigins.SCOPUS
-        });
-        const groupDocsIds = groupDocsIdsRows.map(i => i.document);
-        await updateDocuments(groupDocsIds);
-        sails.log.info('updated/inserted ' + groupDocsIds.length + ' scopus external documents of group ' + group.name);
+        if (_.isEmpty(group.scopusId)) {
+            sails.log.info('ScopusExternalImporter: user ' + user.username + ' empty scopusId');
+            return;
+        }
+        const total = await updateResearchEntityProfile(ExternalDocumentGroup, Group, group);
+        sails.log.info('updated/inserted ' + total + ' scopus external documents of group ' + group.name);
     },
     updateAll: async () => {
-        await updateUserProfiles();
-        await updateGroupProfiles();
+        const usersDocumentsScopusIds = await getResearchEntitiesDocumentsScopusIds(User);
+        const groupsDocumentsScopusIds = await getResearchEntitiesDocumentsScopusIds(Group);
 
-        const userDocsIdsRows = await ExternalId.findByOrigin(DocumentOrigins.SCOPUS);
-        const groupDocsIdsRows = await ExternalIdGroup.findByOrigin(DocumentOrigins.SCOPUS);
-
-        const userDocsIds = userDocsIdsRows.map(i => i.document);
-        const groupDocsIds = groupDocsIdsRows.map(i => i.document);
+        const userDocsIds = _.flatten(usersDocumentsScopusIds.map(ur => ur.scopusIds));
+        const groupDocsIds = _.flatten(groupsDocumentsScopusIds.map(ur => ur.scopusIds));
         const docsIds = [...new Set(userDocsIds.concat(groupDocsIds))];
 
-        await updateDocuments(docsIds);
+        const importedDocuments = await importDocuments(docsIds);
+        await updateAllExternalDocuments(ExternalDocument, usersDocumentsScopusIds, importedDocuments);
+        await updateAllExternalDocuments(ExternalDocumentGroup, groupsDocumentsScopusIds, importedDocuments);
 
-        sails.log.info('updated/inserted ' + docsIds.length + ' scopus external documents');
-    },
-
+        sails.log.info('updated/inserted ' + importedDocuments.length + ' scopus external documents');
+    }
 };
 
-async function updateUserProfiles() {
-    const users = await User.find({scopusId: {'!': ''}});
+async function updateResearchEntityProfile(externalDocumentModel, researchEntityModel, researchEntity) {
+    const documentScopusIds = await getResearchEntityDocumentsScopusIds(researchEntityModel, researchEntity);
+    const importedDocuments = await importDocuments(documentScopusIds);
+    await updateExternalDocuments(externalDocumentModel, researchEntity.id, importedDocuments);
 
-    for (let u of users)
-        await importProfileIds(ExternalId, User, u);
+    return importedDocuments.length;
 }
 
-async function updateGroupProfiles() {
-    const groups = await Group.find({scopusId: {'!': ''}});
+async function getResearchEntitiesDocumentsScopusIds(researchEntityModel) {
+    const researchEntities = await researchEntityModel.find({scopusId: {'!': ''}});
+    let researchEntitiesScopusIds = [];
 
-    for (let g of groups)
-        await importProfileIds(ExternalIdGroup, Group, g);
+    for (let re of researchEntities)
+        researchEntitiesScopusIds.push({
+            researchEntity: re,
+            scopusIds: await getResearchEntityDocumentsScopusIds(researchEntityModel, re)
+        });
+
+    return researchEntitiesScopusIds;
 }
 
-async function importProfileIds(externalIdModel, researchEntityModel, researchEntity) {
-    await externalIdModel.destroy({
-        researchEntity: researchEntity.scopusId,
-        origin: DocumentOrigins.SCOPUS
-    });
-
+async function getResearchEntityDocumentsScopusIds(researchEntityModel, researchEntity) {
     const researchEntityId = researchEntity.id;
-    const researchEntityScopusId = researchEntity.scopusId;
-
     const query = {
         limit: 200,
         skip: 0,
@@ -84,15 +72,17 @@ async function importProfileIds(externalIdModel, researchEntityModel, researchEn
         }
     };
 
-    if (researchEntity.getType() === 'user')
-        return scopusLoop(query);
+    if (researchEntity.getType() === 'user') {
+        const res = await scopusLoop(query);
+        return res.scopusIds;
+    }
 
     const total = await getDocumentsTotal(query);
     const startingYear = ((new Date()).getFullYear()) + 1;
 
-    await scopusYearLoop(query, startingYear, total);
+    return scopusYearLoop(query, startingYear, total);
 
-    async function scopusYearLoop(baseQuery, year, total, done = 0) {
+    async function scopusYearLoop(baseQuery, year, total, totalDone = 0) {
         const query = _.cloneDeep(baseQuery);
         query.where.additionalFields = [
             {
@@ -102,10 +92,13 @@ async function importProfileIds(externalIdModel, researchEntityModel, researchEn
         ];
 
         try {
-            const count = await scopusLoop(query);
-            const newDone = done + parseInt(count, 10);
-            if (newDone < total)
-                return scopusYearLoop(baseQuery, year - 1, total, newDone);
+            const res = await scopusLoop(query);
+            const newTotalDone = totalDone + parseInt(res.done, 10);
+            const documentsScopusIds = res.scopusIds;
+            if (newTotalDone < total)
+                return documentsScopusIds.concat(await scopusYearLoop(baseQuery, year - 1, total, newTotalDone));
+
+            return documentsScopusIds;
         } catch (err) {
             sails.log.debug(err);
         }
@@ -115,24 +108,27 @@ async function importProfileIds(externalIdModel, researchEntityModel, researchEn
         const extracted = await scopusRequest(query);
 
         if (!extracted.documents)
-            return extracted.count;
+            return {
+                done: 0,
+                scopusIds: []
+            };
 
-        const documents = extracted.documents.map(ed => getScopusId(ed));
-
-        for (let d of documents)
-            await externalIdModel.create({
-                researchEntity: researchEntityScopusId,
-                document: d,
-                origin: DocumentOrigins.SCOPUS
-            })
-
-        if (extracted.count <= (query.limit + query.skip))
-            return extracted.count;
+        const documentsScopusIds = extracted.documents.map(ed => getScopusId(ed));
 
         const nextQuery = _.cloneDeep(query);
         nextQuery.skip += query.limit;
 
-        return scopusLoop(nextQuery);
+        if (extracted.count <= nextQuery.skip)
+            return {
+                done: extracted.count,
+                scopusIds: documentsScopusIds
+            };
+
+        const res = await scopusLoop(nextQuery);
+        return {
+            done: res.done,
+            scopusIds: documentsScopusIds.concat(res.scopusIds)
+        }
     }
 
     async function scopusRequest(query) {
@@ -149,6 +145,28 @@ async function importProfileIds(externalIdModel, researchEntityModel, researchEn
     }
 }
 
+async function updateAllExternalDocuments(externalDocumentsModel, researchEntitiesDocumentsScopusIds, importedDocuments) {
+    for (let r of researchEntitiesDocumentsScopusIds) {
+        const documents = _.filter(importedDocuments, d => _.includes(r.scopusIds, d.scopusId));
+        await updateExternalDocuments(externalDocumentsModel, r.researchEntity.id, documents);
+    }
+}
+
+async function updateExternalDocuments(externalDocumentsModel, researchEntityId, documents) {
+    await externalDocumentsModel.destroy({
+        researchEntity: researchEntityId,
+        origin: DocumentOrigins.SCOPUS
+    });
+
+    for (let d of documents)
+        await externalDocumentsModel.create({
+            researchEntity: researchEntityId,
+            document: d.id,
+            origin: DocumentOrigins.SCOPUS
+        })
+
+}
+
 function getScopusId(d) {
     const identifier = d['dc:identifier'];
     if (_.startsWith(identifier, 'SCOPUS_ID:')) {
@@ -162,38 +180,37 @@ function getScopusId(d) {
 }
 
 
-async function updateDocuments(documents) {
+async function importDocuments(documents) {
+    if (_.isEmpty(documents))
+        return [];
+
+    let documentsIds = [];
     const docsIterator = chunks(documents, chunkSize);
 
     for (let docs of docsIterator)
-        await updateDocs(docs);
+        documentsIds = documentsIds.concat(await updateDocs(docs));
+
+    return documentsIds;
 
     async function updateDocs(documents) {
-        const results = await Promise.all(
+        const docs = await Promise.all(
             documents.map(
                 async sId => {
                     try {
-                        return {
-                            scopusId: sId,
-                            data: await ScopusConnector.getDocument(sId)
-                        }
+                        const documentData = await ScopusConnector.getDocument(sId);
+                        const document = await createOrUpdateDocument(documentData);
+                        if (_.has(document, 'id'))
+                            return document;
                     }
                     catch (err) {
-                        return {
-                            scopusId: sId,
-                            data: false
-                        };
+                        sails.log.debug('Updater: Document failed ' + r.scopusId);
                     }
+
+                    return {};
                 }
             )
         );
-
-        for (let r of results) {
-            if (r.data)
-                await createOrUpdateDocument(r.data);
-            else
-                sails.log.debug('Updater: Document failed ' + r.scopusId);
-        }
+        return docs.filter(d => !_.isEmpty(d));
     }
 }
 
@@ -203,15 +220,16 @@ async function createOrUpdateDocument(documentData) {
         origin: DocumentOrigins.SCOPUS,
         kind: DocumentKinds.EXTERNAL
     };
-    if(documentData.source)
+    if (documentData.source)
         documentData.source = documentData.source.id;
     documentData.origin = DocumentOrigins.SCOPUS;
     documentData.kind = DocumentKinds.EXTERNAL;
 
     try {
-        await Document.createOrUpdate(criteria, documentData);
+        return await Document.createOrUpdate(criteria, documentData);
     } catch (err) {
         sails.log.debug(err);
+        return {};
     }
 
 }
