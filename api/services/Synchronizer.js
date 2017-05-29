@@ -7,6 +7,7 @@ module.exports = {
 };
 
 async function synchronizeScopus() {
+    sails.log.info("Scopus synchronization starting");
     const documentsToSynchronize = await Document.find({
         editedAfterImport: false,
         kind: [DocumentKinds.DRAFT, DocumentKinds.VERIFIED],
@@ -22,4 +23,5 @@ async function synchronizeScopus() {
         delete externalDocData.kind;
         const d = await Document.update(doc.id, externalDocData);
     }
+    sails.log.info(documentsToSynchronize.length + " documents synchronized");
 }
