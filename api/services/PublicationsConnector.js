@@ -78,7 +78,8 @@ module.exports = {
                     pages: /^\d+-\d+$/.test(d.pages) ? d.pages : '',
                     articleNumber: '',
                     sourceType: sourceType,
-                    type: documentType
+                    type: documentType,
+                    iitPublicationsId: d.id
                 };
 
                 //TODO accrocchio mainInstituteId assumed equal 1
