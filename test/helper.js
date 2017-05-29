@@ -33,6 +33,7 @@ module.exports = {
     userCreateDraft,
     userCreateDrafts,
     userUpdateDraft,
+    groupUpdateDraft,
     userVerifyDraft,
     userVerifyDrafts,
     addAuthorship,
@@ -213,6 +214,16 @@ async function userUpdateDraft(user, draftData, respCode = 200) {
     const auth = getAuth(user.id);
     const res = await auth.agent
         .put('/users/' + user.id + '/drafts/' + draftData.id)
+        .set('access_token', auth.token)
+        .send(draftData)
+        .expect(respCode);
+    return res.body;
+}
+
+async function groupUpdateDraft(group, draftData, respCode = 200) {
+    const auth = getAdminAuth();
+    const res = await auth.agent
+        .put('/groups/' + group.id + '/drafts/' + draftData.id)
         .set('access_token', auth.token)
         .send(draftData)
         .expect(respCode);

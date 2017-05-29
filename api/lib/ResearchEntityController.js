@@ -73,7 +73,7 @@ module.exports = {
         res.halt(Model.createDrafts(Model, researchEntityId, documents));
     },
     updateDraft: function (req, res) {
-        var draftId = req.params.researchEntityId;
+        var draftId = req.params.id;
         var draftData = req.body;
         var Model = getModel(req);
         res.halt(Model.updateDraft(Model, draftId, draftData));
