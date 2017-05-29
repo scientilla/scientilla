@@ -280,7 +280,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     findCopies: function (verifyingDraft, verifyingPosition) {
         const query = _.pick(verifyingDraft, Document.getFields());
-        query.kind = {'!': DocumentKinds.DRAFT};
+        query.kind = DocumentKinds.VERIFIED;
         return Document.find(query)
             .populate('authorships')
             .populate('affiliations')
@@ -328,14 +328,15 @@ module.exports = _.merge({}, BaseModel, {
 
         let doc = await Document.findOne(criteria);
         if (doc)
-            await Document.update(criteria, selectedData);
+            doc = await Document.update(criteria, selectedData);
         else
-            await Document.create(selectedData);
+            doc = await Document.create(selectedData);
 
         if (documentData.authorships) {
             doc = await Document.findOne(criteria);
             await Authorship.destroy({document: doc.id});
             await Authorship.createEmptyAuthorships(doc.id, documentData);
         }
+        return doc;
     }
 });
