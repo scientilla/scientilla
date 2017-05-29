@@ -30,9 +30,9 @@ CREATE OR REPLACE VIEW documentduplicate AS
         )
         AND D.id <> dd.id
         AND (
-          (D.kind <> 'v' AND dd.kind IN ('d', 'v'))
+          (D.kind = 'd' AND dd.kind IN ('d', 'v'))
           OR
-          (D.kind = 'v' AND dd.kind = 'v'))
+          (D.kind in ('v','e') AND dd.kind = 'v'))
   UNION
   SELECT
     d.id    AS document,
@@ -65,6 +65,6 @@ CREATE OR REPLACE VIEW documentduplicate AS
         )
         AND D.id <> dd.id
         AND (
-          (D.kind <> 'v' AND dd.kind IN ('d', 'v'))
+          (D.kind = 'd' AND dd.kind IN ('d', 'v'))
           OR
-          (D.kind = 'v' AND dd.kind = 'v'))
+          (D.kind in ('v','e') AND dd.kind = 'v'))
