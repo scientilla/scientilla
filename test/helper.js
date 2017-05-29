@@ -45,6 +45,7 @@ module.exports = {
     groupCreateDraft,
     groupCreateDrafts,
     getDocument,
+    createExternalDocument,
     EMPTY_RES: {count: 0, items: []}
 };
 
@@ -338,4 +339,17 @@ async function getDocument(documentId, respCode = 200) {
         .get('/documents/' + documentId)
         .expect(respCode);
     return res.body;
+}
+
+async function createExternalDocument(documentData, origin = DocumentOrigins.SCOPUS) {
+    documentData.origin = origin;
+    const selectedDraftData = Document.selectData(documentData);
+    selectedDraftData.kind = DocumentKinds.EXTERNAL;
+    const document = await Document.create(selectedDraftData);
+    await Authorship.createEmptyAuthorships(document.id, documentData);
+    return Document.findOneById(document.id)
+        .populate('authorships')
+        .populate('affiliations')
+        .populate('authors')
+        .populate('source');
 }
