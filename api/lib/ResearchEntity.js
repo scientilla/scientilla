@@ -167,10 +167,11 @@ module.exports = _.merge({}, BaseModel, {
                 item: e.item
             }));
     },
-    updateDraft: function (ResearchEntityModel, draftId, draftData) {
+    updateDraft: async function (ResearchEntityModel, draftId, draftData) {
         const documentFields = Document.getFields();
         const selectedDraftData = _.pick(draftData, documentFields);
-        return Document.update({id: draftId}, selectedDraftData);
+        const updatedDraft = await Document.update({id: draftId}, selectedDraftData);
+        return updatedDraft[0];
     },
     addTags: function (TagModel, userId, documentId, tags) {
         return TagModel.destroy({researchEntity: userId, document: documentId})
