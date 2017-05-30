@@ -48,10 +48,16 @@
          ng-if="vm.document.sourceType && !['invited_talk'].includes(vm.document.type)">
         <label for="source">{{vm.sourceLabel}}</label>
         <div class="input-group">
-            <input id="source" name="source" type="text" ng-model="vm.document.source"
+            <input id="source" name="source" type="text" ng-model="vm.document.source" class="form-control"
                    uib-typeahead="source as source.title for source in vm.getSources($viewValue)"
-                   typeahead-loading="searching" typeahead-no-results="noResults" class="form-control"
-                   data-ng-required="true" placeholder="{{vm.sourceLabel}}" ng-model-options="{ allowInvalid: true }"
+                   typeahead-loading="searching"
+                   typeahead-no-results="noResults"
+                   data-ng-required="true"
+                   placeholder="{{vm.sourceLabel}}"
+                   ng-model-options="{ allowInvalid: true }"
+                   typeahead-editable="false"
+                   typeahead-select-on-blur="true"
+                   ng-blur="vm.checkSource($event)"
             >
             <span class="input-group-btn">
                 <button popover-is-open="vm['popover-is-open']"

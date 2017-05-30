@@ -44,6 +44,7 @@
         vm.getItSources = getItSources;
         vm.createSource = createSource;
         vm.closePopover = closePopover;
+        vm.checkSource = checkSource;
         var allSourceTypes = DocumentTypesService.getSourceTypes();
         vm.sourceLabel = _.get(_.find(allSourceTypes, {id: vm.document.sourceType}), 'label');
 
@@ -216,6 +217,11 @@
                 .then(function() {
                     return documentService.openDocumentAffiliationForm(vm.document);
                 });
+        }
+
+        function checkSource($event) {
+            if (!$event.target.value)
+                vm.document.source = null;
         }
 
 
