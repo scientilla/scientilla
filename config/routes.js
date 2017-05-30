@@ -38,6 +38,8 @@ module.exports.routes = {
     'post /groups/:researchEntityId/drafts': 'Group.createDraft',
     'put /users/:researchEntityId/drafts/verify-drafts': 'User.verifyDrafts',
     'put /groups/:researchEntityId/drafts/verify-drafts': 'Group.verifyDrafts',
+    'put /users/:researchEntityId': 'User.updateProfile',
+    'put /groups/:researchEntityId': 'Group.updateProfile',
     'put /users/:researchEntityId/drafts/:id': 'User.updateDraft',
     'put /groups/:researchEntityId/drafts/:id': 'Group.updateDraft',
     'put /users/:researchEntityId/verify-documents': 'User.verifyDocuments',

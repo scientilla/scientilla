@@ -9,6 +9,7 @@
  */
 
 
+const exec = require('child_process').exec;
 const Promise = require("bluebird");
 const _ = require("lodash");
 const BaseModel = require("./BaseModel.js");
@@ -193,6 +194,17 @@ module.exports = _.merge({}, BaseModel, {
         const deleteAuthorships = await Authorship.destroy({document: draftId});
         await Affiliation.destroy({authorship: deleteAuthorships.map(a => a.id)});
         return Authorship.create(authorshipsData);
+    },
+    updateProfile: async function (ResearchEntityModel, researchEntityId, researchEntityData) {
+        const oldResearchEntity = await ResearchEntityModel.findOne({id: researchEntityId});
+        const res = await ResearchEntityModel.update({id: researchEntityId}, researchEntityData);
+        const newResearchEntity = res[0];
+        if (newResearchEntity.scopusId !== oldResearchEntity.scopusId
+            || newResearchEntity.username !== oldResearchEntity.username) {
+            const researchEntityType = newResearchEntity.getType();
+            exec('grunt external:import:' + researchEntityType + ':' + newResearchEntity.id);
+        }
+        return newResearchEntity;
     },
     _config: {
         actions: false,

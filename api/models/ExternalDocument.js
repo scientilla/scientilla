@@ -1,19 +1,17 @@
+/**
+ * ExternalDocument.js
+ */
+const _ = require('lodash');
+const BaseModel = require("../lib/BaseModel.js");
 
-module.exports = {
+module.exports = _.merge({}, BaseModel, {
     attributes: {
-        document: {
-            model: 'document',
-            primaryKey: true
-        },
         researchEntity: {
-            model: 'user',
-            primaryKey: true
-        }
-    },
-
-    migrate: 'safe',
-    tableName: 'externaldocument',
-    autoUpdatedAt: false,
-    autoCreatedAt: false
-
-};
+            model: 'User',
+        },
+        document: {
+            model: 'Document'
+        },
+        origin: 'STRING'
+    }
+});

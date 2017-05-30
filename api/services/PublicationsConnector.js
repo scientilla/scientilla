@@ -68,9 +68,10 @@ module.exports = {
                     talk: DocumentTypes.INVITED_TALK
                 };
                 const documentType = d.typeAlias in typeMappings ? typeMappings[d.typeAlias] : null;
+                const authors = d.authors ? d.authors : '';
                 const newDoc = {
                     title: d.title,
-                    authorsStr: d.authors.replace(/\*/g, ''),
+                    authorsStr: authors.replace(/\*/g, ''),
                     year: d.year,
                     doi: d.doi,
                     volume: d.volume,
