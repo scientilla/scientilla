@@ -55,6 +55,8 @@ module.exports.http = {
          ****************************************************************************/
 
         myRequestLogger: async function (req, res, next) {
+            if (!req.path.startsWith('/api/v1/'))
+                return next();
             const logData = {
                 path: req.path,
                 method: req.method
