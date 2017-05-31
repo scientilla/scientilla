@@ -169,9 +169,9 @@
         }
 
         function deleteDrafts(researchEntity, draftIds) {
-            return Restangular
-                .all('documents')
-                .customDELETE('delete', {}, {}, {draftIds: draftIds});
+            return researchEntity
+                .all('drafts')
+                .customPUT({draftIds: draftIds}, 'delete');
         }
 
         function setPrivateTags(researchEntity, document, tags) {

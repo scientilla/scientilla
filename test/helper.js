@@ -46,6 +46,8 @@ module.exports = {
     groupCreateDrafts,
     getDocument,
     createExternalDocument,
+    userDeleteDrafts,
+    groupDeleteDrafts,
     EMPTY_RES: {count: 0, items: []}
 };
 
@@ -337,6 +339,26 @@ async function groupCreateDrafts(group, draftsData) {
 async function getDocument(documentId, respCode = 200) {
     const res = await request(url)
         .get('/documents/' + documentId)
+        .expect(respCode);
+    return res.body;
+}
+
+async function userDeleteDrafts(user, draftIds, respCode = 200) {
+    const auth = getAuth(user.id);
+    const res = await auth.agent
+        .put('/users/' + user.id + '/drafts/delete')
+        .set('access_token', auth.token)
+        .send({draftIds: draftIds})
+        .expect(respCode);
+    return res.body;
+}
+
+async function groupDeleteDrafts(group, draftIds, respCode = 200) {
+    const auth = getAdminAuth();
+    const res = await auth.agent
+        .put('/groups/' + group.id + '/drafts/delete')
+        .set('access_token', auth.token)
+        .send({draftIds: draftIds})
         .expect(respCode);
     return res.body;
 }

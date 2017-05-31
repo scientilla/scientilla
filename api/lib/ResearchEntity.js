@@ -175,6 +175,11 @@ module.exports = _.merge({}, BaseModel, {
         const updatedDraft = await Document.update({id: draftId}, selectedDraftData);
         return updatedDraft[0];
     },
+    deleteDrafts: function (Model, draftIds) {
+        return Promise.all(draftIds.map(function (draftId) {
+            return Document.destroy({id: draftId});
+        }));
+    },
     addTags: function (TagModel, userId, documentId, tags) {
         return TagModel.destroy({researchEntity: userId, document: documentId})
             .then(() =>

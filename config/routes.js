@@ -40,6 +40,8 @@ module.exports.routes = {
     'put /groups/:researchEntityId/drafts/verify-drafts': 'Group.verifyDrafts',
     'put /users/:researchEntityId': 'User.updateProfile',
     'put /groups/:researchEntityId': 'Group.updateProfile',
+    'put /users/:researchEntityId/drafts/delete': 'User.deleteDrafts',
+    'put /groups/:researchEntityId/drafts/delete': 'Group.deleteDrafts',
     'put /users/:researchEntityId/drafts/:id': 'User.updateDraft',
     'put /groups/:researchEntityId/drafts/:id': 'Group.updateDraft',
     'put /users/:researchEntityId/verify-documents': 'User.verifyDocuments',
@@ -64,7 +66,7 @@ module.exports.routes = {
     'get /users/:researchEntityId/charts': 'User.getChartsData',
     'get /groups/:researchEntityId/charts': 'Group.getChartsData',
     'put /groups/:researchEntityId/drafts/:documentId/authorships': 'Group.setAuthorhips',
-    'put /users/:researchEntityId/drafts/:documentId/authorships': 'User.setAuthorhips'
+    'put /users/:researchEntityId/drafts/:documentId/authorships': 'User.setAuthorhips',
 
 
     /***************************************************************************
