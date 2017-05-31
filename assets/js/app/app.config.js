@@ -4,9 +4,9 @@
         .config(configure)
         .run(run);
 
-    configure.$inject = ['RestangularProvider', '$routeProvider', 'localStorageServiceProvider'];
+    configure.$inject = ['RestangularProvider', '$routeProvider', 'localStorageServiceProvider', 'apiPrefix'];
 
-    function configure(RestangularProvider, $routeProvider, localStorageServiceProvider) {
+    function configure(RestangularProvider, $routeProvider, localStorageServiceProvider, apiPrefix) {
         $routeProvider
             .when("/", {
                 template: "<profile-summary></profile-summary>"
@@ -14,6 +14,8 @@
             .otherwise({
                 redirectTo: "/"
             });
+
+        RestangularProvider.setBaseUrl('/api/v1');
 
         //sTODO: set request error interceptor
 

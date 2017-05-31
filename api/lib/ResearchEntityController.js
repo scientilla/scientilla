@@ -101,6 +101,11 @@ module.exports = {
         const Model = getModel(req);
         const researchEntityData = req.body;
         res.halt(Model.updateProfile(Model, researchEntityId, researchEntityData));
+    },
+    deleteDrafts: function (req, res) {
+        const Model = getModel(req);
+        var draftIds = req.param('draftIds');
+        res.halt(Model.deleteDrafts(Model, draftIds));
     }
 };
 

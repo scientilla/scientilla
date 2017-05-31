@@ -120,12 +120,15 @@
         UVERIFYING: 'unverifying'
     };
 
-    angular.module('components')
+    const apiPrefix = '/api/v1';
+
+    angular.module('app')
         .constant('pageSize', 10)
         .constant('yearsInterval', yearsInterval)
         .constant('documentSearchForm', documentSearchForm)
         .constant('userConstants', userConstants)
         .constant('config', config)
         .constant('publicationTypes', publicationTypes)
-        .constant('DocumentLabels', DocumentLabels);
+        .constant('DocumentLabels', DocumentLabels)
+        .constant('apiPrefix', apiPrefix);
 })();

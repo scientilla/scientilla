@@ -273,11 +273,6 @@ module.exports = _.merge({}, BaseModel, {
         });
         return suggestedDocuments;
     },
-    deleteDrafts: function (draftIds) {
-        return Promise.all(draftIds.map(function (documentId) {
-            return Document.destroy({id: documentId});
-        }));
-    },
     findCopies: function (verifyingDraft, verifyingPosition) {
         const query = _.pick(verifyingDraft, Document.getFields());
         query.kind = DocumentKinds.VERIFIED;
