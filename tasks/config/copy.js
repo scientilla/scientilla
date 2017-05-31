@@ -70,6 +70,11 @@ module.exports = function (grunt) {
                 src: ['js/app/*/*.html'],
                 flatten: true,
                 dest: '.tmp/public/partials'
+            }, {
+                expand: true,
+                cwd: './assets/images',
+                src: ['*'],
+                dest: '.tmp/public/images'
             }]
         },
         build: {
