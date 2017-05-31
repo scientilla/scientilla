@@ -1,0 +1,143 @@
+@import "iit-colors";
+
+.tab-content {
+  border-left: 1px solid @iit-grey-light;
+  border-right: 1px solid @iit-grey-light;
+  border-bottom: 1px solid @iit-grey-light;
+
+  padding: 15px;
+}
+
+/*nav-pills*/
+
+.nav-pills > li > a {
+  background-color: @iit-white;
+  color: @iit-grey-dark
+}
+
+.nav > li > a:focus,
+.nav > li > a:hover {
+  background-color: @iit-grey-dark;
+  color: @iit-white
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:focus,
+.nav-pills > li.active > a:hover {
+  background-color: @iit-grey-dark;
+  color: @iit-white
+}
+
+/*buttons*/
+
+.btn-primary {
+  background-color: @iit-primary;
+  border-color: @iit-primary;
+}
+
+.btn-primary:hover {
+  background-color: @iit-primary-hover;
+  border-color: @iit-primary-hover;
+}
+
+.btn-primary:active {
+  background-color: @iit-primary-active;
+  border-color: @iit-primary-active;
+}
+
+.btn-cancel {
+  background-color: @iit-white;
+}
+
+.btn-default,
+.btn-default:hover,
+.btn-default:active {
+  background-color: @iit-white;
+}
+
+.btn-default.active.focus,
+.btn-default.active:hover,
+.btn-default:active:focus,
+.btn-default:active:hover,
+.open > .dropdown-toggle.btn-default.focus,
+.open > .dropdown-toggle.btn-default:hover {
+  background-color: @iit-white;
+}
+
+/******************************************************************************/
+
+.divider,
+.divider:hover {
+  background-color: inherit !important;
+}
+
+.modal-content {
+  padding: 15px;
+}
+
+.scientilla-dropdown-align-right {
+}
+
+.scientilla-dropdown-align-right > .dropdown-menu {
+  left: auto;
+}
+
+.scientilla-filter-results {
+  min-height: 20px;
+}
+
+.well {
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: ligthen(@iit-grey-dark, 80%);
+}
+
+.pagination-sm {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+
+.pagination > .active > a,
+.pagination > .active > a:focus,
+.pagination > .active > a:hover,
+.pagination > .active > span,
+.pagination > .active > span:focus,
+.pagination > .active > span:hover {
+  background-color: @iit-blue-dark;
+  border-color: @iit-blue-dark;
+}
+
+.progress-bar {
+  background-color: @iit-blue-dark;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+/******************************************************************************/
+/*Bootstrap dropdown fix*/
+
+
+.dropdown-menu li > a {
+  display: block;
+  padding: 3px 20px;
+  clear: both;
+  font-weight: 400;
+  line-height: 1.42857143;
+  color: #333;
+  white-space: nowrap;
+}
+
+.dropdown-menu li:hover {
+  background-color: @iit-grey-light;
+}
+
+.dropdown-menu li > a:focus,
+.dropdown-menu li > a:hover {
+  color: @iit-black;
+  background-color: @iit-grey-light;
+  text-decoration: none;
+}
+
+/*Bootstrap dropdown fix*/

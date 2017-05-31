@@ -1,14 +1,12 @@
 <div class="row scientilla-toolbar">
     <div class="col-sm-1">
-        <a class="btn btn-link" href="#/">
-            Scientilla
+        <a href="#/">
+            <img class="scientilla-small-logo" src="/images/scientilla-logo-white-60.png">
         </a>
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-6 text-right">
         <a class="btn btn-link" ng-click="vm.editProfile()">
-            <!--<span class="displayname">-->
-                {{vm.researchEntity.getDisplayName()}}
-            <!--</span>-->
+            {{vm.researchEntity.getDisplayName()}}
         </a>
         <div uib-dropdown class="btn-group" is-open="status.isopen" ng-if="vm.user.administratedGroups.length">
             <button id="single-button" type="button" class="btn btn-link" uib-dropdown-toggle ng-disabled="disabled">
@@ -27,10 +25,10 @@
     </div>
     <div class="col-sm-5 text-right">
         <div ng-if="!vm.isLogged">
-            <a ng-href="#/register" aria-label="Register" ng-if="vm.isRegisterEnabled">
+            <a class="btn btn-link" ng-href="#/register" aria-label="Register" ng-if="vm.isRegisterEnabled">
                 Register
             </a>
-            <a ng-href="#/login" aria-label="Login">
+            <a class="btn btn-link" ng-href="#/login" aria-label="Login">
                 Login
             </a>
         </div>
