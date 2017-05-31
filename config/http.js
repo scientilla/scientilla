@@ -61,7 +61,7 @@ module.exports.http = {
                 path: req.path,
                 method: req.method
             };
-            await Log.create(logData);
+            await AccessLog.create(logData);
             return next();
         },
 
