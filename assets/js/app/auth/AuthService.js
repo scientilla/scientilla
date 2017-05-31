@@ -10,7 +10,8 @@
         "$q",
         "localStorageService",
         "EventsService",
-        "Prototyper"
+        "Prototyper",
+        "apiPrefix",
     ];
 
     function AuthService($http,
@@ -19,7 +20,8 @@
                          $q,
                          localStorageService,
                          EventsService,
-                         Prototyper) {
+                         Prototyper,
+                         apiPrefix) {
 
         var service = {
             isLogged: false,
@@ -51,13 +53,13 @@
         //sTODO: refactor
         service.login = function (credentials) {
 
-            return authOp('/auths/login', credentials);
+            return authOp(apiPrefix+'/auths/login', credentials);
         };
         service.register = function (registrationData) {
-            return authOp('/auths/register', registrationData);
+            return authOp(apiPrefix+'/auths/register', registrationData);
         };
         service.logout = function () {
-            return $http.get('/auths/logout').then(function () {
+            return $http.get(apiPrefix+'/auths/logout').then(function () {
 
                 //sTODO: move to the proper place
                 Restangular.setDefaultHeaders({access_token: undefined});
@@ -86,7 +88,7 @@
                         Prototyper.toUserModel(service.user);
 
                         user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
-                        return $http.get('/users/jwt');
+                        return $http.get(apiPrefix+'/users/jwt');
                     })
                     .then(function (result) {
 

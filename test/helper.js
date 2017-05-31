@@ -66,7 +66,7 @@ function cleanAuths() {
     auths = [];
 }
 
-const url = 'http://localhost:1338';
+const url = 'http://localhost:1338/api/v1';
 
 function cleanDb() {
     var models = [Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source];

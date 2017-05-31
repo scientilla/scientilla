@@ -17,7 +17,7 @@
             refresh = refresh || false;
             if (settings && !refresh)
                 return Promise.resolve(settings);
-            var url = '/settings';
+            var url = '/api/v1/settings';
             return $http.get(url)
                 .then(function(result) {
                     settings = result.data;
