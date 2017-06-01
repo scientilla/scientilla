@@ -19,6 +19,10 @@ async function synchronizeScopus() {
             kind: DocumentKinds.EXTERNAL,
             origin: DocumentOrigins.SCOPUS
         });
+        if (!externalDoc) {
+            sails.log.debug('Document with id ' + doc.id + " has no corresponding external document");
+            continue;
+        }
         const externalDocData = Document.selectData(externalDoc);
         delete externalDocData.kind;
         const d = await Document.update(doc.id, externalDocData);
