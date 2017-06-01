@@ -1,4 +1,4 @@
-/* global ResearchEntity, Document, SqlService */
+/* global Affiliation, Authorship, ResearchEntity, Document, TagLabel, SqlService, DocumentOrigins */
 'use strict';
 
 /**
@@ -53,7 +53,7 @@ module.exports = _.merge({}, BaseModel, {
             });
     },
     doUnverifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
-        var authorshipModel = getAuthorshipModel(ResearchEntityModel);
+        const authorshipModel = getAuthorshipModel(ResearchEntityModel);
         return authorshipModel
             .findOne({researchEntity: researchEntityId, document: documentId})
             .then(function (authorship) {
@@ -102,11 +102,11 @@ module.exports = _.merge({}, BaseModel, {
 
                         return Document.findCopies(draft, authorshipData.position)
                             .then(documents => {
-                                var n = documents.length;
+                                const n = documents.length;
                                 if (n === 0) return draft;
                                 if (n > 1)
                                     sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
-                                var doc = documents[0];
+                                const doc = documents[0];
 
                                 if (doc.isPositionVerified(authorshipData.position))
                                     throw {
@@ -204,11 +204,14 @@ module.exports = _.merge({}, BaseModel, {
         const oldResearchEntity = await ResearchEntityModel.findOne({id: researchEntityId});
         const res = await ResearchEntityModel.update({id: researchEntityId}, researchEntityData);
         const newResearchEntity = res[0];
-        if (newResearchEntity.scopusId !== oldResearchEntity.scopusId
-            || newResearchEntity.username !== oldResearchEntity.username) {
-            const researchEntityType = newResearchEntity.getType();
-            exec('grunt external:import:' + researchEntityType + ':' + newResearchEntity.id);
-        }
+        const researchEntityType = newResearchEntity.getType();
+        const command = 'grunt external:import:' + researchEntityType + ':' + newResearchEntity.id;
+        if (newResearchEntity.scopusId !== oldResearchEntity.scopusId)
+            exec(command + ':' + DocumentOrigins.SCOPUS);
+        if (newResearchEntity.username !== oldResearchEntity.username
+            || newResearchEntity.publicationsAcronym !== oldResearchEntity.publicationsAcronym)
+            exec(command + ':' + DocumentOrigins.PUBLICATIONS);
+
         return newResearchEntity;
     },
     _config: {
@@ -219,7 +222,7 @@ module.exports = _.merge({}, BaseModel, {
 });
 
 function getThroughModel(ResearchEntityModel, fieldName) {
-    var throughModelName = ResearchEntityModel._attributes[fieldName].through;
+    const throughModelName = ResearchEntityModel._attributes[fieldName].through;
     return sails.models[throughModelName];
 }
 
