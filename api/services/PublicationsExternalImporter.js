@@ -1,7 +1,9 @@
-/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalId, ExternalIdGroup, ScopusConnector, User, Group, Authorship */
+/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship */
 // PublicationsExternalImporter.js - in api/services
 
 "use strict";
+
+const _ = require('lodash');
 
 module.exports = {
     updateUser: async (user) => {
@@ -15,6 +17,7 @@ module.exports = {
     updateAll: async () => {
         let count = 0;
 
+        //TODO OPTIMIZE
         count += await updateUserProfiles();
         count += await updateGroupProfiles();
         sails.log.info('updated/inserted ' + count + ' publications external documents');
@@ -34,6 +37,10 @@ async function updateUserProfiles() {
 async function updateGroupProfiles() {
     const groups = await Group.find({publicationsAcronym: {'!': ''}});
 
+    //TODO change this
+    const mainInstitute = await Group.findOne({id: 1});
+    groups.push(mainInstitute);
+
     let count = 0;
     for (let g of groups)
         count += await updateResearchEntityProfile(g);
@@ -43,19 +50,16 @@ async function updateGroupProfiles() {
 
 async function updateResearchEntityProfile(researchEntity) {
 
-    let researchEntityModel, publicationsResearchEntityField, externalIdModel;
+    let researchEntityModel, publicationsResearchEntityField, externalDocumentModel;
     if (researchEntity.getType() === 'user') {
         researchEntityModel = User;
         publicationsResearchEntityField = 'username';
-        externalIdModel = ExternalId;
+        externalDocumentModel = ExternalDocument;
     } else {
         researchEntityModel = Group;
         publicationsResearchEntityField = 'publicationsAcronym';
-        externalIdModel = ExternalIdGroup;
+        externalDocumentModel = ExternalDocumentGroup;
     }
-
-    if(!researchEntity[publicationsResearchEntityField])
-        throw 'empty publications ResearchEntity field';
 
     const query = {
         where: {
@@ -68,30 +72,36 @@ async function updateResearchEntityProfile(researchEntity) {
     };
     const res = await Connector.getDocuments(researchEntityModel, researchEntity.id, query);
     const documents = res.items;
-    const documentsIds = documents.map(d => d.iitPublicationsId);
-    await updateProfile(externalIdModel, researchEntity[publicationsResearchEntityField], documentsIds);
+    const documentsIds = await createOrUpdateDocuments(documents);
+    await updateProfile(externalDocumentModel, researchEntity.id, documentsIds);
     await createOrUpdateDocuments(documents);
 
-    return res.count;
+    return documentsIds.length;
 }
 
-async function updateProfile(externalIdModel, researchEntityKey, documentsIds) {
-    await externalIdModel.destroy({
-        researchEntity: researchEntityKey,
+async function updateProfile(externalDocumentModel, researchEntityId, documentsIds) {
+    await externalDocumentModel.destroy({
+        researchEntity: researchEntityId,
         origin: DocumentOrigins.PUBLICATIONS
     });
 
     for (let id of documentsIds)
-        await externalIdModel.create({
-            researchEntity: researchEntityKey,
+        await externalDocumentModel.create({
+            researchEntity: researchEntityId,
             document: id,
             origin: DocumentOrigins.PUBLICATIONS
         })
 }
 
-async function createOrUpdateDocuments(documents) {
-    for (let data of documents)
-        await createOrUpdateDocument(data);
+async function createOrUpdateDocuments(documentsData) {
+    const createdDocumentsIds = [];
+    for (let data of documentsData) {
+        const document = await createOrUpdateDocument(data);
+        if (_.has(document, 'id'))
+            createdDocumentsIds.push(document.id);
+    }
+
+    return createdDocumentsIds;
 }
 
 
@@ -106,8 +116,9 @@ async function createOrUpdateDocument(documentData) {
     documentData.origin = DocumentOrigins.PUBLICATIONS;
     documentData.kind = DocumentKinds.EXTERNAL;
     try {
-        await Document.createOrUpdate(criteria, documentData);
+        return await Document.createOrUpdate(criteria, documentData);
     } catch (err) {
         sails.log.debug(err);
+        return {};
     }
 }

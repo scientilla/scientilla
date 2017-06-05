@@ -5,9 +5,9 @@
     angular.module("groups")
             .factory("GroupsService", GroupService);
 
-    GroupService.$inject = ["Restangular", "$http", "Prototyper"];
+    GroupService.$inject = ["Restangular", "$http", "Prototyper", "apiPrefix"];
 
-    function GroupService(Restangular, $http, Prototyper) {
+    function GroupService(Restangular, $http, Prototyper, apiPrefix) {
         var service = Restangular.service("groups");
 
         service.getNewGroup = getNewGroup;
@@ -85,7 +85,7 @@
             if (!groupId)
                 return;
 
-            return $http.get('/memberships',
+            return $http.get(apiPrefix+'/memberships',
                     {params: {group: groupId, populate: 'user'}})
                     .then(function (result) {
                         var memberships = result.data;

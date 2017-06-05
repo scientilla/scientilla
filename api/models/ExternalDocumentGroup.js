@@ -1,19 +1,17 @@
+/**
+ * ExternalGroup.js
+ */
+const _ = require('lodash');
+const BaseModel = require("../lib/BaseModel.js");
 
-module.exports = {
+module.exports = _.merge({}, BaseModel, {
     attributes: {
-        document: {
-            model: 'document',
-            primaryKey: true
-        },
         researchEntity: {
-            model: 'group',
-            primaryKey: true
-        }
-    },
-
-    migrate: 'safe',
-    tableName: 'externaldocumentgroup',
-    autoUpdatedAt: false,
-    autoCreatedAt: false
-
-};
+            model: 'Group',
+        },
+        document: {
+            model: 'Document'
+        },
+        origin: 'STRING'
+    }
+});

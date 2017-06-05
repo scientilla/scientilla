@@ -1,4 +1,4 @@
-/* global ResearchEntity, Document, SqlService */
+/* global Affiliation, Authorship, ResearchEntity, Document, TagLabel, SqlService, DocumentOrigins */
 'use strict';
 
 /**
@@ -9,6 +9,7 @@
  */
 
 
+const exec = require('child_process').exec;
 const Promise = require("bluebird");
 const _ = require("lodash");
 const BaseModel = require("./BaseModel.js");
@@ -52,7 +53,7 @@ module.exports = _.merge({}, BaseModel, {
             });
     },
     doUnverifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
-        var authorshipModel = getAuthorshipModel(ResearchEntityModel);
+        const authorshipModel = getAuthorshipModel(ResearchEntityModel);
         return authorshipModel
             .findOne({researchEntity: researchEntityId, document: documentId})
             .then(function (authorship) {
@@ -171,6 +172,11 @@ module.exports = _.merge({}, BaseModel, {
         const updatedDraft = await Document.update({id: draftId}, selectedDraftData);
         return updatedDraft[0];
     },
+    deleteDrafts: function (Model, draftIds) {
+        return Promise.all(draftIds.map(function (draftId) {
+            return Document.destroy({id: draftId});
+        }));
+    },
     addTags: function (TagModel, userId, documentId, tags) {
         return TagModel.destroy({researchEntity: userId, document: documentId})
             .then(() =>
@@ -191,6 +197,20 @@ module.exports = _.merge({}, BaseModel, {
         await Affiliation.destroy({authorship: deleteAuthorships.map(a => a.id)});
         return Authorship.create(authorshipsData);
     },
+    updateProfile: async function (ResearchEntityModel, researchEntityId, researchEntityData) {
+        const oldResearchEntity = await ResearchEntityModel.findOne({id: researchEntityId});
+        const res = await ResearchEntityModel.update({id: researchEntityId}, researchEntityData);
+        const newResearchEntity = res[0];
+        const researchEntityType = newResearchEntity.getType();
+        const command = 'grunt external:import:' + researchEntityType + ':' + newResearchEntity.id;
+        if (newResearchEntity.scopusId !== oldResearchEntity.scopusId)
+            exec(command + ':' + DocumentOrigins.SCOPUS);
+        if (newResearchEntity.username !== oldResearchEntity.username
+            || newResearchEntity.publicationsAcronym !== oldResearchEntity.publicationsAcronym)
+            exec(command + ':' + DocumentOrigins.PUBLICATIONS);
+
+        return newResearchEntity;
+    },
     _config: {
         actions: false,
         shortcuts: false,
@@ -199,7 +219,7 @@ module.exports = _.merge({}, BaseModel, {
 });
 
 function getThroughModel(ResearchEntityModel, fieldName) {
-    var throughModelName = ResearchEntityModel._attributes[fieldName].through;
+    const throughModelName = ResearchEntityModel._attributes[fieldName].through;
     return sails.models[throughModelName];
 }
 

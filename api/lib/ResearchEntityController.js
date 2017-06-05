@@ -84,17 +84,28 @@ module.exports = {
         var Model = getModel(req);
         res.halt(Connector.getDocuments(Model, researchEntityId, query));
     },
-    getChartsData: function(req, res) {
+    getChartsData: function (req, res) {
         var modelName = req.options.model || req.options.controller;
         var id = req.params.researchEntityId;
         res.halt(Chart.getChartsData(id, modelName));
     },
-    setAuthorhips: function(req, res) {
+    setAuthorhips: function (req, res) {
         var researchEntityId = req.params.researchEntityId;
         var draftId = req.params.documentId;
         var authorshipsData = req.body;
         var Model = getModel(req);
         res.halt(Model.setAuthorships(Model, researchEntityId, draftId, authorshipsData));
+    },
+    updateProfile: function (req, res) {
+        const researchEntityId = req.params.researchEntityId;
+        const Model = getModel(req);
+        const researchEntityData = req.body;
+        res.halt(Model.updateProfile(Model, researchEntityId, researchEntityData));
+    },
+    deleteDrafts: function (req, res) {
+        const Model = getModel(req);
+        var draftIds = req.param('draftIds');
+        res.halt(Model.deleteDrafts(Model, draftIds));
     }
 };
 

@@ -1,6 +1,7 @@
 language: node_js
 node_js:
   - "7.6"
+  - "8"
 sudo: true
 env:
   - CXX=g++-4.8

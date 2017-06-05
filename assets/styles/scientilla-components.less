@@ -1,0 +1,282 @@
+@import "iit-colors";
+
+.scientilla-main-logo {
+  display: block;
+  width: 40%;
+  margin: 0 auto;
+}
+
+.scientilla-small-logo {
+  height: 40px;
+  margin: 5px 0 5px 15px;
+}
+
+.scientilla-toolbar {
+  height: 50px;
+  color: @iit-white;
+
+  background-color: @iit-grey-dark;
+  margin-bottom: 10px;
+}
+
+.scientilla-toolbar a,
+.scientilla-toolbar a:visited,
+.scientilla-toolbar a:hover,
+.scientilla-toolbar .btn-link {
+  color: @iit-white;
+  text-decoration: none;
+  font-size: 1.5em;
+
+  margin-top: 0.2em;
+}
+
+.scientilla-items-found {
+  display: inline-block;
+  padding: .3em .6em .4em;
+  margin-top: 10px;
+  margin-left: 2px;
+  font-size: 14px;
+  background-color: @iit-grey-dark;
+}
+
+.scientilla-clickable {
+  cursor: pointer;
+  color: @iit-primary;
+}
+
+.scientilla-clickable:hover {
+  text-decoration: underline;
+}
+
+.scientilla-login-form {
+  width: 40%;
+  margin: 0 auto;
+}
+
+.scientilla-register-form {
+  width: 40%;
+  margin: 0 15%;
+}
+
+.scientilla-document {
+  margin-left: 20px;
+  padding-left: 10px;
+
+  border-left: 3px solid @iit-blue-dark;
+}
+
+.scientilla-document.invalid {
+  border-left: 3px solid @iit-alert;
+}
+
+.scientilla-document-left-col {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  height: 100%;
+}
+
+.scientilla-document-year {
+  -webkit-transform: rotate(-90deg);
+  -moz-transform: rotate(-90deg);
+  -ms-transform: rotate(-90deg);
+  -o-transform: rotate(-90deg);
+  transform: rotate(-90deg);
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  -o-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+
+  font-size: 16px;
+}
+
+.scientilla-document-icons {
+  margin-left: 9px;
+  margin-top: 18px;
+  position: absolute;
+  bottom: 5px;
+}
+
+.scientilla-document-title {
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+.scientilla-document-discarded {
+  margin-right: 5px;
+}
+
+.scientilla-document-source {
+  font-style: italic;
+}
+
+.scientilla-in-press {
+  text-decoration: underline;
+  color: @iit-inpress;
+  font-weight: bold;
+}
+
+.scientilla-document-icon-container {
+  display: inline-block;
+}
+
+.scientilla-document-authors {
+  font-weight: bold;
+}
+
+.scientilla-document-doi {
+}
+
+.scientilla-right-menu {
+  font-size: 1.2em;
+}
+
+form.autosave {
+  padding-left: 5px;
+}
+
+form.autosave.unsaved {
+  border-left: 2px solid @iit-form-unsaved;
+}
+
+form.autosave.saved {
+  border-left: 2px solid @iit-form-saved;
+}
+
+form.autosave.default {
+  border-left: 2px solid @iit-form-default;
+}
+
+/*icons*/
+.scientilla-icon {
+  padding: 0 8px 5px 8px;
+  content: ' ';
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.scientilla-icon-iit {
+  background: no-repeat left center url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAASCAYAAABb0P4QAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH4AsYDhsfFk0UJgAAAzlJREFUOMudk09oXFUUxn/3vjf/0pn3Zt7gm5nWBJSYCbQEQbqWbrIQuqoOCdlYKC6EmIYWhRbqoouADdJAFxYpFMRdwY0bKbYuaoXioroqSWPixhonE8j7k/fy5t73ukgypK6MZ3M5B853vnO++4lOZwZgFngLEEDG0ULsv38CiyawZJrmJ9vbHr1ej3L5GK7rIgR4nk+3u0mpVKLZbJCmKUJAkvRRSpHP5zEMgywbcHjbOHly4lvfD0qNhkun8z65XI61tXWU0lSrVaanP6BSqbCyskqxWCRNU7ROKRaLCCH+zfaUqbUOPM9zFhcXGB9vA9DpzPDs2TJ37nzF6dPvAHD+/Ee8ePE329vbzM5+zNmz73Hz5i3u3/+RVqt5AOhLIYSWUrCx8Q8AvV4PpTT5fI5utwvAzk5EkiSkqaZUKnHmzLtUKhVM0ySOd0nT9ABQm1JKbNvm9u2vefr0d5aXV4jjmJGRYe7e/YaVlVXW19fxPA/P8xkfbw8Y+b6P7/uEYYhlWWRZhjh3bvoP3/ffuHz5IiMjw2itWFj4gufP17hy5TPGxkaR0mBubp7JyUkuXPiQcrkMQBRFKKVYXV3j6tVrFAqFLRNgd3eXVqtFuz2GUgqlNFEU4bqv0W6PAZBloFT/FQXCcIcgCAjDACEEQghMACklURQBEAQBAIZhEMcxBwOHh19naekWQkguXZoD4MaNL7l37ztGR9/EcRyyLNsD/C+hlMKyLMrlY4OaZVk0Gi62bQ+EkUeyxP5ah3Mp5Ss1yVF9dqj5kEP+H2CWZRiGcUiUkCAIiKJoMOiIK0s8zxvkExOnqNVq1Gq1AVuZZaC1pl6vA1CtVgFIkgTHqQFQKBSQUuI4VR48+ImtrS0ApqY6PHz4A9evf063u4lSSphSCoaGhnj8+Bc2NjYIw4AsA8dxePLkV4IgpN/vkyQJ9Xod3/eZn/+UmZkpTpw4jpQGjx79TD6fwzCMiuh0ZhLDMHKbm5vEcYyUBo2GSy635+WD+7iui2maSCnp9bYIw5B8Po/WCiklzWaTNE1/M4HvtdbHD98BoN/vU61WsW17oG6apqRpim1bWFZlz7v7X0lr/Rdw8SU82WQLUckcLwAAAABJRU5ErkJggg==');
+  background-size: 16px 15px;
+}
+
+/*Scientilla-menu*/
+scientilla-menu .menu-label {
+  color: grey;
+  padding-left: 0;
+  margin-left: 0;
+  text-align: left;
+}
+
+scientilla-menu .menu-label {
+  background-color: transparent;
+}
+
+/*scientilla-document-institutes*/
+
+.scientilla-document-institutes > div {
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+.scientilla-document-affiliations {
+  font-style: italic;
+}
+
+/*scientilla-filter*/
+
+scientilla-filter [uib-dropdown] .btn-link {
+  color: @iit-black;
+}
+
+/* scientilla-document-form*/
+
+scientilla-document-form .has-feedback label ~ .form-control-feedback.fa {
+  top: 35px;
+}
+
+/* scientilla-document-type */
+
+scientilla-document-type small {
+  border-radius: 99px;
+  text-align: center;
+  display: inline-block;
+  width: 22px;
+  min-height: 22px;
+  font-size: 11px;
+  vertical-align: middle;
+  line-height: 22px;
+  background-color: @iit-grey-dark;
+  color: @iit-white;
+  font-weight: 700;
+  cursor: default;
+}
+
+/*Scientilla document labels*/
+
+scientilla-document-label {
+  display: inline-block;
+  vertical-align: super;
+}
+
+.scientilla-document-label-duplicate {
+  background-color: #ff9933;
+}
+
+.scientilla-document-label-discarded {
+  background-color: @iit-alert;
+}
+
+/*Scientilla multicheck*/
+
+scientilla-multicheck .scientila-multicheck-commands-row {
+  height: 38px;
+  line-height: 38px;
+}
+
+.scientilla-modal .btn {
+  margin-right: 5px;
+}
+
+/*Scientilla tooltip*/
+
+.tooltip.scientilla-tooltip .tooltip-inner {
+  color: #ffffff;
+  background-color: @iit-grey-dark;
+}
+
+.tooltip.scientilla-tooltip.top .tooltip-arrow {
+  border-top-color: @iit-grey-dark;;
+}
+
+.tooltip.right.scientilla-tooltip .tooltip-arrow {
+  border-right-color: @iit-grey-dark;
+}
+
+.tooltip.left.scientilla-tooltip .tooltip-arrow {
+  border-left-color: @iit-grey-dark;
+}
+
+.tooltip.scientilla-tooltip.bottom .tooltip-arrow {
+  border-bottom-color: @iit-grey-dark;
+}
+
+/*Scientilla filter*/
+.scientilla-filter-form > form > text-field, .scientilla-filter-form > form > select-field {
+  display: inline-block;
+  vertical-align: top;
+  margin-right: 5px;
+}
+
+.scientilla-filter-form > form > text-field > div.form-group {
+  width: 300px;
+}
+
+.scientilla-filter-form > form > select-field > div.form-group {
+  min-width: 80px;
+}
+
+.documents-header > div > * {
+  margin-bottom: 10px;
+}
