@@ -137,7 +137,7 @@ module.exports = _.merge({}, BaseModel, {
                 .populate('authorships')
             )
             .then(document => {
-                if (!document)
+                if (!document || document.kind !== DocumentKinds.VERIFIED)
                     throw {
                         error: 'Document not found',
                         item: researchEntityId
