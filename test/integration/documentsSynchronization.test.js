@@ -3,7 +3,7 @@
 var test = require('./../helper.js');
 
 
-describe.only('Synchronization', function () {
+describe('Synchronization', function () {
     before(test.cleanDb);
     after(test.cleanDb);
 
