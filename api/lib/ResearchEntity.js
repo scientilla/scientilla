@@ -76,58 +76,55 @@ module.exports = _.merge({}, BaseModel, {
             draftIds.map(draftId => ResearchEntityModel.verifyDraft(ResearchEntityModel, researchEntityId, draftId))
         );
     },
-    verifyDraft: function (ResearchEntityModel, researchEntityId, draftId, position, affiliationInstituteIds, corresponding) {
-        return Document.findOneById(draftId)
+    verifyDraft: async function (ResearchEntityModel, researchEntityId, draftId, position, affiliationInstituteIds, corresponding) {
+        const draft = await Document.findOneById(draftId)
             .populate('authorships')
-            .populate('affiliations')
-            .then(draft => {
-                if (!draft || draft.kind !== DocumentKinds.DRAFT)
-                    throw {
-                        error: 'Draft not found',
-                        item: draftId
-                    };
-                if (!draft.isValid())
-                    throw {
-                        error: 'Draft not valid for verification',
-                        item: draft
-                    };
-                return ResearchEntityModel.getAuthorshipsData(draft, researchEntityId, position, affiliationInstituteIds, corresponding)
-                    .then(authorshipData => {
-                        if (!authorshipData.isVerifiable)
-                            throw {
-                                error: authorshipData.error,
-                                item: authorshipData.document
-                            };
+            .populate('affiliations');
 
-                        return Document.findCopies(draft, authorshipData.position)
-                            .then(documents => {
-                                var n = documents.length;
-                                if (n === 0) return draft;
-                                if (n > 1)
-                                    sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
-                                var doc = documents[0];
+        if (!draft || draft.kind !== DocumentKinds.DRAFT)
+            return {
+                error: 'Draft not found',
+                item: draftId
+            };
+        if (!draft.isValid())
+            return {
+                error: 'Draft not valid for verification',
+                item: draft
+            };
 
-                                if (doc.isPositionVerified(authorshipData.position))
-                                    throw {
-                                        error: "The position is already verified",
-                                        item: doc
-                                    };
+        const authorshipData = await ResearchEntityModel.getAuthorshipsData(draft, researchEntityId, position, affiliationInstituteIds, corresponding);
 
-                                sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + doc.id);
-                                return Document.destroy({id: draft.id}).then(_ => doc);
-                            })
-                            .then(d => d.draftToDocument())
-                            .then(d => ResearchEntityModel.doVerifyDocument(d, researchEntityId, authorshipData));
-                    });
-            })
-            .catch(e => {
-                if (e.error)
-                    return {
-                        error: e.error,
-                        item: e.item
-                    };
-                throw e;
-            });
+        if (!authorshipData.isVerifiable)
+            return {
+                error: authorshipData.error,
+                item: authorshipData.document
+            };
+
+        const documentCopies = await Document.findCopies(draft, authorshipData.position);
+
+        var n = documentCopies.length;
+        let docToVerify;
+        if (n === 0) {
+            docToVerify = await draft.draftToDocument();
+        }
+        else {
+            if (n > 1)
+                sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
+            docToVerify = documentCopies[0];
+
+            if (docToVerify.isPositionVerified(authorshipData.position))
+                return {
+                    error: "The position is already verified",
+                    item: documentCopy
+                };
+
+            sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + docToVerify.id);
+            await Document.destroy({id: draft.id});
+        }
+
+        const newDoc = await ResearchEntityModel.doVerifyDocument(docToVerify, researchEntityId, authorshipData);
+
+        return newDoc;
     },
     verifyDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(documentId => Model.verifyDocument(Model, researchEntityId, documentId)));
