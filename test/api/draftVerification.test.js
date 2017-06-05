@@ -46,7 +46,7 @@ describe('Draft Verification', () => {
         }
     );
 
-    it('verifying a complete draft should be possible', async() => {
+    it('verifying a valid draft should be possible', async() => {
             documentData.source = journal;
             user1Draft1 = await test.userCreateDraft(user1, documentData);
             const affiliations = [iitInstitute.id];
@@ -145,6 +145,8 @@ describe('Draft Verification', () => {
             const author2affiliations = d.affiliations.filter(a => a.authorship === d.authorships[1].id);
             const author2affiliationInstitutesActual = _.map(author2affiliations, 'institute');
             author2affiliationInstitutesActual.should.containDeep(author2affiliationInstitutes);
+
+            await test.getDocument(user2Draft1.id, 404);
         }
     );
 
