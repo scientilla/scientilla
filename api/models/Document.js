@@ -273,50 +273,32 @@ module.exports = _.merge({}, BaseModel, {
         });
         return suggestedDocuments;
     },
-    findCopies: function (verifyingDraft, verifyingPosition) {
-        const query = _.pick(verifyingDraft, Document.getFields());
-        query.kind = DocumentKinds.VERIFIED;
-        return Document.find(query)
-            .populate('authorships')
-            .populate('affiliations')
-            .then(similarDocs => {
-                const draftFullAuthorships = verifyingDraft.getFullAuthorships();
-                const copies = similarDocs.filter(d => {
-                    let isCopy = true;
-                    const copyFullAuthorships = d.getFullAuthorships();
-
-                    copyFullAuthorships.forEach(cfa => {
-                        if (cfa.position === verifyingPosition)
-                            return;
-                        if (!_.isNil(cfa.researchEntity))
-                            return;
-                        const dfa = draftFullAuthorships.find(dfa => dfa.position === cfa.position);
-
-                        if (!_.isEqual(
-                                _.map(cfa.affiliations, 'institute').sort(),
-                                _.map(dfa.affiliations, 'institute').sort()))
-                            isCopy = false;
-                    });
-
-                    if (!isCopy) return false;
-
-                    draftFullAuthorships.forEach(dfa => {
-                        if (dfa.position === verifyingPosition)
-                            return;
-                        const cfa = draftFullAuthorships.find(cfa => cfa.position === dfa.position);
-                        if (!_.isNil(cfa.researchEntity))
-                            return;
-
-                        if (!_.isEqual(
-                                _.map(cfa.affiliations, 'institute').sort(),
-                                _.map(dfa.affiliations, 'institute').sort()))
-                            isCopy = false;
-                    });
-                    return isCopy;
-                });
-
-                return copies;
+    findCopies: async function (document, AuthorshipPositionNotToCheck = null) {
+        function areAuthorshipsEqual(as1, as2) {
+            return as1.every(a1 => {
+                const a2 = as2.find(a2 => a1.position === a2.position);
+                return (
+                    a1.position === AuthorshipPositionNotToCheck ||
+                    !_.isNil(a1.researchEntity) ||
+                    _.isEmpty(_.xor(_.map(a1.affiliations, 'institute'), _.map(a2.affiliations, 'institute')))
+                );
             });
+        }
+
+        const query = _.pick(document, Document.getFields());
+        query.id = {'!': document.id};
+        query.kind = DocumentKinds.VERIFIED;
+        const similarDocuments = await Document.find(query)
+            .populate('authorships')
+            .populate('affiliations');
+        const draftFullAuthorships = document.getFullAuthorships();
+        const copies = similarDocuments.filter(d => {
+            const copyFullAuthorships = d.getFullAuthorships();
+            return areAuthorshipsEqual(draftFullAuthorships, copyFullAuthorships) &&
+                areAuthorshipsEqual(draftFullAuthorships, copyFullAuthorships);
+        });
+
+        return copies;
     },
     createOrUpdate: async function (criteria, documentData) {
         const selectedData = Document.selectData(documentData);
