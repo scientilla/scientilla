@@ -1,9 +1,8 @@
 @import "iit-colors";
 
-.scientilla-main-logo {
-  display: block;
-  width: 40%;
-  margin: 0 auto;
+.scientilla-login-body {
+  background-color: @iit-grey-dark;
+  color: @iit-white;
 }
 
 .scientilla-small-logo {
@@ -11,12 +10,20 @@
   margin: 5px 0 5px 15px;
 }
 
+@scientilla-toolbar-height: 50px;
 .scientilla-toolbar {
-  height: 50px;
-  color: @iit-white;
-
-  background-color: @iit-grey-dark;
+  height: @scientilla-toolbar-height;
   margin-bottom: 10px;
+}
+
+.scientilla-toolbar > .row {
+  height: @scientilla-toolbar-height;
+  color: @iit-white;
+  background-color: @iit-grey-dark;
+
+  position: fixed;
+  z-index: 100;
+  width: 100%;
 }
 
 .scientilla-toolbar a,
@@ -28,6 +35,26 @@
   font-size: 1.5em;
 
   margin-top: 0.2em;
+}
+
+@scientilla-footer-height: 45px;
+.scientilla-footer {
+  content: "";
+  height: @scientilla-footer-height;
+  margin-top: 10px;
+}
+
+.scientilla-footer > .row {
+  color: @iit-white;
+  background-color: @iit-grey-dark;
+
+  position: fixed;
+  bottom: 0;
+  z-index: 100;
+  width: 100%;
+  height: @scientilla-footer-height;
+
+  padding-top: 2px;
 }
 
 .scientilla-items-found {
@@ -48,9 +75,14 @@
   text-decoration: underline;
 }
 
+.scientilla-login-description {
+  text-transform: uppercase;
+  font-size: 16px;
+  text-align: justify;
+}
+
 .scientilla-login-form {
-  width: 40%;
-  margin: 0 auto;
+  padding-top: 20px;
 }
 
 .scientilla-register-form {

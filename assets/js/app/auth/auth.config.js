@@ -13,7 +13,8 @@
                     controllerAs: 'vm',
                     access: {
                         noLogin: true
-                    }
+                    },
+                    bodyClass: 'scientilla-login-body'
                 })
                 .when("/register", {
                     templateUrl: "partials/register.html",

@@ -43,6 +43,9 @@
         $rootScope.$on('$locationChangeSuccess', (event, current) =>
             path.current = path.getUrlPath(current)
         );
+        $rootScope.$on('$routeChangeSuccess', function (event, current) {
+            $rootScope.bodyClass = current.$$route.bodyClass;
+        });
 
         $rootScope.$on('$viewContentLoaded', () => {
             if (!AuthService.isLogged)
