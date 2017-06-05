@@ -103,6 +103,10 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'authorship',
             via: 'document'
         },
+        groupAuthorships: {
+            collection: 'authorshipgroup',
+            via: 'document'
+        },
         affiliations: {
             collection: 'affiliation',
             via: 'document',
