@@ -29,13 +29,14 @@ async function synchronizeScopus() {
         }
         const docData = Document.selectData(doc);
         const externalDocData = Document.selectData(externalDoc);
-        const differences = getDifferences(docData, externalDocData)
-        if (!_.isEmpty(differences)) {
-            documentSynchronized.push(docData);
+        const differences = getDifferences(docData, externalDocData);
+        if (_.isEmpty(differences)) {
+            continue;
         }
+        documentSynchronized.push(docData);
         delete externalDocData.kind;
         delete docData.kind;
-        const d = await Document.update(doc.id, externalDocData);
+        await Document.update(doc.id, externalDocData);
     }
     sails.log.info(documentSynchronized.length + " documents synchronized");
 }
