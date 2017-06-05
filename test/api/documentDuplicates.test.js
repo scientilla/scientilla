@@ -5,7 +5,7 @@ const should = require('should');
 const _ = require('lodash');
 const test = require('./../helper.js');
 
-describe('Draft Verification', () => {
+describe('Document duplicates', () => {
     before(test.clean);
     after(test.clean);
 
