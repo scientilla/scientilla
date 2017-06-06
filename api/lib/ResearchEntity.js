@@ -45,12 +45,10 @@ module.exports = _.merge({}, BaseModel, {
                     .populate('source');
             });
     },
-    unverifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
-        return this
-            .doUnverifyDocument(ResearchEntityModel, researchEntityId, documentId)
-            .then(function () {
-                return Document.deleteIfNotVerified(documentId);
-            });
+    unverifyDocument: async function (ResearchEntityModel, researchEntityId, documentId) {
+        await this.doUnverifyDocument(ResearchEntityModel, researchEntityId, documentId)
+        const deletedDocument = await Document.deleteIfNotVerified(documentId);
+        return deletedDocument;
     },
     doUnverifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
         const authorshipModel = getAuthorshipModel(ResearchEntityModel);
