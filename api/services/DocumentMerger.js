@@ -18,7 +18,7 @@ async function getAllVerifiedDocuments() {
     let limit = chunkSize;
     let keepLoading = true;
     while (keepLoading) {
-        chunkedDocuments = await Document.find({where: {kind: DocumentKinds.VERIFIED}, skip: skip, limit: limit})
+        chunkedDocuments = await Document.find({where: {kind: DocumentKinds.VERIFIED}, skip: skip, limit: limit, sort: 'id'})
             .populate('authorships')
             .populate('groupAuthorships')
             .populate('affiliations')
