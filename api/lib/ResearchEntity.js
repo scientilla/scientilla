@@ -130,7 +130,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     verifyDocument: function (Model, researchEntityId, documentId, position, affiliationInstituteIds, corresponding) {
         const DiscardedModel = getDiscardedModel(Model);
-        return DiscardedModel.destroy({document: documentId})
+        return DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId})
             .then(() => Document.findOneById(documentId)
                 .populate('affiliations')
                 .populate('authorships')
