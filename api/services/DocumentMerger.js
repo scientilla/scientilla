@@ -42,7 +42,7 @@ async function mergeDocuments() {
 
     for (let doc of documents) {
         if (doc.authorships.length == 0 && doc.groupAuthorships.length == 0) {
-            sails.log.warn(`Document with id ${doc.id} is a verified document bus has no authorships`);
+            sails.log.warn(`Document with id ${doc.id} is a verified document but has no authorships`);
             continue;
         }
         const errors = [];
