@@ -65,7 +65,7 @@ async function mergeDocuments() {
             const res = await User.verifyDocument(User, a.researchEntity, copy.id, a.position, instituteIds, a.corresponding);
             if (res.error) {
                 errors.push(res);
-                sails.log.warn(`User ${a.researchEntity} was trying to verify document ${copy.id} (${doc.title}) in position: ${a.position}, but an error occured`);
+                sails.log.warn(`User ${a.researchEntity} was trying to unverify document ${doc.id} and verify document ${copy.id} (${doc.title}) in position: ${a.position}, but an error occured`);
                 sails.log.warn('Error: ');
                 sails.log.warn(res.error);
             } else
@@ -77,7 +77,7 @@ async function mergeDocuments() {
             const res = await Group.verifyDocument(Group, a.researchEntity, copy.id, null, null, null);
             if (res.error) {
                 errors.push(res);
-                sails.log.warn(`Group ${a.researchEntity} was trying to verify document ${copy.id} (${doc.title}), but an error occured`);
+                sails.log.warn(`Group ${a.researchEntity} was trying to unverify document ${doc.id} and verify document ${copy.id} (${doc.title}), but an error occured`);
                 sails.log.warn('Error: ');
                 sails.log.warn(res.error);
             } else
