@@ -15,20 +15,23 @@ async function getAllVerifiedDocuments() {
     const documents = [];
     let chunkedDocuments;
     let skip = 0;
-    let limit = chunkSize;
-    let keepLoading = true;
-    while (keepLoading) {
-        chunkedDocuments = await Document.find({where: {kind: DocumentKinds.VERIFIED}, skip: skip, limit: limit, sort: 'id'})
+    while (true) {
+        chunkedDocuments = await Document.find(
+            {
+                where: {kind: DocumentKinds.VERIFIED},
+                skip: skip,
+                limit: chunkSize,
+                sort: 'id'
+            })
             .populate('authorships')
             .populate('groupAuthorships')
             .populate('affiliations')
             .populate('discarded')
             .populate('discardedG');
-        skip+=chunkSize;
-        limit+= chunkSize;
+        skip += chunkSize;
         documents.push(...chunkedDocuments);
         if (chunkedDocuments.length == 0)
-            keepLoading = false;
+            break;
     }
     return documents;
 }
@@ -61,7 +64,7 @@ async function mergeDocuments() {
         for (let a of doc.authorships) {
             if (!a.researchEntity)
                 continue;
-             const instituteIds = doc.affiliations.filter(aff => aff.authorship == a.id).map(aff => aff.institute);
+            const instituteIds = doc.affiliations.filter(aff => aff.authorship == a.id).map(aff => aff.institute);
             const res = await User.verifyDocument(User, a.researchEntity, copy.id, a.position, instituteIds, a.corresponding);
             if (res.error) {
                 errors.push(res);
