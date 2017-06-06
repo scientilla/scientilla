@@ -65,6 +65,12 @@ module.exports = _.merge({}, BaseModel, {
             return Model.createDraft(Model, researchEntityId, document);
         }));
     },
+    undiscardDocument: async function(Model, researchEntityId, documentId) {
+        const DiscardedModel = getDiscardedModel(Model);
+        await DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
+        const deletedDocument = await Document.deleteIfNotVerified(documentId);
+        return deletedDocument;
+    },
     discardDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(function (documentId) {
             return Model.discardDocument(researchEntityId, documentId);

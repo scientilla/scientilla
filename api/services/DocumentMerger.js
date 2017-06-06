@@ -32,12 +32,23 @@ async function mergeDocuments() {
             continue;
         const copy = copies[0];
         for (let d of doc.discarded) {
-            await Discarded.destroy({id: d.id});
-            await User.discardDocument(d.researchEntity, d.document);
+            const res = await User.undiscardDocument(User, d.researchEntity, d.document);
+            if (res.error) {
+                errors.push(res);
+                sails.log.warn(`User ${a.researchEntity} was trying to remove ${doc.id} from the discarded but an error occured`);
+                sails.log.warn('Error: ');
+                sails.log.warn(res.error);
+            }
+            await User.discardDocument(d.researchEntity, copy.id);
         }
         for (let d of doc.discardedG) {
-            await Discarded.destroy({id: d.id});
-            await Group.discardDocument(d.researchEntity, d.document);
+            const res = await Group.undiscardDocument(Group, d.researchEntity, d.document);
+            if (res.error) {
+                sails.log.warn(`Group ${a.researchEntity} was trying to remove ${doc.id} from the discarded but an error occured`);
+                sails.log.warn('Error: ');
+                sails.log.warn(res.error);
+            }
+            await Group.discardDocument(d.researchEntity, copy.id);
         }
         for (let a of doc.authorships) {
             if (!a.researchEntity)
@@ -64,10 +75,14 @@ async function mergeDocuments() {
             } else
                 await Group.unverifyDocument(Group, a.researchEntity, doc.id);
         }
-        if (errors.length)
-            nonMergedDocuments.push(doc);
-        else
-            mergedDocuments.push(doc);
+        if (errors.length) {
+            sails.log.debug(`Document ${doc.id} should have been merged with  ${copy.id} but an error occured`)
+            nonMergedDocuments.push({doc: doc, copy: copy});
+        }
+        else {
+            sails.log.debug(`Document ${doc.id} was merged with  ${copy.id}`);
+            mergedDocuments.push({doc: doc, copy: copy});
+        }
     }
     sails.log.debug(`${mergedDocuments.length} documents merged`);
     sails.log.debug(`${nonMergedDocuments.length} documents were not merged because of some error`);
