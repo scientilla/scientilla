@@ -156,6 +156,14 @@ module.exports = _.merge({}, BaseModel, {
             via: 'discardedDocuments',
             through: 'discardedgroup'
         },
+        discarded: {
+            collection: 'discarded',
+            via: 'document'
+        },
+        discardedG: {
+            collection: 'discardedgroup',
+            via: 'document'
+        },
         draftCreator: {
             model: 'User'
         },

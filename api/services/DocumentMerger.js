@@ -21,7 +21,9 @@ async function getAllVerifiedDocuments() {
         chunkedDocuments = await Document.find({where: {kind: DocumentKinds.VERIFIED}, skip: skip, limit: limit})
             .populate('authorships')
             .populate('groupAuthorships')
-            .populate('affiliations');
+            .populate('affiliations')
+            .populate('discarded')
+            .populate('discardedG');
         skip+=chunkSize;
         limit+= chunkSize;
         documents.push(...chunkedDocuments);
@@ -48,6 +50,14 @@ async function mergeDocuments() {
         if (copies.length == 0)
             continue;
         const copy = copies[0];
+        for (let d of doc.discarded) {
+            await Discarded.destroy({id: d.id});
+            await User.discardDocument(d.researchEntity, d.document);
+        }
+        for (let d of doc.discardedG) {
+            await Discarded.destroy({id: d.id});
+            await Group.discardDocument(d.researchEntity, d.document);
+        }
         for (let a of doc.authorships) {
             if (!a.researchEntity)
                 continue;
@@ -56,6 +66,8 @@ async function mergeDocuments() {
             if (res.error) {
                 errors.push(res);
                 sails.log.warn(`Document with id ${doc.id} (${doc.title}) has authorship problem. User: ${a.researchEntity}, position: ${a.position}`);
+                sails.log.warn('Error: ');
+                sails.log.warn(res.error);
             } else
                 await User.unverifyDocument(User, a.researchEntity, doc.id);
         }
@@ -65,7 +77,7 @@ async function mergeDocuments() {
             const res = await Group.verifyDocument(Group, a.researchEntity, copy.id, a.position, [], a.corresponding);
             if (res.error) {
                 errors.push(res);
-                sails.log.warn(`Document with id ${doc.id} (${doc.title}) has authorship problem. Group: ${a.researchEntity}, position: ${a.position}`);
+                sails.log.warn(`Document with id ${doc.id} (${doc.title}) has authorship problem. Group: ${a.researchEntity}`);
             } else
                 await Group.unverifyDocument(Group, a.researchEntity, doc.id);
         }
