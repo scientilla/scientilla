@@ -128,40 +128,32 @@ module.exports = _.merge({}, BaseModel, {
     verifyDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(documentId => Model.verifyDocument(Model, researchEntityId, documentId)));
     },
-    verifyDocument: function (Model, researchEntityId, documentId, position, affiliationInstituteIds, corresponding) {
+    verifyDocument: async function (Model, researchEntityId, documentId, position, affiliationInstituteIds, corresponding) {
         const DiscardedModel = getDiscardedModel(Model);
-        return DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId})
-            .then(() => Document.findOneById(documentId)
-                .populate('affiliations')
-                .populate('authorships')
-            )
-            .then(document => {
-                if (!document || document.kind !== DocumentKinds.VERIFIED)
-                    throw {
-                        error: 'Document not found',
-                        item: researchEntityId
-                    };
-                return Model.getAuthorshipsData(document, researchEntityId, position, affiliationInstituteIds, corresponding)
-            })
-            .then(authorshipData => {
-                if (!authorshipData.isVerifiable)
-                    throw {
-                        error: authorshipData.error,
-                        item: authorshipData.document
-                    };
+        await  DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
+        const document = await Document.findOneById(documentId)
+            .populate('affiliations')
+            .populate('authorships');
+        if (!document || document.kind !== DocumentKinds.VERIFIED)
+            return {
+                error: 'Document not found',
+                item: researchEntityId
+            };
+        const authorshipData = await Model.getAuthorshipsData(document, researchEntityId, position, affiliationInstituteIds, corresponding)
+        if (!authorshipData.isVerifiable)
+            return {
+                error: authorshipData.error,
+                item: authorshipData.document
+            };
 
 
-                if (authorshipData.document.isPositionVerified(authorshipData.position))
-                    throw {
-                        error: "The position is already verified",
-                        item: authorshipData.document
-                    };
-                return Model.doVerifyDocument(authorshipData.document, researchEntityId, authorshipData);
-            })
-            .catch(e => ({
-                error: e.error,
-                item: e.item
-            }));
+        if (authorshipData.document.isPositionVerified(authorshipData.position))
+            return {
+                error: "The position is already verified",
+                item: authorshipData.document
+            };
+        const verifiedDocument = await Model.doVerifyDocument(authorshipData.document, researchEntityId, authorshipData);
+        return verifiedDocument;
     },
     updateDraft: async function (ResearchEntityModel, draftId, draftData) {
         const documentFields = Document.getFields();
