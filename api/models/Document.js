@@ -258,7 +258,10 @@ module.exports = _.merge({}, BaseModel, {
             .populate('discardedCoauthors')
             .populate('discardedGroups');
         if (!document)
-            throw new Error('Document ' + documentId + ' does not exist');
+            return {
+                error: 'Document ' + documentId + ' does not exist',
+                item: documentId
+            };
         if (countAuthorsAndGroups(document) == 0) {
             sails.log.debug('Document ' + documentId + ' will be deleted');
             let deletedDocument = await Document.destroy({id: documentId});
