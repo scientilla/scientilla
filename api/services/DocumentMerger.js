@@ -8,42 +8,20 @@ module.exports = {
     mergeDocuments
 };
 
-async function getAllVerifiedDocuments() {
-    // waterline goes crazy when find returns more than 6200 elements
-    // https://github.com/balderdashy/waterline/issues/1498
-    const chunkSize = 1000;
-    const documents = [];
-    let chunkedDocuments;
-    let skip = 0;
-    while (true) {
-        chunkedDocuments = await Document.find(
-            {
-                where: {kind: DocumentKinds.VERIFIED},
-                skip: skip,
-                limit: chunkSize,
-                sort: 'id'
-            })
+//missing check of discarded documents
+async function mergeDocuments() {
+    const mergedDocuments = [];
+    const nonMergedDocuments = [];
+    const documents = await Document.findByKind(DocumentKinds.VERIFIED);
+    sails.log.debug(`${documents.length} documents to check found`);
+
+    for (let partialDoc of documents) {
+        const doc = await Document.findOneById(partialDoc.id)
             .populate('authorships')
             .populate('groupAuthorships')
             .populate('affiliations')
             .populate('discarded')
             .populate('discardedG');
-        skip += chunkSize;
-        documents.push(...chunkedDocuments);
-        if (chunkedDocuments.length == 0)
-            break;
-    }
-    return documents;
-}
-
-//missing check of discarded documents
-async function mergeDocuments() {
-    const mergedDocuments = [];
-    const nonMergedDocuments = [];
-    const documents = await getAllVerifiedDocuments();
-    sails.log.debug(`${documents.length} documents to check found`);
-
-    for (let doc of documents) {
         if (doc.authorships.length == 0 && doc.groupAuthorships.length == 0) {
             sails.log.warn(`Document with id ${doc.id} is a verified document but has no authorships`);
             continue;
