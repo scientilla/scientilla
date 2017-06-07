@@ -27,11 +27,13 @@
                                UsersService,
                                ModalService,
                                path) {
-        var vm = this;
+        const vm = this;
+        vm.wizardOpened = false;
         vm.isRegisterEnabled = false;
         vm.changeContextToGroup = changeContextToGroup;
         vm.changeContextToUser = changeContextToUser;
         vm.editProfile = editProfile;
+        vm.openWizard = openWizard;
 
         vm.$onInit = function () {
 
@@ -77,8 +79,8 @@
         }
 
         function editProfile() {
-            var openForm;
-            var researchEntityService;
+            let openForm;
+            let researchEntityService;
             if (vm.researchEntity.getType() === 'user') {
                 openForm = ModalService.openScientillaUserForm;
                 researchEntityService = UsersService;
@@ -99,6 +101,10 @@
                 .then(function (researchEntity) {
                     vm.researchEntity = researchEntity;
                 });
+        }
+
+        function openWizard() {
+            ModalService.openWizard(true);
         }
     }
 

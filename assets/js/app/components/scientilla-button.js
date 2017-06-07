@@ -9,30 +9,32 @@
                 bindings: {
                     type: '@?',
                     size: '@?',
-                    ngDisabled: '<'
+                    ngDisabled: '<',
+                    click: '&'
                 },
                 transclude: true
             });
 
     function scientillaButtonController() {
-        var vm = this;
+        const vm = this;
         vm.getClasses = getClasses;
         
         activate();
         
         function activate() {
-            vm.type = vm.type || 'submit';
+            vm.type = vm.type || 'button';
             vm.size = vm.size || 'medium';
         }
         
         function getClasses() {
-            var typeClassesTable = {
+            const typeClassesTable = {
                 submit: 'btn-primary',
+                button: 'btn-primary',
                 secondary: 'btn btn-default',
                 cancel: 'btn-default btn-cancel',
                 link: 'btn-link'
             };
-            var sizeClassesTable = {
+            const sizeClassesTable = {
                 small: 'btn-sm',
                 medium: ''
             };
