@@ -71,9 +71,14 @@ module.exports = _.merge({}, BaseModel, {
         const deletedDocument = await Document.deleteIfNotVerified(documentId);
         return deletedDocument;
     },
+    discardDocument: async function (Model, researchEntityId, documentId) {
+        const DiscardedModel = getDiscardedModel(Model);
+        const discarded = await DiscardedModel.findOrCreate({researchEntity: researchEntityId, document: documentId});
+        return discarded;
+    },
     discardDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(function (documentId) {
-            return Model.discardDocument(researchEntityId, documentId);
+            return Model.discardDocument(Model, researchEntityId, documentId);
         }));
     },
     verifyDrafts: function (ResearchEntityModel, researchEntityId, draftIds) {
