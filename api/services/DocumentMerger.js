@@ -41,7 +41,7 @@ async function mergeDocuments() {
                 sails.log.warn('Error: ');
                 sails.log.warn(res.error);
             }
-            await User.discardDocument(d.researchEntity, copy.id);
+            await User.discardDocument(User, d.researchEntity, copy.id);
         }
         for (let d of doc.discardedG) {
             const res = await Group.undiscardDocument(Group, d.researchEntity, d.document);
@@ -50,7 +50,7 @@ async function mergeDocuments() {
                 sails.log.warn('Error: ');
                 sails.log.warn(res.error);
             }
-            await Group.discardDocument(d.researchEntity, copy.id);
+            await Group.discardDocument(Group, d.researchEntity, copy.id);
         }
         for (let a of doc.authorships) {
             if (!a.researchEntity)
