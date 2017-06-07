@@ -1,4 +1,4 @@
-<form ng-submit="vm.submit()">
+<form>
     <div class="form-group">
         <label for="username">Username (Email)</label>
         <input type="text" class="form-control" id="username" placeholder="Username (Email)"
@@ -14,7 +14,7 @@
         <input type="text" class="form-control" id="surname" placeholder="Surname"
                ng-model="vm.user.surname" ng-disabled="!vm.userIsAdmin">
     </div>
-    <div class="form-group" ng-if="false" >
+    <div class="form-group" ng-if="false">
         <label for="slug">Slug</label>
         <input type="text" class="form-control" id="slug" placeholder="Slug" ng-model="vm.user.slug"
                ng-pattern="/^[a-zA-Z0-9-_]*$/" ng-required="true" ng-minlength="3" ng-maxlength="40"
@@ -43,14 +43,14 @@
         </select>
     </div>
     <scientilla-multicomplete
-        items="vm.user.collaborations"
-        query="vm.getGroupsQuery"
-        filter="vm.getCollaborationsFilter"
-        transform="vm.groupToCollaboration"
-        title="Collaborations"
-        ng-if="false"
-        >
-    </scientilla-multicomplete> 
-    <scientilla-button type="submit">Save</scientilla-button>
+            items="vm.user.collaborations"
+            query="vm.getGroupsQuery"
+            filter="vm.getCollaborationsFilter"
+            transform="vm.groupToCollaboration"
+            title="Collaborations"
+            ng-if="false"
+    >
+    </scientilla-multicomplete>
+    <scientilla-button type="submit" click="vm.submit()">Save</scientilla-button>
     <scientilla-button type="cancel" click="vm.cancel()">Cancel</scientilla-button>
 </form>
