@@ -12,7 +12,9 @@ module.exports = function (grunt) {
                     'synchronize': {
                         'scopus': Synchronizer.synchronizeScopus,
                     },
-                    'merge': DocumentMerger.mergeDocuments
+                    'clean': {
+                        'copies': Cleaner.cleanDocumentCopies
+                    }
                 };
 
                 const task = getMethod(args, methods);
