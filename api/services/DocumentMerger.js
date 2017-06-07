@@ -56,33 +56,37 @@ async function mergeDocuments() {
             if (!a.researchEntity)
                 continue;
             const instituteIds = doc.affiliations.filter(aff => aff.authorship == a.id).map(aff => aff.institute);
+            sails.log.warn(`User ${a.researchEntity} is trying to verify document ${copy.id} (${copy.title}) in position: ${a.position}`);
             const res = await User.verifyDocument(User, a.researchEntity, copy.id, a.position, instituteIds, a.corresponding);
             if (res.error) {
                 errors.push(res);
-                sails.log.warn(`User ${a.researchEntity} was trying to unverify document ${doc.id} and verify document ${copy.id} (${doc.title}) in position: ${a.position}, but an error occured`);
                 sails.log.warn('Error: ');
                 sails.log.warn(res.error);
-            } else
+            } else {
+                sails.log.warn(`User ${a.researchEntity} is trying to unverify document ${doc.id} (${doc.title})`);
                 await User.unverifyDocument(User, a.researchEntity, doc.id);
+            }
         }
         for (let a of doc.groupAuthorships) {
             if (!a.researchEntity)
                 continue;
+            sails.log.warn(`Group ${a.researchEntity} is trying to verify document ${copy.id} (${copy.title})`);
             const res = await Group.verifyDocument(Group, a.researchEntity, copy.id, null, null, null);
             if (res.error) {
                 errors.push(res);
-                sails.log.warn(`Group ${a.researchEntity} was trying to unverify document ${doc.id} and verify document ${copy.id} (${doc.title}), but an error occured`);
                 sails.log.warn('Error: ');
                 sails.log.warn(res.error);
-            } else
+            } else {
+                sails.log.warn(`Group ${a.researchEntity} is trying to unverify document ${doc.id} (${doc.title})`);
                 await Group.unverifyDocument(Group, a.researchEntity, doc.id);
+            }
         }
         if (errors.length) {
             sails.log.debug(`Document ${doc.id} should have been merged with  ${copy.id} but an error occured`)
             nonMergedDocuments.push({doc: doc, copy: copy});
         }
         else {
-            sails.log.debug(`Document ${doc.id} was merged with  ${copy.id}`);
+            sails.log.debug(`Document ${doc.id} was merged with ${copy.id}`);
             mergedDocuments.push({doc: doc, copy: copy});
         }
     }
