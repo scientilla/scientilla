@@ -9,7 +9,9 @@
 </div>
 <div>
     <small class="scientilla-document-institutes">
-        <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} - {{institute.name}}</div>
+        <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} -
+            {{institute.name}}
+        </div>
     </small>
 </div>
 <div>
@@ -56,6 +58,6 @@
             </div>
         </div>
     </div>
-    <scientilla-button type="primary" ng-click="vm.submit()">Save</scientilla-button>
-    <scientilla-button type="cancel" ng-click="vm.cancel()">Close</scientilla-button>
+    <scientilla-button type="submit" click="vm.submit()">Save</scientilla-button>
+    <scientilla-button type="cancel" click="vm.cancel()">Close</scientilla-button>
 </form>

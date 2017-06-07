@@ -1,4 +1,5 @@
 (function () {
+    "use strict";
     angular.module("services").factory("ModalService", ModalService);
 
     ModalService.$inject = ['$uibModal'];
@@ -178,9 +179,9 @@
                             </div>\
                             <hr>' +
                     scope.buttonLabels.map(function (b, i) {
-                        return '<scientilla-button ng-click="vm.ok(' + i + ')">' + b + '</scientilla-button>';
+                        return '<scientilla-button click="vm.ok(' + i + ')">' + b + '</scientilla-button>';
                     }).join('') +
-                    '<scientilla-button ng-click="vm.cancel()" type="cancel">Cancel</scientilla-button>\
+                    '<scientilla-button click="vm.cancel()" type="cancel">Cancel</scientilla-button>\
                 <div>',
                     scope);
 

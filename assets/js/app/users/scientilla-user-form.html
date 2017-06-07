@@ -1,4 +1,4 @@
-<form>
+<form ng-submit="vm.submit()">
     <div class="form-group">
         <label for="username">Username (Email)</label>
         <input type="text" class="form-control" id="username" placeholder="Username (Email)"
@@ -51,6 +51,6 @@
         ng-if="false"
         >
     </scientilla-multicomplete> 
-    <scientilla-button ng-click="vm.submit()">Save</scientilla-button>
-    <scientilla-button type="cancel" ng-click="vm.cancel()">Cancel</scientilla-button>
+    <scientilla-button type="submit">Save</scientilla-button>
+    <scientilla-button type="cancel" click="vm.cancel()">Cancel</scientilla-button>
 </form>
