@@ -22,6 +22,8 @@ async function mergeDocuments() {
             .populate('authorships')
             .populate('groupAuthorships')
             .populate('affiliations')
+            .populate('discardedCoauthors')
+            .populate('discardedGroups')
             .populate('discarded')
             .populate('discardedG');
         if (Document.getNumberOfConnections(doc) == 0) {
