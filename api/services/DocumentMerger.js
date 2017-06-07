@@ -34,23 +34,27 @@ async function mergeDocuments() {
             continue;
         const copy = copies[0];
         for (let d of doc.discarded) {
+            sails.log.debug(`User ${a.researchEntity} is removing ${doc.id} from the discarded`);
             const res = await User.undiscardDocument(User, d.researchEntity, d.document);
             if (res.error) {
                 errors.push(res);
-                sails.log.debug(`User ${a.researchEntity} was trying to remove ${doc.id} from the discarded but an error occured`);
                 sails.log.warn('Error: ');
                 sails.log.warn(res.error);
+            } else {
+                sails.log.debug(`User ${a.researchEntity} is discarding ${copy.id}`);
+                await User.discardDocument(User, d.researchEntity, copy.id);
             }
-            await User.discardDocument(User, d.researchEntity, copy.id);
         }
         for (let d of doc.discardedG) {
+            sails.log.debug(`Group ${a.researchEntity} is removing ${doc.id} from the discarded`);
             const res = await Group.undiscardDocument(Group, d.researchEntity, d.document);
             if (res.error) {
-                sails.log.debug(`Group ${a.researchEntity} was trying to remove ${doc.id} from the discarded but an error occured`);
                 sails.log.warn('Error: ');
                 sails.log.warn(res.error);
+            } else {
+                sails.log.debug(`Group ${a.researchEntity} is discarding ${copy.id}`);
+                await Group.discardDocument(Group, d.researchEntity, copy.id);
             }
-            await Group.discardDocument(Group, d.researchEntity, copy.id);
         }
         for (let a of doc.authorships) {
             if (!a.researchEntity)
