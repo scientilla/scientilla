@@ -17,13 +17,15 @@ async function mergeDocuments() {
 
     for (let partialDoc of documents) {
         const doc = await Document.findOneById(partialDoc.id)
+            .populate('authors')
+            .populate('groups')
             .populate('authorships')
             .populate('groupAuthorships')
             .populate('affiliations')
             .populate('discarded')
             .populate('discardedG');
-        if (doc.authorships.length == 0 && doc.groupAuthorships.length == 0) {
-            sails.log.warn(`Document with id ${doc.id} is a verified document but has no authorships`);
+        if (Document.getNumberOfConnections(doc) == 0) {
+            sails.log.warn(`Document with id ${doc.id} is a verified document but has no connections`);
             continue;
         }
         const errors = [];
