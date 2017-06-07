@@ -7,6 +7,7 @@
         "$http",
         "Restangular",
         "UsersService",
+        "ModalService",
         "$q",
         "localStorageService",
         "EventsService",
@@ -17,13 +18,14 @@
     function AuthService($http,
                          Restangular,
                          UsersService,
+                         ModalService,
                          $q,
                          localStorageService,
                          EventsService,
                          Prototyper,
                          apiPrefix) {
 
-        var service = {
+        const service = {
             isLogged: false,
             userId: null,
             username: null,
@@ -33,7 +35,7 @@
         };
 
         function loadAuthenticationData() {
-            var localAuthenticationData = localStorageService.get("authService");
+            const localAuthenticationData = localStorageService.get("authService");
 
             if (!localAuthenticationData)
                 return;
@@ -52,14 +54,13 @@
 
         //sTODO: refactor
         service.login = function (credentials) {
-
-            return authOp(apiPrefix+'/auths/login', credentials);
+            return authOp(apiPrefix + '/auths/login', credentials);
         };
         service.register = function (registrationData) {
-            return authOp(apiPrefix+'/auths/register', registrationData);
+            return authOp(apiPrefix + '/auths/register', registrationData);
         };
         service.logout = function () {
-            return $http.get(apiPrefix+'/auths/logout').then(function () {
+            return $http.get(apiPrefix + '/auths/logout').then(function () {
 
                 //sTODO: move to the proper place
                 Restangular.setDefaultHeaders({access_token: undefined});
@@ -88,7 +89,7 @@
                         Prototyper.toUserModel(service.user);
 
                         user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
-                        return $http.get(apiPrefix+'/users/jwt');
+                        return $http.get(apiPrefix + '/users/jwt');
                     })
                     .then(function (result) {
 
@@ -108,6 +109,8 @@
                         });
 
                         EventsService.publish(EventsService.AUTH_LOGIN, service.user);
+                        if (!service.user.alreadyAccess)
+                            ModalService.openWizard(false);
                         resolve();
                     })
                     .catch(function (result) {

@@ -51,7 +51,7 @@
                 "values": []
             }];
 
-        vm.documentsByType.data =[];
+        vm.documentsByType.data = [];
 
         vm.documentsByType.options = {
             chart: {
@@ -87,8 +87,8 @@
                         year: parseInt(d.year),
                         count: parseInt(d.count)
                     }));
-                    const minYear = _.minBy(data, 'year').year;
-                    const maxYear = _.maxBy(data, 'year').year;
+                    const minYear = _.isEmpty(data) ? 0:_.minBy(data, 'year').year;
+                    const maxYear = _.isEmpty(data) ? 0:_.maxBy(data, 'year').year;
                     _.range(minYear, maxYear)
                         .forEach(y => {
                             if (!_.find(data, {year: y}))
