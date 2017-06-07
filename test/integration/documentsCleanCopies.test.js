@@ -3,7 +3,7 @@
 var test = require('./../helper.js');
 
 
-describe('Documents merge', function () {
+describe('Documents clean copies', function () {
     before(test.cleanDb);
     after(test.cleanDb);
 
@@ -37,7 +37,7 @@ describe('Documents merge', function () {
         document2.title.should.equal(newTitle);
         document1.id.should.not.equal(document2.id);
 
-        await DocumentMerger.mergeDocuments();
+        await Cleaner.cleanDocumentCopies();
         const user1Documents = await test.getUserDocuments(user1);
         document1 = user1Documents.items[0];
         const user2Documents = await test.getUserDocuments(user2);

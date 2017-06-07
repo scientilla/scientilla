@@ -1,15 +1,15 @@
-// DocumentMerger.js - in api/services
+// Cleaner.js - in api/services
 
 const _ = require('lodash');
 
 "use strict";
 
 module.exports = {
-    mergeDocuments
+    cleanDocumentCopies
 };
 
 //missing check of discarded documents
-async function mergeDocuments() {
+async function cleanDocumentCopies() {
     const mergedDocuments = [];
     const nonMergedDocuments = [];
     const documents = await Document.findByKind(DocumentKinds.VERIFIED);
