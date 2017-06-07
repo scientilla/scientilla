@@ -46,19 +46,16 @@ module.exports = _.merge({}, BaseModel, {
             });
     },
     unverifyDocument: async function (ResearchEntityModel, researchEntityId, documentId) {
-        await this.doUnverifyDocument(ResearchEntityModel, researchEntityId, documentId)
+        await this.doUnverifyDocument(ResearchEntityModel, researchEntityId, documentId);
         const deletedDocument = await Document.deleteIfNotVerified(documentId);
         return deletedDocument;
     },
-    doUnverifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
+    doUnverifyDocument: async function (ResearchEntityModel, researchEntityId, documentId) {
         const authorshipModel = getAuthorshipModel(ResearchEntityModel);
-        return authorshipModel
-            .findOne({researchEntity: researchEntityId, document: documentId})
-            .then(function (authorship) {
-                if (!authorship)
-                    return;
-                return authorship.unverify();
-            });
+        const authorship = await authorshipModel.findOne({researchEntity: researchEntityId, document: documentId});
+        if (!authorship)
+            return;
+        return authorship.unverify();
     },
     createDrafts: function (Model, researchEntityId, documents) {
         return Promise.all(documents.map(function (document) {
