@@ -1,5 +1,5 @@
 CREATE OR REPLACE VIEW documentsuggestion AS
-  SELECT
+  SELECT DISTINCT
     d."id"      AS "document",
     "user"."id" AS "researchEntity"
   FROM "user"

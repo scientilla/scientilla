@@ -65,9 +65,24 @@ module.exports = _.merge({}, BaseModel, {
             return Model.createDraft(Model, researchEntityId, document);
         }));
     },
+    undiscardDocument: async function(Model, researchEntityId, documentId) {
+        const DiscardedModel = getDiscardedModel(Model);
+        await DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
+        const deletedDocument = await Document.deleteIfNotVerified(documentId);
+        return deletedDocument;
+    },
+    discardDocument: async function (Model, researchEntityId, documentId) {
+        const DiscardedModel = getDiscardedModel(Model);
+        const AuthorshipModel = getAuthorshipModel(Model);
+        const authorships = await AuthorshipModel.find({document:documentId, researchEntity: researchEntityId});
+        if (authorships.length > 0)
+            return null;
+        const discarded = await DiscardedModel.findOrCreate({researchEntity: researchEntityId, document: documentId});
+        return discarded;
+    },
     discardDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(function (documentId) {
-            return Model.discardDocument(researchEntityId, documentId);
+            return Model.discardDocument(Model, researchEntityId, documentId);
         }));
     },
     verifyDrafts: function (ResearchEntityModel, researchEntityId, draftIds) {

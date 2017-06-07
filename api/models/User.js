@@ -312,11 +312,6 @@ module.exports = _.merge({}, ResearchEntity, {
             })
             .then(() => cb());
     },
-    discardDocument: function (researchEntityId, documentId) {
-        return ResearchEntity
-            .doUnverifyDocument(User, researchEntityId, documentId)
-            .then(() => Discarded.findOrCreate({researchEntity: researchEntityId, document: documentId}))
-    },
     isInternalUser: function(user) {
         return _.endsWith(user.username, '@' + sails.config.scientilla.ldap.domain);
     }

@@ -58,7 +58,7 @@ module.exports = {
         var researchEntityId = req.params.researchEntityId;
         var documentId = req.param('documentId');
         var Model = getModel(req);
-        res.halt(Model.discardDocument(researchEntityId, documentId));
+        res.halt(Model.discardDocument(Model, researchEntityId, documentId));
     },
     discardDocuments: function (req, res) {
         var researchEntityId = req.params.researchEntityId;

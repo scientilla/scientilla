@@ -88,11 +88,6 @@ module.exports = _.merge({}, ResearchEntity, {
         return AuthorshipGroup.create(authorship)
             .then(()=>document);
     },
-    discardDocument: function (researchEntityId, documentId) {
-        return ResearchEntity
-            .doUnverifyDocument(Group, researchEntityId, documentId)
-            .then(() => DiscardedGroup.findOrCreate({researchEntity: researchEntityId, document: documentId}));
-    },
     getDefaultGroup: function () {
         //TODO: id must be read from settings
         const defaultInstituteName = sails.config.scientilla.institute.name;

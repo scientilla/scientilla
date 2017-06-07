@@ -242,14 +242,13 @@ module.exports = _.merge({}, BaseModel, {
         const documentFields = Document.getFields();
         return _.pick(draftData, documentFields);
     },
+    getNumberOfConnections: function(document) {
+        return document.authors.length +
+            document.groups.length +
+            document.discardedCoauthors.length +
+            document.discardedGroups.length;
+    },
     deleteIfNotVerified: async function (documentId) {
-        function countAuthorsAndGroups(document) {
-            return document.authors.length +
-                document.groups.length +
-                document.discardedCoauthors.length +
-                document.discardedGroups.length;
-        }
-
         const document = await Document.findOneById(documentId)
             .populate('authors')
             .populate('groups')
@@ -262,7 +261,7 @@ module.exports = _.merge({}, BaseModel, {
                 error: 'Document ' + documentId + ' does not exist',
                 item: documentId
             };
-        if (countAuthorsAndGroups(document) == 0) {
+        if (Document.getNumberOfConnections(document) == 0) {
             sails.log.debug('Document ' + documentId + ' will be deleted');
             let deletedDocument = await Document.destroy({id: documentId});
             deletedDocument = deletedDocument[0];

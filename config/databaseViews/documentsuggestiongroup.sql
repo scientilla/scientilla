@@ -1,5 +1,5 @@
 CREATE OR REPLACE VIEW documentsuggestiongroup AS
-  SELECT
+  SELECT DISTINCT
     "authorship"."document" AS "document",
     "membership"."group"    AS "researchEntity"
   FROM "membership"
