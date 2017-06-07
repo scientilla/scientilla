@@ -110,7 +110,7 @@
                                         });
                                     break;
                                 case 1:
-                                    researchEntityService.discardDocument(researchEntity, document.id)
+                                    researchEntityService.unverify(researchEntity, document)
                                         .then(function (draft) {
                                             EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
                                             Notification.success("Document succesfully unverified");

@@ -156,6 +156,14 @@ module.exports = _.merge({}, BaseModel, {
             via: 'discardedDocuments',
             through: 'discardedgroup'
         },
+        discarded: {
+            collection: 'discarded',
+            via: 'document'
+        },
+        discardedG: {
+            collection: 'discardedgroup',
+            via: 'document'
+        },
         draftCreator: {
             model: 'User'
         },
@@ -234,35 +242,32 @@ module.exports = _.merge({}, BaseModel, {
         const documentFields = Document.getFields();
         return _.pick(draftData, documentFields);
     },
-    deleteIfNotVerified: function (documentId) {
-        function countAuthorsAndGroups(document) {
-            return document.authors.length +
-                document.groups.length +
-                document.discardedCoauthors.length +
-                document.discardedGroups.length;
-        }
-
-        return Document.findOneById(documentId)
+    getNumberOfConnections: function(document) {
+        return document.authors.length +
+            document.groups.length +
+            document.discardedCoauthors.length +
+            document.discardedGroups.length;
+    },
+    deleteIfNotVerified: async function (documentId) {
+        const document = await Document.findOneById(documentId)
             .populate('authors')
             .populate('groups')
             .populate('authorships')
             .populate('affiliations')
             .populate('discardedCoauthors')
-            .populate('discardedGroups')
-            .then(function (document) {
-                if (!document)
-                    throw new Error('Document ' + documentId + ' does not exist');
-                if (countAuthorsAndGroups(document) == 0) {
-                    sails.log.debug('Document ' + documentId + ' will be deleted');
-                    return Document.destroy({id: documentId});
-                }
-                return document;
-            })
-            .then(function (document) {
-                if (_.isArray(document))
-                    return document[0];
-                return document;
-            });
+            .populate('discardedGroups');
+        if (!document)
+            return {
+                error: 'Document ' + documentId + ' does not exist',
+                item: documentId
+            };
+        if (Document.getNumberOfConnections(document) == 0) {
+            sails.log.debug('Document ' + documentId + ' will be deleted');
+            let deletedDocument = await Document.destroy({id: documentId});
+            deletedDocument = deletedDocument[0];
+            return deletedDocument;
+        }
+        return document;
     },
     filterSuggested: function (maybeSuggestedDocuments, toBeDiscardedDocuments, similarityThreshold) {
         var suggestedDocuments = [];
@@ -282,6 +287,7 @@ module.exports = _.merge({}, BaseModel, {
             return as1.every(a1 => {
                 const a2 = as2.find(a2 => a1.position === a2.position);
                 return (
+                    !a2 ||
                     a1.position === AuthorshipPositionNotToCheck ||
                     !_.isNil(a1.researchEntity) ||
                     _.isEmpty(_.xor(_.map(a1.affiliations, 'institute'), _.map(a2.affiliations, 'institute')))

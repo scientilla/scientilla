@@ -45,31 +45,41 @@ module.exports = _.merge({}, BaseModel, {
                     .populate('source');
             });
     },
-    unverifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
-        return this
-            .doUnverifyDocument(ResearchEntityModel, researchEntityId, documentId)
-            .then(function () {
-                return Document.deleteIfNotVerified(documentId);
-            });
+    unverifyDocument: async function (ResearchEntityModel, researchEntityId, documentId) {
+        await this.doUnverifyDocument(ResearchEntityModel, researchEntityId, documentId);
+        const deletedDocument = await Document.deleteIfNotVerified(documentId);
+        return deletedDocument;
     },
-    doUnverifyDocument: function (ResearchEntityModel, researchEntityId, documentId) {
+    doUnverifyDocument: async function (ResearchEntityModel, researchEntityId, documentId) {
         const authorshipModel = getAuthorshipModel(ResearchEntityModel);
-        return authorshipModel
-            .findOne({researchEntity: researchEntityId, document: documentId})
-            .then(function (authorship) {
-                if (!authorship)
-                    return;
-                return authorship.unverify();
-            });
+        const authorship = await authorshipModel.findOne({researchEntity: researchEntityId, document: documentId});
+        if (!authorship)
+            return;
+        return authorship.unverify();
     },
     createDrafts: function (Model, researchEntityId, documents) {
         return Promise.all(documents.map(function (document) {
             return Model.createDraft(Model, researchEntityId, document);
         }));
     },
+    undiscardDocument: async function(Model, researchEntityId, documentId) {
+        const DiscardedModel = getDiscardedModel(Model);
+        await DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
+        const deletedDocument = await Document.deleteIfNotVerified(documentId);
+        return deletedDocument;
+    },
+    discardDocument: async function (Model, researchEntityId, documentId) {
+        const DiscardedModel = getDiscardedModel(Model);
+        const AuthorshipModel = getAuthorshipModel(Model);
+        const authorships = await AuthorshipModel.find({document:documentId, researchEntity: researchEntityId});
+        if (authorships.length > 0)
+            return null;
+        const discarded = await DiscardedModel.findOrCreate({researchEntity: researchEntityId, document: documentId});
+        return discarded;
+    },
     discardDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(function (documentId) {
-            return Model.discardDocument(researchEntityId, documentId);
+            return Model.discardDocument(Model, researchEntityId, documentId);
         }));
     },
     verifyDrafts: function (ResearchEntityModel, researchEntityId, draftIds) {
@@ -130,44 +140,37 @@ module.exports = _.merge({}, BaseModel, {
     verifyDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(documentId => Model.verifyDocument(Model, researchEntityId, documentId)));
     },
-    verifyDocument: function (Model, researchEntityId, documentId, position, affiliationInstituteIds, corresponding) {
+    verifyDocument: async function (Model, researchEntityId, documentId, position, affiliationInstituteIds, corresponding) {
         const DiscardedModel = getDiscardedModel(Model);
-        return DiscardedModel.destroy({document: documentId})
-            .then(() => Document.findOneById(documentId)
-                .populate('affiliations')
-                .populate('authorships')
-            )
-            .then(document => {
-                if (!document || document.kind !== DocumentKinds.VERIFIED)
-                    throw {
-                        error: 'Document not found',
-                        item: researchEntityId
-                    };
-                return Model.getAuthorshipsData(document, researchEntityId, position, affiliationInstituteIds, corresponding)
-            })
-            .then(authorshipData => {
-                if (!authorshipData.isVerifiable)
-                    throw {
-                        error: authorshipData.error,
-                        item: authorshipData.document
-                    };
+        await  DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
+        const document = await Document.findOneById(documentId)
+            .populate('affiliations')
+            .populate('authorships');
+        if (!document || document.kind !== DocumentKinds.VERIFIED)
+            return {
+                error: 'Document not found',
+                item: researchEntityId
+            };
+        const authorshipData = await Model.getAuthorshipsData(document, researchEntityId, position, affiliationInstituteIds, corresponding)
+        if (!authorshipData.isVerifiable)
+            return {
+                error: authorshipData.error,
+                item: authorshipData.document
+            };
 
 
-                if (authorshipData.document.isPositionVerified(authorshipData.position))
-                    throw {
-                        error: "The position is already verified",
-                        item: authorshipData.document
-                    };
-                return Model.doVerifyDocument(authorshipData.document, researchEntityId, authorshipData);
-            })
-            .catch(e => ({
-                error: e.error,
-                item: e.item
-            }));
+        if (authorshipData.document.isPositionVerified(authorshipData.position))
+            return {
+                error: "The position is already verified",
+                item: authorshipData.document
+            };
+        const verifiedDocument = await Model.doVerifyDocument(authorshipData.document, researchEntityId, authorshipData);
+        return verifiedDocument;
     },
     updateDraft: async function (ResearchEntityModel, draftId, draftData) {
         const documentFields = Document.getFields();
         const selectedDraftData = _.pick(draftData, documentFields);
+        selectedDraftData.kind = DocumentKinds.VERIFIED;
         selectedDraftData.editedAfterImport = true;
         const updatedDraft = await Document.update({id: draftId}, selectedDraftData);
         return updatedDraft[0];
