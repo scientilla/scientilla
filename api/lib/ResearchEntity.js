@@ -73,6 +73,10 @@ module.exports = _.merge({}, BaseModel, {
     },
     discardDocument: async function (Model, researchEntityId, documentId) {
         const DiscardedModel = getDiscardedModel(Model);
+        const AuthorshipModel = getAuthorshipModel(Model);
+        const authorships = await AuthorshipModel.find({document:documentId, researchEntity: researchEntityId});
+        if (authorships.length > 0)
+            return null;
         const discarded = await DiscardedModel.findOrCreate({researchEntity: researchEntityId, document: documentId});
         return discarded;
     },
