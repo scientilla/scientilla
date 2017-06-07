@@ -41,7 +41,7 @@ async function mergeDocuments() {
                 sails.log.warn('Error: ');
                 sails.log.warn(res.error);
             } else {
-                sails.log.debug(`User ${da.researchEntity} is discarding ${copy.id}`);
+                sails.log.debug(`User ${d.researchEntity} is discarding ${copy.id}`);
                 await User.discardDocument(User, d.researchEntity, copy.id);
             }
         }
