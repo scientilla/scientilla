@@ -87,7 +87,6 @@
                         year: parseInt(d.year),
                         count: parseInt(d.count)
                     }));
-                    console.log(data);
                     const minYear = _.isEmpty(data) ? 0:_.minBy(data, 'year').year;
                     const maxYear = _.isEmpty(data) ? 0:_.maxBy(data, 'year').year;
                     _.range(minYear, maxYear)

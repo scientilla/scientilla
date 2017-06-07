@@ -1,0 +1,37 @@
+<h3>AUTOMATICALLY FIND YOUR PUBLICATIONS</h3>
+
+<br/>
+
+<div class="row">
+    <div class="col-xs-6">
+        <youtube-embed video="b3UTGJbeftA"></youtube-embed>
+    </div>
+    <div class="col-xs-6 text-justify">
+        <p>By setting a Scopus identifier (Author ID), you will allow SCIENTILLA for finding automatically most of your
+            publications, including metadata.<br/>
+            Learn how to retrieve your personal Scopus identifier watching the video
+            and fill the Scopus identifier field.
+            <a href="https://www.scopus.com/search/form.uri?display=authorLookup" target="_blank">Click here</a>
+            to look for your identifier.
+        </p>
+        <form ng-submit="vm.save()" name="idsForm">
+            <div class="form-group has-feedback">
+                <label for="scopusId">Scopus id</label>
+                <input type="text" class="form-control" id="scopusId"
+                       placeholder="Scopus id"
+                       ng-model="vm.user.scopusId">
+            </div>
+            <br/>
+            <p>If you have also an ORCID identifier, you can insert it below.</p>
+            <div class="form-group has-feedback">
+                <label for="orcidId">Orcid id</label>
+                <input type="text" class="form-control" id="orcidId"
+                       placeholder="Orcid id"
+                       ng-model="vm.user.orcidId">
+            </div>
+            <br/>
+            <scientilla-button type="submit">Save profile</scientilla-button>
+        </form>
+    </div>
+
+</div>

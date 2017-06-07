@@ -48,6 +48,10 @@ module.exports = _.merge({}, ResearchEntity, {
             maxLength: 30,
             defaultsTo: ""
         },
+        alreadyAccess: {
+            type: "BOOLEAN",
+            defaultsTo: false
+        },
         role: {
             type: 'STRING',
             enum: [USER, ADMINISTRATOR],

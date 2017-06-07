@@ -193,6 +193,25 @@
             return ret;
         };
 
+        service.openWizard = function (closable) {
+            let args;
+            if (closable)
+                args = {
+                    size: 'lg',
+                    windowClass: 'modal-dark'
+                };
+            else
+                args = {
+                    backdrop: 'static',
+                    keyboard: false,
+                    size: 'lg',
+                    windowClass: 'modal-dark'
+                };
+
+            service.modal = openComponentModal('wizard-container', {}, args);
+            return service.modal.result;
+        };
+
 
         service.confirm = function (title, message) {
             return service.multipleChoiceConfirm(title, message, ['Ok']);
@@ -201,6 +220,23 @@
         return service;
 
         // private
+        function openComponentModal(component, data, args) {
+            const callbacks = getDefaultCallbacks();
+
+            const resolve = {
+                data,
+                callbacks
+            };
+
+            return $uibModal.open(
+                _.defaults({
+                    animation: true,
+                    component: component,
+                    resolve: resolve
+                }, args)
+            );
+        }
+
         function openModal(template, scope, args) {
             var callbacks = getDefaultCallbacks();
 
