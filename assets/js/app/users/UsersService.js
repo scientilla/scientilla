@@ -13,6 +13,20 @@
     function UsersService(Restangular, $q, Prototyper, userConstants) {
         var service = Restangular.service("users");
 
+        const userFields = [
+            'id',
+            'auth',
+            'username',
+            'name',
+            'surname',
+            'slug',
+            'alreadyAccess',
+            'role',
+            'orcidId',
+            'scopusId',
+            'jobTitle'
+        ];
+
         service.getNewUser = function () {
             var user = {
                 name: "",
@@ -36,14 +50,14 @@
 
         service.save = function (user) {
             if (user.id)
-                return user.save();
+                return Restangular.one('users', user.id).customPUT(user);
             else
                 return this.post(user);
         };
 
         service.doSave = function (user) {
-            delete user.documents;
-            return this.save(user).then(function (u) {
+            const userData = _.pick(user, userFields);
+            return this.save(userData).then(function (u) {
                 return user;
             });
         };
