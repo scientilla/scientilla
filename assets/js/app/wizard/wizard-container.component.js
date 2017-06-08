@@ -57,16 +57,21 @@
         vm.canChangeStep = true;
 
         vm.$onInit = function () {
-            vm.user = AuthService.user;
+            UsersService.one(AuthService.user.id).get({populate: ['administratedGroups']})
+                .then(user => {
+                    vm.user = user;
+                    vm.userLevel = vm.user.administratedGroups.length ? 'groupAdmin' : 'standard';
+                    steps = allSteps.filter(s => s.userLevels.includes(vm.userLevel));
+                });
             vm.currentStep = 0;
-            vm.userLevel = vm.user.administratedGroups.length ? 'groupAdmin' : 'standard';
-            steps = allSteps.filter(s => s.userLevels.includes(vm.userLevel));
         };
 
         vm.$onDestroy = function () {
         };
 
         function isStep(stepName) {
+            if (!steps[vm.currentStep])return false;
+
             return steps[vm.currentStep].name === stepName;
         }
 
