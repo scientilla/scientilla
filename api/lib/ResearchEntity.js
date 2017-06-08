@@ -170,7 +170,7 @@ module.exports = _.merge({}, BaseModel, {
     updateDraft: async function (ResearchEntityModel, draftId, draftData) {
         const documentFields = Document.getFields();
         const selectedDraftData = _.pick(draftData, documentFields);
-        selectedDraftData.kind = DocumentKinds.VERIFIED;
+        selectedDraftData.kind = DocumentKinds.DRAFT;
         selectedDraftData.editedAfterImport = true;
         const updatedDraft = await Document.update({id: draftId}, selectedDraftData);
         return updatedDraft[0];
