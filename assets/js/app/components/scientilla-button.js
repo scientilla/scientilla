@@ -2,30 +2,37 @@
     'use strict';
 
     angular.module('components')
-            .component('scientillaButton', {
-                templateUrl: 'partials/scientillaButton.html',
-                controller: scientillaButtonController,
-                controllerAs: 'vm',
-                bindings: {
-                    type: '@?',
-                    size: '@?',
-                    ngDisabled: '<',
-                    click: '&'
-                },
-                transclude: true
-            });
+        .component('scientillaButton', {
+            templateUrl: 'partials/scientillaButton.html',
+            controller: scientillaButtonController,
+            controllerAs: 'vm',
+            bindings: {
+                type: '@?',
+                size: '@?',
+                ngDisabled: '<',
+                click: '&'
+            },
+            transclude: true
+        });
 
     function scientillaButtonController() {
         const vm = this;
         vm.getClasses = getClasses;
-        
-        activate();
-        
-        function activate() {
+
+        const typeTable = {
+            submit: 'submit',
+            button: 'button',
+            secondary: 'button',
+            cancel: 'button',
+            link: 'button',
+        };
+
+        vm.$onInit = function () {
             vm.type = vm.type || 'button';
+            vm.buttonType = typeTable[vm.type];
             vm.size = vm.size || 'medium';
-        }
-        
+        };
+
         function getClasses() {
             const typeClassesTable = {
                 submit: 'btn-primary',

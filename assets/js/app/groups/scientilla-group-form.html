@@ -1,7 +1,6 @@
 <form form-for="vm.group"
       validation-rules="vm.validationAndViewRules"
-      form-for-builder
-      ng-submit="vm.submit()">
+      form-for-builder>
     <scientilla-multicomplete
             items="vm.group.members"
             query="vm.getUsersQuery"
@@ -17,7 +16,7 @@
             title="Administrators"
     >
     </scientilla-multicomplete>
-    <scientilla-button type="submit">Save</scientilla-button>
+    <scientilla-button type="submit" click="vm.submit()">Save</scientilla-button>
     <scientilla-button type="cancel" click="vm.cancel()">Cancel</scientilla-button>
 </form>
 
