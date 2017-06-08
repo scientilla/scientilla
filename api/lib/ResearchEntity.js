@@ -123,12 +123,13 @@ module.exports = _.merge({}, BaseModel, {
                 sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
             docToVerify = documentCopies[0];
 
-            if (docToVerify.isPositionVerified(authorshipData.position))
+            if (docToVerify.isPositionVerified(authorshipData.position)) {
+                const authorName = docToVerify.authorsStr.split(', ')[authorshipData.position];
                 return {
-                    error: "The position is already verified",
-                    item: documentCopy
+                    error: `You cannot verify this document as ${authorName} because someone else already claimed to be that author`,
+                    item: docToVerify
                 };
-
+            }
             sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + docToVerify.id);
             await Document.destroy({id: draft.id});
         }
@@ -170,7 +171,7 @@ module.exports = _.merge({}, BaseModel, {
     updateDraft: async function (ResearchEntityModel, draftId, draftData) {
         const documentFields = Document.getFields();
         const selectedDraftData = _.pick(draftData, documentFields);
-        selectedDraftData.kind = DocumentKinds.VERIFIED;
+        selectedDraftData.kind = DocumentKinds.DRAFT;
         selectedDraftData.editedAfterImport = true;
         const updatedDraft = await Document.update({id: draftId}, selectedDraftData);
         return updatedDraft[0];
