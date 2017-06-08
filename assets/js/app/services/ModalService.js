@@ -12,12 +12,14 @@
 
 
         service.dismiss = function (reason) {
-            service.modal.dismiss(reason);
+            if (service.modal)
+                service.modal.dismiss(reason);
             service.modal = null;
         };
 
         service.close = function (reason) {
-            service.modal.close(reason);
+            if (service.modal)
+                service.modal.close(reason);
             service.modal = null;
         };
 
