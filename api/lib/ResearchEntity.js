@@ -126,7 +126,7 @@ module.exports = _.merge({}, BaseModel, {
             if (docToVerify.isPositionVerified(authorshipData.position))
                 return {
                     error: "The position is already verified",
-                    item: documentCopy
+                    item: docToVerify
                 };
 
             sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + docToVerify.id);
