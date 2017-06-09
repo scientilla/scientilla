@@ -7,7 +7,8 @@ module.exports = function (req, res, next) {
         }
         const u = await User.findOneById(user.id).populate('administratedGroups');
         const groupId = req.params.researchEntityId || req.params.id;
-        if (!u.administratedGroups.includes(groupId) && user.role != 'administrator'){
+        const administratedGroupIds = u.administratedGroups.map(g => g.id);
+        if (!administratedGroupIds.includes(groupId) && user.role != 'administrator'){
             sails.log.debug('access forbidden ' + req.path);
             return res.forbidden(err);
         }
