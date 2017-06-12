@@ -13,7 +13,8 @@ async function cleanInstituteCopies() {
     function getInstituteCopy(i) {
         return Institute.findOne({id: {'!': i.id}, scopusId: i.scopusId });
     }
-    const institutes = await Institute.find();
+    // bad hack: Institute 1 is the main institute
+    const institutes = await Institute.find({id: {'!': 1}});
     const deletedInstitutes = [];
     for (let institute of institutes) {
         const copy = await getInstituteCopy(institute);
