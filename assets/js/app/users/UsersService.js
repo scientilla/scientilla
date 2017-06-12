@@ -91,6 +91,17 @@
                 .get();
         };
 
+        service.getCompleteProfile = function (userId) {
+            return this
+                .one(userId)
+                .get({populate: ['administratedGroups']})
+                .then(function (user) {
+                    Prototyper.toUserModel(user);
+                    user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
+                    return user;
+                });
+        };
+
         return service;
     }
 
