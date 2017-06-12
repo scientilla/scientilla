@@ -5,10 +5,31 @@ const _ = require('lodash');
 "use strict";
 
 module.exports = {
-    cleanDocumentCopies
+    cleanDocumentCopies,
+    cleanInstituteCopies
 };
 
-//missing check of discarded documents
+async function cleanInstituteCopies() {
+    function getInstituteCopy(i) {
+        return Institute.findOne({id: {'!': i.id}, scopusId: i.scopusId });
+    }
+    const institutes = await Institute.find();
+    const deletedInstitutes = [];
+    for (let institute of institutes) {
+        const copy = await getInstituteCopy(institute);
+        if (!copy)
+            continue;
+
+        const affiliations = await Affiliation.find({institute: institute.id});
+        const affiliationsIds = affiliations.map(a => a.id);
+        const updateAffiliations = await Affiliation.update({id: affiliationsIds}, {institute: copy.id});
+        await institute.destroy();
+        deletedInstitutes.push(institute);
+        sails.log.debug(`${updateAffiliations.length} affiliations updated from institute ${institute.id} to ${copy.id}`);
+    }
+    sails.log.debug(`${deletedInstitutes.length} deleted`);
+}
+
 async function cleanDocumentCopies() {
     const mergedDocuments = [];
     const nonMergedDocuments = [];
