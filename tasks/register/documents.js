@@ -13,7 +13,8 @@ module.exports = function (grunt) {
                         'scopus': Synchronizer.synchronizeScopus,
                     },
                     'clean': {
-                        'copies': Cleaner.cleanDocumentCopies
+                        'copies': Cleaner.cleanDocumentCopies,
+                        'institutes': Cleaner.cleanInstituteCopies
                     }
                 };
 

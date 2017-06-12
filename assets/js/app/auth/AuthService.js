@@ -8,10 +8,8 @@
         "Restangular",
         "UsersService",
         "ModalService",
-        "$q",
         "localStorageService",
         "EventsService",
-        "Prototyper",
         "apiPrefix",
     ];
 
@@ -19,10 +17,8 @@
                          Restangular,
                          UsersService,
                          ModalService,
-                         $q,
                          localStorageService,
                          EventsService,
-                         Prototyper,
                          apiPrefix) {
 
         const service = {
@@ -31,38 +27,70 @@
             username: null,
             user: null,
             jwtToken: null,
-            loadAuthenticationData: loadAuthenticationData
+            loadAuthenticationData: loadAuthenticationData,
+            login: login,
+            register: register,
+            logout: logout
         };
+
+        return service;
+
+        function setupUserAccount(userId) {
+            return UsersService.getCompleteProfile(userId)
+                .then(function (user) {
+                    service.user = user;
+                    service.userId = user.id;
+                    service.username = user.username;
+                    return $http.get(apiPrefix + '/users/jwt');
+                })
+                .then(function (result) {
+                    service.isLogged = true;
+                    service.jwtToken = result.data.token;
+
+                    Restangular.setDefaultHeaders({access_token: service.jwtToken});
+                    $http.defaults.headers.common.access_token = service.jwtToken;
+
+                    localStorageService.set("authService", {
+                        isLogged: service.isLogged,
+                        userId: service.userId,
+                        username: service.username,
+                        user: service.user,
+                        jwtToken: service.jwtToken
+                    });
+
+                    EventsService.publish(EventsService.AUTH_LOGIN, service.user);
+                    if (!service.user.alreadyAccess)
+                        ModalService.openWizard(false);
+                });
+        }
 
         function loadAuthenticationData() {
             const localAuthenticationData = localStorageService.get("authService");
-
             if (!localAuthenticationData)
                 return;
 
-            _.assign(service, localAuthenticationData);
-
-            service.user = Restangular.copy(service.user);
-
-            Prototyper.toUserModel(service.user);
-
-            Restangular.setDefaultHeaders({access_token: service.jwtToken});
-            $http.defaults.headers.common.access_token = service.jwtToken;
-            EventsService.publish(EventsService.AUTH_LOGIN, service.user);
+            setupUserAccount(localAuthenticationData.userId);
         }
 
+        function login(credentials) {
+            const url = apiPrefix + '/auths/login';
+            return $http.post(url, credentials)
+                .then(function (result) {
+                    return setupUserAccount(result.data.id);
+                });
+        }
 
-        //sTODO: refactor
-        service.login = function (credentials) {
-            return authOp(apiPrefix + '/auths/login', credentials);
-        };
-        service.register = function (registrationData) {
-            return authOp(apiPrefix + '/auths/register', registrationData);
-        };
-        service.logout = function () {
+        function register(registrationData) {
+            const url = apiPrefix + '/auths/register';
+            return $http.post(url, registrationData)
+                .then(function (result) {
+                    return setupUserAccount(result.data.id);
+                });
+        }
+
+        function logout() {
             return $http.get(apiPrefix + '/auths/logout').then(function () {
 
-                //sTODO: move to the proper place
                 Restangular.setDefaultHeaders({access_token: undefined});
                 delete $http.defaults.headers.common.access_token;
                 service.isLogged = false;
@@ -71,51 +99,6 @@
                 EventsService.publish(EventsService.AUTH_LOGOUT);
 
                 localStorageService.set("authService", null);
-
-            });
-        };
-        return service;
-
-        function authOp(url, data) {
-            return $q(function (resolve, reject) {
-                $http.post(url, data)
-                    .then(function (result) {
-                        service.userId = result.data.id;
-                        service.username = result.data.username;
-                        return UsersService.one(result.data.id).get({populate: ['administratedGroups']});
-                    })
-                    .then(function (user) {
-                        service.user = user;
-                        Prototyper.toUserModel(service.user);
-
-                        user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
-                        return $http.get(apiPrefix + '/users/jwt');
-                    })
-                    .then(function (result) {
-
-                        //sTODO: move to the proper place
-                        service.isLogged = true;
-                        service.jwtToken = result.data.token;
-                        Restangular.setDefaultHeaders({access_token: service.jwtToken});
-                        $http.defaults.headers.common.access_token = service.jwtToken;
-
-
-                        localStorageService.set("authService", {
-                            isLogged: service.isLogged,
-                            userId: service.userId,
-                            username: service.username,
-                            user: service.user,
-                            jwtToken: service.jwtToken
-                        });
-
-                        EventsService.publish(EventsService.AUTH_LOGIN, service.user);
-                        if (!service.user.alreadyAccess)
-                            ModalService.openWizard(false);
-                        resolve();
-                    })
-                    .catch(function (result) {
-                        reject();
-                    });
 
             });
         }

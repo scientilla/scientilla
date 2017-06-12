@@ -25,10 +25,18 @@
 
     // unused services are injected for initialization purpose
     const servicesToInit = ['context'];
-    const services = ['$rootScope', 'AuthService', 'Restangular', 'Prototyper', 'path'];
+    const services = [
+        '$rootScope',
+        'AuthService',
+        'Restangular',
+        'Prototyper',
+        'path',
+        'Notification',
+        'ModalService'
+    ];
     run.$inject = _.union(services, servicesToInit);
 
-    function run($rootScope, AuthService, Restangular, Prototyper, path) {
+    function run($rootScope, AuthService, Restangular, Prototyper, path, Notification, ModalService) {
 
         $rootScope.$on("$routeChangeStart", (event, next, current) => {
             if (!AuthService.isLogged) {
@@ -50,6 +58,16 @@
         $rootScope.$on('$viewContentLoaded', () => {
             if (!AuthService.isLogged)
                 AuthService.loadAuthenticationData();
+        });
+
+        Restangular.setErrorInterceptor(function(response, deferred, responseHandler) {
+            if(response.status === 403) {
+                Notification.warning('Your session is expired. Please login again.');
+                ModalService.dismiss(null);
+                path.goTo('/logout');
+                return false;
+            }
+            return true;
         });
 
         Restangular.addResponseInterceptor((response, operation) => {
