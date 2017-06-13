@@ -27,6 +27,7 @@
             username: null,
             user: null,
             jwtToken: null,
+            expiration: null,
             loadAuthenticationData: loadAuthenticationData,
             login: login,
             register: register,
@@ -46,7 +47,7 @@
                 .then(function (result) {
                     service.isLogged = true;
                     service.jwtToken = result.data.token;
-
+                    service.expiration = result.data.expires;
                     Restangular.setDefaultHeaders({access_token: service.jwtToken});
                     $http.defaults.headers.common.access_token = service.jwtToken;
 
@@ -55,7 +56,8 @@
                         userId: service.userId,
                         username: service.username,
                         user: service.user,
-                        jwtToken: service.jwtToken
+                        jwtToken: service.jwtToken,
+                        expiration: service.expiration
                     });
 
                     EventsService.publish(EventsService.AUTH_LOGIN, service.user);
@@ -65,11 +67,19 @@
         }
 
         function loadAuthenticationData() {
-            const localAuthenticationData = localStorageService.get("authService");
-            if (!localAuthenticationData)
+            const authenticationData = localStorageService.get("authService");
+            service.expiration = _.get(authenticationData, 'expiration');
+            const userId = _.get(authenticationData, 'userId');
+            if (!service.expiration)
                 return;
 
-            setupUserAccount(localAuthenticationData.userId);
+            const jwtExpiration = new Date(service.expiration);
+            if (jwtExpiration < new Date()) {
+                clearUserAccount();
+                return;
+            }
+
+            setupUserAccount(userId);
         }
 
         function login(credentials) {
@@ -88,19 +98,22 @@
                 });
         }
 
+        function clearUserAccount() {
+            Restangular.setDefaultHeaders({access_token: undefined});
+            delete $http.defaults.headers.common.access_token;
+            service.isLogged = false;
+            service.user = null;
+            service.userId = null;
+
+            localStorageService.set("authService", null);
+        }
+
         function logout() {
-            return $http.get(apiPrefix + '/auths/logout').then(function () {
-
-                Restangular.setDefaultHeaders({access_token: undefined});
-                delete $http.defaults.headers.common.access_token;
-                service.isLogged = false;
-                service.user = null;
-                service.userId = null;
-                EventsService.publish(EventsService.AUTH_LOGOUT);
-
-                localStorageService.set("authService", null);
-
-            });
+            return $http.get(apiPrefix + '/auths/logout')
+                .then(function () {
+                    EventsService.publish(EventsService.AUTH_LOGOUT);
+                    clearUserAccount();
+                });
         }
     }
 
