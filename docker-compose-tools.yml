@@ -1,23 +1,26 @@
 version: '2'
 
 services:
+  node:
+    build: ./docker/node
+    volumes:
+      - .:/usr/src/app
+    user: "${USERID}"
   npm:
-    build: ./docker/node
+    extends: node
     entrypoint: npm
-    volumes:
-      - .:/usr/src/app
   bower:
-    build: ./docker/node
+    extends: node
     entrypoint: bower
-    volumes:
-      - .:/usr/src/app
   mocha:
-    build: ./docker/node
+    extends: node
     entrypoint: mocha
-    volumes:
-      - .:/usr/src/app
   grunt:
-    build: ./docker/node
+    extends: node
     entrypoint: grunt
-    volumes:
-      - .:/usr/src/app
+  db-test:
+    image: postgres:9.6
+    environment:
+      POSTGRES_DB: scientillatest
+      POSTGRES_USER: scientilla
+      POSTGRES_PASSWORD: scientillapassword
