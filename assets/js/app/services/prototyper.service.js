@@ -326,12 +326,6 @@
             }
         };
 
-        function checkDuplicates(document) {
-            if (document.duplicates && document.duplicates.length > 0) {
-                document.addLabel(DocumentLabels.DUPLICATE);
-            }
-        }
-
         function initializeAffiliations(document) {
             _.forEach(document.authorships, a => {
                 if (a.affiliations)
@@ -373,7 +367,6 @@
             service.toTagLabelsCollection(document.tagLabels);
             service.toTagLabelsCollection(document.groupTagLabels);
             service.toAuthorshipsCollection(document.authorships);
-            checkDuplicates(document);
             return document;
         }
 

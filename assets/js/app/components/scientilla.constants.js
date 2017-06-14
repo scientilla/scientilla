@@ -115,7 +115,8 @@
     ];
 
     var DocumentLabels = {
-        DUPLICATE: 'duplicate?',
+        DUPLICATE: 'duplicate',
+        ALREADY_VERIFIED: 'already verified',
         DISCARDED: 'discarded',
         UVERIFYING: 'unverifying'
     };
