@@ -6,7 +6,8 @@ const _ = require('lodash');
 
 module.exports = {
     cleanDocumentCopies,
-    cleanInstituteCopies
+    cleanInstituteCopies,
+    cleanSourceCopies
 };
 
 async function cleanInstituteCopies() {
@@ -29,6 +30,27 @@ async function cleanInstituteCopies() {
         sails.log.debug(`${updateAffiliations.length} affiliations updated from institute ${institute.id} to ${copy.id}`);
     }
     sails.log.debug(`${deletedInstitutes.length} deleted`);
+}
+
+async function cleanSourceCopies() {
+    function getSourceCopy(i) {
+        return Source.findOne({id: {'!': i.id}, scopusId: i.scopusId });
+    }
+    const sources = await Source.find();
+    const deletedSources = [];
+    for (let source of sources) {
+        const copy = await getSourceCopy(source);
+        if (!copy)
+            continue;
+
+        const documents = await Document.find({source: source.id});
+        const documentIds = documents.map(d => d.id);
+        const updateDocuments = await Document.update({id: documentIds}, {source: copy.id});
+        await source.destroy();
+        deletedSources.push(source);
+        sails.log.debug(`${updateDocuments.length} documents updated from source ${source.id} to ${copy.id}`);
+    }
+    sails.log.debug(`${deletedSources.length} deleted`);
 }
 
 async function cleanDocumentCopies() {
