@@ -15,19 +15,39 @@
     scientillaDocument.$inject = [
         'ModalService',
         'config',
-        'DocumentLabels'
+        'DocumentLabels',
+        'context'
     ];
 
-    function scientillaDocument(ModalService, config, DocumentLabels) {
+    function scientillaDocument(ModalService, config, DocumentLabels, context) {
         var vm = this;
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
         vm.editTags = editTags;
-        vm.isDisabled = isDisabled;
 
         vm.$onInit = function () {
             vm.showPrivateTags = vm.showPrivateTags || false;
+            checkDuplicate();
         };
+
+        function checkDuplicate() {
+            function isSuggested(doc) {
+                const researchEntity = context.getResearchEntity();
+                const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
+                const ids = doc[f].map(re => re.id);
+                return !ids.includes(researchEntity.id);
+            }
+
+            if (!vm.document.duplicates || !vm.document.duplicates.length)
+                return;
+            let documentLabel;
+            if (['e', 'd'].includes(vm.document.kind) || isSuggested(vm.document))
+                documentLabel = DocumentLabels.ALREADY_VERIFIED;
+            else
+                documentLabel = DocumentLabels.DUPLICATE;
+            vm.document.addLabel(documentLabel);
+
+        }
 
         function openDetails() {
             ModalService
@@ -42,10 +62,6 @@
 
         function editTags() {
             ModalService.openScientillaTagForm(vm.document);
-        }
-
-        function isDisabled(){
-            return vm.document.hasLabel(DocumentLabels.DUPLICATE);
         }
     }
 
