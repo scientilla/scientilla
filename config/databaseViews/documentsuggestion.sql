@@ -1,16 +1,16 @@
 CREATE OR REPLACE VIEW documentsuggestion AS
   SELECT DISTINCT
-    d."id"      AS "document",
-    "user"."id" AS "researchEntity"
-  FROM "user"
+    d.id AS "document",
+    u.id AS "researchEntity"
+  FROM "user" u
     JOIN "document" d
-      ON d."authorsStr" ILIKE '%' :: TEXT || "user"."surname" || '%' :: TEXT
+      ON d."authorsStr" ~* ('\y' || u.surname ||'\y')
     JOIN (SELECT a.document
           FROM "authorship" a
           WHERE a."researchEntity" IS NOT NULL
           UNION
           SELECT a.document
-          FROM "authorshipgroup" a
+          FROM authorshipgroup a
           WHERE a."researchEntity" IS NOT NULL
          ) AS verified
       ON d.id = verified.document
@@ -18,11 +18,11 @@ CREATE OR REPLACE VIEW documentsuggestion AS
     d."id" NOT IN (
       SELECT "authorship"."document"
       FROM "authorship"
-      WHERE "authorship"."researchEntity" = "user"."id"
+      WHERE "authorship"."researchEntity" = u.id
     )
     AND
     d."id" NOT IN (
       SELECT "discarded"."document"
       FROM "discarded"
-      WHERE "discarded"."researchEntity" = "user"."id"
+      WHERE "discarded"."researchEntity" = u.id
     )
