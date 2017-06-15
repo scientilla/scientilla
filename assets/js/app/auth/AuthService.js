@@ -83,6 +83,7 @@
         }
 
         function login(credentials) {
+            credentials.username = credentials.username.toLowerCase();
             const url = apiPrefix + '/auths/login';
             return $http.post(url, credentials)
                 .then(function (result) {
