@@ -14,7 +14,8 @@ module.exports = function (grunt) {
                     },
                     'clean': {
                         'copies': Cleaner.cleanDocumentCopies,
-                        'institutes': Cleaner.cleanInstituteCopies
+                        'institutes': Cleaner.cleanInstituteCopies,
+                        'sources': Cleaner.cleanSourceCopies
                     }
                 };
 

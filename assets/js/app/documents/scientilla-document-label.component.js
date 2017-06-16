@@ -13,7 +13,7 @@
 
     function scientillaDocumentLabel() {
         var vm = this;
-        vm.labelNormalized = vm.label.replace('?','');
+        vm.labelNormalized = vm.label.replace(/[^\w]/gmi,'');
         
         activate();
         

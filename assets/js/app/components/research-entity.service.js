@@ -41,7 +41,8 @@
             'groupTags',
             'groupTagLabels',
             'institutes',
-            'duplicates'
+            'duplicates',
+            'groups'
         ];
 
         function getDocuments(researchEntity, query) {

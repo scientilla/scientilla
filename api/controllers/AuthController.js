@@ -8,11 +8,13 @@
  * @docs        :: http://waterlock.ninja/documentation
  */
 
+const _ = require('lodash');
+
 module.exports = require('waterlock').waterlocked({
     register: function (req, res) {
         if (!sails.config.scientilla.registerEnabled)
             return res.badRequest('Registering is currently disabled');
-        var params = waterlock._utils.allParams(req);
+        const params = waterlock._utils.allParams(req);
         User.registerUser(params)
             .then(function (user) {
                 waterlock.cycle.loginSuccess(req, res, user);
@@ -24,10 +26,10 @@ module.exports = require('waterlock').waterlocked({
 
     },
     login: function (req, res) {
-        var login = require('waterlock').actions.waterlocked().login;
-
+        const login = require('waterlock').actions.waterlocked().login;
+        const username = _.toLower(req.body.username);
         Auth
-            .findOneByUsername(req.body.username)
+            .findOneByUsername(username)
             .then(function (auth) {
                 req.query.type = (!auth || !auth.password) ? 'ldap' : 'local';
                 login(req, res);
