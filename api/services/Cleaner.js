@@ -5,10 +5,54 @@ const _ = require('lodash');
 "use strict";
 
 module.exports = {
-    cleanDocumentCopies
+    cleanDocumentCopies,
+    cleanInstituteCopies,
+    cleanSourceCopies
 };
 
-//missing check of discarded documents
+async function cleanInstituteCopies() {
+    function getInstituteCopy(i) {
+        return Institute.findOne({id: {'!': i.id}, scopusId: i.scopusId });
+    }
+    // bad hack: Institute 1 is the main institute
+    const institutes = await Institute.find({id: {'!': 1}});
+    const deletedInstitutes = [];
+    for (let institute of institutes) {
+        const copy = await getInstituteCopy(institute);
+        if (!copy)
+            continue;
+
+        const affiliations = await Affiliation.find({institute: institute.id});
+        const affiliationsIds = affiliations.map(a => a.id);
+        const updateAffiliations = await Affiliation.update({id: affiliationsIds}, {institute: copy.id});
+        await institute.destroy();
+        deletedInstitutes.push(institute);
+        sails.log.debug(`${updateAffiliations.length} affiliations updated from institute ${institute.id} to ${copy.id}`);
+    }
+    sails.log.debug(`${deletedInstitutes.length} deleted`);
+}
+
+async function cleanSourceCopies() {
+    function getSourceCopy(i) {
+        return Source.findOne({id: {'!': i.id}, scopusId: i.scopusId });
+    }
+    const sources = await Source.find();
+    const deletedSources = [];
+    for (let source of sources) {
+        const copy = await getSourceCopy(source);
+        if (!copy)
+            continue;
+
+        const documents = await Document.find({source: source.id});
+        const documentIds = documents.map(d => d.id);
+        const updateDocuments = await Document.update({id: documentIds}, {source: copy.id});
+        await source.destroy();
+        deletedSources.push(source);
+        sails.log.debug(`${updateDocuments.length} documents updated from source ${source.id} to ${copy.id}`);
+    }
+    sails.log.debug(`${deletedSources.length} deleted`);
+}
+
 async function cleanDocumentCopies() {
     const mergedDocuments = [];
     const nonMergedDocuments = [];

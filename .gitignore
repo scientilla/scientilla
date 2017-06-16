@@ -134,11 +134,11 @@ doc
 ################################################
 
 docker-compose.yml
-docker/db/data/
+docker/db/data/*
 !docker/db/data/.gitkeep
 
-logs/
-!docker/logs/.gitkeep
+logs/*
+!logs/.gitkeep
 
 ################################################
 # Program files

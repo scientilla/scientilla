@@ -12,27 +12,21 @@ CREATE OR REPLACE VIEW documentduplicate AS
     JOIN document dd
       ON a.document = dd.id
          OR u.id = dd."draftCreator"
-  WHERE (
-          (d.doi = dd.doi AND (
-            d."authorsStr" = dd."authorsStr"
-            OR d.title = dd.title
-            OR d."scopusId" = dd."scopusId"))
-          OR (
-            d."authorsStr" = dd."authorsStr" AND (
-              d.doi = dd.doi
-              OR d.title = dd.title
-              OR d."scopusId" = dd."scopusId"))
-          OR (
-            d.title = dd.title AND (
-              d.doi = dd.doi
-              OR d."authorsStr" = dd."authorsStr"
-              OR d."scopusId" = dd."scopusId"))
-        )
-        AND D.id <> dd.id
+  WHERE
+         CASE WHEN d.type = 'invited_talk' OR dd.type = 'invited_talk'
+           THEN (d."authorsStr" = dd."authorsStr") :: INT +
+                (d.title = dd.title) :: INT +
+                (d."itSource" = dd."itSource") :: INT > 1
+         ELSE (d.doi = dd.doi) :: INT +
+              (d."authorsStr" = dd."authorsStr") :: INT +
+              (d.title = dd.title) :: INT +
+              (d."scopusId" = dd."scopusId") :: INT > 1
+         END
+        AND d.id <> dd.id
         AND (
-          (D.kind = 'd' AND dd.kind IN ('d', 'v'))
+          (d.kind = 'd' AND dd.kind IN ('d', 'v'))
           OR
-          (D.kind in ('v','e') AND dd.kind = 'v'))
+          (d.kind IN ('v', 'e') AND dd.kind = 'v'))
   UNION
   SELECT
     d.id    AS document,
@@ -40,31 +34,24 @@ CREATE OR REPLACE VIEW documentduplicate AS
     g.id    AS "researchEntity",
     'group' AS "researchEntityType",
     1       AS id
-  FROM document d,
-    "group" g
+  FROM "group" g
     LEFT JOIN authorshipgroup a
       ON g.id = a."researchEntity"
     JOIN document dd
       ON a.document = dd.id
          OR g.id = dd."draftGroupCreator"
-  WHERE (
-          (d.doi = dd.doi AND (
-            d."authorsStr" = dd."authorsStr"
-            OR d.title = dd.title
-            OR d."scopusId" = dd."scopusId"))
-          OR (
-            d."authorsStr" = dd."authorsStr" AND (
-              d.doi = dd.doi
-              OR d.title = dd.title
-              OR d."scopusId" = dd."scopusId"))
-          OR (
-            d.title = dd.title AND (
-              d.doi = dd.doi
-              OR d."authorsStr" = dd."authorsStr"
-              OR d."scopusId" = dd."scopusId"))
-        )
-        AND D.id <> dd.id
-        AND (
-          (D.kind = 'd' AND dd.kind IN ('d', 'v'))
-          OR
-          (D.kind in ('v','e') AND dd.kind = 'v'))
+    JOIN document d
+      ON CASE WHEN d.type = 'invited_talk' OR dd.type = 'invited_talk'
+      THEN (d."authorsStr" = dd."authorsStr") :: INT +
+           (d.title = dd.title) :: INT +
+           (d."itSource" = dd."itSource") :: INT > 1
+         ELSE (d.doi = dd.doi) :: INT +
+              (d."authorsStr" = dd."authorsStr") :: INT +
+              (d.title = dd.title) :: INT +
+              (d."scopusId" = dd."scopusId") :: INT > 1
+         END
+         AND D.id <> dd.id
+         AND (
+           (D.kind = 'd' AND dd.kind IN ('d', 'v'))
+           OR
+           (D.kind IN ('v', 'e') AND dd.kind = 'v'))
