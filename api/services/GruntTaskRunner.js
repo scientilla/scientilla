@@ -17,16 +17,22 @@ async function run(command) {
             const startedAt = new Date();
             const taskObj = exec('grunt ' + command);
 
+            const task = {
+                command,
+                taskObj,
+                startedAt
+            };
+            tasks.push(task);
+
             taskObj.stdout.on('data', data => {
-                sails.log.debug(data);
+                sails.log.info('grunt ' + task.command + ': ' + data);
             });
 
             taskObj.stderr.on('data', data => {
-                sails.log.error(data);
+                sails.log.debug('grunt ' + task.command + ': ' + data);
             });
 
             taskObj.on('close', code => {
-                const task = tasks.find(t => t.taskObj === taskObj);
                 const now = new Date();
 
                 sails.log.info('grunt ' + task.command + ' finished in ' + ( (now - task.startedAt) / 1000) + ' seconds with code ' + code);
@@ -34,14 +40,6 @@ async function run(command) {
 
                 resolve(code);
             });
-
-            const task = {
-                command,
-                taskObj,
-                startedAt
-            };
-
-            tasks.push(task);
 
             sails.log.info('grunt ' + task.command + ' started at ' + task.startedAt.toISOString());
         }
