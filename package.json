@@ -5,6 +5,7 @@
   "keywords": [],
   "dependencies": {
     "bluebird": "^3.3.3",
+    "cron": "^1.2.1",
     "ejs": "~0.8.4",
     "fast-levenshtein": "^2.0.5",
     "grunt": "0.4.2",

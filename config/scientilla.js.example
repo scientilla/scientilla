@@ -27,5 +27,8 @@ module.exports.scientilla = {
         startingYear: 1970,
         userImportUrl: 'http://example.com/users'
     },
+    cron: {
+        time: '0 0 4 * * *'
+    },
     registerEnabled: true
 };
