@@ -90,7 +90,11 @@
                 function unverifyDocument(document) {
                     document.addLabel(DocumentLabels.UVERIFYING);
                     ModalService
-                        .multipleChoiceConfirm('Unverifying', 'Do you want to unverify the document?', ['Create New Version', 'Unverify'])
+                        .multipleChoiceConfirm('Unverifying',
+                            'Unverifying a document removes it from your profile, you can choose:\n\n' +
+                            'Edit: to move the document in your drafts.\n' +
+                            'Remove: to remove it completely from your profile.',
+                            ['Edit', 'Remove'])
                         .then(function (buttonIndex) {
                             switch (buttonIndex) {
                                 case 0:

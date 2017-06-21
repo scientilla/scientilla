@@ -176,8 +176,8 @@
                 service.modal = openModal('\
                         <div class="scientilla-modal">\
                             <div>\
-                                <h3 ng-if="vm.title">{{vm.title}}</h3>\
-                                <div ng-if="vm.message">{{vm.message}}</div>\
+                                <h3 class="scientilla-multiple-choice-title" ng-if="vm.title">{{vm.title}}</h3>\
+                                <div class="scientilla-multiple-choice-message" ng-if="vm.message">{{vm.message}}</div>\
                             </div>\
                             <hr>' +
                     scope.buttonLabels.map(function (b, i) {
