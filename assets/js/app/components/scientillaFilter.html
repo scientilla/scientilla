@@ -4,7 +4,7 @@
             structure="vm.searchFormStructure"
             css-class="form-group-sm"
             ng-if="vm.formVisible"
-            ng-submit="!vm.onStatus(vm.STATUS_LOADING) && vm.search()"
+            on-submit="vm.onSubmit"
             reset="vm.formReset"
     >
         <scientilla-button size="small" type="submit" ng-disabled="vm.onStatus(vm.STATUS_LOADING)">

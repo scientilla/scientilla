@@ -10,7 +10,7 @@
                 values: '=',
                 structure: '<',
                 cssClass: '@',
-                ngSubmit: '&',
+                onSubmit: '&',
                 reset: '='
             },
             transclude: true,
@@ -70,8 +70,8 @@
 
         function submit() {
             clearNil();
-            if (_.isFunction(vm.ngSubmit()))
-                vm.ngSubmit()();
+            if (_.isFunction(vm.onSubmit()))
+                vm.onSubmit()();
         }
 
         function onStructureChange() {

@@ -26,6 +26,7 @@
     function scientillaFilter(pageSize, $scope, $timeout) {
         var vm = this;
 
+        vm.onSubmit = onSubmit;
         vm.onSearch = onSearch;
         vm.onPageChange = onPageChange;
         vm.onStatus = onStatus;
@@ -69,6 +70,10 @@
         vm.$onDestroy = function () {
             onDataChangeDeregisterer();
         };
+
+        function onSubmit() {
+            return !vm.onStatus(vm.STATUS_LOADING) && vm.search();
+        }
 
         function onSearch(searchWhere) {
             vm.currentPage = 1;
