@@ -1,0 +1,18 @@
+<label>
+    <span ng-bind-html="vm.structure.label"></span>
+</label>
+<input type="text"
+       class="{{vm.cssClass}}"
+       placeholder="{{vm.structure.placeholder}}"
+       ng-model="vm.dateObj"
+       ng-disabled="vm.structure.disabled"
+
+       uib-datepicker-popup="yyyy"
+       datepicker-options="vm.datePickerOptions"
+       is-open="vm.popupOpened"
+       ng-click="vm.openPopup()"
+       close-text="Close"
+>
+
+<p class="input-group">
+</p>

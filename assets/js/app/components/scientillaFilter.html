@@ -1,11 +1,12 @@
 <div class="scientilla-filter-form well">
-    <form form-for="vm.searchValues"
-          validation-rules="vm.searchFormStructure"
-          form-for-builder
-          class="form-group-sm"
-          ng-if="vm.formVisible"
-          ng-submit="!vm.onStatus(vm.STATUS_LOADING) && vm.search()">
-        <br>
+    <scientilla-component-form
+            values="vm.searchValues"
+            structure="vm.searchFormStructure"
+            css-class="form-group-sm"
+            ng-if="vm.formVisible"
+            ng-submit="!vm.onStatus(vm.STATUS_LOADING) && vm.search()"
+            reset="vm.formReset"
+    >
         <scientilla-button size="small" type="submit" ng-disabled="vm.onStatus(vm.STATUS_LOADING)">
             {{vm.filterLabel}}
         </scientilla-button>
@@ -18,7 +19,7 @@
                     ng-options="s * 1 as s for s in vm.pageSizes"
                     ng-disabled="vm.onStatus(vm.STATUS_LOADING)"></select>
         </div>
-    </form>
+    </scientilla-component-form>
 </div>
 
 <div class="scientilla-filter-results">
@@ -33,10 +34,10 @@
         <h3 ng-if="vm.elements.length === 0">{{vm.emptyListMessage}}</h3>
         <div ng-if="vm.elements.length > 0">
 
-
             <div class="row">
                 <div class="col-md-2">
-                    <label class="scientilla-items-found label label-default">{{vm.totalItems}} items found</label>
+                    <label class="scientilla-items-found label label-default">{{vm.totalItems}}{{vm.totalItems>=1500?'+':''}}
+                        items found</label>
                 </div>
                 <div class="col-md-4 col-md-offset-2 text-center">
                     <ul uib-pagination

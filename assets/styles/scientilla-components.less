@@ -203,7 +203,7 @@ form.autosave.default {
   top: 0;
 }
 
-.scientilla-multiple-choice-message{
+.scientilla-multiple-choice-message {
   white-space: pre;
 }
 
@@ -322,18 +322,19 @@ scientilla-multicheck .scientila-multicheck-commands-row {
 }
 
 /*Scientilla filter*/
-.scientilla-filter-form > form > text-field, .scientilla-filter-form > form > select-field {
+
+.scientilla-filter-form > scientilla-component-form > form > scientilla-field > div.form-group {
   display: inline-block;
   vertical-align: top;
   margin-right: 5px;
 }
 
-.scientilla-filter-form > form > text-field > div.form-group {
+.scientilla-filter-form > scientilla-component-form > form > scientilla-field > div.form-group > scientilla-text-field > input {
   width: 300px;
 }
 
-.scientilla-filter-form > form > select-field > div.form-group {
-  min-width: 80px;
+.scientilla-filter-form > scientilla-component-form > form > scientilla-field > div.form-group > scientilla-date-field > input {
+  width: 80px;
 }
 
 .documents-header > div > * {

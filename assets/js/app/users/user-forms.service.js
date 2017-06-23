@@ -1,52 +1,49 @@
 (function () {
-        angular.module("users")
-            .factory("UserForms", UserForms);
+    angular.module("users")
+        .factory("UserForms", UserForms);
 
-        UserForms.$inject = [
-            'publicationTypes'
-        ];
+    UserForms.$inject = [];
 
-        function UserForms(publicationTypes) {
+    function UserForms() {
 
-            var service = {};
+        const service = {};
 
-            service.getExternalNewFileds = function (selection) {
-                var opts = {
+        service.getExternalNewFileds = function (selection) {
+            const opts = {
 
-                    'publications': {
-                        publicationsField: {
-                            inputType: 'select',
-                            label: 'Search key',
-                            matchColumn: 'field',
-                            values: [
-                                {value: 'username', label: 'E-Mail'}
-                            ]
-                        }
-                    },
-                    'scopus': {
-                        scopusField: {
-                            inputType: 'select',
-                            label: 'Search key',
-                            matchColumn: 'field',
-                            values: [
-                                {value: 'scopusId', label: 'Author id'}
-                            ]
-                        }
+                'publications': {
+                    publicationsField: {
+                        inputType: 'select',
+                        label: 'Search key',
+                        matchColumn: 'field',
+                        values: [
+                            {value: 'username', label: 'E-Mail'}
+                        ],
+                        defaultValue: 'username'
                     }
-                };
-
-                var s = selection.toLowerCase();
-                if (s in opts)
-                    return opts[s];
-
-                return {};
+                },
+                'scopus': {
+                    scopusField: {
+                        inputType: 'select',
+                        label: 'Search key',
+                        matchColumn: 'field',
+                        values: [
+                            {value: 'scopusId', label: 'Author id'}
+                        ],
+                        defaultValue: 'scopusId'
+                    }
+                }
             };
 
-            return service;
+            const s = selection.toLowerCase();
+            if (s in opts)
+                return opts[s];
 
-        }
+            return {};
+        };
+
+        return service;
 
     }
-    ()
-)
-;
+
+})();

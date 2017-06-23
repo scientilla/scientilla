@@ -1,0 +1,8 @@
+<label>
+    <span ng-bind-html="vm.structure.label"></span>
+</label>
+<input type="text"
+       class="{{vm.cssClass}}"
+       placeholder="{{vm.structure.placeholder}}"
+       ng-model="vm.model"
+       ng-disabled="vm.structure.disabled">

@@ -19,7 +19,8 @@
                         matchColumn: 'field',
                         values: [
                             {value: 'name', label: 'Acronym'}
-                        ]
+                        ],
+                        defaultValue: 'name'
                     }
                 },
                 'scopus': {
@@ -29,7 +30,8 @@
                         matchColumn: 'field',
                         values: [
                             {value: 'scopusId', label: 'Scopus id'}
-                        ]
+                        ],
+                        defaultValue: 'scopusId'
                     }
                 }
             };

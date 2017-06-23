@@ -1,0 +1,10 @@
+<label>
+    <span ng-bind-html="vm.structure.label"></span>
+</label>
+<select
+        class="{{vm.cssClass}}"
+        placeholder="{{vm.placeholder}}"
+        ng-model="vm.model"
+        ng-disabled="vm.structure.disabled"
+        ng-options="option.value as option.label for option in vm.values">
+</select>

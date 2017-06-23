@@ -7,6 +7,7 @@
         'ui.bootstrap',
         'ui-notification',
         'LocalStorageModule',
+        'scientilla-form',
 
         /* Feature areas */
         'users',
