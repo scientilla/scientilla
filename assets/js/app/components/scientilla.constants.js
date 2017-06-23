@@ -249,8 +249,7 @@
                 [{value: "?", label: 'Select'}],
                 documentTypes.map(s => ({value: s.key, label: s.label}))
             ),
-            matchColumn: 'type',
-            matchRule: 'like'
+            matchColumn: 'type'
         },
         sourceType: {
             inputType: 'select',
@@ -259,8 +258,7 @@
                 [{value: "?", label: 'Select'}],
                 documentSourceTypes.map(s => ({value: s.id, label: s.label}))
             ),
-            matchColumn: 'sourceType',
-            matchRule: 'like'
+            matchColumn: 'sourceType'
         }
 
     };
