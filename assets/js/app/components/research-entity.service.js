@@ -68,16 +68,11 @@
         }
 
         function getExternalDocuments(researchEntity, query) {
-            const originsMapping = {
-                'Scopus': 'scopus',
-                'Publications': 'publications'
-            };
-
             const populate = {populate: documentPopulates};
             const q = _.merge({
                 limit: query.limit,
                 skip: query.skip,
-                where: {origin: originsMapping[query.where.connector]}
+                where: query.where
             }, populate);
 
             return researchEntity.getList('externalDocuments', q);

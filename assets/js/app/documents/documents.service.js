@@ -239,16 +239,21 @@
                 }
 
                 function getExternalDocuments(query, service) {
-                    var connector = query.where.connector;
+                    const connector = query.where.origin;
                     if (!connector)
                         return $q.resolve([]);
+
+                    const fields = {
+                        'scopus': 'scopusId',
+                        'publications': 'username',
+                        'orcid': 'orcidId'
+                    };
 
                     return service
                         .getProfile(researchEntity.id)
                         .then(function (resEntity) {
-
-                            if (!resEntity[query.where.field]) {
-                                var msg = "Warning<br>" + query.where.field + " empty<br>update your profile";
+                            if (!resEntity[fields[query.where.origin]]) {
+                                const msg = "Warning<br>" + fields[query.where.origin] + " empty<br>update your profile";
                                 Notification.warning(msg);
                                 throw msg;
                             }
