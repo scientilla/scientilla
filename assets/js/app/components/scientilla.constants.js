@@ -2,15 +2,7 @@
     'use strict';
 
 
-    var yearsInterval = _.range(new Date().getFullYear(), 2005, -1);
-
-
-    var years_value = _.concat(
-        [{value: "?", label: 'Select'}],
-        _.map(yearsInterval, function (y) {
-            return {value: y + '', label: y + ''};
-        }));
-    var documentSearchForm = {
+    const documentSearchForm = {
         title: {
             inputType: 'text',
             label: 'Title',
@@ -24,22 +16,20 @@
             matchRule: 'contains'
         },
         maxYear: {
-            inputType: 'select',
+            inputType: 'year',
             label: 'Year from',
-            values: years_value,
             matchColumn: 'year',
             matchRule: '>='
         },
         minYear: {
-            inputType: 'select',
+            inputType: 'year',
             label: 'Year to',
-            values: years_value,
             matchColumn: 'year',
             matchRule: '<='
         }
     };
 
-    var userConstants = {
+    const userConstants = {
         role: {
             USER: 'user',
             ADMINISTRATOR: 'administrator',
@@ -47,14 +37,14 @@
     };
 
     // TODO change to configuration webservice
-    var config = {
+    const config = {
         mainInstitute: {
             id: 1,
             shortname: 'IIT'
         }
     };
 
-    var publicationTypes = [
+    const publicationTypes = [
         {
             value: 'book-chapter',
             label: 'Book chapter'
@@ -114,7 +104,7 @@
         //{value:'patent', label: 'Patent'},
     ];
 
-    var DocumentLabels = {
+    const DocumentLabels = {
         DUPLICATE: 'duplicate',
         ALREADY_VERIFIED: 'already verified',
         DISCARDED: 'discarded',
@@ -125,7 +115,6 @@
 
     angular.module('app')
         .constant('pageSize', 10)
-        .constant('yearsInterval', yearsInterval)
         .constant('documentSearchForm', documentSearchForm)
         .constant('userConstants', userConstants)
         .constant('config', config)
