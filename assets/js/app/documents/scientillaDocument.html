@@ -7,6 +7,18 @@
             <div ng-if="vm.hasMainGroupAffiliation()" class="scientilla-document-icon-container">
                 <span class="scientilla-icon scientilla-icon-iit"></span>
             </div>
+            <div ng-if="!vm.document.origin" class="scientilla-document-icon-container">
+                <span class="scientilla-icon scientilla-icon-scientilla"
+                      title="This document has been inserted directly in Scientilla"></span>
+            </div>
+            <div ng-if="vm.document.origin==='scopus'" class="scientilla-document-icon-container">
+                <span class="scientilla-icon scientilla-icon-scopus"
+                      title="This document has been imported from Scopus"></span>
+            </div>
+            <div ng-if="!vm.document.editedAfterImport" class="scientilla-document-icon-container">
+                <span class="scientilla-icon scientilla-icon-refresh"
+                      title="The document will update automatically from {{vm.document.origin}}"></span>
+            </div>
         </div>
     </div>
 
