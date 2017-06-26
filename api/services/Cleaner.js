@@ -18,16 +18,20 @@ async function cleanInstituteCopies() {
     const institutes = await Institute.find({id: {'!': 1}});
     const deletedInstitutes = [];
     for (let institute of institutes) {
+        if (!institute.scopusId)
+            continue;
         const copy = await getInstituteCopy(institute);
         if (!copy)
             continue;
 
         const affiliations = await Affiliation.find({institute: institute.id});
-        const affiliationsIds = affiliations.map(a => a.id);
-        const updateAffiliations = await Affiliation.update({id: affiliationsIds}, {institute: copy.id});
+        if (affiliations.length) {
+            const affiliationsIds = affiliations.map(a => a.id);
+            const updateAffiliations = await Affiliation.update({id: affiliationsIds}, {institute: copy.id});
+            sails.log.debug(`${updateAffiliations.length} affiliations updated from institute ${institute.id} to ${copy.id}`);
+        }
         await institute.destroy();
         deletedInstitutes.push(institute);
-        sails.log.debug(`${updateAffiliations.length} affiliations updated from institute ${institute.id} to ${copy.id}`);
     }
     sails.log.debug(`${deletedInstitutes.length} deleted`);
 }
@@ -39,16 +43,20 @@ async function cleanSourceCopies() {
     const sources = await Source.find();
     const deletedSources = [];
     for (let source of sources) {
+        if (!source.scopusId)
+            continue;
         const copy = await getSourceCopy(source);
         if (!copy)
             continue;
 
         const documents = await Document.find({source: source.id});
-        const documentIds = documents.map(d => d.id);
-        const updateDocuments = await Document.update({id: documentIds}, {source: copy.id});
+        if (documents.length) {
+            const documentIds = documents.map(d => d.id);
+            const updateDocuments = await Document.update({id: documentIds}, {source: copy.id});
+            sails.log.debug(`${updateDocuments.length} documents updated from source ${source.id} to ${copy.id}`);
+        }
         await source.destroy();
         deletedSources.push(source);
-        sails.log.debug(`${updateDocuments.length} documents updated from source ${source.id} to ${copy.id}`);
     }
     sails.log.debug(`${deletedSources.length} deleted`);
 }
