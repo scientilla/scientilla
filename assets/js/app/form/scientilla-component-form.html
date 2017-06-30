@@ -1,0 +1,5 @@
+<form class="{{vm.cssClass}}" ng-submit="vm.submit()">
+    <scientilla-field ng-repeat="(name, struct) in vm.structure" structure="struct" name="name"
+                      values="vm.values"></scientilla-field>
+    <div ng-transclude></div>
+</form>

@@ -121,7 +121,7 @@ h1 {
 /******************************************************************************/
 /*Bootstrap dropdown fix*/
 
-.dropdown-menu li > a {
+.dropdown > .dropdown-menu > li > a {
   display: block;
   padding: 3px 20px;
   clear: both;
@@ -131,12 +131,12 @@ h1 {
   white-space: nowrap;
 }
 
-.dropdown-menu li:hover {
+.dropdown >.dropdown-menu  >li:hover {
   background-color: @iit-grey-light;
 }
 
-.dropdown-menu li > a:focus,
-.dropdown-menu li > a:hover {
+.dropdown >.dropdown-menu > li > a:focus,
+.dropdown >.dropdown-menu > li > a:hover {
   color: @iit-black;
   background-color: @iit-grey-light;
   text-decoration: none;

@@ -69,7 +69,7 @@ module.exports = function expand(req, res) {
         sort = relationModel.DEFAULT_SORTING;
     const hardLimit = 1500;
     const skip = actionUtil.parseSkip(req);
-    const limit = hardLimit + skip;
+    const limit = hardLimit;
     populate.sort = sort;
     populate.limit = limit;
     populate.skip = skip;
@@ -96,7 +96,7 @@ module.exports = function expand(req, res) {
                 const fieldAttribute = relationModel._attributes[f.alias];
                 const criteria = _.get(fieldAttribute, 'getCriteria') ? await fieldAttribute.getCriteria(req) : {};
                 query = query.populate(f.alias, criteria);
-            };
+            }
 
             return Promise.all([query, count])
                 .spread((matchingRecords, count) => {

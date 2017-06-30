@@ -11,15 +11,20 @@
 'use strict';
 const _ = require('lodash');
 
-module.exports.bootstrap = function (cb) {
+module.exports.bootstrap = async function (cb) {
     const env = sails.config.environment;
     const isTest = env == 'test';
     // It's very important to trigger this callback method when you are finished
     // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
 
-    return initializeInstitutes()
-        .then(initializeGroups)
-        .then(_ => cb());
+    await initializeInstitutes();
+    await initializeGroups();
+    if (!isTest) {
+        Cron.init();
+        await Cron.start();
+    }
+
+    cb();
 
     function initializeInstitutes() {
         return Institute.count()

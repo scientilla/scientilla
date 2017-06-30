@@ -26,6 +26,7 @@
     function scientillaFilter(pageSize, $scope, $timeout) {
         var vm = this;
 
+        vm.onSubmit = onSubmit;
         vm.onSearch = onSearch;
         vm.onPageChange = onPageChange;
         vm.onStatus = onStatus;
@@ -46,8 +47,6 @@
         vm.formVisible = true;
 
         var searchQuery = {};
-        var onChangeWatchesDeregisters = [];
-        var formStructureDeregisterer = null;
         var onDataChangeDeregisterer = null;
 
         vm.$onInit = function () {
@@ -63,19 +62,18 @@
             if (_.isUndefined(vm.elements))
                 vm.elements = [];
 
-            initSearchValues();
-
-            formStructureDeregisterer = $scope.$watch('vm.searchFormStructure', refreshForm, true);
             onDataChangeDeregisterer = $scope.$watch('vm.elements', onDataChange, true);
 
             vm.search();
         };
 
         vm.$onDestroy = function () {
-            deregisterOnChanges();
-            formStructureDeregisterer();
             onDataChangeDeregisterer();
         };
+
+        function onSubmit() {
+            return !vm.onStatus(vm.STATUS_LOADING) && vm.search();
+        }
 
         function onSearch(searchWhere) {
             vm.currentPage = 1;
@@ -96,7 +94,7 @@
         function search() {
             var where = {};
 
-            _.forEach(this.searchValues,
+            _.forEach(vm.searchValues,
                 function (value, key) {
 
                     var struct = vm.searchFormStructure[key];
@@ -122,21 +120,7 @@
         }
 
         function reset() {
-            _.forEach(this.searchValues,
-                function (value, key) {
-
-                    var struct = vm.searchFormStructure[key];
-                    if (struct.inputType === 'select') {
-                        vm.searchValues[key] = "?";
-                    }
-                    else {
-
-                        if (struct.defaultValue)
-                            vm.searchValues[key] = struct.defaultValue;
-                        else
-                            vm.searchValues[key] = '';
-                    }
-                });
+            vm.formReset();
             vm.search();
         }
 
@@ -180,39 +164,6 @@
 
         function setStatus(status) {
             vm.status = status;
-        }
-
-        function initSearchValues() {
-            deregisterOnChanges();
-
-            var oldSearchValues = _.cloneDeep(vm.searchValues);
-            vm.searchValues = {};
-
-            _.forEach(vm.searchFormStructure, function (value, key) {
-                if (!_.isUndefined(oldSearchValues[key]))
-                    vm.searchValues[key] = oldSearchValues[key];
-                else if (!_.isUndefined(value.defaultValue))
-                    vm.searchValues[key] = value.defaultValue;
-                if (!_.isUndefined(value.onChange))
-                    onChangeWatchesDeregisters.push($scope.$watch('vm.searchValues.' + key, value.onChange));
-            });
-        }
-
-        function deregisterOnChanges() {
-            _.forEach(onChangeWatchesDeregisters, function (deregister) {
-                deregister();
-            });
-            onChangeWatchesDeregisters = [];
-        }
-
-        function refreshForm() {
-
-            initSearchValues();
-
-            vm.formVisible = false;
-            $timeout(function () {
-                vm.formVisible = true;
-            }, 0);
         }
     }
 })();

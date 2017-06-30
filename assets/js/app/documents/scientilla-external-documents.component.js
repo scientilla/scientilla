@@ -13,13 +13,13 @@
 
     scientillaExternalDocuments.$inject = [
         'context',
-        'ResearchEntityFormsFactory'
+        'documentSearchForm'
     ];
 
-    function scientillaExternalDocuments(context, ResearchEntityFormsFactory) {
-        var vm = this;
+    function scientillaExternalDocuments(context, documentSearchForm) {
+        const vm = this;
 
-        var DocumentService = context.getDocumentService();
+        const DocumentService = context.getDocumentService();
 
         vm.copyDocument = DocumentService.copyDocument;
         vm.copyDocuments = DocumentService.copyDocuments;
@@ -27,13 +27,21 @@
         vm.onFilter = onFilter;
 
         vm.documents = [];
-        var query = {};
+        let query = {};
 
 
         vm.$onInit = function () {
-            var ResearchEntityForms = ResearchEntityFormsFactory(vm);
+            vm.searchForm = Object.assign({},
+                {
+                    connector: getConnectorField(),
+                    newline1: {
+                        inputType: 'br'
+                    }
+                },
+                documentSearchForm
+            );
 
-            ResearchEntityForms.setExternalForm();
+            console.log(vm.searchForm);
         };
 
         function onFilter(q) {
@@ -44,6 +52,23 @@
                     vm.documents = documents;
                 });
         }
+
+        function getConnectorField() {
+            const connectors = vm.researchEntity.getExternalConnectors();
+            const values = _.concat(
+                {value: '?', label: 'Select'},
+                connectors.map(function (c) {
+                    return {value: c.value, label: c.label};
+                }));
+
+            return {
+                inputType: 'select',
+                label: 'Connector',
+                values: values,
+                matchColumn: 'origin'
+            };
+        }
+
 
     }
 })();

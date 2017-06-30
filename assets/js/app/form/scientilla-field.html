@@ -1,0 +1,11 @@
+<div class="form-group">
+    <scientilla-text-field ng-if="vm.structure.inputType==='text'" model="vm.values[vm.name]" field-id="vm.id"
+                           structure="vm.fieldStructure"></scientilla-text-field>
+    <scientilla-select-field ng-if="vm.structure.inputType==='select'" model="vm.values[vm.name]" field-id="vm.id"
+                             structure="vm.fieldStructure"></scientilla-select-field>
+    <scientilla-date-field ng-if="vm.structure.inputType==='year'" model="vm.values[vm.name]" field-id="vm.id"
+                           structure="vm.fieldStructure"></scientilla-date-field>
+    <scientilla-checkbox-field ng-if="vm.structure.inputType==='checkbox'" model="vm.values[vm.name]" field-id="vm.id"
+                               structure="vm.fieldStructure"></scientilla-checkbox-field>
+</div>
+<br ng-if="vm.structure.inputType==='br'">

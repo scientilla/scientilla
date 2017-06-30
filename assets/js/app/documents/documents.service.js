@@ -90,7 +90,11 @@
                 function unverifyDocument(document) {
                     document.addLabel(DocumentLabels.UVERIFYING);
                     ModalService
-                        .multipleChoiceConfirm('Unverifying', 'Do you want to unverify the document?', ['Create New Version', 'Unverify'])
+                        .multipleChoiceConfirm('Unverifying',
+                            'Unverifying a document removes it from your profile, you can choose:\n\n' +
+                            'Edit: to move the document in your drafts.\n' +
+                            'Remove: to remove it completely from your profile.',
+                            ['Edit', 'Remove'])
                         .then(function (buttonIndex) {
                             switch (buttonIndex) {
                                 case 0:
@@ -235,16 +239,21 @@
                 }
 
                 function getExternalDocuments(query, service) {
-                    var connector = query.where.connector;
+                    const connector = query.where.origin;
                     if (!connector)
                         return $q.resolve([]);
+
+                    const fields = {
+                        'scopus': 'scopusId',
+                        'publications': 'username',
+                        'orcid': 'orcidId'
+                    };
 
                     return service
                         .getProfile(researchEntity.id)
                         .then(function (resEntity) {
-
-                            if (!resEntity[query.where.field]) {
-                                var msg = "Warning<br>" + query.where.field + " empty<br>update your profile";
+                            if (!resEntity[fields[query.where.origin]]) {
+                                const msg = "Warning<br>" + fields[query.where.origin] + " empty<br>update your profile";
                                 Notification.warning(msg);
                                 throw msg;
                             }

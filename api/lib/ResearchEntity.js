@@ -206,12 +206,12 @@ module.exports = _.merge({}, BaseModel, {
         const res = await ResearchEntityModel.update({id: researchEntityId}, researchEntityData);
         const newResearchEntity = res[0];
         const researchEntityType = newResearchEntity.getType();
-        const command = 'grunt external:import:' + researchEntityType + ':' + newResearchEntity.id;
+        const command = 'external:import:' + researchEntityType + ':' + newResearchEntity.id;
         if (newResearchEntity.scopusId !== oldResearchEntity.scopusId)
-            exec(command + ':' + DocumentOrigins.SCOPUS);
+            GruntTaskRunner.run(command + ':' + DocumentOrigins.SCOPUS);
         if (newResearchEntity.username !== oldResearchEntity.username
             || newResearchEntity.publicationsAcronym !== oldResearchEntity.publicationsAcronym)
-            exec(command + ':' + DocumentOrigins.PUBLICATIONS);
+            GruntTaskRunner.run(command + ':' + DocumentOrigins.PUBLICATIONS);
 
         return newResearchEntity;
     },

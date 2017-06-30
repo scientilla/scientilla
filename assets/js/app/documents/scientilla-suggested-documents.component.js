@@ -15,10 +15,11 @@
     scientillaSuggestedDocumentsController.$inject = [
         'context',
         'researchEntityService',
-        'EventsService'
+        'EventsService',
+        'documentSearchForm'
     ];
 
-    function scientillaSuggestedDocumentsController(context, researchEntityService, EventsService) {
+    function scientillaSuggestedDocumentsController(context, researchEntityService, EventsService, documentSearchForm) {
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
@@ -34,14 +35,19 @@
 
         vm.onFilter = onFilter;
 
-        vm.searchForm = {
-            rejected: {
-                inputType: 'checkbox',
-                label: 'Show discarded documents',
-                defaultValue: false,
-                matchColumn: 'discarded'
-            }
-        };
+        vm.searchForm = Object.assign({},
+            documentSearchForm,
+            {
+                newline1: {
+                    inputType: 'br'
+                },
+                rejected: {
+                    inputType: 'checkbox',
+                    label: 'Show discarded documents',
+                    defaultValue: false,
+                    matchColumn: 'discarded'
+                }
+            });
 
         vm.$onInit = function () {
             EventsService.subscribeAll(vm, [
