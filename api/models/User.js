@@ -161,19 +161,19 @@ module.exports = _.merge({}, ResearchEntity, {
                 return user.administratedGroups;
             });
     },
-    setSlug: function (user) {
-        var name = user.name ? user.name : "";
-        var surname = user.surname ? user.surname : "";
-        var fullName = _.trim(name + " " + surname);
-        var slug = fullName.toLowerCase().replace(/\s+/gi, '-');
+    setSlug: async function (user) {
+        const basicSlug = user.username.toLowerCase().trim().replace(/\./gi, '-').split('@')[0];
 
-        return User
-            .findBySlug(slug)
-            .then(function (usersFound) {
-                user.slug = usersFound.length ? slug + _.random(1, 999) : slug;
+        let slug = basicSlug;
+        while(true) {
+            const otherUserBySlug = await User.findOneBySlug(slug);
+            if (!otherUserBySlug)
+                break;
+            slug = basicSlug + _.random(1, 999);
+        }
 
-                return user;
-            });
+        user.slug = slug;
+        return user;
     },
     createCompleteUser: function (params) {
         var attributes = _.keys(User._attributes);
