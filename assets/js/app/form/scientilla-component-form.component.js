@@ -7,7 +7,6 @@
             controller: scientillaComponentForm,
             controllerAs: 'vm',
             bindings: {
-                values: '=',
                 structure: '<',
                 cssClass: '@',
                 onSubmit: '&',
@@ -25,6 +24,7 @@
 
         vm.submit = submit;
 
+        vm.values = {};
         let onChangeWatchesDeregisters = [];
         let onStructureChangeDeregisterer;
 
@@ -71,7 +71,7 @@
         function submit() {
             clearNil();
             if (_.isFunction(vm.onSubmit()))
-                vm.onSubmit()();
+                vm.onSubmit()(vm.values);
         }
 
         function onStructureChange() {
