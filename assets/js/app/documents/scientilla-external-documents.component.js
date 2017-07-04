@@ -40,8 +40,6 @@
                 },
                 documentSearchForm
             );
-
-            console.log(vm.searchForm);
         };
 
         function onFilter(q) {
