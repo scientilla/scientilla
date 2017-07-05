@@ -6,7 +6,7 @@
             <!--<a ng-href="{{menuItem.url}}">{{menuItem.title}}</a>-->
             <!--<div ng-bind-html="menuItem.other | trust"></div>-->
         <!--</li>-->
-        <li ng-class="{active: vm.isActive('?#/')}">
+        <li ng-class="{active: vm.isActive('/')}">
             <a ng-href="#/">Summary</a>
         <li class="nav-divider">
         </li>
@@ -14,16 +14,16 @@
             Documents
             <scientilla-button-new-document></scientilla-button-new-document>
         </li>
-        <li ng-class="{active: vm.isActive('?#/suggested')}">
+        <li ng-class="{active: vm.isActive('/suggested')}">
             <a ng-href="#/suggested">Suggested</a>
         </li>
-        <li ng-class="{active: vm.isActive('?#/verified')}">
+        <li ng-class="{active: vm.isActive('/verified')}">
             <a ng-href="#/verified">Verified</a>
         </li>
-        <li ng-class="{active: vm.isActive('?#/drafts')}">
+        <li ng-class="{active: vm.isActive('/drafts')}">
             <a ng-href="#/drafts">Drafts</a>
         </li>
-        <li ng-class="{active: vm.isActive('?#/external')}">
+        <li ng-class="{active: vm.isActive('/external')}">
             <a ng-href="#/external">External</a>
         </li>
         <li class="nav-divider">
@@ -31,10 +31,10 @@
         <li class="menu-label">
             System
         </li>
-        <li ng-class="{active: vm.isActive('?#/users')}">
+        <li ng-class="{active: vm.isActive('/users')}">
             <a ng-href="#/users">People</a>
         </li>
-        <li ng-class="{active: vm.isActive('?#/groups')}">
+        <li ng-class="{active: vm.isActive('/groups')}">
             <a ng-href="#/groups">Groups</a>
         </li>
     </ul>
