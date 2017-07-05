@@ -108,6 +108,10 @@
   height: 100%;
 }
 
+.scientilla-document-metadata {
+  border-right: 1px solid #eee;
+}
+
 .scientilla-document-year {
   -webkit-transform: rotate(-90deg);
   -moz-transform: rotate(-90deg);
@@ -123,7 +127,7 @@
   font-size: 16px;
 }
 
-.scientilla-document-icons {
+.scientilla-document-affiliations-icon {
   margin-left: 9px;
   margin-top: 25px;
   position: absolute;
@@ -151,6 +155,10 @@
 
 .scientilla-document-icon-container {
   display: inline-block;
+}
+
+.scientilla-document-icons-extra {
+  margin-top: 6px;
 }
 
 .scientilla-document-authors {
@@ -209,9 +217,8 @@ form.autosave.default {
 
 /*icons*/
 .scientilla-icon {
-  padding: 0 8px 5px 8px;
+  padding: 0 8px 0px 8px;
   content: ' ';
-  margin-left: 2px;
   margin-right: 2px;
 }
 
@@ -230,13 +237,12 @@ form.autosave.default {
   background-size: 16px 15px;
 }
 
-.scientilla-icon-refresh {
-  background: no-repeat left center url(data:image/gif;base64,R0lGODlhEAAQAIABAAAAAP///yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAEALAAAAAAQABAAAAImjI+pwH2QmoSBGvdkttuypV1KFY7maU6jV24XhsCqm5ETV3UfihYAOw==);
-  background-size: 16px 16px;
-}
-
 .scientilla-icon-grey-40 {
   background-image: url(data:image/gif;base64,R0lGODlhKAAlAKECADE1PjI1Pv///////yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAIALAAAAAAoACUAAAKPlI+py+0PowmRShdsyxdr9nUKlZWmwIngZJ6hyh5tmsKsNlulje7y2fOJZr8asZNDCJMXpkx5rDhHOeBmmki+QFgodLuoSoUPsacl6SoAaqoVgh6Dz/NsbXjH8J7wJpm/YfdXFbKFY3ZDSCN4GJc4tcRlpVhXtqS4F/QYlamDmDkR9Ab6Q1pheoqqp8rKUAAAOw==);
+}
+
+.scientilal-icon-spark {
+  background: no-repeat left center url(data:image/gif;base64,R0lGODlhEAAPAIABADI1Pv///yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAAEALAAAAAAQAA8AAAIhjI+poG3AnnsRTmpvgDkv7n3gBI5JiUabGq5NS2qHKmsFADs=);
 }
 
 /*Scientilla-menu*/
@@ -307,6 +313,19 @@ scientilla-document-label {
 }
 
 /*Scientilla multicheck*/
+
+.scientilla-document-row {
+  width: 100%;
+}
+
+.scientilla-checkable-row {
+  display: flex;
+}
+
+.scientilla-checkable-check {
+  margin-right: 20px;
+  margin-top: 20px;
+}
 
 scientilla-multicheck .scientila-multicheck-commands-row {
   height: 38px;

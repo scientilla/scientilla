@@ -35,6 +35,7 @@
             'source',
             'authors',
             'authorships',
+            'groupAuthorships',
             'affiliations',
             'userTags',
             'tagLabels',

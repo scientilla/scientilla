@@ -19,10 +19,10 @@
             <item-list>
                 <scientilla-checkable ng-repeat="d in vm.drafts" item="d">
                     <div class="row">
-                        <div class="col-md-9">
+                        <div class="col-md-10">
                             <scientilla-document document="d" show-private-tags="true"></scientilla-document>
                         </div>
-                        <div class="col-md-3 text-right">
+                        <div class="col-md-2 text-right">
                             <h3>
                                 <div class="btn-group scientilla-dropdown-align-right" uib-dropdown>
                                     <button ng-click="vm.openEditPopup(d)" type="button" class=" btn btn-primary">

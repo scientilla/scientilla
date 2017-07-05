@@ -3,44 +3,52 @@
         <div class="scientilla-document-year">
             {{vm.document.year}}
         </div>
-        <div class="scientilla-document-icons">
+        <div class="scientilla-document-affiliations-icon">
             <div ng-if="vm.hasMainGroupAffiliation()" class="scientilla-document-icon-container">
                 <span class="scientilla-icon scientilla-icon-iit"></span>
             </div>
-            <div ng-if="!vm.document.origin" class="scientilla-document-icon-container">
-                <span class="scientilla-icon scientilla-icon-scientilla"
-                      title="This document has been inserted directly in Scientilla"></span>
-            </div>
-            <div ng-if="vm.document.origin==='scopus'" class="scientilla-document-icon-container">
-                <span class="scientilla-icon scientilla-icon-scopus"
-                      title="This document has been imported from Scopus"></span>
-            </div>
-            <div ng-if="!vm.document.editedAfterImport" class="scientilla-document-icon-container">
-                <span class="scientilla-icon scientilla-icon-refresh"
-                      title="The document will update automatically from {{vm.document.origin}}"></span>
-            </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-xs-10 scientilla-document-metadata">
+            <div>
+                <scientilla-document-type document="vm.document"></scientilla-document-type>
+                <small class="scientilla-document-authors">
+                    <span ng-bind-html='vm.document.authorsStr | authorsCorresponding:vm.document | authorsVerified:vm.document | authorsMainGroup:vm.document'></span>
+                </small>
+            </div>
+            <div>
+                <scientilla-document-label ng-repeat="l in vm.document.labels" label="l"></scientilla-document-label>
+                <span class="scientilla-document-title scientilla-clickable" ng-click="vm.openDetails()"
+                      ng-bind-html='vm.document | title'></span>
+            </div>
+            <scientilla-document-source document="vm.document"></scientilla-document-source>
+            <div ng-if="vm.document.doi">
+                <small class="scientilla-document-doi">
+                    <span ng-bind-html='vm.document | doi'></span>
+                </small>
+            </div>
+            <div ng-if="vm.showPrivateTags">
+                <span ng-click="vm.editTags()" class="fa fa-edit scientilla-clickable" title="Edit your tags"></span>
+                <span ng-bind-html='vm.document | documentusertags'></span>
+            </div>
+        </div>
 
-    <div>
-        <scientilla-document-type document="vm.document"></scientilla-document-type>
-        <small class="scientilla-document-authors">
-            <span ng-bind-html='vm.document.authorsStr | authorsCorresponding:vm.document | authorsVerified:vm.document | authorsMainGroup:vm.document'></span>
-        </small>
-    </div>
-    <div>
-        <scientilla-document-label ng-repeat="l in vm.document.labels" label="l"></scientilla-document-label>
-        <span class="scientilla-document-title scientilla-clickable" ng-click="vm.openDetails()"
-              ng-bind-html='vm.document | title'></span>
-    </div>
-    <scientilla-document-source document="vm.document"></scientilla-document-source>
-    <div ng-if="vm.document.doi">
-        <small class="scientilla-document-doi">
-            <span ng-bind-html='vm.document | doi'></span>
-        </small>
-    </div>
-    <div ng-if="vm.showPrivateTags">
-        <span ng-bind-html='vm.document | documentusertags'></span>
-        <span ng-click="vm.editTags()" class="fa fa-edit scientilla-clickable" title="Edit your tags"></span>
+        <div class="col-xs-2 scientilla-document-icons" ng-if="vm.document.kind==='v'">
+            <div title="{{vm.verifiedCount}} people or groups have verified this document">
+                <span class="fa fa-check"></span> {{vm.verifiedCount}}
+            </div>
+            <div class="scientilla-document-icons-extra">
+                <div ng-if="vm.document.origin==='scopus'" class="scientilla-document-icon-container">
+                <span class="scientilla-icon scientilla-icon-scopus"
+                      title="This document has been imported from Scopus"></span>
+                </div>
+                <div ng-if="!vm.document.editedAfterImport && vm.document.origin==='scopus'"
+                     class="scientilla-document-icon-container">
+                <span class="fa fa-refresh"
+                      title="The document will update automatically from {{vm.document.origin}}"></span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
