@@ -52,7 +52,7 @@ describe('Document duplicates', () => {
 
             const doc1 = allUserDocs.items[0];
             doc1.duplicates.should.be.ok;
-            doc1.duplicates.length.should.equal(0);
+            doc1.duplicates.length.should.equal(1);
         }
     );
 
