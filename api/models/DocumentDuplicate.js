@@ -17,7 +17,8 @@ module.exports = {
         researchEntity : {
             model: 'user'
         },
-        type: 'string'
+        type: 'string',
+        duplicateKind: 'string'
     },
 
     migrate: 'safe',

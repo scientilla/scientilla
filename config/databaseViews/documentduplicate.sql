@@ -1,36 +1,33 @@
 CREATE OR REPLACE VIEW documentduplicate AS
   SELECT
-    d.id   AS document,
-    dd.id  AS duplicate,
-    u.id   AS "researchEntity",
-    'user' AS "researchEntityType",
-    1      AS id
-  FROM document d,
-        "user" u
+    d.id    AS document,
+    dd.id   AS duplicate,
+    dd.kind AS "duplicateKind",
+    u.id    AS "researchEntity",
+    'user'  AS "researchEntityType",
+    1       AS id
+  FROM "user" u
     LEFT JOIN authorship a
       ON u.id = a."researchEntity"
     JOIN document dd
       ON a.document = dd.id
          OR u.id = dd."draftCreator"
-  WHERE
-         CASE WHEN d.type = 'invited_talk' OR dd.type = 'invited_talk'
-           THEN (d."authorsStr" = dd."authorsStr") :: INT +
-                (d.title = dd.title) :: INT +
-                (d."itSource" = dd."itSource") :: INT > 1
-         ELSE (d.doi = dd.doi) :: INT +
-              (d."authorsStr" = dd."authorsStr") :: INT +
-              (d.title = dd.title) :: INT +
-              (d."scopusId" = dd."scopusId") :: INT > 1
+    JOIN document d
+      ON CASE WHEN d.type = 'invited_talk' OR dd.type = 'invited_talk'
+      THEN coalesce((d."authorsStr" = dd."authorsStr") :: INT, 0) +
+           coalesce((d.title = dd.title) :: INT, 0) +
+           coalesce((d."itSource" = dd."itSource") :: INT, 0) > 1
+         ELSE coalesce((d.doi = dd.doi) :: INT, 0) +
+              coalesce((d."authorsStr" = dd."authorsStr") :: INT, 0) +
+              coalesce((d.title = dd.title) :: INT, 0) +
+              coalesce((d."scopusId" = dd."scopusId") :: INT, 0) > 1
          END
-        AND d.id <> dd.id
-        AND (
-          (d.kind = 'd' AND dd.kind IN ('d', 'v'))
-          OR
-          (d.kind IN ('v', 'e') AND dd.kind = 'v'))
+         AND d.id <> dd.id
   UNION
   SELECT
     d.id    AS document,
     dd.id   AS duplicate,
+    dd.kind AS "duplicateKind",
     g.id    AS "researchEntity",
     'group' AS "researchEntityType",
     1       AS id
@@ -42,16 +39,12 @@ CREATE OR REPLACE VIEW documentduplicate AS
          OR g.id = dd."draftGroupCreator"
     JOIN document d
       ON CASE WHEN d.type = 'invited_talk' OR dd.type = 'invited_talk'
-      THEN (d."authorsStr" = dd."authorsStr") :: INT +
-           (d.title = dd.title) :: INT +
-           (d."itSource" = dd."itSource") :: INT > 1
-         ELSE (d.doi = dd.doi) :: INT +
-              (d."authorsStr" = dd."authorsStr") :: INT +
-              (d.title = dd.title) :: INT +
-              (d."scopusId" = dd."scopusId") :: INT > 1
+      THEN coalesce((d."authorsStr" = dd."authorsStr") :: INT, 0) +
+           coalesce((d.title = dd.title) :: INT, 0) +
+           coalesce((d."itSource" = dd."itSource") :: INT, 0) > 1
+         ELSE coalesce((d.doi = dd.doi) :: INT, 0) +
+              coalesce((d."authorsStr" = dd."authorsStr") :: INT, 0) +
+              coalesce((d.title = dd.title) :: INT, 0) +
+              coalesce((d."scopusId" = dd."scopusId") :: INT, 0) > 1
          END
          AND D.id <> dd.id
-         AND (
-           (D.kind = 'd' AND dd.kind IN ('d', 'v'))
-           OR
-           (D.kind IN ('v', 'e') AND dd.kind = 'v'))
