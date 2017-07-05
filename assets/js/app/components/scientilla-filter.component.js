@@ -34,7 +34,6 @@
         vm.reset = reset;
         vm.pageSizes = [10, 20, 50, 100, 200];
         vm.currentPage = 1;
-        vm.searchValues = {};
 
         // statuses
         vm.STATUS_WAITING = 0;
@@ -71,8 +70,8 @@
             onDataChangeDeregisterer();
         };
 
-        function onSubmit() {
-            return !vm.onStatus(vm.STATUS_LOADING) && vm.search();
+        function onSubmit(searchValues) {
+            return !vm.onStatus(vm.STATUS_LOADING) && vm.search(searchValues);
         }
 
         function onSearch(searchWhere) {
@@ -91,15 +90,14 @@
             return vm.status === status;
         }
 
-        function search() {
+        function search(searchValues) {
             var where = {};
 
-            _.forEach(vm.searchValues,
+            _.forEach(searchValues,
                 function (value, key) {
-
                     var struct = vm.searchFormStructure[key];
 
-                    if (struct.inputType === 'select' && vm.searchValues[key] === "?")
+                    if (struct.inputType === 'select' && searchValues[key] === "?")
                         return;
 
                     var whereAdd = {};
