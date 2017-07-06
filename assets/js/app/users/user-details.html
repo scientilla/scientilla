@@ -48,12 +48,12 @@
                 <uib-tab-heading>Collaborations</uib-tab-heading>
                 <div ng-repeat="c in vm.user.collaborations">
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-10">
                             <a ng-href="#{{c.group.getProfileUrl()}}">
                                 {{c.getDisplayName()}}
                             </a>
                         </div>
-                        <div class="col-md-4 text-right">
+                        <div class="col-md-2 text-right">
                         </div>
                     </div>
                     <hr>

@@ -27,6 +27,7 @@
 
         vm.$onInit = function () {
             vm.showPrivateTags = vm.showPrivateTags || false;
+            vm.verifiedCount = getVerifiedCount();
             checkDuplicate();
         };
 
@@ -82,6 +83,11 @@
 
         function editTags() {
             ModalService.openScientillaTagForm(vm.document);
+        }
+
+        function getVerifiedCount() {
+            return vm.document.authorships.filter(a => a.researchEntity)
+                .concat(vm.document.groupAuthorships).length;
         }
     }
 

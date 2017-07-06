@@ -1,13 +1,9 @@
-<div class="row">
-    <div class="col-md-1">
-        <h3>
-            <label ng-if="vm.areButtonsRegistered()">
-                <input type="checkbox" ng-model="vm.isChecked"/>
-            </label>
-        </h3>
+<div class="scientilla-checkable-row">
+    <div class="scientilla-checkable-check">
+        <label ng-if="vm.areButtonsRegistered()">
+            <input type="checkbox" ng-model="vm.isChecked"/>
+        </label>
     </div>
-    <div class="col-md-11">
-        <div ng-transclude></div>
-    </div>
+    <div class="scientilla-document-row" ng-transclude></div>
 </div>
-<hr> 
+<hr>
