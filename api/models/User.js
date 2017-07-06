@@ -176,6 +176,7 @@ module.exports = _.merge({}, ResearchEntity, {
         return user;
     },
     createCompleteUser: function (params) {
+        params.username = _.toLower(params.username);
         var attributes = _.keys(User._attributes);
         var userObj = _.pick(params, attributes);
 
