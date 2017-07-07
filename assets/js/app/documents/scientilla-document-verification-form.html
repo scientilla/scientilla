@@ -9,7 +9,9 @@
 </div>
 <div>
     <small class="scientilla-document-institutes">
-        <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} - {{institute.name}}</div>
+        <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} -
+            {{institute.name}}
+        </div>
     </small>
 </div>
 <div>
@@ -42,12 +44,20 @@
         </scientilla-multicomplete>
     </div>
     <div class="form-group">
-        <label for="corresponding">
+        <label>
             Are you the corresponding author?
-            <input id="corresponding"
-                   type="checkbox"
+            <input type="checkbox"
                    style="display:block;"
                    ng-model="vm.verificationData.corresponding"/>
+        </label>
+    </div>
+    <hr>
+    <div class="form-group" ng-if="vm.document.origin && !vm.document.editedAfterImport">
+        <label>
+            Keep the document sincronized with {{vm.document.origin}}?
+            <input type="checkbox"
+                   style="display:block;"
+                   ng-model="vm.verificationData.autoUpdate"/>
         </label>
     </div>
     <scientilla-button type="submit" click="vm.submit()">Verify</scientilla-button>
