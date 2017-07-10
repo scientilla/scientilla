@@ -234,7 +234,7 @@ module.exports = _.merge({}, ResearchEntity, {
             });
 
     },
-    getAuthorshipsData: async function (document, researchEntityId, newAffiliationData) {
+    getAuthorshipsData: async function (document, researchEntityId, newAffiliationData = {}) {
         const user = await User.findOneById(researchEntityId);
 
         if (!user)
