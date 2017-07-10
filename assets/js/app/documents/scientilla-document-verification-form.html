@@ -52,12 +52,12 @@
         </label>
     </div>
     <hr>
-    <div class="form-group" ng-if="vm.document.origin && !vm.document.editedAfterImport">
+    <div class="form-group" ng-if="vm.document.origin && vm.document.synchronized">
         <label>
             Keep the document sincronized with {{vm.document.origin}}?
             <input type="checkbox"
                    style="display:block;"
-                   ng-model="vm.verificationData.autoUpdate"/>
+                   ng-model="vm.verificationData.synchronize"/>
         </label>
     </div>
     <scientilla-button type="submit" click="vm.submit()">Verify</scientilla-button>

@@ -115,7 +115,7 @@
         }
 
         function verifyDraftAsUser(researchEntity, draftId, verificationData) {
-            var verificationFields = ['position', 'affiliations', 'corresponding', 'autoUpdate'];
+            var verificationFields = ['position', 'affiliations', 'corresponding', 'synchronize'];
             verificationData = _.pick(verificationData, verificationFields);
             return researchEntity.one('drafts', draftId)
                 .customPUT(verificationData, 'verified');

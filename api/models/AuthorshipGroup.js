@@ -18,6 +18,7 @@ module.exports = _.merge({}, BaseModel, {
         },
         position: 'integer',
         public: 'boolean',
+        synchronize: 'boolean',
         unverify: function () {
             return this.destroy();
         }

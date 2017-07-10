@@ -256,7 +256,7 @@ module.exports = _.merge({}, ResearchEntity, {
 
         const affiliationInstituteIds = !_.isEmpty(newAffiliationData.affiliationInstituteIds) ? newAffiliationData.affiliationInstituteIds : affiliations;
         const corresponding = !_.isNil(newAffiliationData.corresponding) ? newAffiliationData.corresponding : authorship.corresponding;
-        const autoUpdate = !_.isNil(newAffiliationData.autoUpdate) ? newAffiliationData.autoUpdate : !document.editedAfterImport;
+        const synchronize = !_.isNil(newAffiliationData.synchronize) ? newAffiliationData.synchronize : document.synchronized;
 
         if (_.isEmpty(affiliationInstituteIds) || _.isNil(position))
             return {
@@ -271,7 +271,7 @@ module.exports = _.merge({}, ResearchEntity, {
             position,
             affiliationInstituteIds,
             corresponding,
-            autoUpdate,
+            synchronize,
             document
         };
     },
@@ -282,7 +282,7 @@ module.exports = _.merge({}, ResearchEntity, {
             position: authorshipData.position,
             affiliations: authorshipData.affiliationInstituteIds,
             corresponding: authorshipData.corresponding,
-            autoUpdate: authorshipData.autoUpdate
+            synchronize: authorshipData.synchronize
         };
 
         const authorshipFindCriteria = {

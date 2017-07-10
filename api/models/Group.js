@@ -1,4 +1,4 @@
-/* global Document, SqlService, Promise, Group */
+/* global AuthorshipGroup, Document, SqlService, Promise, Group */
 'use strict';
 
 /**
@@ -74,19 +74,21 @@ module.exports = _.merge({}, ResearchEntity, {
             model: 'institute'
         }
     },
-    getAuthorshipsData: function (document) {
-        return Promise.resolve({
+    getAuthorshipsData: async function (document, groupId, newAffiliationData) {
+        return {
             isVerifiable: true,
-            document: document
-        });
+            document: document,
+            synchronize: !_.isNil(newAffiliationData.synchronize) ? newAffiliationData.synchronize : document.synchronized
+        };
     },
-    doVerifyDocument: function (document, researchEntityId) {
+    doVerifyDocument: async function (document, researchEntityId, authorshipData) {
         const authorship = {
             researchEntity: researchEntityId,
-            document: document.id
+            document: document.id,
+            synchronize: authorshipData.synchronize
         };
-        return AuthorshipGroup.create(authorship)
-            .then(()=>document);
+        await AuthorshipGroup.create(authorship);
+        return document;
     },
     getDefaultGroup: function () {
         //TODO: id must be read from settings
@@ -95,16 +97,16 @@ module.exports = _.merge({}, ResearchEntity, {
             .populate('members')
             .populate('administrators');
     },
-    addMember: function(group, user) {
+    addMember: function (group, user) {
         group.members.add(user);
         return group.savePromise();
     },
-    addAdministrator: function(group, user) {
+    addAdministrator: function (group, user) {
         if (group.administrators.length == 0)
             group.administrators.add(user);
         return group.savePromise();
     },
-    addUserToDefaultGroup: function(user) {
+    addUserToDefaultGroup: function (user) {
         return Group.getDefaultGroup()
             .then(group => Group.addAdministrator(group, user))
             .then(group => Group.addMember(group, user))

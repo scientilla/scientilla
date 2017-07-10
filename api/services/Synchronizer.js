@@ -12,7 +12,7 @@ async function synchronizeScopus() {
     sails.log.info("Scopus synchronization starting");
     const documentSynchronized = [];
     const documentsToSynchronize = await Document.find({
-        editedAfterImport: false,
+        synchronized: true,
         kind: [DocumentKinds.DRAFT, DocumentKinds.VERIFIED],
         origin: DocumentOrigins.SCOPUS
     });

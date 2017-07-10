@@ -9,7 +9,6 @@
  */
 
 const _ = require('lodash');
-const Promise = require('bluebird');
 const BaseModel = require("../lib/BaseModel.js");
 const actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 
@@ -32,7 +31,8 @@ const fields = [
     {name: 'wosId'},
     {name: 'iitPublicationsId'},
     {name: 'origin'},
-    {name: 'kind'}
+    {name: 'kind'},
+    {name: 'synchronized'}
 ];
 
 module.exports = _.merge({}, BaseModel, {
@@ -62,10 +62,7 @@ module.exports = _.merge({}, BaseModel, {
         abstract: 'TEXT',
         kind: 'STRING',
         origin: 'STRING',
-        editedAfterImport: {
-            type: "BOOLEAN",
-            defaultsTo: false
-        },
+        synchronized: "BOOLEAN",
         source: {
             model: 'source'
         },
@@ -242,7 +239,7 @@ module.exports = _.merge({}, BaseModel, {
         const documentFields = Document.getFields();
         return _.pick(draftData, documentFields);
     },
-    getNumberOfConnections: function(document) {
+    getNumberOfConnections: function (document) {
         return document.authors.length +
             document.groups.length +
             document.discardedCoauthors.length +

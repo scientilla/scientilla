@@ -136,7 +136,7 @@ module.exports = _.merge({}, BaseModel, {
     verifyDocuments: function (Model, researchEntityId, documentIds) {
         return Promise.all(documentIds.map(documentId => Model.verifyDocument(Model, researchEntityId, documentId)));
     },
-    verifyDocument: async function (Model, researchEntityId, documentId, position, affiliationInstituteIds, corresponding) {
+    verifyDocument: async function (Model, researchEntityId, documentId, verificationData) {
         const DiscardedModel = getDiscardedModel(Model);
         await  DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
         const document = await Document.findOneById(documentId)
@@ -147,27 +147,26 @@ module.exports = _.merge({}, BaseModel, {
                 error: 'Document not found',
                 item: researchEntityId
             };
-        const authorshipData = await Model.getAuthorshipsData(document, researchEntityId, position, affiliationInstituteIds, corresponding)
+        const authorshipData = await Model.getAuthorshipsData(document, researchEntityId, verificationData);
+
         if (!authorshipData.isVerifiable)
             return {
                 error: authorshipData.error,
                 item: authorshipData.document
             };
 
-
         if (authorshipData.document.isPositionVerified(authorshipData.position))
             return {
                 error: "The position is already verified",
                 item: authorshipData.document
             };
-        const verifiedDocument = await Model.doVerifyDocument(authorshipData.document, researchEntityId, authorshipData);
-        return verifiedDocument;
+
+        return await Model.doVerifyDocument(authorshipData.document, researchEntityId, authorshipData);
     },
     updateDraft: async function (ResearchEntityModel, draftId, draftData) {
         const documentFields = Document.getFields();
         const selectedDraftData = _.pick(draftData, documentFields);
         selectedDraftData.kind = DocumentKinds.DRAFT;
-        selectedDraftData.editedAfterImport = true;
         const updatedDraft = await Document.update({id: draftId}, selectedDraftData);
         return updatedDraft[0];
     },

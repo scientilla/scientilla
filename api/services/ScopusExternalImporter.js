@@ -224,6 +224,7 @@ async function createOrUpdateDocument(documentData) {
         documentData.source = documentData.source.id;
     documentData.origin = DocumentOrigins.SCOPUS;
     documentData.kind = DocumentKinds.EXTERNAL;
+    documentData.synchronized = true;
 
     try {
         return await Document.createOrUpdate(criteria, documentData);
