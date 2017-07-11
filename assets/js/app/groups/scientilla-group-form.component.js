@@ -23,9 +23,7 @@
 
     function GroupFormController(GroupsService, FormForConfiguration, Notification, $scope, Prototyper) {
         var vm = this;
-        vm.getMembers = getMembers;
         vm.getUsersQuery = getUsersQuery;
-        vm.userToMembership = userToMembership;
         vm.cancel = cancel;
 
         vm.submit = submit;
@@ -64,14 +62,11 @@
             }
         };
 
-
-        activate();
-
-
-        function activate() {
+        vm.$onInit = function () {
+            delete vm.group.members;
             FormForConfiguration.enableAutoLabels();
             $scope.$watch('vm.group.name', nameChanged);
-        }
+        };
 
         function nameChanged() {
             if (!vm.group)
@@ -106,13 +101,6 @@
             return {model: model, qs: qs};
         }
 
-        function userToMembership(u) {
-            return u;
-        }
-
-        function getMembers() {
-            return vm.group.members;
-        }
 
         function cancel() {
             executeOnSubmit(0);
