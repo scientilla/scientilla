@@ -11,7 +11,8 @@
             controllerAs: 'vm',
             bindings: {
                 researchEntity: '<',
-                editable: "<"
+                editable: "<",
+                checkDuplicates: '<?'
             }
         });
 
@@ -37,6 +38,9 @@
         vm.searchForm = documentSearchForm;
 
         vm.showPrivateTags = vm.editable;
+
+        if (_.isNil(vm.checkDuplicates))
+            vm.checkDuplicates = true;
 
         var query = {};
 

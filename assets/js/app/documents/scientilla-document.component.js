@@ -8,7 +8,8 @@
             controllerAs: 'vm',
             bindings: {
                 document: "<",
-                showPrivateTags: "<?"
+                showPrivateTags: "<?",
+                checkDuplicates: '<?'
             }
         });
 
@@ -24,11 +25,14 @@
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
         vm.editTags = editTags;
+        if (_.isNil(vm.checkDuplicates))
+            vm.checkDuplicates = true;
 
         vm.$onInit = function () {
             vm.showPrivateTags = vm.showPrivateTags || false;
             vm.verifiedCount = getVerifiedCount();
-            checkDuplicate();
+            if (vm.checkDuplicates)
+                checkDuplicate();
         };
 
         function checkDuplicate() {
