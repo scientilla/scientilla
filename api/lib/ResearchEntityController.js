@@ -26,11 +26,13 @@ module.exports = {
     verifyDraft: function (req, res) {
         const researchEntityId = req.params.researchEntityId;
         const draftId = req.params.draftId;
-        const position = req.body.position;
-        const corresponding = req.body.corresponding;
-        const affiliationInstituteIds = req.body.affiliations;
+        const verificationData = {
+            position: req.body.position,
+            corresponding: req.body.corresponding,
+            affiliationInstituteIds: req.body.affiliations
+        };
         const Model = getModel(req);
-        res.halt(Model.verifyDraft(Model, researchEntityId, draftId, position, affiliationInstituteIds, corresponding));
+        res.halt(Model.verifyDraft(Model, researchEntityId, draftId, verificationData));
     },
     verifyDrafts: function (req, res) {
         var researchEntityId = req.params.researchEntityId;

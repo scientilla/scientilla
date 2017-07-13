@@ -1,6 +1,7 @@
 /* global Scientilla */
 
 (function () {
+    "use strict";
 
     angular
         .module('documents')
@@ -28,10 +29,12 @@
         vm.submit = submit;
         vm.cancel = cancel;
 
+        let oldAuthorships;
 
         vm.$onInit = () => {
             $scope.$watch('vm.position', userSelectedChanged);
             $scope.$watch('vm.authorship.affiliations', resetInstitutes, true);
+            oldAuthorships = getSimpleAuthorships(vm.document.authorships);
         };
 
         function getInstitutesQuery(searchText) {
@@ -45,7 +48,7 @@
         }
 
         function userSelectedChanged() {
-            if(_.isUndefined(vm.position))
+            if (_.isUndefined(vm.position))
                 return;
             vm.author = vm.document.getAuthors()[vm.position];
             vm.authorship = vm.document.authorships.find(a => a.position === vm.position);
@@ -97,7 +100,16 @@
         }
 
         function save() {
-            return vm.document.customPUT(vm.document.authorships, 'authorships');
+            return vm.document.customPUT(vm.document.authorships, 'authorships')
+                .then(() => {
+                    const newAuthorships = getSimpleAuthorships(vm.document.authorships);
+                    if (_.isEqual(oldAuthorships, newAuthorships))
+                        return;
+                    
+                    vm.document.editedAfterImport = true;
+                    return vm.document.save();
+
+                });
         }
 
         function executeOnSubmit(i) {
@@ -108,6 +120,20 @@
         function executeOnFailure() {
             if (_.isFunction(vm.onFailure()))
                 vm.onFailure()();
+        }
+
+        function getSimpleAuthorships(authorships) {
+            const simplyfiedAuthorships = [];
+            for (let a of authorships)
+                simplyfiedAuthorships.push({
+                    researchEntity: a.researchEntity,
+                    affiliations: a.affiliations,
+                    corresponding: a.corresponding,
+                    position: a.position,
+                    public: a.public
+                });
+
+            return simplyfiedAuthorships;
         }
 
     }

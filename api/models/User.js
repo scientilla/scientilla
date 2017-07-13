@@ -165,7 +165,7 @@ module.exports = _.merge({}, ResearchEntity, {
         const basicSlug = user.username.toLowerCase().trim().replace(/\./gi, '-').split('@')[0];
 
         let slug = basicSlug;
-        while(true) {
+        while (true) {
             const otherUserBySlug = await User.findOneBySlug(slug);
             if (!otherUserBySlug)
                 break;
@@ -197,7 +197,7 @@ module.exports = _.merge({}, ResearchEntity, {
                 });
             });
     },
-    registerUser: function(user) {
+    registerUser: function (user) {
         if (User.isInternalUser(user)) {
             const err = 'Cannot create domain users';
             throw err;
@@ -213,7 +213,7 @@ module.exports = _.merge({}, ResearchEntity, {
             });
     },
     checkUsername: async function (user) {
-        const sameUsernameUsers =  await User.findByUsername(user.username);
+        const sameUsernameUsers = await User.findByUsername(user.username);
         if (sameUsernameUsers.length > 0)
             throw new Error('Username already used');
 
@@ -234,45 +234,46 @@ module.exports = _.merge({}, ResearchEntity, {
             });
 
     },
-    getAuthorshipsData: function (document, researchEntityId, newPosition, newAffiliationInstituteIds, newCorresponding) {
-        //TODO .populate('aliases')
-        return User.findOneById(researchEntityId)
-            .then(user => {
-                if (!user)
-                    return {
-                        isVerifiable: false,
-                        error: 'User not found',
-                        item: researchEntityId
-                    };
+    getAuthorshipsData: async function (document, researchEntityId, newAffiliationData) {
+        const user = await User.findOneById(researchEntityId);
 
-                const position = !_.isNil(newPosition) ? newPosition : document.getAuthorIndex(user);
-                const authorship = document.getAuthorshipByPosition(position) || Authorship.getEmpty();
-                //TODO: [Accrocchio] remove when deep populate is added to waterline
-                assert(!_.isNil(document.affiliations), 'getAuthorshipAffiliations: affiliations missing');
+        if (!user)
+            return {
+                isVerifiable: false,
+                error: 'User not found',
+                item: researchEntityId
+            };
 
-                const affiliations = document.affiliations
-                    .filter(a => a.authorship == authorship.id)
-                    .map(a => a.institute);
-                //[/Accrocchio]
+        const position = !_.isNil(newAffiliationData.position) ? newAffiliationData.position : document.getAuthorIndex(user);
+        const authorship = document.getAuthorshipByPosition(position) || Authorship.getEmpty();
+        //TODO: [Accrocchio] remove when deep populate is added to waterline
+        assert(!_.isNil(document.affiliations), 'getAuthorshipAffiliations: affiliations missing');
 
-                const affiliationInstituteIds = !_.isEmpty(newAffiliationInstituteIds) ? newAffiliationInstituteIds : affiliations;
-                const corresponding = !_.isNil(newCorresponding) ? newCorresponding : authorship.corresponding;
-                if (_.isEmpty(affiliationInstituteIds) || _.isNil(position))
-                    return {
-                        isVerifiable: false,
-                        error: "Document Verify fail: affiliation or position not specified",
-                        document: document
-                    };
+        const affiliations = document.affiliations
+            .filter(a => a.authorship == authorship.id)
+            .map(a => a.institute);
+        //[/Accrocchio]
+
+        const affiliationInstituteIds = !_.isEmpty(newAffiliationData.affiliationInstituteIds) ? newAffiliationData.affiliationInstituteIds : affiliations;
+        const corresponding = !_.isNil(newAffiliationData.corresponding) ? newAffiliationData.corresponding : authorship.corresponding;
+        const autoUpdate = !_.isNil(newAffiliationData.autoUpdate) ? newAffiliationData.autoUpdate : !document.editedAfterImport;
+
+        if (_.isEmpty(affiliationInstituteIds) || _.isNil(position))
+            return {
+                isVerifiable: false,
+                error: "Document Verify fail: affiliation or position not specified",
+                document: document
+            };
 
 
-                return {
-                    isVerifiable: true,
-                    position,
-                    affiliationInstituteIds,
-                    corresponding,
-                    document
-                };
-            })
+        return {
+            isVerifiable: true,
+            position,
+            affiliationInstituteIds,
+            corresponding,
+            autoUpdate,
+            document
+        };
     },
     doVerifyDocument: function (document, researchEntityId, authorshipData) {
         const newAuthorship = {
@@ -280,7 +281,8 @@ module.exports = _.merge({}, ResearchEntity, {
             document: document.id,
             position: authorshipData.position,
             affiliations: authorshipData.affiliationInstituteIds,
-            corresponding: authorshipData.corresponding
+            corresponding: authorshipData.corresponding,
+            autoUpdate: authorshipData.autoUpdate
         };
 
         const authorshipFindCriteria = {
@@ -289,14 +291,14 @@ module.exports = _.merge({}, ResearchEntity, {
         };
 
         return Authorship.destroy(authorshipFindCriteria)
-            .then(oldAuthorship=> Affiliation.destroy({authorship: oldAuthorship.id}))
-            .then(()=> Authorship.create(newAuthorship))
-            .then((authorship)=> {
+            .then(oldAuthorship => Affiliation.destroy({authorship: oldAuthorship.id}))
+            .then(() => Authorship.create(newAuthorship))
+            .then((authorship) => {
 
                 _.assign(authorship, newAuthorship);
                 return authorship.savePromise();
 
-            }).then(()=>document);
+            }).then(() => document);
     },
     beforeCreate: function (user, cb) {
         Promise.resolve(user)
@@ -317,7 +319,7 @@ module.exports = _.merge({}, ResearchEntity, {
             })
             .then(() => cb());
     },
-    isInternalUser: function(user) {
+    isInternalUser: function (user) {
         return _.endsWith(user.username, '@' + sails.config.scientilla.ldap.domain);
     }
 });

@@ -40,6 +40,7 @@
 
         function activate() {
             vm.verificationData.position = vm.document.getUserIndex(user);
+            vm.verificationData.autoUpdate = !vm.document.editedAfterImport;
 
             $scope.$watch('vm.verificationData.position', userSelectedChanged);
         }
@@ -58,7 +59,8 @@
             var data = {
                 affiliations: _.map(vm.verificationData.affiliations, 'id'),
                 position: vm.verificationData.position,
-                corresponding: vm.verificationData.corresponding
+                corresponding: vm.verificationData.corresponding,
+                autoUpdate: vm.verificationData.autoUpdate
             };
             return verify(user, vm.document.id, data)
                 .then(function (user) {
