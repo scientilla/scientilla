@@ -14,13 +14,13 @@ CREATE OR REPLACE VIEW documentduplicate AS
          OR u.id = dd."draftCreator"
     JOIN document d
       ON CASE WHEN d.type = 'invited_talk' OR dd.type = 'invited_talk'
-      THEN coalesce((d."authorsStr" = dd."authorsStr") :: INT, 0) +
-           coalesce((d.title = dd.title) :: INT, 0) +
-           coalesce((d."itSource" = dd."itSource") :: INT, 0) > 1
-         ELSE coalesce((d.doi = dd.doi) :: INT, 0) +
-              coalesce((d."authorsStr" = dd."authorsStr") :: INT, 0) +
-              coalesce((d.title = dd.title) :: INT, 0) +
-              coalesce((d."scopusId" = dd."scopusId") :: INT, 0) > 1
+      THEN (coalesce(d."authorsStr", '') != '' AND coalesce(dd."authorsStr", '') != '' AND d."authorsStr" = dd."authorsStr") :: INT +
+           (coalesce(d.title, '') != '' AND coalesce(dd.title, '') != '' AND d.title = dd.title) :: INT +
+           (coalesce(d."itSource", '') != '' AND coalesce(dd."itSource", '') != '' AND d."itSource" = dd."itSource") :: INT > 1
+         ELSE (coalesce(d.doi, '') != '' AND coalesce(dd.doi, '') != '' AND d.doi = dd.doi) :: INT + +
+              (coalesce(d."authorsStr", '') != '' AND coalesce(dd."authorsStr", '') != '' AND d."authorsStr" = dd."authorsStr") :: INT +
+              (coalesce(d.title, '') != '' AND coalesce(dd.title, '') != '' AND d.title = dd.title) :: INT +
+              (coalesce(d."scopusId", '') != '' AND coalesce(dd."scopusId", '') != '' AND d."scopusId" = dd."scopusId") :: INT > 1
          END
          AND d.id <> dd.id
   UNION
@@ -39,12 +39,12 @@ CREATE OR REPLACE VIEW documentduplicate AS
          OR g.id = dd."draftGroupCreator"
     JOIN document d
       ON CASE WHEN d.type = 'invited_talk' OR dd.type = 'invited_talk'
-      THEN coalesce((d."authorsStr" = dd."authorsStr") :: INT, 0) +
-           coalesce((d.title = dd.title) :: INT, 0) +
-           coalesce((d."itSource" = dd."itSource") :: INT, 0) > 1
-         ELSE coalesce((d.doi = dd.doi) :: INT, 0) +
-              coalesce((d."authorsStr" = dd."authorsStr") :: INT, 0) +
-              coalesce((d.title = dd.title) :: INT, 0) +
-              coalesce((d."scopusId" = dd."scopusId") :: INT, 0) > 1
+      THEN (coalesce(d."authorsStr", '') != '' AND coalesce(dd."authorsStr", '') != '' AND d."authorsStr" = dd."authorsStr") :: INT +
+           (coalesce(d.title, '') != '' AND coalesce(dd.title, '') != '' AND d.title = dd.title) :: INT +
+           (coalesce(d."itSource", '') != '' AND coalesce(dd."itSource", '') != '' AND d."itSource" = dd."itSource") :: INT > 1
+         ELSE (coalesce(d.doi, '') != '' AND coalesce(dd.doi, '') != '' AND d.doi = dd.doi) :: INT + +
+              (coalesce(d."authorsStr", '') != '' AND coalesce(dd."authorsStr", '') != '' AND d."authorsStr" = dd."authorsStr") :: INT +
+              (coalesce(d.title, '') != '' AND coalesce(dd.title, '') != '' AND d.title = dd.title) :: INT +
+              (coalesce(d."scopusId", '') != '' AND coalesce(dd."scopusId", '') != '' AND d."scopusId" = dd."scopusId") :: INT > 1
          END
          AND D.id <> dd.id
