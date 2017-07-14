@@ -56,7 +56,7 @@
         }
 
         function submit() {
-            var data = {
+            const data = {
                 affiliations: _.map(vm.verificationData.affiliations, 'id'),
                 position: vm.verificationData.position,
                 corresponding: vm.verificationData.corresponding,

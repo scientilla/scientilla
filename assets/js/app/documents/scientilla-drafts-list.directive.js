@@ -33,6 +33,8 @@
         vm.openDocumentAffiliationForm = DocumentsService.openDocumentAffiliationForm;
         vm.deleteDrafts = DocumentsService.deleteDrafts;
         vm.verifyDrafts = DocumentsService.verifyDrafts;
+        vm.synchronizeDraft = DocumentsService.synchronizeDraft;
+        vm.desynchronizeDrafts = DocumentsService.desynchronizeDrafts;
 
         vm.searchForm = documentSearchForm;
 
@@ -45,6 +47,7 @@
                 EventsService.DRAFT_CREATED,
                 EventsService.DRAFT_VERIFIED,
                 EventsService.DRAFT_UNVERIFIED,
+                EventsService.DRAFT_SYNCHRONIZED,
                 EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED
             ], updateList);
         };

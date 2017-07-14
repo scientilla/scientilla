@@ -19,6 +19,8 @@
             DRAFT_VERIFIED: 'draft.verified',
             DRAFT_UNVERIFIED: 'draft.unverified',
 
+            DRAFT_SYNCHRONIZED: 'draft.synchronized',
+
             DOCUMENT_VERIFIED: 'document.verified',
             DOCUMENT_PRIVATE_TAGS_UPDATED: 'document.privateTagsUpdated',
 

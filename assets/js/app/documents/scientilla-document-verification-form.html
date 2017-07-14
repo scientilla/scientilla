@@ -52,7 +52,7 @@
         </label>
     </div>
     <hr>
-    <div class="form-group" ng-if="vm.document.origin && vm.document.synchronized">
+    <div class="form-group" ng-if="vm.document.kind === 'v' && vm.document.origin && vm.document.synchronized">
         <label>
             Keep the document sincronized with {{vm.document.origin}}?
             <input type="checkbox"

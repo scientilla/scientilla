@@ -1,4 +1,5 @@
 (function () {
+    "use strict";
 
     angular.module("documents").factory("DocumentsServiceFactory", DocumentsServiceFactory);
 
@@ -30,6 +31,8 @@
                 service.copyDocuments = copyDocuments;
                 service.copyUncopiedDocuments = copyUncopiedDocuments;
                 service.getExternalDocuments = _.partialRight(getExternalDocuments, reService);
+                service.synchronizeDraft = synchronizeDraft;
+                service.desynchronizeDrafts = desynchronizeDrafts;
 
                 return service;
 
@@ -216,6 +219,26 @@
                             });
                             Notification.success(resultPartitioned[0].length + " document(s) discarded");
                             EventsService.publish(EventsService.NOTIFICATION_DISCARDED, documents);
+                        })
+                        .catch(function (err) {
+                            Notification.warning("An error happened");
+                        });
+                }
+
+                function synchronizeDraft(document, sync) {
+                    return researchEntity.one('drafts', document.id)
+                        .customPUT({synchronized: sync}, 'synchronized')
+                        .then(newDocData => {
+                            EventsService.publish(EventsService.DRAFT_SYNCHRONIZED, newDocData);
+                            return newDocData;
+                        });
+                }
+
+                function desynchronizeDrafts(documents) {
+                    return researchEntity.customPUT({drafts: documents.map(d => d.id)}, 'desynchronize-documents')
+                        .then(function (results) {
+                            Notification.success(results.length + " document(s) desynchronized");
+                            EventsService.publish(EventsService.DRAFT_SYNCHRONIZED, documents);
                         })
                         .catch(function (err) {
                             Notification.warning("An error happened");

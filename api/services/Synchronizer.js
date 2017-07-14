@@ -5,7 +5,8 @@ const _ = require('lodash');
 "use strict";
 
 module.exports = {
-    synchronizeScopus
+    synchronizeScopus,
+    documentSynchronizeScopus
 };
 
 async function synchronizeScopus() {
@@ -18,27 +19,42 @@ async function synchronizeScopus() {
     });
     sails.log.info(documentsToSynchronize.length + " documents found");
     for (let doc of documentsToSynchronize) {
-        const externalDoc = await Document.findOne({
-            scopusId: doc.scopusId,
-            kind: DocumentKinds.EXTERNAL,
-            origin: DocumentOrigins.SCOPUS
-        });
-        if (!externalDoc) {
-            sails.log.debug('Document with id ' + doc.id + " has no corresponding external document");
-            continue;
-        }
-        const docData = Document.selectData(doc);
-        const externalDocData = Document.selectData(externalDoc);
-        const differences = getDifferences(docData, externalDocData);
-        if (_.isEmpty(differences)) {
-            continue;
-        }
-        documentSynchronized.push(docData);
-        delete externalDocData.kind;
-        delete docData.kind;
-        await Document.update(doc.id, externalDocData);
+        const res = await documentSynchronizeScopus(doc);
+        if (!res.err)
+            documentSynchronized.push(res.docData);
     }
     sails.log.info(documentSynchronized.length + " documents synchronized");
+}
+
+
+async function documentSynchronizeScopus(doc) {
+    const externalDoc = await Document.findOne({
+        scopusId: doc.scopusId,
+        kind: DocumentKinds.EXTERNAL,
+        origin: DocumentOrigins.SCOPUS
+    });
+    if (!externalDoc) {
+        sails.log.debug('Document with id ' + doc.id + " has no corresponding external document");
+        return {err: true, code: 0};
+    }
+    const docData = Document.selectData(doc);
+    const externalDocData = Document.selectData(externalDoc);
+    const differences = getDifferences(docData, externalDocData);
+    if (_.isEmpty(differences))
+        return {
+            err: true,
+            code: 1,
+            docData
+        };
+
+    delete externalDocData.kind;
+    delete docData.kind;
+    await Document.update(doc.id, externalDocData);
+
+    return {
+        err: false,
+        docData: externalDocData
+    };
 }
 
 

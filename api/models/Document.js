@@ -1,4 +1,4 @@
-/* global Document, sails, User, ObjectComparer, Authorship, DocumentKinds */
+/* global Document, sails, User, ObjectComparer, Authorship, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer */
 'use strict';
 
 /**
@@ -230,6 +230,35 @@ module.exports = _.merge({}, BaseModel, {
                 authorship.affiliations = this.affiliations.filter(affiliation => authorship.id === affiliation.authorship);
                 return authorship;
             });
+        },
+        scopusSynchronize: async function (synchronized) {
+            if (!synchronized) {
+                this.synchronized = false;
+                return this.savePromise();
+            }
+
+            if (!this.scopusId)
+                return {error: "Empty scopusId"};
+
+            let newDocData;
+
+            try {
+                const document = await ExternalImporter.updateDocument(DocumentOrigins.SCOPUS, this.scopusId);
+                if (!_.has(document, 'id'))
+                    return {error: "ScopusId rejected by Scopus"};
+
+                const res = await Synchronizer.documentSynchronizeScopus(this);
+                if (res.err && res.code !== 1)
+                    return {error: "Synchronization failed"};
+
+                newDocData = res.docData;
+
+            } catch (e) {
+                sails.log.debug('Document synchronize failed ' + this.scopusId);
+                return e;
+            }
+
+            return newDocData;
         }
     },
     getFields: function () {
@@ -322,5 +351,18 @@ module.exports = _.merge({}, BaseModel, {
             await Authorship.createEmptyAuthorships(doc.id, documentData);
         }
         return doc;
+    },
+    desynchronizeAll: async function (drafts) {
+        const desynchronizedDrafts = [];
+        for (let d of drafts) {
+            const draft = await Document.findOneById(d);
+            if(!draft)
+                continue;
+
+            draft.synchronized = false;
+            await draft.savePromise();
+            desynchronizedDrafts.push(draft);
+        }
+        return desynchronizedDrafts;
     }
 });
