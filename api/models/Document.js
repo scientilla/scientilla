@@ -39,8 +39,8 @@ module.exports = _.merge({}, BaseModel, {
     /* CONSTANTS */
     DEFAULT_SORTING: {
         year: 'desc',
-        updatedAt: 'desc',
-        title: 'asc'
+        title: 'asc',
+        id: 'desc'
     },
     /* ATTRIBUTES */
     attributes: {
