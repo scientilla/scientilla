@@ -12,8 +12,9 @@ module.exports = {
 
 async function cleanInstituteCopies() {
     function getInstituteCopy(i) {
-        return Institute.findOne({id: {'!': i.id}, scopusId: i.scopusId });
+        return Institute.findOne({id: {'!': i.id}, scopusId: i.scopusId});
     }
+
     // bad hack: Institute 1 is the main institute
     const institutes = await Institute.find({id: {'!': 1}});
     const deletedInstitutes = [];
@@ -38,8 +39,9 @@ async function cleanInstituteCopies() {
 
 async function cleanSourceCopies() {
     function getSourceCopy(i) {
-        return Source.findOne({id: {'!': i.id}, scopusId: i.scopusId });
+        return Source.findOne({id: {'!': i.id}, scopusId: i.scopusId});
     }
+
     const sources = await Source.find();
     const deletedSources = [];
     for (let source of sources) {
@@ -113,9 +115,14 @@ async function cleanDocumentCopies() {
         for (let a of doc.authorships) {
             if (!a.researchEntity)
                 continue;
-            const instituteIds = doc.affiliations.filter(aff => aff.authorship == a.id).map(aff => aff.institute);
+            const instituteIds = doc.affiliations.filter(aff => aff.authorship === a.id).map(aff => aff.institute);
             sails.log.debug(`User ${a.researchEntity} is trying to verify document ${copy.id} (${copy.title}) in position: ${a.position}`);
-            const res = await User.verifyDocument(User, a.researchEntity, copy.id, a.position, instituteIds, a.corresponding);
+            const res = await User.verifyDocument(User, a.researchEntity, copy.id, {
+                position: a.position,
+                affiliationInstituteIds: instituteIds,
+                corresponding: a.corresponding,
+                synchronize: a.synchronize
+            });
             if (res.error) {
                 errors.push(res);
                 sails.log.warn('Error: ');
@@ -129,7 +136,7 @@ async function cleanDocumentCopies() {
             if (!a.researchEntity)
                 continue;
             sails.log.debug(`Group ${a.researchEntity} is trying to verify document ${copy.id} (${copy.title})`);
-            const res = await Group.verifyDocument(Group, a.researchEntity, copy.id, null, null, null);
+            const res = await Group.verifyDocument(Group, a.researchEntity, copy.id);
             if (res.error) {
                 errors.push(res);
                 sails.log.warn('Error: ');

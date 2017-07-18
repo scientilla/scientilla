@@ -347,7 +347,7 @@ module.exports = _.merge({}, BaseModel, {
         const copies = similarDocuments.filter(d => {
             const copyFullAuthorships = d.getFullAuthorships();
             return areAuthorshipsEqual(draftFullAuthorships, copyFullAuthorships) &&
-                areAuthorshipsEqual(draftFullAuthorships, copyFullAuthorships);
+                areAuthorshipsEqual(copyFullAuthorships, draftFullAuthorships);
         });
 
         return copies;

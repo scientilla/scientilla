@@ -196,15 +196,21 @@ async function synchronizeAffiliations(doc, externalDoc) {
     const authorshipsData = doc.getFullAuthorships();
 
     const newAuthorshipsData = [];
-    externalAuthorshipsData.forEach(ea => {
-        let newAuthorship;
-        const authData = authorshipsData.find(a => a.position === ea.position);
-        if (authData) {
-            newAuthorship = _.cloneDeep(authData);
-            newAuthorship.affiliations = _.cloneDeep(ea.affiliations);
-        }
-        else newAuthorship = _.cloneDeep(ea);
-        newAuthorshipsData.push(newAuthorship);
-    });
+    if (!externalDoc.authorsStr)
+        return;
+
+    for (const i of externalDoc.authorsStr.split(',').keys()) {
+        const externalAuthData = externalAuthorshipsData.find(a => a.position === i);
+        const authData = authorshipsData.find(a => a.position === i);
+
+        let newAuthorship = _.cloneDeep(authData);
+        if (authData && externalAuthData)
+            newAuthorship.affiliations = _.cloneDeep(externalAuthData.affiliations);
+        else if (!authData && externalAuthData)
+            newAuthorship = _.cloneDeep(externalAuthData);
+
+        if (authData || externalAuthData)
+            newAuthorshipsData.push(newAuthorship);
+    }
     await doc.setAuthorships(newAuthorshipsData);
 }
