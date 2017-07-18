@@ -8,7 +8,8 @@
             controllerAs: 'vm',
             bindings: {
                 document: "<",
-                showPrivateTags: "<?"
+                showPrivateTags: "<?",
+                checkDuplicates: '<?'
             }
         });
 
@@ -27,11 +28,14 @@
         vm.isSynchronized = isSynchronized;
 
         const researchEntity = context.getResearchEntity();
+        if (_.isNil(vm.checkDuplicates))
+            vm.checkDuplicates = true;
 
         vm.$onInit = function () {
             vm.showPrivateTags = vm.showPrivateTags || false;
             vm.verifiedCount = getVerifiedCount();
-            checkDuplicate();
+            if (vm.checkDuplicates)
+                checkDuplicate();
         };
 
         function checkDuplicate() {
