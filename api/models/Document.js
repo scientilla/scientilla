@@ -1,4 +1,4 @@
-/* global Document, sails, User, ObjectComparer, Authorship, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer */
+/* global Document, sails, User, ObjectComparer, Authorship, Affiliation, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer */
 'use strict';
 
 /**
@@ -227,8 +227,9 @@ module.exports = _.merge({}, BaseModel, {
                 return [];
 
             return this.authorships.map(authorship => {
-                authorship.affiliations = this.affiliations.filter(affiliation => authorship.id === affiliation.authorship);
-                return authorship;
+                const auth = _.clone(authorship);
+                auth.affiliations = this.affiliations.filter(affiliation => authorship.id === affiliation.authorship);
+                return auth;
             });
         },
         scopusSynchronize: async function (synchronized) {
@@ -238,27 +239,45 @@ module.exports = _.merge({}, BaseModel, {
             }
 
             if (!this.scopusId)
-                return {error: "Empty scopusId"};
-
-            let newDocData;
+                throw "Empty scopusId";
 
             try {
-                const document = await ExternalImporter.updateDocument(DocumentOrigins.SCOPUS, this.scopusId);
-                if (!_.has(document, 'id'))
-                    return {error: "ScopusId rejected by Scopus"};
-
-                const res = await Synchronizer.documentSynchronizeScopus(this);
-                if (res.err && res.code !== 1)
-                    return {error: "Synchronization failed"};
-
-                newDocData = res.docData;
+                const res = await Synchronizer.documentSynchronizeScopus(this.id);
+                return res.docData;
 
             } catch (e) {
                 sails.log.debug('Document synchronize failed ' + this.scopusId);
                 return e;
             }
+        },
+        clone: async function (newDocPartialData = {}) {
+            const docData = Document.selectData(this);
+            const newDocData = Object.assign({}, docData, newDocPartialData);
+            return await Document.create(newDocData);
+        },
+        setAuthorships: async function (authorshipsData) {
+            const authData = _.cloneDeep(authorshipsData);
+            authData.forEach(a => {
+                delete a.id;
+                delete a.createdAt;
+                delete a.updatedAt;
+                a.document = this.id;
+                a.affiliations = a.affiliations.map(aff => {
+                    if (aff.institute)
+                        return aff.institute;
 
-            return newDocData;
+                    aff.document = this.id;
+                    delete aff.id;
+                    delete aff.authorship;
+                    delete aff.createdAt;
+                    delete aff.updatedAt;
+
+                    return aff;
+                });
+            });
+            const deleteAuthorships = await Authorship.destroy({document: this.id});
+            await Affiliation.destroy({authorship: deleteAuthorships.map(a => a.id)});
+            return Authorship.create(authData);
         }
     },
     getFields: function () {
@@ -356,7 +375,7 @@ module.exports = _.merge({}, BaseModel, {
         const desynchronizedDrafts = [];
         for (let d of drafts) {
             const draft = await Document.findOneById(d);
-            if(!draft)
+            if (!draft)
                 continue;
 
             draft.synchronized = false;
@@ -364,5 +383,9 @@ module.exports = _.merge({}, BaseModel, {
             desynchronizedDrafts.push(draft);
         }
         return desynchronizedDrafts;
-    }
+    },
+    setAuthorships: async function (draftId, authorshipsData) {
+        const draft = await Document.findOneById(draftId);
+        return await draft.setAuthorships(authorshipsData);
+    },
 });

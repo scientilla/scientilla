@@ -96,11 +96,9 @@ module.exports = {
         res.halt(Chart.getChartsData(id, modelName));
     },
     setAuthorhips: function (req, res) {
-        var researchEntityId = req.params.researchEntityId;
-        var draftId = req.params.documentId;
-        var authorshipsData = req.body;
-        var Model = getModel(req);
-        res.halt(Model.setAuthorships(Model, researchEntityId, draftId, authorshipsData));
+        const draftId = req.params.documentId;
+        const authorshipsData = req.body;
+        res.halt(Document.setAuthorships(draftId, authorshipsData));
     },
     updateProfile: function (req, res) {
         const researchEntityId = req.params.researchEntityId;

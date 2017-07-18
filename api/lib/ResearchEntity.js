@@ -190,12 +190,6 @@ module.exports = _.merge({}, BaseModel, {
                 )
             )
     },
-    setAuthorships: async function (ResearchEntityModel, researchEntityId, draftId, authorshipsData) {
-        authorshipsData.forEach(a => delete a.id);
-        const deleteAuthorships = await Authorship.destroy({document: draftId});
-        await Affiliation.destroy({authorship: deleteAuthorships.map(a => a.id)});
-        return Authorship.create(authorshipsData);
-    },
     updateProfile: async function (ResearchEntityModel, researchEntityId, researchEntityData) {
         const oldResearchEntity = await ResearchEntityModel.findOne({id: researchEntityId});
         const res = await ResearchEntityModel.update({id: researchEntityId}, researchEntityData);
