@@ -267,10 +267,7 @@ module.exports = _.merge({}, BaseModel, {
                         return aff.institute;
 
                     aff.document = this.id;
-                    delete aff.id;
                     delete aff.authorship;
-                    delete aff.createdAt;
-                    delete aff.updatedAt;
 
                     return aff;
                 });
