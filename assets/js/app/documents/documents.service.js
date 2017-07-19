@@ -274,7 +274,7 @@
                     return service
                         .getProfile(researchEntity.id)
                         .then(function (resEntity) {
-                            if (!resEntity[fields[query.where.origin]]) {
+                            if (resEntity.getType() === 'user' && !resEntity[fields[query.where.origin]]) {
                                 const msg = "Warning<br>" + fields[query.where.origin] + " empty<br>update your profile";
                                 Notification.warning(msg);
                                 throw msg;
