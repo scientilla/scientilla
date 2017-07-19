@@ -97,7 +97,7 @@
                             'Unverifying a document removes it from your profile, you can choose:\n\n' +
                             'Edit: to move the document in your drafts.\n' +
                             'Remove: to remove it completely from your profile.',
-                            ['Edit', 'Remove'])
+                            ['Move to drafts', 'Remove'])
                         .then(function (buttonIndex) {
                             switch (buttonIndex) {
                                 case 0:
@@ -140,7 +140,6 @@
                             Notification.success('Document copied');
                             EventsService.publish(EventsService.DRAFT_CREATED, draft);
                             document.addLabel(DocumentLabels.DUPLICATE);
-                            openEditPopup(draft);
                         });
                 }
 

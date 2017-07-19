@@ -1,6 +1,7 @@
 /* global Scientilla */
 
 (function () {
+    "use strict";
 
     angular
         .module('users')
@@ -21,29 +22,33 @@
         'AuthService',
         '$scope',
         'Restangular',
-        'researchEntityService'
+        'context'
     ];
 
-    function DocumentVerificationController(AuthService, $scope, Restangular, researchEntityService) {
+    function DocumentVerificationController(AuthService, $scope, Restangular, context) {
         var vm = this;
         vm.instituteToId = instituteToId;
         vm.getInstitutesFilter = getInstitutesFilter;
         vm.getInstitutesQuery = getInstitutesQuery;
         vm.submit = submit;
+        vm.copyToDraft = copyToDraft;
         vm.cancel = cancel;
+        vm.viewSynchFields = viewSynchFields;
+        vm.viewSynchMessage = viewSynchMessage;
+        vm.viewAuthorshipFields = viewAuthorshipFields;
+        vm.viewCopyToDraft = viewCopyToDraft;
         vm.verificationData = {};
 
         var user = AuthService.user;
 
-        activate();
+        const DocumentService = context.getDocumentService();
 
-
-        function activate() {
+        vm.$onInit = function () {
             vm.verificationData.position = vm.document.getUserIndex(user);
             vm.verificationData.synchronize = vm.document.synchronized;
 
             $scope.$watch('vm.verificationData.position', userSelectedChanged);
-        }
+        };
 
         function getInstitutesQuery(searchText) {
             var qs = {where: {name: {contains: searchText}, parentId: null}};
@@ -53,6 +58,11 @@
 
         function instituteToId(institute) {
             return institute.id;
+        }
+
+        function copyToDraft() {
+            DocumentService.copyDocument(vm.document, context.getResearchEntity());
+            executeOnSubmit(0);
         }
 
         function submit() {
@@ -102,6 +112,22 @@
 
         function cancel() {
             executeOnSubmit(0);
+        }
+
+        function viewSynchFields() {
+            return vm.document.kind === 'v' && vm.document.origin && vm.document.synchronized;
+        }
+
+        function viewAuthorshipFields() {
+            return !vm.document.authorships[vm.verificationData.position].affiliations.length;
+        }
+
+        function viewSynchMessage() {
+            return vm.document.kind === 'v' && !vm.document.synchronized;
+        }
+
+        function viewCopyToDraft() {
+            return vm.document.kind === 'v';
         }
 
         function verify(user, documentId, verificationData) {
