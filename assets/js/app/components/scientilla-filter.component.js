@@ -19,11 +19,10 @@
 
     scientillaFilter.$inject = [
         'pageSize',
-        '$scope',
-        '$timeout'
+        '$scope'
     ];
 
-    function scientillaFilter(pageSize, $scope, $timeout) {
+    function scientillaFilter(pageSize, $scope) {
         var vm = this;
 
         vm.onSubmit = onSubmit;
@@ -35,6 +34,8 @@
         vm.pageSizes = [10, 20, 50, 100, 200];
         vm.currentPage = 1;
 
+        vm.filterSearchFormStructure = {};
+
         // statuses
         vm.STATUS_WAITING = 0;
         vm.STATUS_LOADING = 1;
@@ -45,8 +46,8 @@
 
         vm.formVisible = true;
 
-        var searchQuery = {};
-        var onDataChangeDeregisterer = null;
+        let searchQuery = {};
+        let onDataChangeDeregisterer = null;
 
         vm.$onInit = function () {
             vm.itemsPerPage = pageSize;
@@ -62,6 +63,29 @@
                 vm.elements = [];
 
             onDataChangeDeregisterer = $scope.$watch('vm.elements', onDataChange, true);
+
+            vm.filterSearchFormStructure = _.assign({}, vm.searchFormStructure, {
+                newlineFilter1: {
+                    inputType: 'br'
+                },
+                buttonSearch: {
+                    inputType: 'submit',
+                    label: vm.filterLabel
+                },
+                buttonReset: {
+                    inputType: 'button',
+                    label: 'Reset',
+                    onClick: 'reset'
+                },
+                itemsPerPage: {
+                    inputType: 'select',
+                    label: 'Items per page',
+                    defaultValue: pageSize,
+                    values: vm.pageSizes.map(ps => ({value: ps, label: ps})),
+                    labelPosition: 'inline',
+                    onChange: 'submit'
+                }
+            });
 
             vm.search();
         };
@@ -93,8 +117,14 @@
         function search(searchValues) {
             var where = {};
 
+            if (searchValues && searchValues.itemsPerPage)
+                vm.itemsPerPage = searchValues.itemsPerPage;
+
             _.forEach(searchValues,
                 function (value, key) {
+                    if (key === 'itemsPerPage')
+                        return;
+
                     var struct = vm.searchFormStructure[key];
 
                     if (struct.inputType === 'select' && searchValues[key] === "?")
