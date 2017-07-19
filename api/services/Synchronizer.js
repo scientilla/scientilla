@@ -10,7 +10,7 @@ module.exports = {
     documentSynchronizeScopus
 };
 
-const populates = [
+const documentPopulates = [
     'authorships',
     'groupAuthorships',
     'affiliations'
@@ -23,7 +23,7 @@ async function synchronizeScopus() {
         synchronized: true,
         kind: [DocumentKinds.DRAFT, DocumentKinds.VERIFIED],
         origin: DocumentOrigins.SCOPUS
-    }).populate(populates);
+    }).populate(documentPopulates);
     sails.log.info(documentsToSynchronize.length + " documents found");
     for (let doc of documentsToSynchronize) {
         try {
@@ -39,7 +39,7 @@ async function synchronizeScopus() {
 }
 
 async function documentSynchronizeScopus(docId) {
-    const doc = await Document.findOneById(docId).populate(populates);
+    const doc = await Document.findOneById(docId).populate(documentPopulates);
 
     const externalDocument = await ExternalImporter.updateDocument(DocumentOrigins.SCOPUS, doc.scopusId);
     if (!_.has(externalDocument, 'id'))
@@ -67,7 +67,7 @@ async function documentSynchronize(doc, origin) {
         scopusId: doc.scopusId,
         kind: DocumentKinds.EXTERNAL,
         origin: origin
-    }).populate(populates);
+    }).populate(documentPopulates);
     if (!externalDoc) {
         sails.log.debug('Document with id ' + doc.id + " has no corresponding external document");
         return {err: true, code: 0};
@@ -82,18 +82,20 @@ async function documentSynchronize(doc, origin) {
     if (_.isEmpty(differences) && !affiliationsHaveDiff)
         return {err: true, code: 1, docData};
 
-    if (doc.kind === DocumentKinds.VERIFIED) {
-        const splitRes = await documentSplit(doc);
+    let docToUpdate = doc;
 
-        if (!splitRes)
+    if (doc.kind === DocumentKinds.VERIFIED) {
+        docToUpdate = await documentSplit(doc);
+
+        if (!docToUpdate)
             return {err: true, code: 2, docData};
     }
 
-    await synchronizeAffiliations(doc, externalDoc);
+    docToUpdate = await synchronizeAffiliations(docToUpdate, externalDoc);
 
     delete externalDocData.kind;
     delete externalDocData.synchronized;
-    await Document.update(doc.id, externalDocData);
+    await Document.update(docToUpdate.id, externalDocData);
 
     return {
         err: false,
@@ -185,10 +187,8 @@ async function documentSplit(doc) {
         }
         else return a;
     });
-    await doc.setAuthorships(oldDocAuthorshipsData);
-    await newDoc.setAuthorships(newDocAuthorshipsData);
-
-    return true;
+    await Document.setAuthorships(newDoc.id, newDocAuthorshipsData);
+    return await Document.setAuthorships(doc.id, oldDocAuthorshipsData);
 }
 
 async function synchronizeAffiliations(doc, externalDoc) {
@@ -212,5 +212,5 @@ async function synchronizeAffiliations(doc, externalDoc) {
         if (authData || externalAuthData)
             newAuthorshipsData.push(newAuthorship);
     }
-    await doc.setAuthorships(newAuthorshipsData);
+    return await Document.setAuthorships(doc.id, newAuthorshipsData);
 }

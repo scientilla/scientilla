@@ -254,27 +254,6 @@ module.exports = _.merge({}, BaseModel, {
             const docData = Document.selectData(this);
             const newDocData = Object.assign({}, docData, newDocPartialData);
             return await Document.create(newDocData);
-        },
-        setAuthorships: async function (authorshipsData) {
-            const authData = _.cloneDeep(authorshipsData);
-            authData.forEach(a => {
-                delete a.id;
-                delete a.createdAt;
-                delete a.updatedAt;
-                a.document = this.id;
-                a.affiliations = a.affiliations.map(aff => {
-                    if (aff.institute)
-                        return aff.institute;
-
-                    aff.document = this.id;
-                    delete aff.authorship;
-
-                    return aff;
-                });
-            });
-            const deleteAuthorships = await Authorship.destroy({document: this.id});
-            await Affiliation.destroy({authorship: deleteAuthorships.map(a => a.id)});
-            return Authorship.create(authData);
         }
     },
     getFields: function () {
@@ -381,8 +360,28 @@ module.exports = _.merge({}, BaseModel, {
         }
         return desynchronizedDrafts;
     },
-    setAuthorships: async function (draftId, authorshipsData) {
-        const draft = await Document.findOneById(draftId);
-        return await draft.setAuthorships(authorshipsData);
+    setAuthorships: async function (docId, authorshipsData) {
+        const authData = _.cloneDeep(authorshipsData);
+        authData.forEach(a => {
+            delete a.id;
+            delete a.createdAt;
+            delete a.updatedAt;
+            a.document = docId;
+            a.affiliations = a.affiliations.map(aff => {
+                if (aff.institute)
+                    return aff.institute;
+
+                aff.document = docId;
+                delete aff.authorship;
+
+                return aff;
+            });
+        });
+        const deleteAuthorships = await Authorship.destroy({document: docId});
+        await Affiliation.destroy({authorship: deleteAuthorships.map(a => a.id)});
+        await Authorship.create(authData);
+
+        return await Document.findOneById(docId)
+            .populate(['authorships', 'groupAuthorships', 'affiliations']);
     },
 });
