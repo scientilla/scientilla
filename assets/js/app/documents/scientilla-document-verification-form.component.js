@@ -46,7 +46,7 @@
         }
 
         function getInstitutesQuery(searchText) {
-            var qs = {where: {name: {contains: searchText}}};
+            var qs = {where: {name: {contains: searchText}, parentId: null}};
             var model = 'institutes';
             return {model: model, qs: qs};
         }
