@@ -12,15 +12,18 @@ module.exports = {
 
 async function cleanInstituteCopies() {
     function getInstituteCopy(i) {
-        return Institute.findOne({id: {'!': i.id}, scopusId: i.scopusId});
+        return Institute.findOne({id: {'<': i.id}, scopusId: i.scopusId});
+    }
+    function getInstituteParent(i) {
+        return Institute.findOne({id: i.parentId});
     }
 
     // bad hack: Institute 1 is the main institute
-    const institutes = await Institute.find({id: {'!': 1}});
+    const mainInstituteId = 1;
+    const institutes = await Institute.find({id: {'!': mainInstituteId}, scopusId: {'!': null}});
+    sails.log.debug(`${institutes.length} to check`);
     const deletedInstitutes = [];
     for (let institute of institutes) {
-        if (!institute.scopusId)
-            continue;
         const copy = await getInstituteCopy(institute);
         if (!copy)
             continue;
@@ -35,6 +38,21 @@ async function cleanInstituteCopies() {
         deletedInstitutes.push(institute);
     }
     sails.log.debug(`${deletedInstitutes.length} deleted`);
+
+    const institutesDup = await Institute.find({id: {'!': mainInstituteId}, parentId: {'!': null}});
+    for (let institute of institutesDup) {
+        const parent = await getInstituteParent(institute);
+        if (!parent)
+            continue;
+
+        const affiliations = await Affiliation.find({institute: institute.id});
+        if (affiliations.length) {
+            const affiliationsIds = affiliations.map(a => a.id);
+            const updateAffiliations = await Affiliation.update({id: affiliationsIds}, {institute: parent.id});
+            sails.log.debug(`${updateAffiliations.length} affiliations updated from institute ${institute.id} to ${parent.id}`);
+        }
+    }
+
 }
 
 async function cleanSourceCopies() {
