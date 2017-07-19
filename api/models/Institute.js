@@ -29,6 +29,7 @@ module.exports = {
             via: 'institutes',
             through: 'affiliation'
         },
+        parentId: 'INTEGER'
     },
     findOrCreateRealInstitute: function(i) {
         return Institute.findOrCreate({scopusId: i.scopusId}, i)
