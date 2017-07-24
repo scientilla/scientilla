@@ -41,9 +41,17 @@ async function synchronizeScopus() {
 async function documentSynchronizeScopus(docId) {
     const doc = await Document.findOneById(docId).populate(documentPopulates);
 
-    const externalDocument = await ExternalImporter.updateDocument(DocumentOrigins.SCOPUS, doc.scopusId);
-    if (!_.has(externalDocument, 'id'))
-        throw "ScopusId rejected by Scopus" + doc.scopusId;
+    const externalDoc = await Document.findOne({
+        scopusId: doc.scopusId,
+        kind: DocumentKinds.EXTERNAL,
+        origin: DocumentOrigins.SCOPUS
+    });
+
+    if (!externalDoc) {
+        const externalDoc = await ExternalImporter.updateDocument(DocumentOrigins.SCOPUS, doc.scopusId);
+        if (!_.has(externalDoc, 'id'))
+            throw "ScopusId rejected by Scopus" + doc.scopusId;
+    }
 
     const res = await documentSynchronize(doc, DocumentOrigins.SCOPUS);
     if (res.err && res.code !== 1)
