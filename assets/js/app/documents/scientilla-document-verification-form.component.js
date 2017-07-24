@@ -119,7 +119,7 @@
         }
 
         function viewAuthorshipFields() {
-            return !vm.document.authorships[vm.verificationData.position].affiliations.length;
+            return true;
         }
 
         function viewSynchMessage() {
