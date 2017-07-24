@@ -95,7 +95,7 @@
                     ModalService
                         .multipleChoiceConfirm('Unverifying',
                             'Unverifying a document removes it from your profile, you can choose:\n\n' +
-                            'Edit: to move the document in your drafts.\n' +
+                            'Move to drafts: to move the document in your drafts.\n' +
                             'Remove: to remove it completely from your profile.',
                             ['Move to drafts', 'Remove'])
                         .then(function (buttonIndex) {
