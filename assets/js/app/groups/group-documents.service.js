@@ -59,7 +59,7 @@
                     if (sync) {
                         title = 'Synchronize with scopus';
                         msg = 'This action will synchronize your document and keep it consistent with the Scopus version.\n' +
-                            'To edit the document disable the synchronization.\n' +
+                            'To edit the document disable the synchronization.\n\n' +
                             'WARNING! It may overwrite the current data.';
                     }
                     else {
