@@ -97,13 +97,7 @@
         }
 
         function isSynchronized() {
-            if (vm.document.kind === 'd')
-                return vm.document.synchronized && vm.document.origin === 'scopus';
-            else if (vm.document.kind === 'v') {
-                const authorships = researchEntity.getType() === 'user' ? vm.document.authorships : vm.document.groupAuthorships;
-                return !!authorships.find(a => a.researchEntity === researchEntity.id && a.synchronize);
-            }
-            return false;
+            return vm.document.synchronized && vm.document.origin === 'scopus';
         }
     }
 
