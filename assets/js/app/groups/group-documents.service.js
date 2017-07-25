@@ -64,7 +64,7 @@
                     }
                     else {
                         title = 'Disable synchronization';
-                        msg = 'This action will disable the synchronization with scopus.'
+                        msg = 'This action will disable the synchronization with scopus.';
                     }
 
                     return ModalService.multipleChoiceConfirm(title, msg, ['Proceed'])
