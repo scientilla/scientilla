@@ -96,6 +96,7 @@ module.exports = {
                 );
 
                 if (documentType === DocumentTypes.INVITED_TALK) {
+                    newDoc.sourceType = null;
                     newDoc.itSource = d.publication;
                     return newDoc;
                 }
