@@ -141,13 +141,13 @@
                         .then(function (draft) {
                             Notification.success('Document copied to drafts');
                             EventsService.publish(EventsService.DRAFT_CREATED, draft);
-                            document.addLabel(DocumentLabels.DUPLICATE);
+                            document.addLabel(DocumentLabels.ALREADY_IN_DRAFTS);
                         });
                 }
 
                 function copyUncopiedDocuments(documents) {
                     var notCopiedCocuments = documents.filter(function (d) {
-                        return !d.hasLabel(DocumentLabels.DUPLICATE);
+                        return !d.hasLabel(DocumentLabels.ALREADY_VERIFIED) && !d.hasLabel(DocumentLabels.ALREADY_IN_DRAFTS);
                     });
                     return copyDocuments(notCopiedCocuments);
                 }
@@ -162,7 +162,7 @@
                         .then(function (drafts) {
                             Notification.success(drafts.length + " draft(s) created");
                             documents.forEach(function (d) {
-                                d.addLabel(DocumentLabels.DUPLICATE);
+                                d.addLabel(DocumentLabels.ALREADY_IN_DRAFTS);
                             });
                             EventsService.publish(EventsService.DRAFT_CREATED, drafts);
                         })
