@@ -31,7 +31,6 @@
                 service.copyDocuments = copyDocuments;
                 service.copyUncopiedDocuments = copyUncopiedDocuments;
                 service.getExternalDocuments = _.partialRight(getExternalDocuments, reService);
-                service.synchronizeDraft = synchronizeDraft;
                 service.desynchronizeDrafts = desynchronizeDrafts;
 
                 return service;
@@ -225,36 +224,6 @@
                         .catch(function (err) {
                             Notification.warning("An error happened");
                         });
-                }
-
-                function synchronizeDraft(document, sync) {
-                    let msg;
-                    if (sync)
-                        msg = 'This action will synchronize your document and keep it consistent with the Scopus version.\n' +
-                            'To edit the document disable the synchronization.\n' +
-                            'You can edit your affiliation during the document verification process without ' +
-                            'disabling the\n synchronization.\n\n' +
-                            'WARNING! It may overwrite the current data.';
-                    else
-                        msg = 'This action will disable the synchronization with scopus.\n' +
-                            'Remember: you can edit your affiliation during the document verification process without\n ' +
-                            'disabling the synchronization.';
-
-                    return ModalService.multipleChoiceConfirm('Synchronization', msg, ['Proceed'])
-                        .then(res => researchEntity.one('drafts', document.id)
-                            .customPUT({synchronized: sync}, 'synchronized')
-                            .then(newDocData => {
-                                EventsService.publish(EventsService.DRAFT_SYNCHRONIZED, newDocData);
-                                if (sync)
-                                    Notification.success("Document synchronized");
-                                else
-                                    Notification.success("Document desynchronized");
-                            })
-                            .catch(function (err) {
-                                Notification.warning(err.data);
-                            })
-                        )
-                        .catch(() => true);
                 }
 
                 function desynchronizeDrafts(documents) {
