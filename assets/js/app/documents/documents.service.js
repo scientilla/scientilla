@@ -113,12 +113,10 @@
                                                 .copyDocument(researchEntity, document)
                                                 .then(function (draft) {
                                                     EventsService.publish(EventsService.DRAFT_CREATED, draft);
+                                                    Notification.success('Document moved to drafts');
                                                     return draft;
                                                 })
-                                                .then(openEditPopup)
-                                                .catch(function () {
-                                                    Notification.warning("Failed to unverify document");
-                                                });
+                                                .catch(() => Notification.warning('Failed to unverify document'));
                                         });
                                     break;
                                 case 1:
