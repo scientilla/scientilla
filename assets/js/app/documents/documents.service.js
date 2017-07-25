@@ -229,7 +229,13 @@
                         .customPUT({synchronized: sync}, 'synchronized')
                         .then(newDocData => {
                             EventsService.publish(EventsService.DRAFT_SYNCHRONIZED, newDocData);
-                            return newDocData;
+                            if (sync)
+                                Notification.success("Document synchronized");
+                            else
+                                Notification.success("Document desynchronized");
+                        })
+                        .catch(function (err) {
+                            Notification.warning(err.data);
                         });
                 }
 
@@ -240,7 +246,7 @@
                             EventsService.publish(EventsService.DRAFT_SYNCHRONIZED, documents);
                         })
                         .catch(function (err) {
-                            Notification.warning("An error happened");
+                            Notification.warning(err.data);
                         });
                 }
 

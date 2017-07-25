@@ -50,7 +50,7 @@ async function documentSynchronizeScopus(docId) {
     if (!externalDoc) {
         const externalDoc = await ExternalImporter.updateDocument(DocumentOrigins.SCOPUS, doc.scopusId);
         if (!_.has(externalDoc, 'id'))
-            throw "ScopusId rejected by Scopus" + doc.scopusId;
+            throw "Scopus Id rejected by Scopus, scopusId: " + doc.scopusId;
     }
 
     const res = await documentSynchronize(doc, DocumentOrigins.SCOPUS);

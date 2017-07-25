@@ -183,8 +183,8 @@ module.exports = _.merge({}, BaseModel, {
                 requiredFields.push('source');
 
             return _.every(requiredFields, function (v) {
-                    return self[v];
-                }) && authorsStrRegex.test(self.authorsStr);
+                return self[v];
+            }) && authorsStrRegex.test(self.authorsStr);
         },
         draftToDocument: function () {
             this.kind = DocumentKinds.VERIFIED;
@@ -239,16 +239,10 @@ module.exports = _.merge({}, BaseModel, {
             }
 
             if (!this.scopusId)
-                throw "Empty scopusId";
+                throw 'Empty scopusId';
 
-            try {
-                const res = await Synchronizer.documentSynchronizeScopus(this.id);
-                return res.docData;
-
-            } catch (e) {
-                sails.log.debug('Document synchronize failed ' + this.scopusId);
-                return e;
-            }
+            const res = await Synchronizer.documentSynchronizeScopus(this.id);
+            return res.docData;
         },
         clone: async function (newDocPartialData = {}) {
             const docData = Document.selectData(this);
