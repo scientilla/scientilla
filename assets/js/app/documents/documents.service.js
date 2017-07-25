@@ -139,7 +139,7 @@
                     researchEntityService
                         .copyDocument(researchEntity, document)
                         .then(function (draft) {
-                            Notification.success('Document copied');
+                            Notification.success('Document copied to drafts');
                             EventsService.publish(EventsService.DRAFT_CREATED, draft);
                             document.addLabel(DocumentLabels.DUPLICATE);
                         });
