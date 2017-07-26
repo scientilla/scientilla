@@ -23,10 +23,10 @@
             <item-list>
                 <scientilla-checkable ng-repeat="document in vm.documents" item="document">
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-10">
                             <scientilla-document document="document"></scientilla-document>
                         </div>
-                        <div class="col-md-4 text-right">
+                        <div class="col-md-2 text-right">
                             <h3>
                                 <div class="btn-group scientilla-dropdown-align-right" uib-dropdown>
                                     <button ng-disabled="!document.isValid()" ng-click="vm.verifyDocument(document)" type="button"
@@ -42,7 +42,7 @@
                                         <li>
                                             <button class="btn btn-link" ng-click="vm.copyDocument(document)" href="javascript:void(0)">
                                                 <span class="fa fa-copy"></span>
-                                                Copy
+                                                Copy to drafts
                                             </button>
                                         </li>
                                         <li ng-if="!document.isDiscarded()">

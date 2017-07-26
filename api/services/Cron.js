@@ -10,6 +10,9 @@ module.exports = {
     init: () => {
         addJob(GruntTaskRunner.run, ['external:import:all']);
         addJob(GruntTaskRunner.run, ['documents:synchronize:scopus']);
+        addJob(GruntTaskRunner.run, ['documents:clean:sources']);
+        addJob(GruntTaskRunner.run, ['documents:clean:institutes']);
+        addJob(GruntTaskRunner.run, ['documents:clean:copies']);
     },
     start: () => {
         cron = new CronJob(sails.config.scientilla.cron.time, onTick, onStop, false, 'Europe/Rome');

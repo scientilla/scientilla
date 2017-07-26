@@ -1,6 +1,7 @@
 /* global Scientilla */
 
 (function () {
+    "use strict";
 
     angular
         .module('documents')
@@ -28,14 +29,13 @@
         vm.submit = submit;
         vm.cancel = cancel;
 
-
         vm.$onInit = () => {
             $scope.$watch('vm.position', userSelectedChanged);
             $scope.$watch('vm.authorship.affiliations', resetInstitutes, true);
         };
 
         function getInstitutesQuery(searchText) {
-            var qs = {where: {name: {contains: searchText}}};
+            var qs = {where: {name: {contains: searchText}, parentId: null}};
             var model = 'institutes';
             return {model: model, qs: qs};
         }
@@ -45,7 +45,7 @@
         }
 
         function userSelectedChanged() {
-            if(_.isUndefined(vm.position))
+            if (_.isUndefined(vm.position))
                 return;
             vm.author = vm.document.getAuthors()[vm.position];
             vm.authorship = vm.document.authorships.find(a => a.position === vm.position);
@@ -97,7 +97,8 @@
         }
 
         function save() {
-            return vm.document.customPUT(vm.document.authorships, 'authorships');
+            return vm.document.customPUT(vm.document.authorships, 'authorships')
+                .then(() => vm.document.save());
         }
 
         function executeOnSubmit(i) {

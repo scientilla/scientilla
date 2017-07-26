@@ -19,6 +19,7 @@
 
                 service.verifyDraft = verifyDraft;
                 service.verifyDocument = verifyDocument;
+                service.synchronizeDraft = synchronizeDraft;
 
                 return service;
 
@@ -60,6 +61,40 @@
                     }
 
                     return ModalService.openDocumentVerificationForm(document, verificationCallback);
+                }
+
+                function synchronizeDraft(document, sync) {
+                    let msg, title;
+                    if (sync) {
+                        title = 'Synchronize with scopus';
+                        msg = 'This action will synchronize your document and keep it consistent with the Scopus version.\n' +
+                            'To edit the document disable the synchronization.\n' +
+                            'You can edit your affiliation during the document verification process without disabling the\n' +
+                            'synchronization.\n\n' +
+                            'WARNING! It may overwrite the current data.';
+                    }
+                    else {
+                        title = 'Disable synchronization';
+                        msg = 'This action will disable the synchronization with scopus.\n' +
+                            'Remember: you can edit your affiliation during the document verification process without\n' +
+                            'disabling the synchronization.';
+                    }
+
+                    return ModalService.multipleChoiceConfirm(title, msg, ['Proceed'])
+                        .then(res => researchEntity.one('drafts', document.id)
+                            .customPUT({synchronized: sync}, 'synchronized')
+                            .then(newDocData => {
+                                EventsService.publish(EventsService.DRAFT_SYNCHRONIZED, newDocData);
+                                if (sync)
+                                    Notification.success("Document synchronized");
+                                else
+                                    Notification.success("Document desynchronized");
+                            })
+                            .catch(function (err) {
+                                Notification.warning(err.data);
+                            })
+                        )
+                        .catch(() => true);
                 }
             }
         };

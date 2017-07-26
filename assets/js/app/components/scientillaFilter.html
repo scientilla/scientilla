@@ -1,24 +1,10 @@
 <div class="scientilla-filter-form well">
     <scientilla-component-form
-            values="vm.searchValues"
-            structure="vm.searchFormStructure"
+            structure="vm.filterSearchFormStructure"
             css-class="form-group-sm"
             ng-if="vm.formVisible"
             on-submit="vm.onSubmit"
-            reset="vm.formReset"
     >
-        <scientilla-button size="small" type="submit" ng-disabled="vm.onStatus(vm.STATUS_LOADING)">
-            {{vm.filterLabel}}
-        </scientilla-button>
-        <scientilla-button size="small" click="vm.reset()" ng-disabled="vm.onStatus(vm.STATUS_LOADING)">
-            Reset
-        </scientilla-button>
-        <div class="scientilla-filter-config form-inline">
-            <label>Items per page: </label>
-            <select class="form-control" ng-model="vm.itemsPerPage" ng-change="vm.search()"
-                    ng-options="s * 1 as s for s in vm.pageSizes"
-                    ng-disabled="vm.onStatus(vm.STATUS_LOADING)"></select>
-        </div>
     </scientilla-component-form>
 </div>
 

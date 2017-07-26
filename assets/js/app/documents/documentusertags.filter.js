@@ -13,7 +13,7 @@
             var tags = researchEntity.getTagsByDocument(document);
 
             return tags.map(function (tag) {
-                return "<span class='label label-primary'>"+tag.value+"</span>";
+                return "<span class='label label-scientilla-grey'>"+tag.value+"</span>";
             }).join(' ');
         };
 

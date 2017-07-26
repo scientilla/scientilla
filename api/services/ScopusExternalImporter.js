@@ -37,7 +37,8 @@ module.exports = {
         await updateAllExternalDocuments(ExternalDocumentGroup, groupsDocumentsScopusIds, importedDocuments);
 
         sails.log.info('updated/inserted ' + importedDocuments.length + ' scopus external documents');
-    }
+    },
+    updateDocument: getAndCreateOrUpdateDocument
 };
 
 async function updateResearchEntityProfile(externalDocumentModel, researchEntityModel, researchEntity) {
@@ -195,10 +196,9 @@ async function importDocuments(documents) {
     async function updateDocs(documents) {
         const docs = await Promise.all(
             documents.map(
-                async sId => {
+                async scopusId => {
                     try {
-                        const documentData = await ScopusConnector.getDocument(sId);
-                        const document = await createOrUpdateDocument(documentData);
+                        const document = await getAndCreateOrUpdateDocument(scopusId);
                         if (_.has(document, 'id'))
                             return document;
                     }
@@ -214,6 +214,11 @@ async function importDocuments(documents) {
     }
 }
 
+async function getAndCreateOrUpdateDocument(scopusId) {
+    const documentData = await ScopusConnector.getDocument(scopusId);
+    return await createOrUpdateDocument(documentData);
+}
+
 async function createOrUpdateDocument(documentData) {
     const criteria = {
         scopusId: documentData.scopusId,
@@ -224,6 +229,7 @@ async function createOrUpdateDocument(documentData) {
         documentData.source = documentData.source.id;
     documentData.origin = DocumentOrigins.SCOPUS;
     documentData.kind = DocumentKinds.EXTERNAL;
+    documentData.synchronized = true;
 
     try {
         return await Document.createOrUpdate(criteria, documentData);

@@ -14,13 +14,13 @@
                 <uib-tab-heading>Members</uib-tab-heading>
                 <div ng-repeat="m in vm.group.members">
                     <div class="row">
-                        <div class="col-md-8">
+                        <div class="col-md-10">
                             <a ng-href="#{{m.getProfileUrl()}}">
                                 {{m| fullname}}
                             </a>
                             <small>{{m.username}}</small>
                         </div>
-                        <div class="col-md-4 text-right">
+                        <div class="col-md-2 text-right">
                         </div>
                     </div>
                     <hr>

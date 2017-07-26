@@ -68,7 +68,7 @@
         </div>
     </div>
     <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.itSource.$invalid}"
-         ng-if="vm.document.type == 'invited_talk' && vm.document.sourceType">
+         ng-if="vm.document.type == 'invited_talk'">
         <label for="source">{{vm.sourceLabel}}</label>
         <input id="itSource" name="itSource" type="text" ng-model="vm.document.itSource"
                uib-typeahead="source.title || source.name for source in vm.getItSources($viewValue)"

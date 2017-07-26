@@ -15,17 +15,26 @@
                     <span class="fa fa-remove"></span>
                     Delete
                 </scientilla-multicheck-button>
+                <scientilla-multicheck-button on-click="vm.desynchronizeDrafts">
+                    <span class="fa fa-refresh"></span>
+                    Disable sync.
+                </scientilla-multicheck-button>
             </buttons>
             <item-list>
                 <scientilla-checkable ng-repeat="d in vm.drafts" item="d">
                     <div class="row">
-                        <div class="col-md-9">
+                        <div class="col-md-10">
                             <scientilla-document document="d" show-private-tags="true"></scientilla-document>
                         </div>
-                        <div class="col-md-3 text-right">
+                        <div class="col-md-2 text-right">
                             <h3>
-                                <div class="btn-group scientilla-dropdown-align-right" uib-dropdown>
-                                    <button ng-click="vm.openEditPopup(d)" type="button" class=" btn btn-primary">
+                                <div class="btn-group scientilla-dropdown-align-right"
+                                     uib-dropdown>
+                                    <button ng-click="vm.openEditPopup(d)"
+                                            ng-disabled="d.synchronized"
+                                            type="button"
+                                            class=" btn btn-primary"
+                                            title="Let you edit the document, if synchronization is active the document cannot be edited">
                                         <span class="fa fa-edit"></span>
                                         Edit
                                     </button>
@@ -35,19 +44,39 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-right">
                                         <li>
-                                            <button class="btn btn-link" ng-click="vm.openDocumentAffiliationForm(d)" href="javascript:void(0)">
+                                            <button ng-click="vm.openDocumentAffiliationForm(d)"
+                                                    ng-disabled="d.synchronized"
+                                                    class="btn btn-link">
                                                 <span class="fa fa-edit"></span>
                                                 Edit Affiliations
                                             </button>
                                         </li>
+                                        <li ng-if="!d.synchronized">
+                                            <button ng-click="vm.synchronizeDraft(d, true)"
+                                                    ng-disabled="d.synchronized"
+                                                    class="btn btn-link">
+                                                <span class="fa fa-refresh"></span>
+                                                Synchronize with scopus
+                                            </button>
+                                        </li>
+                                        <li ng-if="d.synchronized">
+                                            <button ng-click="vm.synchronizeDraft(d, false)"
+                                                    class="btn btn-link">
+                                                <span class="fa fa-refresh"></span>
+                                                Disable sync.
+                                            </button>
+                                        </li>
                                         <li>
-                                            <button class="btn btn-link" ng-disabled="!d.isValid()" ng-click="vm.verifyDraft(d)" href="javascript:void(0)">
+                                            <button ng-click="vm.verifyDraft(d)"
+                                                    ng-disabled="!d.isValid()"
+                                                    class="btn btn-link">
                                                 <span class="fa fa-check"></span>
                                                 Verify
                                             </button>
                                         </li>
                                         <li>
-                                            <button class="btn btn-link" ng-click="vm.deleteDraft(d)" href="javascript:void(0)">
+                                            <button ng-click="vm.deleteDraft(d)"
+                                                    class="btn btn-link">
                                                 <span class="fa fa-remove"></span>
                                                 Delete
                                             </button>

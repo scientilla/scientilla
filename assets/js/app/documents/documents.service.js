@@ -1,4 +1,5 @@
 (function () {
+    "use strict";
 
     angular.module("documents").factory("DocumentsServiceFactory", DocumentsServiceFactory);
 
@@ -30,6 +31,7 @@
                 service.copyDocuments = copyDocuments;
                 service.copyUncopiedDocuments = copyUncopiedDocuments;
                 service.getExternalDocuments = _.partialRight(getExternalDocuments, reService);
+                service.desynchronizeDrafts = desynchronizeDrafts;
 
                 return service;
 
@@ -47,15 +49,20 @@
                 }
 
                 function deleteDraft(draft) {
-                    researchEntityService
-                        .deleteDraft(researchEntity, draft.id)
-                        .then(function (d) {
-                            Notification.success("Draft deleted");
-                            EventsService.publish(EventsService.DRAFT_DELETED, d);
-                        })
-                        .catch(function () {
-                            Notification.warning("Failed to delete draft");
-                        });
+                    return ModalService.multipleChoiceConfirm(
+                        'Delete',
+                        'This action will permanently delete this document.\n Do you want to proceed?',
+                        ['Proceed'])
+                        .then(() => researchEntityService
+                            .deleteDraft(researchEntity, draft.id)
+                            .then(function (d) {
+                                Notification.success("Draft deleted");
+                                EventsService.publish(EventsService.DRAFT_DELETED, d);
+                            })
+                            .catch(function () {
+                                Notification.warning("Failed to delete draft");
+                            })
+                        ).catch(() => true);
                 }
 
                 function verifyDrafts(drafts) {
@@ -92,9 +99,9 @@
                     ModalService
                         .multipleChoiceConfirm('Unverifying',
                             'Unverifying a document removes it from your profile, you can choose:\n\n' +
-                            'Edit: to move the document in your drafts.\n' +
+                            'Move to drafts: to move the document in your drafts.\n' +
                             'Remove: to remove it completely from your profile.',
-                            ['Edit', 'Remove'])
+                            ['Move to drafts', 'Remove'])
                         .then(function (buttonIndex) {
                             switch (buttonIndex) {
                                 case 0:
@@ -105,12 +112,10 @@
                                                 .copyDocument(researchEntity, document)
                                                 .then(function (draft) {
                                                     EventsService.publish(EventsService.DRAFT_CREATED, draft);
+                                                    Notification.success('Document moved to drafts');
                                                     return draft;
                                                 })
-                                                .then(openEditPopup)
-                                                .catch(function () {
-                                                    Notification.warning("Failed to unverify document");
-                                                });
+                                                .catch(() => Notification.warning('Failed to unverify document'));
                                         });
                                     break;
                                 case 1:
@@ -134,16 +139,15 @@
                     researchEntityService
                         .copyDocument(researchEntity, document)
                         .then(function (draft) {
-                            Notification.success('Document copied');
+                            Notification.success('Document copied to drafts');
                             EventsService.publish(EventsService.DRAFT_CREATED, draft);
-                            document.addLabel(DocumentLabels.DUPLICATE);
-                            openEditPopup(draft);
+                            document.addLabel(DocumentLabels.ALREADY_IN_DRAFTS);
                         });
                 }
 
                 function copyUncopiedDocuments(documents) {
                     var notCopiedCocuments = documents.filter(function (d) {
-                        return !d.hasLabel(DocumentLabels.DUPLICATE);
+                        return !d.hasLabel(DocumentLabels.ALREADY_VERIFIED) && !d.hasLabel(DocumentLabels.ALREADY_IN_DRAFTS);
                     });
                     return copyDocuments(notCopiedCocuments);
                 }
@@ -158,7 +162,7 @@
                         .then(function (drafts) {
                             Notification.success(drafts.length + " draft(s) created");
                             documents.forEach(function (d) {
-                                d.addLabel(DocumentLabels.DUPLICATE);
+                                d.addLabel(DocumentLabels.ALREADY_IN_DRAFTS);
                             });
                             EventsService.publish(EventsService.DRAFT_CREATED, drafts);
                         })
@@ -222,6 +226,17 @@
                         });
                 }
 
+                function desynchronizeDrafts(documents) {
+                    return researchEntity.customPUT({drafts: documents.map(d => d.id)}, 'desynchronize-documents')
+                        .then(function (results) {
+                            Notification.success(results.length + " document(s) desynchronized");
+                            EventsService.publish(EventsService.DRAFT_SYNCHRONIZED, documents);
+                        })
+                        .catch(function (err) {
+                            Notification.warning(err.data);
+                        });
+                }
+
                 function openEditPopup(draft) {
                     ModalService
                         .openScientillaDocumentForm(draft.clone(), researchEntity);
@@ -252,7 +267,7 @@
                     return service
                         .getProfile(researchEntity.id)
                         .then(function (resEntity) {
-                            if (!resEntity[fields[query.where.origin]]) {
+                            if (resEntity.getType() === 'user' && !resEntity[fields[query.where.origin]]) {
                                 const msg = "Warning<br>" + fields[query.where.origin] + " empty<br>update your profile";
                                 Notification.warning(msg);
                                 throw msg;

@@ -7,11 +7,9 @@
             controller: scientillaComponentForm,
             controllerAs: 'vm',
             bindings: {
-                values: '=',
                 structure: '<',
                 cssClass: '@',
-                onSubmit: '&',
-                reset: '='
+                onSubmit: '&'
             },
             transclude: true,
         });
@@ -24,14 +22,15 @@
         const vm = this;
 
         vm.submit = submit;
+        vm.reset = reset;
 
+        vm.values = {};
         let onChangeWatchesDeregisters = [];
         let onStructureChangeDeregisterer;
 
         vm.$onInit = function () {
             setDefault();
             clearNil();
-            vm.reset = reset;
 
             onStructureChangeDeregisterer = $scope.$watch('vm.structure', onStructureChange, true);
         };
@@ -57,7 +56,7 @@
         function setDefault() {
             _.forEach(vm.values, (value, key) => {
                 const struct = vm.structure[key];
-                if (struct.inputType === 'select')
+                if (struct.inputType === 'select' && !struct.defaultValue)
                     vm.values[key] = "?";
                 else {
                     if (struct.defaultValue)
@@ -71,7 +70,7 @@
         function submit() {
             clearNil();
             if (_.isFunction(vm.onSubmit()))
-                vm.onSubmit()();
+                vm.onSubmit()(vm.values);
         }
 
         function onStructureChange() {
@@ -88,8 +87,17 @@
                 }
 
                 if (!_.isUndefined(struct.onChange))
-                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, struct.onChange));
+                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, execEvent(struct.onChange)));
             });
+        }
+
+        function execEvent(fn) {
+            if (_.isFunction(fn))
+                return fn;
+            if (fn === 'submit')
+                return submit;
+            if (fn === 'reset')
+                return reset;
         }
 
         function deregisterOnChanges() {

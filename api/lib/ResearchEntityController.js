@@ -26,11 +26,14 @@ module.exports = {
     verifyDraft: function (req, res) {
         const researchEntityId = req.params.researchEntityId;
         const draftId = req.params.draftId;
-        const position = req.body.position;
-        const corresponding = req.body.corresponding;
-        const affiliationInstituteIds = req.body.affiliations;
+        const verificationData = {
+            position: req.body.position,
+            corresponding: req.body.corresponding,
+            affiliationInstituteIds: req.body.affiliations,
+            synchronize: req.body.synchronize
+        };
         const Model = getModel(req);
-        res.halt(Model.verifyDraft(Model, researchEntityId, draftId, position, affiliationInstituteIds, corresponding));
+        res.halt(Model.verifyDraft(Model, researchEntityId, draftId, verificationData));
     },
     verifyDrafts: function (req, res) {
         var researchEntityId = req.params.researchEntityId;
@@ -41,12 +44,15 @@ module.exports = {
     verifyDocument: function (req, res) {
         const researchEntityId = req.params.researchEntityId;
         const documentId = req.body.id;
-        const position = req.body.position;
-        const affiliationInstituteIds = req.body.affiliations;
-        const corresponding = req.body.corresponding;
+        const verificationData = {
+            position: req.body.position,
+            corresponding: req.body.corresponding,
+            affiliationInstituteIds: req.body.affiliations,
+            synchronize: req.body.synchronize
+        };
         const Model = getModel(req);
         // TODO in case of failed verify give response with details instead of 400
-        res.halt(Model.verifyDocument(Model, researchEntityId, documentId, position, affiliationInstituteIds, corresponding));
+        res.halt(Model.verifyDocument(Model, researchEntityId, documentId, verificationData));
     },
     verifyDocuments: function (req, res) {
         var researchEntityId = req.params.researchEntityId;
@@ -90,11 +96,9 @@ module.exports = {
         res.halt(Chart.getChartsData(id, modelName));
     },
     setAuthorhips: function (req, res) {
-        var researchEntityId = req.params.researchEntityId;
-        var draftId = req.params.documentId;
-        var authorshipsData = req.body;
-        var Model = getModel(req);
-        res.halt(Model.setAuthorships(Model, researchEntityId, draftId, authorshipsData));
+        const draftId = req.params.documentId;
+        const authorshipsData = req.body;
+        res.halt(Document.setAuthorships(draftId, authorshipsData));
     },
     updateProfile: function (req, res) {
         const researchEntityId = req.params.researchEntityId;

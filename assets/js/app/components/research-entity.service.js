@@ -35,6 +35,7 @@
             'source',
             'authors',
             'authorships',
+            'groupAuthorships',
             'affiliations',
             'userTags',
             'tagLabels',
@@ -101,7 +102,7 @@
         }
 
         function verifyDocument(researchEntity, id, verificationData) {
-            var verificationFields = ['position', 'affiliations', 'corresponding'];
+            const verificationFields = ['position', 'affiliations', 'corresponding', 'synchronize'];
             verificationData = _.pick(verificationData, verificationFields);
             verificationData.id = id;
             return researchEntity
@@ -114,7 +115,7 @@
         }
 
         function verifyDraftAsUser(researchEntity, draftId, verificationData) {
-            var verificationFields = ['position', 'affiliations', 'corresponding'];
+            const verificationFields = ['position', 'affiliations', 'corresponding', 'synchronize'];
             verificationData = _.pick(verificationData, verificationFields);
             return researchEntity.one('drafts', draftId)
                 .customPUT(verificationData, 'verified');

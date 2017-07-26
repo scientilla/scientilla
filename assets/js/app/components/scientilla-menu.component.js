@@ -34,14 +34,13 @@
         };
 
 
-
         function refresh() {
             vm.isLogged = AuthService.isLogged;
             vm.user = AuthService.user;
         }
 
-        function isActive(linkUrl) {
-            return path.current === linkUrl;
+        function isActive(page) {
+            return (path.current === '?#' + page || path.current === '#' + page);
         }
     }
 

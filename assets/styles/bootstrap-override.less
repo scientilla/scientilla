@@ -1,5 +1,9 @@
 @import "iit-colors";
 
+.label-scientilla-grey {
+  background-color: @iit-grey-dark;
+}
+
 .tab-content {
   border-left: 1px solid @iit-grey-light;
   border-right: 1px solid @iit-grey-light;
@@ -78,9 +82,6 @@
   padding: 15px;
 }
 
-.scientilla-dropdown-align-right {
-}
-
 .scientilla-dropdown-align-right > .dropdown-menu {
   left: auto;
 }
@@ -121,7 +122,9 @@ h1 {
 /******************************************************************************/
 /*Bootstrap dropdown fix*/
 
-.dropdown > .dropdown-menu > li > a {
+.dropdown > .dropdown-menu > li > a,
+.dropdown > .dropdown-menu > li > button,
+.dropdown-toggle ~ .dropdown-menu li a {
   display: block;
   padding: 3px 20px;
   clear: both;
@@ -131,12 +134,15 @@ h1 {
   white-space: nowrap;
 }
 
-.dropdown >.dropdown-menu  >li:hover {
+.dropdown > .dropdown-menu > li:hover,
+.dropdown-toggle ~ .dropdown-menu li:hover {
   background-color: @iit-grey-light;
 }
 
-.dropdown >.dropdown-menu > li > a:focus,
-.dropdown >.dropdown-menu > li > a:hover {
+.dropdown > .dropdown-menu > li > a:focus,
+.dropdown > .dropdown-menu > li > a:hover,
+.dropdown-toggle ~ .dropdown-menu li a:hover,
+.dropdown-toggle ~ .dropdown-menu li a:focus {
   color: @iit-black;
   background-color: @iit-grey-light;
   text-decoration: none;

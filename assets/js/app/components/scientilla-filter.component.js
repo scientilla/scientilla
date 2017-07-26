@@ -19,11 +19,10 @@
 
     scientillaFilter.$inject = [
         'pageSize',
-        '$scope',
-        '$timeout'
+        '$scope'
     ];
 
-    function scientillaFilter(pageSize, $scope, $timeout) {
+    function scientillaFilter(pageSize, $scope) {
         var vm = this;
 
         vm.onSubmit = onSubmit;
@@ -34,7 +33,8 @@
         vm.reset = reset;
         vm.pageSizes = [10, 20, 50, 100, 200];
         vm.currentPage = 1;
-        vm.searchValues = {};
+
+        vm.filterSearchFormStructure = {};
 
         // statuses
         vm.STATUS_WAITING = 0;
@@ -46,8 +46,8 @@
 
         vm.formVisible = true;
 
-        var searchQuery = {};
-        var onDataChangeDeregisterer = null;
+        let searchQuery = {};
+        let onDataChangeDeregisterer = null;
 
         vm.$onInit = function () {
             vm.itemsPerPage = pageSize;
@@ -64,6 +64,29 @@
 
             onDataChangeDeregisterer = $scope.$watch('vm.elements', onDataChange, true);
 
+            vm.filterSearchFormStructure = _.assign({}, vm.searchFormStructure, {
+                newlineFilter1: {
+                    inputType: 'br'
+                },
+                buttonSearch: {
+                    inputType: 'submit',
+                    label: vm.filterLabel
+                },
+                buttonReset: {
+                    inputType: 'button',
+                    label: 'Reset',
+                    onClick: 'reset'
+                },
+                itemsPerPage: {
+                    inputType: 'select',
+                    label: 'Items per page',
+                    defaultValue: pageSize,
+                    values: vm.pageSizes.map(ps => ({value: ps, label: ps})),
+                    labelPosition: 'inline',
+                    onChange: 'submit'
+                }
+            });
+
             vm.search();
         };
 
@@ -71,8 +94,8 @@
             onDataChangeDeregisterer();
         };
 
-        function onSubmit() {
-            return !vm.onStatus(vm.STATUS_LOADING) && vm.search();
+        function onSubmit(searchValues) {
+            return !vm.onStatus(vm.STATUS_LOADING) && vm.search(searchValues);
         }
 
         function onSearch(searchWhere) {
@@ -91,15 +114,20 @@
             return vm.status === status;
         }
 
-        function search() {
+        function search(searchValues) {
             var where = {};
 
-            _.forEach(vm.searchValues,
+            if (searchValues && searchValues.itemsPerPage)
+                vm.itemsPerPage = searchValues.itemsPerPage;
+
+            _.forEach(searchValues,
                 function (value, key) {
+                    if (key === 'itemsPerPage')
+                        return;
 
                     var struct = vm.searchFormStructure[key];
 
-                    if (struct.inputType === 'select' && vm.searchValues[key] === "?")
+                    if (struct.inputType === 'select' && searchValues[key] === "?")
                         return;
 
                     var whereAdd = {};

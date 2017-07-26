@@ -1,4 +1,4 @@
-/* global Document, sails, User, ObjectComparer, Authorship, DocumentKinds */
+/* global Document, sails, User, ObjectComparer, Authorship, Affiliation, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer */
 'use strict';
 
 /**
@@ -9,7 +9,6 @@
  */
 
 const _ = require('lodash');
-const Promise = require('bluebird');
 const BaseModel = require("../lib/BaseModel.js");
 const actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 
@@ -32,15 +31,16 @@ const fields = [
     {name: 'wosId'},
     {name: 'iitPublicationsId'},
     {name: 'origin'},
-    {name: 'kind'}
+    {name: 'kind'},
+    {name: 'synchronized'}
 ];
 
 module.exports = _.merge({}, BaseModel, {
     /* CONSTANTS */
     DEFAULT_SORTING: {
         year: 'desc',
-        updatedAt: 'desc',
-        title: 'asc'
+        title: 'asc',
+        id: 'desc'
     },
     /* ATTRIBUTES */
     attributes: {
@@ -62,10 +62,7 @@ module.exports = _.merge({}, BaseModel, {
         abstract: 'TEXT',
         kind: 'STRING',
         origin: 'STRING',
-        editedAfterImport: {
-            type: "BOOLEAN",
-            defaultsTo: false
-        },
+        synchronized: "BOOLEAN",
         source: {
             model: 'source'
         },
@@ -186,8 +183,8 @@ module.exports = _.merge({}, BaseModel, {
                 requiredFields.push('source');
 
             return _.every(requiredFields, function (v) {
-                    return self[v];
-                }) && authorsStrRegex.test(self.authorsStr);
+                return self[v];
+            }) && authorsStrRegex.test(self.authorsStr);
         },
         draftToDocument: function () {
             this.kind = DocumentKinds.VERIFIED;
@@ -230,9 +227,27 @@ module.exports = _.merge({}, BaseModel, {
                 return [];
 
             return this.authorships.map(authorship => {
-                authorship.affiliations = this.affiliations.filter(affiliation => authorship.id === affiliation.authorship);
-                return authorship;
+                const auth = _.clone(authorship);
+                auth.affiliations = this.affiliations.filter(affiliation => authorship.id === affiliation.authorship);
+                return auth;
             });
+        },
+        scopusSynchronize: async function (synchronized) {
+            if (!synchronized) {
+                this.synchronized = false;
+                return this.savePromise();
+            }
+
+            if (!this.scopusId)
+                throw 'Empty scopusId';
+
+            const res = await Synchronizer.documentSynchronizeScopus(this.id);
+            return res.docData;
+        },
+        clone: async function (newDocPartialData = {}) {
+            const docData = Document.selectData(this);
+            const newDocData = Object.assign({}, docData, newDocPartialData);
+            return await Document.create(newDocData);
         }
     },
     getFields: function () {
@@ -242,7 +257,7 @@ module.exports = _.merge({}, BaseModel, {
         const documentFields = Document.getFields();
         return _.pick(draftData, documentFields);
     },
-    getNumberOfConnections: function(document) {
+    getNumberOfConnections: function (document) {
         return document.authors.length +
             document.groups.length +
             document.discardedCoauthors.length +
@@ -305,7 +320,7 @@ module.exports = _.merge({}, BaseModel, {
         const copies = similarDocuments.filter(d => {
             const copyFullAuthorships = d.getFullAuthorships();
             return areAuthorshipsEqual(draftFullAuthorships, copyFullAuthorships) &&
-                areAuthorshipsEqual(draftFullAuthorships, copyFullAuthorships);
+                areAuthorshipsEqual(copyFullAuthorships, draftFullAuthorships);
         });
 
         return copies;
@@ -325,5 +340,42 @@ module.exports = _.merge({}, BaseModel, {
             await Authorship.createEmptyAuthorships(doc.id, documentData);
         }
         return doc;
-    }
+    },
+    desynchronizeAll: async function (drafts) {
+        const desynchronizedDrafts = [];
+        for (let d of drafts) {
+            const draft = await Document.findOneById(d);
+            if (!draft)
+                continue;
+
+            draft.synchronized = false;
+            await draft.savePromise();
+            desynchronizedDrafts.push(draft);
+        }
+        return desynchronizedDrafts;
+    },
+    setAuthorships: async function (docId, authorshipsData) {
+        const authData = _.cloneDeep(authorshipsData);
+        authData.forEach(a => {
+            delete a.id;
+            delete a.createdAt;
+            delete a.updatedAt;
+            a.document = docId;
+            a.affiliations = a.affiliations.map(aff => {
+                if (aff.institute)
+                    return aff.institute;
+
+                aff.document = docId;
+                delete aff.authorship;
+
+                return aff;
+            });
+        });
+        const deleteAuthorships = await Authorship.destroy({document: docId});
+        await Affiliation.destroy({authorship: deleteAuthorships.map(a => a.id)});
+        await Authorship.create(authData);
+
+        return await Document.findOneById(docId)
+            .populate(['authorships', 'groupAuthorships', 'affiliations']);
+    },
 });

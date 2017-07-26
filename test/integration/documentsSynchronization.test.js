@@ -1,6 +1,6 @@
 "use strict";
 
-var test = require('./../helper.js');
+const test = require('./../helper.js');
 
 
 describe('Synchronization', function () {
@@ -8,19 +8,21 @@ describe('Synchronization', function () {
     after(test.cleanDb);
 
     const documentsData = test.getAllDocumentData();
-    const userData = test.getAllUserData()[0];
+    const userData = test.getAllUserData();
     const institutesData = test.getAllInstituteData();
     const sourcesData = test.getAllSourceData();
-    let user, draft, institute, externalDocument;
+    let user, user2, draft, institute, externalDocument;
 
     it("should update a draft that was copied from external", async function () {
         const newTitle = 'test';
-        user = await User.registerUser(userData);
+        user = await User.registerUser(userData[0]);
         institute = await Institute.create(institutesData[0]);
         const journal = await Source.create(sourcesData[0]);
         const doc1 = documentsData[0];
         doc1.source = journal.id;
-        doc1.authorships = [{corresponding: true, affiliations: [institute.id], position: 1}];
+        doc1.origin = 'scopus';
+        doc1.synchronized = true;
+        doc1.authorships = [{corresponding: true, affiliations: [institute.id], position: 0}];
         externalDocument = await test.createExternalDocument(doc1);
         draft = await User.createDraft(User, user.id, externalDocument);
         await Document.update(externalDocument.id, {title: newTitle});
@@ -29,27 +31,53 @@ describe('Synchronization', function () {
         updatedDraft.title.should.equal(newTitle);
     });
 
-    it("should update a verified document that was copied from external", async function() {
-        const newTitle = 'test 2';
-        const d = await Document.findOneById(draft.id);
+    it("should update a verified document", async function () {
+        user2 = await User.registerUser(userData[1]);
+        const newTitle = 'test 3';
 
-        const document = await User.verifyDraft(User, user.id, draft.id, 1, [institute.id], true);
+        const document = await User.verifyDraft(User, user.id, draft.id, {
+            position: 0,
+            affiliationInstituteIds: [institute.id],
+            corresponding: true,
+            synchronize: true
+        });
         await Document.update(externalDocument.id, {title: newTitle});
         await Synchronizer.synchronizeScopus();
         const updatedDocument = await Document.findOneById(document.id);
-        updatedDocument.title.should.equal(newTitle);
+        updatedDocument.title.should.not.equal(documentsData[0].title);
     });
 
-    it("should not update a verified document that was copied from external", async function() {
-        const newDraftTitle = 'test 3';
-        const newUpdatedDocumentTitle = 'test 4';
 
-        let draft2 = await User.createDraft(User, user.id, externalDocument);
-        const d = await User.updateDraft(User, draft2.id, {title: newDraftTitle});
-        const updatedDocument = await Document.findOneById(draft2.id);
+    it("should split a document with an authorship with synchronize = false ", async function () {
+        const newYear = '2018';
+        const oldYear = externalDocument.year;
+        await User.verifyDocument(User, user2.id, draft.id, {
+            position: 1,
+            affiliationInstituteIds: [institute.id],
+            corresponding: true,
+            synchronize: false
+        });
+
+        await Document.update(externalDocument.id, {year: newYear});
         await Synchronizer.synchronizeScopus();
-        draft2 = await Document.findOneById(draft2.id);
-        draft2.title.should.equal(newDraftTitle);
+
+        const clonedDocument = await Document.findOne({year: oldYear, kind: 'v'}).populate(['authorships']);
+        const updatedDocument = await Document.findOne({year: newYear, kind: 'v'}).populate(['authorships']);
+
+        should.not.be.empty(clonedDocument);
+        should.not.be.empty(updatedDocument);
+
+        const clonedDocumentAuthorshipsVerified = clonedDocument.authorships.filter(a => a.researchEntity);
+        const updatedDocumentAuthorshipsVerified = updatedDocument.authorships.filter(a => a.researchEntity);
+
+        should.not.be.empty(clonedDocumentAuthorshipsVerified);
+        should.not.be.empty(updatedDocumentAuthorshipsVerified);
+
+        clonedDocumentAuthorshipsVerified.should.have.length(1);
+        updatedDocumentAuthorshipsVerified.should.have.length(1);
+
+        clonedDocumentAuthorshipsVerified[0].synchronize.should.equal(false);
+        updatedDocumentAuthorshipsVerified[0].synchronize.should.equal(true);
     });
 
 });

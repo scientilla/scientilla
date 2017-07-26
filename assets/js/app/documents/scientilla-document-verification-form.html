@@ -9,7 +9,9 @@
 </div>
 <div>
     <small class="scientilla-document-institutes">
-        <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} - {{institute.name}}</div>
+        <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} -
+            {{institute.name}}
+        </div>
     </small>
 </div>
 <div>
@@ -33,23 +35,35 @@
                 ng-options="+index as author for (index, author) in vm.document.getAuthors()">
         </select>
     </div>
-    <div class="form-group">
-        <scientilla-multicomplete
-                items="vm.verificationData.affiliations"
-                query="vm.getInstitutesQuery"
-                filter="vm.getInstitutesFilter"
-                title="What are your affiliations for this document?">
-        </scientilla-multicomplete>
+    <div ng-if="vm.viewAuthorshipFields()">
+        <div class="form-group">
+            <scientilla-multicomplete
+                    items="vm.verificationData.affiliations"
+                    query="vm.getInstitutesQuery"
+                    filter="vm.getInstitutesFilter"
+                    title="What are your affiliations for this document?">
+            </scientilla-multicomplete>
+        </div>
+        <div class="form-group">
+            <label>
+                Are you the corresponding author?
+                <input type="checkbox"
+                       style="display:block;"
+                       ng-model="vm.verificationData.corresponding"/>
+            </label>
+        </div>
     </div>
-    <div class="form-group">
-        <label for="corresponding">
-            Are you the corresponding author?
-            <input id="corresponding"
-                   type="checkbox"
-                   style="display:block;"
-                   ng-model="vm.verificationData.corresponding"/>
+    <hr>
+    <div class="form-group" ng-if="vm.viewSynchFields()">
+        <label>
+            <input type="checkbox" ng-model="vm.verificationData.synchronize"/>
+            Keep the document synchronized with {{vm.document.origin}}?
         </label>
     </div>
+    <div class="form-group" ng-if="vm.viewSynchMessage()">
+        This document is not synchronized
+    </div>
     <scientilla-button type="submit" click="vm.submit()">Verify</scientilla-button>
+    <scientilla-button ng-if="vm.viewCopyToDraft()" type="submit" click="vm.copyToDraft()">Copy to draft</scientilla-button>
     <scientilla-button type="cancel" click="vm.cancel()">Cancel</scientilla-button>
 </form>

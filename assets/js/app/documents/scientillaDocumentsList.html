@@ -4,17 +4,16 @@
     elements="vm.documents"
     empty-list-message="No documents found">
 
-
     <scientilla-multicheck >
         <buttons>
         </buttons>
         <item-list>
             <scientilla-checkable ng-repeat="d in vm.documents" item="d">
-                <div class="row">
-                    <div class="col-md-8">
-                        <scientilla-document document="d" show-private-tags="vm.showPrivateTags"></scientilla-document>
+                <div class="row scientilla-document-row">
+                    <div class="col-md-10">
+                        <scientilla-document document="d" show-private-tags="vm.showPrivateTags" check-duplicates="vm.checkDuplicates"></scientilla-document>
                     </div>
-                    <div ng-if="vm.editable" class="col-md-4 text-right">
+                    <div ng-if="vm.editable" class="col-md-2 text-right">
                         <h3>
                             <button class="btn btn-primary"
                                     ng-click="vm.unverifyDocument(d)"

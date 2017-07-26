@@ -23,5 +23,9 @@ module.exports = {
             await ScopusExternalImporter.updateAll();
         if (!origin || origin === DocumentOrigins.PUBLICATIONS)
             await PublicationsExternalImporter.updateAll();
+    },
+    updateDocument: async (origin, id) => {
+        if (origin === DocumentOrigins.SCOPUS)
+            return await ScopusExternalImporter.updateDocument(id);
     }
 };

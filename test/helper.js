@@ -1,4 +1,4 @@
-/* global Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute */
+/* global Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source, ExternalDocument */
 'use strict';
 
 const should = require('should');
@@ -69,11 +69,8 @@ function cleanAuths() {
 const url = 'http://localhost:1338/api/v1';
 
 function cleanDb() {
-    var models = [Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source];
-    var destroyFns =
-        models.map(function (model) {
-            return model.destroy();
-        });
+    var models = [Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source, ExternalDocument];
+    var destroyFns = models.map(model => model.destroy());
     return Promise.all(destroyFns);
 }
 

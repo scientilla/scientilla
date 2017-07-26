@@ -79,6 +79,7 @@
     const DocumentLabels = {
         DUPLICATE: 'duplicate',
         ALREADY_VERIFIED: 'already verified',
+        ALREADY_IN_DRAFTS: 'already in drafts',
         DISCARDED: 'discarded',
         UVERIFYING: 'unverifying'
     };

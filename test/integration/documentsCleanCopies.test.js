@@ -23,13 +23,25 @@ describe('Documents clean copies', function () {
         const doc1 = documentsData[0];
         doc1.source = journal.id;
         doc1.authorships = [{corresponding: true, affiliations: [institute.id], position: 1}];
+        doc1.synchronized = true;
         externalDocument = await test.createExternalDocument(doc1);
         draft1 = await User.createDraft(User, user1.id, externalDocument);
-        document1 = await User.verifyDraft(User, user1.id, draft1.id, 0, [institute.id], true);
+        document1 = await User.verifyDraft(User, user1.id, draft1.id, {
+            position: 0,
+            affiliationInstituteIds: [institute.id],
+            corresponding: true,
+            synchronize: true
+        });
         await Document.update(externalDocument.id, {title: newTitle});
         externalDocument = await Document.findOneById(externalDocument.id);
         draft2 = await User.createDraft(User, user2.id, externalDocument);
-        document2 = await User.verifyDraft(User, user2.id, draft2.id, 1, [institute.id], true);
+        document2 = await User.verifyDraft(User, user2.id, draft2.id, {
+            position: 1,
+            affiliationInstituteIds: [institute.id],
+            corresponding: true,
+            synchronize: true
+        });
+
         await Synchronizer.synchronizeScopus();
         document1 = await Document.findOneById(document1.id);
 

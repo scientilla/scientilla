@@ -25,8 +25,10 @@ module.exports = _.merge({}, BaseModel, {
         corresponding: 'boolean',
         position: 'integer',
         public: 'boolean',
+        synchronize: 'boolean',
         unverify: function () {
             this.researchEntity = null;
+            this.synchronize = null;
             return this.savePromise();
         }
     },
@@ -39,6 +41,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     getEmpty: function () {
         return {
+            synchronize: null,
             corresponding: false,
             affiliations: []
         };

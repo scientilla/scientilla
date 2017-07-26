@@ -13,9 +13,6 @@ module.exports = {
         const researchEntityType = researchEntity.getType();
         let uri = sails.config.scientilla.scopus.url + '/content/search/scopus';
 
-        if (researchEntityType === 'group')
-            uri += 'affiliation';
-
         if (researchEntityType === 'user')
             query.push('au-id(' + researchEntity.scopusId + ')');
         else
