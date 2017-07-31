@@ -264,6 +264,11 @@
 
     };
 
+    const documentFieldsRegExes = {
+        authorsStr: /^((\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)(,\s(\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)*$/,
+        scopusId: /^\d*$/
+    };
+
     const apiPrefix = '/api/v1';
 
     angular.module('app')
@@ -275,5 +280,6 @@
         .constant('apiPrefix', apiPrefix)
         .constant('documentSourceTypes', documentSourceTypes)
         .constant('documentTypes', documentTypes)
-        .constant('documentSearchForm', documentSearchForm);
+        .constant('documentSearchForm', documentSearchForm)
+        .constant('documentFieldsRegExes', documentFieldsRegExes);
 })();
