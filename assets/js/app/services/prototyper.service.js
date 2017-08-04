@@ -213,8 +213,7 @@
                 else
                     requiredFields.push('source');
 
-                return _.every(requiredFields, v => this[v])
-                    && _.every(documentFieldsRegExes, (regex,k) => regex.test(this[k]));
+                return _.every(requiredFields, v => this[v]) && _.every(documentFieldsRegExes, (regex, k) => regex.test(this[k]));
             },
             getAllCoauthors: function () {
                 return this.authors;
