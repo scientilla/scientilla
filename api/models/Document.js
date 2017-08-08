@@ -243,11 +243,6 @@ module.exports = _.merge({}, BaseModel, {
 
             const res = await Synchronizer.documentSynchronizeScopus(this.id);
             return res.docData;
-        },
-        clone: async function (newDocPartialData = {}) {
-            const docData = Document.selectData(this);
-            const newDocData = Object.assign({}, docData, newDocPartialData);
-            return await Document.create(newDocData);
         }
     },
     getFields: function () {
@@ -334,11 +329,15 @@ module.exports = _.merge({}, BaseModel, {
         else
             doc = await Document.create(selectedData);
 
-        if (documentData.authorships) {
-            doc = await Document.findOne(criteria);
+        if (!doc)
+            return {};
+
+        if (doc.id) {
             await Authorship.destroy({document: doc.id});
-            await Authorship.createEmptyAuthorships(doc.id, documentData);
+            if (documentData.authorships)
+                await Authorship.createEmptyAuthorships(doc.id, documentData);
         }
+
         return doc;
     },
     desynchronizeAll: async function (drafts) {
@@ -365,17 +364,19 @@ module.exports = _.merge({}, BaseModel, {
                 if (aff.institute)
                     return aff.institute;
 
-                aff.document = docId;
-                delete aff.authorship;
-
-                return aff;
+                return aff.id;
             });
         });
-        const deleteAuthorships = await Authorship.destroy({document: docId});
-        await Affiliation.destroy({authorship: deleteAuthorships.map(a => a.id)});
+        await Authorship.destroy({document: docId});
+        await Affiliation.destroy({document: docId});
         await Authorship.create(authData);
 
         return await Document.findOneById(docId)
             .populate(['authorships', 'groupAuthorships', 'affiliations']);
     },
+    clone: async function (document, newDocPartialData = {}) {
+        const docData = Document.selectData(document);
+        const newDocData = Object.assign({}, docData, newDocPartialData);
+        return await Document.create(newDocData);
+    }
 });

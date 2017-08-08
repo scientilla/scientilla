@@ -85,9 +85,9 @@ async function documentSynchronize(doc, origin) {
     const externalDocData = Document.selectData(externalDoc);
     const differences = getDifferences(docData, externalDocData);
     checkAuthors(doc, externalDoc);
-    const affiliationsHaveDiff = checkAffiliations(doc, externalDoc);
+    const affiliationsAreSame = hasSameAffiliations(doc, externalDoc);
 
-    if (_.isEmpty(differences) && !affiliationsHaveDiff)
+    if (_.isEmpty(differences) && affiliationsAreSame)
         return {err: true, code: 1, docData};
 
     let docToUpdate = doc;
@@ -135,59 +135,55 @@ function checkAuthors(doc, externalDoc) {
     });
 }
 
-function checkAffiliations(doc, externalDoc) {
+function hasSameAffiliations(doc, externalDoc) {
     const docFullAuthorships = doc.getFullAuthorships();
     const externalFullAuthorships = externalDoc.getFullAuthorships();
 
     if (docFullAuthorships.length !== externalFullAuthorships.length)
-        return true;
+        return false;
 
-    let retValue = false;
+    return externalDoc.authorsStr.split(',').every((v, i) => {
+        const docAuthorships = docFullAuthorships.find(a => a.position === i);
+        const externalAuthorships = externalFullAuthorships.find(a => a.position === i);
+        if (!docAuthorships && !externalAuthorships)
+            return true;
 
-    docFullAuthorships.forEach((authorship, i) => {
-        const aff1 = authorship.affiliations.map(a => a.institute);
-        const aff2 = externalFullAuthorships[i].affiliations.map(a => a.institute);
+        if (!docAuthorships ^ !externalAuthorships)
+            return false;
 
-        if (aff1.length !== aff2.length)
-            retValue = true;
+        const docAffiliationIds = docAuthorships.affiliations.map(a => a.institute);
+        const externalAffiliationIds = externalAuthorships.affiliations.map(a => a.institute);
 
-        aff1.forEach((af, j) => {
-            if (af !== aff2[j])
-                retValue = true;
-        });
+        return _.isEqual(docAffiliationIds.sort(), externalAffiliationIds.sort());
     });
-
-    return retValue;
 }
 
 async function documentSplit(doc) {
     //a.synchronize could be null
     const notSynchronizingAuthorships = doc.authorships.filter(a => a.synchronize === false);
 
-    if (notSynchronizingAuthorships.length === doc.authorships.length)
+    if (notSynchronizingAuthorships.length === doc.authorships.filter(a => !_.isNil(a.synchronize).length))
         return false;
     if (!notSynchronizingAuthorships.length)
         return doc;
 
-    const newDoc = await doc.clone({synchronized: false});
+    const newDoc = await Document.clone(doc, {synchronized: false});
+
+    const notSynchronizingAuthors = notSynchronizingAuthorships.map(nsa => nsa.researchEntity);
 
     const authorshipsData = doc.getFullAuthorships();
     const oldDocAuthorshipsData = authorshipsData.map(a => {
-        if (!notSynchronizingAuthorships
-                .map(nsa => nsa.researchEntity)
-                .includes(a.researchEntity)) {
+        if (!notSynchronizingAuthors.includes(a.researchEntity)) {
             const newAutorhsip = _.cloneDeep(a);
             a.researchEntity = null;
             a.synchronize = null;
             return newAutorhsip;
         }
         else return a;
-
     });
+
     const newDocAuthorshipsData = authorshipsData.map(a => {
-        if (notSynchronizingAuthorships
-                .map(nsa => nsa.researchEntity)
-                .includes(a.researchEntity)) {
+        if (notSynchronizingAuthors.includes(a.researchEntity)) {
             const newAutorhsip = _.cloneDeep(a);
             a.researchEntity = null;
             a.synchronize = null;
@@ -203,7 +199,7 @@ async function synchronizeAffiliations(doc, externalDoc) {
     const externalAuthorshipsData = externalDoc.getFullAuthorships();
     const authorshipsData = doc.getFullAuthorships();
 
-    const newAuthorshipsData = [];
+    const newAuthorshipsList = [];
     if (!externalDoc.authorsStr)
         return;
 
@@ -212,13 +208,16 @@ async function synchronizeAffiliations(doc, externalDoc) {
         const authData = authorshipsData.find(a => a.position === i);
 
         let newAuthorship = _.cloneDeep(authData);
-        if (authData && externalAuthData)
-            newAuthorship.affiliations = _.cloneDeep(externalAuthData.affiliations);
+        if (authData && externalAuthData) {
+            if (!authData.researchEntity)
+                newAuthorship.affiliations = _.cloneDeep(externalAuthData.affiliations);
+        }
         else if (!authData && externalAuthData)
             newAuthorship = _.cloneDeep(externalAuthData);
 
-        if (authData || externalAuthData)
-            newAuthorshipsData.push(newAuthorship);
+        if (newAuthorship)
+            newAuthorshipsList.push(newAuthorship);
     }
-    return await Document.setAuthorships(doc.id, newAuthorshipsData);
+
+    return await Document.setAuthorships(doc.id, newAuthorshipsList);
 }
