@@ -26,7 +26,7 @@
         'Notification',
         'researchEntityService',
         'EventsService',
-        'documentFieldsRegExes',
+        'documentFieldsRules',
         '$scope',
         '$timeout',
         'DocumentTypesService',
@@ -37,7 +37,7 @@
     function scientillaDocumentFormController(Notification,
                                               researchEntityService,
                                               EventsService,
-                                              documentFieldsRegExes,
+                                              documentFieldsRules,
                                               $scope,
                                               $timeout,
                                               DocumentTypesService,
@@ -54,7 +54,7 @@
         vm.createSource = createSource;
         vm.closePopover = closePopover;
         vm.checkSource = checkSource;
-        vm.documentFieldsRegExes = documentFieldsRegExes;
+        vm.documentFieldsRules = documentFieldsRules;
         var allSourceTypes = DocumentTypesService.getSourceTypes();
         vm.sourceLabel = _.get(_.find(allSourceTypes, {id: vm.document.sourceType}), 'label');
 

@@ -264,9 +264,15 @@
 
     };
 
-    const documentFieldsRegExes = {
-        authorsStr: /^((\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)(,\s(\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)*$/,
-        scopusId: /^\d*$/
+    const documentFieldsRules = {
+        authorsStr: {
+            allowNull: false,
+            regex: /^((\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)(,\s(\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)*$/
+        },
+        scopusId: {
+            allowNull: true,
+            regex: /^\d*$/
+        }
     };
 
     const apiPrefix = '/api/v1';
@@ -281,5 +287,5 @@
         .constant('documentSourceTypes', documentSourceTypes)
         .constant('documentTypes', documentTypes)
         .constant('documentSearchForm', documentSearchForm)
-        .constant('documentFieldsRegExes', documentFieldsRegExes);
+        .constant('documentFieldsRules', documentFieldsRules);
 })();

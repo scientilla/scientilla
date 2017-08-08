@@ -29,7 +29,7 @@
         <label for="authors">Authors (must be in the form "Doe J., Smith Simpson J. V.")</label>
         <input type="text" name="authors" class="form-control" id="authors" placeholder="Authors"
                ng-model="vm.document.authorsStr"
-               ng-pattern="vm.documentFieldsRegExes.authorsStr"
+               ng-pattern="vm.documentFieldsRules.authorsStr.regex"
                data-ng-required="true"
                ng-model-options="{ allowInvalid: true }">
         <span ng-show="vm.document.id && form.authors.$invalid"
@@ -114,7 +114,7 @@
                name="scopusId"
                placeholder="Scopus ID"
                ng-model="vm.document.scopusId"
-               ng-pattern="vm.documentFieldsRegExes.scopusId"
+               ng-pattern="vm.documentFieldsRules.scopusId.regex"
                ng-model-options="{ allowInvalid: true }">
         <span ng-if="vm.document.id && form.scopusId.$invalid"
               class="fa fa-exclamation-circle form-control-feedback">

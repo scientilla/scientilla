@@ -8,10 +8,10 @@
         'userConstants',
         'DocumentLabels',
         'DocumentKinds',
-        'documentFieldsRegExes'
+        'documentFieldsRules'
     ];
 
-    function Prototyper(userConstants, DocumentLabels, DocumentKinds, documentFieldsRegExes) {
+    function Prototyper(userConstants, DocumentLabels, DocumentKinds, documentFieldsRules) {
         const service = {
             toUserModel: toUserModel,
             toUsersCollection: applyToAll(toUserModel),
@@ -213,7 +213,11 @@
                 else
                     requiredFields.push('source');
 
-                return _.every(requiredFields, v => this[v]) && _.every(documentFieldsRegExes, (regex, k) => regex.test(this[k]));
+                return _.every(requiredFields, v => this[v]) &&
+                    _.every(documentFieldsRules, (rule, k) => {
+                        if (!this[k]) return rule.allowNull;
+                        return rule.regex.test(this[k])
+                    });
             },
             getAllCoauthors: function () {
                 return this.authors;
