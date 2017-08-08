@@ -216,7 +216,7 @@
                 return _.every(requiredFields, v => this[v]) &&
                     _.every(documentFieldsRules, (rule, k) => {
                         if (!this[k]) return rule.allowNull;
-                        return rule.regex.test(this[k])
+                        return rule.regex.test(this[k]);
                     });
             },
             getAllCoauthors: function () {
