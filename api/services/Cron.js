@@ -3,34 +3,43 @@
 "use strict";
 const CronJob = require('cron').CronJob;
 
-let cron;
-const jobs = [];
+let scriptCron, monitorCron;
+const DAILY = 'daily', MONITOR = 'monitor';
+const jobs = {};
 
 module.exports = {
     init: () => {
-        addJob(GruntTaskRunner.run, ['external:import:all']);
-        addJob(GruntTaskRunner.run, ['documents:synchronize:scopus']);
-        addJob(GruntTaskRunner.run, ['documents:clean:sources']);
-        addJob(GruntTaskRunner.run, ['documents:clean:institutes']);
-        addJob(GruntTaskRunner.run, ['documents:clean:copies']);
+        addJob(DAILY, GruntTaskRunner.run, ['external:import:all']);
+        addJob(DAILY, GruntTaskRunner.run, ['documents:synchronize:scopus']);
+        addJob(DAILY, GruntTaskRunner.run, ['documents:clean:sources']);
+        addJob(DAILY, GruntTaskRunner.run, ['documents:clean:institutes']);
+        addJob(DAILY, GruntTaskRunner.run, ['documents:clean:copies']);
+        addJob(MONITOR, GruntTaskRunner.run, ['monitor']);
     },
     start: () => {
-        cron = new CronJob(sails.config.scientilla.cron.time, onTick, onStop, false, 'Europe/Rome');
-        cron.start();
+        scriptCron = new CronJob(sails.config.scientilla.cron.daily, generateOnTick(DAILY), onStop, false, 'Europe/Rome');
+        scriptCron.start();
+        monitorCron = new CronJob(sails.config.scientilla.cron.monitor, generateOnTick(MONITOR), onStop, false, 'Europe/Rome');
+        monitorCron.start();
     },
     stop: () => {
-        if (cron)
-            cron.stop();
+        if (scriptCron)
+            scriptCron.stop();
+        if (monitorCron)
+            monitorCron.stop();
     }
 };
 
-async function onTick() {
-    for (let job of jobs)
-        await job.func(job.params);
+function generateOnTick(cronName) {
+    return async function () {
+        for (let job of jobs[cronName])
+            await job.func(job.params);
+    }
 }
 
-function addJob(func, params) {
-    jobs.push({
+function addJob(cronName, func, params) {
+    jobs[cronName] = jobs[cronName] || [];
+    jobs[cronName].push({
         func,
         params
     });
