@@ -354,6 +354,7 @@ module.exports = _.merge({}, BaseModel, {
         return desynchronizedDrafts;
     },
     setAuthorships: async function (docId, authorshipsData) {
+        if (!docId) throw "setAuthorship error!";
         const authData = _.cloneDeep(authorshipsData);
         authData.forEach(a => {
             delete a.id;
