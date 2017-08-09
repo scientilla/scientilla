@@ -26,7 +26,8 @@ module.exports.scientilla = {
         userImportUrl: 'http://example.com/users'
     },
     cron: {
-        time: '0 0 4 * * *'
+        daily: '0 0 4 * * *',
+        monitor: '0 0 * * * *'
     },
     registerEnabled: true
 };
