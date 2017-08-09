@@ -325,18 +325,17 @@ module.exports = _.merge({}, BaseModel, {
 
         let doc = await Document.findOne(criteria);
         if (doc)
-            doc = await Document.update(criteria, selectedData);
+            await Document.update(criteria, selectedData);
         else
-            doc = await Document.create(selectedData);
+            await Document.create(selectedData);
 
+        doc = await Document.findOne(criteria);
         if (!doc)
-            return {};
+            throw 'Document not created';
 
-        if (doc.id) {
-            await Authorship.destroy({document: doc.id});
-            if (documentData.authorships)
-                await Authorship.createEmptyAuthorships(doc.id, documentData);
-        }
+        await Authorship.destroy({document: doc.id});
+        if (documentData.authorships)
+            await Authorship.createEmptyAuthorships(doc.id, documentData);
 
         return doc;
     },

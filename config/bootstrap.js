@@ -39,11 +39,12 @@ module.exports.bootstrap = async function (cb) {
 
     function initializeGroups() {
         return Group.count()
-            .then(groupsNum => {
+            .then(async groupsNum => {
                 if (groupsNum)
                     return;
                 const fields = ['name', 'shortname', 'scopusId'];
                 const groupData = _.pick(sails.config.scientilla.institute, fields);
+                groupData.institute = (await Institute.findOneByScopusId(groupData.scopusId)).id;
                 sails.log.info('Creating group ' + groupData.name);
                 return Group.create(groupData);
             });

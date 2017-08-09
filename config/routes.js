@@ -64,8 +64,6 @@ module.exports.routes = {
     'put /api/v1/groups/:researchEntityId/drafts/:draftId/synchronized': 'Document.synchronizeDraft',
     'put /api/v1/users/:researchEntityId/desynchronize-documents': 'Document.desynchronizeDrafts',
     'put /api/v1/groups/:researchEntityId/desynchronize-documents': 'Document.desynchronizeDrafts',
-    'get /api/v1/users/:researchEntityId/external-documents': 'User.getExternalDocuments',
-    'get /api/v1/groups/:researchEntityId/external-documents': 'Group.getExternalDocuments',
     'get /api/v1/settings': 'Settings.getSettings',
     'get /api/v1/users/:researchEntityId/charts': 'User.getChartsData',
     'get /api/v1/groups/:researchEntityId/charts': 'Group.getChartsData',

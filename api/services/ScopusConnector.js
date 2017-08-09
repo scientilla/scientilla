@@ -8,62 +8,61 @@ const SourceTypes = require("./SourceTypes");
 const DocumentTypes = require("./DocumentTypes");
 
 module.exports = {
-    getConfig: function (researchEntity, configQuery) {
-        let query = [];
-        const researchEntityType = researchEntity.getType();
-        let uri = sails.config.scientilla.scopus.url + '/content/search/scopus';
-
-        if (researchEntityType === 'user')
-            query.push('au-id(' + researchEntity.scopusId + ')');
-        else
-            query.push('AF-ID(' + researchEntity.scopusId + ')');
-
-        const additionalOpts = {
-            'year': 'PUBYEAR IS %val'
-        };
-
-        if (Array.isArray(configQuery.where.additionalFields))
-            query = query.concat(
-                configQuery.where.additionalFields
-                    .map(f => additionalOpts[f.field].replace(/%val/, f.value))
-            );
-
-        return {
-            reqParams: {
-                uri: uri,
-                headers: {
-                    'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
-                    'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
-                },
-                qs: {
-                    start: configQuery.skip,
-                    count: configQuery.limit,
-                    query: query.join(' AND '),
-                    sort: '-pubyear'
-                },
-                json: true
-            },
-            fieldExtract: res => {
-                const error = _.get(res, 'search-results.entry[0].error');
-
-                if (error) {
-                    if (error === 'Result set was empty')
-                        return {count: 0, documents: []};
-                    else
-                        throw new Error(error);
-                }
-
-                const count = _.get(res, 'search-results.opensearch:totalResults');
-                const documents = _.get(res, 'search-results.entry');
-                return {documents, count};
-            },
-            transform: d1 => {
-                return getDocument(getScopusId(d1));
-            }
-        };
-    },
+    getConfig,
     getDocument
 };
+
+function getConfig(scopusId, params) {
+    let query = [];
+    if (params.type === 'author')
+        query.push('au-id(' + scopusId + ')');
+    else
+        query.push('AF-ID(' + scopusId + ')');
+
+    const additionalOpts = {
+        'year': 'PUBYEAR IS %val'
+    };
+
+    if (Array.isArray(params.additionalFields))
+        query = query.concat(
+            params.additionalFields
+                .map(f => additionalOpts[f.field].replace(/%val/, f.value))
+        );
+
+    return {
+        reqParams: {
+            uri: sails.config.scientilla.scopus.url + '/content/search/scopus',
+            headers: {
+                'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
+                'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
+            },
+            qs: {
+                start: params.skip,
+                count: params.limit,
+                query: query.join(' AND '),
+                sort: '-pubyear'
+            },
+            json: true
+        },
+        fieldExtract: res => {
+            const error = _.get(res, 'search-results.entry[0].error');
+
+            if (error) {
+                if (error === 'Result set was empty')
+                    return {count: 0, documents: []};
+                else
+                    throw new Error(error);
+            }
+
+            const count = _.get(res, 'search-results.opensearch:totalResults');
+            const documents = _.get(res, 'search-results.entry');
+            return {documents, count};
+        },
+        transform: d1 => {
+            return getDocument(getScopusId(d1));
+        }
+    };
+}
 
 function getDocument(scopusId) {
     return scoupsSingleRequest(scopusId, 0);

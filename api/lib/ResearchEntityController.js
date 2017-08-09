@@ -84,12 +84,6 @@ module.exports = {
         var Model = getModel(req);
         res.halt(Model.updateDraft(Model, draftId, draftData));
     },
-    getExternalDocuments: function (req, res) {
-        var researchEntityId = req.params.researchEntityId;
-        var query = getQuery(req);
-        var Model = getModel(req);
-        res.halt(Connector.getDocuments(Model, researchEntityId, query));
-    },
     getChartsData: function (req, res) {
         var modelName = req.options.model || req.options.controller;
         var id = req.params.researchEntityId;

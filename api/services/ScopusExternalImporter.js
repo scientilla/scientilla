@@ -13,15 +13,15 @@ module.exports = {
             sails.log.info('ScopusExternalImporter: user ' + user.username + ' empty scopusId');
             return;
         }
-        const total = await updateResearchEntityProfile(ExternalDocument, User, user);
-        sails.log.info('updated/inserted ' + total + ' external documents of user ' + user.username);
+        const total = await updateResearchEntityProfile(ExternalDocument, user);
+        sails.log.info('updated/inserted ' + total + ' scopus external documents of user ' + user.username);
     },
     updateGroup: async (group) => {
         if (_.isEmpty(group.scopusId)) {
             sails.log.info('ScopusExternalImporter: user ' + user.username + ' empty scopusId');
             return;
         }
-        const total = await updateResearchEntityProfile(ExternalDocumentGroup, Group, group);
+        const total = await updateResearchEntityProfile(ExternalDocumentGroup, group);
         sails.log.info('updated/inserted ' + total + ' scopus external documents of group ' + group.name);
     },
     updateAll: async () => {
@@ -46,8 +46,8 @@ module.exports = {
     updateDocument: getAndCreateOrUpdateDocument
 };
 
-async function updateResearchEntityProfile(externalDocumentModel, researchEntityModel, researchEntity) {
-    const documentScopusIds = await getResearchEntityDocumentsScopusIds(researchEntityModel, researchEntity);
+async function updateResearchEntityProfile(externalDocumentModel, researchEntity) {
+    const documentScopusIds = await getResearchEntityDocumentsScopusIds(researchEntity);
     const importedDocuments = await importDocuments(documentScopusIds);
     await updateExternalDocuments(externalDocumentModel, researchEntity.id, importedDocuments);
 
@@ -61,36 +61,42 @@ async function getResearchEntitiesDocumentsScopusIds(researchEntityModel) {
     for (let re of researchEntities)
         researchEntitiesScopusIds.push({
             researchEntity: re,
-            scopusIds: await getResearchEntityDocumentsScopusIds(researchEntityModel, re)
+            scopusIds: await getResearchEntityDocumentsScopusIds(re)
         });
 
     return researchEntitiesScopusIds;
 }
 
-async function getResearchEntityDocumentsScopusIds(researchEntityModel, researchEntity) {
-    const researchEntityId = researchEntity.id;
-    const query = {
+async function getResearchEntityDocumentsScopusIds(researchEntity) {
+    const params = {
         limit: 200,
-        skip: 0,
-        where: {
-            connector: 'Scopus',
-            field: 'scopusId'
-        }
+        skip: 0
     };
 
     if (researchEntity.getType() === 'user') {
-        const res = await scopusLoop(query);
+        params.type = 'author';
+        const res = await scopusLoop(researchEntity.scopusId, params);
         return res.scopusIds;
     }
 
-    const total = await getDocumentsTotal(query);
+    params.type = 'affiliation';
+    let scopusIds = [];
+
+    const childInstitutes = await Institute.find({parentId: researchEntity.institute});
+    for (let childInstitute of childInstitutes) {
+        if (!childInstitute.scopusId) continue;
+        const res = await scopusLoop(childInstitute.scopusId, params);
+        scopusIds = scopusIds.concat(res.scopusIds);
+    }
+
+    const total = await getDocumentsTotal(researchEntity.scopusId, params);
     const startingYear = ((new Date()).getFullYear()) + 1;
 
-    return scopusYearLoop(query, startingYear, total);
+    return scopusIds.concat(await scopusYearLoop(researchEntity.scopusId, params, startingYear, total));
 
-    async function scopusYearLoop(baseQuery, year, total, totalDone = 0) {
-        const query = _.cloneDeep(baseQuery);
-        query.where.additionalFields = [
+    async function scopusYearLoop(scopusId, baseParams, year, total, totalDone = 0) {
+        const params = _.cloneDeep(baseParams);
+        params.additionalFields = [
             {
                 field: 'year',
                 value: year
@@ -98,11 +104,11 @@ async function getResearchEntityDocumentsScopusIds(researchEntityModel, research
         ];
 
         try {
-            const res = await scopusLoop(query);
+            const res = await scopusLoop(scopusId, params);
             const newTotalDone = totalDone + parseInt(res.done, 10);
             const documentsScopusIds = res.scopusIds;
             if (newTotalDone < total)
-                return documentsScopusIds.concat(await scopusYearLoop(baseQuery, year - 1, total, newTotalDone));
+                return documentsScopusIds.concat(await scopusYearLoop(scopusId, baseParams, year - 1, total, newTotalDone));
 
             return documentsScopusIds;
         } catch (err) {
@@ -110,9 +116,8 @@ async function getResearchEntityDocumentsScopusIds(researchEntityModel, research
         }
     }
 
-    async function scopusLoop(query) {
-        const extracted = await scopusRequest(query);
-
+    async function scopusLoop(scopusId, params) {
+        const extracted = await scopusRequest(scopusId, params);
         if (!extracted.documents)
             return {
                 done: 0,
@@ -121,32 +126,32 @@ async function getResearchEntityDocumentsScopusIds(researchEntityModel, research
 
         const documentsScopusIds = extracted.documents.map(ed => getScopusId(ed));
 
-        const nextQuery = _.cloneDeep(query);
-        nextQuery.skip += query.limit;
+        const nextParams = _.cloneDeep(params);
+        nextParams.skip += params.limit;
 
-        if (extracted.count <= nextQuery.skip)
+        if (extracted.count <= nextParams.skip)
             return {
                 done: extracted.count,
                 scopusIds: documentsScopusIds
             };
 
-        const res = await scopusLoop(nextQuery);
+        const res = await scopusLoop(scopusId, nextParams);
         return {
             done: res.done,
             scopusIds: documentsScopusIds.concat(res.scopusIds)
         }
     }
 
-    async function scopusRequest(query) {
-        const config = await Connector.getConfig(researchEntityModel, researchEntityId, query);
+    async function scopusRequest(scopusId, params) {
+        const config = await Connector.getConfig(DocumentOrigins.SCOPUS, scopusId, params);
         const res = await Connector.makeRequest(config);
         return config.fieldExtract(res.body);
     }
 
-    async function getDocumentsTotal(query) {
-        const countQuery = _.cloneDeep(query);
-        countQuery.limit = 1;
-        const res = await scopusRequest(countQuery);
+    async function getDocumentsTotal(scopusId, params) {
+        const countParams = _.cloneDeep(params);
+        countParams.limit = 1;
+        const res = await scopusRequest(scopusId, countParams);
         return res.count;
     }
 }
@@ -186,21 +191,21 @@ function getScopusId(d) {
 }
 
 
-async function importDocuments(documents) {
-    if (_.isEmpty(documents))
+async function importDocuments(documentScopusIds) {
+    if (_.isEmpty(documentScopusIds))
         return [];
 
-    let documentsIds = [];
-    const docsIterator = chunks(documents, chunkSize);
+    let documents = [];
+    const docsIterator = chunks(documentScopusIds, chunkSize);
 
-    for (let docs of docsIterator)
-        documentsIds = documentsIds.concat(await updateDocs(docs));
+    for (let scopusId of docsIterator)
+        documents = documents.concat(await updateDocs(scopusId));
 
-    return documentsIds;
+    return documents;
 
-    async function updateDocs(documents) {
+    async function updateDocs(documentScopusIds) {
         const docs = await Promise.all(
-            documents.map(
+            documentScopusIds.map(
                 async scopusId => {
                     try {
                         const document = await getAndCreateOrUpdateDocument(scopusId);
@@ -221,8 +226,9 @@ async function importDocuments(documents) {
 
 async function getAndCreateOrUpdateDocument(scopusId) {
     const documentData = await ScopusConnector.getDocument(scopusId);
-    if(!_.isEmpty(documentData))
+    if (!_.isEmpty(documentData))
         return await createOrUpdateDocument(documentData);
+    return {};
 }
 
 async function createOrUpdateDocument(documentData) {
