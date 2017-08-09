@@ -28,9 +28,14 @@ module.exports = {
         const usersDocumentsScopusIds = await getResearchEntitiesDocumentsScopusIds(User);
         const groupsDocumentsScopusIds = await getResearchEntitiesDocumentsScopusIds(Group);
 
+        const currentExternalIds = (await Document.find({
+            kind: DocumentKinds.EXTERNAL,
+            origin: DocumentOrigins.SCOPUS
+        })).map(ed => ed.scopusId);
+
         const userDocsIds = _.flatten(usersDocumentsScopusIds.map(ur => ur.scopusIds));
         const groupDocsIds = _.flatten(groupsDocumentsScopusIds.map(ur => ur.scopusIds));
-        const docsIds = [...new Set(userDocsIds.concat(groupDocsIds))];
+        const docsIds = [...new Set(userDocsIds.concat(groupDocsIds).concat(currentExternalIds))];
 
         const importedDocuments = await importDocuments(docsIds);
         await updateAllExternalDocuments(ExternalDocument, usersDocumentsScopusIds, importedDocuments);
@@ -216,7 +221,8 @@ async function importDocuments(documents) {
 
 async function getAndCreateOrUpdateDocument(scopusId) {
     const documentData = await ScopusConnector.getDocument(scopusId);
-    return await createOrUpdateDocument(documentData);
+    if(!_.isEmpty(documentData))
+        return await createOrUpdateDocument(documentData);
 }
 
 async function createOrUpdateDocument(documentData) {

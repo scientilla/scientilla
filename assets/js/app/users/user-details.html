@@ -47,9 +47,9 @@
             <uib-tab index="1">
                 <uib-tab-heading>Groups</uib-tab-heading>
                 <ul>
-                    <li ng-repeat="c in vm.user.memberships">
-                        <a ng-href="#{{c.group.getProfileUrl()}}">
-                            {{c.getDisplayName()}}
+                    <li ng-repeat="g in vm.user.memberships">
+                        <a ng-href="#{{g.getProfileUrl()}}">
+                            {{g.getDisplayName()}}
                         </a>
                     </li>
                     <li ng-if="vm.user.memberships.length === 0">No groups</li>

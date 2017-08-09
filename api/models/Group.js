@@ -74,7 +74,7 @@ module.exports = _.merge({}, ResearchEntity, {
             model: 'institute'
         }
     },
-    getAuthorshipsData: async function (document, groupId, newAffiliationData) {
+    getAuthorshipsData: async function (document, groupId, newAffiliationData = {}) {
         return {
             isVerifiable: true,
             document: document,

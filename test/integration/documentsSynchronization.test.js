@@ -51,7 +51,7 @@ describe('Synchronization', function () {
     it("should split a document with an authorship with synchronize = false ", async function () {
         const newYear = '2018';
         const oldYear = externalDocument.year;
-        const document = await User.verifyDocument(User, user2.id, draft.id, {
+        await User.verifyDocument(User, user2.id, draft.id, {
             position: 1,
             affiliationInstituteIds: [institute.id],
             corresponding: true,
@@ -61,13 +61,23 @@ describe('Synchronization', function () {
         await Document.update(externalDocument.id, {year: newYear});
         await Synchronizer.synchronizeScopus();
 
-        const documents = await Document.find({title: document.title, kind: 'v'}).populate(['authorships']);
+        const clonedDocument = await Document.findOne({year: oldYear, kind: 'v'}).populate(['authorships']);
+        const updatedDocument = await Document.findOne({year: newYear, kind: 'v'}).populate(['authorships']);
 
-        const clonedDocument = documents.find(d => d.authorships.find(a => a.synchronize === false));
-        const updatedDocument = documents.find(d => d.authorships.find(a => a.synchronize));
+        should.not.be.empty(clonedDocument);
+        should.not.be.empty(updatedDocument);
 
-        clonedDocument.year.should.equal(oldYear);
-        updatedDocument.year.should.equal(newYear);
+        const clonedDocumentAuthorshipsVerified = clonedDocument.authorships.filter(a => a.researchEntity);
+        const updatedDocumentAuthorshipsVerified = updatedDocument.authorships.filter(a => a.researchEntity);
+
+        should.not.be.empty(clonedDocumentAuthorshipsVerified);
+        should.not.be.empty(updatedDocumentAuthorshipsVerified);
+
+        clonedDocumentAuthorshipsVerified.should.have.length(1);
+        updatedDocumentAuthorshipsVerified.should.have.length(1);
+
+        clonedDocumentAuthorshipsVerified[0].synchronize.should.equal(false);
+        updatedDocumentAuthorshipsVerified[0].synchronize.should.equal(true);
     });
 
 });

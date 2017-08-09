@@ -21,8 +21,6 @@ module.exports = {
     updateAllExternal: async (origin) => {
         if (!origin || origin === DocumentOrigins.SCOPUS)
             await ScopusExternalImporter.updateAll();
-        if (!origin || origin === DocumentOrigins.PUBLICATIONS)
-            await PublicationsExternalImporter.updateAll();
     },
     updateDocument: async (origin, id) => {
         if (origin === DocumentOrigins.SCOPUS)

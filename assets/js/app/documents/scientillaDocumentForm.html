@@ -28,8 +28,10 @@
     <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.authors.$invalid}">
         <label for="authors">Authors (must be in the form "Doe J., Smith Simpson J. V.")</label>
         <input type="text" name="authors" class="form-control" id="authors" placeholder="Authors"
-               ng-model="vm.document.authorsStr" ng-pattern="/^((\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)(,\s(\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)*$/"
-               data-ng-required="true" ng-model-options="{ allowInvalid: true }" >
+               ng-model="vm.document.authorsStr"
+               ng-pattern="vm.documentFieldsRules.authorsStr.regex"
+               data-ng-required="true"
+               ng-model-options="{ allowInvalid: true }">
         <span ng-show="vm.document.id && form.authors.$invalid"
               class="fa fa-exclamation-circle form-control-feedback" aria-hidden="true"
               title="Author string is not valid. It should be in the form 'E. Molinari, F. Bozzini, F. Semprini'">
@@ -68,12 +70,12 @@
         </div>
     </div>
     <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.itSource.$invalid}"
-         ng-if="vm.document.type == 'invited_talk' && vm.document.sourceType">
+         ng-if="vm.document.type == 'invited_talk'">
         <label for="source">{{vm.sourceLabel}}</label>
         <input id="itSource" name="itSource" type="text" ng-model="vm.document.itSource"
                uib-typeahead="source.title || source.name for source in vm.getItSources($viewValue)"
                typeahead-loading="searching" typeahead-no-results="noResults" class="form-control"
-               data-ng-required="true" placeholder="{{vm.sourceLabel}}" ng-model-options="{ allowInvalid: true }" >
+               data-ng-required="true" placeholder="{{vm.sourceLabel}}" ng-model-options="{ allowInvalid: true }">
     </div>
     <div class="form-group" ng-if="vm.document.sourceType == 'journal' && !['invited_talk'].includes(vm.document.type)">
         <label for="volume">Volume</label>
@@ -104,17 +106,30 @@
         <textarea rows="6" class="form-control" id="abstract" placeholder="Abstract"
                   ng-model="vm.document.abstract"></textarea>
     </div>
-    <div class="form-group" ng-if="!['invited_talk'].includes(vm.document.type)">
-        <label for="scopusid">Scopus ID</label>
-        <input type="text" class="form-control" id="scopusid" placeholder="Scopus ID" ng-model="vm.document.scopusId">
+    <div class="form-group has-feedback"
+         ng-if="!['invited_talk'].includes(vm.document.type)"
+         ng-class="{'has-error': vm.document.id && form.scopusId.$invalid}">
+        <label>Scopus ID</label>
+        <input class="form-control"
+               name="scopusId"
+               placeholder="Scopus ID"
+               ng-model="vm.document.scopusId"
+               ng-pattern="vm.documentFieldsRules.scopusId.regex"
+               ng-model-options="{ allowInvalid: true }">
+        <span ng-if="vm.document.id && form.scopusId.$invalid"
+              class="fa fa-exclamation-circle form-control-feedback">
+        </span>
     </div>
     <div class="form-group" ng-if="!['invited_talk'].includes(vm.document.type)">
-        <label for="scopusid">WoS ID</label>
-        <input type="text" class="form-control" id="wosid" placeholder="Wos ID" ng-model="vm.document.wosId">
+        <label>WoS ID</label>
+        <input class="form-control"
+               placeholder="Wos ID"
+               ng-model="vm.document.wosId">
     </div>
     <scientilla-button type="button" ng-disabled="!vm.document.id || !vm.document.isValid()" click="vm.verify()">Verify
     </scientilla-button>
-    <scientilla-button type="button" ng-disabled="!vm.document.id" click="vm.deleteDocument()">Delete</scientilla-button>
+    <scientilla-button type="button" ng-disabled="!vm.document.id" click="vm.deleteDocument()">Delete
+    </scientilla-button>
     <scientilla-button type="cancel" click="vm.cancel()">Close</scientilla-button>
     <div class="scientilla-document-form-message pull-right">{{vm.status.message}}</div>
 </form>

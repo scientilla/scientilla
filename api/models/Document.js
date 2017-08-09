@@ -183,8 +183,8 @@ module.exports = _.merge({}, BaseModel, {
                 requiredFields.push('source');
 
             return _.every(requiredFields, function (v) {
-                    return self[v];
-                }) && authorsStrRegex.test(self.authorsStr);
+                return self[v];
+            }) && authorsStrRegex.test(self.authorsStr);
         },
         draftToDocument: function () {
             this.kind = DocumentKinds.VERIFIED;
@@ -239,42 +239,10 @@ module.exports = _.merge({}, BaseModel, {
             }
 
             if (!this.scopusId)
-                throw "Empty scopusId";
+                throw 'Empty scopusId';
 
-            try {
-                const res = await Synchronizer.documentSynchronizeScopus(this.id);
-                return res.docData;
-
-            } catch (e) {
-                sails.log.debug('Document synchronize failed ' + this.scopusId);
-                return e;
-            }
-        },
-        clone: async function (newDocPartialData = {}) {
-            const docData = Document.selectData(this);
-            const newDocData = Object.assign({}, docData, newDocPartialData);
-            return await Document.create(newDocData);
-        },
-        setAuthorships: async function (authorshipsData) {
-            const authData = _.cloneDeep(authorshipsData);
-            authData.forEach(a => {
-                delete a.id;
-                delete a.createdAt;
-                delete a.updatedAt;
-                a.document = this.id;
-                a.affiliations = a.affiliations.map(aff => {
-                    if (aff.institute)
-                        return aff.institute;
-
-                    aff.document = this.id;
-                    delete aff.authorship;
-
-                    return aff;
-                });
-            });
-            const deleteAuthorships = await Authorship.destroy({document: this.id});
-            await Affiliation.destroy({authorship: deleteAuthorships.map(a => a.id)});
-            return Authorship.create(authData);
+            const res = await Synchronizer.documentSynchronizeScopus(this.id);
+            return res.docData;
         }
     },
     getFields: function () {
@@ -361,11 +329,15 @@ module.exports = _.merge({}, BaseModel, {
         else
             doc = await Document.create(selectedData);
 
-        if (documentData.authorships) {
-            doc = await Document.findOne(criteria);
+        if (!doc)
+            return {};
+
+        if (doc.id) {
             await Authorship.destroy({document: doc.id});
-            await Authorship.createEmptyAuthorships(doc.id, documentData);
+            if (documentData.authorships)
+                await Authorship.createEmptyAuthorships(doc.id, documentData);
         }
+
         return doc;
     },
     desynchronizeAll: async function (drafts) {
@@ -381,8 +353,30 @@ module.exports = _.merge({}, BaseModel, {
         }
         return desynchronizedDrafts;
     },
-    setAuthorships: async function (draftId, authorshipsData) {
-        const draft = await Document.findOneById(draftId);
-        return await draft.setAuthorships(authorshipsData);
+    setAuthorships: async function (docId, authorshipsData) {
+        const authData = _.cloneDeep(authorshipsData);
+        authData.forEach(a => {
+            delete a.id;
+            delete a.createdAt;
+            delete a.updatedAt;
+            a.document = docId;
+            a.affiliations = a.affiliations.map(aff => {
+                if (aff.institute)
+                    return aff.institute;
+
+                return aff.id;
+            });
+        });
+        await Authorship.destroy({document: docId});
+        await Affiliation.destroy({document: docId});
+        await Authorship.create(authData);
+
+        return await Document.findOneById(docId)
+            .populate(['authorships', 'groupAuthorships', 'affiliations']);
     },
+    clone: async function (document, newDocPartialData = {}) {
+        const docData = Document.selectData(document);
+        const newDocData = Object.assign({}, docData, newDocPartialData);
+        return await Document.create(newDocData);
+    }
 });

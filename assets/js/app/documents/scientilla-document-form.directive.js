@@ -26,6 +26,7 @@
         'Notification',
         'researchEntityService',
         'EventsService',
+        'documentFieldsRules',
         '$scope',
         '$timeout',
         'DocumentTypesService',
@@ -33,7 +34,15 @@
         'Restangular'
     ];
 
-    function scientillaDocumentFormController(Notification, researchEntityService, EventsService, $scope, $timeout, DocumentTypesService, context, Restangular) {
+    function scientillaDocumentFormController(Notification,
+                                              researchEntityService,
+                                              EventsService,
+                                              documentFieldsRules,
+                                              $scope,
+                                              $timeout,
+                                              DocumentTypesService,
+                                              context,
+                                              Restangular) {
         var vm = this;
         vm.status = createStatus();
         vm.cancel = cancel;
@@ -45,6 +54,7 @@
         vm.createSource = createSource;
         vm.closePopover = closePopover;
         vm.checkSource = checkSource;
+        vm.documentFieldsRules = documentFieldsRules;
         var allSourceTypes = DocumentTypesService.getSourceTypes();
         vm.sourceLabel = _.get(_.find(allSourceTypes, {id: vm.document.sourceType}), 'label');
 
@@ -98,23 +108,27 @@
         }
 
         function watchDocumentSourceType() {
-            $scope.$watch('vm.document.sourceType', function(newValue, oldValue) {
+            $scope.$watch('vm.document.sourceType', function (newValue, oldValue) {
                 if (newValue === oldValue)
                     return;
                 closePopover();
-                if (!newValue)
+                if (!newValue) {
+                    vm.sourceLabel = '';
                     return;
+                }
+
                 vm.sourceLabel = _.find(allSourceTypes, {id: newValue}).label;
                 vm.document.source = null;
-                vm.document.itSource = null;
             });
         }
 
         function watchDocumentType() {
-            $scope.$watch('vm.document.type', function(newValue) {
+            $scope.$watch('vm.document.type', function (newValue) {
                 closePopover();
                 var allowedSources = _.find(vm.documentTypes, {key: newValue}).allowedSources;
-                vm.sourceTypes = _.filter(allSourceTypes, function(s) { return allowedSources.includes(s.id);});
+                vm.sourceTypes = _.filter(allSourceTypes, function (s) {
+                    return allowedSources.includes(s.id);
+                });
             });
         }
 
@@ -146,7 +160,7 @@
                     .then(function (draft) {
                         vm.document = draft;
                         vm.status.setSaved(true);
-                        EventsService.publish(EventsService.DRAFT_UPDATED, vm.document );
+                        EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
                     });
         }
 
@@ -181,11 +195,11 @@
 
         function getItSources(searchText) {
             var sourcesData = {
-                'institute' : {
+                'institute': {
                     query: {where: {name: {contains: searchText}}},
                     model: 'institutes'
                 },
-                'conference' : {
+                'conference': {
                     query: {where: {title: {contains: searchText}, type: vm.document.sourceType}},
                     model: 'sources'
                 }
@@ -200,7 +214,7 @@
         function createSource() {
             vm.newSource.type = vm.document.sourceType;
             return Restangular.all('sources').post(vm.newSource)
-                .then(function(source) {
+                .then(function (source) {
                     vm.document.source = source;
                     vm.newSource = {};
                     closePopover();
@@ -213,8 +227,10 @@
 
         function openDocumentAffiliationsForm() {
             return saveDocument()
-                .then(function() {return close();})
-                .then(function() {
+                .then(function () {
+                    return close();
+                })
+                .then(function () {
                     return documentService.openDocumentAffiliationForm(vm.document);
                 });
         }
@@ -227,8 +243,10 @@
 
         function verify() {
             saveDocument()
-                .then(function() {return close();})
-                .then(function() {
+                .then(function () {
+                    return close();
+                })
+                .then(function () {
                     return documentService.verifyDraft(vm.document);
                 });
         }
