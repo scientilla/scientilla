@@ -10,108 +10,10 @@ const loadJsonFile = require('load-json-file');
 
 
 module.exports = {
-    importDocuments,
     importSources,
     importPeople,
     importGroups
 };
-
-async function importDocuments() {
-    const n = await Document.count();
-    if (n>0) {
-        sails.log.info('document import cannot be executed if some documents have already been inserted');
-        return;
-    }
-    const institute = await Group.findOneByName(sails.config.scientilla.institute.name);
-    await importScopusDocuments(institute);
-}
-
-function importScopusDocuments(institute) {
-    const startingYear = sails.config.scientilla.mainInstituteImport.startingYear;
-
-    return scopusYearLoop(startingYear);
-
-    function scopusYearLoop(year) {
-
-        const query = {
-            limit: 200,
-            skip: 0,
-            where: {
-                connector: 'Scopus',
-                field: 'scopusId',
-                additionalFields: [
-                    {
-                        field: 'year',
-                        value: year
-                    }
-                ]
-            }
-        };
-
-        sails.log.info('Importing documents from ' + year);
-
-        return scopusLoop(Group, institute.id, query)
-            .then(items => next(year))
-            .catch(err => {
-                sails.log.debug(err);
-                return next(year);
-            });
-    }
-
-    function next(year) {
-        if (year >= (new Date()).getFullYear() + 1)
-            return;
-
-        return scopusYearLoop(year + 1);
-    }
-
-
-    function scopusLoop(researchEntityModel, instituteId, query) {
-
-        return Connector.getDocuments(researchEntityModel, instituteId, query)
-            .then(result => {
-                const documents = result.items;
-
-                const toImport = documents.filter(
-                    d => !_.isEmpty(d) && d.authorships.filter(
-                        a => a.affiliations.includes(instituteId)
-                    ).length
-                );
-
-                Promise.all(toImport.map(draftData => fastCreateDraft(draftData)))
-                    .then(drafts => drafts.forEach(draft => fastVerifyDraft(draft, instituteId)));
-
-                if (result.count <= (query.limit + query.skip))
-                    return;
-
-                const newQuery = _.cloneDeep(query);
-                newQuery.skip += query.limit;
-
-                return scopusLoop(researchEntityModel, instituteId, newQuery);
-            })
-    }
-
-    function fastCreateDraft(draftData) {
-        const selectedDraftData = Document.selectData(draftData);
-        selectedDraftData.draftGroupCreator = institute.id;
-        return Document.create(selectedDraftData)
-            .then(draft =>
-                Promise.all([
-                    draft,
-                    Authorship.createEmptyAuthorships(draft.id, draftData)
-                ]))
-            .spread(draft => draft);
-    }
-
-    function fastVerifyDraft(draft, instituteId) {
-        if (draft.isValid()) {
-            draft.draftToDocument();
-            Group.doVerifyDocument(draft, instituteId)
-        }
-
-    }
-
-}
 
 async function importSources() {
 
