@@ -82,11 +82,13 @@ async function getResearchEntityDocumentsScopusIds(researchEntity) {
     params.type = 'affiliation';
     let scopusIds = [];
 
-    const childInstitutes = await Institute.find({parentId: researchEntity.institute});
-    for (let childInstitute of childInstitutes) {
-        if (!childInstitute.scopusId) continue;
-        const res = await scopusLoop(childInstitute.scopusId, params);
-        scopusIds = scopusIds.concat(res.scopusIds);
+    if (researchEntity.institute) {
+        const childInstitutes = await Institute.find({parentId: researchEntity.institute});
+        for (let childInstitute of childInstitutes) {
+            if (!childInstitute.scopusId) continue;
+            const res = await scopusLoop(childInstitute.scopusId, params);
+            scopusIds = scopusIds.concat(res.scopusIds);
+        }
     }
 
     const total = await getDocumentsTotal(researchEntity.scopusId, params);
