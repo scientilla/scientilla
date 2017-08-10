@@ -74,6 +74,7 @@ module.exports = _.merge({}, BaseModel, {
         const newAuthData = Authorship.clone(authorshipData);
         newAuthData.document = docId;
 
+        await Affiliation.destroy({authorship: authorshipId, document: docId});
         await Authorship.update({id: authorshipId}, newAuthData);
     },
     createAuthorshipData: async function (docId, authorshipData) {
