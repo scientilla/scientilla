@@ -30,6 +30,7 @@ async function synchronizeScopus() {
             kind: [DocumentKinds.DRAFT, DocumentKinds.VERIFIED],
             origin: DocumentOrigins.SCOPUS
         }).populate(documentPopulates)
+            .sort('id ASC')
             .limit(limit)
             .skip(skip);
 
