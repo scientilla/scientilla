@@ -354,18 +354,10 @@ module.exports = _.merge({}, BaseModel, {
     },
     setAuthorships: async function (docId, authorshipsData) {
         if (!docId) throw "setAuthorship error!";
-        const authData = _.cloneDeep(authorshipsData);
-        authData.forEach(a => {
-            delete a.id;
-            delete a.createdAt;
-            delete a.updatedAt;
-            a.document = docId;
-            a.affiliations = a.affiliations.map(aff => {
-                if (aff.institute)
-                    return aff.institute;
-
-                return aff.id;
-            });
+        const authData = authorshipsData.map(a => {
+            const newAuth = Authorship.clone(a);
+            newAuth.document = docId;
+            return newAuth;
         });
         await Authorship.destroy({document: docId});
         await Affiliation.destroy({document: docId});

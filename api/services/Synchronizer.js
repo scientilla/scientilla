@@ -18,7 +18,7 @@ const documentPopulates = [
 
 async function synchronizeScopus() {
     sails.log.info("Scopus synchronization starting");
-    const documentSynchronized = [];
+    let documentSynchronized = 0;
     const documentsToSynchronize = await Document.find({
         synchronized: true,
         kind: [DocumentKinds.DRAFT, DocumentKinds.VERIFIED],
@@ -28,14 +28,14 @@ async function synchronizeScopus() {
     for (let doc of documentsToSynchronize) {
         try {
             const res = await documentSynchronize(doc, DocumentOrigins.SCOPUS);
-            if (!res.err)
-                documentSynchronized.push(res.docData);
+            if (res)
+                documentSynchronized++;
         }
         catch (e) {
             sails.log.debug(e);
         }
     }
-    sails.log.info(documentSynchronized.length + " documents synchronized");
+    sails.log.info(documentSynchronized + " documents synchronized");
 }
 
 async function documentSynchronizeScopus(docId) {
@@ -53,23 +53,9 @@ async function documentSynchronizeScopus(docId) {
             throw "Scopus Id rejected by Scopus, scopusId: " + doc.scopusId;
     }
 
-    const res = await documentSynchronize(doc, DocumentOrigins.SCOPUS);
-    if (res.err && res.code !== 1)
-        throw "Synchronization failed " + doc.id;
-
-    res.docData.synchronized = true;
-    await Document.update(doc.id, res.docData);
-
-    return res.docData;
+    return await documentSynchronize(doc, DocumentOrigins.SCOPUS);
 }
 
-/*
- * error codes:
- *   0 - No external found
- *   1 - No differences with external
- *   2 - All verified authorship have synchronize = false
- *
- */
 async function documentSynchronize(doc, origin) {
     const externalDoc = await Document.findOne({
         scopusId: doc.scopusId,
@@ -78,37 +64,39 @@ async function documentSynchronize(doc, origin) {
     }).populate(documentPopulates);
     if (!externalDoc) {
         sails.log.debug('Document with id ' + doc.id + " has no corresponding external document");
-        return {err: true, code: 0};
+        throw "Synchronization failed";
     }
 
     const docData = Document.selectData(doc);
     const externalDocData = Document.selectData(externalDoc);
     const differences = getDifferences(docData, externalDocData);
     checkAuthors(doc, externalDoc);
-    const affiliationsAreSame = hasSameAffiliations(doc, externalDoc);
+    const positionsToUpdate = getAuthorshipPositionsToUpdate(doc, externalDoc);
 
-    if (_.isEmpty(differences) && affiliationsAreSame)
-        return {err: true, code: 1, docData};
+    if (_.isEmpty(differences) && !positionsToUpdate.length) {
+        if (!doc.synchronized)
+            await Document.update({id: doc.id}, {synchronized: true});
+        return false;
+    }
 
     let docToUpdate = doc;
 
     if (doc.kind === DocumentKinds.VERIFIED) {
         docToUpdate = await documentSplit(doc);
 
-        if (!docToUpdate)
-            return {err: true, code: 2, docData};
+        if (!docToUpdate) {
+            sails.log.debug('Document with id ' + doc.id + " has no corresponding external document");
+            throw "Synchronization failed";
+        }
     }
 
-    docToUpdate = await synchronizeAffiliations(docToUpdate, externalDoc);
+    await synchronizeAuthorships(docToUpdate, externalDoc, positionsToUpdate);
 
     delete externalDocData.kind;
-    delete externalDocData.synchronized;
+    externalDocData.synchronized = true;
     await Document.update(docToUpdate.id, externalDocData);
 
-    return {
-        err: false,
-        docData: externalDocData
-    };
+    return true;
 }
 
 function getDifferences(d1, d2) {
@@ -135,27 +123,31 @@ function checkAuthors(doc, externalDoc) {
     });
 }
 
-function hasSameAffiliations(doc, externalDoc) {
+function getAuthorshipPositionsToUpdate(doc, externalDoc) {
     const docFullAuthorships = doc.getFullAuthorships();
     const externalFullAuthorships = externalDoc.getFullAuthorships();
 
-    if (docFullAuthorships.length !== externalFullAuthorships.length)
-        return false;
+    return externalDoc.authorsStr.split(',').reduce((acc, v, i) => {
+        const docAuthorship = docFullAuthorships.find(a => a.position === i);
+        const externalAuthorship = externalFullAuthorships.find(a => a.position === i);
+        if (!docAuthorship && !externalAuthorship)
+            return acc;
 
-    return externalDoc.authorsStr.split(',').every((v, i) => {
-        const docAuthorships = docFullAuthorships.find(a => a.position === i);
-        const externalAuthorships = externalFullAuthorships.find(a => a.position === i);
-        if (!docAuthorships && !externalAuthorships)
-            return true;
+        if (_.isObject(docAuthorship) && docAuthorship.researchEntity)
+            return acc;
 
-        if (!docAuthorships ^ !externalAuthorships)
-            return false;
+        if (!docAuthorship ^ !externalAuthorship) {
+            return acc.concat([i]);
+        }
 
-        const docAffiliationIds = docAuthorships.affiliations.map(a => a.institute);
-        const externalAffiliationIds = externalAuthorships.affiliations.map(a => a.institute);
+        const docAffiliationIds = docAuthorship.affiliations.map(a => a.institute);
+        const externalAffiliationIds = externalAuthorship.affiliations.map(a => a.institute);
 
-        return _.isEqual(docAffiliationIds.sort(), externalAffiliationIds.sort());
-    });
+        if (!_.isEqual(docAffiliationIds.sort(), externalAffiliationIds.sort()))
+            return acc.concat([i]);
+
+        return acc;
+    }, []);
 }
 
 async function documentSplit(doc) {
@@ -195,29 +187,24 @@ async function documentSplit(doc) {
     return await Document.setAuthorships(doc.id, oldDocAuthorshipsData);
 }
 
-async function synchronizeAffiliations(doc, externalDoc) {
+async function synchronizeAuthorships(doc, externalDoc, positionsToUpdate) {
     const externalAuthorshipsData = externalDoc.getFullAuthorships();
     const authorshipsData = doc.getFullAuthorships();
 
-    const newAuthorshipsList = [];
-    if (!externalDoc.authorsStr)
-        return;
-
-    for (const i of externalDoc.authorsStr.split(',').keys()) {
-        const externalAuthData = externalAuthorshipsData.find(a => a.position === i);
+    for (const i of positionsToUpdate) {
         const authData = authorshipsData.find(a => a.position === i);
+        const externalAuthData = externalAuthorshipsData.find(a => a.position === i);
 
-        let newAuthorship = _.cloneDeep(authData);
         if (authData && externalAuthData) {
+            const newAuthorship = Authorship.clone(authData);
             if (!authData.researchEntity)
-                newAuthorship.affiliations = _.cloneDeep(externalAuthData.affiliations);
+                newAuthorship.affiliations = externalAuthData.affiliations;
+            await Authorship.updateAuthorshipData(authData.id, doc.id, newAuthorship);
         }
         else if (!authData && externalAuthData)
-            newAuthorship = _.cloneDeep(externalAuthData);
-
-        if (newAuthorship)
-            newAuthorshipsList.push(newAuthorship);
+            await Authorship.createAuthorshipData(doc.id, externalAuthData);
+        else if (authData)
+            await Authorship.destroy({id: authorshipsData.id});
     }
 
-    return await Document.setAuthorships(doc.id, newAuthorshipsList);
 }
