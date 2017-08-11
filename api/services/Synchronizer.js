@@ -18,24 +18,37 @@ const documentPopulates = [
 
 async function synchronizeScopus() {
     sails.log.info("Scopus synchronization starting");
+
+    const limit = 1000;
+    let skip = 0;
     let documentSynchronized = 0;
-    const documentsToSynchronize = await Document.find({
-        synchronized: true,
-        kind: [DocumentKinds.DRAFT, DocumentKinds.VERIFIED],
-        origin: DocumentOrigins.SCOPUS
-    }).populate(documentPopulates);
-    sails.log.info(documentsToSynchronize.length + " documents found");
-    for (let doc of documentsToSynchronize) {
-        try {
-            const res = await documentSynchronize(doc, DocumentOrigins.SCOPUS);
-            if (res)
-                documentSynchronized++;
+    let documentsToSynchronize;
+
+    do {
+        documentsToSynchronize = await Document.find({
+            synchronized: true,
+            kind: [DocumentKinds.DRAFT, DocumentKinds.VERIFIED],
+            origin: DocumentOrigins.SCOPUS
+        }).populate(documentPopulates)
+            .sort('id ASC')
+            .limit(limit)
+            .skip(skip);
+
+        sails.log.info('working on ' + documentsToSynchronize.length + ' documents');
+        for (let doc of documentsToSynchronize) {
+            try {
+                const res = await documentSynchronize(doc, DocumentOrigins.SCOPUS);
+                if (res)
+                    documentSynchronized++;
+            }
+            catch (e) {
+                sails.log.debug(e);
+            }
         }
-        catch (e) {
-            sails.log.debug(e);
-        }
-    }
-    sails.log.info(documentSynchronized + " documents synchronized");
+
+        skip = skip + limit;
+    } while (documentsToSynchronize.length === limit);
+    sails.log.info(documentSynchronized + ' documents synchronized');
 }
 
 async function documentSynchronizeScopus(docId) {
