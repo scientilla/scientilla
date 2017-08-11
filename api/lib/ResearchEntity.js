@@ -164,6 +164,9 @@ module.exports = _.merge({}, BaseModel, {
         return await Model.doVerifyDocument(authorshipData.document, researchEntityId, authorshipData);
     },
     updateDraft: async function (ResearchEntityModel, draftId, draftData) {
+        const d = await Document.findOneById(draftId);
+        if(!d.kind || d.kind !== DocumentKinds.DRAFT)
+            throw "Draft not found";
         const documentFields = Document.getFields();
         const selectedDraftData = _.pick(draftData, documentFields);
         selectedDraftData.kind = DocumentKinds.DRAFT;

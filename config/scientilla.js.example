@@ -23,12 +23,11 @@ module.exports.scientilla = {
         scopusId: "60102151"
     },
     mainInstituteImport: {
-        enabled: false,
-        startingYear: 1970,
         userImportUrl: 'http://example.com/users'
     },
     cron: {
-        time: '0 0 4 * * *'
+        daily: '0 0 4 * * *',
+        monitor: '0 0 * * * *'
     },
     registerEnabled: true
 };

@@ -7,17 +7,17 @@ const SourceTypes = require("./SourceTypes");
 const DocumentTypes = require("./DocumentTypes");
 
 module.exports = {
-    getConfig: function (researchEntity, configQuery) {
+    getConfig: function (orcidId, params) {
         return {
             reqParams: {
-                uri: 'http://pub.orcid.org/' + researchEntity.orcidId + '/orcid-works',
+                uri: 'http://pub.orcid.org/' + orcidId + '/orcid-works',
                 headers: {
                     'Accept': 'application/json'
                 },
                 /*Pagination does not work in this way*/
                 qs: {
-                    limit: configQuery.limit,
-                    skip: configQuery.skip
+                    limit: params.limit,
+                    skip: params.skip
                 },
                 json: true
 
@@ -26,7 +26,7 @@ module.exports = {
                 /* Fake pagination: To be fixed */
                 const allDocuments = _.get(res, 'orcid-profile.orcid-activities.orcid-works.orcid-work');
                 const sortedDocuments = _.orderBy(allDocuments, ['publication-date.year.value'], ['desc']);
-                const documents = _.slice(sortedDocuments, configQuery.skip, configQuery.skip + configQuery.limit);
+                const documents = _.slice(sortedDocuments, params.skip, params.skip + params.limit);
                 const count = allDocuments.length;
                 return {documents, count};
             },

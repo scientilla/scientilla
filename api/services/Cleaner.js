@@ -57,14 +57,12 @@ async function cleanInstituteCopies() {
 
 async function cleanSourceCopies() {
     function getSourceCopy(i) {
-        return Source.findOne({id: {'!': i.id}, scopusId: i.scopusId});
+        return Source.findOne({id: {'<': i.id}, scopusId: i.scopusId});
     }
 
-    const sources = await Source.find();
+    const sources = await Source.find({scopusId: {'!': null}});
     const deletedSources = [];
     for (let source of sources) {
-        if (!source.scopusId)
-            continue;
         const copy = await getSourceCopy(source);
         if (!copy)
             continue;

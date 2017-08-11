@@ -7,10 +7,11 @@
     Prototyper.$inject = [
         'userConstants',
         'DocumentLabels',
-        'DocumentKinds'
+        'DocumentKinds',
+        'documentFieldsRules'
     ];
 
-    function Prototyper(userConstants, DocumentLabels, DocumentKinds) {
+    function Prototyper(userConstants, DocumentLabels, DocumentKinds, documentFieldsRules) {
         const service = {
             toUserModel: toUserModel,
             toUsersCollection: applyToAll(toUserModel),
@@ -128,7 +129,11 @@
             },
             getExternalConnectors: function () {
                 var connectors = [];
-                var publicationsConnector = {value: 'publications', label: 'Publications', enabled: !!this.publicationsAcronym};
+                var publicationsConnector = {
+                    value: 'publications',
+                    label: 'Publications',
+                    enabled: !!this.publicationsAcronym
+                };
                 var scopusConnector = {value: 'scopus', label: 'Scopus', enabled: !!this.scopusId};
                 connectors.push(publicationsConnector);
                 connectors.push(scopusConnector);
@@ -194,8 +199,6 @@
                 return document;
             },
             isValid: function () {
-                const authorsStrRegex = /^((\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)(,\s(\w|-|')+(\s(\w|-|')+)*((\s|-)?\w\.)+)*$/;
-                const self = this;
                 const requiredFields = [
                     'authorsStr',
                     'title',
@@ -210,9 +213,11 @@
                 else
                     requiredFields.push('source');
 
-                return _.every(requiredFields, function (v) {
-                        return self[v];
-                    }) && authorsStrRegex.test(self.authorsStr);
+                return _.every(requiredFields, v => this[v]) &&
+                    _.every(documentFieldsRules, (rule, k) => {
+                        if (!this[k]) return rule.allowNull;
+                        return rule.regex.test(this[k]);
+                    });
             },
             getAllCoauthors: function () {
                 return this.authors;

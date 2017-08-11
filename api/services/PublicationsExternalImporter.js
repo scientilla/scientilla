@@ -1,4 +1,4 @@
-/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship */
+/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, User, Group, Authorship */
 // PublicationsExternalImporter.js - in api/services
 
 "use strict";
@@ -8,11 +8,11 @@ const _ = require('lodash');
 module.exports = {
     updateUser: async (user) => {
         const count = await updateResearchEntityProfile(user);
-        sails.log.info('updated/inserted ' + count + ' publications external documents of user ' + user.id);
+        sails.log.info('updated/inserted ' + count + ' publications external documents of user ' + user.username);
     },
     updateGroup: async (group) => {
         const count = await updateResearchEntityProfile(group);
-        sails.log.info('updated/inserted ' + count + ' publications external documents of group ' + group.id);
+        sails.log.info('updated/inserted ' + count + ' publications external documents of group ' + group.name);
     },
     updateAll: async () => {
         let count = 0;
@@ -50,27 +50,21 @@ async function updateGroupProfiles() {
 
 async function updateResearchEntityProfile(researchEntity) {
 
-    let researchEntityModel, publicationsResearchEntityField, externalDocumentModel;
+    let searchKey, externalDocumentModel;
     if (researchEntity.getType() === 'user') {
-        researchEntityModel = User;
-        publicationsResearchEntityField = 'username';
+        searchKey = 'username';
         externalDocumentModel = ExternalDocument;
     } else {
-        researchEntityModel = Group;
-        publicationsResearchEntityField = 'publicationsAcronym';
+        searchKey = 'publicationsAcronym';
         externalDocumentModel = ExternalDocumentGroup;
     }
 
-    const query = {
-        where: {
-            connector: 'Publications',
-            field: publicationsResearchEntityField,
-            type: 'all'
-        },
+    const params = {
         limit: 9999999, //TODO change
-        skip: 0
+        skip: 0,
+        type: 'author'
     };
-    const res = await Connector.getDocuments(researchEntityModel, researchEntity.id, query);
+    const res = await Connector.getDocuments(DocumentOrigins.PUBLICATIONS, researchEntity[searchKey], params);
     const documents = res.items;
     const documentsIds = await createOrUpdateDocuments(documents);
     await updateProfile(externalDocumentModel, researchEntity.id, documentsIds);

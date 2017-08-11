@@ -243,11 +243,6 @@ module.exports = _.merge({}, BaseModel, {
 
             const res = await Synchronizer.documentSynchronizeScopus(this.id);
             return res.docData;
-        },
-        clone: async function (newDocPartialData = {}) {
-            const docData = Document.selectData(this);
-            const newDocData = Object.assign({}, docData, newDocPartialData);
-            return await Document.create(newDocData);
         }
     },
     getFields: function () {
@@ -330,15 +325,18 @@ module.exports = _.merge({}, BaseModel, {
 
         let doc = await Document.findOne(criteria);
         if (doc)
-            doc = await Document.update(criteria, selectedData);
+            await Document.update(criteria, selectedData);
         else
-            doc = await Document.create(selectedData);
+            await Document.create(selectedData);
 
-        if (documentData.authorships) {
-            doc = await Document.findOne(criteria);
-            await Authorship.destroy({document: doc.id});
+        doc = await Document.findOne(criteria);
+        if (!doc)
+            throw 'Document not created';
+
+        await Authorship.destroy({document: doc.id});
+        if (documentData.authorships)
             await Authorship.createEmptyAuthorships(doc.id, documentData);
-        }
+
         return doc;
     },
     desynchronizeAll: async function (drafts) {
@@ -355,27 +353,22 @@ module.exports = _.merge({}, BaseModel, {
         return desynchronizedDrafts;
     },
     setAuthorships: async function (docId, authorshipsData) {
-        const authData = _.cloneDeep(authorshipsData);
-        authData.forEach(a => {
-            delete a.id;
-            delete a.createdAt;
-            delete a.updatedAt;
-            a.document = docId;
-            a.affiliations = a.affiliations.map(aff => {
-                if (aff.institute)
-                    return aff.institute;
-
-                aff.document = docId;
-                delete aff.authorship;
-
-                return aff;
-            });
+        if (!docId) throw "setAuthorship error!";
+        const authData = authorshipsData.map(a => {
+            const newAuth = Authorship.clone(a);
+            newAuth.document = docId;
+            return newAuth;
         });
-        const deleteAuthorships = await Authorship.destroy({document: docId});
-        await Affiliation.destroy({authorship: deleteAuthorships.map(a => a.id)});
+        await Authorship.destroy({document: docId});
+        await Affiliation.destroy({document: docId});
         await Authorship.create(authData);
 
         return await Document.findOneById(docId)
             .populate(['authorships', 'groupAuthorships', 'affiliations']);
     },
+    clone: async function (document, newDocPartialData = {}) {
+        const docData = Document.selectData(document);
+        const newDocData = Object.assign({}, docData, newDocPartialData);
+        return await Document.create(newDocData);
+    }
 });

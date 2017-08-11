@@ -1,4 +1,5 @@
 /* global Authorship, Affiliation*/
+"use strict";
 /**
  * Authorship.js
  *
@@ -51,6 +52,38 @@ module.exports = _.merge({}, BaseModel, {
         const authorships = _.map(docData.authorships, a => _.pick(a, authorshipFields));
         _.forEach(authorships, a => a.document = docId);
         return Authorship.create(authorships);
+    },
+    clone: function (authorship) {
+        return {
+            position: authorship.position,
+            researchEntity: authorship.researchEntity,
+            synchronize: authorship.synchronize,
+            corresponding: authorship.corresponding,
+            document: authorship.document,
+            affiliations: authorship.affiliations.map(aff => {
+                if (aff.institute)
+                    return aff.institute;
+
+                return aff.id;
+            })
+        };
+    },
+    updateAuthorshipData: async function (authorshipId, docId, authorshipData) {
+        if (!docId) throw "updateAuthorshipData error!";
+
+        const newAuthData = Authorship.clone(authorshipData);
+        newAuthData.document = docId;
+
+        await Affiliation.destroy({authorship: authorshipId, document: docId});
+        await Authorship.update({id: authorshipId}, newAuthData);
+    },
+    createAuthorshipData: async function (docId, authorshipData) {
+        if (!docId) throw "updateAuthorshipData error!";
+
+        const newAuthData = Authorship.clone(authorshipData);
+        newAuthData.document = docId;
+
+        await Authorship.create(newAuthData);
     }
 });
 
