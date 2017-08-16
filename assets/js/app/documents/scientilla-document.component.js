@@ -36,6 +36,8 @@
             vm.verifiedCount = getVerifiedCount();
             if (vm.checkDuplicates)
                 checkDuplicate();
+
+            addLabels();
         };
 
         function checkDuplicate() {
@@ -73,7 +75,12 @@
                 documentLabel = DocumentLabels.ALREADY_IN_DRAFTS;
             if (documentLabel)
                 vm.document.addLabel(documentLabel);
+        }
 
+        function addLabels() {
+            console.log(vm.document.createdAt);
+            if (vm.document.kind === 'd' && (new Date(vm.document.createdAt)).toDateString() === (new Date()).toDateString())
+                vm.document.addLabel(DocumentLabels.NEW);
         }
 
         function openDetails() {

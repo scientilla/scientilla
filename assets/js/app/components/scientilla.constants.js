@@ -81,7 +81,8 @@
         ALREADY_VERIFIED: 'already verified',
         ALREADY_IN_DRAFTS: 'already in drafts',
         DISCARDED: 'discarded',
-        UVERIFYING: 'unverifying'
+        UVERIFYING: 'unverifying',
+        NEW: 'new'
     };
 
 
