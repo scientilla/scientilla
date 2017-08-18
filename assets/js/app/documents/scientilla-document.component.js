@@ -78,7 +78,6 @@
         }
 
         function addLabels() {
-            console.log(vm.document.createdAt);
             if (vm.document.kind === 'd' && (new Date(vm.document.createdAt)).toDateString() === (new Date()).toDateString())
                 vm.document.addLabel(DocumentLabels.NEW);
         }
