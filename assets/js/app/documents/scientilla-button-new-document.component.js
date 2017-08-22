@@ -3,6 +3,7 @@
  */
 
 (function () {
+    "use strict";
     angular
         .module('documents')
         .component('scientillaButtonNewDocument', {
@@ -21,6 +22,7 @@
         var vm = this;
 
         vm.createNewDocument = createNewDocument;
+        vm.openScientillaDocumentSearch = ModalService.openScientillaDocumentSearch;
         vm.types = DocumentTypesService.getDocumentTypes();
 
         function createNewDocument(type) {

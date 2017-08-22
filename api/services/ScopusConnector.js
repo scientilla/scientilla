@@ -9,63 +9,57 @@ const DocumentTypes = require("./DocumentTypes");
 
 module.exports = {
     getConfig,
-    getDocument
+    getDocument,
+    getSingleSearchConfig
 };
 
 function getConfig(scopusId, params) {
-    let query = [];
+    const search = {};
     if (params.type === 'author')
-        query.push('au-id(' + scopusId + ')');
+        search['au-id'] = scopusId;
     else
-        query.push('AF-ID(' + scopusId + ')');
+        search['af-id'] = scopusId;
 
-    const additionalOpts = {
-        'year': 'PUBYEAR IS %val'
-    };
-
-    if (Array.isArray(params.additionalFields))
-        query = query.concat(
-            params.additionalFields
-                .map(f => additionalOpts[f.field].replace(/%val/, f.value))
-        );
+    Object.assign(search, params.additionalFields);
+    const queryString = getQueryString(search);
 
     return {
-        reqParams: {
-            uri: sails.config.scientilla.scopus.url + '/content/search/scopus',
-            headers: {
-                'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
-                'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
-            },
-            qs: {
-                start: params.skip,
-                count: params.limit,
-                query: query.join(' AND '),
-                sort: '-pubyear'
-            },
-            json: true
-        },
-        fieldExtract: res => {
-            const error = _.get(res, 'search-results.entry[0].error');
-
-            if (error) {
-                if (error === 'Result set was empty')
-                    return {count: 0, documents: []};
-                else
-                    throw new Error(error);
-            }
-
-            const count = _.get(res, 'search-results.opensearch:totalResults');
-            const documents = _.get(res, 'search-results.entry');
-            return {documents, count};
-        },
-        transform: d1 => {
-            return getDocument(getScopusId(d1));
-        }
+        fieldExtract,
+        transform,
+        reqParams: getSearchReqParams(queryString, params)
     };
 }
 
 function getDocument(scopusId) {
     return scoupsSingleRequest(scopusId, 0);
+}
+
+function getSingleSearchConfig(search) {
+    const queryString = getQueryString(search);
+
+    return {
+        fieldExtract,
+        transform,
+        reqParams: getSearchReqParams(queryString, {skip: 0, limit: 1})
+    };
+
+}
+
+function getSearchReqParams(queryString, params) {
+    return {
+        uri: sails.config.scientilla.scopus.url + '/content/search/scopus',
+        headers: {
+            'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
+            'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
+        },
+        qs: {
+            start: params.skip,
+            count: params.limit,
+            query: queryString,
+            sort: '-pubyear'
+        },
+        json: true
+    };
 }
 
 async function scoupsSingleRequest(scopusId, attempt) {
@@ -238,6 +232,50 @@ async function scoupsSingleRequest(scopusId, attempt) {
     }
 
     return documentData;
+}
+
+
+function fieldExtract(res) {
+    const error = _.get(res, 'search-results.entry[0].error');
+
+    if (error) {
+        if (error === 'Result set was empty')
+            return {count: 0, documents: []};
+        else
+            throw new Error(error);
+    }
+
+    const count = _.get(res, 'search-results.opensearch:totalResults');
+    const documents = _.get(res, 'search-results.entry');
+    return {documents, count};
+}
+
+function transform(d1) {
+    return getDocument(getScopusId(d1));
+}
+
+function getQueryString(search = {}) {
+    if (!_.isObject(search))
+        return '';
+
+    const queryParams = {
+        'year': 'PUBYEAR IS %val%',
+        'doi': 'doi(%val%)',
+        'au-id': 'au-id(%val%)',
+        'af-id': 'af-id(%val%)'
+    };
+
+    const queryArr = Object.keys(search)
+        .reduce((query, key) => {
+                if (queryParams[key]) {
+                    query.push(queryParams[key].replace(/%val%/, search[key]));
+                    return query;
+                }
+                return query;
+            },
+            []);
+
+    return queryArr.join(' AND ');
 }
 
 function getConferenceLocation(d) {

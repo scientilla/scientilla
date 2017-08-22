@@ -1,4 +1,5 @@
 /* global Document */
+"use strict";
 
 /**
  * DocumentController
@@ -18,5 +19,11 @@ module.exports = {
         const drafts = req.body.drafts;
         res.halt(Document.desynchronizeAll(drafts));
     },
+    externalSearch: async function (req, res) {
+        const origin = req.query.origin;
+        const searchKey = req.query.searchKey;
+        const searchValue = req.query.searchValue;
+        res.halt(Document.externalSearch(origin, searchKey, searchValue));
+    }
 };
 

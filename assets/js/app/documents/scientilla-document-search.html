@@ -1,0 +1,30 @@
+<h1>External search and import</h1>
+<form autocomplete="off" ng-submit="vm.doSearch()">
+    <div class="form-group">
+        <label>Origin</label>
+        <select class="form-control"
+                ng-model="vm.origin"
+                ng-options="option.key as option.label for option in vm.documentOrigins">
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Search by</label>
+        <select class="form-control"
+                ng-model="vm.search.key">
+            <option value="doi">DOI</option>
+            <option value="originId">Origin ID</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Search value</label>
+        <input class="form-control"
+               placeholder="Search"
+               ng-model="vm.search.value"
+        >
+    </div>
+    <div ng-if="vm.status===vm.statuses.SEARCHING">
+        Searching
+    </div>
+    <scientilla-button type="submit" ng-disabled="vm.isSearchDisabled()">Search</scientilla-button>
+    <scientilla-button type="cancel" click="vm.cancel()">Close</scientilla-button>
+</form>
