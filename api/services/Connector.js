@@ -8,21 +8,14 @@ const Promise = require("bluebird");
 module.exports = {
     getDocuments,
     getConfig,
-    makeRequest
+    makeRequest,
+    getDocument,
+    getDocumentByDoi
 };
 
-async function getDocuments(origin, searchKey, params) {
-    const reqConfig = await getConfig(origin, searchKey, params);
-    let res = await makeRequest(reqConfig);
-    const extracted = reqConfig.fieldExtract(res.body);
-    const documents = await Promise.all(_.map(extracted.documents, r => reqConfig.transform(r)));
-
-    res = {
-        items: documents,
-        count: extracted.count
-    };
-
-    return res;
+async function getDocuments(origin, originId, params) {
+    const reqConfig = await getConfig(origin, originId, params);
+    return await getExtractTransformDocuments(reqConfig);
 }
 
 function getConfig(origin, searchKey, params = {}) {
@@ -43,6 +36,32 @@ function makeRequest(reqConfig) {
             },
             reqConfig.reqParams)
     );
+}
+
+
+async function getDocument(origin, originId) {
+    const connector = getConnector(origin);
+    return await connector.getDocument(originId);
+}
+
+async function getDocumentByDoi(origin, doi) {
+    const connector = getConnector(origin);
+    const config = connector.getSingleSearchConfig({doi: doi});
+    const res = await getExtractTransformDocuments(config);
+
+    if (!res.count)
+        return false;
+
+    return res.items[0];
+}
+
+async function getExtractTransformDocuments(config) {
+    const res = await makeRequest(config);
+    const extracted = config.fieldExtract(res.body);
+    return {
+        items: await Promise.all(_.map(extracted.documents, r => config.transform(r))),
+        count: extracted.count
+    };
 }
 
 function getConnector(origin) {

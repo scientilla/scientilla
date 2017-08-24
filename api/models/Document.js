@@ -1,4 +1,4 @@
-/* global Document, sails, User, ObjectComparer, Authorship, Affiliation, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer */
+/* global Document, sails, User, ObjectComparer, Connector, Authorship, Affiliation, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer */
 'use strict';
 
 /**
@@ -370,5 +370,12 @@ module.exports = _.merge({}, BaseModel, {
         const docData = Document.selectData(document);
         const newDocData = Object.assign({}, docData, newDocPartialData);
         return await Document.create(newDocData);
+    },
+    externalSearch: async function (origin, searchKey, searchValue) {
+        const document = await ExternalImporter.search(origin, searchKey, searchValue);
+        if (!document)
+            return {};
+
+        return document;
     }
 });

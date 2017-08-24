@@ -1,11 +1,16 @@
 <div ng-show="vm.areCheckablesRegistered()" class="row scientila-multicheck-commands-row">
     <div class="col-md-6">
-        <input ng-if="vm.areButtonsRegistered()" id="selectAll" title="Select all" type="checkbox" ng-model="vm.allSelected" ng-change="vm.selectAll()"/> 
+        <label ng-if="vm.areButtonsRegistered()">
+            <input id="selectAll" title="Select all" type="checkbox"
+                   ng-model="vm.allSelected" ng-change="vm.selectAll()"/>
+            Select all
+        </label>
     </div>
     <div class="col-md-6 text-right">
 
-        <div ng-show="vm.areButtonsRegistered()" class="btn-group" >
-            <button ng-disabled="!vm.areElementsSelected()" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+        <div ng-show="vm.areButtonsRegistered()" class="btn-group">
+            <button ng-disabled="!vm.areElementsSelected()" type="button" class="btn btn-primary dropdown-toggle"
+                    data-toggle="dropdown">
                 On selected
                 <span class="caret"></span>
             </button>

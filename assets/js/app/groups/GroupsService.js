@@ -3,7 +3,7 @@
 (function () {
 
     angular.module("groups")
-            .factory("GroupsService", GroupService);
+        .factory("GroupsService", GroupService);
 
     GroupService.$inject = ["Restangular", "$http", "Prototyper", "apiPrefix"];
 
@@ -53,11 +53,15 @@
         }
 
         function doSave(group) {
-            var administrators = group.administrators;
-            group.administrators = _.map(group.administrators, 'id');
+            if (group.administrators) {
+                var administrators = group.administrators;
+                group.administrators = _.map(group.administrators, 'id');
+            }
 
-            var members = group.members;
-            group.members = _.map(group.members, 'id');
+            if (group.members) {
+                var members = group.members;
+                group.members = _.map(group.members, 'id');
+            }
 
             return service.save(group).then(function (g) {
                 group.administrators = administrators;
@@ -85,13 +89,13 @@
             if (!groupId)
                 return;
 
-            return $http.get(apiPrefix+'/memberships',
-                    {params: {group: groupId, populate: 'user'}})
-                    .then(function (result) {
-                        var memberships = result.data;
-                        Prototyper.toMembershipsCollection(memberships);
-                        return memberships;
-                    });
+            return $http.get(apiPrefix + '/memberships',
+                {params: {group: groupId, populate: 'user'}})
+                .then(function (result) {
+                    var memberships = result.data;
+                    Prototyper.toMembershipsCollection(memberships);
+                    return memberships;
+                });
         }
 
         function getProfile(groupId) {

@@ -1,4 +1,4 @@
-/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship */
+/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship, ExternalImporter */
 // ScopusExternalImporter.js - in api/services
 
 "use strict";
@@ -98,12 +98,7 @@ async function getResearchEntityDocumentsScopusIds(researchEntity) {
 
     async function scopusYearLoop(scopusId, baseParams, year, total, totalDone = 0) {
         const params = _.cloneDeep(baseParams);
-        params.additionalFields = [
-            {
-                field: 'year',
-                value: year
-            }
-        ];
+        params.additionalFields = {'year': year};
 
         try {
             const res = await scopusLoop(scopusId, params);
@@ -229,29 +224,8 @@ async function importDocuments(documentScopusIds) {
 async function getAndCreateOrUpdateDocument(scopusId) {
     const documentData = await ScopusConnector.getDocument(scopusId);
     if (!_.isEmpty(documentData))
-        return await createOrUpdateDocument(documentData);
+        return await ExternalImporter.createExternalDocument(DocumentOrigins.SCOPUS, documentData);
     return {};
-}
-
-async function createOrUpdateDocument(documentData) {
-    const criteria = {
-        scopusId: documentData.scopusId,
-        origin: DocumentOrigins.SCOPUS,
-        kind: DocumentKinds.EXTERNAL
-    };
-    if (documentData.source)
-        documentData.source = documentData.source.id;
-    documentData.origin = DocumentOrigins.SCOPUS;
-    documentData.kind = DocumentKinds.EXTERNAL;
-    documentData.synchronized = true;
-
-    try {
-        return await Document.createOrUpdate(criteria, documentData);
-    } catch (err) {
-        sails.log.debug(err);
-        return {};
-    }
-
 }
 
 function* chunks(array, chunkSize) {

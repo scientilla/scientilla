@@ -45,6 +45,18 @@
             return service.modal.result;
         };
 
+        service.openScientillaDocumentSearch = function () {
+            service.modal = openComponentModal('scientilla-document-search', {}, {size: 'lg'});
+            return service.modal.result;
+        };
+
+        service.openScientillaDocumentSearchView = function (document) {
+            service.modal = openComponentModal('scientilla-document-search-view',
+                {document: document},
+                {size: 'lg'});
+            return service.modal.result;
+        };
+
         service.openScientillaDocumentDetails = function (document) {
             var scopeVars = {
                 document: document

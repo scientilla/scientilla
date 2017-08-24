@@ -1,13 +1,6 @@
 <form form-for="vm.group"
       validation-rules="vm.validationAndViewRules"
       form-for-builder>
-    <scientilla-multicomplete
-            items="vm.group.members"
-            query="vm.getUsersQuery"
-            transform="vm.userToMembership"
-            filter="vm.getMembers"
-            title="Members"
-    >
     </scientilla-multicomplete>
     <scientilla-multicomplete
             items="vm.group.administrators"

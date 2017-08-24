@@ -82,6 +82,7 @@
         Restangular.extendModel('users', Prototyper.toUserModel);
         Restangular.extendModel('groups', Prototyper.toGroupModel);
         Restangular.extendModel('drafts', Prototyper.toDocumentModel);
+        Restangular.extendModel('externals', Prototyper.toDocumentModel);
         Restangular.extendCollection('documents', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('externalDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('suggestedDocuments', Prototyper.toDocumentsCollection);

@@ -30,6 +30,7 @@
         service.deleteDraft = deleteDraft;
         service.deleteDrafts = deleteDrafts;
         service.setPrivateTags = setPrivateTags;
+        service.searchExternalDocument = searchExternalDocument;
 
         var documentPopulates = [
             'source',
@@ -174,6 +175,11 @@
         function setPrivateTags(researchEntity, document, tags) {
             return researchEntity.one('documents', document.id)
                 .customPUT({tags: tags}, 'tags');
+        }
+
+        function searchExternalDocument(origin, searchKey, searchValue) {
+            return Restangular.all('externals')
+                .customGET('', {origin, searchKey, searchValue});
         }
 
         return service;

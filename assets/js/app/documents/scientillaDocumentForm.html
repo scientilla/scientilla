@@ -109,7 +109,7 @@
     <div class="form-group has-feedback"
          ng-if="!['invited_talk'].includes(vm.document.type)"
          ng-class="{'has-error': vm.document.id && form.scopusId.$invalid}">
-        <label>Scopus ID</label>
+        <label>Scopus ID</label> (Numeric identifier in the scopus document URL: e.g., https://www.scopus.com/[..]eid=2-s2.0-<b>84888368243</b>[..])
         <input class="form-control"
                name="scopusId"
                placeholder="Scopus ID"

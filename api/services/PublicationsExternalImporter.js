@@ -90,29 +90,10 @@ async function updateProfile(externalDocumentModel, researchEntityId, documentsI
 async function createOrUpdateDocuments(documentsData) {
     const createdDocumentsIds = [];
     for (let data of documentsData) {
-        const document = await createOrUpdateDocument(data);
+        const document = await ExternalImporter.createExternalDocument(DocumentOrigins.PUBLICATIONS, data, false);
         if (_.has(document, 'id'))
             createdDocumentsIds.push(document.id);
     }
 
     return createdDocumentsIds;
-}
-
-
-async function createOrUpdateDocument(documentData) {
-    const criteria = {
-        iitPublicationsId: documentData.iitPublicationsId,
-        origin: DocumentOrigins.PUBLICATIONS,
-        kind: DocumentKinds.EXTERNAL
-    };
-    if (documentData.source)
-        documentData.source = documentData.source.id;
-    documentData.origin = DocumentOrigins.PUBLICATIONS;
-    documentData.kind = DocumentKinds.EXTERNAL;
-    try {
-        return await Document.createOrUpdate(criteria, documentData);
-    } catch (err) {
-        sails.log.debug(err);
-        return {};
-    }
 }
