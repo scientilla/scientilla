@@ -46,7 +46,7 @@
         };
 
         service.openScientillaDocumentSearch = function () {
-            service.modal = openComponentModal('scientilla-document-search', {});
+            service.modal = openComponentModal('scientilla-document-search', {}, {size: 'lg'});
             return service.modal.result;
         };
 

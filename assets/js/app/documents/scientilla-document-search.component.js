@@ -23,6 +23,7 @@
         vm.doSearch = doSearch;
         vm.cancel = cancel;
         vm.isSearchDisabled = isSearchDisabled;
+        vm.getValueExplanation = getValueExplanation;
 
         vm.$onInit = function () {
             vm.statuses = {
@@ -69,6 +70,15 @@
 
         function cancel() {
             close();
+        }
+
+        function getValueExplanation() {
+            if (vm.origin === 'scopus' && vm.search.key === 'originId')
+                return '(Numeric identifier in the scopus document URL: e.g., https://www.scopus.com/[..]eid=2-s2.0-<b>84888368243</b>[..])';
+            if (vm.origin === 'scopus' && vm.search.key === 'doi')
+                return '(e.g., 10.1038/nnano.2013.238)';
+
+            return '';
         }
 
         function isSearchDisabled() {

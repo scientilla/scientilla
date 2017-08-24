@@ -4,10 +4,10 @@
     <ul uib-dropdown-menu>
         <li>
             <a ng-click="vm.openScientillaDocumentSearch()" class="scientilla-clickable">
-                External search and import
+                Search and import
             </a>
         </li>
-        <hr>
+        <li class="divider"></li>
         <li ng-repeat="type in vm.types">
             <a ng-click="vm.createNewDocument(type)" class="scientilla-clickable">{{type.label}}</a>
         </li>

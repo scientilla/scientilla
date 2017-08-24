@@ -1,4 +1,5 @@
-<h1>External search and import</h1>
+<h1>Search and import</h1>
+<br>
 <form autocomplete="off" ng-submit="vm.doSearch()">
     <div class="form-group">
         <label>Origin</label>
@@ -12,11 +13,12 @@
         <select class="form-control"
                 ng-model="vm.search.key">
             <option value="doi">DOI</option>
-            <option value="originId">Origin ID</option>
+            <option value="originId">Scopus ID</option>
         </select>
     </div>
     <div class="form-group">
         <label>Search value</label>
+        <i class="small" ng-bind-html="vm.getValueExplanation()"></i>
         <input class="form-control"
                placeholder="Search"
                ng-model="vm.search.value"
