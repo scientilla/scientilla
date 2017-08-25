@@ -39,7 +39,8 @@ module.exports = {
         let document;
 
         const criteria = {
-            kind: DocumentKinds.EXTERNAL
+            kind: DocumentKinds.EXTERNAL,
+            origin: origin
         };
         criteria[filedsMapper[origin][searchKey]] = searchValue;
         document = await Document.findOne(criteria);
