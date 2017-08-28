@@ -76,6 +76,11 @@ module.exports = _.merge({}, BaseModel, {
             via: 'documents',
             through: 'documentsuggestion'
         },
+        citations: {
+            collection: 'citation',
+            via: 'documents',
+            through: 'scopuscitation'
+        },
         externalUsers: {
             collection: 'user',
             via: 'document',

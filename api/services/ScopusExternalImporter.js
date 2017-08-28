@@ -1,4 +1,4 @@
-/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship, ExternalImporter */
+/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship, ExternalImporter, Citation */
 // ScopusExternalImporter.js - in api/services
 
 "use strict";
@@ -206,11 +206,14 @@ async function importDocuments(documentScopusIds) {
                 async scopusId => {
                     try {
                         const document = await getAndCreateOrUpdateDocument(scopusId);
-                        if (_.has(document, 'id'))
+                        if (_.has(document, 'id')) {
+                            await updateCitations(document);
                             return document;
+                        }
+
                     }
                     catch (err) {
-                        sails.log.debug('Updater: Document failed ' + r.scopusId);
+                        sails.log.debug('Updater: Document failed ' + scopusId);
                     }
 
                     return {};
@@ -226,6 +229,24 @@ async function getAndCreateOrUpdateDocument(scopusId) {
     if (!_.isEmpty(documentData))
         return await ExternalImporter.createExternalDocument(DocumentOrigins.SCOPUS, documentData);
     return {};
+}
+
+async function updateCitations(document) {
+    const date = document.year + '-' + (new Date()).getFullYear();
+    const citations = await ScopusConnector.getDocumentCitations(document.scopusId, date);
+
+    for (const cit of citations)
+        await Citation.createOrUpdate({
+            origin: DocumentOrigins.SCOPUS,
+            originId: document.scopusId,
+            year: cit.year
+        }, {
+            origin: DocumentOrigins.SCOPUS,
+            originId: document.scopusId,
+            year: cit.year,
+            citations: cit.value
+        });
+
 }
 
 function* chunks(array, chunkSize) {
