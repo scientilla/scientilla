@@ -290,6 +290,9 @@ function getRequestParams(path, qs) {
 
 
 function fieldExtract(res) {
+    if(_.get(res, 'service-error'))
+        throw new _.get(res, 'service-error.status.statusText');
+
     const error = _.get(res, 'search-results.entry[0].error');
 
     if (error) {
