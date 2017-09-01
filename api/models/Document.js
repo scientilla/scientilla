@@ -130,6 +130,11 @@ module.exports = _.merge({}, BaseModel, {
                 };
             }
         },
+        sourceMetrics: {
+            collection: 'sourcemetric',
+            via: 'document',
+            through: 'documentmetric'
+        },
         userTags: {
             collection: 'tag',
             via: 'document'
