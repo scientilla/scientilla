@@ -11,11 +11,16 @@ const BaseModel = require("../lib/BaseModel.js");
 
 module.exports = _.merge({}, BaseModel, {
     attributes: {
+        source: {
+            model: 'source'
+        },
         issn: 'string',
         eissn: 'string',
+        origin: 'string',
+        sourceOriginId: 'string',
+        sourceTitle: 'string',
         year: 'integer',
         name: 'string',
         value: 'string',
-        origin: 'string',
     },
 });

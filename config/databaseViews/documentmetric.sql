@@ -1,14 +1,10 @@
 CREATE OR REPLACE VIEW documentmetric AS
   SELECT DISTINCT
     d.id  AS document,
-    sm.id AS "metric"
-  FROM (SELECT
-          document.*,
-          source.issn,
-          source.eissn
-        FROM document
-          JOIN source
-            ON document.source = source.id) d
+    sm.id AS metric
+  FROM document d
     JOIN "sourcemetric" sm
-      ON d.issn = sm.issn OR d.eissn = sm.eissn
-  WHERE sm.year = date_part('year', CURRENT_DATE)
+      ON sm.source = d.source
+  WHERE sm.year = (SELECT max(year)
+                   FROM sourcemetric sm2
+                   WHERE sm.origin = sm2.origin)
