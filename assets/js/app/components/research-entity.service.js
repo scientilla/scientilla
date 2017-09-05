@@ -38,6 +38,8 @@
             'authorships',
             'groupAuthorships',
             'affiliations',
+            'citations',
+            'sourceMetrics',
             'userTags',
             'tagLabels',
             'groupTags',

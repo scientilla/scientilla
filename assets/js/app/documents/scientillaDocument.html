@@ -32,13 +32,12 @@
                 <span ng-click="vm.editTags()" class="fa fa-edit scientilla-clickable" title="Edit your tags"></span>
                 <span ng-bind-html='vm.document | documentusertags'></span>
             </div>
-        </div>
 
-        <div class="col-xs-1 scientilla-document-icons">
-            <div title="{{vm.verifiedCount}} people or groups have verified this document">
+            <div style="display:inline-block" title="{{vm.verifiedCount}} people or groups have verified this document">
                 <span class="fa fa-check"></span> {{vm.verifiedCount}}
             </div>
-            <div class="scientilla-document-icons-extra">
+            &nbsp;&nbsp;
+            <div style="display:inline-block" class="scientilla-document-icons-extra">
                 <div ng-if="vm.document.origin==='scopus'" class="scientilla-document-icon-container">
                 <span class="scientilla-icon scientilla-icon-scopus"
                       title="This document has been imported from Scopus"></span>
@@ -49,6 +48,35 @@
                       title="This document will update automatically from {{vm.document.origin}}"></span>
                 </div>
             </div>
+        </div>
+
+        <div class="col-xs-1 scientilla-document-icons">
+
+            <div ng-if="vm.showScopusMetrics()" class="scientilla-document-icons-extra">
+                <div>
+                <span class="scientilla-icon scientilla-icon-scopus"
+                      title=""></span>
+                </div>
+
+                <div ng-if="vm.hasMetric(vm.metrics.CITATIONS)" class="small">
+                    Citations {{ vm.getMetricValue(vm.metrics.CITATIONS) }}
+                </div>
+                <div ng-if="vm.hasMetric(vm.metrics.SNIP)" class="small">
+                    SNIP {{ vm.getMetricValue(vm.metrics.SNIP) }}
+                </div>
+                <div ng-if="vm.hasMetric(vm.metrics.SJR)" class="small">
+                    SJR {{ vm.getMetricValue(vm.metrics.SJR) }}
+                </div>
+            </div>
+            <div ng-if="vm.showWOSMetrics()" class="scientilla-document-icons-extra">
+                <div>
+                    <span class="scientilla-icon scientilla-icon-wos"></span>
+                </div>
+                <div class="small">
+                    IF {{ vm.getMetricValue(vm.metrics.IF) }}
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

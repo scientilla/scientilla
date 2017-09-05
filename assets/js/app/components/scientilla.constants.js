@@ -276,6 +276,13 @@
         }
     };
 
+    const documentOrigins = {
+        SCIENTILLA: 'scientilla',
+        SCOPUS: 'scopus',
+        ORCID: 'orcid',
+        PUBLICATIONS: 'publications'
+    };
+
     const apiPrefix = '/api/v1';
 
     angular.module('app')
@@ -288,5 +295,6 @@
         .constant('documentSourceTypes', documentSourceTypes)
         .constant('documentTypes', documentTypes)
         .constant('documentSearchForm', documentSearchForm)
-        .constant('documentFieldsRules', documentFieldsRules);
+        .constant('documentFieldsRules', documentFieldsRules)
+        .constant('documentOrigins', documentOrigins);
 })();

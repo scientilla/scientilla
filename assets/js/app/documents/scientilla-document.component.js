@@ -17,19 +17,31 @@
         'ModalService',
         'config',
         'DocumentLabels',
-        'context'
+        'context',
+        'documentOrigins'
     ];
 
-    function scientillaDocument(ModalService, config, DocumentLabels, context) {
-        var vm = this;
+    function scientillaDocument(ModalService, config, DocumentLabels, context, documentOrigins) {
+        const vm = this;
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
         vm.editTags = editTags;
         vm.isSynchronized = isSynchronized;
+        vm.showScopusMetrics = showScopusMetrics;
+        vm.showWOSMetrics = showWOSMetrics;
+        vm.getMetricValue = getMetricValue;
+        vm.hasMetric = hasMetric;
 
         const researchEntity = context.getResearchEntity();
         if (_.isNil(vm.checkDuplicates))
             vm.checkDuplicates = true;
+
+        vm.metrics = {
+            CITATIONS: 'citations',
+            SJR: 'SJR',
+            SNIP: 'SNIP',
+            IF: 'IF'
+        };
 
         vm.$onInit = function () {
             vm.showPrivateTags = vm.showPrivateTags || false;
@@ -95,6 +107,39 @@
 
         function editTags() {
             ModalService.openScientillaTagForm(vm.document);
+        }
+
+        function showScopusMetrics() {
+            return hasMetric(vm.metrics.CITATIONS) || hasMetric(vm.metrics.SNIP) || hasMetric(vm.metrics.SJR);
+        }
+
+        function showWOSMetrics() {
+            return hasMetric(vm.metrics.IF);
+        }
+
+        function hasMetric(metric) {
+            switch (metric) {
+                case vm.metrics.CITATIONS:
+                    return !!vm.document.citations.find(cit => cit.origin === documentOrigins.SCOPUS);
+                case vm.metrics.SNIP:
+                case vm.metrics.SJR:
+                case vm.metrics.IF:
+                    return !!getMetric(metric);
+            }
+            return false;
+        }
+
+        function getMetricValue(metric) {
+            return getMetric(metric).value;
+        }
+
+        function getMetric(metric) {
+            if (metric === vm.metrics.CITATIONS)
+                return {
+                    value: vm.document.citations.reduce((tot, val) => val.citations + tot, 0)
+                };
+
+            return vm.document.sourceMetrics.find(m => m.name === metric);
         }
 
         function getVerifiedCount() {
