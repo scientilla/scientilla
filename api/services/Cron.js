@@ -9,8 +9,8 @@ const jobs = {};
 
 module.exports = {
     init: () => {
-        addJob(DAILY, Backup.makeBackup)
-        addJob(DAILY, GruntTaskRunner.run, ['external:import:all']);
+        addJob(DAILY, Backup.makeBackup);
+        addJob(DAILY, GruntTaskRunner.run, ['import:external:all']);
         addJob(DAILY, GruntTaskRunner.run, ['documents:synchronize:scopus']);
         addJob(DAILY, GruntTaskRunner.run, ['documents:clean:sources']);
         addJob(DAILY, GruntTaskRunner.run, ['documents:clean:institutes']);
