@@ -37,11 +37,15 @@ function getMethod(args, methods) {
     let params = [];
 
     for (let a of args) {
-        if (_.isFunction(method))
+        if (_.isFunction(method)) {
             params.push(a);
+            continue;
+        }
 
-        if (_.isFunction(tree[a]))
+        if (_.isFunction(tree[a])) {
             method = tree[a];
+            continue;
+        }
 
         if (_.isObject(tree[a]))
             tree = tree[a];
