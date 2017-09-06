@@ -14,10 +14,10 @@ module.exports = _.merge({}, BaseModel, {
         source: {
             model: 'source'
         },
-        issn: 'string',
-        eissn: 'string',
         origin: 'string',
         sourceOriginId: 'string',
+        issn: 'string',
+        eissn: 'string',
         sourceTitle: 'string',
         year: 'integer',
         name: 'string',
