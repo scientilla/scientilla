@@ -40,7 +40,9 @@
             CITATIONS: 'citations',
             SJR: 'SJR',
             SNIP: 'SNIP',
-            IF: 'IF'
+            IF: 'IF',
+            IF5: '5IF',
+            AIS: 'AIS'
         };
 
         vm.$onInit = function () {
@@ -114,7 +116,7 @@
         }
 
         function showWOSMetrics() {
-            return hasMetric(vm.metrics.IF);
+            return hasMetric(vm.metrics.IF) || hasMetric(vm.metrics.IF5) || hasMetric(vm.metrics.AIS);
         }
 
         function hasMetric(metric) {
@@ -124,6 +126,8 @@
                 case vm.metrics.SNIP:
                 case vm.metrics.SJR:
                 case vm.metrics.IF:
+                case vm.metrics.IF5:
+                case vm.metrics.AIS:
                     return !!getMetric(metric);
             }
             return false;

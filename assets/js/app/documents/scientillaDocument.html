@@ -72,8 +72,14 @@
                 <div>
                     <span class="scientilla-icon scientilla-icon-wos"></span>
                 </div>
-                <div class="small">
+                <div ng-if="vm.hasMetric(vm.metrics.IF)" class="small">
                     IF {{ vm.getMetricValue(vm.metrics.IF) }}
+                </div>
+                <div ng-if="vm.hasMetric(vm.metrics.IF5)" class="small">
+                    5IF {{ vm.getMetricValue(vm.metrics.IF5) }}
+                </div>
+                <div ng-if="vm.hasMetric(vm.metrics.AIS)" class="small">
+                    AIS {{ vm.getMetricValue(vm.metrics.AIS) }}
                 </div>
             </div>
 
