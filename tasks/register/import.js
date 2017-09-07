@@ -10,6 +10,7 @@ module.exports = function (grunt) {
                 'people': Importer.importPeople,
                 'groups': Importer.importGroups,
                 'sources': Importer.importSources,
+                'sourcesMetrics': Importer.importSourceMetrics,
                 'external': {
                     'user': ExternalImporter.updateUserExternal,
                     'group': ExternalImporter.updateGroupExternal,

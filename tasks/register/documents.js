@@ -1,4 +1,4 @@
-/* global ExternalImporter */
+/* global Synchronizer, Cleaner, SourceMetric */
 "use strict";
 const Sails = require('sails');
 const _ = require('lodash');
@@ -9,14 +9,15 @@ module.exports = function (grunt) {
         Sails.load({hooks: {grunt: false}}, async () => {
             try {
                 const methods = {
-                    'synchronize': {
-                        'scopus': Synchronizer.synchronizeScopus,
-                    },
                     'clean': {
                         'copies': Cleaner.cleanDocumentCopies,
                         'institutes': Cleaner.cleanInstituteCopies,
                         'sources': Cleaner.cleanSourceCopies
-                    }
+                    },
+                    'synchronize': {
+                        'scopus': Synchronizer.synchronizeScopus,
+                    },
+                    'assignMetrics': SourceMetric.assignMetrics
                 };
 
                 const task = getMethod(args, methods);
@@ -38,11 +39,15 @@ function getMethod(args, methods) {
     let params = [];
 
     for (let a of args) {
-        if (_.isFunction(method))
+        if (_.isFunction(method)) {
             params.push(a);
+            continue;
+        }
 
-        if (_.isFunction(tree[a]))
+        if (_.isFunction(tree[a])) {
             method = tree[a];
+            continue;
+        }
 
         if (_.isObject(tree[a]))
             tree = tree[a];
@@ -54,5 +59,5 @@ function getMethod(args, methods) {
             params
         };
 
-    throw 'wrong parameters';
+    throw 'wrong parameters ' + args.join(':');
 }
