@@ -283,6 +283,20 @@
         PUBLICATIONS: 'publications'
     };
 
+    const groupTypes = {
+        INSTITUTE: 'institute',
+        CENTER: 'center',
+        RESEARCH_LINE: 'research_line',
+        FACILITY: 'facility'
+    };
+
+    const groupTypeLabels = {
+        INSTITUTE: 'Institute',
+        CENTER: 'Center',
+        RESEARCH_LINE: 'Research line',
+        FACILITY: 'Facility'
+    };
+
     const apiPrefix = '/api/v1';
 
     angular.module('app')
@@ -294,6 +308,8 @@
         .constant('apiPrefix', apiPrefix)
         .constant('documentSourceTypes', documentSourceTypes)
         .constant('documentTypes', documentTypes)
+        .constant('groupTypes', groupTypes)
+        .constant('groupTypeLabels', groupTypeLabels)
         .constant('documentSearchForm', documentSearchForm)
         .constant('documentFieldsRules', documentFieldsRules)
         .constant('documentOrigins', documentOrigins);
