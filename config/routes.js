@@ -40,6 +40,8 @@ module.exports.routes = {
     'put /api/v1/groups/:researchEntityId/drafts/verify-drafts': 'Group.verifyDrafts',
     'put /api/v1/users/:researchEntityId': 'User.updateProfile',
     'put /api/v1/groups/:researchEntityId': 'Group.updateProfile',
+    'delete /api/v1/users/:researchEntityId/drafts/:draftId': 'User.deleteDraft',
+    'delete /api/v1/groups/:researchEntityId/drafts/:draftId': 'Group.deleteDraft',
     'put /api/v1/users/:researchEntityId/drafts/delete': 'User.deleteDrafts',
     'put /api/v1/groups/:researchEntityId/drafts/delete': 'Group.deleteDrafts',
     'put /api/v1/users/:researchEntityId/drafts/:id': 'User.updateDraft',

@@ -77,6 +77,7 @@ module.exports.policies = {
         unverifyDocument: isGroupOwner,
         updateDraft: isGroupOwner,
         setAuthorhips: isGroupOwner,
+        deleteDraft: isGroupOwner
     }, defaultPolicy),
 
     InstituteController: _.defaults({
@@ -111,5 +112,6 @@ module.exports.policies = {
         unverifyDocument: isActivityOwner,
         updateDraft: isActivityOwner,
         setAuthorhips: isActivityOwner,
+        deleteDraft: isActivityOwner
     }, defaultPolicy),
 };

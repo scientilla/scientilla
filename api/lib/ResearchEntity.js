@@ -174,6 +174,9 @@ module.exports = _.merge({}, BaseModel, {
         const updatedDraft = await Document.update({id: draftId}, selectedDraftData);
         return updatedDraft[0];
     },
+    deleteDraft: function (Model, draftId) {
+        return Document.destroy({id: draftId});
+    },
     deleteDrafts: function (Model, draftIds) {
         return Promise.all(draftIds.map(function (draftId) {
             return Document.destroy({id: draftId});
