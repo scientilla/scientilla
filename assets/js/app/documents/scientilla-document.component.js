@@ -116,7 +116,7 @@
         }
 
         function showWOSMetrics() {
-            return hasMetric(vm.metrics.IF) || hasMetric(vm.metrics.IF5) || hasMetric(vm.metrics.AIS);
+            return hasMetric(vm.metrics.IF);
         }
 
         function hasMetric(metric) {
@@ -126,8 +126,6 @@
                 case vm.metrics.SNIP:
                 case vm.metrics.SJR:
                 case vm.metrics.IF:
-                case vm.metrics.IF5:
-                case vm.metrics.AIS:
                     return !!getMetric(metric);
             }
             return false;
