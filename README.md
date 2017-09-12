@@ -40,7 +40,7 @@ At the moment you need to build Scientilla by yourself.
     1. By using [docker](https://www.docker.com/) (suggested):
 
         ```
-        docker-compose -f docker-compose-install.yml run --rm node-install
+        ./bin/npm install
         cp docker-compose-develop.yml docker-compose.yml
         docker-compose up
         ```
