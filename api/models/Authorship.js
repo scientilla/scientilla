@@ -84,6 +84,14 @@ module.exports = _.merge({}, BaseModel, {
         newAuthData.document = docId;
 
         await Authorship.create(newAuthData);
+    },
+    setPrivacy: async function (documentId, userId, privacy) {
+        const authorship = await Authorship.findOne({document: documentId, researchEntity: userId});
+        if (!authorship)
+            throw 'Athorship not found';
+
+        authorship.public = !!privacy;
+        return authorship.savePromise();
     }
 });
 

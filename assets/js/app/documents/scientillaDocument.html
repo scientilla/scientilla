@@ -33,20 +33,28 @@
                 <span ng-bind-html='vm.document | documentusertags'></span>
             </div>
 
-            <div style="display:inline-block" title="{{vm.verifiedCount}} people or groups have verified this document">
+            <div class="scientilla-document-icons-bottom"
+                 title="{{vm.verifiedCount}} people or groups have verified this document">
                 <span class="fa fa-check"></span> {{vm.verifiedCount}}
             </div>
-            &nbsp;&nbsp;
-            <div style="display:inline-block" class="scientilla-document-icons-extra">
-                <div ng-if="vm.document.origin==='scopus'" class="scientilla-document-icon-container">
+            <div ng-if="vm.document.origin==='scopus'" class="scientilla-document-icons-bottom">
+                <div class="scientilla-document-icon-container">
                 <span class="scientilla-icon scientilla-icon-scopus"
                       title="This document has been imported from Scopus"></span>
                 </div>
-                <div ng-if="vm.isSynchronized()"
-                     class="scientilla-document-icon-container">
                 <span class="fa fa-refresh"
+                      ng-if="vm.isSynchronized()"
                       title="This document will update automatically from {{vm.document.origin}}"></span>
-                </div>
+            </div>
+            <div ng-if="vm.isPrivacyToShow()" class="scientilla-document-icons-bottom">
+                <span ng-click="vm.changePrivacy()"
+                      ng-if="vm.isPublic()"
+                      class="fa fa-globe scientilla-icon-fa scientilla-clickable"
+                      title="The document is visible to everyone, click to change it"></span>
+                <span ng-click="vm.changePrivacy()"
+                      ng-if="!vm.isPublic()"
+                      class="fa fa-lock scientilla-icon-fa scientilla-clickable"
+                      title="The document is visible only to scientilla users, click to change it"></span>
             </div>
         </div>
 

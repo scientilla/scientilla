@@ -79,14 +79,16 @@ module.exports = _.merge({}, ResearchEntity, {
         return {
             isVerifiable: true,
             document: document,
-            synchronize: !_.isNil(newAffiliationData.synchronize) ? newAffiliationData.synchronize : document.synchronized
+            synchronize: !_.isNil(newAffiliationData.synchronize) ? newAffiliationData.synchronize : document.synchronized,
+            public: true
         };
     },
     doVerifyDocument: async function (document, researchEntityId, authorshipData) {
         const authorship = {
             researchEntity: researchEntityId,
             document: document.id,
-            synchronize: authorshipData.synchronize
+            synchronize: authorshipData.synchronize,
+            public: authorshipData.public,
         };
         await AuthorshipGroup.create(authorship);
         return document;
@@ -112,5 +114,8 @@ module.exports = _.merge({}, ResearchEntity, {
             .then(group => Group.addAdministrator(group, user))
             .then(group => Group.addMember(group, user))
             .then(() => user);
+    },
+    getAuthorshipModel: function () {
+        return AuthorshipGroup;
     }
 });

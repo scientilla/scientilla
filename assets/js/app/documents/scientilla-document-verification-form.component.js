@@ -46,6 +46,7 @@
         vm.$onInit = function () {
             vm.verificationData.position = vm.document.getUserIndex(user);
             vm.verificationData.synchronize = vm.document.synchronized;
+            vm.verificationData.public = true;
 
             $scope.$watch('vm.verificationData.position', userSelectedChanged);
         };
@@ -70,7 +71,8 @@
                 affiliations: _.map(vm.verificationData.affiliations, 'id'),
                 position: vm.verificationData.position,
                 corresponding: vm.verificationData.corresponding,
-                synchronize: vm.verificationData.synchronize
+                synchronize: vm.verificationData.synchronize,
+                public: vm.verificationData.public
             };
             return verify(user, vm.document.id, data)
                 .then(function (user) {

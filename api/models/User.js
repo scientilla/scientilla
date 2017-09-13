@@ -1,4 +1,4 @@
-/* global User, Document, sails, Auth, SqlService */
+/* global User, Document, sails, Auth, Authorship, SqlService */
 'use strict';
 
 /**
@@ -257,6 +257,7 @@ module.exports = _.merge({}, ResearchEntity, {
         const affiliationInstituteIds = !_.isEmpty(newAffiliationData.affiliationInstituteIds) ? newAffiliationData.affiliationInstituteIds : affiliations;
         const corresponding = !_.isNil(newAffiliationData.corresponding) ? newAffiliationData.corresponding : authorship.corresponding;
         const synchronize = !_.isNil(newAffiliationData.synchronize) ? newAffiliationData.synchronize : document.synchronized;
+        const publicDocument = !_.isNil(newAffiliationData.public) ? newAffiliationData.public : true;
 
         if (_.isEmpty(affiliationInstituteIds) || _.isNil(position))
             return {
@@ -272,6 +273,7 @@ module.exports = _.merge({}, ResearchEntity, {
             affiliationInstituteIds,
             corresponding,
             synchronize,
+            public: publicDocument,
             document
         };
     },
@@ -282,7 +284,8 @@ module.exports = _.merge({}, ResearchEntity, {
             position: authorshipData.position,
             affiliations: authorshipData.affiliationInstituteIds,
             corresponding: authorshipData.corresponding,
-            synchronize: authorshipData.synchronize
+            synchronize: authorshipData.synchronize,
+            public: authorshipData.public,
         };
 
         const authorshipFindCriteria = {
@@ -321,5 +324,8 @@ module.exports = _.merge({}, ResearchEntity, {
     },
     isInternalUser: function (user) {
         return _.endsWith(user.username, '@' + sails.config.scientilla.ldap.domain);
+    },
+    getAuthorshipModel: function () {
+        return Authorship;
     }
 });

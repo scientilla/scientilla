@@ -1,4 +1,5 @@
 /* global Connector, sails */
+"use strict";
 
 /**
  * ResearchEntityController
@@ -30,7 +31,8 @@ module.exports = {
             position: req.body.position,
             corresponding: req.body.corresponding,
             affiliationInstituteIds: req.body.affiliations,
-            synchronize: req.body.synchronize
+            synchronize: req.body.synchronize,
+            public: req.body.public,
         };
         const Model = getModel(req);
         res.halt(Model.verifyDraft(Model, researchEntityId, draftId, verificationData));
@@ -48,7 +50,8 @@ module.exports = {
             position: req.body.position,
             corresponding: req.body.corresponding,
             affiliationInstituteIds: req.body.affiliations,
-            synchronize: req.body.synchronize
+            synchronize: req.body.synchronize,
+            public: req.body.public
         };
         const Model = getModel(req);
         // TODO in case of failed verify give response with details instead of 400
@@ -104,13 +107,25 @@ module.exports = {
         const Model = getModel(req);
         var draftIds = req.param('draftIds');
         res.halt(Model.deleteDrafts(Model, draftIds));
+    },
+    setAuthorshipPrivacy: function (req, res) {
+        const researchEntityId = req.params.researchEntityId;
+        const documentId = req.params.documentId;
+        const AuthorshipModel = getAuthorshipModel(req);
+        const privacy = req.body.privacy;
+        res.halt(AuthorshipModel.setPrivacy(documentId, researchEntityId, privacy));
     }
 };
 
 function getModel(req) {
-    var model_name = req.options.model || req.options.controller;
-    var Model = req._sails.models[model_name];
-    return Model;
+    const model_name = req.options.model || req.options.controller;
+    return req._sails.models[model_name];
+}
+
+function getAuthorshipModel(req) {
+    const Model = getModel(req);
+    return Model.getAuthorshipModel();
+
 }
 
 function getPopulateFields(req) {

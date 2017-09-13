@@ -45,25 +45,28 @@
             </scientilla-multicomplete>
         </div>
         <div class="form-group">
-            <label>
-                Are you the corresponding author?
-                <input type="checkbox"
-                       style="display:block;"
-                       ng-model="vm.verificationData.corresponding"/>
+            <label title="Are you the corresponding author?">
+                <input type="checkbox" ng-model="vm.verificationData.corresponding"/>
+                Corresponding author
             </label>
         </div>
     </div>
     <hr>
+    <h4>Document properties</h4>
     <div class="form-group" ng-if="vm.viewSynchFields()">
-        <label>
+        <label title="Keep the document synchronized with {{vm.document.origin}}?">
             <input type="checkbox" ng-model="vm.verificationData.synchronize"/>
-            Keep the document synchronized with {{vm.document.origin}}?
+            Synchronized with {{vm.document.origin}}
         </label>
     </div>
     <div class="form-group" ng-if="vm.viewSynchMessage()">
         This document is not synchronized
     </div>
     <scientilla-button type="submit" click="vm.submit()">Verify</scientilla-button>
-    <scientilla-button ng-if="vm.viewCopyToDraft()" type="submit" click="vm.copyToDraft()">Copy to draft</scientilla-button>
+    <scientilla-button ng-if="vm.viewCopyToDraft()"
+                       type="submit"
+                       click="vm.copyToDraft()">
+        Copy to draft
+    </scientilla-button>
     <scientilla-button type="cancel" click="vm.cancel()">Cancel</scientilla-button>
 </form>

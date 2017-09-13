@@ -15,13 +15,14 @@
 
     scientillaDocument.$inject = [
         'ModalService',
+        'researchEntityService',
         'config',
         'DocumentLabels',
         'context',
         'documentOrigins'
     ];
 
-    function scientillaDocument(ModalService, config, DocumentLabels, context, documentOrigins) {
+    function scientillaDocument(ModalService, researchEntityService, config, DocumentLabels, context, documentOrigins) {
         const vm = this;
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
@@ -31,6 +32,9 @@
         vm.showWOSMetrics = showWOSMetrics;
         vm.getMetricValue = getMetricValue;
         vm.hasMetric = hasMetric;
+        vm.isPublic = isPublic;
+        vm.isPrivacyToShow = isPrivacyToShow;
+        vm.changePrivacy = changePrivacy;
 
         const researchEntity = context.getResearchEntity();
         if (_.isNil(vm.checkDuplicates))
@@ -152,6 +156,33 @@
         function isSynchronized() {
             return vm.document.synchronized && vm.document.origin === 'scopus';
         }
+
+        function changePrivacy() {
+            const authorship = getAuthorship();
+            authorship.public = !authorship.public;
+            researchEntityService.setAuthorshipPrivacy(researchEntity, authorship);
+        }
+
+        function isPublic() {
+            const authorship = getAuthorship();
+            if (!authorship) return false;
+            return !!authorship.public;
+        }
+
+        function isPrivacyToShow() {
+            return vm.document.kind === 'v' && getAuthorship();
+        }
+
+        function getAuthorship() {
+            let field;
+            if (researchEntity.getType() === 'user')
+                field = 'authorships';
+            else
+                field = 'groupAuthorships';
+
+            return vm.document[field].find(a => a.researchEntity === researchEntity.id);
+        }
+
     }
 
 
