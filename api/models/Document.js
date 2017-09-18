@@ -248,9 +248,6 @@ module.exports = _.merge({}, BaseModel, {
                 return this.savePromise();
             }
 
-            if (!this.scopusId)
-                throw 'Empty scopusId';
-
             const res = await Synchronizer.documentSynchronizeScopus(this.id);
             return res.docData;
         }
