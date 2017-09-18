@@ -27,20 +27,14 @@
 
             vm.bibliographicInformations = [];
 
+            if (vm.document.volume)
+                vm.bibliographicInformations.push('vol. ' + vm.document.volume);
+
             if (vm.document.issue)
                 vm.bibliographicInformations.push('issue ' + vm.document.issue);
 
-            if (vm.document.editor)
-                vm.bibliographicInformations.push('editor ' + vm.document.editor);
-
-            if (vm.document.publisher)
-                vm.bibliographicInformations.push('editor ' + vm.document.publisher);
-
             if (vm.document.articleNumber)
                 vm.bibliographicInformations.push('ar. n. ' + vm.document.articleNumber);
-
-            if (vm.document.volume)
-                vm.bibliographicInformations.push('vol. ' + vm.document.volume);
 
             if (vm.document.pages)
                 vm.bibliographicInformations.push('pp. ' + vm.document.pages);
