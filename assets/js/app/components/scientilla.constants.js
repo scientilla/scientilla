@@ -16,66 +16,6 @@
         }
     };
 
-    const publicationTypes = [
-        {
-            value: 'book-chapter',
-            label: 'Book chapter'
-        },
-        {
-            value: 'book-whole',
-            label: 'Book Whole'
-        },
-        {
-            value: 'full-paper-volume-at-refereed-conference',
-            label: 'Full Paper / Volume at Refereed Conference'
-        },
-        {
-            value: 'short-paper-abstract-at-refereed-conference',
-            label: 'Short Paper / Abstract at Refereed Conference'
-        },
-        {
-            value: 'masters-thesis',
-            label: 'Master\'s Thesis'
-        },
-        {
-            value: 'phd-thesis',
-            label: 'Ph.D. Thesis'
-        },
-        {
-            value: 'national-journal',
-            label: 'National Journal'
-        },
-        {
-            value: 'international-journal',
-            label: 'International Journal'
-        },
-        {
-            value: 'collection',
-            label: 'Collection'
-        },
-        {
-            value: 'report',
-            label: 'Report'
-        },
-        {
-            value: 'correction',
-            label: 'Correction'
-        },
-        {
-            value: 'editorial',
-            label: 'Editorial'
-        },
-        {
-            value: 'supp-information',
-            label: 'Supplementary Information'
-        },
-        {
-            value: 'talks',
-            label: 'Invited Talks'
-        },
-        //{value:'patent', label: 'Patent'},
-    ];
-
     const DocumentLabels = {
         DUPLICATE: 'duplicate',
         ALREADY_VERIFIED: 'already verified',
@@ -205,17 +145,17 @@
     ];
 
     const documentSourceTypes = [
-        {id: 'book', label: 'Book'},
-        {id: 'journal', label: 'Journal'},
-        {id: 'conference', label: 'Conference'},
-        {id: 'bookseries', label: 'Book Series'},
-        {id: 'scientific_conference', label: 'Conference', section: 'Scientific Event'},
-        {id: 'institute', label: 'Institute', section: 'Scientific Event'},
-        {id: 'workshop', label: 'Workshop', section: 'Scientific Event'},
-        {id: 'school', label: 'School (Summer school, ...)', section: 'Scientific Event'},
-        {id: 'media', label: 'Media', section: 'Dissemination'},
-        {id: 'public_event', label: 'Public Event', section: 'Dissemination'},
-        {id: 'outreach', label: 'Outreach', section: 'Dissemination'}
+        {id: 'book', label: 'Book', type: 'scientific'},
+        {id: 'journal', label: 'Journal', type: 'scientific'},
+        {id: 'conference', label: 'Conference', type: 'scientific'},
+        {id: 'bookseries', label: 'Book Series', type: 'scientific'},
+        {id: 'scientific_conference', label: 'Conference', section: 'Scientific Event', type: 'invited-talk'},
+        {id: 'institute', label: 'Institute', section: 'Scientific Event', type: 'invited-talk'},
+        {id: 'workshop', label: 'Workshop', section: 'Scientific Event', type: 'invited-talk'},
+        {id: 'school', label: 'School (Summer school, ...)', section: 'Scientific Event', type: 'invited-talk'},
+        {id: 'media', label: 'Media', section: 'Dissemination', type: 'invited-talk'},
+        {id: 'public_event', label: 'Public Event', section: 'Dissemination', type: 'invited-talk'},
+        {id: 'outreach', label: 'Outreach', section: 'Dissemination', type: 'invited-talk'}
     ];
 
 
@@ -258,7 +198,7 @@
             label: 'Source Type',
             values: _.concat(
                 [{value: "?", label: 'Select'}],
-                documentSourceTypes.map(s => ({value: s.id, label: s.label}))
+                documentSourceTypes.filter(t => t.type === 'scientific').map(s => ({value: s.id, label: s.label}))
             ),
             matchColumn: 'sourceType'
         }
@@ -282,7 +222,6 @@
         .constant('pageSize', 10)
         .constant('userConstants', userConstants)
         .constant('config', config)
-        .constant('publicationTypes', publicationTypes)
         .constant('DocumentLabels', DocumentLabels)
         .constant('apiPrefix', apiPrefix)
         .constant('documentSourceTypes', documentSourceTypes)
