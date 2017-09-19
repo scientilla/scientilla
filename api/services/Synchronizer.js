@@ -90,7 +90,7 @@ async function documentSynchronizeScopus(docId) {
     };
     criteria[documentField] = doc[documentField];
 
-    let externalDoc = await Document.findOne(criteria);
+    let externalDoc = await Document.findOne(criteria).populate(documentPopulates);
 
     if (!externalDoc)
         externalDoc = await ExternalImporter.search(DocumentOrigins.SCOPUS, searchKey, doc[documentField]);
