@@ -141,6 +141,20 @@
             label: 'Invited Talk',
             defaultSource: null,
             allowedSources: invitedTalkSources
+        },
+        {
+            key: 'phd_thesis',
+            shortLabel: 'PT',
+            label: 'PhD Thesis',
+            defaultSource: 'book',
+            allowedSources: defaultSources
+        },
+        {
+            key: 'poster',
+            shortLabel: 'PO',
+            label: 'Poster',
+            defaultSource: 'conference',
+            allowedSources: defaultSources
         }
     ];
 
@@ -151,7 +165,7 @@
         {id: 'bookseries', label: 'Book Series', type: 'scientific'},
         {id: 'scientific_conference', label: 'Conference', section: 'Scientific Event', type: 'invited-talk'},
         {id: 'institute', label: 'Institute', section: 'Scientific Event', type: 'invited-talk'},
-        {id: 'workshop', label: 'Workshop', section: 'Scientific Event', type: 'invited-talk'},
+        {id: 'workshop', label: 'Workshop/Symposium', section: 'Scientific Event', type: 'invited-talk'},
         {id: 'school', label: 'School (Summer school, ...)', section: 'Scientific Event', type: 'invited-talk'},
         {id: 'media', label: 'Media', section: 'Dissemination', type: 'invited-talk'},
         {id: 'public_event', label: 'Public Event', section: 'Dissemination', type: 'invited-talk'},

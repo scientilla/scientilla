@@ -18,4 +18,6 @@ module.exports = {
     REPORT: 'report',
     REVIEW: 'review',
     SHORT_SURVEY: 'short_survey',
+    PHD_THESIS: 'phd_thesis',
+    POSTER: 'poster'
 };
