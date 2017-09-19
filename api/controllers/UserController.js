@@ -40,5 +40,15 @@ module.exports = require('waterlock').actions.user(_.merge({}, researchEntityCon
         var userId = req.params.researchEntityId;
         var tags = req.param('tags');
         res.halt( User.addTags(Tag, userId, documentId, tags));
+    },
+    getDocumentsByUsername: async (req, res) => {
+        const username = req.params.username;
+        const user = await User.findOneByUsername(username);
+        if (!user)
+            return res.ok({
+                count: 0,
+                items: []
+            });
+        return res.redirect(`/users/${user.id}/documents`);
     }
 }));

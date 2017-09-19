@@ -114,6 +114,7 @@ module.exports.policies = {
         updateDraft: isActivityOwner,
         setAuthorhips: isActivityOwner,
         deleteDraft: isActivityOwner,
-        deleteDrafts: isActivityOwner
+        deleteDrafts: isActivityOwner,
+        getDocumentsByUsername: true
     }, defaultPolicy),
 };
