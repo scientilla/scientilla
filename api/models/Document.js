@@ -233,7 +233,7 @@ module.exports = _.merge({}, BaseModel, {
             return this.authorships.find(a => a.position === position);
         },
         getFullAuthorships: function () {
-            if (_.isEmpty(this.affiliations) || _.isEmpty(this.authorships))
+            if (!Array.isArray(this.affiliations) || _.isEmpty(this.authorships))
                 return [];
 
             return this.authorships.map(authorship => {
