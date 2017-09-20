@@ -35,6 +35,33 @@ module.exports = function expand(req, res) {
         return model;
     }
 
+    async function getCount(Model, parentPk, relation, searchCriteria) {
+        //can be optimized with binary search
+        const sortCriteria = {id: 'asc'};
+        const populate = {
+            where: searchCriteria,
+            sort: sortCriteria
+        };
+        let step = 1200;
+        let skip = 0;
+        let limit = 1;
+        let res;
+        do {
+            skip+=step;
+            populate.skip = skip;
+            populate.limit = limit;
+            const el = await Model.findOne(parentPk).populate(relation, populate);
+            res = el[relation];
+        } while(!_.isEmpty(res));
+        skip-=step;
+        limit=step;
+        populate.skip = skip;
+        populate.limit = limit;
+        const el = await Model.findOne(parentPk).populate(relation, populate);
+        res = el[relation];
+        return res.length+skip;
+    }
+
     const Model = actionUtil.parseModel(req);
     const relation = req.options.alias;
     if (!relation || !Model)
@@ -67,7 +94,7 @@ module.exports = function expand(req, res) {
 
     if (_.isEmpty(sort) && relationModel.DEFAULT_SORTING)
         sort = relationModel.DEFAULT_SORTING;
-    const hardLimit = 1500;
+    const hardLimit = 200;
     const skip = actionUtil.parseSkip(req);
     const limit = hardLimit;
     populate.sort = sort;
@@ -81,8 +108,11 @@ module.exports = function expand(req, res) {
                 return res.notFound('No record found with the specified id.');
             if (!matchingRecord[relation])
                 return res.notFound(util.format('Specified record (%s) is missing relation `%s`', parentPk, relation));
-
-            const count = matchingRecord[relation].length + skip;
+            let count;
+            if (matchingRecord[relation].length < hardLimit-1)
+                count = matchingRecord[relation].length;
+            else
+                count = await getCount(Model, parentPk, relation, populate.where);
             const relationsRecords = matchingRecord[relation];
             const limit = actionUtil.parseLimit(req);
             const recordsId = _.slice(_.map(relationsRecords, 'id'), 0, limit);
