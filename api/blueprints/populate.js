@@ -47,19 +47,19 @@ module.exports = function expand(req, res) {
         let limit = 1;
         let res;
         do {
-            skip+=step;
+            skip += step;
             populate.skip = skip;
             populate.limit = limit;
             const el = await Model.findOne(parentPk).populate(relation, populate);
             res = el[relation];
-        } while(!_.isEmpty(res));
-        skip-=step;
-        limit=step;
+        } while (!_.isEmpty(res));
+        skip -= step;
+        limit = step;
         populate.skip = skip;
         populate.limit = limit;
         const el = await Model.findOne(parentPk).populate(relation, populate);
         res = el[relation];
-        return res.length+skip;
+        return res.length + skip;
     }
 
     const Model = actionUtil.parseModel(req);
@@ -109,7 +109,7 @@ module.exports = function expand(req, res) {
             if (!matchingRecord[relation])
                 return res.notFound(util.format('Specified record (%s) is missing relation `%s`', parentPk, relation));
             let count;
-            if (matchingRecord[relation].length < hardLimit-1)
+            if ((skip + matchingRecord[relation].length) < hardLimit - 1)
                 count = matchingRecord[relation].length;
             else
                 count = await getCount(Model, parentPk, relation, populate.where);
@@ -122,7 +122,7 @@ module.exports = function expand(req, res) {
             //sTODO add support for deep populate
             const where = {'id': recordsId};
             let query = relationModel.find({where, sort});
-            for (let f of populateFields)  {
+            for (let f of populateFields) {
                 const fieldAttribute = relationModel._attributes[f.alias];
                 const criteria = _.get(fieldAttribute, 'getCriteria') ? await fieldAttribute.getCriteria(req) : {};
                 query = query.populate(f.alias, criteria);
