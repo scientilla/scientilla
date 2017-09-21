@@ -15,21 +15,39 @@
 
     scientillaDocument.$inject = [
         'ModalService',
+        'researchEntityService',
         'config',
         'DocumentLabels',
-        'context'
+        'context',
+        'documentOrigins'
     ];
 
-    function scientillaDocument(ModalService, config, DocumentLabels, context) {
-        var vm = this;
+    function scientillaDocument(ModalService, researchEntityService, config, DocumentLabels, context, documentOrigins) {
+        const vm = this;
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
         vm.editTags = editTags;
         vm.isSynchronized = isSynchronized;
+        vm.showScopusMetrics = showScopusMetrics;
+        vm.showWOSMetrics = showWOSMetrics;
+        vm.getMetricValue = getMetricValue;
+        vm.hasMetric = hasMetric;
+        vm.isPublic = isPublic;
+        vm.isPrivacyToShow = isPrivacyToShow;
+        vm.changePrivacy = changePrivacy;
 
         const researchEntity = context.getResearchEntity();
         if (_.isNil(vm.checkDuplicates))
             vm.checkDuplicates = true;
+
+        vm.metrics = {
+            CITATIONS: 'citations',
+            SJR: 'SJR',
+            SNIP: 'SNIP',
+            IF: 'IF',
+            IF5: '5IF',
+            AIS: 'AIS'
+        };
 
         vm.$onInit = function () {
             vm.showPrivateTags = vm.showPrivateTags || false;
@@ -97,6 +115,39 @@
             ModalService.openScientillaTagForm(vm.document);
         }
 
+        function showScopusMetrics() {
+            return hasMetric(vm.metrics.CITATIONS) || hasMetric(vm.metrics.SNIP) || hasMetric(vm.metrics.SJR);
+        }
+
+        function showWOSMetrics() {
+            return hasMetric(vm.metrics.IF);
+        }
+
+        function hasMetric(metric) {
+            switch (metric) {
+                case vm.metrics.CITATIONS:
+                    return !!vm.document.citations.find(cit => cit.origin === documentOrigins.SCOPUS);
+                case vm.metrics.SNIP:
+                case vm.metrics.SJR:
+                case vm.metrics.IF:
+                    return !!getMetric(metric);
+            }
+            return false;
+        }
+
+        function getMetricValue(metric) {
+            return getMetric(metric).value;
+        }
+
+        function getMetric(metric) {
+            if (metric === vm.metrics.CITATIONS)
+                return {
+                    value: vm.document.citations.reduce((tot, val) => val.citations + tot, 0)
+                };
+
+            return vm.document.sourceMetrics.find(m => m.name === metric);
+        }
+
         function getVerifiedCount() {
             return vm.document.authorships.filter(a => a.researchEntity)
                 .concat(vm.document.groupAuthorships).length;
@@ -105,6 +156,33 @@
         function isSynchronized() {
             return vm.document.synchronized && vm.document.origin === 'scopus';
         }
+
+        function changePrivacy() {
+            const authorship = getAuthorship();
+            authorship.public = !authorship.public;
+            researchEntityService.setAuthorshipPrivacy(researchEntity, authorship);
+        }
+
+        function isPublic() {
+            const authorship = getAuthorship();
+            if (!authorship) return false;
+            return !!authorship.public;
+        }
+
+        function isPrivacyToShow() {
+            return vm.document.kind === 'v' && getAuthorship();
+        }
+
+        function getAuthorship() {
+            let field;
+            if (researchEntity.getType() === 'user')
+                field = 'authorships';
+            else
+                field = 'groupAuthorships';
+
+            return vm.document[field].find(a => a.researchEntity === researchEntity.id);
+        }
+
     }
 
 

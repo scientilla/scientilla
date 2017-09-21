@@ -29,26 +29,62 @@
                 </small>
             </div>
             <div ng-if="vm.showPrivateTags">
-                <span ng-click="vm.editTags()" class="fa fa-edit scientilla-clickable" title="Edit your tags"></span>
+                <span ng-click="vm.editTags()" class="fa fa-tags scientilla-clickable" title="Edit your tags"></span>
                 <span ng-bind-html='vm.document | documentusertags'></span>
+            </div>
+
+            <div class="scientilla-document-icons-bottom"
+                 title="{{vm.verifiedCount}} people or groups have verified this document">
+                <span class="fa fa-check"></span> {{vm.verifiedCount}}
+            </div>
+            <div ng-if="vm.document.origin==='scopus'" class="scientilla-document-icons-bottom">
+                <div class="scientilla-document-icon-container">
+                <span class="scientilla-icon scientilla-icon-scopus"
+                      title="This document has been imported from Scopus"></span>
+                </div>
+                <span class="fa fa-refresh"
+                      ng-if="vm.isSynchronized()"
+                      title="This document will update automatically from {{vm.document.origin}}"></span>
+            </div>
+            <div ng-if="vm.isPrivacyToShow()" class="scientilla-document-icons-bottom">
+                <span ng-click="vm.changePrivacy()"
+                      ng-if="vm.isPublic()"
+                      class="fa fa-globe scientilla-icon-fa scientilla-clickable"
+                      title="The document is visible to everyone, click to change it"></span>
+                <span ng-click="vm.changePrivacy()"
+                      ng-if="!vm.isPublic()"
+                      class="fa fa-lock scientilla-icon-fa scientilla-clickable"
+                      title="The document is visible only to scientilla users, click to change it"></span>
             </div>
         </div>
 
         <div class="col-xs-1 scientilla-document-icons">
-            <div title="{{vm.verifiedCount}} people or groups have verified this document">
-                <span class="fa fa-check"></span> {{vm.verifiedCount}}
-            </div>
-            <div class="scientilla-document-icons-extra">
-                <div ng-if="vm.document.origin==='scopus'" class="scientilla-document-icon-container">
+
+            <div ng-if="vm.showScopusMetrics()" class="scientilla-document-icons-extra">
+                <div>
                 <span class="scientilla-icon scientilla-icon-scopus"
-                      title="This document has been imported from Scopus"></span>
+                      title=""></span>
                 </div>
-                <div ng-if="vm.isSynchronized()"
-                     class="scientilla-document-icon-container">
-                <span class="fa fa-refresh"
-                      title="This document will update automatically from {{vm.document.origin}}"></span>
+
+                <div ng-if="vm.hasMetric(vm.metrics.CITATIONS)" class="small">
+                    Citations {{ vm.getMetricValue(vm.metrics.CITATIONS) }}
+                </div>
+                <div ng-if="vm.hasMetric(vm.metrics.SNIP)" class="small">
+                    SNIP {{ vm.getMetricValue(vm.metrics.SNIP) }}
+                </div>
+                <div ng-if="vm.hasMetric(vm.metrics.SJR)" class="small">
+                    SJR {{ vm.getMetricValue(vm.metrics.SJR) }}
                 </div>
             </div>
+            <div ng-if="vm.showWOSMetrics()" class="scientilla-document-icons-extra">
+                <div>
+                    <span class="scientilla-icon scientilla-icon-wos"></span>
+                </div>
+                <div ng-if="vm.hasMetric(vm.metrics.IF)" class="small">
+                    IF {{ vm.getMetricValue(vm.metrics.IF) }}
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

@@ -10,6 +10,7 @@ const DocumentTypes = require("./DocumentTypes");
 module.exports = {
     getConfig,
     getDocument,
+    getDocumentCitations,
     getSingleSearchConfig
 };
 
@@ -31,7 +32,11 @@ function getConfig(scopusId, params) {
 }
 
 function getDocument(scopusId) {
-    return scoupsSingleRequest(scopusId, 0);
+    return documentDataRequest(scopusId, 0);
+}
+
+function getDocumentCitations(scopusId, date) {
+    return documentCitationsRequest(scopusId, date);
 }
 
 function getSingleSearchConfig(search) {
@@ -62,26 +67,13 @@ function getSearchReqParams(queryString, params) {
     };
 }
 
-async function scoupsSingleRequest(scopusId, attempt) {
+async function documentDataRequest(scopusId, attempt) {
     let res, documentData;
-    const requestParams = {
-        uri: sails.config.scientilla.scopus.url + '/content/abstract/scopus_id/' + scopusId,
-        headers: {
-            'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
-            'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
-            Accept: 'application/json'
-        },
-        qs: {view: 'FULL'},
-        json: true,
-        fullResponse: true,
-        maxAttempts: 5,
-        retryDelay: 500
-    };
-
+    const requestParams = getRequestParams('/content/abstract/scopus_id/' + scopusId, {view: 'FULL'});
     try {
         res = await request.get(requestParams);
     } catch (err) {
-        sails.log.debug('Scopus request failed. Scopus Id = ' + scopusId);
+        sails.log.debug('Scopus data request failed. Scopus Id = ' + scopusId);
         sails.log.debug(err.error);
         return {};
     }
@@ -225,7 +217,7 @@ async function scoupsSingleRequest(scopusId, attempt) {
         documentData.source = newSource;
 
     } catch (err) {
-        sails.log.debug('Document failed. Scopus Id = ' + scopusId);
+        sails.log.debug('Document data failed. Scopus Id = ' + scopusId);
         sails.log.debug(err);
 
         return {};
@@ -235,7 +227,72 @@ async function scoupsSingleRequest(scopusId, attempt) {
 }
 
 
+async function documentCitationsRequest(scopusId, date) {
+    let res, citations;
+    const requestParams = getRequestParams('/content/abstract/citations', {scopus_id: scopusId, date});
+    try {
+        res = await request.get(requestParams);
+    } catch (err) {
+        sails.log.debug('Scopus citations request failed. Scopus Id = ' + scopusId);
+        sails.log.debug(err.error);
+        return {};
+    }
+
+    try {
+        const body = res.body;
+        citations = formatDocumentCitations(body);
+
+    } catch (err) {
+        sails.log.debug('Document citations failed. Scopus Id = ' + scopusId);
+        sails.log.debug(err);
+
+        return {};
+    }
+    return citations;
+}
+
+function formatDocumentCitations(documentCitations) {
+    const columnHeading = _.get(documentCitations, 'abstract-citations-response.citeColumnTotalXML.citeCountHeader.columnHeading');
+    const columnTotal = _.get(documentCitations, 'abstract-citations-response.citeColumnTotalXML.citeCountHeader.columnTotal');
+
+    if (_.isNil(columnHeading))
+        return [];
+
+    if (Array.isArray(columnHeading))
+        return columnHeading.map((v, k) => ({
+            year: v.$,
+            value: columnTotal[k].$
+        }));
+
+    return [{
+        year: columnHeading,
+        value: columnTotal
+    }];
+
+}
+
+
+function getRequestParams(path, qs) {
+    return {
+        uri: sails.config.scientilla.scopus.url + path,
+        headers: {
+            'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
+            'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
+            Accept: 'application/json'
+        },
+        qs: qs,
+        json: true,
+        fullResponse: true,
+        maxAttempts: 5,
+        retryDelay: 500
+    };
+}
+
+
 function fieldExtract(res) {
+    if(_.get(res, 'service-error'))
+        throw new _.get(res, 'service-error.status.statusText');
+
     const error = _.get(res, 'search-results.entry[0].error');
 
     if (error) {
@@ -324,7 +381,7 @@ function toArray(val) {
 function onError(err, scopusId, attempt) {
     if (attempt < 3) {
         sails.log.debug(err);
-        return scoupsSingleRequest(scopusId, attempt + 1);
+        return documentDataRequest(scopusId, attempt + 1);
     }
 
     throw err;

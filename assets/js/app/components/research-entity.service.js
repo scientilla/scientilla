@@ -31,6 +31,7 @@
         service.deleteDrafts = deleteDrafts;
         service.setPrivateTags = setPrivateTags;
         service.searchExternalDocument = searchExternalDocument;
+        service.setAuthorshipPrivacy = setAuthorshipPrivacy;
 
         var documentPopulates = [
             'source',
@@ -38,6 +39,8 @@
             'authorships',
             'groupAuthorships',
             'affiliations',
+            'citations',
+            'sourceMetrics',
             'userTags',
             'tagLabels',
             'groupTags',
@@ -103,7 +106,7 @@
         }
 
         function verifyDocument(researchEntity, id, verificationData) {
-            const verificationFields = ['position', 'affiliations', 'corresponding', 'synchronize'];
+            const verificationFields = ['position', 'affiliations', 'corresponding', 'synchronize', 'public'];
             verificationData = _.pick(verificationData, verificationFields);
             verificationData.id = id;
             return researchEntity
@@ -112,14 +115,19 @@
 
         function verifyDraftAsGroup(researchEntity, draftId) {
             return researchEntity.one('drafts', draftId)
-                .customPUT({}, 'verified');
+                .customPUT({public: true}, 'verified');
         }
 
         function verifyDraftAsUser(researchEntity, draftId, verificationData) {
-            const verificationFields = ['position', 'affiliations', 'corresponding', 'synchronize'];
+            const verificationFields = ['position', 'affiliations', 'corresponding', 'synchronize', 'public'];
             verificationData = _.pick(verificationData, verificationFields);
             return researchEntity.one('drafts', draftId)
                 .customPUT(verificationData, 'verified');
+        }
+
+        function setAuthorshipPrivacy(researchEntity, authorship) {
+            return researchEntity.one('documents', authorship.document)
+                .customPUT({privacy: authorship.public}, 'privacy');
         }
 
         function unverify(researchEntity, document) {

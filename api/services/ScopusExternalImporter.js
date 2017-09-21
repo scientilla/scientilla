@@ -1,4 +1,4 @@
-/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship, ExternalImporter */
+/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship, ExternalImporter, Citation */
 // ScopusExternalImporter.js - in api/services
 
 "use strict";
@@ -6,6 +6,7 @@
 const _ = require('lodash');
 
 const chunkSize = 100;
+const interval = 12 * 60 * 60 * 1000;
 
 module.exports = {
     updateUser: async (user) => {
@@ -25,46 +26,48 @@ module.exports = {
         sails.log.info('updated/inserted ' + total + ' scopus external documents of group ' + group.name);
     },
     updateAll: async () => {
-        const usersDocumentsScopusIds = await getResearchEntitiesDocumentsScopusIds(User);
-        const groupsDocumentsScopusIds = await getResearchEntitiesDocumentsScopusIds(Group);
+        let total;
+        total = await updateResearchEntityProfiles(User, ExternalDocument);
+        total += await updateResearchEntityProfiles(Group, ExternalDocumentGroup);
 
-        const currentExternalIds = (await Document.find({
+        const externalDocuments = await Document.find({
             kind: DocumentKinds.EXTERNAL,
-            origin: DocumentOrigins.SCOPUS
-        })).map(ed => ed.scopusId);
+            origin: DocumentOrigins.SCOPUS,
+            updatedAt: {
+                '<=': getUpdateLimitDate()
+            }
+        });
+        const currentExternalIds = externalDocuments.map(ed => ed.scopusId);
+        const importedDocuments = await importDocuments(currentExternalIds);
 
-        const userDocsIds = _.flatten(usersDocumentsScopusIds.map(ur => ur.scopusIds));
-        const groupDocsIds = _.flatten(groupsDocumentsScopusIds.map(ur => ur.scopusIds));
-        const docsIds = [...new Set(userDocsIds.concat(groupDocsIds).concat(currentExternalIds))];
-
-        const importedDocuments = await importDocuments(docsIds);
-        await updateAllExternalDocuments(ExternalDocument, usersDocumentsScopusIds, importedDocuments);
-        await updateAllExternalDocuments(ExternalDocumentGroup, groupsDocumentsScopusIds, importedDocuments);
-
-        sails.log.info('updated/inserted ' + importedDocuments.length + ' scopus external documents');
+        total += importedDocuments.length;
+        sails.log.info('updated/inserted ' + total + ' scopus external documents');
     },
     updateDocument: getAndCreateOrUpdateDocument
 };
 
 async function updateResearchEntityProfile(externalDocumentModel, researchEntity) {
-    const documentScopusIds = await getResearchEntityDocumentsScopusIds(researchEntity);
+    let documentScopusIds;
+    try {
+        documentScopusIds = await getResearchEntityDocumentsScopusIds(researchEntity);
+    } catch (e) {
+        return 0;
+    }
     const importedDocuments = await importDocuments(documentScopusIds);
     await updateExternalDocuments(externalDocumentModel, researchEntity.id, importedDocuments);
 
     return importedDocuments.length;
 }
 
-async function getResearchEntitiesDocumentsScopusIds(researchEntityModel) {
+async function updateResearchEntityProfiles(researchEntityModel, externalDocumentModel) {
     const researchEntities = await researchEntityModel.find({scopusId: {'!': ''}});
-    let researchEntitiesScopusIds = [];
+
+    let total = 0;
 
     for (let re of researchEntities)
-        researchEntitiesScopusIds.push({
-            researchEntity: re,
-            scopusIds: await getResearchEntityDocumentsScopusIds(re)
-        });
+        total += await updateResearchEntityProfile(externalDocumentModel, re);
 
-    return researchEntitiesScopusIds;
+    return total;
 }
 
 async function getResearchEntityDocumentsScopusIds(researchEntity) {
@@ -153,13 +156,6 @@ async function getResearchEntityDocumentsScopusIds(researchEntity) {
     }
 }
 
-async function updateAllExternalDocuments(externalDocumentsModel, researchEntitiesDocumentsScopusIds, importedDocuments) {
-    for (let r of researchEntitiesDocumentsScopusIds) {
-        const documents = _.filter(importedDocuments, d => _.includes(r.scopusIds, d.scopusId));
-        await updateExternalDocuments(externalDocumentsModel, r.researchEntity.id, documents);
-    }
-}
-
 async function updateExternalDocuments(externalDocumentsModel, researchEntityId, documents) {
     await externalDocumentsModel.destroy({
         researchEntity: researchEntityId,
@@ -204,13 +200,26 @@ async function importDocuments(documentScopusIds) {
         const docs = await Promise.all(
             documentScopusIds.map(
                 async scopusId => {
+
+                    let document = await Document.findOne({
+                        kind: DocumentKinds.EXTERNAL,
+                        origin: DocumentOrigins.SCOPUS,
+                        scopusId: scopusId
+                    });
+
+                    if (document && document.updatedAt > getUpdateLimitDate())
+                        return document;
+
                     try {
-                        const document = await getAndCreateOrUpdateDocument(scopusId);
-                        if (_.has(document, 'id'))
+                        document = await getAndCreateOrUpdateDocument(scopusId);
+                        if (_.has(document, 'id')) {
+                            await updateCitations(document);
                             return document;
+                        }
+
                     }
                     catch (err) {
-                        sails.log.debug('Updater: Document failed ' + r.scopusId);
+                        sails.log.debug('Updater: Document failed ' + scopusId);
                     }
 
                     return {};
@@ -228,9 +237,31 @@ async function getAndCreateOrUpdateDocument(scopusId) {
     return {};
 }
 
+async function updateCitations(document) {
+    const date = document.year + '-' + (new Date()).getFullYear();
+    const citations = await ScopusConnector.getDocumentCitations(document.scopusId, date);
+
+    for (const cit of citations)
+        await Citation.createOrUpdate({
+            origin: DocumentOrigins.SCOPUS,
+            originId: document.scopusId,
+            year: cit.year
+        }, {
+            origin: DocumentOrigins.SCOPUS,
+            originId: document.scopusId,
+            year: cit.year,
+            citations: cit.value
+        });
+
+}
+
 function* chunks(array, chunkSize) {
     const len = array.length;
     for (let i = 0; i < len; i += chunkSize) {
         yield array.slice(i, i + chunkSize);
     }
+}
+
+function getUpdateLimitDate() {
+    return new Date((new Date()).getTime() - interval);
 }

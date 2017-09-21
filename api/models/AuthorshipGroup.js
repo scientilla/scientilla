@@ -1,3 +1,5 @@
+/* global AuthorshipGroup*/
+"use strict";
 /**
  * AuthorshipGroup.js
  *
@@ -22,6 +24,14 @@ module.exports = _.merge({}, BaseModel, {
         unverify: function () {
             return this.destroy();
         }
+    },
+    setPrivacy: async function (documentId, groupId, privacy) {
+        const authorshipGroup = await AuthorshipGroup.findOne({document: documentId, researchEntity: groupId});
+        if (!authorshipGroup)
+            throw 'Athorship not found';
+
+        authorshipGroup.public = !!privacy;
+        return authorshipGroup.savePromise();
     }
 });
 

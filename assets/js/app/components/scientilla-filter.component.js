@@ -23,7 +23,7 @@
     ];
 
     function scientillaFilter(pageSize, $scope) {
-        var vm = this;
+        const vm = this;
 
         vm.onSubmit = onSubmit;
         vm.onSearch = onSearch;
@@ -47,7 +47,7 @@
         vm.formVisible = true;
 
         let searchQuery = {};
-        let onDataChangeDeregisterer = null;
+        let onDataCountChangeDeregisterer = null;
 
         vm.$onInit = function () {
             vm.itemsPerPage = pageSize;
@@ -62,7 +62,7 @@
             if (_.isUndefined(vm.elements))
                 vm.elements = [];
 
-            onDataChangeDeregisterer = $scope.$watch('vm.elements', onDataChange, true);
+            onDataCountChangeDeregisterer = $scope.$watch('vm.elements.count', onDataCountChange, true);
 
             vm.filterSearchFormStructure = _.assign({}, vm.searchFormStructure, {
                 newlineFilter1: {
@@ -91,7 +91,7 @@
         };
 
         vm.$onDestroy = function () {
-            onDataChangeDeregisterer();
+            onDataCountChangeDeregisterer();
         };
 
         function onSubmit(searchValues) {
@@ -115,7 +115,7 @@
         }
 
         function search(searchValues) {
-            var where = {};
+            let where = {};
 
             if (searchValues && searchValues.itemsPerPage)
                 vm.itemsPerPage = searchValues.itemsPerPage;
@@ -125,12 +125,12 @@
                     if (key === 'itemsPerPage')
                         return;
 
-                    var struct = vm.searchFormStructure[key];
+                    const struct = vm.searchFormStructure[key];
 
                     if (struct.inputType === 'select' && searchValues[key] === "?")
                         return;
 
-                    var whereAdd = {};
+                    const whereAdd = {};
                     if (!struct.matchRule) {
                         whereAdd[struct.matchColumn] = value;
                     }
@@ -163,13 +163,13 @@
             return open ? '<' : '>';
         }
 
-        function onDataChange() {
+        function onDataCountChange() {
             vm.totalItems = vm.elements.count || 0;
         }
 
         function refreshList() {
             setStatus(vm.STATUS_LOADING);
-            var query = getQuery();
+            const query = getQuery();
 
             vm.onFilter()(query)
                 .then(function () {
@@ -182,7 +182,7 @@
         }
 
         function getQuery() {
-            var paginationQuery = {
+            const paginationQuery = {
                 skip: (vm.currentPage - 1) * vm.itemsPerPage,
                 limit: vm.itemsPerPage
             };

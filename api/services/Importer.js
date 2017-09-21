@@ -1,3 +1,4 @@
+/* global Source, User, Group, SourceMetric, SourceTypes*/
 // Importer.js - in api/services
 
 "use strict";
@@ -12,7 +13,8 @@ const loadJsonFile = require('load-json-file');
 module.exports = {
     importSources,
     importPeople,
-    importGroups
+    importGroups,
+    importSourceMetrics
 };
 
 async function importSources() {
@@ -170,4 +172,99 @@ async function importGroups() {
         await Group.create({name: groupName});
     }
     sails.log.info('Import finished');
+}
+
+
+async function importSourceMetrics(filename) {
+    sails.log.info('Source metrics import started');
+
+    const sourceIdentifiers = SourceMetric.sourceIdentifiers;
+
+    const originCellCoord = 'B1';
+    const yearCellCoord = 'D1';
+
+    let recordsCount = 0;
+
+    const cols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+    const filePath = 'config/init/' + filename;
+    if (fs.existsSync(filePath)) {
+        const workbook = xlsx.readFile(filePath);
+        const sheetNameList = workbook.SheetNames;
+
+        const workSheet = workbook.Sheets[sheetNameList[0]];
+
+        if (!workSheet[originCellCoord] || !workSheet[yearCellCoord])
+            throw 'Invalid file format';
+
+        const origin = workSheet[originCellCoord].v;
+        const year = workSheet[yearCellCoord].v;
+
+        const columnsMapping = {};
+
+        for (const c of cols) {
+            const colNameCell = workSheet[c + '2'];
+            if (!colNameCell)
+                break;
+
+            columnsMapping[colNameCell.v] = c;
+        }
+
+        const keyColumns = Object.keys(columnsMapping).filter(c => sourceIdentifiers.includes(c));
+        const valueColumns = Object.keys(columnsMapping).filter(c => !sourceIdentifiers.includes(c));
+
+
+        let i = 3;
+        while (true) {
+            const workSheetRow = {};
+
+            for (const colName in columnsMapping) {
+                const col = columnsMapping[colName];
+                const cellCoord = col + i;
+                if (workSheet[cellCoord])
+                    workSheetRow[colName] = workSheet[cellCoord].v;
+            }
+
+            if (workSheetRow.issn) {
+                workSheetRow.issn = workSheetRow.issn + '';
+                workSheetRow.issn = workSheetRow.issn.replace(/-/g, '');
+            }
+            if (workSheetRow.eissn) {
+                workSheetRow.eissn = workSheetRow.eissn + '';
+                workSheetRow.eissn = workSheetRow.eissn.replace(/-/g, '');
+            }
+
+            if (_.isEmpty(workSheetRow))
+                break;
+
+            i++;
+
+            const baseRecord = {};
+
+            for (const kc of keyColumns)
+                if (workSheetRow[kc])
+                    baseRecord[kc] = workSheetRow[kc];
+
+            if (_.isEmpty(baseRecord))
+                continue;
+
+            baseRecord.year = year;
+            baseRecord.origin = origin;
+
+            for (const vc of valueColumns) {
+                if (!workSheetRow[vc])
+                    continue;
+
+                const criteria = _.clone(baseRecord);
+                criteria.name = vc;
+                const record = _.clone(baseRecord);
+                record.name = vc;
+                record.value = workSheetRow[vc];
+                await SourceMetric.createOrUpdate(criteria, record);
+                recordsCount++;
+            }
+        }
+    }
+
+    sails.log.info('imported ' + recordsCount + ' records');
+    sails.log.info('Source metrics import finished');
 }

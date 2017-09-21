@@ -201,7 +201,7 @@ module.exports = _.merge({}, BaseModel, {
         const res = await ResearchEntityModel.update({id: researchEntityId}, researchEntityData);
         const newResearchEntity = res[0];
         const researchEntityType = newResearchEntity.getType();
-        const command = 'external:import:' + researchEntityType + ':' + newResearchEntity.id;
+        const command = 'import:external:' + researchEntityType + ':' + newResearchEntity.id;
         if (newResearchEntity.scopusId !== oldResearchEntity.scopusId)
             GruntTaskRunner.run(command + ':' + DocumentOrigins.SCOPUS);
         if (newResearchEntity.username !== oldResearchEntity.username

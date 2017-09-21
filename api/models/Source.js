@@ -6,7 +6,6 @@
  */
 
 module.exports = {
-
     attributes: {
         title: 'string',
         issn: 'string',
@@ -22,7 +21,13 @@ module.exports = {
         documents: {
             collection: 'document',
             via: 'source'
-        }
+        },
+        metrics: {
+            collection: 'SourceMetric',
+            via: 'sources',
+            through: 'sourcemetricsource'
+        },
+
     }
 };
 

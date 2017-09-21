@@ -1,4 +1,4 @@
-<div  class="scientilla-document-details-authors">
+<div class="scientilla-document-details-authors">
     <small class="scientilla-document-authors">
         <span ng-bind-html='vm.document.authorsStr | authorsCorresponding:vm.document | authorsVerified:vm.document | authorsAffiliations:vm.document'></span>
     </small>
@@ -8,11 +8,13 @@
 </div>
 <div>
     <small class="scientilla-document-institutes">
-        <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} - {{institute.name}}</div>
+        <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} -
+            {{institute.name}}
+        </div>
     </small>
 </div>
 
-<div ng-if="vm.document.abstract"  class="scientilla-document-details-abstract">
+<div ng-if="vm.document.abstract" class="scientilla-document-details-abstract">
     <hr>
     <h4>Abstract</h4>
     {{vm.document.abstract}}
@@ -22,32 +24,11 @@
     <hr>
     <scientilla-document-source document="vm.document"></scientilla-document-source>
 
-    <small ng-if="vm.document.issue">
-        issue {{vm.document.issue}},
+    <small>
+        {{vm.bibliographicInformations.join(', ')}}
     </small>
-
-    <small ng-if="vm.document.year">
-        year {{vm.document.year}},
-    </small>
-
-    <small ng-if="vm.document.editor">
-        editor {{vm.document.editor}},
-    </small>
-
-    <small ng-if="vm.document.publisher">
-        editor {{vm.document.publisher}},
-    </small>
-
-    <small ng-if="vm.document.articleNumber">
-        article number {{vm.document.articleNumber}},
-    </small>
-
-    <small ng-if="vm.document.volume">
-        volume {{vm.document.volume}},
-    </small>
-
-    <small ng-if="vm.document.pages">
-        {{vm.document.pages}} pages
+    <small>
+        ({{vm.document.year}})
     </small>
 
 </div>
@@ -64,10 +45,10 @@
     <small ng-if="vm.document.wosId">
         <label>WOS id:</label> {{vm.document.wosId}}
     </small>
-    <small ng-if="vm.document.sourceType">
-        <label>Source type:</label> {{vm.document.sourceType}}
+    <small ng-if="vm.sourceType">
+        <label>Source type:</label> {{vm.sourceType}}
     </small>
-    <small ng-if="vm.document.type">
-        <label>Type:</label> {{vm.document.type}}
+    <small ng-if="vm.type">
+        <label>Document type:</label> {{vm.type}}
     </small>
 </div>

@@ -18,48 +18,55 @@
         'FormForConfiguration',
         'Notification',
         '$scope',
-        'Prototyper'
+        'groupTypes',
+        'groupTypeLabels'
     ];
 
-    function GroupFormController(GroupsService, FormForConfiguration, Notification, $scope, Prototyper) {
-        var vm = this;
+    function GroupFormController(GroupsService, FormForConfiguration, Notification, $scope, groupTypes, groupTypeLabels) {
+        const vm = this;
         vm.getUsersQuery = getUsersQuery;
         vm.cancel = cancel;
 
         vm.submit = submit;
-        vm.validationAndViewRules = {
+
+        vm.formStructure = {
             name: {
                 inputType: 'text',
-                required: true,
-                minlength: 3,
-                maxlength: 40
+                label: 'Title',
+                defaultValue: vm.group.name
             },
             slug: {
                 inputType: 'text',
-                required: true,
-                minlength: 3,
-                maxlength: 40,
-                pattern: {
-                    rule: /^[a-zA-Z0-9-_]*$/,
-                    message: 'The slug must contains only letters, number and dashes'
-                }
+                label: 'Slug',
+                defaultValue: vm.group.slug
             },
             shortname: {
                 inputType: 'text',
-                label: 'Short Name'
+                label: 'Short Name',
+                defaultValue: vm.group.shortname
             },
             description: {
                 inputType: 'text',
-                multiline: true
+                label: 'Description',
+                defaultValue: vm.group.description
             },
             publicationsAcronym: {
                 inputType: 'text',
-                label: 'Publications: Group Acronym'
+                label: 'Publications: Group Acronym',
+                defaultValue: vm.group.publicationsAcronym
             },
             scopusId: {
                 inputType: 'text',
-                label: 'Scopus ID'
+                label: 'Scopus ID',
+                defaultValue: vm.group.scopusId
+            },
+            type: {
+                inputType: 'select',
+                label: 'Group Type',
+                defaultValue: vm.group.type || groupTypes.RESEARCH_LINE,
+                values: Object.keys(groupTypes).map(k => ({label: groupTypeLabels[k], value: groupTypes[k]}))
             }
+
         };
 
         vm.$onInit = function () {
@@ -77,14 +84,21 @@
         }
 
         function calculateSlug(group) {
-            var name = group.name ? group.name : "";
-            var slug = name.toLowerCase().replace(/\s+/gi, '-');
-            return slug;
+            const name = group.name ? group.name : "";
+            return name.toLowerCase().replace(/\s+/gi, '-');
         }
 
-        function submit() {
+        function submit(group) {
+            if (!group) return;
+
+            for (const key of Object.keys(vm.formStructure))
+                vm.group[key] = group[key];
+
+            if (!vm.group.slug)
+                vm.group.slug = calculateSlug(group);
+
             GroupsService.doSave(vm.group)
-                .then(function (group) {
+                .then(function () {
                     Notification.success("Group data saved");
                     if (_.isFunction(vm.onSubmit()))
                         vm.onSubmit()(1);
@@ -96,8 +110,8 @@
         }
 
         function getUsersQuery(searchText) {
-            var qs = {where: {or: [{name: {contains: searchText}}, {surname: {contains: searchText}}]}};
-            var model = 'users';
+            const qs = {where: {or: [{name: {contains: searchText}}, {surname: {contains: searchText}}]}};
+            const model = 'users';
             return {model: model, qs: qs};
         }
 

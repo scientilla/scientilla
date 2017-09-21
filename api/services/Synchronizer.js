@@ -36,8 +36,19 @@ async function synchronizeScopus() {
 
         sails.log.info('working on ' + documentsToSynchronize.length + ' documents');
         for (let doc of documentsToSynchronize) {
+            const externalDoc = await Document.findOne({
+                scopusId: doc.scopusId,
+                kind: DocumentKinds.EXTERNAL,
+                origin: DocumentOrigins.SCOPUS,
+            }).populate(documentPopulates);
+
+            if (!externalDoc) {
+                sails.log.debug('Synchronization failed: Document with id ' + doc.id + " has no corresponding external document");
+                continue;
+            }
+
             try {
-                const res = await documentSynchronize(doc, DocumentOrigins.SCOPUS);
+                const res = await documentSynchronize(doc, externalDoc);
                 if (res)
                     documentSynchronized++;
             }
@@ -53,33 +64,46 @@ async function synchronizeScopus() {
 
 async function documentSynchronizeScopus(docId) {
     const doc = await Document.findOneById(docId).populate(documentPopulates);
+    if (!doc)
+        throw 'Document not found';
 
-    const externalDoc = await Document.findOne({
-        scopusId: doc.scopusId,
+    let exceptionMessage,
+        searchKey,
+        documentField;
+
+    if (doc.scopusId) {
+        searchKey = 'originId';
+        documentField = 'scopusId';
+        exceptionMessage = 'Scopus Id rejected by Scopus, scopusId: ' + doc.scopusId;
+    }
+    else if (doc.doi) {
+        searchKey = 'doi';
+        documentField = 'doi';
+        exceptionMessage = 'DOI not found on scopus (' + doc.doi + ')';
+    }
+    else
+        throw "Document's scopus id or DOI not found";
+
+    const criteria = {
         kind: DocumentKinds.EXTERNAL,
         origin: DocumentOrigins.SCOPUS
-    });
+    };
+    criteria[documentField] = doc[documentField];
+
+    let externalDoc = await Document.findOne(criteria).populate(documentPopulates);
 
     if (!externalDoc) {
-        const externalDoc = await ExternalImporter.updateDocument(DocumentOrigins.SCOPUS, doc.scopusId);
-        if (!_.has(externalDoc, 'id'))
-            throw "Scopus Id rejected by Scopus, scopusId: " + doc.scopusId;
+        await ExternalImporter.search(DocumentOrigins.SCOPUS, searchKey, doc[documentField]);
+        externalDoc = await Document.findOne(criteria).populate(documentPopulates);
     }
 
-    return await documentSynchronize(doc, DocumentOrigins.SCOPUS);
+    if (!externalDoc)
+        throw exceptionMessage;
+
+    return await documentSynchronize(doc, externalDoc);
 }
 
-async function documentSynchronize(doc, origin) {
-    const externalDoc = await Document.findOne({
-        scopusId: doc.scopusId,
-        kind: DocumentKinds.EXTERNAL,
-        origin: origin
-    }).populate(documentPopulates);
-    if (!externalDoc) {
-        sails.log.debug('Document with id ' + doc.id + " has no corresponding external document");
-        throw "Synchronization failed";
-    }
-
+async function documentSynchronize(doc, externalDoc) {
     const docData = Document.selectData(doc);
     const externalDocData = Document.selectData(externalDoc);
     const differences = getDifferences(docData, externalDocData);

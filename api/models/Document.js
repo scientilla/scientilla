@@ -76,6 +76,11 @@ module.exports = _.merge({}, BaseModel, {
             via: 'documents',
             through: 'documentsuggestion'
         },
+        citations: {
+            collection: 'citation',
+            via: 'documents',
+            through: 'scopuscitation'
+        },
         externalUsers: {
             collection: 'user',
             via: 'document',
@@ -124,6 +129,11 @@ module.exports = _.merge({}, BaseModel, {
                     'researchEntityType': researchEntityType
                 };
             }
+        },
+        sourceMetrics: {
+            collection: 'sourcemetric',
+            via: 'document',
+            through: 'documentmetric'
         },
         userTags: {
             collection: 'tag',
@@ -223,7 +233,7 @@ module.exports = _.merge({}, BaseModel, {
             return this.authorships.find(a => a.position === position);
         },
         getFullAuthorships: function () {
-            if (_.isEmpty(this.affiliations) || _.isEmpty(this.authorships))
+            if (!Array.isArray(this.affiliations) || _.isEmpty(this.authorships))
                 return [];
 
             return this.authorships.map(authorship => {
@@ -237,9 +247,6 @@ module.exports = _.merge({}, BaseModel, {
                 this.synchronized = false;
                 return this.savePromise();
             }
-
-            if (!this.scopusId)
-                throw 'Empty scopusId';
 
             const res = await Synchronizer.documentSynchronizeScopus(this.id);
             return res.docData;
