@@ -110,7 +110,7 @@ module.exports = function expand(req, res) {
                 return res.notFound(util.format('Specified record (%s) is missing relation `%s`', parentPk, relation));
             let count;
             if ((skip + matchingRecord[relation].length) < hardLimit - 1)
-                count = matchingRecord[relation].length;
+                count = skip + matchingRecord[relation].length;
             else
                 count = await getCount(Model, parentPk, relation, populate.where);
             const relationsRecords = matchingRecord[relation];
