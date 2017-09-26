@@ -127,7 +127,7 @@ module.exports = _.merge({}, BaseModel, {
                     item: docToVerify
                 };
             }
-            Document.addMissingAffiliation(docToVerify, draft, authorshipData.position);
+            await Document.addMissingAffiliation(docToVerify, draft, authorshipData.position);
             sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + docToVerify.id);
             await Document.destroy({id: draft.id});
         }
