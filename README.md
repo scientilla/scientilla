@@ -28,6 +28,7 @@ At the moment you need to build Scientilla by yourself.
     ```
     cp config/scientilla.js.example config/scientilla.js
     cp config/connections.js config/local.js
+    sed -i 's/safe/alter/g' config/models.js
     ```
 
     And edit the config/scientilla.js and config/local.js files with your system settings.
@@ -41,6 +42,7 @@ At the moment you need to build Scientilla by yourself.
 
         ```
         ./bin/npm install
+        ./bin/bower install
         cp docker-compose-develop.yml docker-compose.yml
         docker-compose up
         ```
