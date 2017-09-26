@@ -250,6 +250,35 @@ module.exports = _.merge({}, BaseModel, {
 
             const res = await Synchronizer.documentSynchronizeScopus(this.id);
             return res.docData;
+        },
+        getReferences: function() {
+            let references = '';
+            if (this.volume) {
+                references += 'vol: ' + this.volume;
+            }
+            if (this.issue) {
+                references += ' (no. ' + this.issue + ')';
+            }
+
+            if (this.pages) {
+                references += ' pp. ' + this.pages;
+            }
+
+            if (this.source && this.source.publisher) {
+                references += ' ' + this.source.publisher;
+            }
+
+            if (this.source && this.source.location) {
+                references += ' ' + this.source.location;
+            }
+
+            return references.trim();
+        },
+        toJSON: function() {
+            var document = this.toObject();
+            document.references = this.getReferences();
+    
+            return document;
         }
     },
     getFields: function () {
