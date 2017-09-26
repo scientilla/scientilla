@@ -384,5 +384,23 @@ module.exports = _.merge({}, BaseModel, {
             return {};
 
         return document;
+    },
+    addMissingAffiliation: async (d1, d2) => {
+        const as1 = d1.getFullAuthorships();
+        const as2 = d2.getFullAuthorships();
+        const missingAuthorships = as2.filter(a2 => {
+            const a1 = as1.find(a1 => a2.position === a1.position);
+            return (
+                !a1 ||
+                (
+                    _.isEmpty(a1.affiliations) &&
+                    _.isNil(a1.researchEntity)
+                )
+            );
+        });
+        const missingAuthorshipIds = missingAuthorships.map(a => a.id);
+        const missingAffiliationIds = _.flatMap(missingAuthorships, a => a.affiliations.map(a => a.id));
+        await Authorship.update({id: missingAuthorshipIds}, {document: d1.id});
+        await Affiliation.update({id: missingAffiliationIds}, {document: d1.id});
     }
 });
