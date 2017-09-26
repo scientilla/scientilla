@@ -234,7 +234,7 @@
                 if (!this.authorsStr)
                     return [];
 
-                return this.authorsStr.replace(/\s+et all\s*$/i, '').split(/,|\sand\s/).map(_.trim);
+                return this.authorsStr.replace(/\s+et all\s*$/i, '').split(/,\s*/).map(_.trim);
             },
             getUcAuthors: function () {
                 var authors = this.getAuthors();
