@@ -7,9 +7,8 @@
             controller: scientillaDocument,
             controllerAs: 'vm',
             bindings: {
-                document: "<",
-                showPrivateTags: "<?",
-                checkDuplicates: '<?'
+                document: '<',
+                section: '<'
             }
         });
 
@@ -19,10 +18,11 @@
         'config',
         'DocumentLabels',
         'context',
-        'documentOrigins'
+        'documentOrigins',
+        'documentListSections'
     ];
 
-    function scientillaDocument(ModalService, researchEntityService, config, DocumentLabels, context, documentOrigins) {
+    function scientillaDocument(ModalService, researchEntityService, config, DocumentLabels, context, documentOrigins, documentListSections) {
         const vm = this;
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
@@ -37,8 +37,22 @@
         vm.changePrivacy = changePrivacy;
 
         const researchEntity = context.getResearchEntity();
-        if (_.isNil(vm.checkDuplicates))
-            vm.checkDuplicates = true;
+
+        vm.checkDuplicates = [
+            documentListSections.VERIFIED,
+            documentListSections.DRAFT,
+            documentListSections.SUGGESTED,
+            documentListSections.EXTERNAL
+        ].includes(vm.section);
+
+        vm.showPrivateTags = [
+            documentListSections.VERIFIED,
+            documentListSections.DRAFT
+        ].includes(vm.section);
+
+        vm.showPrivacy = [
+            documentListSections.VERIFIED
+        ].includes(vm.section);
 
         vm.metrics = {
             CITATIONS: 'citations',
@@ -170,7 +184,7 @@
         }
 
         function isPrivacyToShow() {
-            return vm.document.kind === 'v' && getAuthorship();
+            return vm.showPrivacy && vm.document.kind === 'v' && getAuthorship();
         }
 
         function getAuthorship() {

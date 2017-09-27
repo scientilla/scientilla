@@ -13,10 +13,11 @@
 
     scientillaExternalDocuments.$inject = [
         'context',
-        'documentSearchForm'
+        'documentSearchForm',
+        'documentListSections'
     ];
 
-    function scientillaExternalDocuments(context, documentSearchForm) {
+    function scientillaExternalDocuments(context, documentSearchForm, documentListSections) {
         const vm = this;
 
         const DocumentService = context.getDocumentService();
@@ -26,6 +27,7 @@
         vm.copyUncopiedDocuments = DocumentService.copyUncopiedDocuments;
         vm.onFilter = onFilter;
 
+        vm.documentListSections = documentListSections;
         vm.documents = [];
         let query = {};
 

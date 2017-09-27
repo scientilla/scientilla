@@ -11,8 +11,7 @@
             controllerAs: 'vm',
             bindings: {
                 researchEntity: '<',
-                editable: "<",
-                checkDuplicates: '<?'
+                section: '<'
             }
         });
 
@@ -21,13 +20,14 @@
         'context',
         'researchEntityService',
         'documentSearchForm',
-        'EventsService'
+        'EventsService',
+        'documentListSections'
     ];
 
-    function scientillaDocumentsList(context, researchEntityService, documentSearchForm, EventsService) {
-        var vm = this;
+    function scientillaDocumentsList(context, researchEntityService, documentSearchForm, EventsService, documentListSections) {
+        const vm = this;
 
-        var DocumentsService = context.getDocumentService();
+        const DocumentsService = context.getDocumentService();
 
         vm.documents = [];
 
@@ -37,14 +37,11 @@
 
         vm.searchForm = documentSearchForm;
 
-        vm.showPrivateTags = vm.editable;
-
-        if (_.isNil(vm.checkDuplicates))
-            vm.checkDuplicates = true;
-
-        var query = {};
+        let query = {};
 
         vm.$onInit = function () {
+            vm.editable = vm.section === documentListSections.VERIFIED;
+
             EventsService.subscribeAll(vm, [
                 EventsService.DRAFT_VERIFIED,
                 EventsService.DOCUMENT_VERIFIED,

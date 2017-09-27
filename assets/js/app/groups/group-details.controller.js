@@ -1,15 +1,17 @@
 (function () {
     angular
-            .module('groups')
-            .controller('GroupDetailsController', GroupDetailsController);
+        .module('groups')
+        .controller('GroupDetailsController', GroupDetailsController);
 
     GroupDetailsController.$inject = [
-        'group'
+        'group',
+        'documentListSections'
     ];
 
-    function GroupDetailsController(group) {
+    function GroupDetailsController(group, documentListSections) {
         var vm = this;
         vm.group = group;
+        vm.documentListSections = documentListSections;
 
         activate();
 

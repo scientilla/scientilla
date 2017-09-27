@@ -16,10 +16,11 @@
         'context',
         'researchEntityService',
         'EventsService',
-        'documentSearchForm'
+        'documentSearchForm',
+        'documentListSections'
     ];
 
-    function scientillaSuggestedDocumentsController(context, researchEntityService, EventsService, documentSearchForm) {
+    function scientillaSuggestedDocumentsController(context, researchEntityService, EventsService, documentSearchForm, documentListSections) {
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
@@ -35,6 +36,7 @@
 
         vm.onFilter = onFilter;
 
+        vm.documentListSections = documentListSections;
         vm.searchForm = Object.assign({},
             documentSearchForm,
             {

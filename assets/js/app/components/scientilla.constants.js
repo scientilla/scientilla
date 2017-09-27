@@ -253,6 +253,15 @@
 
     const apiPrefix = '/api/v1';
 
+    const documentListSections = {
+        VERIFIED: 'verified-documents',
+        DRAFT: 'draft-list',
+        EXTERNAL: 'external-documents',
+        SUGGESTED: 'suggested-documents',
+        GROUP: 'group-verified-documents',
+        USER: 'user-verified-documents'
+    };
+
     angular.module('app')
         .constant('pageSize', 10)
         .constant('userConstants', userConstants)
@@ -265,5 +274,6 @@
         .constant('groupTypeLabels', groupTypeLabels)
         .constant('documentSearchForm', documentSearchForm)
         .constant('documentFieldsRules', documentFieldsRules)
-        .constant('documentOrigins', documentOrigins);
+        .constant('documentOrigins', documentOrigins)
+        .constant('documentListSections', documentListSections);
 })();

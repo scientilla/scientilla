@@ -17,10 +17,11 @@
         'context',
         'researchEntityService',
         'documentSearchForm',
+        'documentListSections',
         'EventsService'
     ];
 
-    function scientillaDrafsList(context, researchEntityService, documentSearchForm, EventsService) {
+    function scientillaDrafsList(context, researchEntityService, documentSearchForm, documentListSections, EventsService) {
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
@@ -37,6 +38,7 @@
         vm.desynchronizeDrafts = DocumentsService.desynchronizeDrafts;
 
         vm.searchForm = documentSearchForm;
+        vm.documentListSections = documentListSections;
 
         var query = {};
 

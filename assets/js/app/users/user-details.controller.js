@@ -1,17 +1,18 @@
 (function () {
     angular
-            .module('users')
-            .controller('UserDetailsController', UserDetailsController);
+        .module('users')
+        .controller('UserDetailsController', UserDetailsController);
 
     UserDetailsController.$inject = [
         'UsersService',
         'user',
-        '$location'
+        'documentListSections'
     ];
 
-    function UserDetailsController(UsersService, user, $location) {
+    function UserDetailsController(UsersService, user, documentListSections) {
         var vm = this;
         vm.user = user;
+        vm.documentListSections = documentListSections;
 
         activate();
 

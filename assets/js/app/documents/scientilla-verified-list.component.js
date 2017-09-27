@@ -11,10 +11,13 @@
             }
         });
 
-    scientillaVerifiedList.$inject = [];
+    scientillaVerifiedList.$inject = [
+        'documentListSections'
+    ];
 
-    function scientillaVerifiedList() {
-        var vm = this;
+    function scientillaVerifiedList(documentListSections) {
+        const vm = this;
+        vm.documentListSections = documentListSections;
 
         vm.$onInit = function () {
         };
