@@ -1,17 +1,16 @@
 <scientilla-filter
-    search-form-structure="vm.searchForm"
-    on-filter="vm.onFilter"
-    elements="vm.documents"
-    empty-list-message="No documents found">
-
-    <scientilla-multicheck >
+        search-form-structure="vm.searchForm"
+        on-filter="vm.onFilter"
+        elements="vm.documents"
+        empty-list-message="No documents found">
+    <scientilla-multicheck>
         <buttons>
         </buttons>
         <item-list>
             <scientilla-checkable ng-repeat="d in vm.documents" item="d">
                 <div class="row scientilla-document-row">
                     <div class="col-md-10">
-                        <scientilla-document document="d" show-private-tags="vm.showPrivateTags" check-duplicates="vm.checkDuplicates"></scientilla-document>
+                        <scientilla-document document="d" section="vm.section"></scientilla-document>
                     </div>
                     <div ng-if="vm.editable" class="col-md-2 text-right">
                         <h3>
@@ -21,7 +20,7 @@
                                     type="button"
                                     uib-tooltip="Unlink the document from your profile"
                                     tooltip-placement="top"
-                                    tooltip-class="scientilla-tooltip" >
+                                    tooltip-class="scientilla-tooltip">
                                 <span class="fa fa-remove"></span>
                                 Unverify
                             </button>
