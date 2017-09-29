@@ -121,14 +121,7 @@ module.exports = _.merge({}, BaseModel, {
         duplicates: {
             collection: 'documentduplicate',
             via: 'document',
-            getCriteria: async function (req) {
-                const researchEntityId = req.param('parentid');
-                const researchEntityType = req.path.includes('user') ? 'user' : 'group';
-                return {
-                    'researchEntity': researchEntityId,
-                    'researchEntityType': researchEntityType
-                };
-            }
+            custom: true
         },
         sourceMetrics: {
             collection: 'sourcemetric',
@@ -277,7 +270,8 @@ module.exports = _.merge({}, BaseModel, {
         toJSON: function() {
             var document = this.toObject();
             document.references = this.getReferences();
-    
+            document.duplicates = this.duplicates;
+
             return document;
         }
     },
@@ -431,5 +425,15 @@ module.exports = _.merge({}, BaseModel, {
         const missingAffiliationIds = _.flatMap(missingAuthorships, a => a.affiliations.map(a => a.id));
         await Authorship.update({id: missingAuthorshipIds}, {document: d1.id});
         await Affiliation.update({id: missingAffiliationIds}, {document: d1.id});
+    },
+    async customPopulate(elems, fieldName, parentModelName, parentModelId) {
+        if (fieldName == 'duplicates') {
+            const duplicates = await DocumentDuplicate.find({
+                researchEntityType: parentModelName,
+                researchEntity: parentModelId,
+                document: elems.map(e => e.id)
+            });
+            elems.forEach(e => e.duplicates = duplicates.filter(d => d.document === e.id));
+        }
     }
 });

@@ -63,6 +63,7 @@ module.exports = function expand(req, res) {
     }
 
     const Model = actionUtil.parseModel(req);
+    const modelName = req.options.model || req.options.controller;
     const relation = req.options.alias;
     if (!relation || !Model)
         return res.serverError();
@@ -124,14 +125,21 @@ module.exports = function expand(req, res) {
             //sTODO add support for deep populate
             const where = {'id': recordsId};
             let query = relationModel.find({where, sort});
+            const costumPopulates = [];
             for (let f of populateFields) {
                 const fieldAttribute = relationModel._attributes[f.alias];
-                const criteria = _.get(fieldAttribute, 'getCriteria') ? await fieldAttribute.getCriteria(req) : {};
-                query = query.populate(f.alias, {where: criteria});
+                if (_.get(fieldAttribute, 'custom'))
+                    costumPopulates.push(f);
+                else
+                    query = query.populate(f.alias);
             }
 
             return Promise.all([query, count])
-                .spread((matchingRecords, count) => {
+                .spread(async (matchingRecords, count) => {
+
+                    for (let f of costumPopulates) {
+                        await relationModel.customPopulate(matchingRecords, f.alias, modelName, parentPk);
+                    }
                     //if asking for a single related entity
                     if (childPk)
                         if (matchingRecords.length)
