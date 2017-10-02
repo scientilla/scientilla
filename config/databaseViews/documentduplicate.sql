@@ -73,7 +73,7 @@ CREATE OR REPLACE VIEW documentduplicate AS
            'group'             AS "researchEntityType",
            1                   AS id
          FROM
-           group_documents dd
+           dd
            JOIN document d
              ON
                lower(REPLACE(d."scopusId", ' ', '')) = lower(REPLACE(dd."scopusId", ' ', ''))
@@ -158,7 +158,7 @@ CREATE OR REPLACE VIEW documentduplicate AS
            'group'             AS "researchEntityType",
            1                   AS id
          FROM
-           group_documents dd
+           dd
            JOIN document d
              ON
                lower(REPLACE(d."scopusId", ' ', '')) = lower(REPLACE(dd."scopusId", ' ', ''))
