@@ -118,7 +118,7 @@ CREATE OR REPLACE VIEW documentduplicate AS
            dd.id               AS duplicate,
            dd.kind             AS "duplicateKind",
            dd."researchEntity" AS "researchEntity",
-           'group'             AS "researchEntityType",
+           'user'              AS "researchEntityType",
            1                   AS id
          FROM
            dd
@@ -139,7 +139,7 @@ CREATE OR REPLACE VIEW documentduplicate AS
            dd.id               AS duplicate,
            dd.kind             AS "duplicateKind",
            dd."researchEntity" AS "researchEntity",
-           'group'             AS "researchEntityType",
+           'user'              AS "researchEntityType",
            1                   AS id
          FROM
            dd
@@ -155,7 +155,7 @@ CREATE OR REPLACE VIEW documentduplicate AS
            dd.id               AS duplicate,
            dd.kind             AS "duplicateKind",
            dd."researchEntity" AS "researchEntity",
-           'group'             AS "researchEntityType",
+           'user'              AS "researchEntityType",
            1                   AS id
          FROM
            dd
