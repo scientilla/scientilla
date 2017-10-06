@@ -138,6 +138,17 @@ module.exports = _.merge({}, BaseModel, {
         return Promise.all(documentIds.map(documentId => Model.verifyDocument(Model, researchEntityId, documentId)));
     },
     verifyDocument: async function (Model, researchEntityId, documentId, verificationData) {
+        const AuthorshipModel = getAuthorshipModel(Model);
+        const alreadyVerifiedDocuments = await AuthorshipModel.find({
+            document: documentId,
+            researchEntity: researchEntityId
+        });
+        if (alreadyVerifiedDocuments.length)
+            return {
+                error: 'Document already verified',
+                item: researchEntityId
+            };
+
         const DiscardedModel = getDiscardedModel(Model);
         await  DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
         const document = await Document.findOneById(documentId)
