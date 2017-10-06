@@ -75,6 +75,11 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'users',
             through: 'authorship'
         },
+        publicDocuments: {
+            collection: 'Document',
+            via: 'researchEntity',
+            through: 'publicauthorship'
+        },
         suggestedDocuments: {
             collection: 'Document',
             via: 'users',

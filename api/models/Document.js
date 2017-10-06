@@ -71,6 +71,11 @@ module.exports = _.merge({}, BaseModel, {
             via: 'documents',
             through: 'authorship'
         },
+        publicAuthors: {
+            collection: 'user',
+            via: 'document',
+            through: 'publicauthorship'
+        },
         suggestions: {
             collection: 'user',
             via: 'documents',
@@ -100,6 +105,11 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'group',
             via: 'documents',
             through: 'authorshipgroup'
+        },
+        publicGroups: {
+            collection: 'group',
+            via: 'document',
+            through: 'publicauthorshipgroup'
         },
         authorships: {
             collection: 'authorship',
