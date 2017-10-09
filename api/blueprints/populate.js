@@ -95,10 +95,9 @@ module.exports = function expand(req, res) {
 
     if (_.isEmpty(sort) && relationModel.DEFAULT_SORTING)
         sort = relationModel.DEFAULT_SORTING;
-    const hardLimit = 200;
     const skip = actionUtil.parseSkip(req);
     const inputLimit = actionUtil.parseLimit(req);
-    const limit = Math.min(inputLimit, hardLimit);
+    const limit = actionUtil.parseLimit(req)
     populate.sort = sort;
     if (limit)
         populate.limit = limit;
