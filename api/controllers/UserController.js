@@ -49,6 +49,6 @@ module.exports = require('waterlock').actions.user(_.merge({}, researchEntityCon
                 count: 0,
                 items: []
             });
-        return res.redirect(`/users/${user.id}/documents`);
+        return res.redirect(`api/v1/users/${user.id}/publicDocuments`);
     }
 }));
