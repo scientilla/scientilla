@@ -32,29 +32,27 @@
         };
         const userPrototype = {
             getAliases: function () {
+
                 var firstLetter = function (string) {
                     if (!string)
                         return "";
-                    return string.charAt(0).toUpperCase();
+                    return string.split(' ').map(w => w.charAt(0) + ".").join('');
                 };
                 var capitalize = function (string) {
                     if (!string)
                         return "";
-                    return _.capitalize(string.toLowerCase());
-//                return str.replace(/\w\S*/g, function (txt) {
-//                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-//                });
+                    return string.replace(/\w\S*/g, function (txt) {
+                        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                    });
                 };
                 var aliases = [];
-                if (_.isEmpty(this.name) || _.isEmpty(this.surname))
-                    return aliases;
-                var first_name = capitalize(this.name);
-                var last_name = capitalize(this.surname);
-                var initial_first_name = firstLetter(first_name);
-                aliases.push(first_name + " " + last_name);
-                aliases.push(last_name + " " + first_name);
-                aliases.push(last_name + " " + initial_first_name + ".");
-                aliases.push(initial_first_name + ". " + last_name + "");
+                var firstName = capitalize(this.name);
+                var lastName = capitalize(this.surname);
+                var firstNameAcronym = firstLetter(firstName);
+                aliases.push(firstName + " " + lastName);
+                aliases.push(lastName + " " + firstName);
+                aliases.push(lastName + " " + firstNameAcronym);
+                aliases.push(firstNameAcronym + " " + lastName);
                 aliases = _.uniq(aliases);
                 return aliases;
             },

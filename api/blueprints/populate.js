@@ -63,6 +63,7 @@ module.exports = function expand(req, res) {
     }
 
     const Model = actionUtil.parseModel(req);
+    const modelName = req.options.model || req.options.controller;
     const relation = req.options.alias;
     if (!relation || !Model)
         return res.serverError();
@@ -94,11 +95,12 @@ module.exports = function expand(req, res) {
 
     if (_.isEmpty(sort) && relationModel.DEFAULT_SORTING)
         sort = relationModel.DEFAULT_SORTING;
-    const hardLimit = 200;
     const skip = actionUtil.parseSkip(req);
-    const limit = hardLimit;
+    const inputLimit = actionUtil.parseLimit(req);
+    const limit = actionUtil.parseLimit(req)
     populate.sort = sort;
-    populate.limit = limit;
+    if (limit)
+        populate.limit = limit;
     populate.skip = skip;
 
     Model.findOne(parentPk)
@@ -109,27 +111,34 @@ module.exports = function expand(req, res) {
             if (!matchingRecord[relation])
                 return res.notFound(util.format('Specified record (%s) is missing relation `%s`', parentPk, relation));
             let count;
-            if ((skip + matchingRecord[relation].length) < hardLimit - 1)
+            if ((skip + matchingRecord[relation].length) < limit - 1)
                 count = skip + matchingRecord[relation].length;
             else
                 count = await getCount(Model, parentPk, relation, populate.where);
             const relationsRecords = matchingRecord[relation];
-            const limit = actionUtil.parseLimit(req);
-            const recordsId = _.slice(_.map(relationsRecords, 'id'), 0, limit);
+            const allRecordsId = _.map(relationsRecords, 'id');
+            const recordsId = limit ? _.slice(allRecordsId, 0, limit) : allRecordsId;
 
             const populateFieldNames = _.castArray(req.param('populate')).filter(_.identity);
             const populateFields = _.filter(relationModel.associations, f => populateFieldNames.some(f2 => f.alias == f2));
             //sTODO add support for deep populate
             const where = {'id': recordsId};
             let query = relationModel.find({where, sort});
+            const costumPopulates = [];
             for (let f of populateFields) {
                 const fieldAttribute = relationModel._attributes[f.alias];
-                const criteria = _.get(fieldAttribute, 'getCriteria') ? await fieldAttribute.getCriteria(req) : {};
-                query = query.populate(f.alias, criteria);
+                if (_.get(fieldAttribute, 'custom'))
+                    costumPopulates.push(f);
+                else
+                    query = query.populate(f.alias);
             }
 
             return Promise.all([query, count])
-                .spread((matchingRecords, count) => {
+                .spread(async (matchingRecords, count) => {
+
+                    for (let f of costumPopulates) {
+                        await relationModel.customPopulate(matchingRecords, f.alias, modelName, parentPk);
+                    }
                     //if asking for a single related entity
                     if (childPk)
                         if (matchingRecords.length)

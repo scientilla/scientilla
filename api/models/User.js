@@ -75,6 +75,11 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'users',
             through: 'authorship'
         },
+        publicDocuments: {
+            collection: 'Document',
+            via: 'researchEntity',
+            through: 'publicauthorship'
+        },
         suggestedDocuments: {
             collection: 'Document',
             via: 'users',
@@ -116,14 +121,12 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'members',
             through: 'membership'
         },
-        //sTODO: move this methods to a isomorphic component
-        //sTODO: aliases are managed through a specific association.
         getAliases: function () {
 
             var firstLetter = function (string) {
                 if (!string)
                     return "";
-                return string.charAt(0).toUpperCase();
+                return string.split(' ').map(w => w.charAt(0) + ".").join('');
             };
             var capitalize = function (string) {
                 if (!string)
@@ -133,13 +136,13 @@ module.exports = _.merge({}, ResearchEntity, {
                 });
             };
             var aliases = [];
-            var first_name = capitalize(this.name);
-            var last_name = capitalize(this.surname);
-            var initial_first_name = firstLetter(first_name);
-            aliases.push(first_name + " " + last_name);
-            aliases.push(last_name + " " + first_name);
-            aliases.push(last_name + " " + initial_first_name + ".");
-            aliases.push(initial_first_name + ". " + last_name + "");
+            var firstName = capitalize(this.name);
+            var lastName = capitalize(this.surname);
+            var firstNameAcronym = firstLetter(firstName);
+            aliases.push(firstName + " " + lastName);
+            aliases.push(lastName + " " + firstName);
+            aliases.push(lastName + " " + firstNameAcronym);
+            aliases.push(firstNameAcronym + " " + lastName);
             aliases = _.uniq(aliases);
             return aliases;
         },
@@ -278,6 +281,11 @@ module.exports = _.merge({}, ResearchEntity, {
         };
     },
     doVerifyDocument: function (document, researchEntityId, authorshipData) {
+        if (authorshipData.position < 0)
+            return {
+                error: "User not selected",
+                item: authorshipData.document
+            };
         const newAuthorship = {
             researchEntity: researchEntityId,
             document: document.id,
