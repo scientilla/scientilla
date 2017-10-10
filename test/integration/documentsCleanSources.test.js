@@ -5,7 +5,7 @@ const test = require('./../helper.js');
 const should = require('should');
 
 
-describe.only('Documents clean sources', function () {
+describe('Documents clean sources', function () {
     before(test.cleanDb);
     after(test.cleanDb);
 
