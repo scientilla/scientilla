@@ -74,7 +74,7 @@ module.exports = _.merge({}, BaseModel, {
                 delete sourceIdentifiers.sourceTitle;
             }
 
-            if (sourceIdentifiers.origin === DocumentOrigins.SCOPUS)
+            if (metric.origin === DocumentOrigins.SCOPUS)
                 sourceIdentifiers.scopusId = sourceIdentifiers.sourceOriginId;
 
             delete sourceIdentifiers.sourceOriginId;
@@ -97,10 +97,21 @@ module.exports = _.merge({}, BaseModel, {
                 continue;
             }
 
-            if (sources.length === 1)
+            let assignedSources;
+
+            if (sources.length === 1) {
                 assignedCount++;
-            else
+                assignedSources = sources;
+            }
+            else {
                 multipleSourceFound++;
+                assignedSources = sources;
+                if (metric.origin === DocumentOrigins.SCOPUS) {
+                    const originSources = sources.filter(s => !!s.scopusId);
+                    if (originSources.length)
+                        assignedSources = originSources;
+                }
+            }
 
             for (const s of sources) {
                 const sourceMetricSource = {sourceMetric: metric.id, source: s.id};
