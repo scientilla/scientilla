@@ -255,32 +255,36 @@ module.exports = _.merge({}, BaseModel, {
             return res.docData;
         },
         getReferences: function() {
-            let references = '';
+            if (!_.isObject(this.source))
+                return null;
+            const referenceFragments = [];
+            if (this.source.title) {
+                referenceFragments.push(this.source.title);
+            }
             if (this.volume) {
-                references += 'vol: ' + this.volume;
+                referenceFragments.push('vol: ' + this.volume);
             }
             if (this.issue) {
-                references += ' (no. ' + this.issue + ')';
+                referenceFragments.push('(no. ' + this.issue + ')');
             }
-
             if (this.pages) {
-                references += ' pp. ' + this.pages;
+                referenceFragments.push('pp. ' + this.pages);
             }
 
-            if (this.source && this.source.publisher) {
-                references += ' ' + this.source.publisher;
+            if (this.source.publisher) {
+                referenceFragments.push(this.source.publisher);
             }
 
-            if (this.source && this.source.location) {
-                references += ' ' + this.source.location;
+            if (this.source.location) {
+                referenceFragments.push(this.source.location);
             }
-
-            return references.trim();
+            return referenceFragments.join();
         },
         toJSON: function() {
             var document = this.toObject();
             document.references = this.getReferences();
             document.duplicates = this.duplicates;
+            document.inPress = this.type == 'article_in_press';
 
             return document;
         }
