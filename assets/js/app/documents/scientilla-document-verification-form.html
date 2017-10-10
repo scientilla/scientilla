@@ -35,7 +35,8 @@
                 ng-options="+index as author for (index, author) in vm.document.getAuthors()">
         </select>
     </div>
-    <div ng-if="vm.viewAuthorshipFields()">
+    <div ng-if="vm.viewAuthorshipFields()"
+         ng-hide="vm.verificationData.position<0">
         <div class="form-group">
             <scientilla-multicomplete
                     items="vm.verificationData.affiliations"
@@ -44,23 +45,27 @@
                     title="What are your affiliations for this document?">
             </scientilla-multicomplete>
         </div>
-        <div class="form-group">
+        <div class="form-group"
+             ng-hide="vm.verificationData.position<0">
             <label title="Are you the corresponding author?">
-                <input type="checkbox" ng-model="vm.verificationData.corresponding"/>
+                <input type="checkbox"
+                       ng-model="vm.verificationData.corresponding"/>
                 Corresponding author
             </label>
         </div>
     </div>
     <hr>
-    <h4>Document properties</h4>
-    <div class="form-group" ng-if="vm.viewSynchFields()">
-        <label title="Keep the document synchronized with {{vm.document.origin}}?">
-            <input type="checkbox" ng-model="vm.verificationData.synchronize"/>
-            Synchronized with {{vm.document.origin}}
-        </label>
-    </div>
-    <div class="form-group" ng-if="vm.viewSynchMessage()">
-        This document is not synchronized
+    <div ng-if="vm.document.kind === 'v'">
+        <h4>Document properties</h4>
+        <div class="form-group" ng-if="vm.viewSynchFields()">
+            <label title="Keep the document synchronized with {{vm.document.origin}}?">
+                <input type="checkbox" ng-model="vm.verificationData.synchronize"/>
+                Synchronized with {{vm.document.origin}}
+            </label>
+        </div>
+        <div class="form-group" ng-if="vm.viewSynchMessage()">
+            This document is not synchronized
+        </div>
     </div>
     <scientilla-button type="submit"
                        click="vm.submit()"
