@@ -281,6 +281,11 @@ module.exports = _.merge({}, ResearchEntity, {
         };
     },
     doVerifyDocument: function (document, researchEntityId, authorshipData) {
+        if (authorshipData.position < 0)
+            return {
+                error: "User not selected",
+                item: authorshipData.document
+            };
         const newAuthorship = {
             researchEntity: researchEntityId,
             document: document.id,

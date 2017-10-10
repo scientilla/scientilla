@@ -58,6 +58,6 @@
             </div>
         </div>
     </div>
-    <scientilla-button type="submit" click="vm.submit()">Save</scientilla-button>
+    <scientilla-button type="submit" ng-enabled="vm.authorship.position>=0" click="vm.submit()">Save</scientilla-button>
     <scientilla-button type="cancel" click="vm.cancel()">Close</scientilla-button>
 </form>
