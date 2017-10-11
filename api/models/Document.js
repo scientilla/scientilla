@@ -254,7 +254,7 @@ module.exports = _.merge({}, BaseModel, {
             const res = await Synchronizer.documentSynchronizeScopus(this.id);
             return res.docData;
         },
-        getReferences: function() {
+        getReferences: function () {
             if (!_.isObject(this.source))
                 return null;
             const referenceFragments = [];
@@ -278,13 +278,16 @@ module.exports = _.merge({}, BaseModel, {
             if (this.source.location) {
                 referenceFragments.push(this.source.location);
             }
-            return referenceFragments.join();
+            return referenceFragments.join(' ');
         },
-        toJSON: function() {
+        getInPress: function () {
+            return this.type === 'article_in_press';
+        },
+        toJSON: function () {
             var document = this.toObject();
             document.references = this.getReferences();
             document.duplicates = this.duplicates;
-            document.inPress = this.type == 'article_in_press';
+            document.inPress = this.getInPress();
 
             return document;
         }
@@ -425,20 +428,20 @@ module.exports = _.merge({}, BaseModel, {
     addMissingAffiliation: async (d1, d2) => {
         const as1 = d1.getFullAuthorships();
         const as2 = d2.getFullAuthorships();
-        const missingAuthorships = as2.filter(a2 => {
+        const toBeDeleteAuthorships = as1.filter(a1 =>
+            _.isEmpty(a1.affiliations) &&
+            _.isNil(a1.researchEntity) &&
+            as2.some(a2 => a2.position == a1.position && !_.isEmpty(a2.affiliations))
+        );
+        const toBeAddedAuthorships = as2.filter(a2 => {
             const a1 = as1.find(a1 => a2.position === a1.position);
-            return (
-                !a1 ||
-                (
-                    _.isEmpty(a1.affiliations) &&
-                    _.isNil(a1.researchEntity)
-                )
-            );
+            return !a1 || toBeDeleteAuthorships.includes(a1);
         });
-        const missingAuthorshipIds = missingAuthorships.map(a => a.id);
-        const missingAffiliationIds = _.flatMap(missingAuthorships, a => a.affiliations.map(a => a.id));
+        const missingAuthorshipIds = toBeAddedAuthorships.map(a => a.id);
+        const missingAffiliationIds = _.flatMap(toBeAddedAuthorships, a => a.affiliations.map(a => a.id));
         await Authorship.update({id: missingAuthorshipIds}, {document: d1.id});
         await Affiliation.update({id: missingAffiliationIds}, {document: d1.id});
+        await Authorship.destroy({id: toBeDeleteAuthorships.map(a => a.id)})
     },
     async customPopulate(elems, fieldName, parentModelName, parentModelId) {
         if (fieldName == 'duplicates') {
