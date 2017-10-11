@@ -68,9 +68,9 @@
         }
 
         function canBeSubmitted() {
-            return vm.verificationData.affiliations
-                && vm.verificationData.affiliations.length
-                && vm.verificationData.position >= 0;
+            return vm.verificationData.affiliations &&
+                vm.verificationData.affiliations.length &&
+                vm.verificationData.position >= 0;
         }
 
         function submit() {
