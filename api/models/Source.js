@@ -67,11 +67,16 @@ module.exports = {
         function mergeFields(src, cp) {
             const merged = {};
             for (const f of fields) {
-                if (src[f] === cp[f])
+                const sourceField = _.isString(src[f]) ? src[f].toLocaleLowerCase() : src[f];
+                const copyField = _.isString(cp[f]) ? cp[f].toLocaleLowerCase() : cp[f];
+
+                if (sourceField === copyField)
                     merged[f] = src[f];
-                else if (src[f] && !cp[f])
+                else if (sourceField && !copyField)
                     merged[f] = src[f];
-                else if (!src[f] && cp[f])
+                else if (sourceField && !copyField)
+                    merged[f] = src[f];
+                else if (!sourceField && copyField)
                     merged[f] = cp[f];
                 else
                     return false;
