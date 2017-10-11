@@ -3,6 +3,7 @@
 
 const test = require('./../helper.js');
 const should = require('should');
+const _ = require('lodash');
 
 
 describe('Documents clean sources', function () {
@@ -88,12 +89,8 @@ describe('Documents clean sources', function () {
         const sourceUnmodified1Metrics = sourceMetricsSources.filter(sms => sms.source === sourceUnmodified1.id);
         const sourceToMergeAndDeleteMetrics = sourceMetricsSources.filter(sms => sms.source === sourceToMergeAndDelete.id);
 
-        const shouldSourceToMergeMetrics = sourceToMergeMetrics.concat(sourceToMergeAndDeleteMetrics).reduce((res, newSms) => {
-            const duplicate = res.find(sms => sms.source === newSms.source && sms.sourceMetric === newSms.sourceMetric);
-            if (!duplicate)
-                res.push(newSms);
-            return res;
-        }, []);
+        const shouldSourceToMergeMetrics = _.uniqWith(sourceToMergeMetrics.concat(sourceToMergeAndDeleteMetrics),
+            (sms, newSms) => sms.source === newSms.source && sms.sourceMetric === newSms.sourceMetric);
 
         const cleanedSourceToMergeMetrics = cleanedSourceMetricSources.filter(sms => sms.source === sourceToMerge.id);
         const cleanedSourceUnmodified1Metrics = cleanedSourceMetricSources.filter(sms => sms.source === sourceUnmodified1.id);
