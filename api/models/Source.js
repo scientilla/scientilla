@@ -48,10 +48,14 @@ module.exports = {
                 title: source.title
             });
 
-
         if (source.scopusId)
             orCriteria.push({
                 scopusId: source.scopusId,
+            });
+
+        if (source.issn)
+            orCriteria.push({
+                issn: source.issn,
             });
 
         return await Source.find({
