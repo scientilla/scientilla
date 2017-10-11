@@ -57,8 +57,8 @@ async function cleanInstituteCopies() {
 }
 
 async function cleanSourceCopies() {
-    function getSourceCopy(i) {
-        return Source.findOne({id: {'<': i.id}, scopusId: i.scopusId});
+    function getSourceCopy(s) {
+        return Source.findOne({id: {'<': s.id}, scopusId: s.scopusId, type: s.type});
     }
 
     const allSources = await Source.find({scopusId: {'!': null}});
