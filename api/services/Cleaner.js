@@ -14,7 +14,6 @@ async function cleanInstituteCopies() {
     function getInstituteCopy(i) {
         return Institute.findOne({id: {'<': i.id}, scopusId: i.scopusId});
     }
-
     function getInstituteParent(i) {
         return Institute.findOne({id: i.parentId});
     }

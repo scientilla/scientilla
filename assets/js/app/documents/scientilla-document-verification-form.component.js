@@ -38,6 +38,7 @@
         vm.viewAuthorshipFields = viewAuthorshipFields;
         vm.viewCopyToDraft = viewCopyToDraft;
         vm.verificationData = {};
+        vm.canBeSubmitted = canBeSubmitted;
 
         var user = AuthService.user;
 
@@ -64,6 +65,12 @@
         function copyToDraft() {
             DocumentService.copyDocument(vm.document, context.getResearchEntity());
             executeOnSubmit(0);
+        }
+
+        function canBeSubmitted() {
+            return vm.verificationData.affiliations &&
+                vm.verificationData.affiliations.length &&
+                vm.verificationData.position >= 0;
         }
 
         function submit() {

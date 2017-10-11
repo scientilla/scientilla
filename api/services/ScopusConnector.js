@@ -186,7 +186,7 @@ async function documentDataRequest(scopusId, attempt) {
 
 
         const arr = await Promise.all([
-            Source.findOrCreate({scopusId: sourceData.scopusId}, sourceData),
+            Source.findOrCreate({scopusId: sourceData.scopusId, type: sourceData.type}, sourceData),
             Promise.all(institutesCreationFns)
         ]);
 

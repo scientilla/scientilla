@@ -69,7 +69,7 @@
     </div>
     <scientilla-button type="submit"
                        click="vm.submit()"
-                       ng-disabled="vm.verificationData.position<0">
+                       ng-disabled="!vm.canBeSubmitted()">
         Verify
     </scientilla-button>
     <scientilla-button ng-if="vm.viewCopyToDraft()"
