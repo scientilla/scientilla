@@ -11,6 +11,7 @@ const groups = require('./data/groups');
 const documents = require('./data/documents');
 const institutes = require('./data/institutes');
 const sources = require('./data/sources');
+const metrics = require('./data/metrics');
 
 module.exports = {
     cleanDb,
@@ -21,6 +22,7 @@ module.exports = {
     getAllInstituteData,
     getAllDocumentData,
     getAllSourceData,
+    getAllMetricData,
     getUsers,
     createGroup,
     createInstitute,
@@ -101,6 +103,10 @@ function getAllDocumentData() {
 
 function getAllSourceData() {
     return _.cloneDeep(sources);
+}
+
+function getAllMetricData() {
+    return _.cloneDeep(metrics);
 }
 
 async function getUsers(respCode = 200) {

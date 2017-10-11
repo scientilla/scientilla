@@ -57,29 +57,26 @@ async function cleanInstituteCopies() {
 }
 
 async function cleanSourceCopies() {
-    function getSourceCopy(s) {
-        return Source.findOne({id: {'<': s.id}, scopusId: s.scopusId, type: s.type});
-    }
-
-    const allSources = await Source.find({scopusId: {'!': null}});
-    const sources = allSources.filter(s => s.scopusId);
-    const deletedSources = [];
+    const sources = await Source.find();
+    let deletedSourceIds = [];
+    let updatedSourceIds = [];
     sails.log.info(`${sources.length} sources to check`);
     for (let source of sources) {
-        const copy = await getSourceCopy(source);
-        if (!copy)
+        if (updatedSourceIds.includes(source.id) || deletedSourceIds.includes(source.id))
             continue;
 
-        const documents = await Document.find({source: source.id});
-        if (documents.length) {
-            const documentIds = documents.map(d => d.id);
-            const updateDocuments = await Document.update({id: documentIds}, {source: copy.id});
-            sails.log.info(`${updateDocuments.length} documents updated from source ${source.id} to ${copy.id}`);
+        const copies = await Source.searchCopies(source);
+        if (!copies.length)
+            continue;
+
+        const deleted = await Source.merge(source, copies);
+        if (deleted) {
+            deletedSourceIds = deletedSourceIds.concat(deleted.map(s => s.id));
+            updatedSourceIds.push(source.id);
         }
-        await source.destroy();
-        deletedSources.push(source);
     }
-    sails.log.info(`${deletedSources.length} deleted`);
+    sails.log.info(`${updatedSourceIds.length} updated`);
+    sails.log.info(`${deletedSourceIds.length} deleted`);
 }
 
 async function cleanDocumentCopies() {

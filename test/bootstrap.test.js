@@ -1,7 +1,5 @@
-var Sails = require('sails'),
-        sails;
-
-var test = require('./helper.js');
+const Sails = require('sails');
+let sails;
 
 before(function (done) {
 
@@ -14,7 +12,8 @@ before(function (done) {
         port: 1338,
         log: {
             level: 'warn'
-        }
+        },
+        hooks: {grunt: false}
     };
     Sails.lift(testConfig, function (err, server) {
         sails = server;
