@@ -5,6 +5,7 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 var researchEntityController = require('../lib/ResearchEntityController');
+const request = require('request-promise');
 
 module.exports = _.merge({}, researchEntityController, {
     addTags: function (req, res) {
@@ -12,6 +13,22 @@ module.exports = _.merge({}, researchEntityController, {
         var groupId = req.params.researchEntityId;
         var tags = req.param('tags');
         res.halt(Group.addTags(TagGroup, groupId, documentId, tags));
+    },
+    getDocumentsBySlug: async (req, res) => {
+        const groupSlug = req.params.slug;
+        const group = await Group.findOneBySlug(groupSlug);
+        if (!group)
+            return res.notFound();
+        const baseUrl = sails.getBaseUrl();
+        const path = `/api/v1/groups/${group.id}/publicDocuments`;
+        const reqOptions = {
+            uri: baseUrl+path,
+            json: true,
+            qs: req.query
+        };
+
+        const r = await request(reqOptions);
+        res.ok(r);
     }
 
 });
