@@ -19,6 +19,10 @@
                                field-id="vm.id"
                                structure="vm.fieldStructure">
     </scientilla-checkbox-field>
+    <scientilla-attribute-field ng-if="vm.structure.inputType==='attribute'"
+                               model="vm.values[vm.name]"
+                               structure="vm.fieldStructure">
+    </scientilla-attribute-field>
     <scientilla-button ng-if="vm.isButton()"
                        type="{{vm.structure.inputType}}"
                        click="vm.onClick()"
