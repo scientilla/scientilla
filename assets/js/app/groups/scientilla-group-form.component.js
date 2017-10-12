@@ -65,6 +65,13 @@
                 label: 'Group Type',
                 defaultValue: vm.group.type || groupTypes.RESEARCH_LINE,
                 values: Object.keys(groupTypes).map(k => ({label: groupTypeLabels[k], value: groupTypes[k]}))
+            },
+            macroarea: {
+                inputType: 'attribute',
+                label: 'Macroarea',
+                defaultValue: vm.group.attributes,
+                mode: 'single',
+                category: 'macroarea'
             }
 
         };
@@ -90,6 +97,10 @@
 
         function submit(group) {
             if (!group) return;
+
+            vm.group.attributes = group.macroarea;
+            delete group.macroarea;
+
 
             for (const key of Object.keys(vm.formStructure))
                 vm.group[key] = group[key];

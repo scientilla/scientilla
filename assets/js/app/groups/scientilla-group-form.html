@@ -1,13 +1,8 @@
-<form form-for="vm.group"
-      validation-rules="vm.validationAndViewRules"
-      form-for-builder>
-</form>
 <scientilla-component-form
         structure="vm.formStructure"
         css-class="form-group-sm"
         on-submit="vm.submit"
 >
-
     <scientilla-multicomplete
             items="vm.group.administrators"
             query="vm.getUsersQuery"

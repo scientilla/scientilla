@@ -72,15 +72,13 @@
 
 
         function getGroup(groupId) {
-            var populate = {populate: ['members', 'administrators']};
-
+            const populate = {populate: ['members', 'administrators', 'attributes']};
             return service.one(groupId).get(populate);
         }
 
         function getGroups(query) {
-            var populate = {populate: ['members', 'administrators']};
-
-            var q = _.merge({}, query, populate);
+            const populate = {populate: ['members', 'administrators', 'attributes']};
+            const q = _.merge({}, query, populate);
 
             return service.getList(q);
         }

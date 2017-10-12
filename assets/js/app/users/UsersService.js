@@ -24,7 +24,8 @@
             'role',
             'orcidId',
             'scopusId',
-            'jobTitle'
+            'jobTitle',
+            'attributes'
         ];
 
         service.getNewUser = function () {
@@ -78,8 +79,7 @@
         };
 
         service.getUsers = function (query) {
-            var populate = {populate: ['memberships', 'documents']};
-
+            var populate = {populate: ['memberships', 'documents', 'attributes']};
             var q = _.merge({}, query, populate);
 
             return this.getList(q);
@@ -88,7 +88,7 @@
         service.getProfile = function (userId) {
             return this
                 .one(userId)
-                .get();
+                .get({populate:'attributes'});
         };
 
         service.getCompleteProfile = function (userId) {
