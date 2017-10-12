@@ -10,6 +10,7 @@
 
 var _ = require('lodash');
 var researchEntityController = require('../lib/ResearchEntityController');
+const request = require('request-promise');
 
 module.exports = require('waterlock').actions.user(_.merge({}, researchEntityController, {
     //sTODO: move this function to the user model
@@ -39,16 +40,22 @@ module.exports = require('waterlock').actions.user(_.merge({}, researchEntityCon
         var documentId = req.params.documentId;
         var userId = req.params.researchEntityId;
         var tags = req.param('tags');
-        res.halt( User.addTags(Tag, userId, documentId, tags));
+        res.halt(User.addTags(Tag, userId, documentId, tags));
     },
     getDocumentsByUsername: async (req, res) => {
         const username = req.params.username;
         const user = await User.findOneByUsername(username);
         if (!user)
-            return res.ok({
-                count: 0,
-                items: []
-            });
-        return res.redirect(`api/v1/users/${user.id}/publicDocuments`);
+            return res.notFound();
+        const baseUrl = sails.getBaseUrl();
+        const path = `/api/v1/users/${user.id}/publicDocuments`;
+        const reqOptions = {
+            uri: baseUrl+path,
+            json: true,
+            qs: req.query
+        };
+
+        const r = await request(reqOptions);
+        res.ok(r);
     }
 }));
