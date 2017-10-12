@@ -78,6 +78,10 @@ module.exports = _.merge({}, ResearchEntity, {
         },
         institute: {
             model: 'institute'
+        },
+        attributes: {
+            collection: 'Attribute',
+            through: 'groupattribute'
         }
     },
     getAuthorshipsData: async function (document, groupId, newAffiliationData = {}) {
