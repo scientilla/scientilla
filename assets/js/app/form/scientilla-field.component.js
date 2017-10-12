@@ -27,19 +27,7 @@
         vm.$onInit = function () {
             vm.id = new Date().getUTCMilliseconds();
 
-            if (vm.structure.cssClass)
-                vm.fieldStructure.cssClass = vm.structure.cssClass;
-
-            if (vm.structure.disabled)
-                vm.fieldStructure.disabled = vm.structure.disabled;
-
-            if (vm.structure.labelPosition)
-                vm.fieldStructure.labelPosition = vm.structure.labelPosition;
-
-            vm.fieldStructure.placeholder = vm.structure.placeholder;
-            vm.fieldStructure.label = vm.structure.label;
-
-            vm.fieldStructure.values = vm.structure.values;
+            vm.fieldStructure = vm.structure;
 
             if (isButton()) {
                 if (_.isFunction(vm.structure.onClick))
