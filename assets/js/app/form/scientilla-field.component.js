@@ -32,11 +32,16 @@
             if (isButton()) {
                 if (_.isFunction(vm.structure.onClick))
                     vm.onClick = vm.structure.onClick;
-                else if(vm.structure.onClick === 'reset')
+                else if (vm.structure.onClick === 'reset')
                     vm.onClick = vm.reset();
-                else if(vm.structure.onClick === 'submit')
+                else if (vm.structure.onClick === 'submit')
                     vm.onClick = null;
             }
+
+            if (_.isFunction(vm.structure.ngIf))
+                vm.ngIf = vm.structure.ngIf;
+            else
+                vm.ngIf = () => true;
 
             // TODO move all events handlers inside this component
 
