@@ -17,12 +17,13 @@
         'GroupsService',
         'FormForConfiguration',
         'Notification',
+        'AuthService',
         '$scope',
         'groupTypes',
         'groupTypeLabels'
     ];
 
-    function GroupFormController(GroupsService, FormForConfiguration, Notification, $scope, groupTypes, groupTypeLabels) {
+    function GroupFormController(GroupsService, FormForConfiguration, Notification, AuthService, $scope, groupTypes, groupTypeLabels) {
         const vm = this;
         vm.getUsersQuery = getUsersQuery;
         vm.cancel = cancel;
@@ -33,12 +34,14 @@
             name: {
                 inputType: 'text',
                 label: 'Title',
-                defaultValue: vm.group.name
+                defaultValue: vm.group.name,
+                ngIf: isAdmin
             },
             slug: {
                 inputType: 'text',
                 label: 'Slug',
-                defaultValue: vm.group.slug
+                defaultValue: vm.group.slug,
+                ngIf: isAdmin
             },
             shortname: {
                 inputType: 'text',
@@ -60,20 +63,20 @@
                 label: 'Scopus ID',
                 defaultValue: vm.group.scopusId
             },
-            type: {
-                inputType: 'select',
-                label: 'Group Type',
-                defaultValue: vm.group.type || groupTypes.RESEARCH_LINE,
-                values: Object.keys(groupTypes).map(k => ({label: groupTypeLabels[k], value: groupTypes[k]}))
-            },
             macroarea: {
                 inputType: 'attribute',
                 label: 'Macroarea',
                 defaultValue: vm.group.attributes,
                 mode: 'single',
                 category: 'macroarea'
+            },
+            type: {
+                inputType: 'select',
+                label: 'Group Type',
+                defaultValue: vm.group.type || groupTypes.RESEARCH_LINE,
+                values: Object.keys(groupTypes).map(k => ({label: groupTypeLabels[k], value: groupTypes[k]})),
+                ngIf: isAdmin
             }
-
         };
 
         vm.$onInit = function () {
@@ -139,6 +142,10 @@
         function executeOnFailure() {
             if (_.isFunction(vm.onFailure()))
                 vm.onFailure()();
+        }
+
+        function isAdmin(){
+            return AuthService.user.isAdmin();
         }
     }
 })();
