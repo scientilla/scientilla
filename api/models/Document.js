@@ -283,12 +283,39 @@ module.exports = _.merge({}, BaseModel, {
         getInPress: function () {
             return this.type === 'article_in_press';
         },
+        getAuthorDetails: function () {
+            if (!this.authorships.length || !this.affiliations.length || !this.institutes.length)
+                return undefined;
+            const authorDetails = this.getAuthors().map((a, i) => {
+                const authorship = this.authorships.find(au => au.position === i);
+                const corresponding = authorship ? authorship.corresponding : null;
+                let affiliations, mainGroupAffiliation;
+                if (authorship) {
+                    const instituteIds = this.affiliations.filter(af => af.authorship === authorship.id)
+                        .map(af => af.institute);
+                    const institutes = this.institutes.filter(i => instituteIds.includes(i.id));
+                    affiliations = institutes.map(i => i.name);
+                    mainGroupAffiliation = instituteIds.includes(1)
+                } else {
+                    affiliations = [];
+                    mainGroupAffiliation = null;
+                }
+                const authorDetail = {
+                    author: a,
+                    corresponding: corresponding,
+                    affiliations: affiliations,
+                    mainGroupAffiliation: mainGroupAffiliation
+                };
+                return authorDetail;
+            });
+            return authorDetails;
+        },
         toJSON: function () {
             var document = this.toObject();
             document.references = this.getReferences();
             document.duplicates = this.duplicates;
             document.inPress = this.getInPress();
-
+            document.authorDetails = this.getAuthorDetails();
             return document;
         }
     },
