@@ -54,6 +54,8 @@ module.exports.http = {
          *                                                                           *
          ****************************************************************************/
 
+        compress: require('compression')(),
+
         myRequestLogger: async function (req, res, next) {
             if (!req.path.startsWith('/api/v1/'))
                 return next();

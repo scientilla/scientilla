@@ -78,7 +78,8 @@ module.exports.policies = {
         updateDraft: isGroupOwner,
         setAuthorhips: isGroupOwner,
         deleteDraft: isGroupOwner,
-        deleteDrafts: isGroupOwner
+        deleteDrafts: isGroupOwner,
+        getDocumentsBySlug: true
     }, defaultPolicy),
 
     InstituteController: _.defaults({
