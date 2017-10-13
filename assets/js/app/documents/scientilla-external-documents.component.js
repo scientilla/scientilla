@@ -56,7 +56,6 @@
         function getConnectorField() {
             const connectors = vm.researchEntity.getExternalConnectors();
             const values = _.concat(
-                {value: '?', label: 'Select'},
                 connectors.map(function (c) {
                     return {value: c.value, label: c.label};
                 }));
@@ -65,7 +64,8 @@
                 inputType: 'select',
                 label: 'Connector',
                 values: values,
-                matchColumn: 'origin'
+                matchColumn: 'origin',
+                defaultValue: 'scopus'
             };
         }
 
