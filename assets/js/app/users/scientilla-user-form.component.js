@@ -39,17 +39,22 @@
             {label: 'Administrator', value: userConstants.role.ADMINISTRATOR}
         ];
 
-        activate();
+        const deregisteres = [];
 
-
-        function activate() {
-            $scope.$watch('vm.user.name', nameChanged);
-            $scope.$watch('vm.user.surname', nameChanged);
-            $scope.$watch('vm.user.aliasesStr', aliasesStrChanged);
+        vm.$onInit = function () {
+            deregisteres.push($scope.$watch('vm.user.name', nameChanged));
+            deregisteres.push($scope.$watch('vm.user.surname', nameChanged));
+            deregisteres.push($scope.$watch('vm.user.aliasesStr', aliasesStrChanged));
 
             initAliasesStr();
             getCollaborations();
-        }
+        };
+
+        vm.$onDestroy = function () {
+            for (const deregisterer of deregisteres)
+                deregisterer();
+        };
+
 
         //sTODO to be removed when deep populate exists
         function getCollaborations() {

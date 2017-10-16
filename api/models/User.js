@@ -121,6 +121,10 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'members',
             through: 'membership'
         },
+        attributes: {
+            collection: 'Attribute',
+            through: 'userattribute'
+        },
         getAliases: function () {
 
             var firstLetter = function (string) {

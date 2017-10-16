@@ -1,0 +1,6 @@
+<select
+        ng-if="vm.mode==='single'"
+        class="form-control"
+        ng-model="vm.selected"
+        ng-options="option as option.label for option in vm.attributes">
+</select>

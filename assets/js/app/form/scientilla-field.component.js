@@ -27,28 +27,21 @@
         vm.$onInit = function () {
             vm.id = new Date().getUTCMilliseconds();
 
-            if (vm.structure.cssClass)
-                vm.fieldStructure.cssClass = vm.structure.cssClass;
-
-            if (vm.structure.disabled)
-                vm.fieldStructure.disabled = vm.structure.disabled;
-
-            if (vm.structure.labelPosition)
-                vm.fieldStructure.labelPosition = vm.structure.labelPosition;
-
-            vm.fieldStructure.placeholder = vm.structure.placeholder;
-            vm.fieldStructure.label = vm.structure.label;
-
-            vm.fieldStructure.values = vm.structure.values;
+            vm.fieldStructure = vm.structure;
 
             if (isButton()) {
                 if (_.isFunction(vm.structure.onClick))
                     vm.onClick = vm.structure.onClick;
-                else if(vm.structure.onClick === 'reset')
+                else if (vm.structure.onClick === 'reset')
                     vm.onClick = vm.reset();
-                else if(vm.structure.onClick === 'submit')
+                else if (vm.structure.onClick === 'submit')
                     vm.onClick = null;
             }
+
+            if (_.isFunction(vm.structure.ngIf))
+                vm.ngIf = vm.structure.ngIf;
+            else
+                vm.ngIf = () => true;
 
             // TODO move all events handlers inside this component
 
