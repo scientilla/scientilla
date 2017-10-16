@@ -34,6 +34,11 @@ module.exports = _.merge({}, BaseModel, {
         }
     },
     beforeDestroy: async function (criteria, cb) {
+        if (!criteria || !criteria.where) {
+            cb();
+            return;
+        }
+
         const authorships = await Authorship.find(criteria);
         for (let a of authorships)
             await Affiliation.destroy({authorship: a.id});
