@@ -4,7 +4,11 @@ CREATE OR REPLACE VIEW documentsuggestion AS
     u.id AS "researchEntity"
   FROM "user" u
     JOIN "document" d
-      ON d."authorsStr" ~* ('\y' || u.surname ||'\y')
+      ON d."authorsStr" ~~* ANY (
+      SELECT '\y' || str || '\y'
+      FROM alias
+      WHERE alias.user = u.id
+    )
     JOIN (SELECT a.document
           FROM "authorship" a
           WHERE a."researchEntity" IS NOT NULL

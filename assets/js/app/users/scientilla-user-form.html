@@ -36,6 +36,22 @@
         <label for="password">Password</label>
         <input type="text" class="form-control" id="password" placeholder="Password" ng-model="vm.user.password">
     </div>
+    <div class="form-group">
+        <label>Alias</label> (e.g. Surname Secondsurname N.N. or Surname-Secondsurname N.N.)
+        <input ng-keydown="vm.addAlias($event)"
+               type="text"
+               class="form-control"
+               placeholder="Add alias"
+               ng-model="vm.newAlias"/>
+        <ul class="scientilla-multiselect-list">
+            <li class="list-group-item" ng-repeat="alias in vm.user.aliases">
+                {{alias.str}}
+                <button ng-click="vm.removeAlias(alias)" class="badge btn-primary">
+                    <span class="fa fa-remove"></span>
+                </button>
+            </li>
+        </ul>
+    </div>
     <div class="form-group" ng-if="vm.userIsAdmin">
         <label>Macroarea</label>
         <scientilla-attribute-selector

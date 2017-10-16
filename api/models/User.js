@@ -1,4 +1,4 @@
-/* global User, Document, sails, Auth, Authorship, SqlService */
+/* global User, Group, Document, sails, Auth, Authorship, SqlService, Alias */
 'use strict';
 
 /**
@@ -125,37 +125,9 @@ module.exports = _.merge({}, ResearchEntity, {
             collection: 'Attribute',
             through: 'userattribute'
         },
-        getAliases: function () {
-
-            var firstLetter = function (string) {
-                if (!string)
-                    return "";
-                return string.split(' ').map(w => w.charAt(0) + ".").join('');
-            };
-            var capitalize = function (string) {
-                if (!string)
-                    return "";
-                return string.replace(/\w\S*/g, function (txt) {
-                    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-                });
-            };
-            var aliases = [];
-            var firstName = capitalize(this.name);
-            var lastName = capitalize(this.surname);
-            var firstNameAcronym = firstLetter(firstName);
-            aliases.push(firstName + " " + lastName);
-            aliases.push(lastName + " " + firstName);
-            aliases.push(lastName + " " + firstNameAcronym);
-            aliases.push(firstNameAcronym + " " + lastName);
-            aliases = _.uniq(aliases);
-            return aliases;
-        },
-        getUcAliases: function () {
-            var aliases = this.getAliases();
-            var ucAliases = _.map(aliases, function (a) {
-                return a.toUpperCase();
-            });
-            return ucAliases;
+        getAliases: async function () {
+            const aliases = await Alias.find({user: this.id});
+            return aliases.map(a => a.str);
         },
         getType: function () {
             return 'user';
@@ -223,8 +195,36 @@ module.exports = _.merge({}, ResearchEntity, {
         const sameUsernameUsers = await User.findByUsername(user.username);
         if (sameUsernameUsers.length > 0)
             throw new Error('Username already used');
+    },
+    createAliases: async function (user) {
+        function capitalizeAll(str, wordSeparators) {
+            function capitalize(str) {
+                return str.charAt(0).toLocaleUpperCase() + str.slice(1);
+            }
 
-        return user;
+            let retStr = str.toLocaleLowerCase();
+            for (const c of wordSeparators)
+                retStr = retStr.split(c).map(capitalize).join(c);
+            return retStr
+        }
+
+        const separators = [' ', '-', '.'];
+        const nameInitials = user.name.split(' ').map(n => n[0]).join('.') + '.';
+        const alias1 = capitalizeAll(user.surname + ' ' + nameInitials, separators);
+        const alias2 = capitalizeAll(user.surname.replace(' ', '-') + ' ' + nameInitials, separators);
+
+        const aliases = [];
+        aliases.push({
+            user: user.id,
+            str: alias1
+        });
+        if (alias1 !== alias2)
+            aliases.push({
+                user: user.id,
+                str: alias2
+            });
+
+        await Alias.create(aliases);
     },
     copyAuthData: function (user) {
         if (!user.auth)
@@ -251,7 +251,7 @@ module.exports = _.merge({}, ResearchEntity, {
                 item: researchEntityId
             };
 
-        const position = !_.isNil(newAffiliationData.position) ? newAffiliationData.position : document.getAuthorIndex(user);
+        const position = !_.isNil(newAffiliationData.position) ? newAffiliationData.position : await document.getAuthorIndex(user);
         const authorship = document.getAuthorshipByPosition(position) || Authorship.getEmpty();
         //TODO: [Accrocchio] remove when deep populate is added to waterline
         assert(!_.isNil(document.affiliations), 'getAuthorshipAffiliations: affiliations missing');
@@ -310,6 +310,8 @@ module.exports = _.merge({}, ResearchEntity, {
         _.assign(authorship, newAuthorship);
         await authorship.savePromise();
 
+        await Alias.addAlias(researchEntityId, document.authorsStr, authorshipData.position);
+
         return document;
     },
     beforeCreate: function (user, cb) {
@@ -321,15 +323,15 @@ module.exports = _.merge({}, ResearchEntity, {
                 cb();
             });
     },
-    afterCreate: function (user, cb) {
-        Promise.resolve(user)
-            .then(user => {
-                if (User.isInternalUser(user))
-                    return Group.addUserToDefaultGroup(user);
-                else
-                    return user;
-            })
-            .then(() => cb());
+    afterCreate: async function (user, cb) {
+        if (!user.id)
+            return cb();
+
+        await User.createAliases(user);
+        if (User.isInternalUser(user))
+            await Group.addUserToDefaultGroup(user);
+
+        cb();
     },
     isInternalUser: function (user) {
         return _.endsWith(user.username, '@' + sails.config.scientilla.ldap.domain);

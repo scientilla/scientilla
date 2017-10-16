@@ -32,36 +32,7 @@
         };
         const userPrototype = {
             getAliases: function () {
-
-                var firstLetter = function (string) {
-                    if (!string)
-                        return "";
-                    return string.split(' ').map(w => w.charAt(0) + ".").join('');
-                };
-                var capitalize = function (string) {
-                    if (!string)
-                        return "";
-                    return string.replace(/\w\S*/g, function (txt) {
-                        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-                    });
-                };
-                var aliases = [];
-                var firstName = capitalize(this.name);
-                var lastName = capitalize(this.surname);
-                var firstNameAcronym = firstLetter(firstName);
-                aliases.push(firstName + " " + lastName);
-                aliases.push(lastName + " " + firstName);
-                aliases.push(lastName + " " + firstNameAcronym);
-                aliases.push(firstNameAcronym + " " + lastName);
-                aliases = _.uniq(aliases);
-                return aliases;
-            },
-            getUcAliases: function () {
-                var aliases = this.getAliases();
-                var ucAliases = _.map(aliases, function (a) {
-                    return a.toUpperCase();
-                });
-                return ucAliases;
+                return this.aliases.map(a => a.str);
             },
             getDisplayName: function () {
                 var name = this.name ? this.name : "";
@@ -245,8 +216,9 @@
                 return this.getDisplayName();
             },
             getUserIndex: function (user) {
-                var index = _.findIndex(this.getAuthors(), a => user.getAliases().includes(a));
-                return index;
+                const authors = this.getAuthors().map(a => a.toLocaleLowerCase());
+                const aliases = user.getAliases().map(a => a.toLocaleLowerCase());
+                return _.findIndex(authors, a => aliases.includes(a));
             },
             copyDocument: function (document, creator) {
                 var excludedFields = ['kind', 'draftCreator', 'draftGroupCreator'];

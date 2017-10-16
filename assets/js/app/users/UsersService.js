@@ -58,6 +58,8 @@
 
         service.doSave = function (user) {
             const userData = _.pick(user, userFields);
+            if (_.isArray(user.aliases))
+                userData.aliases = user.aliases;
             return this.save(userData).then(function (u) {
                 return user;
             });
@@ -79,7 +81,7 @@
         };
 
         service.getUsers = function (query) {
-            var populate = {populate: ['memberships', 'documents', 'attributes']};
+            var populate = {populate: ['memberships', 'documents', 'attributes', 'aliases']};
             var q = _.merge({}, query, populate);
 
             return this.getList(q);
@@ -88,13 +90,13 @@
         service.getProfile = function (userId) {
             return this
                 .one(userId)
-                .get({populate:'attributes'});
+                .get({populate: ['attributes', 'aliases']});
         };
 
         service.getCompleteProfile = function (userId) {
             return this
                 .one(userId)
-                .get({populate: ['administratedGroups']})
+                .get({populate: ['administratedGroups', 'attributes', 'aliases']})
                 .then(function (user) {
                     Prototyper.toUserModel(user);
                     user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
