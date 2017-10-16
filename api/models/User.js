@@ -280,7 +280,7 @@ module.exports = _.merge({}, ResearchEntity, {
             document
         };
     },
-    doVerifyDocument: function (document, researchEntityId, authorshipData) {
+    doVerifyDocument: async function (document, researchEntityId, authorshipData) {
         if (authorshipData.position < 0)
             return {
                 error: "User not selected",
@@ -301,15 +301,12 @@ module.exports = _.merge({}, ResearchEntity, {
             position: newAuthorship.position
         };
 
-        return Authorship.destroy(authorshipFindCriteria)
-            .then(oldAuthorship => Affiliation.destroy({authorship: oldAuthorship.id}))
-            .then(() => Authorship.create(newAuthorship))
-            .then((authorship) => {
+        await Authorship.destroy(authorshipFindCriteria);
+        const authorship = await Authorship.create(newAuthorship);
+        _.assign(authorship, newAuthorship);
+        await authorship.savePromise();
 
-                _.assign(authorship, newAuthorship);
-                return authorship.savePromise();
-
-            }).then(() => document);
+        return document;
     },
     beforeCreate: function (user, cb) {
         Promise.resolve(user)
