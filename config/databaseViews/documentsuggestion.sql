@@ -5,7 +5,7 @@ CREATE OR REPLACE VIEW documentsuggestion AS
   FROM "user" u
     JOIN "document" d
       ON d."authorsStr" ~~* ANY (
-      SELECT '\y' || str || '\y'
+      SELECT '%' || str || '%'
       FROM alias
       WHERE alias.user = u.id
     )
