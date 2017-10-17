@@ -48,7 +48,7 @@ module.exports = require('waterlock').actions.user(_.merge({}, researchEntityCon
         if (!user)
             return res.notFound();
         const baseUrl = sails.getBaseUrl();
-        const path = `/api/v1/users/${user.id}/publicDocuments`;
+        const path = `/api/v1/users/${user.id}/publications`;
         const qs =  req.query;
         qs.populate =  ['source', 'affiliations', 'authorships', 'institutes'];
         const reqOptions = {

@@ -74,8 +74,8 @@ module.exports.routes = {
     'put /api/v1/groups/:researchEntityId/drafts/:documentId/authorships': 'Group.setAuthorhips',
     'put /api/v1/users/:researchEntityId/drafts/:documentId/authorships': 'User.setAuthorhips',
     'get /api/v1/externals': 'Document.externalSearch',
-    'get /api/v1/users/username/:username/documents': 'User.getDocumentsByUsername',
-    'get /api/v1/groups/slug/:slug/documents': 'Group.getDocumentsBySlug',
+    'get /api/v1/users/username/:username/publications': 'User.getDocumentsByUsername',
+    'get /api/v1/groups/slug/:slug/publications': 'Group.getDocumentsBySlug',
 
 
     /***************************************************************************

@@ -147,6 +147,7 @@ async function importPeople() {
             await User.update(criteria, p);
         }
         else {
+            sails.log.info(`Inserting user ${p.username}`);
             user = await User.createCompleteUser(p);
         }
 

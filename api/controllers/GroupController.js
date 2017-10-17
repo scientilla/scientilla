@@ -20,7 +20,7 @@ module.exports = _.merge({}, researchEntityController, {
         if (!group)
             return res.notFound();
         const baseUrl = sails.getBaseUrl();
-        const path = `/api/v1/groups/${group.id}/publicDocuments`;
+        const path = `/api/v1/groups/${group.id}/publications`;
         const qs =  req.query;
         qs.populate =  ['source', 'affiliations', 'authorships', 'institutes'];
         const reqOptions = {
@@ -28,7 +28,6 @@ module.exports = _.merge({}, researchEntityController, {
             json: true,
             qs: qs
         };
-
         const r = await request(reqOptions);
         res.ok(r);
     }

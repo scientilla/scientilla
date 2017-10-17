@@ -51,6 +51,11 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'researchEntity',
             through: 'publicauthorshipgroup'
         },
+        publications: {
+            collection: 'Document',
+            via: 'researchEntity',
+            through: 'publicationgroup'
+        },
         authorships: {
             collection: 'authorshipGroup',
             via: 'researchEntity',
