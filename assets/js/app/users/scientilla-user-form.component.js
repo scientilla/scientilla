@@ -22,17 +22,14 @@
         'GroupsService',
         'Prototyper',
         'userConstants',
-        'documentFieldsRules',
         'context'
     ];
 
-    function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants, documentFieldsRules, context) {
+    function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants, context) {
         const vm = this;
         vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.getGroupsQuery = GroupsService.getGroupsQuery;
         vm.groupToCollaboration = groupToCollaboration;
-        vm.addAlias = addAlias;
-        vm.removeAlias = removeAlias;
         vm.submit = submit;
         vm.cancel = cancel;
         vm.userIsAdmin = AuthService.user.role === userConstants.role.ADMINISTRATOR;
@@ -40,8 +37,6 @@
             {label: 'User', value: userConstants.role.USER},
             {label: 'Administrator', value: userConstants.role.ADMINISTRATOR}
         ];
-        vm.newAlias = '';
-
         const deregisteres = [];
 
         vm.$onInit = function () {
@@ -106,34 +101,6 @@
             var collaboration = {group: g, user: vm.user.id};
             Prototyper.toCollaborationModel(collaboration);
             return collaboration;
-        }
-
-        function addAlias(event) {
-
-            function capitalizeAll(str, wordSeparators) {
-                function capitalize(str) {
-                    return str.charAt(0).toLocaleUpperCase() + str.slice(1);
-                }
-
-                let retStr = str.toLocaleLowerCase();
-                for (const c of wordSeparators)
-                    retStr = retStr.split(c).map(capitalize).join(c);
-                return retStr;
-            }
-
-            if (event.key === 'Enter') {
-                event.preventDefault();
-
-                const newAlias = capitalizeAll(vm.newAlias, [' ', '-', '.']);
-                if (newAlias.match(documentFieldsRules.authorsStr.regex)) {
-                    vm.user.aliases.push({str: newAlias});
-                    vm.newAlias = '';
-                }
-            }
-        }
-
-        function removeAlias(alias) {
-            vm.user.aliases = vm.user.aliases.filter(a => a.str !== alias.str);
         }
 
         function cancel() {
