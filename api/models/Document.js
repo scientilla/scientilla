@@ -254,7 +254,7 @@ module.exports = _.merge({}, BaseModel, {
             const res = await Synchronizer.documentSynchronizeScopus(this.id);
             return res.docData;
         },
-        getReferences: function () {
+        getSourceDetails: function () {
             if (!_.isObject(this.source))
                 return null;
             const referenceFragments = [];
@@ -262,7 +262,7 @@ module.exports = _.merge({}, BaseModel, {
                 referenceFragments.push(this.source.title);
             }
             if (this.volume) {
-                referenceFragments.push('vol: ' + this.volume);
+                referenceFragments.push('vol. ' + this.volume);
             }
             if (this.issue) {
                 referenceFragments.push('(no. ' + this.issue + ')');
@@ -271,14 +271,11 @@ module.exports = _.merge({}, BaseModel, {
                 referenceFragments.push('pp. ' + this.pages);
             }
 
-            if (this.source.publisher) {
-                referenceFragments.push(this.source.publisher);
+            if (this.source.type == SourceTypes.BOOK && this.source.publisher) {
+                referenceFragments.push('Publisher: ' + this.source.publisher);
             }
 
-            if (this.source.location) {
-                referenceFragments.push(this.source.location);
-            }
-            return referenceFragments.join(' ');
+            return referenceFragments.join(', ');
         },
         getInPress: function () {
             return this.type === 'article_in_press';
@@ -297,7 +294,7 @@ module.exports = _.merge({}, BaseModel, {
                     affiliations = institutes.map(i => i.name);
                     mainGroupAffiliation = instituteIds.includes(1)
                 } else {
-                    affiliations = [];
+                    affiliations = null;
                     mainGroupAffiliation = null;
                 }
                 const authorDetail = {
@@ -312,7 +309,7 @@ module.exports = _.merge({}, BaseModel, {
         },
         toJSON: function () {
             var document = this.toObject();
-            document.references = this.getReferences();
+            document.sourceDetails = this.getSourceDetails();
             document.duplicates = this.duplicates;
             document.inPress = this.getInPress();
             document.authorDetails = this.getAuthorDetails();

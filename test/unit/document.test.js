@@ -251,12 +251,12 @@ describe('Document model', () => {
 
     });
 
-    describe('getReferences', () => {
+    describe('getSourceDetails', () => {
         
         it('should return a compiled reference string', () => {
             const documentData = test.getAllDocumentData()[0];
             const document = test.createModel(Document, documentData);
-            document.getReferences().should.not.be.empty;
+            document.getSourceDetails().should.not.be.empty;
         });
 
     });
