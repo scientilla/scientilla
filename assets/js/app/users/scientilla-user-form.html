@@ -41,7 +41,7 @@
         <input ng-keydown="vm.addAlias($event)"
                type="text"
                class="form-control"
-               placeholder="Add alias"
+               placeholder="Add alias and press Enter (please use only the first letter of the name)"
                ng-model="vm.newAlias"/>
         <ul class="scientilla-multiselect-list">
             <li class="list-group-item" ng-repeat="alias in vm.user.aliases">
