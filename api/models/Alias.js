@@ -8,7 +8,8 @@ module.exports = {
     attributes: {
         str: 'string',
         user: {
-            model: 'user'
+            model: 'user',
+            required: true
         }
     },
     addAlias: async function (userId, authorsStr, position) {
