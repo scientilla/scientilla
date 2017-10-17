@@ -4,8 +4,8 @@ CREATE OR REPLACE VIEW documentsuggestion AS
     u.id AS "researchEntity"
   FROM "user" u
     JOIN "document" d
-      ON d."authorsStr" ~~* ANY (
-      SELECT '%' || str || '%'
+      ON d."authorsStr" ~* ANY (
+      SELECT '\y' || str || '(,\s|$)'
       FROM alias
       WHERE alias.user = u.id
     )
