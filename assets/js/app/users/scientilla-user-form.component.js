@@ -66,6 +66,7 @@
                 .doSave(vm.user)
                 .then(function (user) {
                     Notification.success("User data saved");
+                    aliasesChanged();
                     if (_.isFunction(vm.onSubmit()))
                         vm.onSubmit()(1);
                 })
@@ -127,7 +128,6 @@
                 if (newAlias.match(documentFieldsRules.authorsStr.regex)) {
                     vm.user.aliases.push({str: newAlias});
                     vm.newAlias = '';
-                    aliasesChanged();
                 }
             }
         }
