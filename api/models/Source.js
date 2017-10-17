@@ -28,6 +28,9 @@ module.exports = {
         website: 'string',
         type: 'string',
         scopusId: 'string',
+        sourcetype: {
+            model: 'SourceType'
+        },
         documents: {
             collection: 'document',
             via: 'source'

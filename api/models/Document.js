@@ -54,6 +54,9 @@ module.exports = _.merge({}, BaseModel, {
         articleNumber: 'STRING',
         doi: 'STRING',
         type: 'STRING',
+        documenttype: {
+            model: 'DocumentType'
+        },
         sourceType: 'STRING',
         itSource: 'STRING',
         scopusId: 'STRING',

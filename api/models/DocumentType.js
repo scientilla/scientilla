@@ -18,6 +18,10 @@ module.exports = {
             collection: 'SourceType',
             via: 'allowedDocumentTypes',
             through: 'documenttypesourcetype'
+        },
+        documents: {
+            collection: 'Document',
+            via: 'documenttype'
         }
     }
 };
