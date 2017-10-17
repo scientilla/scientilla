@@ -338,5 +338,26 @@ module.exports = _.merge({}, ResearchEntity, {
     },
     getAuthorshipModel: function () {
         return Authorship;
+    },
+    updateProfile: async function (userId, userData) {
+        let aliases;
+        if (_.isArray(userData.aliases)) {
+            aliases = userData.aliases;
+            delete userData.aliases;
+        }
+        const oldResearchEntity = await User.findOne({id: userId});
+        const res = await User.update({id: userId}, userData);
+        const newResearchEntity = res[0];
+
+        if (aliases && userId)
+            Alias.createOrUpdateAll(userId, aliases);
+
+        const command = 'import:external:user:' + newResearchEntity.id;
+        if (newResearchEntity.scopusId !== oldResearchEntity.scopusId)
+            GruntTaskRunner.run(command + ':' + DocumentOrigins.SCOPUS);
+        if (newResearchEntity.username !== oldResearchEntity.username)
+            GruntTaskRunner.run(command + ':' + DocumentOrigins.PUBLICATIONS);
+
+        return newResearchEntity;
     }
 });

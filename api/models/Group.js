@@ -1,4 +1,4 @@
-/* global AuthorshipGroup, Document, SqlService, Promise, Group */
+/* global AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group */
 'use strict';
 
 /**
@@ -126,5 +126,18 @@ module.exports = _.merge({}, ResearchEntity, {
     },
     getAuthorshipModel: function () {
         return AuthorshipGroup;
+    },
+    updateProfile: async function(groupId, groupData){
+        const oldResearchEntity = await Group.findOne({id: groupId});
+        const res = await Group.update({id: groupId}, groupData);
+        const newResearchEntity = res[0];
+
+        const command = 'import:external:group:' + newResearchEntity.id;
+        if (newResearchEntity.scopusId !== oldResearchEntity.scopusId)
+            GruntTaskRunner.run(command + ':' + DocumentOrigins.SCOPUS);
+        if (newResearchEntity.publicationsAcronym !== oldResearchEntity.publicationsAcronym)
+            GruntTaskRunner.run(command + ':' + DocumentOrigins.PUBLICATIONS);
+
+        return newResearchEntity;
     }
 });
