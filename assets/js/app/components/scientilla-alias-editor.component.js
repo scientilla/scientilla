@@ -20,6 +20,7 @@
         const vm = this;
         vm.addAlias = addAlias;
         vm.removeAlias = removeAlias;
+        vm.newAliasIsCorrect = newAliasIsCorrect;
 
 
         vm.$onInit = function () {
@@ -41,6 +42,10 @@
                     vm.newAlias = '';
                 }
             }
+        }
+
+        function newAliasIsCorrect() {
+            return !vm.newAlias || vm.newAlias.match(documentFieldsRules.authorsStr.regex);
         }
 
         function removeAlias(alias) {
