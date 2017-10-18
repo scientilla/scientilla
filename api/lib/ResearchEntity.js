@@ -99,6 +99,19 @@ module.exports = _.merge({}, BaseModel, {
                 error: 'Draft not valid for verification',
                 item: draft
             };
+        if (draft.scopusId) {
+            const alreadyVerifiedDocuments = (await ResearchEntityModel
+                .findOne(researchEntityId)
+                .populate('documents', {
+                    scopusId: draft.scopusId,
+                    synchronized: true
+                })).documents;
+            if (alreadyVerifiedDocuments)
+                return {
+                    error: 'Draft already verified (same scopusId)',
+                    item: draft
+                };
+        }
 
         const authorshipData = await ResearchEntityModel.getAuthorshipsData(draft, researchEntityId, verificationData);
 
@@ -159,6 +172,19 @@ module.exports = _.merge({}, BaseModel, {
                 error: 'Document not found',
                 item: researchEntityId
             };
+        if (document.scopusId) {
+            const alreadyVerifiedDocuments = (await Model
+                .findOne(researchEntityId)
+                .populate('documents', {
+                    scopusId: document.scopusId,
+                    synchronized: true
+                })).documents;
+            if (alreadyVerifiedDocuments)
+                return {
+                    error: 'Document already verified (same scopusId)',
+                    item: document
+                };
+        }
         const authorshipData = await Model.getAuthorshipsData(document, researchEntityId, verificationData);
 
         if (!authorshipData.isVerifiable)
@@ -177,7 +203,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     updateDraft: async function (ResearchEntityModel, draftId, draftData) {
         const d = await Document.findOneById(draftId);
-        if(!d.kind || d.kind !== DocumentKinds.DRAFT)
+        if (!d.kind || d.kind !== DocumentKinds.DRAFT)
             throw "Draft not found";
         const documentFields = Document.getFields();
         const selectedDraftData = _.pick(draftData, documentFields);
