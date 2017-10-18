@@ -26,9 +26,14 @@
         <wizard-welcome ng-if="vm.isStep('welcome')"></wizard-welcome>
 
         <wizard-scopus-edit
-                ng-if="vm.isStep('edit')"
+                ng-if="vm.isStep('scopus-edit')"
                 wizard-commands="vm.wizardCommands"
                 user="vm.user"></wizard-scopus-edit>
+
+        <wizard-alias-edit
+                ng-if="vm.isStep('alias-edit')"
+                user="vm.user"></wizard-alias-edit>
+
         <wizard-tutorial ng-if="vm.isStep('tutorial')"></wizard-tutorial>
 
         <wizard-admin-tutorial ng-if="vm.isStep('admin-tutorial')"></wizard-admin-tutorial>

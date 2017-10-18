@@ -12,15 +12,14 @@
         });
 
     wizardContainer.$inject = [
-        'AuthService',
-        'UsersService'
+        'context'
     ];
 
-    function wizardContainer(AuthService, UsersService) {
+    function wizardContainer(context) {
         const vm = this;
 
         vm.currentStep = 0;
-        vm.user = {};
+        vm.user = context.getResearchEntity();
 
         vm.isStep = isStep;
         vm.closeModal = closeModal;
@@ -37,8 +36,8 @@
                 userLevels: ['groupAdmin', 'standard']
             },
             {
-                name: 'edit',
-                component: 'wizard-edit',
+                name: 'scopus-edit',
+                component: 'wizard-scopus-edit',
                 userLevels: ['groupAdmin', 'standard']
             },
             {
@@ -50,6 +49,11 @@
                 name: 'admin-tutorial',
                 component: 'wizard-admin-tutorial',
                 userLevels: ['groupAdmin']
+            },
+            {
+                name: 'alias-edit',
+                component: 'wizard-alias-edit',
+                userLevels: ['groupAdmin', 'standard']
             }
         ];
 
@@ -57,34 +61,29 @@
         vm.canChangeStep = true;
 
         vm.$onInit = function () {
-            UsersService.one(AuthService.user.id).get({populate: ['administratedGroups']})
-                .then(user => {
-                    vm.user = user;
-                    vm.userLevel = vm.user.administratedGroups.length ? 'groupAdmin' : 'standard';
-                    steps = allSteps.filter(s => s.userLevels.includes(vm.userLevel));
-                });
             vm.currentStep = 0;
+            vm.userLevel = vm.user.administratedGroups.length ? 'groupAdmin' : 'standard';
+            steps = allSteps.filter(s => s.userLevels.includes(vm.userLevel));
+            if (vm.resolve.data.steps)
+                steps = steps.filter(s => vm.resolve.data.steps.includes(s.name));
         };
 
         vm.$onDestroy = function () {
         };
 
         function isStep(stepName) {
-            if (!steps[vm.currentStep])return false;
-
+            if (!steps[vm.currentStep]) return false;
             return steps[vm.currentStep].name === stepName;
         }
 
         function closeModal() {
             vm.user.alreadyAccess = true;
+            if (vm.resolve.data.steps.includes('alias-edit'))
+                vm.user.alreadyOpenedSuggested = true;
 
-            UsersService
-                .doSave(vm.user)
-                .catch(function () {
-                    Notification.warning("Failed to save user");
-                });
-
-            vm.resolve.callbacks.onClose();
+            return vm.user.save()
+                .then(()=>vm.resolve.callbacks.onClose())
+                .catch(() => Notification.warning("Failed to save user"))
         }
 
         function nextStep() {

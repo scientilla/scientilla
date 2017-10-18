@@ -34,6 +34,7 @@
         vm.changeContextToUser = changeContextToUser;
         vm.editProfile = editProfile;
         vm.openWizard = openWizard;
+        vm.openSuggestedWizard = openSuggestedWizard;
 
         vm.$onInit = function () {
 
@@ -104,7 +105,16 @@
         }
 
         function openWizard() {
-            ModalService.openWizard(true);
+            ModalService.openWizard([
+                'welcome',
+                'scopus-edit',
+                'tutorial',
+                'admin-tutorial',
+            ], true);
+        }
+
+        function openSuggestedWizard() {
+            ModalService.openWizard(['alias-edit'], true);
         }
     }
 

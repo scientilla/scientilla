@@ -16,14 +16,16 @@
         'context',
         'researchEntityService',
         'EventsService',
+        'ModalService',
         'documentSearchForm',
         'documentListSections'
     ];
 
-    function scientillaSuggestedDocumentsController(context, researchEntityService, EventsService, documentSearchForm, documentListSections) {
-        var vm = this;
+    function scientillaSuggestedDocumentsController(context, researchEntityService, EventsService, ModalService, documentSearchForm, documentListSections) {
+        const vm = this;
 
-        var DocumentsService = context.getDocumentService();
+        const DocumentsService = context.getDocumentService();
+        const researchEntity = context.getResearchEntity();
 
         vm.copyDocument = DocumentsService.copyDocument;
         vm.verifyDocument = DocumentsService.verifyDocument;
@@ -32,7 +34,7 @@
         vm.copyDocuments = DocumentsService.copyDocuments;
         vm.discardDocuments = DocumentsService.discardDocuments;
         vm.documents = [];
-        var query = {};
+        let query = {};
 
         vm.onFilter = onFilter;
 
@@ -59,6 +61,9 @@
                 EventsService.DOCUMENT_VERIFIED,
                 EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED
             ], updateList);
+
+            if (researchEntity.getType() === 'user' && !researchEntity.alreadyOpenedSuggested)
+                ModalService.openWizard(['alias-edit'], false);
         };
 
         vm.$onDestroy = function () {

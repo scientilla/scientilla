@@ -25,7 +25,8 @@
             'orcidId',
             'scopusId',
             'jobTitle',
-            'attributes'
+            'attributes',
+            'alreadyOpenedSuggested'
         ];
 
         service.getNewUser = function () {

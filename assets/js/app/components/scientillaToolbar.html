@@ -34,10 +34,22 @@
                     Login
                 </a>
             </div>
-            <div ng-if="vm.isLogged">
-                <a class="btn btn-link" ng-click="vm.openWizard()">
+            <div ng-if="vm.isLogged" class="dropdown">
+                <button class="btn btn-link dropdown-toggle" data-toggle="dropdown" uib-dropdown>
                     <i class="fa fa-question-circle" aria-hidden="true"></i>
-                </a>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <button ng-click="vm.openWizard()" class="btn btn-link">
+                            Initial wizard
+                        </button>
+                    </li>
+                    <li>
+                        <button ng-click="vm.openSuggestedWizard()" class="btn btn-link">
+                            Suggested wizard
+                        </button>
+                    </li>
+                </ul>
                 <a class="btn btn-link" ng-href="#/logout">
                     Logout
                 </a>

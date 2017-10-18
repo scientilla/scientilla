@@ -52,6 +52,10 @@ module.exports = _.merge({}, ResearchEntity, {
             type: "BOOLEAN",
             defaultsTo: false
         },
+        alreadyOpenedSuggested: {
+            type: "BOOLEAN",
+            defaultsTo: false
+        },
         role: {
             type: 'STRING',
             enum: [USER, ADMINISTRATOR],

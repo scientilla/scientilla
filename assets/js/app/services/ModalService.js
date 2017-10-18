@@ -207,25 +207,20 @@
             return ret;
         };
 
-        service.openWizard = function (closable) {
-            let args;
-            if (closable)
-                args = {
-                    size: 'lg',
-                    windowClass: 'modal-dark'
-                };
-            else
-                args = {
+        service.openWizard = function (steps, isClosable) {
+            let args = {
+                size: 'lg',
+                windowClass: 'modal-dark'
+            };
+            if (!isClosable)
+                args = Object.assign({}, args, {
                     backdrop: 'static',
-                    keyboard: false,
-                    size: 'lg',
-                    windowClass: 'modal-dark'
-                };
+                    keyboard: false
+                });
 
-            service.modal = openComponentModal('wizard-container', {}, args);
+            service.modal = openComponentModal('wizard-container', {steps: steps}, args);
             return service.modal.result;
         };
-
 
         service.confirm = function (title, message) {
             return service.multipleChoiceConfirm(title, message, ['Ok']);
