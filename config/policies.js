@@ -81,7 +81,8 @@ module.exports.policies = {
         deleteDrafts: isGroupOwner,
         getPublicDocuments: true,
         getPublications: true,
-        getDisseminationTalks: true
+        getDisseminationTalks: true,
+        getScientificTalks: true
     }, defaultPolicy),
 
     InstituteController: _.defaults({
@@ -120,6 +121,7 @@ module.exports.policies = {
         deleteDrafts: isActivityOwner,
         getPublicDocuments: true,
         getPublications: true,
-        getDisseminationTalks: true
+        getDisseminationTalks: true,
+        getScientificTalks: true
     }, defaultPolicy),
 };

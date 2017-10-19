@@ -146,6 +146,15 @@ module.exports = {
         };
         const attribute = `disseminationTalks`;
         res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, req.query, attribute));
+    },
+    getScientificTalks: async (req, res) => {
+        const researchEntityModel = getModel(req);
+        const searchKey = getSearchKey(researchEntityModel);
+        const searchCriteria = {
+            [searchKey]: req.params[searchKey]
+        };
+        const attribute = `scientificTalks`;
+        res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, req.query, attribute));
     }
 };
 

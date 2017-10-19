@@ -80,6 +80,8 @@ module.exports.routes = {
     'get /api/v1/groups/slug/:slug/documents': 'Group.getPublicDocuments',
     'get /api/v1/users/username/:username/dissemination-talks': 'User.getDisseminationTalks',
     'get /api/v1/groups/slug/:slug/dissemination-talks': 'Group.getDisseminationTalks',
+    'get /api/v1/users/username/:username/scientific-talks': 'User.getScientificTalks',
+    'get /api/v1/groups/slug/:slug/scientific-talks': 'Group.getScientificTalks',
 
 
     /***************************************************************************
