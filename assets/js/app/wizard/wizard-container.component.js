@@ -83,7 +83,7 @@
 
             return vm.user.save()
                 .then(()=>vm.resolve.callbacks.onClose())
-                .catch(() => Notification.warning("Failed to save user"))
+                .catch(() => Notification.warning("Failed to save user"));
         }
 
         function nextStep() {
