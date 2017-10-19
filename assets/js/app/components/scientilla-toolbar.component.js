@@ -33,6 +33,7 @@
         vm.changeContextToGroup = changeContextToGroup;
         vm.changeContextToUser = changeContextToUser;
         vm.editProfile = editProfile;
+        vm.showWizardVisible = showWizardVisible;
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
 
@@ -102,6 +103,10 @@
                 .then(function (researchEntity) {
                     vm.researchEntity = researchEntity;
                 });
+        }
+
+        function showWizardVisible(){
+            return vm.researchEntity.getType() === 'user';
         }
 
         function openWizard() {
