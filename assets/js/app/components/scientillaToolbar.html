@@ -6,9 +6,9 @@
             </a>
         </div>
         <div class="col-xs-6 text-right">
-            <a class="btn btn-link" ng-click="vm.editProfile()">
+            <div class="btn-group scientilla-toolbar-name">
                 {{vm.researchEntity.getDisplayName()}}
-            </a>
+            </div>
             <div uib-dropdown class="btn-group" is-open="status.isopen" ng-if="vm.user.administratedGroups.length">
                 <button id="single-button" type="button" class="btn btn-link" uib-dropdown-toggle
                         ng-disabled="disabled">
@@ -35,18 +35,21 @@
                 </a>
             </div>
             <div ng-if="vm.isLogged" class="dropdown">
+                <button class="btn btn-link" ng-click="vm.editProfile()">
+                    <span class="fa fa-gear"></span>
+                </button>
                 <button class="btn btn-link dropdown-toggle" data-toggle="dropdown" uib-dropdown>
                     <i class="fa fa-question-circle" aria-hidden="true"></i>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-right">
                     <li>
                         <button ng-click="vm.openWizard()" class="btn btn-link">
-                            Initial wizard
+                            Main features
                         </button>
                     </li>
                     <li>
                         <button ng-click="vm.openSuggestedWizard()" class="btn btn-link">
-                            Suggested wizard
+                            Suggested/Alias
                         </button>
                     </li>
                 </ul>
