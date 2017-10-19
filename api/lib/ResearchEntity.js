@@ -111,7 +111,7 @@ module.exports = _.merge({}, BaseModel, {
                     scopusId: draft.scopusId,
                     synchronized: true
                 })).documents;
-            if (alreadyVerifiedDocuments)
+            if (alreadyVerifiedDocuments.length)
                 return {
                     error: 'Draft already verified (same scopusId)',
                     item: draft
@@ -184,7 +184,7 @@ module.exports = _.merge({}, BaseModel, {
                     scopusId: document.scopusId,
                     synchronized: true
                 })).documents;
-            if (alreadyVerifiedDocuments)
+            if (alreadyVerifiedDocuments.length)
                 return {
                     error: 'Document already verified (same scopusId)',
                     item: document
@@ -245,7 +245,7 @@ module.exports = _.merge({}, BaseModel, {
             throw Error('404 page not found');
         const baseUrl = sails.getBaseUrl();
         const path = `/api/v1/${researchEntity.getUrlSection()}/${researchEntity.id}/${attribute}`;
-        qs.populate = ['source', 'affiliations', 'authorships', 'institutes'];
+        qs.populate = ['source', 'affiliations', 'authorships', 'institutes', 'documenttype'];
         const reqOptions = {
             uri: baseUrl + path,
             json: true,

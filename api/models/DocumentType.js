@@ -11,6 +11,7 @@ module.exports = {
         key: 'text',
         shortLabel: 'text',
         label: 'text',
+        section: 'text',
         defaultSourceType: {
             model: 'SourceType'
         },
