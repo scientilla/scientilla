@@ -79,7 +79,9 @@ module.exports.policies = {
         setAuthorhips: isGroupOwner,
         deleteDraft: isGroupOwner,
         deleteDrafts: isGroupOwner,
-        getDocumentsBySlug: true
+        getPublicDocuments: true,
+        getPublications: true,
+        getDisseminationTalks: true
     }, defaultPolicy),
 
     InstituteController: _.defaults({
@@ -116,6 +118,8 @@ module.exports.policies = {
         setAuthorhips: isActivityOwner,
         deleteDraft: isActivityOwner,
         deleteDrafts: isActivityOwner,
-        getDocumentsByUsername: true
+        getPublicDocuments: true,
+        getPublications: true,
+        getDisseminationTalks: true
     }, defaultPolicy),
 };

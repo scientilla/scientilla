@@ -41,23 +41,5 @@ module.exports = require('waterlock').actions.user(_.merge({}, researchEntityCon
         var userId = req.params.researchEntityId;
         var tags = req.param('tags');
         res.halt(User.addTags(Tag, userId, documentId, tags));
-    },
-    getDocumentsByUsername: async (req, res) => {
-        const username = req.params.username;
-        const user = await User.findOneByUsername(username);
-        if (!user)
-            return res.notFound();
-        const baseUrl = sails.getBaseUrl();
-        const path = `/api/v1/users/${user.id}/publications`;
-        const qs =  req.query;
-        qs.populate =  ['source', 'affiliations', 'authorships', 'institutes'];
-        const reqOptions = {
-            uri: baseUrl+path,
-            json: true,
-            qs: qs
-        };
-
-        const r = await request(reqOptions);
-        res.ok(r);
     }
 }));

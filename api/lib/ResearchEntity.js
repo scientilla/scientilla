@@ -13,10 +13,15 @@ const exec = require('child_process').exec;
 const Promise = require("bluebird");
 const _ = require("lodash");
 const BaseModel = require("./BaseModel.js");
+const request = require('request-promise');
 
 
 module.exports = _.merge({}, BaseModel, {
-    attributes: {},
+    attributes: {
+        getUrlSection: function() {
+            return this.getType() + 's';
+        }
+    },
     createDraft: function (ResearchEntityModel, researchEntityId, draftData) {
         const selectedDraftData = Document.selectData(draftData);
         selectedDraftData.kind = DocumentKinds.DRAFT;
@@ -248,6 +253,22 @@ module.exports = _.merge({}, BaseModel, {
 
         return newResearchEntity;
     },
+    makeInternalRequest: async function (researchEntityModel, researchEntitySearchCriteria, qs, attribute) {
+        const researchEntity = await researchEntityModel.findOne(researchEntitySearchCriteria);
+        if (!researchEntity)
+            throw Error('404 page not found');
+        const baseUrl = sails.getBaseUrl();
+        const path = `/api/v1/${researchEntity.getUrlSection()}/${researchEntity.id}/${attribute}`;
+        qs.populate = ['source', 'affiliations', 'authorships', 'institutes'];
+        const reqOptions = {
+            uri: baseUrl + path,
+            json: true,
+            qs: qs
+        };
+        const r = await request(reqOptions);
+        return r;
+    },
+
     _config: {
         actions: false,
         shortcuts: false,

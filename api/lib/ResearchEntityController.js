@@ -119,6 +119,33 @@ module.exports = {
         const AuthorshipModel = getAuthorshipModel(req);
         const privacy = req.body.privacy;
         res.halt(AuthorshipModel.setPrivacy(documentId, researchEntityId, privacy));
+    },
+    getPublicDocuments: async (req, res) => {
+        const researchEntityModel = getModel(req);
+        const searchKey = getSearchKey(researchEntityModel);
+        const searchCriteria = {
+            [searchKey]: req.params[searchKey]
+        };
+        const attribute = `publicDocuments`;
+        res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, req.query, attribute));
+    },
+    getPublications: async (req, res) => {
+        const researchEntityModel = getModel(req);
+        const searchKey = getSearchKey(researchEntityModel);
+        const searchCriteria = {
+            [searchKey]: req.params[searchKey]
+        };
+        const attribute = `publications`;
+        res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, req.query, attribute));
+    },
+    getDisseminationTalks: async (req, res) => {
+        const researchEntityModel = getModel(req);
+        const searchKey = getSearchKey(researchEntityModel);
+        const searchCriteria = {
+            [searchKey]: req.params[searchKey]
+        };
+        const attribute = `disseminationTalks`;
+        res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, req.query, attribute));
     }
 };
 
@@ -130,7 +157,11 @@ function getModel(req) {
 function getAuthorshipModel(req) {
     const Model = getModel(req);
     return Model.getAuthorshipModel();
+}
 
+function getSearchKey(Model) {
+    const searchKey = _.findKey(Model._attributes, a => a.searchKey);
+    return searchKey;
 }
 
 function getPopulateFields(req) {

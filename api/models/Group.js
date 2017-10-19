@@ -18,7 +18,10 @@ module.exports = _.merge({}, ResearchEntity, {
     },
     attributes: {
         name: 'STRING',
-        slug: 'STRING',
+        slug: {
+            type: 'STRING',
+            searchKey: true
+        },
         shortname: 'TEXT',
         description: 'TEXT',
         publicationsAcronym: 'TEXT',
@@ -55,6 +58,11 @@ module.exports = _.merge({}, ResearchEntity, {
             collection: 'Document',
             via: 'researchEntity',
             through: 'publicationgroup'
+        },
+        disseminationTalks: {
+            collection: 'Document',
+            via: 'researchEntity',
+            through: 'disseminationtalkgroup'
         },
         authorships: {
             collection: 'authorshipGroup',

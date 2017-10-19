@@ -30,7 +30,8 @@ module.exports = _.merge({}, ResearchEntity, {
         //Constants
         username: {
             type: 'email',
-            defaultsTo: ""
+            defaultsTo: "",
+            searchKey: true
         },
         name: {
             type: 'STRING',
@@ -79,6 +80,11 @@ module.exports = _.merge({}, ResearchEntity, {
             collection: 'Document',
             via: 'researchEntity',
             through: 'publicauthorship'
+        },
+        disseminationTalks: {
+            collection: 'Document',
+            via: 'researchEntity',
+            through: 'disseminationtalk'
         },
         publications: {
             collection: 'Document',
