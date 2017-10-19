@@ -19,14 +19,14 @@
 
 
     DocumentVerificationController.$inject = [
-        'AuthService',
         '$scope',
         'Restangular',
-        'context'
+        'context',
+        'UsersService'
     ];
 
-    function DocumentVerificationController(AuthService, $scope, Restangular, context) {
-        var vm = this;
+    function DocumentVerificationController($scope, Restangular, context, UsersService) {
+        const vm = this;
         vm.instituteToId = instituteToId;
         vm.getInstitutesFilter = getInstitutesFilter;
         vm.getInstitutesQuery = getInstitutesQuery;
@@ -40,11 +40,14 @@
         vm.verificationData = {};
         vm.canBeSubmitted = canBeSubmitted;
 
-        var user = AuthService.user;
+        const user = context.getResearchEntity();
 
         const DocumentService = context.getDocumentService();
 
         vm.$onInit = function () {
+            if (user.getType() === 'group')
+                return vm.onFailure()();
+
             vm.verificationData.position = vm.document.getUserIndex(user);
             vm.verificationData.synchronize = vm.document.synchronized;
             vm.verificationData.public = true;
@@ -82,9 +85,9 @@
                 public: vm.verificationData.public
             };
             return verify(user, vm.document.id, data)
-                .then(function (user) {
-                    executeOnSubmit(1);
-                })
+                .then(() => UsersService.getProfile(user.id))
+                .then((newUser) => context.setResearchEntity(newUser))
+                .then(() => executeOnSubmit(1))
                 .catch(function () {
                     executeOnFailure();
                 });
