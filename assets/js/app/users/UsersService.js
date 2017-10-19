@@ -82,19 +82,13 @@
         };
 
         service.getUsers = function (query) {
-            var populate = {populate: ['memberships', 'documents', 'attributes', 'aliases']};
+            var populate = {populate: ['memberships', 'attributes', 'aliases']};
             var q = _.merge({}, query, populate);
 
             return this.getList(q);
         };
 
         service.getProfile = function (userId) {
-            return this
-                .one(userId)
-                .get({populate: ['attributes', 'aliases', 'administratedGroups']});
-        };
-
-        service.getCompleteProfile = function (userId) {
             return this
                 .one(userId)
                 .get({populate: ['administratedGroups', 'attributes', 'aliases']})

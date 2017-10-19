@@ -37,7 +37,7 @@
         return service;
 
         function setupUserAccount(userId) {
-            return UsersService.getCompleteProfile(userId)
+            return UsersService.getProfile(userId)
                 .then(function (user) {
                     service.user = user;
                     service.userId = user.id;
