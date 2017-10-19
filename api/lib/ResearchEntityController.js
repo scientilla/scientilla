@@ -120,43 +120,20 @@ module.exports = {
         const privacy = req.body.privacy;
         res.halt(AuthorshipModel.setPrivacy(documentId, researchEntityId, privacy));
     },
-    getPublicDocuments: async (req, res) => {
-        const researchEntityModel = getModel(req);
-        const searchKey = getSearchKey(researchEntityModel);
-        const searchCriteria = {
-            [searchKey]: req.params[searchKey]
-        };
-        const attribute = `publicDocuments`;
-        res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, req.query, attribute));
-    },
-    getPublications: async (req, res) => {
-        const researchEntityModel = getModel(req);
-        const searchKey = getSearchKey(researchEntityModel);
-        const searchCriteria = {
-            [searchKey]: req.params[searchKey]
-        };
-        const attribute = `publications`;
-        res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, req.query, attribute));
-    },
-    getDisseminationTalks: async (req, res) => {
-        const researchEntityModel = getModel(req);
-        const searchKey = getSearchKey(researchEntityModel);
-        const searchCriteria = {
-            [searchKey]: req.params[searchKey]
-        };
-        const attribute = `disseminationTalks`;
-        res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, req.query, attribute));
-    },
-    getScientificTalks: async (req, res) => {
-        const researchEntityModel = getModel(req);
-        const searchKey = getSearchKey(researchEntityModel);
-        const searchCriteria = {
-            [searchKey]: req.params[searchKey]
-        };
-        const attribute = `scientificTalks`;
-        res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, req.query, attribute));
-    }
+    getPublicDocuments: async (req, res) => makePublicAPIrequest(req, res, 'documents'),
+    getPublications: async (req, res) => makePublicAPIrequest(req, res, 'publications'),
+    getDisseminationTalks: async (req, res) => makePublicAPIrequest(req, res, 'disseminationTalks'),
+    getScientificTalks: async (req, res) => makePublicAPIrequest(req, res, 'scientificTalks')
 };
+
+function makePublicAPIrequest(req, res, attribute) {
+    const researchEntityModel = getModel(req);
+    const searchKey = getSearchKey(researchEntityModel);
+    const searchCriteria = {
+        [searchKey]: req.params[searchKey]
+    };
+    res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, req.query, attribute));
+}
 
 function getModel(req) {
     const model_name = req.options.model || req.options.controller;
