@@ -26,12 +26,12 @@ module.exports = _.merge({}, ResearchEntity, {
     },
     USER: USER,
     ADMINISTRATOR: ADMINISTRATOR,
+    searchKey: 'username',
     attributes: require('waterlock').models.user.attributes({
         //Constants
         username: {
             type: 'email',
-            defaultsTo: "",
-            searchKey: true
+            defaultsTo: ""
         },
         name: {
             type: 'STRING',

@@ -146,7 +146,7 @@ function getAuthorshipModel(req) {
 }
 
 function getSearchKey(Model) {
-    const searchKey = _.findKey(Model._attributes, a => a.searchKey);
+    const searchKey = Model.searchKey;
     return searchKey;
 }
 
