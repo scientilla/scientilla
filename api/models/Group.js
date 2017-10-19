@@ -16,11 +16,11 @@ module.exports = _.merge({}, ResearchEntity, {
         name: 'asc',
         updatedAt: 'desc'
     },
+    searchKey: 'slug',
     attributes: {
         name: 'STRING',
         slug: {
-            type: 'STRING',
-            searchKey: true
+            type: 'STRING'
         },
         shortname: 'TEXT',
         description: 'TEXT',
