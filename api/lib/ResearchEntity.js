@@ -111,7 +111,7 @@ module.exports = _.merge({}, BaseModel, {
                     scopusId: draft.scopusId,
                     synchronized: true
                 })).documents;
-            if (alreadyVerifiedDocuments)
+            if (alreadyVerifiedDocuments.length)
                 return {
                     error: 'Draft already verified (same scopusId)',
                     item: draft
@@ -184,7 +184,7 @@ module.exports = _.merge({}, BaseModel, {
                     scopusId: document.scopusId,
                     synchronized: true
                 })).documents;
-            if (alreadyVerifiedDocuments)
+            if (alreadyVerifiedDocuments.length)
                 return {
                     error: 'Document already verified (same scopusId)',
                     item: document
