@@ -1,5 +1,3 @@
-/* global Scientilla */
-
 (function () {
 
     angular
@@ -23,11 +21,12 @@
         'AuthService',
         'GroupsService',
         'Prototyper',
-        'userConstants'
+        'userConstants',
+        'context'
     ];
 
-    function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants) {
-        var vm = this;
+    function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants, context) {
+        const vm = this;
         vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.getGroupsQuery = GroupsService.getGroupsQuery;
         vm.groupToCollaboration = groupToCollaboration;
@@ -38,15 +37,11 @@
             {label: 'User', value: userConstants.role.USER},
             {label: 'Administrator', value: userConstants.role.ADMINISTRATOR}
         ];
-
         const deregisteres = [];
 
         vm.$onInit = function () {
             deregisteres.push($scope.$watch('vm.user.name', nameChanged));
             deregisteres.push($scope.$watch('vm.user.surname', nameChanged));
-            deregisteres.push($scope.$watch('vm.user.aliasesStr', aliasesStrChanged));
-
-            initAliasesStr();
             getCollaborations();
         };
 
@@ -66,6 +61,7 @@
                 .doSave(vm.user)
                 .then(function (user) {
                     Notification.success("User data saved");
+                    aliasesChanged();
                     if (_.isFunction(vm.onSubmit()))
                         vm.onSubmit()(1);
                 })
@@ -78,36 +74,15 @@
         function nameChanged() {
             if (!vm.user)
                 return;
-            if (!vm.user.id) {
+            if (!vm.user.id)
                 vm.user.slug = calculateSlug(vm.user);
-                var aliasesStr = vm.user.getAliases();
-                vm.user.aliasesStr = aliasesStr.join('; ');
-            }
         }
 
-        //sTODO: move all this alias thing in the proper place.
-        function initAliasesStr() {
-            if (!vm.user || !vm.user.aliases) {
-                vm.user.aliasesStr = "";
-            } else {
-                vm.user.aliasesStr = _.map(vm.user.aliases, "str").join("; ");
-            }
-        }
 
-        function aliasesStrChanged() {
-            if (!vm.user || !vm.user.aliasesStr) {
-                vm.user.aliases = [];
-                return;
-            }
-            var aliasesStr = vm.user.aliasesStr.split(";");
-            aliasesStr = _.map(aliasesStr, _.trim);
-            aliasesStr = _.reject(aliasesStr, _.isEmpty);
-            aliasesStr = _.uniq(aliasesStr);
-            vm.user.aliases = _.map(aliasesStr, getRealAlias);
-        }
-
-        function getRealAlias(aliasStr) {
-            return {str: aliasStr};
+        function aliasesChanged() {
+            const researchEntity = context.getResearchEntity();
+            if (researchEntity.getType() === 'user')
+                researchEntity.aliases = vm.user.aliases;
         }
 
         function calculateSlug(user) {

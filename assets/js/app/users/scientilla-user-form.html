@@ -36,6 +36,7 @@
         <label for="password">Password</label>
         <input type="text" class="form-control" id="password" placeholder="Password" ng-model="vm.user.password">
     </div>
+    <scientilla-alias-editor aliases="vm.user.aliases"></scientilla-alias-editor>
     <div class="form-group" ng-if="vm.userIsAdmin">
         <label>Macroarea</label>
         <scientilla-attribute-selector

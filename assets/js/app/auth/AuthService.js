@@ -62,7 +62,12 @@
 
                     EventsService.publish(EventsService.AUTH_LOGIN, service.user);
                     if (!service.user.alreadyAccess)
-                        ModalService.openWizard(false);
+                        ModalService.openWizard([
+                            'welcome',
+                            'scopus-edit',
+                            'tutorial',
+                            'admin-tutorial',
+                        ], false);
                 });
         }
 

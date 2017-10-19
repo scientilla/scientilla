@@ -1,0 +1,16 @@
+<div ng-class="{'form-group':true, 'has-error':!vm.newAliasIsCorrect()}">
+    <label>Alias</label>
+    <input ng-keydown="vm.addAlias($event)"
+           type="text"
+           class="form-control"
+           placeholder="Add alias and press Enter (please use only the first letter of the name)"
+           ng-model="vm.newAlias"/>
+    <ul class="scientilla-multiselect-list scientilla-default-text-color">
+        <li class="list-group-item" ng-repeat="alias in vm.aliases">
+            {{alias.str}}
+            <a ng-click="vm.removeAlias(alias)" class="badge btn-primary">
+                <span class="fa fa-remove"></span>
+            </a>
+        </li>
+    </ul>
+</div>

@@ -23,9 +23,9 @@
 
 <ul class="list-group scientilla-multiselect-list">
     <li ng-repeat="item in vm.items" class="list-group-item">
-        <button ng-click="vm.removeItem(item)" class="badge btn-primary" >
+        <a ng-click="vm.removeItem(item)" class="badge btn-primary" >
             <span class="fa fa-remove"></span>
-        </button>
+        </a>
         {{item.getDisplayName()}}
     </li>
 </ul>

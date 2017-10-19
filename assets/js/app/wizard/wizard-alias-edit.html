@@ -1,0 +1,21 @@
+<h3>INSERT YOUR ALIASES</h3>
+
+<br/>
+
+<div class="row">
+    <div class="col-xs-6">
+        <p>
+            Add aliases and press save.
+            press filter to refresh list.
+            (TODO update text)
+        </p>
+    </div>
+    <div class="col-xs-6">
+        <form ng-submit="vm.save()">
+            <scientilla-alias-editor aliases="vm.user.aliases"></scientilla-alias-editor>
+            <br/>
+            <scientilla-button type="submit">Save aliases</scientilla-button>
+        </form>
+    </div>
+
+</div>

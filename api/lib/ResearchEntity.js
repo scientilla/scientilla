@@ -239,20 +239,6 @@ module.exports = _.merge({}, BaseModel, {
                 )
             )
     },
-    updateProfile: async function (ResearchEntityModel, researchEntityId, researchEntityData) {
-        const oldResearchEntity = await ResearchEntityModel.findOne({id: researchEntityId});
-        const res = await ResearchEntityModel.update({id: researchEntityId}, researchEntityData);
-        const newResearchEntity = res[0];
-        const researchEntityType = newResearchEntity.getType();
-        const command = 'import:external:' + researchEntityType + ':' + newResearchEntity.id;
-        if (newResearchEntity.scopusId !== oldResearchEntity.scopusId)
-            GruntTaskRunner.run(command + ':' + DocumentOrigins.SCOPUS);
-        if (newResearchEntity.username !== oldResearchEntity.username
-            || newResearchEntity.publicationsAcronym !== oldResearchEntity.publicationsAcronym)
-            GruntTaskRunner.run(command + ':' + DocumentOrigins.PUBLICATIONS);
-
-        return newResearchEntity;
-    },
     makeInternalRequest: async function (researchEntityModel, researchEntitySearchCriteria, qs, attribute) {
         const researchEntity = await researchEntityModel.findOne(researchEntitySearchCriteria);
         if (!researchEntity)
