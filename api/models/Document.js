@@ -286,8 +286,12 @@ module.exports = _.merge({}, BaseModel, {
             return this.type === 'article_in_press';
         },
         getAuthorDetails: function () {
-            if (!this.authorships.length || !this.affiliations.length || !this.institutes.length)
+            if (!this.authorships.length)
                 return undefined;
+            if (!this.affiliations)
+                this.affiliations = [];
+            if (!this.institutes)
+                this.institutes = [];
             const authorDetails = this.getAuthors().map((a, i) => {
                 const authorship = this.authorships.find(au => au.position === i);
                 const corresponding = authorship ? authorship.corresponding : null;
