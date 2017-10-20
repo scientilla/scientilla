@@ -91,7 +91,7 @@
         service.getProfile = function (userId) {
             return this
                 .one(userId)
-                .get({populate: ['attributes', 'aliases']});
+                .get({populate: ['attributes', 'aliases', 'administratedGroups']});
         };
 
         service.getCompleteProfile = function (userId) {
