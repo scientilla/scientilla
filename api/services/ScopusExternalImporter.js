@@ -238,7 +238,8 @@ async function getAndCreateOrUpdateDocument(scopusId) {
 }
 
 async function updateCitations(document) {
-    const date = document.year + '-' + (new Date()).getFullYear();
+    const endDate = ((new Date()).getFullYear() + 1);
+    const date = document.year + '-' + endDate;
     const citations = await ScopusConnector.getDocumentCitations(document.scopusId, date);
 
     for (const cit of citations)
