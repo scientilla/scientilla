@@ -174,10 +174,23 @@ module.exports = _.merge({}, ResearchEntity, {
         user.slug = slug;
         return user;
     },
-    createCompleteUser: function (params) {
+    createCompleteUser: async function (params) {
         params.username = _.toLower(params.username);
-        var attributes = _.keys(User._attributes);
-        var userObj = _.pick(params, attributes);
+        const attributes = _.keys(User._attributes);
+        const userObj = _.pick(params, attributes);
+        await User.checkUsername(userObj);
+        const user = await User.create(userObj);
+        const authAttributes = _.keys(Auth._attributes);
+        const auth = _.pick(params, authAttributes);
+        return new Promise(function (resolve, reject) {
+            waterlock.engine.attachAuthToUser(auth, user,
+                function (err) {
+                    if (err)
+                        reject(err);
+                    else
+                        resolve(user);
+                });
+        });
 
         return Promise.resolve(userObj)
             .then(User.checkUsername)
