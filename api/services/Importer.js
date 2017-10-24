@@ -127,8 +127,10 @@ async function importPeople() {
 
     const people = await request(reqOptions);
     sails.log.info(people.length + ' entries found');
+    let usersInserted = 0;
     for (let [i, p] of people.entries()) {
         //groups are loaded in memory because waterline doesn't allow case-insensitive queries with postegres
+        p.username = _.toLower(p.username);
         const allGroups = await Group.find();
         const groupsToBeInserted = p.groups.filter(g => !allGroups.some(g2 => _.toLower(g2.name) == _.toLower(g)));
         const groupsToSearch = allGroups.filter(g => p.groups.some(g2 => _.toLower(g2) == _.toLower(g.name))).map(g => g.name);
@@ -144,11 +146,13 @@ async function importPeople() {
         const criteria = {username: p.username};
         let user = await User.findOne(criteria);
         if (user) {
-            await User.update(criteria, p);
+            if (!user.alreadyAccess)
+                await User.update(criteria, p);
         }
         else {
             sails.log.info(`Inserting user ${p.username}`);
             user = await User.createCompleteUser(p);
+            usersInserted++;
         }
 
         for (let g of groups) {
@@ -159,6 +163,7 @@ async function importPeople() {
         }
     }
     sails.log.info('Import finished');
+    sails.log.info(`${usersInserted} users inserted`);
 }
 
 async function importGroups() {
