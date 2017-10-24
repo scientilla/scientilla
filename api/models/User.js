@@ -147,6 +147,8 @@ module.exports = _.merge({}, ResearchEntity, {
         },
         getAliases: async function () {
             const aliases = await Alias.find({user: this.id});
+            if (!aliases)
+                return [];
             return aliases.map(a => a.str);
         },
         getType: function () {

@@ -224,7 +224,7 @@ module.exports = _.merge({}, BaseModel, {
         },
         getAuthorIndex: async function (author) {
             const authors = this.getAuthors().map(a => a.toLocaleLowerCase());
-            const aliases = await author.getAliases().map(a => a.toLocaleLowerCase());
+            const aliases = (await author.getAliases()).map(a => a.toLocaleLowerCase());
             return _.findIndex(authors, a => _.includes(aliases, a));
         },
         isPositionVerified: function (position) {
