@@ -25,6 +25,8 @@ module.exports = _.merge({}, BaseModel, {
     createDraft: async function (ResearchEntityModel, researchEntityId, draftData) {
         const selectedDraftData = Document.selectData(draftData);
         selectedDraftData.kind = DocumentKinds.DRAFT;
+        const documentType = await DocumentType.findOneByKey(selectedDraftData.type);
+        selectedDraftData.documenttype = documentType;
         const researchEntity = await ResearchEntityModel.findOneById(researchEntityId).populate('drafts');
         const draft = await Document.create(selectedDraftData);
         researchEntity.drafts.add(draft);

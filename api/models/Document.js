@@ -32,7 +32,8 @@ const fields = [
     {name: 'iitPublicationsId'},
     {name: 'origin'},
     {name: 'kind'},
-    {name: 'synchronized'}
+    {name: 'synchronized'},
+    {name: 'documenttype'}
 ];
 
 module.exports = _.merge({}, BaseModel, {
