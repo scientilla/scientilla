@@ -40,7 +40,9 @@
         <span ng-bind-html='vm.document | doi'></span>
     </small>
     <small ng-if="vm.document.scopusId">
-        <label>scopus id:</label> {{vm.document.scopusId}}
+        <label>scopus id:</label> <a
+            href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document.scopusId}}&origin=inward"
+            target="_blank">{{vm.document.scopusId}}</a>
     </small>
     <small ng-if="vm.document.wosId">
         <label>WOS id:</label> {{vm.document.wosId}}
