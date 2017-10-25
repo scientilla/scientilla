@@ -118,6 +118,15 @@ async function importSources() {
 }
 
 async function importPeople() {
+    function userShouldBeUpdated(user, values) {
+        const userFieldsToUpdate = [
+            'jobTitle',
+            'name',
+            'surname'
+        ];
+        const toUpdate = userFieldsToUpdate.some(f => values[f] !== user[f]);
+        return toUpdate;
+    }
     sails.log.info('Import started');
     const url = sails.config.scientilla.mainInstituteImport.userImportUrl;
     const reqOptions = {
@@ -127,7 +136,7 @@ async function importPeople() {
 
     const people = await request(reqOptions);
     sails.log.info(people.length + ' entries found');
-    let usersInserted = 0;
+    let usersInserted = 0, usersUpdated = 0;
     for (let [i, p] of people.entries()) {
         //groups are loaded in memory because waterline doesn't allow case-insensitive queries with postegres
         p.username = _.toLower(p.username);
@@ -146,8 +155,11 @@ async function importPeople() {
         const criteria = {username: p.username};
         let user = await User.findOne(criteria);
         if (user) {
-            if (!user.alreadyAccess)
+            if (userShouldBeUpdated(user, p)) {
+                sails.log.info(`Updating user ${p.username}`);
                 await User.update(criteria, p);
+                usersUpdated++;
+            }
         }
         else {
             sails.log.info(`Inserting user ${p.username}`);
@@ -164,6 +176,7 @@ async function importPeople() {
     }
     sails.log.info('Import finished');
     sails.log.info(`${usersInserted} users inserted`);
+    sails.log.info(`${usersUpdated} users updated`);
 }
 
 async function importGroups() {

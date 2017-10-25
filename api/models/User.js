@@ -187,29 +187,15 @@ module.exports = _.merge({}, ResearchEntity, {
         return new Promise(function (resolve, reject) {
             waterlock.engine.attachAuthToUser(auth, user,
                 function (err) {
-                    if (err)
+                    if (err) {
+                        sails.log.debug(`An error happened while creating a user`);
+                        sails.log.debug(err);
                         reject(err);
+                    }
                     else
                         resolve(user);
                 });
         });
-
-        return Promise.resolve(userObj)
-            .then(User.checkUsername)
-            .then(User.create)
-            .then(function (user) {
-                var authAttributes = _.keys(Auth._attributes);
-                var auth = _.pick(params, authAttributes);
-                return new Promise(function (resolve, reject) {
-                    waterlock.engine.attachAuthToUser(auth, user,
-                        function (err) {
-                            if (err)
-                                reject(err);
-                            else
-                                resolve(user);
-                        });
-                });
-            });
     },
     registerUser: function (user) {
         if (User.isInternalUser(user)) {
