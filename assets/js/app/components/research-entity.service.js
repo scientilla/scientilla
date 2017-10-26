@@ -32,6 +32,7 @@
         service.setPrivateTags = setPrivateTags;
         service.searchExternalDocument = searchExternalDocument;
         service.setAuthorshipPrivacy = setAuthorshipPrivacy;
+        service.setAuthorshipFavorite = setAuthorshipFavorite;
 
         var documentPopulates = [
             'source',
@@ -128,6 +129,11 @@
         function setAuthorshipPrivacy(researchEntity, authorship) {
             return researchEntity.one('documents', authorship.document)
                 .customPUT({privacy: authorship.public}, 'privacy');
+        }
+
+        function setAuthorshipFavorite(researchEntity, authorship) {
+            return researchEntity.one('documents', authorship.document)
+                .customPUT({favorite: authorship.favorite}, 'favorite');
         }
 
         function unverify(researchEntity, document) {

@@ -56,6 +56,16 @@
                       class="fa fa-lock scientilla-icon-fa scientilla-clickable"
                       title="The document is visible only to scientilla users, click to change it"></span>
             </div>
+            <div ng-if="vm.isFavoriteToShow()" class="scientilla-document-icons-bottom">
+                <span ng-click="vm.changeFavorite()"
+                      ng-if="vm.isFavorite()"
+                      class="fa fa-star scientilla-icon-fa scientilla-clickable"
+                      title="The document is visible to everyone, click to change it"></span>
+                <span ng-click="vm.changeFavorite()"
+                      ng-if="!vm.isFavorite()"
+                      class="fa fa-star-o scientilla-icon-fa scientilla-clickable"
+                      title="The document is visible only to scientilla users, click to change it"></span>
+            </div>
         </div>
 
         <div class="col-xs-1 scientilla-document-icons">

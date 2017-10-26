@@ -26,6 +26,7 @@ module.exports = _.merge({}, BaseModel, {
         corresponding: 'boolean',
         position: 'integer',
         public: 'boolean',
+        favorite: 'boolean',
         synchronize: 'boolean',
         unverify: function () {
             this.researchEntity = null;
@@ -96,6 +97,14 @@ module.exports = _.merge({}, BaseModel, {
             throw 'Athorship not found';
 
         authorship.public = !!privacy;
+        return authorship.savePromise();
+    },
+    setFavorite: async function (documentId, userId, favorite) {
+        const authorship = await Authorship.findOne({document: documentId, researchEntity: userId});
+        if (!authorship)
+            throw 'Athorship not found';
+
+        authorship.favorite = !!favorite;
         return authorship.savePromise();
     }
 });

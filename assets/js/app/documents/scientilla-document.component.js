@@ -33,8 +33,11 @@
         vm.getMetricValue = getMetricValue;
         vm.hasMetric = hasMetric;
         vm.isPublic = isPublic;
+        vm.isFavorite = isFavorite;
         vm.isPrivacyToShow = isPrivacyToShow;
+        vm.isFavoriteToShow = isFavoriteToShow;
         vm.changePrivacy = changePrivacy;
+        vm.changeFavorite = changeFavorite;
 
         const researchEntity = context.getResearchEntity();
 
@@ -51,6 +54,10 @@
         ].includes(vm.section);
 
         vm.showPrivacy = [
+            documentListSections.VERIFIED
+        ].includes(vm.section);
+
+        vm.showFavorite = [
             documentListSections.VERIFIED
         ].includes(vm.section);
 
@@ -177,14 +184,31 @@
             researchEntityService.setAuthorshipPrivacy(researchEntity, authorship);
         }
 
+        function changeFavorite() {
+            const authorship = getAuthorship();
+            authorship.favorite = !authorship.favorite;
+            console.log(authorship);
+            researchEntityService.setAuthorshipFavorite(researchEntity, authorship);
+        }
+
         function isPublic() {
             const authorship = getAuthorship();
             if (!authorship) return false;
             return !!authorship.public;
         }
 
+        function isFavorite() {
+            const authorship = getAuthorship();
+            if (!authorship) return false;
+            return !!authorship.favorite;
+        }
+
         function isPrivacyToShow() {
             return vm.showPrivacy && vm.document.kind === 'v' && getAuthorship();
+        }
+
+        function isFavoriteToShow() {
+            return vm.showFavorite && vm.document.kind === 'v' && getAuthorship();
         }
 
         function getAuthorship() {

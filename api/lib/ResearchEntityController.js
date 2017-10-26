@@ -121,6 +121,13 @@ module.exports = {
         const privacy = req.body.privacy;
         res.halt(AuthorshipModel.setPrivacy(documentId, researchEntityId, privacy));
     },
+    setAuthorshipFavorite: function (req, res) {
+        const researchEntityId = req.params.researchEntityId;
+        const documentId = req.params.documentId;
+        const AuthorshipModel = getAuthorshipModel(req);
+        const favorite = req.body.favorite;
+        res.halt(AuthorshipModel.setFavorite(documentId, researchEntityId, favorite));
+    },
     getPublicDocuments: async (req, res) => makePublicAPIrequest(req, res, 'documents'),
     getPublications: async (req, res) => makePublicAPIrequest(req, res, 'publications'),
     getDisseminationTalks: async (req, res) => makePublicAPIrequest(req, res, 'disseminationTalks'),

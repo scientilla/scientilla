@@ -68,6 +68,8 @@ module.exports.routes = {
     'put /api/v1/groups/:researchEntityId/desynchronize-documents': 'Document.desynchronizeDrafts',
     'put /api/v1/users/:researchEntityId/documents/:documentId/privacy': 'User.setAuthorshipPrivacy',
     'put /api/v1/groups/:researchEntityId/documents/:documentId/privacy': 'Group.setAuthorshipPrivacy',
+    'put /api/v1/users/:researchEntityId/documents/:documentId/favorite': 'User.setAuthorshipFavorite',
+    'put /api/v1/groups/:researchEntityId/documents/:documentId/favorite': 'Group.setAuthorshipFavorite',
     'get /api/v1/settings': 'Settings.getSettings',
     'get /api/v1/users/:researchEntityId/charts': 'User.getChartsData',
     'get /api/v1/groups/:researchEntityId/charts': 'Group.getChartsData',
