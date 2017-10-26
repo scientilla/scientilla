@@ -87,6 +87,8 @@ module.exports = {
         documentData.origin = origin;
         documentData.kind = DocumentKinds.EXTERNAL;
         documentData.synchronized = synchronized;
+        const documentType = await DocumentType.findOneByKey(documentData.type);
+        documentData.documenttype = documentType;
         if (documentData.source)
             documentData.source = documentData.source.id;
 

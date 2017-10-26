@@ -176,27 +176,26 @@ module.exports = _.merge({}, ResearchEntity, {
         user.slug = slug;
         return user;
     },
-    createCompleteUser: function (params) {
+    createCompleteUser: async function (params) {
         params.username = _.toLower(params.username);
-        var attributes = _.keys(User._attributes);
-        var userObj = _.pick(params, attributes);
-
-        return Promise.resolve(userObj)
-            .then(User.checkUsername)
-            .then(User.create)
-            .then(function (user) {
-                var authAttributes = _.keys(Auth._attributes);
-                var auth = _.pick(params, authAttributes);
-                return new Promise(function (resolve, reject) {
-                    waterlock.engine.attachAuthToUser(auth, user,
-                        function (err) {
-                            if (err)
-                                reject(err);
-                            else
-                                resolve(user);
-                        });
+        const attributes = _.keys(User._attributes);
+        const userObj = _.pick(params, attributes);
+        await User.checkUsername(userObj);
+        const user = await User.create(userObj);
+        const authAttributes = _.keys(Auth._attributes);
+        const auth = _.pick(params, authAttributes);
+        return new Promise(function (resolve, reject) {
+            waterlock.engine.attachAuthToUser(auth, user,
+                function (err) {
+                    if (err) {
+                        sails.log.debug(`An error happened while creating a user`);
+                        sails.log.debug(err);
+                        reject(err);
+                    }
+                    else
+                        resolve(user);
                 });
-            });
+        });
     },
     registerUser: function (user) {
         if (User.isInternalUser(user)) {

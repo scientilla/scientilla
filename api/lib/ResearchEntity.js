@@ -22,33 +22,22 @@ module.exports = _.merge({}, BaseModel, {
             return this.getType() + 's';
         }
     },
-    createDraft: function (ResearchEntityModel, researchEntityId, draftData) {
+    createDraft: async function (ResearchEntityModel, researchEntityId, draftData) {
         const selectedDraftData = Document.selectData(draftData);
         selectedDraftData.kind = DocumentKinds.DRAFT;
-        return Promise.all([
-            ResearchEntityModel.findOneById(researchEntityId).populate('drafts'),
-            Document.create(selectedDraftData)
-        ])
-            .spread(function (researchEntity, draft) {
-                researchEntity.drafts.add(draft);
-                return Promise.all([
-                    draft.id,
-                    researchEntity.savePromise()
-                ]);
-            })
-            .spread(function (draftId) {
-                return Promise.all([
-                    draftId,
-                    Authorship.createEmptyAuthorships(draftId, draftData)
-                ]);
-            })
-            .spread(function (draftId) {
-                return Document.findOneById(draftId)
-                    .populate('authorships')
-                    .populate('affiliations')
-                    .populate('authors')
-                    .populate('source');
-            });
+        const documentType = await DocumentType.findOneByKey(selectedDraftData.type);
+        selectedDraftData.documenttype = documentType;
+        const researchEntity = await ResearchEntityModel.findOneById(researchEntityId).populate('drafts');
+        const draft = await Document.create(selectedDraftData);
+        researchEntity.drafts.add(draft);
+        await researchEntity.savePromise();
+        await Authorship.createEmptyAuthorships(draft.id, draftData);
+        const completeDraft = await Document.findOneById(draft.id)
+            .populate('authorships')
+            .populate('affiliations')
+            .populate('authors')
+            .populate('source');
+        return completeDraft;
     },
     unverifyDocument: async function (ResearchEntityModel, researchEntityId, documentId) {
         await this.doUnverifyDocument(ResearchEntityModel, researchEntityId, documentId);
