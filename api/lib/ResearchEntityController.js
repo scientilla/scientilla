@@ -88,9 +88,10 @@ module.exports = {
         res.halt(Model.updateDraft(Model, draftId, draftData));
     },
     getChartsData: function (req, res) {
-        var modelName = req.options.model || req.options.controller;
-        var id = req.params.researchEntityId;
-        res.halt(Chart.getChartsData(id, modelName));
+        const modelName = req.options.model || req.options.controller;
+        const id = req.params.researchEntityId;
+        const charts = req.param('charts');
+        res.halt(Chart.getChartsData(id, modelName, charts));
     },
     setAuthorhips: function (req, res) {
         const draftId = req.params.documentId;

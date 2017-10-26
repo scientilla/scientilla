@@ -1,18 +1,45 @@
 <scientilla-backend-layout>
-    <div class="row">
-        <div class="col-md-5">
-            <div class="text-center">
-                <h3>Documents by year</h3>
-                <nvd3 options="vm.documentsByYear.options" data="vm.documentsByYear.data"></nvd3>
+
+    <uib-tabset active="active">
+        <uib-tab index="$index + 1" heading="Overview" disable="tab.disabled">
+            <div class="row">
+                <div class="col-md-offset-2 col-md-8">
+                    <div class="text-center">
+                        <h3>{{vm.mainChart.title}}</h3>
+                        <nvd3 options="vm.mainChart.options"
+                              data="vm.mainChart.data"></nvd3>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="col-md-1">
-        </div>
-        <div class="col-md-5">
-            <div class="text-center">
-                <h3>Documents by Type</h3>
-                <nvd3 options="vm.documentsByType.options" data="vm.documentsByType.data"></nvd3>
+            <div class="row">
+                <div class="col-md-offset-1 col-md-3">
+                    <div class="text-center">
+                        <h3 ng-click="vm.changeChart(vm.documentsByYear)"
+                            class="scientilla-clickable">{{vm.documentsByYear.title}}</h3>
+                        <nvd3 options="vm.documentsByYear.options"
+                              data="vm.documentsByYear.data"></nvd3>
+                    </div>
+                </div>
+                <div class="col-md-offset-1 col-md-3">
+                    <div class="text-center">
+                        <h3 ng-click="vm.changeChart(vm.invitedTalksByYear)"
+                            class="scientilla-clickable">{{vm.invitedTalksByYear.title}}</h3>
+                        <nvd3 options="vm.invitedTalksByYear.options"
+                              data="vm.invitedTalksByYear.data"></nvd3>
+                    </div>
+                </div>
+                <div class="col-md-offset-1 col-md-3">
+                    <div class="text-center">
+                        <h3 ng-click="vm.changeChart(vm.documentsByType)"
+                            class="scientilla-clickable">{{vm.documentsByType.title}}</h3>
+                        <nvd3 options="vm.documentsByType.options"
+                              data="vm.documentsByType.data"></nvd3>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        </uib-tab>
+        <uib-tab index="$index + 1" heading="Metrics" disable="true">
+        </uib-tab>
+    </uib-tabset>
+
 </scientilla-backend-layout>
