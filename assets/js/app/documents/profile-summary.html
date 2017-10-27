@@ -12,28 +12,13 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-offset-1 col-md-3">
+                <div ng-repeat="chart in vm.charts"
+                     class="col-xs-4 scientilla-chart-preview"
+                     ng-class="{'scientilla-chart-selected': vm.isChartSelected(chart)}"
+                     ng-click="vm.changeChart(chart)">
                     <div class="text-center">
-                        <h3 ng-click="vm.changeChart(vm.documentsByYear)"
-                            class="scientilla-clickable">{{vm.documentsByYear.title}}</h3>
-                        <nvd3 options="vm.documentsByYear.options"
-                              data="vm.documentsByYear.data"></nvd3>
-                    </div>
-                </div>
-                <div class="col-md-offset-1 col-md-3">
-                    <div class="text-center">
-                        <h3 ng-click="vm.changeChart(vm.invitedTalksByYear)"
-                            class="scientilla-clickable">{{vm.invitedTalksByYear.title}}</h3>
-                        <nvd3 options="vm.invitedTalksByYear.options"
-                              data="vm.invitedTalksByYear.data"></nvd3>
-                    </div>
-                </div>
-                <div class="col-md-offset-1 col-md-3">
-                    <div class="text-center">
-                        <h3 ng-click="vm.changeChart(vm.documentsByType)"
-                            class="scientilla-clickable">{{vm.documentsByType.title}}</h3>
-                        <nvd3 options="vm.documentsByType.options"
-                              data="vm.documentsByType.data"></nvd3>
+                        <h3>{{chart.title}}</h3>
+                        <nvd3 options="chart.options" data="chart.data"></nvd3>
                     </div>
                 </div>
             </div>

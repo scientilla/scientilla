@@ -18,10 +18,12 @@
         const vm = this;
         vm.researchEntity = context.getResearchEntity();
         vm.changeChart = changeChart;
+        vm.isChartSelected = isChartSelected;
 
-        vm.documentsByYear = {};
-        vm.documentsByType = {};
-        vm.invitedTalksByYear = {};
+        vm.charts = [];
+        vm.charts[0] = {};
+        vm.charts[1] = {};
+        vm.charts[2] = {};
 
         const previewDefaultOptions = {
             chart: {
@@ -69,9 +71,9 @@
         };
 
 
-        vm.documentsByYear.title = 'Documents by year';
-        vm.documentsByYear.data = [];
-        vm.documentsByYear.baseOptions = {
+        vm.charts[0].title = 'Documents by year';
+        vm.charts[0].data = [];
+        vm.charts[0].baseOptions = {
             chart: {
                 type: 'multiBarChart',
                 x: d => d.year,
@@ -91,9 +93,9 @@
         };
 
 
-        vm.invitedTalksByYear.title = 'Invited talks by year';
-        vm.invitedTalksByYear.data = [];
-        vm.invitedTalksByYear.baseOptions = {
+        vm.charts[1].title = 'Invited talks by year';
+        vm.charts[1].data = [];
+        vm.charts[1].baseOptions = {
             chart: {
                 type: 'multiBarChart',
                 x: d => d.year,
@@ -111,9 +113,9 @@
             }
         };
 
-        vm.documentsByType.title = 'Documents by Type';
-        vm.documentsByType.data = [];
-        vm.documentsByType.baseOptions = {
+        vm.charts[2].title = 'Documents by Type';
+        vm.charts[2].data = [];
+        vm.charts[2].baseOptions = {
             chart: {
                 type: 'pieChart',
                 x: function (d) {
@@ -142,43 +144,54 @@
 
             const yearRange = getYearRange(chartsData);
 
-            vm.documentsByYear.data.push({
+            vm.charts[0].data.push({
                 key: 'Journal',
                 values: getDocumentsByYear(chartsData[1], yearRange)
             });
-            vm.documentsByYear.data.push({
+            vm.charts[0].data.push({
                 key: 'Conference',
                 values: getDocumentsByYear(chartsData[1], yearRange)
             });
-            vm.documentsByYear.data.push({
+            vm.charts[0].data.push({
                 key: "Book",
                 values: getDocumentsByYear(chartsData[2], yearRange)
             });
-            vm.documentsByYear.data.push({
+            vm.charts[0].data.push({
                 key: 'Book Chapter',
                 values: getDocumentsByYear(chartsData[3], yearRange)
             });
 
-            vm.documentsByYear.options = getDefaultOptions(vm.documentsByYear.baseOptions, previewDefaultOptions);
+            vm.charts[0].options = getDefaultOptions(vm.charts[0].baseOptions, previewDefaultOptions);
 
-            vm.invitedTalksByYear.data.push({
+            vm.charts[1].data.push({
                 key: 'Invited talk',
                 values: getDocumentsByYear(chartsData[4], yearRange)
             });
-            vm.invitedTalksByYear.options = getDefaultOptions(vm.invitedTalksByYear.baseOptions, previewDefaultOptions);
+            vm.charts[1].options = getDefaultOptions(vm.charts[1].baseOptions, previewDefaultOptions);
 
 
-            vm.documentsByType.data = chartsData[5].map(d => ({
+            vm.charts[2].data = chartsData[5].map(d => ({
                 type: DocumentTypesService.getDocumentTypeLabel(d.type),
                 count: parseInt(d.count)
             }));
-            vm.documentsByType.options = getDefaultOptions(vm.documentsByType.baseOptions, previewDefaultOptions);
+            vm.charts[2].options = getDefaultOptions(vm.charts[2].baseOptions, previewDefaultOptions);
 
-            changeChart(vm.documentsByYear);
+            changeChart(vm.charts[0]);
 
         };
 
         /* jshint ignore:end */
+
+
+        function changeChart(chart) {
+            vm.mainChart = _.cloneDeep(chart);
+            vm.mainChart.options = getDefaultOptions(vm.mainChart.baseOptions, mainChartDefaultOptions);
+        }
+
+        function isChartSelected(chart) {
+            if (!vm.mainChart) return false;
+            return chart.title === vm.mainChart.title;
+        }
 
         function getYearRange(chartsData) {
             const years = _.flatten(chartsData).map(v => parseInt(v.year, 10));
@@ -202,11 +215,6 @@
             newData.sort((a, b) => a.year < b.year ? -1 : a.year > b.year ? 1 : 0);
 
             return newData;
-        }
-
-        function changeChart(chart) {
-            vm.mainChart = _.cloneDeep(chart);
-            vm.mainChart.options = getDefaultOptions(vm.mainChart.baseOptions, mainChartDefaultOptions);
         }
 
         function getDefaultOptions(options, defaults) {
