@@ -228,11 +228,13 @@ module.exports = _.merge({}, BaseModel, {
                 )
             )
     },
-    makeInternalRequest: async function (researchEntityModel, researchEntitySearchCriteria, qs, attribute) {
+    makeInternalRequest: async function (researchEntityModel, researchEntitySearchCriteria, baseUrl, qs, attribute) {
         const researchEntity = await researchEntityModel.findOne(researchEntitySearchCriteria);
         if (!researchEntity)
-            throw Error('404 page not found');
-        const baseUrl = sails.getBaseUrl();
+            return {
+                error: "404 not found",
+                item: researchEntitySearchCriteria
+            };
         const path = `/api/v1/${researchEntity.getUrlSection()}/${researchEntity.id}/${attribute}`;
         qs.populate = ['source', 'affiliations', 'authorships', 'institutes', 'documenttype'];
         const reqOptions = {
