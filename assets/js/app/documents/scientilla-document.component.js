@@ -40,6 +40,7 @@
         vm.changeFavorite = changeFavorite;
 
         const researchEntity = context.getResearchEntity();
+        const documentService = context.getDocumentService();
 
         vm.checkDuplicates = [
             documentListSections.VERIFIED,
@@ -179,16 +180,15 @@
         }
 
         function changePrivacy() {
-            const authorship = getAuthorship();
+            const authorship = _.clone(getAuthorship());
             authorship.public = !authorship.public;
-            researchEntityService.setAuthorshipPrivacy(researchEntity, authorship);
+            documentService.setAuthorshipPrivacy(authorship);
         }
 
         function changeFavorite() {
-            const authorship = getAuthorship();
+            const authorship = _.clone(getAuthorship());
             authorship.favorite = !authorship.favorite;
-            console.log(authorship);
-            researchEntityService.setAuthorshipFavorite(researchEntity, authorship);
+            documentService.setAuthorshipFavorite(authorship);
         }
 
         function isPublic() {

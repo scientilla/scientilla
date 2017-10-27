@@ -100,6 +100,12 @@ module.exports = _.merge({}, BaseModel, {
         return authorship.savePromise();
     },
     setFavorite: async function (documentId, userId, favorite) {
+        if (favorite) {
+            const favorited = await Authorship.find({researchEntity: userId, favorite: true});
+            if (favorited.length >= sails.config.scientilla.maxUserFavorite)
+                throw 'Favorite max limit reached';
+        }
+
         const authorship = await Authorship.findOne({document: documentId, researchEntity: userId});
         if (!authorship)
             throw 'Athorship not found';
