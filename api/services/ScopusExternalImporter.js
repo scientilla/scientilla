@@ -157,6 +157,9 @@ async function getResearchEntityDocumentsScopusIds(researchEntity) {
 }
 
 async function updateExternalDocuments(externalDocumentsModel, researchEntityId, documents) {
+    if (documents.length === 0)
+        return;
+
     await externalDocumentsModel.destroy({
         researchEntity: researchEntityId,
         origin: DocumentOrigins.SCOPUS
