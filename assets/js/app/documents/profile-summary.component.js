@@ -33,11 +33,14 @@
                 duration: 300,
                 reduceXTicks: true,
                 xAxis: {
-                    axisLabel: ''
+                    axisLabel: '',
+                    tickFormat: d => d3.format('')(d)
                 },
                 yAxis: {
-                    axisLabel: ''
-                }
+                    axisLabel: '',
+                    tickFormat: d => d3.format('')(d)
+                },
+                valueFormat: d => d3.format('')(d)
             }
         };
         const mainChartDefaultOptions = {
@@ -54,7 +57,14 @@
                     left: 50
                 },
                 duration: 300,
-                reduceXTicks: false
+                reduceXTicks: false,
+                xAxis: {
+                    tickFormat: d => d3.format('')(d)
+                },
+                yAxis: {
+                    tickFormat: d => d3.format('')(d)
+                },
+                valueFormat: d => d3.format('')(d)
             }
         };
 
@@ -69,12 +79,12 @@
                 showValues: true,
                 stacked: true,
                 xAxis: {
-                    axisLabel: 'Year',
+                    axisLabel: '',
                     rotateLabels: 50,
                     showMaxMin: false
                 },
                 yAxis: {
-                    axisLabel: '# documents',
+                    axisLabel: '',
                     axisLabelDistance: -10
                 }
             }
@@ -90,12 +100,12 @@
                 y: d => d.count,
                 showValues: true,
                 xAxis: {
-                    axisLabel: 'Year',
+                    axisLabel: '',
                     rotateLabels: 50,
                     showMaxMin: false
                 },
                 yAxis: {
-                    axisLabel: '# invited talks',
+                    axisLabel: '',
                     axisLabelDistance: -10
                 }
             }
@@ -202,6 +212,9 @@
         function getDefaultOptions(options, defaults) {
             const newOptions = {};
             newOptions.chart = Object.assign({}, options.chart, _.cloneDeep(defaults.chart));
+            newOptions.chart.margin = Object.assign({}, options.chart.margin, _.cloneDeep(defaults.chart.margin));
+            newOptions.chart.xAxis = Object.assign({}, options.chart.xAxis, _.cloneDeep(defaults.chart.xAxis));
+            newOptions.chart.yAxis = Object.assign({}, options.chart.yAxis, _.cloneDeep(defaults.chart.yAxis));
             return newOptions;
 
         }
