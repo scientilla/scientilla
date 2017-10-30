@@ -167,7 +167,9 @@
                     value: vm.document.citations.reduce((tot, val) => val.citations + tot, 0)
                 };
 
-            return vm.document.sourceMetrics.find(m => m.name === metric);
+            const metricAllYears = vm.document.sourceMetrics.filter(m => m.name === metric);
+            const year = Math.max(...metricAllYears.map(m => parseInt(m.year, 10)));
+            return metricAllYears.find(m => m.year === year);
         }
 
         function getVerifiedCount() {
