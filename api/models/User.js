@@ -145,6 +145,9 @@ module.exports = _.merge({}, ResearchEntity, {
             collection: 'Attribute',
             through: 'userattribute'
         },
+        lastsynch: 'datetime',
+        active: 'boolean',
+        synchronized: 'boolean',
         getAliases: async function () {
             const aliases = await Alias.find({user: this.id});
             if (!aliases)
