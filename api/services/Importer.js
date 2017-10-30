@@ -8,6 +8,7 @@ const _ = require('lodash');
 const fs = require('fs');
 const request = require('request-promise');
 const loadJsonFile = require('load-json-file');
+const moment = require('moment');
 
 
 module.exports = {
@@ -136,7 +137,8 @@ async function importPeople() {
 
     const people = await request(reqOptions);
     sails.log.info(people.length + ' entries found');
-    let usersInserted = 0, usersUpdated = 0;
+    const importTime = moment.utc().format();
+    let numUsersInserted = 0, numUsersUpdated = 0, numGroupsInserted = 0;
     for (let [i, p] of people.entries()) {
         //groups are loaded in memory because waterline doesn't allow case-insensitive queries with postegres
         p.username = _.toLower(p.username);
@@ -147,6 +149,7 @@ async function importPeople() {
             const groupObjs = groupsToBeInserted.map(g => ({name: g}));
             sails.log.info('inserting groups: ' + groupsToBeInserted.join(', '));
             const newGroups = await Group.create(groupObjs);
+            numGroupsInserted++;
             const newGroupsName = newGroups.map(g => g.name);
             groupsToSearch.push(...newGroupsName);
         }
@@ -154,29 +157,51 @@ async function importPeople() {
         const groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
         const criteria = {username: p.username};
         let user = await User.findOne(criteria);
+        p.lastsynch = moment().utc().format();
+        p.synchronized = true;
+        p.active = true;
         if (user) {
+            const u = await User.update(criteria, p);
             if (userShouldBeUpdated(user, p)) {
                 sails.log.info(`Updating user ${p.username}`);
-                await User.update(criteria, p);
-                usersUpdated++;
+                numUsersUpdated++;
             }
         }
         else {
             sails.log.info(`Inserting user ${p.username}`);
             user = await User.createCompleteUser(p);
-            usersInserted++;
+            numUsersInserted++;
         }
 
         for (let g of groups) {
             g.members.add(user.id);
-            if (p.pi)
-                g.administrators.add(user.id);
             await g.savePromise();
+            const membershipCriteria = {user: user.id, group: g.id};
+            const membership = await Membership.findOne(membershipCriteria);
+            if (membership) {
+                membership.lastsynch = moment.utc().format();
+                membership.synchronized = true;
+                membership.active = true;
+                const m = await Membership.update(membershipCriteria, membership);
+            }
+            if (p.pi) {
+                g.administrators.add(user.id);
+                await g.savePromise();
+            }
         }
     }
+    const membershipUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
+    const membershipDisabled = await Membership.update(membershipUpdateCriteria, {active: false});
+    const numMembershipDisabled = membershipDisabled.length;
+    const userUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
+    const usersDisabled = await User.update(userUpdateCriteria, {active: false});
+    const numUsersDisabled = usersDisabled.length;
     sails.log.info('Import finished');
-    sails.log.info(`${usersInserted} users inserted`);
-    sails.log.info(`${usersUpdated} users updated`);
+    sails.log.info(`${numUsersInserted} users inserted`);
+    sails.log.info(`${numUsersUpdated} users updated`);
+    sails.log.info(`${numUsersDisabled} users disabled`);
+    sails.log.info(`${numGroupsInserted} groups updated`);
+    sails.log.info(`${numMembershipDisabled} membership disabled`);
 }
 
 async function importGroups() {
