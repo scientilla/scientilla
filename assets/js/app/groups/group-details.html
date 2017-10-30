@@ -12,7 +12,23 @@
         <uib-tabset active="active">
             <uib-tab index="0">
                 <uib-tab-heading>Members</uib-tab-heading>
-                <div ng-repeat="m in vm.group.members">
+                <h2>Active Members</h2>
+                <div ng-repeat="m in vm.group.getActiveMembers()">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <a ng-href="#{{m.getProfileUrl()}}">
+                                {{m| fullname}}
+                            </a>
+                            <small>{{m.username}}</small>
+                        </div>
+                        <div class="col-md-2 text-right">
+                        </div>
+                    </div>
+                    <hr>
+                    <div ng-if="vm.group.getActiveMembers().length === 0">No Active Members</div>
+                </div>
+                <h2>Collaborators</h2>
+                <div ng-repeat="m in vm.group.getCollaborators()">
                     <div class="row">
                         <div class="col-md-10">
                             <a ng-href="#{{m.getProfileUrl()}}">
@@ -25,7 +41,22 @@
                     </div>
                     <hr>
                 </div>
-                <div ng-if="vm.group.members.length === 0">No Members</div>
+                <div ng-if="vm.group.getCollaborators().length === 0">No Collaborators</div>
+                <h2>Former Members</h2>
+                <div ng-repeat="m in vm.group.getFormerMembers()">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <a ng-href="#{{m.getProfileUrl()}}">
+                                {{m| fullname}}
+                            </a>
+                            <small>{{m.username}}</small>
+                        </div>
+                        <div class="col-md-2 text-right">
+                        </div>
+                    </div>
+                    <hr>
+                </div>
+                <div ng-if="vm.group.getFormerMembers().length === 0">No Formers Members</div>
 
             </uib-tab>
             <uib-tab index="1">
