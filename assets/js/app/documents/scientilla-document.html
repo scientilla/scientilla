@@ -73,25 +73,26 @@
             <div ng-if="vm.showScopusMetrics()" class="scientilla-document-icons-extra">
                 <div>
                 <span class="scientilla-icon scientilla-icon-scopus"
-                      title=""></span>
+                      title="Scopus metrics"></span>
                 </div>
 
                 <div ng-if="vm.hasMetric(vm.metrics.CITATIONS)" class="small">
                     Citations {{ vm.getMetricValue(vm.metrics.CITATIONS) }}
                 </div>
                 <div ng-if="vm.hasMetric(vm.metrics.SNIP)" class="small">
-                    SNIP {{ vm.getMetricValue(vm.metrics.SNIP) }}
+                    SNIP {{ vm.getMetricValue(vm.metrics.SNIP) | number:1 }}
                 </div>
                 <div ng-if="vm.hasMetric(vm.metrics.SJR)" class="small">
-                    SJR {{ vm.getMetricValue(vm.metrics.SJR) }}
+                    SJR {{ vm.getMetricValue(vm.metrics.SJR) | number:1 }}
                 </div>
             </div>
             <div ng-if="vm.showWOSMetrics()" class="scientilla-document-icons-extra">
                 <div>
-                    <span class="scientilla-icon scientilla-icon-wos"></span>
+                    <span class="scientilla-icon scientilla-icon-wos"
+                          title="Web of Science metrics"></span>
                 </div>
                 <div ng-if="vm.hasMetric(vm.metrics.IF)" class="small">
-                    IF {{ vm.getMetricValue(vm.metrics.IF) }}
+                    IF {{ vm.getMetricValue(vm.metrics.IF) | number:1 }}
                 </div>
             </div>
 
