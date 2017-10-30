@@ -146,7 +146,7 @@
 
             vm.charts[0].data.push({
                 key: 'Journal',
-                values: getDocumentsByYear(chartsData[1], yearRange)
+                values: getDocumentsByYear(chartsData[0], yearRange)
             });
             vm.charts[0].data.push({
                 key: 'Conference',
