@@ -139,38 +139,45 @@
 
         /* jshint ignore:start */
         vm.$onInit = async () => {
-            const charts = ['ConferencesByYear', 'ArticlesByYear', 'BooksByYear', 'BookChaptersByYear', 'InvitedTalksByYear', 'DocumentsByType'];
-            const chartsData = await vm.researchEntity.all('charts').getList({charts: charts});
+            const queryes = {
+                ConferencesByYear: 0,
+                ArticlesByYear: 1,
+                BooksByYear: 2,
+                BookChaptersByYear: 3,
+                InvitedTalksByYear: 4,
+                DocumentsByType: 5
+            };
+            const chartsData = await vm.researchEntity.all('charts').getList({charts: Object.keys(queryes)});
 
             const yearRange = getYearRange(chartsData);
 
             vm.charts[0].data.push({
                 key: 'Journal',
-                values: getDocumentsByYear(chartsData[0], yearRange)
+                values: getDocumentsByYear(chartsData[queryes.ConferencesByYear], yearRange)
             });
             vm.charts[0].data.push({
                 key: 'Conference',
-                values: getDocumentsByYear(chartsData[1], yearRange)
+                values: getDocumentsByYear(chartsData[queryes.ArticlesByYear], yearRange)
             });
             vm.charts[0].data.push({
                 key: "Book",
-                values: getDocumentsByYear(chartsData[2], yearRange)
+                values: getDocumentsByYear(chartsData[queryes.BooksByYear], yearRange)
             });
             vm.charts[0].data.push({
                 key: 'Book Chapter',
-                values: getDocumentsByYear(chartsData[3], yearRange)
+                values: getDocumentsByYear(chartsData[queryes.BookChaptersByYear], yearRange)
             });
 
             vm.charts[0].options = getDefaultOptions(vm.charts[0].baseOptions, previewDefaultOptions);
 
             vm.charts[1].data.push({
                 key: 'Invited talk',
-                values: getDocumentsByYear(chartsData[4], yearRange)
+                values: getDocumentsByYear(chartsData[queryes.InvitedTalksByYear], yearRange)
             });
             vm.charts[1].options = getDefaultOptions(vm.charts[1].baseOptions, previewDefaultOptions);
 
 
-            vm.charts[2].data = chartsData[5].map(d => ({
+            vm.charts[2].data = chartsData[queryes.DocumentsByType].map(d => ({
                 type: DocumentTypesService.getDocumentTypeLabel(d.type),
                 count: parseInt(d.count)
             }));
