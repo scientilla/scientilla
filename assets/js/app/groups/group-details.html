@@ -12,7 +12,7 @@
         <uib-tabset active="active">
             <uib-tab index="0">
                 <uib-tab-heading>Members</uib-tab-heading>
-                <h2>Active Members</h2>
+                <h2>Members</h2>
                 <div ng-repeat="m in vm.group.getActiveMembers()">
                     <div class="row">
                         <div class="col-md-10">
@@ -25,7 +25,7 @@
                         </div>
                     </div>
                     <hr>
-                    <div ng-if="vm.group.getActiveMembers().length === 0">No Active Members</div>
+                    <div ng-if="vm.group.getActiveMembers().length === 0">No Members</div>
                 </div>
                 <h2>Collaborators</h2>
                 <div ng-repeat="m in vm.group.getCollaborators()">
