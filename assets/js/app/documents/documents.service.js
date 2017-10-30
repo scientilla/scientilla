@@ -32,6 +32,8 @@
                 service.copyUncopiedDocuments = copyUncopiedDocuments;
                 service.getExternalDocuments = _.partialRight(getExternalDocuments, reService);
                 service.desynchronizeDrafts = desynchronizeDrafts;
+                service.setAuthorshipFavorite = setAuthorshipFavorite;
+                service.setAuthorshipPrivacy = setAuthorshipPrivacy;
 
                 return service;
 
@@ -276,6 +278,26 @@
                             return researchEntityService.getExternalDocuments(researchEntity, query);
 
                         });
+                }
+
+                function setAuthorshipPrivacy(authorship) {
+                    researchEntityService
+                        .setAuthorshipPrivacy(researchEntity, authorship)
+                        .then(() => {
+                            Notification.success('Privacy updated');
+                            EventsService.publish(EventsService.DOCUMENT_AUTORSHIP_PRIVACY_UPDATED, document);
+                        })
+                        .catch(() => Notification.warning('Failed to set privacy'));
+                }
+
+                function setAuthorshipFavorite(authorship) {
+                    researchEntityService
+                        .setAuthorshipFavorite(researchEntity, authorship)
+                        .then(() => {
+                            Notification.success('Favorite set');
+                            EventsService.publish(EventsService.DOCUMENT_AUTORSHIP_FAVORITE_UPDATED, document);
+                        })
+                        .catch(err => Notification.warning(err.data));
                 }
             }
         };

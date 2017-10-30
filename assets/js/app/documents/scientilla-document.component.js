@@ -3,7 +3,7 @@
 
     angular.module('documents')
         .component('scientillaDocument', {
-            templateUrl: 'partials/scientillaDocument.html',
+            templateUrl: 'partials/scientilla-document.html',
             controller: scientillaDocument,
             controllerAs: 'vm',
             bindings: {
@@ -33,10 +33,14 @@
         vm.getMetricValue = getMetricValue;
         vm.hasMetric = hasMetric;
         vm.isPublic = isPublic;
+        vm.isFavorite = isFavorite;
         vm.isPrivacyToShow = isPrivacyToShow;
+        vm.isFavoriteToShow = isFavoriteToShow;
         vm.changePrivacy = changePrivacy;
+        vm.changeFavorite = changeFavorite;
 
         const researchEntity = context.getResearchEntity();
+        const documentService = context.getDocumentService();
 
         vm.checkDuplicates = [
             documentListSections.VERIFIED,
@@ -51,6 +55,10 @@
         ].includes(vm.section);
 
         vm.showPrivacy = [
+            documentListSections.VERIFIED
+        ].includes(vm.section);
+
+        vm.showFavorite = [
             documentListSections.VERIFIED
         ].includes(vm.section);
 
@@ -172,9 +180,15 @@
         }
 
         function changePrivacy() {
-            const authorship = getAuthorship();
+            const authorship = _.clone(getAuthorship());
             authorship.public = !authorship.public;
-            researchEntityService.setAuthorshipPrivacy(researchEntity, authorship);
+            documentService.setAuthorshipPrivacy(authorship);
+        }
+
+        function changeFavorite() {
+            const authorship = _.clone(getAuthorship());
+            authorship.favorite = !authorship.favorite;
+            documentService.setAuthorshipFavorite(authorship);
         }
 
         function isPublic() {
@@ -183,8 +197,18 @@
             return !!authorship.public;
         }
 
+        function isFavorite() {
+            const authorship = getAuthorship();
+            if (!authorship) return false;
+            return !!authorship.favorite;
+        }
+
         function isPrivacyToShow() {
             return vm.showPrivacy && vm.document.kind === 'v' && getAuthorship();
+        }
+
+        function isFavoriteToShow() {
+            return vm.showFavorite && vm.document.kind === 'v' && getAuthorship();
         }
 
         function getAuthorship() {

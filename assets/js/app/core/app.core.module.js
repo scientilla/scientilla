@@ -10,6 +10,7 @@
         'formFor',
         'formFor.bootstrapTemplates',
         'restangular',
-        'nvd3'
+        'nvd3',
+        'ngZone'
     ]);
 })();

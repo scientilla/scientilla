@@ -23,6 +23,8 @@
 
             DOCUMENT_VERIFIED: 'document.verified',
             DOCUMENT_PRIVATE_TAGS_UPDATED: 'document.privateTagsUpdated',
+            DOCUMENT_AUTORSHIP_PRIVACY_UPDATED: 'document.authorship.privacyUpdated',
+            DOCUMENT_AUTORSHIP_FAVORITE_UPDATED: 'document.authorship.favoriteUpdated',
 
             NOTIFICATION_ACCEPTED: 'notification.accepted',
             NOTIFICATION_DISCARDED: 'notification.discarded',

@@ -40,8 +40,6 @@
                     vm.selected = vm.attributes.find(a => a.id === selected.id);
                 else
                     vm.selected = vm.attributes[0];
-
-            $scope.$apply();
         };
         /* jshint ignore:end */
 

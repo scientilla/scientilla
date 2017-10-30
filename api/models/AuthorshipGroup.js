@@ -20,6 +20,7 @@ module.exports = _.merge({}, BaseModel, {
         },
         position: 'integer',
         public: 'boolean',
+        favorite: 'boolean',
         synchronize: 'boolean',
         unverify: function () {
             return this.destroy();
@@ -31,6 +32,20 @@ module.exports = _.merge({}, BaseModel, {
             throw 'Athorship not found';
 
         authorshipGroup.public = !!privacy;
+        return authorshipGroup.savePromise();
+    },
+    setFavorite: async function (documentId, groupId, favorite) {
+        if (favorite) {
+            const favorited = await AuthorshipGroup.find({researchEntity: groupId, favorite: true});
+            if (favorited.length >= sails.config.scientilla.maxUserFavorite)
+                throw 'Favorite max limit reached';
+        }
+
+        const authorshipGroup = await AuthorshipGroup.findOne({document: documentId, researchEntity: groupId});
+        if (!authorshipGroup)
+            throw 'Athorship not found';
+
+        authorshipGroup.favorite = !!favorite;
         return authorshipGroup.savePromise();
     }
 });
