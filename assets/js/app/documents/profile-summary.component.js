@@ -152,26 +152,26 @@
             const yearRange = getYearRange(chartsData);
 
             vm.charts[0].data.push({
-                key: 'Journal',
+                key: DocumentTypesService.getSourceTypeLabel('journal'),
                 values: getDocumentsByYear(chartsData[queryes.ArticlesByYear], yearRange)
             });
             vm.charts[0].data.push({
-                key: 'Conference',
+                key: DocumentTypesService.getSourceTypeLabel('conference'),
                 values: getDocumentsByYear(chartsData[queryes.ConferencesByYear], yearRange)
             });
             vm.charts[0].data.push({
-                key: "Book",
+                key: DocumentTypesService.getSourceTypeLabel('book'),
                 values: getDocumentsByYear(chartsData[queryes.BooksByYear], yearRange)
             });
             vm.charts[0].data.push({
-                key: 'Book Chapter',
+                key: DocumentTypesService.getSourceTypeLabel('bookseries'),
                 values: getDocumentsByYear(chartsData[queryes.BookChaptersByYear], yearRange)
             });
 
             vm.charts[0].options = getDefaultOptions(vm.charts[0].baseOptions, previewDefaultOptions);
 
             vm.charts[1].data.push({
-                key: 'Invited talk',
+                key: DocumentTypesService.getDocumentTypeLabel('invited_talk'),
                 values: getDocumentsByYear(chartsData[queryes.InvitedTalksByYear], yearRange)
             });
             vm.charts[1].options = getDefaultOptions(vm.charts[1].baseOptions, previewDefaultOptions);
