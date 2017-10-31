@@ -144,8 +144,9 @@
                 ConferencesByYear: 1,
                 BooksByYear: 2,
                 BookChaptersByYear: 3,
-                InvitedTalksByYear: 4,
-                DocumentsByType: 5
+                DisseminationTalksByYear: 4,
+                ScientificTalksByYear: 5,
+                DocumentsByType: 6
             };
             const chartsData = await vm.researchEntity.all('charts').getList({charts: Object.keys(queryes)});
 
@@ -171,8 +172,12 @@
             vm.charts[0].options = getDefaultOptions(vm.charts[0].baseOptions, previewDefaultOptions);
 
             vm.charts[1].data.push({
-                key: DocumentTypesService.getDocumentTypeLabel('invited_talk'),
-                values: getDocumentsByYear(chartsData[queryes.InvitedTalksByYear], yearRange)
+                key: 'Dissemination',
+                values: getDocumentsByYear(chartsData[queryes.DisseminationTalksByYear], yearRange)
+            });
+            vm.charts[1].data.push({
+                key: 'Scientific Event',
+                values: getDocumentsByYear(chartsData[queryes.ScientificTalksByYear], yearRange)
             });
             vm.charts[1].options = getDefaultOptions(vm.charts[1].baseOptions, previewDefaultOptions);
 
