@@ -140,8 +140,8 @@
         /* jshint ignore:start */
         vm.$onInit = async () => {
             const queryes = {
-                ConferencesByYear: 0,
-                ArticlesByYear: 1,
+                ArticlesByYear: 0,
+                ConferencesByYear: 1,
                 BooksByYear: 2,
                 BookChaptersByYear: 3,
                 InvitedTalksByYear: 4,
@@ -153,11 +153,11 @@
 
             vm.charts[0].data.push({
                 key: 'Journal',
-                values: getDocumentsByYear(chartsData[queryes.ConferencesByYear], yearRange)
+                values: getDocumentsByYear(chartsData[queryes.ArticlesByYear], yearRange)
             });
             vm.charts[0].data.push({
                 key: 'Conference',
-                values: getDocumentsByYear(chartsData[queryes.ArticlesByYear], yearRange)
+                values: getDocumentsByYear(chartsData[queryes.ConferencesByYear], yearRange)
             });
             vm.charts[0].data.push({
                 key: "Book",
