@@ -140,7 +140,7 @@
         /* jshint ignore:start */
         vm.$onInit = async () => {
             const queryes = {
-                ArticlesByYear: 0,
+                JournalsByYear: 0,
                 ConferencesByYear: 1,
                 BooksByYear: 2,
                 BookChaptersByYear: 3,
@@ -154,7 +154,7 @@
 
             vm.charts[0].data.push({
                 key: DocumentTypesService.getSourceTypeLabel('journal'),
-                values: getDocumentsByYear(chartsData[queryes.ArticlesByYear], yearRange)
+                values: getDocumentsByYear(chartsData[queryes.JournalsByYear], yearRange)
             });
             vm.charts[0].data.push({
                 key: DocumentTypesService.getSourceTypeLabel('conference'),
