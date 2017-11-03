@@ -3,7 +3,8 @@ SELECT
   count(*)
 FROM authorshipgroup a
   JOIN document d ON a.document = d.id
-  JOIN source s ON d.source = s.id
+  JOIN sourcetype st ON d."sourceType" = st.key
 WHERE a."researchEntity" = $1
-      AND s.type = 'bookseries'
+      AND d.type = 'invited_talk'
+      AND st.section = 'Dissemination'
 GROUP BY d.year

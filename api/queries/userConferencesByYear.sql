@@ -3,6 +3,7 @@ SELECT
   count(*)
 FROM authorship a
   JOIN document d ON a.document = d.id
+  JOIN source s ON d.source = s.id
 WHERE a."researchEntity" = $1
-      AND type = 'conference_paper'
+      AND s.type = 'conference'
 GROUP BY d.year

@@ -3,6 +3,7 @@ SELECT
   count(*)
 FROM authorshipgroup a
   JOIN document d ON a.document = d.id
+  JOIN source s ON d.source = s.id
 WHERE a."researchEntity" = $1
-      AND type = 'invited_talk'
+      AND s.type = 'journal'
 GROUP BY d.year
