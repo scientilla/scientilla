@@ -60,12 +60,18 @@
 
             if (group.members) {
                 var members = group.members;
-                group.members = _.map(group.members, 'id');
+                delete group.members;
+            }
+
+            if (group.memberships) {
+                var memberships = group.memberships;
+                delete group.memberships;
             }
 
             return service.save(group).then(function (g) {
                 group.administrators = administrators;
                 group.members = members;
+                group.memberships = memberships;
                 return group;
             });
         }

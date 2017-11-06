@@ -150,6 +150,8 @@ module.exports = _.merge({}, ResearchEntity, {
         return AuthorshipGroup;
     },
     updateProfile: async function(groupId, groupData){
+        delete groupData.memberships;
+        delete groupData.members;
         const oldResearchEntity = await Group.findOne({id: groupId});
         const res = await Group.update({id: groupId}, groupData);
         const newResearchEntity = res[0];

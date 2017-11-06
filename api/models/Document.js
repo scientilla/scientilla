@@ -381,6 +381,7 @@ module.exports = _.merge({}, BaseModel, {
                     !a2 ||
                     a1.position === AuthorshipPositionNotToCheck ||
                     !_.isNil(a1.researchEntity) ||
+                    !_.isNil(a2.researchEntity) ||
                     _.isEmpty(_.xor(_.map(a1.affiliations, 'institute'), _.map(a2.affiliations, 'institute')))
                 );
             });
