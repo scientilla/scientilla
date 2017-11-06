@@ -80,9 +80,9 @@ module.exports = {
 
         const criteria = {
             origin: origin,
-            kind: DocumentKinds.EXTERNAL
+            kind: DocumentKinds.EXTERNAL,
+            [fieldMapper[origin]]: documentData[fieldMapper[origin]]
         };
-        criteria[fieldMapper[origin]] = documentData[fieldMapper[origin]];
 
         documentData.origin = origin;
         documentData.kind = DocumentKinds.EXTERNAL;
