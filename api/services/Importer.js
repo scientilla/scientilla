@@ -128,6 +128,7 @@ async function importPeople() {
         const toUpdate = userFieldsToUpdate.some(f => values[f] !== user[f]);
         return toUpdate;
     }
+    const groupInsertionEnabled = false;
     sails.log.info('Import started');
     const url = sails.config.scientilla.mainInstituteImport.userImportUrl;
     const reqOptions = {
@@ -145,7 +146,7 @@ async function importPeople() {
         const allGroups = await Group.find();
         const groupsToBeInserted = p.groups.filter(g => !allGroups.some(g2 => _.toLower(g2.name) == _.toLower(g)));
         const groupsToSearch = allGroups.filter(g => p.groups.some(g2 => _.toLower(g2) == _.toLower(g.name))).map(g => g.name);
-        if (groupsToBeInserted.length) {
+        if (groupInsertionEnabled && groupsToBeInserted.length) {
             const groupObjs = groupsToBeInserted.map(g => ({name: g}));
             sails.log.info('inserting groups: ' + groupsToBeInserted.join(', '));
             const newGroups = await Group.create(groupObjs);
@@ -200,7 +201,7 @@ async function importPeople() {
     sails.log.info(`${numUsersInserted} users inserted`);
     sails.log.info(`${numUsersUpdated} users updated`);
     sails.log.info(`${numUsersDisabled} users disabled`);
-    sails.log.info(`${numGroupsInserted} groups updated`);
+    sails.log.info(`${numGroupsInserted} groups inserted`);
     sails.log.info(`${numMembershipDisabled} membership disabled`);
 }
 
