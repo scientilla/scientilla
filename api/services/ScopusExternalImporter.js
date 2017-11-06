@@ -215,7 +215,7 @@ async function importDocuments(documentScopusIds) {
 
                     try {
                         document = await getAndCreateOrUpdateDocument(scopusId);
-                        if (_.has(document, 'id')) {
+                        if (_.has(document, 'scopusId')) {
                             await updateCitations(document);
                             return document;
                         }
@@ -241,9 +241,7 @@ async function getAndCreateOrUpdateDocument(scopusId) {
 }
 
 async function updateCitations(document) {
-    const endDate = ((new Date()).getFullYear() + 1);
-    const date = document.year + '-' + endDate;
-    const citations = await ScopusConnector.getDocumentCitations(document.scopusId, date);
+    const citations = await ScopusConnector.getDocumentCitations(document.scopusId);
 
     for (const cit of citations)
         await Citation.createOrUpdate({
