@@ -106,12 +106,11 @@ module.exports = _.merge({}, BaseModel, {
             const alreadyVerifiedDocuments = (await ResearchEntityModel
                 .findOne(researchEntityId)
                 .populate('documents', {
-                    scopusId: draft.scopusId,
-                    synchronized: true
+                    scopusId: draft.scopusId
                 })).documents;
             if (alreadyVerifiedDocuments.length)
                 return {
-                    error: 'Draft already verified (same scopusId)',
+                    error: 'Draft already verified (duplicated scopusId)',
                     item: draft
                 };
         }
@@ -184,12 +183,11 @@ module.exports = _.merge({}, BaseModel, {
             const alreadyVerifiedDocuments = (await Model
                 .findOne(researchEntityId)
                 .populate('documents', {
-                    scopusId: document.scopusId,
-                    synchronized: true
+                    scopusId: document.scopusId
                 })).documents;
             if (alreadyVerifiedDocuments.length)
                 return {
-                    error: 'Document already verified (same scopusId)',
+                    error: 'Document already verified (duplicated scopusId)',
                     item: document
                 };
         }
