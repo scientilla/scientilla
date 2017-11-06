@@ -90,7 +90,7 @@ async function updateProfile(externalDocumentModel, researchEntityId, documentsI
 async function createOrUpdateDocuments(documentsData) {
     const createdDocumentsIds = [];
     for (let data of documentsData) {
-        const document = await ExternalImporter.createExternalDocument(DocumentOrigins.PUBLICATIONS, data, false);
+        const document = await ExternalImporter.createOrUpdateExternalDocument(DocumentOrigins.PUBLICATIONS, data, false);
         if (_.has(document, 'id'))
             createdDocumentsIds.push(document.id);
     }

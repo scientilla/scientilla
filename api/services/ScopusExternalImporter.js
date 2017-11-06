@@ -200,43 +200,39 @@ async function importDocuments(documentScopusIds) {
     return documents;
 
     async function updateDocs(documentScopusIds) {
-        const docs = await Promise.all(
-            documentScopusIds.map(
-                async scopusId => {
+        const docs = [];
+        for (const scopusId of documentScopusIds) {
+            let document = await Document.findOne({
+                kind: DocumentKinds.EXTERNAL,
+                origin: DocumentOrigins.SCOPUS,
+                scopusId: scopusId
+            });
 
-                    let document = await Document.findOne({
-                        kind: DocumentKinds.EXTERNAL,
-                        origin: DocumentOrigins.SCOPUS,
-                        scopusId: scopusId
-                    });
+            if (document && document.updatedAt > getUpdateLimitDate()) {
+                docs.push(document);
+                continue;
+            }
 
-                    if (document && document.updatedAt > getUpdateLimitDate())
-                        return document;
-
-                    try {
-                        document = await getAndCreateOrUpdateDocument(scopusId);
-                        if (_.has(document, 'scopusId')) {
-                            await updateCitations(document);
-                            return document;
-                        }
-
-                    }
-                    catch (err) {
-                        sails.log.debug('Updater: Document failed ' + scopusId);
-                    }
-
-                    return {};
+            try {
+                document = await getAndCreateOrUpdateDocument(scopusId);
+                if (_.has(document, 'scopusId')) {
+                    await updateCitations(document);
+                    docs.push(document);
                 }
-            )
-        );
-        return docs.filter(d => !_.isEmpty(d));
+            }
+            catch (err) {
+                sails.log.debug('Updater: Document failed ' + scopusId);
+            }
+        }
+
+        return docs;
     }
 }
 
 async function getAndCreateOrUpdateDocument(scopusId) {
     const documentData = await ScopusConnector.getDocument(scopusId);
     if (!_.isEmpty(documentData))
-        return await ExternalImporter.createExternalDocument(DocumentOrigins.SCOPUS, documentData);
+        return await ExternalImporter.createOrUpdateExternalDocument(DocumentOrigins.SCOPUS, documentData);
     return {};
 }
 
