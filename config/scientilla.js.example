@@ -10,10 +10,18 @@ module.exports.scientilla = {
         },
         domain: 'iit.it'
     },
-    scopus: {
-        url: 'https://api.elsevier.com',
-        apiKey: '',
-        token: ''
+    externalConnectors: {
+        elsevier: {
+            scopus: {
+                url: 'https://api.elsevier.com',
+                apiKey: '',
+                token: ''
+            },
+            scival: {
+                url: 'http://sais.scivalcontent.com',
+                clientKey: ''
+            },
+        }
     },
     institute: {
         name: "Istituto Italiano di Tecnologia",
