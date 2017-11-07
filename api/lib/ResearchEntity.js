@@ -68,8 +68,18 @@ module.exports = _.merge({}, BaseModel, {
         const AuthorshipModel = getAuthorshipModel(Model);
         const authorships = await AuthorshipModel.find({document: documentId, researchEntity: researchEntityId});
         if (authorships.length > 0)
-            return null;
-        return await DiscardedModel.findOrCreate({researchEntity: researchEntityId, document: documentId});
+            return {
+                error: 'Document verified, must be unverified',
+                item: documentId
+             };
+        const alreadyDiscarded = await DiscardedModel.find({researchEntity: researchEntityId, document: documentId});
+        if (alreadyDiscarded.length > 0)
+            return {
+                error: 'Document already discarded',
+                item: documentId
+            };
+        const newDiscarded = await DiscardedModel.create({researchEntity: researchEntityId, document: documentId});
+        return newDiscarded;
     },
     discardDocuments: async function (Model, researchEntityId, documentIds) {
         const results = [];
@@ -157,7 +167,7 @@ module.exports = _.merge({}, BaseModel, {
         }
         return results;
     },
-    verifyDocument: async function (Model, researchEntityId, documentId, verificationData) {
+    verifyDocument: async function (Model, researchEntityId, documentId, verificationData, check=true) {
         const AuthorshipModel = getAuthorshipModel(Model);
         const alreadyVerifiedDocuments = await AuthorshipModel.find({
             document: documentId,
@@ -179,7 +189,7 @@ module.exports = _.merge({}, BaseModel, {
                 error: 'Document not found',
                 item: researchEntityId
             };
-        if (document.scopusId) {
+        if (check && document.scopusId) {
             const alreadyVerifiedDocuments = (await Model
                 .findOne(researchEntityId)
                 .populate('documents', {
