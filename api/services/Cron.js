@@ -15,6 +15,7 @@ module.exports = {
         addJob(DAILY, GruntTaskRunner.run, ['documents:clean:sources']);
         addJob(DAILY, GruntTaskRunner.run, ['documents:clean:institutes']);
         addJob(DAILY, GruntTaskRunner.run, ['documents:clean:copies']);
+        addJob(DAILY, GruntTaskRunner.run, ['import:people']);
         addJob(MONITOR, GruntTaskRunner.run, ['monitor']);
     },
     start: () => {
