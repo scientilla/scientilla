@@ -19,8 +19,8 @@ module.exports = {
     getFixedCollection: async function (Model, collection) {
 
         async function checkCollection(c) {
-            if (!c)
-                return;
+            if (_.isNil(c))
+                return undefined;
             if (_.isObject(c) && c.id)
                 return c.id;
             if (parseInt(c, 10))

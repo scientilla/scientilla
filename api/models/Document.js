@@ -415,17 +415,16 @@ module.exports = _.merge({}, BaseModel, {
 
         let doc = await Document.findOne(criteria);
         if (doc) {
-            doc = await Document.update(criteria, selectedData);
+            await Document.update(criteria, selectedData);
+            doc = await Document.findOne(criteria);
             await Authorship.updateAuthorships(doc, authorships);
         }
         else {
             doc = await Document.create(selectedData);
+            if (!doc)
+                throw 'Document not created';
             await Authorship.createEmptyAuthorships(doc, authorships);
         }
-
-        doc = await Document.findOne(criteria);
-        if (!doc)
-            throw 'Document not created';
 
         return doc;
     },

@@ -1,4 +1,4 @@
-/* global Authorship, Affiliation*/
+/* global Authorship, Affiliation, Institute*/
 "use strict";
 
 const _ = require('lodash');
@@ -50,24 +50,24 @@ module.exports = _.merge({}, BaseModel, {
     },
     createEmptyAuthorships: async function (doc, authorshipsData) {
         //TODO Add empty authorships generated from authorStr
-
         if (!_.isArray(authorshipsData))
             return;
 
         const authorshipFields = ['position', 'corresponding'];
         const filteredAuthorshipsData = _.map(authorshipsData, a => _.pick(a, authorshipFields));
-        _.forEach(filteredAuthorshipsData, a => a.document = doc.id);
+        filteredAuthorshipsData.forEach(a => a.document = doc.id);
         const authorships = await Authorship.create(filteredAuthorshipsData);
 
         const affiliations = [];
         for (const authData of authorshipsData)
             if (_.isArray(authData.affiliations))
                 for (const aff of authData.affiliations) {
-                    const institute = _.isObject(aff) ? aff.institute : aff;
+                    const institutes = await Authorship.getFixedCollection(Institute, aff);
                     const auth = authorships.find(a => a.position === authData.position);
                     affiliations.push({
+                        document: doc.id,
                         authorship: auth.id,
-                        institute: institute
+                        institute: institutes
                     });
                 }
         if (affiliations.length)
