@@ -198,8 +198,10 @@ async function importDocuments(documentScopusIds) {
             scopusId: scopusId
         });
 
-        if (d && d.updatedAt > getUpdateLimitDate())
+        if (d && d.updatedAt > getUpdateLimitDate()) {
+            documents.push(d);
             continue;
+        }
 
         try {
             const document = await getAndCreateOrUpdateDocument(scopusId);
