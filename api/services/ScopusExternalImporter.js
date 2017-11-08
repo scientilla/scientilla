@@ -190,32 +190,32 @@ async function importDocuments(documentScopusIds) {
     if (_.isEmpty(documentScopusIds))
         return [];
 
-        const documents = [];
-        for (const scopusId of documentScopusIds) {
-            let document = await Document.findOne({
-                kind: DocumentKinds.EXTERNAL,
-                origin: DocumentOrigins.SCOPUS,
-                scopusId: scopusId
-            });
+    const documents = [];
+    for (const scopusId of documentScopusIds) {
+        let d = await Document.findOne({
+            kind: DocumentKinds.EXTERNAL,
+            origin: DocumentOrigins.SCOPUS,
+            scopusId: scopusId
+        });
 
-            if (document && document.updatedAt > getUpdateLimitDate()) {
+        if (d && d.updatedAt > getUpdateLimitDate())
+            continue;
+
+        try {
+            const document = await getAndCreateOrUpdateDocument(scopusId);
+            if (_.has(document, 'scopusId')) {
+                await updateCitations(document);
                 documents.push(document);
-                continue;
             }
-
-            try {
-                document = await getAndCreateOrUpdateDocument(scopusId);
-                if (_.has(document, 'scopusId')) {
-                    await updateCitations(document);
-                    documents.push(document);
-                }
-            }
-            catch (err) {
+            else
                 sails.log.debug('Updater: Document failed ' + scopusId);
-            }
         }
+        catch (err) {
+            sails.log.debug('Updater: Document failed ' + scopusId);
+        }
+    }
 
-        return documents;
+    return documents;
 }
 
 async function getAndCreateOrUpdateDocument(scopusId) {

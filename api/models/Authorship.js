@@ -1,11 +1,6 @@
 /* global Authorship, Affiliation*/
 "use strict";
-/**
- * Authorship.js
- *
- * @description :: TODO: You might write a short summary of how this model works and what it represents here.
- * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
- */
+
 const _ = require('lodash');
 const BaseModel = require("../lib/BaseModel.js");
 
@@ -53,11 +48,36 @@ module.exports = _.merge({}, BaseModel, {
             affiliations: []
         };
     },
-    createEmptyAuthorships: function (docId, docData) {
-        const authorshipFields = ['position', 'affiliations', 'corresponding'];
-        const authorships = _.map(docData.authorships, a => _.pick(a, authorshipFields));
-        _.forEach(authorships, a => a.document = docId);
-        return Authorship.create(authorships);
+    createEmptyAuthorships: async function (doc, authorshipsData) {
+        //TODO Add empty authorships generated from authorStr
+
+        if (!_.isArray(authorshipsData))
+            return;
+
+        const authorshipFields = ['position', 'corresponding'];
+        const filteredAuthorshipsData = _.map(authorshipsData, a => _.pick(a, authorshipFields));
+        _.forEach(filteredAuthorshipsData, a => a.document = doc.id);
+        const authorships = await Authorship.create(filteredAuthorshipsData);
+
+        const affiliations = [];
+        for (const authData of authorshipsData)
+            if (_.isArray(authData.affiliations))
+                for (const aff of authData.affiliations) {
+                    const institute = _.isObject(aff) ? aff.institute : aff;
+                    const auth = authorships.find(a => a.position === authData.position);
+                    affiliations.push({
+                        authorship: auth.id,
+                        institute: institute
+                    });
+                }
+        if (affiliations.length)
+            await Affiliation.create(affiliations);
+    },
+    updateAuthorships: async function (doc, authorshipsData) {
+        //TODO update authorships instead of delete/insert empty
+        //TODO Fix authorship bug on authorStr changes
+        await Authorship.destroy({document: doc.id});
+        await Authorship.createEmptyAuthorships(doc, authorshipsData);
     },
     clone: function (authorship) {
         return {

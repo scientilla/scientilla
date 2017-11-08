@@ -87,9 +87,6 @@ module.exports = {
         documentData.origin = origin;
         documentData.kind = DocumentKinds.EXTERNAL;
         documentData.synchronized = synchronized;
-        documentData.documenttype = await DocumentType.findOneByKey(documentData.type);
-        if (documentData.source)
-            documentData.source = documentData.source.id;
 
         try {
             return await Document.createOrUpdate(criteria, documentData);
