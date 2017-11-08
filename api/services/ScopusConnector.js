@@ -256,7 +256,13 @@ async function documentCitationsRequest(eId) {
 }
 
 function formatDocumentCitations(XMLDocumentCitations) {
-    const documentCitations = XML.parse(XMLDocumentCitations);
+    let documentCitations;
+    try {
+        documentCitations = XML.parse(XMLDocumentCitations);
+    } catch (e) {
+        sails.log.debug('Failed to parse citations XML: ' + XMLDocumentCitations);
+        return [];
+    }
 
     if (documentCitations.citeColumnTotalXML.citeCountHeader.grandTotal === '0')
         return [{
