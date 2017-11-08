@@ -106,46 +106,56 @@ async function cleanDocumentCopies() {
             continue;
         const copy = copies[0];
         for (let d of doc.discarded) {
-            sails.log.info(`User ${d.researchEntity} is removing ${doc.id} from the discarded`);
-            const res = await User.undiscardDocument(User, d.researchEntity, d.document);
+            sails.log.info(`User ${d.researchEntity} is discarding document ${copy.id} (${copy.title})`);
+            const res = await User.discardDocument(User, d.researchEntity, copy.id);
             if (res.error) {
                 errors.push(res);
                 sails.log.warn('Error: ');
                 sails.log.warn(res.error);
             } else {
-                sails.log.info(`User ${d.researchEntity} is discarding ${copy.id}`);
-                await User.discardDocument(User, d.researchEntity, copy.id);
+                sails.log.info(`User ${d.researchEntity} is removing ${doc.id} from the discarded`);
+                const res2 = await User.undiscardDocument(User, d.researchEntity, d.document);
+                if (res2.error) {
+                    errors.push(res2);
+                    sails.log.warn('Error: ');
+                    sails.log.warn(res2.error);
+                }
             }
         }
         for (let d of doc.discardedG) {
-            sails.log.info(`Group ${d.researchEntity} is removing ${doc.id} from the discarded`);
-            const res = await Group.undiscardDocument(Group, d.researchEntity, d.document);
+            sails.log.info(`Group ${d.researchEntity} is discarding document ${copy.id} (${copy.title})`);
+            const res = await Group.discardDocument(Group, d.researchEntity, copy.id);
             if (res.error) {
                 sails.log.warn('Error: ');
                 sails.log.warn(res.error);
             } else {
-                sails.log.info(`Group ${d.researchEntity} is discarding ${copy.id}`);
-                await Group.discardDocument(Group, d.researchEntity, copy.id);
+                sails.log.info(`Group ${d.researchEntity} is removing ${doc.id} from the discarded`);
+                const res2 = await Group.undiscardDocument(Group, d.researchEntity, d.document);
+                if (res2.error) {
+                    errors.push(res2);
+                    sails.log.warn('Error: ');
+                    sails.log.warn(res2.error);
+                }
             }
         }
         for (let a of doc.authorships) {
             if (!a.researchEntity)
                 continue;
             const instituteIds = doc.affiliations.filter(aff => aff.authorship === a.id).map(aff => aff.institute);
-            sails.log.info(`User ${a.researchEntity} is trying to unverify document ${doc.id} (${doc.title})`);
-            const res = await User.unverifyDocument(User, a.researchEntity, doc.id);
+            sails.log.info(`User ${a.researchEntity} is trying to verify document ${copy.id} (${copy.title}) in position: ${a.position}`);
+            const res = await User.verifyDocument(User, a.researchEntity, copy.id, {
+                position: a.position,
+                affiliationInstituteIds: instituteIds,
+                corresponding: a.corresponding,
+                synchronize: a.synchronize
+            }, false);
             if (res.error) {
                 errors.push(res);
                 sails.log.warn('Error: ');
                 sails.log.warn(res.error);
             } else {
-                sails.log.info(`User ${a.researchEntity} is trying to verify document ${copy.id} (${copy.title}) in position: ${a.position}`);
-                const res2 = await User.verifyDocument(User, a.researchEntity, copy.id, {
-                    position: a.position,
-                    affiliationInstituteIds: instituteIds,
-                    corresponding: a.corresponding,
-                    synchronize: a.synchronize
-                });
+                sails.log.info(`User ${a.researchEntity} is trying to unverify document ${doc.id} (${doc.title})`);
+                const res2 = await User.unverifyDocument(User, a.researchEntity, doc.id);
                 if (res2.error) {
                     errors.push(res2);
                     sails.log.warn('Error: ');
@@ -156,15 +166,15 @@ async function cleanDocumentCopies() {
         for (let a of doc.groupAuthorships) {
             if (!a.researchEntity)
                 continue;
-            sails.log.info(`Group ${a.researchEntity} is trying to unverify document ${doc.id} (${doc.title})`);
-            const res = await Group.unverifyDocument(Group, a.researchEntity, doc.id);
+            sails.log.info(`Group ${a.researchEntity} is trying to verify document ${copy.id} (${copy.title})`);
+            const res = await Group.verifyDocument(Group, a.researchEntity, copy.id, {}, false);
             if (res.error) {
                 errors.push(res);
                 sails.log.warn('Error: ');
                 sails.log.warn(res.error);
             } else {
-                sails.log.info(`Group ${a.researchEntity} is trying to verify document ${copy.id} (${copy.title})`);
-                const res2 = await Group.verifyDocument(Group, a.researchEntity, copy.id);
+                sails.log.info(`Group ${a.researchEntity} is trying to unverify document ${doc.id} (${doc.title})`);
+                const res2 = await Group.unverifyDocument(Group, a.researchEntity, doc.id);
                 if (res2.error) {
                     errors.push(res2);
                     sails.log.warn('Error: ');
