@@ -3,6 +3,9 @@ node_js:
   - "7.6"
   - "8"
 sudo: true
+cache:
+  directories:
+    - node_modules
 env:
   - CXX=g++-4.8
 addons:
