@@ -22,33 +22,22 @@ module.exports = _.merge({}, BaseModel, {
             return this.getType() + 's';
         }
     },
-    createDraft: function (ResearchEntityModel, researchEntityId, draftData) {
+    createDraft: async function (ResearchEntityModel, researchEntityId, draftData) {
         const selectedDraftData = Document.selectData(draftData);
         selectedDraftData.kind = DocumentKinds.DRAFT;
-        return Promise.all([
-            ResearchEntityModel.findOneById(researchEntityId).populate('drafts'),
-            Document.create(selectedDraftData)
-        ])
-            .spread(function (researchEntity, draft) {
-                researchEntity.drafts.add(draft);
-                return Promise.all([
-                    draft.id,
-                    researchEntity.savePromise()
-                ]);
-            })
-            .spread(function (draftId) {
-                return Promise.all([
-                    draftId,
-                    Authorship.createEmptyAuthorships(draftId, draftData)
-                ]);
-            })
-            .spread(function (draftId) {
-                return Document.findOneById(draftId)
-                    .populate('authorships')
-                    .populate('affiliations')
-                    .populate('authors')
-                    .populate('source');
-            });
+        const documentType = await DocumentType.findOneByKey(selectedDraftData.type);
+        selectedDraftData.documenttype = documentType;
+        const researchEntity = await ResearchEntityModel.findOneById(researchEntityId).populate('drafts');
+        const draft = await Document.create(selectedDraftData);
+        researchEntity.drafts.add(draft);
+        await researchEntity.savePromise();
+        await Authorship.createEmptyAuthorships(draft, draftData.authorships);
+        const completeDraft = await Document.findOneById(draft.id)
+            .populate('authorships')
+            .populate('affiliations')
+            .populate('authors')
+            .populate('source');
+        return completeDraft;
     },
     unverifyDocument: async function (ResearchEntityModel, researchEntityId, documentId) {
         await this.doUnverifyDocument(ResearchEntityModel, researchEntityId, documentId);
@@ -61,10 +50,13 @@ module.exports = _.merge({}, BaseModel, {
             return;
         return authorship.unverify();
     },
-    createDrafts: function (Model, researchEntityId, documents) {
-        return Promise.all(documents.map(function (document) {
-            return Model.createDraft(Model, researchEntityId, document);
-        }));
+    createDrafts: async function (Model, researchEntityId, documents) {
+        const results = [];
+        for (let document of documents) {
+            const res = await Model.createDraft(Model, researchEntityId, document);
+            results.push(res);
+        }
+        return results;
     },
     undiscardDocument: async function (Model, researchEntityId, documentId) {
         const DiscardedModel = getDiscardedModel(Model);
@@ -76,18 +68,34 @@ module.exports = _.merge({}, BaseModel, {
         const AuthorshipModel = getAuthorshipModel(Model);
         const authorships = await AuthorshipModel.find({document: documentId, researchEntity: researchEntityId});
         if (authorships.length > 0)
-            return null;
-        return await DiscardedModel.findOrCreate({researchEntity: researchEntityId, document: documentId});
+            return {
+                error: 'Document verified, must be unverified',
+                item: documentId
+             };
+        const alreadyDiscarded = await DiscardedModel.find({researchEntity: researchEntityId, document: documentId});
+        if (alreadyDiscarded.length > 0)
+            return {
+                error: 'Document already discarded',
+                item: documentId
+            };
+        const newDiscarded = await DiscardedModel.create({researchEntity: researchEntityId, document: documentId});
+        return newDiscarded;
     },
-    discardDocuments: function (Model, researchEntityId, documentIds) {
-        return Promise.all(documentIds.map(function (documentId) {
-            return Model.discardDocument(Model, researchEntityId, documentId);
-        }));
+    discardDocuments: async function (Model, researchEntityId, documentIds) {
+        const results = [];
+        for (let documentId of documentIds) {
+            const res = await Model.discardDocument(Model, researchEntityId, documentId);
+            results.push(res);
+        }
+        return results;
     },
-    verifyDrafts: function (ResearchEntityModel, researchEntityId, draftIds) {
-        return Promise.all(
-            draftIds.map(draftId => ResearchEntityModel.verifyDraft(ResearchEntityModel, researchEntityId, draftId))
-        );
+    verifyDrafts: async function (ResearchEntityModel, researchEntityId, draftIds) {
+        const results = [];
+        for (let draftId of draftIds) {
+            const res = await ResearchEntityModel.verifyDraft(ResearchEntityModel, researchEntityId, draftId);
+            results.push(res);
+        }
+        return results;
     },
     verifyDraft: async function (ResearchEntityModel, researchEntityId, draftId, verificationData) {
         const draft = await Document.findOneById(draftId)
@@ -108,12 +116,11 @@ module.exports = _.merge({}, BaseModel, {
             const alreadyVerifiedDocuments = (await ResearchEntityModel
                 .findOne(researchEntityId)
                 .populate('documents', {
-                    scopusId: draft.scopusId,
-                    synchronized: true
+                    scopusId: draft.scopusId
                 })).documents;
             if (alreadyVerifiedDocuments.length)
                 return {
-                    error: 'Draft already verified (same scopusId)',
+                    error: 'Draft already verified (duplicated scopusId)',
                     item: draft
                 };
         }
@@ -152,10 +159,15 @@ module.exports = _.merge({}, BaseModel, {
 
         return await ResearchEntityModel.doVerifyDocument(docToVerify, researchEntityId, authorshipData);
     },
-    verifyDocuments: function (Model, researchEntityId, documentIds) {
-        return Promise.all(documentIds.map(documentId => Model.verifyDocument(Model, researchEntityId, documentId)));
+    verifyDocuments: async function (Model, researchEntityId, documentIds) {
+        const results = [];
+        for (let documentId of documentIds) {
+            const res = await Model.verifyDocument(Model, researchEntityId, documentId);
+            results.push(res);
+        }
+        return results;
     },
-    verifyDocument: async function (Model, researchEntityId, documentId, verificationData) {
+    verifyDocument: async function (Model, researchEntityId, documentId, verificationData, check=true) {
         const AuthorshipModel = getAuthorshipModel(Model);
         const alreadyVerifiedDocuments = await AuthorshipModel.find({
             document: documentId,
@@ -177,16 +189,15 @@ module.exports = _.merge({}, BaseModel, {
                 error: 'Document not found',
                 item: researchEntityId
             };
-        if (document.scopusId) {
+        if (check && document.scopusId) {
             const alreadyVerifiedDocuments = (await Model
                 .findOne(researchEntityId)
                 .populate('documents', {
-                    scopusId: document.scopusId,
-                    synchronized: true
+                    scopusId: document.scopusId
                 })).documents;
             if (alreadyVerifiedDocuments.length)
                 return {
-                    error: 'Document already verified (same scopusId)',
+                    error: 'Document already verified (duplicated scopusId)',
                     item: document
                 };
         }
@@ -220,10 +231,13 @@ module.exports = _.merge({}, BaseModel, {
     deleteDraft: function (Model, draftId) {
         return Document.destroy({id: draftId});
     },
-    deleteDrafts: function (Model, draftIds) {
-        return Promise.all(draftIds.map(function (draftId) {
-            return Document.destroy({id: draftId});
-        }));
+    deleteDrafts: async function (Model, draftIds) {
+        const results = [];
+        for (let draftId of draftIds) {
+            const res = await Document.destroy({id: draftId});
+            results.push(res);
+        }
+        return results;
     },
     addTags: function (TagModel, userId, documentId, tags) {
         return TagModel.destroy({researchEntity: userId, document: documentId})
@@ -239,11 +253,13 @@ module.exports = _.merge({}, BaseModel, {
                 )
             )
     },
-    makeInternalRequest: async function (researchEntityModel, researchEntitySearchCriteria, qs, attribute) {
+    makeInternalRequest: async function (researchEntityModel, researchEntitySearchCriteria, baseUrl, qs, attribute) {
         const researchEntity = await researchEntityModel.findOne(researchEntitySearchCriteria);
         if (!researchEntity)
-            throw Error('404 page not found');
-        const baseUrl = sails.getBaseUrl();
+            return {
+                error: "404 not found",
+                item: researchEntitySearchCriteria
+            };
         const path = `/api/v1/${researchEntity.getUrlSection()}/${researchEntity.id}/${attribute}`;
         qs.populate = ['source', 'affiliations', 'authorships', 'institutes', 'documenttype'];
         const reqOptions = {

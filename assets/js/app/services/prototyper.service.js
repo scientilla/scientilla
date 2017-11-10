@@ -133,6 +133,24 @@
                         return tagLabel.id === gt.tagLabel;
                     });
                 });
+            },
+            getActiveMembers: function () {
+                return this.members.filter(u => {
+                    const userMembersihp = this.memberships.find(m => m.user === u.id);
+                    return userMembersihp.synchronized && userMembersihp.active;
+                });
+            },
+            getCollaborators: function () {
+                return this.members.filter(u => {
+                    const userMembersihp = this.memberships.find(m => m.user === u.id);
+                    return !userMembersihp.synchronized && userMembersihp.active;
+                });
+            },
+            getFormerMembers: function () {
+                return this.members.filter(u => {
+                    const userMembersihp = this.memberships.find(m => m.user === u.id);
+                    return !userMembersihp.active;
+                });
             }
         };
 

@@ -46,7 +46,9 @@
                 EventsService.DRAFT_VERIFIED,
                 EventsService.DOCUMENT_VERIFIED,
                 EventsService.DRAFT_UNVERIFIED,
-                EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED
+                EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED,
+                EventsService.DOCUMENT_AUTORSHIP_PRIVACY_UPDATED,
+                EventsService.DOCUMENT_AUTORSHIP_FAVORITE_UPDATED
             ], updateList);
         };
 

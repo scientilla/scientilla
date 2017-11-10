@@ -3,9 +3,12 @@
 
 const request = require('requestretry');
 const _ = require('lodash');
-const Promise = require("bluebird");
+const Promise = require('bluebird');
+const XML = require('pixl-xml');
 const SourceTypes = require("./SourceTypes");
 const DocumentTypes = require("./DocumentTypes");
+
+const elsevierConfig = sails.config.scientilla.externalConnectors.elsevier;
 
 module.exports = {
     getConfig,
@@ -35,8 +38,9 @@ function getDocument(scopusId) {
     return documentDataRequest(scopusId, 0);
 }
 
-function getDocumentCitations(scopusId, date) {
-    return documentCitationsRequest(scopusId, date);
+function getDocumentCitations(scopusId) {
+    const eId = '2-s2.0-' + scopusId;
+    return documentCitationsRequest(eId);
 }
 
 function getSingleSearchConfig(search) {
@@ -52,10 +56,10 @@ function getSingleSearchConfig(search) {
 
 function getSearchReqParams(queryString, params) {
     return {
-        uri: sails.config.scientilla.scopus.url + '/content/search/scopus',
+        uri: elsevierConfig.scopus.url + '/content/search/scopus',
         headers: {
-            'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
-            'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
+            'X-ELS-APIKey': elsevierConfig.scopus.apiKey,
+            'X-ELS-Insttoken': elsevierConfig.scopus.token,
         },
         qs: {
             start: params.skip,
@@ -69,7 +73,7 @@ function getSearchReqParams(queryString, params) {
 
 async function documentDataRequest(scopusId, attempt) {
     let res, documentData;
-    const requestParams = getRequestParams('/content/abstract/scopus_id/' + scopusId, {view: 'FULL'});
+    const requestParams = getScopusRequestParams('/content/abstract/scopus_id/' + scopusId, {view: 'FULL'});
     try {
         res = await request.get(requestParams);
     } catch (err) {
@@ -227,57 +231,61 @@ async function documentDataRequest(scopusId, attempt) {
 }
 
 
-async function documentCitationsRequest(scopusId, date) {
-    let res, citations;
-    const requestParams = getRequestParams('/content/abstract/citations', {scopus_id: scopusId, date});
+async function documentCitationsRequest(eId) {
+    let res, citations, body;
+    const requestParams = getScivalRequestParams('/REST/', {citations: eId});
     try {
         res = await request.get(requestParams);
     } catch (err) {
-        sails.log.debug('Scopus citations request failed. Scopus Id = ' + scopusId);
+        sails.log.debug('Scopus citations request failed. eId = ' + eId);
         sails.log.debug(err.error);
-        return {};
+        return [];
     }
 
     try {
-        const body = res.body;
+        body = res.body;
         citations = formatDocumentCitations(body);
-
     } catch (err) {
-        sails.log.debug('Document citations failed. Scopus Id = ' + scopusId);
+        sails.log.debug('Document citations failed to parse XML. eId = ' + eId);
+        sails.log.debug('XML: ' + body);
         sails.log.debug(err);
 
-        return {};
+        return [];
     }
     return citations;
 }
 
-function formatDocumentCitations(documentCitations) {
-    const columnHeading = _.get(documentCitations, 'abstract-citations-response.citeColumnTotalXML.citeCountHeader.columnHeading');
-    const columnTotal = _.get(documentCitations, 'abstract-citations-response.citeColumnTotalXML.citeCountHeader.columnTotal');
+function formatDocumentCitations(XMLDocumentCitations) {
+    const documentCitations = XML.parse(XMLDocumentCitations);
 
-    if (_.isNil(columnHeading))
-        return [];
+    if (documentCitations.citeColumnTotalXML.citeCountHeader.grandTotal === '0')
+        return [{
+            year: (new Date()).getFullYear(),
+            value: 0
+        }];
 
-    if (Array.isArray(columnHeading))
-        return columnHeading.map((v, k) => ({
-            year: v.$,
-            value: columnTotal[k].$
+    const years = documentCitations.citeColumnTotalXML.citeCountHeader.columnHeading;
+    const values = documentCitations.citeColumnTotalXML.citeCountHeader.columnTotal;
+
+    if (_.isArray(years))
+        return years.map((y, i) => ({
+            year: y,
+            value: values[i]
         }));
 
     return [{
-        year: columnHeading,
-        value: columnTotal
+        year: years,
+        value: values
     }];
-
 }
 
 
-function getRequestParams(path, qs) {
+function getScopusRequestParams(path, qs) {
     return {
-        uri: sails.config.scientilla.scopus.url + path,
+        uri: elsevierConfig.scopus.url + path,
         headers: {
-            'X-ELS-APIKey': sails.config.scientilla.scopus.apiKey,
-            'X-ELS-Insttoken': sails.config.scientilla.scopus.token,
+            'X-ELS-APIKey': elsevierConfig.scopus.apiKey,
+            'X-ELS-Insttoken': elsevierConfig.scopus.token,
             Accept: 'application/json'
         },
         qs: qs,
@@ -289,8 +297,22 @@ function getRequestParams(path, qs) {
 }
 
 
+function getScivalRequestParams(path, qs) {
+    return {
+        uri: elsevierConfig.scival.url + path,
+        headers: {},
+        qs: _.defaults({
+            clientKey: elsevierConfig.scival.clientKey
+        }, qs),
+        fullResponse: true,
+        maxAttempts: 5,
+        retryDelay: 500
+    };
+}
+
+
 function fieldExtract(res) {
-    if(_.get(res, 'service-error'))
+    if (_.get(res, 'service-error'))
         throw new _.get(res, 'service-error.status.statusText');
 
     const error = _.get(res, 'search-results.entry[0].error');

@@ -81,6 +81,7 @@
 
         vm.$onInit = function () {
             delete vm.group.members;
+            delete vm.group.memberships;
             FormForConfiguration.enableAutoLabels();
             $scope.$watch('vm.group.name', nameChanged);
         };

@@ -38,11 +38,11 @@ CREATE OR REPLACE VIEW documentduplicate AS
          FROM
            dd
            JOIN document d ON
-                             lower(REPLACE(d."authorsStr", ' ', '')) =
-                             lower(REPLACE(dd."authorsStr", ' ', ''))
+                             lower(translate(d."authorsStr", ' .', '')) =
+                             lower(translate(dd."authorsStr", ' .', ''))
                              AND
-                             lower(replace(replace(d."title", ' ', ''), '-', '')) =
-                             lower(replace(replace(dd."title", ' ', ''), '-', ''))
+                             lower(translate(d."title", ' -.', '')) =
+                             lower(translate(dd."title", ' -.', ''))
          WHERE
            d."authorsStr" != '' AND
            dd."authorsStr" != '' AND
@@ -60,7 +60,7 @@ CREATE OR REPLACE VIEW documentduplicate AS
            dd
            JOIN document d
              ON
-               lower(REPLACE(d."doi", ' ', '')) = lower(REPLACE(dd."doi", ' ', ''))
+               lower(translate(d."doi", ' ', '')) = lower(translate(dd."doi", ' ', ''))
          WHERE
            d.doi != '' AND
            dd.doi != ''
@@ -76,7 +76,7 @@ CREATE OR REPLACE VIEW documentduplicate AS
            dd
            JOIN document d
              ON
-               lower(REPLACE(d."scopusId", ' ', '')) = lower(REPLACE(dd."scopusId", ' ', ''))
+               lower(translate(d."scopusId", ' ', '')) = lower(translate(dd."scopusId", ' ', ''))
          WHERE
            d."scopusId" != '' AND
            dd."scopusId" != ''
@@ -123,11 +123,11 @@ CREATE OR REPLACE VIEW documentduplicate AS
          FROM
            dd
            JOIN document d ON
-                             lower(REPLACE(d."authorsStr", ' ', '')) =
-                             lower(REPLACE(dd."authorsStr", ' ', ''))
+                             lower(translate(d."authorsStr", ' .', '')) =
+                             lower(translate(dd."authorsStr", ' .', ''))
                              AND
-                             lower(replace(replace(d."title", ' ', ''), '-', '')) =
-                             lower(replace(replace(dd."title", ' ', ''), '-', ''))
+                             lower(translate(d."title", ' -.', '')) =
+                             lower(translate(dd."title", ' -.', ''))
          WHERE
            d."authorsStr" != '' AND
            dd."authorsStr" != '' AND
@@ -145,7 +145,7 @@ CREATE OR REPLACE VIEW documentduplicate AS
            dd
            JOIN document d
              ON
-               lower(REPLACE(d."doi", ' ', '')) = lower(REPLACE(dd."doi", ' ', ''))
+               lower(translate(d."doi", ' ', '')) = lower(translate(dd."doi", ' ', ''))
          WHERE
            d.doi != '' AND
            dd.doi != ''
@@ -161,7 +161,7 @@ CREATE OR REPLACE VIEW documentduplicate AS
            dd
            JOIN document d
              ON
-               lower(REPLACE(d."scopusId", ' ', '')) = lower(REPLACE(dd."scopusId", ' ', ''))
+               lower(translate(d."scopusId", ' ', '')) = lower(translate(dd."scopusId", ' ', ''))
          WHERE
            d."scopusId" != '' AND
            dd."scopusId" != ''

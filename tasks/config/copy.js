@@ -38,7 +38,9 @@ module.exports = function (grunt) {
                     'restangular/dist/restangular.min.js',
                     'd3/d3.js',
                     'nvd3/build/nv.d3.js',
-                    'angular-nvd3/dist/angular-nvd3.min.js'
+                    'angular-nvd3/dist/angular-nvd3.min.js',
+                    'zone/dist/zone.min.js',
+                    'angular1-zones/angular1-zones.js'
                 ],
                 flatten: true,
                 dest: '.tmp/public/js/dependencies'

@@ -48,7 +48,7 @@ module.exports = {
         if (!document && searchKey === 'doi') {
             if (!document) {
                 const documentData = await Connector.getDocumentByDoi(origin, searchValue);
-                document = await ExternalImporter.createExternalDocument(origin, documentData);
+                document = await ExternalImporter.createOrUpdateExternalDocument(origin, documentData);
             }
         }
         if (!document && searchKey === 'originId') {
@@ -70,7 +70,7 @@ module.exports = {
             ]);
 
     },
-    createExternalDocument: async (origin, documentData, synchronized = true) => {
+    createOrUpdateExternalDocument: async (origin, documentData, synchronized = true) => {
         if (!documentData || !origin)
             return {};
 
@@ -80,15 +80,13 @@ module.exports = {
 
         const criteria = {
             origin: origin,
-            kind: DocumentKinds.EXTERNAL
+            kind: DocumentKinds.EXTERNAL,
+            [fieldMapper[origin]]: documentData[fieldMapper[origin]]
         };
-        criteria[fieldMapper[origin]] = documentData[fieldMapper[origin]];
 
         documentData.origin = origin;
         documentData.kind = DocumentKinds.EXTERNAL;
         documentData.synchronized = synchronized;
-        if (documentData.source)
-            documentData.source = documentData.source.id;
 
         try {
             return await Document.createOrUpdate(criteria, documentData);

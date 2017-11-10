@@ -13,7 +13,8 @@
             getDocumentsFields: getDocumentsFields,
             getDocumentTypes: getDocumentTypes,
             getDocumentTypeLabel: getDocumentTypeLabel,
-            getSourceTypes: getSourceTypes
+            getSourceTypes: getSourceTypes,
+            getSourceTypeLabel: getSourceTypeLabel
         };
 
         return service;
@@ -196,6 +197,11 @@
         function getDocumentTypeLabel(documentTypeKey) {
             const documentTypes = getDocumentTypes();
             return _.find(documentTypes, {key: documentTypeKey}).label;
+        }
+
+        function getSourceTypeLabel(sourceTypeKey) {
+            const sourceTypes = getSourceTypes();
+            return _.find(sourceTypes, {id: sourceTypeKey}).label;
         }
     }
 })();

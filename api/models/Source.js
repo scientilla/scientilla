@@ -135,6 +135,12 @@ module.exports = {
 
         return sourcesToRemove;
 
+    },
+    beforeCreate: async (sourceData, cb) => {
+        const sourceType = await SourceType.findOneByKey(sourceData.type);
+        if (sourceType)
+            sourceData.sourcetype = sourceType.id;
+        cb();
     }
 };
 

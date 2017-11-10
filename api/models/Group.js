@@ -40,6 +40,10 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'memberships',
             through: 'membership'
         },
+        memberships: {
+            collection: 'membership',
+            via: 'group'
+        },
         drafts: {
             collection: 'Document',
             via: 'draftGroupCreator'
@@ -146,6 +150,8 @@ module.exports = _.merge({}, ResearchEntity, {
         return AuthorshipGroup;
     },
     updateProfile: async function(groupId, groupData){
+        delete groupData.memberships;
+        delete groupData.members;
         const oldResearchEntity = await Group.findOne({id: groupId});
         const res = await Group.update({id: groupId}, groupData);
         const newResearchEntity = res[0];

@@ -1,8 +1,9 @@
 SELECT
-  d.type,
+  d.year,
   count(*)
 FROM authorship a
   JOIN document d ON a.document = d.id
+  JOIN source s ON d.source = s.id
 WHERE a."researchEntity" = $1
-      AND type <> 'invited_talk'
-GROUP BY d.type
+      AND s.type = 'bookseries'
+GROUP BY d.year

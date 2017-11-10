@@ -88,9 +88,10 @@ module.exports = {
         res.halt(Model.updateDraft(Model, draftId, draftData));
     },
     getChartsData: function (req, res) {
-        var modelName = req.options.model || req.options.controller;
-        var id = req.params.researchEntityId;
-        res.halt(Chart.getChartsData(id, modelName));
+        const modelName = req.options.model || req.options.controller;
+        const id = req.params.researchEntityId;
+        const charts = req.param('charts');
+        res.halt(Chart.getChartsData(id, modelName, charts));
     },
     setAuthorhips: function (req, res) {
         const draftId = req.params.documentId;
@@ -120,6 +121,13 @@ module.exports = {
         const privacy = req.body.privacy;
         res.halt(AuthorshipModel.setPrivacy(documentId, researchEntityId, privacy));
     },
+    setAuthorshipFavorite: function (req, res) {
+        const researchEntityId = req.params.researchEntityId;
+        const documentId = req.params.documentId;
+        const AuthorshipModel = getAuthorshipModel(req);
+        const favorite = req.body.favorite;
+        res.halt(AuthorshipModel.setFavorite(documentId, researchEntityId, favorite));
+    },
     getPublicDocuments: async (req, res) => makePublicAPIrequest(req, res, 'documents'),
     getPublications: async (req, res) => makePublicAPIrequest(req, res, 'publications'),
     getDisseminationTalks: async (req, res) => makePublicAPIrequest(req, res, 'disseminationTalks'),
@@ -132,7 +140,8 @@ function makePublicAPIrequest(req, res, attribute) {
     const searchCriteria = {
         [searchKey]: req.params[searchKey]
     };
-    res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, req.query, attribute));
+    const baseUrl = `${req.protocol}://${req.host}:${sails.config.port}`;
+    res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, baseUrl, req.query, attribute));
 }
 
 function getModel(req) {

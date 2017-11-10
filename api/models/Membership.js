@@ -12,7 +12,10 @@ module.exports = {
         },
         group: {
             model: 'Group'
-        }
+        },
+        lastsynch: 'datetime',
+        active: 'boolean',
+        synchronized: 'boolean'
     }
 };
 
