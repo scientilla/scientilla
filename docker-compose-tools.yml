@@ -19,7 +19,7 @@ services:
     extends: node
     entrypoint: grunt
   db-test:
-    image: postgres:9.6
+    image: postgres:10
     environment:
       POSTGRES_DB: scientillatest
       POSTGRES_USER: scientilla

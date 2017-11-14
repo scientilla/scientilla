@@ -14,7 +14,7 @@ services:
       NODE_ENV: development
     command: bash -c "sails debug --expose_debug_as=v8debug > ./logs/sailslog"
   db:
-    image: postgres:9.6
+    image: postgres:10
     restart: always
     volumes:
       - scientillapgdata:/var/lib/postgresql/data
