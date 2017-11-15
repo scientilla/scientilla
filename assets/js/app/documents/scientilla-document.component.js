@@ -75,6 +75,7 @@
             vm.showPrivateTags = vm.showPrivateTags || false;
             vm.verifiedCount = getVerifiedCount();
             vm.verifiedNames = getVerfiedNames();
+            vm.scopusCitationsYearStr = getScopusCitationPerYearString();
             if (vm.checkDuplicates)
                 checkDuplicate();
 
@@ -136,6 +137,12 @@
 
         function editTags() {
             ModalService.openScientillaTagForm(vm.document);
+        }
+
+        function getScopusCitationPerYearString() {
+            return vm.document.citations.filter(c => c.origin === documentOrigins.SCOPUS)
+                .map(c => c.year + ':' + c.citations)
+                .join(' ');
         }
 
         function showScopusMetrics() {

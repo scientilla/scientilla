@@ -76,13 +76,13 @@
                       title="Scopus metrics"></span>
                 </div>
 
-                <div ng-if="vm.hasMetric(vm.metrics.CITATIONS)" class="small">
+                <div ng-if="vm.hasMetric(vm.metrics.CITATIONS)" class="small" title="Citations in scopus - {{vm.scopusCitationsYearStr}}">
                     Cit. {{ vm.getMetricValue(vm.metrics.CITATIONS) }}
                 </div>
-                <div ng-if="vm.hasMetric(vm.metrics.SNIP)" class="small">
+                <div ng-if="vm.hasMetric(vm.metrics.SNIP)" class="small" title="Source Normalized Impact per Paper">
                     SNIP {{ vm.getMetricValue(vm.metrics.SNIP) | number:1 }}
                 </div>
-                <div ng-if="vm.hasMetric(vm.metrics.SJR)" class="small">
+                <div ng-if="vm.hasMetric(vm.metrics.SJR)" class="small" title="Scimago Journal Rank">
                     SJR {{ vm.getMetricValue(vm.metrics.SJR) | number:1 }}
                 </div>
             </div>
@@ -91,7 +91,7 @@
                     <span class="scientilla-icon scientilla-icon-wos"
                           title="Web of Science metrics"></span>
                 </div>
-                <div ng-if="vm.hasMetric(vm.metrics.IF)" class="small">
+                <div ng-if="vm.hasMetric(vm.metrics.IF)" class="small" title="Impact factor">
                     IF {{ vm.getMetricValue(vm.metrics.IF) | number:1 }}
                 </div>
             </div>
