@@ -14,7 +14,6 @@
 
     scientillaDocument.$inject = [
         'ModalService',
-        'researchEntityService',
         'config',
         'DocumentLabels',
         'context',
@@ -22,7 +21,7 @@
         'documentListSections'
     ];
 
-    function scientillaDocument(ModalService, researchEntityService, config, DocumentLabels, context, documentOrigins, documentListSections) {
+    function scientillaDocument(ModalService, config, DocumentLabels, context, documentOrigins, documentListSections) {
         const vm = this;
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
@@ -32,6 +31,7 @@
         vm.showWOSMetrics = showWOSMetrics;
         vm.getMetricValue = getMetricValue;
         vm.hasMetric = hasMetric;
+        vm.getVerfiedNamesHTML = getVerfiedNamesHTML;
         vm.isPublic = isPublic;
         vm.isFavorite = isFavorite;
         vm.isPrivacyToShow = isPrivacyToShow;
@@ -74,7 +74,6 @@
         vm.$onInit = function () {
             vm.showPrivateTags = vm.showPrivateTags || false;
             vm.verifiedCount = getVerifiedCount();
-            vm.verifiedNames = getVerfiedNames();
             vm.scopusCitationsYearStr = getScopusCitationPerYearString();
             if (vm.checkDuplicates)
                 checkDuplicate();
@@ -185,10 +184,10 @@
                 .concat(vm.document.groupAuthorships).length;
         }
 
-        function getVerfiedNames() {
-            return vm.document.groups.map(g => g.name).join('\n') +
-                '\n' +
-                vm.document.authors.map(a => a.name + ' ' + a.surname).join('\n');
+        function getVerfiedNamesHTML() {
+            return vm.document.groups.map(g => '- <b>' + g.name + '</b>').join('<br>') +
+                '<br>' +
+                vm.document.authors.map(a => '- ' + a.name + ' ' + a.surname).join('<br>');
         }
 
         function isSynchronized() {

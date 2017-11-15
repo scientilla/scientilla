@@ -34,7 +34,7 @@
             </div>
 
             <div class="scientilla-document-icons-bottom"
-                 title="{{vm.verifiedNames}}">
+                 uib-tooltip-html="'<p>This document is verified by:</p><p>' + vm.getVerfiedNamesHTML() + '</p>'">
                 <span class="fa fa-check"></span> {{vm.verifiedCount}}
             </div>
             <div ng-if="vm.document.origin==='scopus'" class="scientilla-document-icons-bottom">
@@ -76,7 +76,8 @@
                       title="Scopus metrics"></span>
                 </div>
 
-                <div ng-if="vm.hasMetric(vm.metrics.CITATIONS)" class="small" title="Citations in scopus - {{vm.scopusCitationsYearStr}}">
+                <div ng-if="vm.hasMetric(vm.metrics.CITATIONS)" class="small"
+                     title="Citations in scopus - {{vm.scopusCitationsYearStr}}">
                     Cit. {{ vm.getMetricValue(vm.metrics.CITATIONS) }}
                 </div>
                 <div ng-if="vm.hasMetric(vm.metrics.SNIP)" class="small" title="Source Normalized Impact per Paper">
