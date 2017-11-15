@@ -30,27 +30,34 @@
     <small>
         ({{vm.document.year}})
     </small>
-
-</div>
-
-<hr>
-
-<div class="scientilla-document-details-ids">
-    <small ng-if="vm.document.doi" class="scientilla-document-doi">
-        <span ng-bind-html='vm.document | doi'></span>
-    </small>
-    <small ng-if="vm.document.scopusId">
-        <label>scopus id:</label> <a
-            href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document.scopusId}}&origin=inward"
-            target="_blank">{{vm.document.scopusId}}</a>
-    </small>
-    <small ng-if="vm.document.wosId">
-        <label>WOS id:</label> {{vm.document.wosId}}
-    </small>
+    <div>
+        <small ng-if="vm.document.doi" class="scientilla-document-doi">
+            <span ng-bind-html='vm.document | doi'></span>
+        </small>
+    </div>
     <small ng-if="vm.sourceType">
         <label>Source type:</label> {{vm.sourceType}}
     </small>
     <small ng-if="vm.type">
         <label>Document type:</label> {{vm.type}}
     </small>
+
+</div>
+
+<hr>
+
+<div class="scientilla-document-details-ids">
+    <div ng-if="vm.document.scopusId">
+        <small>
+            <label>Scopus id:</label>
+            {{vm.document.scopusId}}
+            <a href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document.scopusId}}&origin=inward"
+               target="_blank">[View at Scopus]</a>
+        </small>
+    </div>
+    <div ng-if="vm.document.wosId">
+        <small>
+            <label>WOS id:</label> {{vm.document.wosId}}
+        </small>
+    </div>
 </div>

@@ -5,7 +5,6 @@
 
 const _ = require('lodash');
 
-const chunkSize = 100;
 const interval = 12 * 60 * 60 * 1000;
 
 module.exports = {
@@ -191,42 +190,34 @@ async function importDocuments(documentScopusIds) {
     if (_.isEmpty(documentScopusIds))
         return [];
 
-    let documents = [];
-    const docsIterator = chunks(documentScopusIds, chunkSize);
+    const documents = [];
+    for (const scopusId of documentScopusIds) {
+        let d = await Document.findOne({
+            kind: DocumentKinds.EXTERNAL,
+            origin: DocumentOrigins.SCOPUS,
+            scopusId: scopusId
+        });
 
-    for (let scopusId of docsIterator)
-        documents = documents.concat(await updateDocs(scopusId));
-
-    return documents;
-
-    async function updateDocs(documentScopusIds) {
-        const docs = [];
-        for (const scopusId of documentScopusIds) {
-            let document = await Document.findOne({
-                kind: DocumentKinds.EXTERNAL,
-                origin: DocumentOrigins.SCOPUS,
-                scopusId: scopusId
-            });
-
-            if (document && document.updatedAt > getUpdateLimitDate()) {
-                docs.push(document);
-                continue;
-            }
-
-            try {
-                document = await getAndCreateOrUpdateDocument(scopusId);
-                if (_.has(document, 'scopusId')) {
-                    await updateCitations(document);
-                    docs.push(document);
-                }
-            }
-            catch (err) {
-                sails.log.debug('Updater: Document failed ' + scopusId);
-            }
+        if (d && d.updatedAt > getUpdateLimitDate()) {
+            documents.push(d);
+            continue;
         }
 
-        return docs;
+        try {
+            const document = await getAndCreateOrUpdateDocument(scopusId);
+            if (_.has(document, 'scopusId')) {
+                await updateCitations(document);
+                documents.push(document);
+            }
+            else
+                sails.log.debug('Updater: Document failed ' + scopusId);
+        }
+        catch (err) {
+            sails.log.debug('Updater: Document failed ' + scopusId);
+        }
     }
+
+    return documents;
 }
 
 async function getAndCreateOrUpdateDocument(scopusId) {
@@ -251,13 +242,6 @@ async function updateCitations(document) {
             citations: cit.value
         });
 
-}
-
-function* chunks(array, chunkSize) {
-    const len = array.length;
-    for (let i = 0; i < len; i += chunkSize) {
-        yield array.slice(i, i + chunkSize);
-    }
 }
 
 function getUpdateLimitDate() {

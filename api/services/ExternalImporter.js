@@ -80,16 +80,13 @@ module.exports = {
 
         const criteria = {
             origin: origin,
-            kind: DocumentKinds.EXTERNAL
+            kind: DocumentKinds.EXTERNAL,
+            [fieldMapper[origin]]: documentData[fieldMapper[origin]]
         };
-        criteria[fieldMapper[origin]] = documentData[fieldMapper[origin]];
 
         documentData.origin = origin;
         documentData.kind = DocumentKinds.EXTERNAL;
         documentData.synchronized = synchronized;
-        documentData.documenttype = await DocumentType.findOneByKey(documentData.type);
-        if (documentData.source)
-            documentData.source = documentData.source.id;
 
         try {
             return await Document.createOrUpdate(criteria, documentData);

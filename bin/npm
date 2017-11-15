@@ -5,7 +5,10 @@ export USERID
 
 if [ "$1" == "test" ]; then
     docker-compose -f docker-compose-tools.yml up -d db-test
+    sleep 1
     docker-compose -f docker-compose-tools.yml run --rm npm test
+    docker-compose -f docker-compose-tools.yml stop db-test
+    docker-compose -f docker-compose-tools.yml rm -f db-test
 else
     docker-compose -f docker-compose-tools.yml run --rm npm $*
 fi

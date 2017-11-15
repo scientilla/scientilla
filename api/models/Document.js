@@ -1,4 +1,4 @@
-/* global Document, sails, User, ObjectComparer, Connector, Authorship, Affiliation, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer */
+/* global Document, sails, User, ObjectComparer, Connector, Source, Authorship, Affiliation, Institute, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer */
 'use strict';
 
 /**
@@ -414,20 +414,27 @@ module.exports = _.merge({}, BaseModel, {
     },
     createOrUpdate: async function (criteria, documentData) {
         const selectedData = Document.selectData(documentData);
+        selectedData.source = await Document.getFixedCollection(Source, selectedData.source);
+        selectedData.documenttype = await Document.getFixedCollection(DocumentType, selectedData.documenttype);
+
+        const authorships = _.cloneDeep(documentData.authorships);
+
+        if (_.isArray(authorships))
+            for (const a of authorships)
+                a.affiliations = (await Document.getFixedCollection(Institute, a.affiliations));
 
         let doc = await Document.findOne(criteria);
-        if (doc)
+        if (doc) {
             await Document.update(criteria, selectedData);
-        else
-            await Document.create(selectedData);
-
-        doc = await Document.findOne(criteria);
-        if (!doc)
-            throw 'Document not created';
-
-        await Authorship.destroy({document: doc.id});
-        if (documentData.authorships)
-            await Authorship.createEmptyAuthorships(doc.id, documentData);
+            doc = await Document.findOne(criteria);
+            await Authorship.updateAuthorships(doc, authorships);
+        }
+        else {
+            doc = await Document.create(selectedData);
+            if (!doc)
+                throw 'Document not created';
+            await Authorship.createEmptyAuthorships(doc, authorships);
+        }
 
         return doc;
     },

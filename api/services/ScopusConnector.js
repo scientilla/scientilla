@@ -232,7 +232,7 @@ async function documentDataRequest(scopusId, attempt) {
 
 
 async function documentCitationsRequest(eId) {
-    let res, citations;
+    let res, citations, body;
     const requestParams = getScivalRequestParams('/REST/', {citations: eId});
     try {
         res = await request.get(requestParams);
@@ -243,11 +243,11 @@ async function documentCitationsRequest(eId) {
     }
 
     try {
-        const body = res.body;
+        body = res.body;
         citations = formatDocumentCitations(body);
-
     } catch (err) {
-        sails.log.debug('Document citations failed. eId = ' + eId);
+        sails.log.debug('Document citations failed to parse XML. eId = ' + eId);
+        sails.log.debug('XML: ' + body);
         sails.log.debug(err);
 
         return [];

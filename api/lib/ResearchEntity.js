@@ -31,7 +31,7 @@ module.exports = _.merge({}, BaseModel, {
         const draft = await Document.create(selectedDraftData);
         researchEntity.drafts.add(draft);
         await researchEntity.savePromise();
-        await Authorship.createEmptyAuthorships(draft.id, draftData);
+        await Authorship.createEmptyAuthorships(draft, draftData.authorships);
         const completeDraft = await Document.findOneById(draft.id)
             .populate('authorships')
             .populate('affiliations')

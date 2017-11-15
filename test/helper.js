@@ -1,4 +1,4 @@
-/* global Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source, ExternalDocument */
+/* global Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source, ExternalDocument, ExternalImporter */
 'use strict';
 
 const should = require('should');
@@ -367,11 +367,7 @@ async function groupDeleteDrafts(group, draftIds, respCode = 200) {
 }
 
 async function createExternalDocument(documentData, origin = DocumentOrigins.SCOPUS) {
-    documentData.origin = origin;
-    const selectedDraftData = Document.selectData(documentData);
-    selectedDraftData.kind = DocumentKinds.EXTERNAL;
-    const document = await Document.create(selectedDraftData);
-    await Authorship.createEmptyAuthorships(document.id, documentData);
+    const document = await ExternalImporter.createOrUpdateExternalDocument(origin, documentData);
     return Document.findOneById(document.id)
         .populate('authorships')
         .populate('affiliations')
