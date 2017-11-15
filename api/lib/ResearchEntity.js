@@ -18,7 +18,7 @@ const request = require('request-promise');
 
 module.exports = _.merge({}, BaseModel, {
     attributes: {
-        getUrlSection: function() {
+        getUrlSection: function () {
             return this.getType() + 's';
         }
     },
@@ -67,17 +67,17 @@ module.exports = _.merge({}, BaseModel, {
         const DiscardedModel = getDiscardedModel(Model);
         const AuthorshipModel = getAuthorshipModel(Model);
         const authorships = await AuthorshipModel.find({document: documentId, researchEntity: researchEntityId});
-        if (authorships.length > 0)
+        if (authorships.length > 0) {
             return {
                 error: 'Document verified, must be unverified',
                 item: documentId
-             };
-        const alreadyDiscarded = await DiscardedModel.find({researchEntity: researchEntityId, document: documentId});
-        if (alreadyDiscarded.length > 0)
-            return {
-                error: 'Document already discarded',
-                item: documentId
             };
+        }
+        const alreadyDiscarded = await DiscardedModel.find({researchEntity: researchEntityId, document: documentId});
+        if (alreadyDiscarded.length > 0) {
+            sails.log.info(`${Model.identity} ${researchEntityId} tried to discard document ${documentId} but was already discarded`);
+            return alreadyDiscarded[0];
+        }
         const newDiscarded = await DiscardedModel.create({researchEntity: researchEntityId, document: documentId});
         return newDiscarded;
     },
@@ -167,7 +167,7 @@ module.exports = _.merge({}, BaseModel, {
         }
         return results;
     },
-    verifyDocument: async function (Model, researchEntityId, documentId, verificationData, check=true) {
+    verifyDocument: async function (Model, researchEntityId, documentId, verificationData, check = true) {
         const AuthorshipModel = getAuthorshipModel(Model);
         const alreadyVerifiedDocuments = await AuthorshipModel.find({
             document: documentId,

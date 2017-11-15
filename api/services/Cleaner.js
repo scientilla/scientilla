@@ -82,10 +82,12 @@ async function cleanSourceCopies() {
 async function cleanDocumentCopies() {
     const mergedDocuments = [];
     const nonMergedDocuments = [];
+    const nonConnectedDocuments = [];
     const documents = await Document.findByKind(DocumentKinds.VERIFIED);
     sails.log.info(`${documents.length} documents to check found`);
 
     for (let partialDoc of documents) {
+
         const doc = await Document.findOneById(partialDoc.id)
             .populate('authors')
             .populate('groups')
@@ -98,12 +100,14 @@ async function cleanDocumentCopies() {
             .populate('discardedG');
         if (Document.getNumberOfConnections(doc) == 0) {
             sails.log.warn(`Document with id ${doc.id} is a verified document but has no connections`);
+            nonConnectedDocuments.push(doc);
             continue;
         }
         const errors = [];
-        const copies = await Document.findCopies(doc);
-        if (copies.length == 0)
+        const copies = await Document.findCopies(doc, null, false);
+        if (copies.length == 0){
             continue;
+        }
         const copy = copies[0];
         for (let d of doc.discarded) {
             sails.log.info(`User ${d.researchEntity} is discarding document ${copy.id} (${copy.title})`);
@@ -193,4 +197,5 @@ async function cleanDocumentCopies() {
     }
     sails.log.info(`${mergedDocuments.length} documents merged`);
     sails.log.info(`${nonMergedDocuments.length} documents were not merged because of some error`);
+    sails.log.info(`${nonConnectedDocuments.length} documents were not connected to any research entity in any way`);
 }

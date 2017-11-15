@@ -373,7 +373,7 @@ module.exports = _.merge({}, BaseModel, {
         });
         return suggestedDocuments;
     },
-    findCopies: async function (document, AuthorshipPositionNotToCheck = null) {
+    findCopies: async function (document, AuthorshipPositionNotToCheck = null, excludeMultipleVerification = true) {
         function areAuthorshipsEqual(as1, as2) {
             return as1.every(a1 => {
                 const a2 = as2.find(a2 => a1.position === a2.position);
@@ -392,12 +392,22 @@ module.exports = _.merge({}, BaseModel, {
         query.kind = DocumentKinds.VERIFIED;
         const similarDocuments = await Document.find(query)
             .populate('authorships')
-            .populate('affiliations');
+            .populate('affiliations')
+            .populate('groups');
         const draftFullAuthorships = document.getFullAuthorships();
-        const copies = similarDocuments.filter(d => {
+        const tmpCopies = similarDocuments.filter(d => {
             const copyFullAuthorships = d.getFullAuthorships();
             return areAuthorshipsEqual(draftFullAuthorships, copyFullAuthorships) &&
                 areAuthorshipsEqual(copyFullAuthorships, draftFullAuthorships);
+        });
+        const copies = excludeMultipleVerification ? tmpCopies : tmpCopies.filter(d => {
+            const copyFullAuthorships = d.getFullAuthorships();
+            const noDoubleAuthors = draftFullAuthorships.every(a1 => {
+                const a2 = copyFullAuthorships.find(a2 => a1.position === a2.position);
+                return !a1.researchEntity || !a2.researchEntity || a1.researchEntity != a2.researchEntity;
+            });
+            const noDoubleGroups = _.intersection(document.groups.map(g => g.id), d.groups.map(g => g.id)).length == 0;
+            return noDoubleAuthors && noDoubleGroups;
         });
 
         return copies;
