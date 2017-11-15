@@ -4,7 +4,7 @@
 
 const actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 var util = require('util');
-var _ = require('@sailshq/lodash');
+var _ = require('lodash');
 
 
 /**
