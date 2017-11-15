@@ -74,6 +74,7 @@
         vm.$onInit = function () {
             vm.showPrivateTags = vm.showPrivateTags || false;
             vm.verifiedCount = getVerifiedCount();
+            vm.verifiedNames = getVerfiedNames();
             if (vm.checkDuplicates)
                 checkDuplicate();
 
@@ -175,6 +176,12 @@
         function getVerifiedCount() {
             return vm.document.authorships.filter(a => a.researchEntity)
                 .concat(vm.document.groupAuthorships).length;
+        }
+
+        function getVerfiedNames() {
+            return vm.document.groups.map(g => g.name).join('\n') +
+                '\n' +
+                vm.document.authors.map(a => a.name + ' ' + a.surname).join('\n');
         }
 
         function isSynchronized() {
