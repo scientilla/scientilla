@@ -52,6 +52,7 @@
         vm.getSources = getSources;
         vm.getItSources = getItSources;
         vm.createSource = createSource;
+        vm.openPopover = openPopover;
         vm.closePopover = closePopover;
         vm.checkSource = checkSource;
         vm.documentFieldsRules = documentFieldsRules;
@@ -221,8 +222,14 @@
                 });
         }
 
+        function openPopover($event) {
+            $event.stopPropagation();
+            vm.popoverIsOpen = true;
+        }
+
+
         function closePopover() {
-            vm["popover-is-open"] = false;
+            vm.popoverIsOpen = false;
         }
 
         function openDocumentAffiliationsForm() {
