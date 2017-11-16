@@ -27,6 +27,7 @@
                 service.discardDocument = discardDocument;
                 service.verifyDocuments = verifyDocuments;
                 service.discardDocuments = discardDocuments;
+                service.createDraft = createDraft;
                 service.copyDocument = copyDocument;
                 service.copyDocuments = copyDocuments;
                 service.copyUncopiedDocuments = copyUncopiedDocuments;
@@ -107,13 +108,12 @@
                         .then(function (buttonIndex) {
                             switch (buttonIndex) {
                                 case 0:
-                                    researchEntityService.unverify(researchEntity, document)
+                                    return researchEntityService.copyDocument(researchEntity, document)
                                         .then(function (draft) {
-                                            EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
-                                            return researchEntityService
-                                                .copyDocument(researchEntity, document)
+                                            EventsService.publish(EventsService.DRAFT_CREATED, draft);
+                                            return researchEntityService.unverify(researchEntity, document)
                                                 .then(function (draft) {
-                                                    EventsService.publish(EventsService.DRAFT_CREATED, draft);
+                                                    EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
                                                     Notification.success('Document moved to drafts');
                                                     return draft;
                                                 })
@@ -121,7 +121,7 @@
                                         });
                                     break;
                                 case 1:
-                                    researchEntityService.unverify(researchEntity, document)
+                                    return researchEntityService.unverify(researchEntity, document)
                                         .then(function (draft) {
                                             EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
                                             Notification.success("Document succesfully unverified");
@@ -137,13 +137,12 @@
                         });
                 }
 
-                function copyDocument(document) {
-                    researchEntityService
-                        .copyDocument(researchEntity, document)
+                function createDraft(documentData) {
+                    return researchEntityService
+                        .createDraft(researchEntity, documentData)
                         .then(function (draft) {
-                            Notification.success('Document copied to drafts');
                             EventsService.publish(EventsService.DRAFT_CREATED, draft);
-                            document.addLabel(DocumentLabels.ALREADY_IN_DRAFTS);
+                            return draft;
                         });
                 }
 
@@ -159,7 +158,7 @@
                         Notification.success("No documents to copy");
                         return;
                     }
-                    researchEntityService
+                    return researchEntityService
                         .copyDocuments(researchEntity, documents)
                         .then(function (drafts) {
                             Notification.success(drafts.length + " draft(s) created");
@@ -170,6 +169,16 @@
                         })
                         .catch(function (err) {
                             Notification.warning("An error happened");
+                        });
+                }
+
+                function copyDocument(document) {
+                    return researchEntityService
+                        .copyDocument(researchEntity, document)
+                        .then(function (draft) {
+                            Notification.success('Document copied to drafts');
+                            EventsService.publish(EventsService.DRAFT_CREATED, draft);
+                            document.addLabel(DocumentLabels.ALREADY_IN_DRAFTS);
                         });
                 }
 

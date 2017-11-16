@@ -75,11 +75,17 @@ module.exports = {
         var Model = getModel(req);
         res.halt(Model.discardDocuments(Model, researchEntityId, documentIds));
     },
-    createDrafts: function (req, res) {
-        var researchEntityId = req.params.researchEntityId;
-        var documents = req.param('documents');
-        var Model = getModel(req);
-        res.halt(Model.createDrafts(Model, researchEntityId, documents));
+    copyDocument: function (req, res) {
+        const researchEntityId = req.params.researchEntityId;
+        const documentId = req.param('documentId');
+        const Model = getModel(req);
+        res.halt(Model.copyDocument(Model, researchEntityId, documentId));
+    },
+    copyDocuments: function (req, res) {
+        const researchEntityId = req.params.researchEntityId;
+        const documentIds = req.param('documentIds');
+        const Model = getModel(req);
+        res.halt(Model.copyDocuments(Model, researchEntityId, documentIds));
     },
     updateDraft: function (req, res) {
         var draftId = req.params.id;

@@ -26,6 +26,7 @@
         service.verifyDrafts = verifyDrafts;
         service.copyDocument = copyDocument;
         service.copyDocuments = copyDocuments;
+        service.createDraft = createDraft;
         service.getExternalDocuments = getExternalDocuments;
         service.deleteDraft = deleteDraft;
         service.deleteDrafts = deleteDrafts;
@@ -156,16 +157,17 @@
                 .customPOST({documentIds: documentIds}, 'discarded-documents');
         }
 
-        function copyDocuments(researchEntity, documents) {
-            documents = documents.map(function (d) {
-                return d.plain();
-            });
-            return researchEntity
-                .customPOST({documents: documents}, 'copy-drafts');
+        function createDraft(researchEntity, draftData) {
+            return researchEntity.all('drafts').post(draftData);
         }
 
         function copyDocument(researchEntity, document) {
-            return researchEntity.all('drafts').post(document);
+            return researchEntity.customPOST({documentId: document.id}, 'copy-document');
+        }
+
+        function copyDocuments(researchEntity, documents) {
+            const documentIds = documents.filter(d => d.kind === 'e').map(d => d.id);
+            return researchEntity.customPOST({documentIds: documentIds}, 'copy-documents');
         }
 
         function verifyDrafts(researchEntity, draftIds) {

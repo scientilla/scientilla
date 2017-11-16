@@ -66,7 +66,7 @@
         }
 
         function copyToDraft() {
-            DocumentService.copyDocument(vm.document, context.getResearchEntity());
+            DocumentService.copyDocument(vm.document);
             executeOnSubmit(0);
         }
 

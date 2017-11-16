@@ -39,6 +39,24 @@ module.exports = _.merge({}, BaseModel, {
             .populate('source');
         return completeDraft;
     },
+    copyDocument: async function (Model, researchEntityId, documentId) {
+        const document = await Document.findOneById(documentId);
+
+        if (!document)
+            throw 'Document not found';
+
+        const documentData = Document.selectData(document);
+        documentData.authorships = await Authorship.find({document: document.id}).populate('affiliations');
+        return await Model.createDraft(Model, researchEntityId, documentData);
+    },
+    copyDocuments: async function (Model, researchEntityId, documentIds) {
+        const results = [];
+        for (const documentId of documentIds) {
+            const res = await Model.copyDocument(Model, researchEntityId, documentId);
+            results.push(res);
+        }
+        return results;
+    },
     unverifyDocument: async function (ResearchEntityModel, researchEntityId, documentId) {
         await this.doUnverifyDocument(ResearchEntityModel, researchEntityId, documentId);
         return await Document.deleteIfNotVerified(documentId);
@@ -49,14 +67,6 @@ module.exports = _.merge({}, BaseModel, {
         if (!authorship)
             return;
         return authorship.unverify();
-    },
-    createDrafts: async function (Model, researchEntityId, documents) {
-        const results = [];
-        for (let document of documents) {
-            const res = await Model.createDraft(Model, researchEntityId, document);
-            results.push(res);
-        }
-        return results;
     },
     undiscardDocument: async function (Model, researchEntityId, documentId) {
         const DiscardedModel = getDiscardedModel(Model);

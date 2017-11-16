@@ -156,8 +156,7 @@
                     EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
                 });
             else
-                return researchEntityService
-                    .copyDocument(vm.researchEntity, vm.document)
+                return documentService.createDraft(vm.document)
                     .then(function (draft) {
                         vm.document = draft;
                         vm.status.setSaved(true);
@@ -177,15 +176,9 @@
 
         function deleteDocument() {
             if (vm.document.id)
-                researchEntityService
-                    .deleteDraft(vm.researchEntity, vm.document.id)
+                documentService.deleteDraft(vm.document.id)
                     .then(function (d) {
-                        Notification.success("Draft deleted");
-                        EventsService.publish(EventsService.DRAFT_DELETED, d);
                         executeOnSubmit(1);
-                    })
-                    .catch(function () {
-                        Notification.warning("Failed to delete draft");
                     });
         }
 
