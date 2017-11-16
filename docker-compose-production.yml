@@ -11,7 +11,7 @@ services:
       - "35732:35732"
     command: bash -c "sails lift"
   db:
-    image: postgres:9.6
+    image: postgres:10
     restart: always
     volumes:
       - ./docker/db/data:/var/lib/postgresql/data
