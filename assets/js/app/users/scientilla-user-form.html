@@ -22,7 +22,8 @@
     </div>
     <div class="form-group">
         <label for="jobtitle">Job Title</label>
-        <input type="text" class="form-control" id="jobtitle" placeholder="job Title" ng-model="vm.user.jobTitle">
+        <input type="text" class="form-control" id="jobtitle" placeholder="job Title"
+               ng-model="vm.user.jobTitle" ng-disabled="!vm.userIsAdmin">
     </div>
     <div class="form-group">
         <label for="orcidid">Orcid ID</label>

@@ -31,7 +31,11 @@ module.exports.scientilla = {
         scopusId: "60102151"
     },
     mainInstituteImport: {
-        userImportUrl: 'http://example.com/users'
+        userImportUrl: 'http://example.com/users',
+        usersCreationCondition: {
+            attribute: "scientificRole",
+            value: true
+        }
     },
     cron: {
         daily: '0 0 4 * * *',

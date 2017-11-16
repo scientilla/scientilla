@@ -154,6 +154,9 @@ data/*
 
 backups/*
 !backups/.gitkeep
+!backups/plain
+backups/plain/*
+!backups/plain/.gitkeep
 
 ################################################
 # Others

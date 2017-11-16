@@ -1,46 +1,111 @@
-// Cleaner.js - in api/services
+// Backup.js - in api/services
 
 "use strict";
 
 const _ = require('lodash');
+const fs = require('fs');
 const exec = require('child_process').exec;
+const moment = require('moment');
 
 module.exports = {
-    makeBackup
+    makeBackup,
+    makeManualBackup,
+    restoreBackup,
 };
 
-async function makeBackup() {
-    return new Promise((resolve, reject) => {
+async function makeManualBackup(postfix) {
+    if (!postfix)
+        return Promise.reject('A postfix is needed to name the backup');
+    return await makeBackup(postfix);
+}
 
+async function makeBackup(postfix = '') {
+    return new Promise(async (resolve, reject) => {
         try {
-            const startedAt = new Date();
-            const connectionData = sails.config.connections[sails.config.environment];
-            const user = connectionData.user;
-            const database = connectionData.database;
-            const password = connectionData.password;
-            const cmd = `pg_dump --dbname=postgresql://${user}:${password}@127.0.0.1:5432/${database} --create --clean --file="backups/dump$(date +'%y%m%d').sql" --inserts`
-            const taskObj = exec(cmd);
+            const currentDate = moment().format('YYMMDD');
+            const binaryBackupFilename = `dump${currentDate}${postfix}.sql`;
+            const binaryBackupFilepath = `backups/${binaryBackupFilename}`;
+            if (fs.existsSync(binaryBackupFilepath))
+                reject(`File ${binaryBackupFilename} already exists`);
 
-            taskObj.stdout.on('data', data => {
-                sails.log.info('backup: ' + data);
-            });
+            const plainBackupFilename = `dump${currentDate}${postfix}-plain.sql`;
+            const plainBackupFilepath = `backups/plain/${plainBackupFilename}`;
+            if (fs.existsSync(plainBackupFilepath))
+                reject(`File ${plainBackupFilename} already exists`);
 
-            taskObj.stderr.on('data', data => {
-                sails.log.debug('backup: ' + data);
-            });
+            sails.log.info(`Creating backup file ${binaryBackupFilename}`);
 
-            taskObj.on('close', code => {
-                const now = new Date();
+            const connectionString = getConnectionString();
+            const binaryBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${binaryBackupFilepath}" --inserts -F c`;
+            const plainBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${plainBackupFilepath}" --inserts`;
+            await runCoomand(binaryBackupCmd, 'binary backup creation');
+            await runCoomand(plainBackupCmd, 'plain backup creation');
+            resolve(0);
+        }
+        catch (e) {
+            reject(e);
+        }
+    });
+}
 
-                sails.log.info('backup finished in ' + ( (now - startedAt) / 1000) + ' seconds with code ' + code);
+async function restoreBackup(filename = null) {
+    function getLastAutomaticBackupFilename() {
+        const backupFilenames = fs.readdirSync('backups');
+        const automaticBackupFilenames = backupFilenames.filter(f => /dump\d{6}\.sql/.test(f));
+        const lastAutomaticBackupFilename = _.last(automaticBackupFilenames.sort());
+        return lastAutomaticBackupFilename;
+    }
 
-                resolve(code);
-            });
+    return new Promise(async (resolve, reject) => {
+        try {
+            const backupFilename = filename ? filename : getLastAutomaticBackupFilename();
+            if (!backupFilename)
+                reject('No backup found');
+            const backupFilepath = `backups/${backupFilename}`;
+            if (!fs.existsSync(backupFilepath))
+                reject(`File ${backupFilename} does not exists`);
 
-            sails.log.info('backup started at ' + startedAt.toISOString());
+            sails.log.info(`Restoring backup file ${backupFilename}`);
+
+            const connectionString = getConnectionString();
+            const binaryBackupCmd = `pg_restore -d ${connectionString} -n public -c -F c -j 3 ${backupFilepath}`;
+            await runCoomand(binaryBackupCmd, 'binary backup restore');
+            resolve(0);
         }
         catch (e) {
             reject(e);
         }
     })
+}
+
+async function runCoomand(cmd, label) {
+    return new Promise((resolve, reject) => {
+        const startedAt = new Date();
+        const taskObj = exec(cmd);
+        sails.log.info(label + ' started at ' + startedAt.toISOString());
+
+        taskObj.stdout.on('data', data => {
+            sails.log.info(`${label}: ${data}`);
+        });
+
+        taskObj.stderr.on('data', data => {
+            sails.log.debug(`${label}: ${data}`);
+            reject(data);
+        });
+
+        taskObj.on('close', code => {
+            const now = new Date();
+
+            sails.log.info(label + ' finished in ' + ( (now - startedAt) / 1000) + ' seconds with code ' + code);
+
+            resolve(code);
+        });
+    });
+}
+
+function getConnectionString() {
+    const connectionData = sails.config.connections[sails.config.environment];
+    const {user, database, password} = connectionData;
+    const connectionString = `postgresql://${user}:${password}@127.0.0.1:5432/${database}`;
+    return connectionString;
 }
