@@ -37,7 +37,7 @@ async function makeBackup(postfix = '') {
 
             const connectionString = getConnectionString();
             const binaryBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${binaryBackupFilepath}" --inserts -F c`;
-            const plainBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${plainBackupFilepath}" --inserts -j 3`;
+            const plainBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${plainBackupFilepath}" --inserts`;
             await runCoomand(binaryBackupCmd, 'binary backup creation');
             await runCoomand(plainBackupCmd, 'plain backup creation');
             resolve(0);
