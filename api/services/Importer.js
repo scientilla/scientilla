@@ -128,6 +128,8 @@ async function importPeople() {
         const toUpdate = userFieldsToUpdate.some(f => values[f] !== user[f]);
         return toUpdate;
     }
+
+    const usersCreationCondition = sails.config.scientilla.mainInstituteImport.usersCreationCondition;
     const groupInsertionEnabled = false;
     sails.log.info('Import started');
     const url = sails.config.scientilla.mainInstituteImport.userImportUrl;
@@ -169,10 +171,14 @@ async function importPeople() {
             }
         }
         else {
-            sails.log.info(`Inserting user ${p.username}`);
-            user = await User.createCompleteUser(p);
-            numUsersInserted++;
+            if (p[usersCreationCondition.attribute] === usersCreationCondition.value) {
+                sails.log.info(`Inserting user ${p.username}`);
+                user = await User.createCompleteUser(p);
+                numUsersInserted++;
+            }
         }
+        if (!user)
+            continue;
 
         for (let g of groups) {
             g.members.add(user.id);
