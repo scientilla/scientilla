@@ -31,7 +31,7 @@
         vm.showWOSMetrics = showWOSMetrics;
         vm.getMetricValue = getMetricValue;
         vm.hasMetric = hasMetric;
-        vm.getVerfiedNamesHTML = getVerfiedNamesHTML;
+        vm.getVerfiedNames = getVerfiedNames;
         vm.isPublic = isPublic;
         vm.isFavorite = isFavorite;
         vm.isPrivacyToShow = isPrivacyToShow;
@@ -184,10 +184,9 @@
                 .concat(vm.document.groupAuthorships).length;
         }
 
-        function getVerfiedNamesHTML() {
-            return vm.document.groups.map(g => '- <b>' + g.name + '</b>').join('<br>') +
-                '<br>' +
-                vm.document.authors.map(a => '- ' + a.name + ' ' + a.surname).join('<br>');
+        function getVerfiedNames() {
+            return vm.document.groups.map(g => '- <b>' + g.name + '</b>')
+                .concat(vm.document.authors.map(a => '- ' + a.name + ' ' + a.surname));
         }
 
         function isSynchronized() {

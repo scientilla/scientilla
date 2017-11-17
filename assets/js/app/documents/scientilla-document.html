@@ -34,7 +34,7 @@
             </div>
 
             <div class="scientilla-document-icons-bottom"
-                 uib-tooltip-html="'<p>This document is verified by:</p><p>' + vm.getVerfiedNamesHTML() + '</p>'"
+                 uib-tooltip-html="'<p>This document is verified by:</p><p>' + vm.getVerfiedNames().join('<br>') + '</p>'"
                  tooltip-class="scientilla-tooltip">
                 <span class="fa fa-check"></span> {{vm.verifiedCount}}
             </div>
