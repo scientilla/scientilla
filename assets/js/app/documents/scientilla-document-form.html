@@ -130,8 +130,7 @@
     </div>
     <scientilla-button type="button" ng-disabled="!vm.document.id || !vm.document.isValid()" click="vm.verify()">Verify
     </scientilla-button>
-    <scientilla-button type="button" ng-disabled="!vm.document.id" click="vm.deleteDocument()">Delete
-    </scientilla-button>
+    <scientilla-button type="button" ng-disabled="!vm.document.id" click="vm.undo()">Undo changes</scientilla-button>
     <scientilla-button type="cancel" click="vm.cancel()">Close</scientilla-button>
     <div class="scientilla-document-form-message pull-right">{{vm.status.message}}</div>
 </form>
