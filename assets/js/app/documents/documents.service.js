@@ -119,7 +119,6 @@
                                                 })
                                                 .catch(() => Notification.warning('Failed to unverify document'));
                                         });
-                                    break;
                                 case 1:
                                     return researchEntityService.unverify(researchEntity, document)
                                         .then(function (draft) {
@@ -129,7 +128,6 @@
                                         .catch(function () {
                                             Notification.warning("Failed to unverify document");
                                         });
-                                    break;
                             }
                         })
                         .catch(function () {
