@@ -31,7 +31,7 @@
         vm.showWOSMetrics = showWOSMetrics;
         vm.getMetricValue = getMetricValue;
         vm.hasMetric = hasMetric;
-        vm.getVerfiedNames = getVerfiedNames;
+        vm.getVerifiedNamesHTML = getVerifiedNamesHTML;
         vm.isPublic = isPublic;
         vm.isFavorite = isFavorite;
         vm.isPrivacyToShow = isPrivacyToShow;
@@ -182,6 +182,14 @@
         function getVerifiedCount() {
             return vm.document.authorships.filter(a => a.researchEntity)
                 .concat(vm.document.groupAuthorships).length;
+        }
+
+        function getVerifiedNamesHTML() {
+            const verifiedNames = getVerfiedNames();
+            if (!verifiedNames.length)
+                return 'Nobody has verified this document yet';
+
+            return '<p>This document is verified by:</p><p>' + verifiedNames.join('<br>') + '</p>';
         }
 
         function getVerfiedNames() {

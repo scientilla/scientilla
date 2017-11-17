@@ -33,8 +33,9 @@
                 <span ng-bind-html='vm.document | documentusertags'></span>
             </div>
 
-            <div class="scientilla-document-icons-bottom"
-                 uib-tooltip-html="'<p>This document is verified by:</p><p>' + vm.getVerfiedNames().join('<br>') + '</p>'"
+            <div ng-if="vm.verifiedCount"
+                 class="scientilla-document-icons-bottom"
+                 uib-tooltip-html="vm.getVerifiedNamesHTML()"
                  tooltip-class="scientilla-tooltip">
                 <span class="fa fa-check"></span> {{vm.verifiedCount}}
             </div>
