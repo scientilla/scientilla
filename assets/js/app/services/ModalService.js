@@ -6,31 +6,31 @@
 
 
     function ModalService($uibModal) {
-        var service = {
-            modal: null
+        const service = {
+            modals: []
         };
 
 
         service.dismiss = function (reason) {
-            if (service.modal)
-                service.modal.dismiss(reason);
-            service.modal = null;
+            const modal = getModalObject();
+            if (modal)
+                modal.dismiss(reason);
         };
 
         service.close = function (reason) {
-            if (service.modal)
-                service.modal.close(reason);
-            service.modal = null;
+            const modal = getModalObject();
+            if (modal)
+                modal.close(reason);
         };
 
 
         service.openScientillaDocumentForm = function (document, researchEntity) {
-            var scopeVars = {
+            const scopeVars = {
                 document: document,
                 researchEntity: researchEntity
             };
 
-            service.modal = openModal(
+            const modal = openModal(
                 '<scientilla-document-form\
                     document="vm.document"\
                     research-entity="vm.researchEntity"\
@@ -42,27 +42,30 @@
                 {size: 'lg'}
             );
 
-            return service.modal.result;
+            addModalObject(modal);
+            return modal.result;
         };
 
         service.openScientillaDocumentSearch = function () {
-            service.modal = openComponentModal('scientilla-document-search', {}, {size: 'lg'});
-            return service.modal.result;
+            const modal = openComponentModal('scientilla-document-search', {}, {size: 'lg'});
+            addModalObject(modal);
+            return modal.result;
         };
 
         service.openScientillaDocumentSearchView = function (document) {
-            service.modal = openComponentModal('scientilla-document-search-view',
+            const modal = openComponentModal('scientilla-document-search-view',
                 {document: document},
                 {size: 'lg'});
-            return service.modal.result;
+            addModalObject(modal);
+            return modal.result;
         };
 
         service.openScientillaDocumentDetails = function (document) {
-            var scopeVars = {
+            const scopeVars = {
                 document: document
             };
 
-            service.modal = openModal(
+            const modal = openModal(
                 '<scientilla-document-details\
                     document="vm.document"\
                 ></scientilla-document-details>',
@@ -70,17 +73,18 @@
                 {size: 'lg'}
             );
 
-            return service.modal.result;
+            addModalObject(modal);
+            return modal.result;
         };
 
 
         service.openScientillaUserForm = function (user) {
 
-            var scopeVars = {
+            const scopeVars = {
                 user: user
             };
 
-            service.modal = openModal(
+            const modal = openModal(
                 '<scientilla-user-form\
                     user="vm.user"\
                     on-failure="vm.onFailure"\
@@ -89,17 +93,18 @@
                 scopeVars
             );
 
-            return service.modal.result;
+            addModalObject(modal);
+            return modal.result;
         };
 
 
         service.openScientillaTagForm = function (document) {
 
-            var scopeVars = {
+            const scopeVars = {
                 document: document
             };
 
-            service.modal = openModal(
+            const modal = openModal(
                 '<scientilla-tag-form\
                     document="vm.document"\
                     on-submit="vm.onSubmit" \
@@ -108,17 +113,18 @@
                 scopeVars
             );
 
-            return service.modal.result;
+            addModalObject(modal);
+            return modal.result;
         };
 
 
         service.openScientillaGroupForm = function (group) {
 
-            var scopeVars = {
+            const scopeVars = {
                 group: group
             };
 
-            service.modal = openModal(
+            const modal = openModal(
                 '<scientilla-group-form\
                     group="vm.group"\
                     on-failure="vm.onFailure"\
@@ -127,15 +133,16 @@
                 scopeVars
             );
 
-            return service.modal.result;
+            addModalObject(modal);
+            return modal.result;
         };
 
         service.openDocumentAffiliationForm = function (document) {
-            var scopeVars = {
+            const scopeVars = {
                 document: document
             };
 
-            service.modal = openModal(
+            const modal = openModal(
                 '<scientilla-document-affiliations\
                     document="vm.document"\
                     on-failure="vm.onFailure"\
@@ -145,17 +152,18 @@
                 {size: 'lg'}
             );
 
-            return service.modal.result;
+            addModalObject(modal);
+            return modal.result;
         };
 
         service.openDocumentVerificationForm = function (document, verificationFn) {
 
-            var scopeVars = {
+            const scopeVars = {
                 document: document,
                 verificationFn: verificationFn
             };
 
-            service.modal = openModal(
+            const modal = openModal(
                 '<scientilla-document-verification-form\
                     document="vm.document"\
                     verification-fn="vm.verificationFn"\
@@ -166,13 +174,14 @@
                 {size: 'lg'}
             );
 
-            return service.modal.result;
+            addModalObject(modal);
+            return modal.result;
         };
 
         service.multipleChoiceConfirm = function (title, message, buttonLabels) {
             buttonLabels = buttonLabels || [];
-            var ret = new Promise(function (resolve, reject) {
-                var scope = {
+            return new Promise(function (resolve, reject) {
+                const scope = {
                     title: title,
                     message: message,
                     cancel: function () {
@@ -185,7 +194,7 @@
                     },
                     buttonLabels: buttonLabels
                 };
-                service.modal = openModal('\
+                const modal = openModal('\
                         <div class="scientilla-modal">\
                             <div>\
                                 <h3 class="scientilla-multiple-choice-title" ng-if="vm.title">{{vm.title}}</h3>\
@@ -199,12 +208,11 @@
                 <div>',
                     scope);
 
-                service.modal.result.catch(function () {
+                modal.result.catch(function () {
                     reject();
                 });
+                addModalObject(modal);
             });
-
-            return ret;
         };
 
         service.openWizard = function (steps, isClosable) {
@@ -218,8 +226,9 @@
                     keyboard: false
                 });
 
-            service.modal = openComponentModal('wizard-container', {steps: steps}, args);
-            return service.modal.result;
+            const modal = openComponentModal('wizard-container', {steps: steps}, args);
+            addModalObject(modal);
+            return modal.result;
         };
 
         service.confirm = function (title, message) {
@@ -247,11 +256,11 @@
         }
 
         function openModal(template, scope, args) {
-            var callbacks = getDefaultCallbacks();
+            const callbacks = getDefaultCallbacks();
 
             _.defaults(scope, callbacks);
 
-            var controller = function () {
+            const controller = function () {
                 _.assign(this, scope);
             };
 
@@ -266,13 +275,19 @@
         }
 
         function getDefaultCallbacks() {
-            var callbacks = {
+            return {
                 onFailure: _.noop,
                 onSubmit: service.close,
                 onClose: service.close
             };
+        }
 
-            return callbacks;
+        function addModalObject(modal) {
+            service.modals.push(modal);
+        }
+
+        function getModalObject() {
+            return service.modals.pop();
         }
     }
 

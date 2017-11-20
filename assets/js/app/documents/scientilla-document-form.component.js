@@ -25,7 +25,8 @@
         '$timeout',
         'DocumentTypesService',
         'context',
-        'Restangular'
+        'Restangular',
+        'ModalService'
     ];
 
     function scientillaDocumentFormController(EventsService,
@@ -34,11 +35,12 @@
                                               $timeout,
                                               DocumentTypesService,
                                               context,
-                                              Restangular) {
+                                              Restangular,
+                                              ModalService) {
         const vm = this;
         vm.status = createStatus();
         vm.cancel = cancel;
-        vm.deleteDocument = deleteDocument;
+        vm.undo = undo;
         vm.verify = verify;
         vm.documentTypes = DocumentTypesService.getDocumentTypes();
         vm.getSources = getSources;
@@ -51,6 +53,7 @@
         const allSourceTypes = DocumentTypesService.getSourceTypes();
         vm.sourceLabel = _.get(_.find(allSourceTypes, {id: vm.document.sourceType}), 'label');
 
+        let documentBackup = null;
         let debounceTimeout = null;
         const debounceTime = 2000;
         const documentService = context.getDocumentService();
@@ -58,6 +61,11 @@
         vm.openDocumentAffiliationForm = openDocumentAffiliationsForm;
 
         vm.$onInit = function () {
+            if (_.isFunction(vm.document.clone))
+                documentBackup = vm.document.clone();
+            else
+                documentBackup = _.cloneDeep(vm.document);
+
             watchDocument();
             watchDocumentSourceType();
             watchDocumentType();
@@ -170,10 +178,13 @@
             close();
         }
 
-        function deleteDocument() {
-            if (vm.document.id)
-                documentService.deleteDraft(vm.document.id)
-                    .then(d => executeOnSubmit(1));
+        function undo() {
+            ModalService.multipleChoiceConfirm(
+                'Undo',
+                'Do you want to undo the last changes?',
+                ['Proceed'])
+                .then(() => vm.document = _.cloneDeep(documentBackup))
+                .catch(() => true);
         }
 
         function getSources(searchText) {
