@@ -9,6 +9,9 @@
  * http://sailsjs.org/#!/documentation/reference/sails.config/sails.config.http.html
  */
 
+const lodash = require('lodash');
+const fs = require('fs');
+
 module.exports.http = {
 
     /****************************************************************************
@@ -41,6 +44,7 @@ module.exports.http = {
             'methodOverride',
             'poweredBy',
             '$custom',
+            'checkDisabled',
             'router',
             'www',
             'favicon',
@@ -56,6 +60,20 @@ module.exports.http = {
 
         compress: require('compression')(),
 
+        checkDisabled: async function (req, res, next) {
+            function isApiRequest() {
+                return  _.startsWith(req.originalUrl, '/api');
+            }
+            function shouldBeUnavailable() {
+                return fs.existsSync('.lock');
+            }
+            if(shouldBeUnavailable() && isApiRequest()) {
+                return res.status(503).send('');
+            }
+            next();
+        },
+
+
         myRequestLogger: async function (req, res, next) {
             if (!req.path.startsWith('/api/v1/'))
                 return next();
@@ -63,9 +81,12 @@ module.exports.http = {
                 path: req.path,
                 method: req.method
             };
-            await AccessLog.create(logData);
+            await
+                AccessLog.create(logData);
             return next();
-        },
+        }
+
+        ,
 
 
         /***************************************************************************
@@ -77,7 +98,7 @@ module.exports.http = {
          *                                                                          *
          ***************************************************************************/
 
-        // bodyParser: require('skipper')
+// bodyParser: require('skipper')
 
     },
 
@@ -91,5 +112,6 @@ module.exports.http = {
      *                                                                          *
      ***************************************************************************/
 
-    // cache: 31557600000
-};
+// cache: 31557600000
+}
+;

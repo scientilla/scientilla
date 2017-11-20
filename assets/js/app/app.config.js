@@ -51,22 +51,29 @@
         $rootScope.$on('$locationChangeSuccess', (event, current) =>
             path.current = path.getUrlPath(current)
         );
-        $rootScope.$on('$routeChangeSuccess', function (event, current) {
-            $rootScope.bodyClass = current.$$route.bodyClass;
-        });
 
         $rootScope.$on('$viewContentLoaded', () => {
-            if (!AuthService.isLogged)
+            if (!AuthService.isLogged && AuthService.isAvailable)
                 AuthService.loadAuthenticationData();
         });
 
-        Restangular.setErrorInterceptor(function(response, deferred, responseHandler) {
-            if(response.status === 403) {
+        Restangular.setErrorInterceptor(function (response, deferred, responseHandler) {
+            if (response.status === 403) {
                 Notification.warning('Your session is expired. Please login again.');
                 ModalService.dismiss(null);
-                path.goTo('/logout');
+                AuthService.logout();
                 return false;
             }
+            if (response.status === 503) {
+                AuthService.isAvailable = false;
+                Notification.warning('Sorry but scientilla is temporary unavailable. Try again later.');
+                ModalService.dismiss(null);
+                path.goTo('/unavailable');
+            }
+            if (response.status === 200) {
+                AuthService.isAvailable = true;
+            }
+
             return true;
         });
 

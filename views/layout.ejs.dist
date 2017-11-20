@@ -29,8 +29,7 @@
     <!--STYLES-->
     <!--STYLES END-->
 </head>
-
-<body ng-app="app" class="{{bodyClass}}">
+<body ng-app="app" class="{{bodyLayout}}">
 <%- body %>
 
 

@@ -5,9 +5,11 @@
     angular.module("groups")
         .factory("GroupsService", GroupService);
 
-    GroupService.$inject = ["Restangular", "$http", "Prototyper", "apiPrefix"];
+    GroupService.$inject = [
+        'Restangular'
+    ];
 
-    function GroupService(Restangular, $http, Prototyper, apiPrefix) {
+    function GroupService(Restangular) {
         var service = Restangular.service("groups");
 
         service.getNewGroup = getNewGroup;
@@ -18,7 +20,6 @@
         service.doSave = doSave;
         service.getGroups = getGroups;
         service.getGroup = getGroup;
-        service.getGroupMemebers = getGroupMemebers;
         service.getProfile = getProfile;
 
         return service;
@@ -87,19 +88,6 @@
             const q = _.merge({}, query, populate);
 
             return service.getList(q);
-        }
-
-        function getGroupMemebers(groupId) {
-            if (!groupId)
-                return;
-
-            return $http.get(apiPrefix + '/memberships',
-                {params: {group: groupId, populate: 'user'}})
-                .then(function (result) {
-                    var memberships = result.data;
-                    Prototyper.toMembershipsCollection(memberships);
-                    return memberships;
-                });
         }
 
         function getProfile(groupId) {

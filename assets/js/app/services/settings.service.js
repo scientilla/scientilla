@@ -4,10 +4,10 @@
         .factory("Settings", Settings);
 
     Settings.$inject = [
-        '$http'
+        'Restangular'
     ];
 
-    function Settings($http) {
+    function Settings(Restangular) {
         var settings;
         var service = {
             getSettings: getSettings
@@ -17,10 +17,10 @@
             refresh = refresh || false;
             if (settings && !refresh)
                 return Promise.resolve(settings);
-            var url = '/api/v1/settings';
-            return $http.get(url)
-                .then(function(result) {
-                    settings = result.data;
+            var url = 'settings';
+            return Restangular.one(url).get()
+                .then(function(data) {
+                    settings = data;
                     return settings;
                 });
         }

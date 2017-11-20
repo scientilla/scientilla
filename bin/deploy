@@ -5,4 +5,5 @@ git pull
 chmod u+x ./bin/deploy
 bower install
 npm install
+cp ./views/layout.ejs.dist ./views/layout.ejs
 pm2 restart app
