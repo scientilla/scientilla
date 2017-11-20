@@ -1,40 +1,35 @@
-<div class="row">
-    <div class="col-xs-6">
-        <img class="scientilla-small-logo" src="/images/scientilla-logo-white-40.png">
+<scientilla-frontend-layout>
+    <div class="row">
+        <div class="col-xs-offset-3 col-xs-4 scientilla-login-description">
+            <h3>SCIENTILLA IS OUR NEW PLATFORM DESIGNED TO STORE AND MANAGE YOUR RESEARCH DATA IN A QUICK AND EASY
+                WAY!</h3>
+            <br/><br/>
+            <p>
+                SCIENTILLA is designed for PIs, Researchers, Postdocs and PhD students to monitor their scientific
+                production.
+            </p>
+            <br/>
+            <p>
+                With SCIENTILLA, you can certify and keep track of your research information.
+                As a group leader, you will find the data of your team easily accessible and you can better design your
+                strategy and reach your goals.
+                And you can keep your scientific production up-to-date on your own.
+            </p>
+            <br/>
+            <p>
+                SCIENTILLA ensures the data driving our strategic decisions are trusted, comprehensive and accessible in
+                real-time. By collecting in a single place all the research information, it offers a wider and more
+                detailed
+                view of the scientific activities of groups, research lines and areas.
+            </p>
+        </div>
+        <div class="col-xs-2 scientilla-login-form">
+            <form form-for="vm.formData"
+                  validation-rules="vm.validationAndViewRules"
+                  form-for-builder
+                  submit-with="vm.submit()">
+                <button type="submit" class="btn btn-primary btn-md">Login</button>
+            </form>
+        </div>
     </div>
-    <div class="col-xs-6 text-right">
-        <img class="scientilla-small-logo" src="/images/iit-logo-40.png">
-    </div>
-</div>
-<br/>
-<div class="row">
-    <div class="col-xs-offset-3 col-xs-4 scientilla-login-description">
-        <h3>SCIENTILLA IS OUR NEW PLATFORM DESIGNED TO STORE AND MANAGE YOUR RESEARCH DATA IN A QUICK AND EASY WAY!</h3>
-        <br/><br/>
-        <p>
-            SCIENTILLA is designed for PIs, Researchers, Postdocs and PhD students to monitor their scientific
-            production.
-        </p>
-        <br/>
-        <p>
-            With SCIENTILLA, you can certify and keep track of your research information.
-            As a group leader, you will find the data of your team easily accessible and you can better design your
-            strategy and reach your goals.
-            And you can keep your scientific production up-to-date on your own.
-        </p>
-        <br/>
-        <p>
-            SCIENTILLA ensures the data driving our strategic decisions are trusted, comprehensive and accessible in
-            real-time. By collecting in a single place all the research information, it offers a wider and more detailed
-            view of the scientific activities of groups, research lines and areas.
-        </p>
-    </div>
-    <div class="col-xs-2 scientilla-login-form">
-        <form form-for="vm.formData"
-              validation-rules="vm.validationAndViewRules"
-              form-for-builder
-              submit-with="vm.submit()">
-            <button type="submit" class="btn btn-primary btn-md">Login</button>
-        </form>
-    </div>
-</div>
+</scientilla-frontend-layout>

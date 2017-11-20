@@ -9,12 +9,15 @@
             transclude: true
         });
 
-    scientillaBackendLayout.$inject = [];
+    scientillaBackendLayout.$inject = [
+        '$rootScope'
+    ];
 
-    function scientillaBackendLayout() {
+    function scientillaBackendLayout($rootScope) {
         var vm = this;
 
         vm.$onInit = function () {
+            $rootScope.bodyLayout = 'backend';
         };
 
         vm.$onDestroy = function () {
