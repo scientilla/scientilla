@@ -24,6 +24,7 @@
             user: null,
             jwtToken: null,
             expiration: null,
+            isAvailable: true,
             loadAuthenticationData: loadAuthenticationData,
             login: login,
             register: register,

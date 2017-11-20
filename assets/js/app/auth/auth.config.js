@@ -7,6 +7,12 @@
 
     function configure($routeProvider) {
         $routeProvider
+            .when("/unavailable", {
+                templateUrl: 'partials/unavailable.html',
+                access: {
+                    noLogin: true
+                }
+            })
             .when("/login", {
                 templateUrl: "partials/login.html",
                 controller: "LoginController",
