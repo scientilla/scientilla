@@ -1,30 +1,24 @@
 /* global Scientilla */
 
 (function () {
+    "use strict";
+
     angular
         .module('documents')
-        .directive('scientillaDocumentForm', scientillaDocumentForm);
-
-    function scientillaDocumentForm() {
-        return {
-            restrict: 'E',
-            templateUrl: 'partials/scientillaDocumentForm.html',
+        .component('scientillaDocumentForm', {
+            templateUrl: 'partials/scientilla-document-form.html',
             controller: scientillaDocumentFormController,
             controllerAs: 'vm',
-            scope: {},
-            bindToController: {
-                document: "=",
-                researchEntity: "=",
+            bindings: {
+                document: "<",
+                researchEntity: "<",
                 onFailure: "&",
                 onSubmit: "&",
                 closeFn: "&"
             }
-        };
-    }
+        });
 
     scientillaDocumentFormController.$inject = [
-        'Notification',
-        'researchEntityService',
         'EventsService',
         'documentFieldsRules',
         '$scope',
@@ -34,16 +28,14 @@
         'Restangular'
     ];
 
-    function scientillaDocumentFormController(Notification,
-                                              researchEntityService,
-                                              EventsService,
+    function scientillaDocumentFormController(EventsService,
                                               documentFieldsRules,
                                               $scope,
                                               $timeout,
                                               DocumentTypesService,
                                               context,
                                               Restangular) {
-        var vm = this;
+        const vm = this;
         vm.status = createStatus();
         vm.cancel = cancel;
         vm.deleteDocument = deleteDocument;
@@ -56,19 +48,62 @@
         vm.closePopover = closePopover;
         vm.checkSource = checkSource;
         vm.documentFieldsRules = documentFieldsRules;
-        var allSourceTypes = DocumentTypesService.getSourceTypes();
+        const allSourceTypes = DocumentTypesService.getSourceTypes();
         vm.sourceLabel = _.get(_.find(allSourceTypes, {id: vm.document.sourceType}), 'label');
 
-        var debounceTimeout = null;
-        var debounceTime = 2000;
-        var documentService = context.getDocumentService();
+        let debounceTimeout = null;
+        const debounceTime = 2000;
+        const documentService = context.getDocumentService();
+        const deregisteres = [];
         vm.openDocumentAffiliationForm = openDocumentAffiliationsForm;
 
-        activate();
+        vm.$onInit = function () {
+            watchDocument();
+            watchDocumentSourceType();
+            watchDocumentType();
+        };
+
+        vm.$onDestroy = function () {
+            for (const deregisterer of deregisteres)
+                deregisterer();
+        };
+
+        function watchDocument() {
+            const fieldsToWatch = vm.document.fields;
+            _.forEach(fieldsToWatch, function (f) {
+                deregisteres.push($scope.$watch('vm.document.' + f, prepareSave, true));
+            });
+        }
+
+        function watchDocumentSourceType() {
+            const dereg = $scope.$watch('vm.document.sourceType', (newValue, oldValue) => {
+                if (newValue === oldValue)
+                    return;
+                closePopover();
+                if (!newValue) {
+                    vm.sourceLabel = '';
+                    return;
+                }
+
+                vm.sourceLabel = _.find(allSourceTypes, {id: newValue}).label;
+                vm.document.source = null;
+            });
+
+            deregisteres.push(dereg);
+        }
+
+        function watchDocumentType() {
+            const dereg = $scope.$watch('vm.document.type', newValue => {
+                closePopover();
+                const allowedSources = _.find(vm.documentTypes, {key: newValue}).allowedSources;
+                vm.sourceTypes = _.filter(allSourceTypes, s => allowedSources.includes(s.id));
+            });
+            deregisteres.push(dereg);
+        }
 
         function createStatus() {
-            var isSavedVar = false;
-            var isSavingVar = false;
+            let isSavedVar = false;
+            let isSavingVar = false;
             return {
                 isSaved: function () {
                     return isSavedVar;
@@ -94,49 +129,10 @@
             };
         }
 
-
-        function activate() {
-            watchDocument();
-            watchDocumentSourceType();
-            watchDocumentType();
-        }
-
-        function watchDocument() {
-            var fieldsToWatch = vm.document.fields;
-            _.forEach(fieldsToWatch, function (f) {
-                $scope.$watch('vm.document.' + f, prepareSave, true);
-            });
-        }
-
-        function watchDocumentSourceType() {
-            $scope.$watch('vm.document.sourceType', function (newValue, oldValue) {
-                if (newValue === oldValue)
-                    return;
-                closePopover();
-                if (!newValue) {
-                    vm.sourceLabel = '';
-                    return;
-                }
-
-                vm.sourceLabel = _.find(allSourceTypes, {id: newValue}).label;
-                vm.document.source = null;
-            });
-        }
-
-        function watchDocumentType() {
-            $scope.$watch('vm.document.type', function (newValue) {
-                closePopover();
-                var allowedSources = _.find(vm.documentTypes, {key: newValue}).allowedSources;
-                vm.sourceTypes = _.filter(allSourceTypes, function (s) {
-                    return allowedSources.includes(s.id);
-                });
-            });
-        }
-
         function prepareSave(newValue, oldValue) {
-            var isNotChanged = (newValue === oldValue);
-            var isNewAndEmpty = ((_.isNil(oldValue)) && newValue === "");
-            var isStillEmpty = (_.isNil(oldValue) && _.isNil(newValue));
+            const isNotChanged = (newValue === oldValue);
+            const isNewAndEmpty = ((_.isNil(oldValue)) && newValue === "");
+            const isStillEmpty = (_.isNil(oldValue) && _.isNil(newValue));
 
             if (isNotChanged || isNewAndEmpty || isStillEmpty)
                 return;
@@ -151,13 +147,13 @@
 
         function saveDocument() {
             if (vm.document.id)
-                return vm.document.save().then(function () {
+                return vm.document.save().then(() => {
                     vm.status.setSaved(true);
                     EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
                 });
             else
                 return documentService.createDraft(vm.document)
-                    .then(function (draft) {
+                    .then(draft => {
                         vm.document = draft;
                         vm.status.setSaved(true);
                         EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
@@ -177,18 +173,16 @@
         function deleteDocument() {
             if (vm.document.id)
                 documentService.deleteDraft(vm.document.id)
-                    .then(function (d) {
-                        executeOnSubmit(1);
-                    });
+                    .then(d => executeOnSubmit(1));
         }
 
         function getSources(searchText) {
-            var qs = {where: {title: {contains: searchText}, type: vm.document.sourceType}};
+            const qs = {where: {title: {contains: searchText}, type: vm.document.sourceType}};
             return Restangular.all('sources').getList(qs);
         }
 
         function getItSources(searchText) {
-            var sourcesData = {
+            const sourcesData = {
                 'institute': {
                     query: {where: {name: {contains: searchText}}},
                     model: 'institutes'
@@ -198,7 +192,7 @@
                     model: 'sources'
                 }
             };
-            var sourceData = sourcesData[vm.document.sourceType];
+            const sourceData = sourcesData[vm.document.sourceType];
             if (!sourceData)
                 return [];
             return Restangular.all(sourceData.model).getList(sourceData.query);
@@ -208,7 +202,7 @@
         function createSource() {
             vm.newSource.type = vm.document.sourceType;
             return Restangular.all('sources').post(vm.newSource)
-                .then(function (source) {
+                .then(source => {
                     vm.document.source = source;
                     vm.newSource = {};
                     closePopover();
@@ -227,12 +221,8 @@
 
         function openDocumentAffiliationsForm() {
             return saveDocument()
-                .then(function () {
-                    return close();
-                })
-                .then(function () {
-                    return documentService.openDocumentAffiliationForm(vm.document);
-                });
+                .then(() => close())
+                .then(() => documentService.openDocumentAffiliationForm(vm.document));
         }
 
         function checkSource($event) {
@@ -243,12 +233,8 @@
 
         function verify() {
             saveDocument()
-                .then(function () {
-                    return close();
-                })
-                .then(function () {
-                    return documentService.verifyDraft(vm.document);
-                });
+                .then(() => close())
+                .then(() => documentService.verifyDraft(vm.document));
         }
 
         function executeOnSubmit(i) {
