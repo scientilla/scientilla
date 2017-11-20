@@ -4,22 +4,18 @@
     angular.module("auth").factory("AuthService", AuthService);
 
     AuthService.$inject = [
-        "$http",
         "Restangular",
         "UsersService",
         "ModalService",
         "localStorageService",
-        "EventsService",
-        "apiPrefix",
+        "EventsService"
     ];
 
-    function AuthService($http,
-                         Restangular,
+    function AuthService(Restangular,
                          UsersService,
                          ModalService,
                          localStorageService,
-                         EventsService,
-                         apiPrefix) {
+                         EventsService) {
 
         const service = {
             isLogged: false,
@@ -42,14 +38,14 @@
                     service.user = user;
                     service.userId = user.id;
                     service.username = user.username;
-                    return $http.get(apiPrefix + '/users/jwt');
+                    const url = '/users/jwt';
+                    return Restangular.one(url).get();
                 })
-                .then(function (result) {
+                .then(function (jwt) {
                     service.isLogged = true;
-                    service.jwtToken = result.data.token;
-                    service.expiration = result.data.expires;
+                    service.jwtToken = jwt.token;
+                    service.expiration = jwt.expires;
                     Restangular.setDefaultHeaders({access_token: service.jwtToken});
-                    $http.defaults.headers.common.access_token = service.jwtToken;
 
                     localStorageService.set("authService", {
                         isLogged: service.isLogged,
@@ -89,24 +85,23 @@
 
         function login(credentials) {
             credentials.username = credentials.username.toLowerCase();
-            const url = apiPrefix + '/auths/login';
-            return $http.post(url, credentials)
-                .then(function (result) {
-                    return setupUserAccount(result.data.id);
+            const url = 'auths/login';
+            return Restangular.all(url).post(credentials)
+                .then(function (data) {
+                    return setupUserAccount(data.id);
                 });
         }
 
         function register(registrationData) {
-            const url = apiPrefix + '/auths/register';
-            return $http.post(url, registrationData)
-                .then(function (result) {
-                    return setupUserAccount(result.data.id);
+            const url = '/auths/register';
+            return Restangular.all(url).post(credentials)
+                .then(function (data) {
+                    return setupUserAccount(data.id);
                 });
         }
 
         function clearUserAccount() {
             Restangular.setDefaultHeaders({access_token: undefined});
-            delete $http.defaults.headers.common.access_token;
             service.isLogged = false;
             service.user = null;
             service.userId = null;
@@ -115,7 +110,8 @@
         }
 
         function logout() {
-            return $http.get(apiPrefix + '/auths/logout')
+            const url = 'auths/logout';
+            return Restangular.all(url).post()
                 .then(function () {
                     EventsService.publish(EventsService.AUTH_LOGOUT);
                     clearUserAccount();
