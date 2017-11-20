@@ -44,12 +44,13 @@ module.exports.http = {
             'methodOverride',
             'poweredBy',
             '$custom',
-            'checkDisabled',
+            'checkStatus',
             'router',
             'www',
             'favicon',
             '404',
-            '500'
+            '500',
+            'checkDisabled'
         ],
 
         /****************************************************************************
@@ -60,17 +61,9 @@ module.exports.http = {
 
         compress: require('compression')(),
 
-        checkDisabled: async function (req, res, next) {
-            function isApiRequest() {
-                return  _.startsWith(req.originalUrl, '/api');
-            }
-            function shouldBeUnavailable() {
-                return fs.existsSync('.lock');
-            }
-            if(shouldBeUnavailable() && isApiRequest()) {
-                return res.status(503).send('');
-            }
-            next();
+        checkStatus: async function (req, res, next) {
+            res.set('scientilla-status', Status.get());
+            return next();
         },
 
 

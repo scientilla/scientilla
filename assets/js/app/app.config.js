@@ -64,26 +64,27 @@
                 AuthService.logout();
                 return false;
             }
-            if (response.status === 503) {
-                AuthService.isAvailable = false;
-                Notification.warning('Sorry but scientilla is temporary unavailable. Try again later.');
-                ModalService.dismiss(null);
-                path.goTo('/unavailable');
-            }
-            if (response.status === 200) {
-                AuthService.isAvailable = true;
-            }
 
             return true;
         });
 
-        Restangular.addResponseInterceptor((response, operation) => {
+        Restangular.addResponseInterceptor((data, operation, what, url, response) => {
+            const status = response.headers('scientilla-status');
+            if (status === 'DISABLED') {
+                AuthService.isAvailable = false;
+                Notification.warning('Sorry but scientilla is temporary unavailable. Try again later.');
+                ModalService.dismiss(null);
+                path.goTo('/unavailable');
+            } else {
+                AuthService.isAvailable = true;
+            }
+
             if (operation === 'getList') {
-                var newResponse = response.items;
-                newResponse.count = response.count;
+                var newResponse = data.items;
+                newResponse.count = data.count;
                 return newResponse;
             }
-            return response;
+            return data;
         });
 
         Restangular.extendModel('users', Prototyper.toUserModel);

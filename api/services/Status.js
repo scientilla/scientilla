@@ -7,21 +7,31 @@ const fs = require('fs');
 
 module.exports = {
     disable,
-    enable
+    enable,
+    isEnabled,
+    get
 };
 
 const lockFilename = '.lock';
 
-async function disable() {
+function disable() {
     if (!fs.existsSync(lockFilename))
         createFile(lockFilename);
     return 0;
 }
 
-async function enable() {
+function enable() {
     if (fs.existsSync(lockFilename))
         fs.unlinkSync(lockFilename);
     return 0;
+}
+
+function get() {
+    return isEnabled() ? 'ENABLED' : 'DISABLED';
+}
+
+function isEnabled() {
+    return !fs.existsSync(lockFilename);
 }
 
 function createFile(filepath) {

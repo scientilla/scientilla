@@ -32,7 +32,7 @@ module.exports.routes = {
      ***************************************************************************/
 
     '/': 'Homepage.default',
-
+    '/api/v1/ping': 'Homepage.ping',
     'post /api/v1/auths/register': 'Auth.register',
     'post /api/v1/users/:researchEntityId/drafts': 'User.createDraft',
     'post /api/v1/groups/:researchEntityId/drafts': 'Group.createDraft',
