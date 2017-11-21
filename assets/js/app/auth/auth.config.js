@@ -8,7 +8,7 @@
     function configure($routeProvider) {
         $routeProvider
             .when("/unavailable", {
-                templateUrl: 'partials/unavailable.html',
+                template: '<scientilla-unavailable></scientilla-unavailable>',
                 access: {
                     noLogin: true
                 }
