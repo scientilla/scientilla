@@ -94,7 +94,8 @@
                 }
 
                 vm.sourceLabel = _.find(allSourceTypes, {id: newValue}).label;
-                vm.document.source = null;
+                if (vm.document.source.type !== vm.document.sourceType)
+                    vm.document.source = null;
             });
 
             deregisteres.push(dereg);

@@ -40,8 +40,7 @@
     <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.year.$invalid}">
         <label for="year">Year (YYYY format)</label>
         <input type="text" name="year" class="form-control" id="year" placeholder="Year" ng-model="vm.document.year"
-               data-ng-required="true" ng-pattern="/^\d{4}$/" ng-model-options="{ allowInvalid: true }"
-        >
+               data-ng-required="true" ng-pattern="/^\d{4}$/" ng-model-options="{ allowInvalid: true }">
         <span ng-show="vm.document.id && form.year.$invalid"
               class="fa fa-exclamation-circle form-control-feedback" aria-hidden="true">
         </span>
@@ -111,7 +110,8 @@
     <div class="form-group has-feedback"
          ng-if="!['invited_talk'].includes(vm.document.type)"
          ng-class="{'has-error': vm.document.id && form.scopusId.$invalid}">
-        <label>Scopus ID</label> (Numeric identifier in the scopus document URL: e.g., https://www.scopus.com/[..]eid=2-s2.0-<b>84888368243</b>[..])
+        <label>Scopus ID</label> (Numeric identifier in the scopus document URL: e.g.,
+        https://www.scopus.com/[..]eid=2-s2.0-<b>84888368243</b>[..])
         <input class="form-control"
                name="scopusId"
                placeholder="Scopus ID"
