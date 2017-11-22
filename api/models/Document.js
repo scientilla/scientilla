@@ -292,26 +292,28 @@ module.exports = _.merge({}, BaseModel, {
                 this.affiliations = [];
             if (!this.institutes)
                 this.institutes = [];
-            return this.getAuthors().map((a, i) => {
+            return this.getAuthors().map((author, i) => {
                 const authorship = this.authorships.find(au => au.position === i);
                 const corresponding = authorship ? authorship.corresponding : null;
-                let affiliations, mainGroupAffiliation;
+                let affiliations, mainGroupAffiliation, userId;
                 if (authorship) {
                     const instituteIds = this.affiliations.filter(af => af.authorship === authorship.id)
                         .map(af => af.institute);
                     const institutes = this.institutes.filter(i => instituteIds.includes(i.id));
                     affiliations = institutes.map(i => i.name);
-                    mainGroupAffiliation = instituteIds.includes(1)
+                    mainGroupAffiliation = instituteIds.includes(1);
+                    userId = authorship.researchEntity;
                 } else {
                     affiliations = null;
                     mainGroupAffiliation = null;
+                    userId = null;
                 }
                 return {
-                    author: a,
-                    corresponding: corresponding,
-                    affiliations: affiliations,
-                    mainGroupAffiliation: mainGroupAffiliation,
-                    userId: authorship ? authorship.researchEntity : null
+                    author,
+                    corresponding,
+                    affiliations,
+                    mainGroupAffiliation,
+                    userId
                 };
             });
         },
