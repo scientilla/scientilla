@@ -312,7 +312,7 @@ module.exports = _.merge({}, BaseModel, {
                     corresponding: corresponding,
                     affiliations: affiliations,
                     mainGroupAffiliation: mainGroupAffiliation,
-                    userId: authorship.researchEntity
+                    userId: authorship ? authorship.researchEntity : null
                 };
             });
         },
