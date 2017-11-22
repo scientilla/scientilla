@@ -131,6 +131,9 @@ async function documentSynchronize(doc, externalDoc) {
 
     delete externalDocData.kind;
     externalDocData.synchronized = true;
+    if (docToUpdate.type !== externalDocData.type) {
+        await Document.fixDocumentType(externalDocData);
+    }
     await Document.update(docToUpdate.id, externalDocData);
 
     return true;

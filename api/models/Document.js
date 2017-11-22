@@ -416,6 +416,8 @@ module.exports = _.merge({}, BaseModel, {
         const selectedData = Document.selectData(documentData);
         selectedData.source = await Document.getFixedCollection(Source, selectedData.source);
         selectedData.documenttype = await Document.getFixedCollection(DocumentType, selectedData.documenttype);
+        if (!selectedData.documenttype)
+            await Document.fixDocumentType(selectedData);
 
         const authorships = _.cloneDeep(documentData.authorships);
 
@@ -504,5 +506,9 @@ module.exports = _.merge({}, BaseModel, {
             });
             elems.forEach(e => e.duplicates = duplicates.filter(d => d.document === e.id));
         }
+    },
+    async fixDocumentType(document) {
+        const documentType = await DocumentType.findOneByKey(document.type);
+        document.documenttype = documentType;
     }
 });
