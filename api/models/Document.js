@@ -293,7 +293,7 @@ module.exports = _.merge({}, BaseModel, {
                 this.affiliations = [];
             if (!this.institutes)
                 this.institutes = [];
-            const authorDetails = this.getAuthors().map((a, i) => {
+            return this.getAuthors().map((a, i) => {
                 const authorship = this.authorships.find(au => au.position === i);
                 const corresponding = authorship ? authorship.corresponding : null;
                 let affiliations, mainGroupAffiliation;
@@ -307,18 +307,17 @@ module.exports = _.merge({}, BaseModel, {
                     affiliations = null;
                     mainGroupAffiliation = null;
                 }
-                const authorDetail = {
+                return {
                     author: a,
                     corresponding: corresponding,
                     affiliations: affiliations,
-                    mainGroupAffiliation: mainGroupAffiliation
+                    mainGroupAffiliation: mainGroupAffiliation,
+                    userId: authorship.researchEntity
                 };
-                return authorDetail;
             });
-            return authorDetails;
         },
         toJSON: function () {
-            var document = this.toObject();
+            const document = this.toObject();
             document.sourceDetails = this.getSourceDetails();
             document.duplicates = this.duplicates;
             document.inPress = this.getInPress();
