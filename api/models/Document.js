@@ -508,6 +508,8 @@ module.exports = _.merge({}, BaseModel, {
         }
     },
     async fixDocumentType(document) {
+        if (!document.type)
+            return;
         const documentType = await DocumentType.findOneByKey(document.type);
         document.documenttype = documentType;
     }
