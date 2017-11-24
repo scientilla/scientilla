@@ -37,5 +37,16 @@
         <li ng-class="{active: vm.isActive('/groups')}">
             <a ng-href="#/groups">Groups</a>
         </li>
+        <li class="nav-divider" ng-if="vm.isAdmin()">
+        </li>
+        <li class="menu-label" ng-if="vm.isAdmin()">
+            Admin
+        </li>
+        <li ng-class="{active: vm.isActive('/admin-dashboard')}" ng-if="vm.isAdmin()">
+            <a ng-href="#/admin-dashboard">Dashboard</a>
+        </li>
+        <li ng-class="{active: vm.isActive('/sources')}" ng-if="vm.isAdmin()">
+            <a ng-href="#/sources">Sources</a>
+        </li>
     </ul>
 </div>

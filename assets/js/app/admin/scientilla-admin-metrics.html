@@ -1,0 +1,144 @@
+<scientilla-backend-layout>
+    <h1>Source and metrics</h1>
+
+    <uib-tabset active="active">
+        <uib-tab index="0" heading="Source">
+            <div class="row">
+                <div class="col-xs-12">
+                    <input type="text"
+                           class="form-control"
+                           ng-model="vm.selectedSource"
+                           uib-typeahead="source as vm.formatSource(source) for source in vm.getSources($viewValue)"
+                           typeahead-loading="searching"
+                           typeahead-no-results="noResults"
+                           data-ng-required="true"
+                           placeholder="Search source"
+                           ng-model-options="{ allowInvalid: true }"
+                           typeahead-editable="false"
+                           typeahead-select-on-blur="true"
+                    >
+                    <table class="table" style="min-height: 74px;">
+                        <tr>
+                            <th>Id</th>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>ScopusId</th>
+                            <th>ISSN</th>
+                            <th>EISSN</th>
+                            <th>Acronym</th>
+                            <th>Location</th>
+                            <th>Year</th>
+                            <th>Publisher</th>
+                            <th>Isbn</th>
+                            <th>Website</th>
+                        </tr>
+                        <tr>
+                            <th>{{vm.selectedSource.id}}</th>
+                            <th>{{vm.selectedSource.title}}</th>
+                            <th>{{vm.selectedSource.type}}</th>
+                            <th>{{vm.selectedSource.scopusId}}</th>
+                            <th>{{vm.selectedSource.issn}}</th>
+                            <th>{{vm.selectedSource.eissn}}</th>
+                            <th>{{vm.selectedSource.acronym}}</th>
+                            <th>{{vm.selectedSource.location}}</th>
+                            <th>{{vm.selectedSource.year}}</th>
+                            <th>{{vm.selectedSource.publisher}}</th>
+                            <th>{{vm.selectedSource.isbn}}</th>
+                            <th>{{vm.selectedSource.website}}</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    <h3>Associated metrics</h3>
+                    <div style="height: 34px;">
+                        <button class="btn btn-primary"
+                                ng-click="vm.removeMetric()">
+                            Remove
+                        </button>
+                    </div>
+                    <table class="table table-hover">
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Value</th>
+                            <th>Source title</th>
+                            <th>ISSN</th>
+                            <th>EISSN</th>
+                            <th>Origin</th>
+                            <th>Or. ID</th>
+                        </tr>
+                        <tr ng-repeat="metric in vm.selectedSource.metrics"
+                            ng-click="vm.selectMetric(metric)"
+                            class="scientilla-clickable">
+                            <td><input type="checkbox" ng-checked="metric.selected"></td>
+                            <th>{{metric.name}}</th>
+                            <th>{{metric.value}}</th>
+                            <td>{{metric.sourceTitle}}</td>
+                            <td>{{metric.issn}}</td>
+                            <td>{{metric.eissn}}</td>
+                            <td>{{metric.origin}}</td>
+                            <td>{{metric.sourceOriginId}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-xs-6">
+                    <h3>Search metrics</h3>
+                    <div class="input-group">
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary"
+                                    ng-click="vm.addMetric()">
+                                Associate
+                            </button>
+                        </span>
+                        <span class="input-group-btn">
+                        </span>
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary"
+                                    ng-click="vm.searchMetrics()">
+                                Search
+                            </button>
+                        </span>
+                        <input type="text"
+                               class="form-control"
+                               ng-model="vm.metricsSearch"
+                               ng-keydown="vm.onMetricSearchKey($event)"
+                               placeholder="Type and press enter">
+
+                    </div>
+                    <table class="table table-hover">
+                        <tr>
+                            <th></th>
+                            <th>Name</th>
+                            <th>Value</th>
+                            <th>Source title</th>
+                            <th>ISSN</th>
+                            <th>EISSN</th>
+                            <th>Origin</th>
+                            <th>Ori. ID</th>
+                        </tr>
+                        <tr ng-repeat="metric in vm.foundMetrics"
+                            ng-click="vm.selectMetric(metric)"
+                            class="scientilla-clickable">
+                            <td><input type="checkbox" ng-checked="metric.selected"></td>
+                            <th>{{metric.name}}</th>
+                            <th>{{metric.value}}</th>
+                            <td>{{metric.sourceTitle}}</td>
+                            <td>{{metric.issn}}</td>
+                            <td>{{metric.eissn}}</td>
+                            <td>{{metric.origin}}</td>
+                            <td>{{metric.sourceOriginId}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </uib-tab>
+
+        <uib-tab index="1" heading="Metrics import">
+            <div class="row">
+            </div>
+        </uib-tab>
+    </uib-tabset>
+
+</scientilla-backend-layout>

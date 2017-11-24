@@ -15,9 +15,10 @@
     ];
 
     function scientillaMenu(AuthService, EventsService, path) {
-        var vm = this;
+        const vm = this;
 
         vm.isActive = isActive;
+        vm.isAdmin = isAdmin;
 
         vm.$onInit = function () {
 
@@ -41,6 +42,10 @@
 
         function isActive(page) {
             return (path.current === '?#' + page || path.current === '#' + page);
+        }
+
+        function isAdmin() {
+            return vm.user.isAdmin();
         }
     }
 

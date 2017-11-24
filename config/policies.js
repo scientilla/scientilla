@@ -28,7 +28,7 @@ const defaultPolicy = {
     findOne: true,
     find: true,
     populate: true,
-    delete: isAdmin,
+    destroy: isAdmin,
     create: isAdmin,
     update: isAdmin
 };
@@ -98,6 +98,10 @@ module.exports.policies = {
     SourceController: _.defaults({
         create: isLogged,
     }, defaultPolicy),
+
+    SourceMetricController: defaultPolicy,
+
+    SourceMetricSourceController: defaultPolicy,
 
     TaglabelController: defaultPolicy,
 
