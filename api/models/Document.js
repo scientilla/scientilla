@@ -511,6 +511,7 @@ module.exports = _.merge({}, BaseModel, {
         if (!document.type)
             return;
         const documentType = await DocumentType.findOneByKey(document.type);
-        document.documenttype = documentType;
+        if (documentType)
+            document.documenttype = documentType.id;
     }
 });

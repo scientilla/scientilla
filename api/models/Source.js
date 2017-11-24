@@ -137,6 +137,8 @@ module.exports = {
 
     },
     beforeCreate: async (sourceData, cb) => {
+        if (!sourceData.type)
+            return;
         const sourceType = await SourceType.findOneByKey(sourceData.type);
         if (sourceType)
             sourceData.sourcetype = sourceType.id;
