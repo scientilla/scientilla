@@ -26,6 +26,8 @@ module.exports = _.merge({}, ResearchEntity, {
         description: 'TEXT',
         publicationsAcronym: 'TEXT',
         type: 'STRING',
+        cdr: 'STRING',
+        active: 'BOOLEAN',
         collaborations: {
             collection: 'collaboration',
             via: 'group'
