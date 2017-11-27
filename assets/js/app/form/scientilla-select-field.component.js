@@ -24,7 +24,7 @@
             if (vm.structure.values)
                 vm.values = vm.structure.values;
 
-            if (!vm.model) vm.model = '?';
+            if (vm.model === undefined || vm.model === null) vm.model = '?';
         };
 
 
