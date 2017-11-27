@@ -76,6 +76,21 @@
                 defaultValue: vm.group.type || groupTypes.RESEARCH_LINE,
                 values: Object.keys(groupTypes).map(k => ({label: groupTypeLabels[k], value: groupTypes[k]})),
                 ngIf: isAdmin
+            },
+            cdr: {
+                inputType: 'text',
+                label: 'CDR',
+                defaultValue: vm.group.cdr
+            },
+            active: {
+                inputType: 'select',
+                label: 'Active',
+                defaultValue: vm.group.active,
+                values: [
+                    {label: 'Yes', value: true},
+                    {label: 'No', value: false}
+                ],
+                ngIf: isAdmin
             }
         };
 
