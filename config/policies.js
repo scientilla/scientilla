@@ -82,7 +82,8 @@ module.exports.policies = {
         getPublicDocuments: true,
         getPublications: true,
         getDisseminationTalks: true,
-        getScientificTalks: true
+        getScientificTalks: true,
+        getMBOInstitutePerformance: true,
     }, defaultPolicy),
 
     InstituteController: _.defaults({
@@ -126,6 +127,8 @@ module.exports.policies = {
         getPublicDocuments: true,
         getPublications: true,
         getDisseminationTalks: true,
-        getScientificTalks: true
+        getScientificTalks: true,
+        getMBOOverallPerformance: true,
+        getMBOInstitutePerformance: true,
     }, defaultPolicy),
 };

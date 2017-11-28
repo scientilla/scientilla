@@ -41,5 +41,15 @@ module.exports = require('waterlock').actions.user(_.merge({}, researchEntityCon
         var userId = req.params.researchEntityId;
         var tags = req.param('tags');
         res.halt(User.addTags(Tag, userId, documentId, tags));
-    }
+    },
+    getMBOOverallPerformance: function (req, res) {
+        const username = req.query.email;
+        const year = req.query.year;
+        res.halt(User.getMBOOverallPerformance(username, year));
+    },
+    getMBOInstitutePerformance: function (req, res) {
+        const username = req.query.email;
+        const year = req.query.year;
+        res.halt(User.getMBOInstitutePerformance(username, year));
+    },
 }));

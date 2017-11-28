@@ -87,6 +87,10 @@ module.exports.routes = {
     'get /api/v1/users/username/:username/scientific-talks': 'User.getScientificTalks',
     'get /api/v1/groups/slug/:slug/scientific-talks': 'Group.getScientificTalks',
 
+    //MBO
+    'get /api/v1/mbo/v2017/overall_performance/researcher': 'User.getMBOOverallPerformance',
+    'get /api/v1/mbo/v2017/iit_performance/researcher': 'User.getMBOInstitutePerformance',
+    'get /api/v1/mbo/v2017/iit_performance/line': 'Group.getMBOInstitutePerformance',
 
     /***************************************************************************
      *                                                                          *

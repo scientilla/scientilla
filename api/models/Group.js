@@ -1,4 +1,4 @@
-/* global AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group */
+/* global AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group, PerformanceCalculator */
 'use strict';
 
 /**
@@ -151,7 +151,7 @@ module.exports = _.merge({}, ResearchEntity, {
     getAuthorshipModel: function () {
         return AuthorshipGroup;
     },
-    updateProfile: async function(groupId, groupData){
+    updateProfile: async function (groupId, groupData) {
         delete groupData.memberships;
         delete groupData.members;
         const oldResearchEntity = await Group.findOne({id: groupId});
@@ -165,5 +165,13 @@ module.exports = _.merge({}, ResearchEntity, {
             GruntTaskRunner.run(command + ':' + DocumentOrigins.PUBLICATIONS);
 
         return newResearchEntity;
+    },
+    getMBOInstitutePerformance: async function (cdr, year) {
+        if (cdr) {
+            const group = await Group.findOne({cdr}).populate('documents');
+            return await PerformanceCalculator.getGroupPerformance(group, year);
+        }
+
+        return await PerformanceCalculator.getGroupsPerformance(year);
     }
 });

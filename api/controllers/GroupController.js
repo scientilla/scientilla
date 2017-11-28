@@ -13,6 +13,11 @@ module.exports = _.merge({}, researchEntityController, {
         var groupId = req.params.researchEntityId;
         var tags = req.param('tags');
         res.halt(Group.addTags(TagGroup, groupId, documentId, tags));
-    }
+    },
+    getMBOInstitutePerformance: function (req, res) {
+        const cdr = req.query.cdr;
+        const year = req.query.year;
+        res.halt(Group.getMBOInstitutePerformance(cdr, year));
+    },
 
 });

@@ -1,4 +1,4 @@
-/* global User, Group, Document, sails, Auth, Authorship, SqlService, Alias */
+/* global User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator */
 'use strict';
 
 /**
@@ -383,5 +383,21 @@ module.exports = _.merge({}, ResearchEntity, {
             GruntTaskRunner.run(command + ':' + DocumentOrigins.PUBLICATIONS);
 
         return newResearchEntity;
+    },
+    getMBOOverallPerformance: async function (username, year) {
+        if (username) {
+            const user = await User.findOne({username}).populate('documents');
+            return await PerformanceCalculator.getUserPerformance(user, year);
+        }
+
+        return await PerformanceCalculator.getUsersPerformance(year);
+    },
+    getMBOInstitutePerformance: async function (username, year) {
+        if (username) {
+            const user = await User.findOne({username}).populate('documents');
+            return await PerformanceCalculator.getUserPerformance(user, year);
+        }
+
+        return await PerformanceCalculator.getUsersPerformance(year);
     }
 });
