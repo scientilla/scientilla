@@ -395,9 +395,9 @@ module.exports = _.merge({}, ResearchEntity, {
     getMBOInstitutePerformance: async function (username, year) {
         if (username) {
             const user = await User.findOne({username}).populate('documents');
-            return await PerformanceCalculator.getUserPerformance(user, year);
+            return await PerformanceCalculator.getUserInstitutePerformance(user, year);
         }
 
-        return await PerformanceCalculator.getUsersPerformance(year);
+        return await PerformanceCalculator.getUsersInstitutePerformance(year);
     }
 });
