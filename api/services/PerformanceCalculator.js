@@ -1,4 +1,4 @@
-/* global sails, User, Group, Document, Authorship, Citation, ScopusCitation, DocumentOrigins, SourceTypes */
+/* global sails, User, Group, Document, Authorship, Citation, ScopusCitation, DocumentOrigins, SourceTypes, DocumentTypes */
 "use strict";
 
 const _ = require('lodash');
@@ -123,14 +123,13 @@ async function getResearchEntityPerformance(docs, year = (new Date()).getFullYea
 
 async function getResearchEntityInstitutePerformance(documents, year = (new Date()).getFullYear()) {
     const excludedDocumentTypes = [
-        DocumentType.ERRATUM,
-        DocumentType.POSTER,
-        DocumentType.PHD_THESIS,
-        DocumentType.REPORT,
-        DocumentType.INVITED_TALK,
-        DocumentType.ABSTRACT_REPORT
+        DocumentTypes.ERRATUM,
+        DocumentTypes.POSTER,
+        DocumentTypes.PHD_THESIS,
+        DocumentTypes.REPORT,
+        DocumentTypes.INVITED_TALK,
+        DocumentTypes.ABSTRACT_REPORT
     ];
-
     const docs = documents.filter(d => !excludedDocumentTypes.includes(d.type));
     const docsCurrentYear = docs.filter(d => parseInt(d.year, 10) === year);
     const docsNextYear = docs.filter(d => parseInt(d.year, 10) === (year + 1));
