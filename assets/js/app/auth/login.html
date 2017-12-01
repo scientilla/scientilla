@@ -28,7 +28,10 @@
                   validation-rules="vm.validationAndViewRules"
                   form-for-builder
                   submit-with="vm.submit()">
-                <button type="submit" class="btn btn-primary btn-md">Login</button>
+                <button type="submit"
+                        class="btn btn-primary btn-md"
+                        ng-disabled="vm.status == vm.STATUS_LOADING">Login
+                </button>
             </form>
         </div>
     </div>

@@ -11,6 +11,7 @@
 
 const lodash = require('lodash');
 const fs = require('fs');
+const Promise = require('bluebird');
 
 module.exports.http = {
 
@@ -45,6 +46,7 @@ module.exports.http = {
             'poweredBy',
             '$custom',
             'checkStatus',
+            'checkLogged',
             'router',
             'www',
             'favicon',
@@ -63,6 +65,12 @@ module.exports.http = {
 
         checkStatus: async function (req, res, next) {
             res.set('scientilla-status', Status.get());
+            return next();
+        },
+
+        checkLogged: async function (req, res, next) {
+            const user = await getUser(req);
+            res.set('scientilla-logged', !!user);
             return next();
         },
 
@@ -108,3 +116,14 @@ module.exports.http = {
 // cache: 31557600000
 }
 ;
+
+async function getUser(req) {
+    const accessToken = req.get('access_token');
+    if (accessToken) {
+        const jwt = await Jwt.findOneByToken(accessToken).populate('owner');
+        const user = jwt.owner;
+        return user;
+    }
+    return undefined;
+
+}
