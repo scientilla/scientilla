@@ -16,15 +16,12 @@ module.exports = {
 
 async function getUserPerformance(user, year) {
     const performance = await getResearchEntityPerformance(user.documents, year);
-    return {
-        'email': user.username,
-        'lastname': user.surname,
-        'name': user.name,
-        'hindex': performance['hindex'],
-        'total_citations': performance['total_citations'],
-        'citations_years': performance['citations_years'],
-        'source': performance['source'],
-    };
+    return formatPerformance({
+            email: user.username,
+            lastname: user.surname,
+            name: user.name
+        },
+        performance);
 }
 
 async function getUsersPerformance(year) {
@@ -42,15 +39,12 @@ async function getGroupInstitutePerformance(group, year) {
     const docs = group.documents.filter(d => parseInt(d.year, 10) === y || parseInt(d.year, 10) === y + 1);
     const documents = await Document.find({id: docs.map(d => d.id)}).populate('sourceMetrics');
     const performance = await getResearchEntityInstitutePerformance(documents, y);
-    return {
-        'cdr': group.cdr,
-        'line': group.name,
-        'papers': performance['papers'],
-        'papers_next_year': performance['papers_next_year'],
-        'papers_if': performance['papers_if'],
-        'total_if': performance['total_if'],
-        'source': '(Publications from SCIENTILLA and Impact Factor from Web of Science)',
-    };
+    return formatInstitutePerformance({
+            'cdr': group.cdr,
+            'line': group.name
+        },
+        performance
+    );
 }
 
 async function getGroupsInstitutePerformance(year) {
@@ -75,16 +69,12 @@ async function getUserInstitutePerformance(user, year) {
     const documents = await Document.find({id: _.uniq(documentIds)})
         .populate('sourceMetrics');
     const performance = await getResearchEntityInstitutePerformance(documents, y);
-    return {
-        'email': user.username,
-        'lastname': user.surname,
-        'name': user.name,
-        'papers': performance['papers'],
-        'papers_next_year': performance['papers_next_year'],
-        'papers_if': performance['papers_if'],
-        'total_if': performance['total_if'],
-        'source': '(Publications from SCIENTILLA and Impact Factor from Web of Science)',
-    };
+    return formatInstitutePerformance({
+            email: user.username,
+            lastname: user.surname,
+            name: user.name
+        },
+        performance);
 }
 
 async function getUsersInstitutePerformance(year) {
@@ -107,16 +97,18 @@ async function getResearchEntityPerformance(docs, year = (new Date()).getFullYea
 
     const years = _.range(citation_year_count, 0).map(i => i + parseInt(year, 10) - citation_year_count);
     const citationsPerYear = (await getCitationPerYear(scopusCitations, years));
-    const citationsPerYearStr = citationsPerYear.map(cpy => cpy.year + ':' + cpy.citations).join(', ');
 
     const lastScopusCitation = await Citation.findOne({origin: DocumentOrigins.SCOPUS}).sort('updatedAt DESC');
-    const dataUpTo = lastScopusCitation.updatedAt.getDate() + ' ' +
-        lastScopusCitation.updatedAt.getMonth() + ' ' +
+    const dataUpTo = lastScopusCitation.updatedAt.getDate() + '/' +
+        lastScopusCitation.updatedAt.getMonth() + '/' +
         lastScopusCitation.updatedAt.getFullYear();
     return {
-        'hindex': 'h-index: ' + hIndex,
+        'hindex': hIndex,
+        'hindex_tpl': 'h-index: $hindex',
         'total_citations': totalCitations,
-        'citations_years': 'Nr. of citations per year: ' + citationsPerYearStr,
+        'total_citations_tpl': 'Total Citations: $total_citations',
+        'citations_years': citationsPerYear,
+        'citations_years_tpl': 'Nr. of citations per year: $citations_years',
         'source': '(Citations from Scopus - data up to ' + dataUpTo + ')'
     };
 }
@@ -134,26 +126,19 @@ async function getResearchEntityInstitutePerformance(documents, year = (new Date
     const docsCurrentYear = docs.filter(d => parseInt(d.year, 10) === year);
     const docsNextYear = docs.filter(d => parseInt(d.year, 10) === (year + 1));
 
-    const papersStr = 'Nr. of papers in current year (Journal, Conference, Book): ' +
-        docsCurrentYear.length +
-        ' (' +
-        docsCurrentYear.filter(d => d.sourceType === SourceTypes.JOURNAL).length +
-        ' J + ' +
-        docsCurrentYear.filter(d => d.sourceType === SourceTypes.CONFERENCE).length +
-        ' C + ' +
-        docsCurrentYear.filter(d => [SourceTypes.BOOK, SourceTypes.BOOKSERIES].includes(d.sourceType)).length +
-        ' B)';
+    const papersStr = {
+        total: docsCurrentYear.length,
+        journal: docsCurrentYear.filter(d => d.sourceType === SourceTypes.JOURNAL).length,
+        conference: docsCurrentYear.filter(d => d.sourceType === SourceTypes.CONFERENCE).length,
+        book: docsCurrentYear.filter(d => [SourceTypes.BOOK, SourceTypes.BOOKSERIES].includes(d.sourceType)).length
+    };
 
-    const papers_next_yearStr = 'Nr. of papers due next year (Journal, Conference, Book): ' +
-        docsNextYear.length +
-        ' (' +
-        docsNextYear.filter(d => d.sourceType === SourceTypes.JOURNAL).length +
-        ' J + ' +
-        docsNextYear.filter(d => d.sourceType === SourceTypes.CONFERENCE).length +
-        ' C + ' +
-        docsNextYear.filter(d => [SourceTypes.BOOK, SourceTypes.BOOKSERIES].includes(d.sourceType)).length +
-        ' B)';
-
+    const papers_next_yearStr = {
+        total: docsNextYear.length,
+        journal: docsNextYear.filter(d => d.sourceType === SourceTypes.JOURNAL).length,
+        conference: docsNextYear.filter(d => d.sourceType === SourceTypes.CONFERENCE).length,
+        book: docsNextYear.filter(d => [SourceTypes.BOOK, SourceTypes.BOOKSERIES].includes(d.sourceType)).length
+    };
 
     const dcyIF = docsCurrentYear.map(d => {
         const metricAllYears = d.sourceMetrics.filter(m => m.name === 'IF');
@@ -168,9 +153,69 @@ async function getResearchEntityInstitutePerformance(documents, year = (new Date
     return {
         'papers': papersStr,
         'papers_next_year': papers_next_yearStr,
-        'papers_if': 'Nr. of papers (in current year) with IF: ' + docsCurrentYearWithIF.length,
-        'total_if': 'Total IF (papers in current year): ' + totalIFCurrentYear.toFixed(2),
+        'papers_if': docsCurrentYearWithIF.length,
+        'total_if': totalIFCurrentYear.toFixed(2),
     };
+}
+
+function formatPerformance(researchEntityData, performance) {
+    const citationsYearStr = performance['citations_years'].map(cpy => cpy.year + ':' + cpy.citations).join(', ');
+    return Object.assign({}, researchEntityData, {
+        hindex: {
+            title: 'H-index',
+            value: performance['hindex'],
+            str: 'h-index: ' + performance['hindex']
+        },
+        total_citations: {
+            title: 'Total Citations',
+            value: performance['total_citations'],
+            str: 'Total Citations: ' + performance['total_citations']
+        },
+        citations_years: {
+            title: 'Nr. of citations per year',
+            value: performance['citations_years'],
+            str: 'Nr. of citations per year: ' + citationsYearStr,
+        },
+        source: {
+            str: performance['source']
+        }
+    });
+}
+
+function formatInstitutePerformance(researchEntityData, performance) {
+    return Object.assign({}, researchEntityData, {
+        papers: {
+            title: 'Nr. of papers in current year (Journal, Conference, Book)',
+            value: performance['papers'],
+            str: 'Nr. of papers due current year (Journal, Conference, Book): ' +
+            performance['papers'].total +
+            ' ( ' + performance['papers'].journal + ' J + ' +
+            performance['papers'].conference + 'C + ' +
+            performance['papers'].book + ' B )'
+        },
+        papers_next_year: {
+            title: 'Nr. of papers due next year (Journal, Conference, Book)',
+            value: performance['papers_next_year'],
+            str: 'Nr. of papers due next year (Journal, Conference, Book): ' +
+            performance['papers_next_year'].total +
+            ' ( ' + performance['papers_next_year'].journal + ' J + ' +
+            performance['papers_next_year'].conference + 'C + ' +
+            performance['papers_next_year'].book + ' B )'
+        },
+        papers_if: {
+            title: 'Nr. of papers (in current year) with IF',
+            value: performance['papers_if'],
+            str: 'Nr. of papers (in current year) with IF: ' + performance['papers_if']
+        },
+        total_if: {
+            title: 'Total IF (papers in current year)',
+            value: performance['total_if'],
+            str: 'Total IF (papers in current year): ' + performance['total_if']
+        },
+        source: {
+            str: '(Publications from SCIENTILLA and Impact Factor from Web of Science)'
+        },
+    });
 }
 
 function getCitationTotals(scopusCitations) {
