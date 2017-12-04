@@ -10,7 +10,7 @@ const moment = require('moment');
 module.exports = {
     makeBackup,
     makeManualBackup,
-    restoreBackup,
+    restoreBackup
 };
 
 async function makeManualBackup(postfix) {
@@ -38,8 +38,8 @@ async function makeBackup(postfix = '') {
             const connectionString = getConnectionString();
             const binaryBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${binaryBackupFilepath}" --inserts -F c`;
             const plainBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${plainBackupFilepath}" --inserts`;
-            await runCoomand(binaryBackupCmd, 'binary backup creation');
-            await runCoomand(plainBackupCmd, 'plain backup creation');
+            await runCommand(binaryBackupCmd, 'binary backup creation');
+            await runCommand(plainBackupCmd, 'plain backup creation');
             resolve(0);
         }
         catch (e) {
@@ -69,7 +69,7 @@ async function restoreBackup(filename = null) {
 
             const connectionString = getConnectionString();
             const binaryBackupCmd = `pg_restore -d ${connectionString} -n public -c -F c -j 3 ${backupFilepath}`;
-            await runCoomand(binaryBackupCmd, 'binary backup restore');
+            await runCommand(binaryBackupCmd, 'binary backup restore');
             resolve(0);
         }
         catch (e) {
@@ -78,7 +78,7 @@ async function restoreBackup(filename = null) {
     })
 }
 
-async function runCoomand(cmd, label) {
+async function runCommand(cmd, label) {
     return new Promise((resolve, reject) => {
         const startedAt = new Date();
         const taskObj = exec(cmd);
