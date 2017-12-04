@@ -92,6 +92,9 @@ module.exports.routes = {
     //Commands
     'put /api/v1/status/enable': 'Status.enable',
     'put /api/v1/status/disable': 'Status.disable',
+    'get /api/v1/backup/dumps': 'Backup.getDumps',
+    'post /api/v1/backup/restore': 'Backup.restore',
+    'post /api/v1/backup/make': 'Backup.make',
 
     //MBO
     'get /api/v1/mbo/v2017/overall_performance/researcher': 'User.getMBOOverallPerformance',

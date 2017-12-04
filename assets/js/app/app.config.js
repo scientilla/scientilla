@@ -39,8 +39,9 @@
     function run($rootScope, AuthService, Restangular, Prototyper, path, Notification, ModalService) {
 
         $rootScope.$on("$routeChangeStart", (event, next, current) => {
-            const goingToUnavailablePage = next.$$route && next.$$route.originalPath === '/unavailable';
-            if (!goingToUnavailablePage && !AuthService.isAvailable && !AuthService.isAdmin) {
+            const noRedirectUrls = ['/unavailable', '/login'];
+            const goingToNoRedirectUrl = next.$$route && noRedirectUrls.includes(next.$$route.originalPath);
+            if (!goingToNoRedirectUrl && !AuthService.isAvailable && !AuthService.isAdmin) {
                 Notification.warning('Sorry but scientilla is temporary unavailable. Try again later.');
                 ModalService.dismiss(null);
                 path.goTo('/unavailable');
