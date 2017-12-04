@@ -19,6 +19,7 @@
 
         const service = {
             isLogged: false,
+            isAdmin: false,
             userId: null,
             username: null,
             user: null,
@@ -34,6 +35,8 @@
         return service;
 
         function setupUserAccount(userId) {
+            if (!service.isAvailable && !service.isAdmin)
+                return;
             return UsersService.getProfile(userId)
                 .then(function (user) {
                     service.user = user;

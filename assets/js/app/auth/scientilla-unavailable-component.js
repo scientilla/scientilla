@@ -30,7 +30,7 @@
             const url = 'ping';
             return Restangular.one(url).get()
                 .then(() => {
-                    if (AuthService.isAvailable)
+                    if (AuthService.isAvailable || AuthService.isAdmin)
                         path.goTo('login');
                 });
         }

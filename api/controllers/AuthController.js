@@ -28,11 +28,22 @@ module.exports = require('waterlock').waterlocked({
     login: function (req, res) {
         const login = require('waterlock').actions.waterlocked().login;
         const username = _.toLower(req.body.username);
-        Auth
+        return Auth
             .findOneByUsername(username)
             .then(function (auth) {
                 req.query.type = (!auth || !auth.password) ? 'ldap' : 'local';
                 login(req, res);
-            });
+            })
+            .catch(err => res.serverError());
+    },
+    postLogin: function(req, res) {
+        res.set('scientilla-logged', req.session.authenticated);
+        res.set('scientilla-admin', req.session.user.role === 'administrator');
+        res.json(req.session.user);
+    },
+    postLogout: function(req, res) {
+        res.set('scientilla-logged', false);
+        res.set('scientilla-admin', true);
+        res.json({});
     }
 });

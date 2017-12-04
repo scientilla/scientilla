@@ -39,6 +39,13 @@
     function run($rootScope, AuthService, Restangular, Prototyper, path, Notification, ModalService) {
 
         $rootScope.$on("$routeChangeStart", (event, next, current) => {
+            const goingToUnavailablePage = next.$$route && next.$$route.originalPath === '/unavailable';
+            if (!goingToUnavailablePage && !AuthService.isAvailable && !AuthService.isAdmin) {
+                Notification.warning('Sorry but scientilla is temporary unavailable. Try again later.');
+                ModalService.dismiss(null);
+                path.goTo('/unavailable');
+                return;
+            }
             if (!AuthService.isLogged) {
                 if (next.access && next.access.noLogin) {
 
@@ -58,7 +65,8 @@
         });
 
         Restangular.setErrorInterceptor(function (response, deferred, responseHandler) {
-            if (response.status === 403) {
+            const isLogged = response.headers('scientilla-logged') === 'true';
+            if (response.status === 403 && isLogged) {
                 Notification.warning('Your session is expired. Please login again.');
                 ModalService.dismiss(null);
                 AuthService.logout();
@@ -70,11 +78,15 @@
 
         Restangular.addResponseInterceptor((data, operation, what, url, response) => {
             const status = response.headers('scientilla-status');
+            const isAdmin = response.headers('scientilla-admin') === 'true';
+            AuthService.isAdmin = isAdmin;
             if (status === 'DISABLED') {
                 AuthService.isAvailable = false;
-                Notification.warning('Sorry but scientilla is temporary unavailable. Try again later.');
-                ModalService.dismiss(null);
-                path.goTo('/unavailable');
+                if (!isAdmin) {
+                    Notification.warning('Sorry but scientilla is temporary unavailable. Try again later.');
+                    ModalService.dismiss(null);
+                    path.goTo('/unavailable');
+                }
             } else {
                 AuthService.isAvailable = true;
             }

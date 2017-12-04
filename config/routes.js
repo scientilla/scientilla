@@ -33,6 +33,8 @@ module.exports.routes = {
 
     '/': 'Homepage.default',
     '/api/v1/ping': 'Homepage.ping',
+    '/api/v1/login': 'Auth.postLogin',
+    '/api/v1/logout': 'Auth.postLogout',
     'post /api/v1/auths/register': 'Auth.register',
     'post /api/v1/users/:researchEntityId/drafts': 'User.createDraft',
     'post /api/v1/groups/:researchEntityId/drafts': 'Group.createDraft',
@@ -86,6 +88,10 @@ module.exports.routes = {
     'get /api/v1/groups/slug/:slug/dissemination-talks': 'Group.getDisseminationTalks',
     'get /api/v1/users/username/:username/scientific-talks': 'User.getScientificTalks',
     'get /api/v1/groups/slug/:slug/scientific-talks': 'Group.getScientificTalks',
+
+    //Commands
+    'put /api/v1/status/enable': 'Status.enable',
+    'put /api/v1/status/disable': 'Status.disable',
 
     //MBO
     'get /api/v1/mbo/v2017/overall_performance/researcher': 'User.getMBOOverallPerformance',
