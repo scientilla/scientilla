@@ -82,7 +82,7 @@ async function documentDataRequest(scopusId, attempt = 0) {
         const body = res.body;
 
         if (_.get(body, 'service-error'))
-            onError({
+            return onError({
                 message: _.get(body, 'service-error.status.statusCode'),
                 res: body
             }, scopusId, 3);
@@ -90,7 +90,7 @@ async function documentDataRequest(scopusId, attempt = 0) {
         const scopusDocumentData = _.get(body, 'abstracts-retrieval-response', {});
 
         if (_.isEmpty(scopusDocumentData))
-            onError({
+            return onError({
                 message: 'Empty document',
                 res: body
             }, scopusId, 3);
@@ -124,7 +124,7 @@ async function documentDataRequest(scopusId, attempt = 0) {
 
         const sourceType = sourceTypeMappings[getDollars(scopusSource, '@type')];
         if (!sourceType)
-            onError('Source type missing', scopusId, attempt);
+            return onError('Source type missing', scopusId, attempt);
 
         documentData = {
             title: _.get(scopusDocumentData, 'coredata.dc:title'),
@@ -152,7 +152,7 @@ async function documentDataRequest(scopusId, attempt = 0) {
         };
 
         if (_.isEmpty(documentData.authorsStr))
-            onError('Document field missing', scopusId, attempt);
+            return onError('Document field missing', scopusId, attempt);
 
 
         const sourceData = {
@@ -180,7 +180,7 @@ async function documentDataRequest(scopusId, attempt = 0) {
 
         const scopusInstituteError = scopusInstitutes.filter(si => (!si.name || !si.scopusId)).length;
         if (scopusInstituteError)
-            onError('Affiliation field missing', scopusId, attempt);
+            return onError('Affiliation field missing', scopusId, attempt);
 
         const institutesCreationFns = _.map(
             scopusInstitutes,
@@ -222,7 +222,6 @@ async function documentDataRequest(scopusId, attempt = 0) {
     } catch (err) {
         sails.log.debug('Document data failed. Scopus Id = ' + scopusId);
         sails.log.debug(err);
-
         return {};
     }
 
@@ -400,10 +399,8 @@ function toArray(val) {
 }
 
 function onError(err, scopusId, attempt) {
-    if (attempt < 3) {
-        sails.log.debug(err);
+    if (attempt < 3)
         return documentDataRequest(scopusId, attempt + 1);
-    }
 
     throw err;
 }
