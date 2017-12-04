@@ -51,5 +51,8 @@
         <li ng-class="{active: vm.isActive('/status')}" ng-if="vm.isAdmin()">
             <a ng-href="#/status">Status</a>
         </li>
+        <li ng-class="{active: vm.isActive('/backup')}" ng-if="vm.isAdmin()">
+            <a ng-href="#/backup">Backup</a>
+        </li>
     </ul>
 </div>

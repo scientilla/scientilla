@@ -10,12 +10,19 @@ const moment = require('moment');
 module.exports = {
     makeBackup,
     makeManualBackup,
-    restoreBackup
+    makeTimestampedBackup,
+    restoreBackup,
+    getDumps
 };
 
 async function makeManualBackup(postfix) {
     if (!postfix)
         return Promise.reject('A postfix is needed to name the backup');
+    return await makeBackup(postfix);
+}
+
+async function makeTimestampedBackup() {
+    const postfix = moment().format('hhmmss');
     return await makeBackup(postfix);
 }
 
@@ -40,7 +47,7 @@ async function makeBackup(postfix = '') {
             const plainBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${plainBackupFilepath}" --inserts`;
             await runCommand(binaryBackupCmd, 'binary backup creation');
             await runCommand(plainBackupCmd, 'plain backup creation');
-            resolve(0);
+            resolve(binaryBackupFilename);
         }
         catch (e) {
             reject(e);
@@ -50,7 +57,7 @@ async function makeBackup(postfix = '') {
 
 async function restoreBackup(filename = null) {
     function getLastAutomaticBackupFilename() {
-        const backupFilenames = fs.readdirSync('backups');
+        const backupFilenames = fs.readdirSync('backups').filter(f => f.startsWith('dump'));
         const automaticBackupFilenames = backupFilenames.filter(f => /dump\d{6}\.sql/.test(f));
         const lastAutomaticBackupFilename = _.last(automaticBackupFilenames.sort());
         return lastAutomaticBackupFilename;
@@ -76,6 +83,12 @@ async function restoreBackup(filename = null) {
             reject(e);
         }
     })
+}
+
+function getDumps() {
+    const dumpFilenames = fs.readdirSync('backups').filter(f => f.startsWith('dump'));
+    const dumps = dumpFilenames.map(f => ({filename: f}));
+    return dumps;
 }
 
 async function runCommand(cmd, label) {
