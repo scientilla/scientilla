@@ -109,7 +109,7 @@ module.exports.waterlock = {
             // obj - {controller: 'blog', action: 'post'}
             // string - 'custom json response string'
             // default - 'default'
-            success: 'default',
+            success: '/api/v1/login',
 //            success: '/users/jwt',
             // This can be any one of the following
             //
@@ -128,8 +128,7 @@ module.exports.waterlock = {
             // relativePath - '/blog/post'
             // obj - {controller: 'blog', action: 'post'}
             // string - 'custom json response string'
-            // default - 'default'
-            success: 'default',
+            success: '/api/v1/logout',
             // This can be any one of the following
             //
             // url - 'http://example.com'

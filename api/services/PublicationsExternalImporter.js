@@ -50,19 +50,21 @@ async function updateGroupProfiles() {
 
 async function updateResearchEntityProfile(researchEntity) {
 
-    let searchKey, externalDocumentModel;
+    let searchKey, externalDocumentModel, type;
     if (researchEntity.getType() === 'user') {
         searchKey = 'username';
         externalDocumentModel = ExternalDocument;
+        type = 'author';
     } else {
         searchKey = 'publicationsAcronym';
         externalDocumentModel = ExternalDocumentGroup;
+        type = 'group';
     }
 
     const params = {
         limit: 9999999, //TODO change
         skip: 0,
-        type: 'author'
+        type: type
     };
     const res = await Connector.getDocuments(DocumentOrigins.PUBLICATIONS, researchEntity[searchKey], params);
     const documents = res.items;
