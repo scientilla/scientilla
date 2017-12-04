@@ -12,7 +12,7 @@ const elsevierConfig = sails.config.scientilla.externalConnectors.elsevier;
 
 module.exports = {
     getConfig,
-    getDocument,
+    getDocument: documentDataRequest,
     getDocumentCitations,
     getSingleSearchConfig
 };
@@ -32,10 +32,6 @@ function getConfig(scopusId, params) {
         transform,
         reqParams: getSearchReqParams(queryString, params)
     };
-}
-
-function getDocument(scopusId) {
-    return documentDataRequest(scopusId, 0);
 }
 
 function getDocumentCitations(scopusId) {
@@ -71,7 +67,7 @@ function getSearchReqParams(queryString, params) {
     };
 }
 
-async function documentDataRequest(scopusId, attempt) {
+async function documentDataRequest(scopusId, attempt = 0) {
     let res, documentData;
     const requestParams = getScopusRequestParams('/content/abstract/scopus_id/' + scopusId, {view: 'FULL'});
     try {
@@ -86,7 +82,7 @@ async function documentDataRequest(scopusId, attempt) {
         const body = res.body;
 
         if (_.get(body, 'service-error'))
-            onError({
+            return onError({
                 message: _.get(body, 'service-error.status.statusCode'),
                 res: body
             }, scopusId, 3);
@@ -94,7 +90,7 @@ async function documentDataRequest(scopusId, attempt) {
         const scopusDocumentData = _.get(body, 'abstracts-retrieval-response', {});
 
         if (_.isEmpty(scopusDocumentData))
-            onError({
+            return onError({
                 message: 'Empty document',
                 res: body
             }, scopusId, 3);
@@ -127,6 +123,9 @@ async function documentDataRequest(scopusId, attempt) {
         };
 
         const sourceType = sourceTypeMappings[getDollars(scopusSource, '@type')];
+        if (!sourceType)
+            return onError('Source type missing', scopusId, attempt);
+
         documentData = {
             title: _.get(scopusDocumentData, 'coredata.dc:title'),
             authorsStr: _.map(
@@ -153,7 +152,7 @@ async function documentDataRequest(scopusId, attempt) {
         };
 
         if (_.isEmpty(documentData.authorsStr))
-            onError('Document field missing', scopusId, attempt);
+            return onError('Document field missing', scopusId, attempt);
 
 
         const sourceData = {
@@ -181,7 +180,7 @@ async function documentDataRequest(scopusId, attempt) {
 
         const scopusInstituteError = scopusInstitutes.filter(si => (!si.name || !si.scopusId)).length;
         if (scopusInstituteError)
-            onError('Affiliation field missing', scopusId, attempt);
+            return onError('Affiliation field missing', scopusId, attempt);
 
         const institutesCreationFns = _.map(
             scopusInstitutes,
@@ -223,7 +222,6 @@ async function documentDataRequest(scopusId, attempt) {
     } catch (err) {
         sails.log.debug('Document data failed. Scopus Id = ' + scopusId);
         sails.log.debug(err);
-
         return {};
     }
 
@@ -401,10 +399,8 @@ function toArray(val) {
 }
 
 function onError(err, scopusId, attempt) {
-    if (attempt < 3) {
-        sails.log.debug(err);
+    if (attempt < 3)
         return documentDataRequest(scopusId, attempt + 1);
-    }
 
     throw err;
 }
