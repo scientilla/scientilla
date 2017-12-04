@@ -12,7 +12,7 @@ const elsevierConfig = sails.config.scientilla.externalConnectors.elsevier;
 
 module.exports = {
     getConfig,
-    getDocument,
+    getDocument: documentDataRequest,
     getDocumentCitations,
     getSingleSearchConfig
 };
@@ -32,10 +32,6 @@ function getConfig(scopusId, params) {
         transform,
         reqParams: getSearchReqParams(queryString, params)
     };
-}
-
-function getDocument(scopusId) {
-    return documentDataRequest(scopusId, 0);
 }
 
 function getDocumentCitations(scopusId) {
@@ -71,7 +67,7 @@ function getSearchReqParams(queryString, params) {
     };
 }
 
-async function documentDataRequest(scopusId, attempt) {
+async function documentDataRequest(scopusId, attempt = 0) {
     let res, documentData;
     const requestParams = getScopusRequestParams('/content/abstract/scopus_id/' + scopusId, {view: 'FULL'});
     try {
@@ -127,6 +123,9 @@ async function documentDataRequest(scopusId, attempt) {
         };
 
         const sourceType = sourceTypeMappings[getDollars(scopusSource, '@type')];
+        if (!sourceType)
+            onError('Source type missing', scopusId, attempt);
+
         documentData = {
             title: _.get(scopusDocumentData, 'coredata.dc:title'),
             authorsStr: _.map(
