@@ -47,6 +47,7 @@ module.exports.http = {
             '$custom',
             'checkStatus',
             'checkLogged',
+            'checkUserRole',
             'router',
             'www',
             'favicon',
@@ -70,7 +71,14 @@ module.exports.http = {
 
         checkLogged: async function (req, res, next) {
             const user = await getUser(req);
-            res.set('scientilla-logged', !!user);
+            res.set('scientilla-logged', req.session.authenticated);
+            return next();
+        },
+
+        checkUserRole: async function (req, res, next) {
+            const user = await getUser(req);
+            if (user)
+                res.set('scientilla-admin', user.role == 'administrator');
             return next();
         },
 
@@ -118,6 +126,7 @@ module.exports.http = {
 ;
 
 async function getUser(req) {
+    return req.session.user;
     const accessToken = req.get('access_token');
     if (accessToken) {
         const jwt = await Jwt.findOneByToken(accessToken).populate('owner');

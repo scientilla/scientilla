@@ -11,6 +11,9 @@
                 template: params => '' +
                     '<scientilla-admin-metrics></scientilla-admin-metrics>',
                 resolve: {}
+            })
+            .when("/status", {
+                template: '<scientilla-admin-status></scientilla-admin-status>'
             });
 
     }

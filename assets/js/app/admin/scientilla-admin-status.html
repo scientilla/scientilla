@@ -1,0 +1,7 @@
+<scientilla-backend-layout>
+    <h3>Status Management</h3>
+    Current Status: {{vm.isAvailable() ? "Available" : "Not Available"}}
+    <br>
+    <scientilla-button ng-if="!vm.isAvailable()" ng-click="vm.enable()">Enable</scientilla-button>
+    <scientilla-button ng-if="vm.isAvailable()" ng-click="vm.disable()">Disable</scientilla-button>
+</scientilla-backend-layout>
