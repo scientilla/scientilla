@@ -169,9 +169,11 @@ module.exports = _.merge({}, ResearchEntity, {
     getMBOInstitutePerformance: async function (cdr, year) {
         if (cdr) {
             const group = await Group.findOne({cdr}).populate('documents');
-            return await PerformanceCalculator.getGroupPerformance(group, year);
+            if(!group)
+                throw 'Group not found';
+            return await PerformanceCalculator.getGroupInstitutePerformance(group, year);
         }
 
-        return await PerformanceCalculator.getGroupsPerformance(year);
+        return await PerformanceCalculator.getGroupsInstitutePerformance(year);
     }
 });

@@ -1,35 +1,27 @@
-/* global sails, User, Group, Document, Citation, ScopusCitation, ScopusCitationTotal, DocumentOrigins */
+/* global sails, User, Group, Document, Authorship, Citation, ScopusCitation, DocumentOrigins, SourceTypes, DocumentTypes */
 "use strict";
 
 const _ = require('lodash');
+const citation_year_count = 6;
+const mainInstituteId = 1;
 
 module.exports = {
-    getGroupPerformance: getGroupPerformance,
-    getGroupsPerformance: getGroupsPerformance,
-    getUserPerformance: getUserPerformance,
-    getUsersPerformance: getUsersPerformance
+    getUserPerformance,
+    getUsersPerformance,
+    getGroupInstitutePerformance,
+    getGroupsInstitutePerformance,
+    getUserInstitutePerformance,
+    getUsersInstitutePerformance,
 };
-
-
-async function getGroupPerformance(group, year) {
-    //TODO
-}
-
-async function getGroupsPerformance(year) {
-    // TODO const groups = await Group.find({active: true}).populate('documents');
-}
 
 async function getUserPerformance(user, year) {
     const performance = await getResearchEntityPerformance(user.documents, year);
-    return {
-        'email': user.username,
-        'lastname': user.surname,
-        'name': user.name,
-        'hindex': performance['hindex'],
-        'total_citations': performance['total_citations'],
-        'citations_years': performance['citations_years'],
-        'source': performance['source'],
-    };
+    return formatPerformance({
+            email: user.username,
+            lastname: user.surname,
+            name: user.name
+        },
+        performance);
 }
 
 async function getUsersPerformance(year) {
@@ -42,51 +34,233 @@ async function getUsersPerformance(year) {
     return res;
 }
 
+async function getGroupInstitutePerformance(group, year) {
+    const y = parseInt(year) || (new Date()).getFullYear();
+    const docs = group.documents.filter(d => parseInt(d.year, 10) === y || parseInt(d.year, 10) === y + 1);
+    const documents = await Document.find({id: docs.map(d => d.id)}).populate('sourceMetrics');
+    const performance = await getResearchEntityInstitutePerformance(documents, y);
+    return formatInstitutePerformance({
+            'cdr': group.cdr,
+            'line': group.name
+        },
+        performance
+    );
+}
 
-async function getResearchEntityPerformance(docs, year) {
-    const documents = year ? docs.filter(d => d.year <= year) : docs;
-    const citations = (await getCitationTotals(documents));
+async function getGroupsInstitutePerformance(year) {
+    const groups = await Group.find().populate('documents');
+    const res = [];
+    for (const group of groups)
+        if (!_.isEmpty(group.documents))
+            res.push(await getGroupInstitutePerformance(group, year));
+
+    return res;
+}
+
+
+async function getUserInstitutePerformance(user, year) {
+    const y = parseInt(year) || (new Date()).getFullYear();
+    const docs = user.documents.filter(d => parseInt(d.year, 10) === y || parseInt(d.year, 10) === y + 1);
+    const authorships = await Authorship.find({document: docs.map(d => d.id)}).populate('affiliations');
+    const documentIds = authorships.filter(
+        a => a.affiliations.map(af => af.id)
+            .includes(mainInstituteId))
+        .map(a => a.document);
+    const documents = await Document.find({id: _.uniq(documentIds)})
+        .populate('sourceMetrics');
+    const performance = await getResearchEntityInstitutePerformance(documents, y);
+    return formatInstitutePerformance({
+            email: user.username,
+            lastname: user.surname,
+            name: user.name
+        },
+        performance);
+}
+
+async function getUsersInstitutePerformance(year) {
+    const users = await User.find().populate('documents');
+    const res = [];
+    for (const user of users)
+        if (!_.isEmpty(user.documents))
+            res.push(await getUserInstitutePerformance(user, year));
+
+    return res;
+}
+
+
+async function getResearchEntityPerformance(docs, year = (new Date()).getFullYear()) {
+    const documents = docs.filter(d => d.year <= year);
+    const scopusCitations = await getScopusCitations(documents, year);
+    const citations = getCitationTotals(scopusCitations);
     const hIndex = calculateHIndex(citations);
     const totalCitations = citations.reduce((total, c) => total + c, 0);
 
-    const citationsPerYear = (await getCitationPerYear(documents));
-    const citationsPerYearStr = citationsPerYear.map(cpy => cpy.year + ':' + cpy.citations).join(', ');
+    const years = _.range(citation_year_count, 0).map(i => i + parseInt(year, 10) - citation_year_count);
+    const citationsPerYear = (await getCitationPerYear(scopusCitations, years));
 
     const lastScopusCitation = await Citation.findOne({origin: DocumentOrigins.SCOPUS}).sort('updatedAt DESC');
-    const dataUpTo = lastScopusCitation.updatedAt.getDate() + ' ' +
-        lastScopusCitation.updatedAt.getMonth() + ' ' +
+    const dataUpTo = lastScopusCitation.updatedAt.getDate() + '/' +
+        lastScopusCitation.updatedAt.getMonth() + '/' +
         lastScopusCitation.updatedAt.getFullYear();
     return {
-        'hindex': 'h-index: ' + hIndex,
+        'hindex': hIndex,
+        'hindex_tpl': 'h-index: $hindex',
         'total_citations': totalCitations,
-        'citations_years': 'Nr. of citations per year: ' + citationsPerYearStr,
+        'total_citations_tpl': 'Total Citations: $total_citations',
+        'citations_years': citationsPerYear,
+        'citations_years_tpl': 'Nr. of citations per year: $citations_years',
         'source': '(Citations from Scopus - data up to ' + dataUpTo + ')'
     };
 }
 
-async function getCitationTotals(documents) {
-    const docIds = documents.map(d => d.id);
-    return (await ScopusCitationTotal.find({document: docIds}))
+async function getResearchEntityInstitutePerformance(documents, year = (new Date()).getFullYear()) {
+    const excludedDocumentTypes = [
+        DocumentTypes.ERRATUM,
+        DocumentTypes.POSTER,
+        DocumentTypes.PHD_THESIS,
+        DocumentTypes.REPORT,
+        DocumentTypes.INVITED_TALK,
+        DocumentTypes.ABSTRACT_REPORT
+    ];
+    const docs = documents.filter(d => !excludedDocumentTypes.includes(d.type));
+    const docsCurrentYear = docs.filter(d => parseInt(d.year, 10) === year);
+    const docsNextYear = docs.filter(d => parseInt(d.year, 10) === (year + 1));
+
+    const papersStr = {
+        total: docsCurrentYear.length,
+        journal: docsCurrentYear.filter(d => d.sourceType === SourceTypes.JOURNAL).length,
+        conference: docsCurrentYear.filter(d => d.sourceType === SourceTypes.CONFERENCE).length,
+        book: docsCurrentYear.filter(d => [SourceTypes.BOOK, SourceTypes.BOOKSERIES].includes(d.sourceType)).length
+    };
+
+    const papers_next_yearStr = {
+        total: docsNextYear.length,
+        journal: docsNextYear.filter(d => d.sourceType === SourceTypes.JOURNAL).length,
+        conference: docsNextYear.filter(d => d.sourceType === SourceTypes.CONFERENCE).length,
+        book: docsNextYear.filter(d => [SourceTypes.BOOK, SourceTypes.BOOKSERIES].includes(d.sourceType)).length
+    };
+
+    const dcyIF = docsCurrentYear.map(d => {
+        const metricAllYears = d.sourceMetrics.filter(m => m.name === 'IF');
+        const year = Math.max(...metricAllYears.map(m => parseInt(m.year, 10)));
+        d.IF = metricAllYears.find(m => m.year === year);
+        return d;
+    });
+
+    const docsCurrentYearWithIF = dcyIF.filter(d => d.IF);
+    const totalIFCurrentYear = docsCurrentYearWithIF.reduce((sum, d) => sum + parseFloat(d.IF.value), 0);
+
+    return {
+        'papers': papersStr,
+        'papers_next_year': papers_next_yearStr,
+        'papers_if': docsCurrentYearWithIF.length,
+        'total_if': totalIFCurrentYear.toFixed(2),
+    };
+}
+
+function formatPerformance(researchEntityData, performance) {
+    const citationsYearStr = performance['citations_years'].map(cpy => cpy.year + ':' + cpy.citations).join(', ');
+    return Object.assign({}, researchEntityData, {
+        hindex: {
+            title: 'H-index',
+            value: performance['hindex'],
+            str: 'h-index: ' + performance['hindex']
+        },
+        total_citations: {
+            title: 'Total Citations',
+            value: performance['total_citations'],
+            str: 'Total Citations: ' + performance['total_citations']
+        },
+        citations_years: {
+            title: 'Nr. of citations per year',
+            value: performance['citations_years'],
+            str: 'Nr. of citations per year: ' + citationsYearStr,
+        },
+        source: {
+            str: performance['source']
+        }
+    });
+}
+
+function formatInstitutePerformance(researchEntityData, performance) {
+    return Object.assign({}, researchEntityData, {
+        papers: {
+            title: 'Nr. of papers in current year (Journal, Conference, Book)',
+            value: performance['papers'],
+            str: 'Nr. of papers due current year (Journal, Conference, Book): ' +
+            performance['papers'].total +
+            ' ( ' + performance['papers'].journal + ' J + ' +
+            performance['papers'].conference + 'C + ' +
+            performance['papers'].book + ' B )'
+        },
+        papers_next_year: {
+            title: 'Nr. of papers due next year (Journal, Conference, Book)',
+            value: performance['papers_next_year'],
+            str: 'Nr. of papers due next year (Journal, Conference, Book): ' +
+            performance['papers_next_year'].total +
+            ' ( ' + performance['papers_next_year'].journal + ' J + ' +
+            performance['papers_next_year'].conference + 'C + ' +
+            performance['papers_next_year'].book + ' B )'
+        },
+        papers_if: {
+            title: 'Nr. of papers (in current year) with IF',
+            value: performance['papers_if'],
+            str: 'Nr. of papers (in current year) with IF: ' + performance['papers_if']
+        },
+        total_if: {
+            title: 'Total IF (papers in current year)',
+            value: performance['total_if'],
+            str: 'Total IF (papers in current year): ' + performance['total_if']
+        },
+        source: {
+            str: '(Publications from SCIENTILLA and Impact Factor from Web of Science)'
+        },
+    });
+}
+
+function getCitationTotals(scopusCitations) {
+    return scopusCitations
+        .reduce((res, sc) => {
+            let documentCits = res.find(r => r.document === sc.document);
+            if (!documentCits) {
+                documentCits = {
+                    document: sc.document,
+                    citations: 0
+                };
+                res.push(documentCits);
+            }
+
+            documentCits.citations += sc.citations;
+            return res;
+        }, [])
         .map(c => c.citations)
         .map(c => parseInt(c, 10));
 }
 
-async function getCitationPerYear(documents) {
-    const docIds = documents.map(d => d.id);
+async function getCitationPerYear(scopusCitations, years) {
+    const citPerYear = scopusCitations.reduce((res, c) => {
+        if (_.isEmpty(c) || !c.citations) return res;
+        if (!res[c.year]) res[c.year] = 0;
+        res[c.year] += parseInt(c.citations, 10);
+        return res;
+    }, {});
 
-    const scopusCitations = await ScopusCitation.find({document: docIds});
-    const citPerYear = (await Citation.find({id: scopusCitations.map(sc => sc.citation)}))
-        .reduce((res, c) => {
-            if (_.isEmpty(c) || !c.citations) return res;
-            if (!res[c.year]) res[c.year] = 0;
-            res[c.year] += parseInt(c.citations, 10);
-            return res;
-        }, {});
-
-    return Object.keys(citPerYear).map(y => ({
+    return years.map(y => ({
         year: y,
-        citations: citPerYear[y]
-    })).filter(c => c.citations);
+        citations: citPerYear[y] || 0
+    }));
+}
+
+async function getScopusCitations(documents, year) {
+    const docIds = documents.map(d => d.id);
+    const scopusCitations = await ScopusCitation.find({document: docIds});
+    return (await Citation.find({id: scopusCitations.map(sc => sc.citation)}))
+        .filter(c => c.year <= year)
+        .map(c => ({
+            document: scopusCitations.find(sc => sc.citation === c.id).document,
+            year: c.year,
+            citations: parseInt(c.citations, 10)
+        }));
 }
 
 function calculateHIndex(citations) {
