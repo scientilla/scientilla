@@ -328,7 +328,7 @@ function fieldExtract(res) {
 }
 
 function transform(d1) {
-    return getDocument(getScopusId(d1));
+    return documentDataRequest(getScopusId(d1));
 }
 
 function getQueryString(search = {}) {
