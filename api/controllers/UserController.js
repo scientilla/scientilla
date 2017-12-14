@@ -1,3 +1,4 @@
+/* global sails, User */
 /**
  * UserController.js
  *
@@ -51,5 +52,10 @@ module.exports = require('waterlock').actions.user(_.merge({}, researchEntityCon
         const username = req.query.email;
         const year = req.query.year;
         res.halt(User.getMBOInstitutePerformance(username, year));
+    },
+    getMBOInvitedTalks: function (req, res) {
+        const username = req.query.email;
+        const year = req.query.year;
+        res.halt(User.getMBOInvitedTalks(username, year));
     },
 }));

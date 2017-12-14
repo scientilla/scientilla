@@ -175,5 +175,15 @@ module.exports = _.merge({}, ResearchEntity, {
         }
 
         return await PerformanceCalculator.getGroupsInstitutePerformance(year);
+    },
+    getMBOInvitedTalks: async function (cdr, year) {
+        if (cdr) {
+            const group = await Group.findOne({cdr}).populate('documents');
+            if(!group)
+                throw 'Group not found';
+            return await PerformanceCalculator.getGroupMBOInvitedTalks(group, year);
+        }
+
+        return await PerformanceCalculator.getGroupsMBOInvitedTalks(year);
     }
 });

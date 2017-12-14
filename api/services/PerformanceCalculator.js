@@ -1,4 +1,4 @@
-/* global sails, User, Group, Document, Authorship, Citation, ScopusCitation, DocumentOrigins, SourceTypes, DocumentTypes */
+/* global sails, User, Group, Document, Authorship, Citation, ScopusCitation, DocumentOrigins, SourceTypes, DocumentTypes, SourceType */
 "use strict";
 
 const _ = require('lodash');
@@ -12,10 +12,15 @@ module.exports = {
     getGroupsInstitutePerformance,
     getUserInstitutePerformance,
     getUsersInstitutePerformance,
+    getUserMBOInvitedTalks,
+    getUsersMBOInvitedTalks,
+    getGroupMBOInvitedTalks,
+    getGroupsMBOInvitedTalks
 };
 
 async function getUserPerformance(user, year) {
-    const performance = await getResearchEntityPerformance(user.documents, year);
+    const y = parseInt(year) || (new Date()).getFullYear();
+    const performance = await getResearchEntityPerformance(user.documents, y);
     return formatPerformance({
             email: user.username,
             lastname: user.surname,
@@ -25,13 +30,7 @@ async function getUserPerformance(user, year) {
 }
 
 async function getUsersPerformance(year) {
-    const users = await User.find().populate('documents');
-    const res = [];
-    for (const user of users)
-        if (!_.isEmpty(user.documents))
-            res.push(await getUserPerformance(user, year));
-
-    return res;
+    return await calculateForAll(User, getUserPerformance, year);
 }
 
 async function getGroupInstitutePerformance(group, year) {
@@ -40,21 +39,15 @@ async function getGroupInstitutePerformance(group, year) {
     const documents = await Document.find({id: docs.map(d => d.id)}).populate('sourceMetrics');
     const performance = await getResearchEntityInstitutePerformance(documents, y);
     return formatInstitutePerformance({
-            'cdr': group.cdr,
-            'line': group.name
+            cdr: group.cdr,
+            line: group.name
         },
         performance
     );
 }
 
 async function getGroupsInstitutePerformance(year) {
-    const groups = await Group.find().populate('documents');
-    const res = [];
-    for (const group of groups)
-        if (!_.isEmpty(group.documents))
-            res.push(await getGroupInstitutePerformance(group, year));
-
-    return res;
+    return await calculateForAll(Group, getGroupInstitutePerformance, year);
 }
 
 
@@ -78,17 +71,59 @@ async function getUserInstitutePerformance(user, year) {
 }
 
 async function getUsersInstitutePerformance(year) {
-    const users = await User.find().populate('documents');
-    const res = [];
-    for (const user of users)
-        if (!_.isEmpty(user.documents))
-            res.push(await getUserInstitutePerformance(user, year));
+    return await calculateForAll(User, getUserInstitutePerformance, year);
+}
 
-    return res;
+async function getUserMBOInvitedTalks(user, year) {
+    const y = parseInt(year) || (new Date()).getFullYear();
+    const res = await getResearchEntityMBOInvitedTalks(user.documents, y);
+
+    return Object.assign({}, {
+        email: user.username,
+        lastname: user.surname,
+        name: user.name,
+        year: y
+    }, res);
+}
+
+async function getUsersMBOInvitedTalks(year) {
+    return await calculateForAll(User, getUserMBOInvitedTalks, year);
+}
+
+async function getGroupMBOInvitedTalks(group, year) {
+    const y = parseInt(year) || (new Date()).getFullYear();
+    const res = await getResearchEntityMBOInvitedTalks(group.documents, y);
+
+    return Object.assign({}, {
+        cdr: group.cdr,
+        line: group.name,
+        year: y
+    }, res);
+}
+
+async function getGroupsMBOInvitedTalks(year) {
+    return await calculateForAll(Group, getGroupMBOInvitedTalks, year);
+}
+
+async function getResearchEntityMBOInvitedTalks(docs, year) {
+    function formatIT(doc) {
+        return doc.authorsStr + ' ' + doc.title + ' ' + doc.itSource;
+    }
+    const invitedTalks = docs.filter(d => parseInt(d.year, 10) === year && d.type === DocumentTypes.INVITED_TALK);
+
+    const sourceTypes = await SourceType.find({type: 'invited_talk'});
+    const scientificSourceTypes = sourceTypes.filter(st => st.section === 'Scientific Event').map(st => st.key);
+    const disseminationSourceTypes = sourceTypes.filter(st => st.section === 'Dissemination').map(st => st.key);
+
+    return {
+        scientific: invitedTalks.filter(d => scientificSourceTypes.includes(d.sourceType)).map(formatIT),
+        dissemination: invitedTalks.filter(d => disseminationSourceTypes.includes(d.sourceType)).map(formatIT)
+    };
+
 }
 
 
-async function getResearchEntityPerformance(docs, year = (new Date()).getFullYear()) {
+async function getResearchEntityPerformance(docs, year) {
     const documents = docs.filter(d => d.year <= year);
     const scopusCitations = await getScopusCitations(documents, year);
     const citations = getCitationTotals(scopusCitations);
@@ -107,7 +142,7 @@ async function getResearchEntityPerformance(docs, year = (new Date()).getFullYea
     };
 }
 
-async function getResearchEntityInstitutePerformance(documents, year = (new Date()).getFullYear()) {
+async function getResearchEntityInstitutePerformance(documents, year) {
     const excludedDocumentTypes = [
         DocumentTypes.ERRATUM,
         DocumentTypes.POSTER,
@@ -213,6 +248,16 @@ function formatInstitutePerformance(researchEntityData, performance) {
             papers.conference + 'C + ' +
             papers.book + ' B )'
     }
+}
+
+async function calculateForAll(ResearchEntityModel, fn, ...params) {
+    const researchEntities = await ResearchEntityModel.find().populate('documents');
+    const res = [];
+    for (const researchEntity of researchEntities)
+        if (!_.isEmpty(researchEntity.documents))
+            res.push(await fn(researchEntity, params));
+
+    return res;
 }
 
 function getCitationTotals(scopusCitations) {

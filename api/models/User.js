@@ -403,5 +403,15 @@ module.exports = _.merge({}, ResearchEntity, {
         }
 
         return await PerformanceCalculator.getUsersInstitutePerformance(year);
+    },
+    getMBOInvitedTalks: async function (username, year) {
+        if (username) {
+            const user = await User.findOne({username}).populate('documents');
+            if(!user)
+                throw 'User not found';
+            return await PerformanceCalculator.getUserMBOInvitedTalks(user, year);
+        }
+
+        return await PerformanceCalculator.getUsersMBOInvitedTalks(year);
     }
 });
