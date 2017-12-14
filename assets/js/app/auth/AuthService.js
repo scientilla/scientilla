@@ -98,7 +98,8 @@
 
         function register(registrationData) {
             const url = '/auths/register';
-            return Restangular.all(url).post(credentials)
+            registrationData.username = registrationData.username.toLowerCase();
+            return Restangular.all(url).post(registrationData)
                 .then(function (data) {
                     return setupUserAccount(data.id);
                 });
