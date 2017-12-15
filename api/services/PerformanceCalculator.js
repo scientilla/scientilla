@@ -107,18 +107,31 @@ async function getGroupsMBOInvitedTalks(year) {
 
 async function getResearchEntityMBOInvitedTalks(docs, year) {
     function formatIT(doc) {
-        return doc.authorsStr + ' ' + doc.title + ' ' + doc.itSource;
+        return doc.itSource;
     }
+
+    function formatOutput(sourceTypes, invitedTalks) {
+        return sourceTypes.reduce((res, st) => {
+            const filteredIT = invitedTalks.filter(d => d.sourceType === st.key);
+            if (filteredIT.length)
+                res.push({
+                    title: st.label,
+                    value: filteredIT.map(formatIT)
+                });
+            return res;
+        }, []);
+    }
+
     const invitedTalks = docs.filter(d => parseInt(d.year, 10) === year && d.type === DocumentTypes.INVITED_TALK);
 
     const sourceTypes = await SourceType.find({type: 'invited_talk'});
-    const scientificSourceTypes = sourceTypes.filter(st => st.section === 'Scientific Event').map(st => st.key);
-    const disseminationSourceTypes = sourceTypes.filter(st => st.section === 'Dissemination').map(st => st.key);
+    const scientificSourceTypes = sourceTypes.filter(st => st.section === 'Scientific Event');
+    const disseminationSourceTypes = sourceTypes.filter(st => st.section === 'Dissemination');
 
-    return {
-        scientific: invitedTalks.filter(d => scientificSourceTypes.includes(d.sourceType)).map(formatIT),
-        dissemination: invitedTalks.filter(d => disseminationSourceTypes.includes(d.sourceType)).map(formatIT)
-    };
+    const scientific = formatOutput(scientificSourceTypes, invitedTalks);
+    const dissemination = formatOutput(disseminationSourceTypes, invitedTalks);
+
+    return {scientific, dissemination};
 
 }
 
