@@ -1,6 +1,9 @@
+/* global SourceType*/
 // SourceTypes.js - in api/services
 
 "use strict";
+
+let sourceTypes = [];
 
 module.exports = {
     BOOK: 'book',
@@ -13,5 +16,11 @@ module.exports = {
     SCHOOL: 'school',
     MEDIA: 'media',
     PUBLIC_EVENT: 'public_event',
-    OUTREACH: 'outreach'
+    OUTREACH: 'outreach',
+    get: async function () {
+        if (!sourceTypes.length)
+            sourceTypes = await SourceType.find();
+
+        return sourceTypes;
+    }
 };

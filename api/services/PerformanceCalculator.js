@@ -124,7 +124,7 @@ async function getResearchEntityMBOInvitedTalks(docs, year) {
 
     const invitedTalks = docs.filter(d => parseInt(d.year, 10) === year && d.type === DocumentTypes.INVITED_TALK);
 
-    const sourceTypes = await SourceType.find({type: 'invited_talk'});
+    const sourceTypes = (await SourceTypes.get()).filter(st => st.type === 'invited_talk');
     const scientificSourceTypes = sourceTypes.filter(st => st.section === 'Scientific Event');
     const disseminationSourceTypes = sourceTypes.filter(st => st.section === 'Dissemination');
 

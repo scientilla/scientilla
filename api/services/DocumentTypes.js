@@ -1,6 +1,9 @@
+/* global SourceType*/
 // DocumentTypes.js - in api/services
 
 "use strict";
+
+let documentTypes = [];
 
 module.exports = {
     ARTICLE: 'article',
@@ -19,5 +22,11 @@ module.exports = {
     REVIEW: 'review',
     SHORT_SURVEY: 'short_survey',
     PHD_THESIS: 'phd_thesis',
-    POSTER: 'poster'
+    POSTER: 'poster',
+    get: async function () {
+        if (!documentTypes.length)
+            documentTypes = await DocumentType.find();
+
+        return documentTypes;
+    }
 };

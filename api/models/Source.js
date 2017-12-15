@@ -1,4 +1,4 @@
-/* global Source, SourceMetricSource */
+/* global Source, SourceMetricSource,SourceTypes */
 "use strict";
 
 const fields = [
@@ -139,7 +139,7 @@ module.exports = {
     beforeCreate: async (sourceData, cb) => {
         if (!sourceData.type)
             return;
-        const sourceType = await SourceType.findOneByKey(sourceData.type);
+        const sourceType = (await SourceTypes.get()).find(st => st.key === sourceData.type);
         if (sourceType)
             sourceData.sourcetype = sourceType.id;
         cb();

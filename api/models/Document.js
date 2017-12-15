@@ -1,4 +1,4 @@
-/* global Document, sails, User, ObjectComparer, Connector, Source, Authorship, Affiliation, Institute, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer */
+/* global Document, sails, User, ObjectComparer, Connector, Source, Authorship, Affiliation, Institute, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer, DocumentTypes */
 'use strict';
 
 /**
@@ -510,7 +510,7 @@ module.exports = _.merge({}, BaseModel, {
     async fixDocumentType(document) {
         if (!document.type)
             return;
-        const documentType = await DocumentType.findOneByKey(document.type);
+        const documentType = (await DocumentTypes.get()).find(dt => dt.key === document.type);
         if (documentType)
             document.documenttype = documentType.id;
     }
