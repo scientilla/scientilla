@@ -139,7 +139,7 @@ module.exports = {
     beforeCreate: async (sourceData, cb) => {
         if (!sourceData.type)
             return;
-        const sourceType = (await SourceTypes.get()).find(st => st.key === sourceData.type);
+        const sourceType = SourceTypes.get().find(st => st.key === sourceData.type);
         if (sourceType)
             sourceData.sourcetype = sourceType.id;
         cb();

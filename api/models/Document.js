@@ -510,7 +510,7 @@ module.exports = _.merge({}, BaseModel, {
     async fixDocumentType(document) {
         if (!document.type)
             return;
-        const documentType = (await DocumentTypes.get()).find(dt => dt.key === document.type);
+        const documentType = DocumentTypes.get().find(dt => dt.key === document.type);
         if (documentType)
             document.documenttype = documentType.id;
     }

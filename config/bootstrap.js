@@ -1,3 +1,4 @@
+/* global Cron, Institute, Group */
 /**
  * Bootstrap
  * (sails.config.bootstrap)
@@ -17,6 +18,7 @@ module.exports.bootstrap = async function (cb) {
     // It's very important to trigger this callback method when you are finished
     // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
 
+    await initializeServices();
     await initializeInstitutes();
     await initializeGroups();
     if (!isTest) {
@@ -25,28 +27,33 @@ module.exports.bootstrap = async function (cb) {
     }
 
     cb();
-
-    function initializeInstitutes() {
-        return Institute.count()
-            .then(institutesNum => {
-                if (institutesNum)
-                    return;
-                const instituteData = sails.config.scientilla.institute;
-                sails.log.info('Creating institute ' + instituteData.name);
-                return Institute.create(instituteData);
-            });
-    }
-
-    function initializeGroups() {
-        return Group.count()
-            .then(async groupsNum => {
-                if (groupsNum)
-                    return;
-                const fields = ['name', 'shortname', 'scopusId'];
-                const groupData = _.pick(sails.config.scientilla.institute, fields);
-                groupData.institute = (await Institute.findOneByScopusId(groupData.scopusId)).id;
-                sails.log.info('Creating group ' + groupData.name);
-                return Group.create(groupData);
-            });
-    }
 };
+
+async function initializeServices() {
+    await DocumentTypes.init();
+    await SourceTypes.init();
+}
+
+function initializeInstitutes() {
+    return Institute.count()
+        .then(institutesNum => {
+            if (institutesNum)
+                return;
+            const instituteData = sails.config.scientilla.institute;
+            sails.log.info('Creating institute ' + instituteData.name);
+            return Institute.create(instituteData);
+        });
+}
+
+function initializeGroups() {
+    return Group.count()
+        .then(async groupsNum => {
+            if (groupsNum)
+                return;
+            const fields = ['name', 'shortname', 'scopusId'];
+            const groupData = _.pick(sails.config.scientilla.institute, fields);
+            groupData.institute = (await Institute.findOneByScopusId(groupData.scopusId)).id;
+            sails.log.info('Creating group ' + groupData.name);
+            return Group.create(groupData);
+        });
+}

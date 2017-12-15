@@ -23,10 +23,6 @@ module.exports = {
     SHORT_SURVEY: 'short_survey',
     PHD_THESIS: 'phd_thesis',
     POSTER: 'poster',
-    get: async function () {
-        if (!documentTypes.length)
-            documentTypes = await DocumentType.find();
-
-        return documentTypes;
-    }
+    init: async () => documentTypes = await DocumentType.find(),
+    get: () => documentTypes
 };

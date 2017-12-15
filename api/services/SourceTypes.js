@@ -17,10 +17,7 @@ module.exports = {
     MEDIA: 'media',
     PUBLIC_EVENT: 'public_event',
     OUTREACH: 'outreach',
-    get: async function () {
-        if (!sourceTypes.length)
-            sourceTypes = await SourceType.find();
-
-        return sourceTypes;
-    }
-};
+    init: async () => sourceTypes = await SourceType.find(),
+    get: () => sourceTypes
+}
+;
