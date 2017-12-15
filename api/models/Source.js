@@ -40,6 +40,17 @@ module.exports = {
             via: 'sources',
             through: 'sourcemetricsource'
         },
+        getSourceTypeObj: function () {
+            if (!this.sourcetype)
+                return undefined;
+
+            return SourceTypes.get().find(st => st.id === this.sourcetype);
+        },
+        toJSON: function () {
+            const source = this.toObject();
+            source.sourcetype = this.getSourceTypeObj();
+            return source;
+        }
 
     },
     searchCopies: async function (source) {
