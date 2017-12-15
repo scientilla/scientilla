@@ -107,7 +107,7 @@ async function getGroupsMBOInvitedTalks(year) {
 
 async function getResearchEntityMBOInvitedTalks(docs, year) {
     function formatIT(doc) {
-        return doc.itSource;
+        return doc.title + ' - ' + doc.itSource;
     }
 
     function formatOutput(sourceTypes, invitedTalks) {
