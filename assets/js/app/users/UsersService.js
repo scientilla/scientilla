@@ -85,7 +85,7 @@
             var populate = {populate: ['memberships', 'attributes', 'aliases']};
             var q = _.merge({}, query, populate);
 
-            return this.getList(q);
+            return service.getList(q);
         };
 
         service.getProfile = function (userId) {
