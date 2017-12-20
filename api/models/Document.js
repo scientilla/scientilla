@@ -324,8 +324,11 @@ module.exports = _.merge({}, BaseModel, {
             return SourceTypes.get().find(st => st.key === this.sourceType);
         },
         getdocumentType: function () {
-            if (!this.sourceType)
+            if (!this.documenttype)
                 return undefined;
+
+            if (_.isObject(this.documenttype))
+                return this.documenttype;
 
             return DocumentTypes.get().find(st => st.id === this.documenttype);
         },
