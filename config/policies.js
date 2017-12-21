@@ -20,8 +20,8 @@ const _ = require('lodash');
 
 const isLogged = ['isLogged'];
 const isAdmin = ['isAdmin'];
-const isActivityOwner = ['isActivityOwner']
-const isGroupOwner = ['isGroupOwner']
+const isActivityOwner = ['isActivityOwner'];
+const isGroupOwner = ['isGroupOwner'];
 
 const defaultPolicy = {
     '*': isLogged,
@@ -84,6 +84,7 @@ module.exports.policies = {
         getDisseminationTalks: true,
         getScientificTalks: true,
         getMBOInstitutePerformance: true,
+        getMBOInvitedTalks: true,
     }, defaultPolicy),
 
     InstituteController: _.defaults({
@@ -130,5 +131,6 @@ module.exports.policies = {
         getScientificTalks: true,
         getMBOOverallPerformance: true,
         getMBOInstitutePerformance: true,
+        getMBOInvitedTalks: true,
     }, defaultPolicy),
 };

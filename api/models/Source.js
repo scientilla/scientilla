@@ -1,4 +1,4 @@
-/* global Source, SourceMetricSource */
+/* global Source, SourceMetricSource,SourceTypes */
 "use strict";
 
 const fields = [
@@ -40,6 +40,17 @@ module.exports = {
             via: 'sources',
             through: 'sourcemetricsource'
         },
+        getSourceTypeObj: function () {
+            if (!this.sourcetype)
+                return undefined;
+
+            return SourceTypes.get().find(st => st.id === this.sourcetype);
+        },
+        toJSON: function () {
+            const source = this.toObject();
+            source.sourcetype = this.getSourceTypeObj();
+            return source;
+        }
 
     },
     searchCopies: async function (source) {
@@ -139,7 +150,7 @@ module.exports = {
     beforeCreate: async (sourceData, cb) => {
         if (!sourceData.type)
             return;
-        const sourceType = await SourceType.findOneByKey(sourceData.type);
+        const sourceType = SourceTypes.get().find(st => st.key === sourceData.type);
         if (sourceType)
             sourceData.sourcetype = sourceType.id;
         cb();

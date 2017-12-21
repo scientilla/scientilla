@@ -100,6 +100,8 @@ module.exports.routes = {
     'get /api/v1/mbo/v2017/overall_performance/researcher': 'User.getMBOOverallPerformance',
     'get /api/v1/mbo/v2017/iit_performance/researcher': 'User.getMBOInstitutePerformance',
     'get /api/v1/mbo/v2017/iit_performance/line': 'Group.getMBOInstitutePerformance',
+    'get /api/v1/mbo/v2017/invited_talk/researcher': 'User.getMBOInvitedTalks',
+    'get /api/v1/mbo/v2017/invited_talk/line': 'Group.getMBOInvitedTalks',
 
     /***************************************************************************
      *                                                                          *

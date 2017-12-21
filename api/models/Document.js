@@ -1,4 +1,4 @@
-/* global Document, sails, User, ObjectComparer, Connector, Source, Authorship, Affiliation, Institute, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer */
+/* global Document, sails, User, ObjectComparer, Connector, Source, Authorship, Affiliation, Institute, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer, DocumentTypes, SourceTypes */
 'use strict';
 
 /**
@@ -317,12 +317,29 @@ module.exports = _.merge({}, BaseModel, {
                 };
             });
         },
+        getSourceType: function () {
+            if (!this.sourceType)
+                return undefined;
+
+            return SourceTypes.get().find(st => st.key === this.sourceType);
+        },
+        getdocumentType: function () {
+            if (!this.documenttype)
+                return undefined;
+
+            if (_.isObject(this.documenttype))
+                return this.documenttype;
+
+            return DocumentTypes.get().find(st => st.id === this.documenttype);
+        },
         toJSON: function () {
             const document = this.toObject();
             document.sourceDetails = this.getSourceDetails();
             document.duplicates = this.duplicates;
             document.inPress = this.getInPress();
             document.authorDetails = this.getAuthorDetails();
+            document.sourceTypeObj = this.getSourceType();
+            document.documenttype = this.getdocumentType();
             return document;
         }
     },
@@ -510,7 +527,7 @@ module.exports = _.merge({}, BaseModel, {
     async fixDocumentType(document) {
         if (!document.type)
             return;
-        const documentType = await DocumentType.findOneByKey(document.type);
+        const documentType = DocumentTypes.get().find(dt => dt.key === document.type);
         if (documentType)
             document.documenttype = documentType.id;
     }

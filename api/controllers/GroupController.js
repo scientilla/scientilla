@@ -19,5 +19,10 @@ module.exports = _.merge({}, researchEntityController, {
         const year = req.query.year;
         res.halt(Group.getMBOInstitutePerformance(cdr, year));
     },
+    getMBOInvitedTalks: function (req, res) {
+        const cdr = req.query.cdr;
+        const year = req.query.year;
+        res.halt(Group.getMBOInvitedTalks(cdr, year));
+    },
 
 });

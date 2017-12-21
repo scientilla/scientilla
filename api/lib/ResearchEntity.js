@@ -272,7 +272,7 @@ module.exports = _.merge({}, BaseModel, {
             };
         const path = `/api/v1/${researchEntity.getUrlSection()}/${researchEntity.id}/${attribute}`;
         if (!_.isArray(qs.populate)) qs.populate = [qs.populate];
-        qs.populate = _.union(['source', 'affiliations', 'authorships', 'institutes', 'documenttype'], qs.populate);
+        qs.populate = _.union(['source', 'affiliations', 'authorships', 'institutes'], qs.populate);
         const reqOptions = {
             uri: baseUrl + path,
             json: true,
