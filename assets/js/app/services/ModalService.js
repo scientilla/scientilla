@@ -52,14 +52,6 @@
             return modal.result;
         };
 
-        service.openGroupCollaboratorsForm = function (group) {
-            const modal = openModal('scientilla-group-collaborators-form', {
-                group: group
-            });
-            addModalObject(modal);
-            return modal.result;
-        };
-
         service.openScientillaDocumentSearchView = function (document) {
             const modal = openComponentModal('scientilla-document-search-view',
                 {document: document},

@@ -26,11 +26,6 @@ module.exports = require('waterlock').waterlocked({
 
     },
     login: function (req, res) {
-        console.log('login');
-        if (Backup.isRestoring()) {
-            console.log('nope');
-            return res.forbidden('Restoring in progress');
-        }
         const login = require('waterlock').actions.waterlocked().login;
         const username = _.toLower(req.body.username);
         return Auth
