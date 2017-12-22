@@ -60,14 +60,17 @@
                             <br>
                             <div class="row" ng-show="vm.selectedUser">
                                 <div class="col-md-4">
-                        <span>
-                            {{vm.selectedUser.getDisplayName()}}
-                        </span>
+                                    <span>
+                                        {{vm.selectedUser.getDisplayName()}}
+                                    </span>
+                                </div>
+                                <div class="col-md-2">
+                                    <label><input type="checkbox" ng-model="vm.selectedUserActive" /> Active</label>
                                 </div>
                                 <div class="col-md-3">
                                     <button type="button"
                                             class="btn btn-link fa fa-plus"
-                                            ng-click="vm.addCollaborator(vm.group, vm.selectedUser)"
+                                            ng-click="vm.addCollaborator(vm.group, vm.selectedUser, vm.selectedUserActive)"
                                             title="Add {{vm.selectedUser.getDisplayName()}} as a collaborator">
                                     </button>
                                 </div>
@@ -102,11 +105,19 @@
                     <h2>Former Members</h2>
                     <div ng-repeat="m in vm.group.getFormerMembers()">
                         <div class="row">
-                            <div class="col-md-10">
+                            <div class="col-md-5">
                                 <a ng-href="#{{m.getProfileUrl()}}">
                                     {{m| fullname}}
                                 </a>
                                 <small>{{m.jobTitle}}</small>
+                            </div>
+                            <div class="col-md-5">
+                                <button type="button"
+                                        ng-if="vm.isAdmin()"
+                                        class="btn btn-link fa fa-minus"
+                                        ng-click="vm.removeCollaborator(vm.group, m)"
+                                        title="Remove {{vm.selectedUser.getDisplayName()}} from the former members">
+                                </button>
                             </div>
                             <div class="col-md-2 text-right">
                             </div>

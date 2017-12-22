@@ -96,11 +96,11 @@
             return getGroup(groupId);
         }
 
-        function addCollaborator(group, user) {
+        function addCollaborator(group, user, active) {
             const newMembership = {
                 group: group.id,
                 user: user.id,
-                active: true
+                active: active
             };
             return Restangular
                 .all('memberships')

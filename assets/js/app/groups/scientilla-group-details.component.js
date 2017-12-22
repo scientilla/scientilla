@@ -28,6 +28,7 @@
 
         vm.$onInit = function () {
             vm.isCollaborationManagementFormOpen = false;
+            vm.selectedUesrActive = true;
             getUser();
         };
 
@@ -40,8 +41,8 @@
             return UsersService.getUsers(qs);
         }
 
-        function addCollaborator(group, user) {
-            return GroupsService.addCollaborator(group, user)
+        function addCollaborator(group, user, active) {
+            return GroupsService.addCollaborator(group, user, active)
                 .then(() => {
                     delete vm.selectedUser;
                     return getUser();
