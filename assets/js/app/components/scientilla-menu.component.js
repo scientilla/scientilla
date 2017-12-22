@@ -45,7 +45,7 @@
         }
 
         function isAdmin() {
-            return vm.user.isAdmin();
+            return vm.user && vm.user.isAdmin();
         }
     }
 
