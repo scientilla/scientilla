@@ -14,10 +14,11 @@
         'documentListSections',
         "UsersService",
         "GroupsService",
-        "AuthService"
+        "AuthService",
+        "ModalService"
     ];
 
-    function GroupDetailsController(documentListSections, UsersService, GroupsService, AuthService) {
+    function GroupDetailsController(documentListSections, UsersService, GroupsService, AuthService, ModalService) {
         const vm = this;
         vm.documentListSections = documentListSections;
         vm.openCollaboratorsManagementForm = openCollaboratorsManagementForm;
@@ -28,7 +29,7 @@
 
         vm.$onInit = function () {
             vm.isCollaborationManagementFormOpen = false;
-            vm.selectedUesrActive = true;
+            vm.selectedUserActive = true;
             getUser();
         };
 
@@ -55,8 +56,17 @@
         }
 
         function removeCollaborator(group, user) {
-            return GroupsService.removeCollaborator(group, user)
-                .then(() => getUser());
+            ModalService
+                .multipleChoiceConfirm('Removing group member',
+                    `Are you sure you want to remove ${user.getDisplayName()} from the group members?`,
+                    ['Proceed'])
+                .then(function (buttonIndex) {
+                    switch (buttonIndex) {
+                        case 0:
+                            return GroupsService.removeCollaborator(group, user)
+                                .then(() => getUser());
+                    }
+                });
 
         }
 
