@@ -21,6 +21,8 @@
         service.getGroups = getGroups;
         service.getGroup = getGroup;
         service.getProfile = getProfile;
+        service.addCollaborator = addCollaborator;
+        service.removeCollaborator = removeCollaborator;
 
         return service;
 
@@ -92,6 +94,24 @@
 
         function getProfile(groupId) {
             return getGroup(groupId);
+        }
+
+        function addCollaborator(group, user, active) {
+            const newMembership = {
+                group: group.id,
+                user: user.id,
+                active: active
+            };
+            return Restangular
+                .all('memberships')
+                .customPOST(newMembership);
+        }
+
+        function removeCollaborator(group, user) {
+            const membership = group.memberships.find(m => m.user === user.id);
+            return Restangular
+                .one('memberships', membership.id)
+                .remove();
         }
 
         return service;

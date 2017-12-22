@@ -12,8 +12,12 @@ module.exports = {
     makeManualBackup,
     makeTimestampedBackup,
     restoreBackup,
-    getDumps
+    getDumps,
+    isRestoring
 };
+
+
+const restoreLockFilename = '.restorelock';
 
 async function makeManualBackup(postfix) {
     if (!postfix)
@@ -51,6 +55,7 @@ async function makeBackup(postfix = '') {
         }
         catch (e) {
             reject(e);
+            fs.unlinkSync(restoreLockFilename);
         }
     });
 }
@@ -65,6 +70,8 @@ async function restoreBackup(filename = null) {
 
     return new Promise(async (resolve, reject) => {
         try {
+            if (!fs.existsSync(restoreLockFilename))
+                createFile(restoreLockFilename);
             const backupFilename = filename ? filename : getLastAutomaticBackupFilename();
             if (!backupFilename)
                 reject('No backup found');
@@ -77,9 +84,13 @@ async function restoreBackup(filename = null) {
             const connectionString = getConnectionString();
             const binaryBackupCmd = `pg_restore -d ${connectionString} -n public -c -F c -j 3 ${backupFilepath}`;
             await runCommand(binaryBackupCmd, 'binary backup restore');
+            if (fs.existsSync(restoreLockFilename))
+                fs.unlinkSync(restoreLockFilename);
             resolve(0);
         }
         catch (e) {
+            if (fs.existsSync(restoreLockFilename))
+                fs.unlinkSync(restoreLockFilename);
             reject(e);
         }
     })
@@ -121,4 +132,12 @@ function getConnectionString() {
     const {user, database, password} = connectionData;
     const connectionString = `postgresql://${user}:${password}@127.0.0.1:5432/${database}`;
     return connectionString;
+}
+
+function createFile(filepath) {
+    fs.closeSync(fs.openSync(filepath, 'a'));
+}
+
+function isRestoring() {
+    return fs.existsSync(restoreLockFilename);
 }

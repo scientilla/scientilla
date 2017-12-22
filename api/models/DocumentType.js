@@ -6,6 +6,9 @@
  */
 
 module.exports = {
+    DEFAULT_SORTING: {
+        label: 'asc'
+    },
 
     attributes: {
         key: 'text',
