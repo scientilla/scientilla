@@ -29,7 +29,8 @@
             loadAuthenticationData: loadAuthenticationData,
             login: login,
             register: register,
-            logout: logout
+            logout: logout,
+            setupUserAccount: setupUserAccount
         };
 
         return service;

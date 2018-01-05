@@ -19,6 +19,7 @@
         vm.deleteUser = deleteUser;
         vm.editUser = editUser;
         vm.createNew = createNew;
+        vm.loginAs = loginAs;
 
         vm.onFilter = onFilter;
         var query = {};
@@ -72,6 +73,10 @@
                     Notification.warning("Failed to delete user");
                 });
 
+        }
+
+        function loginAs(user) {
+            AuthService.setupUserAccount(user.id);
         }
 
         // private
