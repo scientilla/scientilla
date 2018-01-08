@@ -65,6 +65,11 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'researchEntity',
             through: 'publicationgroup'
         },
+        allPublications: {
+            collection: 'Document',
+            via: 'researchEntity',
+            through: 'allpublicationgroup'
+        },
         disseminationTalks: {
             collection: 'Document',
             via: 'researchEntity',
