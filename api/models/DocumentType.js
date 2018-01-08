@@ -15,6 +15,7 @@ module.exports = {
         shortLabel: 'text',
         label: 'text',
         type: 'text',
+        highimpact: 'boolean',
         defaultSourceType: {
             model: 'SourceType'
         },
