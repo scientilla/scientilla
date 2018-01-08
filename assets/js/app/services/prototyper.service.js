@@ -276,15 +276,16 @@
                 return this.hasLabel(DocumentLabels.UVERIFYING);
             },
             getInstituteIdentifier: function (instituteIndex) {
+                const base26Chars = "0123456789abcdefghijklmnopqrstuvwxyz".split("");
                 const alphabet = "abcdefghijklmnopqrstuvwxyz".split("");
-                if (instituteIndex < alphabet.length)
-                    return alphabet[instituteIndex];
-                const getBaseLog = (y, x) => Math.log(y) / Math.log(x);
-                const firstLetter = alphabet [Math.floor(getBaseLog(instituteIndex, alphabet.length)) - 1];
-                const secondLetter = alphabet [instituteIndex % alphabet.length];
-                return firstLetter + secondLetter;
-            }
+                const alphabetMapper = {};
+                alphabet.forEach((v, i) => alphabetMapper[base26Chars[i]] = v);
+                const base26Value = instituteIndex.toString(alphabet.length).split('');
+                if (base26Value.length > 1)
+                    base26Value[0] = base26Chars[base26Chars.indexOf(base26Value[0]) - 1];
 
+                return base26Value.map(c => alphabetMapper[c]).join('');
+            }
         };
 
         const membershipPrototype = {
