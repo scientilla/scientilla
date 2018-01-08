@@ -185,6 +185,7 @@ module.exports = _.merge({}, BaseModel, {
         },
         isValid: function () {
             const authorsStrRegex = /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?[a-zA-ZÀ-ÖØ-öø-ÿ]\.)+)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?\w\.)+)*$/;
+            const yearRegex = /^(19|20)\d{2}$/;
             const self = this;
             const requiredFields = [
                 'authorsStr',
@@ -199,8 +200,9 @@ module.exports = _.merge({}, BaseModel, {
                 requiredFields.push('source');
 
             return _.every(requiredFields, function (v) {
-                return self[v];
-            }) && authorsStrRegex.test(self.authorsStr);
+                    return self[v];
+                }) && authorsStrRegex.test(self.authorsStr)
+                && yearRegex.test(self.year);
         },
         draftToDocument: function () {
             this.kind = DocumentKinds.VERIFIED;

@@ -40,7 +40,7 @@
     <div class="form-group has-feedback" ng-class="{'has-error': vm.document.id && form.year.$invalid}">
         <label for="year">Year (YYYY format)</label>
         <input type="text" name="year" class="form-control" id="year" placeholder="Year" ng-model="vm.document.year"
-               data-ng-required="true" ng-pattern="/^\d{4}$/" ng-model-options="{ allowInvalid: true }">
+               data-ng-required="true" ng-pattern="/^(19|20)\d{2}$/" ng-model-options="{ allowInvalid: true }">
         <span ng-show="vm.document.id && form.year.$invalid"
               class="fa fa-exclamation-circle form-control-feedback" aria-hidden="true">
         </span>

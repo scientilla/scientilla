@@ -227,7 +227,11 @@
         scopusId: {
             allowNull: true,
             regex: /^\d*$/
-        }
+        },
+        year: {
+            allowNull: false,
+            regex: /^(19|20)\d{2}$/
+ }
     };
 
     const documentOrigins = {
