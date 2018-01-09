@@ -187,7 +187,7 @@ async function importPeople() {
             if (membership) {
                 membership.lastsynch = moment.utc().format();
                 membership.synchronized = true;
-                membership.active = true;
+                membership.active = p.active;
                 const m = await Membership.update(membershipCriteria, membership);
             }
             if (p.pi) {
