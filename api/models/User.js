@@ -100,10 +100,10 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'researchEntity',
             through: 'publication'
         },
-        allPublications: {
+        highImpactPublications: {
             collection: 'Document',
             via: 'researchEntity',
-            through: 'allpublication'
+            through: 'highimpactpublication'
         },
         suggestedDocuments: {
             collection: 'Document',
