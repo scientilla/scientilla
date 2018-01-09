@@ -203,7 +203,7 @@ async function getResearchEntityInstitutePerformance(documents, year) {
 function formatPerformance(researchEntityData, performance) {
     const citationsYearStr = performance.citations_years.map(cpy => cpy.year + ':' + cpy.citations).join(', ');
     const dataUpTo = performance.source_date.updatedAt.getDate() + '/' +
-        performance.source_date.updatedAt.getMonth() + '/' +
+        (performance.source_date.updatedAt.getMonth()+1) + '/' +
         performance.source_date.updatedAt.getFullYear();
     return Object.assign({}, researchEntityData, {
         hindex: {
