@@ -219,7 +219,7 @@ function formatPerformance(researchEntityData, performance) {
             str: 'Total Citations: ' + performance.total_citations
         },
         citations_years: {
-            title: 'Nr. of citations per year',
+            title: 'Nr. of citations',
             value: performance.citations_years,
             str: 'Nr. of citations per year: ' + citationsYearStr,
         },
