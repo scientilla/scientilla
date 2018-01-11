@@ -232,22 +232,22 @@ function formatPerformance(researchEntityData, performance) {
 function formatInstitutePerformance(researchEntityData, performance, y) {
     return Object.assign({}, researchEntityData, {
         papers: {
-            title: `Nr. of papers in ${y} (Journal, Conference, Book)`,
+            title: `Nr. of papers`,
             value: performance.papers,
             str: formatPapers(performance.papers, `Nr. of papers due in ${y} (Journal, Conference, Book):`)
         },
         papers_next_year: {
-            title: `Nr. of papers due ${y+1} (Journal, Conference, Book)`,
+            title: `Nr. of papers`,
             value: performance.papers_next_year,
             str: formatPapers(performance.papers_next_year, `Nr. of papers due in ${y+1} (Journal, Conference, Book):`)
         },
         papers_if: {
-            title: `Nr. of papers (in ${y}) with IF`,
+            title: `Nr. of papers with IF`,
             value: performance.papers_if,
             str: `Nr. of papers (in ${y}) with IF: ` + performance.papers_if
         },
         total_if: {
-            title: `Total IF (papers in ${y})`,
+            title: `Total IF`,
             value: performance.total_if,
             str: `Total IF (papers in ${y}): ` + performance.total_if
         },
