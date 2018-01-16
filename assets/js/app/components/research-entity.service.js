@@ -166,7 +166,7 @@
         }
 
         function copyDocuments(researchEntity, documents) {
-            const documentIds = documents.filter(d => d.kind === 'e').map(d => d.id);
+            const documentIds = documents.map(d => d.id);
             return researchEntity.customPOST({documentIds: documentIds}, 'copy-documents');
         }
 
