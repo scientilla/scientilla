@@ -1,6 +1,6 @@
 SELECT
-  d.year,
-  count(*)
+  d.year AS year,
+  count(*) AS value
 FROM authorship a
   JOIN document d ON a.document = d.id
   JOIN source s ON d.source = s.id

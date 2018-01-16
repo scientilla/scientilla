@@ -15,7 +15,10 @@ module.exports = {
     getUserMBOInvitedTalks,
     getUsersMBOInvitedTalks,
     getGroupMBOInvitedTalks,
-    getGroupsMBOInvitedTalks
+    getGroupsMBOInvitedTalks,
+    getScopusCitations,
+    getCitationTotals,
+    calculateHIndex
 };
 
 async function getUserPerformance(user, year) {
@@ -205,7 +208,7 @@ async function getResearchEntityInstitutePerformance(documents, year) {
 function formatPerformance(researchEntityData, performance) {
     const citationsYearStr = performance.citations_years.map(cpy => cpy.year + ':' + cpy.citations).join(', ');
     const dataUpTo = performance.source_date.updatedAt.getDate() + '/' +
-        (performance.source_date.updatedAt.getMonth()+1) + '/' +
+        (performance.source_date.updatedAt.getMonth() + 1) + '/' +
         performance.source_date.updatedAt.getFullYear();
     return Object.assign({}, researchEntityData, {
         hindex: {
@@ -239,7 +242,7 @@ function formatInstitutePerformance(researchEntityData, performance, y) {
         papers_next_year: {
             title: `Nr. of papers`,
             value: performance.papers_next_year,
-            str: formatPapers(performance.papers_next_year, `Nr. of papers due in ${y+1} (Journal, Conference, Book):`)
+            str: formatPapers(performance.papers_next_year, `Nr. of papers due in ${y + 1} (Journal, Conference, Book):`)
         },
         papers_if: {
             title: `Nr. of papers with IF`,

@@ -15,6 +15,7 @@
         'groups',
         'services',
         'wizard',
-        'admin'
+        'admin',
+        'summary'
     ]);
 })();

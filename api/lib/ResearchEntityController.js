@@ -94,10 +94,10 @@ module.exports = {
         res.halt(Model.updateDraft(Model, draftId, draftData));
     },
     getChartsData: function (req, res) {
-        const modelName = req.options.model || req.options.controller;
+        const Model = getModel(req);
         const id = req.params.researchEntityId;
-        const charts = req.param('charts');
-        res.halt(Chart.getChartsData(id, modelName, charts));
+        const refresh = req.param('refresh') === 'true';
+        res.halt(Chart.getChartsData(id, Model, refresh));
     },
     setAuthorhips: function (req, res) {
         const draftId = req.params.documentId;

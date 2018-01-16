@@ -1,0 +1,20 @@
+<div class="row">
+    <div class="col-md-offset-2 col-md-8">
+        <div class="text-center">
+            <h3>{{vm.mainChart.title}}</h3>
+            <nvd3 options="vm.mainChart.options"
+                  data="vm.mainChart.data"></nvd3>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div ng-repeat="chart in vm.charts"
+         class="col-xs-4 scientilla-chart-preview"
+         ng-class="{'scientilla-chart-selected': vm.isChartSelected(chart)}"
+         ng-click="vm.changeChart(chart)">
+        <div class="text-center">
+            <h3>{{chart.title}}</h3>
+            <nvd3 options="chart.options" data="chart.data"></nvd3>
+        </div>
+    </div>
+</div>
