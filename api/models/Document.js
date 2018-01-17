@@ -194,7 +194,7 @@ module.exports = _.merge({}, BaseModel, {
                 'type',
                 'sourceType'
             ];
-            if (this.type === DocumentTypes.INVITED_TALK)
+            if (this.type === DocumentTypes.INVITED_TALK.key)
                 requiredFields.push('itSource');
             else
                 requiredFields.push('source');

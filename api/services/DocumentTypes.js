@@ -1,4 +1,4 @@
-/* global SourceType*/
+/* global DocumentTypes*/
 // DocumentTypes.js - in api/services
 
 "use strict";
@@ -6,23 +6,26 @@
 let documentTypes = [];
 
 module.exports = {
-    ARTICLE: 'article',
-    ARTICLE_IN_PRESS: 'article_in_press',
-    ABSTRACT_REPORT: 'abstract_report',
-    BOOK: 'book',
-    BOOK_CHAPTER: 'book_chapter',
-    CONFERENCE_PAPER: 'conference_paper',
-    CONFERENCE_REVIEW: 'conference_review',
-    EDITORIAL: 'editorial',
-    ERRATUM: 'erratum',
-    INVITED_TALK: 'invited_talk',
-    LETTER: 'letter',
-    NOTE: 'note',
-    REPORT: 'report',
-    REVIEW: 'review',
-    SHORT_SURVEY: 'short_survey',
-    PHD_THESIS: 'phd_thesis',
-    POSTER: 'poster',
-    init: async () => documentTypes = await DocumentType.find(),
+    ARTICLE: {},
+    ARTICLE_IN_PRESS: {},
+    ABSTRACT_REPORT: {},
+    BOOK: {},
+    BOOK_CHAPTER: {},
+    CONFERENCE_PAPER: {},
+    CONFERENCE_REVIEW: {},
+    EDITORIAL: {},
+    ERRATUM: {},
+    INVITED_TALK: {},
+    LETTER: {},
+    NOTE: {},
+    REPORT: {},
+    REVIEW: {},
+    SHORT_SURVEY: {},
+    PHD_THESIS: {},
+    POSTER: {},
+    init: async () => {
+        documentTypes = await DocumentType.find();
+        documentTypes.forEach(dt => DocumentTypes[dt.key.toLocaleUpperCase()] = dt);
+    },
     get: () => documentTypes
 };

@@ -45,16 +45,16 @@ function getConfig(publicationsKey, params) {
                 sourceType = null;
 
             const typeMappings = {
-                bookwhole: DocumentTypes.BOOK,
-                bookchapter: DocumentTypes.BOOK_CHAPTER,
-                fullpapervolumeatreferredconference: DocumentTypes.CONFERENCE_PAPER,
-                shortpaperabstractatrefereedconference: DocumentTypes.ABSTRACT_REPORT,
-                nationaljournal: DocumentTypes.ARTICLE,
-                internationaljournal: DocumentTypes.ARTICLE,
-                correction: DocumentTypes.ERRATUM,
-                editorial: DocumentTypes.EDITORIAL,
-                supplementaryinformation: DocumentTypes.NOTE,
-                talk: DocumentTypes.INVITED_TALK
+                bookwhole: DocumentTypes.BOOK.key,
+                bookchapter: DocumentTypes.BOOK_CHAPTER.key,
+                fullpapervolumeatreferredconference: DocumentTypes.CONFERENCE_PAPER.key,
+                shortpaperabstractatrefereedconference: DocumentTypes.ABSTRACT_REPORT.key,
+                nationaljournal: DocumentTypes.ARTICLE.key,
+                internationaljournal: DocumentTypes.ARTICLE.key,
+                correction: DocumentTypes.ERRATUM.key,
+                editorial: DocumentTypes.EDITORIAL.key,
+                supplementaryinformation: DocumentTypes.NOTE.key,
+                talk: DocumentTypes.INVITED_TALK.key
             };
             const documentType = d.typeAlias in typeMappings ? typeMappings[d.typeAlias] : null;
             const authors = d.authors ? d.authors : '';
@@ -84,7 +84,7 @@ function getConfig(publicationsKey, params) {
                 }
             );
 
-            if (documentType === DocumentTypes.INVITED_TALK) {
+            if (documentType === DocumentTypes.INVITED_TALK.key) {
                 newDoc.sourceType = null;
                 newDoc.itSource = d.publication;
                 return newDoc;
