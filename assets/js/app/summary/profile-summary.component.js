@@ -41,7 +41,7 @@
             async function request() {
                 const res = await researchEntity.all('charts').getList({refresh: vm.refresh});
                 vm.chartsData = res[0];
-                if (vm.chartsData.chartDataDate)
+                if (vm.chartsData.chartDataDate && vm.chartsData.chartDataDate[0].max)
                     vm.lastRefresh = new Date(vm.chartsData.chartDataDate[0].max);
             }
 
