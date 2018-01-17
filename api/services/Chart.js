@@ -1,4 +1,4 @@
-/* global SqlService, ChartData, PerformanceCalculator, DocumentTypes, DocumentMetric, SourceMetric*/
+/* global SqlService, ChartData, PerformanceCalculator, DocumentTypes, SourceTypes, DocumentMetric, SourceMetric*/
 const Promise = require("bluebird");
 const _ = require("lodash");
 
@@ -7,59 +7,114 @@ module.exports = {
 };
 
 async function getChartsData(researchEntityId, Model, refresh) {
-    const charts = [
-        {
-            key: 'journalsByYear',
-            fn: query
-        },
-        {
-            key: 'conferencesByYear',
-            fn: query
-        },
-        {
-            key: 'booksByYear',
-            fn: query
-        },
-        {
-            key: 'bookChaptersByYear',
-            fn: query
-        },
-        {
-            key: 'disseminationTalksByYear',
-            fn: query
-        },
-        {
-            key: 'scientificTalksByYear',
-            fn: query
-        },
-        {
-            key: 'documentsByType',
-            fn: query
-        },
-        {
-            key: 'hindexPerYear',
-            fn: hindexPerYear
-        },
-        {
-            key: 'citationsPerYear',
-            fn: citationsPerYear
-        },
-        {
-            key: 'citationsPerDocumentYear',
-            fn: citationsPerDocumentYear
-        },
-        {
-            key: 'totaIfPerYear',
-            fn: totaIfPerYear
-        },
-        {
-            key: 'chartDataDate',
-            fn: query
-        }
+
+    const excludedDocumentTypes = [
+        DocumentTypes.ERRATUM.id,
+        DocumentTypes.POSTER.id,
+        DocumentTypes.PHD_THESIS.id,
+        DocumentTypes.REPORT.id,
+        DocumentTypes.INVITED_TALK.id,
+        DocumentTypes.ABSTRACT_REPORT.id
     ];
 
     const researchEntity = await Model.findOne({id: researchEntityId});
     const researchEntityType = researchEntity.getType();
+
+    const mainInstituteId = 1;
+
+    const charts = [{
+        key: 'journalsByYear',
+        queryName: 'documentsByYear',
+        fn: query,
+        params: [researchEntityId, SourceTypes.JOURNAL]
+    }, {
+        key: 'conferencesByYear',
+        queryName: 'documentsByYear',
+        fn: query,
+        params: [researchEntityId, SourceTypes.CONFERENCE]
+    }, {
+        key: 'booksByYear',
+        queryName: 'documentsByYear',
+        fn: query,
+        params: [researchEntityId, SourceTypes.BOOK]
+    }, {
+        key: 'bookChaptersByYear',
+        queryName: 'documentsByYear',
+        fn: query,
+        params: [researchEntityId, SourceTypes.BOOKSERIES]
+    }, {
+        key: 'disseminationTalksByYear',
+        queryName: 'invitedTalksByYear',
+        fn: query,
+        params: [researchEntityId, 'Dissemination']
+    }, {
+        key: 'scientificTalksByYear',
+        queryName: 'invitedTalksByYear',
+        fn: query,
+        params: [researchEntityId, 'Scientific Event']
+    }, {
+        key: 'documentsByType',
+        queryName: 'documentsByType',
+        fn: query,
+        params: [researchEntityId]
+    }, {
+        key: 'filteredAffiliatedJournalsByYear',
+        queryName: 'filteredAffiliatedDocumentsByYear',
+        fn: query,
+        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.JOURNAL]
+    }, {
+        key: 'filteredAffiliatedConferencesByYear',
+        queryName: 'filteredAffiliatedDocumentsByYear',
+        fn: query,
+        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.CONFERENCE]
+    }, {
+        key: 'filteredAffiliatedBooksByYear',
+        queryName: 'filteredAffiliatedDocumentsByYear',
+        fn: query,
+        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOK]
+    }, {
+        key: 'filteredAffiliatedBookChaptersByYear',
+        queryName: 'filteredAffiliatedDocumentsByYear',
+        fn: query,
+        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES]
+    }, {
+        key: 'filteredNotAffiliatedJournalsByYear',
+        queryName: 'filteredNotAffiliatedDocumentsByYear',
+        fn: query,
+        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.JOURNAL]
+    }, {
+        key: 'filteredNotAffiliatedConferencesByYear',
+        queryName: 'filteredNotAffiliatedDocumentsByYear',
+        fn: query,
+        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.CONFERENCE]
+    }, {
+        key: 'filteredNotAffiliatedBooksByYear',
+        queryName: 'filteredNotAffiliatedDocumentsByYear',
+        fn: query,
+        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOK]
+    }, {
+        key: 'filteredNotAffiliatedBookChaptersByYear',
+        queryName: 'filteredNotAffiliatedDocumentsByYear',
+        fn: query,
+        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES]
+    }, {
+        key: 'hindexPerYear',
+        fn: hindexPerYear
+    }, {
+        key: 'citationsPerYear',
+        fn: citationsPerYear
+    }, {
+        key: 'citationsPerDocumentYear',
+        fn: citationsPerDocumentYear
+    }, {
+        key: 'totaIfPerYear',
+        fn: totaIfPerYear
+    }, {
+        key: 'chartDataDate',
+        queryName: 'chartDataDate',
+        fn: query,
+        params: [researchEntityId, researchEntityType]
+    }];
 
     let documents = [];
     let citations = [];
@@ -69,7 +124,7 @@ async function getChartsData(researchEntityId, Model, refresh) {
         await setCitations();
     }
 
-    const promises = charts.map(chart => cachedChartData(researchEntityId, researchEntityType, chart, chart.fn, refresh));
+    const promises = charts.map(chart => cachedChartData(chart, refresh));
     const results = await Promise.all(promises);
 
     const res = {};
@@ -80,13 +135,17 @@ async function getChartsData(researchEntityId, Model, refresh) {
         items: [res]
     };
 
-    async function query(id, type, chart) {
-        const chartQueryPath = `api/queries/${chart.key}.sql`;
+    async function query(chart) {
+        const sql = getSql(chart.queryName);
+        return await SqlService.query(sql, chart.params);
+    }
+
+    function getSql(queryName) {
+        const chartQueryPath = `api/queries/${queryName}.sql`;
         const chartQuerySqlRaw = SqlService.readQueryFromFs(chartQueryPath);
-        const table = type === 'user' ? 'authorship' : 'authorshipgroup';
+        const table = researchEntityType === 'user' ? 'authorship' : 'authorshipgroup';
         //TODO change database structure to handle groups as users
-        const chartQuerySql = chartQuerySqlRaw.replace('authorship', table);
-        return await SqlService.query(chartQuerySql, [id, type]);
+        return chartQuerySqlRaw.replace('authorship', table);
     }
 
     async function hindexPerYear() {
@@ -165,14 +224,6 @@ async function getChartsData(researchEntityId, Model, refresh) {
     }
 
     async function setDocuments() {
-        const excludedDocumentTypes = [
-            DocumentTypes.ERRATUM,
-            DocumentTypes.POSTER,
-            DocumentTypes.PHD_THESIS,
-            DocumentTypes.REPORT,
-            DocumentTypes.INVITED_TALK,
-            DocumentTypes.ABSTRACT_REPORT
-        ];
         const researchEntity = await Model.findOne({id: researchEntityId}).populate('documents');
         documents = researchEntity.documents.filter(d => !excludedDocumentTypes.includes(d.type));
     }
@@ -198,21 +249,21 @@ async function getChartsData(researchEntityId, Model, refresh) {
     }
 
 
-    async function cachedChartData(id, type, chart, fn, refresh) {
+    async function cachedChartData(chart, refresh) {
         if (!refresh) {
-            const chartData = await getCachedData(id, type, chart.key);
+            const chartData = await getCachedData(chart.key);
             if (chartData)
                 return chartData
         }
 
-        const result = await fn(id, type, chart);
+        const result = await chart.fn(chart);
 
-        await cacheData(id, type, chart.key, result);
+        await cacheData(chart.key, result);
 
         return result;
     }
 
-    async function getCachedData(researchEntityId, researchEntityType, key) {
+    async function getCachedData(key) {
         const res = await ChartData.findOne({
             researchEntity: researchEntityId,
             researchEntityType: researchEntityType,
@@ -223,7 +274,7 @@ async function getChartsData(researchEntityId, Model, refresh) {
             return res.value;
     }
 
-    async function cacheData(researchEntityId, researchEntityType, key, value) {
+    async function cacheData(key, value) {
         const chartData = await ChartData.findOne({
             researchEntity: researchEntityId,
             researchEntityType: researchEntityType,
