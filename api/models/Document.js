@@ -194,7 +194,7 @@ module.exports = _.merge({}, BaseModel, {
                 'type',
                 'sourceType'
             ];
-            if (this.type === DocumentTypes.INVITED_TALK.key)
+            if (this.type === DocumentTypes.INVITED_TALK)
                 requiredFields.push('itSource');
             else
                 requiredFields.push('source');
@@ -332,7 +332,7 @@ module.exports = _.merge({}, BaseModel, {
             if (_.isObject(this.documenttype))
                 return this.documenttype;
 
-            return DocumentTypes.get().find(st => st.id === this.documenttype);
+            return DocumentTypes.getDocumentType(this.documenttype);
         },
         toJSON: function () {
             const document = this.toObject();
@@ -529,7 +529,7 @@ module.exports = _.merge({}, BaseModel, {
     async fixDocumentType(document) {
         if (!document.type)
             return;
-        const documentType = DocumentTypes.get().find(dt => dt.key === document.type);
+        const documentType = DocumentTypes.getDocumentType(this.documenttype);
         if (documentType)
             document.documenttype = documentType.id;
     }

@@ -8,13 +8,15 @@ module.exports = {
 
 async function getChartsData(researchEntityId, Model, refresh) {
 
+    const documentTypes = DocumentTypes.get();
+
     const excludedDocumentTypes = [
-        DocumentTypes.ERRATUM.id,
-        DocumentTypes.POSTER.id,
-        DocumentTypes.PHD_THESIS.id,
-        DocumentTypes.REPORT.id,
-        DocumentTypes.INVITED_TALK.id,
-        DocumentTypes.ABSTRACT_REPORT.id
+        documentTypes[DocumentTypes.ERRATUM].id,
+        documentTypes[DocumentTypes.POSTER].id,
+        documentTypes[DocumentTypes.PHD_THESIS].id,
+        documentTypes[DocumentTypes.REPORT].id,
+        documentTypes[DocumentTypes.INVITED_TALK].id,
+        documentTypes[DocumentTypes.ABSTRACT_REPORT].id
     ];
 
     const researchEntity = await Model.findOne({id: researchEntityId});

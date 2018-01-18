@@ -127,7 +127,7 @@ async function getResearchEntityMBOInvitedTalks(docs, year) {
         }, []);
     }
 
-    const invitedTalks = docs.filter(d => parseInt(d.year, 10) === year && d.documenttype === DocumentTypes.INVITED_TALK.id);
+    const invitedTalks = docs.filter(d => parseInt(d.year, 10) === year && DocumentTypes.getDocumentType(d.documenttype).key === DocumentTypes.INVITED_TALK);
 
     const sourceTypes = SourceTypes.get().filter(st => st.type === 'invited_talk');
     const scientificSourceTypes = sourceTypes.filter(st => st.section === 'Scientific Event');
@@ -162,14 +162,14 @@ async function getResearchEntityPerformance(docs, year) {
 
 async function getResearchEntityInstitutePerformance(documents, year) {
     const excludedDocumentTypes = [
-        DocumentTypes.ERRATUM.id,
-        DocumentTypes.POSTER.id,
-        DocumentTypes.PHD_THESIS.id,
-        DocumentTypes.REPORT.id,
-        DocumentTypes.INVITED_TALK.id,
-        DocumentTypes.ABSTRACT_REPORT.id
+        DocumentTypes.ERRATUM,
+        DocumentTypes.POSTER,
+        DocumentTypes.PHD_THESIS,
+        DocumentTypes.REPORT,
+        DocumentTypes.INVITED_TALK,
+        DocumentTypes.ABSTRACT_REPORT
     ];
-    const docs = documents.filter(d => !excludedDocumentTypes.includes(d.documenttype));
+    const docs = documents.filter(d => !excludedDocumentTypes.includes(d.type));
     const docsCurrentYear = docs.filter(d => parseInt(d.year, 10) === year);
     const docsNextYear = docs.filter(d => parseInt(d.year, 10) === (year + 1));
 

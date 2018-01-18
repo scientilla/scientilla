@@ -107,19 +107,19 @@ async function documentDataRequest(scopusId, attempt = 0) {
         };
 
         const typeMappings = {
-            ar: DocumentTypes.ARTICLE.key,
-            ab: DocumentTypes.ABSTRACT_REPORT.key,
-            ip: DocumentTypes.ARTICLE_IN_PRESS.key,
-            bk: DocumentTypes.BOOK.key,
-            ch: DocumentTypes.BOOK_CHAPTER.key,
-            cp: DocumentTypes.CONFERENCE_PAPER.key,
-            cr: DocumentTypes.CONFERENCE_REVIEW.key,
-            ed: DocumentTypes.EDITORIAL.key,
-            er: DocumentTypes.ERRATUM.key,
-            le: DocumentTypes.LETTER.key,
-            no: DocumentTypes.NOTE.key,
-            re: DocumentTypes.REVIEW.key,
-            sh: DocumentTypes.SHORT_SURVEY.key
+            ar: DocumentTypes.ARTICLE,
+            ab: DocumentTypes.ABSTRACT_REPORT,
+            ip: DocumentTypes.ARTICLE_IN_PRESS,
+            bk: DocumentTypes.BOOK,
+            ch: DocumentTypes.BOOK_CHAPTER,
+            cp: DocumentTypes.CONFERENCE_PAPER,
+            cr: DocumentTypes.CONFERENCE_REVIEW,
+            ed: DocumentTypes.EDITORIAL,
+            er: DocumentTypes.ERRATUM,
+            le: DocumentTypes.LETTER,
+            no: DocumentTypes.NOTE,
+            re: DocumentTypes.REVIEW,
+            sh: DocumentTypes.SHORT_SURVEY
         };
 
         const sourceType = sourceTypeMappings[getDollars(scopusSource, '@type')];
