@@ -145,7 +145,7 @@ async function getChartsData(researchEntityId, Model, refresh) {
         const chartQuerySqlRaw = SqlService.readQueryFromFs(chartQueryPath);
         const table = researchEntityType === 'user' ? 'authorship' : 'authorshipgroup';
         //TODO change database structure to handle groups as users
-        return chartQuerySqlRaw.replace('authorship', table);
+        return chartQuerySqlRaw.replace(new RegExp('authorship', 'g'), table);
     }
 
     async function hindexPerYear() {
