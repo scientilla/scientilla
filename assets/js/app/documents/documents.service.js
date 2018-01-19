@@ -35,6 +35,8 @@
                 service.desynchronizeDrafts = desynchronizeDrafts;
                 service.setAuthorshipFavorite = setAuthorshipFavorite;
                 service.setAuthorshipPrivacy = setAuthorshipPrivacy;
+                service.compareDocuments = compareDocuments;
+                service.verify = verify;
 
                 return service;
 
@@ -306,6 +308,77 @@
                         })
                         .catch(err => Notification.warning(err.data));
                 }
+
+                /* jshint ignore:start */
+                async function compareDocuments(doc1Id, doc2Id) {
+                    const doc1 = await researchEntityService.getDocument(doc1Id);
+                    const doc2 = await researchEntityService.getDocument(doc2Id);
+                    const i = await ModalService.openDocumentComparisonForm(doc1, doc2);
+                    let chosenDoc, msg, discardedDoc;
+                    if (i === 1) {
+                        chosenDoc = doc1;
+                        discardedDoc = doc2;
+                        msg = "The second document has been discarded";
+                    }
+                    if (i === 2) {
+                        chosenDoc = doc2;
+                        discardedDoc = doc1;
+                        msg = "The first document has been discarded";
+                    }
+                    if (i === 1 || i === 2) {
+                        EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
+                        Notification.success(msg);
+                        await researchEntityService.removeDocument(researchEntity, discardedDoc);
+                        if (chosenDoc.isSuggested(researchEntity)) {
+                            const j = await ModalService
+                                .multipleChoiceConfirm('Action choice',
+                                    `What do you want to do with the selected document?`,
+                                    ['Verify', 'Copy to Draft']);
+                            if (j === 0) {
+                                await service.verify(chosenDoc);
+                            }
+                            if (j === 1) {
+                                await researchEntityService.copyDocument(researchEntity, chosenDoc);
+                                Notification.success('Draft created');
+                            }
+                        }
+                        if (chosenDoc.isDraft()) {
+                            const draft = await researchEntityService.getDraft(researchEntity, chosenDoc.id);
+                            await openEditPopup(draft);
+                        }
+                        if (chosenDoc.isVerified(researchEntity)) {
+                            const j = await ModalService
+                                .multipleChoiceConfirm('Action choice',
+                                    `Do you want to move the selected document to the drafts?`,
+                                    ['Move to draft']);
+                            if (j === 0) {
+                                const draft = await researchEntityService.copyDocument(researchEntity, chosenDoc);
+                                EventsService.publish(EventsService.DRAFT_CREATED, draft);
+                                await researchEntityService.unverify(researchEntity, chosenDoc);
+                                EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
+                                Notification.success('Document moved to drafts');
+                            }
+                            if (j === 1) {
+                                await researchEntityService.copyDocument(researchEntity, chosenDoc);
+                                Notification.success('Draft created');
+                            }
+                        }
+                    }
+                    if (i === 3) {
+                        await researchEntityService.documentsNotDuplicate(researchEntity, doc1, doc2);
+                        EventsService.publish(EventsService.DOCUMENT_COMPARE, null);
+                        Notification.success("The documents have been marked as non-duplicates");
+                    }
+                }
+
+                function verify(d) {
+                    if (d.isDraft())
+                        return service.verifyDraft(d);
+                    else
+                        return service.verifyDocument(d);
+                }
+
+                /* jshint ignore:end */
             }
         };
     }

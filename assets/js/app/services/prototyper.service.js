@@ -285,7 +285,18 @@
                     base26Value[0] = base26Chars[base26Chars.indexOf(base26Value[0]) - 1];
 
                 return base26Value.map(c => alphabetMapper[c]).join('');
-            }
+            },
+            isSuggested: function(researchEntity) {
+                const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
+                return this.kind === DocumentKinds.VERIFIED && !this[f].some(re => re.id === researchEntity.id);
+            },
+            isDraft: function() {
+                return this.kind === DocumentKinds.DRAFT;
+            },
+            isVerified: function(researchEntity) {
+                const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
+                return this[f].some(re => re.id === researchEntity.id);
+            },
         };
 
         const membershipPrototype = {

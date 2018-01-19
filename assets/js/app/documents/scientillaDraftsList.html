@@ -32,11 +32,19 @@
                                      uib-dropdown>
                                     <button ng-click="vm.openEditPopup(d)"
                                             ng-disabled="d.synchronized"
+                                            ng-if="!d.duplicates.length"
                                             type="button"
                                             class=" btn btn-primary"
                                             title="Let you edit the document, if synchronization is active the document cannot be edited">
                                         <span class="fa fa-edit"></span>
                                         Edit
+                                    </button>
+                                    <button ng-click="vm.compareDocuments(d.id, d.duplicates[0].duplicate)"
+                                            ng-if="d.duplicates.length"
+                                            type="button"
+                                            class=" btn btn-primary">
+                                        <span class="fa fa-edit"></span>
+                                        Compare
                                     </button>
                                     <button type="button" class="btn btn-primary dropdown-toggle"
                                             data-toggle="dropdown">
@@ -44,6 +52,11 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-right">
                                         <li>
+                                            <button ng-click="vm.openEditPopup(d)" type="button"
+                                                    class="btn btn-primary" ng-if="d.duplicates.length">
+                                                <span class="fa fa-check"></span>
+                                                Edit
+                                            </button>
                                             <button ng-click="vm.openDocumentAffiliationForm(d)"
                                                     ng-disabled="d.synchronized"
                                                     class="btn btn-link">

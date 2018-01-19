@@ -30,9 +30,14 @@
                             <h3>
                                 <div class="btn-group scientilla-dropdown-align-right" uib-dropdown>
                                     <button ng-disabled="!document.isValid()" ng-click="vm.verifyDocument(document)" type="button"
-                                            class="btn btn-primary">
+                                            class="btn btn-primary" ng-if="!document.duplicates.length">
                                         <span class="fa fa-check"></span>
                                         Verify
+                                    </button>
+                                    <button ng-click="vm.compareDocuments(document.id, document.duplicates[0].duplicate)" type="button"
+                                            class="btn btn-primary" ng-if="document.duplicates.length">
+                                        <span class="fa fa-check"></span>
+                                        Compare
                                     </button>
                                     <button type="button" class="btn btn-primary dropdown-toggle"
                                             data-toggle="dropdown">

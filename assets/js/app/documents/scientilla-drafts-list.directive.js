@@ -21,7 +21,11 @@
         'EventsService'
     ];
 
-    function scientillaDrafsList(context, researchEntityService, documentSearchForm, documentListSections, EventsService) {
+    function scientillaDrafsList(context,
+                                 researchEntityService,
+                                 documentSearchForm,
+                                 documentListSections,
+                                 EventsService) {
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
@@ -36,6 +40,7 @@
         vm.verifyDrafts = DocumentsService.verifyDrafts;
         vm.synchronizeDraft = DocumentsService.synchronizeDraft;
         vm.desynchronizeDrafts = DocumentsService.desynchronizeDrafts;
+        vm.compareDocuments = DocumentsService.compareDocuments;
 
         vm.searchForm = documentSearchForm;
         vm.documentListSections = documentListSections;
@@ -50,7 +55,9 @@
                 EventsService.DRAFT_VERIFIED,
                 EventsService.DRAFT_UNVERIFIED,
                 EventsService.DRAFT_SYNCHRONIZED,
-                EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED
+                EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED,
+                EventsService.DOCUMENT_DISCARDED,
+                EventsService.DOCUMENT_COMPARE
             ], updateList);
         };
 

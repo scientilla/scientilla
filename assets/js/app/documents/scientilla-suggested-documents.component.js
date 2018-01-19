@@ -21,7 +21,12 @@
         'documentListSections'
     ];
 
-    function scientillaSuggestedDocumentsController(context, researchEntityService, EventsService, ModalService, documentSearchForm, documentListSections) {
+    function scientillaSuggestedDocumentsController(context,
+                                                    researchEntityService,
+                                                    EventsService,
+                                                    ModalService,
+                                                    documentSearchForm,
+                                                    documentListSections) {
         const vm = this;
 
         const DocumentsService = context.getDocumentService();
@@ -33,6 +38,7 @@
         vm.discardDocument = DocumentsService.discardDocument;
         vm.copyDocuments = DocumentsService.copyDocuments;
         vm.discardDocuments = DocumentsService.discardDocuments;
+        vm.compareDocuments = DocumentsService.compareDocuments;
         vm.documents = [];
         let query = {};
 
@@ -59,7 +65,9 @@
                 EventsService.NOTIFICATION_DISCARDED,
                 EventsService.DRAFT_UNVERIFIED,
                 EventsService.DOCUMENT_VERIFIED,
-                EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED
+                EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED,
+                EventsService.DOCUMENT_DISCARDED,
+                EventsService.DOCUMENT_COMPARE
             ], updateList);
 
             if (researchEntity.getType() === 'user' && !researchEntity.alreadyOpenedSuggested)

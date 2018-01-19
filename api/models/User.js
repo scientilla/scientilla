@@ -115,6 +115,11 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'researchEntity',
             through: 'externaldocument'
         },
+        notDuplicateDocuments: {
+            collection: 'document',
+            via: 'researchEntity',
+            through: 'documentnotduplicate'
+        },
         authorships: {
             collection: 'authorship',
             via: 'researchEntity',

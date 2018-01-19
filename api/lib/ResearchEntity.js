@@ -74,14 +74,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     discardDocument: async function (Model, researchEntityId, documentId) {
         const DiscardedModel = getDiscardedModel(Model);
-        const AuthorshipModel = getAuthorshipModel(Model);
-        const authorships = await AuthorshipModel.find({document: documentId, researchEntity: researchEntityId});
-        if (authorships.length > 0) {
-            return {
-                error: 'Document verified, must be unverified',
-                item: documentId
-            };
-        }
+        await Model.doUnverifyDocument(Model, researchEntityId, documentId);
         const alreadyDiscarded = await DiscardedModel.find({researchEntity: researchEntityId, document: documentId});
         if (alreadyDiscarded.length > 0) {
             sails.log.info(`${Model.identity} ${researchEntityId} tried to discard document ${documentId} but was already discarded`);
@@ -263,6 +256,31 @@ module.exports = _.merge({}, BaseModel, {
                 )
             )
     },
+    removeDocument: async function(researchEntityModel, researchEntityId, documentId) {
+        const document = await Document.findOneById(documentId);
+        if (document.kind === DocumentKinds.DRAFT)
+            await Document.destroy({id: documentId});
+        else
+            await researchEntityModel.discardDocument(researchEntityModel, researchEntityId, documentId);
+    },
+    verify: async function(researchEntityModel, researchEntityId, documentId) {
+        const document = await Document.findOneById(documentId);
+        if (document.kind === DocumentKinds.DRAFT)
+            return await researchEntityModel.verifyDraft(researchEntityModel, researchEntityId, documentId);
+        else
+            return await researchEntityModel.verifyDocument(researchEntityModel, researchEntityId, documentId);
+    },
+    setDocumentAsNotDuplicate: async function (researchEntityModel, researchEntityId, document1Id, document2Id) {
+        const DocumentNotDuplicatedModel = getDocumentNotDuplicateModel(researchEntityModel);
+        const minDocId = Math.min(document1Id, document2Id);
+        const maxDocId = Math.max(document1Id, document2Id);
+        const documentNotDuplicate = await DocumentNotDuplicatedModel.create({
+            researchEntity: researchEntityId,
+            document: document1Id,
+            duplicate: document2Id
+        });
+        return documentNotDuplicate;
+    },
     makeInternalRequest: async function (researchEntityModel, researchEntitySearchCriteria, baseUrl, qs, attribute) {
         const researchEntity = await researchEntityModel.findOne(researchEntitySearchCriteria);
         if (!researchEntity)
@@ -300,4 +318,8 @@ function getAuthorshipModel(ResearchEntityModel) {
 
 function getDiscardedModel(ResearchEntityModel) {
     return getThroughModel(ResearchEntityModel, 'discardedDocuments');
+}
+
+function getDocumentNotDuplicateModel(ResearchEntityModel) {
+    return getThroughModel(ResearchEntityModel, 'notDuplicateDocuments');
 }
