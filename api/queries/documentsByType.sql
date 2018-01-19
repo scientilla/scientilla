@@ -1,6 +1,6 @@
 SELECT
-  d.type,
-  count(*)
+  d.type   AS type,
+  count(*) AS value
 FROM authorship a
   JOIN document d ON a.document = d.id
 WHERE a."researchEntity" = $1

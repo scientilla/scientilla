@@ -15,7 +15,10 @@ module.exports = {
     getUserMBOInvitedTalks,
     getUsersMBOInvitedTalks,
     getGroupMBOInvitedTalks,
-    getGroupsMBOInvitedTalks
+    getGroupsMBOInvitedTalks,
+    getScopusCitations,
+    getCitationTotals,
+    calculateHIndex
 };
 
 async function getUserPerformance(user, year) {
@@ -205,7 +208,7 @@ async function getResearchEntityInstitutePerformance(documents, year) {
 function formatPerformance(researchEntityData, performance) {
     const citationsYearStr = performance.citations_years.map(cpy => cpy.year + ':' + cpy.citations).join(', ');
     const dataUpTo = performance.source_date.updatedAt.getDate() + '/' +
-        (performance.source_date.updatedAt.getMonth()+1) + '/' +
+        (performance.source_date.updatedAt.getMonth() + 1) + '/' +
         performance.source_date.updatedAt.getFullYear();
     return Object.assign({}, researchEntityData, {
         hindex: {
@@ -219,7 +222,7 @@ function formatPerformance(researchEntityData, performance) {
             str: 'Total Citations: ' + performance.total_citations
         },
         citations_years: {
-            title: 'Nr. of citations per year',
+            title: 'Nr. of citations',
             value: performance.citations_years,
             str: 'Nr. of citations per year: ' + citationsYearStr,
         },
@@ -232,22 +235,22 @@ function formatPerformance(researchEntityData, performance) {
 function formatInstitutePerformance(researchEntityData, performance, y) {
     return Object.assign({}, researchEntityData, {
         papers: {
-            title: `Nr. of papers in ${y} (Journal, Conference, Book)`,
+            title: `Nr. of papers`,
             value: performance.papers,
             str: formatPapers(performance.papers, `Nr. of papers due in ${y} (Journal, Conference, Book):`)
         },
         papers_next_year: {
-            title: `Nr. of papers due ${y+1} (Journal, Conference, Book)`,
+            title: `Nr. of papers`,
             value: performance.papers_next_year,
-            str: formatPapers(performance.papers_next_year, `Nr. of papers due in ${y+1} (Journal, Conference, Book):`)
+            str: formatPapers(performance.papers_next_year, `Nr. of papers due in ${y + 1} (Journal, Conference, Book):`)
         },
         papers_if: {
-            title: `Nr. of papers (in ${y}) with IF`,
+            title: `Nr. of papers with IF`,
             value: performance.papers_if,
             str: `Nr. of papers (in ${y}) with IF: ` + performance.papers_if
         },
         total_if: {
-            title: `Total IF (papers in ${y})`,
+            title: `Total IF`,
             value: performance.total_if,
             str: `Total IF (papers in ${y}): ` + performance.total_if
         },
