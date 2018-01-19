@@ -110,7 +110,16 @@ async function getChartsData(researchEntityId, Model, refresh) {
         fn: citationsPerDocumentYear
     }, {
         key: 'totaIfPerYear',
-        fn: totaIfPerYear
+        fn: getTotalMetricPerYear,
+        metricName: 'IF'
+    }, {
+        key: 'totaSjrPerYear',
+        fn: getTotalMetricPerYear,
+        metricName: 'SJR'
+    }, {
+        key: 'totaSnipPerYear',
+        fn: getTotalMetricPerYear,
+        metricName: 'SNIP'
     }, {
         key: 'chartDataDate',
         queryName: 'chartDataDate',
@@ -120,10 +129,12 @@ async function getChartsData(researchEntityId, Model, refresh) {
 
     let documents = [];
     let citations = [];
+    let docsMetrics = [];
 
     if (refresh || !await areChartsCached()) {
         await setDocuments();
         await setCitations();
+        await setDocumentsMetrics();
     }
 
     const promises = charts.map(chart => cachedChartData(chart, refresh));
@@ -153,7 +164,7 @@ async function getChartsData(researchEntityId, Model, refresh) {
     async function hindexPerYear() {
         if (!documents.length) return [];
         const yearRange = getYearRange(documents);
-        const years = _.range(yearRange.min, yearRange.max + 1);
+        const years = _.range(yearRange.min, new Date().getFullYear() + 1);
 
         return await Promise.all(years.map(async y => ({
                 year: y,
@@ -197,19 +208,18 @@ async function getChartsData(researchEntityId, Model, refresh) {
             });
     }
 
-    async function totaIfPerYear() {
-        const docsMetrics = await DocumentMetric.find({document: documents.map(d => d.id)});
-        const impactFactors = await SourceMetric.find({name: 'IF', id: docsMetrics.map(dm => dm.metric)});
+    async function getTotalMetricPerYear(chart) {
+        const metrics = await SourceMetric.find({name: chart.metricName, id: docsMetrics.map(dm => dm.metric)});
         const docs = documents.map(d => {
             const documentMetricsIds = docsMetrics.filter(dm => dm.document === d.id).map(dm => dm.metric);
-            const impactFactorsAllYears = impactFactors.filter(i => documentMetricsIds.includes(i.id));
+            const impactFactorsAllYears = metrics.filter(i => documentMetricsIds.includes(i.id));
             const year = Math.max(...impactFactorsAllYears.map(m => parseInt(m.year, 10)));
-            const IF = impactFactorsAllYears.find(m => m.year === year);
+            const metric = impactFactorsAllYears.find(m => m.year === year);
             return {
                 year: d.year,
-                IF: IF ? parseFloat(IF.value) : 0
+                metric: metric ? parseFloat(metric.value) : 0
             };
-        }).filter(d => d.IF);
+        }).filter(d => d.metric);
 
         if (!docs.length) return [];
         const yearRange = getYearRange(docs);
@@ -217,7 +227,7 @@ async function getChartsData(researchEntityId, Model, refresh) {
         return _.range(yearRange.min, yearRange.max + 1)
             .map(y => {
                 const yearDocs = docs.filter(c => parseInt(c.year, 10) === y);
-                const yearTotal = yearDocs.reduce((res, doc) => doc.IF + res, 0);
+                const yearTotal = yearDocs.reduce((res, doc) => doc.metric + res, 0);
                 return {
                     year: y,
                     value: yearTotal
@@ -232,6 +242,10 @@ async function getChartsData(researchEntityId, Model, refresh) {
 
     async function setCitations() {
         citations = await PerformanceCalculator.getScopusCitations(documents, new Date().getFullYear() + 1);
+    }
+
+    async function setDocumentsMetrics() {
+        docsMetrics = await DocumentMetric.find({document: documents.map(d => d.id)});
     }
 
     async function getHIndex(year) {
