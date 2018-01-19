@@ -1,13 +1,16 @@
 <scientilla-backend-layout>
-    Data calculated on: {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}
-    <scientilla-button click="vm.recalculate">Recalculate data</scientilla-button>
-
     <uib-tabset active="active">
         <uib-tab index="0" heading="Overview" ng-click="vm.changeTab('overview')">
             <summary-overview ng-if="vm.chartsData" charts-data="vm.chartsData"></summary-overview>
         </uib-tab>
         <uib-tab index="1" heading="Metrics" ng-click="vm.changeTab('metrics')">
             <summary-metrics ng-if="vm.chartsData" charts-data="vm.chartsData"></summary-metrics>
+        </uib-tab>
+        <uib-tab index="2" heading="Data calculated on {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}">
+            <scientilla-button click="vm.recalculate">Recalculate data</scientilla-button>
+            <div>
+                <span ng-if="vm.isLoading" class="fa fa-refresh fa-5x fa-spin"></span>
+            </div>
         </uib-tab>
     </uib-tabset>
 

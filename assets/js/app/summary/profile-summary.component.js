@@ -18,6 +18,7 @@
 
             vm.refresh = false;
             vm.lastRefresh = new Date();
+            vm.isLoading = false;
 
             vm.recalculate = recalculate;
             vm.changeTab = changeTab;
@@ -33,9 +34,11 @@
 
             async function recalculate() {
                 vm.refresh = true;
+                vm.isLoading = true;
                 await request();
                 reloadTabs();
                 vm.refresh = false;
+                vm.isLoading = false;
             }
 
             async function request() {
