@@ -83,7 +83,7 @@ CREATE OR REPLACE VIEW documentduplicate AS
        ) tmp
   WHERE
     document <> duplicate
-    AND (document, duplicate, "researchEntity") NOT IN (
+    AND (LEAST(document, duplicate),GREATEST(document, duplicate), "researchEntity") NOT IN (
       SELECT
         document,
         duplicate,
@@ -175,7 +175,7 @@ CREATE OR REPLACE VIEW documentduplicate AS
        ) tmp
   WHERE
     document <> duplicate
-    AND (document, duplicate, "researchEntity") NOT IN (
+    AND (LEAST(document, duplicate),GREATEST(document, duplicate), "researchEntity") NOT IN (
       SELECT
         document,
         duplicate,
