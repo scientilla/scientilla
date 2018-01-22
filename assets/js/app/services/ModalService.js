@@ -97,6 +97,30 @@
             return modal.result;
         };
 
+        service.openDocumentComparisonForm = function (document1, document2) {
+
+            var scopeVars = {
+                document1: document1,
+                document2: document2
+            };
+
+            const modal = openModal(
+                '<scientilla-document-comparison-form\
+                    document1="vm.document1"\
+                    document2="vm.document2"\
+                    on-failure="vm.onFailure"\
+                    on-submit="vm.onSubmit"\
+                ></scientilla-document-comparison-form>',
+                scopeVars,
+                {
+                    size: 'lg',
+                    windowClass: 'scientilla-modal-large'
+                }
+            );
+            addModalObject(modal);
+            return modal.result;
+        };
+
 
         service.openScientillaTagForm = function (document) {
 

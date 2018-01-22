@@ -83,6 +83,13 @@ CREATE OR REPLACE VIEW documentduplicate AS
        ) tmp
   WHERE
     document <> duplicate
+    AND (document, duplicate, "researchEntity") NOT IN (
+      SELECT
+        document,
+        duplicate,
+        "researchEntity"
+      FROM documentnotduplicategroup dnd
+    )
   UNION
   (WITH dd AS (
     SELECT
@@ -168,4 +175,11 @@ CREATE OR REPLACE VIEW documentduplicate AS
        ) tmp
   WHERE
     document <> duplicate
+    AND (document, duplicate, "researchEntity") NOT IN (
+      SELECT
+        document,
+        duplicate,
+        "researchEntity"
+      FROM documentnotduplicate dnd
+    )
   )

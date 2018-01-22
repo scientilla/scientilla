@@ -20,8 +20,16 @@
                 service.verifyDraft = verifyDraft;
                 service.verifyDocument = verifyDocument;
                 service.synchronizeDraft = synchronizeDraft;
+                service.verify = verify;
 
                 return service;
+
+                function verify(d) {
+                    if (d.isDraft())
+                        verifyDraft(d);
+                    else
+                        verifyDocument(d);
+                }
 
                 function verifyDraft(draft) {
                     function verificationCallback(user, documentId, verificationData) {

@@ -134,6 +134,13 @@ module.exports = {
         const favorite = req.body.favorite;
         res.halt(AuthorshipModel.setFavorite(documentId, researchEntityId, favorite));
     },
+    setDocumentAsNotDuplicate: function (req, res) {
+        const researchEntityId = req.params.researchEntityId;
+        const document1Id = req.body.document1Id;
+        const document2Id = req.body.document2Id;
+        const Model = getModel(req);
+        res.halt(Model.setDocumentAsNotDuplicate(Model, researchEntityId, document1Id, document2Id));
+    },
     getPublicDocuments: async (req, res) => makePublicAPIrequest(req, res, 'documents'),
     getPublications: async (req, res) => makePublicAPIrequest(req, res, 'publications'),
     getDisseminationTalks: async (req, res) => makePublicAPIrequest(req, res, 'disseminationTalks'),

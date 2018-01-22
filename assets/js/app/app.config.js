@@ -100,6 +100,7 @@
             return data;
         });
 
+        Restangular.extendModel('documents', Prototyper.toDocumentModel);
         Restangular.extendModel('users', Prototyper.toUserModel);
         Restangular.extendModel('groups', Prototyper.toGroupModel);
         Restangular.extendModel('drafts', Prototyper.toDocumentModel);

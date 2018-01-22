@@ -99,6 +99,11 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'researchEntity',
             through: 'externaldocumentgroup'
         },
+        notDuplicateDocuments: {
+            collection: 'document',
+            via: 'researchEntity',
+            through: 'documentnotduplicategroup'
+        },
         getType: function () {
             return 'group';
         },
