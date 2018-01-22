@@ -177,7 +177,9 @@
                 'wosId',
                 'authorships',
                 'affiliations',
-                'institutes'
+                'institutes',
+                'synchronized',
+                'origin'
             ],
             create: function (documentData) {
                 var fields = _.union(['kind', 'draftCreator', 'draftGroupCreator'], documentPrototype.fields);
@@ -297,6 +299,15 @@
                 const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
                 return this[f].some(re => re.id === researchEntity.id);
             },
+            getStringKind(researchEntity) {
+                if (this.isSuggested(researchEntity))
+                    return 'Suggested';
+                if (this.isDraft())
+                    return 'Draft';
+                if (this.isVerified(researchEntity))
+                    return 'Verified';
+
+            }
         };
 
         const membershipPrototype = {

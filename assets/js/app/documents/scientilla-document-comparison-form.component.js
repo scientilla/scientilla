@@ -36,7 +36,7 @@
         var user = AuthService.user;
 
         const DocumentService = context.getDocumentService();
-        const researchEntity = context.getResearchEntity();
+        vm.researchEntity = context.getResearchEntity();
         vm.$onInit = function () {vm.differentFields = getDifferentFields();
         };
 
