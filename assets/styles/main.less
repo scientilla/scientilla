@@ -1,6 +1,6 @@
 @import "iit-colors";
 
-body{
+body {
   color: @main-text-color;
 }
 
@@ -67,4 +67,81 @@ i {
 .scientilla-dropdown-align-right li button {
   width: 100%;
   text-align: left;
+}
+
+/*************Charts************************/
+
+#scientilla-chart-container .tab-content {
+  background-color: @iit-grey-light;
+}
+
+#scientilla-chart-container li.active > a {
+  background-color: @iit-grey-light;
+  color: @iit-grey-dark;
+}
+
+.scientilla-chart-widget {
+  border-radius: 25px;
+  background-color: @iit-white;
+  margin-top: 20px;
+  padding: 10px;
+  text-align: center;
+}
+
+#scientilla-chart-totals > table {
+  margin-bottom: 0;
+}
+
+#scientilla-chart-hindexPerYear .nv-point {
+  stroke-opacity: 1;
+  stroke-width: 2px;
+  fill-opacity: 1;
+}
+
+#scientilla-chart-journalMetricsPerYear .nv-point {
+  stroke-opacity: 1;
+  stroke-width: 2px;
+  fill-opacity: 1;
+}
+
+.scientilla-chart-selector {
+  background-color: rgb(174, 199, 232);
+  text-align: center;
+  border-radius: 20px;
+  font-size: 0;
+  width: 100px;
+}
+
+.scientilla-chart-selector-element {
+  color: @iit-white;
+  cursor: pointer;
+  display: inline-block;
+  border-radius: 20px;
+  width: 50%;
+  padding: 3px;
+  font-size: 20px;
+}
+
+.scientilla-chart-selector-element.selected {
+  background-color: @iit-blue-dark;
+}
+
+.scientilla-chart-icon {
+  font-size: 25px;
+}
+
+.scientilla-icon-color-document {
+  color: @scientilla-document-color;
+}
+
+.scientilla-icon-color-hindex {
+  color: @scientilla-hindex-color;
+}
+
+.scientilla-icon-color-citations {
+  color: @scientilla-citations-color;
+}
+
+.scientilla-icon-color-metric {
+  color: @scientilla-metric-color;
 }

@@ -109,15 +109,15 @@ async function getChartsData(researchEntityId, Model, refresh) {
         key: 'citationsPerDocumentYear',
         fn: citationsPerDocumentYear
     }, {
-        key: 'totaIfPerYear',
+        key: 'totalIfPerYear',
         fn: getTotalMetricPerYear,
         metricName: 'IF'
     }, {
-        key: 'totaSjrPerYear',
+        key: 'totalSjrPerYear',
         fn: getTotalMetricPerYear,
         metricName: 'SJR'
     }, {
-        key: 'totaSnipPerYear',
+        key: 'totalSnipPerYear',
         fn: getTotalMetricPerYear,
         metricName: 'SNIP'
     }, {

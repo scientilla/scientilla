@@ -7,6 +7,11 @@
         'DocumentTypesService'
     ];
 
+    const metricsColors = [
+        '#2ca02c',
+        '#9467bd',
+        '#118798'
+    ];
 
     function ChartService(DocumentTypesService) {
         const service = {
@@ -15,7 +20,6 @@
                     showLabels: false,
                     showLegend: false,
                     showControls: false,
-                    width: undefined,
                     height: 250,
                     duration: 300,
                     reduceXTicks: true,
@@ -35,7 +39,6 @@
                     showLabels: true,
                     showLegend: true,
                     showControls: true,
-                    width: undefined,
                     height: 420,
                     margin: {
                         top: 40,
@@ -171,129 +174,191 @@
 
         service.getHindexPerYear = (chartsData) => {
             const yearRange = getYearRange(chartsData);
-            const baseOptions = {
-                chart: {
-                    type: 'multiBarChart',
-                    x: d => d.year,
-                    y: d => d.value,
-                    showValues: true,
-                    stacked: true,
-                    xAxis: {
-                        axisLabel: '',
-                        rotateLabels: 50,
-                        showMaxMin: false
-                    },
-                    yAxis: {
-                        axisLabel: '',
-                        axisLabelDistance: -10
-                    }
-                }
-            };
-
+            const maxYValue = parseInt(_.maxBy(chartsData.hindexPerYear, 'value').value, 10);
+            const maxXValue = parseInt(_.maxBy(chartsData.hindexPerYear, 'year').year, 10);
+            const minXValue = parseInt(_.minBy(chartsData.hindexPerYear, 'year').year, 10);
             return {
                 title: 'h index by year',
                 data: [{
                     key: 'h-index',
                     values: getItemsByYear(chartsData.hindexPerYear, yearRange)
                 }],
-                options: getDefaultOptions(baseOptions, service.previewDefaultOptions),
-                baseOptions: baseOptions
+                options: {
+                    chart: {
+                        type: 'lineChart',
+                        color: () => '#a94442',
+                        x: d => d.year,
+                        y: d => d.value,
+                        showLabels: true,
+                        showLegend: false,
+                        showControls: false,
+                        useInteractiveGuideline: true,
+                        height: 300,
+                        xAxis: {
+                            rotateLabels: 50,
+                            showMaxMin: false,
+                            tickFormat: d => d3.format('')(d)
+                        },
+                        yAxis: {
+                            showMaxMin: false,
+                            tickFormat: d => d3.format('')(d)
+                        },
+                        yDomain: [-0.1, maxYValue + (maxYValue * 0.05)],
+                        xDomain: [minXValue, maxXValue + 0.1],
+                        valueFormat: d => d3.format('')(d)
+                    }
+                }
             };
         };
 
         service.getCitationsPerDocumentYear = (chartsData) => {
             const yearRange = getYearRange(chartsData);
-            const baseOptions = {
-                chart: {
-                    type: 'multiBarChart',
-                    x: d => d.year,
-                    y: d => d.value,
-                    showValues: true,
-                    stacked: true,
-                    xAxis: {
-                        axisLabel: '',
-                        rotateLabels: 50,
-                        showMaxMin: false
-                    },
-                    yAxis: {
-                        axisLabel: '',
-                        axisLabelDistance: -10
-                    }
-                }
-            };
 
             return {
-                title: 'Citations per document year',
+                title: 'Citations by document year',
                 data: [{
                     key: 'Citations',
                     values: getItemsByYear(chartsData.citationsPerDocumentYear, yearRange)
                 }],
-                options: getDefaultOptions(baseOptions, service.previewDefaultOptions),
-                baseOptions: baseOptions
+                options: getMultiBarChartConfig({
+                    stacked: true,
+                    color: () => '#ff9933',
+                }),
             };
         };
 
         service.getCitationsPerYear = (chartsData) => {
             const yearRange = getYearRange(chartsData);
-            const baseOptions = {
-                chart: {
-                    type: 'multiBarChart',
-                    x: d => d.year,
-                    y: d => d.value,
-                    showValues: true,
-                    stacked: true,
-                    xAxis: {
-                        axisLabel: '',
-                        rotateLabels: 50,
-                        showMaxMin: false
-                    },
-                    yAxis: {
-                        axisLabel: '',
-                        axisLabelDistance: -10
-                    }
-                }
-            };
-
             return {
                 title: 'Citations by year',
                 data: [{
                     key: 'Citations',
                     values: getItemsByYear(chartsData.citationsPerYear, yearRange)
                 }],
-                options: getDefaultOptions(baseOptions, service.previewDefaultOptions),
-                baseOptions: baseOptions
+                options: getMultiBarChartConfig({
+                    stacked: true,
+                    color: () => '#ff9933',
+                }),
             };
         };
 
-        service.getCitationsTotaIfPerYear = (chartsData) => {
+        service.getJournalMetricsPerYearLineChart = (chartsData) => {
             const yearRange = getYearRange(chartsData);
-            const baseOptions = {
-                chart: {
-                    type: 'multiBarChart',
-                    x: d => d.year,
-                    y: d => d.value,
-                    showValues: true,
-                    stacked: true,
-                    xAxis: {
-                        axisLabel: '',
-                        rotateLabels: 50,
-                        showMaxMin: false
-                    },
-                    yAxis: {
-                        axisLabel: '',
-                        axisLabelDistance: -10
+            return {
+                title: 'Journal metrics by year',
+                data: [{
+                    key: 'IF',
+                    values: getItemsByYear(chartsData.totalIfPerYear, yearRange)
+                }, {
+                    key: 'SJR',
+                    values: getItemsByYear(chartsData.totalSjrPerYear, yearRange)
+                }, {
+                    key: 'SNIP',
+                    values: getItemsByYear(chartsData.totalSnipPerYear, yearRange)
+                }],
+                options: {
+                    chart: {
+                        type: 'lineChart',
+                        color: (d, i) => metricsColors[i],
+                        showLabels: true,
+                        showLegend: true,
+                        useInteractiveGuideline: true,
+                        height: 420,
+                        duration: 300,
+                        x: d => d.year,
+                        y: d => d.value,
+                        xAxis: {
+                            axisLabel: '',
+                            rotateLabels: 50,
+                            showMaxMin: false,
+                            tickFormat: d => d3.format('')(d)
+                        },
+                        yAxis: {
+                            axisLabel: '',
+                            axisLabelDistance: -10,
+                            tickFormat: d => d3.format('')(d)
+                        },
+                        valueFormat: d => d3.format('')(d),
                     }
                 }
             };
+        };
+
+        service.getJournalMetricsPerYearBarChart = (chartsData) => {
+            const yearRange = getYearRange(chartsData);
+            return {
+                title: 'Journal metrics by year',
+                data: [{
+                    key: 'IF',
+                    values: getItemsByYear(chartsData.totalIfPerYear, yearRange)
+                }, {
+                    key: 'SJR',
+                    values: getItemsByYear(chartsData.totalSjrPerYear, yearRange)
+                }, {
+                    key: 'SNIP',
+                    values: getItemsByYear(chartsData.totalSnipPerYear, yearRange)
+                }],
+                options: getMultiBarChartConfig({color: (d, i) => metricsColors[i]})
+            };
+        };
+
+        service.getFilteredDocumentsByYear = function (chartsData) {
+            const yearRange = getYearRange(chartsData);
+            const affiliatedDocuments = [];
+            chartsData.filteredAffiliatedJournalsByYear.forEach(getDataMerger(affiliatedDocuments));
+            chartsData.filteredAffiliatedConferencesByYear.forEach(getDataMerger(affiliatedDocuments));
+            chartsData.filteredAffiliatedBooksByYear.forEach(getDataMerger(affiliatedDocuments));
+            chartsData.filteredAffiliatedBookChaptersByYear.forEach(getDataMerger(affiliatedDocuments));
+            const notAffiliatedDocuments = [];
+            chartsData.filteredNotAffiliatedJournalsByYear.forEach(getDataMerger(notAffiliatedDocuments));
+            chartsData.filteredNotAffiliatedConferencesByYear.forEach(getDataMerger(notAffiliatedDocuments));
+            chartsData.filteredNotAffiliatedBooksByYear.forEach(getDataMerger(notAffiliatedDocuments));
+            chartsData.filteredNotAffiliatedBookChaptersByYear.forEach(getDataMerger(notAffiliatedDocuments));
 
             return {
-                title: 'Total impact factor by year',
+                title: 'IIT/not IIT documents',
                 data: [{
-                    key: 'Impact factor',
-                    values: getItemsByYear(chartsData.totaIfPerYear, yearRange)
+                    key: 'IIT',
+                    values: getItemsByYear(affiliatedDocuments, yearRange)
+                }, {
+                    key: 'Not IIT',
+                    values: getItemsByYear(notAffiliatedDocuments, yearRange)
                 }],
-                options: getDefaultOptions(baseOptions, service.previewDefaultOptions),
-                baseOptions: baseOptions
+                options: getMultiBarChartConfig(),
+            };
+        };
+
+        service.getFilteredDocumentsTypeByYear = function (chartsData) {
+            const yearRange = getYearRange(chartsData);
+            const filteredJournals = [];
+            chartsData.filteredAffiliatedJournalsByYear.forEach(getDataMerger(filteredJournals));
+            chartsData.filteredNotAffiliatedJournalsByYear.forEach(getDataMerger(filteredJournals));
+            const filteredConferences = [];
+            chartsData.filteredAffiliatedConferencesByYear.forEach(getDataMerger(filteredConferences));
+            chartsData.filteredNotAffiliatedConferencesByYear.forEach(getDataMerger(filteredConferences));
+            const filteredBooks = [];
+            chartsData.filteredAffiliatedBooksByYear.forEach(getDataMerger(filteredBooks));
+            chartsData.filteredNotAffiliatedBooksByYear.forEach(getDataMerger(filteredBooks));
+            const filteredBookChapters = [];
+            chartsData.filteredAffiliatedBookChaptersByYear.forEach(getDataMerger(filteredBookChapters));
+            chartsData.filteredNotAffiliatedBookChaptersByYear.forEach(getDataMerger(filteredBookChapters));
+
+            return {
+                title: 'Document by source type',
+                data: [{
+                    key: DocumentTypesService.getSourceTypeLabel('journal'),
+                    values: getItemsByYear(filteredJournals, yearRange)
+                }, {
+                    key: DocumentTypesService.getSourceTypeLabel('conference'),
+                    values: getItemsByYear(filteredConferences, yearRange)
+                }, {
+                    key: DocumentTypesService.getSourceTypeLabel('book'),
+                    values: getItemsByYear(filteredBooks, yearRange)
+                }, {
+                    key: DocumentTypesService.getSourceTypeLabel('bookseries'),
+                    values: getItemsByYear(filteredBookChapters, yearRange)
+                }],
+                options: getMultiBarChartConfig({stacked: true}),
             };
         };
 
@@ -326,18 +391,64 @@
         }
 
 
-        function getYearRange(cd) {
+        function getYearRange(chartsData) {
             let flattenedData = [];
-            for (const key in cd)
-                if (_.isArray(cd[key]))
-                    flattenedData = flattenedData.concat(cd[key]);
+
+            flattenedData = flattenedData.concat(chartsData.journalsByYear);
+            flattenedData = flattenedData.concat(chartsData.conferencesByYear);
+            flattenedData = flattenedData.concat(chartsData.booksByYear);
+            flattenedData = flattenedData.concat(chartsData.bookChaptersByYear);
 
             const years = flattenedData.map(v => parseInt(v.year, 10));
             const currentYear = new Date().getFullYear();
 
             return {
                 min: _.isEmpty(years) ? currentYear : _.min(years),
-                max: _.isEmpty(years) ? currentYear : _.max(years)
+                max: currentYear
+            };
+        }
+
+        function getDataMerger(dataSet) {
+            return function (d) {
+                const value = parseInt(d.value, 10);
+                const data = dataSet.find(d2 => d2.year === d.year);
+                if (data)
+                    data.value += value;
+                else
+                    dataSet.push({
+                        year: d.year,
+                        value: value
+                    });
+            };
+        }
+
+        function getMultiBarChartConfig(chartOptions) {
+            return {
+                chart: Object.assign({}, {
+                    type: 'multiBarChart',
+                    showLabels: true,
+                    showLegend: true,
+                    showValues: true,
+                    stacked: false,
+                    showControls: false,
+                    height: 420,
+                    x: d => d.year,
+                    y: d => d.value,
+                    duration: 300,
+                    reduceXTicks: false,
+                    xAxis: {
+                        axisLabel: '',
+                        rotateLabels: 50,
+                        showMaxMin: false,
+                        tickFormat: d => d3.format('')(d)
+                    },
+                    yAxis: {
+                        axisLabel: '',
+                        axisLabelDistance: -10,
+                        tickFormat: d => d3.format('')(d)
+                    },
+                    valueFormat: d => d3.format('')(d)
+                }, chartOptions)
             };
         }
     }

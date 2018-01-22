@@ -51,7 +51,8 @@
             /* jshint ignore:end */
 
             function changeTab(tabName) {
-                tabs.find(t => t.name === tabName).reload(vm.chartsData);
+                if (tabs.find(t => t.name === tabName))
+                    tabs.find(t => t.name === tabName).reload(vm.chartsData);
             }
 
             function reloadTabs() {
