@@ -173,6 +173,9 @@
         };
 
         service.getHindexPerYear = (chartsData) => {
+            if(!chartsData.hindexPerYear.length)
+                return {};
+
             const yearRange = getYearRange(chartsData);
             const maxYValue = parseInt(_.maxBy(chartsData.hindexPerYear, 'value').value, 10);
             const maxXValue = parseInt(_.maxBy(chartsData.hindexPerYear, 'year').year, 10);

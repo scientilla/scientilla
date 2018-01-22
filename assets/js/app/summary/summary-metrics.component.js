@@ -98,7 +98,7 @@
                 'filteredNotAffiliatedBooksByYear',
                 'filteredNotAffiliatedBookChaptersByYear',
             ]);
-            const hIndex = chartsData.hindexPerYear[chartsData.hindexPerYear.length - 1].value;
+            const hIndex = chartsData.hindexPerYear.length ? chartsData.hindexPerYear[chartsData.hindexPerYear.length - 1].value : 0;
             const totalCitations = getTotal(chartsData, ['citationsPerYear']);
             const totalImpactFactor = getTotal(chartsData, ['totalIfPerYear']);
 
