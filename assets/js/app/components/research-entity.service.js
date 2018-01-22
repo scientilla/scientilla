@@ -215,7 +215,9 @@
             var populate = {populate: documentPopulates};
 
             const res = await researchEntity.one('drafts', draftId).get(populate);
-            return res[0];
+            const draft = res[0];
+            Restangular.restangularizeElement(researchEntity, {id:draftId}, 'drafts')
+            return draft;
         }
 
         async function documentsNotDuplicate(researchEntity, doc1, doc2) {

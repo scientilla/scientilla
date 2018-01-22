@@ -286,14 +286,14 @@
 
                 return base26Value.map(c => alphabetMapper[c]).join('');
             },
-            isSuggested: function(researchEntity) {
+            isSuggested: function (researchEntity) {
                 const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
                 return this.kind === DocumentKinds.VERIFIED && !this[f].some(re => re.id === researchEntity.id);
             },
-            isDraft: function() {
+            isDraft: function () {
                 return this.kind === DocumentKinds.DRAFT;
             },
-            isVerified: function(researchEntity) {
+            isVerified: function (researchEntity) {
                 const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
                 return this[f].some(re => re.id === researchEntity.id);
             },
@@ -368,11 +368,19 @@
         function toDocumentModel(document) {
             initializeAffiliations(document);
             _.defaultsDeep(document, documentPrototype);
+            checkDuplicates(document);
             service.toUsersCollection(document.authors);
             service.toTagLabelsCollection(document.tagLabels);
             service.toTagLabelsCollection(document.groupTagLabels);
             service.toAuthorshipsCollection(document.authorships);
             return document;
+        }
+
+        function checkDuplicates(document) {
+            document.isComparable = !document.isDraft() &&
+                document.duplicates &&
+                document.duplicates.length &&
+                document.duplicates.every(d => d.duplicateKind === 'v');
         }
 
         function toMembershipModel(membership) {
