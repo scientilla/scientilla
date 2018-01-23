@@ -216,7 +216,7 @@
 
             const res = await researchEntity.one('drafts', draftId).get(populate);
             const draft = res[0];
-            Restangular.restangularizeElement(researchEntity, {id:draftId}, 'drafts')
+            Restangular.restangularizeElement(researchEntity, draft, 'drafts');
             return draft;
         }
 
