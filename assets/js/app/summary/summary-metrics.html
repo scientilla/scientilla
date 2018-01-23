@@ -1,28 +1,59 @@
 <div class="row">
-    <div class="col-md-4 col-md-8">
-        <table>
-            <tr ng-repeat="index in vm.indexes">
-                <td>{{index.label}}</td>
-                <td>{{index.value}}</td>
-            </tr>
-        </table>
-    </div>
-    <div class="col-md-6">
-        <div class="text-center">
-            <h3>{{vm.mainChart.title}}</h3>
-            <nvd3 options="vm.mainChart.options"
-                  data="vm.mainChart.data"></nvd3>
+    <div class="col-xs-12">
+        <div class="row">
+            <div class="col-xs-1"></div>
+            <div class="col-xs-2" ng-repeat="index in vm.indexes">
+                <div class="scientilla-chart-widget">
+                    <span ng-bind-html="index.icon" class="scientilla-chart-icon"></span>
+                    <br>
+                    {{index.label}}
+                    <br>
+                    <b>{{index.value | number:index.format}}</b>
+                </div>
+
+            </div>
         </div>
+    </div>
+    <div class="col-md-4">
+        <div class="scientilla-chart-widget"
+             id="scientilla-chart-totals">
+            <table class="table table-condensed">
+                <tr>
+                    <th ng-repeat="total in vm.documentTotals"
+                        class="text-center">
+                        {{total.title}}
+                    </th>
+                </tr>
+                <tr>
+                    <td ng-repeat="total in vm.documentTotals"
+                        class="text-center">
+                        {{total.value}}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="scientilla-chart-widget">
+            <h3>{{vm.charts.hindexPerYear.title}}</h3>
+            <nvd3 id="scientilla-chart-hindexPerYear"
+                  options="vm.charts.hindexPerYear.options"
+                  data="vm.charts.hindexPerYear.data"></nvd3>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <scientilla-chart-selector
+                charts="vm.documentsCharts"
+        ></scientilla-chart-selector>
     </div>
 </div>
 <div class="row">
-    <div ng-repeat="chart in vm.charts"
-         class="col-xs-3 scientilla-chart-preview"
-         ng-class="{'scientilla-chart-selected': vm.isChartSelected(chart)}"
-         ng-click="vm.changeChart(chart)">
-        <div class="text-center">
-            <h3>{{chart.title}}</h3>
-            <nvd3 options="chart.options" data="chart.data"></nvd3>
-        </div>
+    <div class="col-xs-6">
+        <scientilla-chart-selector
+                charts="vm.citationsCharts"
+        ></scientilla-chart-selector>
+    </div>
+    <div class="col-xs-6">
+        <scientilla-chart-selector
+                charts="vm.metricsCharts"
+        ></scientilla-chart-selector>
     </div>
 </div>
