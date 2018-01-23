@@ -54,6 +54,16 @@
                 name: 'alias-edit',
                 component: 'wizard-alias-edit',
                 userLevels: ['groupAdmin', 'standard']
+            },
+            {
+                name: 'summary-metrics',
+                component: 'wizard-summary-metrics',
+                userLevels: ['groupAdmin', 'standard']
+            },
+            {
+                name: 'summary-overview',
+                component: 'wizard-summary-overview',
+                userLevels: ['groupAdmin', 'standard']
             }
         ];
 

@@ -3,13 +3,13 @@
         <uib-tabset active="active">
             <uib-tab index="0" heading="Overview" ng-click="vm.changeTab('overview')">
                 <summary-overview ng-if="vm.chartsData" charts-data="vm.chartsData"></summary-overview>
-                <span  ng-if="!vm.chartsData" class="fa fa-refresh fa-5x fa-spin"></span>
+                <span ng-if="!vm.chartsData" class="fa fa-refresh fa-5x fa-spin"></span>
             </uib-tab>
             <uib-tab index="1" heading="Metrics" ng-click="vm.changeTab('metrics')">
                 <summary-metrics ng-if="vm.chartsData" charts-data="vm.chartsData"></summary-metrics>
-                <span  ng-if="!vm.chartsData" class="fa fa-refresh fa-5x fa-spin"></span>
+                <span ng-if="!vm.chartsData" class="fa fa-refresh fa-5x fa-spin"></span>
             </uib-tab>
-            <uib-tab index="2" heading="Data calculated on {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}">
+            <uib-tab ng-if="vm.isMainGroup()" index="2" heading="Data calculated on {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}">
                 <div class="scientilla-chart-widget" style="height: 200px;padding:10px">
                     <scientilla-button click="vm.recalculate">Recalculate data</scientilla-button>
                     <br>
