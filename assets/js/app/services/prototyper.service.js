@@ -8,10 +8,11 @@
         'userConstants',
         'DocumentLabels',
         'DocumentKinds',
-        'documentFieldsRules'
+        'documentFieldsRules',
+        'documentOrigins'
     ];
 
-    function Prototyper(userConstants, DocumentLabels, DocumentKinds, documentFieldsRules) {
+    function Prototyper(userConstants, DocumentLabels, DocumentKinds, documentFieldsRules, documentOrigins) {
         const service = {
             toUserModel: toUserModel,
             toUsersCollection: applyToAll(toUserModel),
@@ -66,7 +67,8 @@
                     draftCreator: this.id,
                     kind: DocumentKinds.DRAFT,
                     type: documentTypeObj.key,
-                    sourceType: documentTypeObj.defaultSource
+                    sourceType: documentTypeObj.defaultSource,
+                    origin: documentOrigins.SCIENTILLA
                 };
                 return documentPrototype.create(documentData);
             },
@@ -113,7 +115,8 @@
                     draftCreator: this.id,
                     kind: DocumentKinds.DRAFT,
                     type: documentTypeObj.key,
-                    sourceType: documentTypeObj.defaultSource
+                    sourceType: documentTypeObj.defaultSource,
+                    origin: documentOrigins.SCIENTILLA
                 };
                 return documentPrototype.create(documentData);
             },
