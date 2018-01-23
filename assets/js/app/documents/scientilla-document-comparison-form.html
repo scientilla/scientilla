@@ -4,13 +4,29 @@
         <div class="col-xs-6">
             <div class="scientilla-document-details-kind"
                  ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('kind')}">
-                <div class="text-center">{{vm.document1.getStringKind(vm.researchEntity)}}</div>
+                <div class="text-center">
+                    {{vm.document1.getStringKind(vm.researchEntity)}}
+                    <span ng-if="vm.verifiedCount1"
+                          class="scientilla-document-icons-bottom"
+                          uib-tooltip-html="vm.getVerifiedNamesHTML(vm.document1)"
+                          tooltip-class="scientilla-tooltip">
+                        <span class="fa fa-check"></span> {{vm.verifiedCount1}}
+                    </span>
+                </div>
             </div>
         </div>
         <div class="col-xs-6">
             <div class="scientilla-document-details-kind"
                  ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('kind')}">
-                <div class="text-center">{{vm.document2.getStringKind(vm.researchEntity)}}</div>
+                <div class="text-center">
+                    {{vm.document2.getStringKind(vm.researchEntity)}}
+                    <span ng-if="vm.verifiedCount2"
+                         class="scientilla-document-icons-bottom"
+                         uib-tooltip-html="vm.getVerifiedNamesHTML(vm.document2)"
+                         tooltip-class="scientilla-tooltip">
+                        <span class="fa fa-check"></span> {{vm.verifiedCount2}}
+                    </span>
+                </div>
             </div>
         </div>
     </div>
