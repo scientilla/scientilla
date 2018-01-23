@@ -8,10 +8,11 @@
         'userConstants',
         'DocumentLabels',
         'DocumentKinds',
-        'documentFieldsRules'
+        'documentFieldsRules',
+        'documentOrigins'
     ];
 
-    function Prototyper(userConstants, DocumentLabels, DocumentKinds, documentFieldsRules) {
+    function Prototyper(userConstants, DocumentLabels, DocumentKinds, documentFieldsRules, documentOrigins) {
         const service = {
             toUserModel: toUserModel,
             toUsersCollection: applyToAll(toUserModel),
@@ -66,7 +67,8 @@
                     draftCreator: this.id,
                     kind: DocumentKinds.DRAFT,
                     type: documentTypeObj.key,
-                    sourceType: documentTypeObj.defaultSource
+                    sourceType: documentTypeObj.defaultSource,
+                    origin: documentOrigins.SCIENTILLA
                 };
                 return documentPrototype.create(documentData);
             },
@@ -113,7 +115,8 @@
                     draftCreator: this.id,
                     kind: DocumentKinds.DRAFT,
                     type: documentTypeObj.key,
-                    sourceType: documentTypeObj.defaultSource
+                    sourceType: documentTypeObj.defaultSource,
+                    origin: documentOrigins.SCIENTILLA
                 };
                 return documentPrototype.create(documentData);
             },
@@ -177,7 +180,9 @@
                 'wosId',
                 'authorships',
                 'affiliations',
-                'institutes'
+                'institutes',
+                'synchronized',
+                'origin'
             ],
             create: function (documentData) {
                 var fields = _.union(['kind', 'draftCreator', 'draftGroupCreator'], documentPrototype.fields);
@@ -286,17 +291,26 @@
 
                 return base26Value.map(c => alphabetMapper[c]).join('');
             },
-            isSuggested: function(researchEntity) {
+            isSuggested: function (researchEntity) {
                 const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
                 return this.kind === DocumentKinds.VERIFIED && !this[f].some(re => re.id === researchEntity.id);
             },
-            isDraft: function() {
+            isDraft: function () {
                 return this.kind === DocumentKinds.DRAFT;
             },
-            isVerified: function(researchEntity) {
+            isVerified: function (researchEntity) {
                 const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
                 return this[f].some(re => re.id === researchEntity.id);
             },
+            getStringKind(researchEntity) {
+                if (this.isSuggested(researchEntity))
+                    return 'Suggested';
+                if (this.isDraft())
+                    return 'Draft';
+                if (this.isVerified(researchEntity))
+                    return 'Verified';
+
+            }
         };
 
         const membershipPrototype = {
@@ -368,11 +382,19 @@
         function toDocumentModel(document) {
             initializeAffiliations(document);
             _.defaultsDeep(document, documentPrototype);
+            checkDuplicates(document);
             service.toUsersCollection(document.authors);
             service.toTagLabelsCollection(document.tagLabels);
             service.toTagLabelsCollection(document.groupTagLabels);
             service.toAuthorshipsCollection(document.authorships);
             return document;
+        }
+
+        function checkDuplicates(document) {
+            document.isComparable = !document.isDraft() &&
+                document.duplicates &&
+                document.duplicates.length &&
+                document.duplicates.every(d => d.duplicateKind === 'v');
         }
 
         function toMembershipModel(membership) {

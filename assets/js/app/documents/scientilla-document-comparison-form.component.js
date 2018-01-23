@@ -31,13 +31,17 @@
         vm.keepDocument1 = keepDocument1;
         vm.keepDocument2 = keepDocument2;
         vm.documentsNotDuplicate = documentsNotDuplicate;
+        vm.getVerifiedNamesHTML = getVerifiedNamesHTML;
         vm.cancel = cancel;
 
         var user = AuthService.user;
 
         const DocumentService = context.getDocumentService();
-        const researchEntity = context.getResearchEntity();
-        vm.$onInit = function () {vm.differentFields = getDifferentFields();
+        vm.researchEntity = context.getResearchEntity();
+        vm.$onInit = function () {
+            vm.differentFields = getDifferentFields();
+            vm.verifiedCount1 = getVerifiedCount(vm.document1);
+            vm.verifiedCount2 = getVerifiedCount(vm.document2);
         };
 
         function getDifferentFields() {
@@ -80,6 +84,26 @@
         function executeOnFailure() {
             if (_.isFunction(vm.onFailure()))
                 vm.onFailure()();
+        }
+
+
+
+        function getVerifiedCount(document) {
+            return document.authorships.filter(a => a.researchEntity)
+                .concat(document.groupAuthorships).length;
+        }
+
+        function getVerifiedNamesHTML(document) {
+            const verifiedNames = getVerifiedNames(document);
+            if (!verifiedNames.length)
+                return 'Nobody has verified this document yet';
+
+            return '<p>This document is verified by:</p><p>' + verifiedNames.join('<br>') + '</p>';
+        }
+
+        function getVerifiedNames(document) {
+            return document.groups.map(g => '- <b>' + g.name + '</b>')
+                .concat(document.authors.map(a => '- ' + a.name + ' ' + a.surname));
         }
 
     }

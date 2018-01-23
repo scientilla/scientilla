@@ -20,9 +20,20 @@
                                     type="button"
                                     uib-tooltip="Unlink the document from your profile"
                                     tooltip-placement="top"
-                                    tooltip-class="scientilla-tooltip">
+                                    tooltip-class="scientilla-tooltip"
+                                    ng-if="!d.isComparable">
                                 <span class="fa fa-remove"></span>
                                 Unverify
+                            </button>
+                            <button class="btn btn-primary"
+                                    ng-click="vm.compareDocuments(d.id, d.duplicates[0].duplicate)"
+                                    type="button"
+                                    uib-tooltip="Open the comparison form"
+                                    tooltip-placement="top"
+                                    tooltip-class="scientilla-tooltip"
+                                    ng-if="d.isComparable">
+                                <span class="fa fa-remove"></span>
+                                Compare
                             </button>
                         </h3>
                     </div>
