@@ -32,6 +32,7 @@
         vm.documents = [];
 
         vm.unverifyDocument = DocumentsService.unverifyDocument;
+        vm.compareDocuments = DocumentsService.compareDocuments;
 
         vm.onFilter = onFilter;
 
@@ -48,7 +49,8 @@
                 EventsService.DRAFT_UNVERIFIED,
                 EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED,
                 EventsService.DOCUMENT_AUTORSHIP_PRIVACY_UPDATED,
-                EventsService.DOCUMENT_AUTORSHIP_FAVORITE_UPDATED
+                EventsService.DOCUMENT_AUTORSHIP_FAVORITE_UPDATED,
+                EventsService.DOCUMENT_COMPARE
             ], updateList);
         };
 

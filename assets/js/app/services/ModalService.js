@@ -210,7 +210,7 @@
                     message: message,
                     cancel: function () {
                         this.onClose();
-                        reject();
+                        resolve(-1);
                     },
                     ok: function (i) {
                         this.onSubmit();
@@ -232,8 +232,8 @@
                 <div>',
                     scope);
 
-                modal.result.catch(function () {
-                    reject();
+                modal.result.catch(function (err) {
+                    reject(err);
                 });
                 addModalObject(modal);
             });
