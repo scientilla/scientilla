@@ -52,8 +52,11 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-right">
                                         <li>
-                                            <button ng-click="vm.openEditPopup(d)" type="button"
-                                                    class="btn btn-primary" ng-if="d.duplicates.length">
+                                            <button ng-click="vm.openEditPopup(d)"
+                                                    type="button"
+                                                    ng-disabled="d.synchronized"
+                                                    class="btn btn-primary" ng-if="d.duplicates.length"
+                                                    title="Let you edit the document, if synchronization is active the document cannot be edited">
                                                 <span class="fa fa-check"></span>
                                                 Edit
                                             </button>
