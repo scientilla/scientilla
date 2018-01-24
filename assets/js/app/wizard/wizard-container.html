@@ -1,6 +1,7 @@
-<div class="scientilla-wizard-container">
+<div>
     <div>
         <scientilla-button
+                ng-if="vm.getStepsNumber() > 1"
                 ng-disabled="vm.isNotPrev() || !vm.canChangeStep"
                 click="vm.prevStep()">
             Previous

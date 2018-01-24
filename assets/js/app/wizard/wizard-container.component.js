@@ -27,6 +27,7 @@
         vm.prevStep = prevStep;
         vm.isNotPrev = isNotPrev;
         vm.isEnd = isEnd;
+        vm.getStepsNumber = getStepsNumber;
         vm.wizardCommands = wizardCommands;
 
         const accessLevels = {
@@ -128,6 +129,10 @@
 
         function isEnd() {
             return vm.currentStep === (steps.length - 1);
+        }
+
+        function getStepsNumber(){
+            return steps.length;
         }
 
         function wizardCommands(command) {

@@ -239,18 +239,18 @@
             });
         };
 
-        service.openWizard = function (steps, isClosable) {
+        service.openWizard = function (steps, config = {}) {
             let args = {
                 size: 'lg',
-                windowClass: 'modal-dark'
+                windowClass: config.style === 'light' ? 'wizard-modal' : 'wizard-modal modal-dark'
             };
-            if (!isClosable)
+            if (!config.isClosable)
                 args = Object.assign({}, args, {
                     backdrop: 'static',
                     keyboard: false
                 });
 
-            const modal = openComponentModal('wizard-container', {steps: steps}, args);
+            const modal = openComponentModal('wizard-container', {steps: steps, style: config.style}, args);
             addModalObject(modal);
             return modal.result;
         };

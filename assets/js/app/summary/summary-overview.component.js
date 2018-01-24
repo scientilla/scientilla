@@ -57,8 +57,8 @@
             return chart.title === vm.mainChart.title;
         }
 
-        function showInfo(){
-            ModalService.openWizard(['summary-overview'], true);
+        function showInfo() {
+            ModalService.openWizard(['summary-overview'], {style: 'light', isClosable: true});
         }
     }
 })();

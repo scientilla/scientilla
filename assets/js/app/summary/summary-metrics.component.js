@@ -157,8 +157,8 @@
 
         };
 
-        function showInfo(){
-            ModalService.openWizard(['summary-metrics'], true);
+        function showInfo() {
+            ModalService.openWizard(['summary-metrics'], {style: 'light', isClosable: true});
         }
 
         function getTotal(chartsData, dataNames) {
