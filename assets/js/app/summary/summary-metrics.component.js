@@ -16,15 +16,17 @@
         });
 
     SummaryMetricsComponent.$inject = [
-        'ChartService'
+        'ChartService',
+        'ModalService'
     ];
 
-    function SummaryMetricsComponent(ChartService) {
+    function SummaryMetricsComponent(ChartService, ModalService) {
         const vm = this;
 
         vm.name = 'metrics';
         vm.charts = {};
 
+        vm.showInfo = showInfo;
 
         vm.$onInit = () => {
             vm.profileSummary.registerTab(vm);
@@ -122,14 +124,14 @@
                 format: 0
             });
             vm.indexes.push({
-                label: 'Citations per publication',
-                value: totalCitations / totalDocuments,
+                label: 'Citations per document',
+                value: totalCitations / totalDocuments | 0,
                 icon: '<span class="fa fa-quote-right scientilla-icon-color-citations"></span>',
                 format: 2
             });
             vm.indexes.push({
-                label: 'IF per publication',
-                value: totalImpactFactor / totalDocuments,
+                label: 'IF per document',
+                value: totalImpactFactor / totalDocuments | 0,
                 icon: '<b class="scientilla-icon-color-metric">IF</b>',
                 format: 2
             });
@@ -154,6 +156,10 @@
             ];
 
         };
+
+        function showInfo() {
+            ModalService.openWizard(['summary-metrics'], {style: 'light', isClosable: true});
+        }
 
         function getTotal(chartsData, dataNames) {
             let total = 0;

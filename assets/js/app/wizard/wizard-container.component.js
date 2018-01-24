@@ -19,7 +19,7 @@
         const vm = this;
 
         vm.currentStep = 0;
-        vm.user = context.getResearchEntity();
+        vm.researchEntity = context.getResearchEntity();
 
         vm.isStep = isStep;
         vm.closeModal = closeModal;
@@ -27,33 +27,56 @@
         vm.prevStep = prevStep;
         vm.isNotPrev = isNotPrev;
         vm.isEnd = isEnd;
+        vm.getStepsNumber = getStepsNumber;
         vm.wizardCommands = wizardCommands;
+
+        const accessLevels = {
+            GROUP_ADMIN: 'groupAdmin',
+            STANDARD: 'standard'
+        };
 
         const allSteps = [
             {
                 name: 'welcome',
                 component: 'wizard-welcome',
-                userLevels: ['groupAdmin', 'standard']
+                accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
+                researchEntityToSave: false
             },
             {
                 name: 'scopus-edit',
                 component: 'wizard-scopus-edit',
-                userLevels: ['groupAdmin', 'standard']
+                accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
+                researchEntityToSave: false
             },
             {
                 name: 'tutorial',
                 component: 'wizard-tutorial',
-                userLevels: ['groupAdmin', 'standard']
+                accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
+                researchEntityToSave: true
             },
             {
                 name: 'admin-tutorial',
                 component: 'wizard-admin-tutorial',
-                userLevels: ['groupAdmin']
+                accessLevels: [accessLevels.GROUP_ADMIN],
+                researchEntityToSave: true
             },
             {
                 name: 'alias-edit',
                 component: 'wizard-alias-edit',
-                userLevels: ['groupAdmin', 'standard']
+                accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
+                researchEntityToSave: true
+            },
+            {
+                name: 'summary-metrics',
+                component: 'wizard-summary-metrics',
+                accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
+                researchEntityToSave: false
+            },
+            {
+                name: 'summary-overview',
+                component: 'wizard-summary-overview',
+                accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
+                researchEntityToSave: false
             }
         ];
 
@@ -62,8 +85,9 @@
 
         vm.$onInit = function () {
             vm.currentStep = 0;
-            vm.userLevel = vm.user.administratedGroups.length ? 'groupAdmin' : 'standard';
-            steps = allSteps.filter(s => s.userLevels.includes(vm.userLevel));
+            const accessLevel = vm.researchEntity.getType() === 'group' ? accessLevels.GROUP_ADMIN :
+                vm.researchEntity.administratedGroups.length ? accessLevels.GROUP_ADMIN : accessLevels.STANDARD;
+            steps = allSteps.filter(s => s.accessLevels.includes(accessLevel));
             if (vm.resolve.data.steps)
                 steps = steps.filter(s => vm.resolve.data.steps.includes(s.name));
         };
@@ -77,12 +101,17 @@
         }
 
         function closeModal() {
-            vm.user.alreadyAccess = true;
-            if (vm.resolve.data.steps.includes('alias-edit'))
-                vm.user.alreadyOpenedSuggested = true;
+            if (!steps[vm.currentStep].researchEntityToSave) {
+                vm.resolve.callbacks.onClose();
+                return;
+            }
 
-            return vm.user.save()
-                .then(()=>vm.resolve.callbacks.onClose())
+            vm.researchEntity.alreadyAccess = true;
+            if (vm.resolve.data.steps.includes('alias-edit'))
+                vm.researchEntity.alreadyOpenedSuggested = true;
+
+            return vm.researchEntity.save()
+                .then(() => vm.resolve.callbacks.onClose())
                 .catch(() => Notification.warning("Failed to save user"));
         }
 
@@ -100,6 +129,10 @@
 
         function isEnd() {
             return vm.currentStep === (steps.length - 1);
+        }
+
+        function getStepsNumber(){
+            return steps.length;
         }
 
         function wizardCommands(command) {

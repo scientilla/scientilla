@@ -16,10 +16,10 @@
             const vm = this;
             const researchEntity = context.getResearchEntity();
 
-            vm.refresh = false;
             vm.lastRefresh = new Date();
             vm.isLoading = false;
 
+            vm.isMainGroup = isMainGroup;
             vm.recalculate = recalculate;
             vm.changeTab = changeTab;
             vm.registerTab = registerTab;
@@ -29,26 +29,29 @@
 
             /* jshint ignore:start */
             vm.$onInit = async () => {
-                await request();
+                const refresh = !isMainGroup();
+                await request(refresh);
             };
 
             async function recalculate() {
-                vm.refresh = true;
                 vm.isLoading = true;
-                await request();
+                await request(true);
                 reloadTabs();
-                vm.refresh = false;
                 vm.isLoading = false;
             }
 
-            async function request() {
-                const res = await researchEntity.all('charts').getList({refresh: vm.refresh});
+            async function request(refresh) {
+                const res = await researchEntity.all('charts').getList({refresh: !!refresh});
                 vm.chartsData = res[0];
                 if (vm.chartsData.chartDataDate && vm.chartsData.chartDataDate[0].max)
                     vm.lastRefresh = new Date(vm.chartsData.chartDataDate[0].max);
             }
 
             /* jshint ignore:end */
+
+            function isMainGroup() {
+                return researchEntity.id === 1;
+            }
 
             function changeTab(tabName) {
                 if (tabs.find(t => t.name === tabName))

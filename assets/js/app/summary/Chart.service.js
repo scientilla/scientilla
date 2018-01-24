@@ -173,15 +173,20 @@
         };
 
         service.getHindexPerYear = (chartsData) => {
-            if(!chartsData.hindexPerYear.length)
-                return {};
-
             const yearRange = getYearRange(chartsData);
-            const maxYValue = parseInt(_.maxBy(chartsData.hindexPerYear, 'value').value, 10);
-            const maxXValue = parseInt(_.maxBy(chartsData.hindexPerYear, 'year').year, 10);
-            const minXValue = parseInt(_.minBy(chartsData.hindexPerYear, 'year').year, 10);
+            let maxYValue, maxXValue, minXValue;
+            if (chartsData.hindexPerYear.length) {
+                maxYValue = parseInt(_.maxBy(chartsData.hindexPerYear, 'value').value, 10);
+                maxXValue = parseInt(_.maxBy(chartsData.hindexPerYear, 'year').year, 10);
+                minXValue = parseInt(_.minBy(chartsData.hindexPerYear, 'year').year, 10);
+            }
+            else{
+                maxYValue = 1;
+                maxXValue = yearRange.max;
+                minXValue = yearRange.min;
+            }
             return {
-                title: 'h index by year',
+                title: 'h-index by year',
                 data: [{
                     key: 'h-index',
                     values: getItemsByYear(chartsData.hindexPerYear, yearRange)
@@ -200,6 +205,7 @@
                         xAxis: {
                             rotateLabels: 50,
                             showMaxMin: false,
+                            ticks: Math.min(maxXValue - minXValue, 10),
                             tickFormat: d => d3.format('')(d)
                         },
                         yAxis: {
@@ -382,7 +388,7 @@
             const newData = data.map(d => ({
                 year: parseInt(d.year, 10),
                 value: parseInt(d.value, 10)
-            }));
+            })).filter(d => d.year >= yearRange.min);
             _.range(yearRange.min, yearRange.max + 1).forEach(y => {
                 if (!_.find(newData, {year: y}))
                     newData.push({value: 0, year: y});

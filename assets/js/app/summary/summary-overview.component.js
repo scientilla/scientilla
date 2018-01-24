@@ -16,13 +16,15 @@
         });
 
     SummaryOverviewComponent.$inject = [
-        'ChartService'
+        'ChartService',
+        'ModalService'
     ];
 
-    function SummaryOverviewComponent(ChartService) {
+    function SummaryOverviewComponent(ChartService, ModalService) {
         const vm = this;
         vm.changeChart = changeChart;
         vm.isChartSelected = isChartSelected;
+        vm.showInfo = showInfo;
 
         vm.name = 'overview';
         vm.charts = [];
@@ -53,6 +55,10 @@
         function isChartSelected(chart) {
             if (!vm.mainChart) return false;
             return chart.title === vm.mainChart.title;
+        }
+
+        function showInfo() {
+            ModalService.openWizard(['summary-overview'], {style: 'light', isClosable: true});
         }
     }
 })();

@@ -71,7 +71,7 @@
             ], updateList);
 
             if (researchEntity.getType() === 'user' && !researchEntity.alreadyOpenedSuggested)
-                ModalService.openWizard(['alias-edit'], false);
+                ModalService.openWizard(['alias-edit']);
         };
 
         vm.$onDestroy = function () {
