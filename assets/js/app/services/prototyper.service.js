@@ -309,7 +309,12 @@
                     return 'Draft';
                 if (this.isVerified(researchEntity))
                     return 'Verified';
-
+            },
+            getComparisonDuplicate() {
+                if (this.isDraft())
+                    return this.duplicates[0].duplicate;
+                else
+                    return this.duplicates.find(d => d.duplicateKind === 'v').duplicate;
             }
         };
 
@@ -394,7 +399,7 @@
             document.isComparable = !document.isDraft() &&
                 document.duplicates &&
                 document.duplicates.length &&
-                document.duplicates.every(d => d.duplicateKind === 'v');
+                document.duplicates.some(d => d.duplicateKind === 'v');
         }
 
         function toMembershipModel(membership) {
