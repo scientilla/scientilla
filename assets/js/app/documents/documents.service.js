@@ -327,39 +327,56 @@
                             msg = "The first document has been discarded";
                         }
                         if (i === 1 || i === 2) {
-                            await researchEntityService.removeDocument(researchEntity, discardedDoc);
                             if (chosenDoc.isSuggested(researchEntity)) {
                                 const j = await ModalService
                                     .multipleChoiceConfirm('Action choice',
                                         `What do you want to do with the selected document?`,
                                         ['Verify', 'Copy to Draft']);
-                                if (j === 0) {
-                                    await service.verify(chosenDoc);
-                                }
-                                if (j === 1) {
-                                    await researchEntityService.copyDocument(researchEntity, chosenDoc);
-                                    Notification.success('Draft created');
+                                if (j === 0 || j === 1) {
+                                    await researchEntityService.removeDocument(researchEntity, discardedDoc);
+                                    if (j === 0) {
+                                        await service.verify(chosenDoc);
+                                    }
+                                    if (j === 1) {
+                                        await researchEntityService.copyDocument(researchEntity, chosenDoc);
+                                        Notification.success('Draft created');
+                                    }
+                                    EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
+                                    Notification.success(msg);
                                 }
                             }
                             if (chosenDoc.isDraft()) {
-                                const draft = await researchEntityService.getDraft(researchEntity, chosenDoc.id);
-                                await openEditPopup(draft);
+                                const j = await ModalService
+                                    .multipleChoiceConfirm('Action choice',
+                                        `Do you want to verify the document?`,
+                                        ['Verify', 'Keep Draft']);
+                                if (j === 0 || j === 1) {
+                                    await researchEntityService.removeDocument(researchEntity, discardedDoc);
+                                    if (j === 0) {
+                                        await service.verify(chosenDoc);
+                                    }
+                                    EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
+                                    Notification.success(msg);
+                                }
                             }
                             if (chosenDoc.isVerified(researchEntity)) {
                                 const j = await ModalService
                                     .multipleChoiceConfirm('Action choice',
                                         `Do you want to edit the selected document by creating a new draft?`,
-                                        ['Create a draft']);
-                                if (j === 0) {
-                                    const draft = await researchEntityService.copyDocument(researchEntity, chosenDoc);
-                                    EventsService.publish(EventsService.DRAFT_CREATED, draft);
-                                    await researchEntityService.unverify(researchEntity, chosenDoc);
-                                    EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
-                                    Notification.success('Document moved to drafts');
+                                        ['Create a draft', 'Keep verified']);
+                                if (j === 0 || j === 1) {
+                                    await researchEntityService.removeDocument(researchEntity, discardedDoc);
+                                    if (j === 0) {
+                                        const draft = await researchEntityService.copyDocument(researchEntity, chosenDoc);
+                                        EventsService.publish(EventsService.DRAFT_CREATED, draft);
+                                        await researchEntityService.unverify(researchEntity, chosenDoc);
+                                        EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
+                                        Notification.success('Document moved to drafts');
+                                    }
+                                    EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
+                                    Notification.success(msg);
                                 }
                             }
-                            EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
-                            Notification.success(msg);
                         }
                         if (i === 3) {
                             await researchEntityService.documentsNotDuplicate(researchEntity, doc1, doc2);
