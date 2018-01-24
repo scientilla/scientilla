@@ -34,7 +34,7 @@
                                         <span class="fa fa-check"></span>
                                         Verify
                                     </button>
-                                    <button ng-click="vm.compareDocuments(document.id, document.duplicates[0].duplicate)" type="button"
+                                    <button ng-click="vm.compareDocuments(document.id, document.getComparisonDuplicate())" type="button"
                                             class="btn btn-primary" ng-if="document.isComparable">
                                         <span class="fa fa-check"></span>
                                         Compare

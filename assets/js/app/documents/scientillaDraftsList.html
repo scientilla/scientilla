@@ -39,7 +39,7 @@
                                         <span class="fa fa-edit"></span>
                                         Edit
                                     </button>
-                                    <button ng-click="vm.compareDocuments(d.id, d.duplicates[0].duplicate)"
+                                    <button ng-click="vm.compareDocuments(d.id, d.getComparisonDuplicate())"
                                             ng-if="d.duplicates.length"
                                             type="button"
                                             class=" btn btn-primary">
