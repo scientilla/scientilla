@@ -325,12 +325,12 @@
             chartsData.filteredNotAffiliatedBookChaptersByYear.forEach(getDataMerger(notAffiliatedDocuments));
 
             return {
-                title: 'IIT/not IIT documents',
+                title: 'IIT vs non-IIT documents',
                 data: [{
                     key: 'IIT',
                     values: getItemsByYear(affiliatedDocuments, yearRange)
                 }, {
-                    key: 'Not IIT',
+                    key: 'non-IIT',
                     values: getItemsByYear(notAffiliatedDocuments, yearRange)
                 }],
                 options: getMultiBarChartConfig(),
