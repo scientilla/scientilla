@@ -315,6 +315,7 @@
                         const doc1 = await researchEntityService.getDocument(doc1Id);
                         const doc2 = await researchEntityService.getDocument(doc2Id);
                         const i = await ModalService.openDocumentComparisonForm(doc1, doc2);
+                        const d = i === 1 ? 2 : 1;
                         let chosenDoc, msg, discardedDoc;
                         if (i === 1) {
                             chosenDoc = doc1;
@@ -330,7 +331,7 @@
                             if (chosenDoc.isSuggested(researchEntity)) {
                                 const j = await ModalService
                                     .multipleChoiceConfirm('Action choice',
-                                        `What do you want to do with the selected document?`,
+                                        `Document ${d} will be removed. What do you want to do with document ${i}?`,
                                         ['Verify', 'Copy to Draft']);
                                 if (j === 0 || j === 1) {
                                     await researchEntityService.removeDocument(researchEntity, discardedDoc);
@@ -347,8 +348,8 @@
                             }
                             if (chosenDoc.isDraft()) {
                                 const j = await ModalService
-                                    .multipleChoiceConfirm('Action choice',
-                                        `Do you want to verify the document?`,
+                                    .multipleChoiceConfirm('Draft selected',
+                                        `Document ${d} will be removed. What do you want to do with document ${i}?`,
                                         ['Verify', 'Keep Draft']);
                                 if (j === 0 || j === 1) {
                                     await researchEntityService.removeDocument(researchEntity, discardedDoc);
@@ -361,8 +362,8 @@
                             }
                             if (chosenDoc.isVerified(researchEntity)) {
                                 const j = await ModalService
-                                    .multipleChoiceConfirm('Action choice',
-                                        `Do you want to edit the selected document by creating a new draft?`,
+                                    .multipleChoiceConfirm('Document selected',
+                                        `Document ${d} will be removed. What do you want to do with document ${i}?`,
                                         ['Create a draft', 'Keep verified']);
                                 if (j === 0 || j === 1) {
                                     await researchEntityService.removeDocument(researchEntity, discardedDoc);
