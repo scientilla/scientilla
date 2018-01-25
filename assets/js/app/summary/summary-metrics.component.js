@@ -132,7 +132,7 @@
             vm.indexes.push({
                 label: 'IF per document',
                 value: totalImpactFactor / totalDocuments | 0,
-                icon: '<b class="scientilla-icon-color-metric">IF</b>',
+                icon: '<b class="scientilla-icon-color-if">IF</b>',
                 format: 2
             });
 

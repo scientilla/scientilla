@@ -8,9 +8,16 @@
     ];
 
     const metricsColors = [
-        '#2ca02c',
-        '#9467bd',
-        '#118798'
+        '#2ca02c', // IF
+        '#9467bd', // SJR
+        '#118798' // SNIP
+    ];
+
+    const sourceTypesColors = [
+        '#0072AF', // journal
+        '#aec7e8', // conference
+        '#980181', // book
+        '#753198' // book series
     ];
 
     function ChartService(DocumentTypesService) {
@@ -140,6 +147,7 @@
                     y: d => d.value,
                     showValues: true,
                     stacked: true,
+                    color: sourceTypesColors,
                     xAxis: {
                         axisLabel: '',
                         rotateLabels: 50,
@@ -384,7 +392,10 @@
                     key: DocumentTypesService.getSourceTypeLabel('bookseries'),
                     values: getItemsByYear(filteredBookChapters, yearRange)
                 }],
-                options: getMultiBarChartConfig({stacked: true}),
+                options: getMultiBarChartConfig({
+                    stacked: true,
+                    color: sourceTypesColors
+                }),
             };
         };
 
