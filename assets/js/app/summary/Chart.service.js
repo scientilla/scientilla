@@ -180,7 +180,7 @@
                 maxXValue = parseInt(_.maxBy(chartsData.hindexPerYear, 'year').year, 10);
                 minXValue = parseInt(_.minBy(chartsData.hindexPerYear, 'year').year, 10);
             }
-            else{
+            else {
                 maxYValue = 1;
                 maxXValue = yearRange.max;
                 minXValue = yearRange.min;
@@ -212,8 +212,8 @@
                             showMaxMin: false,
                             tickFormat: d => d3.format('')(d)
                         },
-                        yDomain: [-0.1, maxYValue + (maxYValue * 0.05)],
-                        xDomain: [minXValue, maxXValue + 0.1],
+                        yDomain: [0, maxYValue + (maxYValue * 0.05)],
+                        xDomain: [minXValue, maxXValue + ((maxXValue - minXValue) * 0.05)],
                         valueFormat: d => d3.format('')(d)
                     }
                 }
@@ -253,6 +253,20 @@
 
         service.getJournalMetricsPerYearLineChart = (chartsData) => {
             const yearRange = getYearRange(chartsData);
+            let maxYValue, maxXValue, minXValue;
+            if (chartsData.totalIfPerYear.length) {
+                const maxIf = parseInt(_.maxBy(chartsData.totalIfPerYear, 'value').value, 10);
+                const maxSjr = parseInt(_.maxBy(chartsData.totalSjrPerYear, 'value').value, 10);
+                const maxSnip = parseInt(_.maxBy(chartsData.totalSnipPerYear, 'value').value, 10);
+                maxYValue = Math.max(maxIf, maxSjr, maxSnip);
+                maxXValue = parseInt(_.maxBy(chartsData.totalIfPerYear, 'year').year, 10);
+                minXValue = parseInt(_.minBy(chartsData.totalIfPerYear, 'year').year, 10);
+            }
+            else {
+                maxYValue = 1;
+                maxXValue = yearRange.max;
+                minXValue = yearRange.min;
+            }
             return {
                 title: 'Journal metrics by year',
                 data: [{
@@ -280,6 +294,7 @@
                             axisLabel: '',
                             rotateLabels: 50,
                             showMaxMin: false,
+                            ticks: Math.min(maxXValue - minXValue, 10),
                             tickFormat: d => d3.format('')(d)
                         },
                         yAxis: {
@@ -287,6 +302,8 @@
                             axisLabelDistance: -10,
                             tickFormat: d => d3.format('')(d)
                         },
+                        yDomain: [0, maxYValue + (maxYValue * 0.05)],
+                        xDomain: [minXValue, maxXValue + ((maxXValue - minXValue) * 0.05)],
                         valueFormat: d => d3.format('')(d),
                     }
                 }
