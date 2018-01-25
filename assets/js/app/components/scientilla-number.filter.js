@@ -10,6 +10,6 @@
                     return num.toFixed(digits);
 
                 return num.toString();
-            }
+            };
         });
 })();
