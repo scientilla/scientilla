@@ -32,7 +32,7 @@
                                      uib-dropdown>
                                     <button ng-click="vm.openEditPopup(d)"
                                             ng-disabled="d.synchronized"
-                                            ng-if="!d.duplicates.length"
+                                            ng-if="!d.isComparable"
                                             type="button"
                                             class=" btn btn-primary"
                                             title="Let you edit the document, if synchronization is active the document cannot be edited">
@@ -40,13 +40,14 @@
                                         Edit
                                     </button>
                                     <button ng-click="vm.compareDocuments(d.id, d.getComparisonDuplicate())"
-                                            ng-if="d.duplicates.length"
+                                            ng-if="d.isComparable"
                                             type="button"
-                                            class=" btn btn-primary">
-                                        <span class="fa fa-edit"></span>
+                                            class=" btn btn-compare">
                                         Compare
                                     </button>
-                                    <button type="button" class="btn btn-primary dropdown-toggle"
+                                    <button type="button"
+                                            class="btn dropdown-toggle"
+                                            ng-class="{'btn-compare': d.isComparable, 'btn-primary': !d.isComparable}"
                                             data-toggle="dropdown">
                                         <span class="caret"></span>
                                     </button>
@@ -84,7 +85,7 @@
                                         </li>
                                         <li>
                                             <button ng-click="vm.verifyDraft(d)"
-                                                    ng-disabled="!d.isValid()"
+                                                    ng-disabled="!d.isValid() || d.isComparable"
                                                     class="btn btn-link">
                                                 <span class="fa fa-check"></span>
                                                 Verify

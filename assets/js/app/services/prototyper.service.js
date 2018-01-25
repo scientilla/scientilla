@@ -396,10 +396,16 @@
         }
 
         function checkDuplicates(document) {
-            document.isComparable = !document.isDraft() &&
-                document.duplicates &&
-                document.duplicates.length &&
-                document.duplicates.some(d => d.duplicateKind === 'v');
+            document.isComparable = (
+                    document.isDraft() &&
+                    document.duplicates.length
+                ) ||
+                (
+                    !document.isDraft() &&
+                    document.duplicates &&
+                    document.duplicates.length &&
+                    document.duplicates.some(d => d.duplicateKind === 'v')
+                );
         }
 
         function toMembershipModel(membership) {
