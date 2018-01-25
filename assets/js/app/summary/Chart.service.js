@@ -362,7 +362,7 @@
             };
         };
 
-        service.getFilteredDocumentsTypeByYear = function (chartsData) {
+        service.getFilteredDocumentsSourceTypeByYear = function (chartsData) {
             const yearRange = getYearRange(chartsData);
             const filteredJournals = [];
             chartsData.filteredAffiliatedJournalsByYear.forEach(getDataMerger(filteredJournals));
