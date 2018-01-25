@@ -71,7 +71,8 @@
                 }
 
                 function verifyDrafts(drafts) {
-                    var draftIds = _.map(drafts, 'id');
+                    const [verifiableDrafts, unverifiableDrafts] = _.partition(drafts, d => !d.isComparable);
+                    var draftIds = _.map(verifiableDrafts, 'id');
                     researchEntityService
                         .verifyDrafts(researchEntity, draftIds)
                         .then(function (allDocs) {
@@ -84,7 +85,7 @@
                                 return !d.error && d.kind !== DocumentKinds.DRAFT;
                             });
                             var verifiedDrafts = part[0];
-                            var unverifiedDrafts = part[1];
+                            var unverifiedDrafts = unverifiableDrafts.concat(part[1]);
 
                             if (verifiedDrafts.length)
                                 Notification.success(verifiedDrafts.length + " draft(s) verified");
@@ -183,7 +184,8 @@
                 }
 
                 function verifyDocuments(documents) {
-                    var documentIds = _.map(documents, 'id');
+                    const [verifiableDocs, unverifiableDocs] = _.partition(documents, d => !d.isComparable);
+                    var documentIds = _.map(verifiableDocs, 'id');
                     researchEntityService
                         .verifyDocuments(researchEntity, documentIds)
                         .then(function (allDocs) {
@@ -196,7 +198,7 @@
                                 return !d.error;
                             });
                             var verifiedDocs = part[0];
-                            var unverifiedDocs = part[1];
+                            var unverifiedDocs = unverifiableDocs.concat(part[1]);
                             if (verifiedDocs.length)
                                 Notification.success(verifiedDocs.length + " document(s) verified");
                             if (unverifiedDocs.length)
