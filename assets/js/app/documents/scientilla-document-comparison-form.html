@@ -1,10 +1,10 @@
 <form>
-    <h1>Document Comparison</h1>
     <div class="row">
         <div class="col-xs-6">
             <div class="scientilla-document-details-kind"
                  ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('kind')}">
-                <div class="text-center">
+                <h4 class="text-center">
+                    Document 1:
                     {{vm.document1.getStringKind(vm.researchEntity)}}
                     <span ng-if="vm.verifiedCount1"
                           class="scientilla-document-icons-bottom"
@@ -12,13 +12,14 @@
                           tooltip-class="scientilla-tooltip">
                         <span class="fa fa-check"></span> {{vm.verifiedCount1}}
                     </span>
-                </div>
+                </h4>
             </div>
         </div>
         <div class="col-xs-6">
             <div class="scientilla-document-details-kind"
                  ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('kind')}">
-                <div class="text-center">
+                <h4 class="text-center">
+                    Document 2:
                     {{vm.document2.getStringKind(vm.researchEntity)}}
                     <span ng-if="vm.verifiedCount2"
                          class="scientilla-document-icons-bottom"
@@ -26,7 +27,7 @@
                          tooltip-class="scientilla-tooltip">
                         <span class="fa fa-check"></span> {{vm.verifiedCount2}}
                     </span>
-                </div>
+                </h4>
             </div>
         </div>
     </div>
