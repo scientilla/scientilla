@@ -276,8 +276,8 @@ module.exports = _.merge({}, BaseModel, {
         const maxDocId = Math.max(document1Id, document2Id);
         const documentNotDuplicate = await DocumentNotDuplicatedModel.create({
             researchEntity: researchEntityId,
-            document: document1Id,
-            duplicate: document2Id
+            document: minDocId,
+            duplicate: maxDocId
         });
         return documentNotDuplicate;
     },
