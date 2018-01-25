@@ -41,22 +41,22 @@
             vm.charts.journalMetricsPerYearLineChart = ChartService.getJournalMetricsPerYearLineChart(chartsData);
             vm.charts.getJournalMetricsPerYearBarChart = ChartService.getJournalMetricsPerYearBarChart(chartsData);
             vm.charts.filteredDocumentsByYear = ChartService.getFilteredDocumentsByYear(chartsData);
-            vm.charts.filteredDocumentsTypeByYear = ChartService.getFilteredDocumentsTypeByYear(chartsData);
+            vm.charts.filteredDocumentsSourceTypeByYear = ChartService.getFilteredDocumentsSourceTypeByYear(chartsData);
 
-            vm.documentsChartToShow = vm.charts.filteredDocumentsTypeByYear;
+            vm.documentsChartToShow = vm.charts.filteredDocumentsSourceTypeByYear;
             vm.citationsChartToShow = vm.charts.citationsPerYear;
 
             vm.documentsCharts = [
                 {
                     icon: 'fa-pie-chart',
-                    chartSettings: vm.charts.filteredDocumentsTypeByYear,
+                    chartSettings: vm.charts.filteredDocumentsSourceTypeByYear,
                     default: true,
-                    title: vm.charts.filteredDocumentsTypeByYear.title
+                    title: vm.charts.filteredDocumentsSourceTypeByYear.title
                 },
                 {
                     icon: 'fa-university',
                     chartSettings: vm.charts.filteredDocumentsByYear,
-                    title: vm.charts.filteredDocumentsTypeByYear.title
+                    title: vm.charts.filteredDocumentsSourceTypeByYear.title
                 }
             ];
 
@@ -132,7 +132,7 @@
             vm.indexes.push({
                 label: 'IF per document',
                 value: totalImpactFactor / totalDocuments | 0,
-                icon: '<b class="scientilla-icon-color-metric">IF</b>',
+                icon: '<b class="scientilla-icon-color-if">IF</b>',
                 format: 2
             });
 
