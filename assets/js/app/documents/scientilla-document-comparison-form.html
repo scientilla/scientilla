@@ -1,5 +1,6 @@
 <form>
     <div class="row">
+        <div class="text-center text-warning">{{vm.document1.getComparisonDuplicates().length}} duplicate(s) found</div>
         <div class="col-xs-6">
             <div class="scientilla-document-details-kind"
                  ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('kind')}">
@@ -190,7 +191,7 @@
             <div class="scientilla-document-details-ids">
                 <small ng-if="vm.document1.doi" class="scientilla-document-doi"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('doi')}">
-                    <span ng-bind-html='vm.document | doi'></span>
+                    <span ng-bind-html='vm.document1 | doi'></span>
                 </small>
                 <small ng-if="vm.document1.scopusId"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('scopusId')}">
@@ -216,7 +217,7 @@
             <div class="scientilla-document-details-ids">
                 <small ng-if="vm.document2.doi" class="scientilla-document-doi"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('doi')}">
-                    <span ng-bind-html='vm.document | doi'></span>
+                    <span ng-bind-html='vm.document2 | doi'></span>
                 </small>
                 <small ng-if="vm.document2.scopusId"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('scopusId')}">
