@@ -89,18 +89,21 @@
                     }
 
                     return ModalService.multipleChoiceConfirm(title, msg, ['Proceed'])
-                        .then(res => researchEntity.one('drafts', document.id)
-                            .customPUT({synchronized: sync}, 'synchronized')
-                            .then(newDocData => {
-                                EventsService.publish(EventsService.DRAFT_SYNCHRONIZED, newDocData);
-                                if (sync)
-                                    Notification.success("Document synchronized");
-                                else
-                                    Notification.success("Document desynchronized");
-                            })
-                            .catch(function (err) {
-                                Notification.warning(err.data);
-                            })
+                        .then(res => {
+                            if (res === 0)
+                                researchEntity.one('drafts', document.id)
+                                    .customPUT({synchronized: sync}, 'synchronized')
+                                    .then(newDocData => {
+                                        EventsService.publish(EventsService.DRAFT_SYNCHRONIZED, newDocData);
+                                        if (sync)
+                                            Notification.success("Document synchronized");
+                                        else
+                                            Notification.success("Document desynchronized");
+                                    })
+                                    .catch(function (err) {
+                                        Notification.warning(err.data);
+                                    });
+                            }
                         )
                         .catch(() => true);
                 }
