@@ -1,5 +1,6 @@
 <form>
     <div class="row">
+        <div class="text-center text-warning">{{vm.document1.getComparisonDuplicates().length}} duplicate(s) found</div>
         <div class="col-xs-6">
             <div class="scientilla-document-details-kind"
                  ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('kind')}">
