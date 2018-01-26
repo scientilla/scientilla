@@ -190,7 +190,7 @@
             <div class="scientilla-document-details-ids">
                 <small ng-if="vm.document1.doi" class="scientilla-document-doi"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('doi')}">
-                    <span ng-bind-html='vm.document | doi'></span>
+                    <span ng-bind-html='vm.document1 | doi'></span>
                 </small>
                 <small ng-if="vm.document1.scopusId"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('scopusId')}">
@@ -216,7 +216,7 @@
             <div class="scientilla-document-details-ids">
                 <small ng-if="vm.document2.doi" class="scientilla-document-doi"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('doi')}">
-                    <span ng-bind-html='vm.document | doi'></span>
+                    <span ng-bind-html='vm.document2 | doi'></span>
                 </small>
                 <small ng-if="vm.document2.scopusId"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('scopusId')}">
