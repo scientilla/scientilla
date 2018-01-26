@@ -318,22 +318,22 @@
                         const doc2 = await researchEntityService.getDocument(doc2Id);
                         const i = await ModalService.openDocumentComparisonForm(doc1, doc2);
                         const d = i === 1 ? 2 : 1;
-                        let chosenDoc, msg, discardedDoc;
+                        let chosenDoc, discardedDoc;
                         if (i === 1) {
                             chosenDoc = doc1;
                             discardedDoc = doc2;
-                            msg = "The second document has been discarded";
                         }
                         if (i === 2) {
                             chosenDoc = doc2;
                             discardedDoc = doc1;
-                            msg = "The first document has been discarded";
                         }
                         if (i === 1 || i === 2) {
+                            const modalMsg = `Discarded document (${discardedDoc.getStringKind(researchEntity)}) will be removed. 
+                            What do you want to do with selected document ((${chosenDoc.getStringKind(researchEntity)}))?`;
                             if (chosenDoc.isSuggested(researchEntity)) {
                                 const j = await ModalService
-                                    .multipleChoiceConfirm('Action choice',
-                                        `Document ${d} will be removed. What do you want to do with document ${i}?`,
+                                    .multipleChoiceConfirm('Suggested document selected',
+                                        modalMsg,
                                         ['Verify', 'Copy to Draft']);
                                 if (j === 0 || j === 1) {
                                     await researchEntityService.removeDocument(researchEntity, discardedDoc);
@@ -345,13 +345,12 @@
                                         Notification.success('Draft created');
                                     }
                                     EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
-                                    Notification.success(msg);
                                 }
                             }
                             if (chosenDoc.isDraft()) {
                                 const j = await ModalService
                                     .multipleChoiceConfirm('Draft selected',
-                                        `Document ${d} will be removed. What do you want to do with document ${i}?`,
+                                        modalMsg,
                                         ['Verify', 'Keep Draft']);
                                 if (j === 0 || j === 1) {
                                     await researchEntityService.removeDocument(researchEntity, discardedDoc);
@@ -359,13 +358,12 @@
                                         await service.verify(chosenDoc);
                                     }
                                     EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
-                                    Notification.success(msg);
                                 }
                             }
                             if (chosenDoc.isVerified(researchEntity)) {
                                 const j = await ModalService
-                                    .multipleChoiceConfirm('Document selected',
-                                        `Document ${d} will be removed. What do you want to do with document ${i}?`,
+                                    .multipleChoiceConfirm('Verified document selected',
+                                        modalMsg,
                                         ['Create a draft', 'Keep verified']);
                                 if (j === 0 || j === 1) {
                                     await researchEntityService.removeDocument(researchEntity, discardedDoc);
@@ -377,7 +375,10 @@
                                         Notification.success('Document moved to drafts');
                                     }
                                     EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
-                                    Notification.success(msg);
+                                    const notificationMsg = discardedDoc.isDraft() ?
+                                        `Discarded document ${d} (Draft) has been deleted` :
+                                        `Discarded document ${d} (${discardedDoc.getStringKind(researchEntity)}) has been discarded`;
+                                    Notification.success(notificationMsg);
                                 }
                             }
                         }
