@@ -16,8 +16,8 @@
     const sourceTypesColors = [
         '#0072AF', // journal
         '#aec7e8', // conference
-        '#980181', // book
-        '#753198' // book series
+        '#ff7f0e', // book
+        '#ffbb78' // book series
     ];
 
     function ChartService(DocumentTypesService) {
@@ -399,6 +399,47 @@
             };
         };
 
+        service.getTotalFilteredDocuments = function (chartsData) {
+            return getTotal(chartsData, [
+                'filteredAffiliatedJournalsByYear',
+                'filteredAffiliatedConferencesByYear',
+                'filteredAffiliatedBooksByYear',
+                'filteredAffiliatedBookChaptersByYear',
+                'filteredNotAffiliatedJournalsByYear',
+                'filteredNotAffiliatedConferencesByYear',
+                'filteredNotAffiliatedBooksByYear',
+                'filteredNotAffiliatedBookChaptersByYear',
+            ]);
+        };
+
+        service.getTotalFilteredJournals = function (chartsData) {
+            return getTotal(chartsData, ['filteredAffiliatedJournalsByYear', 'filteredNotAffiliatedJournalsByYear']);
+        };
+        service.getTotalFilteredConferences = function (chartsData) {
+            return getTotal(chartsData, ['filteredAffiliatedConferencesByYear', 'filteredNotAffiliatedConferencesByYear'])
+
+        };
+        service.getTotalFilteredBooks = function (chartsData) {
+            return getTotal(chartsData, ['filteredAffiliatedBooksByYear', 'filteredNotAffiliatedBooksByYear'])
+
+        };
+        service.getTotalFilteredBookSeries = function (chartsData) {
+            return getTotal(chartsData, ['filteredAffiliatedBookChaptersByYear', 'filteredNotAffiliatedBookChaptersByYear'])
+
+        };
+
+        service.getHindex = function (chartsData) {
+            return chartsData.hindexPerYear.length ? chartsData.hindexPerYear[chartsData.hindexPerYear.length - 1].value : 0;
+        };
+
+        service.getTotalCitations = function (chartsData) {
+            getTotal(chartsData, ['citationsPerYear']);
+        };
+
+        service.getTotalImpactFactor = function (chartsData) {
+            getTotal(chartsData, ['totalIfPerYear']);
+        };
+
 
         return service;
 
@@ -487,6 +528,12 @@
                     valueFormat: d => d3.format('')(d)
                 }, chartOptions)
             };
+        }
+
+        function getTotal(chartsData, dataNames) {
+            let total = 0;
+            dataNames.forEach(dn => total = chartsData[dn].reduce((total, d) => total + parseFloat(d.value), total));
+            return total;
         }
     }
 }());
