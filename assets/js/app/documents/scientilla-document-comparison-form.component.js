@@ -51,13 +51,20 @@
             vm.type2 = _.get(documentTypes.find(dt => dt.key === vm.document2.type), 'label');
             vm.sourceType2 = _.get(documentSourceTypes.find(dt => dt.id === vm.document2.sourceType), 'label');
 
-            return vm.document1.fields.filter(f =>
+            const comparisonFields = vm.document1.fields;
+            const differentFields = comparisonFields.filter(f =>
                 (vm.document1[f] || vm.document2[f]) &&
                 (
                     (_.isObject(vm.document1[f]) && _.isObject(vm.document2[f]) && vm.document1[f].id !== vm.document2[f].id) ||
                     (!_.isObject(vm.document1[f]) && !_.isObject(vm.document2[f]) && vm.document1[f] !== vm.document2[f])
                 )
             );
+            const doc1Institutes = _.sortBy(vm.document1.institutes, 'id');
+            const doc2Institutes = _.sortBy(vm.document2.institutes, 'id');
+            if (!_.isEqualWith(doc1Institutes, doc2Institutes, 'id')) {
+                differentFields.push('institutes');
+            }
+            return differentFields;
         }
 
         function keepDocument1() {
