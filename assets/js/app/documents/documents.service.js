@@ -328,8 +328,7 @@
                             discardedDoc = doc1;
                         }
                         if (i === 1 || i === 2) {
-                            const modalMsg = `Discarded document (${discardedDoc.getStringKind(researchEntity)}) will be removed. 
-                            What do you want to do with selected document ((${chosenDoc.getStringKind(researchEntity)}))?`;
+                            const modalMsg = `Discarded document (${discardedDoc.getStringKind(researchEntity)}) will be removed.\nWhat do you want to do with selected document (${chosenDoc.getStringKind(researchEntity)})?`;
                             if (chosenDoc.isSuggested(researchEntity)) {
                                 const j = await ModalService
                                     .multipleChoiceConfirm('Suggested document selected',
