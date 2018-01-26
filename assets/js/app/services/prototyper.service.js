@@ -311,13 +311,15 @@
                     return 'Verified';
             },
             getComparisonDuplicate() {
-                return this.getComparisonDuplicates()[0].duplicate;
+                return this.getComparisonDuplicates()[0];
             },
             getComparisonDuplicates() {
+                let duplicates;
                 if (this.isDraft())
-                    return this.duplicates;
+                    duplicates =  this.duplicates;
                 else
-                    return this.duplicates.filter(d => d.duplicateKind === 'v');
+                    duplicates = this.duplicates.filter(d => d.duplicateKind === 'v');
+                return _.uniqBy(duplicates, 'duplicate');
             }
         };
 

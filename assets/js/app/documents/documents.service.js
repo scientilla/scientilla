@@ -312,10 +312,10 @@
                 }
 
                 /* jshint ignore:start */
-                async function compareDocuments(doc1Id, doc2Id) {
+                async function compareDocuments(doc1, duplicateInfo) {
                     try {
-                        const doc1 = await researchEntityService.getDocument(doc1Id);
-                        const doc2 = await researchEntityService.getDocument(doc2Id);
+                        const doc2Id = duplicateInfo.duplicate;
+                        const doc2 = await researchEntityService.getDoc(researchEntity, doc2Id, duplicateInfo.duplicateKind);
                         const i = await ModalService.openDocumentComparisonForm(doc1, doc2);
                         const d = i === 1 ? 2 : 1;
                         let chosenDoc, discardedDoc;
