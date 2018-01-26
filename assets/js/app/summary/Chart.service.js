@@ -430,11 +430,11 @@
         };
 
         service.getTotalCitations = function (chartsData) {
-            getTotal(chartsData, ['citationsPerYear']);
+            return getTotal(chartsData, ['citationsPerYear']);
         };
 
         service.getTotalImpactFactor = function (chartsData) {
-            getTotal(chartsData, ['totalIfPerYear']);
+            return getTotal(chartsData, ['totalIfPerYear']);
         };
 
 
