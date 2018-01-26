@@ -329,6 +329,7 @@
                         }
                         if (i === 1 || i === 2) {
                             const modalMsg = `Discarded document (${discardedDoc.getStringKind(researchEntity)}) will be removed.\nWhat do you want to do with selected document (${chosenDoc.getStringKind(researchEntity)})?`;
+                            let notificationMsg1;
                             if (chosenDoc.isSuggested(researchEntity)) {
                                 const j = await ModalService
                                     .multipleChoiceConfirm('Suggested document selected',
@@ -338,10 +339,12 @@
                                     await researchEntityService.removeDocument(researchEntity, discardedDoc);
                                     if (j === 0) {
                                         await service.verify(chosenDoc);
+                                        notificationMsg1 = `The selected document has been verified`;
                                     }
                                     if (j === 1) {
                                         await researchEntityService.copyDocument(researchEntity, chosenDoc);
                                         Notification.success('Draft created');
+                                        notificationMsg1 = `The selected document has been copied to a draft`;
                                     }
                                     EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
                                 }
@@ -355,6 +358,10 @@
                                     await researchEntityService.removeDocument(researchEntity, discardedDoc);
                                     if (j === 0) {
                                         await service.verify(chosenDoc);
+                                        notificationMsg1 = `The selected document has been verified`;
+                                    }
+                                    if (j===1){
+                                        notificationMsg1 = `Selected document has been kept as a draft`;
                                     }
                                     EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
                                 }
@@ -372,14 +379,18 @@
                                         await researchEntityService.unverify(researchEntity, chosenDoc);
                                         EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
                                         Notification.success('Document moved to drafts');
+                                        notificationMsg1 = `The selected document has been moved to a draft`;
                                     }
+                                    if (j===1)
+                                        notificationMsg1 = `Selected document has been kept verified`;
                                     EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
-                                    const notificationMsg = discardedDoc.isDraft() ?
-                                        `Discarded document ${d} (Draft) has been deleted` :
-                                        `Discarded document ${d} (${discardedDoc.getStringKind(researchEntity)}) has been discarded`;
-                                    Notification.success(notificationMsg);
                                 }
                             }
+                            const notificationMsg2 = discardedDoc.isDraft() ?
+                                `Discarded draft has been deleted` :
+                                `Discarded document ${d} (${discardedDoc.getStringKind(researchEntity)}) has been discarded`;
+                            Notification.success(notificationMsg1);
+                            Notification.success(notificationMsg2);
                         }
                         if (i === 3) {
                             await researchEntityService.documentsNotDuplicate(researchEntity, doc1, doc2);
