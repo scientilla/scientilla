@@ -43,6 +43,11 @@
             vm.charts.filteredDocumentsByYear = ChartService.getFilteredDocumentsByYear(chartsData);
             vm.charts.filteredDocumentsSourceTypeByYear = ChartService.getFilteredDocumentsSourceTypeByYear(chartsData);
 
+            const totalDocuments = ChartService.getTotalFilteredDocuments(chartsData);
+            const hIndex = ChartService.getHindex(chartsData);
+            const totalCitations = ChartService.getTotalCitations(chartsData);
+            const totalImpactFactor = ChartService.getTotalImpactFactor(chartsData);
+
             vm.documentsChartToShow = vm.charts.filteredDocumentsSourceTypeByYear;
             vm.citationsChartToShow = vm.charts.citationsPerYear;
 
@@ -90,20 +95,6 @@
 
             ];
 
-            const totalDocuments = getTotal(chartsData, [
-                'filteredAffiliatedJournalsByYear',
-                'filteredAffiliatedConferencesByYear',
-                'filteredAffiliatedBooksByYear',
-                'filteredAffiliatedBookChaptersByYear',
-                'filteredNotAffiliatedJournalsByYear',
-                'filteredNotAffiliatedConferencesByYear',
-                'filteredNotAffiliatedBooksByYear',
-                'filteredNotAffiliatedBookChaptersByYear',
-            ]);
-            const hIndex = chartsData.hindexPerYear.length ? chartsData.hindexPerYear[chartsData.hindexPerYear.length - 1].value : 0;
-            const totalCitations = getTotal(chartsData, ['citationsPerYear']);
-            const totalImpactFactor = getTotal(chartsData, ['totalIfPerYear']);
-
             vm.indexes = [];
             vm.indexes.push({
                 label: 'Documents',
@@ -125,13 +116,13 @@
             });
             vm.indexes.push({
                 label: 'Citations per document',
-                value: totalCitations / totalDocuments | 0,
+                value: (totalCitations / totalDocuments) || 0,
                 icon: '<span class="fa fa-quote-right scientilla-icon-color-citations"></span>',
                 format: 2
             });
             vm.indexes.push({
                 label: 'IF per document',
-                value: totalImpactFactor / totalDocuments | 0,
+                value: (totalImpactFactor / totalDocuments) || 0,
                 icon: '<b class="scientilla-icon-color-if">IF</b>',
                 format: 2
             });
@@ -139,19 +130,19 @@
             vm.documentTotals = [
                 {
                     title: 'Journals',
-                    value: getTotal(chartsData, ['filteredAffiliatedJournalsByYear', 'filteredNotAffiliatedJournalsByYear'])
+                    value: ChartService.getTotalFilteredJournals(chartsData)
                 },
                 {
                     title: 'Conferences',
-                    value: getTotal(chartsData, ['filteredAffiliatedConferencesByYear', 'filteredNotAffiliatedConferencesByYear'])
+                    value: ChartService.getTotalFilteredConferences(chartsData)
                 },
                 {
                     title: 'Books',
-                    value: getTotal(chartsData, ['filteredAffiliatedBooksByYear', 'filteredNotAffiliatedBooksByYear'])
+                    value: ChartService.getTotalFilteredBooks(chartsData)
                 },
                 {
                     title: 'Book Series',
-                    value: getTotal(chartsData, ['filteredAffiliatedBookChaptersByYear', 'filteredNotAffiliatedBookChaptersByYear'])
+                    value: ChartService.getTotalFilteredBookSeries(chartsData)
                 },
             ];
 
@@ -159,14 +150,6 @@
 
         function showInfo() {
             ModalService.openWizard(['summary-metrics'], {style: 'light', isClosable: true});
-        }
-
-        function getTotal(chartsData, dataNames) {
-            let total = 0;
-            dataNames.forEach(dn => {
-                total = chartsData[dn].reduce((total, d) => total + parseInt(d.value, 10), total);
-            });
-            return total;
         }
 
     }
