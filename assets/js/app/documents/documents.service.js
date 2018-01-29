@@ -346,7 +346,6 @@
                                     }
                                     if (j === 1) {
                                         await researchEntityService.copyDocument(researchEntity, chosenDoc);
-                                        Notification.success('Draft created');
                                         notificationMsg1 = `The selected document has been copied to a draft`;
                                     }
                                     EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
@@ -381,7 +380,6 @@
                                         EventsService.publish(EventsService.DRAFT_CREATED, draft);
                                         await researchEntityService.unverify(researchEntity, chosenDoc);
                                         EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
-                                        Notification.success('Document moved to drafts');
                                         notificationMsg1 = `The selected document has been moved to a draft`;
                                     }
                                     if (j === 1)
