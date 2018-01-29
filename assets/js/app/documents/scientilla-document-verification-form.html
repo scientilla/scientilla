@@ -68,13 +68,13 @@
         </div>
     </div>
     <scientilla-button type="submit"
-                       click="vm.submit()"
+                       click="vm.submit"
                        ng-disabled="!vm.canBeSubmitted()">
         Verify
     </scientilla-button>
     <scientilla-button ng-if="vm.viewCopyToDraft()"
                        type="submit"
-                       click="vm.copyToDraft()">
+                       click="vm.copyToDraft">
         Copy to draft
     </scientilla-button>
     <scientilla-button type="cancel" click="vm.cancel()">Cancel</scientilla-button>
