@@ -329,9 +329,9 @@
                         }
                         if (i === 1 || i === 2) {
                             const modalMsg = `Discarded document (${discardedDoc.getStringKind(researchEntity)}) will be removed.\nWhat do you want to do with selected document (${chosenDoc.getStringKind(researchEntity)})?`;
-                            let notificationMsg1;
+                            let notificationMsg1, j;
                             if (chosenDoc.isSuggested(researchEntity)) {
-                                const j = await ModalService
+                                j = await ModalService
                                     .multipleChoiceConfirm('Suggested document selected',
                                         modalMsg,
                                         ['Verify', 'Copy to Draft']);
@@ -350,7 +350,7 @@
                                 }
                             }
                             if (chosenDoc.isDraft()) {
-                                const j = await ModalService
+                                j = await ModalService
                                     .multipleChoiceConfirm('Draft selected',
                                         modalMsg,
                                         ['Verify', 'Keep Draft']);
@@ -367,7 +367,7 @@
                                 }
                             }
                             if (chosenDoc.isVerified(researchEntity)) {
-                                const j = await ModalService
+                                j = await ModalService
                                     .multipleChoiceConfirm('Verified document selected',
                                         modalMsg,
                                         ['Create a draft', 'Keep verified']);
@@ -386,11 +386,13 @@
                                     EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
                                 }
                             }
-                            const notificationMsg2 = discardedDoc.isDraft() ?
-                                `Discarded draft has been deleted` :
-                                `Discarded document ${d} (${discardedDoc.getStringKind(researchEntity)}) has been discarded`;
-                            Notification.success(notificationMsg1);
-                            Notification.success(notificationMsg2);
+                            if (j === 0 || j === 1) {
+                                const notificationMsg2 = discardedDoc.isDraft() ?
+                                    `Discarded draft has been deleted` :
+                                    `Discarded document ${d} (${discardedDoc.getStringKind(researchEntity)}) has been discarded`;
+                                Notification.success(notificationMsg1);
+                                Notification.success(notificationMsg2);
+                            }
                         }
                         if (i === 3) {
                             await researchEntityService.documentsNotDuplicate(researchEntity, doc1, doc2);
