@@ -58,15 +58,18 @@
                         'Delete',
                         'This action will permanently delete this document.\n Do you want to proceed?',
                         ['Proceed'])
-                        .then(() => researchEntityService
-                            .deleteDraft(researchEntity, draft.id)
-                            .then(function (d) {
-                                Notification.success("Draft deleted");
-                                EventsService.publish(EventsService.DRAFT_DELETED, d);
-                            })
-                            .catch(function () {
-                                Notification.warning("Failed to delete draft");
-                            })
+                        .then(res => {
+                                if (res === 0)
+                                    researchEntityService
+                                        .deleteDraft(researchEntity, draft.id)
+                                        .then(function (d) {
+                                            Notification.success("Draft deleted");
+                                            EventsService.publish(EventsService.DRAFT_DELETED, d);
+                                        })
+                                        .catch(function () {
+                                            Notification.warning("Failed to delete draft");
+                                        });
+                            }
                         ).catch(() => true);
                 }
 
@@ -312,10 +315,10 @@
                 }
 
                 /* jshint ignore:start */
-                async function compareDocuments(doc1Id, doc2Id) {
+                async function compareDocuments(doc1, duplicateInfo) {
                     try {
-                        const doc1 = await researchEntityService.getDocument(doc1Id);
-                        const doc2 = await researchEntityService.getDocument(doc2Id);
+                        const doc2Id = duplicateInfo.duplicate;
+                        const doc2 = await researchEntityService.getDoc(researchEntity, doc2Id, duplicateInfo.duplicateKind);
                         const i = await ModalService.openDocumentComparisonForm(doc1, doc2);
                         const d = i === 1 ? 2 : 1;
                         let chosenDoc, discardedDoc;
@@ -328,40 +331,45 @@
                             discardedDoc = doc1;
                         }
                         if (i === 1 || i === 2) {
-                            const modalMsg = `Discarded document (${discardedDoc.getStringKind(researchEntity)}) will be removed. 
-                            What do you want to do with selected document ((${chosenDoc.getStringKind(researchEntity)}))?`;
+                            const modalMsg = `Discarded document (${discardedDoc.getStringKind(researchEntity)}) will be removed.\nWhat do you want to do with selected document (${chosenDoc.getStringKind(researchEntity)})?`;
+                            let notificationMsg1, j;
                             if (chosenDoc.isSuggested(researchEntity)) {
-                                const j = await ModalService
+                                j = await ModalService
                                     .multipleChoiceConfirm('Suggested document selected',
                                         modalMsg,
                                         ['Verify', 'Copy to Draft']);
                                 if (j === 0 || j === 1) {
                                     await researchEntityService.removeDocument(researchEntity, discardedDoc);
                                     if (j === 0) {
-                                        await service.verify(chosenDoc);
+                                        await service.verify(chosenDoc, false);
+                                        notificationMsg1 = `The selected document has been verified`;
                                     }
                                     if (j === 1) {
                                         await researchEntityService.copyDocument(researchEntity, chosenDoc);
-                                        Notification.success('Draft created');
+                                        notificationMsg1 = `The selected document has been copied to a draft`;
                                     }
                                     EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
                                 }
                             }
                             if (chosenDoc.isDraft()) {
-                                const j = await ModalService
+                                j = await ModalService
                                     .multipleChoiceConfirm('Draft selected',
                                         modalMsg,
                                         ['Verify', 'Keep Draft']);
                                 if (j === 0 || j === 1) {
                                     await researchEntityService.removeDocument(researchEntity, discardedDoc);
                                     if (j === 0) {
-                                        await service.verify(chosenDoc);
+                                        await service.verify(chosenDoc, false);
+                                        notificationMsg1 = `The selected document has been verified`;
+                                    }
+                                    if (j === 1) {
+                                        notificationMsg1 = `Selected document has been kept as a draft`;
                                     }
                                     EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
                                 }
                             }
                             if (chosenDoc.isVerified(researchEntity)) {
-                                const j = await ModalService
+                                j = await ModalService
                                     .multipleChoiceConfirm('Verified document selected',
                                         modalMsg,
                                         ['Create a draft', 'Keep verified']);
@@ -372,14 +380,19 @@
                                         EventsService.publish(EventsService.DRAFT_CREATED, draft);
                                         await researchEntityService.unverify(researchEntity, chosenDoc);
                                         EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
-                                        Notification.success('Document moved to drafts');
+                                        notificationMsg1 = `The selected document has been moved to a draft`;
                                     }
+                                    if (j === 1)
+                                        notificationMsg1 = `Selected document has been kept verified`;
                                     EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
-                                    const notificationMsg = discardedDoc.isDraft() ?
-                                        `Discarded document ${d} (Draft) has been deleted` :
-                                        `Discarded document ${d} (${discardedDoc.getStringKind(researchEntity)}) has been discarded`;
-                                    Notification.success(notificationMsg);
                                 }
+                            }
+                            if (j === 0 || j === 1) {
+                                const notificationMsg2 = discardedDoc.isDraft() ?
+                                    `Discarded draft has been deleted` :
+                                    `Discarded document ${d} (${discardedDoc.getStringKind(researchEntity)}) has been discarded`;
+                                Notification.success(notificationMsg1);
+                                Notification.success(notificationMsg2);
                             }
                         }
                         if (i === 3) {
@@ -392,11 +405,11 @@
                     }
                 }
 
-                function verify(d) {
+                function verify(d, notifications = true) {
                     if (d.isDraft())
-                        return service.verifyDraft(d);
+                        return service.verifyDraft(d, notifications);
                     else
-                        return service.verifyDocument(d);
+                        return service.verifyDocument(d, notifications);
                 }
 
                 /* jshint ignore:end */

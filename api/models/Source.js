@@ -148,6 +148,9 @@ module.exports = {
 
     },
     beforeCreate: async (sourceData, cb) => {
+        if (Array.isArray(sourceData)) {
+            sails.log.error(`Source.beforeCreate called with an array with length ${sourceData.length}`);
+        }
         if (!sourceData.type)
             return;
         const sourceType = SourceTypes.get().find(st => st.key === sourceData.type);

@@ -5,16 +5,18 @@
 
     ResearchEntityServiceFactory.$inject = [
         'Restangular',
-        'DocumentLabels'
+        'DocumentLabels',
+        'DocumentKinds'
     ];
 
-    function ResearchEntityServiceFactory(Restangular, DocumentLabels) {
+    function ResearchEntityServiceFactory(Restangular, DocumentLabels, DocumentKinds) {
         var service = {};
 
         service.getDocument = getDocument;
         service.getDocuments = getDocuments;
         service.getDraft = getDraft;
         service.getDrafts = getDrafts;
+        service.getDoc = getDoc;
         service.getSuggestedDocuments = getSuggestedDocuments;
         service.getDiscardedDocuments = getDiscardedDocuments;
         service.verifyDocument = verifyDocument;
@@ -54,12 +56,6 @@
             'duplicates',
             'groups'
         ];
-
-        function getDocument(documentId) {
-            const populate = {populate: documentPopulates};
-
-            return Restangular.one('documents', documentId).get(populate);
-        }
 
         function getDocuments(researchEntity, query) {
             var populate = {populate: documentPopulates};
@@ -210,6 +206,24 @@
         }
 
         /* jshint ignore:start */
+
+        async function getDoc(researchEntity, docId, docKind) {
+            if (docKind === DocumentKinds.DRAFT)
+                return service.getDraft(researchEntity, docId);
+            else
+                return service.getDocument(researchEntity, docId);
+        }
+
+        async function getDocument(researchEntity, documentId) {
+            const populate = {populate: documentPopulates};
+
+            const res = await researchEntity.one('documents', documentId).get(populate);
+            const document = res[0];
+            Restangular.restangularizeElement(researchEntity, document, 'documents');
+            return document;
+
+            // return Restangular.one('documents', documentId).get(populate);
+        }
 
         async function getDraft(researchEntity, draftId) {
             var populate = {populate: documentPopulates};

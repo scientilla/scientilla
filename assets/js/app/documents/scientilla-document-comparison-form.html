@@ -66,7 +66,7 @@
     </div>
     <div class="row">
         <div class="col-xs-6">
-            <div>
+            <div ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('institutes')}">
                 <small class="scientilla-document-institutes">
                     <div ng-repeat='(i, institute) in vm.document1.institutes'>
                         {{vm.document1.getInstituteIdentifier(i)}} -
@@ -76,7 +76,7 @@
             </div>
         </div>
         <div class="col-xs-6">
-            <div>
+            <div ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('institutes')}">
                 <small class="scientilla-document-institutes">
                     <div ng-repeat='(i, institute) in vm.document2.institutes'>
                         {{vm.document2.getInstituteIdentifier(i)}} -

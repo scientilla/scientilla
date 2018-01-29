@@ -529,8 +529,17 @@ module.exports = _.merge({}, BaseModel, {
     async fixDocumentType(document) {
         if (!document.type)
             return;
-        const documentType = DocumentTypes.getDocumentType(this.documenttype);
+        const documentType = DocumentTypes.getDocumentType(document.type);
         if (documentType)
             document.documenttype = documentType.id;
+    },
+    beforeCreate: async (document, cb) => {
+        if (Array.isArray(document)) {
+            sails.log.error(`Document.beforeCreate called with an array with length ${document.length}`);
+        }
+        if (document && document.type && !document.documenttype)
+            sails.log.error(`Document.beforeCreate, document without documenttype ${document.id}`);
+        // fixDocumentType(document);
+        cb();
     }
 });
