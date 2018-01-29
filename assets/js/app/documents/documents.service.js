@@ -68,7 +68,7 @@
                                         })
                                         .catch(function () {
                                             Notification.warning("Failed to delete draft");
-                                        })
+                                        });
                             }
                         ).catch(() => true);
                 }
