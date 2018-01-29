@@ -1,4 +1,4 @@
-/* global Affiliation, Authorship, ResearchEntity, Document, TagLabel, SqlService, DocumentOrigins */
+/* global Affiliation, Authorship, ResearchEntity, Document, TagLabel, SqlService, DocumentOrigins, DocumentKinds */
 'use strict';
 
 /**
@@ -161,18 +161,10 @@ module.exports = _.merge({}, BaseModel, {
 
         return await ResearchEntityModel.doVerifyDocument(docToVerify, researchEntityId, authorshipData);
     },
-    verifyDocuments: async function (Model, researchEntityId, documentIds) {
-        const results = [];
-        for (let documentId of documentIds) {
-            const res = await Model.verifyDocument(Model, researchEntityId, documentId);
-            results.push(res);
-        }
-        return results;
-    },
-    verifyDocument: async function (Model, researchEntityId, documentId, verificationData, check = true) {
+    verifyVerifiedDocument: async function (Model, researchEntityId, document, verificationData, check) {
         const AuthorshipModel = getAuthorshipModel(Model);
         const alreadyVerifiedDocuments = await AuthorshipModel.find({
-            document: documentId,
+            document: document.id,
             researchEntity: researchEntityId
         });
         if (alreadyVerifiedDocuments.length)
@@ -182,10 +174,7 @@ module.exports = _.merge({}, BaseModel, {
             };
 
         const DiscardedModel = getDiscardedModel(Model);
-        await  DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
-        const document = await Document.findOneById(documentId)
-            .populate('affiliations')
-            .populate('authorships');
+        await DiscardedModel.destroy({document: document.id, researchEntity: researchEntityId});
         if (!document || document.kind !== DocumentKinds.VERIFIED)
             return {
                 error: 'Document not found',
@@ -218,6 +207,31 @@ module.exports = _.merge({}, BaseModel, {
             };
 
         return await Model.doVerifyDocument(authorshipData.document, researchEntityId, authorshipData);
+    },
+    verifyExternalDocument: async function (Model, researchEntityId, document, verificationData) {
+        const draft = await Model.copyDocument(Model, researchEntityId, document.id);
+        const result = await Model.verifyDraft(Model, researchEntityId, draft.id, verificationData);
+        if (!result.id)
+            await Document.destroy(draft.id);
+        return result;
+    },
+    verifyDocuments: async function (Model, researchEntityId, documentIds) {
+        const results = [];
+        for (let documentId of documentIds) {
+            const res = await Model.verifyDocument(Model, researchEntityId, documentId);
+            results.push(res);
+        }
+        return results;
+    },
+    verifyDocument: async function (Model, researchEntityId, documentId, verificationData, check = true) {
+        const document = await Document.findOneById(documentId)
+            .populate('affiliations')
+            .populate('authorships');
+        if (document.kind === DocumentKinds.VERIFIED)
+            return await Model.verifyVerifiedDocument(Model, researchEntityId, document, verificationData, check);
+        else if (document.kind === DocumentKinds.EXTERNAL)
+            return await Model.verifyExternalDocument(Model, researchEntityId, document, verificationData);
+        else return await Model.verifyDraft(Model, researchEntityId, document.id, verificationData);
     },
     updateDraft: async function (ResearchEntityModel, draftId, draftData) {
         const d = await Document.findOneById(draftId);
@@ -256,14 +270,14 @@ module.exports = _.merge({}, BaseModel, {
                 )
             )
     },
-    removeDocument: async function(researchEntityModel, researchEntityId, documentId) {
+    removeDocument: async function (researchEntityModel, researchEntityId, documentId) {
         const document = await Document.findOneById(documentId);
         if (document.kind === DocumentKinds.DRAFT)
             await Document.destroy({id: documentId});
         else
             await researchEntityModel.discardDocument(researchEntityModel, researchEntityId, documentId);
     },
-    verify: async function(researchEntityModel, researchEntityId, documentId) {
+    verify: async function (researchEntityModel, researchEntityId, documentId) {
         const document = await Document.findOneById(documentId);
         if (document.kind === DocumentKinds.DRAFT)
             return await researchEntityModel.verifyDraft(researchEntityModel, researchEntityId, documentId);

@@ -22,7 +22,8 @@
         ALREADY_IN_DRAFTS: 'already in drafts',
         DISCARDED: 'discarded',
         UVERIFYING: 'unverifying',
-        NEW: 'new'
+        NEW: 'new',
+        EXTERNAL: 'external'
     };
 
 

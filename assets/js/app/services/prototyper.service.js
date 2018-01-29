@@ -293,7 +293,7 @@
             },
             isSuggested: function (researchEntity) {
                 const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
-                return this.kind === DocumentKinds.VERIFIED && !this[f].some(re => re.id === researchEntity.id);
+                return (this.kind === DocumentKinds.VERIFIED || this.isExternal()) && !this[f].some(re => re.id === researchEntity.id);
             },
             isDraft: function () {
                 return this.kind === DocumentKinds.DRAFT;
@@ -301,6 +301,9 @@
             isVerified: function (researchEntity) {
                 const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
                 return this[f].some(re => re.id === researchEntity.id);
+            },
+            isExternal: function () {
+                return this.kind === DocumentKinds.EXTERNAL;
             },
             getStringKind(researchEntity) {
                 if (this.isSuggested(researchEntity))
