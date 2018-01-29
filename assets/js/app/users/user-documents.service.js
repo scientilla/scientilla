@@ -31,14 +31,15 @@
                         verifyDocument(d);
                 }
 
-                function verifyDraft(draft) {
+                function verifyDraft(draft, notifications = true) {
                     function verificationCallback(user, documentId, verificationData) {
                         return researchEntityService.verifyDraftAsUser(user, documentId, verificationData)
                             .then(function (res) {
                                 if (res.error)
                                     throw res.error;
 
-                                Notification.success("Draft verified");
+                                if (notifications)
+                                    Notification.success("Draft verified");
                                 EventsService.publish(EventsService.DRAFT_VERIFIED, res);
 
                             })
@@ -51,14 +52,15 @@
 
                 }
 
-                function verifyDocument(document) {
+                function verifyDocument(document, notifications = true) {
                     function verificationCallback(user, documentId, verificationData) {
                         return researchEntityService.verifyDocument(user, documentId, verificationData)
                             .then(function (res) {
                                 if (res.error)
                                     throw res.error;
 
-                                Notification.success('Document verified');
+                                if (notifications)
+                                    Notification.success('Document verified');
                                 EventsService.publish(EventsService.DOCUMENT_VERIFIED, document);
                                 EventsService.publish(EventsService.NOTIFICATION_ACCEPTED, document);
 

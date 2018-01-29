@@ -341,7 +341,7 @@
                                 if (j === 0 || j === 1) {
                                     await researchEntityService.removeDocument(researchEntity, discardedDoc);
                                     if (j === 0) {
-                                        await service.verify(chosenDoc);
+                                        await service.verify(chosenDoc, false);
                                         notificationMsg1 = `The selected document has been verified`;
                                     }
                                     if (j === 1) {
@@ -360,7 +360,7 @@
                                 if (j === 0 || j === 1) {
                                     await researchEntityService.removeDocument(researchEntity, discardedDoc);
                                     if (j === 0) {
-                                        await service.verify(chosenDoc);
+                                        await service.verify(chosenDoc, false);
                                         notificationMsg1 = `The selected document has been verified`;
                                     }
                                     if (j === 1) {
@@ -407,11 +407,11 @@
                     }
                 }
 
-                function verify(d) {
+                function verify(d, notifications = true) {
                     if (d.isDraft())
-                        return service.verifyDraft(d);
+                        return service.verifyDraft(d, notifications);
                     else
-                        return service.verifyDocument(d);
+                        return service.verifyDocument(d, notifications);
                 }
 
                 /* jshint ignore:end */
