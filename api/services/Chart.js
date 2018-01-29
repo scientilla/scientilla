@@ -237,7 +237,7 @@ async function getChartsData(researchEntityId, Model, refresh) {
 
     async function setDocuments() {
         const researchEntity = await Model.findOne({id: researchEntityId}).populate('documents');
-        documents = researchEntity.documents.filter(d => !excludedDocumentTypes.includes(d.type));
+        documents = researchEntity.documents.filter(d => !excludedDocumentTypes.includes(d.documenttype));
     }
 
     async function setCitations() {
