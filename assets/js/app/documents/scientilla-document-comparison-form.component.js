@@ -45,6 +45,11 @@
         };
 
         function getDifferentFields() {
+            function isEqualArrayBy(a1, a2, index) {
+                return _.isEmpty(_.differenceBy(doc1Institutes, doc2Institutes, 'id')) &&
+                    _.isEmpty(_.differenceBy(doc2Institutes, doc1Institutes, 'id'));
+            }
+
             vm.type1 = _.get(documentTypes.find(dt => dt.key === vm.document1.type), 'label');
             vm.sourceType1 = _.get(documentSourceTypes.find(dt => dt.id === vm.document1.sourceType), 'label');
 
@@ -61,7 +66,7 @@
             );
             const doc1Institutes = _.sortBy(vm.document1.institutes, 'id');
             const doc2Institutes = _.sortBy(vm.document2.institutes, 'id');
-            if (!_.isEqualWith(doc1Institutes, doc2Institutes, 'id')) {
+            if (!isEqualArrayBy(doc1Institutes, doc2Institutes, 'id')) {
                 differentFields.push('institutes');
             }
             return differentFields;
@@ -92,7 +97,6 @@
             if (_.isFunction(vm.onFailure()))
                 vm.onFailure()();
         }
-
 
 
         function getVerifiedCount(document) {
