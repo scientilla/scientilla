@@ -58,15 +58,18 @@
                         'Delete',
                         'This action will permanently delete this document.\n Do you want to proceed?',
                         ['Proceed'])
-                        .then(() => researchEntityService
-                            .deleteDraft(researchEntity, draft.id)
-                            .then(function (d) {
-                                Notification.success("Draft deleted");
-                                EventsService.publish(EventsService.DRAFT_DELETED, d);
-                            })
-                            .catch(function () {
-                                Notification.warning("Failed to delete draft");
-                            })
+                        .then(res => {
+                                if (res === 0)
+                                    researchEntityService
+                                        .deleteDraft(researchEntity, draft.id)
+                                        .then(function (d) {
+                                            Notification.success("Draft deleted");
+                                            EventsService.publish(EventsService.DRAFT_DELETED, d);
+                                        })
+                                        .catch(function () {
+                                            Notification.warning("Failed to delete draft");
+                                        })
+                            }
                         ).catch(() => true);
                 }
 
@@ -360,7 +363,7 @@
                                         await service.verify(chosenDoc);
                                         notificationMsg1 = `The selected document has been verified`;
                                     }
-                                    if (j===1){
+                                    if (j === 1) {
                                         notificationMsg1 = `Selected document has been kept as a draft`;
                                     }
                                     EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
@@ -381,7 +384,7 @@
                                         Notification.success('Document moved to drafts');
                                         notificationMsg1 = `The selected document has been moved to a draft`;
                                     }
-                                    if (j===1)
+                                    if (j === 1)
                                         notificationMsg1 = `Selected document has been kept verified`;
                                     EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
                                 }
