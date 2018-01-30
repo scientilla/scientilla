@@ -12,11 +12,8 @@
                     '<scientilla-admin-metrics></scientilla-admin-metrics>',
                 resolve: {}
             })
-            .when("/status", {
-                template: '<scientilla-admin-status></scientilla-admin-status>'
-            })
-            .when("/backup", {
-                template: '<scientilla-admin-backup></scientilla-admin-backup>'
+            .when("/tools", {
+                template: '<scientilla-admin-tools></scientilla-admin-tools>'
             });
 
     }
