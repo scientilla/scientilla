@@ -182,22 +182,16 @@
 
         service.getHindexPerYear = (chartsData) => {
             const yearRange = getYearRange(chartsData);
-            let maxYValue, maxXValue, minXValue;
-            if (chartsData.hindexPerYear.length) {
-                maxYValue = parseInt(_.maxBy(chartsData.hindexPerYear, 'value').value, 10);
-                maxXValue = parseInt(_.maxBy(chartsData.hindexPerYear, 'year').year, 10);
-                minXValue = parseInt(_.minBy(chartsData.hindexPerYear, 'year').year, 10);
-            }
-            else {
-                maxYValue = 1;
-                maxXValue = yearRange.max;
-                minXValue = yearRange.min;
-            }
+            const hindexPerYear = getItemsByYear(chartsData.hindexPerYear, yearRange);
+
+            const maxYValue = parseInt(_.maxBy(hindexPerYear, 'value').value, 10);
+            const maxXValue = parseInt(_.maxBy(hindexPerYear, 'year').year, 10);
+            const minXValue = parseInt(_.minBy(hindexPerYear, 'year').year, 10);
             return {
                 title: 'h-index by year',
                 data: [{
                     key: 'h-index',
-                    values: getItemsByYear(chartsData.hindexPerYear, yearRange)
+                    values: hindexPerYear
                 }],
                 options: {
                     chart: {
@@ -261,31 +255,27 @@
 
         service.getJournalMetricsPerYearLineChart = (chartsData) => {
             const yearRange = getYearRange(chartsData);
-            let maxYValue, maxXValue, minXValue;
-            if (chartsData.totalIfPerYear.length) {
-                const maxIf = parseInt(_.maxBy(chartsData.totalIfPerYear, 'value').value, 10);
-                const maxSjr = parseInt(_.maxBy(chartsData.totalSjrPerYear, 'value').value, 10);
-                const maxSnip = parseInt(_.maxBy(chartsData.totalSnipPerYear, 'value').value, 10);
-                maxYValue = Math.max(maxIf, maxSjr, maxSnip);
-                maxXValue = parseInt(_.maxBy(chartsData.totalIfPerYear, 'year').year, 10);
-                minXValue = parseInt(_.minBy(chartsData.totalIfPerYear, 'year').year, 10);
-            }
-            else {
-                maxYValue = 1;
-                maxXValue = yearRange.max;
-                minXValue = yearRange.min;
-            }
+
+            const totalIfPerYear = getItemsByYear(chartsData.totalIfPerYear, yearRange);
+            const totalSjrPerYear = getItemsByYear(chartsData.totalSjrPerYear, yearRange);
+            const totalSnipPerYear = getItemsByYear(chartsData.totalSnipPerYear, yearRange);
+
+            const maxYValue = Math.max(parseInt(_.maxBy(totalIfPerYear, 'value').value, 10),
+                parseInt(_.maxBy(totalSjrPerYear, 'value').value, 10),
+                parseInt(_.maxBy(totalSnipPerYear, 'value').value, 10));
+            const maxXValue = parseInt(_.maxBy(totalIfPerYear, 'year').year, 10);
+            const minXValue = parseInt(_.minBy(totalIfPerYear, 'year').year, 10);
             return {
                 title: 'Journal metrics by year',
                 data: [{
                     key: 'IF',
-                    values: getItemsByYear(chartsData.totalIfPerYear, yearRange)
+                    values: totalIfPerYear
                 }, {
                     key: 'SJR',
-                    values: getItemsByYear(chartsData.totalSjrPerYear, yearRange)
+                    values: totalSjrPerYear
                 }, {
                     key: 'SNIP',
-                    values: getItemsByYear(chartsData.totalSnipPerYear, yearRange)
+                    values: totalSnipPerYear
                 }],
                 options: {
                     chart: {
@@ -457,7 +447,7 @@
             })).filter(d => d.year >= yearRange.min);
             _.range(yearRange.min, yearRange.max + 1).forEach(y => {
                 if (!_.find(newData, {year: y}))
-                    newData.push({value: 0, year: y});
+                    newData.push({year: y, value: 0});
             });
 
             newData.sort((a, b) => a.year < b.year ? -1 : a.year > b.year ? 1 : 0);
