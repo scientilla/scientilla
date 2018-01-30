@@ -79,11 +79,13 @@
             vm.showPrivateTags = vm.showPrivateTags || false;
             vm.verifiedCount = getVerifiedCount();
             vm.scopusCitationsYearStr = getScopusCitationPerYearString();
-            if (vm.checkDuplicates)
-                checkDuplicate();
 
             if(vm.document.kind === 'e' && showExternalLabel)
                 vm.document.addLabel(DocumentLabels.EXTERNAL);
+
+            if (vm.checkDuplicates)
+                checkDuplicate();
+
 
             addLabels();
         };
