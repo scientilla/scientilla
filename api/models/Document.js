@@ -419,17 +419,15 @@ module.exports = _.merge({}, BaseModel, {
             return areAuthorshipsEqual(draftFullAuthorships, copyFullAuthorships) &&
                 areAuthorshipsEqual(copyFullAuthorships, draftFullAuthorships);
         });
-        const copies = excludeMultipleVerification ? tmpCopies : tmpCopies.filter(d => {
+        return excludeMultipleVerification ? tmpCopies : tmpCopies.filter(d => {
             const copyFullAuthorships = d.getFullAuthorships();
             const noDoubleAuthors = draftFullAuthorships.every(a1 => {
                 const a2 = copyFullAuthorships.find(a2 => a1.position === a2.position);
-                return !a1.researchEntity || !a2.researchEntity || a1.researchEntity != a2.researchEntity;
+                return !a1.researchEntity || !a2 || !a2.researchEntity || a1.researchEntity != a2.researchEntity;
             });
             const noDoubleGroups = _.intersection(document.groups.map(g => g.id), d.groups.map(g => g.id)).length == 0;
             return noDoubleAuthors && noDoubleGroups;
         });
-
-        return copies;
     },
     createOrUpdate: async function (criteria, documentData) {
         const selectedData = Document.selectData(documentData);
