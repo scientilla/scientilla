@@ -1,0 +1,140 @@
+{
+  "values": [
+    {
+      "defaultSourceType": null,
+      "key": "abstract_report",
+      "shortLabel": "AB",
+      "label": "Abstract Report",
+      "type": "publication",
+      "highimpact": false
+    },
+    {
+      "defaultSourceType": null,
+      "key": "article",
+      "shortLabel": "AR",
+      "label": "Article",
+      "type": "publication",
+      "highimpact": true
+    },
+    {
+      "defaultSourceType": null,
+      "key": "article_in_press",
+      "shortLabel": "AP",
+      "label": "Article in Press",
+      "type": "publication",
+      "highimpact": true
+    },
+    {
+      "defaultSourceType": null,
+      "key": "book",
+      "shortLabel": "BO",
+      "label": "Book",
+      "type": "publication",
+      "highimpact": true
+    },
+    {
+      "defaultSourceType": null,
+      "key": "book_chapter",
+      "shortLabel": "BC",
+      "label": "Book Chapter",
+      "type": "publication",
+      "highimpact": true
+    },
+    {
+      "defaultSourceType": null,
+      "key": "conference_paper",
+      "shortLabel": "CP",
+      "label": "Conference Paper",
+      "type": "publication",
+      "highimpact": true
+    },
+    {
+      "defaultSourceType": 3,
+      "key": "conference_review",
+      "shortLabel": "CR",
+      "label": "Conference Review",
+      "type": "publication",
+      "highimpact": true
+    },
+    {
+      "defaultSourceType": null,
+      "key": "editorial",
+      "shortLabel": "ED",
+      "label": "Editorial",
+      "type": "publication",
+      "highimpact": true
+    },
+    {
+      "defaultSourceType": null,
+      "key": "erratum",
+      "shortLabel": "ER",
+      "label": "Erratum",
+      "type": "publication",
+      "highimpact": false
+    },
+    {
+      "defaultSourceType": null,
+      "key": "invited_talk",
+      "shortLabel": "IT",
+      "label": "Invited Talk",
+      "type": "invited_talk",
+      "highimpact": false
+    },
+    {
+      "defaultSourceType": null,
+      "key": "letter",
+      "shortLabel": "LE",
+      "label": "Letter",
+      "type": "publication",
+      "highimpact": true
+    },
+    {
+      "defaultSourceType": null,
+      "key": "note",
+      "shortLabel": "NO",
+      "label": "Note",
+      "type": "publication",
+      "highimpact": true
+    },
+    {
+      "defaultSourceType": 1,
+      "key": "phd_thesis",
+      "shortLabel": "PT",
+      "label": "PhD Thesis",
+      "type": "publication",
+      "highimpact": false
+    },
+    {
+      "defaultSourceType": null,
+      "key": "poster",
+      "shortLabel": "PO",
+      "label": "Poster",
+      "type": "publication",
+      "highimpact": false
+    },
+    {
+      "defaultSourceType": null,
+      "key": "report",
+      "shortLabel": "RP",
+      "label": "Report",
+      "type": "publication",
+      "highimpact": false
+    },
+    {
+      "defaultSourceType": null,
+      "key": "review",
+      "shortLabel": "RV",
+      "label": "Review",
+      "type": "publication",
+      "highimpact": true
+    },
+    {
+      "defaultSourceType": null,
+      "key": "short_survey",
+      "shortLabel": "SS",
+      "label": "Short Survey",
+      "type": "publication",
+      "highimpact": true
+    }
+  ]
+}

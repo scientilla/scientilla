@@ -1,8 +1,8 @@
 /* global DocumentTypes*/
 // DocumentTypes.js - in api/services
-
 "use strict";
 
+const documentTypesData = require('../dataInit/documentType.json').values;
 const documentTypes = {};
 
 module.exports = {
@@ -24,7 +24,9 @@ module.exports = {
     PHD_THESIS: 'phd_thesis',
     POSTER: 'poster',
     init: async () => {
-        const documentTypesArray = await DocumentType.find();
+        let documentTypesArray = await DocumentType.find();
+        if (!documentTypesArray.length)
+            documentTypesArray = await DocumentType.create(documentTypesData);
         documentTypesArray.forEach(dt => {
             documentTypes[dt.id] = dt;
             documentTypes[dt.key] = dt;
