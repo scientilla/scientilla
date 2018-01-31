@@ -56,7 +56,10 @@
                     vm.selectedInstitute[field] = null;
 
             vm.selectedInstitute.save()
-                .then(() => Notification.info('saved'))
+                .then(() => {
+                    Notification.info('saved');
+                    vm.selectedInstitute = undefined;
+                })
                 .catch(e => Notification.warning(e.data.details));
         }
 
