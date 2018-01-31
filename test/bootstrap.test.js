@@ -27,4 +27,6 @@ before(function (done) {
 after(function (done) {
     // here you can clear fixtures, etc.
     sails.lower(done);
+    //TODO check which eventlistener is preventing the process to stop autonomously.
+    setTimeout(process.exit, 2000);
 });

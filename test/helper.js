@@ -50,6 +50,7 @@ module.exports = {
     createExternalDocument,
     userDeleteDrafts,
     groupDeleteDrafts,
+    fixDocumentsDocumenttype,
     EMPTY_RES: {count: 0, items: []}
 };
 
@@ -57,10 +58,10 @@ module.exports = {
 let auths = [];
 
 function getAuth(id) {
-    return auths.find(b => b.id == id);
+    return auths.find(b => b.id === id);
 }
 
-function getAdminAuth(id) {
+function getAdminAuth() {
     return auths.find(b => b.admin);
 }
 
@@ -145,15 +146,19 @@ async function createSource(sourceData, respCode = 201) {
     return res.body;
 }
 
-async function registerUser(userData, respCode = 200) {
-    var userAgent = request.agent(url);
-    const res = await userAgent
+async function registerUser(userData, respCode = 302) {
+    const userAgent = request.agent(url);
+    await userAgent
         .post('/auths/register')
         .send(userData)
         .expect(respCode);
-    if (res.status !== 200)
+    if (respCode !== 302)
         return;
-    const user = res.body;
+    const userRes = await userAgent
+        .post('/login')
+        .send(userData)
+        .expect(200);
+    const user = userRes.body;
     const jwtRes = await userAgent
         .post('/users/jwt')
         .send(userData)
@@ -161,7 +166,7 @@ async function registerUser(userData, respCode = 200) {
     auths.push({
         id: user.id,
         agent: userAgent,
-        admin: user.role == 'administrator',
+        admin: user.role === 'administrator',
         token: jwtRes.body.token
     });
     return user;
@@ -207,13 +212,11 @@ async function userCreateDraft(user, draftData, respCode = 200) {
 }
 
 async function userCreateDrafts(user, draftsData, respCode = 200) {
-    const auth = getAuth(user.id);
-    const res = await auth.agent
-        .post('/users/' + user.id + '/copy-drafts')
-        .set('access_token', auth.token)
-        .send({documents: draftsData})
-        .expect(respCode);
-    return res.body;
+    const drafts = [];
+    for (const dd of draftsData)
+        drafts.push(await userCreateDraft(user, dd, respCode));
+
+    return drafts;
 }
 
 async function userUpdateDraft(user, draftData, respCode = 200) {
@@ -332,11 +335,9 @@ async function groupCreateDraft(group, draftData, respCode = 200) {
 }
 
 async function groupCreateDrafts(group, draftsData) {
-    const auth = getAdminAuth();
-    const res = await auth.agent
-        .post('/groups/' + group.id + '/copy-drafts')
-        .set('access_token', auth.token)
-        .send({documents: draftsData});
+    const drafts = [];
+    for (const dd of draftsData)
+        drafts.push(await groupCreateDraft(group, dd));
 }
 
 async function getDocument(documentId, respCode = 200) {
@@ -373,4 +374,14 @@ async function createExternalDocument(documentData, origin = DocumentOrigins.SCO
         .populate('affiliations')
         .populate('authors')
         .populate('source');
+}
+
+async function fixDocumentsDocumenttype(documents) {
+    const newDocs = [];
+    for (const d of documents) {
+        const newD = d;
+        newD.documenttype = (await DocumentType.findOne({key: d.type})).id;
+        newDocs.push(newD);
+    }
+    return newDocs;
 }

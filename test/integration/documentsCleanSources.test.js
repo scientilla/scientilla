@@ -57,7 +57,7 @@ describe('Documents clean sources', function () {
         await Promise.all(metricsData.map(m => SourceMetric.create(m)));
         await SourceMetric.assignMetrics();
 
-        const docsData = documentsData.slice(0, 5);
+        const docsData = await test.fixDocumentsDocumenttype(documentsData.slice(0, 5));
         docsData[0].source = sourceToMerge;
         docsData[1].source = sourceUnmodified1;
         docsData[2].source = sourceToMergeAndDelete;
