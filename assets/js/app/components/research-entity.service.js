@@ -39,6 +39,7 @@
         service.documentsNotDuplicate = documentsNotDuplicate;
         service.setAuthorshipPrivacy = setAuthorshipPrivacy;
         service.setAuthorshipFavorite = setAuthorshipFavorite;
+        service.removeVerify = removeVerify;
 
         var documentPopulates = [
             'source',
@@ -241,6 +242,15 @@
                 document2Id: doc2.id
             };
             await researchEntity.customPOST(data, 'documents-not-duplicate');
+        }
+
+        async function removeVerify(researchEntity, doc1Id, verificationData, doc2Id) {
+            const verificationFields = ['position', 'affiliations', 'corresponding', 'synchronize'];
+            verificationData = _.pick(verificationData, verificationFields);
+            verificationData.document1Id = doc1Id;
+            verificationData.document2Id = doc2Id;
+            return researchEntity
+                .customPOST(verificationData, 'remove-verify');
         }
         /* jshint ignore:end */
 

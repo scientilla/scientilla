@@ -11,6 +11,7 @@
             controllerAs: 'vm',
             bindings: {
                 document: "<",
+                document2: "<",
                 verificationFn: "&",
                 onFailure: "&",
                 onSubmit: "&"
@@ -39,6 +40,8 @@
         vm.viewCopyToDraft = viewCopyToDraft;
         vm.verificationData = {};
         vm.canBeSubmitted = canBeSubmitted;
+        if (vm.document2)
+            vm.document2id = vm.document2.id;
 
         const user = context.getResearchEntity();
 
@@ -47,6 +50,7 @@
         vm.$onInit = function () {
             if (user.getType() === 'group')
                 return vm.onFailure()();
+
 
             vm.verificationData.position = vm.document.getUserIndex(user);
             vm.verificationData.synchronize = vm.document.synchronized;
@@ -84,7 +88,7 @@
                 synchronize: vm.verificationData.synchronize,
                 public: vm.verificationData.public
             };
-            return verify(user, vm.document.id, data)
+            return verify(user, vm.document.id, data, vm.document2id)
                 .then(() => UsersService.getProfile(user.id))
                 .then((newUser) => context.setResearchEntity(newUser))
                 .then(() => executeOnSubmit(1))
@@ -142,9 +146,9 @@
             return vm.document.kind === 'v';
         }
 
-        function verify(user, documentId, verificationData) {
+        function verify(user, documentId, verificationData, document2id) {
             if (_.isFunction(vm.verificationFn()))
-                return vm.verificationFn()(user, documentId, verificationData);
+                return vm.verificationFn()(user, documentId, verificationData, document2id);
             return Promise.reject('no verification function');
         }
 

@@ -183,6 +183,9 @@ module.exports = _.merge({}, BaseModel, {
         draftGroupCreator: {
             model: 'Group'
         },
+        isDraft: function(){
+            return this.kind === DocumentKinds.DRAFT
+        },
         isValid: function () {
             const authorsStrRegex = /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?[a-zA-ZÀ-ÖØ-öø-ÿ]\.)+)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?\w\.)+)*$/;
             const yearRegex = /^(19|20)\d{2}$/;

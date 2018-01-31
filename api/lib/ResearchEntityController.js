@@ -141,6 +141,20 @@ module.exports = {
         const Model = getModel(req);
         res.halt(Model.setDocumentAsNotDuplicate(Model, researchEntityId, document1Id, document2Id));
     },
+    removeVerify: function (req, res) {
+        const researchEntityId = req.params.researchEntityId;
+        const document1Id = req.body.document1Id;
+        const document2Id = req.body.document2Id;
+        const verificationData = {
+            position: req.body.position,
+            corresponding: req.body.corresponding,
+            affiliationInstituteIds: req.body.affiliations,
+            synchronize: req.body.synchronize,
+            public: req.body.public
+        };
+        const Model = getModel(req);
+        res.halt(Model.removeVerify(Model, researchEntityId, document1Id, verificationData, document2Id));
+    },
     getPublicDocuments: async (req, res) => makePublicAPIrequest(req, res, 'documents'),
     getPublications: async (req, res) => makePublicAPIrequest(req, res, 'publications'),
     getDisseminationTalks: async (req, res) => makePublicAPIrequest(req, res, 'disseminationTalks'),

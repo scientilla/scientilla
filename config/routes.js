@@ -92,6 +92,8 @@ module.exports.routes = {
     'get /api/v1/groups/slug/:slug/scientific-talks': 'Group.getScientificTalks',
     'post /api/v1/users/:researchEntityId/documents-not-duplicate': 'User.setDocumentAsNotDuplicate',
     'post /api/v1/groups/:researchEntityId/documents-not-duplicate': 'Group.setDocumentAsNotDuplicate',
+    'post /api/v1/groups/:researchEntityId/remove-verify': 'Group.removeVerify',
+    'post /api/v1/users/:researchEntityId/remove-verify': 'User.removeVerify',
 
     //Commands
     'put /api/v1/status/enable': 'Status.enable',

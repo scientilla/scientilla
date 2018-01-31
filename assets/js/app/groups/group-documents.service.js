@@ -20,6 +20,7 @@
                 service.verifyDraft = verifyDraft;
                 service.verifyDocument = verifyDocument;
                 service.synchronizeDraft = synchronizeDraft;
+                service.removeVerify = removeVerify;
 
                 return service;
 
@@ -88,6 +89,17 @@
                         )
                         .catch(() => true);
                 }
+
+                /* jshint ignore:start */
+
+                async function removeVerify(docToVerify, docToRemove) {
+                    const verificationData = {};
+                    const res = await researchEntityService.removeVerify(researchEntity, docToVerify.id, verificationData, docToRemove.id)
+                    return res;
+
+                }
+
+                /* jshint ignore:end */
 
             }
         };

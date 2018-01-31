@@ -180,16 +180,17 @@
             return modal.result;
         };
 
-        service.openDocumentVerificationForm = function (document, verificationFn) {
-
+        service.openDocumentVerificationForm = function (document, verificationFn, document2) {
             const scopeVars = {
                 document: document,
+                document2: document2,
                 verificationFn: verificationFn
             };
 
             const modal = openModal(
                 '<scientilla-document-verification-form\
                     document="vm.document"\
+                    document2="vm.document2"\
                     verification-fn="vm.verificationFn"\
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit"\
