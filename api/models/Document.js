@@ -488,6 +488,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     clone: async function (document, newDocPartialData = {}) {
         const docData = Document.selectData(document);
+        await Document.fixDocumentType(docData);
         const newDocData = Object.assign({}, docData, newDocPartialData);
         return await Document.create(newDocData);
     },
