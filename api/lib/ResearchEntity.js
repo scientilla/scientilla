@@ -328,7 +328,7 @@ module.exports = _.merge({}, BaseModel, {
         if (!draft || draft.kind !== DocumentKinds.DRAFT)
             return {
                 error: 'Draft not found',
-                item: draftId
+                item: null
             };
         if (!draft.isValid())
             return {
