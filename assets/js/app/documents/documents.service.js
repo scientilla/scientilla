@@ -340,7 +340,7 @@
                                         ['Verify', 'Copy to Draft']);
                                 if (j === 0 || j === 1) {
                                     if (j === 0) {
-                                        res = await service.removeVerify(chosenDoc, discardedDoc);
+                                        res = (await service.removeVerify(chosenDoc, discardedDoc)).data;
                                     }
                                     if (j === 1) {
                                         res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
@@ -356,7 +356,7 @@
                                         ['Verify', 'Keep Draft']);
                                 if (j === 0 || j === 1) {
                                     if (j === 0) {
-                                        res = await service.removeVerify(chosenDoc, discardedDoc);
+                                        res = (await service.removeVerify(chosenDoc, discardedDoc)).data;
                                     }
                                     if (j === 1) {
                                         res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
@@ -369,22 +369,24 @@
                                         modalMsg,
                                         ['Create a draft', 'Keep verified']);
                                 if (j === 0 || j === 1) {
-                                    await researchEntityService.removeDocument(researchEntity, discardedDoc);
-                                    if (j === 0) {
+                                    res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
+                                    if (!res.error && j === 0) {
                                         res = await researchEntityService.copyDocument(researchEntity, chosenDoc);
                                         if (!res.error)
-                                            await researchEntityService.unverify(researchEntity, chosenDoc);
+                                            res = await researchEntityService.unverify(researchEntity, chosenDoc);
                                     }
                                 }
                             }
                             if (j === 0 || j === 1) {
                                 EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
-                                if (res && res.error) {
-                                    const notificationMsg = 'The operation failed.';
-                                    Notification.warning(notificationMsg);
-                                } else {
-                                    const notificationMsg = 'The operation was successful';
-                                    Notification.success(notificationMsg);
+                                if (res) {
+                                    if (res.error) {
+                                        const notificationMsg = 'The operation failed.';
+                                        Notification.warning(notificationMsg);
+                                    } else {
+                                        const notificationMsg = 'The operation was successful';
+                                        Notification.success(notificationMsg);
+                                    }
                                 }
                             }
                         }
