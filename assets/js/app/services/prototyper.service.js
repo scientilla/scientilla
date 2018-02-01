@@ -322,6 +322,11 @@
                     duplicates =  this.duplicates;
                 else
                     duplicates = this.duplicates.filter(d => d.duplicateKind === 'v');
+                duplicates.sort((a, b) => {
+                    if (a.kinds === DocumentKinds.VERIFIED)
+                        return -1;
+                    return 1;
+                });
                 return _.uniqBy(duplicates, 'duplicate');
             }
         };
