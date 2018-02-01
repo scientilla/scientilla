@@ -1,0 +1,52 @@
+<h1>Institutes</h1>
+<div class="row">
+    <div class="col-xs-12">
+        <input type="text"
+               class="form-control"
+               ng-model="vm.selectedInstitute"
+               uib-typeahead="institute as vm.formatInstitute(institute) for institute in vm.getInstitutes($viewValue)"
+               typeahead-loading="searching"
+               data-ng-required="true"
+               placeholder="Search institute"
+               ng-model-options="{ allowInvalid: true }"
+               typeahead-editable="false"
+               typeahead-select-on-blur="true"
+               typeahead-wait-ms="300"
+               ng-keydown="vm.onInstituteSearchKey($event)"
+        >
+        <table class="table" style="min-height: 74px;">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Country</th>
+                <th>City</th>
+                <th>Shortname</th>
+                <th>Scopus Id</th>
+                <th>Group</th>
+                <th>Parent Id</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+            </tr>
+            <tr>
+                <td>{{vm.selectedInstitute.id}}</td>
+                <td>{{vm.selectedInstitute.name}}</td>
+                <td>{{vm.selectedInstitute.country}}</td>
+                <td>{{vm.selectedInstitute.city}}</td>
+                <td>{{vm.selectedInstitute.shortname}}</td>
+                <td>{{vm.selectedInstitute.scopusId}}</td>
+                <td>
+                    <input type="text" ng-model="vm.selectedInstitute.group">
+                </td>
+                <td>
+                    <input type="text" ng-model="vm.selectedInstitute.parentId">
+                </td>
+                <td>{{vm.selectedInstitute.createdAt | date:'yyyy-MM-dd HH:mm'}}</td>
+                <td>{{vm.selectedInstitute.updatedAt | date:'yyyy-MM-dd HH:mm'}}</td>
+            </tr>
+        </table>
+        <button class="btn btn-primary"
+                ng-click="vm.saveInstitute()">
+            Save
+        </button>
+    </div>
+</div>

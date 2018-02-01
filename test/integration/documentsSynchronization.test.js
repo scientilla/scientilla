@@ -18,7 +18,7 @@ describe('Synchronization', function () {
         user = await User.registerUser(userData[0]);
         institute = await Institute.create(institutesData[0]);
         const journal = await Source.create(sourcesData[0]);
-        const doc1 = documentsData[0];
+        const doc1 =  (await test.fixDocumentsDocumenttype(documentsData))[0];
         doc1.source = journal.id;
         doc1.origin = 'scopus';
         doc1.synchronized = true;
