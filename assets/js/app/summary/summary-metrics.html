@@ -1,23 +1,22 @@
-<div class="row">
-    <div class="col-xs-12">
-        <div class="row">
-            <div class="col-xs-1"></div>
-            <div class="col-xs-2" ng-repeat="index in vm.indexes">
-                <div class="scientilla-chart-widget">
-                    <span ng-bind-html="index.icon" class="scientilla-chart-icon"></span>
-                    <br>
-                    {{index.label}}
-                    <br>
-                    <b>{{index.value | scientillaNumber:index.format}}</b>
-                </div>
-            </div>
-            <div class="col-xs-1 text-right">
+<div class="row same-height">
+    <div class="col-xs-1"></div>
+    <div class="col-xs-2" ng-repeat="index in vm.indexes">
+        <div class="scientilla-chart-widget">
+            <span ng-bind-html="index.icon" class="scientilla-chart-icon"></span>
+            <br>
+            {{index.label}}
+            <br>
+            <b>{{index.value | scientillaNumber:index.format}}</b>
+        </div>
+    </div>
+    <div class="col-xs-1 text-right">
                 <span ng-click="vm.showInfo()"
                       class="fa fa-info-circle"
                       style="font-size: 30px;cursor:pointer"></span>
-            </div>
-        </div>
     </div>
+</div>
+
+<div class="row">
     <div class="col-md-4">
         <div class="scientilla-chart-widget"
              id="scientilla-chart-totals">
@@ -49,6 +48,7 @@
         ></scientilla-chart-selector>
     </div>
 </div>
+
 <div class="row">
     <div class="col-xs-6">
         <scientilla-chart-selector

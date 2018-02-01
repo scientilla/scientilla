@@ -1,31 +1,32 @@
 <div class="scientilla-toolbar">
     <div class="row">
-        <div class="col-xs-1">
+        <div class="col-xs-3">
             <a href="#/">
                 <img class="scientilla-small-logo" src="/images/scientilla-logo-white-40.png">
             </a>
         </div>
-        <div class="col-xs-6 text-right">
-            <div class="btn-group scientilla-toolbar-name">
-                {{vm.researchEntity.getDisplayName()}}
+        <div class="col-xs-6 text-center">
+            <div>
+                <div class="btn-group scientilla-toolbar-name">
+                    {{vm.researchEntity.getDisplayName()}}
+                </div>
+                <div uib-dropdown class="btn-group" is-open="status.isopen" ng-if="vm.user.administratedGroups.length">
+                    <button id="single-button" type="button" class="btn btn-link" uib-dropdown-toggle
+                            ng-disabled="disabled">
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
+                        <li role="menuitem">
+                            <a ng-click="vm.changeContextToUser(vm.user)">{{vm.user.getDisplayName()}}</a>
+                        </li>
+                        <li role="menuitem" ng-repeat="g in vm.user.administratedGroups">
+                            <a ng-click="vm.changeContextToGroup(g)">{{g.getDisplayName()}}</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-            <div uib-dropdown class="btn-group" is-open="status.isopen" ng-if="vm.user.administratedGroups.length">
-                <button id="single-button" type="button" class="btn btn-link" uib-dropdown-toggle
-                        ng-disabled="disabled">
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                    <li role="menuitem">
-                        <a ng-click="vm.changeContextToUser(vm.user)">{{vm.user.getDisplayName()}}</a>
-                    </li>
-                    <li role="menuitem" ng-repeat="g in vm.user.administratedGroups">
-                        <a ng-click="vm.changeContextToGroup(g)">{{g.getDisplayName()}}</a>
-                    </li>
-                </ul>
-            </div>
-
         </div>
-        <div class="col-xs-5 text-right">
+        <div class="col-xs-3 text-right">
             <div ng-if="!vm.isLogged">
                 <a class="btn btn-link" ng-href="#/register" aria-label="Register" ng-if="vm.isRegisterEnabled">
                     Register
