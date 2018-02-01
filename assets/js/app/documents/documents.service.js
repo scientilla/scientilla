@@ -379,12 +379,14 @@
                             }
                             if (j === 0 || j === 1) {
                                 EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
-                                if (res && res.error) {
-                                    const notificationMsg = 'The operation failed.';
-                                    Notification.warning(notificationMsg);
-                                } else {
-                                    const notificationMsg = 'The operation was successful';
-                                    Notification.success(notificationMsg);
+                                if (res) {
+                                    if (res.error) {
+                                        const notificationMsg = 'The operation failed.';
+                                        Notification.warning(notificationMsg);
+                                    } else {
+                                        const notificationMsg = 'The operation was successful';
+                                        Notification.success(notificationMsg);
+                                    }
                                 }
                             }
                         }
