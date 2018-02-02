@@ -340,7 +340,7 @@
                                         ['Verify', 'Copy to Draft']);
                                 if (j === 0 || j === 1) {
                                     if (j === 0) {
-                                        res = (await service.removeVerify(chosenDoc, discardedDoc)).data;
+                                        res = await service.removeVerify(chosenDoc, discardedDoc);
                                     }
                                     if (j === 1) {
                                         res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
@@ -356,7 +356,7 @@
                                         ['Verify', 'Keep Draft']);
                                 if (j === 0 || j === 1) {
                                     if (j === 0) {
-                                        res = (await service.removeVerify(chosenDoc, discardedDoc)).data;
+                                        res = await service.removeVerify(chosenDoc, discardedDoc);
                                     }
                                     if (j === 1) {
                                         res = await researchEntityService.removeDocument(researchEntity, discardedDoc);

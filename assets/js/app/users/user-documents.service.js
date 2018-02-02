@@ -113,14 +113,16 @@
 
                 /* jshint ignore:start */
 
-                function removeVerify(docToVerify, docToRemove) {
+                async function removeVerify(docToVerify, docToRemove) {
                     async function verificationCallback(researchEntity, docToVerifyId, verificationData, docToRemoveId) {
                         const res = await researchEntityService.removeVerify(researchEntity, docToVerifyId, verificationData, docToRemoveId);
                         return res;
 
                     }
 
-                    return ModalService.openDocumentVerificationForm(docToVerify, verificationCallback, docToRemove);
+                    const res = await ModalService.openDocumentVerificationForm(docToVerify, verificationCallback, docToRemove);
+                    if (res)
+                        return res.data;
                 }
 
                 /* jshint ignore:end */
