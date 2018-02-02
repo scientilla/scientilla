@@ -124,7 +124,8 @@ async function getChartsData(researchEntityId, Model, refresh) {
         key: 'chartDataDate',
         queryName: 'chartDataDate',
         fn: query,
-        params: [researchEntityId, researchEntityType]
+        params: [researchEntityId, researchEntityType],
+        nocache: true
     }];
 
     let documents = [];
@@ -255,24 +256,28 @@ async function getChartsData(researchEntityId, Model, refresh) {
     }
 
     async function areChartsCached() {
+        const cc = charts.filter(c => !c.nocache);
+
         const cachedCharts = await ChartData.find({
-            key: charts.map(c => c.key),
+            key: cc.map(c => c.key),
             researchEntityType: researchEntityType,
             researchEntity: researchEntityId
         });
 
-        return cachedCharts.length === charts.length;
+        return cachedCharts.length === cc.length;
     }
 
-
     async function cachedChartData(chart, refresh) {
-        if (!refresh) {
+        if (!refresh && !chart.nocache) {
             const chartData = await getCachedData(chart.key);
             if (chartData)
                 return chartData
         }
 
         const result = await chart.fn(chart);
+
+        if (chart.nocache)
+            return result;
 
         await cacheData(chart.key, result);
 
