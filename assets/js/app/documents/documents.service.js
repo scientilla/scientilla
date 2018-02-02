@@ -397,6 +397,9 @@
                         }
                     } catch (err) {
                         console.log(err);
+                        if (err !== 'backdrop click')
+                            Notification.error("An error happened");
+
                     }
                 }
 
