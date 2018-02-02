@@ -340,7 +340,7 @@
                                         ['Verify', 'Copy to Draft']);
                                 if (j === 0 || j === 1) {
                                     if (j === 0) {
-                                        res = (await service.removeVerify(chosenDoc, discardedDoc)).data;
+                                        res = await service.removeVerify(chosenDoc, discardedDoc);
                                     }
                                     if (j === 1) {
                                         res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
@@ -356,7 +356,7 @@
                                         ['Verify', 'Keep Draft']);
                                 if (j === 0 || j === 1) {
                                     if (j === 0) {
-                                        res = (await service.removeVerify(chosenDoc, discardedDoc)).data;
+                                        res = await service.removeVerify(chosenDoc, discardedDoc);
                                     }
                                     if (j === 1) {
                                         res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
@@ -367,10 +367,10 @@
                                 j = await ModalService
                                     .multipleChoiceConfirm('Verified document selected',
                                         modalMsg,
-                                        ['Create a draft', 'Keep verified']);
+                                        ['Keep verified', 'Create a draft']);
                                 if (j === 0 || j === 1) {
                                     res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
-                                    if (!res.error && j === 0) {
+                                    if (!res.error && j === 1) {
                                         res = await researchEntityService.copyDocument(researchEntity, chosenDoc);
                                         if (!res.error)
                                             res = await researchEntityService.unverify(researchEntity, chosenDoc);
@@ -397,6 +397,9 @@
                         }
                     } catch (err) {
                         console.log(err);
+                        if (err !== 'backdrop click')
+                            Notification.error("An error happened");
+
                     }
                 }
 

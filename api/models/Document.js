@@ -411,6 +411,8 @@ module.exports = _.merge({}, BaseModel, {
 
         const query = _.pick(document, Document.getFields());
         query.id = {'!': document.id};
+        if (_.isObject(document.source) && document.source.id)
+            query.source = document.source.id;
         query.kind = DocumentKinds.VERIFIED;
         const similarDocuments = await Document.find(query)
             .populate('authorships')

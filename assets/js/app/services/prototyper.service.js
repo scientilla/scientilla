@@ -323,9 +323,11 @@
                 else
                     duplicates = this.duplicates.filter(d => d.duplicateKind === 'v');
                 duplicates.sort((a, b) => {
-                    if (a.kinds === DocumentKinds.VERIFIED)
+                    if (a.duplicateKind === DocumentKinds.VERIFIED)
                         return -1;
-                    return 1;
+                    if (b.duplicateKind === DocumentKinds.VERIFIED)
+                        return 1;
+                    return 0;
                 });
                 return _.uniqBy(duplicates, 'duplicate');
             }
