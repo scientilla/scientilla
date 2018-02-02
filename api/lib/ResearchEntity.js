@@ -243,24 +243,32 @@ module.exports = _.merge({}, BaseModel, {
         const r = await request(reqOptions);
         return r;
     },
-    removeVerify: async function (ResearchEntityModel, researchEntityId, docToVerify, verificationData, docToRemove) {
-        const document = await Document.findOneById(docToVerify)
+    removeVerify: async function (ResearchEntityModel, researchEntityId, docToVerifyId, verificationData, docToRemoveId) {
+        const document = await Document.findOneById(docToVerifyId)
             .populate('authorships')
             .populate('affiliations');
-        let errors, isDraft = document.isDraft(), res;
+        let docToVerify, isExternal = document.kind === DocumentKinds.EXTERNAL;
+        if (isExternal)
+            docToVerify = await ResearchEntityModel.copyDocument(ResearchEntityModel, researchEntityId, docToVerifyId);
+        else
+            docToVerify = document;
+        let errors, isDraft = docToVerify.isDraft(), res;
         if (isDraft) {
-            errors = await ResearchEntityModel.getDraftVerifyErrors(ResearchEntityModel, researchEntityId, document, verificationData, docToRemove);
+            errors = await ResearchEntityModel.getDraftVerifyErrors(ResearchEntityModel, researchEntityId, docToVerify, verificationData, docToRemoveId);
         }
         else {
-            errors = await ResearchEntityModel.getDocumentVerifyErrors(ResearchEntityModel, researchEntityId, document, verificationData, true, docToRemove);
+            errors = await ResearchEntityModel.getDocumentVerifyErrors(ResearchEntityModel, researchEntityId, docToVerify, verificationData, true, docToRemoveId);
         }
-        if (errors)
+        if (errors) {
+            if (isExternal)
+                ResearchEntityModel.deleteDraft(ResearchEntityModel, docToVerify.id);
             return errors;
-        await ResearchEntityModel.discardDocument(ResearchEntityModel, researchEntityId, docToRemove);
+        }
+        await ResearchEntityModel.discardDocument(ResearchEntityModel, researchEntityId, docToRemoveId);
         if (isDraft)
-            res = await ResearchEntityModel.verifyDraft(ResearchEntityModel, researchEntityId, docToVerify, verificationData);
+            res = await ResearchEntityModel.verifyDraft(ResearchEntityModel, researchEntityId, docToVerify.id, verificationData);
         else
-            res = await ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, docToVerify, verificationData);
+            res = await ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, docToVerify.id, verificationData);
         return res;
     },
     getDocumentVerifyErrors: async function (Model, researchEntityId, document, verificationData, check = true, docToRemove) {
