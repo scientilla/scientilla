@@ -80,11 +80,26 @@ i {
   color: @iit-grey-dark;
 }
 
+.same-height {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.same-height > [class*='col-'] {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
 .scientilla-chart-widget {
   background-color: @iit-white;
   margin-bottom: 20px;
   padding: 10px;
   text-align: center;
+  height: 100%;
 }
 
 #scientilla-chart-totals > table {
