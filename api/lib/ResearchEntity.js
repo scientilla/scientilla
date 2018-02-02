@@ -310,7 +310,7 @@ module.exports = _.merge({}, BaseModel, {
             };
 
         if (authorshipData.document.isPositionVerified(authorshipData.position)) {
-            if (!docToRemove) {
+            if (docToRemove) {
                 const a = authorshipData.document.getAuthorshipByPosition(authorshipData.position);
                 if (a && a.researchEntity === researchEntityId) {
                     return null;
@@ -368,6 +368,12 @@ module.exports = _.merge({}, BaseModel, {
 
         if (docToVerify.isPositionVerified(authorshipData.position)) {
             const authorName = docToVerify.authorsStr.split(', ')[authorshipData.position];
+            if (docToRemove) {
+                const a = docToVerify.getAuthorshipByPosition(authorshipData.position);
+                if (a && a.researchEntity === researchEntityId) {
+                    return null;
+                }
+            }
             return {
                 error: `You cannot verify this document as ${authorName} because someone else already claimed to be that author`,
                 item: docToVerify

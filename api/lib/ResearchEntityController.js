@@ -142,7 +142,7 @@ module.exports = {
         res.halt(Model.setDocumentAsNotDuplicate(Model, researchEntityId, document1Id, document2Id));
     },
     removeVerify: function (req, res) {
-        const researchEntityId = req.params.researchEntityId;
+        const researchEntityId = parseInt(req.params.researchEntityId, 10);
         const document1Id = req.body.document1Id;
         const document2Id = req.body.document2Id;
         const verificationData = {
