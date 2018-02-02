@@ -367,10 +367,10 @@
                                 j = await ModalService
                                     .multipleChoiceConfirm('Verified document selected',
                                         modalMsg,
-                                        ['Create a draft', 'Keep verified']);
+                                        ['Keep verified', 'Create a draft']);
                                 if (j === 0 || j === 1) {
                                     res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
-                                    if (!res.error && j === 0) {
+                                    if (!res.error && j === 1) {
                                         res = await researchEntityService.copyDocument(researchEntity, chosenDoc);
                                         if (!res.error)
                                             res = await researchEntityService.unverify(researchEntity, chosenDoc);
