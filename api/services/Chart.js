@@ -296,25 +296,23 @@ async function getChartsData(researchEntityId, Model, refresh) {
     }
 
     async function cacheData(key, value) {
-        const chartData = await ChartData.findOne({
+        const chartData = await ChartData.findOrCreate({
             researchEntity: researchEntityId,
             researchEntityType: researchEntityType,
             key: key
+        }, {
+            researchEntity: researchEntityId,
+            researchEntityType: researchEntityType,
+            key: key,
+            value: value
         });
-        if (!chartData)
-            await ChartData.create({
-                researchEntity: researchEntityId,
-                researchEntityType: researchEntityType,
-                key: key,
-                value: value
-            });
-        else
-            await ChartData.update({id: chartData.id}, {
-                researchEntity: researchEntityId,
-                researchEntityType: researchEntityType,
-                key: key,
-                value: value
-            });
+
+        await ChartData.update({id: chartData.id}, {
+            researchEntity: researchEntityId,
+            researchEntityType: researchEntityType,
+            key: key,
+            value: value
+        });
 
     }
 }
