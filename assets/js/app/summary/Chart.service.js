@@ -298,11 +298,11 @@
                         yAxis: {
                             axisLabel: '',
                             axisLabelDistance: -10,
-                            tickFormat: d => d3.format('')(d)
+                            tickFormat: d => d3.format('.2f')(d)
                         },
                         yDomain: [0, maxYValue + (maxYValue * 0.05)],
                         xDomain: [minXValue, maxXValue + ((maxXValue - minXValue) * 0.05)],
-                        valueFormat: d => d3.format('')(d),
+                        valueFormat: d => d3.format('.2f')(d),
                     }
                 }
             };
@@ -322,7 +322,12 @@
                     key: 'SNIP',
                     values: getItemsByYear(chartsData.totalSnipPerYear, yearRange)
                 }],
-                options: getMultiBarChartConfig({color: (d, i) => metricsColors[i]})
+                options: getMultiBarChartConfig({
+                    color: (d, i) => metricsColors[i],
+                    valueFormat: d => d3.format('.2f')(d)
+                }, {
+                    tickFormat: d => d3.format('.2f')(d)
+                })
             };
         };
 
@@ -443,7 +448,7 @@
         function getItemsByYear(data, yearRange) {
             const newData = data.map(d => ({
                 year: parseInt(d.year, 10),
-                value: parseInt(d.value, 10)
+                value: parseFloat(d.value)
             })).filter(d => d.year >= yearRange.min);
             _.range(yearRange.min, yearRange.max + 1).forEach(y => {
                 if (!_.find(newData, {year: y}))
@@ -487,7 +492,7 @@
             };
         }
 
-        function getMultiBarChartConfig(chartOptions) {
+        function getMultiBarChartConfig(chartOptions = {}, yAxisOptions = {}) {
             return {
                 chart: Object.assign({}, {
                     type: 'multiBarChart',
@@ -507,11 +512,11 @@
                         showMaxMin: false,
                         tickFormat: d => d3.format('')(d)
                     },
-                    yAxis: {
+                    yAxis: Object.assign({
                         axisLabel: '',
                         axisLabelDistance: -10,
                         tickFormat: d => d3.format('')(d)
-                    },
+                    }, yAxisOptions),
                     valueFormat: d => d3.format('')(d)
                 }, chartOptions)
             };

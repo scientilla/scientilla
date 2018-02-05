@@ -117,13 +117,19 @@
             vm.indexes.push({
                 label: 'Citations per document',
                 value: (totalCitations / totalDocuments) || 0,
-                icon: '<span class="fa fa-quote-right scientilla-icon-color-citations"></span>',
+                icon: '<b class="scientilla-icon-color-citations"><span class="fa fa-quote-right"></span> / <span class="fa fa-file-text-o"></b>',
+                format: 2
+            });
+            vm.indexes.push({
+                label: 'Total IF',
+                value: totalImpactFactor,
+                icon: '<b class="scientilla-icon-color-if">IF</span></b>',
                 format: 2
             });
             vm.indexes.push({
                 label: 'IF per document',
                 value: (totalImpactFactor / totalDocuments) || 0,
-                icon: '<b class="scientilla-icon-color-if">IF</b>',
+                icon: '<b class="scientilla-icon-color-if">IF / <span class="fa fa-file-text-o"></b>',
                 format: 2
             });
 
