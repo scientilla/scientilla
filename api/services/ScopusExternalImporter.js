@@ -13,7 +13,8 @@ module.exports = {
             sails.log.info('ScopusExternalImporter: user ' + user.username + ' empty scopusId');
             return;
         }
-        const total = await updateResearchEntityProfile(ExternalDocument, user);
+        const deletedFromScopus = await getDeletedFromScopus();
+        const total = await updateResearchEntityProfile(ExternalDocument, user, deletedFromScopus);
         sails.log.info('updated/inserted ' + total + ' scopus external documents of user ' + user.username);
     },
     updateGroup: async (group) => {
@@ -21,7 +22,8 @@ module.exports = {
             sails.log.info('ScopusExternalImporter: user ' + user.username + ' empty scopusId');
             return;
         }
-        const total = await updateResearchEntityProfile(ExternalDocumentGroup, group);
+        const deletedFromScopus = await getDeletedFromScopus();
+        const total = await updateResearchEntityProfile(ExternalDocumentGroup, group, deletedFromScopus);
         sails.log.info('updated/inserted ' + total + ' scopus external documents of group ' + group.name);
     },
     updateAll: async () => {
@@ -45,10 +47,11 @@ module.exports = {
     updateDocument: getAndCreateOrUpdateDocument
 };
 
-async function updateResearchEntityProfile(externalDocumentModel, researchEntity) {
+async function updateResearchEntityProfile(externalDocumentModel, researchEntity, deletedFromScopus = []) {
     let documentScopusIds;
     try {
         documentScopusIds = await getResearchEntityDocumentsScopusIds(researchEntity);
+        documentScopusIds = _.difference(documentScopusIds, deletedFromScopus.map(d => d.scopusId));
     } catch (e) {
         return 0;
     }
@@ -60,11 +63,12 @@ async function updateResearchEntityProfile(externalDocumentModel, researchEntity
 
 async function updateResearchEntityProfiles(researchEntityModel, externalDocumentModel) {
     const researchEntities = await researchEntityModel.find({scopusId: {'!': ''}});
+    const deletedFromScopus = await getDeletedFromScopus();
 
     let total = 0;
 
     for (let re of researchEntities)
-        total += await updateResearchEntityProfile(externalDocumentModel, re);
+        total += await updateResearchEntityProfile(externalDocumentModel, re, deletedFromScopus);
 
     return total;
 }
@@ -205,15 +209,11 @@ async function importDocuments(documentScopusIds) {
 
         try {
             const document = await getAndCreateOrUpdateDocument(scopusId);
-            if (_.has(document, 'scopusId')) {
-                await updateCitations(document);
-                documents.push(document);
-            }
-            else
-                sails.log.debug('Updater: Document failed ' + scopusId);
+            await updateCitations(document);
+            documents.push(document);
         }
         catch (err) {
-            sails.log.debug('Updater: Document failed ' + scopusId);
+            sails.log.debug(err);
         }
     }
 
@@ -222,9 +222,21 @@ async function importDocuments(documentScopusIds) {
 
 async function getAndCreateOrUpdateDocument(scopusId) {
     const documentData = await ScopusConnector.getDocument(scopusId);
-    if (!_.isEmpty(documentData))
-        return await ExternalImporter.createOrUpdateExternalDocument(DocumentOrigins.SCOPUS, documentData);
-    return {};
+    if (!_.has(documentData, 'scopusId')) {
+        if (documentData.message === 'RESOURCE_NOT_FOUND') {
+            await Document.update({scopusId: scopusId, kind: DocumentKinds.EXTERNAL}, {scopus_id_deleted: true});
+            throw 'Scopus id:' + scopusId + ' set to deleted because no longer exists';
+        }
+        throw 'Updater: Document failed ' + scopusId;
+    }
+    documentData.scopus_id_deleted = false;
+
+    const document = await ExternalImporter.createOrUpdateExternalDocument(DocumentOrigins.SCOPUS, documentData);
+
+    if (!_.has(document, 'scopusId'))
+        throw 'Updater: Document failed ' + scopusId;
+
+    return document;
 }
 
 async function updateCitations(document) {
@@ -246,4 +258,8 @@ async function updateCitations(document) {
 
 function getUpdateLimitDate() {
     return new Date((new Date()).getTime() - interval);
+}
+
+async function getDeletedFromScopus() {
+    return Document.find({scopus_id_deleted: true});
 }

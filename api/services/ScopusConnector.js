@@ -222,7 +222,7 @@ async function documentDataRequest(scopusId, attempt = 0) {
     } catch (err) {
         sails.log.debug('Document data failed. Scopus Id = ' + scopusId);
         sails.log.debug(err);
-        return {};
+        return err;
     }
 
     return documentData;
