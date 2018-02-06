@@ -223,7 +223,7 @@ async function importDocuments(documentScopusIds) {
 async function getAndCreateOrUpdateDocument(scopusId) {
     const documentData = await ScopusConnector.getDocument(scopusId);
     if (!_.has(documentData, 'scopusId')) {
-        if (documentData.message === 'RESOURCE_NOT_FOUND') {
+        if (documentData.message === 'RESOURCE_NOT_FOUND' && scopusId) {
             await Document.update({scopusId: scopusId, kind: DocumentKinds.EXTERNAL}, {scopus_id_deleted: true});
             throw 'Scopus id:' + scopusId + ' set to deleted because no longer exists';
         }
