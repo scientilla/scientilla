@@ -260,9 +260,9 @@
             const totalSjrPerYear = getItemsByYear(chartsData.totalSjrPerYear, yearRange);
             const totalSnipPerYear = getItemsByYear(chartsData.totalSnipPerYear, yearRange);
 
-            const maxYValue = Math.max(parseInt(_.maxBy(totalIfPerYear, 'value').value, 10),
-                parseInt(_.maxBy(totalSjrPerYear, 'value').value, 10),
-                parseInt(_.maxBy(totalSnipPerYear, 'value').value, 10));
+            const maxYValue = Math.max(parseFloat(_.maxBy(totalIfPerYear, 'value').value),
+                parseFloat(_.maxBy(totalSjrPerYear, 'value').value),
+                parseFloat(_.maxBy(totalSnipPerYear, 'value').value));
             const maxXValue = parseInt(_.maxBy(totalIfPerYear, 'year').year, 10);
             const minXValue = parseInt(_.minBy(totalIfPerYear, 'year').year, 10);
             return {
