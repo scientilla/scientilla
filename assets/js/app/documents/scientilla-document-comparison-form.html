@@ -23,9 +23,9 @@
                     Document 2:
                     {{vm.document2.getStringKind(vm.researchEntity)}}
                     <span ng-if="vm.verifiedCount2"
-                         class="scientilla-document-icons-bottom"
-                         uib-tooltip-html="vm.getVerifiedNamesHTML(vm.document2)"
-                         tooltip-class="scientilla-tooltip">
+                          class="scientilla-document-icons-bottom"
+                          uib-tooltip-html="vm.getVerifiedNamesHTML(vm.document2)"
+                          tooltip-class="scientilla-tooltip">
                         <span class="fa fa-check"></span> {{vm.verifiedCount2}}
                     </span>
                 </h4>
@@ -246,6 +246,9 @@
                 <small class="scientilla-document-details-origin"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('origin')}">
                     Origin: <span>{{vm.document1.origin}}</span>
+                    <span ng-if="vm.document1.origin==='scopus' && vm.document1.scopus_id_deleted">
+                        - <b style="color:red">Scopus id no longer available on scopus</b>
+                    </span>
                 </small>
             </div>
             <div>
@@ -260,6 +263,9 @@
                 <small class="scientilla-document-details-origin"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('origin')}">
                     Origin: <span>{{vm.document2.origin}}</span>
+                    <span ng-if="vm.document2.origin==='scopus' && vm.document2.scopus_id_deleted">
+                        - <b style="color:red">Scopus id no longer available on scopus</b>
+                    </span>
                 </small>
             </div>
             <div>
