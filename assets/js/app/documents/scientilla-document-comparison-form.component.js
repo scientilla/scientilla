@@ -19,24 +19,19 @@
 
 
     DocumentComparisonController.$inject = [
-        'AuthService',
-        'researchEntityService',
         'context',
         'documentTypes',
         'documentSourceTypes'
     ];
 
-    function DocumentComparisonController(AuthService, researchEntityService, context, documentTypes, documentSourceTypes) {
-        var vm = this;
+    function DocumentComparisonController(context, documentTypes, documentSourceTypes) {
+        const vm = this;
         vm.keepDocument1 = keepDocument1;
         vm.keepDocument2 = keepDocument2;
         vm.documentsNotDuplicate = documentsNotDuplicate;
         vm.getVerifiedNamesHTML = getVerifiedNamesHTML;
         vm.cancel = cancel;
 
-        var user = AuthService.user;
-
-        const DocumentService = context.getDocumentService();
         vm.researchEntity = context.getResearchEntity();
         vm.$onInit = function () {
             vm.differentFields = getDifferentFields();
