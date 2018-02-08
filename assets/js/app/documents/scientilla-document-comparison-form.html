@@ -196,8 +196,11 @@
                 <small ng-if="vm.document1.scopusId"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('scopusId')}">
                     <label>scopus id:</label> <a
+                        ng-if="!vm.document1.scopus_id_deleted"
                         href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document1.scopusId}}&origin=inward"
                         target="_blank">{{vm.document1.scopusId}}</a>
+                    <span ng-if="vm.document1.scopus_id_deleted"
+                          class="text-line-through">{{vm.document1.scopusId}}</span>
                 </small>
                 <small ng-if="vm.document1.wosId"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('wosId')}">
@@ -222,8 +225,11 @@
                 <small ng-if="vm.document2.scopusId"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('scopusId')}">
                     <label>scopus id:</label> <a
+                        ng-if="!vm.document2.scopus_id_deleted"
                         href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document2.scopusId}}&origin=inward"
                         target="_blank">{{vm.document2.scopusId}}</a>
+                    <span ng-if="vm.document2.scopus_id_deleted"
+                          class="text-line-through">{{vm.document2.scopusId}}</span>
                 </small>
                 <small ng-if="vm.document2.wosId"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('wosId')}">
@@ -246,8 +252,8 @@
                 <small class="scientilla-document-details-origin"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('origin')}">
                     Origin: <span>{{vm.document1.origin}}</span>
-                    <span ng-if="vm.document1.origin==='scopus' && vm.document1.scopus_id_deleted">
-                        - <b style="color:red">Scopus id no longer available on scopus</b>
+                    <span ng-if="vm.document1.origin==='scopus' && vm.document1.scopus_id_deleted"
+                          ng-bind-html="vm.scopusIdDeletedMessage">
                     </span>
                 </small>
             </div>
@@ -263,8 +269,8 @@
                 <small class="scientilla-document-details-origin"
                        ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('origin')}">
                     Origin: <span>{{vm.document2.origin}}</span>
-                    <span ng-if="vm.document2.origin==='scopus' && vm.document2.scopus_id_deleted">
-                        - <b style="color:red">Scopus id no longer available on scopus</b>
+                    <span ng-if="vm.document2.origin==='scopus' && vm.document2.scopus_id_deleted"
+                          ng-bind-html="vm.scopusIdDeletedMessage">
                     </span>
                 </small>
             </div>
