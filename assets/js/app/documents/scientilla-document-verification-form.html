@@ -1,8 +1,6 @@
 <h1>Document Verification</h1>
 <div>
-    <small class="scientilla-document-authors">
-        <span ng-bind-html='vm.document.authorsStr | authorsCorresponding:vm.document | authorsVerified:vm.document | authorsAffiliations:vm.document'></span>
-    </small>
+    <scientilla-document-authors document="vm.document"></scientilla-document-authors>
 </div>
 <div>
     <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>

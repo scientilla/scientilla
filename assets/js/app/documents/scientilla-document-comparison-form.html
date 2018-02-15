@@ -36,17 +36,13 @@
         <div class="col-xs-6">
             <div class="scientilla-document-details-authors"
                  ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('authorsStr')}">
-                <small class="scientilla-document-authors">
-                    <span ng-bind-html='vm.document1.authorsStr | authorsCorresponding:vm.document1 | authorsVerified:vm.document1 | authorsAffiliations:vm.document1'></span>
-                </small>
+                <scientilla-document-authors document="vm.document1"></scientilla-document-authors>
             </div>
         </div>
         <div class="col-xs-6">
             <div class="scientilla-document-details-authors"
                  ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('authorsStr')}">
-                <small class="scientilla-document-authors">
-                    <span ng-bind-html='vm.document2.authorsStr | authorsCorresponding:vm.document2 | authorsVerified:vm.document2 | authorsAffiliations:vm.document2'></span>
-                </small>
+                <scientilla-document-authors document="vm.document2"></scientilla-document-authors>
             </div>
         </div>
     </div>
