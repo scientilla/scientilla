@@ -14,7 +14,7 @@ CREATE OR REPLACE VIEW documentsuggestiongroup AS
            JOIN document d
              ON authorship.document = d.id
          WHERE NOT EXISTS(
-             SELECT *
+             SELECT id
              FROM "authorshipgroup"
              WHERE
                "researchEntity" = "membership"."group"
@@ -72,7 +72,7 @@ CREATE OR REPLACE VIEW documentsuggestiongroup AS
                  AND d3."scopusId" = d."scopusId"
                  AND d3.synchronized = TRUE
                  AND NOT EXISTS(
-                     SELECT *
+                     SELECT id
                      FROM "authorshipgroup"
                      WHERE
                        "researchEntity" = "membership"."group"
