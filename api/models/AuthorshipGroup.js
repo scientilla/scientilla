@@ -18,7 +18,6 @@ module.exports = _.merge({}, BaseModel, {
         document: {
             model: 'Document'
         },
-        position: 'integer',
         public: 'boolean',
         favorite: 'boolean',
         synchronize: 'boolean',
