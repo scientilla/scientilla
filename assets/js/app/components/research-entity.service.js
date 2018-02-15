@@ -41,7 +41,7 @@
         service.setAuthorshipFavorite = setAuthorshipFavorite;
         service.removeVerify = removeVerify;
 
-        var documentPopulates = [
+        const documentPopulates = [
             'source',
             'authors',
             'authorships',
@@ -56,6 +56,16 @@
             'institutes',
             'duplicates',
             'groups'
+        ];
+
+        const verificationFields = [
+            'position',
+            'affiliations',
+            'corresponding',
+            'synchronize',
+            'first_coauthor',
+            'last_coauthor',
+            'oral_presentation'
         ];
 
         function getDocuments(researchEntity, query) {
@@ -108,7 +118,6 @@
         }
 
         function verifyDocument(researchEntity, id, verificationData) {
-            const verificationFields = ['position', 'affiliations', 'corresponding', 'synchronize'];
             verificationData = _.pick(verificationData, verificationFields);
             verificationData.id = id;
             return researchEntity
@@ -121,7 +130,6 @@
         }
 
         function verifyDraftAsUser(researchEntity, draftId, verificationData) {
-            const verificationFields = ['position', 'affiliations', 'corresponding', 'synchronize'];
             verificationData = _.pick(verificationData, verificationFields);
             return researchEntity.one('drafts', draftId)
                 .customPUT(verificationData, 'verified');
@@ -245,13 +253,13 @@
         }
 
         async function removeVerify(researchEntity, doc1Id, verificationData, doc2Id) {
-            const verificationFields = ['position', 'affiliations', 'corresponding', 'synchronize'];
             verificationData = _.pick(verificationData, verificationFields);
             verificationData.document1Id = doc1Id;
             verificationData.document2Id = doc2Id;
             return researchEntity
                 .customPOST(verificationData, 'remove-verify');
         }
+
         /* jshint ignore:end */
 
         return service;

@@ -23,9 +23,11 @@
     ];
 
     function ScientillaDocumentAffiliations($scope, Restangular) {
-        var vm = this;
+        const vm = this;
         vm.getInstitutesFilter = getInstitutesFilter;
         vm.getInstitutesQuery = getInstitutesQuery;
+        vm.viewFirstCoauthor = viewFirstCoauthor;
+        vm.viewLastCoauthor = viewLastCoauthor;
         vm.submit = submit;
         vm.cancel = cancel;
 
@@ -35,9 +37,19 @@
         };
 
         function getInstitutesQuery(searchText) {
-            var qs = {where: {name: {contains: searchText}, parentId: null}};
-            var model = 'institutes';
+            const qs = {where: {name: {contains: searchText}, parentId: null}};
+            const model = 'institutes';
             return {model: model, qs: qs};
+        }
+
+        //only first + 1, first + 2, but not last
+        function viewFirstCoauthor() {
+            return vm.authorship.position > 0 && vm.authorship.position < Math.min(3, vm.document.getAuthors().length - 1);
+        }
+
+        //only last - 1, last - 2, but not first
+        function viewLastCoauthor() {
+            return vm.authorship.position < vm.document.getAuthors().length - 1 && vm.authorship.position > Math.max(0, vm.document.getAuthors().length - 4);
         }
 
         function resetInstitutes() {
@@ -66,15 +78,14 @@
         function getAuthorInstitutes() {
             if (_.isNil(vm.position))
                 return Promise.resolve([]);
-            var qs = {
+            const qs = {
                 where: {document: vm.document.id, position: vm.position},
                 populate: 'affiliations'
             };
             return Restangular.all('authorships').getList(qs).then(function (authorships) {
                 if (_.isEmpty(authorships))
                     return [];
-                var authorship = authorships[0];
-                return authorship.affiliations;
+                return authorships[0].affiliations;
             });
         }
 

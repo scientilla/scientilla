@@ -296,9 +296,7 @@ module.exports = _.merge({}, ResearchEntity, {
         //[/Accrocchio]
 
         const affiliationInstituteIds = !_.isEmpty(newAffiliationData.affiliationInstituteIds) ? newAffiliationData.affiliationInstituteIds : affiliations;
-        const corresponding = !_.isNil(newAffiliationData.corresponding) ? newAffiliationData.corresponding : authorship.corresponding;
-        const synchronize = !_.isNil(newAffiliationData.synchronize) ? newAffiliationData.synchronize : document.synchronized;
-        const publicDocument = !_.isNil(newAffiliationData.public) ? newAffiliationData.public : true;
+
 
         if (_.isEmpty(affiliationInstituteIds) || _.isNil(position))
             return {
@@ -312,10 +310,12 @@ module.exports = _.merge({}, ResearchEntity, {
             isVerifiable: true,
             position,
             affiliationInstituteIds,
-            corresponding,
-            synchronize,
-            public: publicDocument,
-            document
+            corresponding: !_.isNil(newAffiliationData.corresponding) ? newAffiliationData.corresponding : authorship.corresponding,
+            synchronize: !_.isNil(newAffiliationData.synchronize) ? newAffiliationData.synchronize : document.synchronized,
+            'public': !_.isNil(newAffiliationData.public) ? newAffiliationData.public : true,
+            first_coauthor: !_.isNil(newAffiliationData.first_coauthor) ? newAffiliationData.first_coauthor : false,
+            last_coauthor: !_.isNil(newAffiliationData.last_coauthor) ? newAffiliationData.last_coauthor : false,
+            oral_presentation: !_.isNil(newAffiliationData.oral_presentation) ? newAffiliationData.oral_presentation : false
         };
     },
     doVerifyDocument: async function (document, researchEntityId, authorshipData) {
@@ -324,15 +324,9 @@ module.exports = _.merge({}, ResearchEntity, {
                 error: "User not selected",
                 item: authorshipData.document
             };
-        const newAuthorship = {
-            researchEntity: researchEntityId,
-            document: document.id,
-            position: authorshipData.position,
-            affiliations: authorshipData.affiliationInstituteIds,
-            corresponding: authorshipData.corresponding,
-            synchronize: authorshipData.synchronize,
-            public: authorshipData.public,
-        };
+        const newAuthorship = Authorship.filterFields(authorshipData);
+        newAuthorship.researchEntity= researchEntityId;
+        newAuthorship.document= document.id;
 
         const authorshipFindCriteria = {
             document: newAuthorship.document,
@@ -397,7 +391,7 @@ module.exports = _.merge({}, ResearchEntity, {
     getMBOOverallPerformance: async function (username, year) {
         if (username) {
             const user = await User.findOne({username}).populate('documents');
-            if(!user)
+            if (!user)
                 throw 'User not found';
             return await PerformanceCalculator.getUserPerformance(user, year);
         }
@@ -407,7 +401,7 @@ module.exports = _.merge({}, ResearchEntity, {
     getMBOInstitutePerformance: async function (username, year) {
         if (username) {
             const user = await User.findOne({username}).populate('documents');
-            if(!user)
+            if (!user)
                 throw 'User not found';
             return await PerformanceCalculator.getUserInstitutePerformance(user, year);
         }
@@ -417,7 +411,7 @@ module.exports = _.merge({}, ResearchEntity, {
     getMBOInvitedTalks: async function (username, year) {
         if (username) {
             const user = await User.findOne({username}).populate('documents');
-            if(!user)
+            if (!user)
                 throw 'User not found';
             return await PerformanceCalculator.getUserMBOInvitedTalks(user, year);
         }

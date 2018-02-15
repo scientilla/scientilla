@@ -185,7 +185,7 @@ module.exports = _.merge({}, BaseModel, {
         draftGroupCreator: {
             model: 'Group'
         },
-        isDraft: function(){
+        isDraft: function () {
             return this.kind === DocumentKinds.DRAFT
         },
         isValid: function () {
@@ -302,6 +302,9 @@ module.exports = _.merge({}, BaseModel, {
             return this.getAuthors().map((author, i) => {
                 const authorship = this.authorships.find(au => au.position === i);
                 const corresponding = authorship ? authorship.corresponding : null;
+                const first_coauthor = authorship ? authorship.first_coauthor : null;
+                const last_coauthor = authorship ? authorship.last_coauthor : null;
+                const oral_presentation = authorship ? authorship.oral_presentation : null;
                 let affiliations, mainGroupAffiliation, userId;
                 if (authorship) {
                     const instituteIds = this.affiliations.filter(af => af.authorship === authorship.id)
@@ -318,6 +321,9 @@ module.exports = _.merge({}, BaseModel, {
                 return {
                     author,
                     corresponding,
+                    first_coauthor,
+                    last_coauthor,
+                    oral_presentation,
                     affiliations,
                     mainGroupAffiliation,
                     userId

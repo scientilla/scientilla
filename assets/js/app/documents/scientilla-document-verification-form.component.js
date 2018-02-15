@@ -38,6 +38,8 @@
             vm.viewSynchMessage = viewSynchMessage;
             vm.viewAuthorshipFields = viewAuthorshipFields;
             vm.viewCopyToDraft = viewCopyToDraft;
+            vm.viewLastCoauthor = viewLastCoauthor;
+            vm.viewFirstCoauthor = viewFirstCoauthor;
             vm.verificationData = {};
             vm.canBeSubmitted = canBeSubmitted;
             if (vm.document2)
@@ -88,7 +90,10 @@
                     position: vm.verificationData.position,
                     corresponding: vm.verificationData.corresponding,
                     synchronize: vm.verificationData.synchronize,
-                    public: vm.verificationData.public
+                    'public': vm.verificationData.public,
+                    first_coauthor: vm.verificationData.first_coauthor,
+                    last_coauthor: vm.verificationData.last_coauthor,
+                    oral_presentation: vm.verificationData.oral_presentation,
                 };
                 try {
                     const res = await verify(user, vm.document.id, data, vm.document2id);
@@ -103,9 +108,13 @@
             /* jshint ignore:end */
 
             function userSelectedChanged() {
-                var authorship = vm.document.authorships[vm.verificationData.position];
-                if (authorship)
+                const authorship = vm.document.authorships[vm.verificationData.position];
+                if (authorship) {
                     vm.verificationData.corresponding = authorship.corresponding;
+                    vm.verificationData.first_coauthor = authorship.first_coauthor;
+                    vm.verificationData.last_coauthor = authorship.last_coauthor;
+                    vm.verificationData.oral_presentation = authorship.oral_presentation;
+                }
 
                 getInstitutes().then(function (institutes) {
                     vm.verificationData.affiliations = institutes;
@@ -149,6 +158,16 @@
 
             function viewCopyToDraft() {
                 return vm.document.kind === 'v';
+            }
+
+            //only first + 1, first + 2, but not last
+            function viewFirstCoauthor() {
+                return vm.verificationData.position > 0 && vm.verificationData.position < Math.min(3, vm.document.getAuthors().length - 1);
+            }
+
+            //only last - 1, last - 2, but not first
+            function viewLastCoauthor() {
+                return vm.verificationData.position < vm.document.getAuthors().length - 1 && vm.verificationData.position > Math.max(0, vm.document.getAuthors().length - 4);
             }
 
             function verify(user, documentId, verificationData, document2id) {

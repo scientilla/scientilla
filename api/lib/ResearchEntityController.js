@@ -27,13 +27,8 @@ module.exports = {
     verifyDraft: function (req, res) {
         const researchEntityId = req.params.researchEntityId;
         const draftId = req.params.draftId;
-        const verificationData = {
-            position: req.body.position,
-            corresponding: req.body.corresponding,
-            affiliationInstituteIds: req.body.affiliations,
-            synchronize: req.body.synchronize,
-            public: req.body.public,
-        };
+        const verificationData = Authorship.filterFields(req.body);
+        verificationData.affiliationInstituteIds = req.body.affiliations;
         const Model = getModel(req);
         res.halt(Model.verifyDraft(Model, researchEntityId, draftId, verificationData));
     },
@@ -46,13 +41,8 @@ module.exports = {
     verifyDocument: function (req, res) {
         const researchEntityId = req.params.researchEntityId;
         const documentId = req.body.id;
-        const verificationData = {
-            position: req.body.position,
-            corresponding: req.body.corresponding,
-            affiliationInstituteIds: req.body.affiliations,
-            synchronize: req.body.synchronize,
-            public: req.body.public
-        };
+        const verificationData = Authorship.filterFields(req.body);
+        verificationData.affiliationInstituteIds = req.body.affiliations;
         const Model = getModel(req);
         // TODO in case of failed verify give response with details instead of 400
         res.halt(Model.verifyDocument(Model, researchEntityId, documentId, verificationData));
@@ -145,13 +135,8 @@ module.exports = {
         const researchEntityId = parseInt(req.params.researchEntityId, 10);
         const document1Id = req.body.document1Id;
         const document2Id = req.body.document2Id;
-        const verificationData = {
-            position: req.body.position,
-            corresponding: req.body.corresponding,
-            affiliationInstituteIds: req.body.affiliations,
-            synchronize: req.body.synchronize,
-            public: req.body.public
-        };
+        const verificationData = Authorship.filterFields(req.body);
+        verificationData.affiliationInstituteIds = req.body.affiliations;
         const Model = getModel(req);
         res.halt(Model.removeVerify(Model, researchEntityId, document1Id, verificationData, document2Id));
     },

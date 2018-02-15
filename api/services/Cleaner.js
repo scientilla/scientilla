@@ -14,6 +14,7 @@ async function cleanInstituteCopies() {
     function getInstituteCopy(i) {
         return Institute.findOne({id: {'<': i.id}, scopusId: i.scopusId});
     }
+
     function getInstituteParent(i) {
         return Institute.findOne({id: i.parentId});
     }
@@ -105,7 +106,7 @@ async function cleanDocumentCopies() {
         }
         const errors = [];
         const copies = await Document.findCopies(doc, null, false);
-        if (copies.length == 0){
+        if (copies.length == 0) {
             continue;
         }
         const copy = copies[0];
@@ -147,12 +148,9 @@ async function cleanDocumentCopies() {
                 continue;
             const instituteIds = doc.affiliations.filter(aff => aff.authorship === a.id).map(aff => aff.institute);
             sails.log.info(`User ${a.researchEntity} is trying to verify document ${copy.id} (${copy.title}) in position: ${a.position}`);
-            const res = await User.verifyDocument(User, a.researchEntity, copy.id, {
-                position: a.position,
-                affiliationInstituteIds: instituteIds,
-                corresponding: a.corresponding,
-                synchronize: a.synchronize
-            }, false);
+            const authorshipData = Authorship.filterFields(a);
+            authorshipData.affiliationInstituteIds = instituteIds;
+            const res = await User.verifyDocument(User, a.researchEntity, copy.id, authorshipData, false);
             if (res.error) {
                 errors.push(res);
                 sails.log.warn('Error: ');

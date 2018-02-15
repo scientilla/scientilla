@@ -53,6 +53,30 @@
                 Corresponding author
             </label>
         </div>
+        <div class="form-group"
+             ng-if="vm.viewFirstCoauthor()">
+            <label title="Are you a first-coauthor?">
+                <input type="checkbox"
+                       ng-model="vm.verificationData.first_coauthor"/>
+                Co-first author
+            </label>
+        </div>
+        <div class="form-group"
+             ng-if="vm.viewLastCoauthor()">
+            <label title="Are you a last-coauthor?">
+                <input type="checkbox"
+                       ng-model="vm.verificationData.last_coauthor"/>
+                Co-Last author
+            </label>
+        </div>
+        <div class="form-group"
+             ng-hide="vm.verificationData.position<0">
+            <label title="Have you presented this document in a conference?">
+                <input type="checkbox"
+                       ng-model="vm.verificationData.oral_presentation"/>
+                Oral presentation
+            </label>
+        </div>
     </div>
     <hr>
     <div ng-if="vm.document.kind === 'v'">

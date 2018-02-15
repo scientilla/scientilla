@@ -9,8 +9,6 @@
  */
 
 
-const exec = require('child_process').exec;
-const Promise = require("bluebird");
 const _ = require("lodash");
 const BaseModel = require("./BaseModel.js");
 const request = require('request-promise');
