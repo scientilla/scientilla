@@ -180,6 +180,25 @@
             return modal.result;
         };
 
+        service.openDocumentAuthorsForm = function (document) {
+            const scopeVars = {
+                document: document
+            };
+
+            const modal = openModal(
+                '<scientilla-document-authors-form\
+                    document="vm.document"\
+                    on-failure="vm.onFailure"\
+                    on-submit="vm.onSubmit"\
+                ></scientilla-document-authors-form>',
+                scopeVars,
+                {size: 'lg'}
+            );
+
+            addModalObject(modal);
+            return modal.result;
+        };
+
         service.openDocumentVerificationForm = function (document, verificationFn, document2) {
             const scopeVars = {
                 document: document,

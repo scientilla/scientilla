@@ -17,10 +17,9 @@
                     return htmlAuthor;
 
                 if (authorship.first_coauthor || (authorship.position === 0 && document.authorships.find(a => a.first_coauthor)))
-                    htmlAuthor = '+' + htmlAuthor;
+                    htmlAuthor = '<sup class="superscript scientilla-document-affiliations">+</sup>' + htmlAuthor;
                 else if (authorship.last_coauthor || (authorship.position === (document.authorsStr.split(',').length - 1) && document.authorships.find(a => a.last_coauthor)))
-                    htmlAuthor = '°' + htmlAuthor;
-
+                    htmlAuthor = '<sup class="superscript scientilla-document-affiliations">#</sup>' + htmlAuthor;
 
                 return htmlAuthor;
 

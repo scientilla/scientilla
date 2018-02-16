@@ -24,6 +24,7 @@
                 service.verifyDrafts = verifyDrafts;
                 service.openEditPopup = openEditPopup;
                 service.openDocumentAffiliationForm = openDocumentAffiliationForm;
+                service.openDocumentAuthorsForm = openDocumentAuthorsForm;
                 service.discardDocument = discardDocument;
                 service.verifyDocuments = verifyDocuments;
                 service.discardDocuments = discardDocuments;
@@ -265,6 +266,17 @@
                             if (i === 1) {
                                 EventsService.publish(EventsService.DRAFT_UPDATED, draft);
                                 Notification.success("Affiliations has been updated");
+                            }
+                        });
+                }
+
+                function openDocumentAuthorsForm(draft) {
+                    return ModalService
+                        .openDocumentAuthorsForm(draft.clone())
+                        .then(i => {
+                            if (i === 1) {
+                                EventsService.publish(EventsService.DRAFT_UPDATED, draft);
+                                Notification.success("Aithors has been updated");
                             }
                         });
                 }

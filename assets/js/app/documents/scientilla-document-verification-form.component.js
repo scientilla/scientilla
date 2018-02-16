@@ -108,7 +108,7 @@
             /* jshint ignore:end */
 
             function userSelectedChanged() {
-                const authorship = vm.document.authorships[vm.verificationData.position];
+                const authorship = vm.document.authorships.find(a => a.position === vm.verificationData.position);
                 if (authorship) {
                     vm.verificationData.corresponding = authorship.corresponding;
                     vm.verificationData.first_coauthor = authorship.first_coauthor;
@@ -160,14 +160,12 @@
                 return vm.document.kind === 'v';
             }
 
-            //only first + 1, first + 2, but not last
             function viewFirstCoauthor() {
-                return vm.verificationData.position > 0 && vm.verificationData.position < Math.min(3, vm.document.getAuthors().length - 1);
+                return vm.verificationData.position > 0 && vm.verificationData.position < vm.document.getAuthors().length - 1;
             }
 
-            //only last - 1, last - 2, but not first
             function viewLastCoauthor() {
-                return vm.verificationData.position < vm.document.getAuthors().length - 1 && vm.verificationData.position > Math.max(0, vm.document.getAuthors().length - 4);
+                return vm.verificationData.position > 0 && vm.verificationData.position < vm.document.getAuthors().length - 1;
             }
 
             function verify(user, documentId, verificationData, document2id) {

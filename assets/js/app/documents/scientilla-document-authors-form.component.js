@@ -5,9 +5,9 @@
 
     angular
         .module('documents')
-        .component('scientillaDocumentAffiliations', {
-            templateUrl: 'partials/scientilla-document-affiliations.html',
-            controller: ScientillaDocumentAffiliations,
+        .component('scientillaDocumentAuthorsForm', {
+            templateUrl: 'partials/scientilla-document-authors-form.html',
+            controller: controller,
             controllerAs: 'vm',
             bindings: {
                 document: "<",
@@ -17,31 +17,27 @@
         });
 
 
-    ScientillaDocumentAffiliations.$inject = [
-        '$scope',
-        'Restangular'
+    controller.$inject = [
+        '$scope'
     ];
 
-    function ScientillaDocumentAffiliations($scope, Restangular) {
+    function controller($scope) {
         const vm = this;
-        vm.getInstitutesFilter = getInstitutesFilter;
-        vm.getInstitutesQuery = getInstitutesQuery;
+        vm.viewFirstCoauthor = viewFirstCoauthor;
+        vm.viewLastCoauthor = viewLastCoauthor;
         vm.submit = submit;
         vm.cancel = cancel;
 
         vm.$onInit = () => {
             $scope.$watch('vm.position', userSelectedChanged);
-            $scope.$watch('vm.authorship.affiliations', resetInstitutes, true);
         };
 
-        function getInstitutesQuery(searchText) {
-            const qs = {where: {name: {contains: searchText}, parentId: null}};
-            const model = 'institutes';
-            return {model: model, qs: qs};
+        function viewFirstCoauthor() {
+            return vm.authorship.position > 0 && vm.authorship.position < vm.document.getAuthors().length - 1;
         }
 
-        function resetInstitutes() {
-            vm.document.institutes = _.uniqBy(_.flatMap(vm.document.authorships, 'affiliations'), 'id');
+        function viewLastCoauthor() {
+            return vm.authorship.position > 0 && vm.authorship.position < vm.document.getAuthors().length - 1;
         }
 
         function userSelectedChanged() {
@@ -58,27 +54,6 @@
                 vm.document.authorships.push(newAuthorship);
                 vm.authorship = newAuthorship;
             }
-
-            getAuthorInstitutes()
-                .then((institutes) => vm.authorship.affiliations = institutes);
-        }
-
-        function getAuthorInstitutes() {
-            if (_.isNil(vm.position))
-                return Promise.resolve([]);
-            const qs = {
-                where: {document: vm.document.id, position: vm.position},
-                populate: 'affiliations'
-            };
-            return Restangular.all('authorships').getList(qs).then(function (authorships) {
-                if (_.isEmpty(authorships))
-                    return [];
-                return authorships[0].affiliations;
-            });
-        }
-
-        function getInstitutesFilter() {
-            return vm.authorship.affiliations;
         }
 
         function cancel() {

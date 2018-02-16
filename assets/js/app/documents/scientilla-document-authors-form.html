@@ -37,20 +37,28 @@
             </div>
         </div>
         <div class="panel-body" ng-if="vm.author">
-            <div class="form-group">
-                <scientilla-multicomplete
-                        items="vm.authorship.affiliations"
-                        query="vm.getInstitutesQuery"
-                        filter="vm.getInstitutesFilter"
-                        title="Affiliations of {{vm.author}}">
-                </scientilla-multicomplete>
+            <div class="form-group"
+                 ng-if="vm.viewFirstCoauthor()">
+                <label title="Are you a first-coauthor?">
+                    <input type="checkbox"
+                           ng-model="vm.authorship.first_coauthor"/>
+                    Co-first author
+                </label>
+            </div>
+            <div class="form-group"
+                 ng-if="vm.viewLastCoauthor()">
+                <label title="Are you a last-coauthor?">
+                    <input type="checkbox"
+                           ng-model="vm.authorship.last_coauthor"/>
+                    Co-Last author
+                </label>
             </div>
             <div class="form-group"
                  ng-hide="vm.authorship.position<0">
-                <label title="Are you the corresponding author?">
+                <label title="Was this author selected to give a talk about this work?">
                     <input type="checkbox"
-                           ng-model="vm.authorship.corresponding"/>
-                    Corresponding author
+                           ng-model="vm.authorship.oral_presentation"/>
+                    Oral presentation
                 </label>
             </div>
         </div>
