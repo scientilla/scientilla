@@ -105,6 +105,16 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'researchEntity',
             through: 'highimpactpublication'
         },
+        favoritePublications: {
+            collection: 'Document',
+            via: 'researchEntity',
+            through: 'favoritepublication'
+        },
+        oralPresentations: {
+            collection: 'Document',
+            via: 'researchEntity',
+            through: 'oralpresentation'
+        },
         suggestedDocuments: {
             collection: 'Document',
             via: 'users',
