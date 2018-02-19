@@ -106,88 +106,74 @@ describe('Document model', () => {
     let iitGroup;
 
     describe('findCopies', () => {
-        it('should only find verified documents with same data and affiliations', () => {
+        it('should only find verified documents with same data and affiliations', async () => {
 
             //TODO move db initialization to a more suitable place
-            return Group.create(iitGroupData)
-                .then(res => iitGroup = res)
-                .then(() => User.createCompleteUser(usersData[0]))
-                .then(u => users.push(u))
-                .then(() => User.createCompleteUser(usersData[1]))
-                .then(u => users.push(u))
-                .then(() => Institute.create(institutesData))
-                .then(i => institutes = i)
-                .then(() => {
-                    const docData = _.merge({}, documentsData[5], {
-                        authorships: [
-                            {
-                                position: 0,
-                                researchEntity: null,
-                                affiliations: [institutes[0].id, institutes[1].id]
-                            },
-                            {
-                                position: 1,
-                                researchEntity: null,
-                                affiliations: [institutes[0].id]
-                            },
-                            {
-                                position: 2,
-                                researchEntity: null,
-                                affiliations: [institutes[1].id]
-                            }
-                        ]
-                    });
-                    return User.createDraft(User, users[0].id, docData);
-                })
-                .then(doc => {
-                    doc.kind = 'v';
-                    doc.draftCreator = null;
-                    doc.draftGroupCreator = null;
-                    return doc.savePromise();
-                })
-                .then(doc => Document.findOneById(doc.id)
-                    .populate('authorships')
-                    .populate('affiliations'))
-                .then(doc => {
-                    document = doc;
+            iitGroup = await Group.create(iitGroupData);
+            users.push(await User.createCompleteUser(usersData[0]));
+            users.push(await User.createCompleteUser(usersData[1]));
+            institutes = await Institute.create(institutesData);
+            const docData = _.merge({}, documentsData[5], {
+                authorships: [
+                    {
+                        position: 0,
+                        researchEntity: null,
+                        affiliations: [institutes[0].id, institutes[1].id]
+                    },
+                    {
+                        position: 1,
+                        researchEntity: null,
+                        affiliations: [institutes[0].id]
+                    },
+                    {
+                        position: 2,
+                        researchEntity: null,
+                        affiliations: [institutes[1].id]
+                    }
+                ]
+            });
+            const doc = await User.createDraft(User, users[0].id, docData);
+            doc.kind = 'v';
+            doc.draftCreator = null;
+            doc.draftGroupCreator = null;
+            await doc.savePromise();
+            document = await Document.findOneById(doc.id)
+                .populate('authorships')
+                .populate('affiliations');
 
-                    const authorship = doc.authorships.find(a => a.position === 0);
-                    return Authorship.findOneById(authorship.id)
-                        .then(a => {
-                            a.researchEntity = users[0].id;
-                            return a.savePromise();
-                        })
-                })
-                .then(() => {
-                    const draftData = _.merge({}, documentsData[5], {
-                        authorships: [
-                            {
-                                position: 0,
-                                researchEntity: null,
-                                affiliations: [institutes[0].id, institutes[1].id]
-                            },
-                            {
-                                position: 1,
-                                researchEntity: null,
-                                affiliations: [institutes[0].id]
-                            },
-                            {
-                                position: 2,
-                                researchEntity: null,
-                                affiliations: [institutes[1].id]
-                            }
-                        ]
-                    });
-                    return User.createDraft(User, users[1].id, draftData);
-                }).then(d => Document.findOneById(d.id)
-                    .populate('authorships')
-                    .populate('affiliations'))
-                .then(d => Document.findCopies(d, 1))
-                .then(copies => {
-                    copies.should.have.length(1);
-                    copies[0].id.should.be.equal(document.id);
-                    copies[0].affiliations.should.have.length(4);
-                });
+            const a = document.authorships.find(a => a.position === 0);
+            const authorship = await Authorship.findOneById(a.id);
+
+            authorship.researchEntity = users[0].id;
+            await  authorship.savePromise();
+
+            const draftData = _.merge({}, documentsData[5], {
+                authorships: [
+                    {
+                        position: 0,
+                        researchEntity: null,
+                        affiliations: [institutes[0].id, institutes[1].id]
+                    },
+                    {
+                        position: 1,
+                        researchEntity: null,
+                        affiliations: [institutes[0].id]
+                    },
+                    {
+                        position: 2,
+                        researchEntity: null,
+                        affiliations: [institutes[1].id]
+                    }
+                ]
+            });
+            const d = await User.createDraft(User, users[1].id, draftData);
+            const draft = await Document.findOneById(d.id)
+                .populate('authorships')
+                .populate('affiliations');
+            const copies = await Document.findCopies(draft, 1);
+            copies.should.have.length(1);
+            copies[0].id.should.be.equal(document.id);
+            copies[0].affiliations.should.have.length(4);
         });
 
         it('should not find verified documents with different data', () => {
@@ -252,7 +238,7 @@ describe('Document model', () => {
     });
 
     describe('getSourceDetails', () => {
-        
+
         it('should return a compiled reference string', () => {
             const documentData = test.getAllDocumentData()[0];
             const document = test.createModel(Document, documentData);
