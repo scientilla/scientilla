@@ -27,7 +27,7 @@ describe('Document Suggestions', () => {
     const user2Doc1Position = 0;
     let iitInstitute;
 
-    it('it should suggest the document to the user whose surname is among the authors (str)', async() => {
+    it('it should suggest the document to the user whose aliases are among the authors (str)', async() => {
         user1 = await test.registerUser(user1Data);
         iitGroup = await test.createGroup(iitGroupData);
         iitInstitute = await test.createInstitute(iitInstituteData);
