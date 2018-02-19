@@ -62,17 +62,12 @@
 
         function submit() {
             return save()
-                .then(function (user) {
-                    executeOnSubmit(1);
-                })
-                .catch(function () {
-                    executeOnFailure();
-                });
+                .then(() => executeOnSubmit(1))
+                .catch(() => executeOnFailure());
         }
 
         function save() {
-            return vm.document.customPUT(vm.document.authorships, 'authorships')
-                .then(() => vm.document.save());
+            return vm.document.customPUT(vm.document.authorships, 'authorships');
         }
 
         function executeOnSubmit(i) {
