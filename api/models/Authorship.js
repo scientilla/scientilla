@@ -86,8 +86,11 @@ module.exports = _.merge({}, BaseModel, {
         if (!_.isArray(authorshipsData))
             return;
 
-        const filteredAuthorshipsData = _.map(authorshipsData, a => _.pick(a, fields));
-        filteredAuthorshipsData.forEach(a => a.document = doc.id);
+        const filteredAuthorshipsData = authorshipsData.map(a => Authorship.filterFields(a));
+        filteredAuthorshipsData.forEach(a => {
+            a.document = doc.id;
+            delete a.affiliations
+        });
         const authorships = await Authorship.create(filteredAuthorshipsData);
 
         const affiliations = [];
