@@ -310,6 +310,7 @@ module.exports = _.merge({}, ResearchEntity, {
             isVerifiable: true,
             position,
             affiliationInstituteIds,
+            document: document,
             corresponding: !_.isNil(newAffiliationData.corresponding) ? newAffiliationData.corresponding : authorship.corresponding,
             synchronize: !_.isNil(newAffiliationData.synchronize) ? newAffiliationData.synchronize : document.synchronized,
             'public': !_.isNil(newAffiliationData.public) ? newAffiliationData.public : true,
@@ -325,8 +326,9 @@ module.exports = _.merge({}, ResearchEntity, {
                 item: authorshipData.document
             };
         const newAuthorship = Authorship.filterFields(authorshipData);
-        newAuthorship.researchEntity= researchEntityId;
-        newAuthorship.document= document.id;
+        newAuthorship.researchEntity = researchEntityId;
+        newAuthorship.document = document.id;
+        newAuthorship.affiliations = authorshipData.affiliationInstituteIds;
 
         const authorshipFindCriteria = {
             document: newAuthorship.document,
@@ -339,6 +341,12 @@ module.exports = _.merge({}, ResearchEntity, {
         await authorship.savePromise();
 
         await Alias.addAlias(researchEntityId, document.authorsStr, authorshipData.position);
+
+        const index = document.authorships.map(a => a.position).indexOf(authorshipData.position);
+        if (index !== -1)
+            document.authorships.splice(index, 1);
+
+        document.authorships.push(authorship);
 
         return document;
     },
