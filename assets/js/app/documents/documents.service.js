@@ -276,7 +276,7 @@
                         .then(i => {
                             if (i === 1) {
                                 EventsService.publish(EventsService.DRAFT_UPDATED, draft);
-                                Notification.success("Aithors has been updated");
+                                Notification.success("Authors has been updated");
                             }
                         });
                 }
