@@ -89,7 +89,8 @@ module.exports = _.merge({}, BaseModel, {
         const filteredAuthorshipsData = authorshipsData.map(a => Authorship.filterFields(a));
         filteredAuthorshipsData.forEach(a => {
             a.document = doc.id;
-            delete a.affiliations
+            delete a.affiliations;
+            delete a.researchEntity;
         });
         const authorships = await Authorship.create(filteredAuthorshipsData);
 
