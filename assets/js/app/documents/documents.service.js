@@ -114,6 +114,9 @@
                             ['Move to drafts', 'Remove'])
                         .then(function (buttonIndex) {
                             switch (buttonIndex) {
+                                case -1:
+                                    document.removeLabel(DocumentLabels.UVERIFYING);
+                                    break;
                                 case 0:
                                     return researchEntityService.copyDocument(researchEntity, document)
                                         .then(function (draft) {
