@@ -9,9 +9,6 @@
     <scientilla-document-affiliations document="vm.document"></scientilla-document-affiliations>
 </div>
 <div>
-    <scientilla-document-authors-legend document="vm.document"></scientilla-document-authors-legend>
-</div>
-<div>
     <small class="scientilla-document-source">
         <span ng-if="vm.document.sourceType === 'journal' ">
             {{vm.document.journal}}
@@ -41,7 +38,7 @@
                 <label title="Are you a first-coauthor?">
                     <input type="checkbox"
                            ng-model="vm.authorship.first_coauthor"/>
-                    Co-first author
+                    + - Co-first author
                 </label>
             </div>
             <div class="form-group"
@@ -49,7 +46,7 @@
                 <label title="Are you a last-coauthor?">
                     <input type="checkbox"
                            ng-model="vm.authorship.last_coauthor"/>
-                    Co-Last author
+                    # - Co-Last author
                 </label>
             </div>
             <div class="form-group"
@@ -57,7 +54,7 @@
                 <label title="Was this author selected to give a talk about this work?">
                     <input type="checkbox"
                            ng-model="vm.authorship.oral_presentation"/>
-                    Oral presentation
+                    <span class="fa fa-microphone"></span> - Oral presentation
                 </label>
             </div>
         </div>

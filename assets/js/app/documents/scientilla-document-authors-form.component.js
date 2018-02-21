@@ -23,13 +23,23 @@
 
     function controller($scope) {
         const vm = this;
+        const deregisteres = [];
+        const coauthorsDeregisteres = [];
+
         vm.viewFirstCoauthor = viewFirstCoauthor;
         vm.viewLastCoauthor = viewLastCoauthor;
         vm.submit = submit;
         vm.cancel = cancel;
 
         vm.$onInit = () => {
-            $scope.$watch('vm.position', userSelectedChanged);
+            deregisteres.push($scope.$watch('vm.position', userSelectedChanged));
+        };
+        vm.$onDestroy = () => {
+            for (const deregisterer of deregisteres)
+                deregisterer();
+
+            for (const deregisterer of coauthorsDeregisteres)
+                deregisterer();
         };
 
         function viewFirstCoauthor() {
@@ -53,6 +63,21 @@
                 };
                 vm.document.authorships.push(newAuthorship);
                 vm.authorship = newAuthorship;
+            }
+            if (coauthorsDeregisteres.length) {
+                coauthorsDeregisteres.pop()();
+                coauthorsDeregisteres.pop()();
+            }
+            coauthorsDeregisteres.push($scope.$watch('vm.authorship.first_coauthor', getCoauthorChangedCB(0)));
+            coauthorsDeregisteres.push($scope.$watch('vm.authorship.last_coauthor', getCoauthorChangedCB(1)));
+        }
+
+        function getCoauthorChangedCB(field) {
+            const fields = ['first_coauthor', 'last_coauthor'];
+            return () => {
+                const index = (field - 1 + fields.length) % fields.length;
+                if (vm.authorship.first_coauthor && vm.authorship.last_coauthor)
+                    vm.authorship[fields[index]] = false;
             }
         }
 
