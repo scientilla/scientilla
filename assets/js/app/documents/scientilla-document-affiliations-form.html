@@ -6,11 +6,10 @@
     <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
 </div>
 <div>
-    <small class="scientilla-document-institutes">
-        <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} -
-            {{institute.name}}
-        </div>
-    </small>
+    <scientilla-document-affiliations document="vm.document"></scientilla-document-affiliations>
+</div>
+<div>
+    <scientilla-document-authors-legend document="vm.document"></scientilla-document-authors-legend>
 </div>
 <div>
     <small class="scientilla-document-source">

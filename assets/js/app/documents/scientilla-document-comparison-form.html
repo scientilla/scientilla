@@ -63,22 +63,13 @@
     <div class="row">
         <div class="col-xs-6">
             <div ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('institutes')}">
-                <small class="scientilla-document-institutes">
-                    <div ng-repeat='(i, institute) in vm.document1.institutes'>
-                        {{vm.document1.getInstituteIdentifier(i)}} -
-                        {{institute.name}}
-                    </div>
-                </small>
+
+                <scientilla-document-affiliations document="vm.document1"></scientilla-document-affiliations>
             </div>
         </div>
         <div class="col-xs-6">
             <div ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('institutes')}">
-                <small class="scientilla-document-institutes">
-                    <div ng-repeat='(i, institute) in vm.document2.institutes'>
-                        {{vm.document2.getInstituteIdentifier(i)}} -
-                        {{institute.name}}
-                    </div>
-                </small>
+                <scientilla-document-affiliations document="vm.document2"></scientilla-document-affiliations>
             </div>
         </div>
     </div>
