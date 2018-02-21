@@ -8,14 +8,20 @@
             controller: controller,
             controllerAs: 'vm',
             bindings: {
-                document: '<'
+                document: '<',
+                type: '@?'
             },
         });
 
-    controller.$inject = [
-    ];
+    controller.$inject = [];
 
     function controller() {
         const vm = this;
+
+        vm.$onInit = () => {
+            if (!vm.type)
+                vm.type = 'default';
+        };
+
     }
 })();

@@ -1,3 +1,7 @@
-<small class="scientilla-document-authors">
+<small ng-if="vm.type==='default'" class="scientilla-document-authors">
+    <span ng-bind-html='vm.document.authorsStr | authorsOralPresentations:vm.document | authorsCorresponding:vm.document | authorsCoauthors:vm.document | authorsVerified:vm.document | authorsAffiliations:vm.document'></span>
+</small>
+
+<small ng-if="vm.type==='preview'" class="scientilla-document-authors">
     <span ng-bind-html='vm.document.authorsStr | authorsOralPresentations:vm.document | authorsCorresponding:vm.document | authorsCoauthors:vm.document | authorsVerified:vm.document | authorsMainGroup:vm.document'></span>
 </small>

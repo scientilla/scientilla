@@ -167,11 +167,11 @@
             };
 
             const modal = openModal(
-                '<scientilla-document-affiliations\
+                '<scientilla-document-affiliations-form\
                     document="vm.document"\
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit"\
-                ></scientilla-document-affiliations>',
+                ></scientilla-document-affiliations-form>',
                 scopeVars,
                 {size: 'lg'}
             );

@@ -1,7 +1,5 @@
 <div class="scientilla-document-details-authors">
-    <small class="scientilla-document-authors">
-        <span ng-bind-html='vm.document.authorsStr | authorsOralPresentations:vm.document | authorsCorresponding:vm.document | authorsCoauthors:vm.document | authorsVerified:vm.document | authorsAffiliations:vm.document'></span>
-    </small>
+    <scientilla-document-authors document="vm.document"></scientilla-document-authors>
 </div>
 <div class="scientilla-document-details-title">
     <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>

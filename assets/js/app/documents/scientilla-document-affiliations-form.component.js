@@ -5,9 +5,9 @@
 
     angular
         .module('documents')
-        .component('scientillaDocumentAffiliations', {
-            templateUrl: 'partials/scientilla-document-affiliations.html',
-            controller: ScientillaDocumentAffiliations,
+        .component('scientillaDocumentAffiliationsForm', {
+            templateUrl: 'partials/scientilla-document-affiliations-form.html',
+            controller: controller,
             controllerAs: 'vm',
             bindings: {
                 document: "<",
@@ -17,12 +17,12 @@
         });
 
 
-    ScientillaDocumentAffiliations.$inject = [
+    controller.$inject = [
         '$scope',
         'Restangular'
     ];
 
-    function ScientillaDocumentAffiliations($scope, Restangular) {
+    function controller($scope, Restangular) {
         const vm = this;
         vm.getInstitutesFilter = getInstitutesFilter;
         vm.getInstitutesQuery = getInstitutesQuery;
