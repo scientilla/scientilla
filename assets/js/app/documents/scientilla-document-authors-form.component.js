@@ -78,7 +78,7 @@
                 const index = (field - 1 + fields.length) % fields.length;
                 if (vm.authorship.first_coauthor && vm.authorship.last_coauthor)
                     vm.authorship[fields[index]] = false;
-            }
+            };
         }
 
         function cancel() {
