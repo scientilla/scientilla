@@ -47,7 +47,7 @@
             <label title="Are you the corresponding author?">
                 <input type="checkbox"
                        ng-model="vm.verificationData.corresponding"/>
-                Corresponding author
+                * - Corresponding author
             </label>
         </div>
         <div class="form-group"
@@ -55,7 +55,7 @@
             <label title="Are you a first-coauthor?">
                 <input type="checkbox"
                        ng-model="vm.verificationData.first_coauthor"/>
-                Co-first author
+                + - Co-first author
             </label>
         </div>
         <div class="form-group"
@@ -63,7 +63,7 @@
             <label title="Are you a last-coauthor?">
                 <input type="checkbox"
                        ng-model="vm.verificationData.last_coauthor"/>
-                Co-Last author
+                # - Co-Last author
             </label>
         </div>
         <div class="form-group"
@@ -71,7 +71,7 @@
             <label title="Were you selected to give a talk about this work?">
                 <input type="checkbox"
                        ng-model="vm.verificationData.oral_presentation"/>
-                Oral presentation
+                <span class="fa fa-microphone"></span> - Oral presentation
             </label>
         </div>
     </div>

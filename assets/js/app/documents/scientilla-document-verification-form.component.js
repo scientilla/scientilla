@@ -46,8 +46,9 @@
                 vm.document2id = vm.document2.id;
 
             const user = context.getResearchEntity();
-
             const DocumentService = context.getDocumentService();
+            const deregisteres = [];
+            const coauthorsDeregisteres = [];
 
             vm.$onInit = function () {
                 if (user.getType() === 'group')
@@ -58,7 +59,14 @@
                 vm.verificationData.synchronize = vm.document.synchronized;
                 vm.verificationData.public = true;
 
-                $scope.$watch('vm.verificationData.position', userSelectedChanged);
+                deregisteres.push($scope.$watch('vm.verificationData.position', userSelectedChanged));
+            };
+            vm.$onDestroy = () => {
+                for (const deregisterer of deregisteres)
+                    deregisterer();
+
+                for (const deregisterer of coauthorsDeregisteres)
+                    deregisterer();
             };
 
             function getInstitutesQuery(searchText) {
@@ -119,7 +127,24 @@
                 getInstitutes().then(function (institutes) {
                     vm.verificationData.affiliations = institutes;
                 });
+
+                if (coauthorsDeregisteres.length) {
+                    coauthorsDeregisteres.pop()();
+                    coauthorsDeregisteres.pop()();
+                }
+                coauthorsDeregisteres.push($scope.$watch('vm.verificationData.first_coauthor', getCoauthorChangedCB(0)));
+                coauthorsDeregisteres.push($scope.$watch('vm.verificationData.last_coauthor', getCoauthorChangedCB(1)));
             }
+
+            function getCoauthorChangedCB(field) {
+                const fields = ['first_coauthor', 'last_coauthor'];
+                return () => {
+                    const index = (field - 1 + fields.length) % fields.length;
+                    if (vm.verificationData.first_coauthor && vm.verificationData.last_coauthor)
+                        vm.verificationData[fields[index]] = false;
+                };
+            }
+
 
             function getInstitutes() {
                 if (_.isNil(vm.verificationData.position) || vm.verificationData.position < 0)
