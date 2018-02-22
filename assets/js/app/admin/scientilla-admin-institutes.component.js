@@ -19,10 +19,12 @@
         vm.getInstitutes = getInstitutes;
         vm.formatInstitute = formatInstitute;
         vm.saveInstitute = saveInstitute;
+        vm.deleteInstitute = deleteInstitute;
+        vm.createInstitute = createInstitute;
         vm.onInstituteSearchKey = onInstituteSearchKey;
 
         vm.$onInit = function () {
-            vm.selectedInstitute = undefined;
+            vm.newInstitute = {};
         };
 
 
@@ -63,11 +65,31 @@
                 .catch(e => Notification.warning(e.data.details));
         }
 
+        function createInstitute() {
+            if (!vm.newInstitute.name) return;
+            Restangular.all('institutes').post(vm.newInstitute)
+                .then(() => {
+                    Notification.info('Created');
+                    vm.newInstitute = {};
+                })
+                .catch(e => Notification.warning(e.data.details));
+        }
+
+        function deleteInstitute() {
+            if (!vm.selectedInstitute || !vm.selectedInstitute.id) return;
+            if (!confirm('Delete this institute')) return;
+            Restangular.one('institutes', vm.selectedInstitute.id).remove()
+                .then(() => {
+                    Notification.info('Deleted');
+                    vm.selectedInstitute = undefined;
+                })
+                .catch(e => Notification.warning(e.data.details));
+        }
+
         function onInstituteSearchKey(event) {
             if (event.key === 'Escape') {
                 event.preventDefault();
                 vm.selectedInstitute = undefined;
-
             }
         }
 

@@ -1,6 +1,7 @@
 <h1>Institutes</h1>
 <div class="row">
     <div class="col-xs-12">
+        <h3>Search and edit</h3>
         <input type="text"
                class="form-control"
                ng-model="vm.selectedInstitute"
@@ -47,6 +48,50 @@
         <button class="btn btn-primary"
                 ng-click="vm.saveInstitute()">
             Save
+        </button>
+        <button class="btn btn-primary"
+                ng-click="vm.deleteInstitute()">
+            Delete
+        </button>
+        <hr>
+        <h3>New</h3>
+        <table class="table" style="min-height: 74px;">
+            <tr>
+                <th>Name</th>
+                <th>Country</th>
+                <th>City</th>
+                <th>Shortname</th>
+                <th>Scopus Id</th>
+                <th>Group</th>
+                <th>Parent Id</th>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" ng-model="vm.newInstitute.name">
+                </td>
+                <td>
+                    <input type="text" ng-model="vm.newInstitute.country">
+                </td>
+                <td>
+                    <input type="text" ng-model="vm.newInstitute.city">
+                </td>
+                <td>
+                    <input type="text" ng-model="vm.newInstitute.shortname">
+                </td>
+                <td>
+                    <input type="text" ng-model="vm.newInstitute.scopusId">
+                </td>
+                <td>
+                    <input type="text" ng-model="vm.newInstitute.group">
+                </td>
+                <td>
+                    <input type="text" ng-model="vm.newInstitute.parentId">
+                </td>
+            </tr>
+        </table>
+        <button class="btn btn-primary"
+                ng-click="vm.createInstitute()">
+            Create
         </button>
     </div>
 </div>
