@@ -73,6 +73,7 @@
                                         </li>
                                         <li>
                                             <button ng-click="vm.openDocumentAuthorsForm(d)"
+                                                    ng-disabled="d.sourceTypeObj.type === 'invited_talk'"
                                                     class="btn btn-link">
                                                 <span class="fa fa-user fa-fw"></span>
                                                 Edit authors details
@@ -80,7 +81,7 @@
                                         </li>
                                         <li ng-if="!d.synchronized">
                                             <button ng-click="vm.synchronizeDraft(d, true)"
-                                                    ng-disabled="d.synchronized"
+                                                    ng-disabled="!d.scopusId && !d.doi"
                                                     class="btn btn-link">
                                                 <span class="fa fa-refresh fa-fw"></span>
                                                 Synchronize with scopus
@@ -88,6 +89,7 @@
                                         </li>
                                         <li ng-if="d.synchronized">
                                             <button ng-click="vm.synchronizeDraft(d, false)"
+                                                    ng-disabled="!d.scopusId && !d.doi"
                                                     class="btn btn-link">
                                                 <span class="fa fa-refresh fa-fw"></span>
                                                 Disable sync.

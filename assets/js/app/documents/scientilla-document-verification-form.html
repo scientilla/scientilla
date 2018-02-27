@@ -67,7 +67,8 @@
             </label>
         </div>
         <div class="form-group"
-             ng-hide="vm.verificationData.position<0">
+             ng-hide="vm.verificationData.position<0"
+             ng-if="vm.viewOralPresentation()">
             <label title="Were you selected to give a talk about this work?">
                 <input type="checkbox"
                        ng-model="vm.verificationData.oral_presentation"/>

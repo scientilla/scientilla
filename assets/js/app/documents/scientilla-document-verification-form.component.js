@@ -40,6 +40,7 @@
             vm.viewCopyToDraft = viewCopyToDraft;
             vm.viewLastCoauthor = viewLastCoauthor;
             vm.viewFirstCoauthor = viewFirstCoauthor;
+            vm.viewOralPresentation = viewOralPresentation;
             vm.verificationData = {};
             vm.canBeSubmitted = canBeSubmitted;
             if (vm.document2)
@@ -186,11 +187,15 @@
             }
 
             function viewFirstCoauthor() {
-                return vm.verificationData.position > 0 && vm.verificationData.position < vm.document.getAuthors().length - 1;
+                return vm.verificationData.position > 0 && vm.verificationData.position < vm.document.getAuthors().length - 1 && vm.document.sourceTypeObj.type !== 'invited_talk';
             }
 
             function viewLastCoauthor() {
-                return vm.verificationData.position > 0 && vm.verificationData.position < vm.document.getAuthors().length - 1;
+                return vm.verificationData.position > 0 && vm.verificationData.position < vm.document.getAuthors().length - 1 && vm.document.sourceTypeObj.type !== 'invited_talk';
+            }
+
+            function viewOralPresentation() {
+                return vm.verificationData.position >= 0 && vm.document.sourceTypeObj.type !== 'invited_talk';
             }
 
             function verify(user, documentId, verificationData, document2id) {
