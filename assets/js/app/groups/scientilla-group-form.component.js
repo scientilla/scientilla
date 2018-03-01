@@ -85,7 +85,7 @@
             active: {
                 inputType: 'select',
                 label: 'Active',
-                defaultValue: vm.group.active,
+                defaultValue: vm.group.active || true,
                 values: [
                     {label: 'Yes', value: true},
                     {label: 'No', value: false}
