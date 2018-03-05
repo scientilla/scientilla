@@ -20,7 +20,6 @@
                     user: getCurrentUser
                 },
                 access: {
-                    noLogin: true
                 }
             });
     }
