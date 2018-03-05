@@ -51,8 +51,6 @@
         }
 
         function removeCollaborator(user) {
-            console.log(vm.group.id);
-            console.log(vm.group.getFormerMembers());
             ModalService
                 .multipleChoiceConfirm('Removing group member',
                     `Are you sure you want to remove ${user.getDisplayName()} from the group members?`,
@@ -60,9 +58,6 @@
                 .then(function (buttonIndex) {
                     switch (buttonIndex) {
                         case 0:
-                            console.log(vm.group.getFormerMembers());
-                            console.log(user);
-                            console.log(vm.group.id);
                             return GroupsService.removeCollaborator(vm.group, user)
                                 .then(() => vm.refreshGroup()());
                     }
