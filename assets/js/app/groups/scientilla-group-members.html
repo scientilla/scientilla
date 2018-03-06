@@ -1,5 +1,5 @@
 <div>
-    <h2>Members</h2>
+    <h3>Members <small>{{vm.group.getActiveMembers().length}}</small></h3>
     <div ng-repeat="m in vm.group.getActiveMembers()">
         <div class="row">
             <div class="col-md-10">
@@ -11,12 +11,12 @@
             <div class="col-md-2 text-right">
             </div>
         </div>
-        <hr>
     </div>
     <div ng-if="vm.group.getActiveMembers().length === 0">No Members</div>
 </div>
+<hr>
 <div>
-    <h2>Collaborators</h2>
+    <h3>Collaborators <small>{{vm.group.getCollaborators().length}}</small></h3>
     <button type="button"
             ng-if="vm.isAdmin()"
             class="btn btn-link fa"
@@ -83,12 +83,12 @@
             <div class="col-md-2 text-right">
             </div>
         </div>
-        <hr>
     </div>
     <div ng-if="vm.group.getCollaborators().length === 0">No Collaborators</div>
 </div>
+<hr>
 <div>
-    <h2>Former Members</h2>
+    <h3>Former Members <small>{{vm.group.getFormerMembers().length}}</small></h3>
     <div ng-repeat="m in vm.group.getFormerMembers()">
         <div class="row">
             <div class="col-md-5">
@@ -108,7 +108,6 @@
             <div class="col-md-2 text-right">
             </div>
         </div>
-        <hr>
     </div>
     <div ng-if="vm.group.getFormerMembers().length === 0">No Formers Members</div>
 </div>
