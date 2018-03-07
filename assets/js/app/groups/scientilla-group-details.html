@@ -1,9 +1,9 @@
 <scientilla-backend-layout>
     <div>
         <h1>{{vm.group.getDisplayName()}}</h1>
-        <small>
+        <small ng-if="vm.group.scopusId">
             <a ng-href="https://www.scopus.com/affil/profile.uri?afid={{vm.group.scopusId}}" target="_blank">
-                Scopus
+                Scopus profile
             </a>
         </small>
     </div>
@@ -15,6 +15,10 @@
                 <scientilla-group-members ng-if="vm.group" group="vm.group" refresh-group="vm.getGroup"></scientilla-group-members>
             </uib-tab>
             <uib-tab index="1">
+                <uib-tab-heading>Groups</uib-tab-heading>
+                <scientilla-group-groups ng-if="vm.group" group="vm.group" refresh-group="vm.getGroup"></scientilla-group-groups>
+            </uib-tab>
+            <uib-tab index="2">
                 <uib-tab-heading>Documents</uib-tab-heading>
                 <scientilla-documents-list
                         ng-if="vm.group"

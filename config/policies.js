@@ -95,6 +95,8 @@ module.exports.policies = {
 
     MembershipController: defaultPolicy,
 
+    MembershipGroupController: defaultPolicy,
+
     SettingsController: _.defaults({
         getSettings: true,
     }, defaultPolicy),

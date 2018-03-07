@@ -46,6 +46,11 @@ module.exports = _.merge({}, ResearchEntity, {
             collection: 'membership',
             via: 'group'
         },
+        childGroups:{
+            collection: 'group',
+            via: 'parent_group',
+            through: 'membershipgroup'
+        },
         drafts: {
             collection: 'Document',
             via: 'draftGroupCreator'

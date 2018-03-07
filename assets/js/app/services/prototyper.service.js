@@ -396,6 +396,7 @@
             service.toUsersCollection(group.members);
             service.toUsersCollection(group.administrators);
             service.toDocumentsCollection(group.documents);
+            service.toGroupsCollection(group.childGroups);
             return group;
         }
 
