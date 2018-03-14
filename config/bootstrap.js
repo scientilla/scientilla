@@ -21,7 +21,6 @@ module.exports.bootstrap = async function (cb) {
     await initializeInstitutes();
     await initializeGroups();
     if (!isTest) {
-        Cron.init();
         await Cron.start();
     }
 
