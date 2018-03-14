@@ -87,5 +87,27 @@ CREATE OR REPLACE VIEW documentsuggestiongroup AS
                  AND "affiliation"."institute" = 1
                  AND NULLIF(d3.year, '') :: INT > 2006
            )
+         UNION
+         SELECT
+           ag."document"     AS "document",
+           mg."parent_group" AS "researchEntity"
+         FROM "membershipgroup" mg
+           JOIN "authorshipgroup" ag
+             ON mg."child_group" = ag."researchEntity"
+           JOIN document d
+             ON ag.document = d.id
+         WHERE
+           NOT EXISTS(
+               SELECT ag2.id
+               FROM "authorshipgroup" ag2
+               WHERE ag2."researchEntity" = mg."parent_group"
+                     AND ag2."document" = ag."document"
+           )
+           AND NOT EXISTS(
+               SELECT dsg.id
+               FROM "discardedgroup" dsg
+               WHERE dsg."researchEntity" = mg."parent_group"
+                     AND dsg."document" = ag."document"
+           )
        ) suggested;
 
