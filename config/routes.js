@@ -80,6 +80,12 @@ module.exports.routes = {
     'put /api/v1/groups/:researchEntityId/drafts/:documentId/authorships': 'Group.setAuthorhips',
     'put /api/v1/users/:researchEntityId/drafts/:documentId/authorships': 'User.setAuthorhips',
     'get /api/v1/externals': 'Document.externalSearch',
+    'post /api/v1/users/:researchEntityId/documents-not-duplicate': 'User.setDocumentAsNotDuplicate',
+    'post /api/v1/groups/:researchEntityId/documents-not-duplicate': 'Group.setDocumentAsNotDuplicate',
+    'post /api/v1/groups/:researchEntityId/remove-verify': 'Group.removeVerify',
+    'post /api/v1/users/:researchEntityId/remove-verify': 'User.removeVerify',
+
+    //Site API
     'get /api/v1/users/username/:username/publications': 'User.getPublications',
     'get /api/v1/groups/slug/:slug/publications': 'Group.getPublications',
     'get /api/v1/users/username/:username/high-impact-publications': 'User.getHighImpactPublications',
@@ -93,10 +99,6 @@ module.exports.routes = {
     'get /api/v1/users/username/:username/favorite-publications': 'User.getFavoritePublications',
     'get /api/v1/groups/slug/:slug/favorite-publications': 'Group.getFavoritePublications',
     'get /api/v1/users/username/:username/oral-presentations': 'User.getOralPresentations',
-    'post /api/v1/users/:researchEntityId/documents-not-duplicate': 'User.setDocumentAsNotDuplicate',
-    'post /api/v1/groups/:researchEntityId/documents-not-duplicate': 'Group.setDocumentAsNotDuplicate',
-    'post /api/v1/groups/:researchEntityId/remove-verify': 'Group.removeVerify',
-    'post /api/v1/users/:researchEntityId/remove-verify': 'User.removeVerify',
 
     //Commands
     'put /api/v1/status/enable': 'Status.enable',
