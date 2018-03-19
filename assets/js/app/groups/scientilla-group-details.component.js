@@ -11,11 +11,13 @@
         });
 
     GroupDetailsController.$inject = [
-        "GroupsService",
+        'GroupsService',
+        'context'
     ];
 
-    function GroupDetailsController(GroupsService) {
+    function GroupDetailsController(GroupsService, context) {
         const vm = this;
+        vm.researchEntity = context.getResearchEntity();
         vm.getGroup = getGroup;
 
         vm.$onInit = function () {

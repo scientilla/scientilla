@@ -14,7 +14,7 @@
                 <uib-tab-heading>Members</uib-tab-heading>
                 <scientilla-group-members ng-if="vm.group" group="vm.group" refresh-group="vm.getGroup"></scientilla-group-members>
             </uib-tab>
-            <uib-tab index="1">
+            <uib-tab index="1" ng-show="vm.group.childGroups.length || vm.researchEntity.isAdmin()">
                 <uib-tab-heading>Groups</uib-tab-heading>
                 <scientilla-group-groups ng-if="vm.group" group="vm.group" refresh-group="vm.getGroup"></scientilla-group-groups>
             </uib-tab>
