@@ -126,7 +126,11 @@ module.exports = _.merge({}, ResearchEntity, {
         attributes: {
             collection: 'Attribute',
             through: 'groupattribute'
-        }
+        },
+        groupAttributes: {
+            collection: 'groupattribute',
+            via: 'researchEntity',
+        },
     },
     getAuthorshipsData: async function (document, groupId, newAffiliationData = {}) {
         return {

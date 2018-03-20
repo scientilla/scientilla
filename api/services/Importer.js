@@ -1,4 +1,4 @@
-/* global Source, User, Group, SourceMetric, SourceTypes*/
+/* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute*/
 // Importer.js - in api/services
 
 "use strict";
@@ -7,7 +7,6 @@ const xlsx = require('xlsx');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request-promise');
-const loadJsonFile = require('load-json-file');
 const moment = require('moment');
 
 
@@ -213,17 +212,84 @@ async function importPeople() {
 }
 
 async function importGroups() {
-    sails.log.info('Import started');
-    const groupsPath = 'data/groups.json';
-    const groupNames = await loadJsonFile(groupsPath);
-    sails.log.info(groupNames.length + ' entries found');
-    for (let groupName of groupNames) {
-        const group = await Group.findOneByName(groupName);
-        if (group)
-            continue;
-        await Group.create({name: groupName});
+    sails.log.info('Group import started');
+
+    const researchDomains = [];
+    const url = sails.config.scientilla.mainInstituteImport.officialGroupsImportUrl;
+    const reqOptions = {
+        uri: url,
+        json: true
+    };
+
+    const {
+        research_domains: researchDomainsData,
+        research_structures: researchStructuresData
+    } = await request(reqOptions);
+
+    await Attribute.destroy({
+        key: {'!': researchDomainsData.map(rd => rd.code)},
+        category: 'research_domain'
+    });
+    for (const rdData of researchDomainsData) {
+        let researchDomain = await Attribute.findOrCreate({
+            key: rdData.code,
+            category: 'research_domain'
+        });
+        researchDomain = await Attribute.update({id: researchDomain.id}, {value: rdData});
+        researchDomains.push(researchDomain[0]);
     }
-    sails.log.info('Import finished');
+
+    for (const rsData of researchStructuresData) {
+        const group = await Group.findOrCreate({cdr: rsData.cdr});
+        await Group.update({id: group.id}, {
+            name: rsData.description,
+            type: rsData.type,
+            //PI
+            //starting date
+        });
+
+        if (rsData.main_research_domain) {
+            await clearResearchDomains([rsData.main_research_domain.code], group, 'main');
+            await addResearchDomain(rsData.main_research_domain.code, group, 'main');
+        }
+        else
+            await clearResearchDomains([], group, 'main');
+
+        await clearResearchDomains(rsData.interactions.map(i => i.code), group, 'interaction');
+        for (const ird of rsData.interactions)
+            await addResearchDomain(ird.code, group, 'interaction');
+    }
+
+    async function clearResearchDomains(correctRdCodes, group, type) {
+        let res;
+        if (!correctRdCodes.length)
+            res = await GroupAttribute.find({
+                researchEntity: group.id
+            });
+        else
+            res = await GroupAttribute.find({
+                attribute: {
+                    '!': researchDomains.filter(rd => correctRdCodes.includes(rd.key)).map(rd => rd.id),
+                },
+                researchEntity: group.id
+            });
+
+        //query language does not support JSON
+        const toDeleteIds = res.filter(ga => ga.extra.type === type).map(ga => ga.id);
+        if (toDeleteIds.length)
+            await GroupAttribute.destroy({id: toDeleteIds});
+    }
+
+    async function addResearchDomain(rdCode, group, type) {
+        const rd = researchDomains.find(rd => rd.key === rdCode);
+        if (rd) {
+            const res = await GroupAttribute.find({attribute: rd.id, researchEntity: group.id});
+            if (!res.filter(ga => ga.extra.type === type).length)
+                await GroupAttribute.create({attribute: rd.id, researchEntity: group.id, extra: {type}});
+        }
+    }
+
+    sails.log.info('Group import finished');
 }
 
 
