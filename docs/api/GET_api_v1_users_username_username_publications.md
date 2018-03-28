@@ -627,4 +627,4 @@ Possible errors:
 }
 ```
 
-[API docs](/docs/README.md)
+[API docs](/docs/api/README.md)
