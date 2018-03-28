@@ -184,7 +184,10 @@
                 'Undo',
                 'Do you want to undo the last changes?',
                 ['Proceed'])
-                .then(() => vm.document = _.cloneDeep(documentBackup))
+                .then(res => {
+                    if (res === 0)
+                        vm.document = _.cloneDeep(documentBackup);
+                })
                 .catch(() => true);
         }
 

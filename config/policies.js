@@ -82,6 +82,7 @@ module.exports.policies = {
         getPublicDocuments: true,
         getPublications: true,
         getHighImpactPublications: true,
+        getFavoritePublications: true,
         getDisseminationTalks: true,
         getScientificTalks: true,
         getMBOInstitutePerformance: true,
@@ -93,6 +94,8 @@ module.exports.policies = {
     }, defaultPolicy),
 
     MembershipController: defaultPolicy,
+
+    MembershipGroupController: defaultPolicy,
 
     SettingsController: _.defaults({
         getSettings: true,
@@ -129,6 +132,8 @@ module.exports.policies = {
         getPublicDocuments: true,
         getPublications: true,
         getHighImpactPublications: true,
+        getFavoritePublications: true,
+        getOralPresentations: true,
         getDisseminationTalks: true,
         getScientificTalks: true,
         getMBOOverallPerformance: true,

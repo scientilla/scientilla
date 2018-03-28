@@ -8,10 +8,11 @@
         'userConstants',
         'DocumentLabels',
         'DocumentKinds',
-        'documentFieldsRules'
+        'documentFieldsRules',
+        'documentOrigins'
     ];
 
-    function Prototyper(userConstants, DocumentLabels, DocumentKinds, documentFieldsRules) {
+    function Prototyper(userConstants, DocumentLabels, DocumentKinds, documentFieldsRules, documentOrigins) {
         const service = {
             toUserModel: toUserModel,
             toUsersCollection: applyToAll(toUserModel),
@@ -66,7 +67,8 @@
                     draftCreator: this.id,
                     kind: DocumentKinds.DRAFT,
                     type: documentTypeObj.key,
-                    sourceType: documentTypeObj.defaultSource
+                    sourceType: documentTypeObj.defaultSource,
+                    origin: documentOrigins.SCIENTILLA
                 };
                 return documentPrototype.create(documentData);
             },
@@ -113,7 +115,8 @@
                     draftCreator: this.id,
                     kind: DocumentKinds.DRAFT,
                     type: documentTypeObj.key,
-                    sourceType: documentTypeObj.defaultSource
+                    sourceType: documentTypeObj.defaultSource,
+                    origin: documentOrigins.SCIENTILLA
                 };
                 return documentPrototype.create(documentData);
             },
@@ -177,7 +180,9 @@
                 'wosId',
                 'authorships',
                 'affiliations',
-                'institutes'
+                'institutes',
+                'synchronized',
+                'origin'
             ],
             create: function (documentData) {
                 var fields = _.union(['kind', 'draftCreator', 'draftGroupCreator'], documentPrototype.fields);
@@ -285,6 +290,46 @@
                     base26Value[0] = base26Chars[base26Chars.indexOf(base26Value[0]) - 1];
 
                 return base26Value.map(c => alphabetMapper[c]).join('');
+            },
+            isSuggested: function (researchEntity) {
+                const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
+                return (this.kind === DocumentKinds.VERIFIED || this.isExternal()) && !this[f].some(re => re.id === researchEntity.id);
+            },
+            isDraft: function () {
+                return this.kind === DocumentKinds.DRAFT;
+            },
+            isVerified: function (researchEntity) {
+                const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
+                return this[f].some(re => re.id === researchEntity.id);
+            },
+            isExternal: function () {
+                return this.kind === DocumentKinds.EXTERNAL;
+            },
+            getStringKind(researchEntity) {
+                if (this.isSuggested(researchEntity))
+                    return 'Suggested';
+                if (this.isDraft())
+                    return 'Draft';
+                if (this.isVerified(researchEntity))
+                    return 'Verified';
+            },
+            getComparisonDuplicate() {
+                return this.getComparisonDuplicates()[0];
+            },
+            getComparisonDuplicates() {
+                let duplicates;
+                if (this.isDraft())
+                    duplicates =  this.duplicates;
+                else
+                    duplicates = this.duplicates.filter(d => d.duplicateKind === 'v');
+                duplicates.sort((a, b) => {
+                    if (a.duplicateKind === DocumentKinds.VERIFIED)
+                        return -1;
+                    if (b.duplicateKind === DocumentKinds.VERIFIED)
+                        return 1;
+                    return 0;
+                });
+                return _.uniqBy(duplicates, 'duplicate');
             }
         };
 
@@ -351,17 +396,32 @@
             service.toUsersCollection(group.members);
             service.toUsersCollection(group.administrators);
             service.toDocumentsCollection(group.documents);
+            service.toGroupsCollection(group.childGroups);
             return group;
         }
 
         function toDocumentModel(document) {
             initializeAffiliations(document);
             _.defaultsDeep(document, documentPrototype);
+            checkDuplicates(document);
             service.toUsersCollection(document.authors);
             service.toTagLabelsCollection(document.tagLabels);
             service.toTagLabelsCollection(document.groupTagLabels);
             service.toAuthorshipsCollection(document.authorships);
             return document;
+        }
+
+        function checkDuplicates(document) {
+            document.isComparable = (
+                    document.isDraft() &&
+                    document.duplicates.length
+                ) ||
+                (
+                    !document.isDraft() &&
+                    document.duplicates &&
+                    document.duplicates.length &&
+                    document.duplicates.some(d => d.duplicateKind === 'v')
+                );
         }
 
         function toMembershipModel(membership) {

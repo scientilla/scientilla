@@ -10,6 +10,10 @@
             <div class="col-md-12">
                 <scientilla-multicheck>
                     <buttons>
+                        <scientilla-multicheck-button on-click="vm.verifyDocuments">
+                            <span class="fa fa-check"></span>
+                            Verify
+                        </scientilla-multicheck-button>
                         <scientilla-multicheck-button on-click="vm.copyDocuments">
                             <span class="fa fa-copy"></span>
                             Copy
@@ -25,15 +29,34 @@
                         <scientilla-checkable ng-repeat="d in vm.documents" item="d">
                             <div class="row">
                                 <div class="col-md-10">
-                                    <scientilla-document document="d" section="vm.documentListSections.EXTERNAL"></scientilla-document>
+                                    <scientilla-document document="d"
+                                                         section="vm.documentListSections.EXTERNAL"></scientilla-document>
                                 </div>
                                 <div class="col-md-2 text-right">
                                     <h3>
-                                        <button class="btn btn-primary"
-                                                ng-click="vm.copyDocument(d, vm.researchEntity)">
-                                            <span class="fa fa-copy"></span>
-                                            Copy
-                                        </button>
+                                        <div class="btn-group scientilla-dropdown-align-right" uib-dropdown>
+                                            <button ng-disabled="!d.isValid()"
+                                                    ng-click="vm.verifyDocument(d)"
+                                                    type="button"
+                                                    class="btn btn-primary">
+                                                <span class="fa fa-check"></span>
+                                                Verify
+                                            </button>
+                                            <button type="button"
+                                                    class="btn dropdown-toggle btn-primary"
+                                                    data-toggle="dropdown">
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-right">
+                                                <li>
+                                                    <button class="btn btn-link"
+                                                            ng-click="vm.copyDocument(d)">
+                                                        <span class="fa fa-copy"></span>
+                                                        Copy to drafts
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </h3>
                                 </div>
                             </div>

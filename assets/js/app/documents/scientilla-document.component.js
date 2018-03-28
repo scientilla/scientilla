@@ -62,6 +62,10 @@
             documentListSections.VERIFIED
         ].includes(vm.section);
 
+        const showExternalLabel = [
+            documentListSections.SUGGESTED
+        ].includes(vm.section);
+
         vm.metrics = {
             CITATIONS: 'citations',
             SJR: 'SJR',
@@ -75,8 +79,13 @@
             vm.showPrivateTags = vm.showPrivateTags || false;
             vm.verifiedCount = getVerifiedCount();
             vm.scopusCitationsYearStr = getScopusCitationPerYearString();
+
+            if(vm.document.kind === 'e' && showExternalLabel)
+                vm.document.addLabel(DocumentLabels.EXTERNAL);
+
             if (vm.checkDuplicates)
                 checkDuplicate();
+
 
             addLabels();
         };

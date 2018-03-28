@@ -54,14 +54,10 @@ module.exports = {
     readQueryFromFs: (filePath) => {
         return fs.readFileSync(filePath, 'utf-8');
     },
-    query: sql => {
-
-        return db
-            .query(sql)
-            .catch(err => {
-                sails.log.debug('The following query generated an error');
-                sails.log.debug(sql);
-                sails.log.debug(err);
-            });
-    }
+    query: (sql, params) => db.query(sql, params)
+        .catch(err => {
+            sails.log.debug('The following query generated an error');
+            sails.log.debug(sql);
+            sails.log.debug(err);
+        })
 };

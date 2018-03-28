@@ -199,11 +199,6 @@ form.autosave.default {
   border-left: 2px solid @iit-form-default;
 }
 
-.scientilla-wizard-container {
-  background-color: @iit-grey-dark;
-  color: @iit-white;
-}
-
 .scientilla-responsive-youtube {
   height: 0;
   overflow: hidden;
@@ -223,7 +218,7 @@ form.autosave.default {
 }
 
 .scientilla-multiple-choice-message {
-  white-space: pre;
+  white-space: pre-line;
 }
 
 .scientilla-chart-preview {
@@ -255,6 +250,11 @@ form.autosave.default {
 
 .scientilla-icon-scopus {
   background: no-repeat left center url(data:image/gif;base64,R0lGODlhIAAgAOMOAOlxHOp1I+t7LOyHQO6UU/CgZ/KsevS4jvbFovfOsfrdyfzp3P728P77+f///////yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAA8ALAAAAAAgACAAAASQEMhJq7046827/2AojmRpbsRxFAE2qMfACU5tG9Vh74JWF5KAAThhOA4tySAhwxQciYyRENIdnEcRrYExkhI1asXBKBlqiyRg4FiYAoufsn0CEGrNWh3wVEgUDkQmbH5reiFqf4ETOgw9FAGJFX0qRmUUZw4KMHFNFwIJDTUMVxYBCEZoCHusra6vsLGys7IRADs=);
+  background-size: 16px 16px;
+}
+
+.scientilla-icon-scopus-deleted {
+  background: no-repeat left center url(data:image/gif;base64,R0lGODlhIAAgAMZqAAAAAAEAAAIBAAMBAAQCAAUCAQUDAQcDAQcEAQgEAQkEAQsFAQwGAQ0GAg8HAhEIAhAJBBMJAhQKAhYKAxkMAxsNAxwOAx8PBBUSDyAQBBQUFCQRBCgTBRkXFDEYBjUaBjYaBi0eEzocBzscBysrKy8sKVEnCkIsHEMtHVcqClorC10tCzU1NWAvDGQwDGcyDGs0DU88Lm82DXI3DnY5Dnk6DldCM349D389D0xJR01KSIRAEIVBEIxEEVRRT5JHEp9NE6RQFKtTFbBWFbZYFrpaFsRfF8hhGMFlJMxjGM9lGdNmGdZoGtlpGtxrGt5sG+FtG+NuG+RuG+VvHOZwHOhxHOlxHOp1I+t7LNiGS+yHQO6UU/CgZ/KsevS4jvbFotHR0ffOsdbW1u7TwPrdyerq6vzp3PHx8f728P77+f///////////////////////////////////////////////////////////////////////////////////////yH+EUNyZWF0ZWQgd2l0aCBHSU1QACH5BAEKAH8ALAAAAAAgACAAAAf+gFaCg4SFhoc/AxEAh42Ogz0CAAASj5aFPAGTAASXnjebAAVAnpY0oQdBpY8yoQlCq41VL6ELQ7GHVS2hDUSXW15eXFeGVCqhEEWWWGrNzl2EUzahGmBqWI/NXIJXXduCUj6hE0ZaYVqOXGphjVE6oRRHnl5qXodQKKEWSaXMaYZPRITKoCRWmGZbBjkBEWrDElxWujQzc6WJh1AcmEDkZkZNmRChSjTZSCgLiVAszpAcpGRDqA9j1HzbmORCqBFQtDSDSOxIhVAnogiihwYboSvEGnER0yFUDimEJKohE8xLR3SNkGAIFWOKoStf0Dgz88VRkQehTFBZKYiIg1AsKaqwtTKEQagVctkKURDKxVwrQRCEgvHXioFQMwpbCVVD8eJJOBw/3iHZSiAAOw==);
   background-size: 16px 16px;
 }
 
@@ -341,15 +341,19 @@ scientilla-document-label {
 }
 
 .scientilla-document-label-duplicate, .scientilla-document-label-alreadyverified, .scientilla-document-label-alreadyindrafts {
-  background-color: #ff9933;
+  background-color: @iit-orange-duplicate;
 }
 
 .scientilla-document-label-new {
-  background-color: #2ca02c;
+  background-color: @iit-green-new;
 }
 
 .scientilla-document-label-discarded {
   background-color: @iit-alert;
+}
+
+.scientilla-document-label-external {
+  background-color: @iit-green-new;
 }
 
 /*Scientilla multicheck*/
@@ -428,7 +432,7 @@ body.frontend {
 /*Scientilla admin backup*/
 #dump-list {
   max-height: 300px;
-  overflow-y:scroll;
+  overflow-y: scroll;
 }
 
 #dump-list li {
@@ -436,6 +440,26 @@ body.frontend {
 }
 
 /*Scientilla group details*/
-scientilla-group-details h2 {
+scientilla-group-details h3 {
   display: inline;
+}
+
+/*Scientilla document comparison form*/
+
+.scientilla-field-highlighted {
+  background-color: lightgoldenrodyellow;
+}
+
+/*Scientilla modal*/
+
+.scientilla-modal-large > .modal-dialog {
+  width: 95%;
+}
+
+.btn.btn-compare {
+  color: @iit-white;
+  background-color: @iit-orange-duplicate;
+  &:focus, &:hover {
+    background-color: darken(@iit-orange-duplicate, 20%);
+  }
 }

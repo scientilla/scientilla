@@ -1,18 +1,16 @@
 <div class="scientilla-document-details-authors">
-    <small class="scientilla-document-authors">
-        <span ng-bind-html='vm.document.authorsStr | authorsCorresponding:vm.document | authorsVerified:vm.document | authorsAffiliations:vm.document'></span>
-    </small>
+    <scientilla-document-authors document="vm.document"></scientilla-document-authors>
 </div>
 <div class="scientilla-document-details-title">
     <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
 </div>
 <div>
-    <small class="scientilla-document-institutes">
-        <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} -
-            {{institute.name}}
-        </div>
-    </small>
+    <scientilla-document-affiliations document="vm.document"></scientilla-document-affiliations>
 </div>
+<div>
+    <scientilla-document-authors-legend document="vm.document"></scientilla-document-authors-legend>
+</div>
+
 
 <div ng-if="vm.document.abstract" class="scientilla-document-details-abstract">
     <hr>
@@ -50,9 +48,15 @@
     <div ng-if="vm.document.scopusId">
         <small>
             <label>Scopus id:</label>
-            {{vm.document.scopusId}}
-            <a href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document.scopusId}}&origin=inward"
-               target="_blank">[View at Scopus]</a>
+            <span ng-if="!vm.document.scopus_id_deleted">
+                {{vm.document.scopusId}}
+                <a href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document.scopusId}}&origin=inward"
+                   target="_blank">[View at Scopus]</a>
+            </span>
+            <span ng-if="vm.document.scopus_id_deleted">
+                <span class="text-line-through">{{vm.document.scopusId}}</span>
+                <span class="text-danger">- This ID is not available in Scopus anymore</span>
+            </span>
         </small>
     </div>
     <div ng-if="vm.document.wosId">

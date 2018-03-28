@@ -13,9 +13,7 @@
         <div class="col-xs-11 scientilla-document-metadata">
             <div>
                 <scientilla-document-type document="vm.document"></scientilla-document-type>
-                <small class="scientilla-document-authors">
-                    <span ng-bind-html='vm.document.authorsStr | authorsCorresponding:vm.document | authorsVerified:vm.document | authorsMainGroup:vm.document'></span>
-                </small>
+                <scientilla-document-authors document="vm.document" type="preview"></scientilla-document-authors>
             </div>
             <div>
                 <scientilla-document-label ng-repeat="l in vm.document.labels" label="l"></scientilla-document-label>
@@ -41,8 +39,13 @@
             </div>
             <div ng-if="vm.document.origin==='scopus'" class="scientilla-document-icons-bottom">
                 <div class="scientilla-document-icon-container">
-                <span class="scientilla-icon scientilla-icon-scopus"
-                      title="This document has been imported from Scopus"></span>
+                    <span ng-if="!vm.document.scopus_id_deleted" class="scientilla-icon scientilla-icon-scopus"
+                          uib-tooltip-html="'This document has been imported from Scopus'"
+                          tooltip-class="scientilla-tooltip text-left"></span>
+                    <span ng-if=" vm.document.scopus_id_deleted" class="scientilla-icon scientilla-icon-scopus-deleted"
+                          uib-tooltip-html="'This document has been imported from Scopus but this ID is not available in Scopus anymore -
+                    IT IS STRONGLY ADVISED TO LOOK FOR A WORKING SCOPUS ID NOT TO MISS NEW CITATIONS!'"
+                          tooltip-class="text-left scientilla-tooltip"></span>
                 </div>
                 <span class="fa fa-refresh"
                       ng-if="vm.isSynchronized()"

@@ -5,15 +5,18 @@
 
     ResearchEntityServiceFactory.$inject = [
         'Restangular',
-        'DocumentLabels'
+        'DocumentLabels',
+        'DocumentKinds'
     ];
 
-    function ResearchEntityServiceFactory(Restangular, DocumentLabels) {
+    function ResearchEntityServiceFactory(Restangular, DocumentLabels, DocumentKinds) {
         var service = {};
 
+        service.getDocument = getDocument;
         service.getDocuments = getDocuments;
         service.getDraft = getDraft;
         service.getDrafts = getDrafts;
+        service.getDoc = getDoc;
         service.getSuggestedDocuments = getSuggestedDocuments;
         service.getDiscardedDocuments = getDiscardedDocuments;
         service.verifyDocument = verifyDocument;
@@ -32,10 +35,13 @@
         service.deleteDrafts = deleteDrafts;
         service.setPrivateTags = setPrivateTags;
         service.searchExternalDocument = searchExternalDocument;
+        service.removeDocument = removeDocument;
+        service.documentsNotDuplicate = documentsNotDuplicate;
         service.setAuthorshipPrivacy = setAuthorshipPrivacy;
         service.setAuthorshipFavorite = setAuthorshipFavorite;
+        service.removeVerify = removeVerify;
 
-        var documentPopulates = [
+        const documentPopulates = [
             'source',
             'authors',
             'authorships',
@@ -52,18 +58,22 @@
             'groups'
         ];
 
+        const verificationFields = [
+            'position',
+            'affiliations',
+            'corresponding',
+            'synchronize',
+            'first_coauthor',
+            'last_coauthor',
+            'oral_presentation'
+        ];
+
         function getDocuments(researchEntity, query) {
             var populate = {populate: documentPopulates};
 
             var q = _.merge({}, query, populate);
 
             return researchEntity.getList('documents', q);
-        }
-
-        function getDraft(researchEntity, draftId) {
-            var populate = {populate: documentPopulates};
-
-            return researchEntity.one('drafts', draftId).get(populate);
         }
 
         function getDrafts(researchEntity, query) {
@@ -108,7 +118,6 @@
         }
 
         function verifyDocument(researchEntity, id, verificationData) {
-            const verificationFields = ['position', 'affiliations', 'corresponding', 'synchronize', 'public'];
             verificationData = _.pick(verificationData, verificationFields);
             verificationData.id = id;
             return researchEntity
@@ -117,11 +126,10 @@
 
         function verifyDraftAsGroup(researchEntity, draftId) {
             return researchEntity.one('drafts', draftId)
-                .customPUT({public: true}, 'verified');
+                .customPUT({}, 'verified');
         }
 
         function verifyDraftAsUser(researchEntity, draftId, verificationData) {
-            const verificationFields = ['position', 'affiliations', 'corresponding', 'synchronize', 'public'];
             verificationData = _.pick(verificationData, verificationFields);
             return researchEntity.one('drafts', draftId)
                 .customPUT(verificationData, 'verified');
@@ -166,7 +174,7 @@
         }
 
         function copyDocuments(researchEntity, documents) {
-            const documentIds = documents.filter(d => d.kind === 'e').map(d => d.id);
+            const documentIds = documents.map(d => d.id);
             return researchEntity.customPOST({documentIds: documentIds}, 'copy-documents');
         }
 
@@ -197,6 +205,62 @@
             return Restangular.all('externals')
                 .customGET('', {origin, searchKey, searchValue});
         }
+
+
+        function removeDocument(researchEntity, doc) {
+            if (doc.isDraft())
+                return deleteDraft(researchEntity, doc.id);
+            else
+                return discardDocument(researchEntity, doc.id);
+        }
+
+        /* jshint ignore:start */
+
+        async function getDoc(researchEntity, docId, docKind) {
+            if (docKind === DocumentKinds.DRAFT)
+                return service.getDraft(researchEntity, docId);
+            else
+                return service.getDocument(researchEntity, docId);
+        }
+
+        async function getDocument(researchEntity, documentId) {
+            const populate = {populate: documentPopulates};
+
+            const res = await researchEntity.one('documents', documentId).get(populate);
+            const document = res[0];
+            Restangular.restangularizeElement(researchEntity, document, 'documents');
+            return document;
+
+            // return Restangular.one('documents', documentId).get(populate);
+        }
+
+        async function getDraft(researchEntity, draftId) {
+            var populate = {populate: documentPopulates};
+
+            const res = await researchEntity.one('drafts', draftId).get(populate);
+            const draft = res[0];
+            Restangular.restangularizeElement(researchEntity, draft, 'drafts');
+            return draft;
+        }
+
+        async function documentsNotDuplicate(researchEntity, doc1, doc2) {
+            const data = {
+                researchEntityId: researchEntity.id,
+                document1Id: doc1.id,
+                document2Id: doc2.id
+            };
+            await researchEntity.customPOST(data, 'documents-not-duplicate');
+        }
+
+        async function removeVerify(researchEntity, doc1Id, verificationData, doc2Id) {
+            verificationData = _.pick(verificationData, verificationFields);
+            verificationData.document1Id = doc1Id;
+            verificationData.document2Id = doc2Id;
+            return researchEntity
+                .customPOST(verificationData, 'remove-verify');
+        }
+
+        /* jshint ignore:end */
 
         return service;
     }

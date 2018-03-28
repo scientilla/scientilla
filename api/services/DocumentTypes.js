@@ -1,9 +1,9 @@
-/* global SourceType*/
+/* global DocumentTypes*/
 // DocumentTypes.js - in api/services
-
 "use strict";
 
-let documentTypes = [];
+const documentTypesData = require('../dataInit/documentType.json').values;
+const documentTypes = {};
 
 module.exports = {
     ARTICLE: 'article',
@@ -23,6 +23,15 @@ module.exports = {
     SHORT_SURVEY: 'short_survey',
     PHD_THESIS: 'phd_thesis',
     POSTER: 'poster',
-    init: async () => documentTypes = await DocumentType.find(),
-    get: () => documentTypes
+    init: async () => {
+        let documentTypesArray = await DocumentType.find();
+        if (!documentTypesArray.length)
+            documentTypesArray = await DocumentType.create(documentTypesData);
+        documentTypesArray.forEach(dt => {
+            documentTypes[dt.id] = dt;
+            documentTypes[dt.key] = dt;
+        });
+    },
+    get: () => documentTypes,
+    getDocumentType: (id) => documentTypes[id]
 };

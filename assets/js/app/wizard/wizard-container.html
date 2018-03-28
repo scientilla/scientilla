@@ -1,6 +1,7 @@
-<div class="scientilla-wizard-container">
+<div>
     <div>
         <scientilla-button
+                ng-if="vm.getStepsNumber() > 1"
                 ng-disabled="vm.isNotPrev() || !vm.canChangeStep"
                 click="vm.prevStep()">
             Previous
@@ -28,14 +29,17 @@
         <wizard-scopus-edit
                 ng-if="vm.isStep('scopus-edit')"
                 wizard-commands="vm.wizardCommands"
-                user="vm.user"></wizard-scopus-edit>
+                user="vm.researchEntity"></wizard-scopus-edit>
 
         <wizard-alias-edit
                 ng-if="vm.isStep('alias-edit')"
-                user="vm.user"></wizard-alias-edit>
+                user="vm.researchEntity"></wizard-alias-edit>
 
         <wizard-tutorial ng-if="vm.isStep('tutorial')"></wizard-tutorial>
 
         <wizard-admin-tutorial ng-if="vm.isStep('admin-tutorial')"></wizard-admin-tutorial>
+
+        <wizard-summary-overview ng-if="vm.isStep('summary-overview')"></wizard-summary-overview>
+        <wizard-summary-metrics ng-if="vm.isStep('summary-metrics')"></wizard-summary-metrics>
     </div>
 </div>

@@ -42,7 +42,7 @@
             const noRedirectUrls = ['/unavailable', '/login'];
             const goingToNoRedirectUrl = next.$$route && noRedirectUrls.includes(next.$$route.originalPath);
             if (!goingToNoRedirectUrl && !AuthService.isAvailable && !AuthService.isAdmin) {
-                Notification.warning('Sorry but scientilla is temporary unavailable. Try again later.');
+                Notification.warning('Sorry but scientilla is temporarly unavailable. Try again later.');
                 ModalService.dismiss(null);
                 path.goTo('/unavailable');
                 return;
@@ -84,7 +84,7 @@
             if (status === 'DISABLED') {
                 AuthService.isAvailable = false;
                 if (!isAdmin) {
-                    Notification.warning('Sorry but scientilla is temporary unavailable. Try again later.');
+                    Notification.warning('Sorry but scientilla is temporarly unavailable. Try again later.');
                     ModalService.dismiss(null);
                     path.goTo('/unavailable');
                 }
@@ -100,6 +100,7 @@
             return data;
         });
 
+        Restangular.extendModel('documents', Prototyper.toDocumentModel);
         Restangular.extendModel('users', Prototyper.toUserModel);
         Restangular.extendModel('groups', Prototyper.toGroupModel);
         Restangular.extendModel('drafts', Prototyper.toDocumentModel);

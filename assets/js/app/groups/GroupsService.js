@@ -23,6 +23,8 @@
         service.getProfile = getProfile;
         service.addCollaborator = addCollaborator;
         service.removeCollaborator = removeCollaborator;
+        service.addRelative = addRelative;
+        service.removeChild = removeChild;
 
         return service;
 
@@ -81,12 +83,12 @@
 
 
         function getGroup(groupId) {
-            const populate = {populate: ['members', 'administrators', 'attributes', 'memberships']};
+            const populate = {populate: ['members', 'administrators', 'attributes', 'memberships', 'childGroups', 'parentGroups']};
             return service.one(groupId).get(populate);
         }
 
         function getGroups(query) {
-            const populate = {populate: ['members', 'administrators', 'attributes', 'memberships']};
+            const populate = {populate: ['administrators', 'attributes']};
             const q = _.merge({}, query, populate);
 
             return service.getList(q);
@@ -112,6 +114,28 @@
             return Restangular
                 .one('memberships', membership.id)
                 .remove();
+        }
+
+        function addRelative(parent, child) {
+            const newMembership = {
+                parent_group: parent.id,
+                child_group: child.id
+            };
+            return Restangular
+                .all('membershipgroups')
+                .customPOST(newMembership);
+        }
+
+        function removeChild(parent, child) {
+            const qs = {where: {parent_group: parent.id, child_group: child.id}};
+            return Restangular.all('membershipgroups').customGET('', qs)
+                .then(res => {
+                    if (!res.items[0]) return;
+
+                    return Restangular
+                        .one('membershipgroups', res.items[0].id)
+                        .remove();
+                });
         }
 
         return service;

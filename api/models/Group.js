@@ -46,6 +46,11 @@ module.exports = _.merge({}, ResearchEntity, {
             collection: 'membership',
             via: 'group'
         },
+        childGroups:{
+            collection: 'group',
+            via: 'parent_group',
+            through: 'membershipgroup'
+        },
         drafts: {
             collection: 'Document',
             via: 'draftGroupCreator'
@@ -69,6 +74,11 @@ module.exports = _.merge({}, ResearchEntity, {
             collection: 'Document',
             via: 'researchEntity',
             through: 'highimpactpublicationgroup'
+        },
+        favoritePublications: {
+            collection: 'Document',
+            via: 'researchEntity',
+            through: 'favoritepublicationgroup'
         },
         disseminationTalks: {
             collection: 'Document',
@@ -98,6 +108,11 @@ module.exports = _.merge({}, ResearchEntity, {
             collection: 'document',
             via: 'researchEntity',
             through: 'externaldocumentgroup'
+        },
+        notDuplicateDocuments: {
+            collection: 'document',
+            via: 'researchEntity',
+            through: 'documentnotduplicategroup'
         },
         getType: function () {
             return 'group';

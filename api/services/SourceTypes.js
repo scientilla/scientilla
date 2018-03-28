@@ -3,6 +3,7 @@
 
 "use strict";
 
+const sourceTypesData = require('../dataInit/sourceType.json').values;
 let sourceTypes = [];
 
 module.exports = {
@@ -17,7 +18,11 @@ module.exports = {
     MEDIA: 'media',
     PUBLIC_EVENT: 'public_event',
     OUTREACH: 'outreach',
-    init: async () => sourceTypes = await SourceType.find(),
+    init: async () => {
+        sourceTypes = await SourceType.find();
+        if (!sourceTypes.length)
+            sourceTypes = await SourceType.create(sourceTypesData);
+    },
     get: () => sourceTypes
 }
 ;

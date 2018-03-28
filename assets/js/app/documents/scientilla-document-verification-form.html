@@ -1,18 +1,15 @@
 <h1>Document Verification</h1>
 <div>
-    <small class="scientilla-document-authors">
-        <span ng-bind-html='vm.document.authorsStr | authorsCorresponding:vm.document | authorsVerified:vm.document | authorsAffiliations:vm.document'></span>
-    </small>
+    <scientilla-document-authors document="vm.document"></scientilla-document-authors>
 </div>
 <div>
     <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
 </div>
 <div>
-    <small class="scientilla-document-institutes">
-        <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} -
-            {{institute.name}}
-        </div>
-    </small>
+    <scientilla-document-affiliations document="vm.document"></scientilla-document-affiliations>
+</div>
+<div>
+    <scientilla-document-authors-legend document="vm.document"></scientilla-document-authors-legend>
 </div>
 <div>
     <small class="scientilla-document-source">
@@ -50,7 +47,32 @@
             <label title="Are you the corresponding author?">
                 <input type="checkbox"
                        ng-model="vm.verificationData.corresponding"/>
-                Corresponding author
+                * - Corresponding author
+            </label>
+        </div>
+        <div class="form-group"
+             ng-if="vm.viewFirstCoauthor()">
+            <label title="Are you a first-coauthor?">
+                <input type="checkbox"
+                       ng-model="vm.verificationData.first_coauthor"/>
+                + - Co-first author
+            </label>
+        </div>
+        <div class="form-group"
+             ng-if="vm.viewLastCoauthor()">
+            <label title="Are you a last-coauthor?">
+                <input type="checkbox"
+                       ng-model="vm.verificationData.last_coauthor"/>
+                # - Co-Last author
+            </label>
+        </div>
+        <div class="form-group"
+             ng-hide="vm.verificationData.position<0"
+             ng-if="vm.viewOralPresentation()">
+            <label title="Were you selected to give a talk about this work?">
+                <input type="checkbox"
+                       ng-model="vm.verificationData.oral_presentation"/>
+                <span class="fa fa-microphone"></span> - Oral presentation
             </label>
         </div>
     </div>
@@ -68,13 +90,13 @@
         </div>
     </div>
     <scientilla-button type="submit"
-                       click="vm.submit()"
+                       click="vm.submit"
                        ng-disabled="!vm.canBeSubmitted()">
         Verify
     </scientilla-button>
     <scientilla-button ng-if="vm.viewCopyToDraft()"
                        type="submit"
-                       click="vm.copyToDraft()">
+                       click="vm.copyToDraft">
         Copy to draft
     </scientilla-button>
     <scientilla-button type="cancel" click="vm.cancel()">Cancel</scientilla-button>

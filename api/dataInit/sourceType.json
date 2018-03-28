@@ -1,0 +1,70 @@
+{
+  "values": [
+    {
+      "key": "book",
+      "label": "Book",
+      "section": "",
+      "type": "publication"
+    },
+    {
+      "key": "bookseries",
+      "label": "Book Series",
+      "section": "",
+      "type": "publication"
+    },
+    {
+      "key": "scientific_conference",
+      "label": "Conference",
+      "section": "Scientific Event",
+      "type": "invited_talk"
+    },
+    {
+      "key": "conference",
+      "label": "Conference",
+      "section": "",
+      "type": "publication"
+    },
+    {
+      "key": "institute",
+      "label": "Institute",
+      "section": "Scientific Event",
+      "type": "invited_talk"
+    },
+    {
+      "key": "journal",
+      "label": "Journal",
+      "section": "",
+      "type": "publication"
+    },
+    {
+      "key": "media",
+      "label": "Media",
+      "section": "Dissemination",
+      "type": "invited_talk"
+    },
+    {
+      "key": "outreach",
+      "label": "Outreach",
+      "section": "Dissemination",
+      "type": "invited_talk"
+    },
+    {
+      "key": "public_event",
+      "label": "Public Event",
+      "section": "Dissemination",
+      "type": "invited_talk"
+    },
+    {
+      "key": "school",
+      "label": "School (Summer school, ...)",
+      "section": "Scientific Event",
+      "type": "invited_talk"
+    },
+    {
+      "key": "workshop",
+      "label": "Workshop/Symposium",
+      "section": "Scientific Event",
+      "type": "invited_talk"
+    }
+  ]
+}

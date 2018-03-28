@@ -27,13 +27,8 @@ module.exports = {
     verifyDraft: function (req, res) {
         const researchEntityId = req.params.researchEntityId;
         const draftId = req.params.draftId;
-        const verificationData = {
-            position: req.body.position,
-            corresponding: req.body.corresponding,
-            affiliationInstituteIds: req.body.affiliations,
-            synchronize: req.body.synchronize,
-            public: req.body.public,
-        };
+        const verificationData = Authorship.filterFields(req.body);
+        verificationData.affiliationInstituteIds = req.body.affiliations;
         const Model = getModel(req);
         res.halt(Model.verifyDraft(Model, researchEntityId, draftId, verificationData));
     },
@@ -46,13 +41,8 @@ module.exports = {
     verifyDocument: function (req, res) {
         const researchEntityId = req.params.researchEntityId;
         const documentId = req.body.id;
-        const verificationData = {
-            position: req.body.position,
-            corresponding: req.body.corresponding,
-            affiliationInstituteIds: req.body.affiliations,
-            synchronize: req.body.synchronize,
-            public: req.body.public
-        };
+        const verificationData = Authorship.filterFields(req.body);
+        verificationData.affiliationInstituteIds = req.body.affiliations;
         const Model = getModel(req);
         // TODO in case of failed verify give response with details instead of 400
         res.halt(Model.verifyDocument(Model, researchEntityId, documentId, verificationData));
@@ -94,10 +84,10 @@ module.exports = {
         res.halt(Model.updateDraft(Model, draftId, draftData));
     },
     getChartsData: function (req, res) {
-        const modelName = req.options.model || req.options.controller;
+        const Model = getModel(req);
         const id = req.params.researchEntityId;
-        const charts = req.param('charts');
-        res.halt(Chart.getChartsData(id, modelName, charts));
+        const refresh = req.param('refresh') === 'true';
+        res.halt(Chart.getChartsData(id, Model, refresh));
     },
     setAuthorhips: function (req, res) {
         const draftId = req.params.documentId;
@@ -134,11 +124,29 @@ module.exports = {
         const favorite = req.body.favorite;
         res.halt(AuthorshipModel.setFavorite(documentId, researchEntityId, favorite));
     },
+    setDocumentAsNotDuplicate: function (req, res) {
+        const researchEntityId = req.params.researchEntityId;
+        const document1Id = req.body.document1Id;
+        const document2Id = req.body.document2Id;
+        const Model = getModel(req);
+        res.halt(Model.setDocumentAsNotDuplicate(Model, researchEntityId, document1Id, document2Id));
+    },
+    removeVerify: function (req, res) {
+        const researchEntityId = parseInt(req.params.researchEntityId, 10);
+        const document1Id = req.body.document1Id;
+        const document2Id = req.body.document2Id;
+        const verificationData = Authorship.filterFields(req.body);
+        verificationData.affiliationInstituteIds = req.body.affiliations;
+        const Model = getModel(req);
+        res.halt(Model.removeVerify(Model, researchEntityId, document1Id, verificationData, document2Id));
+    },
     getPublicDocuments: async (req, res) => makePublicAPIrequest(req, res, 'documents'),
     getPublications: async (req, res) => makePublicAPIrequest(req, res, 'publications'),
     getDisseminationTalks: async (req, res) => makePublicAPIrequest(req, res, 'disseminationTalks'),
     getScientificTalks: async (req, res) => makePublicAPIrequest(req, res, 'scientificTalks'),
-    getHighImpactPublications: async (req, res) => makePublicAPIrequest(req, res, 'highImpactPublications')
+    getHighImpactPublications: async (req, res) => makePublicAPIrequest(req, res, 'highImpactPublications'),
+    getFavoritePublications: async (req, res) => makePublicAPIrequest(req, res, 'favoritePublications'),
+    getOralPresentations: async (req, res) => makePublicAPIrequest(req, res, 'oralPresentations')
 };
 
 function makePublicAPIrequest(req, res, attribute) {

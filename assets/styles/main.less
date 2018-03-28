@@ -1,6 +1,6 @@
 @import "iit-colors";
 
-body{
+body {
   color: @main-text-color;
 }
 
@@ -19,6 +19,13 @@ body{
 .scientilla-multiselect-list {
   max-height: 100px;
   overflow-y: scroll;
+}
+
+.text-line-through {
+  text-decoration: line-through;
+}
+.text-line-through:hover {
+  text-decoration: line-through;
 }
 
 /*****************************************/
@@ -67,4 +74,94 @@ i {
 .scientilla-dropdown-align-right li button {
   width: 100%;
   text-align: left;
+}
+
+/*************Charts************************/
+
+#scientilla-chart-container .tab-content {
+  background-color: @iit-grey-light;
+}
+
+#scientilla-chart-container li.active > a {
+  background-color: @iit-grey-light;
+  color: @iit-grey-dark;
+}
+
+.same-height {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.same-height > [class*='col-'] {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.scientilla-chart-widget {
+  background-color: @iit-white;
+  margin-bottom: 20px;
+  padding: 10px;
+  text-align: center;
+  height: 100%;
+}
+
+#scientilla-chart-totals > table {
+  min-height: 80px;
+  margin-bottom: 0;
+}
+
+#scientilla-chart-hindexPerYear .nv-point {
+  stroke-opacity: 1;
+  stroke-width: 2px;
+  fill-opacity: 1;
+}
+
+#scientilla-chart-journalMetricsPerYear .nv-point {
+  stroke-opacity: 1;
+  stroke-width: 2px;
+  fill-opacity: 1;
+}
+
+.scientilla-chart-selector {
+  background-color: rgb(174, 199, 232);
+  text-align: center;
+  font-size: 0;
+  width: 100px;
+}
+
+.scientilla-chart-selector-element {
+  color: @iit-white;
+  cursor: pointer;
+  display: inline-block;
+  width: 50%;
+  padding: 3px;
+  font-size: 20px;
+}
+
+.scientilla-chart-selector-element.selected {
+  background-color: @iit-blue-dark;
+}
+
+.scientilla-chart-icon {
+  font-size: 35px;
+}
+
+.scientilla-icon-color-document {
+  color: @scientilla-document-color;
+}
+
+.scientilla-icon-color-hindex {
+  color: @scientilla-hindex-color;
+}
+
+.scientilla-icon-color-citations {
+  color: @scientilla-citations-color;
+}
+
+.scientilla-icon-color-if {
+  color: @scientilla-if-color;
 }

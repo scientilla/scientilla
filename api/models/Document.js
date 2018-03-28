@@ -28,6 +28,7 @@ const fields = [
     {name: 'type'},
     {name: 'sourceType'},
     {name: 'scopusId'},
+    {name: 'scopus_id_deleted'},
     {name: 'wosId'},
     {name: 'iitPublicationsId'},
     {name: 'origin'},
@@ -60,6 +61,7 @@ module.exports = _.merge({}, BaseModel, {
         sourceType: 'STRING',
         itSource: 'STRING',
         scopusId: 'STRING',
+        scopus_id_deleted: 'BOOLEAN',
         wosId: 'STRING',
         iitPublicationsId: 'STRING',
         abstract: 'TEXT',
@@ -183,6 +185,9 @@ module.exports = _.merge({}, BaseModel, {
         draftGroupCreator: {
             model: 'Group'
         },
+        isDraft: function () {
+            return this.kind === DocumentKinds.DRAFT
+        },
         isValid: function () {
             const authorsStrRegex = /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?[a-zA-ZÀ-ÖØ-öø-ÿ]\.)+)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?\w\.)+)*$/;
             const yearRegex = /^(19|20)\d{2}$/;
@@ -297,6 +302,9 @@ module.exports = _.merge({}, BaseModel, {
             return this.getAuthors().map((author, i) => {
                 const authorship = this.authorships.find(au => au.position === i);
                 const corresponding = authorship ? authorship.corresponding : null;
+                const first_coauthor = authorship ? authorship.first_coauthor : null;
+                const last_coauthor = authorship ? authorship.last_coauthor : null;
+                const oral_presentation = authorship ? authorship.oral_presentation : null;
                 let affiliations, mainGroupAffiliation, userId;
                 if (authorship) {
                     const instituteIds = this.affiliations.filter(af => af.authorship === authorship.id)
@@ -313,6 +321,9 @@ module.exports = _.merge({}, BaseModel, {
                 return {
                     author,
                     corresponding,
+                    first_coauthor,
+                    last_coauthor,
+                    oral_presentation,
                     affiliations,
                     mainGroupAffiliation,
                     userId
@@ -332,7 +343,7 @@ module.exports = _.merge({}, BaseModel, {
             if (_.isObject(this.documenttype))
                 return this.documenttype;
 
-            return DocumentTypes.get().find(st => st.id === this.documenttype);
+            return DocumentTypes.getDocumentType(this.documenttype);
         },
         toJSON: function () {
             const document = this.toObject();
@@ -408,6 +419,8 @@ module.exports = _.merge({}, BaseModel, {
 
         const query = _.pick(document, Document.getFields());
         query.id = {'!': document.id};
+        if (_.isObject(document.source) && document.source.id)
+            query.source = document.source.id;
         query.kind = DocumentKinds.VERIFIED;
         const similarDocuments = await Document.find(query)
             .populate('authorships')
@@ -419,17 +432,15 @@ module.exports = _.merge({}, BaseModel, {
             return areAuthorshipsEqual(draftFullAuthorships, copyFullAuthorships) &&
                 areAuthorshipsEqual(copyFullAuthorships, draftFullAuthorships);
         });
-        const copies = excludeMultipleVerification ? tmpCopies : tmpCopies.filter(d => {
+        return excludeMultipleVerification ? tmpCopies : tmpCopies.filter(d => {
             const copyFullAuthorships = d.getFullAuthorships();
             const noDoubleAuthors = draftFullAuthorships.every(a1 => {
                 const a2 = copyFullAuthorships.find(a2 => a1.position === a2.position);
-                return !a1.researchEntity || !a2.researchEntity || a1.researchEntity != a2.researchEntity;
+                return !a1.researchEntity || !a2 || !a2.researchEntity || a1.researchEntity != a2.researchEntity;
             });
             const noDoubleGroups = _.intersection(document.groups.map(g => g.id), d.groups.map(g => g.id)).length == 0;
             return noDoubleAuthors && noDoubleGroups;
         });
-
-        return copies;
     },
     createOrUpdate: async function (criteria, documentData) {
         const selectedData = Document.selectData(documentData);
@@ -488,6 +499,7 @@ module.exports = _.merge({}, BaseModel, {
     },
     clone: async function (document, newDocPartialData = {}) {
         const docData = Document.selectData(document);
+        await Document.fixDocumentType(docData);
         const newDocData = Object.assign({}, docData, newDocPartialData);
         return await Document.create(newDocData);
     },
@@ -529,8 +541,17 @@ module.exports = _.merge({}, BaseModel, {
     async fixDocumentType(document) {
         if (!document.type)
             return;
-        const documentType = DocumentTypes.get().find(dt => dt.key === document.type);
+        const documentType = DocumentTypes.getDocumentType(document.type);
         if (documentType)
             document.documenttype = documentType.id;
+    },
+    beforeCreate: async (document, cb) => {
+        if (Array.isArray(document)) {
+            sails.log.error(`Document.beforeCreate called with an array with length ${document.length}`);
+        }
+        if (document && document.type && !document.documenttype)
+            sails.log.error(`Document.beforeCreate, document without documenttype ${document.id}`);
+        // fixDocumentType(document);
+        cb();
     }
 });

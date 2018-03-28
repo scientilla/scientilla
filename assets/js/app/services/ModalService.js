@@ -97,6 +97,30 @@
             return modal.result;
         };
 
+        service.openDocumentComparisonForm = function (document1, document2) {
+
+            var scopeVars = {
+                document1: document1,
+                document2: document2
+            };
+
+            const modal = openModal(
+                '<scientilla-document-comparison-form\
+                    document1="vm.document1"\
+                    document2="vm.document2"\
+                    on-failure="vm.onFailure"\
+                    on-submit="vm.onSubmit"\
+                ></scientilla-document-comparison-form>',
+                scopeVars,
+                {
+                    size: 'lg',
+                    windowClass: 'scientilla-modal-large'
+                }
+            );
+            addModalObject(modal);
+            return modal.result;
+        };
+
 
         service.openScientillaTagForm = function (document) {
 
@@ -143,11 +167,11 @@
             };
 
             const modal = openModal(
-                '<scientilla-document-affiliations\
+                '<scientilla-document-affiliations-form\
                     document="vm.document"\
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit"\
-                ></scientilla-document-affiliations>',
+                ></scientilla-document-affiliations-form>',
                 scopeVars,
                 {size: 'lg'}
             );
@@ -156,16 +180,36 @@
             return modal.result;
         };
 
-        service.openDocumentVerificationForm = function (document, verificationFn) {
+        service.openDocumentAuthorsForm = function (document) {
+            const scopeVars = {
+                document: document
+            };
 
+            const modal = openModal(
+                '<scientilla-document-authors-form\
+                    document="vm.document"\
+                    on-failure="vm.onFailure"\
+                    on-submit="vm.onSubmit"\
+                ></scientilla-document-authors-form>',
+                scopeVars,
+                {size: 'lg'}
+            );
+
+            addModalObject(modal);
+            return modal.result;
+        };
+
+        service.openDocumentVerificationForm = function (document, verificationFn, document2) {
             const scopeVars = {
                 document: document,
+                document2: document2,
                 verificationFn: verificationFn
             };
 
             const modal = openModal(
                 '<scientilla-document-verification-form\
                     document="vm.document"\
+                    document2="vm.document2"\
                     verification-fn="vm.verificationFn"\
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit"\
@@ -186,7 +230,7 @@
                     message: message,
                     cancel: function () {
                         this.onClose();
-                        reject();
+                        resolve(-1);
                     },
                     ok: function (i) {
                         this.onSubmit();
@@ -208,25 +252,25 @@
                 <div>',
                     scope);
 
-                modal.result.catch(function () {
-                    reject();
+                modal.result.catch(function (err) {
+                    reject(err);
                 });
                 addModalObject(modal);
             });
         };
 
-        service.openWizard = function (steps, isClosable) {
+        service.openWizard = function (steps, config = {}) {
             let args = {
                 size: 'lg',
-                windowClass: 'modal-dark'
+                windowClass: config.style === 'light' ? 'wizard-modal' : 'wizard-modal modal-dark'
             };
-            if (!isClosable)
+            if (!config.isClosable)
                 args = Object.assign({}, args, {
                     backdrop: 'static',
                     keyboard: false
                 });
 
-            const modal = openComponentModal('wizard-container', {steps: steps}, args);
+            const modal = openComponentModal('wizard-container', {steps: steps, style: config.style}, args);
             addModalObject(modal);
             return modal.result;
         };

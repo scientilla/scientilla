@@ -3,48 +3,37 @@
 "use strict";
 const CronJob = require('cron').CronJob;
 
-let scriptCron, monitorCron;
-const DAILY = 'daily', MONITOR = 'monitor';
-const jobs = {};
+const crons = [];
 
 module.exports = {
-    init: () => {
-        addJob(DAILY, Backup.makeBackup);
-        addJob(DAILY, GruntTaskRunner.run, ['import:external:all']);
-        addJob(DAILY, GruntTaskRunner.run, ['documents:synchronize:scopus']);
-        addJob(DAILY, GruntTaskRunner.run, ['documents:clean:sources']);
-        addJob(DAILY, GruntTaskRunner.run, ['documents:clean:institutes']);
-        addJob(DAILY, GruntTaskRunner.run, ['documents:clean:copies']);
-        addJob(DAILY, GruntTaskRunner.run, ['import:people']);
-        addJob(MONITOR, GruntTaskRunner.run, ['monitor']);
-    },
     start: () => {
-        scriptCron = new CronJob(sails.config.scientilla.cron.daily, generateOnTick(DAILY), onStop, false, 'Europe/Rome');
-        scriptCron.start();
-        monitorCron = new CronJob(sails.config.scientilla.cron.monitor, generateOnTick(MONITOR), onStop, false, 'Europe/Rome');
-        monitorCron.start();
+        sails.config.scientilla.crons.forEach(cron =>
+            crons.push(new CronJob(cron.time, generateOnTick(cron), onStop, false, 'Europe/Rome'))
+        );
+        crons.forEach(cron => cron.start());
     },
     stop: () => {
-        if (scriptCron)
-            scriptCron.stop();
-        if (monitorCron)
-            monitorCron.stop();
+        crons.forEach(cron => cron.stop());
     }
 };
 
-function generateOnTick(cronName) {
+function generateOnTick(cron) {
     return async function () {
-        for (let job of jobs[cronName])
-            await job.func(job.params);
-    }
-}
+        if (!cron.enabled)
+            return;
 
-function addJob(cronName, func, params) {
-    jobs[cronName] = jobs[cronName] || [];
-    jobs[cronName].push({
-        func,
-        params
-    });
+        sails.log.info('Cron ' + cron.name + ' started at ' + new Date().toISOString());
+
+        for (const job of cron.jobs) {
+            try {
+                await _.get(global, job.fn)(...job.params);
+            } catch (e) {
+                sails.log.error(e);
+            }
+        }
+
+        sails.log.info('Cron ' + cron.name + ' finished at ' + new Date().toISOString());
+    }
 }
 
 function onStop() {

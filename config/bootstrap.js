@@ -18,21 +18,14 @@ module.exports.bootstrap = async function (cb) {
     // It's very important to trigger this callback method when you are finished
     // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
 
-    await initializeServices();
     await initializeInstitutes();
     await initializeGroups();
     if (!isTest) {
-        Cron.init();
         await Cron.start();
     }
 
     cb();
 };
-
-async function initializeServices() {
-    await DocumentTypes.init();
-    await SourceTypes.init();
-}
 
 function initializeInstitutes() {
     return Institute.count()

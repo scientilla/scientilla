@@ -1,0 +1,69 @@
+<div ng-if="vm.isAdmin()">
+    <h3>Edit</h3>
+    <button type="button"
+            ng-if="vm.isAdmin()"
+            class="btn btn-link fa"
+            ng-class="vm.isEditorOpen ? 'fa-angle-up' : 'fa-angle-down'"
+            ng-click="vm.openCollaboratorsManagementForm()">
+    </button>
+    <div class="panel panel-default"
+         ng-show="vm.isEditorOpen">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <input type="text"
+                           class="form-control"
+                           ng-model="vm.selectedGroup"
+                           uib-typeahead="group as group.getDisplayName() for group in vm.getGroups($viewValue)"
+                           typeahead-loading="searching"
+                           typeahead-no-results="noResults"
+                           data-ng-required="true"
+                           placeholder="Search group"
+                           ng-model-options="{ allowInvalid: true }"
+                           typeahead-editable="false"
+                           typeahead-select-on-blur="true"
+                    />
+                </div>
+            </div>
+            <br>
+            <div class="row" ng-show="vm.selectedGroup">
+                <div class="col-md-4">
+                    <span>
+                        {{vm.selectedGroup.getDisplayName()}}
+                    </span>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-link"
+                            ng-click="vm.addChild()"
+                            title="Add {{vm.selectedGroup.getDisplayName()}} as a child group">
+                        <span class="fa fa-plus"></span> Add as child
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+</div>
+<div>
+    <h3>Child groups
+        <small>{{vm.group.childGroups.length}}</small>
+    </h3>
+    <div ng-repeat="cg in vm.group.childGroups">
+        <div class="row">
+            <div class="col-md-5">
+                <a ng-href="#{{cg.getProfileUrl()}}">
+                    {{cg.getDisplayName()}}
+                </a>
+            </div>
+            <div class="col-md-5">
+                <a type="button"
+                   ng-if="vm.isAdmin()"
+                   class="btn btn-link"
+                   ng-click="vm.removeChild(cg)"
+                   title="Removes {{cg.getDisplayName()}} from the child groups">
+                    <span class="fa fa-minus"></span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

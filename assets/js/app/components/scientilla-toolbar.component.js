@@ -105,7 +105,7 @@
                 });
         }
 
-        function showWizardVisible(){
+        function showWizardVisible() {
             return vm.researchEntity.getType() === 'user';
         }
 
@@ -115,11 +115,11 @@
                 'scopus-edit',
                 'tutorial',
                 'admin-tutorial',
-            ], true);
+            ], {isClosable: true});
         }
 
         function openSuggestedWizard() {
-            ModalService.openWizard(['alias-edit'], true);
+            ModalService.openWizard(['alias-edit'], {isClosable: true});
         }
     }
 

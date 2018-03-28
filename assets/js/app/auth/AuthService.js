@@ -68,7 +68,7 @@
                             'scopus-edit',
                             'tutorial',
                             'admin-tutorial',
-                        ], false);
+                        ]);
                 });
         }
 

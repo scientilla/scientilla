@@ -20,17 +20,27 @@
                 service.verifyDraft = verifyDraft;
                 service.verifyDocument = verifyDocument;
                 service.synchronizeDraft = synchronizeDraft;
+                service.verify = verify;
+                service.removeVerify = removeVerify;
 
                 return service;
 
-                function verifyDraft(draft) {
+                function verify(d) {
+                    if (d.isDraft())
+                        verifyDraft(d);
+                    else
+                        verifyDocument(d);
+                }
+
+                function verifyDraft(draft, notifications = true) {
                     function verificationCallback(user, documentId, verificationData) {
                         return researchEntityService.verifyDraftAsUser(user, documentId, verificationData)
                             .then(function (res) {
                                 if (res.error)
                                     throw res.error;
 
-                                Notification.success("Draft verified");
+                                if (notifications)
+                                    Notification.success("Draft verified");
                                 EventsService.publish(EventsService.DRAFT_VERIFIED, res);
 
                             })
@@ -43,14 +53,15 @@
 
                 }
 
-                function verifyDocument(document) {
+                function verifyDocument(document, notifications = true) {
                     function verificationCallback(user, documentId, verificationData) {
                         return researchEntityService.verifyDocument(user, documentId, verificationData)
                             .then(function (res) {
                                 if (res.error)
                                     throw res.error;
 
-                                Notification.success('Document verified');
+                                if (notifications)
+                                    Notification.success('Document verified');
                                 EventsService.publish(EventsService.DOCUMENT_VERIFIED, document);
                                 EventsService.publish(EventsService.NOTIFICATION_ACCEPTED, document);
 
@@ -81,21 +92,40 @@
                     }
 
                     return ModalService.multipleChoiceConfirm(title, msg, ['Proceed'])
-                        .then(res => researchEntity.one('drafts', document.id)
-                            .customPUT({synchronized: sync}, 'synchronized')
-                            .then(newDocData => {
-                                EventsService.publish(EventsService.DRAFT_SYNCHRONIZED, newDocData);
-                                if (sync)
-                                    Notification.success("Document synchronized");
-                                else
-                                    Notification.success("Document desynchronized");
-                            })
-                            .catch(function (err) {
-                                Notification.warning(err.data);
-                            })
+                        .then(res => {
+                                if (res === 0)
+                                    researchEntity.one('drafts', document.id)
+                                        .customPUT({synchronized: sync}, 'synchronized')
+                                        .then(newDocData => {
+                                            EventsService.publish(EventsService.DRAFT_SYNCHRONIZED, newDocData);
+                                            if (sync)
+                                                Notification.success("Document synchronized");
+                                            else
+                                                Notification.success("Document desynchronized");
+                                        })
+                                        .catch(function (err) {
+                                            Notification.warning(err.data);
+                                        });
+                            }
                         )
                         .catch(() => true);
                 }
+
+                /* jshint ignore:start */
+
+                async function removeVerify(docToVerify, docToRemove) {
+                    async function verificationCallback(researchEntity, docToVerifyId, verificationData, docToRemoveId) {
+                        const res = await researchEntityService.removeVerify(researchEntity, docToVerifyId, verificationData, docToRemoveId);
+                        return res;
+
+                    }
+
+                    const res = await ModalService.openDocumentVerificationForm(docToVerify, verificationCallback, docToRemove);
+                    if (res)
+                        return res.data;
+                }
+
+                /* jshint ignore:end */
             }
         };
     }

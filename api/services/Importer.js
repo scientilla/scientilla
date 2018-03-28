@@ -162,6 +162,8 @@ async function importPeople() {
         let user = await User.findOne(criteria);
         p.lastsynch = moment().utc().format();
         p.synchronized = true;
+        const activeMembership = p.active;
+        p.active = true;
         if (user) {
             const u = await User.update(criteria, p);
             if (userShouldBeUpdated(user, p)) {
@@ -187,7 +189,7 @@ async function importPeople() {
             if (membership) {
                 membership.lastsynch = moment.utc().format();
                 membership.synchronized = true;
-                membership.active = p.active;
+                membership.active = activeMembership;
                 const m = await Membership.update(membershipCriteria, membership);
             }
             if (p.pi) {

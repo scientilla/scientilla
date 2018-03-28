@@ -30,11 +30,19 @@
                             <h3>
                                 <div class="btn-group scientilla-dropdown-align-right" uib-dropdown>
                                     <button ng-disabled="!document.isValid()" ng-click="vm.verifyDocument(document)" type="button"
-                                            class="btn btn-primary">
+                                            class="btn btn-primary" ng-if="!document.isComparable">
                                         <span class="fa fa-check"></span>
                                         Verify
                                     </button>
-                                    <button type="button" class="btn btn-primary dropdown-toggle"
+                                    <button ng-click="vm.compareDocuments(document, document.getComparisonDuplicate())"
+                                            type="button"
+                                            class="btn btn-compare"
+                                            ng-if="document.isComparable">
+                                        Compare
+                                    </button>
+                                    <button type="button"
+                                            class="btn dropdown-toggle"
+                                            ng-class="{'btn-compare': document.isComparable, 'btn-primary': !document.isComparable}"
                                             data-toggle="dropdown">
                                         <span class="caret"></span>
                                     </button>

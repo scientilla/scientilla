@@ -75,16 +75,6 @@ SELECT
     )
   ) AS authorship_without_affiliations,
   (
-    SELECT count(DISTINCT a.id)
-    FROM authorshipgroup a
-    WHERE "researchEntity" IS NOT NULL
-          AND NOT exists(
-        SELECT *
-        FROM affiliation af
-        WHERE af.authorship = a.id
-    )
-  ) AS authorshipgroup_without_affiliations,
-  (
     SELECT count(*)
     FROM affiliation a
   ) AS affiliations,
@@ -123,4 +113,31 @@ SELECT
     FROM "group" g
       JOIN authorshipgroup a
         ON g.id = a."researchEntity"
-  ) AS groups_with_verified_documents
+  ) AS groups_with_verified_documents,
+  (
+    SELECT count(d.id)
+    FROM document d
+      JOIN authorship a ON d.id = a.document
+    WHERE d.kind = 'v'
+          AND a."researchEntity" IS NOT NULL
+          AND a.position >= array_length(string_to_array(d."authorsStr", ','), 1)
+  ) AS authorship_with_position_higher_than_authors_count,
+  (
+    SELECT count(*)
+    FROM (
+           SELECT DISTINCT
+             (string_to_array(d."authorsStr", ', ')) [a.position + 1],
+             a."researchEntity",
+             d.title
+           FROM document d
+             JOIN authorship a ON d.id = a.document
+           WHERE d.kind = 'v'
+                 AND a."researchEntity" IS NOT NULL
+                 AND NOT exists(
+               SELECT id
+               FROM alias al
+               WHERE al.user = a."researchEntity"
+                     AND (string_to_array(d."authorsStr", ', ')) [a.position + 1] ILIKE al.str
+           )
+         ) AS a
+  ) AS document_verified_by_user_without_correct_alias;

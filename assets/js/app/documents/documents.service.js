@@ -24,6 +24,7 @@
                 service.verifyDrafts = verifyDrafts;
                 service.openEditPopup = openEditPopup;
                 service.openDocumentAffiliationForm = openDocumentAffiliationForm;
+                service.openDocumentAuthorsForm = openDocumentAuthorsForm;
                 service.discardDocument = discardDocument;
                 service.verifyDocuments = verifyDocuments;
                 service.discardDocuments = discardDocuments;
@@ -35,6 +36,8 @@
                 service.desynchronizeDrafts = desynchronizeDrafts;
                 service.setAuthorshipFavorite = setAuthorshipFavorite;
                 service.setAuthorshipPrivacy = setAuthorshipPrivacy;
+                service.compareDocuments = compareDocuments;
+                service.verify = verify;
 
                 return service;
 
@@ -56,20 +59,24 @@
                         'Delete',
                         'This action will permanently delete this document.\n Do you want to proceed?',
                         ['Proceed'])
-                        .then(() => researchEntityService
-                            .deleteDraft(researchEntity, draft.id)
-                            .then(function (d) {
-                                Notification.success("Draft deleted");
-                                EventsService.publish(EventsService.DRAFT_DELETED, d);
-                            })
-                            .catch(function () {
-                                Notification.warning("Failed to delete draft");
-                            })
+                        .then(res => {
+                                if (res === 0)
+                                    researchEntityService
+                                        .deleteDraft(researchEntity, draft.id)
+                                        .then(function (d) {
+                                            Notification.success("Draft deleted");
+                                            EventsService.publish(EventsService.DRAFT_DELETED, d);
+                                        })
+                                        .catch(function () {
+                                            Notification.warning("Failed to delete draft");
+                                        });
+                            }
                         ).catch(() => true);
                 }
 
                 function verifyDrafts(drafts) {
-                    var draftIds = _.map(drafts, 'id');
+                    const [verifiableDrafts, unverifiableDrafts] = _.partition(drafts, d => !d.isComparable);
+                    var draftIds = _.map(verifiableDrafts, 'id');
                     researchEntityService
                         .verifyDrafts(researchEntity, draftIds)
                         .then(function (allDocs) {
@@ -82,7 +89,7 @@
                                 return !d.error && d.kind !== DocumentKinds.DRAFT;
                             });
                             var verifiedDrafts = part[0];
-                            var unverifiedDrafts = part[1];
+                            var unverifiedDrafts = unverifiableDrafts.concat(part[1]);
 
                             if (verifiedDrafts.length)
                                 Notification.success(verifiedDrafts.length + " draft(s) verified");
@@ -107,6 +114,9 @@
                             ['Move to drafts', 'Remove'])
                         .then(function (buttonIndex) {
                             switch (buttonIndex) {
+                                case -1:
+                                    document.removeLabel(DocumentLabels.UVERIFYING);
+                                    break;
                                 case 0:
                                     return researchEntityService.copyDocument(researchEntity, document)
                                         .then(function (draft) {
@@ -181,7 +191,8 @@
                 }
 
                 function verifyDocuments(documents) {
-                    var documentIds = _.map(documents, 'id');
+                    const [verifiableDocs, unverifiableDocs] = _.partition(documents, d => !d.isComparable);
+                    var documentIds = _.map(verifiableDocs, 'id');
                     researchEntityService
                         .verifyDocuments(researchEntity, documentIds)
                         .then(function (allDocs) {
@@ -194,7 +205,7 @@
                                 return !d.error;
                             });
                             var verifiedDocs = part[0];
-                            var unverifiedDocs = part[1];
+                            var unverifiedDocs = unverifiableDocs.concat(part[1]);
                             if (verifiedDocs.length)
                                 Notification.success(verifiedDocs.length + " document(s) verified");
                             if (unverifiedDocs.length)
@@ -262,6 +273,17 @@
                         });
                 }
 
+                function openDocumentAuthorsForm(draft) {
+                    return ModalService
+                        .openDocumentAuthorsForm(draft.clone())
+                        .then(i => {
+                            if (i === 1) {
+                                EventsService.publish(EventsService.DRAFT_UPDATED, draft);
+                                Notification.success("Authors has been updated");
+                            }
+                        });
+                }
+
                 function getExternalDocuments(query, service) {
                     const connector = query.where.origin;
                     if (!connector)
@@ -306,6 +328,104 @@
                         })
                         .catch(err => Notification.warning(err.data));
                 }
+
+                /* jshint ignore:start */
+                async function compareDocuments(doc1, duplicateInfo) {
+                    try {
+                        const doc2Id = duplicateInfo.duplicate;
+                        const doc2 = await researchEntityService.getDoc(researchEntity, doc2Id, duplicateInfo.duplicateKind);
+                        const i = await ModalService.openDocumentComparisonForm(doc1, doc2);
+                        const d = i === 1 ? 2 : 1;
+                        let chosenDoc, discardedDoc;
+                        if (i === 1) {
+                            chosenDoc = doc1;
+                            discardedDoc = doc2;
+                        }
+                        if (i === 2) {
+                            chosenDoc = doc2;
+                            discardedDoc = doc1;
+                        }
+                        if (i === 1 || i === 2) {
+                            const modalMsg = `Discarded document (${discardedDoc.getStringKind(researchEntity)}) will be removed.\nWhat do you want to do with selected document (${chosenDoc.getStringKind(researchEntity)})?`;
+                            let res, err, j;
+                            if (chosenDoc.isSuggested(researchEntity)) {
+                                j = await ModalService
+                                    .multipleChoiceConfirm('Suggested document selected',
+                                        modalMsg,
+                                        ['Verify', 'Copy to Draft']);
+                                if (j === 0 || j === 1) {
+                                    if (j === 0) {
+                                        res = await service.removeVerify(chosenDoc, discardedDoc);
+                                    }
+                                    if (j === 1) {
+                                        res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
+                                        if (!res.error)
+                                            res = await researchEntityService.copyDocument(researchEntity, chosenDoc);
+                                    }
+                                }
+                            }
+                            if (chosenDoc.isDraft()) {
+                                j = await ModalService
+                                    .multipleChoiceConfirm('Draft selected',
+                                        modalMsg,
+                                        ['Verify', 'Keep Draft']);
+                                if (j === 0 || j === 1) {
+                                    if (j === 0) {
+                                        res = await service.removeVerify(chosenDoc, discardedDoc);
+                                    }
+                                    if (j === 1) {
+                                        res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
+                                    }
+                                }
+                            }
+                            if (chosenDoc.isVerified(researchEntity)) {
+                                j = await ModalService
+                                    .multipleChoiceConfirm('Verified document selected',
+                                        modalMsg,
+                                        ['Keep verified', 'Create a draft']);
+                                if (j === 0 || j === 1) {
+                                    res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
+                                    if (!res.error && j === 1) {
+                                        res = await researchEntityService.copyDocument(researchEntity, chosenDoc);
+                                        if (!res.error)
+                                            res = await researchEntityService.unverify(researchEntity, chosenDoc);
+                                    }
+                                }
+                            }
+                            if (j === 0 || j === 1) {
+                                EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
+                                if (res) {
+                                    if (res.error) {
+                                        const notificationMsg = 'The operation failed.';
+                                        Notification.warning(notificationMsg);
+                                    } else {
+                                        const notificationMsg = 'The operation was successful';
+                                        Notification.success(notificationMsg);
+                                    }
+                                }
+                            }
+                        }
+                        if (i === 3) {
+                            await researchEntityService.documentsNotDuplicate(researchEntity, doc1, doc2);
+                            EventsService.publish(EventsService.DOCUMENT_COMPARE, null);
+                            Notification.success("The documents have been marked as non-duplicates");
+                        }
+                    } catch (err) {
+                        console.log(err);
+                        if (err !== 'backdrop click')
+                            Notification.error("An error happened");
+
+                    }
+                }
+
+                function verify(d, notifications = true) {
+                    if (d.isDraft())
+                        return service.verifyDraft(d, notifications);
+                    else
+                        return service.verifyDocument(d, notifications);
+                }
+
+                /* jshint ignore:end */
             }
         };
     }

@@ -13,10 +13,7 @@
                 controllerAs: 'vm'
             })
             .when("/groups/:id", {
-                template: params => `<scientilla-group-details group-id="${params.id}"></scientilla-group-details>`,
-                access: {
-                    noLogin: true
-                }
+                template: params => `<scientilla-group-details group-id="${params.id}"></scientilla-group-details>`
             });
     }
 

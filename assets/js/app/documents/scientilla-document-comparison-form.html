@@ -1,0 +1,288 @@
+<form>
+    <div class="row">
+        <div class="text-center text-warning">{{vm.document1.getComparisonDuplicates().length}} duplicate(s) found</div>
+        <div class="col-xs-6">
+            <div class="scientilla-document-details-kind"
+                 ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('kind')}">
+                <h4 class="text-center">
+                    Document 1:
+                    {{vm.document1.getStringKind(vm.researchEntity)}}
+                    <span ng-if="vm.verifiedCount1"
+                          class="scientilla-document-icons-bottom"
+                          uib-tooltip-html="vm.getVerifiedNamesHTML(vm.document1)"
+                          tooltip-class="scientilla-tooltip">
+                        <span class="fa fa-check"></span> {{vm.verifiedCount1}}
+                    </span>
+                </h4>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="scientilla-document-details-kind"
+                 ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('kind')}">
+                <h4 class="text-center">
+                    Document 2:
+                    {{vm.document2.getStringKind(vm.researchEntity)}}
+                    <span ng-if="vm.verifiedCount2"
+                          class="scientilla-document-icons-bottom"
+                          uib-tooltip-html="vm.getVerifiedNamesHTML(vm.document2)"
+                          tooltip-class="scientilla-tooltip">
+                        <span class="fa fa-check"></span> {{vm.verifiedCount2}}
+                    </span>
+                </h4>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="scientilla-document-details-authors"
+                 ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('authorsStr')}">
+                <scientilla-document-authors document="vm.document1"></scientilla-document-authors>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="scientilla-document-details-authors"
+                 ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('authorsStr')}">
+                <scientilla-document-authors document="vm.document2"></scientilla-document-authors>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="scientilla-document-details-title"
+                 ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('title')}">
+                <span class="scientilla-document-title" ng-bind-html='vm.document1 | title'></span>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="scientilla-document-details-title"
+                 ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('title')}">
+                <span class="scientilla-document-title" ng-bind-html='vm.document2 | title'></span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <div ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('institutes')}">
+
+                <scientilla-document-affiliations document="vm.document1"></scientilla-document-affiliations>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('institutes')}">
+                <scientilla-document-affiliations document="vm.document2"></scientilla-document-affiliations>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <div ng-if="vm.document1.abstract" class="scientilla-document-details-abstract"
+                 ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('abstract')}">
+                <hr>
+                <h4>Abstract</h4>
+                {{vm.document1.abstract}}
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div ng-if="vm.document2.abstract" class="scientilla-document-details-abstract"
+                 ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('abstract')}">
+                <hr>
+                <h4>Abstract</h4>
+                {{vm.document2.abstract}}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="scientilla-document-details-source">
+                <hr>
+
+                <small ng-if="vm.document1.type !== 'invited_talk'"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('source')}">
+                    {{vm.document1.source.title}}
+                </small>
+
+                <small ng-if="vm.document1.type === 'invited_talk'"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('itSource')}">
+                    {{vm.document1.itSource}}
+                </small>
+
+                <small ng-if="vm.document1.volume"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('volume')}">
+                    , vol: {{vm.document1.volume}}
+                </small>
+
+                <small ng-if="vm.document1.issue"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('issue')}">
+                    , issue: {{vm.document1.issue}}
+                </small>
+
+                <small ng-if="vm.document1.pages"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('pages')}">
+                    , pages: {{vm.document1.pages}}
+                </small>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="scientilla-document-details-source">
+                <hr>
+
+                <small ng-if="vm.document2.type !== 'invited_talk'"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('source')}">
+                    {{vm.document2.source.title}}
+                </small>
+
+                <small ng-if="vm.document2.type === 'invited_talk'"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('itSource')}">
+                    {{vm.document2.itSource}}
+                </small>
+
+                <small ng-if="vm.document2.volume"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('volume')}">
+                    , vol: {{vm.document2.volume}}
+                </small>
+
+                <small ng-if="vm.document2.issue"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('issue')}">
+                    , issue: {{vm.document2.issue}}
+                </small>
+
+                <small ng-if="vm.document2.pages"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('pages')}">
+                    , pages: {{vm.document2.pages}}
+                </small>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <div ng-if="vm.document1.year"
+                 class="scientilla-document-details-year"
+                 ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('year')}">
+                <small>
+                    ({{vm.document1.year}})
+                </small>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div ng-if="vm.document2.year"
+                 class="scientilla-document-details-year"
+                 ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('year')}">
+                <small>
+                    ({{vm.document2.year}})
+                </small>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="scientilla-document-details-ids">
+                <small ng-if="vm.document1.doi" class="scientilla-document-doi"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('doi')}">
+                    <span ng-bind-html='vm.document1 | doi'></span>
+                </small>
+                <small ng-if="vm.document1.scopusId"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('scopusId')}">
+                    <label>scopus id:</label> <a
+                        ng-if="!vm.document1.scopus_id_deleted"
+                        href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document1.scopusId}}&origin=inward"
+                        target="_blank">{{vm.document1.scopusId}}</a>
+                    <span ng-if="vm.document1.scopus_id_deleted"
+                          class="text-line-through">{{vm.document1.scopusId}}</span>
+                </small>
+                <small ng-if="vm.document1.wosId"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('wosId')}">
+                    <label>WOS id:</label> {{vm.document1.wosId}}
+                </small>
+                <small ng-if="vm.sourceType1"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('sourcetype')}">
+                    <label>Source type:</label> {{vm.sourceType1}}
+                </small>
+                <small ng-if="vm.type1"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('type')}">
+                    <label>Document type:</label> {{vm.type1}}
+                </small>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="scientilla-document-details-ids">
+                <small ng-if="vm.document2.doi" class="scientilla-document-doi"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('doi')}">
+                    <span ng-bind-html='vm.document2 | doi'></span>
+                </small>
+                <small ng-if="vm.document2.scopusId"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('scopusId')}">
+                    <label>scopus id:</label> <a
+                        ng-if="!vm.document2.scopus_id_deleted"
+                        href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document2.scopusId}}&origin=inward"
+                        target="_blank">{{vm.document2.scopusId}}</a>
+                    <span ng-if="vm.document2.scopus_id_deleted"
+                          class="text-line-through">{{vm.document2.scopusId}}</span>
+                </small>
+                <small ng-if="vm.document2.wosId"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('wosId')}">
+                    <label>WOS id:</label> {{vm.document2.wosId}}
+                </small>
+                <small ng-if="vm.sourceType2"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('sourcetype')}">
+                    <label>Source type:</label> {{vm.sourceType2}}
+                </small>
+                <small ng-if="vm.type2"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('type')}">
+                    <label>Document type:</label> {{vm.type2}}
+                </small>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <div>
+                <small class="scientilla-document-details-origin"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('origin')}">
+                    Origin: <span>{{vm.document1.origin}}</span>
+                    <span ng-if="vm.document1.origin==='scopus' && vm.document1.scopus_id_deleted"
+                          ng-bind-html="vm.scopusIdDeletedMessage">
+                    </span>
+                </small>
+            </div>
+            <div>
+                <small class="scientilla-document-details-synchronized"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('synchronized')}">
+                    Synchronized: <span>{{vm.document1.synchronized}}</span>
+                </small>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div>
+                <small class="scientilla-document-details-origin"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('origin')}">
+                    Origin: <span>{{vm.document2.origin}}</span>
+                    <span ng-if="vm.document2.origin==='scopus' && vm.document2.scopus_id_deleted"
+                          ng-bind-html="vm.scopusIdDeletedMessage">
+                    </span>
+                </small>
+            </div>
+            <div>
+                <small class="scientilla-document-details-synchronized"
+                       ng-class="{'scientilla-field-highlighted': vm.differentFields.includes('synchronized')}">
+                    Synchronized: <span>{{vm.document2.synchronized}}</span>
+                </small>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <scientilla-button type="submit" click="vm.keepDocument1">
+                Keep document 1
+            </scientilla-button>
+            <scientilla-button type="submit" click="vm.keepDocument2">
+                Keep document 2
+            </scientilla-button>
+            <scientilla-button type="submit" click="vm.documentsNotDuplicate">
+                Mark as not duplicate
+            </scientilla-button>
+            <scientilla-button type="cancel" click="vm.cancel()">
+                Cancel
+            </scientilla-button>
+        </div>
+    </div>
+</form>

@@ -1,6 +1,8 @@
-FROM node:7.6
+FROM node:9-alpine
 
-RUN apt-get update & apt-get install git
+RUN apk update && \
+ apk add --no-cache git make gcc g++ python
+
 
 RUN npm install -g mocha
 RUN npm install -g sails

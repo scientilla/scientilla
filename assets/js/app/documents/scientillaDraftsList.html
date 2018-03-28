@@ -32,52 +32,81 @@
                                      uib-dropdown>
                                     <button ng-click="vm.openEditPopup(d)"
                                             ng-disabled="d.synchronized"
+                                            ng-if="!d.isComparable"
                                             type="button"
                                             class=" btn btn-primary"
                                             title="Let you edit the document, if synchronization is active the document cannot be edited">
                                         <span class="fa fa-edit"></span>
                                         Edit
                                     </button>
-                                    <button type="button" class="btn btn-primary dropdown-toggle"
+                                    <button ng-click="vm.compareDocuments(d, d.getComparisonDuplicate())"
+                                            ng-if="d.isComparable"
+                                            type="button"
+                                            class=" btn btn-compare">
+                                        Compare
+                                    </button>
+                                    <button type="button"
+                                            class="btn dropdown-toggle"
+                                            ng-class="{'btn-compare': d.isComparable, 'btn-primary': !d.isComparable}"
                                             data-toggle="dropdown">
                                         <span class="caret"></span>
                                     </button>
                                     <ul class="dropdown-menu dropdown-menu-right">
                                         <li>
+                                            <button ng-click="vm.openEditPopup(d)"
+                                                    ng-if="d.duplicates.length"
+                                                    type="button"
+                                                    ng-disabled="d.synchronized"
+                                                    class="btn btn-link"
+                                                    title="Let you edit the document, if synchronization is active the document cannot be edited">
+                                                <span class="fa fa-edit fa-fw"></span>
+                                                Edit
+                                            </button>
+                                        </li>
+                                        <li>
                                             <button ng-click="vm.openDocumentAffiliationForm(d)"
                                                     ng-disabled="d.synchronized"
                                                     class="btn btn-link">
-                                                <span class="fa fa-edit"></span>
+                                                <span class="fa fa-university fa-fw"></span>
                                                 Edit Affiliations
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button ng-click="vm.openDocumentAuthorsForm(d)"
+                                                    ng-disabled="d.sourceTypeObj.type === 'invited_talk'"
+                                                    class="btn btn-link">
+                                                <span class="fa fa-user fa-fw"></span>
+                                                Edit authors details
                                             </button>
                                         </li>
                                         <li ng-if="!d.synchronized">
                                             <button ng-click="vm.synchronizeDraft(d, true)"
-                                                    ng-disabled="d.synchronized"
+                                                    ng-disabled="!d.scopusId && !d.doi"
                                                     class="btn btn-link">
-                                                <span class="fa fa-refresh"></span>
+                                                <span class="fa fa-refresh fa-fw"></span>
                                                 Synchronize with scopus
                                             </button>
                                         </li>
                                         <li ng-if="d.synchronized">
                                             <button ng-click="vm.synchronizeDraft(d, false)"
+                                                    ng-disabled="!d.scopusId && !d.doi"
                                                     class="btn btn-link">
-                                                <span class="fa fa-refresh"></span>
+                                                <span class="fa fa-refresh fa-fw"></span>
                                                 Disable sync.
                                             </button>
                                         </li>
                                         <li>
                                             <button ng-click="vm.verifyDraft(d)"
-                                                    ng-disabled="!d.isValid()"
+                                                    ng-disabled="!d.isValid() || d.isComparable"
                                                     class="btn btn-link">
-                                                <span class="fa fa-check"></span>
+                                                <span class="fa fa-check fa-fw"></span>
                                                 Verify
                                             </button>
                                         </li>
                                         <li>
                                             <button ng-click="vm.deleteDraft(d)"
                                                     class="btn btn-link">
-                                                <span class="fa fa-remove"></span>
+                                                <span class="fa fa-remove fa-fw"></span>
                                                 Delete
                                             </button>
                                         </li>

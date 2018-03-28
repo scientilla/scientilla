@@ -35,8 +35,9 @@
 
             ModalService
                     .confirm("", "Apply this action to " + checkedItems.length + " elements?")
-                    .then(function () {
-                        vm.onClick()(checkedItems);
+                    .then(function (res) {
+                        if (res === 0)
+                            vm.onClick()(checkedItems);
                     })
                     .catch(function () {});
 

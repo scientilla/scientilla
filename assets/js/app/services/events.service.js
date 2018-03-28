@@ -25,6 +25,9 @@
             DOCUMENT_PRIVATE_TAGS_UPDATED: 'document.privateTagsUpdated',
             DOCUMENT_AUTORSHIP_PRIVACY_UPDATED: 'document.authorship.privacyUpdated',
             DOCUMENT_AUTORSHIP_FAVORITE_UPDATED: 'document.authorship.favoriteUpdated',
+            DOCUMENT_DISCARDED: 'document.discarded',
+            DOCUMENT_NOT_DUPLICATED: 'document.notDuplicated',
+            DOCUMENT_COMPARE: 'document.compare',
 
             NOTIFICATION_ACCEPTED: 'notification.accepted',
             NOTIFICATION_DISCARDED: 'notification.discarded',

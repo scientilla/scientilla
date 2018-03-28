@@ -4,6 +4,20 @@
 const _ = require('lodash');
 const BaseModel = require("../lib/BaseModel.js");
 
+const fields = [
+    'researchEntity',
+    'document',
+    'affiliations',
+    'position',
+    'synchronize',
+    'corresponding',
+    'public',
+    'favorite',
+    'first_coauthor',
+    'last_coauthor',
+    'oral_presentation'
+];
+
 module.exports = _.merge({}, BaseModel, {
 
     attributes: {
@@ -18,11 +32,14 @@ module.exports = _.merge({}, BaseModel, {
             via: 'authorships',
             through: 'affiliation'
         },
-        corresponding: 'boolean',
         position: 'integer',
         public: 'boolean',
         favorite: 'boolean',
         synchronize: 'boolean',
+        corresponding: 'boolean',
+        first_coauthor: 'boolean',
+        last_coauthor: 'boolean',
+        oral_presentation: 'boolean',
         unverify: function () {
             this.researchEntity = null;
             this.synchronize = null;
@@ -44,18 +61,37 @@ module.exports = _.merge({}, BaseModel, {
     getEmpty: function () {
         return {
             synchronize: null,
+            researchEntity: null,
             corresponding: false,
+            'public': false,
+            favorite: false,
+            first_coauthor: false,
+            last_coauthor: false,
+            oral_presentation: false,
             affiliations: []
         };
+    },
+    getFields: function () {
+        return fields;
+    },
+    filterFields: function (authorshipData) {
+        if (!_.isObject(authorshipData))
+            return {};
+        const newAuthorship = {};
+        fields.forEach(f => newAuthorship[f] = authorshipData[f]);
+        return newAuthorship;
     },
     createEmptyAuthorships: async function (doc, authorshipsData) {
         //TODO Add empty authorships generated from authorStr
         if (!_.isArray(authorshipsData))
             return;
 
-        const authorshipFields = ['position', 'corresponding'];
-        const filteredAuthorshipsData = _.map(authorshipsData, a => _.pick(a, authorshipFields));
-        filteredAuthorshipsData.forEach(a => a.document = doc.id);
+        const filteredAuthorshipsData = authorshipsData.map(a => Authorship.filterFields(a));
+        filteredAuthorshipsData.forEach(a => {
+            a.document = doc.id;
+            delete a.affiliations;
+            delete a.researchEntity;
+        });
         const authorships = await Authorship.create(filteredAuthorshipsData);
 
         const affiliations = [];
@@ -80,19 +116,15 @@ module.exports = _.merge({}, BaseModel, {
         await Authorship.createEmptyAuthorships(doc, authorshipsData);
     },
     clone: function (authorship) {
-        return {
-            position: authorship.position,
-            researchEntity: authorship.researchEntity,
-            synchronize: authorship.synchronize,
-            corresponding: authorship.corresponding,
-            document: authorship.document,
-            affiliations: authorship.affiliations.map(aff => {
-                if (aff.institute)
-                    return aff.institute;
+        const newAuthorship = Authorship.filterFields(authorship);
+        newAuthorship.affiliations = authorship.affiliations.map(aff => {
+            if (aff.institute)
+                return aff.institute;
 
-                return aff.id;
-            })
-        };
+            return aff.id;
+        });
+
+        return newAuthorship;
     },
     updateAuthorshipData: async function (authorshipId, docId, authorshipData) {
         if (!docId) throw "updateAuthorshipData error!";

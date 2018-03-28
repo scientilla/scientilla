@@ -83,7 +83,7 @@ describe('Draft Verification', () => {
             // expect
             body.should.have.property('error');
             body.should.have.property('item');
-            body.item.should.equal(user1Draft1.id + '');
+            should(body.item).be.null;
         }
     );
 
@@ -109,7 +109,7 @@ describe('Draft Verification', () => {
             const body = await test.userVerifyDraft(user1, nonExistentDocument);
             // expect
             body.should.have.property('error');
-            body.item.should.equal(nonExistentDocument.id + '');
+            should(body.item).be.null;
         }
     );
 

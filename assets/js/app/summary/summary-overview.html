@@ -1,0 +1,25 @@
+<div class="row">
+    <div class="col-xs-offset-2 col-xs-8">
+        <div class="scientilla-chart-widget text-center">
+            <h3>{{vm.mainChart.title}}</h3>
+            <nvd3 options="vm.mainChart.options"
+                  data="vm.mainChart.data"></nvd3>
+        </div>
+    </div>
+    <div class="col-xs-2 text-right">
+        <span ng-click="vm.showInfo()"
+              class="fa fa-info-circle"
+              style="font-size: 30px;cursor:pointer"></span>
+    </div>
+</div>
+<div class="row">
+    <div ng-repeat="chart in vm.charts"
+         class="col-xs-4">
+        <div class="scientilla-chart-preview scientilla-chart-widget text-center"
+             ng-class="{'scientilla-chart-selected': vm.isChartSelected(chart)}"
+             ng-click="vm.changeChart(chart)">
+            <h3>{{chart.title}}</h3>
+            <nvd3 options="chart.options" data="chart.data"></nvd3>
+        </div>
+    </div>
+</div>
