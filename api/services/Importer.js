@@ -1,4 +1,4 @@
-/* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute*/
+/* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator*/
 // Importer.js - in api/services
 
 "use strict";
@@ -244,9 +244,29 @@ async function importGroups() {
         await Group.update({id: group.id}, {
             name: rsData.description,
             type: rsData.type,
-            //PI
-            //starting date
+            starting_date: rsData.start_date
         });
+
+        if (Array.isArray(rsData.pis) && rsData.pis.length > 0) {
+            const pis = await User.find({username: rsData.pis.map(p => p.email)});
+
+            if (pis && pis.length) {
+                await PrincipalInvestigator.destroy({
+                    group: group.id,
+                    pi: {'!': pis.map(p => p.id)}
+                });
+
+                for (const pi of pis)
+                    await PrincipalInvestigator.findOrCreate({
+                        pi: pi.id,
+                        group: group.id
+                    });
+            }
+            else
+                await PrincipalInvestigator.destroy({group: group.id});
+        }
+        else
+            await PrincipalInvestigator.destroy({group: group.id});
 
         if (rsData.main_research_domain) {
             await clearResearchDomains([rsData.main_research_domain.code], group, 'main');

@@ -156,6 +156,11 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'administrators',
             through: 'groupadministrator'
         },
+        managedGroups: {
+            collection: 'group',
+            via: 'pi',
+            through: 'principalinvestigator'
+        },
         memberships: {
             collection: 'Group',
             via: 'members',

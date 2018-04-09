@@ -32,10 +32,16 @@ module.exports = _.merge({}, ResearchEntity, {
             collection: 'collaboration',
             via: 'group'
         },
+        starting_date: 'DATE',
         administrators: {
             collection: 'user',
             via: 'administratedGroups',
             through: 'groupadministrator'
+        },
+        pi: {
+            collection: 'user',
+            via: 'managedGroups',
+            through: 'principalinvestigator'
         },
         members: {
             collection: 'User',
