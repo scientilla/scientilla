@@ -83,7 +83,7 @@
 
 
         function getGroup(groupId) {
-            const populate = {populate: ['members', 'administrators', 'attributes', 'memberships', 'childGroups', 'parentGroups']};
+            const populate = {populate: ['members', 'administrators', 'attributes', 'groupAttributes', 'memberships', 'childGroups', 'parentGroups', 'pis']};
             return service.one(groupId).get(populate);
         }
 
