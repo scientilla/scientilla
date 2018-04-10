@@ -38,7 +38,7 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'administratedGroups',
             through: 'groupadministrator'
         },
-        pi: {
+        pis: {
             collection: 'user',
             via: 'managedGroups',
             through: 'principalinvestigator'
