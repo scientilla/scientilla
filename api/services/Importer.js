@@ -240,7 +240,7 @@ async function importGroups() {
     }
 
     for (const rsData of researchStructuresData) {
-        const group = await Group.findOrCreate({cdr: rsData.cdr});
+        const group = await Group.findOrCreate({code: rsData.cdr});
         await Group.update({id: group.id}, {
             name: rsData.description,
             type: rsData.type,

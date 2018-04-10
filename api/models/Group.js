@@ -26,7 +26,7 @@ module.exports = _.merge({}, ResearchEntity, {
         description: 'TEXT',
         publicationsAcronym: 'TEXT',
         type: 'STRING',
-        cdr: 'STRING',
+        code: 'STRING',
         active: 'BOOLEAN',
         collaborations: {
             collection: 'collaboration',
@@ -198,7 +198,7 @@ module.exports = _.merge({}, ResearchEntity, {
     },
     getMBOInstitutePerformance: async function (cdr, year) {
         if (cdr) {
-            const group = await Group.findOne({cdr}).populate('documents');
+            const group = await Group.findOne({code:cdr}).populate('documents');
             if(!group)
                 throw 'Group not found';
             return await PerformanceCalculator.getGroupInstitutePerformance(group, year);
@@ -208,7 +208,7 @@ module.exports = _.merge({}, ResearchEntity, {
     },
     getMBOInvitedTalks: async function (cdr, year) {
         if (cdr) {
-            const group = await Group.findOne({cdr}).populate('documents');
+            const group = await Group.findOne({code:cdr}).populate('documents');
             if(!group)
                 throw 'Group not found';
             return await PerformanceCalculator.getGroupMBOInvitedTalks(group, year);
