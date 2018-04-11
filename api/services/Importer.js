@@ -1,4 +1,4 @@
-/* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator*/
+/* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator, MembershipGroup*/
 // Importer.js - in api/services
 
 "use strict";
@@ -247,6 +247,7 @@ async function importGroups() {
             starting_date: rsData.start_date
         });
 
+        //PI
         if (Array.isArray(rsData.pis) && rsData.pis.length > 0) {
             const pis = await User.find({username: rsData.pis.map(p => p.email)});
 
@@ -268,6 +269,27 @@ async function importGroups() {
         else
             await PrincipalInvestigator.destroy({group: group.id});
 
+        //center
+        if (rsData.center) {
+            const center = await Group.findOrCreate({code: rsData.center.code});
+            await Group.update({id: center.id}, {name: rsData.center.name});
+
+            const mgs = await MembershipGroup.find({child_group: group.id});
+            const toDeleteIds = mgs.filter(mg => mg.parent_group !== center.id).map(mg => mg.id);
+            if (toDeleteIds.length > 0)
+                await MembershipGroup.destroy({id: toDeleteIds});
+
+
+            if (!mgs.find(mg => mg.parent_group === center.id))
+                await MembershipGroup.create({
+                    parent_group: center.id,
+                    child_group: group.id
+                });
+        }
+        else
+            await MembershipGroup.destroy({child_group: group.id});
+
+        //research domains and interactions
         if (rsData.main_research_domain) {
             await clearResearchDomains([rsData.main_research_domain.code], group, 'main');
             await addResearchDomain(rsData.main_research_domain.code, group, 'main');
