@@ -270,24 +270,28 @@ async function importGroups() {
             await PrincipalInvestigator.destroy({group: group.id});
 
         //center
+        const membershipGroups = await MembershipGroup.find({child_group: group.id}).populate('parent_group');
+        const oldCentersMG = membershipGroups.filter(mg => mg.parent_group.type === 'center');
+
         if (rsData.center) {
             const center = await Group.findOrCreate({code: rsData.center.code});
-            await Group.update({id: center.id}, {name: rsData.center.name});
+            await Group.update({id: center.id}, {
+                name: rsData.center.name,
+                type: 'center'
+            });
 
-            const mgs = await MembershipGroup.find({child_group: group.id});
-            const toDeleteIds = mgs.filter(mg => mg.parent_group !== center.id).map(mg => mg.id);
+            const toDeleteIds = oldCentersMG.filter(mg => mg.parent_group.id !== center.id).map(mg => mg.id);
             if (toDeleteIds.length > 0)
                 await MembershipGroup.destroy({id: toDeleteIds});
 
-
-            if (!mgs.find(mg => mg.parent_group === center.id))
+            if (!oldCentersMG.find(mg => mg.parent_group.id === center.id))
                 await MembershipGroup.create({
                     parent_group: center.id,
                     child_group: group.id
                 });
         }
         else
-            await MembershipGroup.destroy({child_group: group.id});
+            await MembershipGroup.destroy({child_group: oldCentersMG.map(mg => mg.id)});
 
         //research domains and interactions
         if (rsData.main_research_domain) {
