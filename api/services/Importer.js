@@ -286,7 +286,7 @@ async function importGroups() {
         const membershipGroups = await MembershipGroup.find({child_group: group.id}).populate('parent_group');
         const oldCentersMG = membershipGroups.filter(mg => mg.parent_group.type === 'center');
 
-        if (rsData.center) {
+        if (rsData.center && rsData.center.code) {
             const center = await Group.findOrCreate({code: rsData.center.code});
             await Group.update({id: center.id}, {
                 name: rsData.center.name,
