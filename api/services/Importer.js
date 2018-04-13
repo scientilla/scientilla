@@ -137,7 +137,13 @@ async function importPeople() {
         json: true
     };
 
-    const people = await request(reqOptions);
+    let people;
+    try {
+        people = await request(reqOptions);
+    } catch (e) {
+        sails.log.debug('importPeople');
+        sails.log.debug(e);
+    }
     sails.log.info(people.length + ' entries found');
     const importTime = moment.utc().format();
     let numUsersInserted = 0, numUsersUpdated = 0, numGroupsInserted = 0;
@@ -221,10 +227,17 @@ async function importGroups() {
         json: true
     };
 
+    let res;
+    try {
+        res = await request(reqOptions);
+    } catch (e) {
+        sails.log.debug('importGroups');
+        sails.log.debug(e);
+    }
     const {
         research_domains: researchDomainsData,
         research_structures: researchStructuresData
-    } = await request(reqOptions);
+    } = res;
 
     await Attribute.destroy({
         key: {'!': researchDomainsData.map(rd => rd.code)},
