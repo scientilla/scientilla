@@ -1,4 +1,4 @@
-/* global Source, User, Group, SourceMetric, SourceTypes*/
+/* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator, MembershipGroup*/
 // Importer.js - in api/services
 
 "use strict";
@@ -7,7 +7,6 @@ const xlsx = require('xlsx');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request-promise');
-const loadJsonFile = require('load-json-file');
 const moment = require('moment');
 
 
@@ -138,7 +137,13 @@ async function importPeople() {
         json: true
     };
 
-    const people = await request(reqOptions);
+    let people;
+    try {
+        people = await request(reqOptions);
+    } catch (e) {
+        sails.log.debug('importPeople');
+        sails.log.debug(e);
+    }
     sails.log.info(people.length + ' entries found');
     const importTime = moment.utc().format();
     let numUsersInserted = 0, numUsersUpdated = 0, numGroupsInserted = 0;
@@ -213,17 +218,137 @@ async function importPeople() {
 }
 
 async function importGroups() {
-    sails.log.info('Import started');
-    const groupsPath = 'data/groups.json';
-    const groupNames = await loadJsonFile(groupsPath);
-    sails.log.info(groupNames.length + ' entries found');
-    for (let groupName of groupNames) {
-        const group = await Group.findOneByName(groupName);
-        if (group)
-            continue;
-        await Group.create({name: groupName});
+    sails.log.info('Group import started');
+
+    const researchDomains = [];
+    const url = sails.config.scientilla.mainInstituteImport.officialGroupsImportUrl;
+    const reqOptions = {
+        uri: url,
+        json: true
+    };
+
+    let res;
+    try {
+        res = await request(reqOptions);
+    } catch (e) {
+        sails.log.debug('importGroups');
+        sails.log.debug(e);
     }
-    sails.log.info('Import finished');
+    const {
+        research_domains: researchDomainsData,
+        research_structures: researchStructuresData
+    } = res;
+
+    await Attribute.destroy({
+        key: {'!': researchDomainsData.map(rd => rd.code)},
+        category: 'research_domain'
+    });
+    for (const rdData of researchDomainsData) {
+        let researchDomain = await Attribute.findOrCreate({
+            key: rdData.code,
+            category: 'research_domain'
+        });
+        researchDomain = await Attribute.update({id: researchDomain.id}, {value: rdData});
+        researchDomains.push(researchDomain[0]);
+    }
+
+    for (const rsData of researchStructuresData) {
+        const group = await Group.findOrCreate({code: rsData.cdr});
+        await Group.update({id: group.id}, {
+            name: rsData.description,
+            type: rsData.type,
+            starting_date: rsData.start_date
+        });
+
+        //PI
+        if (Array.isArray(rsData.pis) && rsData.pis.length > 0) {
+            const pis = await User.find({username: rsData.pis.map(p => p.email)});
+
+            if (pis && pis.length) {
+                await PrincipalInvestigator.destroy({
+                    group: group.id,
+                    pi: {'!': pis.map(p => p.id)}
+                });
+
+                for (const pi of pis)
+                    await PrincipalInvestigator.findOrCreate({
+                        pi: pi.id,
+                        group: group.id
+                    });
+            }
+            else
+                await PrincipalInvestigator.destroy({group: group.id});
+        }
+        else
+            await PrincipalInvestigator.destroy({group: group.id});
+
+        //center
+        const membershipGroups = await MembershipGroup.find({child_group: group.id}).populate('parent_group');
+        const oldCentersMG = membershipGroups.filter(mg => mg.parent_group.type === 'center');
+
+        if (rsData.center && rsData.center.code) {
+            const center = await Group.findOrCreate({code: rsData.center.code});
+            await Group.update({id: center.id}, {
+                name: rsData.center.name,
+                type: 'center'
+            });
+
+            const toDeleteIds = oldCentersMG.filter(mg => mg.parent_group.id !== center.id).map(mg => mg.id);
+            if (toDeleteIds.length > 0)
+                await MembershipGroup.destroy({id: toDeleteIds});
+
+            if (!oldCentersMG.find(mg => mg.parent_group.id === center.id))
+                await MembershipGroup.create({
+                    parent_group: center.id,
+                    child_group: group.id
+                });
+        }
+        else
+            await MembershipGroup.destroy({child_group: oldCentersMG.map(mg => mg.id)});
+
+        //research domains and interactions
+        if (rsData.main_research_domain) {
+            await clearResearchDomains([rsData.main_research_domain.code], group, 'main');
+            await addResearchDomain(rsData.main_research_domain.code, group, 'main');
+        }
+        else
+            await clearResearchDomains([], group, 'main');
+
+        await clearResearchDomains(rsData.interactions.map(i => i.code), group, 'interaction');
+        for (const ird of rsData.interactions)
+            await addResearchDomain(ird.code, group, 'interaction');
+    }
+
+    async function clearResearchDomains(correctRdCodes, group, type) {
+        let res;
+        if (!correctRdCodes.length)
+            res = await GroupAttribute.find({
+                researchEntity: group.id
+            });
+        else
+            res = await GroupAttribute.find({
+                attribute: {
+                    '!': researchDomains.filter(rd => correctRdCodes.includes(rd.key)).map(rd => rd.id),
+                },
+                researchEntity: group.id
+            });
+
+        //query language does not support JSON
+        const toDeleteIds = res.filter(ga => ga.extra.type === type).map(ga => ga.id);
+        if (toDeleteIds.length)
+            await GroupAttribute.destroy({id: toDeleteIds});
+    }
+
+    async function addResearchDomain(rdCode, group, type) {
+        const rd = researchDomains.find(rd => rd.key === rdCode);
+        if (rd) {
+            const res = await GroupAttribute.find({attribute: rd.id, researchEntity: group.id});
+            if (!res.filter(ga => ga.extra.type === type).length)
+                await GroupAttribute.create({attribute: rd.id, researchEntity: group.id, extra: {type}});
+        }
+    }
+
+    sails.log.info('Group import finished');
 }
 
 

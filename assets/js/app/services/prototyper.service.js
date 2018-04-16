@@ -154,6 +154,31 @@
                     const userMembersihp = this.memberships.find(m => m.user === u.id);
                     return userMembersihp && !userMembersihp.active;
                 });
+            },
+            getResearchDomain: function () {
+                const researchDomain = this.attributes
+                    .filter(a => a.category === 'research_domain')
+                    .reduce((res, a) => {
+                        const ga = this.groupAttributes.find(ga => ga.attribute === a.id);
+                        if (ga.extra.type === 'main') return a;
+                        return res;
+                    }, null);
+
+                if (_.isObject(researchDomain))
+                    return researchDomain.value;
+            },
+            getInteractions: function () {
+                const interactionsGroupAttributes = this.groupAttributes.filter(ga => ga.extra.type === 'interaction');
+                const interactions = this.attributes
+                    .filter(a => a.category === 'research_domain')
+                    .reduce((res, a) => {
+                        const groupAttribute = interactionsGroupAttributes.find(ga => ga.attribute === a.id);
+                        if (groupAttribute)
+                            res.push(a);
+                        return res;
+                    }, []);
+
+                return interactions.map(i => i.value);
             }
         };
 
@@ -319,7 +344,7 @@
             getComparisonDuplicates() {
                 let duplicates;
                 if (this.isDraft())
-                    duplicates =  this.duplicates;
+                    duplicates = this.duplicates;
                 else
                     duplicates = this.duplicates.filter(d => d.duplicateKind === 'v');
                 duplicates.sort((a, b) => {
@@ -395,6 +420,7 @@
             _.defaultsDeep(group, groupPrototype);
             service.toUsersCollection(group.members);
             service.toUsersCollection(group.administrators);
+            service.toUsersCollection(group.pis);
             service.toDocumentsCollection(group.documents);
             service.toGroupsCollection(group.childGroups);
             return group;

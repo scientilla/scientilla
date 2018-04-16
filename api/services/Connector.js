@@ -56,7 +56,13 @@ async function getDocumentByDoi(origin, doi) {
 }
 
 async function getExtractTransformDocuments(config) {
-    const res = await makeRequest(config);
+    let res;
+    try {
+        res = await makeRequest(config);
+    } catch (e) {
+        sails.log.debug('getExtractTransformDocuments');
+        sails.log.debug(e);
+    }
     const extracted = config.fieldExtract(res.body);
     return {
         items: await Promise.all(_.map(extracted.documents, r => config.transform(r))),

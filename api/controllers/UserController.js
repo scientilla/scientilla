@@ -11,7 +11,6 @@
 
 var _ = require('lodash');
 var researchEntityController = require('../lib/ResearchEntityController');
-const request = require('request-promise');
 
 module.exports = require('waterlock').actions.user(_.merge({}, researchEntityController, {
     //sTODO: move this function to the user model

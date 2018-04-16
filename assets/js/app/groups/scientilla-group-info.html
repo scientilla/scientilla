@@ -1,0 +1,41 @@
+<div ng-if="vm.group.type === 'Research Line'">
+    <span ng-if="vm.group.pis.length">
+        <label>PI:</label>
+        <span ng-repeat="pi in vm.group.pis">
+            <a ng-href="#{{pi.getProfileUrl()}}">{{pi.getDisplayName()}}</a>
+        </span>
+        <br>
+    </span>
+    <span ng-if="vm.group.starting_date">
+        <label>Starting date:</label> <span>{{vm.group.starting_date | date : 'd LLLL yyyy'}}</span>
+        <br>
+    </span>
+    <span ng-if="vm.researchDomain">
+        <label>Research domain:</label> <span>{{vm.researchDomain.name}}</span>
+        <br>
+    </span>
+    <span ng-if="vm.group.interactions.length">
+        <label>Interactions:</label> <span
+            ng-repeat="interaction in vm.interactions">{{interaction.name}} </span>
+        <br>
+    </span>
+    <span ng-if="vm.group.scopusId">
+        <a ng-href="https://www.scopus.com/affil/profile.uri?afid={{vm.group.scopusId}}" target="_blank">
+            Scopus profile
+        </a>
+        <br>
+    </span>
+    <span>
+        <label>Total members:</label> <span>{{vm.group.getActiveMembers().length}}</span>
+        <br>
+    </span>
+    <nvd3 options="vm.chart.options" data="vm.chart.data"></nvd3>
+</div>
+<div ng-if="vm.group.type !== 'Research Line'">
+    <span ng-if="vm.group.scopusId">
+        <a ng-href="https://www.scopus.com/affil/profile.uri?afid={{vm.group.scopusId}}" target="_blank">
+            Scopus profile
+        </a>
+        <br>
+    </span>
+</div>

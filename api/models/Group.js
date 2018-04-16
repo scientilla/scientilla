@@ -26,21 +26,31 @@ module.exports = _.merge({}, ResearchEntity, {
         description: 'TEXT',
         publicationsAcronym: 'TEXT',
         type: 'STRING',
-        cdr: 'STRING',
+        code: 'STRING',
         active: 'BOOLEAN',
         collaborations: {
             collection: 'collaboration',
             via: 'group'
         },
+        starting_date: 'DATE',
         administrators: {
             collection: 'user',
             via: 'administratedGroups',
             through: 'groupadministrator'
         },
+        pis: {
+            collection: 'user',
+            via: 'managedGroups',
+            through: 'principalinvestigator'
+        },
         members: {
             collection: 'User',
             via: 'memberships',
             through: 'membership'
+        },
+        subGroupsMembers: {
+            collection: 'User',
+            through: 'subgroupsmembership'
         },
         memberships: {
             collection: 'membership',
@@ -126,7 +136,11 @@ module.exports = _.merge({}, ResearchEntity, {
         attributes: {
             collection: 'Attribute',
             through: 'groupattribute'
-        }
+        },
+        groupAttributes: {
+            collection: 'groupattribute',
+            via: 'researchEntity',
+        },
     },
     getAuthorshipsData: async function (document, groupId, newAffiliationData = {}) {
         return {
@@ -188,7 +202,7 @@ module.exports = _.merge({}, ResearchEntity, {
     },
     getMBOInstitutePerformance: async function (cdr, year) {
         if (cdr) {
-            const group = await Group.findOne({cdr}).populate('documents');
+            const group = await Group.findOne({code:cdr}).populate('documents');
             if(!group)
                 throw 'Group not found';
             return await PerformanceCalculator.getGroupInstitutePerformance(group, year);
@@ -198,7 +212,7 @@ module.exports = _.merge({}, ResearchEntity, {
     },
     getMBOInvitedTalks: async function (cdr, year) {
         if (cdr) {
-            const group = await Group.findOne({cdr}).populate('documents');
+            const group = await Group.findOne({code:cdr}).populate('documents');
             if(!group)
                 throw 'Group not found';
             return await PerformanceCalculator.getGroupMBOInvitedTalks(group, year);

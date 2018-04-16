@@ -238,8 +238,13 @@ module.exports = _.merge({}, BaseModel, {
             json: true,
             qs: qs
         };
-        const r = await request(reqOptions);
-        return r;
+
+        try {
+            return await request(reqOptions);
+        } catch (e) {
+            sails.log.debug('make internal request:');
+            sails.log.debug(e);
+        }
     },
     removeVerify: async function (ResearchEntityModel, researchEntityId, docToVerifyId, verificationData, docToRemoveId) {
         const document = await Document.findOneById(docToVerifyId)
@@ -368,7 +373,7 @@ module.exports = _.merge({}, BaseModel, {
         const documentCopies = await Document.findCopies(draft, authorshipData.position);
 
         const n = documentCopies.length;
-        if (n===0)
+        if (n === 0)
             return null;
         const docToVerify = documentCopies[0];
 

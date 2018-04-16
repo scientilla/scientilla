@@ -5,6 +5,7 @@ module.exports = {
         },
         attribute: {
             model: 'Attribute'
-        }
+        },
+        extra: 'JSON'
     }
 };

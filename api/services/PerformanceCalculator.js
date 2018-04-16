@@ -42,7 +42,7 @@ async function getGroupInstitutePerformance(group, year) {
     const documents = await Document.find({id: docs.map(d => d.id)}).populate('sourceMetrics');
     const performance = await getResearchEntityInstitutePerformance(documents, y);
     return formatInstitutePerformance({
-            cdr: group.cdr,
+            cdr: group.code,
             line: group.name
         },
         performance,
@@ -100,7 +100,7 @@ async function getGroupMBOInvitedTalks(group, year) {
     const res = await getResearchEntityMBOInvitedTalks(group.documents, y);
 
     return Object.assign({}, {
-        cdr: group.cdr,
+        cdr: group.code,
         line: group.name,
         year: y
     }, res);

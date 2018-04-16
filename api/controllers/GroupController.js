@@ -5,7 +5,6 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 var researchEntityController = require('../lib/ResearchEntityController');
-const request = require('request-promise');
 
 module.exports = _.merge({}, researchEntityController, {
     addTags: function (req, res) {

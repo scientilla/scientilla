@@ -77,10 +77,10 @@
                 values: Object.keys(groupTypes).map(k => ({label: groupTypeLabels[k], value: groupTypes[k]})),
                 ngIf: isAdmin
             },
-            cdr: {
+            code: {
                 inputType: 'text',
-                label: 'CDR',
-                defaultValue: vm.group.cdr
+                label: 'CDR/CODE',
+                defaultValue: vm.group.code
             },
             active: {
                 inputType: 'select',

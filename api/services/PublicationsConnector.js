@@ -1,7 +1,6 @@
 /* global sails,Source */
 "use strict";
 
-const request = require('request-promise');
 const _ = require('lodash');
 const SourceTypes = require("./SourceTypes");
 const DocumentTypes = require("./DocumentTypes");

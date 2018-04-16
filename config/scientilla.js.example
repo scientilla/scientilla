@@ -35,7 +35,8 @@ module.exports.scientilla = {
         usersCreationCondition: {
             attribute: "scientificRole",
             value: true
-        }
+        },
+        officialGroupsImportUrl: 'http://example.com/groups'
     },
     crons: [
         {
