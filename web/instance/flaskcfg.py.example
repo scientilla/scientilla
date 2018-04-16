@@ -1,0 +1,27 @@
+##########################################################
+#
+# This is a sample flaskcfg.py for developing Scientilla.
+#
+##########################################################
+import os
+
+
+# grab the folder of the top-level directory of this project
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
+TOP_LEVEL_DIR = os.path.abspath(os.curdir)
+
+# Update later by using a random number generator and moving
+# the actual key outside of the source code under version control
+SECRET_KEY = 'secret_key'
+WTF_CSRF_ENABLED = True
+DEBUG = True
+
+# SQLAlchemy
+POSTGRES_DEFAULT_USER = 'scientilla'
+POSTGRES_USER = 'scientilla'
+POSTGRES_PASSWORD = 'scientillapassword'
+POSTGRES_DB = 'scientilla'
+POSTGRES_HOST = '172.17.0.1'
+POSTGRES_PORT = 5433
+SQLALCHEMY_DATABASE_URI = 'postgresql://%s:%s@%s:%d/%s' % (POSTGRES_USER, POSTGRES_PASSWORD, POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DB)
+SQLALCHEMY_TRACK_MODIFICATIONS = True
