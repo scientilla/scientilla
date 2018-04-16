@@ -6,7 +6,7 @@ module.exports = {
     getChartsData
 };
 
-async function getChartsData(researchEntityId, Model, refresh) {
+async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
 
     const documentTypes = DocumentTypes.get();
 
@@ -101,25 +101,31 @@ async function getChartsData(researchEntityId, Model, refresh) {
         params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES]
     }, {
         key: 'hindexPerYear',
-        fn: hindexPerYear
+        fn: hindexPerYear,
+        requires: ['documents', 'citations']
     }, {
         key: 'citationsPerYear',
-        fn: citationsPerYear
+        fn: citationsPerYear,
+        requires: ['citations']
     }, {
         key: 'citationsPerDocumentYear',
-        fn: citationsPerDocumentYear
+        fn: citationsPerDocumentYear,
+        requires: ['documents', 'citations']
     }, {
         key: 'totalIfPerYear',
         fn: getTotalMetricPerYear,
-        metricName: 'IF'
+        metricName: 'IF',
+        requires: ['documents', 'docsMetrics']
     }, {
         key: 'totalSjrPerYear',
         fn: getTotalMetricPerYear,
-        metricName: 'SJR'
+        metricName: 'SJR',
+        requires: ['documents', 'docsMetrics']
     }, {
         key: 'totalSnipPerYear',
         fn: getTotalMetricPerYear,
-        metricName: 'SNIP'
+        metricName: 'SNIP',
+        requires: ['documents', 'docsMetrics']
     }, {
         key: 'chartDataDate',
         queryName: 'chartDataDate',
@@ -128,26 +134,49 @@ async function getChartsData(researchEntityId, Model, refresh) {
         nocache: true
     }];
 
+    let selectedCharts = [];
     let documents = [];
     let citations = [];
     let docsMetrics = [];
 
-    if (refresh || !await areChartsCached()) {
-        await setDocuments();
-        await setCitations();
-        await setDocumentsMetrics();
-    }
+    await setData();
 
-    const promises = charts.map(chart => cachedChartData(chart, refresh));
+    const promises = selectedCharts.map(chart => cachedChartData(chart, refresh));
     const results = await Promise.all(promises);
 
     const res = {};
-    results.forEach((r, i) => res[charts[i].key] = r);
+    results.forEach((r, i) => res[selectedCharts[i].key] = r);
 
     return {
         count: 1,
         items: [res]
     };
+
+    async function setData() {
+
+        if (chartsKeys.length > 0)
+            selectedCharts = charts.filter(c => chartsKeys.includes(c.key));
+        else
+            selectedCharts = charts;
+
+        if (refresh || !await areChartsCached()) {
+            if (selectedCharts.find(sc =>
+                sc.requires
+                && (
+                    sc.requires.includes('documents')
+                    || sc.requires.includes('citations')
+                    || sc.requires.includes('docsMetrics')
+                )))
+                await setDocuments();
+
+            if (selectedCharts.find(sc => sc.requires && sc.requires.includes('citations')))
+                await setCitations();
+
+            if (selectedCharts.find(sc => sc.requires && sc.requires.includes('docsMetrics')))
+                await setDocumentsMetrics();
+        }
+    }
+
 
     async function query(chart) {
         const sql = getSql(chart.queryName);
@@ -256,7 +285,7 @@ async function getChartsData(researchEntityId, Model, refresh) {
     }
 
     async function areChartsCached() {
-        const cc = charts.filter(c => !c.nocache);
+        const cc = selectedCharts.filter(c => !c.nocache);
 
         const cachedCharts = await ChartData.find({
             key: cc.map(c => c.key),
