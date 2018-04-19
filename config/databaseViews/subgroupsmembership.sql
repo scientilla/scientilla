@@ -13,6 +13,8 @@ CREATE OR REPLACE VIEW subgroupsmembership AS
   )
   SELECT
     sg.parent_group AS "group",
-    m."user"        AS "user"
+    m."user"        AS "user",
+    m.synchronized AS synchronized,
+    m.active AS active
   FROM subg sg
     JOIN membership m ON m."group" = sg.child_group;

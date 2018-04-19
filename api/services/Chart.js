@@ -132,6 +132,11 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
         fn: query,
         params: [researchEntityId, researchEntityType],
         nocache: true
+    }, {
+        key: 'groupMembersByRole',
+        fn: getGroupMembersByRole,
+        researchEntityId: researchEntityId,
+        researchEntityType: researchEntityType
     }];
 
     let selectedCharts = [];
@@ -263,6 +268,108 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
                     value: yearTotal
                 };
             });
+    }
+
+    async function getGroupMembersByRole(chart) {
+        if (chart.researchEntityType !== 'group')
+            return [];
+
+        const groupId = chart.researchEntityId;
+
+        const roles = {
+            pi: 'PI',
+            affiliated_researcher: 'Affiliated Researcher',
+            administrative: 'Administrative',
+            external_collaborator: 'External Collaborator',
+            phd: 'PhD',
+            post_doc: 'Post Doc',
+            research_support: 'Research Support',
+            researcher: 'Researcher',
+            scientific_director: 'Scientific Director',
+            technician: 'Technician',
+            technologist: 'Technologist',
+            visiting_scientist: 'Visiting Scientist',
+            director: 'Director',
+            other: 'Other'
+        };
+
+        const roleMapper = {
+            'researcher - center coordinator': roles.researcher,
+            'researcher tt (tt1)': roles.researcher,
+            'senior researcher tt (tt2)': roles.researcher,
+            'senior researcher tenured': roles.researcher,
+            'senior researcher tenured - center coordinator': roles.researcher,
+            'senior researcher tenured - research director': roles.researcher,
+            'senior researcher - center coordinator': roles.researcher,
+            'senior researcher - founding director': roles.researcher,
+            'senior researcher - research director': roles.researcher,
+            'technologist - center coordinator': roles.technologist,
+            'chief technician': roles.technician,
+            'affiliated researcher': roles.affiliated_researcher,
+            'administrative assistant': roles.administrative,
+            'administrative manager': roles.administrative,
+            'administrative supervisor': roles.administrative,
+            'support administrative assistant': roles.administrative,
+            'external collaborator': roles.external_collaborator,
+            'phd/fellow': roles.phd,
+            'post doc': roles.post_doc,
+            'post doc fellow': roles.post_doc,
+            'research administrative': roles.research_support,
+            'research manager': roles.research_support,
+            'research support administrative junior': roles.research_support,
+            'research support administrative senior': roles.research_support,
+            'early-stage researcher': roles.researcher,
+            'researcher': roles.researcher,
+            'senior researcher': roles.researcher,
+            'scientific director': roles.scientific_director,
+            'senior technician': roles.technician,
+            'support technician': roles.technician,
+            'junior technician': roles.technician,
+            'technologist': roles.technologist,
+            'visiting scientist': roles.visiting_scientist,
+            'director': roles.director
+        };
+
+        const pis = await PrincipalInvestigator.find();
+
+        const group = await Group.findOne({id: groupId}).populate(['subGroupsMembers']);
+
+        const memberships = await Membership.find({
+            group: groupId,
+            synchronized: true,
+            active: true
+        });
+        const directMembers = await User.find({id: memberships.map(m => m.user)});
+
+        const subGroupsMemberships = await SubGroupsMembership.find({group: groupId});
+        const subGroupsMembers = group.subGroupsMembers.filter(u => {
+            const userMembersihp = subGroupsMemberships.find(m => m.user === u.id);
+            return userMembersihp && userMembersihp.synchronized && userMembersihp.active;
+        });
+
+        const totalMembers = _.uniqBy(directMembers.concat(subGroupsMembers), 'id');
+        return totalMembers.reduce((acc, m) => {
+            let role;
+            if (pis.find(p => m.id === p.pi))
+                role = roles.pi;
+            else if (m.jobTitle)
+                role = roleMapper[m.jobTitle.toLocaleLowerCase()];
+
+            if (!role) role = roles.other;
+
+            const res = acc.find(r => r.role === role);
+            if (!res) {
+                acc.push({
+                    role: role,
+                    value: 1
+                });
+                return acc;
+            }
+
+            res.value++;
+            return acc;
+        }, []);
+
     }
 
     async function setDocuments() {

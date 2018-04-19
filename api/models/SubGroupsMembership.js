@@ -7,7 +7,9 @@ module.exports = {
         user: {
             model: 'User',
             primaryKey: true
-        }
+        },
+        synchronized: 'boolean',
+        active: 'boolean',
     },
     migrate: 'safe',
     tableName: 'subgroupsmembership',
