@@ -19,10 +19,11 @@
 
     scientillaFilter.$inject = [
         'pageSize',
-        '$scope'
+        '$scope',
+        '$timeout'
     ];
 
-    function scientillaFilter(pageSize, $scope) {
+    function scientillaFilter(pageSize, $scope, $timeout) {
         const vm = this;
 
         vm.onSubmit = onSubmit;
@@ -43,6 +44,7 @@
         vm.advancedOpen = false;
         vm.advancedText = getAdvancedText(vm.advancedOpen);
         vm.toggleAdvanced = toggleAdvanced;
+        let statusTimeoutId = null;
 
         vm.formVisible = true;
 
@@ -191,6 +193,13 @@
         }
 
         function setStatus(status) {
+            if (statusTimeoutId)
+                $timeout.cancel(statusTimeoutId);
+            if (status === vm.STATUS_LOADING) {
+                vm.status = vm.STATUS_WAITING;
+                statusTimeoutId = $timeout(() => vm.status = vm.STATUS_LOADING, 400);
+                return;
+            }
             vm.status = status;
         }
     }
