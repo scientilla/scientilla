@@ -268,7 +268,7 @@
     };
 
     angular.module('app')
-        .constant('pageSize', 10)
+        .constant('pageSize', 50)
         .constant('userConstants', userConstants)
         .constant('config', config)
         .constant('DocumentLabels', DocumentLabels)
