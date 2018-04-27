@@ -102,7 +102,8 @@
             const newMembership = {
                 group: group.id,
                 user: user.id,
-                active: active
+                active: active,
+                synchronized: false
             };
             return Restangular
                 .all('memberships')

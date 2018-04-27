@@ -1,31 +1,38 @@
-<div>
-    <h3>Members <small>{{vm.group.getActiveMembers().length}}</small></h3>
-    <div ng-repeat="m in vm.group.getActiveMembers()">
-        <div class="row">
-            <div class="col-md-10">
-                <a ng-href="#{{m.getProfileUrl()}}">
-                    {{m| fullname}}
-                </a>
-                <small>{{m.jobTitle}}</small>
-            </div>
-            <div class="col-md-2 text-right">
+<scientilla-filter
+        search-form-structure="vm.searchForm"
+        on-filter="vm.onFilter"
+        elements="vm.members"
+        empty-list-message="No members found">
+
+    <item-list>
+        <div ng-repeat="m in vm.members" class="col-md-6 scientilla-user-card">
+            <div class="row">
+                <div class="col-xs-10">
+                    <a ng-href="#{{m.getProfileUrl()}}">
+                        {{m| fullname}}
+                    </a>
+                    <small>{{m.jobTitle}}</small>
+                    <br/>
+                    {{m.membership.type.label}}
+                    <span ng-if="m.membership.level>0" title="Inherited from subgroups" class="fa fa-user-times"></span>
+                </div>
+                <div class="col-xs-2 text-right">
+                    <button ng-click="vm.removeCollaborator(m)"
+                            ng-if="vm.isAdmin() && [vm.membershipTypes.COLLABORATOR.id,vm.membershipTypes.FORMER_COLLABORATOR.id].includes(m.membership.type.id)"
+                            class="btn btn-primary"
+                    >X
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
-    <div ng-if="vm.group.getActiveMembers().length === 0">No Members</div>
-</div>
-<hr>
-<div>
-    <h3>Collaborators <small>{{vm.group.getCollaborators().length}}</small></h3>
-    <button type="button"
-            ng-if="vm.isAdmin()"
-            class="btn btn-link fa"
-            ng-class="vm.isCollaborationManagementFormOpen ? 'fa-angle-up' : 'fa-angle-down'"
-            ng-click="vm.openCollaboratorsManagementForm()">
-    </button>
-    <div class="panel panel-default"
-         ng-show="vm.isCollaborationManagementFormOpen"
-         ng-if="vm.isAdmin()">
+    </item-list>
+</scientilla-filter>
+
+
+<div ng-if="vm.isAdmin()">
+    <hr>
+    <h3>Add collaborator</h3>
+    <div class="panel panel-default">
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-6">
@@ -51,7 +58,7 @@
                                     </span>
                 </div>
                 <div class="col-md-2">
-                    <label><input type="checkbox" ng-model="vm.selectedUserActive" /> Active</label>
+                    <label><input type="checkbox" ng-model="vm.selectedUserActive"/> Active</label>
                 </div>
                 <div class="col-md-3">
                     <button type="button"
@@ -63,51 +70,4 @@
             </div>
         </div>
     </div>
-    <br>
-    <div ng-repeat="m in vm.group.getCollaborators()">
-        <div class="row">
-            <div class="col-md-5">
-                <a ng-href="#{{m.getProfileUrl()}}">
-                    {{m| fullname}}
-                </a>
-                <small>{{m.jobTitle}}</small>
-            </div>
-            <div class="col-md-5">
-                <button type="button"
-                        ng-if="vm.isAdmin()"
-                        class="btn btn-link fa fa-minus"
-                        ng-click="vm.removeCollaborator(m)"
-                        title="Remove {{vm.selectedUser.getDisplayName()}} from the collaborators">
-                </button>
-            </div>
-            <div class="col-md-2 text-right">
-            </div>
-        </div>
-    </div>
-    <div ng-if="vm.group.getCollaborators().length === 0">No Collaborators</div>
-</div>
-<hr>
-<div>
-    <h3>Former Members <small>{{vm.group.getFormerMembers().length}}</small></h3>
-    <div ng-repeat="m in vm.group.getFormerMembers()">
-        <div class="row">
-            <div class="col-md-5">
-                <a ng-href="#{{m.getProfileUrl()}}">
-                    {{m| fullname}}
-                </a>
-                <small>{{m.jobTitle}}</small>
-            </div>
-            <div class="col-md-5">
-                <button type="button"
-                        ng-if="vm.isAdmin()"
-                        class="btn btn-link fa fa-minus"
-                        ng-click="vm.removeCollaborator(m)"
-                        title="Remove {{vm.selectedUser.getDisplayName()}} from the former members">
-                </button>
-            </div>
-            <div class="col-md-2 text-right">
-            </div>
-        </div>
-    </div>
-    <div ng-if="vm.group.getFormerMembers().length === 0">No Formers Members</div>
 </div>

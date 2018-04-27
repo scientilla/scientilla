@@ -332,23 +332,13 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
 
         const pis = await PrincipalInvestigator.find();
 
-        const group = await Group.findOne({id: groupId}).populate(['subGroupsMembers']);
-
-        const memberships = await Membership.find({
+        const memberships = await AllMembership.find({
             group: groupId,
             synchronized: true,
             active: true
         });
-        const directMembers = await User.find({id: memberships.map(m => m.user)});
-
-        const subGroupsMemberships = await SubGroupsMembership.find({group: groupId});
-        const subGroupsMembers = group.subGroupsMembers.filter(u => {
-            const userMembersihp = subGroupsMemberships.find(m => m.user === u.id);
-            return userMembersihp && userMembersihp.synchronized && userMembersihp.active;
-        });
-
-        const totalMembers = _.uniqBy(directMembers.concat(subGroupsMembers), 'id');
-        return totalMembers.reduce((acc, m) => {
+        const members = await User.find({id: memberships.map(m => m.user)});
+        return members.reduce((acc, m) => {
             let role;
             if (pis.find(p => m.id === p.pi))
                 role = roles.pi;
