@@ -9,12 +9,6 @@
 </div>
 
 <div class="scientilla-filter-results">
-    <div ng-if="vm.onStatus(vm.STATUS_LOADING)"
-         class="progress-bar progress-bar-striped active"
-         role="progressbar"
-         style="width: 100%">
-        Loading
-    </div>
 
     <div>
         <h3 ng-if="vm.elements.length === 0">{{vm.emptyListMessage}}</h3>
@@ -26,6 +20,12 @@
                         items found</label>
                 </div>
                 <div class="col-md-4 col-md-offset-2 text-center">
+                    <div ng-if="vm.onStatus(vm.STATUS_LOADING)"
+                         class="progress-bar progress-bar-striped active"
+                         role="progressbar"
+                         style="width: 100%">
+                        Loading
+                    </div>
                     <ul ng-if="vm.onStatus(vm.STATUS_WAITING)"
                         uib-pagination
                         ng-change="vm.onPageChange()"
@@ -43,6 +43,12 @@
 
             <div class="row">
                 <div class="col-md-4 col-md-offset-4 text-center">
+                    <div ng-if="vm.onStatus(vm.STATUS_LOADING)"
+                         class="progress-bar progress-bar-striped active"
+                         role="progressbar"
+                         style="width: 100%">
+                        Loading
+                    </div>
                     <ul ng-if="vm.onStatus(vm.STATUS_WAITING)"
                         uib-pagination
                         ng-change="vm.onPageChange()"
