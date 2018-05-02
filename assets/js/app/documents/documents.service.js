@@ -411,7 +411,7 @@
                             Notification.success("The documents have been marked as non-duplicates");
                         }
                     } catch (err) {
-                        if (err !== 'backdrop click')
+                        if (!['backdrop click', 'escape key press'].includes(err))
                             Notification.error("An error happened");
 
                     }
