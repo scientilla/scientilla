@@ -10,7 +10,6 @@
             bindings: {
                 onFilter: '&',
                 searchFormStructure: '<',
-                emptyListMessage: '@?',
                 filterLabel: '@?',
                 elements: '<?'
             }
@@ -38,9 +37,10 @@
         vm.filterSearchFormStructure = {};
 
         // statuses
-        vm.STATUS_WAITING = 0;
-        vm.STATUS_LOADING = 1;
-        vm.STATUS_ERROR = 2;
+        vm.STATUS_INITIAL_LOADING = 0;
+        vm.STATUS_WAITING = 1;
+        vm.STATUS_LOADING = 2;
+        vm.STATUS_ERROR = 3;
         vm.advancedOpen = false;
         vm.advancedText = getAdvancedText(vm.advancedOpen);
         vm.toggleAdvanced = toggleAdvanced;
@@ -53,10 +53,7 @@
 
         vm.$onInit = function () {
             vm.itemsPerPage = pageSize;
-            vm.status = vm.STATUS_WAITING;
-
-            if (_.isUndefined(vm.emptyListMessage))
-                vm.emptyListMessage = "No results found";
+            vm.status = vm.STATUS_INITIAL_LOADING;
 
             if (_.isUndefined(vm.filterLabel))
                 vm.filterLabel = "Filter";
@@ -170,7 +167,9 @@
         }
 
         function refreshList() {
-            setStatus(vm.STATUS_LOADING);
+            if (!onStatus(vm.STATUS_INITIAL_LOADING))
+                setStatus(vm.STATUS_LOADING);
+
             const query = getQuery();
 
             vm.onFilter()(query)
