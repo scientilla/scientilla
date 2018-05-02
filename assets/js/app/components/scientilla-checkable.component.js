@@ -3,7 +3,7 @@
 
     angular.module('components')
             .component('scientillaCheckable', {
-                templateUrl: 'partials/scientillaCheckable.html',
+                templateUrl: 'partials/scientilla-checkable.html',
                 controller: scientillaCheckable,
                 controllerAs: 'vm',
                 bindings: {

@@ -3,7 +3,7 @@
 
     angular.module('components')
         .component('scientillaToolbar', {
-            templateUrl: 'partials/scientillaToolbar.html',
+            templateUrl: 'partials/scientilla-toolbar.html',
             controller: scientillaToolbar,
             controllerAs: 'vm'
         });

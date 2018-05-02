@@ -3,7 +3,7 @@
 
     angular.module('components')
             .component('scientillaMulticheck', {
-                templateUrl: 'partials/scientillaMulticheck.html',
+                templateUrl: 'partials/scientilla-multicheck.html',
                 controller: scientillaMulticheckController,
                 controllerAs: 'vm',
                 bindings: {

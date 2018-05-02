@@ -3,7 +3,7 @@
 
     angular.module('documents')
         .component('scientillaExternalDocuments', {
-            templateUrl: 'partials/scientillaExternalDocuments.html',
+            templateUrl: 'partials/scientilla-external-documents.html',
             controller: scientillaExternalDocuments,
             controllerAs: 'vm',
             bindings: {

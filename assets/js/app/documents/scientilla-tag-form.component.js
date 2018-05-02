@@ -3,7 +3,7 @@
 
     angular.module('documents')
         .component('scientillaTagForm', {
-            templateUrl: 'partials/scientillaTagForm.html',
+            templateUrl: 'partials/scientilla-tag-form.html',
             controller: scientillaTagForm,
             controllerAs: 'vm',
             bindings: {

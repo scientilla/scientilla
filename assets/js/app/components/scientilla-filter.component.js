@@ -3,7 +3,7 @@
 
     angular.module('components')
         .component('scientillaFilter', {
-            templateUrl: 'partials/scientillaFilter.html',
+            templateUrl: 'partials/scientilla-filter.html',
             controller: scientillaFilter,
             controllerAs: 'vm',
             transclude: true,

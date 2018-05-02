@@ -4,7 +4,7 @@
     angular
         .module('documents')
         .component('scientillaSuggestedDocuments', {
-            templateUrl: 'partials/scientillaSuggestedDocuments.html',
+            templateUrl: 'partials/scientilla-suggested-documents.html',
             controller: scientillaSuggestedDocumentsController,
             controllerAs: 'vm',
             bindings: {
