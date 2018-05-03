@@ -115,9 +115,9 @@
                     if (!alias) {
                         const aliases = user.aliases.map(a => a.str).join(', ');
                         const result = await ModalService.multipleChoiceConfirm('New alias!',
-                            'The author string you have selected "' + authorStr + '" is not among your aliases (' + aliases + ')' +
-                            ' by proceeding it will be automatically added to them.' +
-                            ' You can manage your aliases from your profile settings.',
+                            'You are verifying the document as "' + authorStr + '".\n' +
+                            'By clicking on Proceed "' + authorStr + '" will be automatically added to your aliases (' + aliases + ').\n' +
+                            'You can always manage them from your profile settings.\n',
                             ['Proceed']);
 
                         if (result === -1)
