@@ -166,6 +166,7 @@ backups/plain/*
 
 __pycache__
 web/instance/flaskcfg.py
+web/instance/flaskcfg_test.py
 
 ################################################
 # Others
