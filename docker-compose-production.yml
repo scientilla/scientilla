@@ -5,7 +5,7 @@ services:
     build: ./docker/node
     restart: always
     volumes:
-      - .:/usr/src/app
+      - ./old:/usr/src/app
     ports:
       - "1337:1337"
       - "35732:35732"

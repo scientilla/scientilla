@@ -1,0 +1,20 @@
+{
+  "name": "scientilla",
+  "version": "1.0.0",
+  "description": "Scientilla",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.16.3",
+    "http-proxy": "^1.17.0",
+    "lodash": "^4.17.10",
+    "pg": "^7.4.1",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.37.6"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "DAO",
+  "license": "ISC"
+}
