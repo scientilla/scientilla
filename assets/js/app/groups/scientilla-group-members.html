@@ -18,8 +18,9 @@
                 </div>
                 <div class="col-xs-2 text-right">
                     <button ng-click="vm.removeCollaborator(m)"
-                            ng-if="vm.isAdmin() && [vm.membershipTypes.COLLABORATOR.id,vm.membershipTypes.FORMER_COLLABORATOR.id].includes(m.membership.type.id)"
+                            ng-if="vm.isAdmin() && m.membership.level === 0 && [vm.membershipTypes.COLLABORATOR.id,vm.membershipTypes.FORMER_COLLABORATOR.id].includes(m.membership.type.id)"
                             class="btn btn-primary"
+                            title="Remove collaborator"
                     >X
                     </button>
                 </div>
