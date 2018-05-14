@@ -1,4 +1,8 @@
 <div>
+    <span>
+        <label>Type:</label> <span>{{vm.group.type}}</span>
+        <br>
+    </span>
     <span ng-if="vm.group.pis.length">
         <label>PI:</label>
         <span ng-repeat="pi in vm.group.pis">
@@ -14,7 +18,7 @@
         <label>Research domain:</label> <span>{{vm.researchDomain.name}}</span>
         <br>
     </span>
-    <span ng-if="vm.group.interactions.length">
+    <span ng-if="vm.interactions.length">
         <label>Interactions:</label> <span
             ng-repeat="interaction in vm.interactions">{{interaction.name}} </span>
         <br>
