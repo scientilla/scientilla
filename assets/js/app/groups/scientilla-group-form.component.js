@@ -63,13 +63,6 @@
                 label: 'Scopus ID',
                 defaultValue: vm.group.scopusId
             },
-            macroarea: {
-                inputType: 'attribute',
-                label: 'Macroarea',
-                defaultValue: vm.group.attributes,
-                mode: 'single',
-                category: 'macroarea'
-            },
             type: {
                 inputType: 'select',
                 label: 'Group Type',
