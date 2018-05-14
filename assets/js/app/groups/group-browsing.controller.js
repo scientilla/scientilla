@@ -8,11 +8,13 @@
         'Notification',
         'AuthService',
         'ModalService',
+        'groupTypes',
+        'groupTypeLabels',
         '$location'
     ];
 
-    function GroupBrowsingController(GroupsService, Notification, AuthService, ModalService, $location) {
-        var vm = this;
+    function GroupBrowsingController(GroupsService, Notification, AuthService, ModalService, groupTypes, groupTypeLabels, $location) {
+        const vm = this;
 
         vm.user = AuthService.user;
         vm.viewGroup = viewGroup;
@@ -21,7 +23,15 @@
         vm.createNew = createNew;
 
         vm.onFilter = onFilter;
-        var query = {};
+        let query = {};
+
+        const typeSelectValues = [{
+            value: '?',
+            label: 'All'
+        }].concat(
+            Object.keys(groupTypes)
+                .map(k => ({label: groupTypeLabels[k], value: groupTypes[k]}))
+        );
 
         vm.searchForm = {
             name: {
@@ -29,6 +39,28 @@
                 label: 'Name',
                 matchColumn: 'name',
                 matchRule: 'contains'
+            },
+            type: {
+                inputType: 'select',
+                label: 'Type',
+                matchColumn: 'type',
+                values: typeSelectValues,
+            },
+            code: {
+                inputType: 'text',
+                label: 'CDR/CODE',
+                matchColumn: 'code',
+                matchRule: 'contains',
+                ngIf: isAdmin
+            },
+            newline1: {
+                inputType: 'br'
+            },
+            active: {
+                inputType: 'checkbox',
+                label: 'Active',
+                matchColumn: 'active',
+                defaultValue: true
             }
         };
 
@@ -77,8 +109,12 @@
                 });
         }
 
-        function refreshList(){
+        function refreshList() {
             onFilter(query);
+        }
+
+        function isAdmin(){
+            return vm.user.isAdmin();
         }
 
     }
