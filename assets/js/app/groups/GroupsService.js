@@ -88,7 +88,7 @@
         }
 
         function getGroups(query) {
-            const populate = {populate: ['administrators', 'attributes']};
+            const populate = {populate: ['administrators', 'attributes', 'groupAttributes', 'pis']};
             const q = _.merge({}, query, populate);
 
             return service.getList(q);

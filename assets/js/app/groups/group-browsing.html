@@ -25,7 +25,24 @@
             <div ng-repeat="g in vm.groups">
                 <div class="row">
                     <div class="col-md-8">
-                        <h3>{{g.getDisplayName()}}</h3>
+                        <h3>{{g.getDisplayName()}} <span ng-if="vm.isAdmin()"> | {{g.code}}</span></h3>
+                        <span ng-if="g.pis.length">
+                            <label>PI:</label>
+                            <span ng-repeat="pi in g.pis">
+                                <a ng-href="#{{pi.getProfileUrl()}}">{{pi.getDisplayName()}}</a>
+                            </span>
+                            <br/>
+                        </span>
+                        {{g.type}}
+                        <span ng-if="g.getResearchDomain()">
+                            <span class="fa fa-circle"></span> {{g.getResearchDomain().name}}
+                        </span>
+                        <span ng-if="g.getInteractions().length">
+                            <span ng-repeat="interaction in g.getInteractions()">
+                                <span class="fa fa-circle-o"></span>
+                                {{interaction.name}}
+                            </span>
+                        </span>
                     </div>
                     <div class="col-md-4 text-right">
                         <h3>
@@ -41,13 +58,15 @@
                                 </button>
                                 <ul uib-dropdown-menu>
                                     <li>
-                                        <button class="btn btn-link" ng-click="vm.editGroup(g)" href="javascript:void(0)">
+                                        <button class="btn btn-link" ng-click="vm.editGroup(g)"
+                                                href="javascript:void(0)">
                                             <span class="fa fa-edit"></span>
                                             Edit
                                         </button>
                                     </li>
                                     <li>
-                                        <button class="btn btn-link" scientilla-click-confirm="Are you sure?" ng-click="vm.deleteGroup(g)" href="javascript:void(0)">
+                                        <button class="btn btn-link" scientilla-click-confirm="Are you sure?"
+                                                ng-click="vm.deleteGroup(g)" href="javascript:void(0)">
                                             <span class="fa fa-remove"></span>
                                             Delete
                                         </button>

@@ -21,6 +21,7 @@
         vm.deleteGroup = deleteGroup;
         vm.editGroup = editGroup;
         vm.createNew = createNew;
+        vm.isAdmin = isAdmin;
 
         vm.onFilter = onFilter;
         let query = {};
@@ -99,6 +100,10 @@
             openGroupForm(group);
         }
 
+        function isAdmin(){
+            return vm.user.isAdmin();
+        }
+
 
         // private
         function openGroupForm(group) {
@@ -111,10 +116,6 @@
 
         function refreshList() {
             onFilter(query);
-        }
-
-        function isAdmin(){
-            return vm.user.isAdmin();
         }
 
     }
