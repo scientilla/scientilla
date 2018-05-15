@@ -1,4 +1,4 @@
-/* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator, MembershipGroup*/
+/* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator, MembershipGroup, GroupTypes*/
 // Importer.js - in api/services
 
 "use strict";
@@ -284,13 +284,13 @@ async function importGroups() {
 
         //center
         const membershipGroups = await MembershipGroup.find({child_group: group.id}).populate('parent_group');
-        const oldCentersMG = membershipGroups.filter(mg => mg.parent_group.type === 'center');
+        const oldCentersMG = membershipGroups.filter(mg => mg.parent_group.type === GroupTypes.CENTER);
 
         if (rsData.center && rsData.center.code) {
             const center = await Group.findOrCreate({code: rsData.center.code});
             await Group.update({id: center.id}, {
                 name: rsData.center.name,
-                type: 'center'
+                type: GroupTypes.CENTER
             });
 
             const toDeleteIds = oldCentersMG.filter(mg => mg.parent_group.id !== center.id).map(mg => mg.id);
