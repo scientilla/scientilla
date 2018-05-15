@@ -78,7 +78,7 @@
             active: {
                 inputType: 'select',
                 label: 'Active',
-                defaultValue: vm.group.active || true,
+                defaultValue: vm.group.active === undefined ? true : vm.group.active,
                 values: [
                     {label: 'Yes', value: true},
                     {label: 'No', value: false}
@@ -150,7 +150,7 @@
                 vm.onFailure()();
         }
 
-        function isAdmin(){
+        function isAdmin() {
             return AuthService.user.isAdmin();
         }
     }
