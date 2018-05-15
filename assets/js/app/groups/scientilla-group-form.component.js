@@ -110,9 +110,6 @@
         function submit(group) {
             if (!group) return;
 
-            vm.group.attributes = group.macroarea;
-            delete group.macroarea;
-
 
             for (const key of Object.keys(vm.formStructure))
                 vm.group[key] = group[key];
