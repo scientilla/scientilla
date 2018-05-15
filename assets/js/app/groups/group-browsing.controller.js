@@ -17,7 +17,6 @@
         const vm = this;
 
         vm.user = AuthService.user;
-        vm.viewGroup = viewGroup;
         vm.deleteGroup = deleteGroup;
         vm.editGroup = editGroup;
         vm.createNew = createNew;
@@ -78,11 +77,6 @@
                     vm.groups = groups;
                     return vm.groups;
                 });
-        }
-
-
-        function viewGroup(g) {
-            $location.path('/groups/' + g.id);
         }
 
         function deleteGroup(group) {
