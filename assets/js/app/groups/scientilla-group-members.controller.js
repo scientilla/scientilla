@@ -123,6 +123,10 @@
                         !member.membership.synchronized && member.membership.active ? vm.membershipTypes.COLLABORATOR :
                             member.membership.synchronized && !member.membership.active ? vm.membershipTypes.FORMER_MEMBER :
                                 !member.membership.synchronized && !member.membership.active ? vm.membershipTypes.FORMER_COLLABORATOR : undefined;
+
+                    member.cssStyle = member.membership.type === vm.membershipTypes.COLLABORATOR ? {'background-color': '#ffffe0'} :
+                        member.membership.type === vm.membershipTypes.FORMER_MEMBER ? {'background-color': '#e9e9e9'} : {};
+
                 });
             }
 

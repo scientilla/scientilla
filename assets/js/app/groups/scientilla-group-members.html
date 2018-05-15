@@ -5,7 +5,7 @@
         empty-list-message="No members found">
 
     <item-list>
-        <div ng-repeat="m in vm.members" class="col-md-6 scientilla-user-card">
+        <div ng-repeat="m in vm.members" class="col-md-6 scientilla-user-card" ng-style="m.cssStyle">
             <div class="row">
                 <div class="col-xs-10">
                     <a ng-href="#{{m.getProfileUrl()}}">
