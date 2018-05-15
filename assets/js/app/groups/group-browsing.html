@@ -26,14 +26,15 @@
                 <div class="row">
                     <div class="col-md-8">
                         <h3><a ng-href="#{{g.getProfileUrl()}}">{{g.getDisplayName()}}</a> <span ng-if="vm.isAdmin()"> | {{g.code}}</span></h3>
+                        {{g.type}}
                         <span ng-if="g.pis.length">
-                            <label>PI:</label>
+                            -
                             <span ng-repeat="pi in g.pis">
                                 <a ng-href="#{{pi.getProfileUrl()}}">{{pi.getDisplayName()}}</a>
                             </span>
-                            <br/>
                         </span>
-                        {{g.type}}
+                        <br/>
+                        <span ng-if="g.getResearchDomain() || g.getInteractions().length">Research domain:</span>
                         <span ng-if="g.getResearchDomain()">
                             <span class="fa fa-circle"></span> {{g.getResearchDomain().name}}
                         </span>
