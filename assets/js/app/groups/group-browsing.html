@@ -46,9 +46,10 @@
                     </div>
                     <div class="col-md-4 text-right">
                         <h3>
-                            <div class="btn-group" uib-dropdown>
+                            <div class="btn-group"
+                                 ng-if="vm.user.isAdmin() || vm.user.admins(g)"
+                                 uib-dropdown>
                                 <button ng-click="vm.editGroup(g)"
-                                        ng-if="vm.user.isAdmin() || vm.user.admins(g)"
                                         type="button"
                                         class="btn btn-primary scientilla-dropdown-align-right">
                                     <span class="fa fa-edit"></span>
