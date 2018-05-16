@@ -3,7 +3,7 @@
 
     angular.module('documents')
         .component('scientillaDocumentDetails', {
-            templateUrl: 'partials/scientillaDocumentDetails.html',
+            templateUrl: 'partials/scientilla-document-details.html',
             controller: scientillaDocumentsDetails,
             controllerAs: 'vm',
             bindings: {

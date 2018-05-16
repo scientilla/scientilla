@@ -6,7 +6,7 @@
 
     angular.module('documents')
         .component('scientillaDocumentsList', {
-            templateUrl: 'partials/scientillaDocumentsList.html',
+            templateUrl: 'partials/scientilla-documents-list.html',
             controller: scientillaDocumentsList,
             controllerAs: 'vm',
             bindings: {

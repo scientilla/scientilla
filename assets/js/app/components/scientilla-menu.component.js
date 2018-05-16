@@ -3,7 +3,7 @@
 
     angular.module('components')
         .component('scientillaMenu', {
-            templateUrl: 'partials/scientillaMenu.html',
+            templateUrl: 'partials/scientilla-menu.html',
             controller: scientillaMenu,
             controllerAs: 'vm'
         });

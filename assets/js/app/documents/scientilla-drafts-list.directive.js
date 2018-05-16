@@ -5,7 +5,7 @@
 
     angular.module('documents')
         .component('scientillaDraftsList', {
-            templateUrl: 'partials/scientillaDraftsList.html',
+            templateUrl: 'partials/scientilla-drafts-list.html',
             controller: scientillaDrafsList,
             controllerAs: 'vm',
             bindings: {

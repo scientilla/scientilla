@@ -3,7 +3,7 @@
 
     angular.module('components')
         .component('scientillaButton', {
-            templateUrl: 'partials/scientillaButton.html',
+            templateUrl: 'partials/scientilla-button.html',
             controller: scientillaButtonController,
             controllerAs: 'vm',
             bindings: {

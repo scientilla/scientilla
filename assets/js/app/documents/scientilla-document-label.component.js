@@ -3,7 +3,7 @@
 
     angular.module('documents')
             .component('scientillaDocumentLabel', {
-                templateUrl: 'partials/scientillaDocumentLabel.html',
+                templateUrl: 'partials/scientilla-document-label.html',
                 controller: scientillaDocumentLabel,
                 controllerAs: 'vm',
                 bindings: {

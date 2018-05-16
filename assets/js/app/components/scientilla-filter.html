@@ -9,24 +9,24 @@
 </div>
 
 <div class="scientilla-filter-results">
-    <div ng-if="vm.onStatus(vm.STATUS_LOADING)"
-         class="progress-bar progress-bar-striped active"
-         role="progressbar"
-         style="width: 100%">
-        Loading
-    </div>
 
-    <div ng-if="vm.onStatus(vm.STATUS_WAITING)">
-        <h3 ng-if="vm.elements.length === 0">{{vm.emptyListMessage}}</h3>
-        <div ng-if="vm.elements.length > 0">
-
+    <div>
+        <div>
             <div class="row">
                 <div class="col-md-2">
-                    <label class="scientilla-items-found label label-default">{{vm.totalItems}}
+                    <label  ng-if="!vm.onStatus(vm.STATUS_INITIAL_LOADING)"
+                            class="scientilla-items-found label label-default">{{vm.totalItems}}
                         items found</label>
                 </div>
                 <div class="col-md-4 col-md-offset-2 text-center">
-                    <ul uib-pagination
+                    <div ng-if="vm.onStatus(vm.STATUS_LOADING) || vm.onStatus(vm.STATUS_INITIAL_LOADING)"
+                         class="progress-bar progress-bar-striped active"
+                         role="progressbar"
+                         style="width: 100%">
+                        Loading
+                    </div>
+                    <ul ng-if="vm.onStatus(vm.STATUS_WAITING) && vm.totalItems > vm.itemsPerPage"
+                        uib-pagination
                         ng-change="vm.onPageChange()"
                         total-items="vm.totalItems"
                         ng-model="vm.currentPage"
@@ -39,10 +39,20 @@
 
             <div ng-transclude></div>
 
+            <div ng-if="vm.onStatus(vm.STATUS_ERROR)">
+                <h3>An error happened</h3>
+            </div>
 
             <div class="row">
                 <div class="col-md-4 col-md-offset-4 text-center">
-                    <ul uib-pagination
+                    <div ng-if="vm.onStatus(vm.STATUS_LOADING)"
+                         class="progress-bar progress-bar-striped active"
+                         role="progressbar"
+                         style="width: 100%">
+                        Loading
+                    </div>
+                    <ul ng-if="vm.onStatus(vm.STATUS_WAITING) && vm.totalItems > vm.itemsPerPage"
+                        uib-pagination
                         ng-change="vm.onPageChange()"
                         total-items="vm.totalItems"
                         ng-model="vm.currentPage"
@@ -55,9 +65,5 @@
 
         </div>
 
-    </div>
-
-    <div ng-if="vm.onStatus(vm.STATUS_ERROR)">
-        <h3>An error happened</h3>
     </div>
 </div>

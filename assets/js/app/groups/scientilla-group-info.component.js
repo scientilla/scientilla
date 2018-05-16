@@ -15,18 +15,29 @@
     function controller() {
         const vm = this;
 
-        vm.$onInit = function () {
+        /* jshint ignore:start */
+        vm.$onInit = async function () {
             vm.researchDomain = vm.group.getResearchDomain();
             vm.interactions = vm.group.getInteractions();
+            await initChart();
+        };
+
+        async function initChart() {
+            const charts = await vm.group.all('charts').getList({
+                refresh: true,
+                charts: ['groupMembersByRole']
+            });
+            const groupMembersByRole = charts[0].groupMembersByRole;
+
+            vm.totalMembers = groupMembersByRole.reduce((tot, el) => tot + el.value, 0);
 
             vm.chart = {
                 title: 'Members',
-                data: getMembersChartData(),
+                data: groupMembersByRole,
                 options: {
                     chart: {
                         type: 'pieChart',
-                        x: d => d.type,
-                        y: d => d.value,
+                        legendPosition: 'right',
                         labelThreshold: 0.02,
                         labelSunbeamLayout: true,
                         legend: {
@@ -37,32 +48,18 @@
                                 left: 15
                             }
                         },
-                        height: 500,
-                        width: 600,
+                        height: 400,
+                        width: 800,
                         duration: 300,
+                        x: d => d.role,
+                        y: d => d.value,
                         valueFormat: d => d3.format('')(d)
                     }
                 }
             };
-        };
-
-
-        function getMembersChartData() {
-            const members = vm.group.getActiveMembers();
-
-            return members.reduce((res, m) => {
-                const datum = res.find(r => r.type === m.jobTitle);
-                if (datum)
-                    datum.value += 1;
-                else {
-                    res.push({
-                        type: m.jobTitle,
-                        value: 1
-                    });
-                }
-                return res;
-            }, []);
         }
+
+        /* jshint ignore:end */
 
 
     }

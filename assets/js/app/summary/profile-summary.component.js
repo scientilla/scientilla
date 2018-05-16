@@ -41,7 +41,31 @@
             }
 
             async function request(refresh) {
-                const res = await researchEntity.all('charts').getList({refresh: !!refresh});
+                const charts = [
+                    'journalsByYear',
+                    'conferencesByYear',
+                    'booksByYear',
+                    'bookChaptersByYear',
+                    'disseminationTalksByYear',
+                    'scientificTalksByYear',
+                    'documentsByType',
+                    'filteredAffiliatedJournalsByYear',
+                    'filteredAffiliatedConferencesByYear',
+                    'filteredAffiliatedBooksByYear',
+                    'filteredAffiliatedBookChaptersByYear',
+                    'filteredNotAffiliatedJournalsByYear',
+                    'filteredNotAffiliatedConferencesByYear',
+                    'filteredNotAffiliatedBooksByYear',
+                    'filteredNotAffiliatedBookChaptersByYear',
+                    'hindexPerYear',
+                    'citationsPerYear',
+                    'citationsPerDocumentYear',
+                    'totalIfPerYear',
+                    'totalSjrPerYear',
+                    'totalSnipPerYear',
+                    'chartDataDate'
+                ];
+                const res = await researchEntity.all('charts').getList({refresh: !!refresh, charts});
                 vm.chartsData = res[0];
                 if (vm.chartsData.chartDataDate && vm.chartsData.chartDataDate[0].max)
                     vm.lastRefresh = new Date(vm.chartsData.chartDataDate[0].max);

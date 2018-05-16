@@ -23,10 +23,11 @@
             '$scope',
             'Restangular',
             'context',
-            'UsersService'
+            'UsersService',
+            'ModalService'
         ];
 
-        function DocumentVerificationController($scope, Restangular, context, UsersService) {
+        function DocumentVerificationController($scope, Restangular, context, UsersService, ModalService) {
             const vm = this;
             vm.instituteToId = instituteToId;
             vm.getInstitutesFilter = getInstitutesFilter;
@@ -104,6 +105,28 @@
                     last_coauthor: vm.verificationData.last_coauthor,
                     oral_presentation: vm.verificationData.oral_presentation,
                 };
+
+
+                const authorsArr = vm.document.authorsStr.split(', ');
+                if (data.position < authorsArr.length) {
+                    const authorStr = authorsArr[data.position];
+                    const alias = user.aliases.find(a => a.str === authorStr);
+
+                    if (!alias) {
+                        const aliases = user.aliases.map(a => a.str).join(', ');
+                        const result = await ModalService.multipleChoiceConfirm('New alias!',
+                            'You are verifying the document as "' + authorStr + '".\n' +
+                            'By clicking on Proceed "' + authorStr + '" will be automatically added to your aliases (' + aliases + ').\n' +
+                            'You can always manage them from your profile settings.\n',
+                            ['Proceed']);
+
+                        if (result === -1)
+                            return;
+                    }
+
+                }
+                else return;
+
                 try {
                     const res = await verify(user, vm.document.id, data, vm.document2id);
                     const newUser = await UsersService.getProfile(user.id);

@@ -31,6 +31,8 @@
         service.copyDocuments = copyDocuments;
         service.createDraft = createDraft;
         service.getExternalDocuments = getExternalDocuments;
+        service.getAllMembers = getAllMembers;
+        service.getAllMemberships = getAllMemberships;
         service.deleteDraft = deleteDraft;
         service.deleteDrafts = deleteDrafts;
         service.setPrivateTags = setPrivateTags;
@@ -95,6 +97,16 @@
             return researchEntity.getList('externalDocuments', q);
         }
 
+        function getAllMembers(researchEntity, query) {
+            return researchEntity.getList('allMembers', query);
+        }
+
+        function getAllMemberships(researchEntity, query) {
+            query.where = Object.assign({}, query.where, {
+                group: researchEntity.id
+            });
+            return Restangular.all('allMemberships').getList(query);
+        }
 
         function getSuggestedDocuments(researchEntity, query) {
             var populate = {populate: documentPopulates};

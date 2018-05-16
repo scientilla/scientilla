@@ -63,13 +63,6 @@
                 label: 'Scopus ID',
                 defaultValue: vm.group.scopusId
             },
-            macroarea: {
-                inputType: 'attribute',
-                label: 'Macroarea',
-                defaultValue: vm.group.attributes,
-                mode: 'single',
-                category: 'macroarea'
-            },
             type: {
                 inputType: 'select',
                 label: 'Group Type',
@@ -85,7 +78,7 @@
             active: {
                 inputType: 'select',
                 label: 'Active',
-                defaultValue: vm.group.active || true,
+                defaultValue: vm.group.active === undefined ? true : vm.group.active,
                 values: [
                     {label: 'Yes', value: true},
                     {label: 'No', value: false}
@@ -116,9 +109,6 @@
 
         function submit(group) {
             if (!group) return;
-
-            vm.group.attributes = group.macroarea;
-            delete group.macroarea;
 
 
             for (const key of Object.keys(vm.formStructure))
@@ -160,7 +150,7 @@
                 vm.onFailure()();
         }
 
-        function isAdmin(){
+        function isAdmin() {
             return AuthService.user.isAdmin();
         }
     }

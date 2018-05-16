@@ -88,7 +88,7 @@
         }
 
         function getGroups(query) {
-            const populate = {populate: ['administrators', 'attributes']};
+            const populate = {populate: ['administrators', 'attributes', 'groupAttributes', 'pis']};
             const q = _.merge({}, query, populate);
 
             return service.getList(q);
@@ -102,7 +102,8 @@
             const newMembership = {
                 group: group.id,
                 user: user.id,
-                active: active
+                active: active,
+                synchronized: false
             };
             return Restangular
                 .all('memberships')

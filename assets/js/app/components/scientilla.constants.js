@@ -243,10 +243,10 @@
     };
 
     const groupTypes = {
-        INSTITUTE: 'institute',
-        CENTER: 'center',
-        RESEARCH_LINE: 'research_line',
-        FACILITY: 'facility'
+        INSTITUTE: 'Institute',
+        CENTER: 'Center',
+        RESEARCH_LINE: 'Research Line',
+        FACILITY: 'Facility'
     };
 
     const groupTypeLabels = {
@@ -268,7 +268,7 @@
     };
 
     angular.module('app')
-        .constant('pageSize', 10)
+        .constant('pageSize', 50)
         .constant('userConstants', userConstants)
         .constant('config', config)
         .constant('DocumentLabels', DocumentLabels)

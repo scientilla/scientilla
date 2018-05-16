@@ -13,57 +13,132 @@
 
     controller.$inject = [
         'documentListSections',
-        "UsersService",
-        "GroupsService",
-        "AuthService",
-        "ModalService"
+        'UsersService',
+        'GroupsService',
+        'AuthService',
+        'ModalService',
+        'researchEntityService'
     ];
 
-    function controller(documentListSections, UsersService, GroupsService, AuthService, ModalService) {
+    function controller(documentListSections, UsersService, GroupsService, AuthService, ModalService, researchEntityService) {
         const vm = this;
         vm.documentListSections = documentListSections;
-        vm.openCollaboratorsManagementForm = openCollaboratorsManagementForm;
         vm.addCollaborator = addCollaborator;
         vm.removeCollaborator = removeCollaborator;
         vm.getUsers = getUsers;
         vm.isAdmin = isAdmin;
+
+        vm.membershipTypes = {
+            MEMBER: {
+                id: 0,
+                label: 'Member'
+            },
+            COLLABORATOR: {
+                id: 1,
+                label: 'Collaborator'
+            },
+            FORMER_MEMBER: {
+                id: 2,
+                label: 'Former member'
+            },
+            FORMER_COLLABORATOR: {
+                id: 3,
+                label: 'Former collaborator'
+            }
+        };
+
+        vm.members = [];
+        vm.searchForm = {
+            name: {
+                inputType: 'text',
+                label: 'Name',
+                matchColumn: 'name',
+                matchRule: 'contains'
+            },
+            surname: {
+                inputType: 'text',
+                label: 'Surname',
+                matchColumn: 'surname',
+                matchRule: 'contains'
+            }
+
+        };
+        vm.onFilter = onFilter;
+        let query = {};
 
         vm.$onInit = function () {
             vm.isCollaborationManagementFormOpen = false;
             vm.selectedUserActive = true;
         };
 
-        function openCollaboratorsManagementForm() {
-            vm.isCollaborationManagementFormOpen = !vm.isCollaborationManagementFormOpen;
-        }
-
         function getUsers(searchText) {
             const qs = {where: {or: [{name: {contains: searchText}}, {surname: {contains: searchText}}]}};
             return UsersService.getUsers(qs);
         }
 
-        function addCollaborator(group, user, active) {
-            return GroupsService.addCollaborator(group, user, active)
-                .then(() => {
-                    delete vm.selectedUser;
-                    return vm.refreshGroup()();
-                });
+        /* jshint ignore:start */
+
+        async function addCollaborator(group, user, active) {
+            try {
+                await GroupsService.addCollaborator(group, user, active);
+            } catch (e) {
+                delete vm.selectedUser;
+                return;
+            }
+
+            delete vm.selectedUser;
+            refresh();
         }
 
-        function removeCollaborator(user) {
-            ModalService
-                .multipleChoiceConfirm('Removing group member',
-                    `Are you sure you want to remove ${user.getDisplayName()} from the group members?`,
-                    ['Proceed'])
-                .then(function (buttonIndex) {
-                    switch (buttonIndex) {
-                        case 0:
-                            return GroupsService.removeCollaborator(vm.group, user)
-                                .then(() => vm.refreshGroup()());
+        async function removeCollaborator(user) {
+            const buttonIndex = await ModalService.multipleChoiceConfirm('Removing group member',
+                `Are you sure you want to remove ${user.getDisplayName()} from the group members?`,
+                ['Proceed']);
+
+            switch (buttonIndex) {
+                case 0:
+                    await GroupsService.removeCollaborator(vm.group, user);
+                    refresh();
+            }
+
+        }
+
+        async function onFilter(q) {
+            query = q;
+
+            const members = await researchEntityService.getAllMembers(vm.group, query);
+            let memberships;
+
+            if (members.length > 0) {
+                memberships = await researchEntityService.getAllMemberships(vm.group, {
+                    where: {
+                        group: vm.group.id,
+                        user: members.map(m => m.id)
                     }
                 });
 
+                members.forEach(member => {
+                    member.membership = memberships.find(m => m.user === member.id);
+                    member.membership.type = member.membership.synchronized && member.membership.active ? vm.membershipTypes.MEMBER :
+                        !member.membership.synchronized && member.membership.active ? vm.membershipTypes.COLLABORATOR :
+                            member.membership.synchronized && !member.membership.active ? vm.membershipTypes.FORMER_MEMBER :
+                                !member.membership.synchronized && !member.membership.active ? vm.membershipTypes.FORMER_COLLABORATOR : undefined;
+
+                    member.cssStyle = member.membership.type === vm.membershipTypes.COLLABORATOR ? {'background-color': '#ffffe0'} :
+                        member.membership.type === vm.membershipTypes.FORMER_MEMBER ? {'background-color': '#e9e9e9'} : {};
+
+                });
+            }
+
+            vm.members = members;
         }
+
+        function refresh() {
+            onFilter(query);
+            vm.refreshGroup()();
+        }
+
+        /* jshint ignore:end */
 
         function isAdmin() {
             return AuthService.isAdmin;

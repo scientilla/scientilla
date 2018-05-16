@@ -3,7 +3,7 @@
 
     angular.module('components')
         .component('scientillaMulticomplete', {
-            templateUrl: 'partials/scientillaMulticomplete.html',
+            templateUrl: 'partials/scientilla-multicomplete.html',
             controller: scientillaMulticompleteController,
             controllerAs: 'vm',
             bindings: {

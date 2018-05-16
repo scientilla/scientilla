@@ -421,6 +421,7 @@
             service.toUsersCollection(group.members);
             service.toUsersCollection(group.administrators);
             service.toUsersCollection(group.pis);
+            service.toUsersCollection(group.allMembers);
             service.toDocumentsCollection(group.documents);
             service.toGroupsCollection(group.childGroups);
             return group;

@@ -7,10 +7,16 @@ module.exports = {
         user: {
             model: 'User',
             primaryKey: true
-        }
+        },
+        synchronized: 'boolean',
+        active: 'boolean',
+        child_group: {
+            model: 'Group'
+        },
+        level: 'integer'
     },
     migrate: 'safe',
-    tableName: 'subgroupsmembership',
+    tableName: 'allmembership',
     autoUpdatedAt: false,
     autoCreatedAt: false
 };

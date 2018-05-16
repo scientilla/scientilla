@@ -6,7 +6,7 @@ module.exports = {
     getChartsData
 };
 
-async function getChartsData(researchEntityId, Model, refresh) {
+async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
 
     const documentTypes = DocumentTypes.get();
 
@@ -101,53 +101,87 @@ async function getChartsData(researchEntityId, Model, refresh) {
         params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES]
     }, {
         key: 'hindexPerYear',
-        fn: hindexPerYear
+        fn: hindexPerYear,
+        requires: ['documents', 'citations']
     }, {
         key: 'citationsPerYear',
-        fn: citationsPerYear
+        fn: citationsPerYear,
+        requires: ['citations']
     }, {
         key: 'citationsPerDocumentYear',
-        fn: citationsPerDocumentYear
+        fn: citationsPerDocumentYear,
+        requires: ['documents', 'citations']
     }, {
         key: 'totalIfPerYear',
         fn: getTotalMetricPerYear,
-        metricName: 'IF'
+        metricName: 'IF',
+        requires: ['documents', 'docsMetrics']
     }, {
         key: 'totalSjrPerYear',
         fn: getTotalMetricPerYear,
-        metricName: 'SJR'
+        metricName: 'SJR',
+        requires: ['documents', 'docsMetrics']
     }, {
         key: 'totalSnipPerYear',
         fn: getTotalMetricPerYear,
-        metricName: 'SNIP'
+        metricName: 'SNIP',
+        requires: ['documents', 'docsMetrics']
     }, {
         key: 'chartDataDate',
         queryName: 'chartDataDate',
         fn: query,
         params: [researchEntityId, researchEntityType],
         nocache: true
+    }, {
+        key: 'groupMembersByRole',
+        fn: getGroupMembersByRole,
+        researchEntityId: researchEntityId,
+        researchEntityType: researchEntityType
     }];
 
+    let selectedCharts = [];
     let documents = [];
     let citations = [];
     let docsMetrics = [];
 
-    if (refresh || !await areChartsCached()) {
-        await setDocuments();
-        await setCitations();
-        await setDocumentsMetrics();
-    }
+    await setData();
 
-    const promises = charts.map(chart => cachedChartData(chart, refresh));
+    const promises = selectedCharts.map(chart => cachedChartData(chart, refresh));
     const results = await Promise.all(promises);
 
     const res = {};
-    results.forEach((r, i) => res[charts[i].key] = r);
+    results.forEach((r, i) => res[selectedCharts[i].key] = r);
 
     return {
         count: 1,
         items: [res]
     };
+
+    async function setData() {
+
+        if (chartsKeys.length > 0)
+            selectedCharts = charts.filter(c => chartsKeys.includes(c.key));
+        else
+            selectedCharts = charts;
+
+        if (refresh || !await areChartsCached()) {
+            if (selectedCharts.find(sc =>
+                sc.requires
+                && (
+                    sc.requires.includes('documents')
+                    || sc.requires.includes('citations')
+                    || sc.requires.includes('docsMetrics')
+                )))
+                await setDocuments();
+
+            if (selectedCharts.find(sc => sc.requires && sc.requires.includes('citations')))
+                await setCitations();
+
+            if (selectedCharts.find(sc => sc.requires && sc.requires.includes('docsMetrics')))
+                await setDocumentsMetrics();
+        }
+    }
+
 
     async function query(chart) {
         const sql = getSql(chart.queryName);
@@ -236,6 +270,98 @@ async function getChartsData(researchEntityId, Model, refresh) {
             });
     }
 
+    async function getGroupMembersByRole(chart) {
+        if (chart.researchEntityType !== 'group')
+            return [];
+
+        const groupId = chart.researchEntityId;
+
+        const roles = {
+            pi: 'PI',
+            affiliated_researcher: 'Affiliated Researcher',
+            administrative: 'Administrative',
+            external_collaborator: 'External Collaborator',
+            phd: 'PhD',
+            post_doc: 'Post Doc',
+            research_support: 'Research Support',
+            researcher: 'Researcher',
+            scientific_director: 'Scientific Director',
+            technician: 'Technician',
+            technologist: 'Technologist',
+            visiting_scientist: 'Visiting Scientist',
+            director: 'Director',
+            other: 'Other'
+        };
+
+        const roleMapper = {
+            'researcher - center coordinator': roles.researcher,
+            'researcher tt (tt1)': roles.researcher,
+            'senior researcher tt (tt2)': roles.researcher,
+            'senior researcher tenured': roles.researcher,
+            'senior researcher tenured - center coordinator': roles.researcher,
+            'senior researcher tenured - research director': roles.researcher,
+            'senior researcher - center coordinator': roles.researcher,
+            'senior researcher - founding director': roles.researcher,
+            'senior researcher - research director': roles.researcher,
+            'technologist - center coordinator': roles.technologist,
+            'chief technician': roles.technician,
+            'affiliated researcher': roles.affiliated_researcher,
+            'administrative assistant': roles.administrative,
+            'administrative manager': roles.administrative,
+            'administrative supervisor': roles.administrative,
+            'support administrative assistant': roles.administrative,
+            'external collaborator': roles.external_collaborator,
+            'phd/fellow': roles.phd,
+            'post doc': roles.post_doc,
+            'post doc fellow': roles.post_doc,
+            'research administrative': roles.research_support,
+            'research manager': roles.research_support,
+            'research support administrative junior': roles.research_support,
+            'research support administrative senior': roles.research_support,
+            'early-stage researcher': roles.researcher,
+            'researcher': roles.researcher,
+            'senior researcher': roles.researcher,
+            'scientific director': roles.scientific_director,
+            'senior technician': roles.technician,
+            'support technician': roles.technician,
+            'junior technician': roles.technician,
+            'technologist': roles.technologist,
+            'visiting scientist': roles.visiting_scientist,
+            'director': roles.director
+        };
+
+        const pis = await PrincipalInvestigator.find();
+
+        const memberships = await AllMembership.find({
+            group: groupId,
+            synchronized: true,
+            active: true
+        });
+        const members = await User.find({id: memberships.map(m => m.user)});
+        return members.reduce((acc, m) => {
+            let role;
+            if (pis.find(p => m.id === p.pi))
+                role = roles.pi;
+            else if (m.jobTitle)
+                role = roleMapper[m.jobTitle.toLocaleLowerCase()];
+
+            if (!role) role = roles.other;
+
+            const res = acc.find(r => r.role === role);
+            if (!res) {
+                acc.push({
+                    role: role,
+                    value: 1
+                });
+                return acc;
+            }
+
+            res.value++;
+            return acc;
+        }, []);
+
+    }
+
     async function setDocuments() {
         const researchEntity = await Model.findOne({id: researchEntityId}).populate('documents');
         documents = researchEntity.documents.filter(d => !excludedDocumentTypes.includes(d.documenttype));
@@ -256,7 +382,7 @@ async function getChartsData(researchEntityId, Model, refresh) {
     }
 
     async function areChartsCached() {
-        const cc = charts.filter(c => !c.nocache);
+        const cc = selectedCharts.filter(c => !c.nocache);
 
         const cachedCharts = await ChartData.find({
             key: cc.map(c => c.key),
