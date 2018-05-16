@@ -177,7 +177,7 @@ async function importPeople() {
             }
         }
         else {
-            if (p[usersCreationCondition.attribute] === usersCreationCondition.value) {
+            if (!usersCreationCondition || p[usersCreationCondition.attribute] === usersCreationCondition.value) {
                 sails.log.info(`Inserting user ${p.username}`);
                 user = await User.createCompleteUser(p);
                 numUsersInserted++;
