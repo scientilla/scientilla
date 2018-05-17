@@ -144,5 +144,9 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
 
+    Document.verifyDraft = () => {
+
+    };
+
     return Document;
 };

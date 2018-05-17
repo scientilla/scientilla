@@ -4,12 +4,14 @@
   "description": "Scientilla",
   "main": "app.js",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "express": "^4.16.3",
     "http-proxy": "^1.17.0",
     "lodash": "^4.17.10",
-    "pg": "^7.4.1",
+    "npm": "^6.0.1",
+    "pg": "^7.4.3",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^4.37.6"
+    "sequelize": "^4.37.7"
   },
   "devDependencies": {},
   "scripts": {

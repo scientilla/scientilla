@@ -13,6 +13,12 @@ module.exports = () => {
 
     global.configs = configs;
 
+    const controllersLocation = path.join(__dirname, 'controllers/');
+    fs.readdirSync(controllersLocation).forEach(filename => {
+        const controllerPath = path.join(controllersLocation, filename);
+        const name = filename.replace(/\.[^/.]+$/, "");
+        global[name] = require(controllerPath);
+    });
 
     const hooksLocation = path.join(__dirname, 'hooks/');
     fs.readdirSync(hooksLocation).forEach(filename => {

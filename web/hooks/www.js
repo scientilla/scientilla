@@ -1,14 +1,39 @@
+_ = require('lodash');
+
 module.exports = {
     start: () => {
         const express = require('express');
-        const httpProxy = require('http-proxy');
-        const proxy = httpProxy.createProxyServer();
+        const bodyParser = require('body-parser');
         const app = express();
 
         const router = express.Router({});
 
-        router.all('/*', async (req, res) => {
-            proxy.web(req, res, {target: 'http://node:1337'});
+        const methods = [
+            'all',
+            'get',
+            'post',
+            'delete',
+            'put',
+            'head',
+            'connect',
+            'options',
+            'trace',
+            'patch'
+        ];
+
+        Object.keys(configs.routes).forEach(key => {
+            const method = key.split(' ')[0].toLocaleLowerCase();
+            const path = key.split(' ')[1];
+
+            if (!methods.includes(method))
+                throw 'Invalid route configuration ' + key;
+
+            router[method](path, _.get(global, configs.routes[key]));
+
+            if (path !== '/*') {
+                app.use(path, bodyParser.json());
+                app.use(path, bodyParser.urlencoded({extended: true}));
+            }
         });
 
         app.use(router);

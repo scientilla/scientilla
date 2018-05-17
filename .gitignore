@@ -134,7 +134,7 @@ doc
 ################################################
 
 docker-compose.yml
-docker/db/data/*
+docker/db/data
 !docker/db/data/.gitkeep
 
 old/logs/*
@@ -167,3 +167,4 @@ old/!backups/plain/.gitkeep
 old/views/layout.ejs
 
 /.lock
+web/node_modules/
