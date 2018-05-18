@@ -3,6 +3,7 @@ import enum
 import re
 from sqlalchemy import Boolean, Column, Date, DateTime, Integer, JSON, Table, Text, text
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.associationproxy import association_proxy
 
 from flask_sqlalchemy import SQLAlchemy
 from project.exceptions import UnverifiableDocumentException
@@ -17,8 +18,11 @@ metadata = Base.metadata
 class ResearchEntity(db.Model):
     __abstract__ = True
 
-    def get_documents(self):
-        return [a.document for a in self.authorships]
+    def get_documents(self, offset=0, limit=20):
+        return [a.document for a in self.authorships.offset(offset).limit(limit)]
+
+        
+    documents = association_proxy('authorships', 'document')
 
     def verify_draft(self, draft, verification_data):
         assert draft
@@ -343,7 +347,7 @@ t_disseminationtalkgroup = Table(
 class Document(db.Model):
     __tablename__ = 'document'
 
-    authorships = db.relationship("Authorship", back_populates="document")
+    authorships = db.relationship("Authorship", back_populates="document", lazy='dynamic')
     affiliations = db.relationship("Affiliation", back_populates="document")
     groupAuthorships = db.relationship("AuthorshipGroup", back_populates="document")
     title = Column(Text)
@@ -374,6 +378,9 @@ class Document(db.Model):
     id = Column(Integer, primary_key=True, server_default=text("nextval('document_id_seq'::regclass)"))
     createdAt = Column(DateTime(True))
     updatedAt = Column(DateTime(True))
+    
+    authors = association_proxy('authorships', 'research_entity')
+    groups = association_proxy('groupAuthorships', 'research_entity')
 
     @staticmethod
     def get_fields():
@@ -659,7 +666,7 @@ class Group(ResearchEntity):
     starting_date = Column(Date)
     scopusId = Column(Text)
     institute = Column(Integer)    
-    authorships = db.relationship("AuthorshipGroup", back_populates="research_entity")
+    authorships = db.relationship("AuthorshipGroup", back_populates="research_entity", lazy='dynamic')
     id = Column(Integer, primary_key=True, server_default=text("nextval('group_id_seq'::regclass)"))
     createdAt = Column(DateTime(True))
     updatedAt = Column(DateTime(True))
@@ -986,7 +993,7 @@ class User(ResearchEntity):
     lastsynch = Column(DateTime(True))
     active = Column(Boolean)
     synchronized = Column(Boolean)
-    authorships = db.relationship("Authorship", back_populates="research_entity")
+    authorships = db.relationship("Authorship", back_populates="research_entity", lazy='dynamic')
     id = Column(Integer, primary_key=True, server_default=text("nextval('user_id_seq'::regclass)"))
     createdAt = Column(DateTime(True))
     updatedAt = Column(DateTime(True))

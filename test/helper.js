@@ -69,7 +69,7 @@ function cleanAuths() {
     auths = [];
 }
 
-const url = 'http://localhost:1338/api/v1';
+const url = 'http://testweb:8000/api/v1';
 
 function cleanDb() {
     var models = [Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source, ExternalDocument];
@@ -150,10 +150,10 @@ async function registerUser(userData, respCode = 302) {
     const userAgent = request.agent(url);
     await userAgent
         .post('/auths/register')
-        .send(userData)
-        .expect(respCode);
-    if (respCode !== 302)
-        return;
+        .send(userData);
+         .expect(respCode);
+     if (respCode !== 302)
+         return;
     const userRes = await userAgent
         .post('/login')
         .send(userData)

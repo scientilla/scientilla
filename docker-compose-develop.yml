@@ -12,7 +12,9 @@ services:
       - "5858:5858"
     environment:
       NODE_ENV: development
-    command: bash -c "sails debug --expose_debug_as=v8debug > ./logs/sailslog"
+    command: sails lift
+    depends_on:
+      - db
   db:
     image: postgres:10
     restart: always
@@ -24,6 +26,66 @@ services:
       POSTGRES_DB: scientilla
       POSTGRES_USER: scientilla
       POSTGRES_PASSWORD: scientillapassword
+  web:
+    restart: always
+    build: ./web
+    ports:
+      - "1338:8000"
+    volumes:
+      - ./web:/app/web
+      - ./.tmp/:/app/web/project/static
+    command: /usr/local/bin/gunicorn --timeout=600 --reload -w 3 -b :8000 project:create_app()
+    environment:
+      PYTHONUNBUFFERED: 0
+      FLASK_ENV: development
+      FLASK_APP: project/__init__.py
+    working_dir: /app/web
+    user: "${USERID}"
+    depends_on:
+      - node
+      - db
+  test:
+    build: ./docker/node
+    volumes:
+      - .:/usr/src/app
+    command: sh -c "mocha test/bootstrap.test.js test/integration/bootstrap.test.js test/**/*.test.js"
+    environment:
+      - NODE_ENV=test
+    depends_on:
+      - testdb
+      - testnode
+      - testweb
+  testnode:
+    build: ./docker/node
+    volumes:
+      - .:/usr/src/app
+    environment:
+      - NODE_ENV=test
+    command: sh -c "NODE_ENV=test node app.js"
+    depends_on:
+      - testdb
+  testweb:
+    build: ./web
+    volumes:
+      - ./web:/app/web
+      - ./.tmp/:/app/web/project/static
+    command: /usr/local/bin/gunicorn --timeout=600 --reload -w 3 -b :8000 project:create_app()
+    environment:
+      PYTHONUNBUFFERED: 0
+      FLASK_ENV: test
+      FLASK_APP: project/__init__.py
+    working_dir: /app/web
+    user: "${USERID}"
+    depends_on:
+      - testnode
+      - testdb
+  testdb:
+    image: postgres:10
+    environment:
+      POSTGRES_DB: scientilla
+      POSTGRES_USER: scientilla
+      POSTGRES_PASSWORD: scientillapassword
+
 
 volumes:
   scientillapgdata:
