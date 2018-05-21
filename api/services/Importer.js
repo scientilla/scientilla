@@ -208,6 +208,8 @@ async function importPeople() {
     const numMembershipDisabled = membershipDisabled.length;
     const userUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
     const usersDisabled = await User.update(userUpdateCriteria, {active: false});
+    const mainGroupMembershipUpdateCriteria = {group: 1, user: usersDisabled.map(u => u.id)};
+    await Membership.update(mainGroupMembershipUpdateCriteria, {active: false});
     const numUsersDisabled = usersDisabled.length;
     sails.log.info('Import finished');
     sails.log.info(`${numUsersInserted} users inserted`);
