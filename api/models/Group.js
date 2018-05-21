@@ -175,9 +175,9 @@ module.exports = _.merge({}, ResearchEntity, {
         return Membership.create({
             user: user.id,
             group: group.id,
-            lastsynch: new Date(),
+            lastsynch: null,
             active: true,
-            synchronized: false
+            synchronized: true
         });
     },
     addAdministrator: function (group, user) {

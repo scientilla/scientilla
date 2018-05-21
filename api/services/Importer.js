@@ -161,7 +161,7 @@ async function importPeople() {
             const newGroupsName = newGroups.map(g => g.name);
             groupsToSearch.push(...newGroupsName);
         }
-        const groupSearchCriteria = {or: groupsToSearch.map(g => ({name: g}))};
+        const groupSearchCriteria = {id: { '!' : 1}, or: groupsToSearch.map(g => ({name: g}))};
         const groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
         const criteria = {username: p.username};
         let user = await User.findOne(criteria);
