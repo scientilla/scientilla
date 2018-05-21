@@ -177,7 +177,7 @@ module.exports = _.merge({}, ResearchEntity, {
             group: group.id,
             lastsynch: new Date(),
             active: true,
-            synchronized: true
+            synchronized: false
         });
     },
     addAdministrator: function (group, user) {
