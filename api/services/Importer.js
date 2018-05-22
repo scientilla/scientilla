@@ -202,8 +202,9 @@ async function importPeople() {
                 await g.savePromise();
             }
         }
-        if (!activeMembership)
-            await Membership.update({group: 1, user: user.id}, {active: false});
+        const m = await Membership.findOne({group: 1, user: user.id});
+        if (m.active !== activeMembership)
+            await Membership.update({group: 1, user: user.id}, {active: activeMembership});
     }
     const membershipUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
     const membershipDisabled = await Membership.update(membershipUpdateCriteria, {active: false});
