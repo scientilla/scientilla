@@ -9,7 +9,6 @@ RUN npm install -g sails
 RUN npm install -g bower
 RUN npm install -g grunt
 RUN npm install -g grunt-cli
-RUN npm install -g nodemon
 
 WORKDIR /usr/src/app
 
