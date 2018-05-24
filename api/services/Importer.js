@@ -140,86 +140,87 @@ async function importPeople() {
     let people;
     try {
         people = await request(reqOptions);
-    } catch (e) {
-        sails.log.debug('importPeople');
-        sails.log.debug(e);
-    }
-    sails.log.info(people.length + ' entries found');
-    const importTime = moment.utc().format();
-    let numUsersInserted = 0, numUsersUpdated = 0, numGroupsInserted = 0;
-    for (let [i, p] of people.entries()) {
-        //groups are loaded in memory because waterline doesn't allow case-insensitive queries with postegres
-        p.username = _.toLower(p.username);
-        const allGroups = await Group.find();
-        const groupsToBeInserted = p.groups.filter(g => !allGroups.some(g2 => _.toLower(g2.name) == _.toLower(g)));
-        const groupsToSearch = allGroups.filter(g => p.groups.some(g2 => _.toLower(g2) == _.toLower(g.name))).map(g => g.name);
-        if (groupInsertionEnabled && groupsToBeInserted.length) {
-            const groupObjs = groupsToBeInserted.map(g => ({name: g}));
-            sails.log.info('inserting groups: ' + groupsToBeInserted.join(', '));
-            const newGroups = await Group.create(groupObjs);
-            numGroupsInserted++;
-            const newGroupsName = newGroups.map(g => g.name);
-            groupsToSearch.push(...newGroupsName);
-        }
-        const groupSearchCriteria = {or: groupsToSearch.map(g => ({name: g}))};
-        const groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
-        const criteria = {username: p.username};
-        let user = await User.findOne(criteria);
-        p.lastsynch = moment().utc().format();
-        p.synchronized = true;
-        const activeMembership = p.active;
-        p.active = true;
-        if (user) {
-            const u = await User.update(criteria, p);
-            if (userShouldBeUpdated(user, p)) {
-                sails.log.info(`Updating user ${p.username}`);
-                numUsersUpdated++;
+        sails.log.info(people.length + ' entries found');
+        const importTime = moment.utc().format();
+        let numUsersInserted = 0, numUsersUpdated = 0, numGroupsInserted = 0;
+        for (let [i, p] of people.entries()) {
+            //groups are loaded in memory because waterline doesn't allow case-insensitive queries with postegres
+            p.username = _.toLower(p.username);
+            const allGroups = await Group.find();
+            const groupsToBeInserted = p.groups.filter(g => !allGroups.some(g2 => _.toLower(g2.name) == _.toLower(g)));
+            const groupsToSearch = allGroups.filter(g => p.groups.some(g2 => _.toLower(g2) == _.toLower(g.name))).map(g => g.name);
+            if (groupInsertionEnabled && groupsToBeInserted.length) {
+                const groupObjs = groupsToBeInserted.map(g => ({name: g}));
+                sails.log.info('inserting groups: ' + groupsToBeInserted.join(', '));
+                const newGroups = await Group.create(groupObjs);
+                numGroupsInserted++;
+                const newGroupsName = newGroups.map(g => g.name);
+                groupsToSearch.push(...newGroupsName);
             }
-        }
-        else {
-            if (!usersCreationCondition || p[usersCreationCondition.attribute] === usersCreationCondition.value) {
-                sails.log.info(`Inserting user ${p.username}`);
-                user = await User.createCompleteUser(p);
-                numUsersInserted++;
+            const groupSearchCriteria = {or: groupsToSearch.map(g => ({name: g}))};
+            const groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
+            const criteria = {username: p.username};
+            let user = await User.findOne(criteria);
+            p.lastsynch = moment().utc().format();
+            p.synchronized = true;
+            const activeMembership = p.active;
+            p.active = true;
+            if (user) {
+                const u = await User.update(criteria, p);
+                if (userShouldBeUpdated(user, p)) {
+                    sails.log.info(`Updating user ${p.username}`);
+                    numUsersUpdated++;
+                }
             }
-        }
-        if (!user)
-            continue;
+            else {
+                if (!usersCreationCondition || p[usersCreationCondition.attribute] === usersCreationCondition.value) {
+                    sails.log.info(`Inserting user ${p.username}`);
+                    user = await User.createCompleteUser(p);
+                    numUsersInserted++;
+                }
+            }
+            if (!user)
+                continue;
 
-        for (let g of groups) {
-            g.members.add(user.id);
-            await g.savePromise();
-            const membershipCriteria = {user: user.id, group: g.id};
-            const membership = await Membership.findOne(membershipCriteria);
-            if (membership) {
-                membership.lastsynch = moment.utc().format();
-                membership.synchronized = true;
-                membership.active = activeMembership;
-                const m = await Membership.update(membershipCriteria, membership);
+            for (let g of groups) {
+                const membershipCriteria = {user: user.id, group: g.id};
+                let membership = await Membership.findOne(membershipCriteria);
+                if (!membership) {
+                    membership = await Group.addMember(g, user);
+                }
+                if (membership) {
+                    membership.lastsynch = moment.utc().format();
+                    membership.synchronized = true;
+                    membership.active = activeMembership;
+                    const m = await Membership.update(membershipCriteria, membership);
+                }
+                if (p.pi) {
+                    g.administrators.add(user.id);
+                    await g.savePromise();
+                }
             }
-            if (p.pi) {
-                g.administrators.add(user.id);
-                await g.savePromise();
-            }
+            const m = await Membership.findOne({group: 1, user: user.id});
+            if (m && m.active !== activeMembership)
+                await Membership.update({id: m.id}, {active: activeMembership});
         }
-        const m = await Membership.findOne({group: 1, user: user.id});
-        if (m.active !== activeMembership)
-            await Membership.update({group: 1, user: user.id}, {active: activeMembership});
+        const membershipUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
+        const membershipDisabled = await Membership.update(membershipUpdateCriteria, {active: false});
+        const numMembershipDisabled = membershipDisabled.length;
+        const userUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
+        const usersDisabled = await User.update(userUpdateCriteria, {active: false});
+        const mainGroupMembershipUpdateCriteria = {group: 1, user: usersDisabled.map(u => u.id)};
+        await Membership.update(mainGroupMembershipUpdateCriteria, {active: false});
+        const numUsersDisabled = usersDisabled.length;
+        sails.log.info('Import finished');
+        sails.log.info(`${numUsersInserted} users inserted`);
+        sails.log.info(`${numUsersUpdated} users updated`);
+        sails.log.info(`${numUsersDisabled} users disabled`);
+        sails.log.info(`${numGroupsInserted} groups inserted`);
+        sails.log.info(`${numMembershipDisabled} membership disabled`);
+    } catch (e) {
+        sails.log.error('importPeople error');
+        sails.log.error(e);
     }
-    const membershipUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
-    const membershipDisabled = await Membership.update(membershipUpdateCriteria, {active: false});
-    const numMembershipDisabled = membershipDisabled.length;
-    const userUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
-    const usersDisabled = await User.update(userUpdateCriteria, {active: false});
-    const mainGroupMembershipUpdateCriteria = {group: 1, user: usersDisabled.map(u => u.id)};
-    await Membership.update(mainGroupMembershipUpdateCriteria, {active: false});
-    const numUsersDisabled = usersDisabled.length;
-    sails.log.info('Import finished');
-    sails.log.info(`${numUsersInserted} users inserted`);
-    sails.log.info(`${numUsersUpdated} users updated`);
-    sails.log.info(`${numUsersDisabled} users disabled`);
-    sails.log.info(`${numGroupsInserted} groups inserted`);
-    sails.log.info(`${numMembershipDisabled} membership disabled`);
 }
 
 async function importGroups() {
