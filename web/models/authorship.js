@@ -68,6 +68,10 @@ module.exports = function (sequelize, DataTypes) {
         tableName: 'authorship'
     });
 
+    Authorship.associate = models => {
+        Authorship.belongsTo(models.User, {foreignKey: 'researchEntity'});
+    };
+
     Authorship.filterFields = (data) => {
         console.log(data);
     };

@@ -1,9 +1,12 @@
+const queryString2SequelizeParameters = require('../services/queryString2SequelizeParameters');
+
 module.exports = {
-    verifyDraft: (req, res) => {
+    getVerifiedDocuments: async (req, res) => {
         const researchEntityId = req.params.researchEntityId;
-        const draftId = req.params.draftId;
-        const verificationData = req.body;
-        //const Model = getModel(req);
-        //res.halt(Model.verifyDraft(Model, researchEntityId, draftId, verificationData));
+        const researchEntity = await User.findById(researchEntityId);
+        const sequelizeParameters = queryString2SequelizeParameters(req.query);
+        sequelizeParameters.order = Document.orderBy;
+        const documents = await researchEntity.getDocuments(sequelizeParameters);
+        res.json(documents);
     }
 };

@@ -7,12 +7,20 @@ services:
     volumes:
       - ./old:/usr/src/app
     ports:
-      - "1337:1337"
+      - "8088:1337"
       - "35732:35732"
       - "5858:5858"
     environment:
-      NODE_ENV: development
-    command: bash -c "sails debug --expose_debug_as=v8debug > ./logs/sailslog"
+      - NODE_ENV=development
+    #command: bash -c "sails debug --expose_debug_as=v8debug > ./logs/sailslog"
+    command: sails lift
+    extra_hosts:
+      #- "api.elsevier.com:10.255.9.84"
+      - "scopus-cache.iit.local:10.255.9.84"
+      - "scientilla.iit.dev:127.0.0.1"
+    user: "1000"
+    depends_on:
+      - db
 
   web:
     build: ./docker/web
@@ -20,8 +28,15 @@ services:
     volumes:
       - ./web:/usr/src/app
     ports:
-      - "8088:1337"
+      - "8084:1337"
     command: node app.js
+    extra_hosts:
+      - "scopus-cache.iit.local:10.255.9.84"
+      - "scientilla.iit.dev:127.0.0.1"
+    user: "1000"
+    depends_on:
+      - node
+      - db
 
   db:
     image: postgres:10

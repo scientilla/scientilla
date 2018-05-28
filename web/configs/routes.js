@@ -1,4 +1,4 @@
 module.exports = {
-    'put /api/v1/users/:researchEntityId/drafts/:draftId/verified': 'ResearchEntityController.verifyDraft',
+    'get /api/v1/users/:researchEntityId/documents': 'ResearchEntityController.getVerifiedDocuments',
     'all /*': 'OldController.relay'
 };

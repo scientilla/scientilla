@@ -129,6 +129,13 @@ module.exports = (sequelize, DataTypes) => {
     });
 
     Document.associate = models => {
+
+        Document.hasMany(models.Authorship, {
+            as: 'authorships',
+            foreignKey: 'document',
+            sourceKey: 'id'
+        });
+
         Document.belongsToMany(models.Institute, {
             as: 'institutes',
             through: 'affiliation',
@@ -144,9 +151,10 @@ module.exports = (sequelize, DataTypes) => {
         });
     };
 
-    Document.verifyDraft = () => {
-
-    };
+    Document.orderBy = [
+        ['year', 'DESC'],
+        ['title']
+    ];
 
     return Document;
 };
