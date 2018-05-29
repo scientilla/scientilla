@@ -35,7 +35,9 @@
                 surname: "",
                 slug: "",
                 username: "",
-                role: userConstants.role.USER
+                role: userConstants.role.USER,
+		active: true,
+		synchronized: false
             };
             Prototyper.toUserModel(user);
             return user;
@@ -59,8 +61,11 @@
 
         service.doSave = function (user) {
             const userData = _.pick(user, userFields);
-            if (!user.id)
+            if (!user.id) {
                 userData.password = user.password;
+		userData.active = user.active;
+		userData.synchronized = user.synchronized;
+	    }
             if (_.isArray(user.aliases))
                 userData.aliases = user.aliases;
             return this.save(userData).then(function (u) {
