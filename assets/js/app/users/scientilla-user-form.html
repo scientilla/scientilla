@@ -33,7 +33,7 @@
         <label for="scopusid">Scopus ID</label>
         <input type="text" class="form-control" id="scopusid" placeholder="Scopus ID" ng-model="vm.user.scopusId">
     </div>
-    <div class="form-group" ng-if="vm.false">
+    <div class="form-group" ng-if="vm.userIsAdmin && !vm.user.id">
         <label for="password">Password</label>
         <input type="text" class="form-control" id="password" placeholder="Password" ng-model="vm.user.password">
     </div>
