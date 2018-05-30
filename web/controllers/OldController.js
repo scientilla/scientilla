@@ -3,6 +3,6 @@ const proxy = httpProxy.createProxyServer();
 
 module.exports = {
     relay: (req, res) => {
-        proxy.web(req, res, {target: 'http://node:1337'});
+        proxy.web(req, res, {target: configs.proxyUrl});
     }
 };

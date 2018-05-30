@@ -1,19 +1,18 @@
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
-module.exports = function queryString2SequelizeParameters(queryString) {
+module.exports = function queryString2SequelizeParameters(queryString, Model) {
+    const validAssociationNames = Object.keys(Model.associations);
     const populateTmp = queryString.populate || [];
-    const populate = Array.isArray(populateTmp) ? populateTmp : [populateTmp];
-    const whereConditions = JSON.parse(queryString.where);
+    const populateAll = Array.isArray(populateTmp) ? populateTmp : [populateTmp];
+    const populate = populateAll.filter(p => validAssociationNames.includes(p));
+    const whereConditions = queryString.where ? JSON.parse(queryString.where) : {};
     const sequelizeParameters = {
 
         where: getWhereConditions(whereConditions),
         include: populate,
         limit: queryString.limit,
-        order: [
-            ['year', 'DESC'],
-            ['title']
-        ]
+        order: Model.orderBy
     };
     return sequelizeParameters;
 };

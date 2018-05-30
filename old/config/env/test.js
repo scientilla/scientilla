@@ -18,10 +18,10 @@ module.exports = {
      ***************************************************************************/
 
     models: {
-        connection: 'test'
+        connection: 'test',
+        migrate: 'drop'
     },
 
-    migrate: 'drop'
 
     /***************************************************************************
      * Set the port in the production environment to 80                        *

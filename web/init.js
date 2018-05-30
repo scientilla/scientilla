@@ -1,15 +1,20 @@
 const fs = require('fs');
 const path = require('path');
+const env = process.env.NODE_ENV || 'development';
+const config = require(`./configs/env/${env}`);
 
 module.exports = () => {
-    const configs = {};
+    let configs = {};
 
     const configsLocation = path.join(__dirname, 'configs/');
-    fs.readdirSync(configsLocation).forEach(filename => {
-        const configPath = path.join(configsLocation, filename);
-        const name = filename.replace(/\.[^/.]+$/, "");
-        configs[name] = require(configPath);
-    });
+    fs.readdirSync(configsLocation)
+        .filter(filename => filename.endsWith('.js'))
+        .forEach(filename => {
+            const configPath = path.join(configsLocation, filename);
+            const name = filename.replace(/\.[^/.]+$/, "");
+            configs[name] = require(configPath);
+        });
+    configs = {...config, ...configs};
 
     global.configs = configs;
 
