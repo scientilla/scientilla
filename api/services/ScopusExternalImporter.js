@@ -163,18 +163,27 @@ async function updateExternalDocuments(externalDocumentsModel, researchEntityId,
     if (documents.length === 0)
         return;
 
-    await externalDocumentsModel.destroy({
+    const externalDocuments = await externalDocumentsModel.find({
         researchEntity: researchEntityId,
         origin: DocumentOrigins.SCOPUS
     });
 
-    for (let d of documents)
+    const toCreateExDocsIds = documents.filter(d => !externalDocuments.find(ed => d.id === ed.document)).map(d => d.id);
+    const toDestroyExDocsIds = externalDocuments.filter(ed => !documents.find(d => d.id === ed.document)).map(ed => ed.document);
+
+    for (let id of toCreateExDocsIds)
         await externalDocumentsModel.create({
             researchEntity: researchEntityId,
-            document: d.id,
+            document: id,
             origin: DocumentOrigins.SCOPUS
-        })
+        });
 
+    for (let id of toDestroyExDocsIds)
+        await externalDocumentsModel.destroy({
+            researchEntity: researchEntityId,
+            document: id,
+            origin: DocumentOrigins.SCOPUS
+        });
 }
 
 function getScopusId(d) {
