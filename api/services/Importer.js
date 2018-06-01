@@ -257,7 +257,8 @@ async function importGroups() {
         await Group.update({id: group.id}, {
             name: rsData.description,
             type: rsData.type,
-            starting_date: rsData.start_date
+            starting_date: rsData.start_date,
+            active: true
         });
 
         //PI
