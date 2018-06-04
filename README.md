@@ -1,4 +1,4 @@
-# scientilla
+# Scientilla
 
 [![Build Status](https://travis-ci.org/scientilla/scientilla.svg?branch=master)](https://travis-ci.org/scientilla/scientilla)
 
@@ -7,7 +7,7 @@
 
 Scientilla is currently in development and not ready to be used in production.
 
-## Try it out:
+## Installation:
 
 At the moment you need to build Scientilla by yourself.
 
@@ -83,3 +83,6 @@ At the moment you need to build Scientilla by yourself.
 
     If you find any problem while performing these procedures please [open up a new issue and let us know](https://github.com/scientilla/scientilla/issues/new).
 
+## API 
+
+[API documentation](docs/api/README.md)

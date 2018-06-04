@@ -59,6 +59,8 @@
 
         service.doSave = function (user) {
             const userData = _.pick(user, userFields);
+            if (!user.id)
+                userData.password = user.password;
             if (_.isArray(user.aliases))
                 userData.aliases = user.aliases;
             return this.save(userData).then(function (u) {

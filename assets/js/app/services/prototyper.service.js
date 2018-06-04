@@ -88,8 +88,10 @@
                         return tagLabel.id === ut.tagLabel;
                     });
                 });
+            },
+            isInternal: function () {
+                return _.endsWith(this.username, '@iit.it');
             }
-
         };
         const groupPrototype = {
             getDisplayName: function () {

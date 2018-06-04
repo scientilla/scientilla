@@ -12,18 +12,18 @@
         </li>
         <li class="menu-label">
             Documents
-            <scientilla-button-new-document></scientilla-button-new-document>
+            <scientilla-button-new-document ng-if="vm.user.isInternal()"></scientilla-button-new-document>
         </li>
-        <li ng-class="{active: vm.isActive('/suggested')}">
+        <li ng-class="{active: vm.isActive('/suggested')}" ng-if="vm.user.isInternal()">
             <a ng-href="#/suggested">Suggested</a>
         </li>
         <li ng-class="{active: vm.isActive('/verified')}">
             <a ng-href="#/verified">Verified</a>
         </li>
-        <li ng-class="{active: vm.isActive('/drafts')}">
+        <li ng-class="{active: vm.isActive('/drafts')}" ng-if="vm.user.isInternal()">
             <a ng-href="#/drafts">Drafts</a>
         </li>
-        <li ng-class="{active: vm.isActive('/external')}">
+        <li ng-class="{active: vm.isActive('/external')}" ng-if="vm.user.isInternal()">
             <a ng-href="#/external">External</a>
         </li>
         <li class="nav-divider">
