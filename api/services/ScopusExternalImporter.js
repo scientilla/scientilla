@@ -13,8 +13,8 @@ module.exports = {
             sails.log.info('ScopusExternalImporter: user ' + user.username + ' empty scopusId');
             return;
         }
-        const deletedFromScopus = await getDeletedFromScopus();
-        const total = await updateResearchEntityProfile(ExternalDocument, user, deletedFromScopus);
+        const invalidScopusIds = await getInvalidScopusIds();
+        const total = await updateResearchEntityProfile(ExternalDocument, user, invalidScopusIds);
         sails.log.info('updated/inserted ' + total + ' scopus external documents of user ' + user.username);
     },
     updateGroup: async (group) => {
@@ -22,14 +22,15 @@ module.exports = {
             sails.log.info('ScopusExternalImporter: user ' + user.username + ' empty scopusId');
             return;
         }
-        const deletedFromScopus = await getDeletedFromScopus();
-        const total = await updateResearchEntityProfile(ExternalDocumentGroup, group, deletedFromScopus);
+        const invalidScopusIds = await getInvalidScopusIds();
+        const total = await updateResearchEntityProfile(ExternalDocumentGroup, group, invalidScopusIds);
         sails.log.info('updated/inserted ' + total + ' scopus external documents of group ' + group.name);
     },
     updateAll: async () => {
         let total;
-        total = await updateResearchEntityProfiles(User, ExternalDocument);
-        total += await updateResearchEntityProfiles(Group, ExternalDocumentGroup);
+        const invalidScopusIds = await getInvalidScopusIds();
+        total = await updateResearchEntityProfiles(User, ExternalDocument, invalidScopusIds);
+        total += await updateResearchEntityProfiles(Group, ExternalDocumentGroup, invalidScopusIds);
 
         const externalDocuments = await Document.find({
             kind: DocumentKinds.EXTERNAL,
@@ -39,7 +40,15 @@ module.exports = {
             }
         });
         const currentExternalIds = externalDocuments.map(ed => ed.scopusId);
-        const importedDocuments = await importDocuments(currentExternalIds);
+
+        const customDocuments = await Document.find({
+            scopusId: {'!': ''},
+            kind: DocumentKinds.VERIFIED
+        });
+        const currentCustomExternalIds = customDocuments.map(ed => ed.scopusId);
+
+        const toImportScopusIds = [...new Set(currentExternalIds.concat(currentCustomExternalIds))];
+        const importedDocuments = await importDocuments(_.difference(toImportScopusIds, invalidScopusIds));
 
         total += importedDocuments.length;
         sails.log.info('updated/inserted ' + total + ' scopus external documents');
@@ -61,10 +70,8 @@ async function updateResearchEntityProfile(externalDocumentModel, researchEntity
     return importedDocuments.length;
 }
 
-async function updateResearchEntityProfiles(researchEntityModel, externalDocumentModel) {
+async function updateResearchEntityProfiles(researchEntityModel, externalDocumentModel, deletedFromScopus = []) {
     const researchEntities = await researchEntityModel.find({scopusId: {'!': ''}});
-    const deletedFromScopus = await getDeletedFromScopus();
-
     let total = 0;
 
     for (let re of researchEntities)
@@ -266,7 +273,7 @@ function getUpdateLimitDate() {
     return new Date((new Date()).getTime() - interval);
 }
 
-async function getDeletedFromScopus() {
+async function getInvalidScopusIds() {
     const extrenalMetadatas = await ExternalDocumentMetadata.find({origin: DocumentOrigins.SCOPUS});
     return extrenalMetadatas.filter(em => em.data.scopusIdInvalid).map(em => em.origin_id);
 
