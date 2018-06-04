@@ -1,4 +1,4 @@
-/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship, ExternalImporter, Citation */
+/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship, ExternalImporter, Citation, ExternalDocumentMetadata */
 // ScopusExternalImporter.js - in api/services
 
 "use strict";
@@ -51,7 +51,7 @@ async function updateResearchEntityProfile(externalDocumentModel, researchEntity
     let documentScopusIds;
     try {
         documentScopusIds = await getResearchEntityDocumentsScopusIds(researchEntity);
-        documentScopusIds = _.difference(documentScopusIds, deletedFromScopus.map(d => d.scopusId));
+        documentScopusIds = _.difference(documentScopusIds, deletedFromScopus);
     } catch (e) {
         return 0;
     }
@@ -233,12 +233,15 @@ async function getAndCreateOrUpdateDocument(scopusId) {
     const documentData = await ScopusConnector.getDocument(scopusId);
     if (!_.has(documentData, 'scopusId')) {
         if (documentData.message === 'RESOURCE_NOT_FOUND' && scopusId) {
-            await Document.update({scopusId: scopusId, kind: DocumentKinds.EXTERNAL}, {scopus_id_deleted: true});
+            await ExternalDocumentMetadata.setData(
+                DocumentOrigins.SCOPUS,
+                scopusId,
+                'scopusIdInvalid',
+                true);
             throw 'Scopus id:' + scopusId + ' set to deleted because no longer exists';
         }
         throw 'Updater: Document failed ' + scopusId;
     }
-    documentData.scopus_id_deleted = false;
 
     const document = await ExternalImporter.createOrUpdateExternalDocument(DocumentOrigins.SCOPUS, documentData);
 
@@ -250,19 +253,13 @@ async function getAndCreateOrUpdateDocument(scopusId) {
 
 async function updateCitations(document) {
     const citations = await ScopusConnector.getDocumentCitations(document.scopusId);
+    citations.sort((a, b) => a.year > b.year);
 
-    for (const cit of citations)
-        await Citation.createOrUpdate({
-            origin: DocumentOrigins.SCOPUS,
-            originId: document.scopusId,
-            year: cit.year
-        }, {
-            origin: DocumentOrigins.SCOPUS,
-            originId: document.scopusId,
-            year: cit.year,
-            citations: cit.value
-        });
-
+    await ExternalDocumentMetadata.setData(
+        DocumentOrigins.SCOPUS,
+        document.scopusId,
+        'citations',
+        citations);
 }
 
 function getUpdateLimitDate() {
@@ -270,5 +267,7 @@ function getUpdateLimitDate() {
 }
 
 async function getDeletedFromScopus() {
-    return Document.find({scopus_id_deleted: true});
+    const extrenalMetadatas = await ExternalDocumentMetadata.find({origin: DocumentOrigins.SCOPUS});
+    return extrenalMetadatas.filter(em => em.data.scopusIdInvalid).map(em => em.origin_id);
+
 }

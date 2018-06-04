@@ -80,7 +80,7 @@
             vm.verifiedCount = getVerifiedCount();
             vm.scopusCitationsYearStr = getScopusCitationPerYearString();
 
-            if(vm.document.kind === 'e' && showExternalLabel)
+            if (vm.document.kind === 'e' && showExternalLabel)
                 vm.document.addLabel(DocumentLabels.EXTERNAL);
 
             if (vm.checkDuplicates)
@@ -148,9 +148,7 @@
         }
 
         function getScopusCitationPerYearString() {
-            return vm.document.citations.filter(c => c.origin === documentOrigins.SCOPUS)
-                .map(c => c.year + ':' + c.citations)
-                .join(' ');
+            return getScopusCitations().map(c => c.year + ':' + c.value).join(' ');
         }
 
         function showScopusMetrics() {
@@ -164,7 +162,7 @@
         function hasMetric(metric) {
             switch (metric) {
                 case vm.metrics.CITATIONS:
-                    return !!vm.document.citations.find(cit => cit.origin === documentOrigins.SCOPUS);
+                    return !!getScopusCitations().length;
                 case vm.metrics.SNIP:
                 case vm.metrics.SJR:
                 case vm.metrics.IF:
@@ -180,7 +178,7 @@
         function getMetric(metric) {
             if (metric === vm.metrics.CITATIONS)
                 return {
-                    value: vm.document.citations.reduce((tot, val) => val.citations + tot, 0)
+                    value: getScopusCitations().reduce((tot, cit) => cit.value + tot, 0)
                 };
 
             const metricAllYears = vm.document.sourceMetrics.filter(m => m.name === metric);
@@ -250,6 +248,10 @@
                 field = 'groupAuthorships';
 
             return vm.document[field].find(a => a.researchEntity === researchEntity.id);
+        }
+
+        function getScopusCitations() {
+            return vm.document.scopusDocumentMetadata[0] ? vm.document.scopusDocumentMetadata[0].data.citations : [];
         }
 
     }
