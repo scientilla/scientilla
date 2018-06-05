@@ -334,7 +334,7 @@
             },
             hasValidScopusId: function () {
                 if (!this.scopusDocumentMetadata || !this.scopusDocumentMetadata[0]) return true;
-                return !this.scopusDocumentMetadata[0].data.scopusDocumentMetadata;
+                return !this.scopusDocumentMetadata[0].data.scopusIdInvalid;
             },
             getStringKind(researchEntity) {
                 if (this.isSuggested(researchEntity))
