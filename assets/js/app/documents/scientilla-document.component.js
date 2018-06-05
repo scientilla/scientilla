@@ -251,7 +251,7 @@
         }
 
         function getScopusCitations() {
-            return vm.document.scopusDocumentMetadata[0] ? vm.document.scopusDocumentMetadata[0].data.citations : [];
+            return vm.document.scopusDocumentMetadata[0] && vm.document.scopusDocumentMetadata[0].data.citations ? vm.document.scopusDocumentMetadata[0].data.citations : [];
         }
 
     }
