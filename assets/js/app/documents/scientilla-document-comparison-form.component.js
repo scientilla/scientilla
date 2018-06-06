@@ -32,7 +32,7 @@
         vm.getVerifiedNamesHTML = getVerifiedNamesHTML;
         vm.cancel = cancel;
 
-        vm.scopusIdDeletedMessage = '- <b class="text-danger">This ID is not available in Scopus anymore - IT IS STRONGLY ADVISED TO CHOOSE A VERSION WITH A WORKING SCOPUS ID NOT TO MISS NEW CITATIONS!</b>';
+        vm.scopusIdDeletedMessage = '- <b class="text-danger">This ID is not available in Scopus - IT IS STRONGLY ADVISED TO CHOOSE A VERSION WITH A WORKING SCOPUS ID NOT TO MISS NEW CITATIONS!</b>';
 
         vm.researchEntity = context.getResearchEntity();
         vm.$onInit = function () {
