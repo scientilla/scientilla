@@ -1,4 +1,4 @@
-/* global */
+/* global DocumentTypes */
 // Exporter.js - in api/services
 
 "use strict";
@@ -26,12 +26,19 @@ function documentsToCsv(documents) {
         const doc = [];
         doc.push(document.authorsStr);
         doc.push(document.title);
-        doc.push(document.source.title);
+
+        let source;
+        if (document.type === DocumentTypes.INVITED_TALK)
+            source = document.itSource;
+        else
+            source = document.source ? document.source.title : '';
+
+        doc.push(source);
         doc.push(document.year);
         doc.push(document.doi);
-        doc.push(document.documenttype.label);
-        doc.push(document.source.sourcetype.label);
-        doc.push(Array.isArray(document.scopusCitations) ? document.scopusCitations.map(s => s.year + ':' + s.value).join(' - ') : '');
+        doc.push(document.documenttype ? document.documenttype.label : '');
+        doc.push(document.sourceTypeObj ? document.sourceTypeObj.label : '');
+        doc.push(Array.isArray(document.scopusCitations) ? document.scopusCitations.reduce((total, s) => total + s.value, 0) : '');
         doc.push(document.IF);
         doc.push(document.SNIP);
         doc.push(document.SJR);
