@@ -24,6 +24,15 @@ module.exports = {
         const searchKey = req.query.searchKey;
         const searchValue = req.query.searchValue;
         res.halt(Document.externalSearch(origin, searchKey, searchValue));
+    },
+    async export(req, res) {
+        let documentIds = req.body.documentIds;
+        const format = req.body.format;
+
+        if (!Array.isArray(documentIds))
+            documentIds = [documentIds];
+
+        res.halt(Document.export(documentIds, format), {dataType: 'file'});
     }
 };
 

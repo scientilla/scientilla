@@ -5,10 +5,14 @@
         empty-list-message="No documents found">
     <scientilla-multicheck>
         <buttons>
+            <scientilla-multicheck-button on-click="vm.exportDocuments">
+                <span class="fa fa-download"></span>
+                Export
+            </scientilla-multicheck-button>
         </buttons>
         <item-list>
             <scientilla-checkable ng-repeat="d in vm.documents" item="d">
-                <div class="row scientilla-document-row">
+                <div class="row">
                     <div class="col-md-10">
                         <scientilla-document document="d" section="vm.section"></scientilla-document>
                     </div>

@@ -10,10 +10,11 @@
         'EventsService',
         'DocumentLabels',
         'DocumentKinds',
-        '$q'
+        '$q',
+        '$http'
     ];
 
-    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, DocumentLabels, DocumentKinds, $q) {
+    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, DocumentLabels, DocumentKinds, $q, $http) {
         return {
             create: function (researchEntity, reService) {
                 var service = {};
@@ -31,6 +32,7 @@
                 service.createDraft = createDraft;
                 service.copyDocument = copyDocument;
                 service.copyDocuments = copyDocuments;
+                service.exportDocuments = exportDocuments;
                 service.copyUncopiedDocuments = copyUncopiedDocuments;
                 service.getExternalDocuments = _.partialRight(getExternalDocuments, reService);
                 service.desynchronizeDrafts = desynchronizeDrafts;
@@ -188,6 +190,24 @@
                             EventsService.publish(EventsService.DRAFT_CREATED, draft);
                             document.addLabel(DocumentLabels.ALREADY_IN_DRAFTS);
                         });
+                }
+
+                function exportDocuments(documents) {
+                    $http.post('/api/v1/documents/export', {
+                        format: 'csv',
+                        documentIds: documents.map(d => d.id)
+                    }).then((res) => {
+                        const element = document.createElement('a');
+                        element.setAttribute('href', res.data);
+                        element.setAttribute('download', 'Export.csv');
+
+                        element.style.display = 'none';
+                        document.body.appendChild(element);
+
+                        element.click();
+
+                        document.body.removeChild(element);
+                    });
                 }
 
                 function verifyDocuments(documents) {
