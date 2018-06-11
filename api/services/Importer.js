@@ -161,12 +161,16 @@ async function importPeople() {
             const groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
             const criteria = {username: p.username};
             let user = await User.findOne(criteria);
+            if (!user) {
+                const auth = await Auth.findOne({dn: p.dn}).populate('user');
+                if (auth) user = auth.user;
+            }
             p.lastsynch = moment().utc().format();
             p.synchronized = true;
             const activeMembership = p.active;
             p.active = true;
             if (user) {
-                const u = await User.update(criteria, p);
+                const u = await User.update({id: user.id}, p);
                 if (userShouldBeUpdated(user, p)) {
                     sails.log.info(`Updating user ${p.username}`);
                     numUsersUpdated++;
