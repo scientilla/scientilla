@@ -268,12 +268,12 @@ function formatDocumentCitations(XMLDocumentCitations) {
     if (_.isArray(years))
         return years.map((y, i) => ({
             year: y,
-            value: values[i]
+            value: parseInt(values[i], 10)
         }));
 
     return [{
         year: years,
-        value: values
+        value: parseInt(values, 10)
     }];
 }
 

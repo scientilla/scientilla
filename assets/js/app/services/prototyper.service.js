@@ -88,8 +88,10 @@
                         return tagLabel.id === ut.tagLabel;
                     });
                 });
+            },
+            isInternal: function () {
+                return _.endsWith(this.username, '@iit.it');
             }
-
         };
         const groupPrototype = {
             getDisplayName: function () {
@@ -329,6 +331,10 @@
             },
             isExternal: function () {
                 return this.kind === DocumentKinds.EXTERNAL;
+            },
+            hasValidScopusId: function () {
+                if (!this.scopusDocumentMetadata || !this.scopusDocumentMetadata[0]) return true;
+                return !this.scopusDocumentMetadata[0].data.scopusIdInvalid;
             },
             getStringKind(researchEntity) {
                 if (this.isSuggested(researchEntity))

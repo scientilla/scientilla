@@ -2,16 +2,13 @@ module.exports = {
     attributes: {
         document: {
             model: 'document',
-            primaryKey: true
+            unique: true
         },
-        citation: {
-            model: 'citation',
-            primaryKey: true
-        }
-    },
+        data: 'JSON'
 
+    },
     migrate: 'safe',
-    tableName: 'scopuscitation',
+    tableName: 'scopusdocumentmetadata',
     autoUpdatedAt: false,
     autoCreatedAt: false
 };

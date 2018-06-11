@@ -214,7 +214,7 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
 
         return _.range(yearRange.min, yearRange.max + 1)
             .map(y => {
-                const yearCitations = citations.filter(c => c.year === y);
+                const yearCitations = citations.filter(c => parseInt(c.year, 10) === y);
                 const yearTotal = yearCitations.reduce((res, cit) => cit.citations + res, 0);
                 return {
                     year: y,

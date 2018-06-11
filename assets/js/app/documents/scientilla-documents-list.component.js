@@ -21,10 +21,11 @@
         'researchEntityService',
         'documentSearchForm',
         'EventsService',
-        'documentListSections'
+        'documentListSections',
+        'AuthService'
     ];
 
-    function scientillaDocumentsList(context, researchEntityService, documentSearchForm, EventsService, documentListSections) {
+    function scientillaDocumentsList(context, researchEntityService, documentSearchForm, EventsService, documentListSections, AuthService) {
         const vm = this;
 
         const DocumentsService = context.getDocumentService();
@@ -41,7 +42,7 @@
         let query = {};
 
         vm.$onInit = function () {
-            vm.editable = vm.section === documentListSections.VERIFIED;
+            vm.editable = vm.section === documentListSections.VERIFIED && AuthService.user.isInternal();
 
             EventsService.subscribeAll(vm, [
                 EventsService.DRAFT_VERIFIED,

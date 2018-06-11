@@ -39,10 +39,10 @@
             </div>
             <div ng-if="vm.document.origin==='scopus'" class="scientilla-document-icons-bottom">
                 <div class="scientilla-document-icon-container">
-                    <span ng-if="!vm.document.scopus_id_deleted" class="scientilla-icon scientilla-icon-scopus"
+                    <span ng-if="vm.document.hasValidScopusId()" class="scientilla-icon scientilla-icon-scopus"
                           uib-tooltip-html="'This document has been imported from Scopus'"
                           tooltip-class="scientilla-tooltip text-left"></span>
-                    <span ng-if=" vm.document.scopus_id_deleted" class="scientilla-icon scientilla-icon-scopus-deleted"
+                    <span ng-if="!vm.document.hasValidScopusId()" class="scientilla-icon scientilla-icon-scopus-deleted"
                           uib-tooltip-html="'This document has been imported from Scopus but this ID is not available in Scopus anymore -
                     IT IS STRONGLY ADVISED TO LOOK FOR A WORKING SCOPUS ID NOT TO MISS NEW CITATIONS!'"
                           tooltip-class="text-left scientilla-tooltip"></span>

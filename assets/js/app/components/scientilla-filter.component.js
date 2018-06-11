@@ -86,7 +86,6 @@
                 }
             });
 
-            vm.search();
         };
 
         vm.$onDestroy = function () {

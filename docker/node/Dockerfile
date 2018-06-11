@@ -8,6 +8,7 @@ RUN npm install -g mocha
 RUN npm install -g sails
 RUN npm install -g bower
 RUN npm install -g grunt
+RUN npm install -g grunt-cli
 
 WORKDIR /usr/src/app
 

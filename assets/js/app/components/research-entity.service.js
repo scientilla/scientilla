@@ -57,7 +57,8 @@
             'groupTagLabels',
             'institutes',
             'duplicates',
-            'groups'
+            'groups',
+            'scopusDocumentMetadata'
         ];
 
         const verificationFields = [

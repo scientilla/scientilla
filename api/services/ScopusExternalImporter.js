@@ -1,4 +1,4 @@
-/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship, ExternalImporter, Citation */
+/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship, ExternalImporter, Citation, ExternalDocumentMetadata */
 // ScopusExternalImporter.js - in api/services
 
 "use strict";
@@ -13,8 +13,8 @@ module.exports = {
             sails.log.info('ScopusExternalImporter: user ' + user.username + ' empty scopusId');
             return;
         }
-        const deletedFromScopus = await getDeletedFromScopus();
-        const total = await updateResearchEntityProfile(ExternalDocument, user, deletedFromScopus);
+        const invalidScopusIds = await getInvalidScopusIds();
+        const total = await updateResearchEntityProfile(ExternalDocument, user, invalidScopusIds);
         sails.log.info('updated/inserted ' + total + ' scopus external documents of user ' + user.username);
     },
     updateGroup: async (group) => {
@@ -22,14 +22,15 @@ module.exports = {
             sails.log.info('ScopusExternalImporter: user ' + user.username + ' empty scopusId');
             return;
         }
-        const deletedFromScopus = await getDeletedFromScopus();
-        const total = await updateResearchEntityProfile(ExternalDocumentGroup, group, deletedFromScopus);
+        const invalidScopusIds = await getInvalidScopusIds();
+        const total = await updateResearchEntityProfile(ExternalDocumentGroup, group, invalidScopusIds);
         sails.log.info('updated/inserted ' + total + ' scopus external documents of group ' + group.name);
     },
     updateAll: async () => {
         let total;
-        total = await updateResearchEntityProfiles(User, ExternalDocument);
-        total += await updateResearchEntityProfiles(Group, ExternalDocumentGroup);
+        const invalidScopusIds = await getInvalidScopusIds();
+        total = await updateResearchEntityProfiles(User, ExternalDocument, invalidScopusIds);
+        total += await updateResearchEntityProfiles(Group, ExternalDocumentGroup, invalidScopusIds);
 
         const externalDocuments = await Document.find({
             kind: DocumentKinds.EXTERNAL,
@@ -39,7 +40,15 @@ module.exports = {
             }
         });
         const currentExternalIds = externalDocuments.map(ed => ed.scopusId);
-        const importedDocuments = await importDocuments(currentExternalIds);
+
+        const customDocuments = await Document.find({
+            scopusId: {'!': ''},
+            kind: DocumentKinds.VERIFIED
+        });
+        const currentCustomExternalIds = customDocuments.map(ed => ed.scopusId);
+
+        const toImportScopusIds = [...new Set(currentExternalIds.concat(currentCustomExternalIds))];
+        const importedDocuments = await importDocuments(_.difference(toImportScopusIds, invalidScopusIds));
 
         total += importedDocuments.length;
         sails.log.info('updated/inserted ' + total + ' scopus external documents');
@@ -51,7 +60,7 @@ async function updateResearchEntityProfile(externalDocumentModel, researchEntity
     let documentScopusIds;
     try {
         documentScopusIds = await getResearchEntityDocumentsScopusIds(researchEntity);
-        documentScopusIds = _.difference(documentScopusIds, deletedFromScopus.map(d => d.scopusId));
+        documentScopusIds = _.difference(documentScopusIds, deletedFromScopus);
     } catch (e) {
         return 0;
     }
@@ -61,10 +70,8 @@ async function updateResearchEntityProfile(externalDocumentModel, researchEntity
     return importedDocuments.length;
 }
 
-async function updateResearchEntityProfiles(researchEntityModel, externalDocumentModel) {
+async function updateResearchEntityProfiles(researchEntityModel, externalDocumentModel, deletedFromScopus = []) {
     const researchEntities = await researchEntityModel.find({scopusId: {'!': ''}});
-    const deletedFromScopus = await getDeletedFromScopus();
-
     let total = 0;
 
     for (let re of researchEntities)
@@ -163,18 +170,27 @@ async function updateExternalDocuments(externalDocumentsModel, researchEntityId,
     if (documents.length === 0)
         return;
 
-    await externalDocumentsModel.destroy({
+    const externalDocuments = await externalDocumentsModel.find({
         researchEntity: researchEntityId,
         origin: DocumentOrigins.SCOPUS
     });
 
-    for (let d of documents)
+    const toCreateExDocsIds = documents.filter(d => !externalDocuments.find(ed => d.id === ed.document)).map(d => d.id);
+    const toDestroyExDocsIds = externalDocuments.filter(ed => !documents.find(d => d.id === ed.document)).map(ed => ed.document);
+
+    for (let id of toCreateExDocsIds)
         await externalDocumentsModel.create({
             researchEntity: researchEntityId,
-            document: d.id,
+            document: id,
             origin: DocumentOrigins.SCOPUS
-        })
+        });
 
+    for (let id of toDestroyExDocsIds)
+        await externalDocumentsModel.destroy({
+            researchEntity: researchEntityId,
+            document: id,
+            origin: DocumentOrigins.SCOPUS
+        });
 }
 
 function getScopusId(d) {
@@ -224,12 +240,15 @@ async function getAndCreateOrUpdateDocument(scopusId) {
     const documentData = await ScopusConnector.getDocument(scopusId);
     if (!_.has(documentData, 'scopusId')) {
         if (documentData.message === 'RESOURCE_NOT_FOUND' && scopusId) {
-            await Document.update({scopusId: scopusId, kind: DocumentKinds.EXTERNAL}, {scopus_id_deleted: true});
+            await ExternalDocumentMetadata.setData(
+                DocumentOrigins.SCOPUS,
+                scopusId,
+                'scopusIdInvalid',
+                true);
             throw 'Scopus id:' + scopusId + ' set to deleted because no longer exists';
         }
         throw 'Updater: Document failed ' + scopusId;
     }
-    documentData.scopus_id_deleted = false;
 
     const document = await ExternalImporter.createOrUpdateExternalDocument(DocumentOrigins.SCOPUS, documentData);
 
@@ -241,25 +260,21 @@ async function getAndCreateOrUpdateDocument(scopusId) {
 
 async function updateCitations(document) {
     const citations = await ScopusConnector.getDocumentCitations(document.scopusId);
+    citations.sort((a, b) => a.year > b.year);
 
-    for (const cit of citations)
-        await Citation.createOrUpdate({
-            origin: DocumentOrigins.SCOPUS,
-            originId: document.scopusId,
-            year: cit.year
-        }, {
-            origin: DocumentOrigins.SCOPUS,
-            originId: document.scopusId,
-            year: cit.year,
-            citations: cit.value
-        });
-
+    await ExternalDocumentMetadata.setData(
+        DocumentOrigins.SCOPUS,
+        document.scopusId,
+        'citations',
+        citations);
 }
 
 function getUpdateLimitDate() {
     return new Date((new Date()).getTime() - interval);
 }
 
-async function getDeletedFromScopus() {
-    return Document.find({scopus_id_deleted: true});
+async function getInvalidScopusIds() {
+    const extrenalMetadatas = await ExternalDocumentMetadata.find({origin: DocumentOrigins.SCOPUS});
+    return extrenalMetadatas.filter(em => em.data.scopusIdInvalid).map(em => em.origin_id);
+
 }

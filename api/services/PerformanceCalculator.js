@@ -1,4 +1,4 @@
-/* global sails, User, Group, Document, Authorship, Citation, ScopusCitation, DocumentOrigins, SourceTypes, DocumentTypes, SourceType */
+/* global sails, User, Group, Document, Authorship, Citation, ScopusCitation, DocumentOrigins, SourceTypes, DocumentTypes, SourceType, ScopusDocumentMetadata, ExternalDocumentMetadata */
 "use strict";
 
 const _ = require('lodash');
@@ -151,7 +151,7 @@ async function getResearchEntityPerformance(docs, year) {
     const years = _.range(citation_year_count, 0).map(i => i + parseInt(year, 10) - citation_year_count);
     const citationsPerYear = (await getCitationPerYear(scopusCitations, years));
 
-    const source_date = await Citation.findOne({origin: DocumentOrigins.SCOPUS}).sort('updatedAt DESC');
+    const source_date = await ExternalDocumentMetadata.findOne({origin: DocumentOrigins.SCOPUS}).sort('updatedAt DESC');
     return {
         hindex: hIndex,
         total_citations: totalCitations,
@@ -313,14 +313,22 @@ async function getCitationPerYear(scopusCitations, years) {
 
 async function getScopusCitations(documents, year) {
     const docIds = documents.map(d => d.id);
-    const scopusCitations = await ScopusCitation.find({document: docIds});
-    return (await Citation.find({id: scopusCitations.map(sc => sc.citation)}))
-        .filter(c => c.year <= year)
-        .map(c => ({
-            document: scopusCitations.find(sc => sc.citation === c.id).document,
-            year: c.year,
-            citations: parseInt(c.citations, 10)
-        }));
+    const scopusDocumentMetadata = await ScopusDocumentMetadata.find({document: docIds});
+
+    let citations = [];
+    scopusDocumentMetadata.forEach(sm => {
+        if (!sm.data.citations) return;
+        citations = citations.concat(
+            sm.data.citations.filter(c => c.year <= year)
+                .map(c => ({
+                    document: sm.document,
+                    year: c.year,
+                    citations: parseInt(c.value, 10)
+                }))
+        );
+    });
+
+    return citations;
 }
 
 function calculateHIndex(citations) {

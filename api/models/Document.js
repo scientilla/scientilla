@@ -28,7 +28,6 @@ const fields = [
     {name: 'type'},
     {name: 'sourceType'},
     {name: 'scopusId'},
-    {name: 'scopus_id_deleted'},
     {name: 'wosId'},
     {name: 'iitPublicationsId'},
     {name: 'origin'},
@@ -61,7 +60,6 @@ module.exports = _.merge({}, BaseModel, {
         sourceType: 'STRING',
         itSource: 'STRING',
         scopusId: 'STRING',
-        scopus_id_deleted: 'BOOLEAN',
         wosId: 'STRING',
         iitPublicationsId: 'STRING',
         abstract: 'TEXT',
@@ -86,10 +84,9 @@ module.exports = _.merge({}, BaseModel, {
             via: 'documents',
             through: 'documentsuggestion'
         },
-        citations: {
-            collection: 'citation',
-            via: 'documents',
-            through: 'scopuscitation'
+        scopusDocumentMetadata: {
+            collection: 'scopusdocumentmetadata',
+            via: 'document'
         },
         externalUsers: {
             collection: 'user',
