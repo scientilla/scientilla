@@ -161,12 +161,16 @@ async function importPeople() {
             const groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
             const criteria = {username: p.username};
             let user = await User.findOne(criteria);
+            if (!user) {
+                const auth = await Auth.findOne({dn: p.dn}).populate('user');
+                if (auth) user = auth.user;
+            }
             p.lastsynch = moment().utc().format();
             p.synchronized = true;
             const activeMembership = p.active;
             p.active = true;
             if (user) {
-                const u = await User.update(criteria, p);
+                const u = await User.update({id: user.id}, p);
                 if (userShouldBeUpdated(user, p)) {
                     sails.log.info(`Updating user ${p.username}`);
                     numUsersUpdated++;
@@ -199,18 +203,21 @@ async function importPeople() {
                     await g.savePromise();
                 }
             }
-            const m = await Membership.findOne({group: 1, user: user.id});
-            if (m && m.active !== activeMembership)
-                await Membership.update({id: m.id}, {active: activeMembership});
+            //reenable membership to main group if a user is back
+            if (User.isInternalUser(user)) {
+                const m = await Membership.findOne({group: 1, user: user.id});
+                if (m && !m.active && activeMembership)
+                    await Membership.update({id: m.id}, {active: true});
+            }
         }
         const membershipUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
         const membershipDisabled = await Membership.update(membershipUpdateCriteria, {active: false});
-        const numMembershipDisabled = membershipDisabled.length;
         const userUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
         const usersDisabled = await User.update(userUpdateCriteria, {active: false});
-        const mainGroupMembershipUpdateCriteria = {group: 1, user: usersDisabled.map(u => u.id)};
-        await Membership.update(mainGroupMembershipUpdateCriteria, {active: false});
+        const collaborationUpdateCriteria = {synchronized: false, user: usersDisabled.map(u => u.id), active: true};
+        const collaborationDisabled = await Membership.update(collaborationUpdateCriteria, {active: false});
         const numUsersDisabled = usersDisabled.length;
+        const numMembershipDisabled = membershipDisabled.length + collaborationDisabled.length;
         sails.log.info('Import finished');
         sails.log.info(`${numUsersInserted} users inserted`);
         sails.log.info(`${numUsersUpdated} users updated`);
