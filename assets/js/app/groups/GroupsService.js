@@ -59,7 +59,6 @@
 
         function doSave(group) {
             const associationsKeys = [
-                'administrators',
                 'members',
                 'memberships',
                 'pis',
@@ -69,13 +68,15 @@
             const associations = {};
             associationsKeys.forEach(key => associations[key] = group[key]);
 
+            const administrators = group.administrators;
             if (group.administrators)
-                group.administrators = _.map(group.administrators, 'id');
+                group.administrators = group.administrators.map(a => a.id);
 
             associationsKeys.forEach(key => delete group[key]);
             return service.save(group)
                 .then(function (g) {
                     associationsKeys.forEach(key => group[key] = associations[key]);
+                    group.administrators = administrators;
                     return group;
                 });
         }
