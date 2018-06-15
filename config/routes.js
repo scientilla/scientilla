@@ -80,6 +80,7 @@ module.exports.routes = {
     'put /api/v1/groups/:researchEntityId/drafts/:documentId/authorships': 'Group.setAuthorhips',
     'put /api/v1/users/:researchEntityId/drafts/:documentId/authorships': 'User.setAuthorhips',
     'get /api/v1/externals': 'Document.externalSearch',
+    'post /api/v1/documents/export': 'Document.export',
     'post /api/v1/users/:researchEntityId/documents-not-duplicate': 'User.setDocumentAsNotDuplicate',
     'post /api/v1/groups/:researchEntityId/documents-not-duplicate': 'Group.setDocumentAsNotDuplicate',
     'post /api/v1/groups/:researchEntityId/remove-verify': 'Group.removeVerify',

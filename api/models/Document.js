@@ -280,7 +280,7 @@ module.exports = _.merge({}, BaseModel, {
                 referenceFragments.push('pp. ' + this.pages);
             }
 
-            if (this.source.type == SourceTypes.BOOK && this.source.publisher) {
+            if (this.source.type === SourceTypes.BOOK && this.source.publisher) {
                 referenceFragments.push('Publisher: ' + this.source.publisher);
             }
 
@@ -342,6 +342,21 @@ module.exports = _.merge({}, BaseModel, {
 
             return DocumentTypes.getDocumentType(this.documenttype);
         },
+        getMetric(metric) {
+            if (!this.sourceMetrics)
+                return undefined;
+
+            const metricAllYears = this.sourceMetrics.filter(m => m.name === metric);
+            const year = Math.max(...metricAllYears.map(m => parseInt(m.year, 10)));
+            const m = metricAllYears.find(m => m.year === year);
+            return m && parseFloat(m.value) ? parseFloat(m.value) : undefined;
+        },
+        getCitations(origin) {
+            if (origin !== DocumentOrigins.SCOPUS || !this.scopusDocumentMetadata || !this.scopusDocumentMetadata[0] || !this.scopusDocumentMetadata[0].data.citations)
+                return undefined;
+
+            return this.scopusDocumentMetadata[0].data.citations;
+        },
         toJSON: function () {
             const document = this.toObject();
             document.sourceDetails = this.getSourceDetails();
@@ -350,6 +365,12 @@ module.exports = _.merge({}, BaseModel, {
             document.authorDetails = this.getAuthorDetails();
             document.sourceTypeObj = this.getSourceType();
             document.documenttype = this.getdocumentType();
+
+            document.SJR = this.getMetric('SJR');
+            document.SNIP = this.getMetric('SNIP');
+            document.IF = this.getMetric('IF');
+            document.scopusCitations = this.getCitations(DocumentOrigins.SCOPUS);
+
             return document;
         }
     },
@@ -541,6 +562,18 @@ module.exports = _.merge({}, BaseModel, {
         const documentType = DocumentTypes.getDocumentType(document.type);
         if (documentType)
             document.documenttype = documentType.id;
+    },
+    async export(documentIds, format) {
+        const documents = await Document.find({id: documentIds})
+            .populate([
+                'source',
+                'sourceMetrics',
+                'scopusDocumentMetadata',
+                'documenttype',
+            ]);
+
+        if (format === 'csv')
+            return Exporter.documentsToCsv(documents);
     },
     beforeCreate: async (document, cb) => {
         if (Array.isArray(document)) {

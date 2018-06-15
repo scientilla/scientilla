@@ -58,27 +58,27 @@
         }
 
         function doSave(group) {
-            if (group.administrators) {
-                var administrators = group.administrators;
-                group.administrators = _.map(group.administrators, 'id');
-            }
+            const associationsKeys = [
+                'members',
+                'memberships',
+                'pis',
+                'attributes',
+                'groupAttributes'
+            ];
+            const associations = {};
+            associationsKeys.forEach(key => associations[key] = group[key]);
 
-            if (group.members) {
-                var members = group.members;
-                delete group.members;
-            }
+            const administrators = group.administrators;
+            if (group.administrators)
+                group.administrators = group.administrators.map(a => a.id);
 
-            if (group.memberships) {
-                var memberships = group.memberships;
-                delete group.memberships;
-            }
-
-            return service.save(group).then(function (g) {
-                group.administrators = administrators;
-                group.members = members;
-                group.memberships = memberships;
-                return group;
-            });
+            associationsKeys.forEach(key => delete group[key]);
+            return service.save(group)
+                .then(function (g) {
+                    associationsKeys.forEach(key => group[key] = associations[key]);
+                    group.administrators = administrators;
+                    return group;
+                });
         }
 
 

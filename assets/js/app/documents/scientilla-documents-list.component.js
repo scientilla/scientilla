@@ -34,6 +34,7 @@
 
         vm.unverifyDocument = DocumentsService.unverifyDocument;
         vm.compareDocuments = DocumentsService.compareDocuments;
+        vm.exportDocuments = DocumentsService.exportDocuments;
 
         vm.onFilter = onFilter;
 
