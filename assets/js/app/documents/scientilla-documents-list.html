@@ -5,9 +5,13 @@
         empty-list-message="No documents found">
     <scientilla-multicheck>
         <buttons>
-            <scientilla-multicheck-button on-click="vm.exportDocuments">
+            <scientilla-multicheck-button on-click="vm.exportCsvDocuments">
                 <span class="fa fa-download"></span>
-                Export
+                Export as CSV
+            </scientilla-multicheck-button>
+            <scientilla-multicheck-button on-click="vm.exportBibtexDocuments">
+                <span class="fa fa-download"></span>
+                Export as BibTeX
             </scientilla-multicheck-button>
         </buttons>
         <item-list>

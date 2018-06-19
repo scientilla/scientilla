@@ -1,10 +1,13 @@
-/* global DocumentTypes */
+/* global DocumentTypes, SourceTypes */
 // Exporter.js - in api/services
+
+const lescape = require('escape-latex');
 
 "use strict";
 
 module.exports = {
-    documentsToCsv
+    documentsToCsv,
+    documentsToBibtex
 };
 
 
@@ -56,3 +59,178 @@ function documentsToCsv(documents) {
     return csv;
 }
 
+
+function documentsToBibtex(documents) {
+
+    let bibtex = 'data:text/plain;charset=utf-8,';
+
+    documents.forEach(document => {
+        bibtex += getBibtex(document) + '\n\n';
+    });
+
+    return bibtex;
+
+}
+
+function getBibtex(document) {
+    const doc = document.toJSON();
+
+    let entryType = 'ARTICLE';
+
+    if ([
+        DocumentTypes.INVITED_TALK,
+        DocumentTypes.ABSTRACT_REPORT,
+        DocumentTypes.ERRATUM,
+        DocumentTypes.POSTER,
+        DocumentTypes.PHD_THESIS,
+        DocumentTypes.REPORT
+    ].includes(doc.documenttype.key)) {
+        const map = {
+            [DocumentTypes.PHD_THESIS]: 'PHDTHESIS',
+            [DocumentTypes.ABSTRACT_REPORT]: 'TECHREPORT',
+            [DocumentTypes.ERRATUM]: 'MISC',
+            [DocumentTypes.REPORT]: 'MISC',
+            [DocumentTypes.POSTER]: 'MISC',
+            [DocumentTypes.INVITED_TALK]: 'MISC',
+        };
+        entryType = map[doc.documenttype.key];
+    }
+    else {
+        const map = {
+            [SourceTypes.JOURNAL]: 'ARTICLE',
+            [SourceTypes.CONFERENCE]: 'CONFERENCE',
+            [SourceTypes.BOOK]: 'BOOK',
+            [SourceTypes.BOOKSERIES]: 'INCOLLECTION',
+
+        };
+        entryType = map[doc.source.sourcetype.key];
+    }
+
+    const entryFields = {
+        'ARTICLE': {
+            required: [
+                'author',
+                'title',
+                'journal',
+                'year'
+            ],
+            optional: [
+                'volume',
+                'number',
+                'pages'
+            ]
+        },
+        'CONFERENCE': {
+            required: [
+                'author',
+                'title',
+                'booktitle',
+                'year'
+            ],
+            optional: [
+                'pages'
+            ]
+        },
+        'BOOK': {
+            required: [
+                'author',
+                'title',
+                'publisher',
+                'year'
+            ],
+            optional: [
+                'volume'
+            ]
+        },
+        'INCOLLECTION': {
+            required: [
+                'author',
+                'title',
+                'booktitle',
+                'year'
+            ],
+            optional: [
+                'pages'
+            ]
+        },
+        'PHDTHESIS': {
+            required: [
+                'author',
+                'title',
+                'school',
+                'year'
+            ],
+            optional: []
+        },
+        'TECHREPORT': {
+            required: [
+                'author',
+                'title',
+                'institution',
+                'year'
+            ],
+            optional: []
+        },
+        'MISC': {
+            required: [
+                'author',
+                'title'
+            ],
+            optional: []
+        },
+    };
+
+    const fieldsMapper = {
+        author: getBibtexAuthors(doc),
+        title: doc.title,
+        journal: doc.source ? doc.source.title : '',
+        booktitle: doc.source ? doc.source.title : '',
+        institution: doc.source ? doc.source.title : '',
+        publisher: doc.source ? doc.source.title : '',
+        school: doc.source ? doc.source.title : '',
+        year: doc.year,
+        volume: doc.volume,
+        number: doc.articleNumber,
+        pages: doc.pages,
+    };
+
+    const fields = {};
+
+    entryFields[entryType].required.forEach(f => fields[f] = fieldsMapper[f]);
+    entryFields[entryType].optional.forEach(f => {
+        if (fieldsMapper[f]) fields[f] = fieldsMapper[f];
+    });
+
+
+    return formatBibtex(getBibtexKey(doc), fields, entryType);
+
+}
+
+function getBibtexKey(doc) {
+    return 'SCTL-' + doc.id;
+}
+
+function getBibtexAuthors(doc) {
+    const authors = doc.authorsStr.split(', ');
+
+    return authors.map(a => {
+        const tokens = a.split(/\s/);
+
+        const {names, surnames} = tokens.reduce((res, val) => {
+            if (val.includes('.'))
+                res.surnames.push(val.replace(/\./g, '. ').trim());
+            else
+                res.names.push(val.trim());
+
+            return res;
+        }, {names: [], surnames: []});
+
+
+        return names.join(' ') + ', ' + surnames.join(' ');
+    }).join(' and ');
+}
+
+function formatBibtex(key, fields, entryType) {
+    const fieldsArr = Object.keys(fields).map(f => '  ' + f + '={' + lescape(fields[f]) + '}');
+    return '@' + entryType + '{' + key + ',\n' + fieldsArr.join(',\n') + '\n}';
+}

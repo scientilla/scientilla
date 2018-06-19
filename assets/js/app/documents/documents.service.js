@@ -192,14 +192,15 @@
                         });
                 }
 
-                function exportDocuments(documents) {
+                function exportDocuments(documents, format) {
+                    const filename = format === 'csv' ? 'Export.csv' : 'Export.bib';
                     $http.post('/api/v1/documents/export', {
-                        format: 'csv',
+                        format: format,
                         documentIds: documents.map(d => d.id)
                     }).then((res) => {
                         const element = document.createElement('a');
                         element.setAttribute('href', res.data);
-                        element.setAttribute('download', 'Export.csv');
+                        element.setAttribute('download', filename);
 
                         element.style.display = 'none';
                         document.body.appendChild(element);

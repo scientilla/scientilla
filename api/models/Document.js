@@ -574,6 +574,8 @@ module.exports = _.merge({}, BaseModel, {
 
         if (format === 'csv')
             return Exporter.documentsToCsv(documents);
+        else if (format === 'bibtex')
+            return Exporter.documentsToBibtex(documents);
     },
     beforeCreate: async (document, cb) => {
         if (Array.isArray(document)) {

@@ -34,7 +34,8 @@
 
         vm.unverifyDocument = DocumentsService.unverifyDocument;
         vm.compareDocuments = DocumentsService.compareDocuments;
-        vm.exportDocuments = DocumentsService.exportDocuments;
+        vm.exportCsvDocuments = documents => DocumentsService.exportDocuments(documents, 'csv');
+        vm.exportBibtexDocuments = documents => DocumentsService.exportDocuments(documents, 'bibtex');
 
         vm.onFilter = onFilter;
 
