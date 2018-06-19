@@ -198,10 +198,6 @@ async function importPeople() {
                     membership.active = activeMembership;
                     const m = await Membership.update(membershipCriteria, membership);
                 }
-                if (p.pi) {
-                    g.administrators.add(user.id);
-                    await g.savePromise();
-                }
             }
             //reenable membership to main group if a user is back
             if (User.isInternalUser(user)) {
@@ -218,6 +214,7 @@ async function importPeople() {
         const collaborationDisabled = await Membership.update(collaborationUpdateCriteria, {active: false});
         const numUsersDisabled = usersDisabled.length;
         const numMembershipDisabled = membershipDisabled.length + collaborationDisabled.length;
+        await Membership.update({user: usersDisabled.map(u => u.id), active: true, group: 1}, {active: false});
         sails.log.info('Import finished');
         sails.log.info(`${numUsersInserted} users inserted`);
         sails.log.info(`${numUsersUpdated} users updated`);
@@ -284,11 +281,17 @@ async function importGroups() {
                     pi: {'!': pis.map(p => p.id)}
                 });
 
-                for (const pi of pis)
+                for (const pi of pis) {
+                    await GroupAdministrator.findOrCreate({
+                        administrator: pi.id,
+                        group: group.id
+                    });
+
                     await PrincipalInvestigator.findOrCreate({
                         pi: pi.id,
                         group: group.id
                     });
+                }
             }
             else
                 await PrincipalInvestigator.destroy({group: group.id});
