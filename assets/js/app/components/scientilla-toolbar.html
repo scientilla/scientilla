@@ -51,7 +51,7 @@
                 </a>
             </div>
             <div ng-if="vm.isLogged" class="dropdown">
-                <button ng-if="vm.showWizardVisible()"
+                <button ng-if="vm.showWizardVisible() && vm.user.isInternal()"
                         class="btn btn-link dropdown-toggle"
                         data-toggle="dropdown"
                         uib-dropdown>
@@ -69,7 +69,7 @@
                         </button>
                     </li>
                 </ul>
-                <button class="btn btn-link" ng-click="vm.editProfile()">
+                <button class="btn btn-link" ng-click="vm.editProfile()" ng-if="vm.user.isInternal()">
                     <span class="fa fa-gear"></span>
                 </button>
                 <a class="btn btn-link" ng-href="#/logout">
