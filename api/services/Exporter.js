@@ -14,7 +14,7 @@ module.exports = {
 function documentsToCsv(documents) {
     const rows = [[
         'Authors',
-        'Ttile',
+        'Titile',
         'Source',
         'Year',
         'DOI',
