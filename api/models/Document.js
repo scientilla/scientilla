@@ -506,6 +506,7 @@ module.exports = _.merge({}, BaseModel, {
         const authData = authorshipsData.map(a => {
             const newAuth = Authorship.clone(a);
             newAuth.document = docId;
+            newAuth.affiliations = a.affiliations.map(af => _.isObject(af) ? af.id : af);
             return newAuth;
         });
         await Authorship.destroy({document: docId});
