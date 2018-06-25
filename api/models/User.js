@@ -306,7 +306,7 @@ module.exports = _.merge({}, ResearchEntity, {
         assert(!_.isNil(document.affiliations), 'getAuthorshipAffiliations: affiliations missing');
 
         const affiliations = document.affiliations
-            .filter(a => a.authorship == authorship.id)
+            .filter(a => a.authorship === authorship.id)
             .map(a => a.institute);
         //[/Accrocchio]
 
@@ -328,10 +328,10 @@ module.exports = _.merge({}, ResearchEntity, {
             document: document,
             corresponding: !_.isNil(newAffiliationData.corresponding) ? newAffiliationData.corresponding : authorship.corresponding,
             synchronize: !_.isNil(newAffiliationData.synchronize) ? newAffiliationData.synchronize : document.synchronized,
-            'public': !_.isNil(newAffiliationData.public) ? newAffiliationData.public : true,
-            first_coauthor: !_.isNil(newAffiliationData.first_coauthor) ? newAffiliationData.first_coauthor : false,
-            last_coauthor: !_.isNil(newAffiliationData.last_coauthor) ? newAffiliationData.last_coauthor : false,
-            oral_presentation: !_.isNil(newAffiliationData.oral_presentation) ? newAffiliationData.oral_presentation : false
+            'public': !_.isNil(newAffiliationData.public) ? newAffiliationData.public : authorship.public,
+            first_coauthor: !_.isNil(newAffiliationData.first_coauthor) ? newAffiliationData.first_coauthor : authorship.first_coauthor,
+            last_coauthor: !_.isNil(newAffiliationData.last_coauthor) ? newAffiliationData.last_coauthor : authorship.last_coauthor,
+            oral_presentation: !_.isNil(newAffiliationData.oral_presentation) ? newAffiliationData.oral_presentation : authorship.oral_presentation
         };
     },
     doVerifyDocument: async function (document, researchEntityId, authorshipData) {
