@@ -20,22 +20,6 @@ module.exports = _.merge({}, BaseModel, {
             return this.getType() + 's';
         }
     },
-    createDraft: async function (ResearchEntityModel, researchEntityId, draftData) {
-        const selectedDraftData = Document.selectData(draftData);
-        selectedDraftData.kind = DocumentKinds.DRAFT;
-        await Document.fixDocumentType(selectedDraftData);
-        const researchEntity = await ResearchEntityModel.findOneById(researchEntityId).populate('drafts');
-        const draft = await Document.create(selectedDraftData);
-        researchEntity.drafts.add(draft);
-        await researchEntity.savePromise();
-        await Authorship.createEmptyAuthorships(draft, draftData.authorships);
-        const completeDraft = await Document.findOneById(draft.id)
-            .populate('authorships')
-            .populate('affiliations')
-            .populate('authors')
-            .populate('source');
-        return completeDraft;
-    },
     copyDocument: async function (Model, researchEntityId, documentId) {
         const document = await Document.findOneById(documentId);
 
@@ -160,6 +144,22 @@ module.exports = _.merge({}, BaseModel, {
         else if (document.kind === DocumentKinds.EXTERNAL)
             return await Model.verifyExternalDocument(Model, researchEntityId, document, verificationData);
         else return await Model.verifyDraft(Model, researchEntityId, document.id, verificationData);
+    },
+    createDraft: async function (ResearchEntityModel, researchEntityId, draftData) {
+        const selectedDraftData = Document.selectData(draftData);
+        selectedDraftData.kind = DocumentKinds.DRAFT;
+        await Document.fixDocumentType(selectedDraftData);
+        const researchEntity = await ResearchEntityModel.findOneById(researchEntityId).populate('drafts');
+        const draft = await Document.create(selectedDraftData);
+        researchEntity.drafts.add(draft);
+        await researchEntity.savePromise();
+        await Authorship.createEmptyAuthorships(draft, draftData.authorships);
+        const completeDraft = await Document.findOneById(draft.id)
+            .populate('authorships')
+            .populate('affiliations')
+            .populate('authors')
+            .populate('source');
+        return completeDraft;
     },
     updateDraft: async function (ResearchEntityModel, draftId, draftData) {
         const d = await Document.findOneById(draftId);
