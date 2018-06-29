@@ -199,7 +199,7 @@
                         documentIds: documents.map(d => d.id)
                     }).then((res) => {
                         const element = document.createElement('a');
-                        element.setAttribute('href', res.data);
+                        element.setAttribute('href', encodeURI(res.data));
                         element.setAttribute('download', filename);
 
                         element.style.display = 'none';
