@@ -66,7 +66,6 @@
                             return Restangular.one('backup', 'restore')
                                 .customPOST(postData)
                                 .then(e => {
-                                    console.log(e);
                                     vm.loading = false;
                                     Notification.success('Backup correctly restored');
                                 })
