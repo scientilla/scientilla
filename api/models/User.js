@@ -290,7 +290,7 @@ module.exports = _.merge({}, ResearchEntity, {
             });
 
     },
-    getAuthorshipsData: async function (document, researchEntityId, newAffiliationData = {}) {
+    getAuthorshipsData: async function (document, researchEntityId, verificationData = {}) {
         const user = await User.findOneById(researchEntityId);
 
         if (!user)
@@ -300,8 +300,19 @@ module.exports = _.merge({}, ResearchEntity, {
                 item: researchEntityId
             };
 
-        const position = !_.isNil(newAffiliationData.position) ? newAffiliationData.position : await document.getAuthorIndex(user);
-        const authorship = document.getAuthorshipByPosition(position) || Authorship.getEmpty();
+        const position = !_.isNil(verificationData.position) ? verificationData.position : await document.getAuthorIndex(user);
+
+        const authors = document.getAuthors();
+        if (position >= authors.length)
+            return {
+                isVerifiable: false,
+                error: "Document Verify fail: position not valid",
+                document: document
+            };
+
+        const authorStr = authors[position];
+
+        const authorship = document.getAuthorshipByPosition(position) || Authorship.getEmpty(authorStr, position, document.id);
         //TODO: [Accrocchio] remove when deep populate is added to waterline
         assert(!_.isNil(document.affiliations), 'getAuthorshipAffiliations: affiliations missing');
 
@@ -310,7 +321,7 @@ module.exports = _.merge({}, ResearchEntity, {
             .map(a => a.institute);
         //[/Accrocchio]
 
-        const affiliationInstituteIds = !_.isEmpty(newAffiliationData.affiliationInstituteIds) ? newAffiliationData.affiliationInstituteIds : affiliations;
+        const affiliationInstituteIds = !_.isEmpty(verificationData.affiliationInstituteIds) ? verificationData.affiliationInstituteIds : affiliations;
 
 
         if (_.isEmpty(affiliationInstituteIds) || _.isNil(position))
@@ -323,15 +334,16 @@ module.exports = _.merge({}, ResearchEntity, {
 
         return {
             isVerifiable: true,
-            position,
+            position: authorship.position,
+            authorStr: authorStr,
             affiliationInstituteIds,
             document: document,
-            corresponding: !_.isNil(newAffiliationData.corresponding) ? newAffiliationData.corresponding : authorship.corresponding,
-            synchronize: !_.isNil(newAffiliationData.synchronize) ? newAffiliationData.synchronize : document.synchronized,
-            'public': !_.isNil(newAffiliationData.public) ? newAffiliationData.public : authorship.public,
-            first_coauthor: !_.isNil(newAffiliationData.first_coauthor) ? newAffiliationData.first_coauthor : authorship.first_coauthor,
-            last_coauthor: !_.isNil(newAffiliationData.last_coauthor) ? newAffiliationData.last_coauthor : authorship.last_coauthor,
-            oral_presentation: !_.isNil(newAffiliationData.oral_presentation) ? newAffiliationData.oral_presentation : authorship.oral_presentation
+            corresponding: !_.isNil(verificationData.corresponding) ? verificationData.corresponding : authorship.corresponding,
+            synchronize: !_.isNil(verificationData.synchronize) ? verificationData.synchronize : document.synchronized,
+            'public': !_.isNil(verificationData.public) ? verificationData.public : authorship.public,
+            first_coauthor: !_.isNil(verificationData.first_coauthor) ? verificationData.first_coauthor : authorship.first_coauthor,
+            last_coauthor: !_.isNil(verificationData.last_coauthor) ? verificationData.last_coauthor : authorship.last_coauthor,
+            oral_presentation: !_.isNil(verificationData.oral_presentation) ? verificationData.oral_presentation : authorship.oral_presentation
         };
     },
     doVerifyDocument: async function (document, researchEntityId, authorshipData) {

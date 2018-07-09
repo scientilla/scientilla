@@ -27,7 +27,12 @@ module.exports = _.merge({}, BaseModel, {
             throw 'Document not found';
 
         const documentData = Document.selectData(document);
-        documentData.authorships = await Authorship.find({document: document.id}).populate('affiliations');
+        const authorships = await Authorship.find({document: document.id}).populate('affiliations');
+        documentData.authorships = authorships.map(a => {
+            const authorship = Authorship.filterFields(a);
+            authorship.researchEntity = null;
+            return authorship;
+        });
         return await Model.createDraft(Model, researchEntityId, documentData);
     },
     copyDocuments: async function (Model, researchEntityId, documentIds) {
@@ -153,13 +158,12 @@ module.exports = _.merge({}, BaseModel, {
         const draft = await Document.create(selectedDraftData);
         researchEntity.drafts.add(draft);
         await researchEntity.savePromise();
-        await Authorship.createEmptyAuthorships(draft, draftData.authorships);
-        const completeDraft = await Document.findOneById(draft.id)
+        await Authorship.updateAuthorships(draft, draftData.authorships);
+        return await Document.findOneById(draft.id)
             .populate('authorships')
             .populate('affiliations')
             .populate('authors')
             .populate('source');
-        return completeDraft;
     },
     updateDraft: async function (ResearchEntityModel, draftId, draftData) {
         const d = await Document.findOneById(draftId);
@@ -170,8 +174,11 @@ module.exports = _.merge({}, BaseModel, {
         selectedDraftData.kind = DocumentKinds.DRAFT;
         selectedDraftData.synchronized = false;
         await Document.fixDocumentType(selectedDraftData);
-        const updatedDraft = await Document.update({id: draftId}, selectedDraftData);
-        return updatedDraft[0];
+        const updatedDrafts = await Document.update({id: draftId}, selectedDraftData);
+        const updatedDraft = updatedDrafts[0];
+        const authorshipsData = await Authorship.getMatchingAuthorshipsData(updatedDraft, draftData.authorships);
+        await Authorship.updateAuthorships(updatedDraft, authorshipsData);
+        return updatedDraft;
     },
     deleteDraft: function (Model, draftId) {
         return Document.destroy({id: draftId});

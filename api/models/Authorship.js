@@ -8,6 +8,7 @@ const fields = [
     'researchEntity',
     'document',
     'affiliations',
+    'authorStr',
     'position',
     'synchronize',
     'corresponding',
@@ -33,6 +34,7 @@ module.exports = _.merge({}, BaseModel, {
             through: 'affiliation'
         },
         position: 'integer',
+        authorStr: 'string',
         public: 'boolean',
         favorite: 'boolean',
         synchronize: 'boolean',
@@ -58,8 +60,11 @@ module.exports = _.merge({}, BaseModel, {
 
         cb();
     },
-    getEmpty: function () {
+    getEmpty: function (authorStr, position, document) {
         return {
+            authorStr: authorStr,
+            position: position,
+            document: document,
             synchronize: null,
             researchEntity: null,
             corresponding: false,
@@ -78,42 +83,123 @@ module.exports = _.merge({}, BaseModel, {
         if (!_.isObject(authorshipData))
             return {};
         const newAuthorship = {};
-        fields.forEach(f => newAuthorship[f] = authorshipData[f]);
+        Object.keys(authorshipData)
+            .filter(key => fields.includes(key))
+            .forEach(f => newAuthorship[f] = authorshipData[f]);
         return newAuthorship;
     },
-    createEmptyAuthorships: async function (doc, authorshipsData) {
-        //TODO Add empty authorships generated from authorStr
-        if (!_.isArray(authorshipsData))
+    async cleanAuthorshipsData(authorshipsData) {
+        const cleanAuthorshipsData = [];
+        for (const newAuthorshipData of authorshipsData) {
+            const cleanAuthorshipData = Authorship.filterFields(newAuthorshipData);
+            delete cleanAuthorshipData.document;
+            cleanAuthorshipData.affiliations = await Authorship.getFixedCollection(Institute, newAuthorshipData.affiliations);
+            if (!cleanAuthorshipData.affiliations)
+                cleanAuthorshipData.affiliations = [];
+
+            cleanAuthorshipsData.push(cleanAuthorshipData);
+        }
+        return cleanAuthorshipsData;
+    },
+    areEquals(authorship1, authorship2) {
+        const authData1 = Authorship.filterFields(authorship1);
+        const authData2 = Authorship.filterFields(authorship2);
+        return !Object.keys(authData1).find(key => !_.isEqual(authData1[key], authData2[key]));
+    },
+    async getMatchingAuthorshipsData(document, authorshipsData) {
+        const authors = document.getAuthors();
+
+        const fixedNewAuthorshipsData = _.cloneDeep(authorshipsData);
+        if (fixedNewAuthorshipsData.length > 0) {
+
+            //removes wrong authorships
+            fixedNewAuthorshipsData.slice().reverse().forEach((newAuthorship, index) => {
+                const correctPosition = authors.findIndex(authorStr => authorStr === newAuthorship.authorStr);
+                if (correctPosition === -1)
+                    return fixedNewAuthorshipsData.splice(fixedNewAuthorshipsData.length - 1 - index, 1);
+
+                if (correctPosition !== newAuthorship.position) {
+                    const correctPositionNewAuthorship = fixedNewAuthorshipsData.find(a => a.position === correctPosition);
+                    if (!correctPositionNewAuthorship)
+                        newAuthorship.position = correctPosition;
+                    else if (correctPositionNewAuthorship.authorStr && correctPositionNewAuthorship.authorStr !== newAuthorship.authorStr) {
+                        correctPositionNewAuthorship.position = undefined;
+                        newAuthorship.position = correctPosition;
+                    }
+                    else
+                        fixedNewAuthorshipsData.splice(fixedNewAuthorshipsData.length - 1 - index, 1);
+                    return;
+                }
+
+                if (newAuthorship.authorStr && !authors.includes(newAuthorship.authorStr))
+                    return fixedNewAuthorshipsData.splice(fixedNewAuthorshipsData.length - 1 - index, 1);
+            });
+
+            return fixedNewAuthorshipsData;
+        }
+    },
+    async updateAuthorships(doc, newAuthorshipsData = []) {
+        if (!doc.id || !doc.hasValidAuthorsStr())
             return;
 
-        const filteredAuthorshipsData = authorshipsData.map(a => Authorship.filterFields(a));
-        filteredAuthorshipsData.forEach(a => {
-            a.document = doc.id;
-            delete a.affiliations;
-            delete a.researchEntity;
-        });
-        const authorships = await Authorship.create(filteredAuthorshipsData);
+        if (!doc.authorsStr || doc.authorsStr === '')
+            return await Authorship.destroy({document: doc.id});
 
-        const affiliations = [];
-        for (const authData of authorshipsData)
-            if (_.isArray(authData.affiliations))
-                for (const aff of authData.affiliations) {
-                    const institutes = await Authorship.getFixedCollection(Institute, aff);
-                    const auth = authorships.find(a => a.position === authData.position);
-                    affiliations.push({
-                        document: doc.id,
-                        authorship: auth.id,
-                        institute: institutes
-                    });
-                }
-        if (affiliations.length)
-            await Affiliation.create(affiliations);
-    },
-    updateAuthorships: async function (doc, authorshipsData) {
-        //TODO update authorships instead of delete/insert empty
-        //TODO Fix authorship bug on authorStr changes
-        await Authorship.destroy({document: doc.id});
-        await Authorship.createEmptyAuthorships(doc, authorshipsData);
+        const cleanAuthorshipsData = await Authorship.cleanAuthorshipsData(newAuthorshipsData);
+        cleanAuthorshipsData.forEach(a => a.document = doc.id);
+
+        const authors = doc.getAuthors();
+
+        const currentAuthorships = await Authorship.find({document: doc.id}).populate('affiliations');
+        const currentAuthorshipsData = currentAuthorships.map(a => {
+            const ad = Authorship.filterFields(a);
+            ad.id = a.id;
+            ad.affiliations = ad.affiliations.map(af => af.id);
+            return ad;
+        });
+
+        const authorshipsToDelete = currentAuthorshipsData.filter(a => a.position >= authors.length);
+        const authorshipsToCreate = [];
+        const authorshipsToUpdate = [];
+
+        authors.forEach((authorStr, position) => {
+            const currentAuthorship = currentAuthorshipsData.find(a => a.position === position);
+            const newAuthorshipData = cleanAuthorshipsData.find(a => a.position === position);
+            const defaults = !!currentAuthorship && currentAuthorship.authorStr === authorStr ? Authorship.filterFields(currentAuthorship) : Authorship.getEmpty(authorStr, position, doc.id);
+            const newAuthorship = Object.assign({}, defaults, newAuthorshipData);
+
+            if (!currentAuthorship) //the document is new or the authorsStr is longer than before
+                authorshipsToCreate.push(newAuthorship);
+            else if (newAuthorshipData && !Authorship.areEquals(currentAuthorship, newAuthorship)) {
+                //there is a current authorship and a different new authorship is passed by param
+
+                authorshipsToUpdate.push({
+                    current: currentAuthorship,
+                    'new': newAuthorship
+                });
+            }
+            else if (currentAuthorship.authorStr !== authorStr) {
+                //there is a wrong current authorship and no new authorship is passed.
+
+                if (currentAuthorship.researchEntity)
+                    throw 'UpdateAuthorships error'; //TODO handle when currentAuthorship is verified
+
+                authorshipsToUpdate.push({
+                    current: currentAuthorship,
+                    'new': newAuthorship
+                });
+            }
+        });
+
+        if (authorshipsToDelete.length)
+            await Authorship.destroy({id: authorshipsToDelete.map(a => a.id)});
+
+        if (authorshipsToCreate.length)
+            await Authorship.create(authorshipsToCreate);
+
+        for (const authorship of authorshipsToUpdate)
+            await Authorship.update({id: authorship.current.id}, authorship.new);
+
     },
     clone: function (authorship) {
         const newAuthorship = Authorship.filterFields(authorship);
@@ -125,23 +211,6 @@ module.exports = _.merge({}, BaseModel, {
         });
 
         return newAuthorship;
-    },
-    updateAuthorshipData: async function (authorshipId, docId, authorshipData) {
-        if (!docId) throw "updateAuthorshipData error!";
-
-        const newAuthData = Authorship.clone(authorshipData);
-        newAuthData.document = docId;
-
-        await Affiliation.destroy({authorship: authorshipId, document: docId});
-        await Authorship.update({id: authorshipId}, newAuthData);
-    },
-    createAuthorshipData: async function (docId, authorshipData) {
-        if (!docId) throw "updateAuthorshipData error!";
-
-        const newAuthData = Authorship.clone(authorshipData);
-        newAuthData.document = docId;
-
-        await Authorship.create(newAuthData);
     },
     setPrivacy: async function (documentId, userId, privacy) {
         const authorship = await Authorship.findOne({document: documentId, researchEntity: userId});

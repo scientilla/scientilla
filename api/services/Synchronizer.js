@@ -100,7 +100,9 @@ async function documentSynchronizeScopus(docId) {
     if (!externalDoc)
         throw exceptionMessage;
 
-    return await documentSynchronize(doc, externalDoc);
+    await documentSynchronize(doc, externalDoc);
+
+    return await Document.findOne({id: doc.id}).populate(documentPopulates)
 }
 
 async function documentSynchronize(doc, externalDoc) {
@@ -121,13 +123,10 @@ async function documentSynchronize(doc, externalDoc) {
     if (doc.kind === DocumentKinds.VERIFIED) {
         docToUpdate = await documentSplit(doc);
 
-        if (!docToUpdate) {
-            sails.log.debug('Document with id ' + doc.id + " has no corresponding external document");
-            throw "Synchronization failed";
-        }
+        if (!docToUpdate)
+            return false;
     }
 
-    await synchronizeAuthorships(docToUpdate, externalDoc, positionsToUpdate);
 
     delete externalDocData.kind;
     externalDocData.synchronized = true;
@@ -135,6 +134,10 @@ async function documentSynchronize(doc, externalDoc) {
         await Document.fixDocumentType(externalDocData);
     }
     await Document.update(docToUpdate.id, externalDocData);
+    const updatedDoc = await Document.findOne({id: docToUpdate.id}).populate(documentPopulates);
+
+    const newAuthorships = getAuthorshipsToUpdate(updatedDoc, externalDoc);
+    await Authorship.updateAuthorships(updatedDoc, newAuthorships);
 
     return true;
 }
@@ -167,7 +170,7 @@ function getAuthorshipPositionsToUpdate(doc, externalDoc) {
     const docFullAuthorships = doc.getFullAuthorships();
     const externalFullAuthorships = externalDoc.getFullAuthorships();
 
-    return externalDoc.authorsStr.split(',').reduce((acc, v, i) => {
+    return externalDoc.getAuthors().reduce((acc, v, i) => {
         const docAuthorship = docFullAuthorships.find(a => a.position === i);
         const externalAuthorship = externalFullAuthorships.find(a => a.position === i);
         if (!docAuthorship && !externalAuthorship)
@@ -190,61 +193,67 @@ function getAuthorshipPositionsToUpdate(doc, externalDoc) {
     }, []);
 }
 
+// if the document is verified with at least a synchronize = true and a syncronize = false it will create a new document
+// returns the document that will be updated (the old one)
 async function documentSplit(doc) {
     //a.synchronize could be null
-    const notSynchronizingAuthorships = doc.authorships.filter(a => a.synchronize === false);
+    function isSynchronizing(authorship) {
+        return authorship.researchEntity && authorship.synchronize === false;
+    }
 
-    if (notSynchronizingAuthorships.length === doc.authorships.filter(a => !_.isNil(a.synchronize).length))
+    const notSynchronizingAuthorships = doc.authorships.filter(isSynchronizing);
+
+    if (notSynchronizingAuthorships.length === doc.authorships.filter(a => !_.isNil(a.synchronize)).length)
         return false;
     if (!notSynchronizingAuthorships.length)
         return doc;
 
     const newDoc = await Document.clone(doc, {synchronized: false});
 
-    const notSynchronizingAuthors = notSynchronizingAuthorships.map(nsa => nsa.researchEntity);
-
-    const authorshipsData = doc.getFullAuthorships();
+    const authorshipsData = doc.getFullAuthorships().map(a => {
+        const newAutorhsip = _.cloneDeep(a);
+        newAutorhsip.affiliations = newAutorhsip.affiliations.map(af => af.institute);
+        return newAutorhsip;
+    });
     const oldDocAuthorshipsData = authorshipsData.map(a => {
-        if (!notSynchronizingAuthors.includes(a.researchEntity)) {
+        if (isSynchronizing(a)) {
             const newAutorhsip = _.cloneDeep(a);
-            a.researchEntity = null;
-            a.synchronize = null;
+            newAutorhsip.researchEntity = null;
+            newAutorhsip.synchronize = null;
             return newAutorhsip;
         }
         else return a;
     });
 
     const newDocAuthorshipsData = authorshipsData.map(a => {
-        if (notSynchronizingAuthors.includes(a.researchEntity)) {
+        if (!isSynchronizing(a)) {
             const newAutorhsip = _.cloneDeep(a);
-            a.researchEntity = null;
-            a.synchronize = null;
+            newAutorhsip.researchEntity = null;
+            newAutorhsip.synchronize = null;
             return newAutorhsip;
         }
         else return a;
     });
-    await Document.setAuthorships(newDoc.id, newDocAuthorshipsData);
-    return await Document.setAuthorships(doc.id, oldDocAuthorshipsData);
+
+    await Authorship.updateAuthorships(newDoc, newDocAuthorshipsData);
+    await Authorship.updateAuthorships(doc, oldDocAuthorshipsData);
+
+    return await Document.findOne({id: doc.id});
 }
 
-async function synchronizeAuthorships(doc, externalDoc, positionsToUpdate) {
-    const externalAuthorshipsData = externalDoc.getFullAuthorships();
-    const authorshipsData = doc.getFullAuthorships();
 
-    for (const i of positionsToUpdate) {
-        const authData = authorshipsData.find(a => a.position === i);
-        const externalAuthData = externalAuthorshipsData.find(a => a.position === i);
+function getAuthorshipsToUpdate(docToUpdate, externalDocData) {
+    const verifiedPositions = docToUpdate.authorships.filter(a => a.researchEntity).map(a => a.position);
+    return externalDocData.getFullAuthorships().reduce((acc, authorship) => {
+        if (verifiedPositions.includes(authorship.position))
+            return;
 
-        if (authData && externalAuthData) {
-            const newAuthorship = Authorship.clone(authData);
-            if (!authData.researchEntity)
-                newAuthorship.affiliations = externalAuthData.affiliations;
-            await Authorship.updateAuthorshipData(authData.id, doc.id, newAuthorship);
-        }
-        else if (!authData && externalAuthData)
-            await Authorship.createAuthorshipData(doc.id, externalAuthData);
-        else if (authData)
-            await Authorship.destroy({id: authorshipsData.id});
-    }
+        const a = _.cloneDeep(authorship);
+        a.affiliations = a.affiliations.map(af => af.institute);
+        delete a.researchEntity;
+        delete a.id;
 
+        acc.push(a);
+        return acc;
+    }, []);
 }

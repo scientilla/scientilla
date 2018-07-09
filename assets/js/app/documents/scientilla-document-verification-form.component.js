@@ -95,6 +95,10 @@
             /* jshint ignore:start */
 
             async function submit() {
+                const authorsArr = vm.document.authorsStr.split(', ');
+                if (vm.verificationData.position >= authorsArr.length)
+                    return;
+
                 const data = {
                     affiliations: _.map(vm.verificationData.affiliations, 'id'),
                     position: vm.verificationData.position,
@@ -106,26 +110,21 @@
                     oral_presentation: vm.verificationData.oral_presentation,
                 };
 
+                const authorStr = authorsArr[vm.verificationData.position];
+                const alias = user.aliases.find(a => a.str === authorStr);
 
-                const authorsArr = vm.document.authorsStr.split(', ');
-                if (data.position < authorsArr.length) {
-                    const authorStr = authorsArr[data.position];
-                    const alias = user.aliases.find(a => a.str === authorStr);
+                if (!alias) {
+                    const aliases = user.aliases.map(a => a.str).join(', ');
+                    const result = await ModalService.multipleChoiceConfirm('New alias!',
+                        'You are verifying the document as "' + authorStr + '".\n' +
+                        'By clicking on Proceed "' + authorStr + '" will be automatically added to your aliases (' + aliases + ').\n' +
+                        'You can always manage them from your profile settings.\n',
+                        ['Proceed']);
 
-                    if (!alias) {
-                        const aliases = user.aliases.map(a => a.str).join(', ');
-                        const result = await ModalService.multipleChoiceConfirm('New alias!',
-                            'You are verifying the document as "' + authorStr + '".\n' +
-                            'By clicking on Proceed "' + authorStr + '" will be automatically added to your aliases (' + aliases + ').\n' +
-                            'You can always manage them from your profile settings.\n',
-                            ['Proceed']);
-
-                        if (result === -1)
-                            return;
-                    }
-
+                    if (result === -1)
+                        return;
                 }
-                else return;
+
 
                 try {
                     const res = await verify(user, vm.document.id, data, vm.document2id);

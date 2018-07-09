@@ -7,7 +7,6 @@ const test = require('./../helper.js');
 
 describe('Draft Verification', () => {
     before(test.clean);
-    after(test.clean);
 
     const usersData = test.getAllUserData();
     const documentsData = test.getAllDocumentData();
@@ -35,7 +34,7 @@ describe('Draft Verification', () => {
     let unigeInstitute;
     let author2affiliationInstitutes;
 
-    it('there should be no verified documents for a new user', async() => {
+    it('there should be no verified documents for a new user', async () => {
             user1 = await test.registerUser(user1Data);
             iitGroup = await test.createGroup(iitGroupData);
             iitInstitute = await test.createInstitute(iitInstituteData);
@@ -46,7 +45,7 @@ describe('Draft Verification', () => {
         }
     );
 
-    it('verifying a valid draft should be possible', async() => {
+    it('verifying a valid draft should be possible', async () => {
             documentData.source = journal;
             user1Draft1 = await test.userCreateDraft(user1, documentData);
             const affiliations = [iitInstitute.id];
@@ -71,14 +70,15 @@ describe('Draft Verification', () => {
             should(document.draftCreator).be.null;
             document.authors.should.have.length(1);
             document.authors[0].username.should.equal(user1.username);
-            document.authorships.should.have.length(1);
-            document.authorships[0].position.should.equal(user1Doc1Position);
+            document.authorships.should.have.length(5);
+            const user1Authorship = document.authorships.find(a => a.position === user1Doc1Position);
+            user1Authorship.researchEntity.should.equal(user1.id);
             document.affiliations.should.have.length(1);
             document.affiliations[0].institute.should.equal(iitInstitute.id);
         }
     );
 
-    it('verifying a complete draft twice should give an error', async() => {
+    it('verifying a complete draft twice should give an error', async () => {
             const body = await test.userVerifyDraft(user1, user1Draft1);
             // expect
             body.should.have.property('error');
@@ -87,7 +87,7 @@ describe('Draft Verification', () => {
         }
     );
 
-    it('verifying a non complete draft should not be possible', async() => {
+    it('verifying a non complete draft should not be possible', async () => {
             user1Draft2 = await test.userCreateDraft(user1, incompleteDocumentData);
             const body = await test.userVerifyDraft(user1, user1Draft2, 4, [iitInstitute.id]);
             // expect
@@ -105,7 +105,7 @@ describe('Draft Verification', () => {
         }
     );
 
-    it('verifying a nonexsting document should give an error', async() => {
+    it('verifying a nonexsting document should give an error', async () => {
             const body = await test.userVerifyDraft(user1, nonExistentDocument);
             // expect
             body.should.have.property('error');
@@ -113,7 +113,7 @@ describe('Draft Verification', () => {
         }
     );
 
-    it('verifying two identical documents should merge them', async() => {
+    it('verifying two identical documents should merge them', async () => {
             user2 = await test.registerUser(user2Data);
             documentData.source = journal;
             user2Draft1 = await test.userCreateDraft(user2, documentData);
@@ -137,12 +137,14 @@ describe('Draft Verification', () => {
             should(d.draftCreator).be.null;
             d.authors[0].username.should.equal(user1.username);
             d.authors[1].username.should.equal(user2.username);
-            d.authorships.should.have.length(2);
-            d.authorships[0].position.should.equal(user1Doc1Position);
-            d.authorships[1].position.should.equal(user2Doc1Position);
+            d.authorships.should.have.length(5);
+            const user1Authorship = d.authorships.find(a => a.position === user1Doc1Position);
+            const user2Authorship = d.authorships.find(a => a.position === user2Doc1Position);
+            user1Authorship.researchEntity.should.equal(user1.id);
+            user2Authorship.researchEntity.should.equal(user2.id);
             d.affiliations.should.have.length(3);
             d.affiliations[0].institute.should.equal(iitInstitute.id);
-            const author2affiliations = d.affiliations.filter(a => a.authorship === d.authorships[1].id);
+            const author2affiliations = d.affiliations.filter(a => a.authorship === user2Authorship.id);
             const author2affiliationInstitutesActual = _.map(author2affiliations, 'institute');
             author2affiliationInstitutesActual.should.containDeep(author2affiliationInstitutes);
 
@@ -150,7 +152,7 @@ describe('Draft Verification', () => {
         }
     );
 
-    it('verifying in bulk should verify only draft with at least an affiliation associated to the user', async() => {
+    it('verifying in bulk should verify only draft with at least an affiliation associated to the user', async () => {
         await test.clean();
         user1 = await test.registerUser(user1Data);
         iitGroup = await test.createGroup(iitGroupData);

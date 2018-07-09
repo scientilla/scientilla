@@ -7,7 +7,6 @@ const _ = require('lodash');
 
 describe('Document Verification', () => {
     before(test.clean);
-    after(test.clean);
 
     const user1Data = test.getAllUserData()[0];
     const user2Data = test.getAllUserData()[1];
@@ -21,8 +20,8 @@ describe('Document Verification', () => {
     let user2;
     let document;
     let journal;
-    const user1Doc1position = 4;
-    const user2Doc1position = 0;
+    const user1Doc1Position = 4;
+    const user2Doc1Position = 0;
     let iitInstitute;
     let unigeInstitute;
     let iitGroup;
@@ -37,10 +36,10 @@ describe('Document Verification', () => {
         journal = await test.createSource(journalData);
         documentData.source = journal;
         document = await test.userCreateDraft(user1, documentData);
-        await test.userVerifyDraft(user1, document, user1Doc1position, [iitInstitute.id]);
+        await test.userVerifyDraft(user1, document, user1Doc1Position, [iitInstitute.id]);
         user2 = await test.registerUser(user2Data);
         author2affiliationInstitutes = [unigeInstitute.id, iitInstitute.id];
-        await test.userVerifyDocument(user2, document, user2Doc1position, author2affiliationInstitutes);
+        await test.userVerifyDocument(user2, document, user2Doc1Position, author2affiliationInstitutes);
         const body = await test.getUserDocumentsWithAuthors(user2);
         // expect
         const count = body.count;
@@ -55,12 +54,14 @@ describe('Document Verification', () => {
         d.authors.should.have.length(2);
         d.authors[0].username.should.equal(user1.username);
         d.authors[1].username.should.equal(user2.username);
-        d.authorships.should.have.length(2);
-        d.authorships[0].position.should.equal(user1Doc1position);
-        d.authorships[1].position.should.equal(user2Doc1position);
+        d.authorships.should.have.length(5);
+        const user1Authorship = d.authorships.find(a => a.position === user1Doc1Position);
+        const user2Authorship = d.authorships.find(a => a.position === user2Doc1Position);
+        user1Authorship.researchEntity.should.equal(user1.id);
+        user2Authorship.researchEntity.should.equal(user2.id);
         d.affiliations.should.have.length(3);
         d.affiliations[0].institute.should.equal(iitInstitute.id);
-        const author2affiliations = d.affiliations.filter(a => a.authorship === d.authorships[1].id);
+        const author2affiliations = d.affiliations.filter(a => a.authorship === user2Authorship.id);
         const author2affiliationInstitutesActual = _.map(author2affiliations, 'institute');
         author2affiliationInstitutesActual.should.containDeep(author2affiliationInstitutes);
     });

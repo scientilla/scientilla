@@ -185,10 +185,7 @@ module.exports = _.merge({}, BaseModel, {
         isDraft: function () {
             return this.kind === DocumentKinds.DRAFT
         },
-        isValid: function () {
-            const authorsStrRegex = /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?[a-zA-ZÀ-ÖØ-öø-ÿ]\.)+)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?\w\.)+)*$/;
-            const yearRegex = /^(19|20)\d{2}$/;
-            const self = this;
+        isValid() {
             const requiredFields = [
                 'authorsStr',
                 'title',
@@ -201,10 +198,15 @@ module.exports = _.merge({}, BaseModel, {
             else
                 requiredFields.push('source');
 
-            return _.every(requiredFields, function (v) {
-                    return self[v];
-                }) && authorsStrRegex.test(self.authorsStr)
-                && yearRegex.test(self.year);
+            return _.every(requiredFields, v => this[v]) && this.hasValidAuthorsStr() && this.hasValidYear();
+        },
+        hasValidAuthorsStr() {
+            const authorsStrRegex = /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?[a-zA-ZÀ-ÖØ-öø-ÿ]\.)+)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?\w\.)+)*$/;
+            return authorsStrRegex.test(this.authorsStr);
+        },
+        hasValidYear() {
+            const yearRegex = /^(19|20)\d{2}$/;
+            return yearRegex.test(this.year);
         },
         draftToDocument: function () {
             this.kind = DocumentKinds.VERIFIED;
@@ -213,10 +215,8 @@ module.exports = _.merge({}, BaseModel, {
             return this.savePromise();
         },
         getAuthors: function () {
-            if (!this.authorsStr)
-                return [];
-            var authors = this.authorsStr.replace(/\s+et all\s*/i, '').split(',').map(_.trim);
-            return authors;
+            if (!this.authorsStr) return [];
+            return this.authorsStr.replace(/\s+et all\s*/i, '').split(',').map(_.trim);
         },
         getUcAuthors: function () {
             var authors = this.getAuthors();
@@ -260,8 +260,7 @@ module.exports = _.merge({}, BaseModel, {
                 return this.savePromise();
             }
 
-            const res = await Synchronizer.documentSynchronizeScopus(this.id);
-            return res.docData;
+            return await Synchronizer.documentSynchronizeScopus(this.id);
         },
         getSourceDetails: function () {
             if (!_.isObject(this.source))
@@ -467,24 +466,17 @@ module.exports = _.merge({}, BaseModel, {
         if (!selectedData.documenttype)
             await Document.fixDocumentType(selectedData);
 
-        const authorships = _.cloneDeep(documentData.authorships);
-
-        if (_.isArray(authorships))
-            for (const a of authorships)
-                a.affiliations = (await Document.getFixedCollection(Institute, a.affiliations));
-
-        let doc = await Document.findOne(criteria);
-        if (doc) {
+        const oldDoc = await Document.findOne(criteria);
+        let doc;
+        if (oldDoc) {
             await Document.update(criteria, selectedData);
             doc = await Document.findOne(criteria);
-            await Authorship.updateAuthorships(doc, authorships);
         }
-        else {
-            doc = await Document.create(selectedData);
-            if (!doc)
-                throw 'Document not created';
-            await Authorship.createEmptyAuthorships(doc, authorships);
-        }
+        else doc = await Document.create(selectedData);
+        if (!doc)
+            throw 'Document not created';
+
+        await Authorship.updateAuthorships(doc, documentData.authorships);
 
         return doc;
     },
@@ -503,18 +495,11 @@ module.exports = _.merge({}, BaseModel, {
     },
     setAuthorships: async function (docId, authorshipsData) {
         if (!docId) throw "setAuthorship error!";
-        const authData = authorshipsData.map(a => {
-            const newAuth = Authorship.clone(a);
-            newAuth.document = docId;
-            newAuth.affiliations = a.affiliations.map(af => _.isObject(af) ? af.id : af);
-            return newAuth;
-        });
-        await Authorship.destroy({document: docId});
-        await Affiliation.destroy({document: docId});
-        await Authorship.create(authData);
 
-        return await Document.findOneById(docId)
-            .populate(['authorships', 'groupAuthorships', 'affiliations']);
+        const document = await Document.findOne({id: docId});
+        if (!document) throw 'Document not found';
+        const authData = await Authorship.getMatchingAuthorshipsData(document, authorshipsData);
+        await Authorship.updateAuthorships(document, authData);
     },
     clone: async function (document, newDocPartialData = {}) {
         const docData = Document.selectData(document);
