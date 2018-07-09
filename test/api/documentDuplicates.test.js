@@ -7,7 +7,6 @@ const test = require('./../helper.js');
 
 describe('Document duplicates', () => {
     before(test.clean);
-    after(test.clean);
 
     const usersData = test.getAllUserData();
     const documentsData = test.getAllDocumentData().slice(2, 4);

@@ -5,7 +5,6 @@ const test = require('./../helper.js');
 
 describe('User registration', () => {
     before(test.clean);
-    after(test.clean);
 
     const userData = test.getAllUserData()[0];
     const institutesData = test.getAllInstituteData();

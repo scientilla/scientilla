@@ -6,7 +6,6 @@ const test = require('./../helper.js');
 
 describe('Draft Unverification', () => {
     before(test.clean);
-    after(test.clean);
 
     const user1Data = test.getAllUserData()[0];
     const user2Data = test.getAllUserData()[1];

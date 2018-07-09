@@ -6,7 +6,6 @@ const test = require('./../helper.js');
 
 describe('Draft Deletion: ', () => {
     before(test.clean);
-    after(test.clean);
 
     const usersData = test.getAllUserData();
     const documentsData = test.getAllDocumentData();

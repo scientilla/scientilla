@@ -7,7 +7,6 @@ const should = require('should');
 
 describe('Draft Creation: ', () => {
     before(test.clean);
-    after(test.clean);
 
     const usersData = test.getAllUserData();
     const documentsData = test.getAllDocumentData();

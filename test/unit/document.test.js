@@ -7,6 +7,7 @@ const _ = require('lodash');
 let Doc;
 
 describe('Document model', () => {
+    before(test.cleanDb);
 
     before(() => {
         Doc = _.partial(test.createModel, Document);
