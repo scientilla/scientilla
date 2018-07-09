@@ -19,7 +19,7 @@ services:
     extends: node
     entrypoint: grunt
   db-test:
-    image: postgres:10
+    build: ./docker/db-test
     environment:
       POSTGRES_DB: scientillatest
       POSTGRES_USER: scientilla

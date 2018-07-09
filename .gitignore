@@ -136,6 +136,7 @@ doc
 docker-compose.yml
 docker/db/data/*
 !docker/db/data/.gitkeep
+docker/db-test/logs
 
 logs/*
 !logs/.gitkeep
