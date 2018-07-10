@@ -2,6 +2,7 @@
 // Exporter.js - in api/services
 
 const lescape = require('escape-latex');
+const _ = require('lodash');
 
 "use strict";
 
@@ -23,7 +24,8 @@ function documentsToCsv(documents) {
         'Citations',
         'IF',
         'SNIP',
-        'SJR'
+        'SJR',
+        'Reference'
     ]].concat(documents.map(d => {
         const document = d.toJSON();
         const doc = [];
@@ -45,6 +47,15 @@ function documentsToCsv(documents) {
         doc.push(document.IF);
         doc.push(document.SNIP);
         doc.push(document.SJR);
+
+        const reference = [
+            document.authorsStr,
+            document.title,
+            document.sourceDetails,
+            document.year,
+            document.doi
+        ];
+        doc.push(reference.filter(r => !_.isNil(r)).join(', '));
 
         return doc;
     }));
