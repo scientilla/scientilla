@@ -222,7 +222,7 @@
             return modal.result;
         };
 
-        service.multipleChoiceConfirm = function (title, message, buttonLabels) {
+        service.multipleChoiceConfirm = function (title, message, buttonLabels, cancelLabel = 'Cancel') {
             buttonLabels = buttonLabels || [];
             return new Promise(function (resolve, reject) {
                 const scope = {
@@ -248,7 +248,7 @@
                     scope.buttonLabels.map(function (b, i) {
                         return '<scientilla-button click="vm.ok(' + i + ')">' + b + '</scientilla-button>';
                     }).join('') +
-                    '<scientilla-button click="vm.cancel()" type="cancel">Cancel</scientilla-button>\
+                    '<scientilla-button click="vm.cancel()" type="cancel">' + cancelLabel + '</scientilla-button>\
                 <div>',
                     scope);
 
@@ -277,6 +277,10 @@
 
         service.confirm = function (title, message) {
             return service.multipleChoiceConfirm(title, message, ['Ok']);
+        };
+
+        service.alert = function (title, message) {
+            return service.multipleChoiceConfirm(title, message, [], 'Close');
         };
 
         return service;
