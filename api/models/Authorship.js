@@ -68,7 +68,7 @@ module.exports = _.merge({}, BaseModel, {
             synchronize: null,
             researchEntity: null,
             corresponding: false,
-            'public': false,
+            'public': true,
             favorite: false,
             first_coauthor: false,
             last_coauthor: false,
