@@ -210,12 +210,18 @@
 
         function changePrivacy() {
             const authorship = _.clone(getAuthorship());
+            if (authorship.favorite)
+                return ModalService.alert('Document visibility error', 'A favorite document cannot be set to private.');
+
             authorship.public = !authorship.public;
             documentService.setAuthorshipPrivacy(authorship);
         }
 
         function changeFavorite() {
             const authorship = _.clone(getAuthorship());
+            if (!authorship.public)
+                return ModalService.alert('Favorite error', 'A favorite document should be first set to public.');
+
             authorship.favorite = !authorship.favorite;
             documentService.setAuthorshipFavorite(authorship);
         }
