@@ -246,7 +246,7 @@ function getAuthorshipsToUpdate(docToUpdate, externalDocData) {
     const verifiedPositions = docToUpdate.authorships.filter(a => a.researchEntity).map(a => a.position);
     return externalDocData.getFullAuthorships().reduce((acc, authorship) => {
         if (verifiedPositions.includes(authorship.position))
-            return;
+            return acc;
 
         const a = _.cloneDeep(authorship);
         a.affiliations = a.affiliations.map(af => af.institute);
