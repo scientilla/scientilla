@@ -237,7 +237,7 @@ async function documentCitationsRequest(eId) {
     } catch (err) {
         sails.log.debug('Scopus citations request failed. eId = ' + eId);
         sails.log.debug(err.error);
-        return [];
+        return false;
     }
 
     try {
@@ -248,7 +248,7 @@ async function documentCitationsRequest(eId) {
         sails.log.debug('XML: ' + body);
         sails.log.debug(err);
 
-        return [];
+        return false;
     }
     return citations;
 }
