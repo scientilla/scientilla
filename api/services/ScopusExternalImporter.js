@@ -260,6 +260,9 @@ async function getAndCreateOrUpdateDocument(scopusId) {
 
 async function updateCitations(document) {
     const citations = await ScopusConnector.getDocumentCitations(document.scopusId);
+    if(!citations)
+        return;
+
     citations.sort((a, b) => a.year > b.year);
 
     await ExternalDocumentMetadata.setData(

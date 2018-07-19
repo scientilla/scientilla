@@ -72,9 +72,47 @@ function cleanAuths() {
 const url = 'http://localhost:1338/api/v1';
 
 function cleanDb() {
-    var models = [Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source, ExternalDocument];
-    var destroyFns = models.map(model => model.destroy());
-    return Promise.all(destroyFns);
+    return SqlService.query(
+        'TRUNCATE accesslog,\n' +
+        'affiliation,\n' +
+        '"alias",\n' +
+        'attempt,\n' +
+        'authorship,\n' +
+        'authorshipgroup,\n' +
+        'collaboration,\n' +
+        'discarded,\n' +
+        'discardedgroup,\n' +
+        'externaldocument,\n' +
+        'externaldocumentgroup,\n' +
+        'documentnotduplicate,\n' +
+        'documentnotduplicategroup,\n' +
+        'documenttypesourcetype,\n' +
+        '"document",\n' +
+        'groupattribute,\n' +
+        '"group",\n' +
+        'groupadministrator,\n' +
+        'institute,\n' +
+        'jwt,\n' +
+        'membership,\n' +
+        'membershipgroup,\n' +
+        'resettoken,\n' +
+        'settings,\n' +
+        'sourcemetricsource,\n' +
+        'sourcemetric,\n' +
+        'source,\n' +
+        '"tag",\n' +
+        'taggroup,\n' +
+        'taglabel,\n' +
+        'use,\n' +
+        'userattribute,\n' +
+        '"attribute",\n' +
+        '"user",\n' +
+        'auth,\n' +
+        'chartdata,\n' +
+        'monitor,\n' +
+        'principalinvestigator,\n' +
+        'externaldocumentmetadata RESTART IDENTITY CASCADE;'
+    );
 }
 
 async function clean() {

@@ -5,7 +5,6 @@ var test = require('./../helper.js');
 
 describe('Documents clean institutes', function () {
     before(test.cleanDb);
-    after(test.cleanDb);
 
     const documentsData = test.getAllDocumentData();
     const [user1Data, user2Data, user3Data] = test.getAllUserData();

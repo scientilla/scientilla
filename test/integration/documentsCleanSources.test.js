@@ -8,7 +8,6 @@ const _ = require('lodash');
 
 describe('Documents clean sources', function () {
     before(test.cleanDb);
-    after(test.cleanDb);
 
     const documentsData = test.getAllDocumentData();
     const sourcesData = test.getAllSourceData();

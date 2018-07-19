@@ -96,8 +96,7 @@
         }
 
         function save() {
-            return vm.document.customPUT(vm.document.authorships, 'authorships')
-                .then(() => vm.document.save());
+            return vm.document.customPUT(vm.document.authorships, 'authorships');
         }
 
         function executeOnSubmit(i) {

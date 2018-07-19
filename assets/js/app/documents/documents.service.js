@@ -199,7 +199,7 @@
                         documentIds: documents.map(d => d.id)
                     }).then((res) => {
                         const element = document.createElement('a');
-                        element.setAttribute('href', res.data);
+                        element.setAttribute('href', encodeURI(res.data));
                         element.setAttribute('download', filename);
 
                         element.style.display = 'none';
@@ -337,17 +337,23 @@
                             Notification.success('Privacy updated');
                             EventsService.publish(EventsService.DOCUMENT_AUTORSHIP_PRIVACY_UPDATED, document);
                         })
-                        .catch(() => Notification.warning('Failed to set privacy'));
+                        .catch(() => {
+                            authorship.public = !authorship.public;
+                            Notification.warning('Failed to update privacy');
+                        });
                 }
 
                 function setAuthorshipFavorite(authorship) {
                     researchEntityService
                         .setAuthorshipFavorite(researchEntity, authorship)
                         .then(() => {
-                            Notification.success('Favorite set');
+                            Notification.success('Favorite updated');
                             EventsService.publish(EventsService.DOCUMENT_AUTORSHIP_FAVORITE_UPDATED, document);
                         })
-                        .catch(err => Notification.warning(err.data));
+                        .catch(() => {
+                            authorship.favorite = !authorship.favorite;
+                            Notification.warning('Failed to update favorite');
+                        });
                 }
 
                 /* jshint ignore:start */

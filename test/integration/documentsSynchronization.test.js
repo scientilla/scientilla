@@ -5,7 +5,6 @@ const test = require('./../helper.js');
 
 describe('Synchronization', function () {
     before(test.cleanDb);
-    after(test.cleanDb);
 
     const documentsData = test.getAllDocumentData();
     const userData = test.getAllUserData();
