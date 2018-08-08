@@ -201,7 +201,7 @@ module.exports = _.merge({}, BaseModel, {
             return _.every(requiredFields, v => this[v]) && this.hasValidAuthorsStr() && this.hasValidYear();
         },
         hasValidAuthorsStr() {
-            const authorsStrRegex = /^(([A-ZÀ-ÖØ-Þ])([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')*(\s([A-ZÀ-ÖØ-Þ])([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')*)*(\s[A-ZÀ-ÖØ-Þ]\.)+)(,\s([A-ZÀ-ÖØ-Þ])([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')*(\s([A-ZÀ-ÖØ-Þ])([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')*)*(\s[A-ZÀ-ÖØ-Þ]\.)+)*$/;
+            const authorsStrRegex = /^(([a-zA-ZÀ-ÖØ-öø-ÿ])([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')*(\s([a-zA-ZÀ-ÖØ-öø-ÿ])([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')*)*(\s[a-zA-ZÀ-ÖØ-öø-ÿ]\.)+)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ])([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')*(\s([a-zA-ZÀ-ÖØ-öø-ÿ])([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')*)*(\s[a-zA-ZÀ-ÖØ-öø-ÿ]\.)+)*$/;
             return authorsStrRegex.test(this.authorsStr);
         },
         hasValidYear() {
