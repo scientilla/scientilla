@@ -6,7 +6,6 @@
  */
 
 module.exports = {
-
     attributes: {
         name: 'STRING',
         country: 'STRING',
@@ -31,13 +30,20 @@ module.exports = {
         },
         parentId: 'INTEGER'
     },
-    findOrCreateRealInstitute: function(i) {
+    findOrCreateRealInstitute: function (i) {
         return Institute.findOrCreate({scopusId: i.scopusId}, i)
             .then(i => {
                 if (!i.aliasOf)
                     return i;
                 return findOneById(i.aliasOf);
             });
+    },
+    async getChildInstitutes(parentId) {
+        if (!parentId)
+            return await Institute.find({parentId: {'!': null}});
+
+        return await Institute.find({parentId: parentId});
     }
+
 };
 
