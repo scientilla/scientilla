@@ -418,8 +418,6 @@ module.exports = _.merge({}, ResearchEntity, {
         const command = 'import:external:user:' + newResearchEntity.id;
         if (newResearchEntity.scopusId !== oldResearchEntity.scopusId)
             GruntTaskRunner.run(command + ':' + DocumentOrigins.SCOPUS);
-        if (newResearchEntity.username !== oldResearchEntity.username)
-            GruntTaskRunner.run(command + ':' + DocumentOrigins.PUBLICATIONS);
 
         return newResearchEntity;
     },

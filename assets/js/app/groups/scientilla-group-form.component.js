@@ -53,11 +53,6 @@
                 label: 'Description',
                 defaultValue: vm.group.description
             },
-            publicationsAcronym: {
-                inputType: 'text',
-                label: 'Publications: Group Acronym',
-                defaultValue: vm.group.publicationsAcronym
-            },
             scopusId: {
                 inputType: 'text',
                 label: 'Scopus ID',

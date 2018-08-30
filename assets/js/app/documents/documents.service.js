@@ -312,14 +312,13 @@
 
                     const fields = {
                         'scopus': 'scopusId',
-                        'publications': 'username',
                         'orcid': 'orcidId'
                     };
 
                     return service
                         .getProfile(researchEntity.id)
                         .then(function (resEntity) {
-                            if (resEntity.getType() === 'user' && !resEntity[fields[query.where.origin]]) {
+                            if (resEntity.getType() === 'user' && fields[query.where.origin] && !resEntity[fields[query.where.origin]]) {
                                 const msg = "Warning<br>" + fields[query.where.origin] + " empty<br>update your profile";
                                 Notification.warning(msg);
                                 throw msg;

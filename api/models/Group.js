@@ -24,7 +24,6 @@ module.exports = _.merge({}, ResearchEntity, {
         },
         shortname: 'TEXT',
         description: 'TEXT',
-        publicationsAcronym: 'TEXT',
         type: 'STRING',
         code: 'STRING',
         active: 'BOOLEAN',
@@ -204,8 +203,6 @@ module.exports = _.merge({}, ResearchEntity, {
         const command = 'import:external:group:' + newResearchEntity.id;
         if (newResearchEntity.scopusId !== oldResearchEntity.scopusId)
             GruntTaskRunner.run(command + ':' + DocumentOrigins.SCOPUS);
-        if (newResearchEntity.publicationsAcronym !== oldResearchEntity.publicationsAcronym)
-            GruntTaskRunner.run(command + ':' + DocumentOrigins.PUBLICATIONS);
 
         return newResearchEntity;
     },

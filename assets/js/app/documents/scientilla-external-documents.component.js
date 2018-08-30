@@ -72,10 +72,7 @@
 
         function getConnectorField() {
             const connectors = vm.researchEntity.getExternalConnectors();
-            const values = _.concat(
-                connectors.map(function (c) {
-                    return {value: c.value, label: c.label};
-                }));
+            const values = connectors.map(c => ({value: c.value, label: c.label}));
 
             return {
                 inputType: 'select',
