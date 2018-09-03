@@ -46,7 +46,6 @@ module.exports = _.merge({}, ResearchEntity, {
             unique: true,
             alphanumericdashed: true,
             minLength: 3,
-            maxLength: 30,
             defaultsTo: ""
         },
         alreadyAccess: {
