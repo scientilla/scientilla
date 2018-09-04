@@ -34,7 +34,7 @@
         </div>
         <div class="panel-body" ng-if="vm.author">
             <div class="form-group">
-                <label title="{{vm.document.synchronized ? 'The corresponding author cannot be modified if the document is synchronized' : 'Are you the corresponding author?'}}">
+                <label title="{{vm.document.synchronized ? 'The corresponding author cannot be modified if the document is synchronized with scopus' : 'Are you the corresponding author?'}}">
                     <input type="checkbox"
                            ng-model="vm.authorship.corresponding"
                            ng-disabled="vm.document.synchronized"/>
