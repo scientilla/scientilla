@@ -12,8 +12,6 @@
             bindings: {
                 document: "<",
                 researchEntity: "<",
-                onFailure: "&",
-                onSubmit: "&",
                 closeFn: "&"
             }
         });
@@ -58,7 +56,6 @@
         const debounceTime = 2000;
         const documentService = context.getDocumentService();
         const deregisteres = [];
-        vm.openDocumentAffiliationForm = openDocumentAffiliationsForm;
 
         vm.$onInit = function () {
             if (_.isFunction(vm.document.clone))
@@ -234,12 +231,6 @@
             vm.popoverIsOpen = false;
         }
 
-        function openDocumentAffiliationsForm() {
-            return saveDocument()
-                .then(() => close())
-                .then(() => documentService.openDocumentAffiliationForm(vm.document));
-        }
-
         function checkSource($event) {
             if (!$event.target.value)
                 vm.document.source = null;
@@ -250,16 +241,6 @@
             saveDocument()
                 .then(() => close())
                 .then(() => documentService.verifyDraft(vm.document));
-        }
-
-        function executeOnSubmit(i) {
-            if (_.isFunction(vm.onSubmit()))
-                vm.onSubmit()(i);
-        }
-
-        function executeOnFailure() {
-            if (_.isFunction(vm.onFailure()))
-                vm.onFailure()();
         }
 
         function close() {
