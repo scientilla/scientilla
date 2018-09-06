@@ -145,9 +145,6 @@ module.exports = _.merge({}, BaseModel, {
         if (!doc.authorsStr || doc.authorsStr === '')
             return await Authorship.destroy({document: doc.id});
 
-        if (!doc.hasValidAuthorsStr())
-            return;
-
         const cleanAuthorshipsData = await Authorship.cleanAuthorshipsData(newAuthorshipsData);
         cleanAuthorshipsData.forEach(a => a.document = doc.id);
 
