@@ -32,47 +32,61 @@
                         verifyDocument(d);
                 }
 
-                function verifyDraft(draft, notifications = true) {
-                    function verificationCallback(user, documentId, verificationData) {
-                        return researchEntityService.verifyDraftAsUser(user, documentId, verificationData)
-                            .then(function (res) {
-                                if (res.error)
-                                    throw res.error;
+                /* jshint ignore:start */
+                async function verifyDraft(draft, notifications = true) {
 
-                                if (notifications)
-                                    Notification.success("Draft verified");
-                                EventsService.publish(EventsService.DRAFT_VERIFIED, res);
+                    async function verificationCallback(user, documentId, verificationData) {
+                        try {
+                            const res = await researchEntityService.verifyDraftAsUser(user, documentId, verificationData);
 
-                            })
-                            .catch(function (error) {
-                                Notification.warning(error);
-                            });
+                            if (res.error) {
+                                Notification.warning(res.error);
+                                return;
+                            }
+
+                            if (notifications)
+                                Notification.success("Draft verified");
+
+                            EventsService.publish(EventsService.DRAFT_VERIFIED, res);
+
+                        } catch (error) {
+                            Notification.warning(error);
+                        }
+
                     }
 
-                    return ModalService.openDocumentVerificationForm(draft, verificationCallback);
+                    const d = await researchEntityService.getDraft(researchEntity, draft.id);
+                    return ModalService.openDocumentVerificationForm(d, verificationCallback);
 
                 }
 
-                function verifyDocument(document, notifications = true) {
-                    function verificationCallback(user, documentId, verificationData) {
-                        return researchEntityService.verifyDocument(user, documentId, verificationData)
-                            .then(function (res) {
-                                if (res.error)
-                                    throw res.error;
+                /* jshint ignore:end */
 
-                                if (notifications)
-                                    Notification.success('Document verified');
-                                EventsService.publish(EventsService.DOCUMENT_VERIFIED, document);
-                                EventsService.publish(EventsService.NOTIFICATION_ACCEPTED, document);
+                /* jshint ignore:start */
+                async function verifyDocument(document, notifications = true) {
+                    async function verificationCallback(user, documentId, verificationData) {
+                        try {
+                            const res = await researchEntityService.verifyDocument(user, documentId, verificationData);
 
-                            })
-                            .catch(function (error) {
-                                Notification.warning(error);
-                            });
+                            if (res.error) {
+                                Notification.warning(res.error);
+                                return;
+                            }
+
+                            if (notifications)
+                                Notification.success('Document verified');
+                            EventsService.publish(EventsService.DOCUMENT_VERIFIED, document);
+                            EventsService.publish(EventsService.NOTIFICATION_ACCEPTED, document);
+
+                        } catch (error) {
+                            Notification.warning(error);
+                        }
                     }
 
                     return ModalService.openDocumentVerificationForm(document, verificationCallback);
                 }
+
+                /* jshint ignore:end */
 
                 function synchronizeDraft(document, sync) {
                     let msg, title;
