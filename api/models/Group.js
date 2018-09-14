@@ -187,6 +187,12 @@ module.exports = _.merge({}, ResearchEntity, {
                 };
         }
 
+        if (!(await document.hasMainInstituteAffiliated()))
+            return {
+                error: 'Document without authors affiliated with ' + sails.config.scientilla.institute.shortname,
+                item: document
+            };
+
         return null;
     },
     getDraftVerifyErrors: async function (researchEntityId, draft, verificationData, docToRemove) {
@@ -215,6 +221,12 @@ module.exports = _.merge({}, ResearchEntity, {
                     item: draft
                 };
         }
+
+        if (!(await draft.hasMainInstituteAffiliated()))
+            return {
+                error: 'Draft without authors affiliated with ' + sails.config.scientilla.institute.shortname,
+                item: draft
+            };
 
         return null;
     },

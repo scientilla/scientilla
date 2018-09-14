@@ -208,6 +208,12 @@ module.exports = _.merge({}, BaseModel, {
             const yearRegex = /^(19|20)\d{2}$/;
             return yearRegex.test(this.year);
         },
+        async hasMainInstituteAffiliated() {
+            const mainInstituteId = 1;
+            const authorships = await Authorship.find({document: this.id}).populate('affiliations');
+            const affiliated = authorships.find(a => a.affiliations.map(aff => aff.id).includes(mainInstituteId));
+            return !!affiliated;
+        },
         draftToDocument: function () {
             this.kind = DocumentKinds.VERIFIED;
             this.draftCreator = null;
