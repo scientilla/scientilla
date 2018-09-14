@@ -1,4 +1,4 @@
-/* global AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group, PerformanceCalculator */
+/* global AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group, PerformanceCalculator, DocumentKinds */
 'use strict';
 
 /**
@@ -152,6 +152,71 @@ module.exports = _.merge({}, ResearchEntity, {
             synchronize: !_.isNil(newAffiliationData.synchronize) ? newAffiliationData.synchronize : document.synchronized,
             public: true
         };
+    },
+    getDocumentVerifyErrors: async function (researchEntityId, document, verificationData, check = true, docToRemove) {
+        const alreadyVerifiedDocuments = await AuthorshipGroup.find({
+            document: document.id,
+            researchEntity: researchEntityId
+        });
+        if (alreadyVerifiedDocuments.length)
+            return {
+                error: 'Document already verified',
+                item: researchEntityId
+            };
+
+        if (!document || document.kind !== DocumentKinds.VERIFIED)
+            return {
+                error: 'Document not found',
+                item: researchEntityId
+            };
+
+        const searchCond = {
+            scopusId: document.scopusId
+        };
+        if (docToRemove)
+            searchCond.id = {'!': docToRemove};
+
+        if (check && document.scopusId) {
+            const alreadyVerifiedDocuments = (await Model
+                .findOne(researchEntityId)
+                .populate('documents', searchCond)).documents;
+            if (alreadyVerifiedDocuments.length)
+                return {
+                    error: 'Document already verified (duplicated scopusId)',
+                    item: document
+                };
+        }
+
+        return null;
+    },
+    getDraftVerifyErrors: async function (researchEntityId, draft, verificationData, docToRemove) {
+        if (!draft || draft.kind !== DocumentKinds.DRAFT)
+            return {
+                error: 'Draft not found',
+                item: null
+            };
+        if (!draft.isValid())
+            return {
+                error: 'Draft not valid for verification',
+                item: draft
+            };
+        if (draft.scopusId) {
+            const searchCond = {
+                scopusId: draft.scopusId
+            };
+            if (docToRemove)
+                searchCond.id = {'!': docToRemove};
+            const alreadyVerifiedDocuments = (await Group
+                .findOne(researchEntityId)
+                .populate('documents', searchCond)).documents;
+            if (alreadyVerifiedDocuments.length)
+                return {
+                    error: 'Draft already verified (duplicated scopusId)',
+                    item: draft
+                };
+        }
+
+        return null;
     },
     doVerifyDocument: async function (document, researchEntityId, authorshipData) {
         const authorship = {

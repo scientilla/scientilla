@@ -1,4 +1,4 @@
-/* global User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator */
+/* global User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds */
 'use strict';
 
 /**
@@ -344,6 +344,123 @@ module.exports = _.merge({}, ResearchEntity, {
             last_coauthor: !_.isNil(verificationData.last_coauthor) ? verificationData.last_coauthor : authorship.last_coauthor,
             oral_presentation: !_.isNil(verificationData.oral_presentation) ? verificationData.oral_presentation : authorship.oral_presentation
         };
+    },
+    getDocumentVerifyErrors: async function (researchEntityId, document, verificationData, check = true, docToRemove) {
+        const alreadyVerifiedDocuments = await Authorship.find({
+            document: document.id,
+            researchEntity: researchEntityId
+        });
+        if (alreadyVerifiedDocuments.length)
+            return {
+                error: 'Document already verified',
+                item: researchEntityId
+            };
+
+        if (!document || document.kind !== DocumentKinds.VERIFIED)
+            return {
+                error: 'Document not found',
+                item: researchEntityId
+            };
+
+        const searchCond = {
+            scopusId: document.scopusId
+        };
+        if (docToRemove)
+            searchCond.id = {'!': docToRemove};
+
+        if (check && document.scopusId) {
+            const alreadyVerifiedDocuments = (await User
+                .findOne(researchEntityId)
+                .populate('documents', searchCond)).documents;
+            if (alreadyVerifiedDocuments.length)
+                return {
+                    error: 'Document already verified (duplicated scopusId)',
+                    item: document
+                };
+        }
+        const authorshipData = await User.getAuthorshipsData(document, researchEntityId, verificationData);
+
+        if (!authorshipData) {
+            return null;
+        }
+
+        if (!authorshipData.isVerifiable)
+            return {
+                error: authorshipData.error,
+                item: authorshipData.document
+            };
+
+        if (authorshipData.document.isPositionVerified(authorshipData.position)) {
+            if (docToRemove) {
+                const a = authorshipData.document.getAuthorshipByPosition(authorshipData.position);
+                if (a && a.researchEntity === researchEntityId) {
+                    return null;
+                }
+            }
+
+            return {
+                error: "The position is already verified",
+                item: authorshipData.document
+            };
+        }
+        return null;
+    },
+    getDraftVerifyErrors: async function (researchEntityId, draft, verificationData, docToRemove) {
+        if (!draft || draft.kind !== DocumentKinds.DRAFT)
+            return {
+                error: 'Draft not found',
+                item: null
+            };
+        if (!draft.isValid())
+            return {
+                error: 'Draft not valid for verification',
+                item: draft
+            };
+        if (draft.scopusId) {
+            const searchCond = {
+                scopusId: draft.scopusId
+            };
+            if (docToRemove)
+                searchCond.id = {'!': docToRemove};
+            const alreadyVerifiedDocuments = (await User
+                .findOne(researchEntityId)
+                .populate('documents', searchCond)).documents;
+            if (alreadyVerifiedDocuments.length)
+                return {
+                    error: 'Draft already verified (duplicated scopusId)',
+                    item: draft
+                };
+        }
+
+        const authorshipData = await User.getAuthorshipsData(draft, researchEntityId, verificationData);
+
+        if (!authorshipData.isVerifiable)
+            return {
+                error: authorshipData.error,
+                item: authorshipData.document
+            };
+
+        const documentCopies = await Document.findCopies(draft, authorshipData.position);
+
+        const n = documentCopies.length;
+        if (n === 0)
+            return null;
+        const docToVerify = documentCopies[0];
+
+        if (docToVerify.isPositionVerified(authorshipData.position)) {
+            const authorName = docToVerify.authorsStr.split(', ')[authorshipData.position];
+            if (docToRemove) {
+                const a = docToVerify.getAuthorshipByPosition(authorshipData.position);
+                if (a && a.researchEntity === researchEntityId) {
+                    return null;
+                }
+            }
+            return {
+                error: `You cannot verify this document as ${authorName} because someone else already claimed to be that author`,
+                item: docToVerify
+            };
+        }
+        return null;
     },
     doVerifyDocument: async function (document, researchEntityId, authorshipData) {
         if (authorshipData.position < 0)
