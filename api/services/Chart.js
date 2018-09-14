@@ -199,8 +199,7 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
     async function hindexPerYear() {
         if (!documents.length) return [];
         const yearRange = getYearRange(documents);
-        const years = _.range(yearRange.min, new Date().getFullYear() + 1);
-
+        const years = _.range(yearRange.min, Math.max(new Date().getFullYear(), yearRange.max) + 1);
         return await Promise.all(years.map(async y => ({
                 year: y,
                 value: await getHIndex(y)
