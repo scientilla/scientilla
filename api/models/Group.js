@@ -177,7 +177,7 @@ module.exports = _.merge({}, ResearchEntity, {
             searchCond.id = {'!': docToRemove};
 
         if (check && document.scopusId) {
-            const alreadyVerifiedDocuments = (await Model
+            const alreadyVerifiedDocuments = (await Group
                 .findOne(researchEntityId)
                 .populate('documents', searchCond)).documents;
             if (alreadyVerifiedDocuments.length)
