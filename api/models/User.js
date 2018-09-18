@@ -408,12 +408,12 @@ module.exports = _.merge({}, ResearchEntity, {
     getDraftVerifyErrors: async function (researchEntityId, draft, verificationData, docToRemove) {
         if (!draft || draft.kind !== DocumentKinds.DRAFT)
             return {
-                error: 'Draft not found',
+                error: 'Document not found',
                 item: null
             };
         if (!draft.isValid())
             return {
-                error: 'Draft not valid for verification',
+                error: 'Document not valid for verification',
                 item: draft
             };
         if (draft.scopusId) {
@@ -427,7 +427,7 @@ module.exports = _.merge({}, ResearchEntity, {
                 .populate('documents', searchCond)).documents;
             if (alreadyVerifiedDocuments.length)
                 return {
-                    error: 'Draft already verified (duplicated scopusId)',
+                    error: 'Document already verified (duplicated scopusId)',
                     item: draft
                 };
         }
