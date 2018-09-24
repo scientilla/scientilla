@@ -86,3 +86,8 @@ At the moment you need to build Scientilla by yourself.
 ## API 
 
 [API documentation](docs/api/README.md)
+
+
+
+## POWERED BY
+<img src="https://www.browserstack.com/images/layout/browserstack-logo-600x315.png" width="150">
