@@ -351,7 +351,7 @@ async function importGroups() {
             });
 
         //query language does not support JSON
-        const toDeleteIds = res.filter(ga => ga.extra.type === type).map(ga => ga.id);
+        const toDeleteIds = res.filter(ga => !ga.extra || ga.extra.type === type).map(ga => ga.id);
         if (toDeleteIds.length)
             await GroupAttribute.destroy({id: toDeleteIds});
     }
@@ -360,7 +360,7 @@ async function importGroups() {
         const rd = researchDomains.find(rd => rd.key === rdCode);
         if (rd) {
             const res = await GroupAttribute.find({attribute: rd.id, researchEntity: group.id});
-            if (!res.filter(ga => ga.extra.type === type).length)
+            if (!res.filter(ga => ga.extra && ga.extra.type === type).length)
                 await GroupAttribute.create({attribute: rd.id, researchEntity: group.id, extra: {type}});
         }
     }
