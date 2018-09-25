@@ -142,20 +142,23 @@ async function importPeople() {
         people = await request(reqOptions);
         sails.log.info(people.length + ' entries found');
         const importTime = moment.utc().format();
+        //groups are loaded in memory because waterline doesn't allow case-insensitive queries with postegres
+        let allGroups = await Group.find();
         let numUsersInserted = 0, numUsersUpdated = 0, numGroupsInserted = 0;
         for (let [i, p] of people.entries()) {
-            //groups are loaded in memory because waterline doesn't allow case-insensitive queries with postegres
             p.username = _.toLower(p.username);
-            const allGroups = await Group.find();
-            const groupsToBeInserted = p.groups.filter(g => !allGroups.some(g2 => _.toLower(g2.name) == _.toLower(g)));
             const groupsToSearch = allGroups.filter(g => p.groups.some(g2 => _.toLower(g2) == _.toLower(g.name))).map(g => g.name);
-            if (groupInsertionEnabled && groupsToBeInserted.length) {
-                const groupObjs = groupsToBeInserted.map(g => ({name: g}));
-                sails.log.info('inserting groups: ' + groupsToBeInserted.join(', '));
-                const newGroups = await Group.create(groupObjs);
-                numGroupsInserted++;
-                const newGroupsName = newGroups.map(g => g.name);
-                groupsToSearch.push(...newGroupsName);
+            if (groupInsertionEnabled) {
+                const groupsToBeInserted = p.groups.filter(g => !allGroups.some(g2 => _.toLower(g2.name) == _.toLower(g)));
+                if (groupsToBeInserted.length) {
+                    const groupObjs = groupsToBeInserted.map(g => ({name: g}));
+                    sails.log.info('inserting groups: ' + groupsToBeInserted.join(', '));
+                    const newGroups = await Group.create(groupObjs);
+                    numGroupsInserted++;
+                    const newGroupsName = newGroups.map(g => g.name);
+                    groupsToSearch.push(...newGroupsName);
+                    allGroups = await Group.find();
+                }
             }
             const groupSearchCriteria = {or: groupsToSearch.map(g => ({name: g}))};
             const groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
