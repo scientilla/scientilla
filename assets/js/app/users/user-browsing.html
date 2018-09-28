@@ -1,72 +1,75 @@
 <scientilla-backend-layout>
-    <div>
-        <div class="row">
-            <div class="col-md-8">
-                <h1>Users</h1>
-            </div>
+    <div class="users users-browsing">
+        <div class="title-container">
+            <h1 class="title">People</h1>
 
-            <div class="col-md-4 text-right">
-                <h1>
-                    <button ng-if="vm.user.isAdmin()"
-                            ng-click="vm.createNew()"
-                            class="btn btn-primary">
-                        Create New User
-                    </button>
-                </h1>
-            </div>
+            <button
+                ng-if="vm.user.isAdmin()"
+                ng-click="vm.createNew()"
+                class="btn btn-primary btn-add-user">
+                Create New User<i class="fas fa-plus fa-right"></i>
+            </button>
         </div>
-        <hr>
 
         <scientilla-filter
-                search-form-structure="vm.searchForm"
-                on-filter="vm.onFilter"
-                elements="vm.users">
+            search-form-structure="vm.searchForm"
+            on-filter="vm.onFilter"
+            elements="vm.users">
 
-            <div ng-repeat="u in vm.users">
-                <div class="row">
-                    <div class="col-md-8">
-                        <h3>{{u| fullname}}</h3>
-                        <small>{{u.username}}</small>
+            <ul class="user-listing">
+                <li ng-repeat="u in vm.users">
+                    <div class="user-content">
+                        <h3 class="user-fullname">{{u| fullname}}</h3>
+                        <a href="mailto:{{u.username}}" class="user-email">{{u.username}}</a>
                     </div>
-                    <div class="col-md-4 text-right">
-                        <h3>
-                            <div class="btn-group scientilla-dropdown-align-right" uib-dropdown>
-                                <button ng-click="vm.viewUser(u)" type="button" class="btn btn-primary">
-                                    <span class="fa fa-user"></span>
-                                    View profile
+
+                    <div class="dropdown-container">
+                        <div
+                            class="btn-group"
+                            uib-dropdown>
+                            <button
+                                ng-click="vm.viewUser(u)"
+                                type="button"
+                                class="btn btn-primary">
+                                <i class="fas fa-user fa-left"></i>View profile
+                            </button>
+
+                            <button
+                                ng-if="vm.user.isAdmin()"
+                                type="button"
+                                class="btn btn-primary only-icon"
+                                uib-dropdown-toggle>
+                            </button>
+
+                            <div
+                                ng-if="vm.user.isAdmin()"
+                                uib-dropdown-menu>
+                                <button
+                                    class="dropdown-item"
+                                    ng-click="vm.loginAs(u)"
+                                    href="javascript:void(0)">
+                                    <i class="fas fa-user fa-left"></i>Login as
                                 </button>
-                                <button ng-if="vm.user.isAdmin()" type="button" class="btn btn-primary"
-                                        uib-dropdown-toggle>
-                                    <span class="caret"></span>
+
+                                <button
+                                    class="dropdown-item"
+                                    ng-click="vm.editUser(u)"
+                                    href="javascript:void(0)">
+                                    <i class="fas fa-edit fa-left"></i>Edit
                                 </button>
-                                <ul uib-dropdown-menu>
-                                    <li>
-                                        <button class="btn btn-link" ng-click="vm.loginAs(u)" href="javascript:void(0)">
-                                            <span class="fa fa-user"></span>
-                                            Login as
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button class="btn btn-link" ng-click="vm.editUser(u)" href="javascript:void(0)">
-                                            <span class="fa fa-edit"></span>
-                                            Edit
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button class="btn btn-link" scientilla-click-confirm="Are you sure?" ng-click="vm.deleteUser(u)" href="javascript:void(0)">
-                                            <span class="fa fa-remove"></span>
-                                            Delete
-                                        </button>
-                                    </li>
-                                </ul>
+
+                                <button
+                                    class="dropdown-item"
+                                    scientilla-click-confirm="Are you sure?"
+                                    ng-click="vm.deleteUser(u)"
+                                    href="javascript:void(0)">
+                                    <i class="fas fa-trash fa-left"></i>Delete
+                                </button>
                             </div>
-                        </h3>
+                        </div>
                     </div>
-                </div>
-                <hr>
+                </li>
             </div>
-
         </scientilla-filter>
-
     </div>
 </scientilla-backend-layout>

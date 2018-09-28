@@ -37,6 +37,7 @@
             {label: 'User', value: userConstants.role.USER},
             {label: 'Administrator', value: userConstants.role.ADMINISTRATOR}
         ];
+        vm.invalidAttributes = {};
         const deregisteres = [];
 
         vm.$onInit = function () {
@@ -50,7 +51,6 @@
                 deregisterer();
         };
 
-
         //sTODO to be removed when deep populate exists
         function getCollaborations() {
             return UsersService.getCollaborations(vm.user);
@@ -59,13 +59,17 @@
         function submit() {
             UsersService
                 .doSave(vm.user)
-                .then(function (user) {
-                    Notification.success("User data saved");
-                    aliasesChanged();
-                    if (_.isFunction(vm.onSubmit()))
-                        vm.onSubmit()(1);
-                })
-                .catch(function () {
+                .then(function (res) {
+                    if (res.data && res.data.invalidAttributes) {
+                        vm.invalidAttributes = res.data.invalidAttributes;
+                    } else {
+                        Notification.success("User data saved");
+                        aliasesChanged();
+                        if (_.isFunction(vm.onSubmit()))
+                            vm.onSubmit()(1);
+                    }
+                    
+                }).catch(function () {
                     Notification.warning("Failed to save user");
                     executeOnFailure();
                 });
