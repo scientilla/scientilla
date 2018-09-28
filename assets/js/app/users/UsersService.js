@@ -63,13 +63,17 @@
             const userData = _.pick(user, userFields);
             if (!user.id) {
                 userData.password = user.password;
-		userData.active = user.active;
-		userData.synchronized = user.synchronized;
-	    }
+                userData.active = user.active;
+                userData.synchronized = user.synchronized;
+            }
+
             if (_.isArray(user.aliases))
                 userData.aliases = user.aliases;
-            return this.save(userData).then(function (u) {
+
+            return this.save(userData).then(function (res) {
                 return user;
+            }, function (res) {
+                return res;
             });
         };
 

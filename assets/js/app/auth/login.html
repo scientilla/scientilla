@@ -1,42 +1,64 @@
 <scientilla-frontend-layout>
-    <div class="row">
-        <div class="col-xs-offset-3 col-xs-4 scientilla-login-description">
-            <h3>SCIENTILLA IS OUR NEW PLATFORM DESIGNED TO STORE AND MANAGE YOUR RESEARCH DATA IN A QUICK AND EASY
-                WAY!</h3>
-            <br/><br/>
-            <p>
-                SCIENTILLA is designed for PIs, Researchers, Postdocs and PhD students to monitor their scientific
-                production.
-            </p>
-            <br/>
-            <p>
-                With SCIENTILLA, you can certify and keep track of your research information.
-                As a group leader, you will find the data of your team easily accessible and you can better design your
-                strategy and reach your goals.
-                And you can keep your scientific production up-to-date on your own.
-            </p>
-            <br/>
-            <p>
-                SCIENTILLA ensures the data driving our strategic decisions are trusted, comprehensive and accessible in
-                real-time. By collecting in a single place all the research information, it offers a wider and more
-                detailed
-                view of the scientific activities of groups, research lines and areas.
-            </p>
-        </div>
-        <div class="col-xs-2 scientilla-login-form">
-            <form form-for="vm.formData"
-                  validation-rules="vm.validationAndViewRules"
-                  form-for-builder
-                  submit-with="vm.submit()">
-                <button type="submit"
-                        class="btn btn-primary btn-md"
-                        ng-disabled="vm.status == vm.STATUS_LOADING">Login
-                </button>
-            </form>
-            <br/>
-            <p>
-                <i><u>Please use SCIENTILLA with Chrome or Firefox browsers</u></i>
-            </p>
+    <div class="login-view">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-6 align-self-center">
+                    <div class="login-description">
+                        <h1 class="login-title"><strong class="text-uppercase">Scientilla is our new platform designed to store and manage your research data in a quick and easy way!</strong></h1>
+                        <p><strong class="text-uppercase">Scientilla</strong> is designed for PIs, Researchers, Postdocs and PhD students to monitor their scientific production.</p>
+                        <p>With <strong class="text-uppercase">Scientilla</strong>, you can certify and keep track of your research information. As a group leader, you will find the data of your team easily accessible and you can better design your strategy and reach your goals. And you can keep your scientific production up-to-date on your own.</p>
+                        <p><strong class="text-uppercase">Scientilla</strong> ensures the data driving our strategic decisions are trusted, comprehensive and accessible in real-time. By collecting in a single place all the research information, it offers a wider and more detailed view of the scientific activities of groups, research lines and areas.</p>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 align-self-center">
+                    <div class="login-form-container">
+                        <div class="card">
+                            <div class="card-body">
+                                <form>
+                                    <div
+                                        ng-class="vm.user.error ? 'has-error' : ''"
+                                        class="form-group has-feedback">
+                                        <label for="username">Username</label>
+                                        <input
+                                            name="username"
+                                            type="text"
+                                            class="form-control"
+                                            id="username"
+                                            ng-model="vm.user.username"
+                                            data-ng-required="true"
+                                            ng-class="vm.user.error ? 'is-invalid' : ''">
+                                    </div>
+
+                                    <div
+                                        ng-class="vm.user.error ? 'has-error' : ''"
+                                        class="form-group has-feedback">
+                                        <label for="username">Password</label>
+                                        <input
+                                            name="password"
+                                            type="password"
+                                            class="form-control"
+                                            id="password"
+                                            ng-model="vm.user.password"
+                                            data-ng-required="true"
+                                            ng-class="vm.user.error ? 'is-invalid' : ''">
+                                        <div
+                                            ng-if="vm.user.error"
+                                            class="invalid-feedback">
+                                            {{ vm.user.error }}
+                                        </div>
+                                    </div>
+
+                                    <scientilla-button
+                                        type="button"
+                                        click="vm.submit()"
+                                        ng-disabled="vm.status == vm.STATUS_LOADING">Login
+                                    </scientilla-button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </scientilla-frontend-layout>

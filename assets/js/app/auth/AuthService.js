@@ -89,11 +89,18 @@
         }
 
         function login(credentials) {
-            credentials.username = credentials.username.toLowerCase();
+            
+            if (credentials.username) {
+                credentials.username = credentials.username.toLowerCase();
+            }
+
             const url = 'auths/login';
             return Restangular.all(url).post(credentials)
                 .then(function (data) {
                     return setupUserAccount(data.id);
+                }, function(res) {
+                    //console.log(res);
+                    throw res;
                 });
         }
 
