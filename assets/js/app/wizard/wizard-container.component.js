@@ -4,6 +4,7 @@
     angular.module('wizard')
         .component('wizardContainer', {
             templateUrl: 'partials/wizard-container.html',
+            class: 'wizard-modal',
             controller: wizardContainer,
             controllerAs: 'vm',
             bindings: {

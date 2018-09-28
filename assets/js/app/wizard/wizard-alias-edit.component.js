@@ -20,6 +20,7 @@
         const vm = this;
 
         vm.save = save;
+        vm.buttonText = 'Save aliases';
 
         vm.$onInit = function () {
         };
@@ -28,9 +29,16 @@
         };
 
         function save() {
+            vm.buttonText = 'Saving aliases ...';
             vm.user.save()
-                .then(() => Notification.success("Profile data saved, you can now proceed"))
-                .catch(() => Notification.warning("Failed to save aliases"));
+                .then(() => {
+                    Notification.success("Profile data saved, you can now proceed");
+                    vm.buttonText = 'Save aliases';
+                })
+                .catch(() => {
+                    Notification.warning("Failed to save aliases");
+                    vm.buttonText = 'Save aliases';
+                });
         }
     }
 

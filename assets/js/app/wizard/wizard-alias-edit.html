@@ -1,38 +1,22 @@
-<h3>SUGGESTED AND ALIASES</h3>
-
-<br/>
-
 <div class="row">
-    <div class="col-xs-6">
-        <p>
-            In the SUGGESTED section Scientilla shows the already verified documents that likely belong to you.
-        </p>
-        <p>
-            To improve your suggestions add or remove ALIASES relative to your name.
-        </p>
-        For example, Rita Levi-Montalcini:
+    <div class="col-12 col-sm-6">
+        <p>In the <strong>suggested</strong> section <strong>Scientilla</strong> shows the already verified documents that likely belong to you.</p>
+        <p>To improve your suggestions add or remove <strong>aliases</strong> relative to your name.</p>
+        <p>For example, Rita Levi-Montalcini:</p>
         <ul>
-            <li>
-                - Montalcini R.
-            </li>
-            <li>
-                - Levi-Montalcini R.
-            </li>
-            <li>
-                - Levi Montalcini R.
-            </li>
+            <li>Montalcini R.</li>
+            <li>Levi-Montalcini R.</li>
+            <li>Levi Montalcini R.</li>
         </ul>
-        <p>
-            You can directly edit your ALIASES using the form on the right.<br>
-            You can always edit this information in your profile <span class="fa fa-gear"></span>.
-        </p>
+        <p>You can directly edit your <strong>aliases</strong> using the form on the right.<br>You can always edit this information in your profile <i class="fas fa-cogs"></i>.</p>
     </div>
-    <div class="col-xs-6">
+    <div class="col-12 col-sm-6">
         <form ng-submit="vm.save()">
             <scientilla-alias-editor aliases="vm.user.aliases"></scientilla-alias-editor>
-            <br/>
-            <scientilla-button type="submit">Save aliases</scientilla-button>
+
+            <scientilla-button type="submit">
+                {{ vm.buttonText }}
+            </scientilla-button>
         </form>
     </div>
-
 </div>
