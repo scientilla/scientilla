@@ -1,0 +1,33 @@
+.footer{
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    padding: 1rem 0px;
+    background: $scarpa-flow;
+    color: $white;
+
+    a{
+        color: $white;
+        text-decoration: underline;
+    }
+
+    img{
+        margin-left: -5px;
+    }
+
+    .footer-listing{
+        @include normalize-listing;
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .footer{
+        .footer-listing{
+            display: grid;
+            grid-template-columns: 1fr auto;
+            grid-template-rows: auto;
+            align-items: center;
+        }
+    }
+}

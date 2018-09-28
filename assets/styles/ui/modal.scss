@@ -1,0 +1,75 @@
+.modal-header{
+    position: relative;
+    display: block;
+    padding: 3rem 6rem 0px 3rem;
+
+    .close{
+        position: absolute;
+        top: 3rem;
+        right: 3rem;
+    }
+}
+
+.modal-body{
+    padding: 0px 3rem 3rem 3rem;
+}
+
+.modal{
+    .confirm-title{
+        text-align: center;
+    }
+
+    .confirm-text{
+        text-align: center;
+    }
+
+    .filter-action-listing,
+    .filter-field-listing{
+        @include normalize-listing;
+    }
+
+    .modal-buttons{
+        @include normalize-listing;
+        @include clearfix;
+        margin: 3rem -1rem -2rem -1rem;
+
+        & > li{
+            display: block;
+            float: left;
+            padding: 0px 1rem 2rem 1rem;
+        }
+
+        &.fluid{
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: 1fr auto;
+
+            &:before,
+            &:after{
+                display: none;
+            }
+        }
+    }
+
+    .status-message{
+        line-height: 3rem;
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .modal-header{
+        display: flex;
+        padding: 3rem 3rem 0px 3rem;
+
+        .close{
+            position: relative;
+            top: auto;
+            right: auto;
+        }
+    }
+
+    .modal-lg{
+        max-width: 1200px;
+        width: calc(100% - 3rem);
+    }
+}

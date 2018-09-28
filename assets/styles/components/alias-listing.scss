@@ -1,0 +1,11 @@
+.alias-listing{
+    @include normalize-listing;
+    display: grid;
+    margin: 0px -1rem;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto;
+
+    & > li{
+        padding:  0px 1rem;
+    }
+}

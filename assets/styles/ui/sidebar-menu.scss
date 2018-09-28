@@ -1,0 +1,31 @@
+.sidebar-menu{
+    padding: 2rem 0px;
+
+    label{
+        font-size: 1.4rem;
+    }
+
+    .label-add-document{
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto;
+        align-items: flex-end;
+    }
+
+    .button-new-document-container{
+        display: inline-block;
+        margin-left: 1rem;
+    }
+}
+
+.sidebar-listing{
+    @include normalize-listing;
+
+    & > li{
+        display: block;
+
+        & + li{
+            margin-top: 2.5rem;
+        }
+    }
+}

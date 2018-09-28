@@ -1,0 +1,18 @@
+.document-details{
+    .document-title{
+        margin-bottom: 0px;
+    }
+
+    .document-details-abstract,
+    .document-details-source,
+    .document-details-ids{
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid $mercury;
+    }
+
+    .document-details-info{
+        @include normalize-listing;
+        margin-top: 1rem;
+    }
+}

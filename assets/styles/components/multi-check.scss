@@ -1,0 +1,14 @@
+.multi-check{
+    @include normalize-listing;
+    display: grid;
+    margin: 0px -1rem 2rem -1rem;
+    justify-items: flex-start;
+    grid-template-rows: auto;
+    grid-template-columns: 1fr auto;
+
+    & > li{
+        display: block;
+        padding: 0px 1rem;
+        text-align: center;
+    }
+}

@@ -1,0 +1,116 @@
+.document{
+    @include normalize-listing;
+    font-size: 1.2rem;
+
+    & > li{
+        padding: 0px 1rem;
+    }
+
+    .document-info{
+        position: relative;
+
+        .document-year{
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        .icon-iit{
+            position: absolute;
+            bottom: 0px;
+            right: 1rem;
+        }
+    }
+
+    .document-authors{
+        .fa{
+            margin: 0px .25rem;
+        }
+    }
+
+    .document-actions{
+        @include normalize-listing;
+        @include clearfix;
+        margin: 1rem -.5rem 0px -.5rem;
+
+        & > li{
+            display: block;
+            padding: 0px .5rem;
+            float: left;
+            font-size: 1.4rem;
+        }
+    }
+
+    .document-icons{
+        @include clearfix;
+        margin: 0px -.5rem 1rem -.5rem;
+
+        ul{
+            @include normalize-listing;
+
+            & > li{
+                display: block;
+                padding: 0px .5rem;
+                float: left;
+            }
+        }
+    }
+
+    .document-title-container{
+        @include clearfix;
+        margin: 1rem 0px;
+    }
+
+    .document-title{
+        display: block;
+        margin: 0px;
+        font-size: 2rem;
+        line-height: 2.2rem;
+        vertical-align: top;
+    }
+
+    .document-labels{
+        @include normalize-listing;
+        float: left;
+        margin: 0px 0px 0px -.5rem;
+
+        & > li{
+            display: block;
+            padding: 0px .5rem;
+            float: left;
+        }
+    }
+
+    .document-verified{
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .document-source{
+        margin-bottom: 1rem;
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .document{
+        display: grid;
+        grid-template-rows: auto;
+        grid-template-columns: auto 1fr auto;
+
+        .document-info{
+            border-right: 2px solid $curious-blue;
+        }
+
+        .document-icons{
+            min-width: 150px;
+            margin: 0px;
+            padding: 0px 2rem;
+
+            ul{
+                & > li{
+                    padding: 0px;
+                    float: none;
+                }
+            }
+        }
+    }
+}

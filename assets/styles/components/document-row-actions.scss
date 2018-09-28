@@ -1,0 +1,17 @@
+.document-row-actions{
+    padding-left: 1rem;
+
+    .dropdown-menu{
+        right: auto;
+        left: 0px;
+    }
+}
+
+@include media-breakpoint-up(md) {
+    .document-row-actions{
+        .dropdown-menu{
+            right: 0px;
+            left: auto;
+        }
+    }
+}

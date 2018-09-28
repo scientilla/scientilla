@@ -1,0 +1,15 @@
+.list-group-item{
+    padding: 1rem 1rem;
+    font-size: 1.2rem;
+    border-color: $mercury;
+
+    &.active{
+        border-color: $deep-cerulean;
+        background: $deep-cerulean;
+
+        &:focus,
+        &:active:focus{
+            color: $white;
+        }
+    }
+}

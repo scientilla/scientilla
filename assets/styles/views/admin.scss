@@ -1,0 +1,159 @@
+.admin{
+    &.admin-sources{
+        .search-field-container{
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 2rem;
+
+            .form-control{
+                padding-right: 3rem;
+            }
+
+            &:after{
+                position: absolute;
+                top: 7px;
+                right: 10px;
+                display: block;
+                font-family: $font-awesome;
+                font-size: 1.2rem;
+                font-weight: 900;
+                content: '\f002';
+            }
+        }
+
+        .metrics-listing{
+            @include normalize-listing;
+            margin-top: 3rem;
+        }
+
+        .search-metrics,
+        .associated-metrics{
+            margin-top: 4rem;
+        }
+
+        .search-metrics-container{
+            max-width: 400px;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+
+        .associated-metrics-container,
+        .search-metrics-results-container{
+            margin-bottom: 2rem;
+            max-height: 215px;
+            overflow-y: auto;
+            overflow-x: hidden;
+
+            .table{
+                margin: 0px;
+            }
+        }
+
+        .source-listing{
+            @include normalize-listing;
+        }
+    }
+
+    &.admin-tools{
+        .status-dot{
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            margin: 0px .2rem .2rem .5rem;
+            border-radius: 50%;
+            vertical-align: middle;
+        }
+
+        .status-enabled{
+            .status-dot{
+                background: $forrest-green;
+            }
+        }
+
+        .status-disabled{
+            .status-dot{
+                background: $apple-blossom;
+            }
+        }
+
+        .backup-actions{
+            @include normalize-listing;
+            @include clearfix;
+            margin: 3rem -1rem 0px -1rem;
+
+            & > li{
+                display: block;
+                float: left;
+                padding: 0px 1rem;
+            }
+        }
+
+        .title-container{
+            margin-bottom: 1rem;
+        }
+
+        .search-field-container{
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 2rem;
+
+            .form-control{
+                padding-right: 3rem;
+            }
+
+            &:after{
+                position: absolute;
+                top: 7px;
+                right: 10px;
+                display: block;
+                font-family: $font-awesome;
+                font-size: 1.2rem;
+                font-weight: 900;
+                content: '\f002';
+            }
+        }
+
+        .institute-card{
+            max-width: 400px;
+        }
+
+        .institute-listing{
+            @include normalize-listing;
+        }
+
+        .institute-buttons{
+            @include normalize-listing;
+            @include clearfix;
+            margin: 3rem -1rem -2rem -1rem;
+
+            & > li{
+                display: block;
+                float: left;
+                padding: 0px 1rem 2rem 1rem;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .admin{
+        &.admin-sources{
+
+        }
+
+        &.admin-tools{
+            .title-container{
+                display: grid;
+                margin: 0px;
+                grid-template-rows: auto;
+                grid-template-columns: 1fr auto;
+            }
+
+            .btn-add-institute{
+                height: fit-content;
+            }
+        }
+    }
+}

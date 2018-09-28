@@ -1,0 +1,36 @@
+.dropdown-item{
+    font-size: 1.2rem;
+    overflow: hidden;
+
+    &:active,
+    &:active:focus{
+        background: $deep-cerulean;
+        color: $white !important;
+    }
+}
+
+.dropdown-toggle{
+    &.only-icon{
+        &:after{
+            margin-left: 0px;
+        }
+    }
+}
+
+.dropdown-menu{
+    min-width: 100%;
+    max-width: 320px;
+    overflow: hidden;
+}
+
+.add-scroll{
+    .dropdown-menu{
+        max-height: 100px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+}
+
+.dropdown-container{
+    position: relative;
+}

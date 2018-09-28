@@ -1,0 +1,90 @@
+.toolbar{
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    z-index: 3;
+    width: 100%;
+}
+
+.top-toolbar{
+    padding: 1.5rem 0px;
+    background: $mine-shaft;
+    color: $white;
+
+    .top-toolbar-listing{
+        @include normalize-listing;
+
+        & > li{
+            position: relative;
+            display: flex;
+            align-self: center;
+
+            &:nth-child(2),
+            &:nth-child(3){
+                display: none;
+            }
+        }
+    }
+
+    .logo-link{
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .btn-link{
+        max-width: 300px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        font-size: 1.5rem;
+        color: $white;
+
+        &:hover,
+        &:focus,
+        &:active:focus{
+            background: $abbey;
+            text-decoration: none;
+        }
+    }
+
+    .toolbar-right-menu{
+        @include normalize-listing;
+
+        & > li{
+            display: block;
+            padding: 0px .5rem;
+            float: left;
+        }
+    }
+}
+
+@include media-breakpoint-up(md){
+    .top-toolbar{
+        .top-toolbar-listing{
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: auto 1fr auto;
+
+            & > li{
+                text-align: center;
+
+                &:nth-child(2),
+                &:nth-child(3){
+                    display: block;
+                }
+
+                &:nth-child(1){
+                    @include set-grid(1,1,1,1);
+                }
+
+                &:nth-child(2){
+                    @include set-grid(1,2,1,1);
+                }
+
+                &:nth-child(3){
+                    @include set-grid(1,3,1,1);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,28 @@
+.fa-left{
+    margin-right: 5px;
+}
+
+.fa-right{
+    margin-left: 5px;
+}
+
+.inline-block{
+    display: inline-block;
+}
+
+.underline{
+    text-decoration: underline;
+}
+
+.highlight-text{
+    display: inline;
+    background: lighten($neon-carrot, 25%);
+    vertical-align: top;
+    box-shadow: .2rem 0 0 lighten($neon-carrot, 25%), -.2rem 0 0 lighten($neon-carrot, 25%);
+}
+
+label{
+    &.inline-block{
+        margin: 0px;
+    }
+}
