@@ -1,0 +1,7 @@
+<div
+    ng-repeat="error in vm.errors"
+    class="invalid-feedback">
+    <span ng-if="error.rule === 'email'">This value should be an email.</span>
+    <span ng-if="error.rule === 'required'">This field is required.</span>
+    <span ng-if="error.rule === 'valid'">{{ error.message }}</span>
+</div>

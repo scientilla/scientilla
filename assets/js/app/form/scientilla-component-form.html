@@ -1,8 +1,38 @@
 <form class="{{vm.cssClass}}" ng-submit="vm.submit()">
-    <scientilla-field ng-repeat="(name, struct) in vm.structure"
-                      structure="struct"
-                      name="name"
-                      reset="vm.reset"
-                      values="vm.values"></scientilla-field>
+    <ul class="filter-field-listing fields-{{ vm.fieldCount }}">
+        <li
+            ng-repeat="(name, struct) in vm.structure"
+            ng-if="fields(name)"
+            >
+            <scientilla-field
+                structure="struct"
+                name="name"
+                reset="vm.reset"
+                values="vm.values"></scientilla-field>
+        </li>
+    </ul>
+
+    <ul class="filter-action-listing actions-{{ vm.actionCount }}">
+        <li
+            ng-repeat="(name, struct) in vm.structure"
+            ng-if="other(name)"
+            >
+            <scientilla-field
+                structure="struct"
+                name="name"
+                reset="vm.reset"
+                values="vm.values"></scientilla-field>
+        </li>
+        <li
+            ng-repeat="(name, struct) in vm.structure"
+            ng-if="actions(name)"
+            >
+            <scientilla-field
+                structure="struct"
+                name="name"
+                reset="vm.reset"
+                values="vm.values"></scientilla-field>
+        </li>
+    </ul>
     <div ng-transclude></div>
 </form>
