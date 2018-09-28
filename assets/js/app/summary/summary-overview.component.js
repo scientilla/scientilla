@@ -47,7 +47,6 @@
             changeChart(vm.charts[0]);
         };
 
-
         function changeChart(chart) {
             vm.mainChart = ChartService.getAsMainChart(chart);
         }
@@ -58,7 +57,7 @@
         }
 
         function showInfo() {
-            ModalService.openWizard(['summary-overview'], {style: 'light', isClosable: true});
+            ModalService.openWizard(['summary-overview'], { isClosable: true});
         }
     }
 })();

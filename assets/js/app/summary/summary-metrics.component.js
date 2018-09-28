@@ -53,13 +53,13 @@
 
             vm.documentsCharts = [
                 {
-                    icon: 'fa-pie-chart',
+                    icon: 'fas fa-chart-pie',
                     chartSettings: vm.charts.filteredDocumentsSourceTypeByYear,
                     default: true,
                     title: vm.charts.filteredDocumentsSourceTypeByYear.title
                 },
                 {
-                    icon: 'fa-university',
+                    icon: 'fas fa-university',
                     chartSettings: vm.charts.filteredDocumentsByYear,
                     title: vm.charts.filteredDocumentsSourceTypeByYear.title
                 }
@@ -67,13 +67,13 @@
 
             vm.citationsCharts = [
                 {
-                    icon: 'fa-quote-right',
+                    icon: 'fas fa-quote-right',
                     chartSettings: vm.charts.citationsPerYear,
                     default: true,
                     title: vm.charts.citationsPerYear.title
                 },
                 {
-                    icon: 'fa-quote-left',
+                    icon: 'fas fa-quote-left',
                     chartSettings: vm.charts.citationsPerDocumentYear,
                     title: vm.charts.citationsPerDocumentYear.title
                 }
@@ -81,14 +81,14 @@
 
             vm.metricsCharts = [
                 {
-                    icon: 'fa-line-chart',
+                    icon: 'fas fa-chart-line',
                     chartSettings: vm.charts.journalMetricsPerYearLineChart,
                     id: 'scientilla-chart-journalMetricsPerYear',
                     default: true,
                     title: 'Line chart'
                 },
                 {
-                    icon: 'fa-bar-chart',
+                    icon: 'fas fa-chart-bar',
                     chartSettings: vm.charts.getJournalMetricsPerYearBarChart,
                     title: 'Bar chart'
                 }
@@ -99,37 +99,37 @@
             vm.indexes.push({
                 label: 'Documents',
                 value: totalDocuments,
-                icon: '<span class="fa fa-file-text-o scientilla-icon-color-document"></span>',
+                icons: ['far fa-file-alt icon-documents'],
                 format: 0
             });
             vm.indexes.push({
                 label: 'h-index',
                 value: hIndex,
-                icon: '<span class="fa fa-line-chart scientilla-icon-color-hindex"></span>',
+                icons: ['fas fa-chart-line icon-h-index'],
                 format: 0
             });
             vm.indexes.push({
                 label: 'Citations',
                 value: totalCitations,
-                icon: '<span class="fa fa-quote-right scientilla-icon-color-citations"></span>',
+                icons: ['fas fa-quote-right icon-citations'],
                 format: 0
             });
             vm.indexes.push({
                 label: 'Citations per document',
                 value: (totalCitations / totalDocuments) || 0,
-                icon: '<b class="scientilla-icon-color-citations"><span class="fa fa-quote-right"></span> / <span class="fa fa-file-text-o"></b>',
+                icons: ['fas fa-quote-right icon-citations','far fa-file-alt icon-citations'],
                 format: 2
             });
             vm.indexes.push({
                 label: 'Total IF',
                 value: totalImpactFactor,
-                icon: '<b class="scientilla-icon-color-if">IF</span></b>',
+                icons: ['icons-if icon-if'],
                 format: 2
             });
             vm.indexes.push({
                 label: 'IF per document',
                 value: (totalImpactFactor / totalDocuments) || 0,
-                icon: '<b class="scientilla-icon-color-if">IF / <span class="fa fa-file-text-o"></b>',
+                icons: ['icons-if icon-if', 'icons-if far fa-file-alt'],
                 format: 2
             });
 
