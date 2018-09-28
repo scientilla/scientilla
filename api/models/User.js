@@ -31,15 +31,19 @@ module.exports = _.merge({}, ResearchEntity, {
         //Constants
         username: {
             type: 'email',
-            defaultsTo: ""
+            defaultsTo: "",
+            required: true,
+            unique: true
         },
         name: {
             type: 'STRING',
-            defaultsTo: ""
+            defaultsTo: "",
+            required: true
         },
         surname: {
             type: 'STRING',
-            defaultsTo: ""
+            defaultsTo: "",
+            required: true
         },
         slug: {
             type: 'STRING',

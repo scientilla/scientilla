@@ -17,7 +17,10 @@ const fields = [
 
 module.exports = {
     attributes: {
-        title: 'string',
+        title: {
+            type: 'string',
+            required: true
+        },
         issn: 'string',
         eissn: 'string',
         acronym: 'string',

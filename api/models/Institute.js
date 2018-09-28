@@ -8,7 +8,11 @@
 module.exports = {
 
     attributes: {
-        name: 'STRING',
+        name: {
+            type: 'STRING',
+            //unique: true,
+            required: true
+        },
         country: 'STRING',
         city: 'STRING',
         shortname: 'STRING',
