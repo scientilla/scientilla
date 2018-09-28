@@ -1,16 +1,46 @@
-<div ng-class="{'form-group':true, 'has-error':!vm.newAliasIsCorrect()}">
-    <label>Alias</label>
-    <input ng-keydown="vm.addAlias($event)"
-           type="text"
-           class="form-control"
-           placeholder="Add alias and press Enter"
-           ng-model="vm.newAlias"/>
-    <ul class="scientilla-multiselect-list scientilla-default-text-color">
-        <li class="list-group-item" ng-repeat="alias in vm.aliases">
-            {{alias.str}}
-            <a ng-click="vm.removeAlias(alias)" class="badge btn-primary">
-                <span class="fa fa-remove"></span>
-            </a>
+<div>
+    <ul class="alias-listing">
+        <li>
+            <div
+                class="form-group"
+                ng-class="{'has-error':!vm.newAliasIsCorrect}">
+                <label>Alias</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Add alias and press Enter"
+                    ng-model="vm.newAlias"
+                    ng-class="{'is-invalid':!vm.newAliasIsCorrect}"/>
+                <div
+                    ng-if="!vm.newAliasIsCorrect"
+                    class="invalid-feedback">
+                    Author string is not valid. It should be in the form 'E. Molinari, F. Bozzini, F. Semprini'.
+                </div>
+            </div>
+        </li>
+        <li>
+            <div class="form-group">
+                <button
+                    type="button"
+                    class="btn btn-primary btn-form-no-label"
+                    ng-click="vm.addAlias()">
+                    <i class="fas fa-plus fa-left"></i>Add
+                </button>
+            </div>
         </li>
     </ul>
+
+    <div class="form-group">
+        <ul class="multiselect-list">
+            <li class="list-group-item" ng-repeat="alias in vm.aliases">
+                {{alias.str}}
+                <a
+                    href=""
+                    ng-click="vm.removeAlias(alias)"
+                    class="btn-primary badge">
+                    <i class="fas fa-times"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
 </div>

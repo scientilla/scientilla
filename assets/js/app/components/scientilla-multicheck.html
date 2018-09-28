@@ -1,22 +1,36 @@
-<div ng-show="vm.areCheckablesRegistered()" class="row scientila-multicheck-commands-row">
-    <div class="col-md-6">
-        <label ng-if="vm.areButtonsRegistered()">
-            <input id="selectAll" title="Select all" type="checkbox"
-                   ng-model="vm.allSelected" ng-change="vm.selectAll()"/>
-            Select all
+<ul
+    class="multi-check"
+    ng-show="vm.areCheckablesRegistered()">
+    <li>
+        <label
+            class="form-checkbox"
+            ng-if="vm.areButtonsRegistered()">
+            <input
+                id="selectAll"
+                title="Select all"
+                type="checkbox"
+                ng-model="vm.allSelected"
+                ng-change="vm.selectAll()"/>
+            <span>Select all</span>
         </label>
-    </div>
-    <div class="col-md-6 text-right">
-
-        <div ng-show="vm.areButtonsRegistered()" class="btn-group">
-            <button ng-disabled="!vm.areElementsSelected()" type="button" class="btn btn-primary dropdown-toggle"
-                    data-toggle="dropdown">
-                On selected
-                <span class="caret"></span>
+    </li>
+    <li>
+         <div
+            ng-show="vm.areButtonsRegistered()"
+            class="btn-group"
+            uib-dropdown>
+            <button
+                ng-disabled="!vm.areElementsSelected()"
+                type="button"
+                class="btn btn-primary dropdown-toggle only-icon"
+                uib-dropdown-toggle>On selected
             </button>
-            <ul class="dropdown-menu dropdown-menu-right" ng-transclude="buttons"></ul>
+            <ul
+                class="dropdown-menu dropdown-menu-right"
+                ng-transclude="buttons"
+                uib-dropdown-menu></ul>
         </div>
-    </div>
-</div>
-<hr/>
+    </li>
+</ul>
+
 <div ng-transclude="item-list"></div>

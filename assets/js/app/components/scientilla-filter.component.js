@@ -47,6 +47,7 @@
         let statusTimeoutId = null;
 
         vm.formVisible = true;
+        vm.filterIsCollapsed = true;
 
         let searchQuery = {};
         let onDataCountChangeDeregisterer = null;
@@ -64,9 +65,6 @@
             onDataCountChangeDeregisterer = $scope.$watch('vm.elements.count', onDataCountChange, true);
 
             vm.filterSearchFormStructure = _.assign({}, vm.searchFormStructure, {
-                newlineFilter1: {
-                    inputType: 'br'
-                },
                 buttonSearch: {
                     inputType: 'submit',
                     label: vm.filterLabel
@@ -82,6 +80,7 @@
                     defaultValue: pageSize,
                     values: vm.pageSizes.map(ps => ({value: ps, label: ps})),
                     labelPosition: 'inline',
+                    cssClass: 'items-per-page',
                     onChange: 'submit'
                 }
             });

@@ -41,7 +41,15 @@
         }
 
         function isActive(page) {
-            return (path.current === '?#' + page || path.current === '#' + page);
+
+            if (page === '/') {
+                return (path.current === '?#' + page || path.current === '#' + page);
+            } else {
+                return (
+                    path.current.lastIndexOf('?#' + page, 0) === 0 ||
+                    path.current.lastIndexOf('#' + page, 0) === 0
+                );
+            }
         }
 
         function isAdmin() {

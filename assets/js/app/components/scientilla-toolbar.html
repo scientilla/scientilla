@@ -1,81 +1,127 @@
-<div class="scientilla-toolbar">
-    <div class="row">
-        <div class="col-xs-3">
-            <a href="#/">
-                <img class="scientilla-small-logo" src="/images/scientilla-logo-white-40.png">
-            </a>
-        </div>
-        <div class="col-xs-6 text-center">
-            <div>
-                <div uib-dropdown class="btn-group" is-open="status.isopen">
-                    <span ng-if="!vm.user.administratedGroups.length"
-                          class="scientilla-toolbar-name btn btn-link"
-                          style="cursor:default">
-                        {{vm.researchEntity.getDisplayName()}}
-                    </span>
-                    <button ng-if="vm.user.administratedGroups.length" id="single-button"
+<header class="toolbar-header js-header">
+    <div class="top-toolbar">
+        <div class="container-fluid">
+            <ul class="top-toolbar-listing">
+                <li>
+                     <a href="#/" class="logo-link">
+                        <img class="logo" src="/images/scientilla-logo-white-40.png">
+                    </a>
+
+                    <div class="mobile-menu-button-container">
+                        <div
+                            class="mobile-menu-button"
+                            ng-click="vm.toggleMobileMenu()">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        Menu
+                    </div>
+                </li>
+                <li>
+                    <div uib-dropdown class="btn-group" is-open="status.isopen">
+                        <span
+                            ng-if="!vm.user.administratedGroups.length"
+                            class="btn btn-link">
+                            {{vm.researchEntity.getDisplayName()}}
+                        </span>
+                        <button
+                            ng-if="vm.user.administratedGroups.length"
+                            id="single-button"
                             type="button"
                             class="btn btn-link"
                             uib-dropdown-toggle
                             ng-disabled="disabled">
-                        <span>{{vm.researchEntity.getDisplayName()}}</span>
-                        <span class="caret"></span>
-                    </button>
-                    <ul class="dropdown-menu" uib-dropdown-menu role="menu" aria-labelledby="single-button">
-                        <li role="menuitem">
-                            <a class="btn btn-link"
-                               style="text-align: left"
-                               ng-click="vm.changeContextToUser(vm.user)">
-                                {{vm.user.getDisplayName()}}
+                            <i class="fas fa-user fa-left"></i>
+                            {{ vm.researchEntity.getDisplayName() }}
+                        </button>
+                        <ul
+                            uib-dropdown-menu
+                            class="dropdown-menu"
+                            role="menu"
+                            aria-labelledby="single-button">
+                            <li role="menuitem">
+                                <a class="dropdown-item"
+                                   ng-click="vm.changeContextToUser(vm.user)">
+                                    {{vm.user.getDisplayName()}}
+                                </a>
+                            </li>
+                            <li ng-repeat="g in vm.user.administratedGroups"
+                                role="menuitem">
+                                <a class="dropdown-item"
+                                   ng-click="vm.changeContextToGroup(g)">
+                                    {{g.getDisplayName()}}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <!-- TODO -->
+                    <ul class="toolbar-right-menu">
+                        <li ng-if="!vm.isLogged">
+                            <a
+                                class="btn btn-link"
+                                ng-href="#/register"
+                                aria-label="Register"
+                                ng-if="vm.isRegisterEnabled">
+                                Register
                             </a>
                         </li>
-                        <li ng-repeat="g in vm.user.administratedGroups"
-                            role="menuitem">
-                            <a class="btn btn-link"
-                               style="text-align: left"
-                               ng-click="vm.changeContextToGroup(g)">
-                                {{g.getDisplayName()}}
+                        <li ng-if="!vm.isLogged">
+                            <a
+                                class="btn btn-link"
+                                ng-href="#/login"
+                                aria-label="Login">
+                                Login
+                            </a>
+                        </li>
+                        <li>
+                            <div uib-dropdown ng-if="vm.isLogged" class="dropdown">
+                                <button
+                                    ng-if="vm.showWizardVisible() && vm.user.isInternal()"
+                                    class="btn btn-link"
+                                    uib-dropdown-toggle>
+                                    <i class="fas fa-question-circle" aria-hidden="true"></i>
+                                </button>
+                                <ul
+                                    uib-dropdown-menu
+                                    class="dropdown-menu dropdown-menu-right">
+                                    <li>
+                                        <button
+                                            ng-click="vm.openWizard()"
+                                            class="dropdown-item">
+                                            Main features
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button
+                                            ng-click="vm.openSuggestedWizard()"
+                                            class="dropdown-item">
+                                            Suggested/Alias
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li ng-if="vm.isLogged">
+                            <button
+                                class="btn btn-link"
+                                ng-click="vm.editProfile()"
+                                ng-if="vm.user.isInternal()">
+                                <i class="fas fa-cogs"></i>
+                            </button>
+                        </li>
+
+                        <li ng-if="vm.isLogged">
+                            <a class="btn btn-link" ng-href="#/logout">
+                                <i class="fas fa-sign-out-alt fa-left"></i>Logout
                             </a>
                         </li>
                     </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-xs-3 text-right">
-            <div ng-if="!vm.isLogged">
-                <a class="btn btn-link" ng-href="#/register" aria-label="Register" ng-if="vm.isRegisterEnabled">
-                    Register
-                </a>
-                <a class="btn btn-link" ng-href="#/login" aria-label="Login">
-                    Login
-                </a>
-            </div>
-            <div ng-if="vm.isLogged" class="dropdown">
-                <button ng-if="vm.showWizardVisible() && vm.user.isInternal()"
-                        class="btn btn-link dropdown-toggle"
-                        data-toggle="dropdown"
-                        uib-dropdown>
-                    <i class="fa fa-question-circle" aria-hidden="true"></i>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-right">
-                    <li>
-                        <button ng-click="vm.openWizard()" class="btn btn-link">
-                            Main features
-                        </button>
-                    </li>
-                    <li>
-                        <button ng-click="vm.openSuggestedWizard()" class="btn btn-link">
-                            Suggested/Alias
-                        </button>
-                    </li>
-                </ul>
-                <button class="btn btn-link" ng-click="vm.editProfile()" ng-if="vm.user.isInternal()">
-                    <span class="fa fa-gear"></span>
-                </button>
-                <a class="btn btn-link" ng-href="#/logout">
-                    Logout
-                </a>
-            </div>
+                </li>
+            </ul>
         </div>
     </div>
-</div>
+</header>

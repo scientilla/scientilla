@@ -37,12 +37,12 @@
             const typeClassesTable = {
                 submit: 'btn-primary',
                 button: 'btn-primary',
-                secondary: 'btn btn-default',
-                cancel: 'btn-default btn-cancel',
+                secondary: 'btn-outline-secondary',
+                cancel: 'btn-outline-secondary',
                 link: 'btn-link'
             };
             const sizeClassesTable = {
-                small: 'btn-sm',
+                small: '',
                 medium: ''
             };
             return typeClassesTable[vm.type] + ' ' + sizeClassesTable[vm.size];

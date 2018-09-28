@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('components')
-        .component('scientillaToolbar', {
-            templateUrl: 'partials/scientilla-toolbar.html',
+        .component('scientillaMobileToolbar', {
+            templateUrl: 'partials/scientilla-mobile-toolbar.html',
             controller: scientillaToolbar,
             controllerAs: 'vm'
         });
@@ -49,8 +49,6 @@
             ], refresh);
 
             refresh();
-
-            $rootScope.$emit('fixedHeader');
         };
 
         vm.$onDestroy = function () {
@@ -63,7 +61,6 @@
             Settings.getSettings()
                 .then(function (settings) {
                     vm.isRegisterEnabled = settings.registerEnabled;
-                    
                 });
             vm.researchEntity = context.getResearchEntity();
         }
@@ -109,6 +106,8 @@
                 .then(function (researchEntity) {
                     vm.researchEntity = researchEntity;
                 });
+
+            $rootScope.$emit('toggleMobileMenu');
         }
 
         function showWizardVisible() {
@@ -125,6 +124,8 @@
                 isClosable: true,
                 size: 'lg'
             });
+
+            $rootScope.$emit('toggleMobileMenu');
         }
 
         function openSuggestedWizard() {
@@ -132,6 +133,8 @@
                 isClosable: true,
                 size: 'lg'
             });
+
+            $rootScope.$emit('toggleMobileMenu');
         }
 
         function toggleMobileMenu() {

@@ -11,7 +11,6 @@
             }
         });
 
-
     scientillaAliasEditor.$inject = [
         'documentFieldsRules'
     ];
@@ -20,8 +19,7 @@
         const vm = this;
         vm.addAlias = addAlias;
         vm.removeAlias = removeAlias;
-        vm.newAliasIsCorrect = newAliasIsCorrect;
-
+        vm.newAliasIsCorrect = true;
 
         vm.$onInit = function () {
             vm.newAlias = '';
@@ -32,20 +30,16 @@
         vm.$onDestroy = function () {
         };
 
-        function addAlias(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
+        function addAlias() {
+            const newAlias = capitalizeAll(vm.newAlias, [' ', '-', '.']);
 
-                const newAlias = capitalizeAll(vm.newAlias, [' ', '-', '.']);
-                if (newAlias.match(documentFieldsRules.authorsStr.regex)) {
-                    vm.aliases.push({str: newAlias});
-                    vm.newAlias = '';
-                }
+            if (newAlias.match(documentFieldsRules.authorsStr.regex)) {
+                vm.aliases.push({str: newAlias});
+                vm.newAlias = '';
+                vm.newAliasIsCorrect = true;
+            } else {
+                vm.newAliasIsCorrect = false;
             }
-        }
-
-        function newAliasIsCorrect() {
-            return !vm.newAlias || vm.newAlias.match(documentFieldsRules.authorsStr.regex);
         }
 
         function removeAlias(alias) {

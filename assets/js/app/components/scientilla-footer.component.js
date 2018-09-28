@@ -8,12 +8,15 @@
             controllerAs: 'vm'
         });
 
-    scientillaFooter.$inject = [];
+    scientillaFooter.$inject = [
+        '$rootScope'
+    ];
 
-    function scientillaFooter() {
+    function scientillaFooter($rootScope) {
         const vm = this;
 
         vm.$onInit = function () {
+            $rootScope.$emit('stickyFooter');
         };
 
         vm.$onDestroy = function () {
