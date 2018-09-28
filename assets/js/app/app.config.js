@@ -1,4 +1,5 @@
 (function () {
+
     angular
         .module('app')
         .config(configure)
@@ -63,6 +64,39 @@
         $rootScope.$on('$viewContentLoaded', () => {
             if (!AuthService.isLogged && AuthService.isAvailable)
                 AuthService.loadAuthenticationData();
+        });
+
+        $rootScope.$on('toggleMobileMenu', function() {
+            $rootScope.mobileMenuIsOpen = !$rootScope.mobileMenuIsOpen;
+        });
+
+        $rootScope.footerHeight = 0;
+        $rootScope.headerHeight = 0;
+
+        let footerTimer;
+        let headerTimer;
+
+        $rootScope.$on('stickyFooter', function() {
+            clearTimeout(footerTimer);
+            footerTimer = setTimeout(function() {
+                let $footer = $('.js-footer'),
+                    height  = $footer.outerHeight(true);
+
+                $rootScope.footerHeight = height;
+                //console.log('Footer: ', height);
+            }, 500);
+        });
+
+        $rootScope.$on('fixedHeader', function() {
+
+            clearTimeout(headerTimer);
+            headerTimer = setTimeout(function() {
+                let $header = $('.js-header'),
+                    height  = $header.outerHeight(true);
+
+                $rootScope.headerHeight = height;
+                //console.log('Header: ', height);
+            }, 500);
         });
 
         Restangular.setErrorInterceptor(function (response, deferred, responseHandler) {
