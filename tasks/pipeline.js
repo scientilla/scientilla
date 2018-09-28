@@ -15,8 +15,6 @@
 // (if you're using LESS with the built-in default config, you'll want
 //  to change `assets/styles/importer.less` instead.)
 var cssFilesToInject = [
-    'styles/reset.css',
-    'styles/dependencies/bootstrap.min.css',
     'styles/**/*.css'
 ];
 

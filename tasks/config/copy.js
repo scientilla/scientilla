@@ -24,8 +24,6 @@ module.exports = function (grunt) {
                     'angular/angular.min.js',
                     'angular-animate/angular-animate.min.js',
                     'angular-aria/angular-aria.min.js',
-                    'angular-bootstrap/ui-bootstrap.min.js',
-                    'angular-bootstrap/ui-bootstrap-tpls.min.js',
                     'angular-form-for/dist/form-for.min.js',
                     'angular-form-for/dist/form-for.bootstrap-templates.js',
                     'angular-local-storage/dist/angular-local-storage.min.js',
@@ -49,13 +47,34 @@ module.exports = function (grunt) {
                 cwd: './bower_components',
                 src: [
                     'angular-ui-notification/dist/angular-ui-notification.min.css',
-                    'bootstrap/dist/css/bootstrap.min.css',
-                    'bootstrap/dist/fonts/*',
-                    'font-awesome/css/font-awesome.min.css',
-                    'font-awesome/fonts/*',
                     'nvd3/build/nv.d3.css'
                 ],
                 dest: '.tmp/public/styles/dependencies'
+            }, {
+                expand: true,
+                cwd: './node_modules',
+                src: [
+                    'ui-bootstrap4/dist/ui-bootstrap.js',
+                    'ui-bootstrap4/dist/ui-bootstrap-tpls.js'
+                ],
+                flatten: true,
+                dest: '.tmp/public/js/dependencies'
+            }, {
+                expand: true,
+                cwd: './node_modules/ui-bootstrap4',
+                src: [
+                    'template/*/*',
+                ],
+                flatten: false,
+                dest: '.tmp/public/uib'
+            }, {
+                expand: true,
+                cwd: './node_modules',
+                src: [
+                    '@fortawesome/fontawesome-free/webfonts/*',
+                ],
+                flatten: true,
+                dest: '.tmp/public/webfonts'
             }, {
                 expand: true,
                 cwd: './assets',
