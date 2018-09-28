@@ -1,12 +1,14 @@
-<div ng-if="(vm.document.type != 'invited_talk' && vm.document.source) || (vm.document.type == 'invited_talk' && vm.document.itSource)">
-    <small class="scientilla-document-source">
-        <div class="scientilla-document-icon-container">
-            <span class="{{vm.iconClass}}" title="{{vm.iconTitle}}" ></span>
-        </div>
-        <small>
-            <span ng-if="vm.document.type === 'article_in_press'" class="scientilla-in-press">IN PRESS</span>
-        </small>
-        <span ng-if="vm.document.type != 'invited_talk'">{{vm.document.source.title}}</span>
-        <span ng-if="vm.document.type == 'invited_talk'">{{vm.document.itSource}}</span>
-    </small>
+<div
+    class="document-source"
+    ng-if="(vm.document.type != 'invited_talk' && vm.document.source) || (vm.document.type == 'invited_talk' && vm.document.itSource)">
+    <i class="{{vm.iconClass}}" title="{{vm.iconTitle}}" ></i>
+    <span
+        ng-if="vm.document.type === 'article_in_press'"
+        class="document-in-press">IN PRESS</span>
+    <span ng-if="vm.document.type != 'invited_talk'">
+        {{vm.document.source.title}}
+    </span>
+    <span ng-if="vm.document.type == 'invited_talk'">
+        {{vm.document.itSource}}
+    </span>
 </div>

@@ -1,15 +1,24 @@
-<div class="btn-group scientilla-dropdown-align-right" uib-dropdown>
-    <button id="single-button" type="button" class="btn btn-link fa fa-plus" uib-dropdown-toggle ng-disabled="disabled">
+<div
+    class="btn-group btn-add-document"
+    uib-dropdown>
+    <button
+        id="single-button"
+        type="button"
+        class="btn btn-light" uib-dropdown-toggle ng-disabled="disabled">
+        <i class="fas fa-plus fa-left"></i>Add
     </button>
-    <ul uib-dropdown-menu>
-        <li>
-            <a ng-click="vm.openScientillaDocumentSearch()" class="scientilla-clickable">
-                Search and import
-            </a>
-        </li>
-        <li class="divider"></li>
-        <li ng-repeat="type in vm.types">
-            <a ng-click="vm.createNewDocument(type)" class="scientilla-clickable">{{type.label}}</a>
-        </li>
+    <ul
+        uib-dropdown-menu
+        class="dropdown-menu dropdown-menu-right">
+        <a
+            ng-click="vm.openScientillaDocumentSearch()"
+            class="dropdown-item">
+            <i class="fas fa-search fa-left"></i>Search and import
+        </a>
+        <div class="dropdown-divider"></div>
+        <a
+            ng-repeat="type in vm.types"
+            ng-click="vm.createNewDocument(type)"
+            class="dropdown-item">{{type.label}}</a>
     </ul>
 </div>

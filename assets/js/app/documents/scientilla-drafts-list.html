@@ -1,118 +1,117 @@
 <scientilla-backend-layout>
+    <h1>Draft documents</h1>
     <scientilla-filter
-            search-form-structure="vm.searchForm"
-            on-filter="vm.onFilter"
-            elements="vm.drafts"
-            empty-list-message="No drafts found">
+        search-form-structure="vm.searchForm"
+        on-filter="vm.onFilter"
+        elements="vm.drafts"
+        empty-list-message="No drafts found">
 
         <scientilla-multicheck>
             <buttons>
                 <scientilla-multicheck-button on-click="vm.verifyDrafts">
-                    <span class="fa fa-check"></span>
-                    Verify
+                    <i class="fas fa-check fa-left"></i>Verify
                 </scientilla-multicheck-button>
                 <scientilla-multicheck-button on-click="vm.deleteDrafts">
-                    <span class="fa fa-remove"></span>
-                    Delete
+                    <i class="far fa-trash-alt fa-left"></i>Delete
                 </scientilla-multicheck-button>
                 <scientilla-multicheck-button on-click="vm.desynchronizeDrafts">
-                    <span class="fa fa-refresh"></span>
-                    Disable sync.
+                    <i class="fas fa-sync-alt fa-left"></i>Disable sync.
                 </scientilla-multicheck-button>
             </buttons>
             <item-list>
-                <scientilla-checkable ng-repeat="d in vm.drafts" item="d">
-                    <div class="row">
-                        <div class="col-md-10">
-                            <scientilla-document document="d" section="vm.documentListSections.DRAFT"></scientilla-document>
-                        </div>
-                        <div class="col-md-2 text-right">
-                            <h3>
-                                <div class="btn-group scientilla-dropdown-align-right"
-                                     uib-dropdown>
-                                    <button ng-click="vm.openEditPopup(d)"
-                                            ng-disabled="d.synchronized"
-                                            ng-if="!d.isComparable"
-                                            type="button"
-                                            class=" btn btn-primary"
-                                            title="Let you edit the document, if synchronization is active the document cannot be edited">
-                                        <span class="fa fa-edit"></span>
-                                        Edit
-                                    </button>
-                                    <button ng-click="vm.compareDocuments(d, d.getComparisonDuplicate())"
-                                            ng-if="d.isComparable"
-                                            type="button"
-                                            class=" btn btn-compare">
-                                        Compare
-                                    </button>
-                                    <button type="button"
-                                            class="btn dropdown-toggle"
-                                            ng-class="{'btn-compare': d.isComparable, 'btn-primary': !d.isComparable}"
-                                            data-toggle="dropdown">
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-right">
-                                        <li>
-                                            <button ng-click="vm.openEditPopup(d)"
-                                                    ng-if="d.duplicates.length"
-                                                    type="button"
-                                                    ng-disabled="d.synchronized"
-                                                    class="btn btn-link"
-                                                    title="Let you edit the document, if synchronization is active the document cannot be edited">
-                                                <span class="fa fa-edit fa-fw"></span>
-                                                Edit
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button ng-click="vm.openDocumentAffiliationForm(d)"
-                                                    ng-disabled="d.synchronized"
-                                                    class="btn btn-link">
-                                                <span class="fa fa-university fa-fw"></span>
-                                                Edit Affiliations
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button ng-click="vm.openDocumentAuthorsForm(d)"
-                                                    ng-disabled="d.sourceTypeObj.type === 'invited_talk'"
-                                                    class="btn btn-link">
-                                                <span class="fa fa-user fa-fw"></span>
-                                                Edit authors details
-                                            </button>
-                                        </li>
-                                        <li ng-if="!d.synchronized">
-                                            <button ng-click="vm.synchronizeDraft(d, true)"
-                                                    ng-disabled="!d.scopusId && !d.doi"
-                                                    class="btn btn-link">
-                                                <span class="fa fa-refresh fa-fw"></span>
-                                                Synchronize with scopus
-                                            </button>
-                                        </li>
-                                        <li ng-if="d.synchronized">
-                                            <button ng-click="vm.synchronizeDraft(d, false)"
-                                                    ng-disabled="!d.scopusId && !d.doi"
-                                                    class="btn btn-link">
-                                                <span class="fa fa-refresh fa-fw"></span>
-                                                Disable sync.
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button ng-click="vm.verifyDraft(d)"
-                                                    ng-disabled="!d.isValid() || d.isComparable"
-                                                    class="btn btn-link">
-                                                <span class="fa fa-check fa-fw"></span>
-                                                Verify
-                                            </button>
-                                        </li>
-                                        <li>
-                                            <button ng-click="vm.deleteDraft(d)"
-                                                    class="btn btn-link">
-                                                <span class="fa fa-remove fa-fw"></span>
-                                                Delete
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </h3>
+                <scientilla-checkable
+                    ng-repeat="d in vm.drafts"
+                    item="d">
+
+                    <scientilla-document
+                        document="d"
+                        section="vm.documentListSections.DRAFT"
+                        class="document-container"></scientilla-document>
+
+                    <div class="document-row-actions">
+                        <div class="btn-group" uib-dropdown>
+                            <button
+                                ng-click="vm.openEditPopup(d)"
+                                ng-disabled="d.synchronized"
+                                ng-if="!d.isComparable"
+                                type="button"
+                                class=" btn btn-primary"
+                                title="Let you edit the document, if synchronization is active the document cannot be edited">
+                                <i class="fas fa-edit fa-left"></i>Edit
+                            </button>
+
+                            <button
+                                ng-click="vm.compareDocuments(d, d.getComparisonDuplicate())"
+                                ng-if="d.isComparable"
+                                type="button"
+                                class=" btn btn-warning">
+                                <i class="fas fa-exchange-alt fa-left"></i>Compare
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn dropdown-toggle only-icon"
+                                ng-class="{'btn-warning': d.isComparable, 'btn-primary': !d.isComparable}"
+                                uib-dropdown-toggle>
+                            </button>
+
+                            <div
+                                uib-dropdown-menu
+                                class="dropdown-menu">
+
+                                <button
+                                    ng-click="vm.openEditPopup(d)"
+                                    ng-if="d.duplicates.length"
+                                    type="button"
+                                    ng-disabled="d.synchronized"
+                                    class="dropdown-item"
+                                    title="Let you edit the document, if synchronization is active the document cannot be edited">
+                                    <i class="fa fa-edit fa-left"></i>Edit
+                                </button>
+
+                                <button
+                                    ng-click="vm.openDocumentAffiliationForm(d)"
+                                    ng-disabled="d.synchronized"
+                                    class="dropdown-item">
+                                    <i class="fa fa-university fa-fw"></i>Edit Affiliations
+                                </button>
+
+                                <button
+                                    ng-click="vm.openDocumentAuthorsForm(d)"
+                                    ng-disabled="d.sourceTypeObj.type === 'invited_talk'"
+                                    class="dropdown-item">
+                                    <i class="fa fa-user fa-left"></i>Edit authors details
+                                </button>
+
+                                <button
+                                    ng-if="!d.synchronized"
+                                    ng-click="vm.synchronizeDraft(d, true)"
+                                    ng-disabled="!d.scopusId && !d.doi"
+                                    class="dropdown-item">
+                                    <i class="fas fa-sync-alt fa-left"></i>Synchronize with scopus
+                                </button>
+
+                                <button
+                                    ng-if="d.synchronized"
+                                    ng-click="vm.synchronizeDraft(d, false)"
+                                    ng-disabled="!d.scopusId && !d.doi"
+                                    class="dropdown-item">
+                                    <i class="fas fa-sync-alt fa-left"></i>Disable sync.
+                                </button>
+
+                                <button
+                                    ng-click="vm.verifyDraft(d)"
+                                    ng-disabled="!d.isValid() || d.isComparable"
+                                    class="dropdown-item">
+                                    <i class="fas fa-check fa-left"></i>Verify
+                                </button>
+
+                                <button
+                                    ng-click="vm.deleteDraft(d)"
+                                    class="dropdown-item">
+                                    <i class="fas fa-trash-alt fa-left"></i>Delete
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </scientilla-checkable>

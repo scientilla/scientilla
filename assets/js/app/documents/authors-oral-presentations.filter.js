@@ -17,7 +17,7 @@
                     return htmlAuthor;
 
                 if (authorship.oral_presentation)
-                    htmlAuthor = '<span class="fa fa-microphone"></span>' + htmlAuthor;
+                    htmlAuthor = '<i class="fas fa-microphone fa-left"></i>' + htmlAuthor;
 
                 return htmlAuthor;
 

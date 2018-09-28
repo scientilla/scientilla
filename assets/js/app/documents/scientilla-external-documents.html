@@ -1,69 +1,64 @@
 <scientilla-backend-layout>
+    <h1>External documents</h1>
     <scientilla-filter
-            search-form-structure="vm.searchForm"
-            on-filter="vm.onFilter"
-            elements="vm.documents"
-            empty-list-message="No documents"
-            filter-label="Search">
+        search-form-structure="vm.searchForm"
+        on-filter="vm.onFilter"
+        elements="vm.documents"
+        empty-list-message="No documents"
+        filter-label="Search">
 
-        <div class="row">
-            <div class="col-md-12">
-                <scientilla-multicheck>
-                    <buttons>
-                        <scientilla-multicheck-button on-click="vm.verifyDocuments">
-                            <span class="fa fa-check"></span>
-                            Verify
-                        </scientilla-multicheck-button>
-                        <scientilla-multicheck-button on-click="vm.copyDocuments">
-                            <span class="fa fa-copy"></span>
-                            Copy
-                        </scientilla-multicheck-button>
-                    </buttons>
-                    <buttons>
-                        <scientilla-multicheck-button on-click="vm.copyUncopiedDocuments">
-                            <span class="fa fa-copy"></span>
-                            Copy only new
-                        </scientilla-multicheck-button>
-                    </buttons>
-                    <item-list>
-                        <scientilla-checkable ng-repeat="d in vm.documents" item="d">
-                            <div class="row">
-                                <div class="col-md-10">
-                                    <scientilla-document document="d"
-                                                         section="vm.documentListSections.EXTERNAL"></scientilla-document>
-                                </div>
-                                <div class="col-md-2 text-right">
-                                    <h3>
-                                        <div class="btn-group scientilla-dropdown-align-right" uib-dropdown>
-                                            <button ng-disabled="!d.isValid()"
-                                                    ng-click="vm.verifyDocument(d)"
-                                                    type="button"
-                                                    class="btn btn-primary">
-                                                <span class="fa fa-check"></span>
-                                                Verify
-                                            </button>
-                                            <button type="button"
-                                                    class="btn dropdown-toggle btn-primary"
-                                                    data-toggle="dropdown">
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul class="dropdown-menu dropdown-menu-right">
-                                                <li>
-                                                    <button class="btn btn-link"
-                                                            ng-click="vm.copyDocument(d)">
-                                                        <span class="fa fa-copy"></span>
-                                                        Copy to drafts
-                                                    </button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </h3>
-                                </div>
+        <scientilla-multicheck>
+            <buttons>
+                <scientilla-multicheck-button on-click="vm.verifyDocuments">
+                    <i class="fas fa-check fa-left"></i>Verify
+                </scientilla-multicheck-button>
+                <scientilla-multicheck-button on-click="vm.copyDocuments">
+                    <i class="fa fa-copy fa-left"></i>Copy
+                </scientilla-multicheck-button>
+
+                <scientilla-multicheck-button on-click="vm.copyUncopiedDocuments">
+                    <i class="fa fa-copy fa-left"></i>Copy only new
+                </scientilla-multicheck-button>
+            </buttons>
+
+            <item-list>
+                <scientilla-checkable
+                    ng-repeat="d in vm.documents"
+                    item="d">
+
+                    <scientilla-document
+                        document="d"
+                        section="vm.documentListSections.EXTERNAL"></scientilla-document>
+
+                    <div class="document-row-actions">
+                        <div class="btn-group" uib-dropdown>
+                            <button
+                                ng-disabled="!d.isValid()"
+                                ng-click="vm.verifyDocument(d)"
+                                type="button"
+                                class="btn btn-primary">
+                                <i class="fas fa-check fa-left"></i>Verify
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn dropdown-toggle btn-primary only-icon"
+                                uib-dropdown-toggle>
+                            </button>
+
+                            <div
+                                uib-dropdown-menu
+                                class="dropdown-menu">
+                                <button
+                                    class="dropdown-item"
+                                    ng-click="vm.copyDocument(d)">
+                                    <i class="far fa-copy fa-left"></i>Copy to drafts
+                                </button>
                             </div>
-                        </scientilla-checkable>
-                    </item-list>
-                </scientilla-multicheck>
-            </div>
-        </div>
+                        </div>
+                    </div>
+                </scientilla-checkable>
+            </item-list>
+        </scientilla-multicheck>
     </scientilla-filter>
 </scientilla-backend-layout>

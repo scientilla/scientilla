@@ -20,12 +20,12 @@
 
 
         var iconClasses = {
-            'journal': 'fa fa-lg fa-fw fa-file-text-o',
-            'conference': 'fa fa-lg fa-fw fa-comment-o',
-            'book': 'fa fa-lg fa-fw fa-book',
-            'bookseries': 'fa fa-lg fa-fw fa-book',
-            'report': 'fa fa-lg fa-fw fa-address-card-o',
-            'invited_talk': 'fa fa-lg fa-fw fa-microphone',
+            'journal': 'far fa-file-alt',
+            'conference': 'far fa-comment',
+            'book': 'fas fa-book',
+            'bookseries': 'fas fa-book',
+            'report': 'far fa-address-card',
+            'invited_talk': 'fas fa-microphone',
         };
 
         vm.$onInit = function () {

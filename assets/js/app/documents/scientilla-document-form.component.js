@@ -19,6 +19,7 @@
         });
 
     scientillaDocumentFormController.$inject = [
+        '$rootScope',
         'EventsService',
         'documentFieldsRules',
         '$scope',
@@ -29,7 +30,8 @@
         'ModalService'
     ];
 
-    function scientillaDocumentFormController(EventsService,
+    function scientillaDocumentFormController($rootScope,
+                                              EventsService,
                                               documentFieldsRules,
                                               $scope,
                                               $timeout,
@@ -40,14 +42,11 @@
         const vm = this;
         vm.status = createStatus();
         vm.cancel = cancel;
-        vm.undo = undo;
         vm.verify = verify;
         vm.documentTypes = DocumentTypesService.getDocumentTypes();
         vm.getSources = getSources;
         vm.getItSources = getItSources;
-        vm.createSource = createSource;
-        vm.openPopover = openPopover;
-        vm.closePopover = closePopover;
+        vm.openSourceTypeModal = openSourceTypeModal;
         vm.checkSource = checkSource;
         vm.documentFieldsRules = documentFieldsRules;
         const allSourceTypes = DocumentTypesService.getSourceTypes();
@@ -59,6 +58,7 @@
         const documentService = context.getDocumentService();
         const deregisteres = [];
         vm.openDocumentAffiliationForm = openDocumentAffiliationsForm;
+        vm.newSource = {};
 
         vm.$onInit = function () {
             if (_.isFunction(vm.document.clone))
@@ -66,7 +66,6 @@
             else
                 documentBackup = _.cloneDeep(vm.document);
 
-            watchDocument();
             watchDocumentSourceType();
             watchDocumentType();
         };
@@ -76,25 +75,18 @@
                 deregisterer();
         };
 
-        function watchDocument() {
-            const fieldsToWatch = vm.document.fields;
-            _.forEach(fieldsToWatch, function (f) {
-                deregisteres.push($scope.$watch('vm.document.' + f, prepareSave, true));
-            });
-        }
-
         function watchDocumentSourceType() {
             const dereg = $scope.$watch('vm.document.sourceType', (newValue, oldValue) => {
                 if (newValue === oldValue)
                     return;
-                closePopover();
+
                 if (!newValue) {
                     vm.sourceLabel = '';
                     return;
                 }
 
                 vm.sourceLabel = _.find(allSourceTypes, {id: newValue}).label;
-                if (vm.document.source.type !== vm.document.sourceType)
+                if (vm.document.source && vm.document.source.type !== vm.document.sourceType)
                     vm.document.source = null;
             });
 
@@ -103,7 +95,6 @@
 
         function watchDocumentType() {
             const dereg = $scope.$watch('vm.document.type', newValue => {
-                closePopover();
                 const allowedSources = _.find(vm.documentTypes, {key: newValue}).allowedSources;
                 vm.sourceTypes = _.filter(allSourceTypes, s => allowedSources.includes(s.id));
             });
@@ -138,27 +129,14 @@
             };
         }
 
-        function prepareSave(newValue, oldValue) {
-            const isNotChanged = (newValue === oldValue);
-            const isNewAndEmpty = ((_.isNil(oldValue)) && newValue === "");
-            const isStillEmpty = (_.isNil(oldValue) && _.isNil(newValue));
-
-            if (isNotChanged || isNewAndEmpty || isStillEmpty)
-                return;
-
-            vm.status.setSaved(false);
-
-            if (debounceTimeout !== null)
-                $timeout.cancel(debounceTimeout);
-
-            debounceTimeout = $timeout(saveDocument, debounceTime);
-        }
-
         function saveDocument() {
+            console.log(vm.document.id);
             if (vm.document.id)
                 return vm.document.save().then(() => {
                     vm.status.setSaved(true);
                     EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
+                }).catch((response) => {
+                    //console.log(response);
                 });
             else
                 return documentService.createDraft(vm.document)
@@ -166,6 +144,14 @@
                         vm.document = draft;
                         vm.status.setSaved(true);
                         EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
+
+                        return vm.document;
+                    }, (res) => {
+                        if (res.data && res.data.invalidAttributes) {
+                            vm.document.invalidAttributes = res.data.invalidAttributes;
+                        }
+                        //console.log(vm.document);
+                        return vm.document;
                     });
         }
 
@@ -177,18 +163,6 @@
                 saveDocument();
 
             close();
-        }
-
-        function undo() {
-            ModalService.multipleChoiceConfirm(
-                'Undo',
-                'Do you want to undo the last changes?',
-                ['Proceed'])
-                .then(res => {
-                    if (res === 0)
-                        vm.document = _.cloneDeep(documentBackup);
-                })
-                .catch(() => true);
         }
 
         function getSources(searchText) {
@@ -213,25 +187,16 @@
             return Restangular.all(sourceData.model).getList(sourceData.query);
         }
 
-
-        function createSource() {
-            vm.newSource.type = vm.document.sourceType;
-            return Restangular.all('sources').post(vm.newSource)
-                .then(source => {
-                    vm.document.source = source;
-                    vm.newSource = {};
-                    closePopover();
-                });
-        }
-
-        function openPopover($event) {
+        function openSourceTypeModal($event) {
             $event.stopPropagation();
-            vm.popoverIsOpen = true;
-        }
 
+            $rootScope.$on('newSource', function(event, source) {
+                vm.document.source = source;
+                vm.getSources(source.title);
+            });
 
-        function closePopover() {
-            vm.popoverIsOpen = false;
+            ModalService
+                .openSourceTypeModal(vm.document);
         }
 
         function openDocumentAffiliationsForm() {
@@ -245,10 +210,38 @@
                 vm.document.source = null;
         }
 
-
         function verify() {
             saveDocument()
-                .then(() => close())
+                .then(() => {
+                    if (vm.document.invalidAttributes || !vm.document.isValid) {
+                        if (!vm.document.invalidAttributes) {
+                            vm.document.invalidAttributes = {};
+                        }
+                        if (!vm.document.hasValidAuthorsStr) {
+                            if(!vm.document.invalidAttributes.authors) {
+                                vm.document.invalidAttributes.authors = [];
+                            }
+                            vm.document.invalidAttributes.authors.push({
+                                rule: 'valid',
+                                message: 'Author string is not valid. It should be in the form \'E. Molinari, F. Bozzini, F. Semprini\'.'
+                            });
+                        }
+
+                        if (!vm.document.hasValidYear) {
+                            if(!vm.document.invalidAttributes.year) {
+                                vm.document.invalidAttributes.year = [];
+                            }
+                            vm.document.invalidAttributes.year.push({
+                                rule: 'valid',
+                                message: 'Not a valid year.'
+                            });
+                        }
+
+                        return Promise.reject();
+                    } else {
+                        close();
+                    }
+                })
                 .then(() => documentService.verifyDraft(vm.document));
         }
 

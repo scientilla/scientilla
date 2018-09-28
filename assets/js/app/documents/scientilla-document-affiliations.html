@@ -1,5 +1,5 @@
-<small class="scientilla-document-institutes">
-    <div ng-repeat='(i, institute) in vm.document.institutes'>{{vm.document.getInstituteIdentifier(i)}} -
-        {{institute.name}}
-    </div>
-</small>
+<ul class="document-institutes">
+    <li ng-repeat="(i, institute) in vm.document.institutes">
+        {{ vm.document.getInstituteIdentifier(i) }} - {{ institute.name }}
+    </li>
+</ul>

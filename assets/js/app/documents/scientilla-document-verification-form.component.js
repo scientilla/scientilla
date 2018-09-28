@@ -56,7 +56,6 @@
                 if (user.getType() === 'group')
                     return vm.onFailure()();
 
-
                 vm.verificationData.position = vm.document.getUserIndex(user);
                 vm.verificationData.synchronize = vm.document.synchronized;
                 vm.verificationData.public = true;
@@ -167,7 +166,6 @@
                         vm.verificationData[fields[index]] = false;
                 };
             }
-
 
             function getInstitutes() {
                 if (_.isNil(vm.verificationData.position) || vm.verificationData.position < 0)

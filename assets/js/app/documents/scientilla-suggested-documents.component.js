@@ -48,9 +48,6 @@
         vm.searchForm = Object.assign({},
             documentSearchForm,
             {
-                newline1: {
-                    inputType: 'br'
-                },
                 rejected: {
                     inputType: 'checkbox',
                     label: 'Show discarded documents',

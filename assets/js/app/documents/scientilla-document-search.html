@@ -1,32 +1,59 @@
-<h1>Search and import</h1>
-<br>
-<form autocomplete="off" ng-submit="vm.doSearch()">
-    <div class="form-group">
-        <label>Origin</label>
-        <select class="form-control"
-                ng-model="vm.origin"
-                ng-options="option.key as option.label for option in vm.documentOrigins">
-        </select>
-    </div>
-    <div class="form-group">
-        <label>Search by</label>
-        <select class="form-control"
-                ng-model="vm.search.key">
-            <option value="doi">DOI</option>
-            <option value="originId">Scopus ID</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label>Search value</label>
-        <i class="small" ng-bind-html="vm.getValueExplanation()"></i>
-        <input class="form-control"
-               placeholder="Search"
-               ng-model="vm.search.value"
-        >
-    </div>
-    <div ng-if="vm.status===vm.statuses.SEARCHING">
-        Searching
-    </div>
-    <scientilla-button type="submit" ng-disabled="vm.isSearchDisabled()">Search</scientilla-button>
-    <scientilla-button type="cancel" click="vm.cancel()">Close</scientilla-button>
-</form>
+<div class="modal-header">
+    <h3>Search and import</h3>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <form autocomplete="off" ng-submit="vm.doSearch()">
+        <div class="form-group">
+            <label>Origin</label>
+            <div class="select-wrapper">
+                <select
+                    class="form-control"
+                    ng-model="vm.origin"
+                    ng-options="option.key as option.label for option in vm.documentOrigins">
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Search by</label>
+            <div class="select-wrapper">
+                <select
+                    class="form-control"
+                    ng-model="vm.search.key">
+                    <option value="doi">DOI</option>
+                    <option value="originId">Scopus ID</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Search value <i class="small" ng-bind-html="vm.getValueExplanation()"></i></label>
+            <input
+                class="form-control"
+                placeholder="Search"
+                ng-model="vm.search.value"
+            >
+        </div>
+        <div ng-if="vm.status===vm.statuses.SEARCHING">
+            Searching
+        </div>
+
+        <ul class="modal-buttons">
+            <li>
+                <scientilla-button
+                    type="submit"
+                    ng-disabled="vm.isSearchDisabled()">Search</scientilla-button>
+            </li>
+            <li>
+                <scientilla-button
+                    type="cancel"
+                    click="vm.cancel()">Close</scientilla-button>
+            </li>
+        </ul>
+    </form>
+</div>

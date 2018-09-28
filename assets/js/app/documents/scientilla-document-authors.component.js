@@ -21,6 +21,8 @@
         vm.$onInit = () => {
             if (!vm.type)
                 vm.type = 'default';
+
+            //console.log(vm);
         };
 
     }
