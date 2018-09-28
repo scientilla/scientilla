@@ -1,16 +1,38 @@
-<scientilla-component-form
+<div class="modal-header">
+    <h3>{{ !!vm.group.id ? 'Edit' : 'Create a new' }} group</h3>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <scientilla-component-form
         structure="vm.formStructure"
         css-class="form-group-sm"
         on-submit="vm.submit"
->
-    <scientilla-multicomplete
+    >
+        <scientilla-multicomplete
             items="vm.group.administrators"
             query="vm.getUsersQuery"
             filter="vm.group.administrators"
             title="Administrators"
-    >
-    </scientilla-multicomplete>
-    <scientilla-button type="submit" click="vm.submit()">Save</scientilla-button>
-    <scientilla-button type="cancel" click="vm.cancel()">Cancel</scientilla-button>
-</scientilla-component-form>
+        >
+        </scientilla-multicomplete>
 
+        <ul class="modal-buttons">
+            <li>
+                <scientilla-button
+                    type="submit"
+                    click="vm.submit()">Save</scientilla-button>
+            </li>
+            <li>
+                <scientilla-button
+                    type="cancel"
+                    click="vm.cancel()">Cancel</scientilla-button>
+            </li>
+        </ul>
+    </scientilla-component-form>
+</div>

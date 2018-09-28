@@ -15,7 +15,6 @@
 
     GroupFormController.$inject = [
         'GroupsService',
-        'FormForConfiguration',
         'Notification',
         'AuthService',
         '$scope',
@@ -23,7 +22,7 @@
         'groupTypeLabels'
     ];
 
-    function GroupFormController(GroupsService, FormForConfiguration, Notification, AuthService, $scope, groupTypes, groupTypeLabels) {
+    function GroupFormController(GroupsService, Notification, AuthService, $scope, groupTypes, groupTypeLabels) {
         const vm = this;
         vm.getUsersQuery = getUsersQuery;
         vm.cancel = cancel;
@@ -35,7 +34,8 @@
                 inputType: 'text',
                 label: 'Title',
                 defaultValue: vm.group.name,
-                ngIf: isAdmin
+                ngIf: isAdmin,
+                required: true
             },
             slug: {
                 inputType: 'text',
@@ -90,7 +90,6 @@
         vm.$onInit = function () {
             delete vm.group.members;
             delete vm.group.memberships;
-            FormForConfiguration.enableAutoLabels();
             $scope.$watch('vm.group.name', nameChanged);
         };
 
@@ -110,7 +109,6 @@
         function submit(group) {
             if (!group) return;
 
-
             for (const key of Object.keys(vm.formStructure))
                 vm.group[key] = group[key];
 
@@ -122,10 +120,11 @@
                     Notification.success("Group data saved");
                     if (_.isFunction(vm.onSubmit()))
                         vm.onSubmit()(1);
-                })
-                .catch(function () {
-                    Notification.warning("Failed to save group");
-                    executeOnFailure();
+                }, function (res) {
+                    var invalidAttributes = res.data.invalidAttributes;
+                    for(var property in invalidAttributes){
+                        vm.formStructure[property].invalidAttributes = invalidAttributes[property];
+                    }
                 });
         }
 

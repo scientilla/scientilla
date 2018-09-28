@@ -1,74 +1,82 @@
 <scientilla-filter
-        search-form-structure="vm.searchForm"
-        on-filter="vm.onFilter"
-        elements="vm.members"
-        empty-list-message="No members found">
+    search-form-structure="vm.searchForm"
+    on-filter="vm.onFilter"
+    elements="vm.members"
+    empty-list-message="No members found">
 
     <item-list>
-        <div ng-repeat="m in vm.members" class="col-md-6 scientilla-user-card" ng-style="m.cssStyle">
-            <div class="row">
-                <div class="col-xs-10">
-                    <a ng-href="#{{m.getProfileUrl()}}">
-                        {{m| fullname}}
+        <ul class="group-member-listing">
+            <li ng-repeat="m in vm.members" ng-class="m.cssClass">
+                <div>
+                    <a
+                        ng-href="#{{ m.getProfileUrl() }}"
+                        class="group-member-fullname"
+                        >
+                        {{ m | fullname }}
                     </a>
-                    <small>{{m.jobTitle}}</small>
-                    <br/>
-                    {{m.membership.type.label}}
-                    <span ng-if="m.membership.level>0" title="Inherited from subgroups" class="fa fa-user-times"></span>
+                    <ul class="member-info">
+                        <li><strong>Job title:</strong> {{ m.jobTitle }}</li>
+                        <li><strong>Label:</strong> {{ m.membership.type.label }}</li>
+                    </ul>
+                    <!-- TODO -->
+                    <span
+                        ng-if="m.membership.level>0"
+                        title="Inherited from subgroups"
+                        class="fa fa-user-times"></span>
                 </div>
-                <div class="col-xs-2 text-right">
-                    <button ng-click="vm.removeCollaborator(m)"
-                            ng-if="vm.isAdmin() && m.membership.level === 0 && [vm.membershipTypes.COLLABORATOR.id,vm.membershipTypes.FORMER_COLLABORATOR.id].includes(m.membership.type.id)"
-                            class="btn btn-primary"
-                            title="Remove collaborator"
-                    >X
+                <div>
+                    <button
+                        ng-click="vm.removeCollaborator(m)"
+                        ng-if="vm.isAdmin() && m.membership.level === 0 && [vm.membershipTypes.COLLABORATOR.id,vm.membershipTypes.FORMER_COLLABORATOR.id].includes(m.membership.type.id)"
+                        class="btn btn-primary"
+                        title="Remove collaborator">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
-            </div>
-        </div>
+            </li>
+        </ul>
     </item-list>
 </scientilla-filter>
 
-
-<div ng-if="vm.isAdmin()">
-    <hr>
-    <h3>Add collaborator</h3>
-    <div class="panel panel-default">
-        <div class="panel-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <input type="text"
-                           class="form-control"
-                           ng-model="vm.selectedUser"
-                           uib-typeahead="user as user.getDisplayName() for user in vm.getUsers($viewValue)"
-                           typeahead-loading="searching"
-                           typeahead-no-results="noResults"
-                           data-ng-required="true"
-                           placeholder="Search User"
-                           ng-model-options="{ allowInvalid: true }"
-                           typeahead-editable="false"
-                           typeahead-select-on-blur="true"
-                    />
-                </div>
-            </div>
-            <br>
-            <div class="row" ng-show="vm.selectedUser">
-                <div class="col-md-4">
-                                    <span>
-                                        {{vm.selectedUser.getDisplayName()}}
-                                    </span>
-                </div>
-                <div class="col-md-2">
-                    <label><input type="checkbox" ng-model="vm.selectedUserActive"/> Active</label>
-                </div>
-                <div class="col-md-3">
-                    <button type="button"
-                            class="btn btn-link fa fa-plus"
-                            ng-click="vm.addCollaborator(vm.group, vm.selectedUser, vm.selectedUserActive)"
-                            title="Add {{vm.selectedUser.getDisplayName()}} as a collaborator">
-                    </button>
-                </div>
-            </div>
+<div
+    ng-if="vm.isAdmin()"
+    class="card">
+    <div class="card-body">
+        <h2>Add collaborator</h2>
+        <div class="dropdown-container add-scroll add-collaborator-field-container">
+            <input
+            type="text"
+            class="form-control add-collaborator-field"
+            ng-model="vm.selectedUser"
+            uib-typeahead="user as user.getDisplayName() for user in vm.getUsers($viewValue)"
+            typeahead-loading="searching"
+            typeahead-no-results="noResults"
+            data-ng-required="true"
+            placeholder="Search User"
+            ng-model-options="{ allowInvalid: true }"
+            typeahead-editable="false"
+            typeahead-select-on-blur="true"/>
         </div>
+
+        <ul 
+            class="selected-user";
+            ng-show="vm.selectedUser">
+            <li>{{ vm.selectedUser.getDisplayName() }}</li>
+            <li>
+                <label class="form-checkbox">
+                    <input type="checkbox" ng-model="vm.selectedUserActive"/>
+                    <span>Active member?</span>
+                </label>
+            </li>
+            <li>
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    ng-click="vm.addCollaborator(vm.group, vm.selectedUser, vm.selectedUserActive)"
+                    title="Add {{vm.selectedUser.getDisplayName()}} as a collaborator">
+                    <i class="fas fa-plus fa-left"></i>Add collaborator
+                </button>
+            </li>
+        </ul>
     </div>
 </div>

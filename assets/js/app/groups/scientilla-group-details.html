@@ -1,30 +1,36 @@
 <scientilla-backend-layout>
-    <div>
-        <h1>{{vm.group.getDisplayName()}}</h1>
-    </div>
-    <br/>
-    <div>
+    <div class="groups group-detail">
+        <h1>{{ vm.group.getDisplayName() }}</h1>
+
         <uib-tabset active="active">
             <uib-tab index="0">
                 <uib-tab-heading>Info</uib-tab-heading>
-                <scientilla-group-info ng-if="vm.group" group="vm.group"></scientilla-group-info>
+                <scientilla-group-info
+                    ng-if="vm.group"
+                    group="vm.group"></scientilla-group-info>
             </uib-tab>
             <uib-tab index="1">
                 <uib-tab-heading>Members</uib-tab-heading>
-                <scientilla-group-members ng-if="vm.group" group="vm.group"
-                                          refresh-group="vm.getGroup"></scientilla-group-members>
+                <scientilla-group-members
+                    ng-if="vm.group"
+                    group="vm.group"
+                    refresh-group="vm.getGroup"></scientilla-group-members>
             </uib-tab>
-            <uib-tab index="2" ng-show="vm.group.childGroups.length || vm.researchEntity.isAdmin()">
+            <uib-tab
+                index="2"
+                ng-show="vm.group.childGroups.length || vm.researchEntity.isAdmin()">
                 <uib-tab-heading>Groups</uib-tab-heading>
-                <scientilla-group-groups ng-if="vm.group" group="vm.group"
-                                         refresh-group="vm.getGroup"></scientilla-group-groups>
+                <scientilla-group-groups
+                    ng-if="vm.group"
+                    group="vm.group"
+                    refresh-group="vm.getGroup"></scientilla-group-groups>
             </uib-tab>
             <uib-tab index="3">
                 <uib-tab-heading>Documents</uib-tab-heading>
                 <scientilla-documents-list
-                        ng-if="vm.group"
-                        research-entity="vm.group"
-                        section="vm.documentListSections.GROUP"></scientilla-documents-list>
+                    ng-if="vm.group"
+                    research-entity="vm.group"
+                    section="vm.documentListSections.GROUP"></scientilla-documents-list>
             </uib-tab>
         </uib-tabset>
     </div>

@@ -37,19 +37,9 @@
                 options: {
                     chart: {
                         type: 'pieChart',
-                        legendPosition: 'right',
+                        legendPosition: 'top',
                         labelThreshold: 0.02,
                         labelSunbeamLayout: true,
-                        legend: {
-                            margin: {
-                                top: 5,
-                                right: 35,
-                                bottom: 15,
-                                left: 15
-                            }
-                        },
-                        height: 400,
-                        width: 800,
                         duration: 300,
                         x: d => d.role,
                         y: d => d.value,
@@ -60,7 +50,5 @@
         }
 
         /* jshint ignore:end */
-
-
     }
 })();

@@ -1,38 +1,55 @@
-<div>
-    <span>
-        <label>Type:</label> <span>{{vm.group.type}}</span>
-        <br>
-    </span>
-    <span ng-if="vm.group.pis.length">
-        <label>PI:</label>
-        <span ng-repeat="pi in vm.group.pis">
-            <a ng-href="#{{pi.getProfileUrl()}}">{{pi.getDisplayName()}}</a>
-        </span>
-        <br>
-    </span>
-    <span ng-if="vm.group.starting_date">
-        <label>Starting date:</label> <span>{{vm.group.starting_date | date : 'd LLLL yyyy'}}</span>
-        <br>
-    </span>
-    <span ng-if="vm.researchDomain">
-        <label>Research domain:</label> <span>{{vm.researchDomain.name}}</span>
-        <br>
-    </span>
-    <span ng-if="vm.interactions.length">
-        <label>Interactions:</label> <span
-            ng-repeat="interaction in vm.interactions">{{interaction.name}} </span>
-        <br>
-    </span>
-    <span ng-if="vm.group.scopusId">
-        <a ng-href="https://www.scopus.com/affil/profile.uri?afid={{vm.group.scopusId}}" target="_blank">
-            Scopus profile
-        </a>
-        <br>
-    </span>
-    <span>
-        <label>Current members*:</label> <span>{{vm.totalMembers}}</span>
-        <br>
-    </span>
-    <nvd3 options="vm.chart.options" data="vm.chart.data"></nvd3>
-    <i>*This representation of group members may not be accurate or up-to-date. If you need to use this data, please contact the HR Office.</i>
+<div class="table-responsive">
+    <table class="table table-striped table-condensed">
+        <tr>
+            <td><strong>Type:</strong></td>
+            <td>{{ vm.group.type }}</td>
+        </tr>
+        <tr ng-if="vm.group.pis.length">
+            <td><strong>PI:</strong></td>
+            <td>
+                <ul class="pi">
+                    <li ng-repeat="pi in vm.group.pis">
+                        <a ng-href="#{{ pi.getProfileUrl() }}">{{ pi.getDisplayName() }}</a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr ng-if="vm.group.starting_date">
+            <td><strong>Starting date:</strong></td>
+            <td>{{ vm.group.starting_date | date : 'd LLLL yyyy' }}</td>
+        </tr>
+        <tr ng-if="vm.researchDomain">
+            <td><strong>Research domain:</strong></td>
+            <td>{{ vm.researchDomain.name }}</td>
+        </tr>
+        <tr ng-if="vm.interactions.length">
+            <td><strong>Interactions:</strong></td>
+            <td>
+                 <ul class="interactions">
+                    <li ng-repeat="interaction in vm.interactions">
+                        {{ interaction.name }}
+                    </li>
+                </ul>
+            </td>
+        </tr>
+        <tr ng-if="vm.group.scopusId">
+            <td><strong>Scopus:</strong></td>
+            <td>
+                <a
+                    ng-href="https://www.scopus.com/affil/profile.uri?afid={{vm.group.scopusId}}"
+                    target="_blank">
+                    Scopus profile
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Current members*:</strong></td>
+            <td>{{ vm.totalMembers }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="chart-container">
+    <nvd3 options="vm.chart.options" data="vm.chart.data" class="chart"></nvd3>
+    <p class="chart-info">* This representation of group members may not be accurate or up-to-date. If you need to use this data, please contact the HR Office.</p>
 </div>
