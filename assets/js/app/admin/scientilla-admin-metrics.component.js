@@ -27,6 +27,9 @@
         vm.metrics = [];
         vm.metricsSearch = '';
 
+        vm.metricsToAdd = [];
+        vm.metricsToRemove = [];
+
         vm.$onInit = function () {
         };
 
@@ -49,7 +52,6 @@
             if (!source) return '';
             return source.title + ' | ' + source.issn + ' | ' + source.eissn + ' | ' + source.scopusId;
         }
-
 
         /* jshint ignore:start */
         function onMetricSearchKey(event) {
@@ -80,13 +82,18 @@
                 }
             };
             vm.foundMetrics = await Restangular.all('sourceMetrics').getList(qs);
-
         }
 
         /* jshint ignore:end */
 
         function selectMetric(metric) {
             metric.selected = !metric.selected;
+
+            if (vm.foundMetrics)
+                vm.metricsToAdd = vm.foundMetrics.filter(m => m.selected);
+
+            if(vm.selectedSource)
+                vm.metricsToRemove = vm.selectedSource.metrics.filter(m => m.selected);
         }
 
         /* jshint ignore:start */
@@ -94,33 +101,37 @@
             if (!vm.selectedSource || !vm.foundMetrics)
                 return;
 
-            const metricsToAdd = vm.foundMetrics.filter(m => m.selected);
-
-            if (!metricsToAdd.length)
+            if (!vm.metricsToAdd.length)
                 return;
 
-            const sourceMetricSources = metricsToAdd.map(m => ({
+            const sourceMetricSources = vm.metricsToAdd.map(m => ({
                 sourceMetric: m.id,
                 source: vm.selectedSource.id
             }));
 
+            await Restangular.all('sourcemetricsources')
+                .post(sourceMetricSources)
+                .then(() => {
+                    vm.metricsToAdd = [];
+                    vm.foundMetrics.forEach(function(metric) {
+                        metric.selected = false;
+                    });
+                });
 
-            await Restangular.all('sourcemetricsources').post(sourceMetricSources);
-            vm.selectedSource = await Restangular.one('sources', vm.selectedSource.id).get({populate: 'metrics'});
+            vm.selectedSource = await Restangular.one('sources', vm.selectedSource.id)
+                .get({populate: 'metrics'});
         }
 
         async function removeMetric() {
             if (!vm.selectedSource || !vm.selectedSource.metrics)
                 return;
 
-            const metricsToRemove = vm.selectedSource.metrics.filter(m => m.selected);
-
-            if (!metricsToRemove.length)
+            if (!vm.metricsToRemove.length)
                 return;
 
             const criteria = {
                 where: {
-                    or: metricsToRemove.map(m => ({
+                    or: vm.metricsToRemove.map(m => ({
                         sourceMetric: m.id,
                         source: vm.selectedSource.id
                     }))
@@ -130,7 +141,10 @@
             const sourceMetricSourcesToDelete = await Restangular.all('sourcemetricsources').getList(criteria);
 
             for (const sms of sourceMetricSourcesToDelete)
-                await sms.remove();
+                await sms.remove()
+                    .then(() => {
+                        vm.metricsToRemove = [];
+                    });
 
             vm.selectedSource = await Restangular.one('sources', vm.selectedSource.id)
                 .get({populate: 'metrics'});

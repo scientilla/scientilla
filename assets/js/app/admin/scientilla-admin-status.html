@@ -1,5 +1,12 @@
-<h3>Status Management</h3>
-Current Status: {{vm.isAvailable() ? "Enabled" : "Disabled"}}
-<br>
-<scientilla-button ng-if="!vm.isAvailable()" ng-click="vm.enable()">Enable</scientilla-button>
-<scientilla-button ng-if="vm.isAvailable()" ng-click="vm.disable()">Disable</scientilla-button>
+<h2>Status management</h2>
+<p class="{{ vm.isAvailable() ? 'status-enabled' : 'status-disabled' }}">
+    Current Status: <span class="status-dot"></span>{{ vm.isAvailable() ? "Enabled" : "Disabled" }}
+</p>
+
+<scientilla-button
+    ng-if="!vm.isAvailable()"
+    ng-click="vm.enable()">Enable</scientilla-button>
+
+<scientilla-button
+    ng-if="vm.isAvailable()"
+    ng-click="vm.disable()">Disable</scientilla-button>
