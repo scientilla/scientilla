@@ -54,8 +54,6 @@ module.exports = _.merge({}, BaseModel, {
             await SourceMetric.update({id: record.id}, selectedData);
         else
             await SourceMetric.create(selectedData);
-
-        return await SourceMetric.findOne(criteria);
     },
     assignMetrics: async function () {
         sails.log.info('Source metrics assign started');
