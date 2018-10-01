@@ -458,6 +458,9 @@ async function importSourceMetrics(filename) {
                 record.value = workSheetRow[vc];
                 await SourceMetric.createOrUpdate(criteria, record);
                 recordsCount++;
+
+                if (recordsCount % 1000 === 0)
+                    sails.log.debug('source metrics inserted/updated: ' + recordsCount);
             }
         }
     }
