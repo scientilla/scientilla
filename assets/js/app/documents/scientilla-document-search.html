@@ -10,35 +10,43 @@
 
 <div class="modal-body">
     <form autocomplete="off" ng-submit="vm.doSearch()">
-        <div class="form-group">
-            <label>Origin</label>
-            <div class="select-wrapper">
-                <select
-                    class="form-control"
-                    ng-model="vm.origin"
-                    ng-options="option.key as option.label for option in vm.documentOrigins">
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Search by</label>
-            <div class="select-wrapper">
-                <select
-                    class="form-control"
-                    ng-model="vm.search.key">
-                    <option value="doi">DOI</option>
-                    <option value="originId">Scopus ID</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Search value <i class="small" ng-bind-html="vm.getValueExplanation()"></i></label>
-            <input
-                class="form-control"
-                placeholder="Search"
-                ng-model="vm.search.value"
-            >
-        </div>
+        <ul class="document-search-listing">
+            <li>
+                <div class="form-group">
+                    <label>Origin</label>
+                    <div class="select-wrapper">
+                        <select
+                            class="form-control"
+                            ng-model="vm.origin"
+                            ng-options="option.key as option.label for option in vm.documentOrigins">
+                        </select>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="form-group">
+                    <label>Search by</label>
+                    <div class="select-wrapper">
+                        <select
+                            class="form-control"
+                            ng-model="vm.search.key">
+                            <option value="doi">DOI</option>
+                            <option value="originId">Scopus ID</option>
+                        </select>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="form-group">
+                    <label>Search value <i class="small" ng-bind-html="vm.getValueExplanation()"></i></label>
+                    <input
+                        class="form-control"
+                        placeholder="Search"
+                        ng-model="vm.search.value">
+                </div>
+            </li>
+        </ul>
+
         <div ng-if="vm.status===vm.statuses.SEARCHING">
             Searching
         </div>

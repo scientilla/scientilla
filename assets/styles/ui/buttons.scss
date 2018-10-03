@@ -4,6 +4,11 @@
         background: $deep-cerulean;
         color: $white;
     }
+
+    &:focus,
+    &.focus{
+        color: $white;
+    }
 }
 
 .btn-warning{
