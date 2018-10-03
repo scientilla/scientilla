@@ -44,7 +44,6 @@
             const goingToNoRedirectUrl = next.$$route && noRedirectUrls.includes(next.$$route.originalPath);
             if (!goingToNoRedirectUrl && !AuthService.isAvailable && !AuthService.isAdmin) {
                 Notification.warning('Sorry but scientilla is temporarly unavailable. Try again later.');
-                ModalService.dismiss(null);
                 path.goTo('/unavailable');
                 return;
             }
@@ -55,6 +54,7 @@
                     path.goTo("/login");
                 }
             }
+            ModalService.dismiss(null);
         });
 
         $rootScope.$on('$locationChangeSuccess', (event, current) =>
