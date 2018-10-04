@@ -283,7 +283,9 @@
                         return '<li><scientilla-button click="vm.ok(' + i + ')">' + b + '</scientilla-button></li>';
                     }).join('');
 
-                buttons += '<li><scientilla-button click="vm.cancel()" type="cancel">' + cancelLabel + '</scientilla-button></li>';
+                if (cancelLabel !== false) {
+                    buttons += '<li><scientilla-button click="vm.cancel()" type="cancel">' + cancelLabel + '</scientilla-button></li>';
+                }
 
                 var template = `<div class="modal-header">
                                     <h3 class="confirm-title" ng-if="vm.title">{{vm.title}}</h3>

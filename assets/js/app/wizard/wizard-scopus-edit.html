@@ -29,7 +29,9 @@
                     ng-model="vm.user.orcidId">
             </div>
 
-            <scientilla-button type="secondary">Save profile</scientilla-button>
+            <scientilla-button 
+                type="submit"
+                ng-disabled="vm.saveStatus.state !== 'ready to save'">{{ vm.saveStatus.message }}</scientilla-button>
         </form>
     </div>
 </div>

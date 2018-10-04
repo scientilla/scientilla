@@ -13,10 +13,11 @@
         });
 
     wizardContainer.$inject = [
-        'context'
+        'context',
+        'ModalService'
     ];
 
-    function wizardContainer(context) {
+    function wizardContainer(context, ModalService) {
         const vm = this;
 
         vm.currentStep = 0;
@@ -24,8 +25,8 @@
 
         vm.isStep = isStep;
         vm.closeModal = closeModal;
-        vm.nextStep = nextStep;
-        vm.prevStep = prevStep;
+        vm.setStep = setStep;
+        vm.checkStep = checkStep;
         vm.isNotPrev = isNotPrev;
         vm.isEnd = isEnd;
         vm.getStepsNumber = getStepsNumber;
@@ -35,6 +36,8 @@
             GROUP_ADMIN: 'groupAdmin',
             STANDARD: 'standard'
         };
+
+        var originalResearchEntity = Object.assign({}, vm.researchEntity);
 
         const allSteps = [
             {
@@ -82,7 +85,7 @@
         ];
 
         let steps = [];
-        vm.canChangeStep = true;
+        vm.formHasUnsavedData = false;
 
         vm.$onInit = function () {
             vm.currentStep = 0;
@@ -116,12 +119,42 @@
                 .catch(() => Notification.warning("Failed to save user"));
         }
 
-        function nextStep() {
-            vm.currentStep += (vm.currentStep < steps.length ? 1 : 0);
+        function setStep(step) {
+            switch(true) {
+                case step === 'next':
+                    vm.currentStep += (vm.currentStep < steps.length ? 1 : 0);
+                    break;
+                case step === 'previous':
+                    vm.currentStep -= (vm.currentStep > 0 ? 1 : 0);
+                    break;
+            }
         }
 
-        function prevStep() {
-            vm.currentStep -= (vm.currentStep > 0 ? 1 : 0);
+        function checkStep(step) {
+            if (vm.formHasUnsavedData) {
+                ModalService
+                    .multipleChoiceConfirm('Unsaved data',
+                        `Do you want to save this data?`,
+                        ['Yes', 'No'],
+                        false)
+                    .then(function (buttonIndex) {
+                        switch(buttonIndex) {
+                            case 0:
+                                vm.researchEntity.save();
+                                originalResearchEntity = Object.assign({}, vm.researchEntity);
+                                break;
+                            case 1:
+                                vm.researchEntity = Object.assign({}, originalResearchEntity);
+                                break;
+                        }
+
+                        vm.formHasUnsavedData = false;
+
+                        setStep(step);
+                    });
+            } else {
+                setStep(step);
+            }
         }
 
         function isNotPrev() {
@@ -137,11 +170,13 @@
         }
 
         function wizardCommands(command) {
-            if (command === 'stop')
-                vm.canChangeStep = false;
-            if (command === 'continue')
-                vm.canChangeStep = true;
-        }
+            if (command === 'formSaved') {
+                vm.formHasUnsavedData = false;
+            }
 
+            if (command === 'formUnsaved') {
+                vm.formHasUnsavedData = true;
+            }
+        }
     }
 })();
