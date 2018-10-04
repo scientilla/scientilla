@@ -199,9 +199,7 @@
                     <hr />
                     <h4>Abstract</h4>
                     <div>
-                        <span
-                            ng-if="vm.differentFields.includes('abstract')"
-                            class="highlight-text">
+                        <span ng-class="{'highlight-text': vm.differentFields.includes('abstract')}">
                             {{ vm.document2.abstract }}
                         </span>
                     </div>
