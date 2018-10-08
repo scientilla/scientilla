@@ -121,7 +121,6 @@
             return modal.result;
         };
 
-
         service.openScientillaUserForm = function (user) {
 
             const scopeVars = {
@@ -279,6 +278,12 @@
                     buttonLabels: buttonLabels
                 };
 
+                let args = {
+                    backdrop: 'static',
+                    keyboard: false
+                };
+                let closeable = false;
+
                 var buttons = scope.buttonLabels.map(function (b, i) {
                         return '<li><scientilla-button click="vm.ok(' + i + ')">' + b + '</scientilla-button></li>';
                     }).join('');
@@ -292,6 +297,7 @@
                                     <button
                                         type="button"
                                         class="close"
+                                        ng-if="closeable"
                                         ng-click="vm.onClose()">
                                         <i class="fas fa-times"></i>
                                     </button>
@@ -304,7 +310,7 @@
                                     `</ul>
                                 </div>`;
 
-                const modal = openModal(template, scope);
+                const modal = openModal(template, scope, args);
 
                 modal.result.catch(function (err) {
                     reject(err);
@@ -315,6 +321,7 @@
 
         service.openWizard = function (steps, config = {}) {
             let args = {};
+            let closeable = false;
 
             if (config.size) {
                 args.size = config.size;
@@ -325,11 +332,13 @@
                     backdrop: 'static',
                     keyboard: false
                 });
+            } else {
+                closeable = true;
             }
 
-            const modal = openComponentModal('wizard-container', {steps: steps}, args);
+            const modal = openComponentModal('wizard-container', {steps: steps}, args, closeable);
             addModalObject(modal);
-            return modal.result;
+            return modal;
         };
 
         service.confirm = function (title, message) {
@@ -343,21 +352,24 @@
         return service;
 
         // private
-        function openComponentModal(component, data, args) {
+        function openComponentModal(component, data, args, closeable) {
             const callbacks = getDefaultCallbacks();
 
             const resolve = {
                 data,
-                callbacks
+                callbacks,
+                closable: closeable
             };
 
-            return $uibModal.open(
+            var modal = $uibModal.open(
                 _.defaults({
                     animation: true,
                     component: component,
                     resolve: resolve
                 }, args)
             );
+
+            return modal;
         }
 
         function openModal(template, scope, args) {
@@ -369,7 +381,7 @@
                 _.assign(this, scope);
             };
 
-            return $uibModal.open(
+            var modal = $uibModal.open(
                 _.defaults({
                     animation: true,
                     template: template,
@@ -377,6 +389,8 @@
                     controllerAs: 'vm'
                 }, args)
             );
+
+            return modal;
         }
 
         function getDefaultCallbacks() {

@@ -9,9 +9,11 @@
     <button
         type="button"
         class="close"
+        ng-if="vm.resolve.closable"
         ng-click="vm.closeModal()">
         <i class="fas fa-times"></i>
     </button>
+    {{ vm.closeable }}
 </div>
 
 <div class="modal-body">

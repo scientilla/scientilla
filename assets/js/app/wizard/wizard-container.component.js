@@ -14,10 +14,12 @@
 
     wizardContainer.$inject = [
         'context',
-        'ModalService'
+        'Notification',
+        'ModalService',
+        '$rootScope'
     ];
 
-    function wizardContainer(context, ModalService) {
+    function wizardContainer(context, Notification, ModalService, $rootScope) {
         const vm = this;
 
         vm.currentStep = 0;
@@ -36,8 +38,6 @@
             GROUP_ADMIN: 'groupAdmin',
             STANDARD: 'standard'
         };
-
-        var originalResearchEntity = Object.assign({}, vm.researchEntity);
 
         const allSteps = [
             {
@@ -94,6 +94,29 @@
             steps = allSteps.filter(s => s.accessLevels.includes(accessLevel));
             if (vm.resolve.data.steps)
                 steps = steps.filter(s => vm.resolve.data.steps.includes(s.name));
+
+            let deregisterListener = $rootScope.$on('backdrop-wizard-modal', function(evt, modal) {
+                if (vm.formHasUnsavedData) {
+                    ModalService
+                        .multipleChoiceConfirm('Unsaved data',
+                            `Do you want to save this data?`,
+                            ['Yes', 'No'],
+                            false)
+                        .then(function (buttonIndex) {
+                            switch(buttonIndex) {
+                                case 0:
+                                    vm.researchEntity.save();
+                                    $rootScope.user = angular.copy(vm.researchEntity);
+                                    Notification.success("Profile data saved, you can now proceed");
+                                    break;
+                                default:
+                                    break;
+                            }
+
+                            vm.formHasUnsavedData = false;
+                        });
+                }
+            });
         };
 
         vm.$onDestroy = function () {
@@ -105,6 +128,28 @@
         }
 
         function closeModal() {
+
+            if (vm.formHasUnsavedData) {
+                ModalService
+                    .multipleChoiceConfirm('Unsaved data',
+                        `Do you want to save this data?`,
+                        ['Yes', 'No'],
+                        false)
+                    .then(function (buttonIndex) {
+                        switch(buttonIndex) {
+                            case 0:
+                                vm.researchEntity.save();
+                                $rootScope.user = angular.copy(vm.researchEntity);
+                                Notification.success("Profile data saved, you can now proceed");
+                                break;
+                            default:
+                                break;
+                        }
+
+                        vm.formHasUnsavedData = false;
+                    });
+            }
+
             if (!steps[vm.currentStep].researchEntityToSave) {
                 vm.resolve.callbacks.onClose();
                 return;
@@ -141,10 +186,10 @@
                         switch(buttonIndex) {
                             case 0:
                                 vm.researchEntity.save();
-                                originalResearchEntity = Object.assign({}, vm.researchEntity);
+                                $rootScope.user = angular.copy(vm.researchEntity);
+                                Notification.success("Profile data saved, you can now proceed");
                                 break;
-                            case 1:
-                                vm.researchEntity = Object.assign({}, originalResearchEntity);
+                            default:
                                 break;
                         }
 

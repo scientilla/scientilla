@@ -7,7 +7,7 @@
             controller: wizardScopusEdit,
             controllerAs: 'vm',
             bindings: {
-                user: '<',
+                user: '=',
                 wizardCommands: '&'
             }
         });
@@ -15,17 +15,27 @@
     wizardScopusEdit.$inject = [
         'UsersService',
         'Notification',
-        '$scope'
+        '$scope',
+        '$rootScope'
     ];
 
-    function wizardScopusEdit(UsersService, Notification, $scope) {
+    function wizardScopusEdit(UsersService, Notification, $scope, $rootScope) {
         const vm = this;
 
         vm.save = save;
         vm.unsavedData = false;
         vm.saveStatus = saveStatus();
+        vm.cancelSave = cancelSave;
 
         vm.$onInit = function () {
+
+            vm.unsavedData = false;
+            if (!$rootScope.user) {
+                $rootScope.user = angular.copy(vm.user);
+            } else {
+                vm.user = angular.copy($rootScope.user);
+            }
+
             $scope.$watch('idsForm.$pristine', function (formUntouched) {
                 if (!formUntouched) {
                     vm.wizardCommands()('formUnsaved');
@@ -37,7 +47,7 @@
         vm.$onDestroy = function () {
         };
 
-        function save() {
+        function save(editForm) {
             vm.saveStatus.setState('saving');
             UsersService
                 .doSave(vm.user)
@@ -46,9 +56,12 @@
                     vm.wizardCommands()('formSaved');
                     vm.unsavedData = false;
                     vm.saveStatus.setState('saved');
+                    $rootScope.user = angular.copy(vm.user);
 
                     setTimeout(function() {
                         vm.saveStatus.setState('ready to save');
+
+                        $scope.idsForm.$setPristine();
                     }, 1000);
                 })
                 .catch(function () {
@@ -57,8 +70,16 @@
 
                     setTimeout(function() {
                         vm.saveStatus.setState('ready to save');
+
+                        $scope.idsForm.$setPristine();
                     }, 1000);
                 });
+        }
+
+        function cancelSave() {
+            vm.unsavedData = false;
+            vm.user = angular.copy($rootScope.user);
+            $scope.idsForm.$setPristine();
         }
 
         function saveStatus() {

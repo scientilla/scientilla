@@ -6,7 +6,7 @@
         <p>By setting a Scopus identifier (Author ID), you will allow <strong>Scientilla</strong> for finding automatically most of your publications, including metadata. The Scopus ID is used in the <strong>external</strong> section to import documents.</p>
         <p>Learn how to retrieve your personal Scopus identifier watching the video and fill the Scopus identifier field. <a href="https://www.scopus.com/search/form.uri?display=authorLookup" target="_blank">Click here</a> to look for your identifier.</p>
 
-        <form ng-submit="vm.save()" name="idsForm">
+        <form ng-submit="vm.save(form)" name="idsForm">
             <div class="form-group has-feedback">
                 <label for="scopusId">Scopus id</label>
                 <input
@@ -29,9 +29,14 @@
                     ng-model="vm.user.orcidId">
             </div>
 
-            <scientilla-button 
+            <scientilla-button
                 type="submit"
-                ng-disabled="vm.saveStatus.state !== 'ready to save'">{{ vm.saveStatus.message }}</scientilla-button>
+                ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData">{{ vm.saveStatus.message }}</scientilla-button>
+
+            <scientilla-button
+                type="secondary"
+                ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData"
+                ng-click="vm.cancelSave()">Cancel</scientilla-button>
         </form>
     </div>
 </div>

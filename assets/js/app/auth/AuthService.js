@@ -8,14 +8,16 @@
         "UsersService",
         "ModalService",
         "localStorageService",
-        "EventsService"
+        "EventsService",
+        '$rootScope'
     ];
 
     function AuthService(Restangular,
                          UsersService,
                          ModalService,
                          localStorageService,
-                         EventsService) {
+                         EventsService,
+                         $rootScope) {
 
         const service = {
             isLogged: false,
@@ -62,13 +64,17 @@
                     });
 
                     EventsService.publish(EventsService.AUTH_LOGIN, service.user);
-                    if (!service.user.alreadyAccess)
+                    if (!service.user.alreadyAccess) {
                         ModalService.openWizard([
                             'welcome',
                             'scopus-edit',
                             'tutorial',
                             'admin-tutorial',
-                        ]);
+                        ], {
+                            isClosable: false,
+                            size: 'lg'
+                        });
+                    }
                 });
         }
 

@@ -115,7 +115,7 @@
         }
 
         function openWizard() {
-            ModalService.openWizard([
+            let modal = ModalService.openWizard([
                 'welcome',
                 'scopus-edit',
                 'tutorial',
@@ -123,6 +123,10 @@
             ], {
                 isClosable: true,
                 size: 'lg'
+            });
+
+            modal.result.catch(function (err) {
+                $rootScope.$emit('backdrop-wizard-modal', modal);
             });
 
             $rootScope.$emit('toggleMobileMenu');

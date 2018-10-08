@@ -155,7 +155,7 @@
         };
 
         function showInfo() {
-            ModalService.openWizard(['summary-metrics'], {style: 'light', isClosable: true});
+            ModalService.openWizard(['summary-metrics'], {isClosable: true});
         }
 
     }
