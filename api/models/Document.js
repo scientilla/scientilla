@@ -427,16 +427,13 @@ module.exports = _.merge({}, BaseModel, {
         return suggestedDocuments;
     },
     findCopies: async function (document, AuthorshipPositionNotToCheck = null, excludeMultipleVerification = true) {
-        function areAuthorshipsEqual(as1, as2) {
+        function areAuthorshipsAffiliationsMergeable(as1, as2) {
             return as1.every(a1 => {
                 const a2 = as2.find(a2 => a1.position === a2.position);
-                return (
-                    !a2 ||
-                    a1.position === AuthorshipPositionNotToCheck ||
-                    !_.isNil(a1.researchEntity) ||
-                    !_.isNil(a2.researchEntity) ||
-                    _.isEmpty(_.xor(_.map(a1.affiliations, 'institute'), _.map(a2.affiliations, 'institute')))
-                );
+                return a1.position === AuthorshipPositionNotToCheck ||
+                    !a1.affiliations.length ||
+                    !a2.affiliations.length ||
+                    Authorship.compareMetadata(a1, a2);
             });
         }
 
@@ -452,8 +449,8 @@ module.exports = _.merge({}, BaseModel, {
         const draftFullAuthorships = document.getFullAuthorships();
         const tmpCopies = similarDocuments.filter(d => {
             const copyFullAuthorships = d.getFullAuthorships();
-            return areAuthorshipsEqual(draftFullAuthorships, copyFullAuthorships) &&
-                areAuthorshipsEqual(copyFullAuthorships, draftFullAuthorships);
+            return draftFullAuthorships.length === copyFullAuthorships.length &&
+                areAuthorshipsAffiliationsMergeable(draftFullAuthorships, copyFullAuthorships);
         });
         return excludeMultipleVerification ? tmpCopies : tmpCopies.filter(d => {
             const copyFullAuthorships = d.getFullAuthorships();
@@ -520,23 +517,22 @@ module.exports = _.merge({}, BaseModel, {
 
         return document;
     },
-    addMissingAffiliation: async (d1, d2) => {
-        const as1 = d1.getFullAuthorships();
-        const as2 = d2.getFullAuthorships();
-        const toBeDeleteAuthorships = as1.filter(a1 =>
-            _.isEmpty(a1.affiliations) &&
-            _.isNil(a1.researchEntity) &&
-            as2.some(a2 => a2.position == a1.position && !_.isEmpty(a2.affiliations))
-        );
-        const toBeAddedAuthorships = as2.filter(a2 => {
-            const a1 = as1.find(a1 => a2.position === a1.position);
-            return !a1 || toBeDeleteAuthorships.includes(a1);
+    mergeAuthorships: async (docFrom, docTo) => {
+        const authorshipsFrom = docFrom.getFullAuthorships();
+        const authorshipsTo = docTo.getFullAuthorships();
+
+        const authorshipsData = authorshipsFrom.map(a1 => {
+            const a2 = authorshipsTo.find(a => a.position === a1.position);
+            if (!a2.researchEntity && a2.affiliations.length === 0) {
+                a1.affiliations = a1.affiliations.map(af => af.institute);
+                return a1;
+            }
+
+            a2.affiliations = a2.affiliations.map(af => af.institute);
+            return a2;
         });
-        const missingAuthorshipIds = toBeAddedAuthorships.map(a => a.id);
-        const missingAffiliationIds = _.flatMap(toBeAddedAuthorships, a => a.affiliations.map(a => a.id));
-        await Authorship.update({id: missingAuthorshipIds}, {document: d1.id});
-        await Affiliation.update({id: missingAffiliationIds}, {document: d1.id});
-        await Authorship.destroy({id: toBeDeleteAuthorships.map(a => a.id)})
+
+        await Authorship.updateAuthorships(docTo, authorshipsData);
     },
     async customPopulate(elems, fieldName, parentModelName, parentModelId) {
         if (fieldName == 'duplicates') {
