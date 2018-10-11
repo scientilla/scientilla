@@ -431,9 +431,9 @@ module.exports = _.merge({}, BaseModel, {
             return as1.every(a1 => {
                 const a2 = as2.find(a2 => a1.position === a2.position);
                 return a1.position === AuthorshipPositionNotToCheck ||
-                    !a1.affiliations.length ||
-                    !a2.affiliations.length ||
-                    Authorship.compareMetadata(a1, a2);
+                    (!a1.affiliations.length && a2.affiliations.length) ||
+                    (!a2.affiliations.length && a1.affiliations.length) ||
+                    Authorship.isMetadataEqual(a1, a2);
             });
         }
 
