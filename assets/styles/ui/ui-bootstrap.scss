@@ -35,13 +35,8 @@
 }
 
 .ui-notification{
-    top: 85px !important;
-    right: 15px !important;
-    z-index: 1000;
+    width: 220px;
     border-radius: .25rem;
     box-shadow: none;
-
-    &:hover{
-        opacity: 1;
-    }
+    pointer-events: none;
 }
