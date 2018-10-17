@@ -521,21 +521,17 @@ module.exports = _.merge({}, BaseModel, {
         const authorshipsFrom = docFrom.getFullAuthorships();
         const authorshipsTo = docTo.getFullAuthorships();
 
-        const authorshipsData = authorshipsFrom.map(a1 => {
-            const a2 = authorshipsTo.find(a => a.position === a1.position);
-            if (!a2.researchEntity && a2.affiliations.length === 0) {
-                a1.affiliations = a1.affiliations.map(af => af.institute);
-                return a1;
-            }
-
-            a2.affiliations = a2.affiliations.map(af => af.institute);
-            return a2;
+        const authorshipsData = authorshipsFrom.map(aFrom => {
+            const aTo = authorshipsTo.find(a => a.position === aFrom.position);
+            let newAuthorship = aTo.isVerified() || aTo.hasAffiliations() ? aTo : aFrom;
+            newAuthorship.affiliations = newAuthorship.affiliations.map(af => af.institute);
+            return newAuthorship;
         });
 
         await Authorship.updateAuthorships(docTo, authorshipsData);
     },
     async customPopulate(elems, fieldName, parentModelName, parentModelId) {
-        if (fieldName == 'duplicates') {
+        if (fieldName === 'duplicates') {
             const duplicates = await DocumentDuplicate.find({
                 researchEntityType: parentModelName,
                 researchEntity: parentModelId,
