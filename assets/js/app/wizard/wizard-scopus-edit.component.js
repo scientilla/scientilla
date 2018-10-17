@@ -7,40 +7,46 @@
             controller: wizardScopusEdit,
             controllerAs: 'vm',
             bindings: {
-                user: '=',
-                wizardCommands: '&'
+                user: '='
             }
         });
 
     wizardScopusEdit.$inject = [
+        'context',
         'UsersService',
         'Notification',
         '$scope',
-        '$rootScope'
+        'FormService',
+        '$timeout'
     ];
 
-    function wizardScopusEdit(UsersService, Notification, $scope, $rootScope) {
+    function wizardScopusEdit(context, UsersService, Notification, $scope, FormService,  $timeout) {
         const vm = this;
 
         vm.save = save;
         vm.unsavedData = false;
         vm.saveStatus = saveStatus();
         vm.cancelSave = cancelSave;
+        vm.originalUser = angular.copy(vm.user);
 
         vm.$onInit = function () {
 
             vm.unsavedData = false;
-            if (!$rootScope.user) {
-                $rootScope.user = angular.copy(vm.user);
-            } else {
-                vm.user = angular.copy($rootScope.user);
-            }
 
             $scope.$watch('idsForm.$pristine', function (formUntouched) {
                 if (!formUntouched) {
-                    vm.wizardCommands()('formUnsaved');
                     vm.unsavedData = true;
                 }
+            });
+
+            $scope.$watch(function() {
+                return vm.unsavedData;
+            }, function() {
+                FormService.setUnsavedData('scopus-edit', vm.unsavedData);
+            }, true);
+
+            $scope.$on('user.scopus.discarded', function() {
+                cancelSave();
             });
         };
 
@@ -52,23 +58,23 @@
             UsersService
                 .doSave(vm.user)
                 .then(function () {
-                    Notification.success("Profile data saved, you can now proceed");
-                    vm.wizardCommands()('formSaved');
-                    vm.unsavedData = false;
                     vm.saveStatus.setState('saved');
-                    $rootScope.user = angular.copy(vm.user);
+                    Notification.success('Profile saved!');
+                    vm.unsavedData = false;
 
-                    setTimeout(function() {
+                    vm.originalUser = angular.copy(vm.user);
+
+                    $timeout(function() {
                         vm.saveStatus.setState('ready to save');
 
                         $scope.idsForm.$setPristine();
                     }, 1000);
                 })
                 .catch(function () {
-                    Notification.warning("Failed to save user");
+                    Notification.warning('Failed to save user');
                     vm.saveStatus.setState('failed');
 
-                    setTimeout(function() {
+                    $timeout(function() {
                         vm.saveStatus.setState('ready to save');
 
                         $scope.idsForm.$setPristine();
@@ -78,7 +84,7 @@
 
         function cancelSave() {
             vm.unsavedData = false;
-            vm.user = angular.copy($rootScope.user);
+            vm.user = angular.copy(vm.originalUser);
             $scope.idsForm.$setPristine();
         }
 

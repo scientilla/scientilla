@@ -33,11 +33,13 @@
         'Prototyper',
         'path',
         'Notification',
-        'ModalService'
+        'ModalService',
+        'MobileMenuService',
+        'LayoutService'
     ];
     run.$inject = _.union(services, servicesToInit);
 
-    function run($rootScope, AuthService, Restangular, Prototyper, path, Notification, ModalService) {
+    function run($rootScope, AuthService, Restangular, Prototyper, path, Notification, ModalService, MobileMenuService, LayoutService) {
 
         $rootScope.$on("$routeChangeStart", (event, next, current) => {
             const noRedirectUrls = ['/unavailable', '/login'];
@@ -66,38 +68,8 @@
                 AuthService.loadAuthenticationData();
         });
 
-        $rootScope.$on('toggleMobileMenu', function() {
-            $rootScope.mobileMenuIsOpen = !$rootScope.mobileMenuIsOpen;
-        });
-
-        $rootScope.footerHeight = 0;
-        $rootScope.headerHeight = 0;
-
-        let footerTimer;
-        let headerTimer;
-
-        $rootScope.$on('stickyFooter', function() {
-            clearTimeout(footerTimer);
-            footerTimer = setTimeout(function() {
-                let $footer = $('.js-footer'),
-                    height  = $footer.outerHeight(true);
-
-                $rootScope.footerHeight = height;
-                //console.log('Footer: ', height);
-            }, 500);
-        });
-
-        $rootScope.$on('fixedHeader', function() {
-
-            clearTimeout(headerTimer);
-            headerTimer = setTimeout(function() {
-                let $header = $('.js-header'),
-                    height  = $header.outerHeight(true);
-
-                $rootScope.headerHeight = height;
-                //console.log('Header: ', height);
-            }, 500);
-        });
+        $rootScope.MobileMenu = MobileMenuService;
+        $rootScope.Layout = LayoutService;
 
         Restangular.setErrorInterceptor(function (response, deferred, responseHandler) {
             const isLogged = response.headers('scientilla-logged') === 'true';

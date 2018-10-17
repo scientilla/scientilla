@@ -7,38 +7,83 @@
             controller: wizardAliasEdit,
             controllerAs: 'vm',
             bindings: {
-                user: '<',
-                wizardCommands: '&'
+                user: '='
             }
         });
 
     wizardAliasEdit.$inject = [
-        'Notification'
+        'Notification',
+        '$scope',
+        'ModalService',
+        'FormService',
+        '$timeout'
     ];
 
-    function wizardAliasEdit(Notification) {
+    function wizardAliasEdit(Notification, $scope, ModalService, FormService, $timeout) {
         const vm = this;
 
         vm.save = save;
-        vm.buttonText = 'Save aliases';
+        vm.saveStatus = saveStatus();
+        vm.unsavedData = false;
 
         vm.$onInit = function () {
+            vm.unsavedData = FormService.getUnsavedData('alias-edit');
+
+            $scope.$watch(function() {
+                return vm.unsavedData;
+            }, function() {
+                FormService.setUnsavedData('alias-edit', vm.unsavedData);
+            }, true);
         };
 
         vm.$onDestroy = function () {
         };
 
         function save() {
-            vm.buttonText = 'Saving aliases ...';
+            vm.saveStatus.setState('saving');
             vm.user.save()
                 .then(() => {
-                    Notification.success("Profile data saved, you can now proceed");
-                    vm.buttonText = 'Save aliases';
+                    vm.saveStatus.setState('saved');
+                    Notification.success(vm.saveStatus.message);
+                    vm.unsavedData = false;
+
+                    $timeout(function() {
+                        vm.saveStatus.setState('ready to save');
+                    }, 1000);
                 })
                 .catch(() => {
-                    Notification.warning("Failed to save aliases");
-                    vm.buttonText = 'Save aliases';
+                    vm.saveStatus.setState('failed');
+                    Notification.warning(vm.saveStatus.message);
+
+                    $timeout(function() {
+                        vm.saveStatus.setState('ready to save');
+                    }, 1000);
                 });
+        }
+
+        function saveStatus() {
+            return {
+                setState: function (state) {
+                    this.state = state;
+
+                    switch(true) {
+                        case state === 'ready to save':
+                            this.message = 'Save aliases';
+                            break;
+                        case state === 'saving':
+                            this.message = 'Saving aliases';
+                            break;
+                        case state === 'saved':
+                            this.message = 'Aliases are saved!';
+                            break;
+                        case state === 'failed':
+                            this.message = 'Failed to save aliases!';
+                            break;
+                    }
+                },
+                state: 'ready to save',
+                message: 'Save aliases'
+            };
         }
     }
 

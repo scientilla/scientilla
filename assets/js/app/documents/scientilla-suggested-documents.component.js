@@ -18,7 +18,8 @@
         'EventsService',
         'ModalService',
         'documentSearchForm',
-        'documentListSections'
+        'documentListSections',
+        'WizardService'
     ];
 
     function scientillaSuggestedDocumentsController(context,
@@ -26,7 +27,8 @@
                                                     EventsService,
                                                     ModalService,
                                                     documentSearchForm,
-                                                    documentListSections) {
+                                                    documentListSections,
+                                                    WizardService) {
         const vm = this;
 
         const DocumentsService = context.getDocumentService();
@@ -67,8 +69,11 @@
                 EventsService.DOCUMENT_COMPARE
             ], updateList);
 
-            if (researchEntity.getType() === 'user' && !researchEntity.alreadyOpenedSuggested)
-                ModalService.openWizard(['alias-edit']);
+            if (researchEntity.getType() === 'user' && !researchEntity.alreadyOpenedSuggested) {
+                addAliasModal();
+                researchEntity.alreadyOpenedSuggested = true;
+                researchEntity.save();
+            }
         };
 
         vm.$onDestroy = function () {
@@ -92,12 +97,14 @@
             delete q.where.discarded;
             query = q;
 
-
             if (!discarded)
                 return researchEntityService.getSuggestedDocuments(vm.researchEntity, query);
             else
                 return researchEntityService.getDiscardedDocuments(vm.researchEntity, query);
         }
 
+        function addAliasModal() {
+            WizardService.suggestedWizard();
+        }
     }
 })();

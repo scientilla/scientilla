@@ -3,18 +3,24 @@
         <li>
             <div
                 class="form-group"
-                ng-class="{'has-error':!vm.newAliasIsCorrect}">
+                ng-class="{'has-error': !vm.newAliasIsCorrect}">
                 <label>Alias</label>
                 <input
                     type="text"
                     class="form-control"
                     placeholder="Add alias and press Enter"
                     ng-model="vm.newAlias"
-                    ng-class="{'is-invalid':!vm.newAliasIsCorrect}"/>
+                    ng-class="{'is-invalid':!vm.newAliasIsCorrect}"
+                    ng-keydown="$event.keyCode === 13 && vm.newAlias.length > 0 && vm.addAlias()"/>
                 <div
-                    ng-if="!vm.newAliasIsCorrect"
+                    ng-if="!vm.newAliasIsCorrect && !vm.newAliasIsDuplicate"
                     class="invalid-feedback">
-                    Author string is not valid. It should be in the form 'E. Molinari, F. Bozzini, F. Semprini'.
+                    Alias string is not valid. It should be in the form 'Molinari E.'.
+                </div>
+                <div
+                    ng-if="!vm.newAliasIsCorrect && vm.newAliasIsDuplicate"
+                    class="invalid-feedback">
+                    This alias string is already been used.
                 </div>
             </div>
         </li>
@@ -23,17 +29,19 @@
                 <button
                     type="button"
                     class="btn btn-primary btn-form-no-label"
-                    ng-click="vm.addAlias()">
+                    ng-click="vm.addAlias()"
+                    ng-disabled="vm.newAlias.length === 0">
                     <i class="fas fa-plus fa-left"></i>Add
                 </button>
             </div>
         </li>
     </ul>
 
+
     <div class="form-group">
         <ul class="multiselect-list">
             <li class="list-group-item" ng-repeat="alias in vm.aliases">
-                {{alias.str}}
+                {{ alias.str }}
                 <a
                     href=""
                     ng-click="vm.removeAlias(alias)"

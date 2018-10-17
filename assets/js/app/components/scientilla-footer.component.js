@@ -9,18 +9,14 @@
         });
 
     scientillaFooter.$inject = [
-        '$rootScope'
+        '$scope',
+        'LayoutService'
     ];
 
-    function scientillaFooter($rootScope) {
-        const vm = this;
-
-        vm.$onInit = function () {
-            $rootScope.$emit('stickyFooter');
-        };
-
-        vm.$onDestroy = function () {
-        };
+    function scientillaFooter($scope, LayoutService) {
+        $scope.$watch('$viewContentLoaded', function(event) {
+            LayoutService.stickyFooter();
+        });
     }
 
 })();

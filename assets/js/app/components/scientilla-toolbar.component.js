@@ -9,6 +9,7 @@
         });
 
     scientillaToolbar.$inject = [
+        '$scope',
         'EventsService',
         'AuthService',
         'Settings',
@@ -17,10 +18,13 @@
         'UsersService',
         'ModalService',
         'path',
-        '$rootScope'
+        'WizardService',
+        'MobileMenuService',
+        'LayoutService'
     ];
 
-    function scientillaToolbar(EventsService,
+    function scientillaToolbar($scope,
+                               EventsService,
                                AuthService,
                                Settings,
                                context,
@@ -28,7 +32,9 @@
                                UsersService,
                                ModalService,
                                path,
-                               $rootScope) {
+                               WizardService,
+                               MobileMenuService,
+                               LayoutService) {
         const vm = this;
         vm.wizardOpened = false;
         vm.isRegisterEnabled = false;
@@ -39,6 +45,7 @@
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
         vm.toggleMobileMenu = toggleMobileMenu;
+        vm.originalUser = {};
 
         vm.$onInit = function () {
 
@@ -50,7 +57,7 @@
 
             refresh();
 
-            $rootScope.$emit('fixedHeader');
+            vm.originalUser = angular.copy(vm.user);
         };
 
         vm.$onDestroy = function () {
@@ -63,7 +70,6 @@
             Settings.getSettings()
                 .then(function (settings) {
                     vm.isRegisterEnabled = settings.registerEnabled;
-                    
                 });
             vm.researchEntity = context.getResearchEntity();
         }
@@ -116,31 +122,20 @@
         }
 
         function openWizard() {
-            let modal = ModalService.openWizard([
-                'welcome',
-                'scopus-edit',
-                'tutorial',
-                'admin-tutorial',
-            ], {
-                isClosable: true,
-                size: 'lg'
-            });
-
-            modal.result.catch(function (err) {
-                $rootScope.$emit('backdrop-wizard-modal', modal);
-            });
+            WizardService.featuresWizard();
         }
 
         function openSuggestedWizard() {
-            ModalService.openWizard(['alias-edit'], {
-                isClosable: true,
-                size: 'lg'
-            });
+            WizardService.suggestedWizard();
         }
 
         function toggleMobileMenu() {
-            $rootScope.$emit('toggleMobileMenu');
+            MobileMenuService.toggle();
         }
+
+        $scope.$watch('$viewContentLoaded', function(event) {
+            LayoutService.fixedHeader();
+        });
     }
 
 })();

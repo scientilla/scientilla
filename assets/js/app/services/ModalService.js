@@ -321,22 +321,29 @@
 
         service.openWizard = function (steps, config = {}) {
             let args = {};
-            let closeable = false;
+            let options = {};
 
             if (config.size) {
                 args.size = config.size;
             }
+
+            options.data = {steps: steps};
 
             if (!config.isClosable) {
                 args = Object.assign({}, args, {
                     backdrop: 'static',
                     keyboard: false
                 });
+                options.data.isClosable = false;
             } else {
-                closeable = true;
+                options.data.isClosable = true;
             }
 
-            const modal = openComponentModal('wizard-container', {steps: steps}, args, closeable);
+            if (typeof config.callback === "function") {
+                options.data.closing = config.callback;
+            }
+
+            const modal = openComponentModal('wizard-container', args, options);
             addModalObject(modal);
             return modal;
         };
@@ -352,13 +359,12 @@
         return service;
 
         // private
-        function openComponentModal(component, data, args, closeable) {
+        function openComponentModal(component, args, options) {
             const callbacks = getDefaultCallbacks();
 
             const resolve = {
-                data,
-                callbacks,
-                closable: closeable
+                data: options.data,
+                callbacks
             };
 
             var modal = $uibModal.open(

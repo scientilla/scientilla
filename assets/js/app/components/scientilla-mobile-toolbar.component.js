@@ -17,7 +17,8 @@
         'UsersService',
         'ModalService',
         'path',
-        '$rootScope'
+        'WizardService',
+        'MobileMenuService'
     ];
 
     function scientillaToolbar(EventsService,
@@ -28,7 +29,8 @@
                                UsersService,
                                ModalService,
                                path,
-                               $rootScope) {
+                               WizardService,
+                               MobileMenuService) {
         const vm = this;
         vm.wizardOpened = false;
         vm.isRegisterEnabled = false;
@@ -107,7 +109,7 @@
                     vm.researchEntity = researchEntity;
                 });
 
-            $rootScope.$emit('toggleMobileMenu');
+            MobileMenuService.close();
         }
 
         function showWizardVisible() {
@@ -115,34 +117,19 @@
         }
 
         function openWizard() {
-            let modal = ModalService.openWizard([
-                'welcome',
-                'scopus-edit',
-                'tutorial',
-                'admin-tutorial',
-            ], {
-                isClosable: true,
-                size: 'lg'
-            });
+            WizardService.featuresWizard();
 
-            modal.result.catch(function (err) {
-                $rootScope.$emit('backdrop-wizard-modal', modal);
-            });
-
-            $rootScope.$emit('toggleMobileMenu');
+            MobileMenuService.close();
         }
 
         function openSuggestedWizard() {
-            ModalService.openWizard(['alias-edit'], {
-                isClosable: true,
-                size: 'lg'
-            });
+            WizardService.suggestedWizard();
 
-            $rootScope.$emit('toggleMobileMenu');
+            MobileMenuService.close();
         }
 
         function toggleMobileMenu() {
-            $rootScope.$emit('toggleMobileMenu');
+            MobileMenuService.toggle();
         }
     }
 

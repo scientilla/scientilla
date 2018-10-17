@@ -11,11 +11,14 @@
         <p>You can directly edit your <strong>aliases</strong> using the form on the right.<br>You can always edit this information in your profile <i class="fas fa-cogs"></i>.</p>
     </div>
     <div class="col-12 col-sm-6">
+        <scientilla-alias-editor
+            aliases="vm.user.aliases"
+            unsaved-data="vm.unsavedData"></scientilla-alias-editor>
         <form ng-submit="vm.save()">
-            <scientilla-alias-editor aliases="vm.user.aliases"></scientilla-alias-editor>
-
-            <scientilla-button type="submit">
-                {{ vm.buttonText }}
+            <scientilla-button
+                type="submit"
+                ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData">
+                {{ vm.saveStatus.message }}
             </scientilla-button>
         </form>
     </div>

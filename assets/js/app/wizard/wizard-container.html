@@ -9,11 +9,10 @@
     <button
         type="button"
         class="close"
-        ng-if="vm.resolve.closable"
-        ng-click="vm.closeModal()">
+        ng-if="vm.resolve.data.isClosable"
+        ng-click="vm.close()">
         <i class="fas fa-times"></i>
     </button>
-    {{ vm.closeable }}
 </div>
 
 <div class="modal-body">
@@ -21,7 +20,6 @@
 
     <wizard-scopus-edit
         ng-if="vm.isStep('scopus-edit')"
-        wizard-commands="vm.wizardCommands"
         user="vm.researchEntity"></wizard-scopus-edit>
 
     <wizard-alias-edit
