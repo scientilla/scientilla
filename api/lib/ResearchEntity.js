@@ -212,13 +212,6 @@ module.exports = _.merge({}, BaseModel, {
         else
             await researchEntityModel.discardDocument(researchEntityModel, researchEntityId, documentId);
     },
-    verify: async function (researchEntityModel, researchEntityId, documentId) {
-        const document = await Document.findOneById(documentId);
-        if (document.kind === DocumentKinds.DRAFT)
-            return await researchEntityModel.verifyDraft(researchEntityModel, researchEntityId, documentId);
-        else
-            return await researchEntityModel.verifyDocument(researchEntityModel, researchEntityId, documentId);
-    },
     setDocumentAsNotDuplicate: async function (researchEntityModel, researchEntityId, document1Id, document2Id) {
         const DocumentNotDuplicatedModel = getDocumentNotDuplicateModel(researchEntityModel);
         const minDocId = Math.min(document1Id, document2Id);
@@ -229,6 +222,17 @@ module.exports = _.merge({}, BaseModel, {
             duplicate: maxDocId
         });
         return documentNotDuplicate;
+    },
+    getDuplicates: async function(ResearchEntityModel, researchEntityId, document) {
+        const researchEntityType = ResearchEntityModel.adapter.identity;
+        const duplicateCondition = {
+            document: document.id,
+            researchEntity: researchEntityId,
+            researchEntityType,
+            duplicateKind: 'v'
+        };
+        const duplicates = await DocumentDuplicate.find(duplicateCondition);
+        return duplicates;
     },
     makeInternalRequest: async function (researchEntityModel, researchEntitySearchCriteria, baseUrl, qs, attribute) {
         const researchEntity = await researchEntityModel.findOne(researchEntitySearchCriteria);
