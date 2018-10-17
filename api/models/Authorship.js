@@ -46,6 +46,12 @@ module.exports = _.merge({}, BaseModel, {
             this.researchEntity = null;
             this.synchronize = null;
             return this.savePromise();
+        },
+        isVerified() {
+            return !!this.researchEntity;
+        },
+        hasAffiliations() {
+            return !!this.affiliations.length;
         }
     },
     beforeDestroy: async function (criteria, cb) {
