@@ -17,7 +17,7 @@
         vm.badges = [];
         vm.badges.external = 'success';
         vm.badges.new = 'success';
-        vm.badges.discarded = 'error';
+        vm.badges.discarded = 'danger';
         vm.badges.duplicate = 'warning';
         vm.badges['already verified'] = 'warning';
         vm.badges['already in drafts'] = 'warning';
