@@ -108,7 +108,7 @@ module.exports = _.merge({}, BaseModel, {
                 sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
             docToVerify = documentCopies[0];
 
-            await Document.addMissingAffiliation(docToVerify, draft, authorshipData.position);
+            await Document.mergeAuthorships(draft, docToVerify);
             sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + docToVerify.id);
             await Document.destroy({id: draft.id});
         }
