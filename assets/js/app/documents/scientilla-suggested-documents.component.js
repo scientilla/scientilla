@@ -54,7 +54,8 @@
                     inputType: 'checkbox',
                     label: 'Show discarded documents',
                     defaultValue: false,
-                    matchColumn: 'discarded'
+                    matchColumn: 'discarded',
+                    type: 'action'
                 }
             });
 

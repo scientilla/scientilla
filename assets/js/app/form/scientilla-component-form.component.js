@@ -9,9 +9,7 @@
             bindings: {
                 structure: '<',
                 cssClass: '@',
-                onSubmit: '&',
-                actionCount: '<',
-                fieldCount: '<'
+                onSubmit: '&'
             },
             transclude: true,
         });
@@ -29,27 +27,16 @@
         vm.values = {};
         let onChangeWatchesDeregisters = [];
         let onStructureChangeDeregisterer;
-        let actionCount = 0;
-        let fieldCount = 0;
+
+        vm.fields = filterStructure('field');
+        vm.actions = filterStructure('action');
+        vm.getObjectSize = getObjectSize;
 
         vm.$onInit = function () {
             setDefault();
             clearNil();
 
             onStructureChangeDeregisterer = $scope.$watch('vm.structure', onStructureChange, true);
-
-            _.forEach(vm.structure, (name, struct) => {
-                //console.log(struct);
-                if (actions(struct) || other(struct)) {
-                    actionCount++;
-                }
-
-                if (fields(struct)) {
-                    fieldCount++;
-                }
-            });
-            vm.actionCount = actionCount;
-            vm.fieldCount = fieldCount;
         };
 
         vm.$onDestroy = function () {
@@ -124,37 +111,23 @@
             onChangeWatchesDeregisters = [];
         }
 
-        function fields(name) {
-            if (name === 'title' || name === 'author' || name === 'minYear' || 
-                name === 'maxYear' || name === 'documentType' || name === 'sourceType' ||
-                name === 'name' || name === 'surname' || name === 'type' || name === 'code' ||
-                name === 'slug' || name === 'shortname' || name === 'description' ||
-                name === 'scopusId') {
-                return true;
-            }
+        function filterStructure(type) {
+            let structs = {};
 
-            return false;
+            Object.keys(vm.structure).forEach(function(name) {
+                let struct = vm.structure[name];
+
+                if (struct.type === type) {
+                    structs[name] = struct;
+                }
+            });
+
+            return structs;
         }
 
-        function actions(name) {
-            if (name === 'buttonReset' || name === 'buttonSearch' || name === 'itemsPerPage' || name === 'active') {
-                return true;
-            }
-
-            return false;
+        function getObjectSize(object) {
+            return Object.keys(object).length;
         }
-
-        function other(name) {
-            if (name === 'rejected') {
-                return true;
-            }
-
-            return false;
-        }
-
-        $scope.fields = fields;
-        $scope.actions = actions;
-        $scope.other = other;
     }
 
 })();

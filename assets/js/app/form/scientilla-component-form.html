@@ -1,9 +1,9 @@
 <form class="{{vm.cssClass}}" ng-submit="vm.submit()">
-    <ul class="filter-field-listing fields-{{ vm.fieldCount }}">
-        <li
-            ng-repeat="(name, struct) in vm.structure"
-            ng-if="fields(name)"
-            >
+    <ul
+        class="filter-field-listing fields-{{ vm.getObjectSize(vm.fields) }}"
+        ng-if="vm.getObjectSize(vm.fields) > 0"
+        >
+        <li ng-repeat="(name, struct) in vm.fields">
             <scientilla-field
                 structure="struct"
                 name="name"
@@ -12,20 +12,11 @@
         </li>
     </ul>
 
-    <ul class="filter-action-listing actions-{{ vm.actionCount }}">
+    <ul
+        class="filter-action-listing actions-{{ vm.getObjectSize(vm.actions) }}"
+        ng-if="vm.getObjectSize(vm.actions) > 0">
         <li
-            ng-repeat="(name, struct) in vm.structure"
-            ng-if="other(name)"
-            >
-            <scientilla-field
-                structure="struct"
-                name="name"
-                reset="vm.reset"
-                values="vm.values"></scientilla-field>
-        </li>
-        <li
-            ng-repeat="(name, struct) in vm.structure"
-            ng-if="actions(name)"
+            ng-repeat="(name, struct) in vm.actions"
             >
             <scientilla-field
                 structure="struct"

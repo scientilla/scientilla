@@ -67,12 +67,14 @@
             vm.filterSearchFormStructure = _.assign({}, vm.searchFormStructure, {
                 buttonSearch: {
                     inputType: 'submit',
-                    label: vm.filterLabel
+                    label: vm.filterLabel,
+                    type: 'action'
                 },
                 buttonReset: {
                     inputType: 'button',
                     label: 'Reset',
-                    onClick: 'reset'
+                    onClick: 'reset',
+                    type: 'action'
                 },
                 itemsPerPage: {
                     inputType: 'select',
@@ -81,7 +83,8 @@
                     values: vm.pageSizes.map(ps => ({value: ps, label: ps})),
                     labelPosition: 'inline',
                     cssClass: 'items-per-page',
-                    onChange: 'submit'
+                    onChange: 'submit',
+                    type: 'action'
                 }
             });
 

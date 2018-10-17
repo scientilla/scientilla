@@ -44,10 +44,7 @@
 
             vm.searchForm = Object.assign({},
                 {
-                    connector: getConnectorField(),
-                    newline1: {
-                        inputType: 'br'
-                    }
+                    connector: getConnectorField()
                 },
                 documentSearchForm
             );

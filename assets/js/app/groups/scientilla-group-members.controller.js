@@ -53,13 +53,15 @@
                 inputType: 'text',
                 label: 'Name',
                 matchColumn: 'name',
-                matchRule: 'contains'
+                matchRule: 'contains',
+                type: 'field'
             },
             surname: {
                 inputType: 'text',
                 label: 'Surname',
                 matchColumn: 'surname',
-                matchRule: 'contains'
+                matchRule: 'contains',
+                type: 'field'
             }
 
         };
