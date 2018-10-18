@@ -79,7 +79,8 @@
                 label: 'Connector',
                 values: values,
                 matchColumn: 'origin',
-                defaultValue: 'scopus'
+                defaultValue: 'scopus',
+                type: 'connector'
             };
         }
 

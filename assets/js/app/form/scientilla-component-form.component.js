@@ -30,6 +30,7 @@
 
         vm.fields = filterStructure('field');
         vm.actions = filterStructure('action');
+        vm.connectors = filterStructure('connector');
         vm.getObjectSize = getObjectSize;
 
         vm.$onInit = function () {

@@ -1,4 +1,5 @@
 .filter-form-container{
+    .filter-connector-listing,
     .filter-field-listing,
     .filter-action-listing{
         @include normalize-listing;
@@ -55,6 +56,11 @@
                 grid-template-columns: auto 1fr auto auto;
             }
         }
+
+        .filter-connector-listing{
+            display: grid;
+            grid-template-rows: auto;
+        }
     }
 
     .filter-result-actions{
@@ -74,6 +80,12 @@
                 grid-template-columns: 1fr 1fr;
             }
         }
+
+        .filter-connector-listing{
+            &.connectors-1{
+                grid-template-columns: 1fr 1fr;
+            }
+        }
     }
 }
 
@@ -89,6 +101,12 @@
             }
 
             &.fields-6{
+                grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
+            }
+        }
+
+        .filter-connector-listing{
+            &.connectors-1{
                 grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
             }
         }

@@ -1,5 +1,18 @@
 <form class="{{vm.cssClass}}" ng-submit="vm.submit()">
     <ul
+            class="filter-connector-listing connectors-{{ vm.getObjectSize(vm.connectors) }}"
+            ng-if="vm.getObjectSize(vm.connectors) > 0"
+    >
+        <li ng-repeat="(name, struct) in vm.connectors">
+            <scientilla-field
+                    structure="struct"
+                    name="name"
+                    reset="vm.reset"
+                    values="vm.values"></scientilla-field>
+        </li>
+    </ul>
+
+    <ul
         class="filter-field-listing fields-{{ vm.getObjectSize(vm.fields) }}"
         ng-if="vm.getObjectSize(vm.fields) > 0"
         >
