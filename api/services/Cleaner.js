@@ -1,4 +1,4 @@
-// Cleaner.js - in api/services
+/* global User, Institute, Affiliation, Source, Group, Authorship, DocumentKinds*/
 
 const _ = require('lodash');
 
@@ -99,50 +99,22 @@ async function cleanDocumentCopies() {
             .populate('discardedGroups')
             .populate('discarded')
             .populate('discardedG');
-        if (Document.getNumberOfConnections(doc) == 0) {
+        if (Document.getNumberOfConnections(doc) === 0) {
             sails.log.warn(`Document with id ${doc.id} is a verified document but has no connections`);
             nonConnectedDocuments.push(doc);
             continue;
         }
-        const errors = [];
+        let errors = [];
         const copies = await Document.findCopies(doc, null, false);
-        if (copies.length == 0) {
+        if (copies.length === 0) {
             continue;
         }
         const copy = copies[0];
-        for (let d of doc.discarded) {
-            sails.log.info(`User ${d.researchEntity} is discarding document ${copy.id} (${copy.title})`);
-            const res = await User.discardDocument(User, d.researchEntity, copy.id);
-            if (res.error) {
-                errors.push(res);
-                sails.log.warn('Error: ');
-                sails.log.warn(res.error);
-            } else {
-                sails.log.info(`User ${d.researchEntity} is removing ${doc.id} from the discarded`);
-                const res2 = await User.undiscardDocument(User, d.researchEntity, d.document);
-                if (res2.error) {
-                    errors.push(res2);
-                    sails.log.warn('Error: ');
-                    sails.log.warn(res2.error);
-                }
-            }
-        }
-        for (let d of doc.discardedG) {
-            sails.log.info(`Group ${d.researchEntity} is discarding document ${copy.id} (${copy.title})`);
-            const res = await Group.discardDocument(Group, d.researchEntity, copy.id);
-            if (res.error) {
-                sails.log.warn('Error: ');
-                sails.log.warn(res.error);
-            } else {
-                sails.log.info(`Group ${d.researchEntity} is removing ${doc.id} from the discarded`);
-                const res2 = await Group.undiscardDocument(Group, d.researchEntity, d.document);
-                if (res2.error) {
-                    errors.push(res2);
-                    sails.log.warn('Error: ');
-                    sails.log.warn(res2.error);
-                }
-            }
-        }
+        const moveUserDiscardedErrors = await moveDiscarded(User, doc, copy, 'discarded');
+        const moveGroupDiscardedErrors = await moveDiscarded(Group, doc, copy, 'discardedG');
+        errors = errors.concat(moveUserDiscardedErrors);
+        errors = errors.concat(moveGroupDiscardedErrors);
+
         for (let a of doc.authorships) {
             if (!a.researchEntity)
                 continue;
@@ -185,7 +157,7 @@ async function cleanDocumentCopies() {
             }
         }
         if (errors.length) {
-            sails.log.info(`Document ${doc.id} should have been merged with  ${copy.id} but an error occured`)
+            sails.log.info(`Document ${doc.id} should have been merged with  ${copy.id} but an error occured`);
             nonMergedDocuments.push({doc: doc, copy: copy});
         }
         else {
@@ -196,4 +168,34 @@ async function cleanDocumentCopies() {
     sails.log.info(`${mergedDocuments.length} documents merged`);
     sails.log.info(`${nonMergedDocuments.length} documents were not merged because of some error`);
     sails.log.info(`${nonConnectedDocuments.length} documents were not connected to any research entity in any way`);
+}
+
+async function moveDiscarded(ResearchEntityModel, document, copy, discadedKey) {
+    const errors = [];
+    for (let discarded of document[discadedKey]) {
+        const user = await ResearchEntityModel.findOne({id: discarded.researchEntity}).populate('documents');
+        if (user.documents.map(d => d.id).includes(copy.id))
+            sails.log.info(`${ResearchEntityModel.adapter.identity} ${discarded.researchEntity} is not discarding document ${copy.id} (${copy.title}) because he has already verified it`);
+        else {
+            sails.log.info(`${ResearchEntityModel.adapter.identity} ${discarded.researchEntity} is discarding document ${copy.id} (${copy.title})`);
+            const res = await ResearchEntityModel.discardDocument(ResearchEntityModel, discarded.researchEntity, copy.id);
+
+            if (res.error) {
+                errors.push(res);
+                sails.log.warn('Error: ');
+                sails.log.warn(res.error);
+                continue;
+            }
+        }
+
+        sails.log.info(`${ResearchEntityModel.adapter.identity} ${discarded.researchEntity} is removing ${document.id} from the discarded`);
+        const res2 = await ResearchEntityModel.undiscardDocument(ResearchEntityModel, discarded.researchEntity, discarded.document);
+        if (res2.error) {
+            errors.push(res2);
+            sails.log.warn('Error: ');
+            sails.log.warn(res2.error);
+        }
+    }
+
+    return errors;
 }
