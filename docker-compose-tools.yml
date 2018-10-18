@@ -1,25 +1,32 @@
 version: '2'
 
 services:
-  node:
+  basenode:
     build: ./docker/node
     volumes:
       - .:/usr/src/app
     user: "${USERID}"
+  testweb:
+    extends: basenode
+    command: npm test
+    depends_on:
+      - testdb
   npm:
-    extends: node
+    extends: basenode
     entrypoint: npm
   bower:
-    extends: node
+    extends: basenode
     entrypoint: bower
   mocha:
-    extends: node
+    extends: basenode
     entrypoint: mocha
   grunt:
-    extends: node
+    extends: basenode
     entrypoint: grunt
-  db-test:
-    build: ./docker/db-test
+  testdb:
+    image: postgres:10
+    ports:
+      - "5434:5432"
     environment:
       POSTGRES_DB: scientillatest
       POSTGRES_USER: scientilla

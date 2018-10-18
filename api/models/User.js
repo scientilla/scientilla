@@ -362,6 +362,13 @@ module.exports = _.merge({}, ResearchEntity, {
                 item: researchEntityId
             };
 
+        if (check && (await ResearchEntity.getDuplicates(User, researchEntityId, document)).length > 0) {
+            return {
+                error: 'Documents must be compared',
+                item: document
+            };
+        }
+
         const searchCond = {
             scopusId: document.scopusId
         };
@@ -416,6 +423,12 @@ module.exports = _.merge({}, ResearchEntity, {
                 error: 'Document not valid for verification',
                 item: draft
             };
+        if ((await ResearchEntity.getDuplicates(User, researchEntityId, draft)).length > 0) {
+            return {
+                error: 'Documents must be compared',
+                item: draft
+            };
+        }
         if (draft.scopusId) {
             const searchCond = {
                 scopusId: draft.scopusId

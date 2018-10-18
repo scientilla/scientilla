@@ -201,4 +201,14 @@ describe('Draft Verification', () => {
         documentsIds.should.not.containDeep([drafts[2]].map(d => d.id));
     });
 
+
+    it('verifying two similar should not be possible', async () => {
+        documentsData[2].title = 'different title';
+        documentsData[2].scopusId = 'no scopus id';
+        const draft = await test.userCreateDraft(user1, documentsData[2]);
+        const body = await test.userVerifyDraft(user1, draft);
+        body.should.have.property('error');
+        should(body.item).be.null;
+    });
+
 });
