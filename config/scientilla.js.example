@@ -52,6 +52,7 @@ module.exports.scientilla = {
                 {fn: 'GruntTaskRunner.run', params: ['documents:clean:institutes']},
                 {fn: 'GruntTaskRunner.run', params: ['documents:clean:copies']},
                 {fn: 'GruntTaskRunner.run', params: ['import:people']},
+                {fn: 'GruntTaskRunner.run', params: ['import:groups']},
                 {fn: 'Status.enable', params: []}
             ]
         },
