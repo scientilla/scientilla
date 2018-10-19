@@ -94,8 +94,8 @@ module.exports = _.merge({}, BaseModel, {
             .forEach(f => newAuthorship[f] = authorshipData[f]);
         return newAuthorship;
     },
-    isMetadataEqual(a1, a2, checkAffiliations = true) {
-        return (checkAffiliations && _.isEmpty(_.xor(a1.affiliations.map(a => a.institute), a2.affiliations.map(a => a.institute)))) &&
+    isMetadataEqual(a1, a2) {
+        return _.isEmpty(_.xor(a1.affiliations.map(a => a.institute), a2.affiliations.map(a => a.institute))) &&
             a1.corresponding === a2.corresponding &&
             a1.first_coauthor === a2.first_coauthor &&
             a1.last_coauthor === a2.last_coauthor &&
