@@ -6,7 +6,8 @@
         return {
             DRAFT: 'd',
             VERIFIED: 'v',
-            EXTERNAL: 'e'
+            EXTERNAL: 'e',
+            IGNORED: 'i'
         };
     }
 })();

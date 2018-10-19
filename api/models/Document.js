@@ -389,8 +389,8 @@ module.exports = _.merge({}, BaseModel, {
     getNumberOfConnections: function (document) {
         return document.authors.length +
             document.groups.length +
-            document.discardedCoauthors.length +
-            document.discardedGroups.length;
+            document.discarded.length +
+            document.discardedG.length;
     },
     deleteIfNotVerified: async function (documentId) {
         const document = await Document.findOneById(documentId)
@@ -398,14 +398,14 @@ module.exports = _.merge({}, BaseModel, {
             .populate('groups')
             .populate('authorships')
             .populate('affiliations')
-            .populate('discardedCoauthors')
-            .populate('discardedGroups');
+            .populate('discarded')
+            .populate('discardedG');
         if (!document)
             return {
                 error: 'Document ' + documentId + ' does not exist',
                 item: documentId
             };
-        if (Document.getNumberOfConnections(document) == 0) {
+        if (Document.getNumberOfConnections(document) === 0) {
             sails.log.debug('Document ' + documentId + ' will be deleted');
             let deletedDocument = await Document.destroy({id: documentId});
             deletedDocument = deletedDocument[0];
@@ -426,7 +426,7 @@ module.exports = _.merge({}, BaseModel, {
         });
         return suggestedDocuments;
     },
-    findCopies: async function (document, AuthorshipPositionNotToCheck = null, excludeMultipleVerification = true) {
+    findCopies: async function (document, AuthorshipPositionNotToCheck = null, skipMultipleVerificationFilter = true) {
         function areAuthorshipsAffiliationsMergeable(as1, as2) {
             return as1.every(a1 => {
                 const a2 = as2.find(a2 => a1.position === a2.position);
@@ -452,13 +452,13 @@ module.exports = _.merge({}, BaseModel, {
             return draftFullAuthorships.length === copyFullAuthorships.length &&
                 areAuthorshipsAffiliationsMergeable(draftFullAuthorships, copyFullAuthorships);
         });
-        return excludeMultipleVerification ? tmpCopies : tmpCopies.filter(d => {
+        return skipMultipleVerificationFilter ? tmpCopies : tmpCopies.filter(d => {
             const copyFullAuthorships = d.getFullAuthorships();
             const noDoubleAuthors = draftFullAuthorships.every(a1 => {
                 const a2 = copyFullAuthorships.find(a2 => a1.position === a2.position);
-                return !a1.researchEntity || !a2 || !a2.researchEntity || a1.researchEntity != a2.researchEntity;
+                return !a1.researchEntity || !a2.researchEntity || a1.researchEntity !== a2.researchEntity;
             });
-            const noDoubleGroups = _.intersection(document.groups.map(g => g.id), d.groups.map(g => g.id)).length == 0;
+            const noDoubleGroups = _.intersection(document.groups.map(g => g.id), d.groups.map(g => g.id)).length === 0;
             return noDoubleAuthors && noDoubleGroups;
         });
     },

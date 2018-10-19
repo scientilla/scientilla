@@ -5,5 +5,6 @@
 module.exports = {
     DRAFT: 'd',
     VERIFIED: 'v',
-    EXTERNAL: 'e'
+    EXTERNAL: 'e',
+    IGNORED: 'i'
 };

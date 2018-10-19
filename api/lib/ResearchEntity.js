@@ -86,12 +86,12 @@ module.exports = _.merge({}, BaseModel, {
         }
         return results;
     },
-    verifyDraft: async function (ResearchEntityModel, researchEntityId, draftId, verificationData) {
+    verifyDraft: async function (ResearchEntityModel, researchEntityId, draftId, verificationData, check) {
         const draft = await Document.findOneById(draftId)
             .populate('authorships')
             .populate('affiliations');
 
-        const error = await ResearchEntityModel.getDraftVerifyErrors(researchEntityId, draft, verificationData);
+        const error = await ResearchEntityModel.getDraftVerifyErrors(researchEntityId, draft, verificationData, check);
         if (error)
             return error;
         const authorshipData = await ResearchEntityModel.getAuthorshipsData(draft, researchEntityId, verificationData);
@@ -268,7 +268,7 @@ module.exports = _.merge({}, BaseModel, {
             docToVerify = document;
         let errors, isDraft = docToVerify.isDraft(), res;
         if (isDraft) {
-            errors = await ResearchEntityModel.getDraftVerifyErrors(researchEntityId, docToVerify, verificationData, docToRemoveId);
+            errors = await ResearchEntityModel.getDraftVerifyErrors(researchEntityId, docToVerify, verificationData, true, docToRemoveId);
         }
         else {
             errors = await ResearchEntityModel.getDocumentVerifyErrors(researchEntityId, docToVerify, verificationData, true, docToRemoveId);

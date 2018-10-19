@@ -412,7 +412,7 @@ module.exports = _.merge({}, ResearchEntity, {
         }
         return null;
     },
-    getDraftVerifyErrors: async function (researchEntityId, draft, verificationData, docToRemove) {
+    getDraftVerifyErrors: async function (researchEntityId, draft, verificationData, check, docToRemove) {
         if (!draft || draft.kind !== DocumentKinds.DRAFT)
             return {
                 error: 'Document not found',
@@ -423,13 +423,13 @@ module.exports = _.merge({}, ResearchEntity, {
                 error: 'Document not valid for verification',
                 item: draft
             };
-        if ((await ResearchEntity.getDuplicates(User, researchEntityId, draft)).length > 0) {
+        if (check && (await ResearchEntity.getDuplicates(User, researchEntityId, draft)).length > 0) {
             return {
                 error: 'Documents must be compared',
                 item: draft
             };
         }
-        if (draft.scopusId) {
+        if (check && draft.scopusId) {
             const searchCond = {
                 scopusId: draft.scopusId
             };
