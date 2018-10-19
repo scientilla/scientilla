@@ -55,7 +55,8 @@ async function makeBackup(postfix = '') {
         }
         catch (e) {
             reject(e);
-            fs.unlinkSync(restoreLockFilename);
+            if (fs.existsSync(restoreLockFilename))
+                fs.unlinkSync(restoreLockFilename);
         }
     });
 }
