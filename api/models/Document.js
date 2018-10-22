@@ -426,14 +426,18 @@ module.exports = _.merge({}, BaseModel, {
         });
         return suggestedDocuments;
     },
-    findCopies: async function (document, AuthorshipPositionNotToCheck = null, skipMultipleVerificationFilter = true) {
+    findCopies: async function (document, AuthorshipPositionNotToCheck = null) {
         function areAuthorshipsAffiliationsMergeable(as1, as2) {
             return as1.every(a1 => {
                 const a2 = as2.find(a2 => a1.position === a2.position);
                 return a1.position === AuthorshipPositionNotToCheck ||
-                    (!a1.affiliations.length && a2.affiliations.length) ||
-                    (!a2.affiliations.length && a1.affiliations.length) ||
-                    Authorship.isMetadataEqual(a1, a2);
+                    (!a1.isVerified() && a2.isVerified()) ||
+                    (!a2.isVerified() && a1.isVerified()) ||
+                    !a1.isVerified() && !a2.isVerified() && (
+                        (!a1.hasAffiliations() && a2.hasAffiliations()) ||
+                        (!a2.hasAffiliations() && a1.hasAffiliations()) ||
+                        Authorship.isMetadataEqual(a1, a2)
+                    );
             });
         }
 
@@ -452,7 +456,7 @@ module.exports = _.merge({}, BaseModel, {
             return draftFullAuthorships.length === copyFullAuthorships.length &&
                 areAuthorshipsAffiliationsMergeable(draftFullAuthorships, copyFullAuthorships);
         });
-        return skipMultipleVerificationFilter ? tmpCopies : tmpCopies.filter(d => {
+        return tmpCopies.filter(d => {
             const copyFullAuthorships = d.getFullAuthorships();
             const noDoubleAuthors = draftFullAuthorships.every(a1 => {
                 const a2 = copyFullAuthorships.find(a2 => a1.position === a2.position);
