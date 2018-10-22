@@ -1,4 +1,4 @@
-/* global AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group, PerformanceCalculator, DocumentKinds */
+/* global AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group, PerformanceCalculator, DocumentKinds, DocumentNotDuplicateGroup */
 'use strict';
 
 /**
@@ -127,9 +127,6 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'researchEntity',
             through: 'documentnotduplicategroup'
         },
-        getType: function () {
-            return 'group';
-        },
         scopusId: {
             type: 'STRING'
         },
@@ -144,6 +141,15 @@ module.exports = _.merge({}, ResearchEntity, {
             collection: 'groupattribute',
             via: 'researchEntity',
         },
+        getType: function () {
+            return 'group';
+        },
+        getModel: function () {
+            return Group;
+        },
+        getDocumentNotDuplicateModel: function () {
+            return DocumentNotDuplicateGroup;
+        }
     },
     getAuthorshipsData: async function (document, groupId, newAffiliationData = {}) {
         return {

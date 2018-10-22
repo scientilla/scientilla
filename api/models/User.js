@@ -1,4 +1,4 @@
-/* global User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds */
+/* global User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate */
 'use strict';
 
 /**
@@ -180,6 +180,12 @@ module.exports = _.merge({}, ResearchEntity, {
         },
         getType: function () {
             return 'user';
+        },
+        getModel: function () {
+            return User;
+        },
+        getDocumentNotDuplicateModel: function(){
+            return DocumentNotDuplicate;
         }
     }),
     getAdministeredGroups: function (userId) {

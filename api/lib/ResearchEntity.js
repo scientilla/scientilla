@@ -18,6 +18,10 @@ module.exports = _.merge({}, BaseModel, {
     attributes: {
         getUrlSection: function () {
             return this.getType() + 's';
+        },
+        compareId(re) {
+            return this.getModel().adapter.identity === re.getModel().adapter.identity &&
+                this.id === re.id;
         }
     },
     copyDocument: async function (Model, researchEntityId, documentId) {
@@ -223,7 +227,7 @@ module.exports = _.merge({}, BaseModel, {
         });
         return documentNotDuplicate;
     },
-    getDuplicates: async function(ResearchEntityModel, researchEntityId, document) {
+    getDuplicates: async function (ResearchEntityModel, researchEntityId, document) {
         const researchEntityType = ResearchEntityModel.adapter.identity;
         const duplicateCondition = {
             document: document.id,

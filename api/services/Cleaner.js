@@ -101,7 +101,7 @@ async function cleanDocumentCopies() {
             continue;
         }
         let errors = [];
-        const copies = await Document.findCopies(doc, null, false);
+        const copies = await Document.findCopies(doc, null);
         if (copies.length === 0) continue;
         const copy = copies[0];
 
@@ -122,6 +122,9 @@ async function cleanDocumentCopies() {
                 const moveGroupDiscardedErrors = await moveDiscarded(Group, doc, copy, 'discardedG');
                 errors = errors.concat(moveUserDiscardedErrors);
                 errors = errors.concat(moveGroupDiscardedErrors);
+
+                const moveNotDuplicatesErorrs = await moveNotDuplicates(doc, copy);
+                errors = errors.concat(moveNotDuplicatesErorrs);
             }
 
             const unverifyResults = await unverifyDocuments(mergeResult.done, doc);
@@ -206,8 +209,8 @@ async function unverifyDocuments(researchEntities, document) {
 async function moveDiscarded(ResearchEntityModel, document, copy, discadedKey) {
     const errors = [];
     for (let discarded of document[discadedKey]) {
-        const user = await ResearchEntityModel.findOne({id: discarded.researchEntity}).populate('documents');
-        if (user.documents.map(d => d.id).includes(copy.id))
+        const user = await ResearchEntityModel.findOne({id: discarded.researchEntity}).populate('documents', {id: copy.id});
+        if (user.documents.length > 0)
             sails.log.info(`${ResearchEntityModel.adapter.identity} ${discarded.researchEntity} is not discarding document because he has already verified it`);
         else {
             sails.log.info(`${ResearchEntityModel.adapter.identity} ${discarded.researchEntity} is discarding document`);
@@ -227,6 +230,70 @@ async function moveDiscarded(ResearchEntityModel, document, copy, discadedKey) {
             sails.log.warn('Error: ' + res2.error);
         }
     }
+
+    return errors;
+}
+
+async function moveNotDuplicates(document, copy) {
+    const errors = [];
+    const userDocumentNotDuplicates = await DocumentNotDuplicate.find({
+        or: [
+            {document: document.id},
+            {duplicate: document.id}
+        ]
+    }).populate('researchEntity');
+    const userCopyNotDuplicates = await DocumentNotDuplicate.find({
+        or: [
+            {document: copy.id},
+            {duplicate: copy.id}
+        ]
+    }).populate('researchEntity');
+
+    const groupDocumentNotDuplicates = await DocumentNotDuplicateGroup.find({
+        or: [
+            {document: document.id},
+            {duplicate: document.id}
+        ]
+    }).populate('researchEntity');
+    const groupCopyNotDuplicates = await DocumentNotDuplicateGroup.find({
+        or: [
+            {document: copy.id},
+            {duplicate: copy.id}
+        ]
+    }).populate('researchEntity');
+
+    const documentNotDuplicates = userDocumentNotDuplicates.concat(groupDocumentNotDuplicates);
+    const copyNotDuplicates = userCopyNotDuplicates.concat(groupCopyNotDuplicates);
+
+    for (const dnd of documentNotDuplicates) {
+        const otherDocumentId = dnd.document === document.id ? dnd.duplicate : dnd.document;
+        sails.log.info(`${dnd.researchEntity.getModel().adapter.identity} ${dnd.researchEntity.id} has a documentNotDuplicate to update: ${document.id}-${otherDocumentId} to ${copy.id}-${otherDocumentId}`);
+
+        const NotDuplicateModel = dnd.researchEntity.getDocumentNotDuplicateModel();
+        let res = await NotDuplicateModel.destroy({id: dnd.id});
+        if(!res.error){
+            errors.push(res);
+            sails.log.warn('Error: ' + res.error);
+        }
+
+        if (otherDocumentId === copy.id) {
+            sails.log.info(`The documentNotDuplicate has been deleted because ${otherDocumentId} is the merging document`);
+            continue;
+        }
+
+        if (copyNotDuplicates.find(cnd => cnd.researchEntity.compareId(dnd.researchEntity) &&
+            (cnd.document === otherDocumentId || cnd.duplicate === otherDocumentId))) {
+            sails.log.info(`The documentNotDuplicate has been deleted because the merging document (${copy.id}) already has ${otherDocumentId} signed as not duplicate`);
+            continue;
+        }
+
+        res = await NotDuplicateModel.insert(document, copy, dnd.researchEntity);
+        if(res.error){
+            errors.push(res);
+            sails.log.warn('Error: ' + res.error);
+        }
+    }
+
 
     return errors;
 }
