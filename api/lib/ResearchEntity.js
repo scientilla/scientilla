@@ -90,7 +90,7 @@ module.exports = _.merge({}, BaseModel, {
         }
         return results;
     },
-    verifyDraft: async function (ResearchEntityModel, researchEntityId, draftId, verificationData, check) {
+    verifyDraft: async function (ResearchEntityModel, researchEntityId, draftId, verificationData, check = true) {
         const draft = await Document.findOneById(draftId)
             .populate('authorships')
             .populate('affiliations');
