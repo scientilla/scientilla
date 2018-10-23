@@ -6,7 +6,6 @@
         '$rootScope'
     ];
 
-
     function ModalService($rootScope) {
         var subscriptions = [];
         var service = {

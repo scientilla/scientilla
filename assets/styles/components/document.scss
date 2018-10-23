@@ -1,17 +1,27 @@
 .document{
     @include normalize-listing;
     font-size: 1.2rem;
+    border-left: 2px solid $curious-blue;
 
     & > li{
         padding: 0px 1rem;
+    }
+
+    &.invalid{
+        border-left: 2px solid $apple-blossom;
     }
 
     .document-info{
         position: relative;
 
         .document-year{
-            display: inline-block;
+            position: absolute;
+            top: -16px;
+            right: 2px;
+            display: block;
             font-weight: bold;
+            transform-origin: bottom right;
+            transform: rotate(-90deg);
         }
 
         .icon-iit{
@@ -95,9 +105,18 @@
         display: grid;
         grid-template-rows: auto;
         grid-template-columns: auto 1fr auto;
+        border-left: 0px;
 
         .document-info{
             border-right: 2px solid $curious-blue;
+        }
+
+        &.invalid{
+            border-left: 0px;
+
+            .document-info{
+                border-right: 2px solid $apple-blossom;
+            }
         }
 
         .document-icons{

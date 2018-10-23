@@ -28,15 +28,21 @@
         @include normalize-listing;
     }
 
+    .modal-buttons-container{
+        //@include clearfix;
+        //margin: 3rem 0px 1rem 0px;
+    }
+
     .modal-buttons{
         @include normalize-listing;
         @include clearfix;
-        margin: 3rem -1rem -2rem -1rem;
+        margin: 0px -1rem;
 
         & > li{
             display: block;
             float: left;
-            padding: 0px 1rem 2rem 1rem;
+            //margin-bottom: 2rem;
+            padding: 0px 1rem 1rem 1rem;
         }
 
         &.fluid{

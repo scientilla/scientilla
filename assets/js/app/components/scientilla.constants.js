@@ -229,15 +229,18 @@
     const documentFieldsRules = {
         authorsStr: {
             allowNull: false,
-            regex: /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?[a-zA-ZÀ-ÖØ-öø-ÿ]\.)+)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?\w\.)+)*$/
+            regex: /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?[a-zA-ZÀ-ÖØ-öø-ÿ]\.)+)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?\w\.)+)*$/,
+            message: 'Author string is not valid. It should be in the form \"E. Molinari, F. Bozzini, F. Semprini\".'
         },
         scopusId: {
             allowNull: true,
-            regex: /^\d*$/
+            regex: /^\d*$/,
+            message: 'The ScopusID is not valid'
         },
         year: {
             allowNull: false,
-            regex: /^(19|20)\d{2}$/
+            regex: /^(19|20)\d{2}$/,
+            message: 'This year is not valid. It should be like: 2018'
  }
     };
 

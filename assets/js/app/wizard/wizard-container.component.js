@@ -184,9 +184,9 @@
             return steps.length;
         }
 
-        $scope.$on('modal.closing', function(event, reason, closed) {
+        $scope.$on('modal.closing', function(event, reason) {
             if (typeof vm.resolve.data.closing === "function") {
-                vm.resolve.data.closing(event, reason, closed);
+                vm.resolve.data.closing(event, reason);
             }
         });
     }

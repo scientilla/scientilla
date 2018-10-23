@@ -14,7 +14,8 @@
                 researchEntity: "<",
                 onFailure: "&",
                 onSubmit: "&",
-                closeFn: "&"
+                closeFn: "&",
+                closing: "<"
             }
         });
 
@@ -27,7 +28,8 @@
         'DocumentTypesService',
         'context',
         'Restangular',
-        'ModalService'
+        'ModalService',
+        'FormService'
     ];
 
     function scientillaDocumentFormController($rootScope,
@@ -38,11 +40,16 @@
                                               DocumentTypesService,
                                               context,
                                               Restangular,
-                                              ModalService) {
+                                              ModalService,
+                                              FormService) {
         const vm = this;
-        vm.status = createStatus();
+
+        vm.saveStatus = saveStatus();
+        vm.verifyStatus = verifyStatus();
+
         vm.cancel = cancel;
         vm.verify = verify;
+        vm.save = save;
         vm.documentTypes = DocumentTypesService.getDocumentTypes();
         vm.getSources = getSources;
         vm.getItSources = getItSources;
@@ -60,6 +67,10 @@
         vm.openDocumentAffiliationForm = openDocumentAffiliationsForm;
         vm.newSource = {};
 
+        vm.errors = {};
+        vm.errorText = '';
+        vm.unsavedData = false;
+
         vm.$onInit = function () {
             if (_.isFunction(vm.document.clone))
                 documentBackup = vm.document.clone();
@@ -68,6 +79,29 @@
 
             watchDocumentSourceType();
             watchDocumentType();
+
+            $scope.$watch('form.$pristine', function (formUntouched) {
+                if (!formUntouched) {
+                    vm.unsavedData = true;
+                } else {
+                    vm.unsavedData = false;
+                }
+
+                if (vm.document.id) {
+                    FormService.setUnsavedData('edit-document', vm.unsavedData);
+                } else {
+                    FormService.setUnsavedData('new-document', vm.unsavedData);
+                }
+            });
+
+            $scope.$on('modal.closing', function(event, reason) {
+                if (typeof vm.closing === "function") {
+                    vm.closing(event, reason, {
+                        document: vm.document,
+                        documentBackup: documentBackup
+                    });
+                }
+            });
         };
 
         vm.$onDestroy = function () {
@@ -101,66 +135,118 @@
             deregisteres.push(dereg);
         }
 
-        function createStatus() {
-            let isSavedVar = false;
-            let isSavingVar = false;
+        function saveStatus() {
             return {
-                isSaved: function () {
-                    return isSavedVar;
-                },
-                isSaving: function () {
-                    return isSavingVar;
-                },
-                setSaved: function (isSaved) {
-                    isSavedVar = isSaved;
-                    isSavingVar = !isSaved;
+                setState: function (state) {
+                    this.state = state;
 
-                    if (isSavedVar) {
-                        this.class = "saved";
-                        this.message = "Saved";
-                    }
-                    else {
-                        this.class = "unsaved";
-                        this.message = "Saving";
+                    switch(true) {
+                        case state === 'ready to save':
+                            this.message = 'Save draft';
+                            break;
+                        case state === 'saving':
+                            this.message = 'Saving draft';
+                            break;
+                        case state === 'saved':
+                            this.message = 'Draft is saved!';
+                            $scope.form.$setPristine();
+                            break;
+                        case state === 'failed':
+                            this.message = 'Failed to save draft!';
+                            break;
                     }
                 },
-                message: "",
-                class: "default"
+                state: 'ready to save',
+                message: 'Save to draft'
             };
         }
 
-        function saveDocument() {
-            console.log(vm.document.id);
-            if (vm.document.id)
+        function verifyStatus() {
+            return {
+                setState: function (state) {
+                    this.state = state;
+
+                    switch(true) {
+                        case state === 'ready to save':
+                            this.message = 'Save draft & verify';
+                            break;
+                        case state === 'saving':
+                            this.message = 'Saving draft';
+                            break;
+                        case state === 'saved':
+                            this.message = 'Draft is saved!';
+                            $scope.form.$setPristine();
+                            break;
+                        case state === 'failed':
+                            this.message = 'Failed to verify!';
+                            break;
+                    }
+                },
+                state: 'ready to save',
+                message: 'Save & verify'
+            };
+        }
+
+        function save() {
+            vm.errors = {};
+            vm.errorText = '';
+            saveDocument(true);
+        }
+
+        function saveDocument(updateState = false) {
+            if (updateState) {
+                vm.saveStatus.setState('saving');
+            }
+
+            if (vm.document.id) {
                 return vm.document.save().then(() => {
-                    vm.status.setSaved(true);
+                    if (updateState) {
+                        vm.saveStatus.setState('saved');
+                    }
+
                     EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
-                }).catch((response) => {
-                    //console.log(response);
+
+                    FormService.setUnsavedData('edit-document', false);
+
+                    if (updateState) {
+                        $timeout(function() {
+                            vm.saveStatus.setState('ready to save');
+                        }, 1000);
+                    }
+
+                    return vm.document;
                 });
-            else
+            } else {
                 return documentService.createDraft(vm.document)
                     .then(draft => {
                         vm.document = draft;
-                        vm.status.setSaved(true);
+                        if (updateState) {
+                            vm.saveStatus.setState('saved');
+                        }
+
                         EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
 
-                        return vm.document;
-                    }, (res) => {
-                        if (res.data && res.data.invalidAttributes) {
-                            vm.document.invalidAttributes = res.data.invalidAttributes;
+                        FormService.setUnsavedData('new-document', false);
+
+                        if (updateState) {
+                            $timeout(function() {
+                                vm.saveStatus.setState('ready to save');
+                            }, 1000);
                         }
-                        //console.log(vm.document);
+
                         return vm.document;
                     });
+            }
         }
 
         function cancel() {
             if (debounceTimeout !== null) {
                 $timeout.cancel(debounceTimeout);
             }
-            if (vm.status.isSaving())
+
+            if (vm.saveStatus.state === 'saving') {
                 saveDocument();
+            }
 
             close();
         }
@@ -193,6 +279,8 @@
             $rootScope.$on('newSource', function(event, source) {
                 vm.document.source = source;
                 vm.getSources(source.title);
+
+                vm.errors = vm.document.validateDocument();
             });
 
             ModalService
@@ -211,38 +299,27 @@
         }
 
         function verify() {
-            saveDocument()
-                .then(() => {
-                    if (vm.document.invalidAttributes || !vm.document.isValid) {
-                        if (!vm.document.invalidAttributes) {
-                            vm.document.invalidAttributes = {};
-                        }
-                        if (!vm.document.hasValidAuthorsStr) {
-                            if(!vm.document.invalidAttributes.authors) {
-                                vm.document.invalidAttributes.authors = [];
-                            }
-                            vm.document.invalidAttributes.authors.push({
-                                rule: 'valid',
-                                message: 'Author string is not valid. It should be in the form \'E. Molinari, F. Bozzini, F. Semprini\'.'
-                            });
-                        }
-
-                        if (!vm.document.hasValidYear) {
-                            if(!vm.document.invalidAttributes.year) {
-                                vm.document.invalidAttributes.year = [];
-                            }
-                            vm.document.invalidAttributes.year.push({
-                                rule: 'valid',
-                                message: 'Not a valid year.'
-                            });
-                        }
-
-                        return Promise.reject();
-                    } else {
+            vm.errors = vm.document.validateDocument();
+            if (_.isEmpty(vm.errors)) {
+                // Is valid
+                vm.verifyStatus.setState('saving');
+                saveDocument()
+                    .then(() => {
+                        vm.verifyStatus.setState('saved');
                         close();
-                    }
-                })
-                .then(() => documentService.verifyDraft(vm.document));
+                    })
+                    .then(() => {
+                        documentService.verifyDraft(vm.document);
+                    });
+            } else {
+                // Is not valid
+                vm.verifyStatus.setState('failed');
+                vm.errorText = 'Please correct the errors on this form!';
+
+                $timeout(function() {
+                    vm.verifyStatus.setState('ready to save');
+                }, 1000);
+            }
         }
 
         function executeOnSubmit(i) {

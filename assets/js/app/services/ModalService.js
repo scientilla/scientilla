@@ -59,25 +59,31 @@
             return modal.result;
         };
 
-        service.openScientillaDocumentForm = function (document, researchEntity) {
+        service.openScientillaDocumentForm = function (document, researchEntity, closing) {
             const scopeVars = {
                 document: document,
-                researchEntity: researchEntity
+                researchEntity: researchEntity,
             };
 
-            const modal = openModal(
+            if (typeof closing === "function") {
+                scopeVars.closing = closing;
+            }
+
+            let modal = openModal(
                 '<scientilla-document-form\
                     document="vm.document"\
                     research-entity="vm.researchEntity"\
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit" \
-                    close-fn="vm.onClose" \
+                    close-fn="vm.onClose"\
+                    closing="vm.closing"\
                 ></scientilla-document-form>',
                 scopeVars
             );
 
             addModalObject(modal);
-            return modal.result;
+
+            return modal;
         };
 
         service.openScientillaDocumentSearch = function () {
@@ -359,7 +365,7 @@
         return service;
 
         // private
-        function openComponentModal(component, args, options) {
+        function openComponentModal(component, args, options = {}) {
             const callbacks = getDefaultCallbacks();
 
             const resolve = {
@@ -392,7 +398,7 @@
                     animation: true,
                     template: template,
                     controller: controller,
-                    controllerAs: 'vm'
+                    controllerAs: 'vm',
                 }, args)
             );
 

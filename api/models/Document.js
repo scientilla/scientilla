@@ -44,16 +44,10 @@ module.exports = _.merge({}, BaseModel, {
     },
     /* ATTRIBUTES */
     attributes: {
-        title: {
-            type: 'STRING',
-            required: true
-        },
+        title: 'STRING',
         authorsStr: 'STRING',
         authorKeywords: 'STRING',
-        year: {
-            type: 'STRING',
-            required: true
-        },
+        year: 'STRING',
         issue: 'STRING',
         volume: 'STRING',
         pages: 'STRING',
@@ -63,10 +57,7 @@ module.exports = _.merge({}, BaseModel, {
         documenttype: {
             model: 'DocumentType'
         },
-        sourceType: {
-            type: 'STRING',
-            required: true
-        },
+        sourceType: 'STRING',
         itSource: 'STRING',
         scopusId: 'STRING',
         wosId: 'STRING',
@@ -76,8 +67,7 @@ module.exports = _.merge({}, BaseModel, {
         origin: 'STRING',
         synchronized: "BOOLEAN",
         source: {
-            model: 'source',
-            required: true
+            model: 'source'
         },
         authors: {
             collection: 'user',

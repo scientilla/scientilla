@@ -238,6 +238,47 @@
                         return rule.regex.test(this[k]);
                     });
             },
+            validateDocument: function () {
+                const requiredFields = [
+                    'authorsStr',
+                    'title',
+                    'year',
+                    'type',
+                    'sourceType'
+                ];
+
+                let errors = {};
+
+                // TODO: refactor, invited_talk should be read by a service;
+                const invitedTalkType = 'invited_talk';
+                if (this.type === invitedTalkType)
+                    requiredFields.push('itSource');
+                else
+                    requiredFields.push('source');
+
+                let document = this;
+                _.forEach(documentFieldsRules, function(rule, field) {
+                    if (document[field]) {
+                        if (!rule.regex.test(document[field])) {
+                            errors[field] = {
+                                rule: 'valid',
+                                message: rule.message
+                            };
+                        }
+                    }
+                });
+
+                _.forEach(requiredFields, function(field) {
+                    if (!document[field]) {
+                        errors[field] = {
+                            rule: 'required',
+                            message: 'This field is required.'
+                        };
+                    }
+                });
+
+                return errors;
+            },
             getAllCoauthors: function () {
                 return this.authors;
             },

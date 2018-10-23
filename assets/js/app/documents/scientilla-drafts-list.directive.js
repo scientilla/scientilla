@@ -39,7 +39,7 @@
         vm.openDocumentAuthorsForm = DocumentsService.openDocumentAuthorsForm;
         vm.deleteDrafts = DocumentsService.deleteDrafts;
         vm.verifyDrafts = DocumentsService.verifyDrafts;
-        vm.synchronizeDraft = DocumentsService.synchronizeDraft;
+        vm.synchronizeDraft = DocumentsService.WizardServicesynchronizeDraft;
         vm.desynchronizeDrafts = DocumentsService.desynchronizeDrafts;
         vm.compareDocuments = DocumentsService.compareDocuments;
 

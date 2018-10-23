@@ -43,17 +43,17 @@
                     ng-model="vm.document.sourceType"
                     ng-model-options="{ allowInvalid: true }"
                     ng-options="option.id as option.label group by option.section for option in vm.sourceTypes"
-                    ng-class="vm.document.invalidAttributes.sourceType ? 'is-invalid' : ''">
+                    ng-class="vm.errors.sourceType ? 'is-invalid' : ''">
                     <option value="">--Not Selected--</option>
                 </select>
             </div>
             <scientilla-error-messages
                 class="error-messages"
-                errors="vm.document.invalidAttributes.sourceType"></scientilla-error-messages>
+                error="vm.errors.sourceType"></scientilla-error-messages>
         </div>
 
         <div
-            ng-class="vm.document.invalidAttributes.title ? 'has-error' : ''"
+            ng-class="vm.errors.title ? 'has-error' : ''"
             class="form-group has-feedback">
             <label for="title">Title *</label>
             <input
@@ -64,14 +64,14 @@
                 placeholder="Title"
                 ng-model="vm.document.title"
                 data-ng-required="true"
-                ng-class="vm.document.invalidAttributes.title ? 'is-invalid' : ''">
+                ng-class="vm.errors.title ? 'is-invalid' : ''">
             <scientilla-error-messages
                 class="error-messages"
-                errors="vm.document.invalidAttributes.title"></scientilla-error-messages>
+                error="vm.errors.title"></scientilla-error-messages>
         </div>
 
         <div
-            ng-class="vm.document.invalidAttributes.authors ? 'has-error' : ''"
+            ng-class="vm.errors.authorsStr ? 'has-error' : ''"
             class="form-group has-feedback">
             <label for="authors">Authors (must be in the form "Doe J., Smith Simpson J. V.") *</label>
             <input
@@ -84,14 +84,14 @@
                 ng-pattern="vm.documentFieldsRules.authorsStr.regex"
                 data-ng-required="true"
                 ng-model-options="{ allowInvalid: true }"
-                ng-class="vm.document.invalidAttributes.authors ? 'is-invalid' : ''">
+                ng-class="vm.errors.authorsStr ? 'is-invalid' : ''">
             <scientilla-error-messages
                 class="error-messages"
-                errors="vm.document.invalidAttributes.authors"></scientilla-error-messages>
+                error="vm.errors.authorsStr"></scientilla-error-messages>
         </div>
 
         <div
-            ng-class="vm.document.invalidAttributes.year ? 'has-error' : ''"
+            ng-class="vm.errors.year ? 'has-error' : ''"
             class="form-group has-feedback">
             <label for="year">Year (YYYY format) *</label>
             <input
@@ -104,20 +104,20 @@
                 data-ng-required="true"
                 ng-pattern="/^(19|20)\d{2}$/"
                 ng-model-options="{ allowInvalid: true }"
-                ng-class="vm.document.invalidAttributes.year ? 'is-invalid' : ''">
+                ng-class="vm.errors.year ? 'is-invalid' : ''">
             <scientilla-error-messages
                 class="error-messages"
-                errors="vm.document.invalidAttributes.year"></scientilla-error-messages>
+                error="vm.errors.year"></scientilla-error-messages>
         </div>
 
         <div
             class="form-group has-feedback"
             ng-if="vm.document.sourceType && !['invited_talk'].includes(vm.document.type)"
-            ng-class="vm.document.invalidAttributes.source ? 'has-error' : ''">
-            <label for="source">{{vm.sourceLabel}}</label>
+            ng-class="vm.errors.source ? 'has-error' : ''">
+            <label for="source">{{ vm.sourceLabel }} *</label>
             <div
                 class="input-group"
-                ng-class="vm.document.invalidAttributes.source ? 'is-invalid' : ''">
+                ng-class="vm.errors.source ? 'is-invalid' : ''">
                 <input
                     id="source"
                     name="source"
@@ -133,7 +133,7 @@
                     typeahead-editable="false"
                     typeahead-select-on-blur="true"
                     ng-blur="vm.checkSource($event)"
-                    ng-class="vm.document.invalidAttributes.source ? 'is-invalid' : ''">
+                    ng-class="vm.errors.source ? 'is-invalid' : ''">
                     {{ $viewValue }}
                 <div class="input-group-append">
                     <button
@@ -144,7 +144,7 @@
             </div>
             <scientilla-error-messages
                 class="error-messages"
-                errors="vm.document.invalidAttributes.source"></scientilla-error-messages>
+                error="vm.errors.source"></scientilla-error-messages>
         </div>
 
         <div
@@ -272,7 +272,15 @@
             <li>
                 <scientilla-button
                     type="button"
-                    click="vm.verify()">Verify
+                    click="vm.save()"
+                    ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData">{{ vm.saveStatus.message }}
+                </scientilla-button>
+            </li>
+            <li>
+                <scientilla-button
+                    type="button"
+                    ng-disabled="vm.verifyStatus.state !== 'ready to save'"
+                    click="vm.verify()">{{ vm.verifyStatus.message }}
                 </scientilla-button>
             </li>
             <li>
@@ -280,11 +288,12 @@
                     type="cancel"
                     click="vm.cancel()">Close</scientilla-button>
             </li>
-            <li
-                ng-if="vm.status.message"
-                class="status-message">
-                <strong>{{ vm.status.message }}</strong>
-            </li>
         </ul>
+
+        <div
+            ng-if="vm.errorText"
+            class="text-danger">
+            {{ vm.errorText }}
+        </div>
     </form>
 </div>

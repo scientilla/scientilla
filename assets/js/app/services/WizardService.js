@@ -19,7 +19,7 @@
             let user = context.getResearchEntity();
             let originalUser = angular.copy(user);
 
-            let closing = function(event = false, reason = false, closed = true) {
+            let closing = function(event = false, reason = false) {
 
                 unsavedData = FormService.getUnsavedData('scopus-edit');
 
@@ -82,7 +82,7 @@
             let originalUser = angular.copy(user);
             let unsavedData = false;
 
-            let closing = function(event = false, reason = false, closed = true) {
+            let closing = function(event = false, reason = false) {
 
                 unsavedData = FormService.getUnsavedData('alias-edit');
 
