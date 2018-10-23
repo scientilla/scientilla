@@ -8,13 +8,19 @@
 
         <scientilla-multicheck>
             <buttons>
-                <scientilla-multicheck-button on-click="vm.verifyDrafts">
+                <scientilla-multicheck-button
+                    subject="Verify draft"
+                    on-click="vm.verifyDrafts">
                     <i class="fas fa-check fa-left"></i>Verify
                 </scientilla-multicheck-button>
-                <scientilla-multicheck-button on-click="vm.deleteDrafts">
+                <scientilla-multicheck-button
+                    subject="Delete draft"
+                    on-click="vm.deleteDrafts">
                     <i class="far fa-trash-alt fa-left"></i>Delete
                 </scientilla-multicheck-button>
-                <scientilla-multicheck-button on-click="vm.desynchronizeDrafts">
+                <scientilla-multicheck-button
+                    subject="Disable synchronisation"
+                    on-click="vm.desynchronizeDrafts">
                     <i class="fas fa-sync-alt fa-left"></i>Disable sync.
                 </scientilla-multicheck-button>
             </buttons>

@@ -7,13 +7,19 @@
 
         <scientilla-multicheck>
             <buttons>
-                <scientilla-multicheck-button on-click="vm.verifyDocuments">
+                <scientilla-multicheck-button
+                    subject="Verify document"
+                    on-click="vm.verifyDocuments">
                     <i class="fas fa-check fa-left"></i>Verify
                 </scientilla-multicheck-button>
-                <scientilla-multicheck-button on-click="vm.copyDocuments">
+                <scientilla-multicheck-button
+                    subject="Copy document"
+                    on-click="vm.copyDocuments">
                     <i class="far fa-copy fa-left"></i>Copy
                 </scientilla-multicheck-button>
-                <scientilla-multicheck-button on-click="vm.discardDocuments">
+                <scientilla-multicheck-button
+                    subject="Discard document"
+                    on-click="vm.discardDocuments">
                     <i class="fas fa-ban fa-left"></i>Discard
                 </scientilla-multicheck-button>
             </buttons>

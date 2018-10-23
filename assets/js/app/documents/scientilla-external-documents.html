@@ -9,14 +9,20 @@
 
         <scientilla-multicheck>
             <buttons>
-                <scientilla-multicheck-button on-click="vm.verifyDocuments">
+                <scientilla-multicheck-button
+                    subject="Verify document"
+                    on-click="vm.verifyDocuments">
                     <i class="fas fa-check fa-left"></i>Verify
                 </scientilla-multicheck-button>
-                <scientilla-multicheck-button on-click="vm.copyDocuments">
+                <scientilla-multicheck-button
+                    subject="Copy document"
+                    on-click="vm.copyDocuments">
                     <i class="fa fa-copy fa-left"></i>Copy
                 </scientilla-multicheck-button>
 
-                <scientilla-multicheck-button on-click="vm.copyUncopiedDocuments">
+                <scientilla-multicheck-button
+                    subject="Copy only new document"
+                    on-click="vm.copyUncopiedDocuments">
                     <i class="fa fa-copy fa-left"></i>Copy only new
                 </scientilla-multicheck-button>
             </buttons>

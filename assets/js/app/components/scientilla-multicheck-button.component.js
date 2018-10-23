@@ -7,7 +7,8 @@
                 controller: scientillaMulticheckButtonController,
                 controllerAs: 'vm',
                 bindings: {
-                    'onClick': '&'
+                    'onClick': '&',
+                    'subject': '@'
                 },
                 transclude: true,
                 require: {
@@ -34,7 +35,7 @@
             var checkedItems = vm.scientillaMulticheck.getCheckedItems();
 
             ModalService
-                    .confirm("", "Apply this action to " + checkedItems.length + " elements?")
+                    .confirm(vm.subject, "Apply this action to " + checkedItems.length + " elements?")
                     .then(function (res) {
                         if (res === 0)
                             vm.onClick()(checkedItems);
