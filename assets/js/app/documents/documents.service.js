@@ -61,7 +61,9 @@
                     return ModalService.multipleChoiceConfirm(
                         'Delete',
                         'This action will permanently delete this document.\n Do you want to proceed?',
-                        ['Proceed'])
+                        ['Proceed'],
+                        'Cancel',
+                        true)
                         .then(res => {
                                 if (res === 0)
                                     researchEntityService

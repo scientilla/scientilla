@@ -272,7 +272,7 @@
             return modal.result;
         };
 
-        service.multipleChoiceConfirm = function (title, message, buttonLabels, cancelLabel = 'Cancel') {
+        service.multipleChoiceConfirm = function (title, message, buttonLabels, cancelLabel = 'Cancel', closeable = false) {
             buttonLabels = buttonLabels || [];
             return new Promise(function (resolve, reject) {
                 const scope = {
@@ -286,14 +286,16 @@
                         this.onSubmit();
                         resolve(i);
                     },
-                    buttonLabels: buttonLabels
+                    buttonLabels: buttonLabels,
+                    closeable: closeable
                 };
 
-                let args = {
-                    backdrop: 'static',
-                    keyboard: false
-                };
-                let closeable = false;
+                let args = {};
+
+                if (!closeable) {
+                    args.backdrop = 'static';
+                    args.keyboard = false;
+                }
 
                 var buttons = scope.buttonLabels.map(function (b, i) {
                         return '<li><scientilla-button click="vm.ok(' + i + ')">' + b + '</scientilla-button></li>';
@@ -308,7 +310,7 @@
                                     <button
                                         type="button"
                                         class="close"
-                                        ng-if="closeable"
+                                        ng-if="vm.closeable"
                                         ng-click="vm.onClose()">
                                         <i class="fas fa-times"></i>
                                     </button>
