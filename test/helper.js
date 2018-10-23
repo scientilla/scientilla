@@ -30,6 +30,7 @@ module.exports = {
     registerUser,
     getUserDocuments,
     getUserDocumentsWithAuthors,
+    getUserDiscarded,
     getUserSuggestedDocuments,
     getUserDrafts,
     userCreateDraft,
@@ -38,6 +39,8 @@ module.exports = {
     groupUpdateDraft,
     userVerifyDraft,
     userVerifyDrafts,
+    userCopyDocument,
+    userDiscardDocument,
     addAuthorship,
     getAuthorships,
     addAffiliation,
@@ -219,6 +222,13 @@ async function getUserDocuments(user, populateFields, qs = {}, respCode = 200) {
     return res.body;
 }
 
+async function getUserDiscarded(user, respCode = 200) {
+    const res = await request(url)
+        .get('/users/' + user.id + '/discardedDocuments')
+        .expect(respCode);
+    return res.body;
+}
+
 function getUserDocumentsWithAuthors(user) {
     return this.getUserDocuments(user, ['authors', 'authorships', 'affiliations'], {});
 }
@@ -283,6 +293,26 @@ async function userVerifyDraft(user, draftData, position, affiliations, correspo
         .put('/users/' + user.id + '/drafts/' + draftData.id + '/verified')
         .set('access_token', auth.token)
         .send({position: position, 'affiliations': affiliations, 'corresponding': corresponding})
+        .expect(respCode);
+    return res.body;
+}
+
+async function userDiscardDocument(user, document, respCode = 200) {
+    const auth = getAuth(user.id);
+    const res = await auth.agent
+        .post('/users/' + user.id + '/discarded-document')
+        .set('access_token', auth.token)
+        .send({documentId: document.id})
+        .expect(respCode);
+    return res.body;
+}
+
+async function userCopyDocument(user, document, respCode = 200) {
+    const auth = getAuth(user.id);
+    const res = await auth.agent
+        .post('/users/' + user.id + '/copy-document')
+        .set('access_token', auth.token)
+        .send({documentId: document.id})
         .expect(respCode);
     return res.body;
 }

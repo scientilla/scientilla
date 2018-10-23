@@ -116,7 +116,6 @@ module.exports = _.merge({}, BaseModel, {
             sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + docToVerify.id);
             await Document.destroy({id: draft.id});
         }
-
         return await ResearchEntityModel.doVerifyDocument(docToVerify, researchEntityId, authorshipData);
     },
     verifyVerifiedDocument: async function (ResearchEntityModel, researchEntityId, document, verificationData, check) {
@@ -288,6 +287,10 @@ module.exports = _.merge({}, BaseModel, {
         else
             res = await ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, docToVerify.id, verificationData);
         return res;
+    },
+    removeDiscarded: async function(ResearchEntityModel, researchEntityId, documentId) {
+        const DiscardedModel = getDiscardedModel(ResearchEntityModel);
+        await DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
     },
     _config: {
         actions: false,
