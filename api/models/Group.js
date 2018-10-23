@@ -252,6 +252,7 @@ module.exports = _.merge({}, ResearchEntity, {
         return null;
     },
     doVerifyDocument: async function (document, researchEntityId, authorshipData) {
+        await Group.removeDiscarded(Group, researchEntityId, document.id);
         const authorship = {
             researchEntity: researchEntityId,
             document: document.id,

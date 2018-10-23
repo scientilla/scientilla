@@ -482,6 +482,7 @@ module.exports = _.merge({}, ResearchEntity, {
         return null;
     },
     doVerifyDocument: async function (document, researchEntityId, authorshipData) {
+        await User.removeDiscarded(User, researchEntityId, document.id);
         if (authorshipData.position < 0)
             return {
                 error: "User not selected",
