@@ -31,6 +31,8 @@
             NOTIFICATION_ACCEPTED: 'notification.accepted',
             NOTIFICATION_DISCARDED: 'notification.discarded',
 
+            SOURCE_CREATED: 'source.created',
+
             CONTEXT_CHANGE: 'context.change'
         };
 

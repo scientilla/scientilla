@@ -260,20 +260,26 @@
                 _.forEach(documentFieldsRules, function(rule, field) {
                     if (document[field]) {
                         if (!rule.regex.test(document[field])) {
-                            errors[field] = {
+                            if (typeof errors[field] === 'undefined') {
+                                errors[field] = [];
+                            }
+                            errors[field].push({
                                 rule: 'valid',
                                 message: rule.message
-                            };
+                            });
                         }
                     }
                 });
 
                 _.forEach(requiredFields, function(field) {
                     if (!document[field]) {
-                        errors[field] = {
+                        if (typeof errors[field] === 'undefined') {
+                            errors[field] = [];
+                        }
+                        errors[field].push({
                             rule: 'required',
                             message: 'This field is required.'
-                        };
+                        });
                     }
                 });
 

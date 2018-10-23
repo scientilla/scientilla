@@ -49,7 +49,7 @@
             </div>
             <scientilla-error-messages
                 class="error-messages"
-                error="vm.errors.sourceType"></scientilla-error-messages>
+                errors="vm.errors.sourceType"></scientilla-error-messages>
         </div>
 
         <div
@@ -67,7 +67,7 @@
                 ng-class="vm.errors.title ? 'is-invalid' : ''">
             <scientilla-error-messages
                 class="error-messages"
-                error="vm.errors.title"></scientilla-error-messages>
+                errors="vm.errors.title"></scientilla-error-messages>
         </div>
 
         <div
@@ -87,7 +87,7 @@
                 ng-class="vm.errors.authorsStr ? 'is-invalid' : ''">
             <scientilla-error-messages
                 class="error-messages"
-                error="vm.errors.authorsStr"></scientilla-error-messages>
+                errors="vm.errors.authorsStr"></scientilla-error-messages>
         </div>
 
         <div
@@ -107,7 +107,7 @@
                 ng-class="vm.errors.year ? 'is-invalid' : ''">
             <scientilla-error-messages
                 class="error-messages"
-                error="vm.errors.year"></scientilla-error-messages>
+                errors="vm.errors.year"></scientilla-error-messages>
         </div>
 
         <div
@@ -144,7 +144,7 @@
             </div>
             <scientilla-error-messages
                 class="error-messages"
-                error="vm.errors.source"></scientilla-error-messages>
+                errors="vm.errors.source"></scientilla-error-messages>
         </div>
 
         <div
@@ -292,7 +292,7 @@
 
         <div
             ng-if="vm.errorText"
-            class="text-danger">
+            class="modal-error text-danger">
             {{ vm.errorText }}
         </div>
     </form>

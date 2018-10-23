@@ -28,21 +28,15 @@
         @include normalize-listing;
     }
 
-    .modal-buttons-container{
-        //@include clearfix;
-        //margin: 3rem 0px 1rem 0px;
-    }
-
     .modal-buttons{
         @include normalize-listing;
         @include clearfix;
-        margin: 0px -1rem;
+        margin: 2rem -1rem -2rem -1rem;
 
         & > li{
             display: block;
             float: left;
-            //margin-bottom: 2rem;
-            padding: 0px 1rem 1rem 1rem;
+            padding: 0px 1rem 2rem 1rem;
         }
 
         &.fluid{
@@ -59,6 +53,10 @@
 
     .status-message{
         line-height: 3rem;
+    }
+
+    .modal-error{
+        margin-top: 2rem;
     }
 }
 

@@ -1,5 +1,9 @@
 <div class="invalid-feedback">
-    <span ng-if="vm.error.rule === 'email'">This value should be an email.</span>
-    <span ng-if="vm.error.rule === 'required'">{{ vm.error.message }}</span>
-    <span ng-if="vm.error.rule === 'valid'">{{ vm.error.message }}</span>
+    <ul class="error-messages">
+        <li ng-repeat="(key, error) in vm.errors">
+            <span ng-if="error.rule === 'email'">This value should be an email.</span>
+            <span ng-if="error.rule === 'required'">{{ error.message }}</span>
+            <span ng-if="error.rule === 'valid'">{{ error.message }}</span>
+        </li>
+    </ul>
 </div>

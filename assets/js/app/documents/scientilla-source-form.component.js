@@ -13,22 +13,46 @@
                 document: "<",
                 onFailure: "&",
                 onSubmit: "&",
-                closeFn: "&"
+                closeFn: "&",
+                closing: "<"
             }
         });
 
     scientillaSourceFormController.$inject = [
-        '$rootScope',
         'context',
         'Restangular',
-        'ModalService'
+        'ModalService',
+        'EventsService',
+        'FormService',
+        '$scope'
     ];
 
-    function scientillaSourceFormController($rootScope, context, Restangular, ModalService) {
+    function scientillaSourceFormController(context, Restangular, ModalService, EventsService, FormService, $scope) {
         const vm = this;
 
         vm.createSource = createSource;
         vm.cancel = cancel;
+        vm.errors = {};
+        vm.errorText = '';
+
+        vm.$onInit = function () {
+
+            $scope.$watch('source.$pristine', function (formUntouched) {
+                if (!formUntouched) {
+                    FormService.setUnsavedData('new-source', true);
+                } else {
+                    FormService.setUnsavedData('new-source', false);
+                }
+            });
+
+            $scope.$on('modal.closing', function (event, reason) {
+                if (typeof vm.closing === "function") {
+                    vm.closing(event, reason, {
+                        source: vm.newSource
+                    });
+                }
+            });
+        };
 
         function createSource() {
 
@@ -41,11 +65,23 @@
             Restangular.all('sources')
                 .post(vm.newSource)
                 .then(source => {
-                    $rootScope.$emit('newSource', source);
+                    EventsService.publish(EventsService.SOURCE_CREATED, source);
                     vm.newSource = {};
+                    FormService.setUnsavedData('new-source', false);
                     cancel();
                 }, function(res) {
-                    vm.invalidAttributes = res.data.invalidAttributes;
+                    vm.errors = res.data.invalidAttributes;
+
+                    angular.forEach(vm.errors, function(fields, fieldIndex) {
+                        angular.forEach(fields, function(error, errorIndex) {
+                            if (error.rule === 'required'){
+                                error.message = 'This field is required.';
+                                vm.errors[fieldIndex][errorIndex] = error;
+                            }
+                        });
+                    });
+
+                    vm.errorText = 'Please correct the errors on this form!';
                 });
         }
 

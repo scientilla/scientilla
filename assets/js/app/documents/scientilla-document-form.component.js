@@ -157,7 +157,7 @@
                     }
                 },
                 state: 'ready to save',
-                message: 'Save to draft'
+                message: 'Save draft'
             };
         }
 
@@ -168,7 +168,7 @@
 
                     switch(true) {
                         case state === 'ready to save':
-                            this.message = 'Save draft & verify';
+                            this.message = 'Save & verify';
                             break;
                         case state === 'saving':
                             this.message = 'Saving draft';
@@ -274,17 +274,67 @@
         }
 
         function openSourceTypeModal($event) {
+            let modal = {};
+            let unsavedData = false;
+            let newSource = {};
+
+            let closing = function(event = false, reason = false, data = {}) {
+
+                let formHasUnsavedData = false;
+
+                if (!modal.forceClose) {
+                    newSource = data.source;
+                    formHasUnsavedData = FormService.getUnsavedData('new-source');
+
+                    if (formHasUnsavedData) {
+                        if (event) {
+                            event.preventDefault();
+                        }
+
+                        ModalService
+                            .multipleChoiceConfirm('Unsaved data',
+                                `Do you want to save this data?`,
+                                ['Yes', 'No'],
+                                false)
+                            .then(function (buttonIndex) {
+                                switch (buttonIndex) {
+                                    case 0:
+                                        newSource.type = vm.document.sourceType;
+                                        Restangular.all('sources')
+                                            .post(newSource)
+                                            .then(source => {
+                                                EventsService.publish(EventsService.SOURCE_CREATED, source);
+                                                FormService.setUnsavedData('new-source', false);
+                                                modal.forceClose = true;
+                                                modal.close();
+                                            });
+                                        break;
+                                    case 1:
+                                        modal.forceClose = true;
+                                        modal.close();
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            });
+                    } else {
+                        modal.forceClose = true;
+                        modal.close();
+                    }
+                }
+            };
+
             $event.stopPropagation();
 
-            $rootScope.$on('newSource', function(event, source) {
+            EventsService.subscribe(vm, EventsService.SOURCE_CREATED, function(event, source) {
                 vm.document.source = source;
                 vm.getSources(source.title);
 
                 vm.errors = vm.document.validateDocument();
             });
 
-            ModalService
-                .openSourceTypeModal(vm.document);
+            modal = ModalService
+                .openSourceTypeModal(vm.document, closing);
         }
 
         function openDocumentAffiliationsForm() {

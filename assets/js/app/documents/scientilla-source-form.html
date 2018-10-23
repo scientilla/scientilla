@@ -9,10 +9,10 @@
 </div>
 
 <div class="modal-body">
-    <form>
+    <form name="source">
         <div
             class="form-group"
-            ng-class="vm.invalidAttributes.title ? 'has-error' : ''">
+            ng-class="vm.errors.title ? 'has-error' : ''">
             <label for="title">Title *</label>
             <input
                 type="text"
@@ -20,10 +20,10 @@
                 id="title"
                 placeholder="Title"
                 ng-model="vm.newSource.title"
-                ng-class="vm.invalidAttributes.title ? 'is-invalid' : ''"/>
+                ng-class="vm.errors.title ? 'is-invalid' : ''"/>
             <scientilla-error-messages
                 class="error-messages"
-                errors="vm.invalidAttributes.title"></scientilla-error-messages>
+                errors="vm.errors.title"></scientilla-error-messages>
         </div>
 
         <div
@@ -112,5 +112,11 @@
                     click="vm.cancel()">Close</scientilla-button>
             </li>
         </ul>
+
+        <div
+            ng-if="vm.errorText"
+            class="modal-error text-danger">
+            {{ vm.errorText }}
+        </div>
     </form>
 </div>

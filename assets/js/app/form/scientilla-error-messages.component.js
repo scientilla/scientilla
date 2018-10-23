@@ -7,7 +7,7 @@
             controller: scientillaErrorMessages,
             controllerAs: 'vm',
             bindings: {
-                error: '<'
+                errors: '<'
             }
         });
 
