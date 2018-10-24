@@ -116,7 +116,9 @@
                             'Unverifying a document removes it from your profile, you can choose:\n\n' +
                             'Move to drafts: to move the document in your drafts.\n' +
                             'Remove: to remove it completely from your profile.',
-                            ['Move to drafts', 'Remove'])
+                            ['Move to drafts', 'Remove'],
+                            'Cancel',
+                            true)
                         .then(function (buttonIndex) {
                             switch (buttonIndex) {
                                 case -1:
