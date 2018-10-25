@@ -60,17 +60,17 @@ async function cleanSourceCopies() {
     let deletedSourceIds = [];
     let updatedSourceIds = [];
     sails.log.info(`${sources.length} sources to check`);
-    for (let source of sources) {
+    for (const [i, source] of sources.entries()) {
         if (updatedSourceIds.includes(source.id) || deletedSourceIds.includes(source.id))
             continue;
 
-        const copies = await Source.searchCopies(source);
+        const copies = Source.searchCopies(source, sources, i);
         if (!copies.length)
             continue;
 
         const deleted = await Source.merge(source, copies);
         if (deleted) {
-            deletedSourceIds = deletedSourceIds.concat(deleted.map(s => s.id));
+            deletedSourceIds.push(...deleted.map(s => s.id));
             updatedSourceIds.push(source.id);
         }
     }
