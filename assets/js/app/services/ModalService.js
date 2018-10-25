@@ -59,15 +59,11 @@
             return modal.result;
         };
 
-        service.openScientillaDocumentForm = function (document, researchEntity, closing) {
+        service.openScientillaDocumentForm = function (document, researchEntity) {
             const scopeVars = {
                 document: document,
                 researchEntity: researchEntity,
             };
-
-            if (typeof closing === "function") {
-                scopeVars.closing = closing;
-            }
 
             let modal = openModal(
                 '<scientilla-document-form\
@@ -76,14 +72,12 @@
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit" \
                     close-fn="vm.onClose"\
-                    closing="vm.closing"\
                 ></scientilla-document-form>',
                 scopeVars
             );
 
             addModalObject(modal);
-
-            return modal;
+            return modal.result;
         };
 
         service.openScientillaDocumentSearch = function () {

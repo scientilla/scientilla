@@ -14,8 +14,7 @@
                 researchEntity: "<",
                 onFailure: "&",
                 onSubmit: "&",
-                closeFn: "&",
-                closing: "<"
+                closeFn: "&"
             }
         });
 
@@ -28,8 +27,7 @@
         'DocumentTypesService',
         'context',
         'Restangular',
-        'ModalService',
-        'FormService'
+        'ModalService'
     ];
 
     function scientillaDocumentFormController($rootScope,
@@ -40,8 +38,7 @@
                                               DocumentTypesService,
                                               context,
                                               Restangular,
-                                              ModalService,
-                                              FormService) {
+                                              ModalService) {
         const vm = this;
 
         vm.saveStatus = saveStatus();
@@ -86,21 +83,10 @@
                 } else {
                     vm.unsavedData = false;
                 }
-
-                if (vm.document.id) {
-                    FormService.setUnsavedData('edit-document', vm.unsavedData);
-                } else {
-                    FormService.setUnsavedData('new-document', vm.unsavedData);
-                }
             });
 
             $scope.$on('modal.closing', function(event, reason) {
-                if (typeof vm.closing === "function") {
-                    vm.closing(event, reason, {
-                        document: vm.document,
-                        documentBackup: documentBackup
-                    });
-                }
+                cancel(event);
             });
         };
 
@@ -167,14 +153,14 @@
                     this.state = state;
 
                     switch(true) {
-                        case state === 'ready to save':
-                            this.message = 'Save & verify';
+                        case state === 'ready to verify':
+                            this.message = 'Verify';
                             break;
-                        case state === 'saving':
-                            this.message = 'Saving draft';
+                        case state === 'verifying':
+                            this.message = 'Verifying draft';
                             break;
-                        case state === 'saved':
-                            this.message = 'Draft is saved!';
+                        case state === 'verified':
+                            this.message = 'Draft is Verified!';
                             $scope.form.$setPristine();
                             break;
                         case state === 'failed':
@@ -182,8 +168,8 @@
                             break;
                     }
                 },
-                state: 'ready to save',
-                message: 'Save & verify'
+                state: 'ready to verify',
+                message: 'Verify'
             };
         }
 
@@ -206,7 +192,7 @@
 
                     EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
 
-                    FormService.setUnsavedData('edit-document', false);
+                    vm.unsavedData = false;
 
                     if (updateState) {
                         $timeout(function() {
@@ -226,7 +212,7 @@
 
                         EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
 
-                        FormService.setUnsavedData('new-document', false);
+                        vm.unsavedData = false;
 
                         if (updateState) {
                             $timeout(function() {
@@ -239,16 +225,40 @@
             }
         }
 
-        function cancel() {
-            if (debounceTimeout !== null) {
-                $timeout.cancel(debounceTimeout);
-            }
+        function cancel(event = false) {
+            if (vm.unsavedData) {
+                if (event) {
+                    event.preventDefault();
+                }
 
-            if (vm.saveStatus.state === 'saving') {
-                saveDocument();
-            }
+                // Show the unsaved data modal
+                ModalService
+                    .multipleChoiceConfirm('Unsaved data',
+                        `There is unsaved data in the form. Do you want to go back and save this data?`,
+                        ['Yes', 'No'],
+                        false)
+                    .then(function (buttonIndex) {
+                        switch (buttonIndex) {
+                            case 0:
+                                break;
+                            case 1:
+                                vm.unsavedData = false;
+                                close();
+                            default:
+                                break;
+                        }
+                    });
+            } else {
+                if (debounceTimeout !== null) {
+                    $timeout.cancel(debounceTimeout);
+                }
 
-            close();
+                if (vm.saveStatus.state === 'saving') {
+                    saveDocument();
+                }
+
+                close();
+            }
         }
 
         function getSources(searchText) {
@@ -303,10 +313,10 @@
             vm.errors = vm.document.validateDocument();
             if (_.isEmpty(vm.errors)) {
                 // Is valid
-                vm.verifyStatus.setState('saving');
+                vm.verifyStatus.setState('verifying');
                 saveDocument()
                     .then(() => {
-                        vm.verifyStatus.setState('saved');
+                        vm.verifyStatus.setState('verified');
                         close();
                     })
                     .then(() => {
@@ -318,7 +328,7 @@
                 vm.errorText = 'Please correct the errors on this form!';
 
                 $timeout(function() {
-                    vm.verifyStatus.setState('ready to save');
+                    vm.verifyStatus.setState('ready to verify');
                 }, 1000);
             }
         }
@@ -334,8 +344,10 @@
         }
 
         function close() {
-            if (_.isFunction(vm.closeFn()))
+            if (_.isFunction(vm.closeFn())) {
                 return vm.closeFn()();
+            }
+
             return Promise.reject('no close function');
         }
     }
