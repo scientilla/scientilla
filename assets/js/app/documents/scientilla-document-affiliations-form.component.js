@@ -19,19 +19,28 @@
 
     controller.$inject = [
         '$scope',
-        'Restangular'
+        'Restangular',
+        'ModalService'
     ];
 
-    function controller($scope, Restangular) {
+    function controller($scope, Restangular, ModalService) {
         const vm = this;
         vm.getInstitutesFilter = getInstitutesFilter;
         vm.getInstitutesQuery = getInstitutesQuery;
         vm.submit = submit;
         vm.cancel = cancel;
 
+        let originalAffiliations = [];
+        let initial = false;
+        let unregister;
+        let unsavedData = false;
+
         vm.$onInit = () => {
             $scope.$watch('vm.position', userSelectedChanged);
-            $scope.$watch('vm.authorship.affiliations', resetInstitutes, true);
+
+            $scope.$on('modal.closing', function(event, reason) {
+                cancel(event, reason);
+            });
         };
 
         function getInstitutesQuery(searchText) {
@@ -42,11 +51,28 @@
 
         function resetInstitutes() {
             vm.document.institutes = _.uniqBy(_.flatMap(vm.document.authorships, 'affiliations'), 'id');
+
+            if (initial) {
+                if (JSON.stringify(vm.authorship.affiliations) === JSON.stringify(originalAffiliations)) {
+                    unsavedData = false;
+                } else {
+                    unsavedData = true;
+                }
+            }
+
+            initial = true;
         }
 
         function userSelectedChanged() {
-            if (_.isUndefined(vm.position))
+            if (typeof unregister === 'function') {
+                unregister();
+                initial = false;
+            }
+
+            if (_.isUndefined(vm.position)) {
                 return;
+            }
+
             vm.author = vm.document.getAuthors()[vm.position];
             vm.authorship = vm.document.authorships.find(a => a.position === vm.position);
             if (!vm.authorship) {
@@ -60,7 +86,13 @@
             }
 
             getAuthorInstitutes()
-                .then((institutes) => vm.authorship.affiliations = institutes);
+                .then((institutes) => {
+                    vm.authorship.affiliations = institutes;
+                    originalAffiliations = angular.copy(institutes);
+                    unsavedData = false;
+                }).then(function() {
+                    unregister = $scope.$watch('vm.authorship.affiliations', resetInstitutes, true);
+                });
         }
 
         function getAuthorInstitutes() {
@@ -81,13 +113,38 @@
             return vm.authorship.affiliations;
         }
 
-        function cancel() {
-            executeOnSubmit(0);
+        function cancel(event = false) {
+            if (unsavedData) {
+                if (event) {
+                    event.preventDefault();
+                }
+
+                ModalService
+                    .multipleChoiceConfirm('Unsaved data',
+                        `There is unsaved data in the form. Do you want to go back and save this data?`,
+                        ['Yes', 'No'],
+                        false)
+                    .then(function (buttonIndex) {
+                        switch (buttonIndex) {
+                            case 0:
+                                break;
+                            case 1:
+                                unsavedData = false;
+                                executeOnSubmit(0);
+                                break;
+                            default:
+                                break;
+                        }
+                    });
+            } else {
+                executeOnSubmit(0);
+            }
         }
 
         function submit() {
             return save()
                 .then(function (user) {
+                    unsavedData = false;
                     executeOnSubmit(1);
                 })
                 .catch(function () {
@@ -100,15 +157,15 @@
         }
 
         function executeOnSubmit(i) {
-            if (_.isFunction(vm.onSubmit()))
+            if (_.isFunction(vm.onSubmit())) {
                 vm.onSubmit()(i);
+            }
         }
 
         function executeOnFailure() {
-            if (_.isFunction(vm.onFailure()))
+            if (_.isFunction(vm.onFailure())) {
                 vm.onFailure()();
+            }
         }
-
     }
-})
-();
+}) ();
