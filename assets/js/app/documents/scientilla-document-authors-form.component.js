@@ -107,9 +107,7 @@
                 executeOnSubmit(0);
             } else {
                 // Compare the current state with the original state
-                if (originalAuthorship.oral_presentation === vm.authorship.oral_presentation &&
-                    originalAuthorship.first_coauthor === vm.authorship.first_coauthor &&
-                    originalAuthorship.last_coauthor === vm.authorship.last_coauthor) {
+                if (angular.toJson(originalAuthorship) === angular.toJson(vm.authorship)) {
                     // No unsaved data
                     executeOnSubmit(0);
                 } else {
@@ -130,6 +128,7 @@
                                     break;
                                 case 1:
                                     // Don't go back to save, close modal instead
+                                    vm.authorship = angular.copy(originalAuthorship);
                                     executeOnSubmit(0);
                                     break;
                                 default:
@@ -142,7 +141,11 @@
 
         function submit() {
             return save()
-                .then(() => executeOnSubmit(1))
+                .then(() => {
+                    // Copy the new authorship data to the originalAuthorship variable
+                    originalAuthorship = angular.copy(vm.authorship);
+                    executeOnSubmit(1);
+                })
                 .catch(() => executeOnFailure());
         }
 
