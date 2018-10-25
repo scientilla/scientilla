@@ -115,17 +115,17 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
         key: 'totalIfPerYear',
         fn: getTotalMetricPerYear,
         metricName: 'IF',
-        requires: ['documents', 'docsMetrics']
+        requires: ['documents', 'docsMetrics', 'metrics']
     }, {
         key: 'totalSjrPerYear',
         fn: getTotalMetricPerYear,
         metricName: 'SJR',
-        requires: ['documents', 'docsMetrics']
+        requires: ['documents', 'docsMetrics', 'metrics']
     }, {
         key: 'totalSnipPerYear',
         fn: getTotalMetricPerYear,
         metricName: 'SNIP',
-        requires: ['documents', 'docsMetrics']
+        requires: ['documents', 'docsMetrics', 'metrics']
     }, {
         key: 'chartDataDate',
         queryName: 'chartDataDate',
@@ -143,6 +143,7 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
     let documents = [];
     let citations = [];
     let docsMetrics = [];
+    let metrics = [];
 
     await setData();
 
@@ -171,14 +172,18 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
                     sc.requires.includes('documents')
                     || sc.requires.includes('citations')
                     || sc.requires.includes('docsMetrics')
+                    || sc.requires.includes('metrics')
                 )))
                 await setDocuments();
 
             if (selectedCharts.find(sc => sc.requires && sc.requires.includes('citations')))
                 await setCitations();
 
-            if (selectedCharts.find(sc => sc.requires && sc.requires.includes('docsMetrics')))
+            if (selectedCharts.find(sc => sc.requires && (sc.requires.includes('docsMetrics') || sc.requires.includes('metrics'))))
                 await setDocumentsMetrics();
+
+            if (selectedCharts.find(sc => sc.requires && sc.requires.includes('metrics')))
+                await setMetrics();
         }
     }
 
@@ -243,10 +248,10 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
     }
 
     async function getTotalMetricPerYear(chart) {
-        const metrics = await SourceMetric.find({name: chart.metricName, id: docsMetrics.map(dm => dm.metric)});
+        const chartMetrics = metrics.filter(dm => dm.name === chart.metricName);
         const docs = documents.map(d => {
             const documentMetricsIds = docsMetrics.filter(dm => dm.document === d.id).map(dm => dm.metric);
-            const impactFactorsAllYears = metrics.filter(i => documentMetricsIds.includes(i.id));
+            const impactFactorsAllYears = chartMetrics.filter(i => documentMetricsIds.includes(i.id));
             const year = Math.max(...impactFactorsAllYears.map(m => parseInt(m.year, 10)));
             const metric = impactFactorsAllYears.find(m => m.year === year);
             return {
@@ -372,6 +377,20 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
 
     async function setDocumentsMetrics() {
         docsMetrics = await DocumentMetric.find({document: documents.map(d => d.id)});
+    }
+
+    async function setMetrics() {
+        const docsMetricsIds = docsMetrics.map(dm => dm.metric);
+        const filterOnQuery = docsMetricsIds.length < 2000;
+
+        const query = {name: ['IF', 'SJR', 'SNIP']};
+        if (filterOnQuery)
+            query.id = docsMetricsIds;
+
+        metrics = (await SourceMetric.find(query));
+
+        if (!filterOnQuery)
+            metrics = metrics.filter(dm => docsMetricsIds.includes(dm.id));
     }
 
     async function getHIndex(year) {
