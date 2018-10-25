@@ -31,13 +31,12 @@
         vm.cancel = cancel;
 
         let originalAffiliations = [];
-        let initial = false;
-        let unregister;
-        let unsavedData = false;
 
         vm.$onInit = () => {
             $scope.$watch('vm.position', userSelectedChanged);
+            $scope.$watch('vm.authorship.affiliations', resetInstitutes, true);
 
+            // Listen to modal closing event
             $scope.$on('modal.closing', function(event, reason) {
                 cancel(event, reason);
             });
@@ -51,23 +50,9 @@
 
         function resetInstitutes() {
             vm.document.institutes = _.uniqBy(_.flatMap(vm.document.authorships, 'affiliations'), 'id');
-
-            if (initial) {
-                if (JSON.stringify(vm.authorship.affiliations) === JSON.stringify(originalAffiliations)) {
-                    unsavedData = false;
-                } else {
-                    unsavedData = true;
-                }
-            }
-
-            initial = true;
         }
 
         function userSelectedChanged() {
-            if (typeof unregister === 'function') {
-                unregister();
-                initial = false;
-            }
 
             if (_.isUndefined(vm.position)) {
                 return;
@@ -88,10 +73,8 @@
             getAuthorInstitutes()
                 .then((institutes) => {
                     vm.authorship.affiliations = institutes;
+                    // Copy original affiliations to compare it later
                     originalAffiliations = angular.copy(institutes);
-                    unsavedData = false;
-                }).then(function() {
-                    unregister = $scope.$watch('vm.authorship.affiliations', resetInstitutes, true);
                 });
         }
 
@@ -114,37 +97,46 @@
         }
 
         function cancel(event = false) {
-            if (unsavedData) {
-                if (event) {
-                    event.preventDefault();
-                }
-
-                ModalService
-                    .multipleChoiceConfirm('Unsaved data',
-                        `There is unsaved data in the form. Do you want to go back and save this data?`,
-                        ['Yes', 'No'],
-                        false)
-                    .then(function (buttonIndex) {
-                        switch (buttonIndex) {
-                            case 0:
-                                break;
-                            case 1:
-                                unsavedData = false;
-                                executeOnSubmit(0);
-                                break;
-                            default:
-                                break;
-                        }
-                    });
-            } else {
+            // Check if an position/author is selected or the authorshop is set
+            if (_.isUndefined(vm.position) || _.isUndefined(vm.authorship)) {
                 executeOnSubmit(0);
+            } else {
+                // Compare the current state with the original state of the affiliations
+                if (angular.toJson(vm.authorship.affiliations) === angular.toJson(originalAffiliations)) {
+                    executeOnSubmit(0);
+                } else {
+                    if (event) {
+                        // Prevent modal from closing
+                        event.preventDefault();
+                    }
+
+                    // Show the unsaved data modal
+                    ModalService
+                        .multipleChoiceConfirm('Unsaved data',
+                            `There is unsaved data in the form. Do you want to go back and save this data?`,
+                            ['Yes', 'No'],
+                            false)
+                        .then(function (buttonIndex) {
+                            switch (buttonIndex) {
+                                case 0:
+                                    break;
+                                case 1:
+                                    vm.authorship.affiliations = angular.copy(originalAffiliations);
+                                    executeOnSubmit(0);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        });
+                }
             }
         }
 
         function submit() {
             return save()
                 .then(function (user) {
-                    unsavedData = false;
+                    // Copy the new affiliations to the originalAffiliations variable
+                    originalAffiliations = angular.copy(vm.authorship.affiliations);
                     executeOnSubmit(1);
                 })
                 .catch(function () {
@@ -168,4 +160,4 @@
             }
         }
     }
-}) ();
+})();
