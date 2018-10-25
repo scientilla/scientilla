@@ -244,6 +244,7 @@
                             case 1:
                                 vm.unsavedData = false;
                                 close();
+                                break;
                             default:
                                 break;
                         }

@@ -284,58 +284,8 @@
                 }
 
                 function openEditPopup(draft) {
-
-                    let modal = {};
-                    let document = draft.clone();
-                    let originalDocument = angular.copy(document);
-
-                    let closing = function(event = false, reason = false) {
-                        let formHasUnsavedData = FormService.getUnsavedData('edit-document');
-
-                        if (!modal.forceClose) {
-                            event.preventDefault();
-                            if (formHasUnsavedData) {
-                                if (event) {
-                                    event.preventDefault();
-                                }
-
-                                ModalService
-                                    .multipleChoiceConfirm('Unsaved data',
-                                        `Do you want to save this data?`,
-                                        ['Yes', 'No'],
-                                        false)
-                                    .then(function (buttonIndex) {
-                                        switch (buttonIndex) {
-                                            case 0:
-                                                document.save().then(() => {
-                                                    originalDocument = angular.copy(document);
-                                                    FormService.setUnsavedData('edit-document', false);
-                                                    EventsService.publish(EventsService.DRAFT_UPDATED, document);
-                                                });
-
-                                                modal.forceClose = true;
-                                                modal.close(reason);
-                                                break;
-                                            case 1:
-                                                document = angular.copy(originalDocument);
-                                                FormService.setUnsavedData('edit-document', false);
-
-                                                modal.forceClose = true;
-                                                modal.close(reason);
-                                                break;
-                                            default:
-                                                break;
-                                        }
-                                    });
-                            } else {
-                                modal.forceClose = true;
-                                modal.close();
-                            }
-                        }
-                    };
-
-                    modal = ModalService
-                        .openScientillaDocumentForm(document, researchEntity, closing);
+                    ModalService
+                        .openScientillaDocumentForm(draft.clone(), researchEntity);
                 }
 
                 function openDocumentAffiliationForm(draft) {
