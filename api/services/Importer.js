@@ -271,6 +271,7 @@ async function importGroups() {
             name: rsData.description,
             type: rsData.type,
             starting_date: rsData.start_date,
+            slug: rsData.slug,
             active: true
         });
 
