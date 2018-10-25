@@ -13,8 +13,7 @@
                 document: "<",
                 onFailure: "&",
                 onSubmit: "&",
-                closeFn: "&",
-                closing: "<"
+                closeFn: "&"
             }
         });
 
@@ -23,11 +22,10 @@
         'Restangular',
         'ModalService',
         'EventsService',
-        'FormService',
         '$scope'
     ];
 
-    function scientillaSourceFormController(context, Restangular, ModalService, EventsService, FormService, $scope) {
+    function scientillaSourceFormController(context, Restangular, ModalService, EventsService, $scope) {
         const vm = this;
 
         vm.createSource = createSource;
@@ -35,22 +33,12 @@
         vm.errors = {};
         vm.errorText = '';
 
+        let emptySource = {};
+        let closed = false;
+
         vm.$onInit = function () {
-
-            $scope.$watch('source.$pristine', function (formUntouched) {
-                if (!formUntouched) {
-                    FormService.setUnsavedData('new-source', true);
-                } else {
-                    FormService.setUnsavedData('new-source', false);
-                }
-            });
-
             $scope.$on('modal.closing', function (event, reason) {
-                if (typeof vm.closing === "function") {
-                    vm.closing(event, reason, {
-                        source: vm.newSource
-                    });
-                }
+                cancel(event);
             });
         };
 
@@ -67,7 +55,6 @@
                 .then(source => {
                     EventsService.publish(EventsService.SOURCE_CREATED, source);
                     vm.newSource = {};
-                    FormService.setUnsavedData('new-source', false);
                     cancel();
                 }, function(res) {
                     vm.errors = res.data.invalidAttributes;
@@ -85,10 +72,42 @@
                 });
         }
 
-        function cancel() {
-            if (_.isFunction(vm.closeFn()))
-                return vm.closeFn()();
-            return Promise.reject('no close function');
+        function cancel(event = false) {
+            if (!_.isFunction(vm.closeFn())){
+                return Promise.reject('no close function');
+            }
+
+            if (!closed) {
+                // Check if the new source is still empty
+                if (angular.toJson(emptySource) === angular.toJson(vm.newSource)) {
+                    closed = true;
+                    return vm.closeFn()();
+                } else {
+                    if (event) {
+                        // Prevent modal from closing
+                        event.preventDefault();
+                    }
+
+                    // Show the unsaved data modal
+                    ModalService
+                        .multipleChoiceConfirm('Unsaved data',
+                            `There is unsaved data in the form. Do you want to go back and save this data?`,
+                            ['Yes', 'No'],
+                            false)
+                        .then(function (buttonIndex) {
+                            switch (buttonIndex) {
+                                case 0:
+                                    break;
+                                case 1:
+                                    vm.newSource = emptySource;
+                                    closed = true;
+                                    return vm.closeFn()();
+                                default:
+                                    break;
+                            }
+                        });
+                }
+            }
         }
     }
 })();

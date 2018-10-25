@@ -40,14 +40,10 @@
             return modal.result;
         };
 
-        service.openSourceTypeModal = function (document, closing) {
+        service.openSourceTypeModal = function (document) {
             const scopeVars = {
                 document: document
             };
-
-            if (typeof closing === "function") {
-                scopeVars.closing = closing;
-            }
 
             const modal = openModal(
                 '<scientilla-source-form\
@@ -55,13 +51,12 @@
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit" \
                     close-fn="vm.onClose" \
-                    closing="vm.closing"\
                 ></scientilla-source-form>',
                 scopeVars
             );
 
             addModalObject(modal);
-            return modal;
+            return modal.result;
         };
 
         service.openScientillaDocumentForm = function (document, researchEntity, closing) {
