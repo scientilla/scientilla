@@ -53,29 +53,12 @@ module.exports = {
         }
 
     },
-    searchCopies: async function (source) {
-
-        const orCriteria = [];
-
-        if (source.title)
-            orCriteria.push({
-                title: source.title
-            });
-
-        if (source.scopusId)
-            orCriteria.push({
-                scopusId: source.scopusId,
-            });
-
-        if (source.issn)
-            orCriteria.push({
-                issn: source.issn,
-            });
-
-        return await Source.find({
-            id: {'!': source.id},
-            or: orCriteria
-        });
+    searchCopies: function (source, sources, index) {
+        return sources.slice(index+1).filter(s =>
+            (s.title === source.title ||
+            s.scopusId === source.scopusId ||
+            s.issn === source.issn)
+        );
     },
     merge: async function (source, copies) {
         function mergeFields(src, cp) {
