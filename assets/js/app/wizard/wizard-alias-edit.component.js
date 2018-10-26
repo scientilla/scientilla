@@ -7,34 +7,22 @@
             controller: wizardAliasEdit,
             controllerAs: 'vm',
             bindings: {
-                user: '='
+                user: '=',
+                originalUser: '='
             }
         });
 
     wizardAliasEdit.$inject = [
         'Notification',
-        '$scope',
-        'ModalService',
-        'FormService',
         '$timeout'
     ];
 
-    function wizardAliasEdit(Notification, $scope, ModalService, FormService, $timeout) {
+    function wizardAliasEdit(Notification, $timeout) {
         const vm = this;
 
         vm.save = save;
         vm.saveStatus = saveStatus();
         vm.unsavedData = false;
-
-        vm.$onInit = function () {
-            vm.unsavedData = FormService.getUnsavedData('alias-edit');
-
-            $scope.$watch(function() {
-                return vm.unsavedData;
-            }, function() {
-                FormService.setUnsavedData('alias-edit', vm.unsavedData);
-            }, true);
-        };
 
         vm.$onDestroy = function () {
         };
@@ -46,6 +34,7 @@
                     vm.saveStatus.setState('saved');
                     Notification.success(vm.saveStatus.message);
                     vm.unsavedData = false;
+                    vm.originalUser = angular.copy(vm.user);
 
                     $timeout(function() {
                         vm.saveStatus.setState('ready to save');

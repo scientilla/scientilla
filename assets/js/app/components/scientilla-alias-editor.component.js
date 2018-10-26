@@ -14,11 +14,10 @@
 
     scientillaAliasEditor.$inject = [
         'documentFieldsRules',
-        '$scope',
-        'FormService'
+        '$scope'
     ];
 
-    function scientillaAliasEditor(documentFieldsRules, $scope, FormService) {
+    function scientillaAliasEditor(documentFieldsRules, $scope) {
         const vm = this;
         vm.addAlias = addAlias;
         vm.removeAlias = removeAlias;
@@ -34,10 +33,6 @@
             $scope.$watch('vm.newAlias', function(newValue, oldValue) {
                 vm.newAliasIsCorrect = true;
                 vm.newAliasIsDuplicate = false;
-            });
-
-            $scope.$on('user.aliases.discarded', function() {
-                vm.aliases = angular.copy(vm.originalAliases);
             });
         };
 
@@ -62,8 +57,7 @@
                 vm.newAlias = '';
                 vm.newAliasIsCorrect = true;
                 vm.newAliasIsDuplicate = false;
-
-                checkChangedAliases();
+                vm.unsavedData = true;
             } else {
                 vm.newAliasIsCorrect = false;
             }
@@ -71,7 +65,7 @@
 
         function removeAlias(alias) {
             vm.aliases = vm.aliases.filter(a => a.str !== alias.str);
-            checkChangedAliases();
+            vm.unsavedData = true;
         }
 
         function capitalize(str) {
@@ -83,11 +77,6 @@
             for (const c of wordSeparators)
                 retStr = retStr.split(c).map(capitalize).join(c);
             return retStr;
-        }
-
-        function checkChangedAliases() {
-            vm.unsavedData = true;
-            FormService.setUnsavedData('alias-edit', true);
         }
     }
 

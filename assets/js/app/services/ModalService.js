@@ -341,13 +341,9 @@
                 options.data.isClosable = true;
             }
 
-            if (typeof config.callback === "function") {
-                options.data.closing = config.callback;
-            }
-
             const modal = openComponentModal('wizard-container', args, options);
             addModalObject(modal);
-            return modal;
+            return modal.result;
         };
 
         service.confirm = function (title, message) {

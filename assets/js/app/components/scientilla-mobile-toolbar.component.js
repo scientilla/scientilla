@@ -17,7 +17,6 @@
         'UsersService',
         'ModalService',
         'path',
-        'WizardService',
         'MobileMenuService'
     ];
 
@@ -29,7 +28,6 @@
                                UsersService,
                                ModalService,
                                path,
-                               WizardService,
                                MobileMenuService) {
         const vm = this;
         vm.wizardOpened = false;
@@ -117,13 +115,24 @@
         }
 
         function openWizard() {
-            WizardService.featuresWizard();
+            ModalService.openWizard([
+                'welcome',
+                'scopus-edit',
+                'tutorial',
+                'admin-tutorial',
+            ], {
+                isClosable: true,
+                size: 'lg'
+            });
 
             MobileMenuService.close();
         }
 
         function openSuggestedWizard() {
-            WizardService.suggestedWizard();
+            ModalService.openWizard(['alias-edit'], {
+                isClosable: true,
+                size: 'lg'
+            });
 
             MobileMenuService.close();
         }

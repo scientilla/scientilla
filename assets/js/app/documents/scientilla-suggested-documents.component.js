@@ -18,8 +18,7 @@
         'EventsService',
         'ModalService',
         'documentSearchForm',
-        'documentListSections',
-        'WizardService'
+        'documentListSections'
     ];
 
     function scientillaSuggestedDocumentsController(context,
@@ -27,8 +26,7 @@
                                                     EventsService,
                                                     ModalService,
                                                     documentSearchForm,
-                                                    documentListSections,
-                                                    WizardService) {
+                                                    documentListSections) {
         const vm = this;
 
         const DocumentsService = context.getDocumentService();
@@ -105,7 +103,10 @@
         }
 
         function addAliasModal() {
-            WizardService.suggestedWizard();
+            ModalService.openWizard(['alias-edit'], {
+                isClosable: true,
+                size: 'lg'
+            });
         }
     }
 })();

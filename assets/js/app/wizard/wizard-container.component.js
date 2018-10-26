@@ -16,12 +16,10 @@
         'context',
         'Notification',
         'ModalService',
-        '$rootScope',
         '$scope',
-        'FormService'
     ];
 
-    function wizardContainer(context, Notification, ModalService, $rootScope, $scope, FormService) {
+    function wizardContainer(context, Notification, ModalService, $scope) {
         const vm = this;
 
         vm.currentStep = 0;
@@ -88,7 +86,7 @@
         ];
 
         let steps = [];
-        vm.formHasUnsavedData = false;
+        let closed = false;
 
         vm.$onInit = function () {
 
@@ -98,6 +96,10 @@
             steps = allSteps.filter(s => s.accessLevels.includes(accessLevel));
             if (vm.resolve.data.steps)
                 steps = steps.filter(s => vm.resolve.data.steps.includes(s.name));
+
+            $scope.$on('modal.closing', function(event, reason) {
+                close(event);
+            });
         };
 
         vm.$onDestroy = function () {
@@ -108,10 +110,7 @@
             return steps[vm.currentStep].name === stepName;
         }
 
-        function close() {
-            vm.resolve.data.closing();
-        }
-
+        // You can close the modal once completed the wizard
         function closeModal() {
 
             if (!steps[vm.currentStep].researchEntityToSave) {
@@ -140,33 +139,29 @@
         }
 
         function checkStep(step) {
-            vm.formHasUnsavedData = FormService.getUnsavedData('scopus-edit');
-
-            if (vm.formHasUnsavedData) {
-                ModalService
-                    .multipleChoiceConfirm('Unsaved data',
-                        `Do you want to save this data?`,
-                        ['Yes', 'No'],
-                        false)
-                    .then(function (buttonIndex) {
-                        switch(buttonIndex) {
-                            case 0:
-                                vm.researchEntity.save();
-                                vm.originalResearchEntity = angular.copy(vm.researchEntity);
-                                Notification.success('Profile saved!');
-                                FormService.setUnsavedData('scopus-edit', false);
-                                break;
-                            case 1:
-                                vm.researchEntity = angular.copy(vm.originalResearchEntity);
-                                FormService.setUnsavedData('scopus-edit', false);
-                                $rootScope.$broadcast('user.scopus.discarded');
-                                break;
-                            default:
-                                break;
-                        }
-
-                        setStep(step);
-                    });
+            if (steps[vm.currentStep] && steps[vm.currentStep].name === 'scopus-edit') {
+                if (angular.toJson(vm.originalResearchEntity) === angular.toJson(vm.researchEntity)) {
+                    setStep(step);
+                } else {
+                    // Show the unsaved data modal
+                    ModalService
+                        .multipleChoiceConfirm('Unsaved data',
+                            `There is unsaved data in the form. Do you want to go back and save this data?`,
+                            ['Yes', 'No'],
+                            false)
+                        .then(function (buttonIndex) {
+                            switch (buttonIndex) {
+                                case 0:
+                                    break;
+                                case 1:
+                                    vm.researchEntity = angular.copy(vm.originalResearchEntity);
+                                    setStep(step);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        });
+                }
             } else {
                 setStep(step);
             }
@@ -184,10 +179,43 @@
             return steps.length;
         }
 
-        $scope.$on('modal.closing', function(event, reason) {
-            if (typeof vm.resolve.data.closing === "function") {
-                vm.resolve.data.closing(event, reason);
+        function close(event = false) {
+            if (!closed) {
+                if (steps[vm.currentStep] && steps[vm.currentStep].name === 'alias-edit' ||
+                    steps[vm.currentStep] && steps[vm.currentStep].name === 'scopus-edit') {
+                    if (angular.toJson(vm.originalResearchEntity) !== angular.toJson(vm.researchEntity)) {
+                        if (event) {
+                            event.preventDefault();
+                        }
+
+                        // Show the unsaved data modal
+                        ModalService
+                            .multipleChoiceConfirm('Unsaved data',
+                                `There is unsaved data in the form. Do you want to go back and save this data?`,
+                                ['Yes', 'No'],
+                                false)
+                            .then(function (buttonIndex) {
+                                switch (buttonIndex) {
+                                    case 0:
+                                        break;
+                                    case 1:
+                                        context.setResearchEntity(vm.originalResearchEntity);
+                                        closed = true;
+                                        vm.resolve.callbacks.onClose();
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            });
+                    } else {
+                        closed = true;
+                        vm.resolve.callbacks.onClose();
+                    }
+                } else {
+                    closed = true;
+                    vm.resolve.callbacks.onClose();
+                }
             }
-        });
+        }
     }
 })();

@@ -7,7 +7,8 @@
             controller: wizardScopusEdit,
             controllerAs: 'vm',
             bindings: {
-                user: '='
+                user: '=',
+                originalUser: '='
             }
         });
 
@@ -16,37 +17,24 @@
         'UsersService',
         'Notification',
         '$scope',
-        'FormService',
         '$timeout'
     ];
 
-    function wizardScopusEdit(context, UsersService, Notification, $scope, FormService,  $timeout) {
+    function wizardScopusEdit(context, UsersService, Notification, $scope, $timeout) {
         const vm = this;
 
         vm.save = save;
         vm.unsavedData = false;
         vm.saveStatus = saveStatus();
         vm.cancelSave = cancelSave;
-        vm.originalUser = angular.copy(vm.user);
 
         vm.$onInit = function () {
-
             vm.unsavedData = false;
 
             $scope.$watch('idsForm.$pristine', function (formUntouched) {
                 if (!formUntouched) {
                     vm.unsavedData = true;
                 }
-            });
-
-            $scope.$watch(function() {
-                return vm.unsavedData;
-            }, function() {
-                FormService.setUnsavedData('scopus-edit', vm.unsavedData);
-            }, true);
-
-            $scope.$on('user.scopus.discarded', function() {
-                cancelSave();
             });
         };
 
@@ -61,7 +49,6 @@
                     vm.saveStatus.setState('saved');
                     Notification.success('Profile saved!');
                     vm.unsavedData = false;
-
                     vm.originalUser = angular.copy(vm.user);
 
                     $timeout(function() {
