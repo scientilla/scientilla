@@ -22,10 +22,11 @@
         'GroupsService',
         'Prototyper',
         'userConstants',
-        'context'
+        'context',
+        'ModalService'
     ];
 
-    function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants, context) {
+    function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants, context, ModalService) {
         const vm = this;
         vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.getGroupsQuery = GroupsService.getGroupsQuery;
@@ -40,10 +41,17 @@
         vm.invalidAttributes = {};
         const deregisteres = [];
 
+        let originalUser = angular.copy(vm.user);
+
         vm.$onInit = function () {
             deregisteres.push($scope.$watch('vm.user.name', nameChanged));
             deregisteres.push($scope.$watch('vm.user.surname', nameChanged));
             getCollaborations();
+
+            // Listen to modal closing event
+            $scope.$on('modal.closing', function(event, reason) {
+                cancel(event, reason);
+            });
         };
 
         vm.$onDestroy = function () {
@@ -53,6 +61,7 @@
 
         //sTODO to be removed when deep populate exists
         function getCollaborations() {
+            UsersService.getCollaborations(originalUser);
             return UsersService.getCollaborations(vm.user);
         }
 
@@ -64,6 +73,7 @@
                         vm.invalidAttributes = res.data.invalidAttributes;
                     } else {
                         Notification.success("User data saved");
+                        originalUser = angular.copy(vm.user);
                         aliasesChanged();
                         if (_.isFunction(vm.onSubmit()))
                             vm.onSubmit()(1);
@@ -81,7 +91,6 @@
             if (!vm.user.id)
                 vm.user.slug = calculateSlug(vm.user);
         }
-
 
         function aliasesChanged() {
             const researchEntity = context.getResearchEntity();
@@ -107,8 +116,36 @@
             return collaboration;
         }
 
-        function cancel() {
-            executeOnSubmit(0);
+        function cancel(event = false) {
+
+            // Compare the current state with the original state of the user
+            if (angular.toJson(vm.user) === angular.toJson(originalUser)) {
+                executeOnSubmit(0);
+            } else {
+                if (event) {
+                    // Prevent modal from closing
+                    event.preventDefault();
+                }
+
+                // Show the unsaved data modal
+                ModalService
+                    .multipleChoiceConfirm('Unsaved data',
+                        `There is unsaved data in the form. Do you want to go back and save this data?`,
+                        ['Yes', 'No'],
+                        false)
+                    .then(function (buttonIndex) {
+                        switch (buttonIndex) {
+                            case 0:
+                                break;
+                            case 1:
+                                vm.user = angular.copy(originalUser);
+                                executeOnSubmit(0);
+                                break;
+                            default:
+                                break;
+                        }
+                    });
+            }
         }
 
         function executeOnSubmit(i) {
