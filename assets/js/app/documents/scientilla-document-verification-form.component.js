@@ -52,6 +52,8 @@
             const deregisteres = [];
             const coauthorsDeregisteres = [];
 
+            let originalVerificationData = angular.copy(vm.verificationData);
+
             vm.$onInit = function () {
                 if (user.getType() === 'group')
                     return vm.onFailure()();
@@ -61,7 +63,12 @@
                 vm.verificationData.public = true;
 
                 deregisteres.push($scope.$watch('vm.verificationData.position', userSelectedChanged));
+
+                $scope.$on('modal.closing', function (event, reason) {
+                    cancel(event);
+                });
             };
+
             vm.$onDestroy = () => {
                 for (const deregisterer of deregisteres)
                     deregisterer();
@@ -186,8 +193,34 @@
                 return vm.verificationData.affiliations;
             }
 
-            function cancel() {
-                executeOnSubmit({buttonIndex: 0});
+            function cancel(event = false) {
+                // Check if the original verification data is the same as the current verification data
+                if (angular.toJson(originalVerificationData) === angular.toJson(vm.verificationData)) {
+                    executeOnSubmit({buttonIndex: 0});
+                } else {
+                    if (event) {
+                        // Prevent modal from closing
+                        event.preventDefault();
+                    }
+
+                    // Show the unsaved data modal
+                    ModalService
+                        .multipleChoiceConfirm('Unsaved data',
+                            `There is unsaved data in the form. Do you want to go back and save this data?`,
+                            ['Yes', 'No'],
+                            false)
+                        .then(function (buttonIndex) {
+                            switch (buttonIndex) {
+                                case 0:
+                                    break;
+                                case 1:
+                                    vm.verificationData = angular.copy(originalVerificationData);
+                                    executeOnSubmit({buttonIndex: 0});
+                                default:
+                                    break;
+                            }
+                        });
+                }
             }
 
             function viewSynchFields() {
