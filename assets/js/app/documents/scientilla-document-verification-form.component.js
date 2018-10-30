@@ -216,6 +216,7 @@
                                 case 1:
                                     vm.verificationData = angular.copy(originalVerificationData);
                                     executeOnSubmit({buttonIndex: 0});
+                                    break;
                                 default:
                                     break;
                             }

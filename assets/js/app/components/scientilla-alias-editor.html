@@ -38,7 +38,9 @@
     </ul>
 
 
-    <div class="form-group">
+    <div
+        ng-if="vm.aliases.length > 0"
+        class="form-group">
         <ul class="multiselect-list">
             <li class="list-group-item" ng-repeat="alias in vm.aliases">
                 {{ alias.str }}
