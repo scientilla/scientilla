@@ -9,7 +9,8 @@
             bindings: {
                 model: '=',
                 structure: '<',
-                id: '<'
+                id: '<',
+                errors: '<'
             }
         });
 

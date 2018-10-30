@@ -9,7 +9,8 @@
             bindings: {
                 structure: '<',
                 cssClass: '@',
-                onSubmit: '&'
+                onSubmit: '&',
+                errors: '<'
             },
             transclude: true,
         });
@@ -90,9 +91,18 @@
                 else if (!_.isUndefined(struct.defaultValue)) {
                     vm.values[key] = struct.defaultValue;
                 }
+            });
 
-                if (!_.isUndefined(struct.onChange))
+            _.forEach(vm.structure, function (struct, key) {
+                if (!_.isUndefined(struct.onChange)) {
                     onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, execEvent(struct.onChange)));
+                }
+
+                if (!_.isUndefined(vm.structure.onChange)) {
+                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, function(evt) {
+                        vm.structure.onChange(vm.values);
+                    }));
+                }
             });
         }
 

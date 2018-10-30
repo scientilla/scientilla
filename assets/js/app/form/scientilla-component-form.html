@@ -1,14 +1,15 @@
 <form class="{{vm.cssClass}}" ng-submit="vm.submit()">
     <ul
-            class="filter-connector-listing connectors-{{ vm.getObjectSize(vm.connectors) }}"
-            ng-if="vm.getObjectSize(vm.connectors) > 0"
+        class="filter-connector-listing connectors-{{ vm.getObjectSize(vm.connectors) }}"
+        ng-if="vm.getObjectSize(vm.connectors) > 0"
     >
         <li ng-repeat="(name, struct) in vm.connectors">
             <scientilla-field
-                    structure="struct"
-                    name="name"
-                    reset="vm.reset"
-                    values="vm.values"></scientilla-field>
+                structure="struct"
+                name="name"
+                reset="vm.reset"
+                values="vm.values"
+                errors="vm.errors[name]"></scientilla-field>
         </li>
     </ul>
 
@@ -21,7 +22,8 @@
                 structure="struct"
                 name="name"
                 reset="vm.reset"
-                values="vm.values"></scientilla-field>
+                values="vm.values"
+                errors="vm.errors[name]"></scientilla-field>
         </li>
     </ul>
 

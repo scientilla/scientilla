@@ -8,7 +8,7 @@
     placeholder="{{vm.structure.placeholder}}"
     ng-model="vm.model"
     ng-disabled="vm.structure.disabled"
-    ng-class="vm.structure.invalidAttributes ? 'is-invalid' : ''">
+    ng-class="vm.errors ? 'is-invalid' : ''">
 <scientilla-error-messages
     class="error-messages"
-    errors="vm.structure.invalidAttributes"></scientilla-error-messages>
+    errors="vm.errors"></scientilla-error-messages>

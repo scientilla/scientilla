@@ -13,6 +13,7 @@
         structure="vm.formStructure"
         css-class="form-group-sm"
         on-submit="vm.submit"
+        errors="vm.errors"
     >
         <scientilla-multicomplete
             items="vm.group.administrators"
@@ -35,4 +36,10 @@
             </li>
         </ul>
     </scientilla-component-form>
+
+    <div
+        ng-if="vm.errorText"
+        class="modal-error text-danger">
+        {{ vm.errorText }}
+    </div>
 </div>
