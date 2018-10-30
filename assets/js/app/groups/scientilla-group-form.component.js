@@ -159,6 +159,7 @@
                         vm.onSubmit()(1);
                 }, function (res) {
                     var errors = res.data.invalidAttributes;
+                    vm.errors = {};
 
                     angular.forEach(errors, function(fields, fieldIndex) {
                         angular.forEach(fields, function(error, errorIndex) {

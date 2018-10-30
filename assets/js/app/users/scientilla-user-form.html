@@ -12,7 +12,7 @@
     <form>
         <div
             class="form-group"
-            ng-class="vm.invalidAttributes.username ? 'has-error' : ''">
+            ng-class="vm.errors.username ? 'has-error' : ''">
             <label for="username">Username (Email) *</label>
             <input
                 type="text"
@@ -21,15 +21,15 @@
                 placeholder="Username (Email)"
                 ng-model="vm.user.username"
                 ng-disabled="!vm.userIsAdmin"
-                ng-class="vm.invalidAttributes.username ? 'is-invalid' : ''">
+                ng-class="vm.errors.username ? 'is-invalid' : ''">
             <scientilla-error-messages
                 class="error-messages"
-                errors="vm.invalidAttributes.username"></scientilla-error-messages>
+                errors="vm.errors.username"></scientilla-error-messages>
         </div>
 
         <div
             class="form-group"
-            ng-class="vm.invalidAttributes.name ? 'has-error' : ''">
+            ng-class="vm.errors.name ? 'has-error' : ''">
             <label for="name">Name *</label>
             <input
                 type="text"
@@ -38,15 +38,15 @@
                 placeholder="Name"
                 ng-model="vm.user.name"
                 ng-disabled="!vm.userIsAdmin"
-                ng-class="vm.invalidAttributes.name ? 'is-invalid' : ''">
+                ng-class="vm.errors.name ? 'is-invalid' : ''">
             <scientilla-error-messages
                 class="error-messages"
-                errors="vm.invalidAttributes.name"></scientilla-error-messages>
+                errors="vm.errors.name"></scientilla-error-messages>
         </div>
 
         <div
             class="form-group"
-            ng-class="vm.invalidAttributes.surname ? 'has-error' : ''">
+            ng-class="vm.errors.surname ? 'has-error' : ''">
             <label for="surname">Surname *</label>
             <input
                 type="text"
@@ -55,10 +55,10 @@
                 placeholder="Surname"
                 ng-model="vm.user.surname"
                 ng-disabled="!vm.userIsAdmin"
-                ng-class="vm.invalidAttributes.surname ? 'is-invalid' : ''">
+                ng-class="vm.errors.surname ? 'is-invalid' : ''">
             <scientilla-error-messages
                 class="error-messages"
-                errors="vm.invalidAttributes.surname"></scientilla-error-messages>
+                errors="vm.errors.surname"></scientilla-error-messages>
         </div>
 
         <div
@@ -156,5 +156,11 @@
                     click="vm.cancel()">Cancel</scientilla-button>
             </li>
         </ul>
+
+        <div
+            ng-if="vm.errorText"
+            class="modal-error text-danger">
+            {{ vm.errorText }}
+        </div>
     </form>
 </div>

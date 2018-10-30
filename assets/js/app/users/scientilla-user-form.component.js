@@ -41,6 +41,9 @@
         vm.invalidAttributes = {};
         const deregisteres = [];
 
+        vm.errors = [];
+        vm.errorText = '';
+
         let originalUser = angular.copy(vm.user);
 
         vm.$onInit = function () {
@@ -52,6 +55,10 @@
             $scope.$on('modal.closing', function(event, reason) {
                 cancel(event, reason);
             });
+
+            if (!_.isArray(originalUser.aliases)) {
+                originalUser.aliases = [];
+            }
         };
 
         vm.$onDestroy = function () {
@@ -70,7 +77,21 @@
                 .doSave(vm.user)
                 .then(function (res) {
                     if (res.data && res.data.invalidAttributes) {
-                        vm.invalidAttributes = res.data.invalidAttributes;
+                        var errors = res.data.invalidAttributes;
+                        vm.errors = {};
+
+                        angular.forEach(errors, function(fields, fieldIndex) {
+                            angular.forEach(fields, function(error, errorIndex) {
+                                if (error.rule === 'required'){
+                                    error.message = 'This field is required.';
+                                    errors[fieldIndex][errorIndex] = error;
+                                }
+                            });
+
+                            vm.errors[fieldIndex] = errors[fieldIndex];
+                        });
+
+                        vm.errorText = 'Please correct the errors on this form!';
                     } else {
                         Notification.success("User data saved");
                         originalUser = angular.copy(vm.user);
@@ -117,7 +138,6 @@
         }
 
         function cancel(event = false) {
-
             // Compare the current state with the original state of the user
             if (angular.toJson(vm.user) === angular.toJson(originalUser)) {
                 executeOnSubmit(0);
