@@ -134,7 +134,7 @@ function mergeFields(src, cp) {
         if (!isFieldEmpty(sourceField) && !isFieldEmpty(copyField) && sourceField !== copyField)
             return false;
 
-        merged[f] = (isFieldEmpty(sourceField) && !isFieldEmpty(copyField)) ? src[f] : cp[f];
+        merged[f] = (!isFieldEmpty(sourceField) && isFieldEmpty(copyField)) ? src[f] : cp[f];
     }
 
     return merged;
