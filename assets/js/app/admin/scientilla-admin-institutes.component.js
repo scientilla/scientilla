@@ -12,10 +12,11 @@
     controller.$inject = [
         'Restangular',
         'Notification',
-        'ModalService'
+        'ModalService',
+        'EventsService'
     ];
 
-    function controller(Restangular, Notification, ModalService) {
+    function controller(Restangular, Notification, ModalService, EventsService) {
         const vm = this;
         vm.getInstitutes = getInstitutes;
         vm.formatInstitute = formatInstitute;
@@ -72,6 +73,11 @@
         }
 
         function editInstitute() {
+            EventsService.subscribe(vm, EventsService.INSTITUTE_UPDATED, function(event, institute) {
+                vm.selectedInstitute = institute;
+                console.log(institute);
+            });
+
             ModalService
                 .openInstituteModal(vm.selectedInstitute);
         }

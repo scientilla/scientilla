@@ -12,17 +12,17 @@
     <form>
         <div
             class="form-group"
-            ng-class="vm.invalidAttributes.name ? 'has-error' : ''">
+            ng-class="vm.errors.name ? 'has-error' : ''">
             <label for="name">Name *</label>
             <input
                 name="name"
                 type="text"
                 class="form-control"
                 ng-model="vm.institute.name"
-                ng-class="vm.invalidAttributes.name ? 'is-invalid' : ''">
+                ng-class="vm.errors.name ? 'is-invalid' : ''">
             <scientilla-error-messages
                 class="error-messages"
-                errors="vm.invalidAttributes.name"></scientilla-error-messages>
+                errors="vm.errors.name"></scientilla-error-messages>
         </div>
 
         <div class="form-group">

@@ -33,6 +33,8 @@
 
             SOURCE_CREATED: 'source.created',
 
+            INSTITUTE_UPDATED: 'institute.updated',
+
             CONTEXT_CHANGE: 'context.change'
         };
 
