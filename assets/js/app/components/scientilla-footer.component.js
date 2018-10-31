@@ -8,15 +8,9 @@
             controllerAs: 'vm'
         });
 
-    scientillaFooter.$inject = [
-        '$scope',
-        'LayoutService'
-    ];
+    scientillaFooter.$inject = [];
 
-    function scientillaFooter($scope, LayoutService) {
-        $scope.$watch('$viewContentLoaded', function(event) {
-            LayoutService.stickyFooter();
-        });
+    function scientillaFooter() {
+
     }
-
 })();

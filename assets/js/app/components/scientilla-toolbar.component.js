@@ -18,8 +18,7 @@
         'UsersService',
         'ModalService',
         'path',
-        'MobileMenuService',
-        'LayoutService'
+        'MobileMenuService'
     ];
 
     function scientillaToolbar($scope,
@@ -31,8 +30,7 @@
                                UsersService,
                                ModalService,
                                path,
-                               MobileMenuService,
-                               LayoutService) {
+                               MobileMenuService) {
         const vm = this;
         vm.wizardOpened = false;
         vm.isRegisterEnabled = false;
@@ -141,10 +139,5 @@
         function toggleMobileMenu() {
             MobileMenuService.toggle();
         }
-
-        $scope.$watch('$viewContentLoaded', function(event) {
-            LayoutService.fixedHeader();
-        });
     }
-
 })();
