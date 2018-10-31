@@ -73,7 +73,7 @@
         }
 
         function editInstitute() {
-            EventsService.subscribe(vm, EventsService.INSTITUTE_UPDATED, function(event, institute) {
+            EventsService.subscribe(vm, EventsService.INSTITUTE_RESTORED, function(event, institute) {
                 vm.selectedInstitute = institute;
                 console.log(institute);
             });

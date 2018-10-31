@@ -113,7 +113,7 @@
                                 break;
                             case 1:
                                 vm.institute = angular.copy(originalInstitute);
-                                EventsService.publish(EventsService.INSTITUTE_UPDATED, vm.institute);
+                                EventsService.publish(EventsService.INSTITUTE_RESTORED, vm.institute);
                                 executeOnSubmit(0);
                                 break;
                             default:
