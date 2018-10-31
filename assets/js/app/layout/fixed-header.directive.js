@@ -2,13 +2,14 @@
     'use strict';
 
     angular.module('components')
-        .directive('fixedHeader', [() => {
+        .directive('fixedHeader', ['$window', '$timeout', ($window, $timeout) => {
             return {
                 restrict: 'A',
                 link: function (scope, element, attr) {
                     let container = angular.element('.js-main-container')[0],
                         header    = element[0],
-                        images    = element.find('img');
+                        images    = element.find('img'),
+                        timer     = null;
 
                     const promise = [];
 
@@ -42,7 +43,16 @@
                         }
                     }
 
-                    loadImages().then(fixedHeader);
+                    loadImages().then(() => {
+                        fixedHeader();
+
+                        angular.element($window).bind('resize', function(){
+                            $timeout.cancel(timer);
+                            timer = $timeout(function() {
+                                fixedHeader();
+                            }, 500);
+                        });
+                    });
                 }
             };
         }]);

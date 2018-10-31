@@ -2,13 +2,14 @@
     'use strict';
 
     angular.module('components')
-        .directive('stickyFooter', [() => {
+        .directive('stickyFooter', ['$window', '$timeout', ($window, $timeout) => {
             return {
                 restrict: 'A',
                 link: function (scope, element, attr) {
                     let container = angular.element('.js-main-container')[0],
                         footer    = element[0],
-                        images    = element.find('img');
+                        images    = element.find('img'),
+                        timer     = null;
 
                     const promise = [];
 
@@ -33,7 +34,7 @@
                     }
 
 
-                    function fixedHeader(){
+                    function stickyFooter(){
                         let height = 0;
 
                         if (footer) {
@@ -42,7 +43,14 @@
                         }
                     }
 
-                    loadImages().then(fixedHeader);
+                    loadImages().then(stickyFooter);
+
+                    angular.element($window).bind('resize', function(){
+                        $timeout.cancel(timer);
+                        timer = $timeout(function() {
+                            stickyFooter();
+                        }, 500);
+                    });
                 }
             };
         }]);
