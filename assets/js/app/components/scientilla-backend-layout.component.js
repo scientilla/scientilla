@@ -10,26 +10,18 @@
         });
 
     scientillaBackendLayout.$inject = [
-        '$rootScope',
-        '$window',
-        'MobileMenuService'
+        '$rootScope'
     ];
 
-    function scientillaBackendLayout($rootScope, $window, MobileMenuService) {
+    function scientillaBackendLayout($rootScope) {
         var vm = this;
-
-        vm.toggleMobileMenu = toggleMobileMenu;
 
         vm.$onInit = function () {
             $rootScope.bodyLayout = 'backend';
-            MobileMenuService.close();
+            document.body.classList.remove('mobile-menu-is-open');
         };
 
         vm.$onDestroy = function () {
         };
-
-        function toggleMobileMenu() {
-            MobileMenuService.toggle();
-        }
     }
 })();

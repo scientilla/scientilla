@@ -40,12 +40,11 @@
         'Prototyper',
         'path',
         'Notification',
-        'ModalService',
-        'MobileMenuService'
+        'ModalService'
     ];
     run.$inject = _.union(services, servicesToInit);
 
-    function run($rootScope, AuthService, Restangular, Prototyper, path, Notification, ModalService, MobileMenuService) {
+    function run($rootScope, AuthService, Restangular, Prototyper, path, Notification, ModalService) {
 
         $rootScope.$on("$routeChangeStart", (event, next, current) => {
             const noRedirectUrls = ['/unavailable', '/login'];
@@ -73,8 +72,6 @@
             if (!AuthService.isLogged && AuthService.isAvailable)
                 AuthService.loadAuthenticationData();
         });
-
-        $rootScope.MobileMenu = MobileMenuService;
 
         Restangular.setErrorInterceptor(function (response, deferred, responseHandler) {
             const isLogged = response.headers('scientilla-logged') === 'true';

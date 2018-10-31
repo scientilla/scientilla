@@ -17,8 +17,7 @@
         'GroupsService',
         'UsersService',
         'ModalService',
-        'path',
-        'MobileMenuService'
+        'path'
     ];
 
     function scientillaToolbar($scope,
@@ -29,8 +28,7 @@
                                GroupsService,
                                UsersService,
                                ModalService,
-                               path,
-                               MobileMenuService) {
+                               path) {
         const vm = this;
         vm.wizardOpened = false;
         vm.isRegisterEnabled = false;
@@ -40,7 +38,6 @@
         vm.showWizardVisible = showWizardVisible;
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
-        vm.toggleMobileMenu = toggleMobileMenu;
         vm.originalUser = {};
 
         vm.$onInit = function () {
@@ -134,10 +131,6 @@
                 isClosable: true,
                 size: 'lg'
             });
-        }
-
-        function toggleMobileMenu() {
-            MobileMenuService.toggle();
         }
     }
 })();

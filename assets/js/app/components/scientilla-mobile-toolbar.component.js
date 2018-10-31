@@ -16,8 +16,7 @@
         'GroupsService',
         'UsersService',
         'ModalService',
-        'path',
-        'MobileMenuService'
+        'path'
     ];
 
     function scientillaToolbar(EventsService,
@@ -27,8 +26,7 @@
                                GroupsService,
                                UsersService,
                                ModalService,
-                               path,
-                               MobileMenuService) {
+                               path) {
         const vm = this;
         vm.wizardOpened = false;
         vm.isRegisterEnabled = false;
@@ -38,7 +36,6 @@
         vm.showWizardVisible = showWizardVisible;
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
-        vm.toggleMobileMenu = toggleMobileMenu;
 
         vm.$onInit = function () {
 
@@ -107,7 +104,7 @@
                     vm.researchEntity = researchEntity;
                 });
 
-            MobileMenuService.close();
+            document.body.classList.remove('mobile-menu-is-open');
         }
 
         function showWizardVisible() {
@@ -125,7 +122,7 @@
                 size: 'lg'
             });
 
-            MobileMenuService.close();
+            document.body.classList.remove('mobile-menu-is-open');
         }
 
         function openSuggestedWizard() {
@@ -134,11 +131,7 @@
                 size: 'lg'
             });
 
-            MobileMenuService.close();
-        }
-
-        function toggleMobileMenu() {
-            MobileMenuService.toggle();
+            document.body.classList.remove('mobile-menu-is-open');
         }
     }
 
