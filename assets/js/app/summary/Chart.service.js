@@ -474,7 +474,7 @@
 
             return {
                 min: _.isEmpty(years) ? currentYear : _.min(years),
-                max: currentYear
+                max: _.isEmpty(years) ? currentYear : Math.max(currentYear, _.max(years)),
             };
         }
 

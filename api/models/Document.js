@@ -201,12 +201,18 @@ module.exports = _.merge({}, BaseModel, {
             return _.every(requiredFields, v => this[v]) && this.hasValidAuthorsStr() && this.hasValidYear();
         },
         hasValidAuthorsStr() {
-            const authorsStrRegex = /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?[a-zA-ZÀ-ÖØ-öø-ÿ]\.)+)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*((\s|-)?\w\.)+)*$/;
+            const authorsStrRegex = /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)*$/;
             return authorsStrRegex.test(this.authorsStr);
         },
         hasValidYear() {
             const yearRegex = /^(19|20)\d{2}$/;
             return yearRegex.test(this.year);
+        },
+        async hasMainInstituteAffiliated() {
+            const mainInstituteId = 1;
+            const authorships = await Authorship.find({document: this.id}).populate('affiliations');
+            const affiliated = authorships.find(a => a.affiliations.map(aff => aff.id).includes(mainInstituteId));
+            return !!affiliated;
         },
         draftToDocument: function () {
             this.kind = DocumentKinds.VERIFIED;

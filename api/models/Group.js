@@ -1,4 +1,4 @@
-/* global AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group, PerformanceCalculator */
+/* global AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group, PerformanceCalculator, DocumentKinds */
 'use strict';
 
 /**
@@ -27,7 +27,6 @@ module.exports = _.merge({}, ResearchEntity, {
         },
         shortname: 'TEXT',
         description: 'TEXT',
-        publicationsAcronym: 'TEXT',
         type: 'STRING',
         code: 'STRING',
         active: 'BOOLEAN',
@@ -157,6 +156,83 @@ module.exports = _.merge({}, ResearchEntity, {
             public: true
         };
     },
+    getDocumentVerifyErrors: async function (researchEntityId, document, verificationData, check = true, docToRemove) {
+        const alreadyVerifiedDocuments = await AuthorshipGroup.find({
+            document: document.id,
+            researchEntity: researchEntityId
+        });
+        if (alreadyVerifiedDocuments.length)
+            return {
+                error: 'Document already verified',
+                item: researchEntityId
+            };
+
+        if (!document || document.kind !== DocumentKinds.VERIFIED)
+            return {
+                error: 'Document not found',
+                item: researchEntityId
+            };
+
+        const searchCond = {
+            scopusId: document.scopusId
+        };
+        if (docToRemove)
+            searchCond.id = {'!': docToRemove};
+
+        if (check && document.scopusId) {
+            const alreadyVerifiedDocuments = (await Group
+                .findOne(researchEntityId)
+                .populate('documents', searchCond)).documents;
+            if (alreadyVerifiedDocuments.length)
+                return {
+                    error: 'Document already verified (duplicated scopusId)',
+                    item: document
+                };
+        }
+
+        if (!(await document.hasMainInstituteAffiliated()))
+            return {
+                error: 'Document without authors affiliated with ' + sails.config.scientilla.institute.shortname,
+                item: document
+            };
+
+        return null;
+    },
+    getDraftVerifyErrors: async function (researchEntityId, draft, verificationData, docToRemove) {
+        if (!draft || draft.kind !== DocumentKinds.DRAFT)
+            return {
+                error: 'Document not found',
+                item: null
+            };
+        if (!draft.isValid())
+            return {
+                error: 'Document not valid for verification',
+                item: draft
+            };
+        if (draft.scopusId) {
+            const searchCond = {
+                scopusId: draft.scopusId
+            };
+            if (docToRemove)
+                searchCond.id = {'!': docToRemove};
+            const alreadyVerifiedDocuments = (await Group
+                .findOne(researchEntityId)
+                .populate('documents', searchCond)).documents;
+            if (alreadyVerifiedDocuments.length)
+                return {
+                    error: 'Document already verified (duplicated scopusId)',
+                    item: draft
+                };
+        }
+
+        if (!(await draft.hasMainInstituteAffiliated()))
+            return {
+                error: 'Document without authors affiliated with ' + sails.config.scientilla.institute.shortname,
+                item: draft
+            };
+
+        return null;
+    },
     doVerifyDocument: async function (document, researchEntityId, authorshipData) {
         const authorship = {
             researchEntity: researchEntityId,
@@ -207,8 +283,6 @@ module.exports = _.merge({}, ResearchEntity, {
         const command = 'import:external:group:' + newResearchEntity.id;
         if (newResearchEntity.scopusId !== oldResearchEntity.scopusId)
             GruntTaskRunner.run(command + ':' + DocumentOrigins.SCOPUS);
-        if (newResearchEntity.publicationsAcronym !== oldResearchEntity.publicationsAcronym)
-            GruntTaskRunner.run(command + ':' + DocumentOrigins.PUBLICATIONS);
 
         return newResearchEntity;
     },

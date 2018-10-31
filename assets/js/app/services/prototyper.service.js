@@ -56,8 +56,8 @@
             },
             getExternalConnectors: function () {
                 var connectors = [];
-                var publicationsConnector = {value: 'publications', label: 'Publications', enabled: true};
-                var scopusConnector = {value: 'scopus', label: 'Scopus', enabled: !!this.scopusId};
+                var publicationsConnector = {value: 'publications', label: 'Publications'};
+                var scopusConnector = {value: 'scopus', label: 'Scopus'};
                 connectors.push(publicationsConnector);
                 connectors.push(scopusConnector);
                 return connectors;
@@ -104,10 +104,9 @@
                 var connectors = [];
                 var publicationsConnector = {
                     value: 'publications',
-                    label: 'Publications',
-                    enabled: !!this.publicationsAcronym
+                    label: 'Publications'
                 };
-                var scopusConnector = {value: 'scopus', label: 'Scopus', enabled: !!this.scopusId};
+                var scopusConnector = {value: 'scopus', label: 'Scopus'};
                 connectors.push(publicationsConnector);
                 connectors.push(scopusConnector);
                 return connectors;

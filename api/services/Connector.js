@@ -1,4 +1,4 @@
-/* global sails, PublicationsConnector, OrcidConnector, ScopusConnector, DocumentOrigins */
+/* global sails, OrcidConnector, ScopusConnector, DocumentOrigins */
 "use strict";
 
 const request = require('requestretry');
@@ -72,7 +72,6 @@ async function getExtractTransformDocuments(config) {
 
 function getConnector(origin) {
     const connectors = {};
-    connectors[DocumentOrigins.PUBLICATIONS] = PublicationsConnector;
     connectors[DocumentOrigins.ORCID] = OrcidConnector;
     connectors[DocumentOrigins.SCOPUS] = ScopusConnector;
 

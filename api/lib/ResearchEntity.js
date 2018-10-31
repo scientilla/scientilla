@@ -91,7 +91,7 @@ module.exports = _.merge({}, BaseModel, {
             .populate('authorships')
             .populate('affiliations');
 
-        const error = await ResearchEntityModel.getDraftVerifyErrors(ResearchEntityModel, researchEntityId, draft, verificationData);
+        const error = await ResearchEntityModel.getDraftVerifyErrors(researchEntityId, draft, verificationData);
         if (error)
             return error;
         const authorshipData = await ResearchEntityModel.getAuthorshipsData(draft, researchEntityId, verificationData);
@@ -116,7 +116,7 @@ module.exports = _.merge({}, BaseModel, {
         return await ResearchEntityModel.doVerifyDocument(docToVerify, researchEntityId, authorshipData);
     },
     verifyVerifiedDocument: async function (ResearchEntityModel, researchEntityId, document, verificationData, check) {
-        const error = await ResearchEntityModel.getDocumentVerifyErrors(ResearchEntityModel, researchEntityId, document, verificationData, check);
+        const error = await ResearchEntityModel.getDocumentVerifyErrors(researchEntityId, document, verificationData, check);
         if (error)
             return error;
 
@@ -264,10 +264,10 @@ module.exports = _.merge({}, BaseModel, {
             docToVerify = document;
         let errors, isDraft = docToVerify.isDraft(), res;
         if (isDraft) {
-            errors = await ResearchEntityModel.getDraftVerifyErrors(ResearchEntityModel, researchEntityId, docToVerify, verificationData, docToRemoveId);
+            errors = await ResearchEntityModel.getDraftVerifyErrors(researchEntityId, docToVerify, verificationData, docToRemoveId);
         }
         else {
-            errors = await ResearchEntityModel.getDocumentVerifyErrors(ResearchEntityModel, researchEntityId, docToVerify, verificationData, true, docToRemoveId);
+            errors = await ResearchEntityModel.getDocumentVerifyErrors(researchEntityId, docToVerify, verificationData, true, docToRemoveId);
         }
         if (errors) {
             if (isExternal)
@@ -280,124 +280,6 @@ module.exports = _.merge({}, BaseModel, {
         else
             res = await ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, docToVerify.id, verificationData);
         return res;
-    },
-    getDocumentVerifyErrors: async function (Model, researchEntityId, document, verificationData, check = true, docToRemove) {
-        const AuthorshipModel = getAuthorshipModel(Model);
-        const alreadyVerifiedDocuments = await AuthorshipModel.find({
-            document: document.id,
-            researchEntity: researchEntityId
-        });
-        if (alreadyVerifiedDocuments.length)
-            return {
-                error: 'Document already verified',
-                item: researchEntityId
-            };
-
-        if (!document || document.kind !== DocumentKinds.VERIFIED)
-            return {
-                error: 'Document not found',
-                item: researchEntityId
-            };
-
-        const searchCond = {
-            scopusId: document.scopusId
-        };
-        if (docToRemove)
-            searchCond.id = {'!': docToRemove};
-
-        if (check && document.scopusId) {
-            const alreadyVerifiedDocuments = (await Model
-                .findOne(researchEntityId)
-                .populate('documents', searchCond)).documents;
-            if (alreadyVerifiedDocuments.length)
-                return {
-                    error: 'Document already verified (duplicated scopusId)',
-                    item: document
-                };
-        }
-        const authorshipData = await Model.getAuthorshipsData(document, researchEntityId, verificationData);
-
-        if (!authorshipData) {
-            return null;
-        }
-
-        if (!authorshipData.isVerifiable)
-            return {
-                error: authorshipData.error,
-                item: authorshipData.document
-            };
-
-        if (authorshipData.document.isPositionVerified(authorshipData.position)) {
-            if (docToRemove) {
-                const a = authorshipData.document.getAuthorshipByPosition(authorshipData.position);
-                if (a && a.researchEntity === researchEntityId) {
-                    return null;
-                }
-            }
-
-            return {
-                error: "The position is already verified",
-                item: authorshipData.document
-            };
-        }
-        return null;
-    },
-    getDraftVerifyErrors: async function (ResearchEntityModel, researchEntityId, draft, verificationData, docToRemove) {
-        if (!draft || draft.kind !== DocumentKinds.DRAFT)
-            return {
-                error: 'Draft not found',
-                item: null
-            };
-        if (!draft.isValid())
-            return {
-                error: 'Draft not valid for verification',
-                item: draft
-            };
-        if (draft.scopusId) {
-            const searchCond = {
-                scopusId: draft.scopusId
-            };
-            if (docToRemove)
-                searchCond.id = {'!': docToRemove};
-            const alreadyVerifiedDocuments = (await ResearchEntityModel
-                .findOne(researchEntityId)
-                .populate('documents', searchCond)).documents;
-            if (alreadyVerifiedDocuments.length)
-                return {
-                    error: 'Draft already verified (duplicated scopusId)',
-                    item: draft
-                };
-        }
-
-        const authorshipData = await ResearchEntityModel.getAuthorshipsData(draft, researchEntityId, verificationData);
-
-        if (!authorshipData.isVerifiable)
-            return {
-                error: authorshipData.error,
-                item: authorshipData.document
-            };
-
-        const documentCopies = await Document.findCopies(draft, authorshipData.position);
-
-        const n = documentCopies.length;
-        if (n === 0)
-            return null;
-        const docToVerify = documentCopies[0];
-
-        if (docToVerify.isPositionVerified(authorshipData.position)) {
-            const authorName = docToVerify.authorsStr.split(', ')[authorshipData.position];
-            if (docToRemove) {
-                const a = docToVerify.getAuthorshipByPosition(authorshipData.position);
-                if (a && a.researchEntity === researchEntityId) {
-                    return null;
-                }
-            }
-            return {
-                error: `You cannot verify this document as ${authorName} because someone else already claimed to be that author`,
-                item: docToVerify
-            };
-        }
-        return null;
     },
     _config: {
         actions: false,

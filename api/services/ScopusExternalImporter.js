@@ -1,4 +1,4 @@
-/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship, ExternalImporter, Citation, ExternalDocumentMetadata */
+/* global sails, Connector, DocumentKinds, DocumentOrigins, ExternalDocument, ExternalDocumentGroup, ScopusConnector, User, Group, Authorship, ExternalImporter, Citation, ExternalDocumentMetadata, Institute */
 // ScopusExternalImporter.js - in api/services
 
 "use strict";
@@ -250,6 +250,17 @@ async function getAndCreateOrUpdateDocument(scopusId) {
         throw 'Updater: Document failed ' + scopusId;
     }
 
+    const childInstitutes = await Institute.getChildInstitutes();
+
+    documentData.authorships.forEach(a => {
+        a.affiliations = a.affiliations.map(af => {
+            const institute = childInstitutes.find(ci => ci.id === af);
+            if (institute)
+                return institute.parentId;
+            return af;
+        });
+    });
+
     const document = await ExternalImporter.createOrUpdateExternalDocument(DocumentOrigins.SCOPUS, documentData);
 
     if (!_.has(document, 'scopusId'))
@@ -260,7 +271,7 @@ async function getAndCreateOrUpdateDocument(scopusId) {
 
 async function updateCitations(document) {
     const citations = await ScopusConnector.getDocumentCitations(document.scopusId);
-    if(!citations)
+    if (!citations)
         return;
 
     citations.sort((a, b) => a.year > b.year);
