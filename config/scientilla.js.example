@@ -46,11 +46,14 @@ module.exports.scientilla = {
             jobs: [
                 {fn: 'Backup.makeBackup', params: []},
                 {fn: 'GruntTaskRunner.run', params: ['import:external:all']},
+                {fn: 'Status.disable', params: []},
                 {fn: 'GruntTaskRunner.run', params: ['documents:synchronize:scopus']},
                 {fn: 'GruntTaskRunner.run', params: ['documents:clean:sources']},
                 {fn: 'GruntTaskRunner.run', params: ['documents:clean:institutes']},
                 {fn: 'GruntTaskRunner.run', params: ['documents:clean:copies']},
-                {fn: 'GruntTaskRunner.run', params: ['import:people']}
+                {fn: 'GruntTaskRunner.run', params: ['import:people']},
+                {fn: 'GruntTaskRunner.run', params: ['import:groups']},
+                {fn: 'Status.enable', params: []}
             ]
         },
         {

@@ -4,12 +4,12 @@ USERID=$UID
 export USERID
 
 if [ "$1" == "test" ]; then
-    docker-compose -f docker-compose-tools.yml up -d db-test
-    docker-compose -f docker-compose-tools.yml logs -f db-test > docker/db-test/logs &
+    docker-compose -f docker-compose-tools.yml up -d testdb
+    docker-compose -f docker-compose-tools.yml logs -f testdb > docker/db-test/logs &
     sleep 1
     docker-compose -f docker-compose-tools.yml run --rm npm test
-    docker-compose -f docker-compose-tools.yml stop db-test
-    docker-compose -f docker-compose-tools.yml rm -f db-test
+    docker-compose -f docker-compose-tools.yml stop testdb
+    docker-compose -f docker-compose-tools.yml rm -f testdb
 else
     docker-compose -f docker-compose-tools.yml run --rm npm $*
 fi

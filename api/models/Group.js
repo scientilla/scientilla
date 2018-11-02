@@ -1,4 +1,4 @@
-/* global AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group, PerformanceCalculator, DocumentKinds */
+/* global AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group, PerformanceCalculator, DocumentKinds, DocumentNotDuplicateGroup */
 'use strict';
 
 /**
@@ -130,9 +130,6 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'researchEntity',
             through: 'documentnotduplicategroup'
         },
-        getType: function () {
-            return 'group';
-        },
         scopusId: {
             type: 'STRING'
         },
@@ -147,6 +144,15 @@ module.exports = _.merge({}, ResearchEntity, {
             collection: 'groupattribute',
             via: 'researchEntity',
         },
+        getType: function () {
+            return 'group';
+        },
+        getModel: function () {
+            return Group;
+        },
+        getDocumentNotDuplicateModel: function () {
+            return DocumentNotDuplicateGroup;
+        }
     },
     getAuthorshipsData: async function (document, groupId, newAffiliationData = {}) {
         return {
@@ -173,6 +179,13 @@ module.exports = _.merge({}, ResearchEntity, {
                 item: researchEntityId
             };
 
+        if (check && (await ResearchEntity.getDuplicates(Group, researchEntityId, document)).length > 0) {
+            return {
+                error: 'Documents must be compared',
+                item: document
+            };
+        }
+
         const searchCond = {
             scopusId: document.scopusId
         };
@@ -198,7 +211,7 @@ module.exports = _.merge({}, ResearchEntity, {
 
         return null;
     },
-    getDraftVerifyErrors: async function (researchEntityId, draft, verificationData, docToRemove) {
+    getDraftVerifyErrors: async function (researchEntityId, draft, verificationData, check, docToRemove) {
         if (!draft || draft.kind !== DocumentKinds.DRAFT)
             return {
                 error: 'Document not found',
@@ -209,7 +222,15 @@ module.exports = _.merge({}, ResearchEntity, {
                 error: 'Document not valid for verification',
                 item: draft
             };
-        if (draft.scopusId) {
+
+        if (check && (await ResearchEntity.getDuplicates(Group, researchEntityId, draft)).length > 0) {
+            return {
+                error: 'Documents must be compared',
+                item: draft
+            };
+        }
+
+        if (check && draft.scopusId) {
             const searchCond = {
                 scopusId: draft.scopusId
             };
@@ -234,6 +255,7 @@ module.exports = _.merge({}, ResearchEntity, {
         return null;
     },
     doVerifyDocument: async function (document, researchEntityId, authorshipData) {
+        await Group.removeDiscarded(Group, researchEntityId, document.id);
         const authorship = {
             researchEntity: researchEntityId,
             document: document.id,

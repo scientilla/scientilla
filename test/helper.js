@@ -1,4 +1,4 @@
-/* global Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source, ExternalDocument, ExternalImporter */
+/* global Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source, ExternalDocument, ExternalImporter, DocumentTypes, SourceTypes */
 'use strict';
 
 const should = require('should');
@@ -30,6 +30,7 @@ module.exports = {
     registerUser,
     getUserDocuments,
     getUserDocumentsWithAuthors,
+    getUserDiscarded,
     getUserSuggestedDocuments,
     getUserDrafts,
     userCreateDraft,
@@ -38,6 +39,8 @@ module.exports = {
     groupUpdateDraft,
     userVerifyDraft,
     userVerifyDrafts,
+    userCopyDocument,
+    userDiscardDocument,
     addAuthorship,
     getAuthorships,
     addAffiliation,
@@ -71,48 +74,15 @@ function cleanAuths() {
 
 const url = 'http://localhost:1338/api/v1';
 
-function cleanDb() {
-    return SqlService.query(
-        'TRUNCATE accesslog,\n' +
-        'affiliation,\n' +
-        '"alias",\n' +
-        'attempt,\n' +
-        'authorship,\n' +
-        'authorshipgroup,\n' +
-        'collaboration,\n' +
-        'discarded,\n' +
-        'discardedgroup,\n' +
-        'externaldocument,\n' +
-        'externaldocumentgroup,\n' +
-        'documentnotduplicate,\n' +
-        'documentnotduplicategroup,\n' +
-        'documenttypesourcetype,\n' +
-        '"document",\n' +
-        'groupattribute,\n' +
-        '"group",\n' +
-        'groupadministrator,\n' +
-        'institute,\n' +
-        'jwt,\n' +
-        'membership,\n' +
-        'membershipgroup,\n' +
-        'resettoken,\n' +
-        'settings,\n' +
-        'sourcemetricsource,\n' +
-        'sourcemetric,\n' +
-        'source,\n' +
-        '"tag",\n' +
-        'taggroup,\n' +
-        'taglabel,\n' +
-        'use,\n' +
-        'userattribute,\n' +
-        '"attribute",\n' +
-        '"user",\n' +
-        'auth,\n' +
-        'chartdata,\n' +
-        'monitor,\n' +
-        'principalinvestigator,\n' +
-        'externaldocumentmetadata RESTART IDENTITY CASCADE;'
-    );
+async function cleanDb() {
+
+    const models = Object.values(sails.models).filter(m => m.migrate !== 'safe');
+    const modelsName = models.map(m => m.adapter.identity);
+
+    await SqlService.query('TRUNCATE ' + modelsName.map(mn => '"' + mn + '"').join(', ') + ' RESTART IDENTITY CASCADE;');
+
+    await DocumentTypes.init();
+    await SourceTypes.init();
 }
 
 async function clean() {
@@ -219,6 +189,13 @@ async function getUserDocuments(user, populateFields, qs = {}, respCode = 200) {
     return res.body;
 }
 
+async function getUserDiscarded(user, respCode = 200) {
+    const res = await request(url)
+        .get('/users/' + user.id + '/discardedDocuments')
+        .expect(respCode);
+    return res.body;
+}
+
 function getUserDocumentsWithAuthors(user) {
     return this.getUserDocuments(user, ['authors', 'authorships', 'affiliations'], {});
 }
@@ -283,6 +260,26 @@ async function userVerifyDraft(user, draftData, position, affiliations, correspo
         .put('/users/' + user.id + '/drafts/' + draftData.id + '/verified')
         .set('access_token', auth.token)
         .send({position: position, 'affiliations': affiliations, 'corresponding': corresponding})
+        .expect(respCode);
+    return res.body;
+}
+
+async function userDiscardDocument(user, document, respCode = 200) {
+    const auth = getAuth(user.id);
+    const res = await auth.agent
+        .post('/users/' + user.id + '/discarded-document')
+        .set('access_token', auth.token)
+        .send({documentId: document.id})
+        .expect(respCode);
+    return res.body;
+}
+
+async function userCopyDocument(user, document, respCode = 200) {
+    const auth = getAuth(user.id);
+    const res = await auth.agent
+        .post('/users/' + user.id + '/copy-document')
+        .set('access_token', auth.token)
+        .send({documentId: document.id})
         .expect(respCode);
     return res.body;
 }

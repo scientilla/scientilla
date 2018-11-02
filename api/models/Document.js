@@ -389,8 +389,8 @@ module.exports = _.merge({}, BaseModel, {
     getNumberOfConnections: function (document) {
         return document.authors.length +
             document.groups.length +
-            document.discardedCoauthors.length +
-            document.discardedGroups.length;
+            document.discarded.length +
+            document.discardedG.length;
     },
     deleteIfNotVerified: async function (documentId) {
         const document = await Document.findOneById(documentId)
@@ -398,14 +398,14 @@ module.exports = _.merge({}, BaseModel, {
             .populate('groups')
             .populate('authorships')
             .populate('affiliations')
-            .populate('discardedCoauthors')
-            .populate('discardedGroups');
+            .populate('discarded')
+            .populate('discardedG');
         if (!document)
             return {
                 error: 'Document ' + documentId + ' does not exist',
                 item: documentId
             };
-        if (Document.getNumberOfConnections(document) == 0) {
+        if (Document.getNumberOfConnections(document) === 0) {
             sails.log.debug('Document ' + documentId + ' will be deleted');
             let deletedDocument = await Document.destroy({id: documentId});
             deletedDocument = deletedDocument[0];
@@ -426,17 +426,18 @@ module.exports = _.merge({}, BaseModel, {
         });
         return suggestedDocuments;
     },
-    findCopies: async function (document, AuthorshipPositionNotToCheck = null, excludeMultipleVerification = true) {
-        function areAuthorshipsEqual(as1, as2) {
+    findCopies: async function (document, AuthorshipPositionNotToCheck = null) {
+        function areAuthorshipsAffiliationsMergeable(as1, as2) {
             return as1.every(a1 => {
                 const a2 = as2.find(a2 => a1.position === a2.position);
-                return (
-                    !a2 ||
-                    a1.position === AuthorshipPositionNotToCheck ||
-                    !_.isNil(a1.researchEntity) ||
-                    !_.isNil(a2.researchEntity) ||
-                    _.isEmpty(_.xor(_.map(a1.affiliations, 'institute'), _.map(a2.affiliations, 'institute')))
-                );
+                return a1.position === AuthorshipPositionNotToCheck ||
+                    (!a1.isVerified() && a2.isVerified()) ||
+                    (!a2.isVerified() && a1.isVerified()) ||
+                    !a1.isVerified() && !a2.isVerified() && (
+                        (!a1.hasAffiliations() && a2.hasAffiliations()) ||
+                        (!a2.hasAffiliations() && a1.hasAffiliations()) ||
+                        Authorship.isMetadataEqual(a1, a2)
+                    );
             });
         }
 
@@ -452,16 +453,16 @@ module.exports = _.merge({}, BaseModel, {
         const draftFullAuthorships = document.getFullAuthorships();
         const tmpCopies = similarDocuments.filter(d => {
             const copyFullAuthorships = d.getFullAuthorships();
-            return areAuthorshipsEqual(draftFullAuthorships, copyFullAuthorships) &&
-                areAuthorshipsEqual(copyFullAuthorships, draftFullAuthorships);
+            return draftFullAuthorships.length === copyFullAuthorships.length &&
+                areAuthorshipsAffiliationsMergeable(draftFullAuthorships, copyFullAuthorships);
         });
-        return excludeMultipleVerification ? tmpCopies : tmpCopies.filter(d => {
+        return tmpCopies.filter(d => {
             const copyFullAuthorships = d.getFullAuthorships();
             const noDoubleAuthors = draftFullAuthorships.every(a1 => {
                 const a2 = copyFullAuthorships.find(a2 => a1.position === a2.position);
-                return !a1.researchEntity || !a2 || !a2.researchEntity || a1.researchEntity != a2.researchEntity;
+                return !a1.researchEntity || !a2.researchEntity || a1.researchEntity !== a2.researchEntity;
             });
-            const noDoubleGroups = _.intersection(document.groups.map(g => g.id), d.groups.map(g => g.id)).length == 0;
+            const noDoubleGroups = _.intersection(document.groups.map(g => g.id), d.groups.map(g => g.id)).length === 0;
             return noDoubleAuthors && noDoubleGroups;
         });
     },
@@ -520,26 +521,21 @@ module.exports = _.merge({}, BaseModel, {
 
         return document;
     },
-    addMissingAffiliation: async (d1, d2) => {
-        const as1 = d1.getFullAuthorships();
-        const as2 = d2.getFullAuthorships();
-        const toBeDeleteAuthorships = as1.filter(a1 =>
-            _.isEmpty(a1.affiliations) &&
-            _.isNil(a1.researchEntity) &&
-            as2.some(a2 => a2.position == a1.position && !_.isEmpty(a2.affiliations))
-        );
-        const toBeAddedAuthorships = as2.filter(a2 => {
-            const a1 = as1.find(a1 => a2.position === a1.position);
-            return !a1 || toBeDeleteAuthorships.includes(a1);
+    mergeAuthorships: async (docFrom, docTo) => {
+        const authorshipsFrom = docFrom.getFullAuthorships();
+        const authorshipsTo = docTo.getFullAuthorships();
+
+        const authorshipsData = authorshipsFrom.map(aFrom => {
+            const aTo = authorshipsTo.find(a => a.position === aFrom.position);
+            let newAuthorship = aTo.isVerified() || aTo.hasAffiliations() ? aTo : aFrom;
+            newAuthorship.affiliations = newAuthorship.affiliations.map(af => af.institute);
+            return newAuthorship;
         });
-        const missingAuthorshipIds = toBeAddedAuthorships.map(a => a.id);
-        const missingAffiliationIds = _.flatMap(toBeAddedAuthorships, a => a.affiliations.map(a => a.id));
-        await Authorship.update({id: missingAuthorshipIds}, {document: d1.id});
-        await Affiliation.update({id: missingAffiliationIds}, {document: d1.id});
-        await Authorship.destroy({id: toBeDeleteAuthorships.map(a => a.id)})
+
+        await Authorship.updateAuthorships(docTo, authorshipsData);
     },
     async customPopulate(elems, fieldName, parentModelName, parentModelId) {
-        if (fieldName == 'duplicates') {
+        if (fieldName === 'duplicates') {
             const duplicates = await DocumentDuplicate.find({
                 researchEntityType: parentModelName,
                 researchEntity: parentModelId,

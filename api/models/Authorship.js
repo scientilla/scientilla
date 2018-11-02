@@ -46,6 +46,12 @@ module.exports = _.merge({}, BaseModel, {
             this.researchEntity = null;
             this.synchronize = null;
             return this.savePromise();
+        },
+        isVerified() {
+            return !!this.researchEntity;
+        },
+        hasAffiliations() {
+            return !!this.affiliations.length;
         }
     },
     beforeDestroy: async function (criteria, cb) {
@@ -87,6 +93,13 @@ module.exports = _.merge({}, BaseModel, {
             .filter(key => fields.includes(key))
             .forEach(f => newAuthorship[f] = authorshipData[f]);
         return newAuthorship;
+    },
+    isMetadataEqual(a1, a2) {
+        return _.isEmpty(_.xor(a1.affiliations.map(a => a.institute), a2.affiliations.map(a => a.institute))) &&
+            a1.corresponding === a2.corresponding &&
+            a1.first_coauthor === a2.first_coauthor &&
+            a1.last_coauthor === a2.last_coauthor &&
+            a1.oral_presentation === a2.oral_presentation;
     },
     async cleanAuthorshipsData(authorshipsData) {
         const cleanAuthorshipsData = [];

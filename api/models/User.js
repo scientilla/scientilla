@@ -1,4 +1,4 @@
-/* global User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds */
+/* global User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate */
 'use strict';
 
 /**
@@ -184,6 +184,12 @@ module.exports = _.merge({}, ResearchEntity, {
         },
         getType: function () {
             return 'user';
+        },
+        getModel: function () {
+            return User;
+        },
+        getDocumentNotDuplicateModel: function(){
+            return DocumentNotDuplicate;
         }
     }),
     getAdministeredGroups: function (userId) {
@@ -366,6 +372,13 @@ module.exports = _.merge({}, ResearchEntity, {
                 item: researchEntityId
             };
 
+        if (check && (await ResearchEntity.getDuplicates(User, researchEntityId, document)).length > 0) {
+            return {
+                error: 'Documents must be compared',
+                item: document
+            };
+        }
+
         const searchCond = {
             scopusId: document.scopusId
         };
@@ -409,7 +422,7 @@ module.exports = _.merge({}, ResearchEntity, {
         }
         return null;
     },
-    getDraftVerifyErrors: async function (researchEntityId, draft, verificationData, docToRemove) {
+    getDraftVerifyErrors: async function (researchEntityId, draft, verificationData, check, docToRemove) {
         if (!draft || draft.kind !== DocumentKinds.DRAFT)
             return {
                 error: 'Document not found',
@@ -420,7 +433,13 @@ module.exports = _.merge({}, ResearchEntity, {
                 error: 'Document not valid for verification',
                 item: draft
             };
-        if (draft.scopusId) {
+        if (check && (await ResearchEntity.getDuplicates(User, researchEntityId, draft)).length > 0) {
+            return {
+                error: 'Documents must be compared',
+                item: draft
+            };
+        }
+        if (check && draft.scopusId) {
             const searchCond = {
                 scopusId: draft.scopusId
             };
@@ -467,6 +486,7 @@ module.exports = _.merge({}, ResearchEntity, {
         return null;
     },
     doVerifyDocument: async function (document, researchEntityId, authorshipData) {
+        await User.removeDiscarded(User, researchEntityId, document.id);
         if (authorshipData.position < 0)
             return {
                 error: "User not selected",

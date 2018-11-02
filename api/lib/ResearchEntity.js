@@ -18,6 +18,10 @@ module.exports = _.merge({}, BaseModel, {
     attributes: {
         getUrlSection: function () {
             return this.getType() + 's';
+        },
+        compareId(re) {
+            return this.getModel().adapter.identity === re.getModel().adapter.identity &&
+                this.id === re.id;
         }
     },
     copyDocument: async function (Model, researchEntityId, documentId) {
@@ -86,12 +90,12 @@ module.exports = _.merge({}, BaseModel, {
         }
         return results;
     },
-    verifyDraft: async function (ResearchEntityModel, researchEntityId, draftId, verificationData) {
+    verifyDraft: async function (ResearchEntityModel, researchEntityId, draftId, verificationData, check = true) {
         const draft = await Document.findOneById(draftId)
             .populate('authorships')
             .populate('affiliations');
 
-        const error = await ResearchEntityModel.getDraftVerifyErrors(researchEntityId, draft, verificationData);
+        const error = await ResearchEntityModel.getDraftVerifyErrors(researchEntityId, draft, verificationData, check);
         if (error)
             return error;
         const authorshipData = await ResearchEntityModel.getAuthorshipsData(draft, researchEntityId, verificationData);
@@ -108,11 +112,10 @@ module.exports = _.merge({}, BaseModel, {
                 sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
             docToVerify = documentCopies[0];
 
-            await Document.addMissingAffiliation(docToVerify, draft, authorshipData.position);
+            await Document.mergeAuthorships(draft, docToVerify);
             sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + docToVerify.id);
             await Document.destroy({id: draft.id});
         }
-
         return await ResearchEntityModel.doVerifyDocument(docToVerify, researchEntityId, authorshipData);
     },
     verifyVerifiedDocument: async function (ResearchEntityModel, researchEntityId, document, verificationData, check) {
@@ -212,13 +215,6 @@ module.exports = _.merge({}, BaseModel, {
         else
             await researchEntityModel.discardDocument(researchEntityModel, researchEntityId, documentId);
     },
-    verify: async function (researchEntityModel, researchEntityId, documentId) {
-        const document = await Document.findOneById(documentId);
-        if (document.kind === DocumentKinds.DRAFT)
-            return await researchEntityModel.verifyDraft(researchEntityModel, researchEntityId, documentId);
-        else
-            return await researchEntityModel.verifyDocument(researchEntityModel, researchEntityId, documentId);
-    },
     setDocumentAsNotDuplicate: async function (researchEntityModel, researchEntityId, document1Id, document2Id) {
         const DocumentNotDuplicatedModel = getDocumentNotDuplicateModel(researchEntityModel);
         const minDocId = Math.min(document1Id, document2Id);
@@ -229,6 +225,17 @@ module.exports = _.merge({}, BaseModel, {
             duplicate: maxDocId
         });
         return documentNotDuplicate;
+    },
+    getDuplicates: async function (ResearchEntityModel, researchEntityId, document) {
+        const researchEntityType = ResearchEntityModel.adapter.identity;
+        const duplicateCondition = {
+            document: document.id,
+            researchEntity: researchEntityId,
+            researchEntityType,
+            duplicateKind: 'v'
+        };
+        const duplicates = await DocumentDuplicate.find(duplicateCondition);
+        return duplicates;
     },
     makeInternalRequest: async function (researchEntityModel, researchEntitySearchCriteria, baseUrl, qs, attribute) {
         const researchEntity = await researchEntityModel.findOne(researchEntitySearchCriteria);
@@ -264,7 +271,7 @@ module.exports = _.merge({}, BaseModel, {
             docToVerify = document;
         let errors, isDraft = docToVerify.isDraft(), res;
         if (isDraft) {
-            errors = await ResearchEntityModel.getDraftVerifyErrors(researchEntityId, docToVerify, verificationData, docToRemoveId);
+            errors = await ResearchEntityModel.getDraftVerifyErrors(researchEntityId, docToVerify, verificationData, true, docToRemoveId);
         }
         else {
             errors = await ResearchEntityModel.getDocumentVerifyErrors(researchEntityId, docToVerify, verificationData, true, docToRemoveId);
@@ -280,6 +287,10 @@ module.exports = _.merge({}, BaseModel, {
         else
             res = await ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, docToVerify.id, verificationData);
         return res;
+    },
+    removeDiscarded: async function(ResearchEntityModel, researchEntityId, documentId) {
+        const DiscardedModel = getDiscardedModel(ResearchEntityModel);
+        await DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
     },
     _config: {
         actions: false,

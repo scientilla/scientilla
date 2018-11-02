@@ -201,4 +201,29 @@ describe('Draft Verification', () => {
         documentsIds.should.not.containDeep([drafts[2]].map(d => d.id));
     });
 
+
+    it('verifying two similar documents should not be possible', async () => {
+        documentsData[2].title = 'different title';
+        documentsData[2].scopusId = 'no scopus id';
+        const draft = await test.userCreateDraft(user1, documentsData[2]);
+        const body = await test.userVerifyDraft(user1, draft);
+        body.should.have.property('error');
+        should(body.item).be.null;
+    });
+
+
+    it('verifying a merging draft create from discarded document should undiscard the document', async () => {
+        user2 = await test.registerUser(user2Data);
+        const affiliations = [iitInstitute.id];
+        const user1Documents = (await test.getUserDocuments(user1)).items;
+        const doc = user1Documents[0];
+
+        const draft = await test.userCopyDocument(user2, doc);
+        await test.userDiscardDocument(user2, doc);
+        await test.userVerifyDraft(user2, draft, user2Doc1Position, affiliations);
+        const body = await test.getUserDiscarded(user2);
+
+        body.should.be.eql(test.EMPTY_RES);
+    });
+
 });

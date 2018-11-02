@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-  node:
+  web:
     build: ./docker/node
     restart: always
     volumes:
@@ -13,6 +13,8 @@ services:
     environment:
       NODE_ENV: development
     command: bash -c "sails debug --expose_debug_as=v8debug > ./logs/sailslog"
+    depends_on:
+      - db
   db:
     image: postgres:10
     restart: always

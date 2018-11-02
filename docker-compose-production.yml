@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-  node:
+  web:
     build: ./docker/node
     restart: always
     volumes:
@@ -10,6 +10,8 @@ services:
       - "1337:1337"
       - "35732:35732"
     command: bash -c "sails lift"
+    depends_on:
+      - db
   db:
     image: postgres:10
     restart: always

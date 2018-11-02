@@ -5,20 +5,16 @@
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
 
-module.exports = {
+const _ = require('lodash');
+const BaseModel = require("../lib/BaseDocumentNotDuplicate");
+
+module.exports = _.merge({}, BaseModel, {
 
     attributes: {
-        duplicate: {
-            model: 'document'
-        },
-        document: {
-            model: 'document'
-        },
         researchEntity: {
             model: 'user'
         }
     },
-
-    tableName: 'documentnotduplicate',
-};
+    tableName: 'documentnotduplicate'
+});
 

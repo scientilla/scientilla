@@ -1,6 +1,4 @@
-// Cleaner.js - in api/services
-
-const _ = require('lodash');
+/* global User, Institute, Affiliation, Source, Group, Authorship, DocumentKinds, DocumentNotDuplicate, DocumentNotDuplicateGroup*/
 
 "use strict";
 
@@ -58,21 +56,33 @@ async function cleanInstituteCopies() {
 }
 
 async function cleanSourceCopies() {
-    const sources = await Source.find();
     let deletedSourceIds = [];
     let updatedSourceIds = [];
-    sails.log.info(`${sources.length} sources to check`);
-    for (let source of sources) {
+
+    const emptySources = await Source.find({or: [{title: null}, {title: ''}]}).populate('documents');
+    sails.log.info(`Found ${emptySources.length} empty sources to delete`);
+    const emptySourcesWithDocsIds = emptySources.filter(s => s.documents.length > 0).map(s => s.id);
+    if (emptySourcesWithDocsIds.length > 0)
+        sails.log.info(`${emptySourcesWithDocsIds.join(', ')} could not be deleted because verified documents are associated`);
+    const emptySourcesToDeleteIds = emptySources.filter(s => !emptySourcesWithDocsIds.includes(s.id)).map(s => s.id);
+    if (emptySourcesToDeleteIds.length > 0) {
+        await Source.destroy({id: emptySourcesToDeleteIds});
+        deletedSourceIds.push(...emptySourcesToDeleteIds);
+    }
+
+    const sources = await Source.find();
+    sails.log.info(`Found ${sources.length} sources`);
+    for (const [i, source] of sources.entries()) {
         if (updatedSourceIds.includes(source.id) || deletedSourceIds.includes(source.id))
             continue;
 
-        const copies = await Source.searchCopies(source);
+        const copies = Source.searchCopies(source, sources, i);
         if (!copies.length)
             continue;
 
         const deleted = await Source.merge(source, copies);
         if (deleted) {
-            deletedSourceIds = deletedSourceIds.concat(deleted.map(s => s.id));
+            deletedSourceIds.push(...deleted.map(s => s.id));
             updatedSourceIds.push(source.id);
         }
     }
@@ -84,7 +94,7 @@ async function cleanDocumentCopies() {
     const mergedDocuments = [];
     const nonMergedDocuments = [];
     const nonConnectedDocuments = [];
-    const documents = await Document.findByKind(DocumentKinds.VERIFIED);
+    const documents = await Document.find({kind: DocumentKinds.VERIFIED});
     sails.log.info(`${documents.length} documents to check found`);
 
     for (let partialDoc of documents) {
@@ -95,105 +105,207 @@ async function cleanDocumentCopies() {
             .populate('authorships')
             .populate('groupAuthorships')
             .populate('affiliations')
-            .populate('discardedCoauthors')
-            .populate('discardedGroups')
             .populate('discarded')
             .populate('discardedG');
-        if (Document.getNumberOfConnections(doc) == 0) {
+        if (Document.getNumberOfConnections(doc) === 0) {
             sails.log.warn(`Document with id ${doc.id} is a verified document but has no connections`);
             nonConnectedDocuments.push(doc);
             continue;
         }
-        const errors = [];
-        const copies = await Document.findCopies(doc, null, false);
-        if (copies.length == 0) {
-            continue;
-        }
+        let errors = [];
+        const copies = await Document.findCopies(doc, null);
+        if (copies.length === 0) continue;
         const copy = copies[0];
-        for (let d of doc.discarded) {
-            sails.log.info(`User ${d.researchEntity} is discarding document ${copy.id} (${copy.title})`);
-            const res = await User.discardDocument(User, d.researchEntity, copy.id);
-            if (res.error) {
-                errors.push(res);
-                sails.log.warn('Error: ');
-                sails.log.warn(res.error);
-            } else {
-                sails.log.info(`User ${d.researchEntity} is removing ${doc.id} from the discarded`);
-                const res2 = await User.undiscardDocument(User, d.researchEntity, d.document);
-                if (res2.error) {
-                    errors.push(res2);
-                    sails.log.warn('Error: ');
-                    sails.log.warn(res2.error);
-                }
+
+        sails.log.info(`Trying to merge document ${doc.id} with ${copy.id} (${doc.title}) ------------`);
+
+        try {
+            await Document.update({id: doc.id}, {kind: DocumentKinds.IGNORED});
+            const researchEntities = doc.authors
+                .map(a => Object.assign({}, a, {Model: User}))
+                .concat(doc.groups.map(g => Object.assign({}, g, {Model: Group})));
+
+            const mergeResult = await mergeDocuments(researchEntities, doc);
+            errors = errors.concat(mergeResult.errors);
+
+
+            if (mergeResult.done.length === researchEntities.length) {
+                const moveUserDiscardedErrors = await moveDiscarded(User, doc, copy, 'discarded');
+                const moveGroupDiscardedErrors = await moveDiscarded(Group, doc, copy, 'discardedG');
+                errors = errors.concat(moveUserDiscardedErrors);
+                errors = errors.concat(moveGroupDiscardedErrors);
+
+                const moveNotDuplicatesErorrs = await moveNotDuplicates(doc, copy);
+                errors = errors.concat(moveNotDuplicatesErorrs);
             }
-        }
-        for (let d of doc.discardedG) {
-            sails.log.info(`Group ${d.researchEntity} is discarding document ${copy.id} (${copy.title})`);
-            const res = await Group.discardDocument(Group, d.researchEntity, copy.id);
-            if (res.error) {
-                sails.log.warn('Error: ');
-                sails.log.warn(res.error);
-            } else {
-                sails.log.info(`Group ${d.researchEntity} is removing ${doc.id} from the discarded`);
-                const res2 = await Group.undiscardDocument(Group, d.researchEntity, d.document);
-                if (res2.error) {
-                    errors.push(res2);
-                    sails.log.warn('Error: ');
-                    sails.log.warn(res2.error);
-                }
+
+            const unverifyResults = await unverifyDocuments(mergeResult.done, doc);
+            errors = errors.concat(unverifyResults.errors);
+
+            if (errors.length) {
+                sails.log.info(`Document ${doc.id} should have been merged with ${copy.id} but errors occured`);
+                await Document.update({id: doc.id}, {kind: DocumentKinds.VERIFIED});
+                nonMergedDocuments.push({doc: doc, copy: copy});
             }
-        }
-        for (let a of doc.authorships) {
-            if (!a.researchEntity)
-                continue;
-            const instituteIds = doc.affiliations.filter(aff => aff.authorship === a.id).map(aff => aff.institute);
-            sails.log.info(`User ${a.researchEntity} is trying to verify document ${copy.id} (${copy.title}) in position: ${a.position}`);
-            const authorshipData = Authorship.filterFields(a);
-            authorshipData.affiliationInstituteIds = instituteIds;
-            const res = await User.verifyDocument(User, a.researchEntity, copy.id, authorshipData, false);
-            if (res.error) {
-                errors.push(res);
-                sails.log.warn('Error: ');
-                sails.log.warn(res.error);
-            } else {
-                sails.log.info(`User ${a.researchEntity} is trying to unverify document ${doc.id} (${doc.title})`);
-                const res2 = await User.unverifyDocument(User, a.researchEntity, doc.id);
-                if (res2.error) {
-                    errors.push(res2);
-                    sails.log.warn('Error: ');
-                    sails.log.warn(res2.error);
-                }
+            else {
+                sails.log.info(`Document ${doc.id} was merged with ${copy.id} -------------------------`);
+                mergedDocuments.push({doc: doc, copy: copy});
             }
-        }
-        for (let a of doc.groupAuthorships) {
-            if (!a.researchEntity)
-                continue;
-            sails.log.info(`Group ${a.researchEntity} is trying to verify document ${copy.id} (${copy.title})`);
-            const res = await Group.verifyDocument(Group, a.researchEntity, copy.id, {}, false);
-            if (res.error) {
-                errors.push(res);
-                sails.log.warn('Error: ');
-                sails.log.warn(res.error);
-            } else {
-                sails.log.info(`Group ${a.researchEntity} is trying to unverify document ${doc.id} (${doc.title})`);
-                const res2 = await Group.unverifyDocument(Group, a.researchEntity, doc.id);
-                if (res2.error) {
-                    errors.push(res2);
-                    sails.log.warn('Error: ');
-                    sails.log.warn(res2.error);
-                }
-            }
-        }
-        if (errors.length) {
-            sails.log.info(`Document ${doc.id} should have been merged with  ${copy.id} but an error occured`)
-            nonMergedDocuments.push({doc: doc, copy: copy});
-        }
-        else {
-            sails.log.info(`Document ${doc.id} was merged with ${copy.id}`);
-            mergedDocuments.push({doc: doc, copy: copy});
+        } catch (e) {
+            sails.log.info(`An error occurred trying to merge ${doc.id} with ${copy.id}:`);
+            sails.log.info(e);
+            await Document.update({id: doc.id}, {kind: DocumentKinds.VERIFIED});
         }
     }
     sails.log.info(`${mergedDocuments.length} documents merged`);
     sails.log.info(`${nonMergedDocuments.length} documents were not merged because of some error`);
     sails.log.info(`${nonConnectedDocuments.length} documents were not connected to any research entity in any way`);
+}
+
+
+async function mergeDocuments(researchEntities, document) {
+
+    const out = {
+        errors: [],
+        done: []
+    };
+
+    for (const re of researchEntities) {
+        sails.log.info(`${re.Model.adapter.identity} ${re.id}:${re.name + (re.surname ? ' ' + re.surname : '')} is trying to verify`);
+        const authorshipData = getAuthorshipData(re, document);
+        const draft = await re.Model.copyDocument(re.Model, re.id, document.id);
+        const res = await re.Model.verifyDraft(re.Model, re.id, draft.id, authorshipData, false);
+        if (res.error) {
+            await Document.destroy(draft);
+            out.errors.push(res);
+            sails.log.warn('Error: ' + res.error);
+        }
+        else out.done.push(re);
+    }
+
+    return out;
+}
+
+function getAuthorshipData(re, document) {
+    if (re.Model.adapter.identity === 'group') return {};
+
+    const authorship = document.authorships.find(a => a.researchEntity === re.id);
+    const instituteIds = document.affiliations.filter(aff => aff.authorship === authorship.id).map(aff => aff.institute);
+    const authorshipData = Authorship.filterFields(authorship);
+    authorshipData.affiliationInstituteIds = instituteIds;
+    return authorshipData;
+}
+
+async function unverifyDocuments(researchEntities, document) {
+
+    const out = {
+        errors: [],
+        done: []
+    };
+
+    for (const re of researchEntities) {
+        sails.log.info(`${re.Model.adapter.identity} ${re.id}:${re.name + (re.surname ? ' ' + re.surname : '')} is trying to unverify`);
+
+        const res = await re.Model.unverifyDocument(re.Model, re.id, document.id);
+        if (res.error) {
+            out.errors.push(res);
+            sails.log.warn('Error: ' + res.error);
+        }
+        else out.done.push(re);
+    }
+
+    return out;
+}
+
+
+async function moveDiscarded(ResearchEntityModel, document, copy, discadedKey) {
+    const errors = [];
+    for (let discarded of document[discadedKey]) {
+        const user = await ResearchEntityModel.findOne({id: discarded.researchEntity}).populate('documents', {id: copy.id});
+        if (user.documents.length > 0)
+            sails.log.info(`${ResearchEntityModel.adapter.identity} ${discarded.researchEntity} is not discarding document because he has already verified it`);
+        else {
+            sails.log.info(`${ResearchEntityModel.adapter.identity} ${discarded.researchEntity} is discarding document`);
+            const res = await ResearchEntityModel.discardDocument(ResearchEntityModel, discarded.researchEntity, copy.id);
+
+            if (res.error) {
+                errors.push(res);
+                sails.log.warn('Error: ' + res.error);
+                continue;
+            }
+        }
+
+        sails.log.info(`${ResearchEntityModel.adapter.identity} ${discarded.researchEntity} is removing ${document.id} from the discarded`);
+        const res2 = await ResearchEntityModel.undiscardDocument(ResearchEntityModel, discarded.researchEntity, discarded.document);
+        if (res2.error) {
+            errors.push(res2);
+            sails.log.warn('Error: ' + res2.error);
+        }
+    }
+
+    return errors;
+}
+
+async function moveNotDuplicates(document, copy) {
+    const errors = [];
+    const userDocumentNotDuplicates = await DocumentNotDuplicate.find({
+        or: [
+            {document: document.id},
+            {duplicate: document.id}
+        ]
+    }).populate('researchEntity');
+    const userCopyNotDuplicates = await DocumentNotDuplicate.find({
+        or: [
+            {document: copy.id},
+            {duplicate: copy.id}
+        ]
+    }).populate('researchEntity');
+
+    const groupDocumentNotDuplicates = await DocumentNotDuplicateGroup.find({
+        or: [
+            {document: document.id},
+            {duplicate: document.id}
+        ]
+    }).populate('researchEntity');
+    const groupCopyNotDuplicates = await DocumentNotDuplicateGroup.find({
+        or: [
+            {document: copy.id},
+            {duplicate: copy.id}
+        ]
+    }).populate('researchEntity');
+
+    const documentNotDuplicates = userDocumentNotDuplicates.concat(groupDocumentNotDuplicates);
+    const copyNotDuplicates = userCopyNotDuplicates.concat(groupCopyNotDuplicates);
+
+    for (const dnd of documentNotDuplicates) {
+        const otherDocumentId = dnd.document === document.id ? dnd.duplicate : dnd.document;
+        sails.log.info(`${dnd.researchEntity.getModel().adapter.identity} ${dnd.researchEntity.id} has a documentNotDuplicate to update: ${document.id}-${otherDocumentId} to ${copy.id}-${otherDocumentId}`);
+
+        const NotDuplicateModel = dnd.researchEntity.getDocumentNotDuplicateModel();
+        let res = await NotDuplicateModel.destroy({id: dnd.id});
+        if (!res.error) {
+            errors.push(res);
+            sails.log.warn('Error: ' + res.error);
+        }
+
+        if (otherDocumentId === copy.id) {
+            sails.log.info(`The documentNotDuplicate has been deleted because ${otherDocumentId} is the merging document`);
+            continue;
+        }
+
+        if (copyNotDuplicates.find(cnd => cnd.researchEntity.compareId(dnd.researchEntity) &&
+            (cnd.document === otherDocumentId || cnd.duplicate === otherDocumentId))) {
+            sails.log.info(`The documentNotDuplicate has been deleted because the merging document (${copy.id}) already has ${otherDocumentId} signed as not duplicate`);
+            continue;
+        }
+
+        res = await NotDuplicateModel.insert(document, copy, dnd.researchEntity);
+        if (res.error) {
+            errors.push(res);
+            sails.log.warn('Error: ' + res.error);
+        }
+    }
+
+
+    return errors;
 }
