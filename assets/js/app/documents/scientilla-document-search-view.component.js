@@ -25,6 +25,7 @@
         const DocumentService = context.getDocumentService();
 
         vm.$onInit = function () {
+            console.log(vm.resolve);
             vm.document = vm.resolve.data.document;
         };
 

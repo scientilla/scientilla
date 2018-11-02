@@ -81,15 +81,15 @@
         };
 
         service.openScientillaDocumentSearch = function () {
-            const modal = openComponentModal('scientilla-document-search', {}, {size: 'lg'});
+            const modal = openComponentModal('scientilla-document-search', {size: 'lg'}, {});
             addModalObject(modal);
             return modal.result;
         };
 
         service.openScientillaDocumentSearchView = function (document) {
             const modal = openComponentModal('scientilla-document-search-view',
-                {document: document},
-                {size: 'lg'});
+                {size: 'lg'},
+                {data: {document: document}});
             addModalObject(modal);
             return modal.result;
         };
