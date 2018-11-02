@@ -13,22 +13,6 @@
 
     .document-info{
         position: relative;
-
-        .document-year{
-            position: absolute;
-            top: -16px;
-            right: 2px;
-            display: block;
-            font-weight: bold;
-            transform-origin: bottom right;
-            transform: rotate(-90deg);
-        }
-
-        .icon-iit{
-            position: absolute;
-            bottom: 0px;
-            right: 1rem;
-        }
     }
 
     .document-authors{
@@ -109,6 +93,22 @@
 
         .document-info{
             border-right: 2px solid $curious-blue;
+
+            .document-year{
+                position: absolute;
+                top: -16px;
+                right: 2px;
+                display: block;
+                font-weight: bold;
+                transform-origin: bottom right;
+                transform: rotate(-90deg);
+            }
+
+            .icon-iit{
+                position: absolute;
+                bottom: 0px;
+                right: 1rem;
+            }
         }
 
         &.invalid{
