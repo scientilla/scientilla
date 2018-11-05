@@ -19,10 +19,11 @@
     function scientillaDocumentsDetails(documentTypes, documentSourceTypes) {
         const vm = this;
 
+        vm.collapsed = true;
+
         vm.$onInit = function () {
             vm.type = _.get(documentTypes.find(dt => dt.key === vm.document.type), 'label');
             vm.sourceType = _.get(documentSourceTypes.find(dt => dt.id === vm.document.sourceType), 'label');
-
 
             vm.bibliographicInformations = [];
 

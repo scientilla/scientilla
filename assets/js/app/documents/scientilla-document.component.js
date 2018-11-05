@@ -75,6 +75,8 @@
             AIS: 'AIS'
         };
 
+        vm.collapsed = true;
+
         vm.$onInit = function () {
             vm.showPrivateTags = vm.showPrivateTags || false;
             vm.verifiedCount = getVerifiedCount();
@@ -85,7 +87,6 @@
 
             if (vm.checkDuplicates)
                 checkDuplicate();
-
 
             addLabels();
         };

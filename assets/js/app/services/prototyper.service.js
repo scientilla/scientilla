@@ -301,6 +301,9 @@
 
                 return this.authorsStr.replace(/\s+et all\s*$/i, '').split(/,\s*/).map(_.trim);
             },
+            getAuthorLimit: function () {
+                return 10;
+            },
             getUcAuthors: function () {
                 var authors = this.getAuthors();
                 var ucAuthors = _.map(authors, function (a) {

@@ -1,6 +1,22 @@
 .document-institutes{
     @include normalize-listing;
-    margin-bottom: 1rem;
+    margin: 1rem -1rem;
     font-size: 1rem;
     font-style: italic;
+    @include clearfix;
+
+    & > li {
+        display: block;
+        padding: 0px 1rem;
+        float: left;
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .document-institutes{
+        & > li {
+            width: 25%;
+        }
+    }
+
 }

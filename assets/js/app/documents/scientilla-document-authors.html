@@ -1,9 +1,19 @@
 <span
     class="document-authors"
     ng-if="vm.type==='default'"
-    ng-bind-html='vm.document.authorsStr | authorsOralPresentations:vm.document | authorsCorresponding:vm.document | authorsCoauthors:vm.document | authorsVerified:vm.document | authorsAffiliations:vm.document'></span>
+    ng-bind-html='vm.document.authorsStr | authorsLength: vm.collapsed ? vm.document.getAuthorLimit() : 0 | authorsOralPresentations:vm.document | authorsCorresponding:vm.document | authorsCoauthors:vm.document | authorsVerified:vm.document | authorsAffiliations:vm.document'>
+</span>
 
 <span
     class="document-authors"
     ng-if="vm.type==='preview'"
-    ng-bind-html='vm.document.authorsStr | authorsOralPresentations:vm.document | authorsCorresponding:vm.document | authorsCoauthors:vm.document | authorsVerified:vm.document | authorsMainGroup:vm.document'></span>
+    ng-bind-html='vm.document.authorsStr | authorsLength: vm.collapsed ? vm.document.getAuthorLimit() : 0 | authorsOralPresentations:vm.document | authorsCorresponding:vm.document | authorsCoauthors:vm.document | authorsVerified:vm.document | authorsMainGroup:vm.document'>
+</span>
+
+<span
+    class="badge badge-secondary badge-click"
+    ng-click="vm.toggleCollapse()"
+    ng-if="vm.document.authorsStr && vm.document.authorsStr !== (vm.document.authorsStr | authorsLength: vm.document.getAuthorLimit())">
+    <span ng-if="vm.collapsed">Show all authors</span>
+    <span ng-if="!vm.collapsed">Show less authors</span>
+</span>

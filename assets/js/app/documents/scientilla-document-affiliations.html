@@ -1,5 +1,5 @@
 <ul class="document-institutes">
-    <li ng-repeat="(i, institute) in vm.document.institutes">
-        {{ vm.document.getInstituteIdentifier(i) }} - {{ institute.name }}
+    <li ng-repeat="(i, institute) in vm.affiliationInstitutes">
+        {{ vm.getAffiliationInstituteIdentifier(institute) }} - {{ institute.name }}
     </li>
 </ul>
