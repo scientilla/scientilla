@@ -1,17 +1,18 @@
-<header class="header">
-    <div class="container-fluid">
-        <ul class="header-listing">
-            <li>
-                <a href="#/login" class="login-link">Login
-                    <!-- <img class="scientilla-small-logo" src="/images/scientilla-logo-white-40.png"> -->
-                </a>
-            </li>
-            <li>
-                <a href="https://iit.it" class="iit-link">Istituto Italiano di Tecnologia</a>
-                <!-- <img class="scientilla-small-logo" src="/images/iit-logo-40.png"> -->
-            </li>
-        </ul>
-    </div>
-</header>
+<div class="main-container js-main-container">
+    <header class="header" fixed-header>
+        <div class="container-fluid">
+            <ul class="header-listing">
+                <li>
+                    <a href="#/login" class="login-link">Login</a>
+                </li>
+                <li>
+                    <a href="https://iit.it" class="iit-link">Istituto Italiano di Tecnologia</a>
+                </li>
+            </ul>
+        </div>
+    </header>
 
-<div class="main-view" ng-transclude></div>
+    <div class="main-view" ng-transclude></div>
+</div>
+
+<scientilla-footer class="footer-container"></scientilla-footer>
