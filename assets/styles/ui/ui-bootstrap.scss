@@ -40,3 +40,16 @@
     box-shadow: none;
     pointer-events: none;
 }
+
+.uib-typeahead-match{
+    &.active{
+        background: $curious-blue;
+        .dropdown-item {
+            color: $white;
+
+            &:hover{
+                background: none;
+            }
+        }
+    }
+}
