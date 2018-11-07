@@ -7,9 +7,9 @@
 //
 // Color system
 //
-$gray-100: $mercury !default;
-$gray-200: $geyser !default;
-$gray-300: $alto !default;
+$gray-100: $silver !default;
+$gray-200: $silver !default;
+$gray-300: $silver !default;
 $gray-400: $silver !default;
 $gray-500: $gray !default;
 $gray-600: $pale-sky !default;
@@ -713,7 +713,7 @@ $card-spacer-y:                     2rem !default;
 $card-spacer-x:                     2rem !default;
 $card-border-width:                 $border-width !default;
 $card-border-radius:                $border-radius !default;
-$card-border-color:                 rgba($black, .125) !default;
+$card-border-color:                 $gray-400 !default;
 $card-inner-border-radius:          calc(#{$card-border-radius} - #{$card-border-width}) !default;
 $card-cap-bg:                       rgba($black, .03) !default;
 $card-bg:                           $white !default;

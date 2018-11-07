@@ -17,7 +17,7 @@
                 & + li{
                     margin-top: 2rem;
                     padding-top: 2rem;
-                    border-top: 1px solid $mercury;
+                    border-top: 1px solid $silver;
                 }
             }
 
@@ -103,7 +103,7 @@
                 padding: 1rem 1rem 1rem 1.5rem;
                 grid-template-rows: auto;
                 grid-template-columns: 1fr auto;
-                border: 1px solid $mercury;
+                border: 1px solid $silver;
                 border-radius: .25rem;
             }
 
@@ -115,11 +115,13 @@
             }
 
             .collaborator{
-                background: lighten($mercury, 8%);
+                border-color: $silver;
+                background: lighten($silver, 10%);
             }
 
             .former-collaborator{
-                background: lighten($link-water, 5%);
+                border-color: $half-baked;
+                background: lighten($half-baked, 10%);
             }
 
             .member-info{

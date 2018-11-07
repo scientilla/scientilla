@@ -1,7 +1,8 @@
 .list-group-item{
     padding: 1rem 1rem;
     font-size: 1.2rem;
-    border-color: $mercury;
+    border-color: $silver;
+    transition: .1s all;
 
     &.active{
         border-color: $deep-cerulean;
