@@ -23,7 +23,7 @@
                     document="d"
                     section="vm.section"
                     class="document-container"></scientilla-document>
-                <div class="document-row-actions">
+                <div class="document-row-actions" ng-if="vm.editable">
                     <button
                         class="btn btn-primary"
                         ng-click="vm.unverifyDocument(d)"
@@ -37,14 +37,14 @@
                         Unverify
                     </button>
                     <button
-                        class="btn btn-compare"
+                        class="btn btn-warning"
                         ng-click="vm.compareDocuments(d, d.getComparisonDuplicate())"
                         type="button"
                         uib-tooltip="Open the comparison form"
                         tooltip-placement="top"
                         tooltip-class="scientilla-tooltip"
                         ng-if="d.isComparable">
-                        Compare
+                        <i class="fas fa-exchange-alt fa-left"></i>Compare
                     </button>
                 </div>
             </scientilla-checkable>

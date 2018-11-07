@@ -47,15 +47,15 @@
                             <button
                                 ng-click="vm.compareDocuments(document, document.getComparisonDuplicate())"
                                 type="button"
-                                class="btn btn-compare"
-                                ng-if="document.isComparable">
-                                Compare
+                                ng-if="document.isComparable"
+                                class="btn btn-warning">
+                                <i class="fas fa-exchange-alt fa-left"></i>Compare
                             </button>
 
                             <button
                                 type="button"
                                 class="btn dropdown-toggle only-icon"
-                                ng-class="{'btn-compare': document.isComparable, 'btn-primary': !document.isComparable}"
+                                ng-class="{'btn-warning': document.isComparable, 'btn-primary': !document.isComparable}"
                                 uib-dropdown-toggle>
                             </button>
 
