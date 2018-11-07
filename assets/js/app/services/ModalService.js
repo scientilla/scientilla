@@ -73,7 +73,10 @@
                     on-submit="vm.onSubmit" \
                     close-fn="vm.onClose"\
                 ></scientilla-document-form>',
-                scopeVars
+                scopeVars,
+                {
+                    size: 'lg'
+                }
             );
 
             addModalObject(modal);
