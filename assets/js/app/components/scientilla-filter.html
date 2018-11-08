@@ -33,7 +33,7 @@
         <li>
             <div
                 ng-if="vm.onStatus(vm.STATUS_LOADING) || vm.onStatus(vm.STATUS_INITIAL_LOADING)"
-                class="progress-bar progress-bar-striped active"
+                class="progress-bar progress-bar-striped active progress-bar-animated"
                 role="progressbar">Loading</div>
             <ul
                 ng-if="vm.onStatus(vm.STATUS_WAITING) && vm.totalItems > vm.itemsPerPage"

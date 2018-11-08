@@ -197,7 +197,10 @@
                 $timeout.cancel(statusTimeoutId);
             if (status === vm.STATUS_LOADING) {
                 vm.status = vm.STATUS_WAITING;
-                statusTimeoutId = $timeout(() => vm.status = vm.STATUS_LOADING, 400);
+                statusTimeoutId = $timeout(() => {
+                    vm.status = vm.STATUS_LOADING;
+                    window.scrollTo(0,0);
+                }, 400);
                 return;
             }
             vm.status = status;
