@@ -91,7 +91,6 @@
         }
 
         function cancel(event = false) {
-            console.log(vm.institute);
             // Compare the current state with the original state of the institute
             if (angular.toJson(vm.institute) === angular.toJson(originalInstitute)) {
                 executeOnSubmit(0);

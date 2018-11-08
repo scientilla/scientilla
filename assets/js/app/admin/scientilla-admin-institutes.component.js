@@ -75,7 +75,6 @@
         function editInstitute() {
             EventsService.subscribe(vm, EventsService.INSTITUTE_RESTORED, function(event, institute) {
                 vm.selectedInstitute = institute;
-                console.log(institute);
             });
 
             ModalService
