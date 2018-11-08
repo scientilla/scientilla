@@ -52,7 +52,7 @@
             const deregisteres = [];
             const coauthorsDeregisteres = [];
 
-            let originalVerificationData = angular.copy(vm.verificationData);
+            let originalVerificationData = {};
 
             vm.$onInit = function () {
                 if (user.getType() === 'group')
@@ -67,6 +67,8 @@
                 $scope.$on('modal.closing', function (event, reason) {
                     cancel(event);
                 });
+
+                originalVerificationData = angular.copy(vm.verificationData);
             };
 
             vm.$onDestroy = () => {
@@ -136,6 +138,7 @@
                     const res = await verify(user, vm.document.id, data, vm.document2id);
                     const newUser = await UsersService.getProfile(user.id);
                     await context.setResearchEntity(newUser);
+                    originalVerificationData = angular.copy(vm.verificationData);
                     executeOnSubmit({buttonIndex: 1, data: res});
                 } catch (e) {
                     executeOnFailure();
@@ -151,10 +154,13 @@
                     vm.verificationData.first_coauthor = authorship.first_coauthor;
                     vm.verificationData.last_coauthor = authorship.last_coauthor;
                     vm.verificationData.oral_presentation = authorship.oral_presentation;
+
+                    originalVerificationData = angular.copy(vm.verificationData);
                 }
 
                 getInstitutes().then(function (institutes) {
                     vm.verificationData.affiliations = institutes;
+                    originalVerificationData = angular.copy(vm.verificationData);
                 });
 
                 if (coauthorsDeregisteres.length) {
