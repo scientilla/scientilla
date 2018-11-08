@@ -1,5 +1,18 @@
 .tooltip-inner{
     padding: 1rem;
     font-size: 1.1rem;
-    text-align: left;
+}
+
+.tooltip{
+    &.text-center{
+        .tooltip-inner{
+            text-align: center;
+        }
+    }
+
+    &.text-left{
+        .tooltip-inner{
+            text-align: left;
+        }
+    }
 }

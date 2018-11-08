@@ -50,29 +50,28 @@
                 ng-if="vm.verifiedCount"
                 class="document-verified"
                 uib-tooltip-html="vm.getVerifiedNamesHTML()"
-                tooltip-class="scientilla-tooltip">
+                tooltip-class="text-left">
                 <i class="fas fa-check"></i> {{vm.verifiedCount}}
             </li>
             <li
                 ng-if="vm.document.origin==='scopus'"
                 class="document-origin">
-                <!-- TODO: scientilla tooltip? -->
                 <span
                     ng-if="vm.document.hasValidScopusId()"
                     class="icon-scopus"
                     uib-tooltip-html="'This document has been imported from Scopus'"
-                    tooltip-class="scientilla-tooltip text-left"></span>
+                    tooltip-class="text-left"></span>
                 <span
                     ng-if="!vm.document.hasValidScopusId()"
                     class="icon-scopus-deleted"
                     uib-tooltip-html="'This document has been imported from Scopus but this ID is not available in Scopus anymore - IT IS STRONGLY ADVISED TO LOOK FOR A WORKING SCOPUS ID NOT TO MISS NEW CITATIONS!'"
-                    tooltip-class="text-left scientilla-tooltip"></span>
+                    tooltip-class="text-left"></span>
             </li>
             <li ng-if="vm.document.origin==='scopus'">
                 <i
                     class="fas fa-sync-alt"
                     ng-if="vm.isSynchronized()"
-                    title="This document will update automatically from {{vm.document.origin}}"></i>
+                    uib-tooltip-html="'This document will update automatically from {{vm.document.origin}}'"></i>
             </li>
             <li
                 ng-if="vm.isPrivacyToShow()"
@@ -81,12 +80,12 @@
                     ng-click="vm.changePrivacy()"
                     ng-if="vm.isPublic()"
                     class="fas fa-globe-africa has-action"
-                    title="The document is visible to everyone, click to change it"></i>
+                    uib-tooltip-html="'The document is visible to everyone, click to change it'"></i>
                 <i
                     ng-click="vm.changePrivacy()"
                     ng-if="!vm.isPublic()"
                     class="fas fa-lock has-action"
-                    title="The document is visible only to scientilla users, click to change it"></i>
+                    uib-tooltip-html="'The document is visible only to scientilla users, click to change it'"></i>
             </li>
             <li
                 ng-if="vm.isFavoriteToShow()"
@@ -95,12 +94,12 @@
                     ng-click="vm.changeFavorite()"
                     ng-if="vm.isFavorite()"
                     class="fas fa-star has-action"
-                    title="This document is one of your favorite"></i>
+                    uib-tooltip-html="'This document is one of your favorite'"></i>
                 <i
                     ng-click="vm.changeFavorite()"
                     ng-if="!vm.isFavorite()"
                     class="far fa-star has-action"
-                    title="Click here to make it favorite"></i>
+                    uib-tooltip-html="'Click here to make it favorite'"></i>
             </li>
         </ul>
     </li>
