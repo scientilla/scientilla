@@ -43,6 +43,7 @@
         &:focus,
         &:active:focus{
             background: $abbey;
+            color: $white;
             text-decoration: none;
         }
     }

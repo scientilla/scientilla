@@ -9,6 +9,10 @@ label{
 
 .form-control{
     height: auto;
+
+    &:disabled{
+        cursor: not-allowed;
+    }
 }
 
 .form-control,

@@ -1,3 +1,9 @@
+.btn{
+    &:disabled{
+        cursor: not-allowed;
+    }
+}
+
 .btn-primary{
     &.selected{
         border-color: $deep-cerulean;
