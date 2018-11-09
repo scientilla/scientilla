@@ -31,14 +31,12 @@
 
         function submit() {
             vm.status = vm.STATUS_LOADING;
-            //console.log(vm.user);
             return AuthService.login(vm.user)
                 .catch(function (res) {
                     Notification.warning('Login failed');
                     vm.user.password = "";
                     vm.status = vm.STATUS_WAITING;
                     vm.user.error = res.data.error;
-                    //console.log(vm.user);
                 });
         }
     }

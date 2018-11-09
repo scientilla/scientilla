@@ -105,7 +105,6 @@
                 .then(function (data) {
                     return setupUserAccount(data.id);
                 }, function(res) {
-                    //console.log(res);
                     throw res;
                 });
         }
