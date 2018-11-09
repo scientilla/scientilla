@@ -211,7 +211,9 @@
                         });
                 } else {
                     forcedClose = true;
-                    executeOnSubmit(0);
+                    if (!event) {
+                        executeOnSubmit(0);
+                    }
                 }
             }
         }
