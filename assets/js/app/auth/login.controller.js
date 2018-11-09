@@ -31,7 +31,7 @@
 
         function submit() {
             vm.status = vm.STATUS_LOADING;
-            return AuthService.login(vm.user)
+            AuthService.login(vm.user)
                 .catch(function (res) {
                     Notification.warning('Login failed');
                     vm.user.password = "";
