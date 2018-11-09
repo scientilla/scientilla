@@ -256,7 +256,9 @@
                     saveDocument();
                 }
 
-                close();
+                if (!event){
+                    close();
+                }
             }
         }
 
