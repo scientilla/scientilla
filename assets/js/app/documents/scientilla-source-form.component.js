@@ -79,9 +79,11 @@
 
             if (!closed) {
                 // Check if the new source is still empty
-                if (angular.toJson(emptySource) === angular.toJson(vm.newSource)) {
+                if (typeof vm.newSource === 'undefined' || angular.toJson(emptySource) === angular.toJson(vm.newSource)) {
                     closed = true;
-                    return vm.closeFn()();
+                    if (!event) {
+                        return vm.closeFn()();
+                    }
                 } else {
                     if (event) {
                         // Prevent modal from closing
