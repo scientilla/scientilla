@@ -104,12 +104,16 @@
         function cancel(event = false) {
             // Check if a position/author is selected
             if (_.isUndefined(vm.position)) {
-                executeOnSubmit(0);
+                if (!event) {
+                    executeOnSubmit(0);
+                }
             } else {
                 // Compare the current state with the original state
                 if (angular.toJson(originalAuthorship) === angular.toJson(vm.authorship)) {
                     // No unsaved data
-                    executeOnSubmit(0);
+                    if (!event) {
+                        executeOnSubmit(0);
+                    }
                 } else {
                     if (event) {
                         // Prevent modal from closing
