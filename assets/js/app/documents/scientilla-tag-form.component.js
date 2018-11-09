@@ -39,7 +39,9 @@
             originalTags = angular.copy(vm.tags);
 
             $scope.$on('modal.closing', function (event, reason) {
-                close(event);
+                if (!closed) {
+                    close(event);
+                }
             });
         };
 
@@ -76,7 +78,9 @@
                 // Check if the tags are the same as the original ones
                 if (angular.toJson(originalTags) === angular.toJson(vm.tags)) {
                     closed = true;
-                    return vm.closeFn()();
+                    if (!event) {
+                        return vm.closeFn()();
+                    }
                 } else {
                     if (event) {
                         // Prevent modal from closing
