@@ -140,7 +140,9 @@
         function cancel(event = false) {
             // Compare the current state with the original state of the user
             if (angular.toJson(vm.user) === angular.toJson(originalUser)) {
-                executeOnSubmit(0);
+                if (!event) {
+                    executeOnSubmit(0);
+                }
             } else {
                 if (event) {
                     // Prevent modal from closing
