@@ -53,6 +53,7 @@
             const coauthorsDeregisteres = [];
 
             let originalVerificationData = {};
+            let closed = false;
 
             vm.collapsed = true;
 
@@ -67,7 +68,9 @@
                 deregisteres.push($scope.$watch('vm.verificationData.position', userSelectedChanged));
 
                 $scope.$on('modal.closing', function (event, reason) {
-                    cancel(event);
+                    if (!closed) {
+                        cancel(event);
+                    }
                 });
 
                 originalVerificationData = angular.copy(vm.verificationData);
@@ -202,33 +205,39 @@
             }
 
             function cancel(event = false) {
-                // Check if the original verification data is the same as the current verification data
-                if (angular.toJson(originalVerificationData) === angular.toJson(vm.verificationData)) {
-                    executeOnSubmit({buttonIndex: 0});
-                } else {
-                    if (event) {
-                        // Prevent modal from closing
-                        event.preventDefault();
-                    }
+                if (!closed) {
+                    // Check if the original verification data is the same as the current verification data
+                    if (angular.toJson(originalVerificationData) === angular.toJson(vm.verificationData)) {
+                        closed = true;
+                        if (!event) {
+                            executeOnSubmit({buttonIndex: 0});
+                        }
+                    } else {
+                        if (event) {
+                            // Prevent modal from closing
+                            event.preventDefault();
+                        }
 
-                    // Show the unsaved data modal
-                    ModalService
-                        .multipleChoiceConfirm('Unsaved data',
-                            `There is unsaved data in the form. Do you want to go back and save this data?`,
-                            ['Yes', 'No'],
-                            false)
-                        .then(function (buttonIndex) {
-                            switch (buttonIndex) {
-                                case 0:
-                                    break;
-                                case 1:
-                                    vm.verificationData = angular.copy(originalVerificationData);
-                                    executeOnSubmit({buttonIndex: 0});
-                                    break;
-                                default:
-                                    break;
-                            }
-                        });
+                        // Show the unsaved data modal
+                        ModalService
+                            .multipleChoiceConfirm('Unsaved data',
+                                `There is unsaved data in the form. Do you want to go back and save this data?`,
+                                ['Yes', 'No'],
+                                false)
+                            .then(function (buttonIndex) {
+                                switch (buttonIndex) {
+                                    case 0:
+                                        break;
+                                    case 1:
+                                        vm.verificationData = angular.copy(originalVerificationData);
+                                        closed = true;
+                                        executeOnSubmit({buttonIndex: 0});
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            });
+                    }
                 }
             }
 

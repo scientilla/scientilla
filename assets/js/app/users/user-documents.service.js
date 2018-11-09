@@ -56,7 +56,7 @@
                     }
 
                     const d = await researchEntityService.getDraft(researchEntity, draft.id);
-                    return ModalService.openDocumentVerificationForm(d, verificationCallback);
+                    ModalService.openDocumentVerificationForm(d, verificationCallback);
 
                 }
 
@@ -83,7 +83,7 @@
                         }
                     }
 
-                    return ModalService.openDocumentVerificationForm(document, verificationCallback);
+                    ModalService.openDocumentVerificationForm(document, verificationCallback);
                 }
 
                 /* jshint ignore:end */
