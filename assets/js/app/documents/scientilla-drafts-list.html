@@ -77,14 +77,16 @@
 
                                 <button
                                     ng-click="vm.openDocumentAffiliationForm(d)"
-                                    ng-disabled="d.synchronized"
+                                    ng-disabled="d.synchronized || !d.authorsStr.match(documentFieldsRules.authorsStr.regex)"
+                                    title="{{ !d.authorsStr.match(documentFieldsRules.authorsStr.regex) ? 'Author string is not valid.' : '' }}"
                                     class="dropdown-item">
                                     <i class="fa fa-university fa-fw"></i>Edit Affiliations
                                 </button>
 
                                 <button
                                     ng-click="vm.openDocumentAuthorsForm(d)"
-                                    ng-disabled="d.sourceTypeObj.type === 'invited_talk'"
+                                    ng-disabled="d.sourceTypeObj.type === 'invited_talk' || !d.authorsStr.match(documentFieldsRules.authorsStr.regex)"
+                                    title="{{ !d.authorsStr.match(documentFieldsRules.authorsStr.regex) ? 'Author string is not valid.' : '' }}"
                                     class="dropdown-item">
                                     <i class="fa fa-user fa-left"></i>Edit authors details
                                 </button>
