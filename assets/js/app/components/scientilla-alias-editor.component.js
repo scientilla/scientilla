@@ -7,8 +7,7 @@
             controller: scientillaAliasEditor,
             controllerAs: 'vm',
             bindings: {
-                aliases: '=',
-                unsavedData: '='
+                aliases: '='
             }
         });
 
@@ -57,7 +56,6 @@
                 vm.newAlias = '';
                 vm.newAliasIsCorrect = true;
                 vm.newAliasIsDuplicate = false;
-                vm.unsavedData = true;
             } else {
                 vm.newAliasIsCorrect = false;
             }
@@ -65,7 +63,6 @@
 
         function removeAlias(alias) {
             vm.aliases = vm.aliases.filter(a => a.str !== alias.str);
-            vm.unsavedData = true;
         }
 
         function capitalize(str) {

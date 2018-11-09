@@ -22,7 +22,6 @@
 
         vm.save = save;
         vm.saveStatus = saveStatus();
-        vm.unsavedData = false;
 
         vm.$onDestroy = function () {
         };
@@ -33,7 +32,6 @@
                 .then(() => {
                     vm.saveStatus.setState('saved');
                     Notification.success(vm.saveStatus.message);
-                    vm.unsavedData = false;
                     vm.originalUser = angular.copy(vm.user);
 
                     $timeout(function() {
