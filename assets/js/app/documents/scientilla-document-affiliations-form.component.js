@@ -31,6 +31,7 @@
         vm.cancel = cancel;
 
         let originalAffiliations = [];
+        vm.collapsed = true;
 
         vm.$onInit = () => {
             $scope.$watch('vm.position', userSelectedChanged);

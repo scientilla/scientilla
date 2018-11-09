@@ -60,7 +60,9 @@
             shortAuthorString.split(/,\s?/).map(function (author, index) {
                 const authorship = _.find(vm.document.authorships, a => a.position === index);
 
-                vm.affiliationInstitutes = vm.affiliationInstitutes.concat(authorship.affiliations).unique();
+                if (authorship) {
+                    vm.affiliationInstitutes = vm.affiliationInstitutes.concat(authorship.affiliations).unique();
+                }
             });
         }
 

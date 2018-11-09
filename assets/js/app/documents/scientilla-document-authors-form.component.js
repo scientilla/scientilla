@@ -33,6 +33,7 @@
         vm.cancel = cancel;
 
         let originalAuthorship = {};
+        vm.collapsed = true;
 
         vm.$onInit = () => {
             deregisteres.push($scope.$watch('vm.position', userSelectedChanged));

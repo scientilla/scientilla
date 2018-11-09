@@ -9,11 +9,15 @@
 </div>
 
 <div class="modal-body">
-    <scientilla-document-authors document="vm.document"></scientilla-document-authors>
+    <scientilla-document-authors
+        document="vm.document"
+        collapsed="vm.collapsed"></scientilla-document-authors>
 
     <h2 class="document-title" ng-bind-html='vm.document | title'></h2>
 
-    <scientilla-document-affiliations document="vm.document"></scientilla-document-affiliations>
+    <scientilla-document-affiliations
+        document="vm.document"
+        collapsed="vm.collapsed"></scientilla-document-affiliations>
 
     <scientilla-document-authors-legend document="vm.document"></scientilla-document-authors-legend>
 

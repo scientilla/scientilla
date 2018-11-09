@@ -41,6 +41,8 @@
             vm.verifiedCount2 = getVerifiedCount(vm.document2);
         };
 
+        vm.collapsed = true;
+
         function getDifferentFields() {
             function isEqualArrayBy(a1, a2, index) {
                 return _.isEmpty(_.differenceBy(doc1Institutes, doc2Institutes, 'id')) &&

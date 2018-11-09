@@ -31,7 +31,9 @@
             <li>
                 <div class="document-details-authors">
                     <span ng-class="{'highlight-text': vm.differentFields.includes('authorsStr')}">
-                        <scientilla-document-authors document="vm.document1"></scientilla-document-authors>
+                        <scientilla-document-authors
+                            document="vm.document1"
+                            collapsed="vm.collapsed"></scientilla-document-authors>
                     </span>
                 </div>
             </li>
@@ -43,7 +45,9 @@
             </li>
             <li>
                 <span ng-class="{'highlight-text': vm.differentFields.includes('institutes')}">
-                    <scientilla-document-affiliations document="vm.document1"></scientilla-document-affiliations>
+                    <scientilla-document-affiliations
+                        document="vm.document1"
+                        collapsed="vm.collapsed"></scientilla-document-affiliations>
                 </span>
             </li>
             <li>
@@ -175,7 +179,9 @@
             <li>
                 <div class="document-details-authors">
                     <span ng-class="{'highlight-text': vm.differentFields.includes('authorsStr')}">
-                        <scientilla-document-authors document="vm.document2"></scientilla-document-authors>
+                        <scientilla-document-authors
+                            document="vm.document2"
+                            collapsed="vm.collapsed"></scientilla-document-authors>
                     </span>
                 </div>
             </li>
@@ -188,7 +194,9 @@
             <li>
                 <div>
                     <span ng-class="{'highlight-text': vm.differentFields.includes('institutes')}">
-                        <scientilla-document-affiliations document="vm.document2"></scientilla-document-affiliations>
+                        <scientilla-document-affiliations
+                            document="vm.document2"
+                            collapsed="vm.collapsed"></scientilla-document-affiliations>
                     </span>
                 </div>
             </li>

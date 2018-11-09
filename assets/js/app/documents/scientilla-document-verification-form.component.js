@@ -54,6 +54,8 @@
 
             let originalVerificationData = {};
 
+            vm.collapsed = true;
+
             vm.$onInit = function () {
                 if (user.getType() === 'group')
                     return vm.onFailure()();
