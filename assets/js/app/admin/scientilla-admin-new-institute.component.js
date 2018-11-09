@@ -32,9 +32,11 @@
         vm.cancel = cancel;
         vm.errors = {};
 
-        let originalInstitute = angular.copy(vm.institute);
+        let originalInstitute = {};
 
         vm.$onInit = function() {
+            originalInstitute = angular.copy(vm.institute);
+
             // Listen to modal closing event
             $scope.$on('modal.closing', function(event, reason) {
                 cancel(event, reason);
@@ -93,7 +95,9 @@
         function cancel(event = false) {
             // Compare the current state with the original state of the institute
             if (angular.toJson(vm.institute) === angular.toJson(originalInstitute)) {
-                executeOnSubmit(0);
+                if (!event) {
+                    executeOnSubmit(0);
+                }
             } else {
                 if (event) {
                     // Prevent modal from closing
@@ -112,7 +116,7 @@
                                 break;
                             case 1:
                                 vm.institute = angular.copy(originalInstitute);
-                                EventsService.publish(EventsService.INSTITUTE_RESTORED, vm.institute);
+                                EventsService.publish(EventsService.INSTITUTE_RESTORED, originalInstitute);
                                 executeOnSubmit(0);
                                 break;
                             default:

@@ -68,13 +68,17 @@
         }
 
         function openInstituteModal() {
+            EventsService.subscribe(vm, EventsService.INSTITUTE_RESTORED, function(event, institute) {
+                vm.institute = angular.copy(institute);
+            });
+
             ModalService
                 .openInstituteModal(vm.institute);
         }
 
         function editInstitute() {
             EventsService.subscribe(vm, EventsService.INSTITUTE_RESTORED, function(event, institute) {
-                vm.selectedInstitute = institute;
+                vm.selectedInstitute = angular.copy(institute);
             });
 
             ModalService
