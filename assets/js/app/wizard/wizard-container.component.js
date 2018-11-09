@@ -209,11 +209,15 @@
                             });
                     } else {
                         closed = true;
-                        vm.resolve.callbacks.onClose();
+                        if (!event) {
+                            vm.resolve.callbacks.onClose();
+                        }
                     }
                 } else {
                     closed = true;
-                    vm.resolve.callbacks.onClose();
+                    if (!event) {
+                        vm.resolve.callbacks.onClose();
+                    }
                 }
             }
         }
