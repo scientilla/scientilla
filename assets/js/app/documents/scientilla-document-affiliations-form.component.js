@@ -99,11 +99,15 @@
         function cancel(event = false) {
             // Check if an position/author is selected or the authorshop is set
             if (_.isUndefined(vm.position) || _.isUndefined(vm.authorship)) {
-                executeOnSubmit(0);
+                if (!event) {
+                    executeOnSubmit(0);
+                }
             } else {
                 // Compare the current state with the original state of the affiliations
                 if (angular.toJson(vm.authorship.affiliations) === angular.toJson(originalAffiliations)) {
-                    executeOnSubmit(0);
+                    if (!event) {
+                        executeOnSubmit(0);
+                    }
                 } else {
                     if (event) {
                         // Prevent modal from closing
