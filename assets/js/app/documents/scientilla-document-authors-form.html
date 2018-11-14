@@ -44,43 +44,36 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <div ng-if="vm.viewFirstCoauthor() && vm.author">
-
-                <div class="form-checkbox">
-                    <label title="{{vm.document.synchronized ? 'The corresponding author cannot be modified if the document is synchronized with scopus' : 'Are you the corresponding author?'}}">
-                        <input
-                            type="checkbox"
-                            ng-model="vm.authorship.corresponding"
-                            ng-disabled="vm.document.synchronized"/>
-                        <span>* - Corresponding author</span>
-                    </label>
-                </div>
-
-                <div class="form-checkbox">
-                    <label title="Are you a first-coauthor?">
-                        <input
-                            type="checkbox"
-                            ng-model="vm.authorship.first_coauthor"/>
-                        <span>+ Co-first author</span>
-                    </label>
-                </div>
+        <div class="form-group" ng-if="vm.author">
+            <div class="form-checkbox">
+                <label title="{{vm.document.synchronized ? 'The corresponding author cannot be modified if the document is synchronized with scopus' : 'Are you the corresponding author?'}}">
+                    <input
+                        type="checkbox"
+                        ng-model="vm.authorship.corresponding"
+                        ng-disabled="vm.document.synchronized"/>
+                    <span>* - Corresponding author</span>
+                </label>
             </div>
 
-            <div ng-if="vm.viewLastCoauthor() && vm.author">
-                <div class="form-checkbox">
-                    <label title="Are you a last-coauthor?">
-                        <input
-                            type="checkbox"
-                            ng-model="vm.authorship.last_coauthor"/>
-                        <span># Co-Last author</span>
-                    </label>
-                </div>
+            <div class="form-checkbox" ng-if="vm.viewFirstCoauthor()">
+                <label title="Are you a first-coauthor?">
+                    <input
+                        type="checkbox"
+                        ng-model="vm.authorship.first_coauthor"/>
+                    <span>+ Co-first author</span>
+                </label>
             </div>
 
-            <div
-                ng-hide="vm.authorship.position<0"
-                ng-if="vm.author">
+            <div class="form-checkbox" ng-if="vm.viewLastCoauthor()">
+                <label title="Are you a last-coauthor?">
+                    <input
+                        type="checkbox"
+                        ng-model="vm.authorship.last_coauthor"/>
+                    <span># Co-Last author</span>
+                </label>
+            </div>
+
+            <div ng-hide="vm.authorship.position < 0">
                 <div class="form-checkbox">
                     <label title="Was this author selected to give a talk about this work?">
                         <input
