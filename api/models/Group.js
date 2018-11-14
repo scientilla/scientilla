@@ -223,7 +223,7 @@ module.exports = _.merge({}, ResearchEntity, {
                 item: draft
             };
 
-        if (check && (await ResearchEntity.getDuplicates(Group, researchEntityId, draft)).length > 0) {
+        if (check && (await ResearchEntity.getDuplicates(Group, researchEntityId, draft, docToRemove)).length > 0) {
             return {
                 error: 'Documents must be compared',
                 item: draft
