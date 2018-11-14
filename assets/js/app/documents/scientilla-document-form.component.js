@@ -152,7 +152,7 @@
 
                     switch(true) {
                         case state === 'ready to verify':
-                            this.message = 'Verify';
+                            this.message = 'Save & verify';
                             break;
                         case state === 'verifying':
                             this.message = 'Verifying draft';
@@ -167,7 +167,7 @@
                     }
                 },
                 state: 'ready to verify',
-                message: 'Verify'
+                message: 'Save & verify'
             };
         }
 
@@ -305,27 +305,34 @@
         }
 
         function verify() {
-            vm.errors = vm.document.validateDocument();
-            if (_.isEmpty(vm.errors)) {
-                // Is valid
-                vm.verifyStatus.setState('verifying');
-                saveDocument()
-                    .then(() => {
-                        vm.verifyStatus.setState('verified');
-                        close();
-                    })
-                    .then(() => {
-                        documentService.verifyDraft(vm.document);
-                    });
-            } else {
-                // Is not valid
-                vm.verifyStatus.setState('failed');
-                vm.errorText = 'Please correct the errors on this form!';
+            vm.errorText = '';
+            vm.errors = {};
+            vm.verifyStatus.setState('verifying');
 
-                $timeout(function() {
-                    vm.verifyStatus.setState('ready to verify');
-                }, 1000);
-            }
+            $timeout(function() {
+                vm.errors = vm.document.validateDocument();
+                if (_.isEmpty(vm.errors)) {
+                    // Is valid
+                    saveDocument()
+                        .then(() => {
+                            vm.verifyStatus.setState('verified');
+                            close();
+                        })
+                        .then(() => {
+                            documentService.verifyDraft(vm.document);
+                        });
+                } else {
+                    // Is not valid
+                    vm.verifyStatus.setState('failed');
+                    vm.errorText = 'The draft has been saved but not been verified! Please correct the errors on this form!';
+
+                    saveDocument(false);
+
+                    $timeout(function() {
+                        vm.verifyStatus.setState('ready to verify');
+                    }, 1000);
+                }
+            }, 200);
         }
 
         function close() {
