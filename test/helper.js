@@ -36,6 +36,7 @@ module.exports = {
     userCreateDraft,
     userCreateDrafts,
     userUpdateDraft,
+    userRemoveVerify,
     groupUpdateDraft,
     userVerifyDraft,
     userVerifyDrafts,
@@ -283,6 +284,19 @@ async function userCopyDocument(user, document, respCode = 200) {
         .expect(respCode);
     return res.body;
 }
+
+async function userRemoveVerify(user, doc1, verificationData, doc2, respCode = 200) {
+    verificationData.document1Id = doc1.id;
+    verificationData.document2Id = doc2.id;
+    const auth = getAuth(user.id);
+    const res = await auth.agent
+        .post('/users/' + user.id + '/remove-verify')
+        .set('access_token', auth.token)
+        .send(verificationData)
+        .expect(respCode);
+    return res.body;
+}
+
 
 async function userVerifyDrafts(user, drafts, respCode = 200) {
     const auth = getAuth(user.id);

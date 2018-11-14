@@ -226,7 +226,7 @@ module.exports = _.merge({}, BaseModel, {
         });
         return documentNotDuplicate;
     },
-    getDuplicates: async function (ResearchEntityModel, researchEntityId, document) {
+    getDuplicates: async function (ResearchEntityModel, researchEntityId, document, excludeDocument) {
         const researchEntityType = ResearchEntityModel.adapter.identity;
         const duplicateCondition = {
             document: document.id,
@@ -234,6 +234,8 @@ module.exports = _.merge({}, BaseModel, {
             researchEntityType,
             duplicateKind: 'v'
         };
+        if (excludeDocument)
+            duplicateCondition.duplicate = {'!': excludeDocument};
         const duplicates = await DocumentDuplicate.find(duplicateCondition);
         return duplicates;
     },

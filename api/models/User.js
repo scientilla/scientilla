@@ -368,7 +368,7 @@ module.exports = _.merge({}, ResearchEntity, {
                 item: researchEntityId
             };
 
-        if (check && (await ResearchEntity.getDuplicates(User, researchEntityId, document)).length > 0) {
+        if (check && (await ResearchEntity.getDuplicates(User, researchEntityId, document, docToRemove)).length > 0) {
             return {
                 error: 'Documents must be compared',
                 item: document
@@ -429,7 +429,7 @@ module.exports = _.merge({}, ResearchEntity, {
                 error: 'Document not valid for verification',
                 item: draft
             };
-        if (check && (await ResearchEntity.getDuplicates(User, researchEntityId, draft)).length > 0) {
+        if (check && (await ResearchEntity.getDuplicates(User, researchEntityId, draft, docToRemove)).length > 0) {
             return {
                 error: 'Documents must be compared',
                 item: draft
@@ -510,7 +510,6 @@ module.exports = _.merge({}, ResearchEntity, {
             document.authorships.splice(index, 1);
 
         document.authorships.push(authorship);
-
         return document;
     },
     beforeCreate: function (user, cb) {
