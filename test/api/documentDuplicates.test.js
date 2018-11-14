@@ -24,6 +24,7 @@ describe('Document duplicates', () => {
     let userDuplicateDrafts;
     let affiliations;
     const user1Doc1Position = 4;
+    const user1Doc2Position = 1;
     let iitInstitute;
 
     it('there should be duplicates for some documents', async () => {
@@ -71,6 +72,24 @@ describe('Document duplicates', () => {
         const allNewUserDocs = (await test.getUserDocuments(user, ['duplicates'])).items;
         allUserDrafts.length.should.equal(allNewUserDrafts.length + 1);
         allNewUserDocs.length.should.equal(1);
+    });
+
+    it('should be possible to substitute a verified document with a duplicate', async () => {
+        const allUserDrafts = (await test.getUserDrafts(user, ['duplicates'])).items;
+        const draft1 = allUserDrafts[0];
+        const draft2 = allUserDrafts[1];
+        const verificationData = {
+            position: user1Doc2Position,
+            affiliations
+        };
+
+        await test.userRemoveVerify(user, draft1, verificationData, draft2);
+
+        const allNewUserDocs = (await test.getUserDocuments(user, ['duplicates'])).items;
+        const allNewUserDrafts = (await test.getUserDrafts(user, ['duplicates'])).items;
+        allNewUserDocs.length.should.equal(2);
+        allNewUserDrafts.length.should.equal(0);
+
     });
 
 });
