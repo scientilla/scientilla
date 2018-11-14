@@ -68,6 +68,17 @@ label{
                 }
             }
         }
+
+        &:disabled{
+            & + span{
+                cursor: not-allowed;
+                color: $gray;
+
+                &:before{
+                    background: lighten($silver, 20%);
+                }
+            }
+        }
     }
 }
 
