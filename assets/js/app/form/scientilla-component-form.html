@@ -1,8 +1,44 @@
 <form class="{{vm.cssClass}}" ng-submit="vm.submit()">
-    <scientilla-field ng-repeat="(name, struct) in vm.structure"
-                      structure="struct"
-                      name="name"
-                      reset="vm.reset"
-                      values="vm.values"></scientilla-field>
+    <ul
+        class="filter-connector-listing connectors-{{ vm.getObjectSize(vm.connectors) }}"
+        ng-if="vm.getObjectSize(vm.connectors) > 0"
+    >
+        <li ng-repeat="(name, struct) in vm.connectors">
+            <scientilla-field
+                structure="struct"
+                name="name"
+                reset="vm.reset"
+                values="vm.values"
+                errors="vm.errors[name]"></scientilla-field>
+        </li>
+    </ul>
+
+    <ul
+        class="filter-field-listing fields-{{ vm.getObjectSize(vm.fields) }}"
+        ng-if="vm.getObjectSize(vm.fields) > 0"
+        >
+        <li ng-repeat="(name, struct) in vm.fields">
+            <scientilla-field
+                structure="struct"
+                name="name"
+                reset="vm.reset"
+                values="vm.values"
+                errors="vm.errors[name]"></scientilla-field>
+        </li>
+    </ul>
+
+    <ul
+        class="filter-action-listing actions-{{ vm.getObjectSize(vm.actions) }}"
+        ng-if="vm.getObjectSize(vm.actions) > 0">
+        <li
+            ng-repeat="(name, struct) in vm.actions"
+            >
+            <scientilla-field
+                structure="struct"
+                name="name"
+                reset="vm.reset"
+                values="vm.values"></scientilla-field>
+        </li>
+    </ul>
     <div ng-transclude></div>
 </form>

@@ -17,7 +17,7 @@
                 const authorship = _.find(document.authorships, a => a.position === index);
 
                 if (authorship) {
-                    htmlAuthor += '<sup class="superscript scientilla-document-affiliations">' +
+                    htmlAuthor += '<sup class="document-affiliations">' +
                         authorship.affiliations.map(a => document.getInstituteIdentifier(document.institutes.findIndex(i => i.id === a.id))).join(',') +
                         '</sup>';
                 }

@@ -1,0 +1,42 @@
+wizard-container{
+    .scientilla-logo{
+        margin-bottom: 2rem;
+        width: 250px;
+    }
+
+    .admin-tutorial-image{
+        margin-bottom: 2rem;
+    }
+
+    .scopus-video{
+        .embed-responsive{
+            margin-bottom: 2rem;
+        }
+    }
+
+    .tutorial-video{
+        .embed-responsive{
+            margin-top: 2rem;
+        }
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    wizard-container{
+        .scientilla-logo{
+            margin-bottom: 0px;
+        }
+
+        .scopus-video{
+            .embed-responsive{
+                margin-bottom: 0px;
+            }
+        }
+
+        .tutorial-video{
+            .embed-responsive{
+                margin-top: 0px;
+            }
+        }
+    }
+}

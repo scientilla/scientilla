@@ -9,19 +9,30 @@
             controllerAs: 'vm',
             bindings: {
                 document: '<',
+                collapsed: '=?',
                 type: '@?'
             },
         });
 
-    controller.$inject = [];
+    controller.$inject = ['$scope'];
 
-    function controller() {
+    function controller($scope) {
         const vm = this;
 
         vm.$onInit = () => {
             if (!vm.type)
                 vm.type = 'default';
+
+            if (!vm.collapsed) {
+                vm.collapsed = true;
+            }
         };
+
+        vm.toggleCollapse = toggleCollapse;
+
+        function toggleCollapse() {
+            vm.collapsed = !vm.collapsed;
+        }
 
     }
 })();

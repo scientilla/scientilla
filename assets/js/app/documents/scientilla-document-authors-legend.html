@@ -1,16 +1,16 @@
-<div style="margin-top:5px">
-    <small class="scientilla-document-institutes">
-        <div ng-if="vm.hasCorresponding()">
-            * - corresponding author
-        </div>
-        <div ng-if="vm.hasCoFirst()">
-            + - co-first author
-        </div>
-        <div ng-if="vm.hasCoLast()">
-            # - co-last author
-        </div>
-        <div ng-if="vm.hasOral()">
-            <span class="fa fa-microphone"></span> - oral presentation
-        </div>
-    </small>
-</div>
+<ul
+    class="author-legend"
+    ng-if="vm.hasCorresponding() || vm.hasCoFirst() || vm.hasCoLast() || vm.hasOral()">
+    <li ng-if="vm.hasCorresponding()">
+        * Corresponding author
+    </li>
+    <li ng-if="vm.hasCoFirst()">
+        + Co-first author
+    </li>
+    <li ng-if="vm.hasCoLast()">
+        # Co-last author
+    </li>
+    <li ng-if="vm.hasOral()">
+        <i class="fas fa-microphone fa-left"></i>Oral presentation
+    </li>
+</ul>

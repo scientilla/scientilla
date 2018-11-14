@@ -1,0 +1,35 @@
+.btn{
+    &:disabled{
+        cursor: not-allowed;
+    }
+}
+
+.btn-primary{
+    &.selected{
+        border-color: $deep-cerulean;
+        background: $deep-cerulean;
+        color: $white;
+    }
+
+    &:focus,
+    &.focus{
+        color: $white;
+    }
+}
+
+.btn-warning{
+    color: $white !important;
+}
+
+.btn-outline-secondary {
+    color: $mine-shaft;
+}
+
+.btn-dashboard{
+    display: block;
+    font-size: 1.5rem;
+}
+
+.btn-form-no-label{
+    margin-top: 2.3rem;
+}

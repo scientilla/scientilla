@@ -1,107 +1,144 @@
-<div class="scientilla-document" ng-class="{invalid: !vm.document.isValid()}">
-    <div class="scientilla-document-left-col">
-        <div class="scientilla-document-year">
-            {{vm.document.year}}
-        </div>
-        <div class="scientilla-document-affiliations-icon">
-            <div ng-if="vm.hasMainGroupAffiliation()" class="scientilla-document-icon-container">
-                <span class="scientilla-icon scientilla-icon-iit"></span>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-11 scientilla-document-metadata">
-            <div>
-                <scientilla-document-type document="vm.document"></scientilla-document-type>
-                <scientilla-document-authors document="vm.document" type="preview"></scientilla-document-authors>
-            </div>
-            <div>
-                <scientilla-document-label ng-repeat="l in vm.document.labels" label="l"></scientilla-document-label>
-                <span class="scientilla-document-title scientilla-clickable" ng-click="vm.openDetails()"
-                      ng-bind-html='vm.document | title'></span>
-            </div>
-            <scientilla-document-source document="vm.document"></scientilla-document-source>
-            <div ng-if="vm.document.doi">
-                <small class="scientilla-document-doi">
-                    <span ng-bind-html='vm.document | doi'></span>
-                </small>
-            </div>
-            <div ng-if="vm.showPrivateTags">
-                <span ng-click="vm.editTags()" class="fa fa-tags scientilla-clickable" title="Edit your tags"></span>
-                <span ng-bind-html='vm.document | documentusertags'></span>
-            </div>
+<ul class="document" ng-class="{invalid: !vm.document.isValid()}">
+    <li class="document-info">
+        <span class="document-year">{{ vm.document.year }}</span>
+        <span class="icon-iit" ng-if="vm.hasMainGroupAffiliation()"></span>
+    </li>
 
-            <div ng-if="vm.verifiedCount"
-                 class="scientilla-document-icons-bottom"
-                 uib-tooltip-html="vm.getVerifiedNamesHTML()"
-                 tooltip-class="scientilla-tooltip">
-                <span class="fa fa-check"></span> {{vm.verifiedCount}}
-            </div>
-            <div ng-if="vm.document.origin==='scopus'" class="scientilla-document-icons-bottom">
-                <div class="scientilla-document-icon-container">
-                    <span ng-if="vm.document.hasValidScopusId()" class="scientilla-icon scientilla-icon-scopus"
-                          uib-tooltip-html="'This document has been imported from Scopus'"
-                          tooltip-class="scientilla-tooltip text-left"></span>
-                    <span ng-if="!vm.document.hasValidScopusId()" class="scientilla-icon scientilla-icon-scopus-deleted"
-                          uib-tooltip-html="'This document has been imported from Scopus but this ID is not available in Scopus anymore -
-                    IT IS STRONGLY ADVISED TO LOOK FOR A WORKING SCOPUS ID NOT TO MISS NEW CITATIONS!'"
-                          tooltip-class="text-left scientilla-tooltip"></span>
-                </div>
-                <span class="fa fa-refresh"
-                      ng-if="vm.isSynchronized()"
-                      title="This document will update automatically from {{vm.document.origin}}"></span>
-            </div>
-            <div ng-if="vm.isPrivacyToShow()" class="scientilla-document-icons-bottom">
-                <span ng-click="vm.changePrivacy()"
-                      ng-if="vm.isPublic()"
-                      class="fa fa-globe scientilla-icon-fa scientilla-clickable"
-                      title="The document is visible to everyone, click to change it"></span>
-                <span ng-click="vm.changePrivacy()"
-                      ng-if="!vm.isPublic()"
-                      class="fa fa-lock scientilla-icon-fa scientilla-clickable"
-                      title="The document is visible only to scientilla users, click to change it"></span>
-            </div>
-            <div ng-if="vm.isFavoriteToShow()" class="scientilla-document-icons-bottom">
-                <span ng-click="vm.changeFavorite()"
-                      ng-if="vm.isFavorite()"
-                      class="fa fa-star scientilla-icon-fa scientilla-clickable"
-                      title="This document is one of your favorite"></span>
-                <span ng-click="vm.changeFavorite()"
-                      ng-if="!vm.isFavorite()"
-                      class="fa fa-star-o scientilla-icon-fa scientilla-clickable"
-                      title="Click here to make it favorite"></span>
-            </div>
+    <li class="document-metadata">
+        <div>
+            <scientilla-document-type document="vm.document"></scientilla-document-type>
+            <scientilla-document-authors
+                document="vm.document"
+                collapsed="vm.collapsed"
+                type="preview"></scientilla-document-authors>
         </div>
 
-        <div class="col-xs-1 scientilla-document-icons">
+        <div class="document-title-container">
+            <ul
+                ng-if="vm.document.labels"
+                class="document-labels">
+                <li ng-repeat="l in vm.document.labels">
+                    <scientilla-document-label
+                        label="l"
+                        class="document-label"></scientilla-document-label>
+                </li>
+            </ul>
+            <h2
+                class="document-title has-action"
+                ng-click="vm.openDetails()"
+                ng-bind-html='vm.document | title'></h2>
+        </div>
 
-            <div ng-if="vm.showScopusMetrics()" class="scientilla-document-icons-extra">
-                <div>
-                <span class="scientilla-icon scientilla-icon-scopus"
-                      title="Scopus metrics"></span>
-                </div>
+        <scientilla-document-source document="vm.document"></scientilla-document-source>
 
-                <div ng-if="vm.hasMetric(vm.metrics.CITATIONS)" class="small"
-                     title="Citations in scopus - {{vm.scopusCitationsYearStr}}">
-                    Cit. {{ vm.getMetricValue(vm.metrics.CITATIONS) }}
-                </div>
-                <div ng-if="vm.hasMetric(vm.metrics.SNIP)" class="small" title="Source Normalized Impact per Paper">
-                    SNIP {{ vm.getMetricValue(vm.metrics.SNIP) | number:1 }}
-                </div>
-                <div ng-if="vm.hasMetric(vm.metrics.SJR)" class="small" title="Scimago Journal Rank">
-                    SJR {{ vm.getMetricValue(vm.metrics.SJR) | number:1 }}
-                </div>
-            </div>
-            <div ng-if="vm.showWOSMetrics()" class="scientilla-document-icons-extra">
-                <div>
-                    <span class="scientilla-icon scientilla-icon-wos"
-                          title="Web of Science metrics"></span>
-                </div>
-                <div ng-if="vm.hasMetric(vm.metrics.IF)" class="small" title="Impact factor">
+        <div
+            class="document-doi"
+            ng-if="vm.document.doi"
+            ng-bind-html='vm.document | doi'>
+        </div>
+
+        <div ng-if="vm.showPrivateTags">
+            <i
+                class="fa fa-tags has-action"
+                ng-click="vm.editTags()"
+                title="Edit your tags"></i>
+            <span ng-bind-html='vm.document | documentusertags'></span>
+        </div>
+
+        <ul class="document-actions">
+            <li
+                ng-if="vm.verifiedCount"
+                class="document-verified"
+                uib-tooltip-html="vm.getVerifiedNamesHTML()"
+                tooltip-class="text-left">
+                <i class="fas fa-check"></i> {{vm.verifiedCount}}
+            </li>
+            <li
+                ng-if="vm.document.origin==='scopus'"
+                class="document-origin">
+                <span
+                    ng-if="vm.document.hasValidScopusId()"
+                    class="icon-scopus"
+                    uib-tooltip-html="'This document has been imported from Scopus'"
+                    tooltip-class="text-left"></span>
+                <span
+                    ng-if="!vm.document.hasValidScopusId()"
+                    class="icon-scopus-deleted"
+                    uib-tooltip-html="'This document has been imported from Scopus but this ID is not available in Scopus anymore - IT IS STRONGLY ADVISED TO LOOK FOR A WORKING SCOPUS ID NOT TO MISS NEW CITATIONS!'"
+                    tooltip-class="text-left"></span>
+            </li>
+            <li ng-if="vm.document.origin==='scopus'">
+                <i
+                    class="fas fa-sync-alt"
+                    ng-if="vm.isSynchronized()"
+                    uib-tooltip-html="'This document will update automatically from {{vm.document.origin}}'"></i>
+            </li>
+            <li
+                ng-if="vm.isPrivacyToShow()"
+                class="document-privacy-actions">
+                <i
+                    ng-click="vm.changePrivacy()"
+                    ng-if="vm.isPublic()"
+                    class="fas fa-globe-africa has-action"
+                    uib-tooltip-html="'The document is visible to everyone, click to change it'"></i>
+                <i
+                    ng-click="vm.changePrivacy()"
+                    ng-if="!vm.isPublic()"
+                    class="fas fa-lock has-action"
+                    uib-tooltip-html="'The document is visible only to scientilla users, click to change it'"></i>
+            </li>
+            <li
+                ng-if="vm.isFavoriteToShow()"
+                class="document-favorite-actions">
+                <i
+                    ng-click="vm.changeFavorite()"
+                    ng-if="vm.isFavorite()"
+                    class="fas fa-star has-action"
+                    uib-tooltip-html="'This document is one of your favorite'"></i>
+                <i
+                    ng-click="vm.changeFavorite()"
+                    ng-if="!vm.isFavorite()"
+                    class="far fa-star has-action"
+                    uib-tooltip-html="'Click here to make it favorite'"></i>
+            </li>
+        </ul>
+    </li>
+
+    <li class="document-icons">
+        <ul ng-if="vm.showScopusMetrics()">
+            <li>
+                <span
+                    class="icon-scopus"
+                    title="Scopus metrics"></span>
+            </li>
+            <li
+                ng-if="vm.hasMetric(vm.metrics.CITATIONS)"
+                title="Citations in scopus - {{vm.scopusCitationsYearStr}}">
+                Cit. {{ vm.getMetricValue(vm.metrics.CITATIONS) }}
+            </li>
+            <li
+                ng-if="vm.hasMetric(vm.metrics.SNIP)"
+                title="Source Normalized Impact per Paper">
+                SNIP {{ vm.getMetricValue(vm.metrics.SNIP) | number:1 }}
+            </li>
+            <li
+                ng-if="vm.hasMetric(vm.metrics.SJR)"
+                title="Scimago Journal Rank">
+                SJR {{ vm.getMetricValue(vm.metrics.SJR) | number:1 }}
+            </li>
+        </ul>
+
+        <ul ng-if="vm.showWOSMetrics()">
+            <li>
+                <span
+                    class="icon-wos"
+                    title="Web of Science metrics"></span>
+            </li>
+            <li
+                ng-if="vm.hasMetric(vm.metrics.IF)"
+                title="Impact factor">
                     IF {{ vm.getMetricValue(vm.metrics.IF) | number:1 }}
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
+            </li>
+        </ul>
+    </li>
+</ul>

@@ -315,6 +315,8 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
             'administrative supervisor': roles.administrative,
             'support administrative assistant': roles.administrative,
             'external collaborator': roles.external_collaborator,
+            'phd student': roles.phd,
+            'phd student fellow': roles.phd,
             'phd/fellow': roles.phd,
             'post doc': roles.post_doc,
             'post doc fellow': roles.post_doc,

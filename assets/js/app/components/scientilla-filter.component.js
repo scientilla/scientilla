@@ -47,6 +47,7 @@
         let statusTimeoutId = null;
 
         vm.formVisible = true;
+        vm.filterIsCollapsed = true;
 
         let searchQuery = {};
         let onDataCountChangeDeregisterer = null;
@@ -64,17 +65,16 @@
             onDataCountChangeDeregisterer = $scope.$watch('vm.elements.count', onDataCountChange, true);
 
             vm.filterSearchFormStructure = _.assign({}, vm.searchFormStructure, {
-                newlineFilter1: {
-                    inputType: 'br'
-                },
                 buttonSearch: {
                     inputType: 'submit',
-                    label: vm.filterLabel
+                    label: vm.filterLabel,
+                    type: 'action'
                 },
                 buttonReset: {
                     inputType: 'button',
                     label: 'Reset',
-                    onClick: 'reset'
+                    onClick: 'reset',
+                    type: 'action'
                 },
                 itemsPerPage: {
                     inputType: 'select',
@@ -82,7 +82,9 @@
                     defaultValue: pageSize,
                     values: vm.pageSizes.map(ps => ({value: ps, label: ps})),
                     labelPosition: 'inline',
-                    onChange: 'submit'
+                    cssClass: 'items-per-page',
+                    onChange: 'submit',
+                    type: 'action'
                 }
             });
 
@@ -195,7 +197,10 @@
                 $timeout.cancel(statusTimeoutId);
             if (status === vm.STATUS_LOADING) {
                 vm.status = vm.STATUS_WAITING;
-                statusTimeoutId = $timeout(() => vm.status = vm.STATUS_LOADING, 400);
+                statusTimeoutId = $timeout(() => {
+                    vm.status = vm.STATUS_LOADING;
+                    window.scrollTo(0,0);
+                }, 400);
                 return;
             }
             vm.status = status;

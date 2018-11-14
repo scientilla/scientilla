@@ -9,6 +9,7 @@
         });
 
     scientillaToolbar.$inject = [
+        '$scope',
         'EventsService',
         'AuthService',
         'Settings',
@@ -19,7 +20,8 @@
         'path'
     ];
 
-    function scientillaToolbar(EventsService,
+    function scientillaToolbar($scope,
+                               EventsService,
                                AuthService,
                                Settings,
                                context,
@@ -36,6 +38,7 @@
         vm.showWizardVisible = showWizardVisible;
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
+        vm.originalUser = {};
 
         vm.$onInit = function () {
 
@@ -46,6 +49,8 @@
             ], refresh);
 
             refresh();
+
+            vm.originalUser = angular.copy(vm.user);
         };
 
         vm.$onDestroy = function () {
@@ -115,12 +120,17 @@
                 'scopus-edit',
                 'tutorial',
                 'admin-tutorial',
-            ], {isClosable: true});
+            ], {
+                isClosable: true,
+                size: 'lg'
+            });
         }
 
         function openSuggestedWizard() {
-            ModalService.openWizard(['alias-edit'], {isClosable: true});
+            ModalService.openWizard(['alias-edit'], {
+                isClosable: true,
+                size: 'lg'
+            });
         }
     }
-
 })();

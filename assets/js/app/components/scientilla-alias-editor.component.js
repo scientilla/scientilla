@@ -11,41 +11,54 @@
             }
         });
 
-
     scientillaAliasEditor.$inject = [
-        'documentFieldsRules'
+        'documentFieldsRules',
+        '$scope'
     ];
 
-    function scientillaAliasEditor(documentFieldsRules) {
+    function scientillaAliasEditor(documentFieldsRules, $scope) {
         const vm = this;
         vm.addAlias = addAlias;
         vm.removeAlias = removeAlias;
-        vm.newAliasIsCorrect = newAliasIsCorrect;
-
+        vm.newAliasIsCorrect = true;
+        vm.newAliasIsDuplicate = false;
+        vm.originalAliases = angular.copy(vm.aliases);
 
         vm.$onInit = function () {
             vm.newAlias = '';
             if (!_.isArray(vm.aliases))
                 vm.aliases = [];
+
+            $scope.$watch('vm.newAlias', function(newValue, oldValue) {
+                vm.newAliasIsCorrect = true;
+                vm.newAliasIsDuplicate = false;
+            });
         };
 
         vm.$onDestroy = function () {
         };
 
-        function addAlias(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
+        function addAlias() {
+            const newAlias = capitalizeAll(vm.newAlias, [' ', '-', '.']);
 
-                const newAlias = capitalizeAll(vm.newAlias, [' ', '-', '.']);
-                if (newAlias.match(documentFieldsRules.authorsStr.regex)) {
-                    vm.aliases.push({str: newAlias});
-                    vm.newAlias = '';
+            if (typeof(vm.aliases) !== 'undefined') {
+                if (vm.aliases.filter(a => a.str === newAlias).length >= 1) {
+                    vm.newAliasIsDuplicate = true;
+                } else {
+                    vm.newAliasIsDuplicate = false;
                 }
+            } else {
+                vm.aliases = [];
             }
-        }
 
-        function newAliasIsCorrect() {
-            return !vm.newAlias || vm.newAlias.match(documentFieldsRules.authorsStr.regex);
+            if (newAlias.match(documentFieldsRules.authorsStr.regex) && !vm.newAliasIsDuplicate) {
+                vm.aliases.push({str: newAlias});
+                vm.newAlias = '';
+                vm.newAliasIsCorrect = true;
+                vm.newAliasIsDuplicate = false;
+            } else {
+                vm.newAliasIsCorrect = false;
+            }
         }
 
         function removeAlias(alias) {

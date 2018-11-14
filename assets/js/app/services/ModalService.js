@@ -4,12 +4,10 @@
 
     ModalService.$inject = ['$uibModal'];
 
-
     function ModalService($uibModal) {
         const service = {
             modals: []
         };
-
 
         service.dismiss = function (reason) {
             const modal = getModalObject();
@@ -23,23 +21,62 @@
                 modal.close(reason);
         };
 
+        service.openInstituteModal = function (institute) {
+            const scopeVars = {
+                institute: institute
+            };
+
+            const modal = openModal(
+                '<scientilla-admin-new-institute\
+                    institute="vm.institute"\
+                    on-failure="vm.onFailure"\
+                    on-submit="vm.onSubmit" \
+                    close-fn="vm.onClose" \
+                ></scientilla-admin-new-institute>',
+                scopeVars
+            );
+
+            addModalObject(modal);
+            return modal.result;
+        };
+
+        service.openSourceTypeModal = function (document) {
+            const scopeVars = {
+                document: document
+            };
+
+            const modal = openModal(
+                '<scientilla-source-form\
+                    document="vm.document"\
+                    on-failure="vm.onFailure"\
+                    on-submit="vm.onSubmit" \
+                    close-fn="vm.onClose" \
+                ></scientilla-source-form>',
+                scopeVars
+            );
+
+            addModalObject(modal);
+            return modal.result;
+        };
 
         service.openScientillaDocumentForm = function (document, researchEntity) {
             const scopeVars = {
                 document: document,
-                researchEntity: researchEntity
+                researchEntity: researchEntity,
             };
 
-            const modal = openModal(
+            let modal = openModal(
                 '<scientilla-document-form\
                     document="vm.document"\
                     research-entity="vm.researchEntity"\
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit" \
-                    close-fn="vm.onClose" \
+                    close-fn="vm.onClose"\
                 ></scientilla-document-form>',
                 scopeVars,
-                {size: 'lg'}
+                {
+                    size: 'lg'
+                }
             );
 
             addModalObject(modal);
@@ -47,15 +84,15 @@
         };
 
         service.openScientillaDocumentSearch = function () {
-            const modal = openComponentModal('scientilla-document-search', {}, {size: 'lg'});
+            const modal = openComponentModal('scientilla-document-search', {size: 'lg'}, {});
             addModalObject(modal);
             return modal.result;
         };
 
         service.openScientillaDocumentSearchView = function (document) {
             const modal = openComponentModal('scientilla-document-search-view',
-                {document: document},
-                {size: 'lg'});
+                {size: 'lg'},
+                {data: {document: document}});
             addModalObject(modal);
             return modal.result;
         };
@@ -65,18 +102,27 @@
                 document: document
             };
 
-            const modal = openModal(
-                '<scientilla-document-details\
-                    document="vm.document"\
-                ></scientilla-document-details>',
-                scopeVars,
-                {size: 'lg'}
-            );
+            var template = `<div class="modal-header">
+                                <h3>Document details</h3>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    ng-click="vm.onClose()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <scientilla-document-details
+                                    document="vm.document"
+                                    class="document-details"></scientilla-document-details>
+                            </div>`;
+
+            const modal = openModal(template, scopeVars, {size: 'lg'});
 
             addModalObject(modal);
             return modal.result;
         };
-
 
         service.openScientillaUserForm = function (user) {
 
@@ -113,8 +159,7 @@
                 ></scientilla-document-comparison-form>',
                 scopeVars,
                 {
-                    size: 'lg',
-                    windowClass: 'scientilla-modal-large'
+                    size: 'lg'
                 }
             );
             addModalObject(modal);
@@ -172,8 +217,7 @@
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit"\
                 ></scientilla-document-affiliations-form>',
-                scopeVars,
-                {size: 'lg'}
+                scopeVars
             );
 
             addModalObject(modal);
@@ -191,8 +235,7 @@
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit"\
                 ></scientilla-document-authors-form>',
-                scopeVars,
-                {size: 'lg'}
+                scopeVars
             );
 
             addModalObject(modal);
@@ -214,15 +257,14 @@
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit"\
                 ></scientilla-document-verification-form>',
-                scopeVars,
-                {size: 'lg'}
+                scopeVars
             );
 
             addModalObject(modal);
             return modal.result;
         };
 
-        service.multipleChoiceConfirm = function (title, message, buttonLabels, cancelLabel = 'Cancel') {
+        service.multipleChoiceConfirm = function (title, message, buttonLabels, cancelLabel = 'Cancel', closeable = false) {
             buttonLabels = buttonLabels || [];
             return new Promise(function (resolve, reject) {
                 const scope = {
@@ -236,21 +278,44 @@
                         this.onSubmit();
                         resolve(i);
                     },
-                    buttonLabels: buttonLabels
+                    buttonLabels: buttonLabels,
+                    closeable: closeable
                 };
-                const modal = openModal('\
-                        <div class="scientilla-modal">\
-                            <div>\
-                                <h3 class="scientilla-multiple-choice-title" ng-if="vm.title">{{vm.title}}</h3>\
-                                <div class="scientilla-multiple-choice-message" ng-if="vm.message">{{vm.message}}</div>\
-                            </div>\
-                            <hr>' +
-                    scope.buttonLabels.map(function (b, i) {
-                        return '<scientilla-button click="vm.ok(' + i + ')">' + b + '</scientilla-button>';
-                    }).join('') +
-                    '<scientilla-button click="vm.cancel()" type="cancel">' + cancelLabel + '</scientilla-button>\
-                <div>',
-                    scope);
+
+                let args = {};
+
+                if (!closeable) {
+                    args.backdrop = 'static';
+                    args.keyboard = false;
+                }
+
+                var buttons = scope.buttonLabels.map(function (b, i) {
+                        return '<li><scientilla-button click="vm.ok(' + i + ')">' + b + '</scientilla-button></li>';
+                    }).join('');
+
+                if (cancelLabel !== false) {
+                    buttons += '<li><scientilla-button click="vm.cancel()" type="cancel">' + cancelLabel + '</scientilla-button></li>';
+                }
+
+                var template = `<div class="modal-header">
+                                    <h3 class="confirm-title" ng-if="vm.title">{{vm.title}}</h3>
+                                    <button
+                                        type="button"
+                                        class="close"
+                                        ng-if="vm.closeable"
+                                        ng-click="vm.cancel()">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+
+                                <div class="modal-body">
+                                    <div class="confirm-message" ng-if="vm.message">{{vm.message}}</div>
+                                    <ul class="modal-buttons">` +
+                                        buttons + 
+                                    `</ul>
+                                </div>`;
+
+                const modal = openModal(template, scope, args);
 
                 modal.result.catch(function (err) {
                     reject(err);
@@ -260,17 +325,26 @@
         };
 
         service.openWizard = function (steps, config = {}) {
-            let args = {
-                size: 'lg',
-                windowClass: config.style === 'light' ? 'wizard-modal' : 'wizard-modal modal-dark'
-            };
-            if (!config.isClosable)
+            let args = {};
+            let options = {};
+
+            if (config.size) {
+                args.size = config.size;
+            }
+
+            options.data = {steps: steps};
+
+            if (!config.isClosable) {
                 args = Object.assign({}, args, {
                     backdrop: 'static',
                     keyboard: false
                 });
+                options.data.isClosable = false;
+            } else {
+                options.data.isClosable = true;
+            }
 
-            const modal = openComponentModal('wizard-container', {steps: steps, style: config.style}, args);
+            const modal = openComponentModal('wizard-container', args, options);
             addModalObject(modal);
             return modal.result;
         };
@@ -286,21 +360,23 @@
         return service;
 
         // private
-        function openComponentModal(component, data, args) {
+        function openComponentModal(component, args, options = {}) {
             const callbacks = getDefaultCallbacks();
 
             const resolve = {
-                data,
+                data: options.data,
                 callbacks
             };
 
-            return $uibModal.open(
+            var modal = $uibModal.open(
                 _.defaults({
                     animation: true,
                     component: component,
                     resolve: resolve
                 }, args)
             );
+
+            return modal;
         }
 
         function openModal(template, scope, args) {
@@ -312,14 +388,16 @@
                 _.assign(this, scope);
             };
 
-            return $uibModal.open(
+            var modal = $uibModal.open(
                 _.defaults({
                     animation: true,
                     template: template,
                     controller: controller,
-                    controllerAs: 'vm'
+                    controllerAs: 'vm',
                 }, args)
             );
+
+            return modal;
         }
 
         function getDefaultCallbacks() {

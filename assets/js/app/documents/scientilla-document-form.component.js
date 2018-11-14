@@ -17,6 +17,7 @@
         });
 
     scientillaDocumentFormController.$inject = [
+        '$rootScope',
         'EventsService',
         'documentFieldsRules',
         '$scope',
@@ -27,7 +28,8 @@
         'ModalService'
     ];
 
-    function scientillaDocumentFormController(EventsService,
+    function scientillaDocumentFormController($rootScope,
+                                              EventsService,
                                               documentFieldsRules,
                                               $scope,
                                               $timeout,
@@ -36,16 +38,17 @@
                                               Restangular,
                                               ModalService) {
         const vm = this;
-        vm.status = createStatus();
+
+        vm.saveStatus = saveStatus();
+        vm.verifyStatus = verifyStatus();
+
         vm.cancel = cancel;
-        vm.undo = undo;
         vm.verify = verify;
+        vm.save = save;
         vm.documentTypes = DocumentTypesService.getDocumentTypes();
         vm.getSources = getSources;
         vm.getItSources = getItSources;
-        vm.createSource = createSource;
-        vm.openPopover = openPopover;
-        vm.closePopover = closePopover;
+        vm.openSourceTypeModal = openSourceTypeModal;
         vm.checkSource = checkSource;
         vm.documentFieldsRules = documentFieldsRules;
         const allSourceTypes = DocumentTypesService.getSourceTypes();
@@ -57,15 +60,32 @@
         const documentService = context.getDocumentService();
         const deregisteres = [];
 
+        vm.newSource = {};
+
+        vm.errors = {};
+        vm.errorText = '';
+        vm.unsavedData = false;
+
         vm.$onInit = function () {
             if (_.isFunction(vm.document.clone))
                 documentBackup = vm.document.clone();
             else
                 documentBackup = _.cloneDeep(vm.document);
 
-            watchDocument();
             watchDocumentSourceType();
             watchDocumentType();
+
+            $scope.$watch('form.$pristine', function (formUntouched) {
+                if (!formUntouched) {
+                    vm.unsavedData = true;
+                } else {
+                    vm.unsavedData = false;
+                }
+            });
+
+            $scope.$on('modal.closing', function(event, reason) {
+                cancel(event);
+            });
         };
 
         vm.$onDestroy = function () {
@@ -73,25 +93,18 @@
                 deregisterer();
         };
 
-        function watchDocument() {
-            const fieldsToWatch = vm.document.fields;
-            _.forEach(fieldsToWatch, function (f) {
-                deregisteres.push($scope.$watch('vm.document.' + f, prepareSave, true));
-            });
-        }
-
         function watchDocumentSourceType() {
             const dereg = $scope.$watch('vm.document.sourceType', (newValue, oldValue) => {
                 if (newValue === oldValue)
                     return;
-                closePopover();
+
                 if (!newValue) {
                     vm.sourceLabel = '';
                     return;
                 }
 
                 vm.sourceLabel = _.find(allSourceTypes, {id: newValue}).label;
-                if (vm.document.source.type !== vm.document.sourceType)
+                if (vm.document.source && vm.document.source.type !== vm.document.sourceType)
                     vm.document.source = null;
             });
 
@@ -100,92 +113,153 @@
 
         function watchDocumentType() {
             const dereg = $scope.$watch('vm.document.type', newValue => {
-                closePopover();
                 const allowedSources = _.find(vm.documentTypes, {key: newValue}).allowedSources;
                 vm.sourceTypes = _.filter(allSourceTypes, s => allowedSources.includes(s.id));
             });
             deregisteres.push(dereg);
         }
 
-        function createStatus() {
-            let isSavedVar = false;
-            let isSavingVar = false;
+        function saveStatus() {
             return {
-                isSaved: function () {
-                    return isSavedVar;
-                },
-                isSaving: function () {
-                    return isSavingVar;
-                },
-                setSaved: function (isSaved) {
-                    isSavedVar = isSaved;
-                    isSavingVar = !isSaved;
+                setState: function (state) {
+                    this.state = state;
 
-                    if (isSavedVar) {
-                        this.class = "saved";
-                        this.message = "Saved";
-                    }
-                    else {
-                        this.class = "unsaved";
-                        this.message = "Saving";
+                    switch(true) {
+                        case state === 'ready to save':
+                            this.message = 'Save draft';
+                            break;
+                        case state === 'saving':
+                            this.message = 'Saving draft';
+                            break;
+                        case state === 'saved':
+                            this.message = 'Draft is saved!';
+                            $scope.form.$setPristine();
+                            break;
+                        case state === 'failed':
+                            this.message = 'Failed to save draft!';
+                            break;
                     }
                 },
-                message: "",
-                class: "default"
+                state: 'ready to save',
+                message: 'Save draft'
             };
         }
 
-        function prepareSave(newValue, oldValue) {
-            const isNotChanged = (newValue === oldValue);
-            const isNewAndEmpty = ((_.isNil(oldValue)) && newValue === "");
-            const isStillEmpty = (_.isNil(oldValue) && _.isNil(newValue));
+        function verifyStatus() {
+            return {
+                setState: function (state) {
+                    this.state = state;
 
-            if (isNotChanged || isNewAndEmpty || isStillEmpty)
-                return;
-
-            vm.status.setSaved(false);
-
-            if (debounceTimeout !== null)
-                $timeout.cancel(debounceTimeout);
-
-            debounceTimeout = $timeout(saveDocument, debounceTime);
+                    switch(true) {
+                        case state === 'ready to verify':
+                            this.message = 'Save & verify';
+                            break;
+                        case state === 'verifying':
+                            this.message = 'Verifying draft';
+                            break;
+                        case state === 'verified':
+                            this.message = 'Draft is Verified!';
+                            $scope.form.$setPristine();
+                            break;
+                        case state === 'failed':
+                            this.message = 'Failed to verify!';
+                            break;
+                    }
+                },
+                state: 'ready to verify',
+                message: 'Save & verify'
+            };
         }
 
-        function saveDocument() {
-            if (vm.document.id)
+        function save() {
+            vm.errors = {};
+            vm.errorText = '';
+            saveDocument(true);
+        }
+
+        function saveDocument(updateState = false) {
+            if (updateState) {
+                vm.saveStatus.setState('saving');
+            }
+
+            if (vm.document.id) {
                 return vm.document.save().then(() => {
-                    vm.status.setSaved(true);
+                    if (updateState) {
+                        vm.saveStatus.setState('saved');
+                    }
+
                     EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
+
+                    vm.unsavedData = false;
+
+                    if (updateState) {
+                        $timeout(function() {
+                            vm.saveStatus.setState('ready to save');
+                        }, 1000);
+                    }
+
+                    return vm.document;
                 });
-            else
+            } else {
                 return documentService.createDraft(vm.document)
                     .then(draft => {
                         vm.document = draft;
-                        vm.status.setSaved(true);
+                        if (updateState) {
+                            vm.saveStatus.setState('saved');
+                        }
+
                         EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
+
+                        vm.unsavedData = false;
+
+                        if (updateState) {
+                            $timeout(function() {
+                                vm.saveStatus.setState('ready to save');
+                            }, 1000);
+                        }
+
+                        return vm.document;
                     });
-        }
-
-        function cancel() {
-            if (debounceTimeout !== null) {
-                $timeout.cancel(debounceTimeout);
             }
-            if (vm.status.isSaving())
-                saveDocument();
-
-            close();
         }
 
-        function undo() {
-            ModalService.multipleChoiceConfirm(
-                'Undo',
-                'Do you want to undo the last changes?',
-                ['Proceed'])
-                .then(res => {
-                    if (res === 0)
-                        vm.document = _.cloneDeep(documentBackup);
-                })
-                .catch(() => true);
+        function cancel(event = false) {
+            if (vm.unsavedData) {
+                if (event) {
+                    event.preventDefault();
+                }
+
+                // Show the unsaved data modal
+                ModalService
+                    .multipleChoiceConfirm('Unsaved data',
+                        `There is unsaved data in the form. Do you want to go back and save this data?`,
+                        ['Yes', 'No'],
+                        false)
+                    .then(function (buttonIndex) {
+                        switch (buttonIndex) {
+                            case 0:
+                                break;
+                            case 1:
+                                vm.unsavedData = false;
+                                close();
+                                break;
+                            default:
+                                break;
+                        }
+                    });
+            } else {
+                if (debounceTimeout !== null) {
+                    $timeout.cancel(debounceTimeout);
+                }
+
+                if (vm.saveStatus.state === 'saving') {
+                    saveDocument();
+                }
+
+                if (!event){
+                    close();
+                }
+            }
         }
 
         function getSources(searchText) {
@@ -210,25 +284,19 @@
             return Restangular.all(sourceData.model).getList(sourceData.query);
         }
 
+        function openSourceTypeModal($event) {
 
-        function createSource() {
-            vm.newSource.type = vm.document.sourceType;
-            return Restangular.all('sources').post(vm.newSource)
-                .then(source => {
-                    vm.document.source = source;
-                    vm.newSource = {};
-                    closePopover();
-                });
-        }
-
-        function openPopover($event) {
             $event.stopPropagation();
-            vm.popoverIsOpen = true;
-        }
 
+            EventsService.subscribe(vm, EventsService.SOURCE_CREATED, function(event, source) {
+                vm.document.source = source;
+                vm.getSources(source.title);
 
-        function closePopover() {
-            vm.popoverIsOpen = false;
+                vm.errors = vm.document.validateDocument();
+            });
+
+            ModalService
+                .openSourceTypeModal(vm.document);
         }
 
         function checkSource($event) {
@@ -236,16 +304,42 @@
                 vm.document.source = null;
         }
 
-
         function verify() {
-            saveDocument()
-                .then(() => close())
-                .then(() => documentService.verifyDraft(vm.document));
+            vm.errorText = '';
+            vm.errors = {};
+            vm.verifyStatus.setState('verifying');
+
+            $timeout(function() {
+                vm.errors = vm.document.validateDocument();
+                if (_.isEmpty(vm.errors)) {
+                    // Is valid
+                    saveDocument()
+                        .then(() => {
+                            vm.verifyStatus.setState('verified');
+                            close();
+                        })
+                        .then(() => {
+                            documentService.verifyDraft(vm.document);
+                        });
+                } else {
+                    // Is not valid
+                    vm.verifyStatus.setState('failed');
+                    vm.errorText = 'The draft has been saved but not been verified! Please correct the errors on this form!';
+
+                    saveDocument(false);
+
+                    $timeout(function() {
+                        vm.verifyStatus.setState('ready to verify');
+                    }, 1000);
+                }
+            }, 200);
         }
 
         function close() {
-            if (_.isFunction(vm.closeFn()))
+            if (_.isFunction(vm.closeFn())) {
                 return vm.closeFn()();
+            }
+
             return Promise.reject('no close function');
         }
     }

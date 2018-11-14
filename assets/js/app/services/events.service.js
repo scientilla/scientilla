@@ -6,7 +6,6 @@
         '$rootScope'
     ];
 
-
     function ModalService($rootScope) {
         var subscriptions = [];
         var service = {
@@ -31,6 +30,10 @@
 
             NOTIFICATION_ACCEPTED: 'notification.accepted',
             NOTIFICATION_DISCARDED: 'notification.discarded',
+
+            SOURCE_CREATED: 'source.created',
+
+            INSTITUTE_RESTORED: 'institute.restored',
 
             CONTEXT_CHANGE: 'context.change'
         };

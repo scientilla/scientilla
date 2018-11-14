@@ -1,0 +1,131 @@
+.document-comparison-listing{
+    @include normalize-listing;
+
+    & > li{
+        &:nth-child(9) {
+            margin-bottom: 4rem;
+            padding-bottom: 4rem;
+            border-bottom: 1px solid $silver;
+        }
+    }
+
+    .research-entity-title{
+        margin-top: 3rem;
+    }
+
+    .document-authors{
+        display: block;
+        margin-bottom: .5rem;
+    }
+
+    .document-details-title{
+        @include h2;
+        margin-bottom: 1rem;
+    }
+
+    .document-details-source{
+        @include normalize-listing;
+        @include clearfix;
+        margin-bottom: 1rem;
+
+        & > li{
+            display: bock;
+            float: left;
+
+            & + li{
+                &:before{
+                    content: ',';
+                }
+            }
+        }
+    }
+
+    .document-details-ids,
+    .document-details-year{
+        margin-bottom: 1rem;
+        padding-left: 1.5rem;
+    }
+
+    .document-details-year{
+        &.highlight-text{
+            display: inline-block;
+        }
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .document-comparison-badge{
+        margin: 1.1rem 2rem;
+    }
+
+    .document-comparison-listing{
+        @include normalize-listing;
+        display: grid;
+        margin: 0px -1rem;
+        grid-template-rows: auto;
+        grid-template-columns: 1fr 1fr;
+
+        & > li{
+            padding: 0px 1rem;
+            // Column 1
+            &:nth-child(1){
+                @include set-grid(1,1,1,1);
+            }
+            &:nth-child(2){
+                @include set-grid(2,1,1,1);
+            }
+            &:nth-child(3){
+                @include set-grid(3,1,1,1);
+            }
+            &:nth-child(4){
+                @include set-grid(4,1,1,1);
+            }
+            &:nth-child(5){
+                @include set-grid(5,1,1,1);
+            }
+            &:nth-child(6){
+                @include set-grid(6,1,1,1);
+            }
+            &:nth-child(7){
+                @include set-grid(7,1,1,1);
+            }
+            &:nth-child(8){
+                @include set-grid(8,1,1,1);
+            }
+            &:nth-child(9){
+                @include set-grid(9,1,1,1);
+                margin-bottom: 0px;
+                padding-bottom: 0px;
+                border-bottom: none;
+            }
+            // Column 2
+            &:nth-child(10){
+                @include set-grid(1,2,1,1);
+            }
+            &:nth-child(11){
+                @include set-grid(2,2,1,1);
+            }
+            &:nth-child(12){
+                @include set-grid(3,2,1,1);
+            }
+            &:nth-child(13){
+                @include set-grid(4,2,1,1);
+            }
+            &:nth-child(14){
+                @include set-grid(5,2,1,1);
+            }
+            &:nth-child(15){
+                @include set-grid(6,2,1,1);
+            }
+            &:nth-child(16){
+                @include set-grid(7,2,1,1);
+            }
+            &:nth-child(17){
+                @include set-grid(8,2,1,1);
+            }
+            &:nth-child(18){
+                @include set-grid(9,2,1,1);
+            }
+        }
+    }
+}

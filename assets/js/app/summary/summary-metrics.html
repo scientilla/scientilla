@@ -1,67 +1,80 @@
+<div class="info-button-container">
+    <a href="" title="" ng-click="vm.showInfo()" class="btn btn-primary info-button">
+        <i class="fas fa-info-circle fa-left"></i>Info
+    </a>
+</div>
+
 <div class="row">
-    <div class="col-xs-1"></div>
-    <div class="col-xs-10">
-        <div class="row  same-height" style="margin:0">
-            <div class="col-xs-2" ng-repeat="index in vm.indexes">
-                <div class="scientilla-chart-widget">
-                    <span ng-bind-html="index.icon" class="scientilla-chart-icon"></span>
-                    <br>
-                    {{index.label}}
-                    <br>
-                    <b>{{index.value | scientillaNumber:index.format}}</b>
-                </div>
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+        <div class="index-container">
+            <h2 class="index-title">Statistics</h2>
+            <ul class="index-listing items-{{ vm.indexes.length }}">
+                <li ng-repeat="index in vm.indexes">
+                    <div class="outer-index">
+                        <div class="index">
+                            <i ng-class="icon" ng-repeat="icon in index.icons"></i>
+                            <span class="index-label">{{ index.label }}</span>
+                            <span class="index-value">{{ index.value | scientillaNumber:index.format }}</span>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6">
+        <div class="document-totals">
+            <div class="table-responsive">
+                <table class="table table-condensed table-striped">
+                    <tr>
+                        <th ng-repeat="total in vm.documentTotals"
+                            class="text-center">
+                            {{ total.title }}
+                        </th>
+                    </tr>
+                    <tr>
+                        <td ng-repeat="total in vm.documentTotals"
+                            class="text-center">
+                            {{ total.value }}
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
-    <div class="col-xs-1 text-right">
-                <span ng-click="vm.showInfo()"
-                      class="fa fa-info-circle"
-                      style="font-size: 30px;cursor:pointer"></span>
-    </div>
 </div>
 
 <div class="row">
-    <div class="col-md-4">
-        <div class="scientilla-chart-widget"
-             id="scientilla-chart-totals">
-            <table class="table table-condensed">
-                <tr>
-                    <th ng-repeat="total in vm.documentTotals"
-                        class="text-center">
-                        {{total.title}}
-                    </th>
-                </tr>
-                <tr>
-                    <td ng-repeat="total in vm.documentTotals"
-                        class="text-center">
-                        {{total.value}}
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="scientilla-chart-widget">
-            <h3>{{vm.charts.hindexPerYear.title}}</h3>
-            <nvd3 id="scientilla-chart-hindexPerYear"
-                  options="vm.charts.hindexPerYear.options"
-                  data="vm.charts.hindexPerYear.data"></nvd3>
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-3">
+        <div class="metric-chart-container">
+            <h3>{{ vm.charts.hindexPerYear.title }}</h3>
+            <div class="chart-container">
+                <nvd3
+                    options="vm.charts.hindexPerYear.options"
+                    data="vm.charts.hindexPerYear.data"
+                    class="chart"></nvd3>
+            </div>
         </div>
     </div>
-    <div class="col-md-8">
-        <scientilla-chart-selector
-                charts="vm.documentsCharts"
-        ></scientilla-chart-selector>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-xs-6">
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-3">
         <scientilla-chart-selector
-                charts="vm.citationsCharts"
-        ></scientilla-chart-selector>
+            charts="vm.documentsCharts"
+            class="metric-chart-container">
+        </scientilla-chart-selector>
     </div>
-    <div class="col-xs-6">
+
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-3">
         <scientilla-chart-selector
-                charts="vm.metricsCharts"
-        ></scientilla-chart-selector>
+            charts="vm.citationsCharts"
+            class="metric-chart-container">
+        </scientilla-chart-selector>
+    </div>
+
+    <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-3">
+        <scientilla-chart-selector
+            charts="vm.metricsCharts"
+            class="metric-chart-container">
+        </scientilla-chart-selector>
     </div>
 </div>

@@ -1,0 +1,33 @@
+.header{
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    z-index: 3;
+    width: 100%;
+    padding: 1.5rem 0px;
+    background: $mine-shaft;
+
+    .header-listing{
+        @include normalize-listing;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto;
+    }
+
+    a{
+        display: block;
+        height: 40px;
+        color: transparent;
+        text-indent: -9999px;
+
+        &.login-link{
+            width: 140px;
+            background: url('/images/scientilla-logo-white-40.png') no-repeat;
+        }
+
+        &.iit-link{
+            width: 92px;
+            background: url('/images/iit-logo-40.png') no-repeat;
+        }
+    }
+}

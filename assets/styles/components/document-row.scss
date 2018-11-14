@@ -1,0 +1,7 @@
+@include media-breakpoint-up(md) {
+    .document-row{
+        display: grid;
+        grid-template-rows: auto;
+        grid-template-columns: 1fr auto;
+    }
+}

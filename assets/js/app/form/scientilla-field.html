@@ -1,33 +1,46 @@
-<div ng-if="vm.ngIf()" class="form-group">
-    <scientilla-text-field ng-if="vm.structure.inputType==='text'"
-                           model="vm.values[vm.name]"
-                           field-id="vm.id"
-                           structure="vm.fieldStructure">
+<div
+    ng-if="vm.ngIf()"
+    class="form-group"
+    ng-class="vm.errors ? 'has-error' : ''">
+    <scientilla-text-field
+        ng-if="vm.structure.inputType==='text'"
+        model="vm.values[vm.name]"
+        field-id="vm.id"
+        structure="vm.fieldStructure"
+        errors="vm.errors">
     </scientilla-text-field>
-    <scientilla-select-field ng-if="vm.structure.inputType==='select'"
-                             model="vm.values[vm.name]"
-                             field-id="vm.id"
-                             structure="vm.fieldStructure">
+    <scientilla-select-field
+        ng-if="vm.structure.inputType==='select'"
+        model="vm.values[vm.name]"
+        field-id="vm.id"
+        structure="vm.fieldStructure"
+        errors="vm.errors">
     </scientilla-select-field>
-    <scientilla-date-field ng-if="vm.structure.inputType==='year'"
-                           model="vm.values[vm.name]"
-                           field-id="vm.id"
-                           structure="vm.fieldStructure">
+    <scientilla-date-field
+        ng-if="vm.structure.inputType==='year'"
+        model="vm.values[vm.name]"
+        field-id="vm.id"
+        structure="vm.fieldStructure"
+        errors="vm.errors">
     </scientilla-date-field>
-    <scientilla-checkbox-field ng-if="vm.structure.inputType==='checkbox'"
-                               model="vm.values[vm.name]"
-                               field-id="vm.id"
-                               structure="vm.fieldStructure">
+    <scientilla-checkbox-field
+        ng-if="vm.structure.inputType==='checkbox'"
+        model="vm.values[vm.name]"
+        field-id="vm.id"
+        structure="vm.fieldStructure"
+        errors="vm.errors">
     </scientilla-checkbox-field>
-    <scientilla-attribute-field ng-if="vm.structure.inputType==='attribute'"
-                                model="vm.values[vm.name]"
-                                structure="vm.fieldStructure">
+    <scientilla-attribute-field
+        ng-if="vm.structure.inputType==='attribute'"
+        model="vm.values[vm.name]"
+        structure="vm.fieldStructure"
+        errors="vm.errors">
     </scientilla-attribute-field>
-    <scientilla-button ng-if="vm.isButton()"
-                       type="{{vm.structure.inputType}}"
-                       click="vm.onClick()"
-                       size="small">
+    <scientilla-button
+        ng-if="vm.isButton()"
+        type="{{vm.structure.inputType}}"
+        click="vm.onClick()"
+        class="button-container">
         {{vm.structure.label}}
     </scientilla-button>
 </div>
-<br ng-if="vm.structure.inputType==='br'">

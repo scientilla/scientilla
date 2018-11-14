@@ -1,67 +1,81 @@
 <scientilla-backend-layout>
+    <h1>Suggested documents</h1>
     <scientilla-filter
-            search-form-structure="vm.searchForm"
-            on-filter="vm.onFilter"
-            elements="vm.documents">
-
+        search-form-structure="vm.searchForm"
+        on-filter="vm.onFilter"
+        elements="vm.documents">
 
         <scientilla-multicheck>
             <buttons>
-                <scientilla-multicheck-button on-click="vm.verifyDocuments">
-                    <span class="fa fa-check"></span>
-                    Verify
+                <scientilla-multicheck-button
+                    subject="Verify document"
+                    on-click="vm.verifyDocuments">
+                    <i class="fas fa-check fa-left"></i>Verify
                 </scientilla-multicheck-button>
-                <scientilla-multicheck-button on-click="vm.discardDocuments">
-                    <span class="fa fa-ban"></span>
-                    Discard
+                <scientilla-multicheck-button
+                    subject="Copy document"
+                    on-click="vm.copyDocuments">
+                    <i class="far fa-copy fa-left"></i>Copy
                 </scientilla-multicheck-button>
-                <scientilla-multicheck-button on-click="vm.copyDocuments">
-                    <span class="fa fa-copy"></span>
-                    Copy
+                <scientilla-multicheck-button
+                    subject="Discard document"
+                    on-click="vm.discardDocuments">
+                    <i class="fas fa-ban fa-left"></i>Discard
                 </scientilla-multicheck-button>
             </buttons>
             <item-list>
-                <scientilla-checkable ng-repeat="document in vm.documents" item="document">
-                    <div class="row">
-                        <div class="col-md-10">
-                            <scientilla-document document="document" section="vm.documentListSections.SUGGESTED"></scientilla-document>
-                        </div>
-                        <div class="col-md-2 text-right">
-                            <h3>
-                                <div class="btn-group scientilla-dropdown-align-right" uib-dropdown>
-                                    <button ng-disabled="!document.isValid()" ng-click="vm.verifyDocument(document)" type="button"
-                                            class="btn btn-primary" ng-if="!document.isComparable">
-                                        <span class="fa fa-check"></span>
-                                        Verify
-                                    </button>
-                                    <button ng-click="vm.compareDocuments(document, document.getComparisonDuplicate())"
-                                            type="button"
-                                            class="btn btn-compare"
-                                            ng-if="document.isComparable">
-                                        Compare
-                                    </button>
-                                    <button type="button"
-                                            class="btn dropdown-toggle"
-                                            ng-class="{'btn-compare': document.isComparable, 'btn-primary': !document.isComparable}"
-                                            data-toggle="dropdown">
-                                        <span class="caret"></span>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-right">
-                                        <li>
-                                            <button class="btn btn-link" ng-click="vm.copyDocument(document)" href="javascript:void(0)">
-                                                <span class="fa fa-copy"></span>
-                                                Copy to drafts
-                                            </button>
-                                        </li>
-                                        <li ng-if="!document.isDiscarded()">
-                                            <button class="btn btn-link" ng-click="vm.discardDocument(document)" href="javascript:void(0)">
-                                                <span class="fa fa-ban"></span>
-                                                Discard
-                                            </button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </h3>
+                <scientilla-checkable
+                    ng-repeat="document in vm.documents"
+                    item="document">
+                    
+                    <scientilla-document
+                        document="document"
+                        section="vm.documentListSections.SUGGESTED"
+                        class="document-container"></scientilla-document>
+                    
+                    <div class="document-row-actions">
+                        <div class="btn-group" uib-dropdown>
+                            <button
+                                ng-disabled="!document.isValid()"
+                                ng-click="vm.verifyDocument(document)"
+                                type="button"
+                                class="btn btn-primary"
+                                ng-if="!document.isComparable">
+                                <i class="fa fa-check fa-left"></i>Verify
+                            </button>
+
+                            <button
+                                ng-click="vm.compareDocuments(document, document.getComparisonDuplicate())"
+                                type="button"
+                                ng-if="document.isComparable"
+                                class="btn btn-warning">
+                                <i class="fas fa-exchange-alt fa-left"></i>Compare
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn dropdown-toggle only-icon"
+                                ng-class="{'btn-warning': document.isComparable, 'btn-primary': !document.isComparable}"
+                                uib-dropdown-toggle>
+                            </button>
+
+                            <div
+                                uib-dropdown-menu
+                                class="dropdown-menu">
+                                <a
+                                    class="dropdown-item"
+                                    ng-click="vm.copyDocument(document)"
+                                    href="javascript:void(0)">
+                                    <i class="far fa-copy fa-left"></i>Copy to drafts
+                                </a>
+                                <a
+                                    class="dropdown-item"
+                                    ng-click="vm.discardDocument(document)"
+                                    ng-if="!document.isDiscarded()"
+                                    href="javascript:void(0)">
+                                    <i class="fas fa-ban fa-left"></i>Discard
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </scientilla-checkable>

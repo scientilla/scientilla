@@ -22,10 +22,11 @@
         'GroupsService',
         'Prototyper',
         'userConstants',
-        'context'
+        'context',
+        'ModalService'
     ];
 
-    function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants, context) {
+    function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants, context, ModalService) {
         const vm = this;
         vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.getGroupsQuery = GroupsService.getGroupsQuery;
@@ -37,12 +38,27 @@
             {label: 'User', value: userConstants.role.USER},
             {label: 'Administrator', value: userConstants.role.ADMINISTRATOR}
         ];
+        vm.invalidAttributes = {};
         const deregisteres = [];
+
+        vm.errors = [];
+        vm.errorText = '';
+
+        let originalUser = angular.copy(vm.user);
 
         vm.$onInit = function () {
             deregisteres.push($scope.$watch('vm.user.name', nameChanged));
             deregisteres.push($scope.$watch('vm.user.surname', nameChanged));
             getCollaborations();
+
+            // Listen to modal closing event
+            $scope.$on('modal.closing', function(event, reason) {
+                cancel(event, reason);
+            });
+
+            if (!_.isArray(originalUser.aliases)) {
+                originalUser.aliases = [];
+            }
         };
 
         vm.$onDestroy = function () {
@@ -50,22 +66,41 @@
                 deregisterer();
         };
 
-
         //sTODO to be removed when deep populate exists
         function getCollaborations() {
+            UsersService.getCollaborations(originalUser);
             return UsersService.getCollaborations(vm.user);
         }
 
         function submit() {
             UsersService
                 .doSave(vm.user)
-                .then(function (user) {
-                    Notification.success("User data saved");
-                    aliasesChanged();
-                    if (_.isFunction(vm.onSubmit()))
-                        vm.onSubmit()(1);
-                })
-                .catch(function () {
+                .then(function (res) {
+                    if (res.data && res.data.invalidAttributes) {
+                        var errors = res.data.invalidAttributes;
+                        vm.errors = {};
+
+                        angular.forEach(errors, function(fields, fieldIndex) {
+                            angular.forEach(fields, function(error, errorIndex) {
+                                if (error.rule === 'required'){
+                                    error.message = 'This field is required.';
+                                    errors[fieldIndex][errorIndex] = error;
+                                }
+                            });
+
+                            vm.errors[fieldIndex] = errors[fieldIndex];
+                        });
+
+                        vm.errorText = 'Please correct the errors on this form!';
+                    } else {
+                        Notification.success("User data saved");
+                        originalUser = angular.copy(vm.user);
+                        aliasesChanged();
+                        if (_.isFunction(vm.onSubmit()))
+                            vm.onSubmit()(1);
+                    }
+                    
+                }).catch(function () {
                     Notification.warning("Failed to save user");
                     executeOnFailure();
                 });
@@ -77,7 +112,6 @@
             if (!vm.user.id)
                 vm.user.slug = calculateSlug(vm.user);
         }
-
 
         function aliasesChanged() {
             const researchEntity = context.getResearchEntity();
@@ -103,8 +137,37 @@
             return collaboration;
         }
 
-        function cancel() {
-            executeOnSubmit(0);
+        function cancel(event = false) {
+            // Compare the current state with the original state of the user
+            if (angular.toJson(vm.user) === angular.toJson(originalUser)) {
+                if (!event) {
+                    executeOnSubmit(0);
+                }
+            } else {
+                if (event) {
+                    // Prevent modal from closing
+                    event.preventDefault();
+                }
+
+                // Show the unsaved data modal
+                ModalService
+                    .multipleChoiceConfirm('Unsaved data',
+                        `There is unsaved data in the form. Do you want to go back and save this data?`,
+                        ['Yes', 'No'],
+                        false)
+                    .then(function (buttonIndex) {
+                        switch (buttonIndex) {
+                            case 0:
+                                break;
+                            case 1:
+                                vm.user = angular.copy(originalUser);
+                                executeOnSubmit(0);
+                                break;
+                            default:
+                                break;
+                        }
+                    });
+            }
         }
 
         function executeOnSubmit(i) {

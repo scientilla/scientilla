@@ -1,0 +1,58 @@
+.users{
+    &.users-browsing{
+
+        .title-container{
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: 1fr auto;
+        }
+
+        .btn-add-user{
+            height: fit-content;
+        }
+
+        .user-listing{
+            @include normalize-listing;
+
+            & > li{
+                & + li{
+                    margin-top: 2rem;
+                    padding-top: 2rem;
+                    border-top: 1px solid $silver;
+                }
+            }
+
+            .user-content{
+                margin-bottom: 1rem;
+            }
+
+            .user-fullname{
+                margin-bottom: 0px;
+            }
+        }
+    }
+
+    &.user-detail{
+        .user-fullname{
+            margin-bottom: .5rem;
+        }
+
+        .user-information{
+            margin-top: 2rem;
+        }
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .users{
+        &.users-browsing{
+            .user-listing{
+                & > li{
+                    display: grid;
+                    grid-template-columns: 1fr auto;
+                    grid-template-rows: auto;
+                }
+            }
+        }
+    }
+}

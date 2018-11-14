@@ -1,9 +1,76 @@
 <scientilla-toolbar></scientilla-toolbar>
-<div class="scientilla-register-form">
-    <form form-for="vm.user"
-          validation-rules="vm.validationAndViewRules"
-          form-for-builder
-          submit-with="vm.submit()">
-        <button class="btn btn-primary btn-md">Register</button>
-    </form>
+
+<div class="register-view">
+    <div class="container">
+        <div class="register-container">
+            <h1>Register</h1>
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div
+                            ng-class="vm.user.error ? 'has-error' : ''"
+                            class="form-group has-feedback">
+                            <label for="name">Name</label>
+                            <input
+                                name="name"
+                                type="text"
+                                class="form-control"
+                                id="name"
+                                ng-model="vm.user.name"
+                                data-ng-required="true"
+                                ng-class="vm.user.error ? 'is-invalid' : ''">
+                        </div>
+
+                        <div
+                            ng-class="vm.user.error ? 'has-error' : ''"
+                            class="form-group has-feedback">
+                            <label for="surname">Surname</label>
+                            <input
+                                name="surname"
+                                type="text"
+                                class="form-control"
+                                id="surname"
+                                ng-model="vm.user.surname"
+                                data-ng-required="true"
+                                ng-class="vm.user.error ? 'is-invalid' : ''">
+                        </div>
+
+                        <div
+                            ng-class="vm.user.error ? 'has-error' : ''"
+                            class="form-group has-feedback">
+                            <label for="username">Username</label>
+                            <input
+                                name="username"
+                                type="text"
+                                class="form-control"
+                                id="username"
+                                ng-model="vm.user.username"
+                                data-ng-required="true"
+                                ng-class="vm.user.error ? 'is-invalid' : ''">
+                        </div>
+
+                        <div
+                            ng-class="vm.user.error ? 'has-error' : ''"
+                            class="form-group has-feedback">
+                            <label for="password">Password</label>
+                            <input
+                                name="password"
+                                type="text"
+                                class="form-control"
+                                id="password"
+                                ng-model="vm.user.password"
+                                data-ng-required="true"
+                                ng-class="vm.user.error ? 'is-invalid' : ''">
+                        </div>
+
+                        <scientilla-button
+                            type="button"
+                            click="vm.submit()">
+                            Register
+                        </scientilla-button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

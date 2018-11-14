@@ -1,12 +1,13 @@
 (function () {
+
     angular
         .module('app')
         .config(configure)
         .run(run);
 
-    configure.$inject = ['RestangularProvider', '$routeProvider', 'localStorageServiceProvider', 'apiPrefix'];
+    configure.$inject = ['RestangularProvider', '$routeProvider', 'localStorageServiceProvider', 'apiPrefix', 'NotificationProvider'];
 
-    function configure(RestangularProvider, $routeProvider, localStorageServiceProvider, apiPrefix) {
+    function configure(RestangularProvider, $routeProvider, localStorageServiceProvider, apiPrefix, NotificationProvider) {
         $routeProvider
             .when("/", {
                 template: "<profile-summary></profile-summary>"
@@ -21,6 +22,13 @@
 
         localStorageServiceProvider
             .setPrefix('scientilla');
+
+        NotificationProvider.setOptions({
+            delay: 4000,
+            startLeft: 15,
+            positionX: 'left',
+            positionY: 'bottom'
+        });
     }
 
     // unused services are injected for initialization purpose

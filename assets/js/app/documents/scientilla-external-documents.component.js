@@ -44,10 +44,7 @@
 
             vm.searchForm = Object.assign({},
                 {
-                    connector: getConnectorField(),
-                    newline1: {
-                        inputType: 'br'
-                    }
+                    connector: getConnectorField()
                 },
                 documentSearchForm
             );
@@ -79,7 +76,8 @@
                 label: 'Connector',
                 values: values,
                 matchColumn: 'origin',
-                defaultValue: 'scopus'
+                defaultValue: 'scopus',
+                type: 'connector'
             };
         }
 

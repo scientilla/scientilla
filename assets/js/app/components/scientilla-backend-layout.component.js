@@ -18,10 +18,10 @@
 
         vm.$onInit = function () {
             $rootScope.bodyLayout = 'backend';
+            document.body.classList.remove('mobile-menu-is-open');
         };
 
         vm.$onDestroy = function () {
         };
     }
-
 })();

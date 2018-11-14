@@ -1,0 +1,242 @@
+label{
+    display: block;
+    font-weight: bold;
+}
+
+.form-group{
+    margin-bottom: 2rem;
+}
+
+.form-control{
+    height: auto;
+
+    &:disabled{
+        cursor: not-allowed;
+    }
+}
+
+.form-control,
+.select-wrapper,
+.input-group{
+    &.is-invalid{
+        border-color: $apple-blossom;
+
+        & ~ .error-messages{
+            .invalid-feedback{
+                display: block;
+            }
+        }
+    }
+}
+
+.form-checkbox{
+    &,
+    label{
+        font-weight: normal;
+    }
+
+    input{
+        display: none;
+
+        & + span{
+            position: relative;
+            display: inline-block;
+            vertical-align: top;
+
+            &:before{
+                display: inline-block;
+                width: 12px;
+                height: 12px;
+                margin: 3px 5px 3px 0px;
+                vertical-align: top;
+                border-radius: 0.25rem;
+                border: 1px solid $silver;
+                content: '';
+            }
+        }
+
+        &:checked{
+            & + span{
+                &:after{
+                    position: absolute;
+                    top: 3px;
+                    left: 2px;
+                    font-family: $font-awesome;
+                    font-size: .8rem;
+                    font-weight: 900;
+                    content: '\f00c';
+                }
+            }
+        }
+
+        &:disabled{
+            & + span{
+                cursor: not-allowed;
+                color: $gray;
+
+                &:before{
+                    background: lighten($silver, 20%);
+                }
+            }
+        }
+    }
+}
+
+.multiselect-list{
+    @include normalize-listing;
+
+    .list-group-item{
+        border-color: $silver;
+    }
+}
+
+.select-wrapper{
+    position: relative;
+
+    &:before{
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        z-index: 1;
+        margin-top: -6px;
+        font-family: $font-awesome;
+        font-weight: 900;
+        line-height: 1;
+        content: '\f0d7';
+    }
+
+    select{
+        position: relative;
+        z-index: 2;
+        display: block;
+        width: 100%;
+        height: 30px;
+        padding-right: 2rem;
+        color: $mine-shaft;
+        border: 1px solid $silver;
+        border-radius: 0.25rem;
+        background: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+
+        &:focus,
+        &:active:focus{
+            background: none;
+        }
+    }
+
+    select::-ms-expand {
+        display: none;
+    }
+
+    &.has-error{
+        &:before{
+            color: $apple-blossom;
+        }
+    }
+}
+
+.has-feedback{
+    position: relative;
+
+    & > label{
+        padding-right: 10px;
+    }
+
+    .form-control-feedback{
+        position: absolute;
+        top: 32px;
+        right: 8px;
+    }
+}
+
+.has-error{
+    label,
+    i{
+        color: $apple-blossom;
+    }
+}
+
+.invalid-feedback{
+    margin-top: .5rem;
+    font-size: 100%;
+    line-height: 1;
+    color: $apple-blossom;
+}
+
+.filter-form-container{
+    .filter-mobile-title{
+        @include h4;
+        position: relative;
+        display: none;
+
+        &,
+        &:hover,
+        &:focus,
+        &:active:focus{
+            color: $mine-shaft;
+        }
+
+        &:after{
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            display: block;
+            font-family: $font-awesome;
+            font-weight: 900;
+            content: '\f107';
+        }
+
+        .open-collapse,
+        .close-collapse{
+            font-size: 1.2rem;
+            color: $silver;
+        }
+
+        .open-collapse{
+            display: none;
+        }
+
+        .close-collapse{
+            display: inline-block;
+        }
+
+        &.is-collapsed{
+            &:after{
+                content: '\f104';
+            }
+
+            .open-collapse{
+                display: inline-block;
+            }
+
+            .close-collapse{
+                display: none;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .filter-form-container{
+
+        .filter-mobile-title{
+            display: block;
+        }
+
+        .button-container,
+        .btn{
+            display: block;
+            width: 100%;
+        }
+    }
+}
+
+@include media-breakpoint-up(md) {
+    .filter-form-container{
+        .collapse{
+            display: block;
+            height: auto !important;
+        }
+    }
+}

@@ -27,7 +27,7 @@
                     showLabels: false,
                     showLegend: false,
                     showControls: false,
-                    height: 250,
+                    //height: 250,
                     duration: 300,
                     reduceXTicks: true,
                     xAxis: {
@@ -46,13 +46,13 @@
                     showLabels: true,
                     showLegend: true,
                     showControls: true,
-                    height: 420,
-                    margin: {
+                    //height: 420,
+                    /*margin: {
                         top: 40,
                         right: 20,
                         bottom: 65,
                         left: 50
-                    },
+                    },*/
                     duration: 300,
                     reduceXTicks: false,
                     xAxis: {
@@ -83,12 +83,12 @@
                     labelThreshold: 0.02,
                     labelSunbeamLayout: true,
                     legend: {
-                        margin: {
+                        /*margin: {
                             top: 5,
                             right: 35,
                             bottom: 5,
                             left: 0
-                        }
+                        }*/
                     }
                 }
             };
@@ -203,7 +203,7 @@
                         showLegend: false,
                         showControls: false,
                         useInteractiveGuideline: true,
-                        height: 300,
+                        //height: 300,
                         xAxis: {
                             rotateLabels: 50,
                             showMaxMin: false,
@@ -284,7 +284,7 @@
                         showLabels: true,
                         showLegend: true,
                         useInteractiveGuideline: true,
-                        height: 420,
+                        //height: 420,
                         duration: 300,
                         x: d => d.year,
                         y: d => d.value,
@@ -501,7 +501,7 @@
                     showValues: true,
                     stacked: false,
                     showControls: false,
-                    height: 420,
+                    //height: 420,
                     x: d => d.year,
                     y: d => d.value,
                     duration: 300,

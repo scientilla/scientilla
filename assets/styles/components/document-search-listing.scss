@@ -1,0 +1,17 @@
+.document-search-listing{
+    @include normalize-listing;
+}
+
+@include media-breakpoint-up(md) {
+    .document-search-listing{
+        display: grid;
+        grid-template-rows: auto;
+        grid-template-columns: 1fr 1fr 2fr;
+        margin: 0px -1rem;
+
+        & > li{
+            display: block;
+            padding: 0px 1rem;
+        }
+    }
+}

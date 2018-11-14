@@ -1,58 +1,166 @@
-<form>
-    <div class="form-group">
-        <label for="username">Username (Email)</label>
-        <input type="text" class="form-control" id="username" placeholder="Username (Email)"
-               ng-model="vm.user.username" ng-disabled="!vm.userIsAdmin">
-    </div>
-    <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" class="form-control" id="name" placeholder="Name"
-               ng-model="vm.user.name" ng-disabled="!vm.userIsAdmin">
-    </div>
-    <div class="form-group">
-        <label for="surname">Surname</label>
-        <input type="text" class="form-control" id="surname" placeholder="Surname"
-               ng-model="vm.user.surname" ng-disabled="!vm.userIsAdmin">
-    </div>
-    <div class="form-group" ng-if="false">
-        <label for="slug">Slug</label>
-        <input type="text" class="form-control" id="slug" placeholder="Slug" ng-model="vm.user.slug"
-               ng-pattern="/^[a-zA-Z0-9-_]*$/" ng-required="true" ng-minlength="3" ng-maxlength="40"
-               ng-disabled="!vm.userIsAdmin">
-    </div>
-    <div class="form-group">
-        <label for="jobtitle">Job Title</label>
-        <input type="text" class="form-control" id="jobtitle" placeholder="job Title"
-               ng-model="vm.user.jobTitle" ng-disabled="!vm.userIsAdmin">
-    </div>
-    <div class="form-group">
-        <label for="orcidid">Orcid ID</label>
-        <input type="text" class="form-control" id="orcidid" placeholder="Orcid ID" ng-model="vm.user.orcidId">
-    </div>
-    <div class="form-group">
-        <label for="scopusid">Scopus ID</label>
-        <input type="text" class="form-control" id="scopusid" placeholder="Scopus ID" ng-model="vm.user.scopusId">
-    </div>
-    <div class="form-group" ng-if="vm.userIsAdmin && !vm.user.id">
-        <label for="password">Password</label>
-        <input type="text" class="form-control" id="password" placeholder="Password" ng-model="vm.user.password">
-    </div>
-    <scientilla-alias-editor aliases="vm.user.aliases"></scientilla-alias-editor>
-    <div class="form-group" ng-if="vm.userIsAdmin">
-        <label for="role">Role</label>
-        <select class="form-control" id="role" ng-model="vm.user.role"
-                ng-options="option.value as option.label for option in vm.roleSelectOptions">
-        </select>
-    </div>
-    <scientilla-multicomplete
+<div class="modal-header">
+    <h3>{{ !!vm.user.id ? 'Edit' : 'Create a new' }} user</h3>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <form>
+        <div
+            class="form-group"
+            ng-class="vm.errors.username ? 'has-error' : ''">
+            <label for="username">Username (Email) *</label>
+            <input
+                type="text"
+                class="form-control"
+                id="username"
+                placeholder="Username (Email)"
+                ng-model="vm.user.username"
+                ng-disabled="!vm.userIsAdmin"
+                ng-class="vm.errors.username ? 'is-invalid' : ''">
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.username"></scientilla-error-messages>
+        </div>
+
+        <div
+            class="form-group"
+            ng-class="vm.errors.name ? 'has-error' : ''">
+            <label for="name">Name *</label>
+            <input
+                type="text"
+                class="form-control"
+                id="name"
+                placeholder="Name"
+                ng-model="vm.user.name"
+                ng-disabled="!vm.userIsAdmin"
+                ng-class="vm.errors.name ? 'is-invalid' : ''">
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.name"></scientilla-error-messages>
+        </div>
+
+        <div
+            class="form-group"
+            ng-class="vm.errors.surname ? 'has-error' : ''">
+            <label for="surname">Surname *</label>
+            <input
+                type="text"
+                class="form-control"
+                id="surname"
+                placeholder="Surname"
+                ng-model="vm.user.surname"
+                ng-disabled="!vm.userIsAdmin"
+                ng-class="vm.errors.surname ? 'is-invalid' : ''">
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.surname"></scientilla-error-messages>
+        </div>
+
+        <div
+            class="form-group"
+            ng-if="false">
+            <label for="slug">Slug</label>
+            <input
+                type="text"
+                class="form-control"
+                id="slug"
+                placeholder="Slug"
+                ng-model="vm.user.slug"
+                ng-pattern="/^[a-zA-Z0-9-_]*$/"
+                ng-required="true"
+                ng-minlength="3"
+                ng-maxlength="40"
+                ng-disabled="!vm.userIsAdmin">
+        </div>
+
+        <div class="form-group">
+            <label for="jobtitle">Job Title</label>
+            <input
+                type="text"
+                class="form-control"
+                id="jobtitle"
+                placeholder="job Title"
+                ng-model="vm.user.jobTitle"
+                ng-disabled="!vm.userIsAdmin">
+        </div>
+
+        <div class="form-group">
+            <label for="orcidid">Orcid ID</label>
+            <input
+                type="text"
+                class="form-control"
+                id="orcidid"
+                placeholder="Orcid ID"
+                ng-model="vm.user.orcidId">
+        </div>
+
+        <div class="form-group">
+            <label for="scopusid">Scopus ID</label>
+            <input
+                type="text"
+                class="form-control"
+                id="scopusid"
+                placeholder="Scopus ID"
+                ng-model="vm.user.scopusId">
+        </div>
+
+        <div
+            class="form-group"
+            ng-if="vm.userIsAdmin && !vm.user.id">
+            <label for="password">Password</label>
+            <input
+                type="text"
+                class="form-control"
+                id="password"
+                placeholder="Password"
+                ng-model="vm.user.password">
+        </div>
+
+        <scientilla-alias-editor aliases="vm.user.aliases"></scientilla-alias-editor>
+
+        <div class="form-group" ng-if="vm.userIsAdmin">
+            <label for="role">Role</label>
+            <div class="select-wrapper">
+                <select
+                    class="form-control"
+                    id="role"
+                    ng-model="vm.user.role"
+                    ng-options="option.value as option.label for option in vm.roleSelectOptions">
+                </select>
+            </div>
+        </div>
+
+        <scientilla-multicomplete
             items="vm.user.collaborations"
             query="vm.getGroupsQuery"
             filter="vm.getCollaborationsFilter"
             transform="vm.groupToCollaboration"
             title="Collaborations"
-            ng-if="false"
-    >
-    </scientilla-multicomplete>
-    <scientilla-button type="submit" click="vm.submit()">Save</scientilla-button>
-    <scientilla-button type="cancel" click="vm.cancel()">Cancel</scientilla-button>
-</form>
+            ng-if="false">
+        </scientilla-multicomplete>
+
+        <ul class="modal-buttons center">
+            <li>
+                <scientilla-button
+                    type="submit"
+                    click="vm.submit()">Save</scientilla-button>
+            </li>
+            <li>
+                <scientilla-button
+                    type="cancel"
+                    click="vm.cancel()">Cancel</scientilla-button>
+            </li>
+        </ul>
+
+        <div
+            ng-if="vm.errorText"
+            class="modal-error text-danger">
+            {{ vm.errorText }}
+        </div>
+    </form>
+</div>

@@ -4,6 +4,7 @@
     angular.module('wizard')
         .component('wizardContainer', {
             templateUrl: 'partials/wizard-container.html',
+            class: 'wizard-modal',
             controller: wizardContainer,
             controllerAs: 'vm',
             bindings: {
@@ -12,23 +13,27 @@
         });
 
     wizardContainer.$inject = [
-        'context'
+        'context',
+        'Notification',
+        'ModalService',
+        '$scope',
     ];
 
-    function wizardContainer(context) {
+    function wizardContainer(context, Notification, ModalService, $scope) {
         const vm = this;
 
         vm.currentStep = 0;
         vm.researchEntity = context.getResearchEntity();
+        vm.originalResearchEntity = angular.copy(vm.researchEntity);
 
         vm.isStep = isStep;
         vm.closeModal = closeModal;
-        vm.nextStep = nextStep;
-        vm.prevStep = prevStep;
+        vm.close = close;
+        vm.setStep = setStep;
+        vm.checkStep = checkStep;
         vm.isNotPrev = isNotPrev;
         vm.isEnd = isEnd;
         vm.getStepsNumber = getStepsNumber;
-        vm.wizardCommands = wizardCommands;
 
         const accessLevels = {
             GROUP_ADMIN: 'groupAdmin',
@@ -81,15 +86,20 @@
         ];
 
         let steps = [];
-        vm.canChangeStep = true;
+        let closed = false;
 
         vm.$onInit = function () {
+
             vm.currentStep = 0;
             const accessLevel = vm.researchEntity.getType() === 'group' ? accessLevels.GROUP_ADMIN :
                 vm.researchEntity.administratedGroups.length ? accessLevels.GROUP_ADMIN : accessLevels.STANDARD;
             steps = allSteps.filter(s => s.accessLevels.includes(accessLevel));
             if (vm.resolve.data.steps)
                 steps = steps.filter(s => vm.resolve.data.steps.includes(s.name));
+
+            $scope.$on('modal.closing', function(event, reason) {
+                close(event);
+            });
         };
 
         vm.$onDestroy = function () {
@@ -100,7 +110,9 @@
             return steps[vm.currentStep].name === stepName;
         }
 
+        // You can close the modal once completed the wizard
         function closeModal() {
+
             if (!steps[vm.currentStep].researchEntityToSave) {
                 vm.resolve.callbacks.onClose();
                 return;
@@ -115,12 +127,44 @@
                 .catch(() => Notification.warning("Failed to save user"));
         }
 
-        function nextStep() {
-            vm.currentStep += (vm.currentStep < steps.length ? 1 : 0);
+        function setStep(step) {
+            switch(true) {
+                case step === 'next':
+                    vm.currentStep += (vm.currentStep < steps.length ? 1 : 0);
+                    break;
+                case step === 'previous':
+                    vm.currentStep -= (vm.currentStep > 0 ? 1 : 0);
+                    break;
+            }
         }
 
-        function prevStep() {
-            vm.currentStep -= (vm.currentStep > 0 ? 1 : 0);
+        function checkStep(step) {
+            if (steps[vm.currentStep] && steps[vm.currentStep].name === 'scopus-edit') {
+                if (angular.toJson(vm.originalResearchEntity) === angular.toJson(vm.researchEntity)) {
+                    setStep(step);
+                } else {
+                    // Show the unsaved data modal
+                    ModalService
+                        .multipleChoiceConfirm('Unsaved data',
+                            `There is unsaved data in the form. Do you want to go back and save this data?`,
+                            ['Yes', 'No'],
+                            false)
+                        .then(function (buttonIndex) {
+                            switch (buttonIndex) {
+                                case 0:
+                                    break;
+                                case 1:
+                                    vm.researchEntity = angular.copy(vm.originalResearchEntity);
+                                    setStep(step);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        });
+                }
+            } else {
+                setStep(step);
+            }
         }
 
         function isNotPrev() {
@@ -135,12 +179,47 @@
             return steps.length;
         }
 
-        function wizardCommands(command) {
-            if (command === 'stop')
-                vm.canChangeStep = false;
-            if (command === 'continue')
-                vm.canChangeStep = true;
-        }
+        function close(event = false) {
+            if (!closed) {
+                if (steps[vm.currentStep] && steps[vm.currentStep].name === 'alias-edit' ||
+                    steps[vm.currentStep] && steps[vm.currentStep].name === 'scopus-edit') {
+                    if (angular.toJson(vm.originalResearchEntity) !== angular.toJson(vm.researchEntity)) {
+                        if (event) {
+                            event.preventDefault();
+                        }
 
+                        // Show the unsaved data modal
+                        ModalService
+                            .multipleChoiceConfirm('Unsaved data',
+                                `There is unsaved data in the form. Do you want to go back and save this data?`,
+                                ['Yes', 'No'],
+                                false)
+                            .then(function (buttonIndex) {
+                                switch (buttonIndex) {
+                                    case 0:
+                                        break;
+                                    case 1:
+                                        context.setResearchEntity(vm.originalResearchEntity);
+                                        closed = true;
+                                        vm.resolve.callbacks.onClose();
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            });
+                    } else {
+                        closed = true;
+                        if (!event) {
+                            vm.resolve.callbacks.onClose();
+                        }
+                    }
+                } else {
+                    closed = true;
+                    if (!event) {
+                        vm.resolve.callbacks.onClose();
+                    }
+                }
+            }
+        }
     }
 })();

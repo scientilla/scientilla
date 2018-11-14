@@ -1,23 +1,29 @@
-<div class="scientilla-chart-widget">
-    <div class="row text-left">
-        <div class="col-xs-3">
-            <div class="scientilla-chart-selector">
-                <div ng-repeat="chart in vm.charts" ng-click="vm.select(chart)"
-                     ng-class="{selected: vm.selectedChart === chart}"
-                     class="scientilla-chart-selector-element"
-                     title="{{chart.title}}">
-                    <span class="fa {{chart.icon}}"></span>
-                </div>
+<div class="metric-widget">
+    <ul class="top-listing">
+        <li>
+            <div class="btn-group">
+                <button
+                    ng-repeat="chart in vm.charts"
+                    ng-click="vm.select(chart)"
+                    ng-class="{selected: vm.selectedChart === chart}"
+                    class="btn btn-primary"
+                    title="{{ chart.title }}">
+                        <i class="{{ chart.icon }}"></i>
+                    </button>
             </div>
-        </div>
-        <div class="col-xs-6 text-center">
-            <h3>{{vm.selectedChart.chartSettings.title}}</h3>
-        </div>
+        </li>
+        <li>
+            <h3>{{ vm.selectedChart.chartSettings.title }}</h3>
+        </li>
+    </ul>
 
+    <div class="chart-container">
+        <nvd3
+            ng-repeat="chart in vm.charts"
+            ng-if="vm.selectedChart === chart"
+            options="chart.chartSettings.options"
+            data="chart.chartSettings.data"
+            ng-attr-id="{{ chart.id }}"
+            class="chart"></nvd3>
     </div>
-    <nvd3 ng-repeat="chart in vm.charts"
-          ng-if="vm.selectedChart === chart"
-          options="chart.chartSettings.options"
-          data="chart.chartSettings.data"
-          ng-attr-id="{{chart.id}}"></nvd3>
 </div>

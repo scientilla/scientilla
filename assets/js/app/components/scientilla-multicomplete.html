@@ -1,31 +1,33 @@
-
-
 <script type="text/ng-template" id="customTemplate.html">
-    <a>{{match.model.getDisplayName()}}</a>
+    <a class="dropdown-item">{{ match.model.getDisplayName() }}</a>
 </script>
 
+<div class="form-group">
+    <label>{{ vm.title }}</label>
+    <div class="dropdown-container add-scroll">
+        <input
+            type="text"
+            ng-model="vm.searchValue"
+            placeholder="Search"
+            stypeahead-template-url="customTemplate.html"
+            uib-typeahead="item as item.getDisplayName() for item in vm.search($viewValue)"
+            typeahead-on-select="vm.onSelect($item, $model, $label)"
+            typeahead-loading="loadingLocations"
+            typeahead-no-results="noResults"
+            class="form-control">
+    </div>
+</div>
 
-
-<label>{{vm.title}}</label>
-
-<input type="text"
-       ng-model="vm.searchValue"
-       placeholder="Search"
-       typeahead-template-url="customTemplate.html"
-       uib-typeahead="item as item.getDisplayName() for item in vm.search($viewValue)"
-       typeahead-on-select="vm.onSelect($item, $model, $label)"
-       typeahead-loading="loadingLocations"
-       typeahead-no-results="noResults"
-       class="form-control">
-<!--<div ng-show="loadingLocations">Loading</div>
-<div ng-show="noResults">No Results Found</div>-->
-
-
-<ul class="list-group scientilla-multiselect-list">
-    <li ng-repeat="item in vm.items" class="list-group-item">
-        <a ng-click="vm.removeItem(item)" class="badge btn-primary" >
-            <span class="fa fa-remove"></span>
-        </a>
-        {{item.getDisplayName()}}
-    </li>
-</ul>
+<div class="form-group" ng-if="vm.items.length > 0">
+    <ul class="list-group multiselect-list">
+        <li ng-repeat="item in vm.items" class="list-group-item">
+            <a
+                href=""
+                ng-click="vm.removeItem(item)"
+                class="badge badge-primary">
+                <i class="fas fa-times"></i>
+            </a>
+            {{item.getDisplayName()}}
+        </li>
+    </ul>
+</div>

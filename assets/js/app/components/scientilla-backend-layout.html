@@ -1,10 +1,19 @@
-<scientilla-toolbar></scientilla-toolbar>
-<div class="row">
-    <div class="col-md-2">
-        <scientilla-menu></scientilla-menu>
-    </div>
-    <div class="col-md-10">
+<scientilla-toolbar class="toolbar"></scientilla-toolbar>
+
+<div class="container-fluid">
+    <div class="main-container js-main-container">
+        <div class="sidebar-container">
+            <div class="sidebar">
+                <scientilla-mobile-toolbar class="mobile-toolbar"></scientilla-mobile-toolbar>
+                <scientilla-menu></scientilla-menu>
+            </div>
+            <div
+                class="mobile-menu-background"
+                mobile-menu></div>
+        </div>
+
         <div class="main-view" ng-transclude></div>
     </div>
 </div>
-<scientilla-footer></scientilla-footer>
+
+<scientilla-footer class="footer-container"></scientilla-footer>

@@ -9,7 +9,8 @@
             bindings: {
                 structure: '<',
                 cssClass: '@',
-                onSubmit: '&'
+                onSubmit: '&',
+                errors: '<'
             },
             transclude: true,
         });
@@ -27,6 +28,11 @@
         vm.values = {};
         let onChangeWatchesDeregisters = [];
         let onStructureChangeDeregisterer;
+
+        vm.fields = filterStructure('field');
+        vm.actions = filterStructure('action');
+        vm.connectors = filterStructure('connector');
+        vm.getObjectSize = getObjectSize;
 
         vm.$onInit = function () {
             setDefault();
@@ -85,9 +91,18 @@
                 else if (!_.isUndefined(struct.defaultValue)) {
                     vm.values[key] = struct.defaultValue;
                 }
+            });
 
-                if (!_.isUndefined(struct.onChange))
+            _.forEach(vm.structure, function (struct, key) {
+                if (!_.isUndefined(struct.onChange)) {
                     onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, execEvent(struct.onChange)));
+                }
+
+                if (!_.isUndefined(vm.structure.onChange)) {
+                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, function(evt) {
+                        vm.structure.onChange(vm.values);
+                    }));
+                }
             });
         }
 
@@ -107,6 +122,23 @@
             onChangeWatchesDeregisters = [];
         }
 
+        function filterStructure(type) {
+            let structs = {};
+
+            Object.keys(vm.structure).forEach(function(name) {
+                let struct = vm.structure[name];
+
+                if (struct.type === type) {
+                    structs[name] = struct;
+                }
+            });
+
+            return structs;
+        }
+
+        function getObjectSize(object) {
+            return Object.keys(object).length;
+        }
     }
 
 })();

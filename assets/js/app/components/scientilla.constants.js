@@ -179,25 +179,29 @@
             inputType: 'text',
             label: 'Title',
             matchColumn: 'title',
-            matchRule: 'contains'
+            matchRule: 'contains',
+            type: 'field'
         },
         author: {
             inputType: 'text',
             label: 'Author',
             matchColumn: 'authorsStr',
-            matchRule: 'contains'
+            matchRule: 'contains',
+            type: 'field'
         },
         maxYear: {
             inputType: 'year',
             label: 'Year from',
             matchColumn: 'year',
-            matchRule: '>='
+            matchRule: '>=',
+            type: 'field'
         },
         minYear: {
             inputType: 'year',
             label: 'Year to',
             matchColumn: 'year',
-            matchRule: '<='
+            matchRule: '<=',
+            type: 'field'
         },
         documentType: {
             inputType: 'select',
@@ -206,7 +210,8 @@
                 [{value: "?", label: 'Select'}],
                 documentTypes.map(s => ({value: s.key, label: s.label}))
             ),
-            matchColumn: 'type'
+            matchColumn: 'type',
+            type: 'field'
         },
         sourceType: {
             inputType: 'select',
@@ -215,7 +220,8 @@
                 [{value: "?", label: 'Select'}],
                 documentSourceTypes.filter(t => t.type === 'scientific').map(s => ({value: s.id, label: s.label}))
             ),
-            matchColumn: 'sourceType'
+            matchColumn: 'sourceType',
+            type: 'field'
         }
 
     };
@@ -223,16 +229,20 @@
     const documentFieldsRules = {
         authorsStr: {
             allowNull: false,
-            regex: /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)*$/
+            regex: /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)*$/,
+            message: 'Author string is not valid. It should be in the form \"E. Molinari, F. Bozzini, F. Semprini\".'
+
         },
         scopusId: {
             allowNull: true,
-            regex: /^\d*$/
+            regex: /^\d*$/,
+            message: 'The ScopusID is not valid'
         },
         year: {
             allowNull: false,
-            regex: /^(19|20)\d{2}$/
- }
+            regex: /^(19|20)\d{2}$/,
+            message: 'This year is not valid. It should be like: 2018'
+        }
     };
 
     const documentOrigins = {

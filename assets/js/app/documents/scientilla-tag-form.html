@@ -1,14 +1,36 @@
-<form autocomplete="off">
-    <div class="form-group">
-        <scientilla-multicomplete
+<div class="modal-header">
+    <h3>Tags</h3>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.close()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <form autocomplete="off">
+        <div class="form-group">
+            <scientilla-multicomplete
                 items="vm.tags"
                 query="vm.getTagsQuery"
-                title="Your tags"
+                title="Search for tags"
                 add-not-found="true"
                 item-contructor="vm.tagLabelContructor"
-        >
-        </scientilla-multicomplete>
-    </div>
-    <scientilla-button type="submit" click="vm.save()">Save</scientilla-button>
-    <scientilla-button type="cancel" click="vm.close()">Close</scientilla-button>
-</form>
+            >
+            </scientilla-multicomplete>
+        </div>
+        <ul class="modal-buttons">
+            <li>
+                <scientilla-button
+                    type="submit"
+                    click="vm.save()">Save</scientilla-button>
+            </li>
+            <li>
+                <scientilla-button
+                    type="cancel"
+                    click="vm.close()">Close</scientilla-button>
+            </li>
+        </ul>
+    </form>
+</div>

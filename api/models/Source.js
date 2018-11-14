@@ -17,7 +17,10 @@ const fields = [
 
 module.exports = {
     attributes: {
-        title: 'string',
+        title: {
+            type: 'string',
+            required: true
+        },
         issn: 'string',
         eissn: 'string',
         acronym: 'string',
@@ -54,44 +57,29 @@ module.exports = {
 
     },
     searchCopies: function (source, sources, index) {
-        return sources.slice(index+1).filter(s =>
-            (s.title === source.title ||
-            s.scopusId === source.scopusId ||
-            s.issn === source.issn)
+        return sources.slice(index + 1).filter(s =>
+            source.title === s.title &&
+            ((isFieldEmpty(source.scopusId) || isFieldEmpty(s.scopusId)) || source.scopusId === s.scopusId) &&
+            ((isFieldEmpty(source.issn) || isFieldEmpty(s.issn)) || source.issn === s.issn)
         );
     },
     merge: async function (source, copies) {
-        function mergeFields(src, cp) {
-            const merged = {};
-            for (const f of fields) {
-                const sourceField = _.isString(src[f]) ? src[f].toLocaleLowerCase() : src[f];
-                const copyField = _.isString(cp[f]) ? cp[f].toLocaleLowerCase() : cp[f];
-
-                if (sourceField === copyField)
-                    merged[f] = src[f];
-                else if (sourceField && !copyField)
-                    merged[f] = src[f];
-                else if (sourceField && !copyField)
-                    merged[f] = src[f];
-                else if (!sourceField && copyField)
-                    merged[f] = cp[f];
-                else
-                    return false;
-            }
-
-            return merged;
-        }
-
         let mergedFields = source;
         const sourcesToRemove = [];
+        const conflicts = [];
 
+        sails.log.info(`Merging ${source.id} - ${source.title} with ${copies.map(c => c.id).join(', ')} --------`);
         for (const copy of copies) {
             const newMergedFields = mergeFields(mergedFields, copy);
-            if (newMergedFields) {
-                sourcesToRemove.push(copy);
-                mergedFields = newMergedFields;
+            if (!newMergedFields) {
+                conflicts.push(copy.id);
+                continue;
             }
+            sourcesToRemove.push(copy);
+            mergedFields = newMergedFields;
         }
+        if (conflicts.length > 0)
+            sails.log.info(`${conflicts.join(', ')} will not be merged because some fields are in confict`);
 
         if (_.isEqual(mergedFields, source))
             return false;
@@ -99,28 +87,20 @@ module.exports = {
         await Source.update({id: source.id}, mergedFields);
 
 
+        sails.log.info(`Deleting merged sources: ${sourcesToRemove.map(str => str.id).join(', ')}`);
         for (const sourceToRemove of sourcesToRemove) {
-            const documents = await Document.find({source: sourceToRemove.id});
-            if (documents.length) {
-                const documentIds = documents.map(d => d.id);
-                const updateDocuments = await Document.update({id: documentIds}, {source: source.id});
-                sails.log.info(`${updateDocuments.length} documents updated from source ${source.id} to ${sourceToRemove.id}`);
-            }
+            const updatedDocuments = await Document.update({source: sourceToRemove.id}, {source: source.id});
+            sails.log.info(`${updatedDocuments.length} documents updated from source ${sourceToRemove.id} to ${source.id}`);
 
             const sourcemetrisources = await SourceMetricSource.find({source: sourceToRemove.id});
             if (sourcemetrisources.length) {
                 const sourcemetrisourcesIds = sourcemetrisources.map(d => d.id);
                 await SourceMetricSource.destroy({id: sourcemetrisourcesIds});
                 for (const sms of sourcemetrisources) {
-                    const smsFound = await SourceMetricSource.findOne({
+                    await SourceMetricSource.findOrCreate({
                         sourceMetric: sms.sourceMetric,
                         source: source.id
                     });
-                    if (!smsFound)
-                        await SourceMetricSource.create({
-                            sourceMetric: sms.sourceMetric,
-                            source: source.id
-                        });
                 }
             }
 
@@ -143,3 +123,22 @@ module.exports = {
     }
 };
 
+
+function isFieldEmpty(field) {
+    return _.isNil(field) || field === '';
+}
+
+function mergeFields(src, cp) {
+    const merged = {};
+    for (const f of fields) {
+        const sourceField = _.isString(src[f]) ? src[f].toLocaleLowerCase() : src[f];
+        const copyField = _.isString(cp[f]) ? cp[f].toLocaleLowerCase() : cp[f];
+
+        if (!isFieldEmpty(sourceField) && !isFieldEmpty(copyField) && sourceField !== copyField)
+            return false;
+
+        merged[f] = (!isFieldEmpty(sourceField) && isFieldEmpty(copyField)) ? src[f] : cp[f];
+    }
+
+    return merged;
+}

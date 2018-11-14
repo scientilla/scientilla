@@ -19,20 +19,14 @@
 
     function controller(GroupsService, AuthService, ModalService) {
         const vm = this;
-        vm.openCollaboratorsManagementForm = openCollaboratorsManagementForm;
         vm.addChild = addChild;
         vm.removeChild = removeChild;
         vm.getGroups = getGroups;
         vm.isAdmin = isAdmin;
 
         vm.$onInit = function () {
-            vm.isEditorOpen = false;
             vm.selectedGroup = undefined;
         };
-
-        function openCollaboratorsManagementForm() {
-            vm.isEditorOpen = !vm.isEditorOpen;
-        }
 
         function getGroups(searchText) {
             const qs = {where: {name: {contains: searchText}}};
@@ -59,7 +53,6 @@
                                 .then(() => vm.refreshGroup()());
                     }
                 });
-
         }
 
         function isAdmin() {

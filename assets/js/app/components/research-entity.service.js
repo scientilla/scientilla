@@ -2,7 +2,6 @@
 
     angular.module("components").factory("researchEntityService", ResearchEntityServiceFactory);
 
-
     ResearchEntityServiceFactory.$inject = [
         'Restangular',
         'DocumentLabels',

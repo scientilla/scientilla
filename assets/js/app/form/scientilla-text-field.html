@@ -1,8 +1,14 @@
 <label>
     <span ng-bind-html="vm.structure.label"></span>
+    <span ng-if="vm.structure.required">*</span>
 </label>
-<input type="text"
-       class="{{vm.cssClass}}"
-       placeholder="{{vm.structure.placeholder}}"
-       ng-model="vm.model"
-       ng-disabled="vm.structure.disabled">
+<input
+    type="text"
+    class="{{vm.cssClass}}"
+    placeholder="{{vm.structure.placeholder}}"
+    ng-model="vm.model"
+    ng-disabled="vm.structure.disabled"
+    ng-class="vm.errors ? 'is-invalid' : ''">
+<scientilla-error-messages
+    class="error-messages"
+    errors="vm.errors"></scientilla-error-messages>

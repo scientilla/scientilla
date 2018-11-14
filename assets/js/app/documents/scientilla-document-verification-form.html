@@ -1,18 +1,27 @@
-<h1>Document Verification</h1>
-<div>
-    <scientilla-document-authors document="vm.document"></scientilla-document-authors>
+<div class="modal-header">
+    <h3>Document Verification</h3>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
 </div>
-<div>
-    <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
-</div>
-<div>
-    <scientilla-document-affiliations document="vm.document"></scientilla-document-affiliations>
-</div>
-<div>
+
+<div class="modal-body">
+    <scientilla-document-authors
+        document="vm.document"
+        collapsed="vm.collapsed"></scientilla-document-authors>
+
+    <h4 class="document-title" ng-bind-html='vm.document | title'></h4>
+
+    <scientilla-document-affiliations
+        document="vm.document"
+        collapsed="vm.collapsed"></scientilla-document-affiliations>
+
     <scientilla-document-authors-legend document="vm.document"></scientilla-document-authors-legend>
-</div>
-<div>
-    <small class="scientilla-document-source">
+
+    <small class="document-source">
         <span ng-if="vm.document.sourceType === 'journal' ">
             {{vm.document.journal}}
         </span>
@@ -23,81 +32,121 @@
             {{vm.document.bookTitle}}
         </span>
     </small>
-</div>
-<form>
-    <div class="form-group">
-        <label for="position">Who are you?</label>
-        <select class="form-control" id="position"
-                ng-model="vm.verificationData.position"
-                ng-options="+index as author for (index, author) in vm.document.getAuthors()">
-        </select>
-    </div>
-    <div ng-if="vm.viewAuthorshipFields()"
-         ng-hide="vm.verificationData.position<0">
+
+    <form>
         <div class="form-group">
-            <scientilla-multicomplete
+            <label for="position">Who are you?</label>
+            <div class="select-wrapper">
+                <select
+                    class="form-control"
+                    id="position"
+                    ng-model="vm.verificationData.position"
+                    ng-options="+index as author for (index, author) in vm.document.getAuthors()">
+                </select>
+            </div>
+        </div>
+
+        <div
+            ng-if="vm.viewAuthorshipFields()"
+            ng-hide="vm.verificationData.position<0">
+            
+            <div class="form-group">
+                <scientilla-multicomplete
                     items="vm.verificationData.affiliations"
                     query="vm.getInstitutesQuery"
                     filter="vm.getInstitutesFilter"
                     title="What are your affiliations for this document?">
-            </scientilla-multicomplete>
+                </scientilla-multicomplete>
+            </div>
+
+            <div class="form-group">
+                <div ng-hide="vm.verificationData.position<0">
+                    <div class="form-checkbox">
+                        <label title="Are you the corresponding author?">
+                            <input
+                                type="checkbox"
+                                ng-model="vm.verificationData.corresponding"/>
+                            <span>* Corresponding author</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div
+                    ng-if="vm.viewFirstCoauthor()"
+                    class="form-checkbox">
+                    <label title="Are you a first-coauthor?">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.verificationData.first_coauthor"/>
+                        <span>+ Co-first author</span>
+                    </label>
+                </div>
+
+                <div
+                    ng-if="vm.viewLastCoauthor()"
+                    class="form-checkbox">
+                    <label title="Are you a last-coauthor?">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.verificationData.last_coauthor"/>
+                        <span># Co-Last author</span>
+                    </label>
+                </div>
+
+                <div
+                    ng-hide="vm.verificationData.position<0"
+                    ng-if="vm.viewOralPresentation()"
+                    class="form-checkbox">
+                    <label title="Were you selected to give a talk about this work?">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.verificationData.oral_presentation"/>
+                        <span><i class="fas fa-microphone"></i> Oral presentation</span>
+                    </label>
+                </div>
+            </div>
         </div>
-        <div class="form-group"
-             ng-hide="vm.verificationData.position<0">
-            <label title="Are you the corresponding author?">
-                <input type="checkbox"
-                       ng-model="vm.verificationData.corresponding"/>
-                * - Corresponding author
-            </label>
+
+        <div ng-if="vm.document.kind === 'v'">
+            <hr/>
+            <h5>Document properties</h5>
+            <div
+                class="form-group"
+                ng-if="vm.viewSynchFields()">
+                <div class="form-checkbox">
+                    <label title="Keep the document synchronized with {{vm.document.origin}}?">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.verificationData.synchronize"/>
+                        <span>Synchronized with {{ vm.document.origin }}</span>
+                    </label>
+                </div>
+
+                <div ng-if="vm.viewSynchMessage()">
+                    This document is not synchronized
+                </div>
+            </div>
         </div>
-        <div class="form-group"
-             ng-if="vm.viewFirstCoauthor()">
-            <label title="Are you a first-coauthor?">
-                <input type="checkbox"
-                       ng-model="vm.verificationData.first_coauthor"/>
-                + - Co-first author
-            </label>
-        </div>
-        <div class="form-group"
-             ng-if="vm.viewLastCoauthor()">
-            <label title="Are you a last-coauthor?">
-                <input type="checkbox"
-                       ng-model="vm.verificationData.last_coauthor"/>
-                # - Co-Last author
-            </label>
-        </div>
-        <div class="form-group"
-             ng-hide="vm.verificationData.position<0"
-             ng-if="vm.viewOralPresentation()">
-            <label title="Were you selected to give a talk about this work?">
-                <input type="checkbox"
-                       ng-model="vm.verificationData.oral_presentation"/>
-                <span class="fa fa-microphone"></span> - Oral presentation
-            </label>
-        </div>
-    </div>
-    <hr>
-    <div ng-if="vm.document.kind === 'v'">
-        <h4>Document properties</h4>
-        <div class="form-group" ng-if="vm.viewSynchFields()">
-            <label title="Keep the document synchronized with {{vm.document.origin}}?">
-                <input type="checkbox" ng-model="vm.verificationData.synchronize"/>
-                Synchronized with {{vm.document.origin}}
-            </label>
-        </div>
-        <div class="form-group" ng-if="vm.viewSynchMessage()">
-            This document is not synchronized
-        </div>
-    </div>
-    <scientilla-button type="submit"
-                       click="vm.submit"
-                       ng-disabled="!vm.canBeSubmitted()">
-        Verify
-    </scientilla-button>
-    <scientilla-button ng-if="vm.viewCopyToDraft()"
-                       type="submit"
-                       click="vm.copyToDraft">
-        Copy to draft
-    </scientilla-button>
-    <scientilla-button type="cancel" click="vm.cancel()">Cancel</scientilla-button>
-</form>
+
+        <ul class="modal-buttons">
+            <li>
+                <scientilla-button
+                    type="submit"
+                    click="vm.submit"
+                    ng-disabled="!vm.canBeSubmitted()">Verify
+                </scientilla-button>
+            </li>
+            <li ng-if="vm.viewCopyToDraft()">
+                <scientilla-button
+                    type="submit"
+                    click="vm.copyToDraft">Copy to draft
+                </scientilla-button>
+            </li>
+            <li>
+                <scientilla-button
+                    type="cancel"
+                    click="vm.cancel()">Cancel</scientilla-button>
+            </li>
+        </ul>
+    </form>
+</div>

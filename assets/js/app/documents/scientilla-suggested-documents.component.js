@@ -48,14 +48,12 @@
         vm.searchForm = Object.assign({},
             documentSearchForm,
             {
-                newline1: {
-                    inputType: 'br'
-                },
                 rejected: {
                     inputType: 'checkbox',
                     label: 'Show discarded documents',
                     defaultValue: false,
-                    matchColumn: 'discarded'
+                    matchColumn: 'discarded',
+                    type: 'action'
                 }
             });
 
@@ -70,8 +68,11 @@
                 EventsService.DOCUMENT_COMPARE
             ], updateList);
 
-            if (researchEntity.getType() === 'user' && !researchEntity.alreadyOpenedSuggested)
-                ModalService.openWizard(['alias-edit']);
+            if (researchEntity.getType() === 'user' && !researchEntity.alreadyOpenedSuggested) {
+                addAliasModal();
+                researchEntity.alreadyOpenedSuggested = true;
+                researchEntity.save();
+            }
         };
 
         vm.$onDestroy = function () {
@@ -95,12 +96,17 @@
             delete q.where.discarded;
             query = q;
 
-
             if (!discarded)
                 return researchEntityService.getSuggestedDocuments(vm.researchEntity, query);
             else
                 return researchEntityService.getDiscardedDocuments(vm.researchEntity, query);
         }
 
+        function addAliasModal() {
+            ModalService.openWizard(['alias-edit'], {
+                isClosable: true,
+                size: 'lg'
+            });
+        }
     }
 })();

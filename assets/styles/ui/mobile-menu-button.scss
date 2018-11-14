@@ -1,0 +1,75 @@
+.mobile-menu-button-container{
+    position: absolute;
+    top: 50%;
+    right: 0px;
+    margin-top: -10px;
+    font-size: .8rem;
+    text-transform: uppercase;
+}
+
+.mobile-menu-button{
+    position: relative;
+    display: block;
+    width: 25px;
+    height: 20px;
+    transform: rotate(0deg);
+    transition: .5s ease-in-out;
+    cursor: pointer;
+    vertical-align: top;
+
+    span{
+        position: absolute;
+        left: 0;
+        display: block;
+        height: 3px;
+        width: 100%;
+        background: $white;
+        border-radius: .25rem;
+        opacity: 1;
+        transform: rotate(0deg);
+        transition: .25s ease-in-out;
+
+        &:nth-child(1) {
+            top: 0px;
+            transform-origin: left center;
+        }
+
+        &:nth-child(2) {
+            top: 8px;
+            transform-origin: left center;
+        }
+
+        &:nth-child(3) {
+            top: 16px;
+            transform-origin: left center;
+        }
+    }
+}
+
+.mobile-menu-is-open{
+    .mobile-menu-button{
+        span{
+            &:nth-child(1) {
+                left: 3px;
+                transform: rotate(45deg);
+            }
+
+            &:nth-child(2) {
+                width: 0%;
+                opacity: 0;
+            }
+
+            &:nth-child(3) {
+                top: 17px;
+                left: 3px;
+                transform: rotate(-45deg);
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(md){
+    .mobile-menu-button-container{
+        display: none;
+    }
+}

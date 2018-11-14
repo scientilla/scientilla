@@ -1,0 +1,55 @@
+.uib-datepicker-popup{
+    min-width: auto;
+    margin-top: 1rem !important;
+    padding: 0.5rem;
+    border: 1px solid $silver;
+
+    svg{
+        width: auto;
+        height: 12px;
+    }
+
+    .btn-secondary{
+        border: 1px solid $gray;
+        background: none;
+        color: $black;
+
+        &.active{
+            border: 1px solid $silver !important;
+            background: $white!important;
+
+            .text-info{
+                color: $forrest-green !important;
+            }
+        }
+    }
+
+    .uib-close{
+        margin-top: 0px;
+    }
+}
+
+.uib-button-bar{
+    @include clearfix;
+    padding: 1rem 1px 0px 1px !important;
+}
+
+.ui-notification{
+    width: 220px;
+    border-radius: .25rem;
+    box-shadow: none;
+    pointer-events: none;
+}
+
+.uib-typeahead-match{
+    &.active{
+        background: $curious-blue;
+        .dropdown-item {
+            color: $white;
+
+            &:hover{
+                background: none;
+            }
+        }
+    }
+}

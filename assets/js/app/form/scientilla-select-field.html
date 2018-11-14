@@ -1,12 +1,16 @@
-<div ng-class="{'form-inline':vm.structure.labelPosition==='inline'}">
+<div
+    class="{{vm.structure.cssClass}}"
+    ng-class="{'form-inline':vm.structure.labelPosition==='inline'}">
     <label>
         <span ng-bind-html="vm.structure.label"></span>
     </label>
-    <select
+    <div class="select-wrapper">
+        <select
             class="{{vm.cssClass}}"
             placeholder="{{vm.placeholder}}"
             ng-model="vm.model"
             ng-disabled="vm.structure.disabled"
             ng-options="option.value as option.label for option in vm.values">
     </select>
+    </div>
 </div>

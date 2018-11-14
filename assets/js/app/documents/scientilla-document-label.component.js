@@ -13,14 +13,21 @@
 
     function scientillaDocumentLabel() {
         var vm = this;
-        vm.labelNormalized = vm.label.replace(/[^\w]/gmi,'');
-        
+
+        vm.badges = [];
+        vm.badges.external = 'success';
+        vm.badges.new = 'success';
+        vm.badges.discarded = 'danger';
+        vm.badges.duplicate = 'warning';
+        vm.badges['already verified'] = 'warning';
+        vm.badges['already in drafts'] = 'warning';
+        vm.badges.unverifying = 'secondary';
+
         activate();
-        
+
         function activate() {
-            
+
         }
-        
     }
 
 })();

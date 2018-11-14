@@ -1,0 +1,96 @@
+<div class="modal-header">
+    <h3>{{ !!vm.institute.id ? 'Edit' : 'Add a new' }} institute</h3>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <form>
+        <div
+            class="form-group"
+            ng-class="vm.errors.name ? 'has-error' : ''">
+            <label for="name">Name *</label>
+            <input
+                name="name"
+                type="text"
+                class="form-control"
+                ng-model="vm.institute.name"
+                ng-class="vm.errors.name ? 'is-invalid' : ''">
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.name"></scientilla-error-messages>
+        </div>
+
+        <div class="form-group">
+            <label for="country">Country</label>
+            <input
+                name="country"
+                type="text"
+                class="form-control"
+                ng-model="vm.institute.country">
+        </div>
+
+        <div class="form-group">
+            <label for="city">City</label>
+            <input
+                name="city"
+                type="text"
+                class="form-control"
+                ng-model="vm.institute.city">
+        </div>
+
+        <div class="form-group">
+            <label for="shortname">Short name</label>
+            <input
+                name="shortname"
+                type="text"
+                class="form-control"
+                ng-model="vm.institute.shortname">
+        </div>
+
+        <div class="form-group">
+            <label for="scopusid">Scopus Id</label>
+            <input
+                name="scopusid"
+                type="text"
+                class="form-control"
+                ng-model="vm.institute.scopusId">
+        </div>
+
+        <div class="form-group">
+            <label for="group">Group</label>
+            <input
+                name="group"
+                type="text"
+                class="form-control"
+                ng-model="vm.institute.group">
+        </div>
+
+        <div class="form-group">
+            <label for="parentid">Parent Id</label>
+            <input
+                name="parentid"
+                type="text"
+                class="form-control"
+                ng-model="vm.institute.parentId">
+        </div>
+    </form>
+
+    <ul class="modal-buttons">
+        <li>
+            <scientilla-button
+                type="button"
+                click="vm.saveInstitute()">Save
+            </scientilla-button>
+        </li>
+        <li>
+            <scientilla-button
+                type="cancel"
+                click="vm.cancel()">Close</scientilla-button>
+        </li>
+    </ul>
+</div>

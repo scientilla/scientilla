@@ -56,10 +56,22 @@ async function cleanInstituteCopies() {
 }
 
 async function cleanSourceCopies() {
-    const sources = await Source.find();
     let deletedSourceIds = [];
     let updatedSourceIds = [];
-    sails.log.info(`${sources.length} sources to check`);
+
+    const emptySources = await Source.find({or: [{title: null}, {title: ''}]}).populate('documents');
+    sails.log.info(`Found ${emptySources.length} empty sources to delete`);
+    const emptySourcesWithDocsIds = emptySources.filter(s => s.documents.length > 0).map(s => s.id);
+    if (emptySourcesWithDocsIds.length > 0)
+        sails.log.info(`${emptySourcesWithDocsIds.join(', ')} could not be deleted because verified documents are associated`);
+    const emptySourcesToDeleteIds = emptySources.filter(s => !emptySourcesWithDocsIds.includes(s.id)).map(s => s.id);
+    if (emptySourcesToDeleteIds.length > 0) {
+        await Source.destroy({id: emptySourcesToDeleteIds});
+        deletedSourceIds.push(...emptySourcesToDeleteIds);
+    }
+
+    const sources = await Source.find();
+    sails.log.info(`Found ${sources.length} sources`);
     for (const [i, source] of sources.entries()) {
         if (updatedSourceIds.includes(source.id) || deletedSourceIds.includes(source.id))
             continue;
@@ -271,7 +283,7 @@ async function moveNotDuplicates(document, copy) {
 
         const NotDuplicateModel = dnd.researchEntity.getDocumentNotDuplicateModel();
         let res = await NotDuplicateModel.destroy({id: dnd.id});
-        if(!res.error){
+        if (!res.error) {
             errors.push(res);
             sails.log.warn('Error: ' + res.error);
         }
@@ -288,7 +300,7 @@ async function moveNotDuplicates(document, copy) {
         }
 
         res = await NotDuplicateModel.insert(document, copy, dnd.researchEntity);
-        if(res.error){
+        if (res.error) {
             errors.push(res);
             sails.log.warn('Error: ' + res.error);
         }

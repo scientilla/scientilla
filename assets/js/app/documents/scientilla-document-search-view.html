@@ -1,6 +1,28 @@
-<h1>Document preview</h1>
-<br>
-<scientilla-document-details document="vm.document"></scientilla-document-details>
-<br>
-<scientilla-button type="button" click="vm.copyToDrafts()">Copy to drafts</scientilla-button>
-<scientilla-button type="cancel" click="vm.cancel()">Cancel</scientilla-button>
+<div class="modal-header">
+    <h3>Document preview</h3>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <scientilla-document-details
+        document="vm.document"
+        class="document-details"></scientilla-document-details>
+    <ul class="modal-buttons">
+        <li>
+            <scientilla-button
+                type="button"
+                click="vm.copyToDrafts()">Copy to drafts</scientilla-button>
+        </li>
+        <li>
+            <scientilla-button
+                type="cancel"
+                click="vm.cancel()">Cancel</scientilla-button>
+        </li>
+    </ul>
+    </form>
+</div>

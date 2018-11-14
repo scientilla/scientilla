@@ -10,7 +10,8 @@
                 structure: '<',
                 values: '=',
                 name: '<',
-                reset: '&'
+                reset: '&',
+                errors: '<'
             }
         });
 

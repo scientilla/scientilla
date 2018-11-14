@@ -8,14 +8,16 @@
         "UsersService",
         "ModalService",
         "localStorageService",
-        "EventsService"
+        "EventsService",
+        '$rootScope'
     ];
 
     function AuthService(Restangular,
                          UsersService,
                          ModalService,
                          localStorageService,
-                         EventsService) {
+                         EventsService,
+                         $rootScope) {
 
         const service = {
             isLogged: false,
@@ -62,13 +64,17 @@
                     });
 
                     EventsService.publish(EventsService.AUTH_LOGIN, service.user);
-                    if (!service.user.alreadyAccess)
+                    if (!service.user.alreadyAccess) {
                         ModalService.openWizard([
                             'welcome',
                             'scopus-edit',
                             'tutorial',
                             'admin-tutorial',
-                        ]);
+                        ], {
+                            isClosable: false,
+                            size: 'lg'
+                        });
+                    }
                 });
         }
 
@@ -89,11 +95,17 @@
         }
 
         function login(credentials) {
-            credentials.username = credentials.username.toLowerCase();
+            
+            if (credentials.username) {
+                credentials.username = credentials.username.toLowerCase();
+            }
+
             const url = 'auths/login';
             return Restangular.all(url).post(credentials)
                 .then(function (data) {
                     return setupUserAccount(data.id);
+                }, function(res) {
+                    throw res;
                 });
         }
 

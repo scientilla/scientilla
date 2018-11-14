@@ -1,72 +1,103 @@
-<h1>Authors details</h1>
-<div>
-    <scientilla-document-authors document="vm.document"></scientilla-document-authors>
+<div class="modal-header">
+    <h3>Authors details</h3>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
 </div>
-<div>
-    <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
-</div>
-<div>
-    <scientilla-document-affiliations document="vm.document"></scientilla-document-affiliations>
-</div>
-<div>
+
+<div class="modal-body">
+    <scientilla-document-authors
+        document="vm.document"
+        collapsed="vm.collapsed"></scientilla-document-authors>
+
+    <h2 class="scientilla-document-title" ng-bind-html='vm.document | title'></h2>
+
+    <scientilla-document-affiliations
+        document="vm.document"
+        collapsed="vm.collapsed"></scientilla-document-affiliations>
+
     <small class="scientilla-document-source">
-        <span ng-if="vm.document.sourceType === 'journal' ">
+        <span ng-if="vm.document.sourceType === 'journal'">
             {{vm.document.journal}}
         </span>
-        <span ng-if="vm.document.sourceType === 'conference' ">
+        <span ng-if="vm.document.sourceType === 'conference'">
             {{vm.document.acronym}} {{vm.document.conferenceName}} {{vm.document.conferenceLocation}}
         </span>
-        <span ng-if="vm.document.sourceType === 'book' ">
+        <span ng-if="vm.document.sourceType === 'book'">
             {{vm.document.bookTitle}}
         </span>
     </small>
-</div>
-<form>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <div class="form-group">
-                <label for="position">Author</label>
-                <select class="form-control" id="position"
-                        ng-model="vm.position"
-                        ng-options="+index as author for (index, author) in vm.document.getAuthors()">
+
+    <form>
+        <div class="form-group">
+            <label for="position">Author</label>
+            <div class="select-wrapper">
+                <select
+                    class="form-control"
+                    id="position"
+                    ng-model="vm.position"
+                    ng-options="+index as author for (index, author) in vm.document.getAuthors()">
                 </select>
             </div>
         </div>
-        <div class="panel-body" ng-if="vm.author">
-            <div class="form-group">
+
+        <div class="form-group" ng-if="vm.author">
+            <div class="form-checkbox">
                 <label title="{{vm.document.synchronized ? 'The corresponding author cannot be modified if the document is synchronized with scopus' : 'Are you the corresponding author?'}}">
-                    <input type="checkbox"
-                           ng-model="vm.authorship.corresponding"
-                           ng-disabled="vm.document.synchronized"/>
-                    * - Corresponding author
+                    <input
+                        type="checkbox"
+                        ng-model="vm.authorship.corresponding"
+                        ng-disabled="vm.document.synchronized"/>
+                    <span>* - Corresponding author</span>
                 </label>
             </div>
-            <div class="form-group"
-                 ng-if="vm.viewFirstCoauthor()">
+
+            <div class="form-checkbox" ng-if="vm.viewFirstCoauthor()">
                 <label title="Are you a first-coauthor?">
-                    <input type="checkbox"
-                           ng-model="vm.authorship.first_coauthor"/>
-                    + - Co-first author
+                    <input
+                        type="checkbox"
+                        ng-model="vm.authorship.first_coauthor"/>
+                    <span>+ Co-first author</span>
                 </label>
             </div>
-            <div class="form-group"
-                 ng-if="vm.viewLastCoauthor()">
+
+            <div class="form-checkbox" ng-if="vm.viewLastCoauthor()">
                 <label title="Are you a last-coauthor?">
-                    <input type="checkbox"
-                           ng-model="vm.authorship.last_coauthor"/>
-                    # - Co-Last author
+                    <input
+                        type="checkbox"
+                        ng-model="vm.authorship.last_coauthor"/>
+                    <span># Co-Last author</span>
                 </label>
             </div>
-            <div class="form-group"
-                 ng-hide="vm.authorship.position<0">
-                <label title="Was this author selected to give a talk about this work?">
-                    <input type="checkbox"
-                           ng-model="vm.authorship.oral_presentation"/>
-                    <span class="fa fa-microphone"></span> - Oral presentation
-                </label>
+
+            <div ng-hide="vm.authorship.position < 0">
+                <div class="form-checkbox">
+                    <label title="Was this author selected to give a talk about this work?">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.authorship.oral_presentation"/>
+                        <span>
+                            <i class="fas fa-microphone fa-left"></i>Oral presentation
+                        </span>
+                    </label>
+                </div>
             </div>
         </div>
-    </div>
-    <scientilla-button type="submit" click="vm.submit">Save</scientilla-button>
-    <scientilla-button type="cancel" click="vm.cancel">Close</scientilla-button>
-</form>
+
+        <ul class="modal-buttons">
+            <li>
+                <scientilla-button
+                    type="submit"
+                    click="vm.submit">Save</scientilla-button>
+            </li>
+            <li>
+                <scientilla-button
+                    type="cancel"
+                    click="vm.cancel">Close</scientilla-button>
+            </li>
+        </ul>
+    </form>
+</div>

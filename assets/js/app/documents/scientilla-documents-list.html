@@ -1,49 +1,51 @@
 <scientilla-filter
-        search-form-structure="vm.searchForm"
-        on-filter="vm.onFilter"
-        elements="vm.documents"
-        empty-list-message="No documents found">
+    search-form-structure="vm.searchForm"
+    on-filter="vm.onFilter"
+    elements="vm.documents"
+    empty-list-message="No documents found">
+
     <scientilla-multicheck>
         <buttons>
-            <scientilla-multicheck-button on-click="vm.exportCsvDocuments">
-                <span class="fa fa-download"></span>
-                Export as CSV
+            <scientilla-multicheck-button
+                subject="Export as CSV"
+                on-click="vm.exportCsvDocuments">
+                <i class="fas fa-download fa-left"></i>Export as CSV
             </scientilla-multicheck-button>
-            <scientilla-multicheck-button on-click="vm.exportBibtexDocuments">
-                <span class="fa fa-download"></span>
-                Export as BibTeX
+            <scientilla-multicheck-button
+                subject="Export as BibTeX"
+                on-click="vm.exportBibtexDocuments">
+                <i class="fas fa-download fa-left"></i>Export as BibTeX
             </scientilla-multicheck-button>
         </buttons>
         <item-list>
             <scientilla-checkable ng-repeat="d in vm.documents" item="d">
-                <div class="row">
-                    <div class="col-md-10">
-                        <scientilla-document document="d" section="vm.section"></scientilla-document>
-                    </div>
-                    <div ng-if="vm.editable" class="col-md-2 text-right">
-                        <h3>
-                            <button class="btn btn-primary"
-                                    ng-click="vm.unverifyDocument(d)"
-                                    ng-disabled="d.isUnverifying()"
-                                    type="button"
-                                    uib-tooltip="Unlink the document from your profile"
-                                    tooltip-placement="top"
-                                    tooltip-class="scientilla-tooltip"
-                                    ng-if="!d.isComparable">
-                                <span class="fa fa-remove"></span>
-                                Unverify
-                            </button>
-                            <button class="btn btn-compare"
-                                    ng-click="vm.compareDocuments(d, d.getComparisonDuplicate())"
-                                    type="button"
-                                    uib-tooltip="Open the comparison form"
-                                    tooltip-placement="top"
-                                    tooltip-class="scientilla-tooltip"
-                                    ng-if="d.isComparable">
-                                Compare
-                            </button>
-                        </h3>
-                    </div>
+                <scientilla-document
+                    document="d"
+                    section="vm.section"
+                    class="document-container"></scientilla-document>
+                <div class="document-row-actions" ng-if="vm.editable">
+                    <button
+                        class="btn btn-primary"
+                        ng-click="vm.unverifyDocument(d)"
+                        ng-disabled="d.isUnverifying()"
+                        type="button"
+                        uib-tooltip="Unlink the document from your profile"
+                        tooltip-placement="top"
+                        tooltip-class="text-left"
+                        ng-if="!d.isComparable">
+                        <i class="fas fa-times fa-left"></i>
+                        Unverify
+                    </button>
+                    <button
+                        class="btn btn-warning"
+                        ng-click="vm.compareDocuments(d, d.getComparisonDuplicate())"
+                        type="button"
+                        uib-tooltip="Open the comparison form"
+                        tooltip-placement="top"
+                        tooltip-class="text-left"
+                        ng-if="d.isComparable">
+                        <i class="fas fa-exchange-alt fa-left"></i>Compare
+                    </button>
                 </div>
             </scientilla-checkable>
         </item-list>

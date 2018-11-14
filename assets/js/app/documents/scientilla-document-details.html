@@ -1,67 +1,68 @@
-<div class="scientilla-document-details-authors">
-    <scientilla-document-authors document="vm.document"></scientilla-document-authors>
-</div>
-<div class="scientilla-document-details-title">
-    <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
-</div>
-<div>
-    <scientilla-document-affiliations document="vm.document"></scientilla-document-affiliations>
-</div>
-<div>
-    <scientilla-document-authors-legend document="vm.document"></scientilla-document-authors-legend>
-</div>
+<scientilla-document-authors
+    document="vm.document"
+    collapsed="vm.collapsed"></scientilla-document-authors>
 
+<h3 class="document-title" ng-bind-html='vm.document | title'></h3>
 
-<div ng-if="vm.document.abstract" class="scientilla-document-details-abstract">
-    <hr>
+<scientilla-document-affiliations
+    document="vm.document"
+    collapsed="vm.collapsed"></scientilla-document-affiliations>
+
+<scientilla-document-authors-legend document="vm.document"></scientilla-document-authors-legend>
+
+<div
+    ng-if="vm.document.abstract"
+    class="document-details-abstract">
     <h4>Abstract</h4>
-    {{vm.document.abstract}}
+    <div>
+        {{ vm.document.abstract }}
+    </div>
 </div>
 
-<div class="scientilla-document-details-source">
-    <hr>
+<div class="document-details-source">
     <scientilla-document-source document="vm.document"></scientilla-document-source>
 
-    <small>
+    <small ng-if="vm.bibliographicInformations">
         {{vm.bibliographicInformations.join(', ')}}
     </small>
-    <small>
+    <small ng-if="vm.document.year">
         ({{vm.document.year}})
     </small>
-    <div>
-        <small ng-if="vm.document.doi" class="scientilla-document-doi">
-            <span ng-bind-html='vm.document | doi'></span>
-        </small>
-    </div>
-    <small ng-if="vm.sourceType">
-        <label>Source type:</label> {{vm.sourceType}}
-    </small>
-    <small ng-if="vm.type">
-        <label>Document type:</label> {{vm.type}}
-    </small>
 
+    <ul
+        class="document-details-info" 
+        ng-if="vm.document.doi || vm.sourceType || vm.type">
+        <li ng-if="vm.document.doi">
+            <span ng-bind-html='vm.document | doi'></span>
+        </li>
+        <li ng-if="vm.sourceType">
+            <label class="inline-block">Source type:</label> {{vm.sourceType}}
+        </li>
+        <li ng-if="vm.type">
+            <label class="inline-block">Document type:</label> {{vm.type}}
+        </li>
+    </ul>
 </div>
 
-<hr>
-
-<div class="scientilla-document-details-ids">
+<div
+    ng-if="vm.document.scopusId || vm.document.wosId"
+    class="document-details-ids">
     <div ng-if="vm.document.scopusId">
-        <small>
-            <label>Scopus id:</label>
-            <span ng-if="vm.document.hasValidScopusId()">
-                {{vm.document.scopusId}}
-                <a href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document.scopusId}}&origin=inward"
-                   target="_blank">[View at Scopus]</a>
-            </span>
-            <span ng-if="!vm.document.hasValidScopusId()">
-                <span class="text-line-through">{{vm.document.scopusId}}</span>
-                <span class="text-danger">- This ID is not available in Scopus</span>
-            </span>
-        </small>
+        <label class="inline-block">Scopus id:</label>
+        <span ng-if="vm.document.hasValidScopusId()">
+            {{vm.document.scopusId}}
+            <a
+                href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document.scopusId}}&origin=inward"
+                target="_blank">[View at Scopus]</a>
+        </span>
+
+        <span ng-if="!vm.document.hasValidScopusId()">
+            <s class="text-danger">{{vm.document.scopusId}}</s>
+            <span class="text-danger">- This ID is not available in Scopus</span>
+        </span>
     </div>
+
     <div ng-if="vm.document.wosId">
-        <small>
-            <label>WOS id:</label> {{vm.document.wosId}}
-        </small>
+        <label class="inline-block">WOS id:</label> {{vm.document.wosId}}
     </div>
 </div>

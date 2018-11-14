@@ -1,0 +1,22 @@
+.login-view{
+    display: flex;
+    padding: 7rem 0px;
+    align-items: center;
+
+    .login-description{
+        margin-bottom: 5rem;
+    }
+
+    .login-title{
+        @include h2;
+    }
+}
+
+@include media-breakpoint-up(md) {
+    .login-view{
+        .login-description{
+            max-width: 450px;
+            margin: 0px auto;
+        }
+    }
+}

@@ -11,10 +11,11 @@
         'DocumentLabels',
         'DocumentKinds',
         '$q',
-        '$http'
+        '$http',
+        'FormService'
     ];
 
-    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, DocumentLabels, DocumentKinds, $q, $http) {
+    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, DocumentLabels, DocumentKinds, $q, $http, FormService) {
         return {
             create: function (researchEntity, reService) {
                 var service = {};
@@ -60,7 +61,9 @@
                     return ModalService.multipleChoiceConfirm(
                         'Delete',
                         'This action will permanently delete this document.\n Do you want to proceed?',
-                        ['Proceed'])
+                        ['Proceed'],
+                        'Cancel',
+                        true)
                         .then(res => {
                                 if (res === 0)
                                     researchEntityService
@@ -113,7 +116,9 @@
                             'Unverifying a document removes it from your profile, you can choose:\n\n' +
                             'Move to drafts: to move the document in your drafts.\n' +
                             'Remove: to remove it completely from your profile.',
-                            ['Move to drafts', 'Remove'])
+                            ['Move to drafts', 'Remove'],
+                            'Cancel',
+                            true)
                         .then(function (buttonIndex) {
                             switch (buttonIndex) {
                                 case -1:

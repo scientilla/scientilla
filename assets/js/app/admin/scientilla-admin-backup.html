@@ -1,15 +1,27 @@
-<h3>Backup Management</h3>
-<ul class="list-group" id="dump-list">
+<h2>Backup management</h2>
+
+<ul
+    class="list-group"
+    ng-if="vm.dumps.length > 0">
     <li class="list-group-item"
         ng-repeat="dump in vm.dumps"
         ng-class="{active: dump.selected}"
         ng-click="vm.toggleDump(dump.filename)">
-        {{dump.filename}}
+        {{ dump.filename }}
     </li>
 </ul>
-<br>
-<scientilla-button ng-disabled="vm.loading" ng-click="vm.makeBackup()">Make Backup</scientilla-button>
-<scientilla-button ng-disabled="!vm.dumpSelected || vm.loading" ng-click="vm.restoreBackup()">Restore Backup
-</scientilla-button>
-<br>
+
+<ul class="backup-actions">
+    <li>
+        <scientilla-button
+            ng-disabled="vm.loading"
+            ng-click="vm.makeBackup()">Make Backup</scientilla-button>
+    </li>
+    <li>
+        <scientilla-button
+            ng-disabled="!vm.dumpSelected || vm.loading"
+            ng-click="vm.restoreBackup()">Restore Backup</scientilla-button>
+    </li>
+</ul>
+
 <span ng-show="vm.loading">Loading...</span>

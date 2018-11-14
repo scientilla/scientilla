@@ -11,22 +11,23 @@
 
     controller.$inject = [
         'Restangular',
-        'Notification'
+        'Notification',
+        'ModalService',
+        'EventsService'
     ];
 
-    function controller(Restangular, Notification) {
+    function controller(Restangular, Notification, ModalService, EventsService) {
         const vm = this;
         vm.getInstitutes = getInstitutes;
         vm.formatInstitute = formatInstitute;
-        vm.saveInstitute = saveInstitute;
+        vm.editInstitute = editInstitute;
         vm.deleteInstitute = deleteInstitute;
-        vm.createInstitute = createInstitute;
         vm.onInstituteSearchKey = onInstituteSearchKey;
+        vm.openInstituteModal = openInstituteModal;
 
         vm.$onInit = function () {
-            vm.newInstitute = {};
+            vm.institute = {};
         };
-
 
         function getInstitutes(searchText) {
 
@@ -49,38 +50,11 @@
             return institute.name + ' | ' + institute.id + ' | ' + institute.parentId;
         }
 
-        function saveInstitute() {
-            if (!vm.selectedInstitute)
-                return;
-
-            for (const field in vm.selectedInstitute)
-                if (vm.selectedInstitute[field] === '')
-                    vm.selectedInstitute[field] = null;
-
-            vm.selectedInstitute.save()
-                .then(() => {
-                    Notification.info('saved');
-                    vm.selectedInstitute = undefined;
-                })
-                .catch(e => Notification.warning(e.data.details));
-        }
-
-        function createInstitute() {
-            if (!vm.newInstitute.name) return;
-            Restangular.all('institutes').post(vm.newInstitute)
-                .then(() => {
-                    Notification.info('Created');
-                    vm.newInstitute = {};
-                })
-                .catch(e => Notification.warning(e.data.details));
-        }
-
         function deleteInstitute() {
             if (!vm.selectedInstitute || !vm.selectedInstitute.id) return;
-            if (!confirm('Delete this institute')) return;
             Restangular.one('institutes', vm.selectedInstitute.id).remove()
                 .then(() => {
-                    Notification.info('Deleted');
+                    Notification.info('Institute is been deleted!');
                     vm.selectedInstitute = undefined;
                 })
                 .catch(e => Notification.warning(e.data.details));
@@ -93,6 +67,23 @@
             }
         }
 
+        function openInstituteModal() {
+            EventsService.subscribe(vm, EventsService.INSTITUTE_RESTORED, function(event, institute) {
+                vm.institute = angular.copy(institute);
+            });
+
+            ModalService
+                .openInstituteModal(vm.institute);
+        }
+
+        function editInstitute() {
+            EventsService.subscribe(vm, EventsService.INSTITUTE_RESTORED, function(event, institute) {
+                vm.selectedInstitute = angular.copy(institute);
+            });
+
+            ModalService
+                .openInstituteModal(vm.selectedInstitute);
+        }
     }
 
 })();

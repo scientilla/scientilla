@@ -38,29 +38,30 @@
                 inputType: 'text',
                 label: 'Name',
                 matchColumn: 'name',
-                matchRule: 'contains'
+                matchRule: 'contains',
+                type: 'field'
             },
             type: {
                 inputType: 'select',
                 label: 'Type',
                 matchColumn: 'type',
                 values: typeSelectValues,
+                type: 'field'
             },
             code: {
                 inputType: 'text',
                 label: 'CDR/CODE',
                 matchColumn: 'code',
                 matchRule: 'contains',
-                ngIf: isAdmin
-            },
-            newline1: {
-                inputType: 'br'
+                ngIf: isAdmin,
+                type: 'field'
             },
             active: {
                 inputType: 'checkbox',
                 label: 'Active',
                 matchColumn: 'active',
-                defaultValue: true
+                defaultValue: true,
+                type: 'action'
             }
         };
 

@@ -1,0 +1,51 @@
+*{
+    box-sizing: border-box;
+}
+
+html{
+    height: 100%;
+
+    &.js{
+        body{
+            opacity: 0;
+            filter: alpha(opacity=0);
+            transition: .2s opacity;
+
+            &.loaded{
+                opacity: 1;
+                filter: alpha(opacity=100);
+            }
+        }
+    }
+}
+
+body{
+    position: relative;
+    min-height: 100%;
+
+    &.hide-overflow{
+        overflow: hidden;
+    }
+}
+
+.main-view{
+    position: relative;
+    z-index: 1;
+    padding: 2rem 0px;
+    flex: 1;
+    //overflow-x: hidden;
+    //overflow-y: visible;
+}
+
+.main-container{
+    position: relative;
+    z-index: 1;
+    padding-top: 7rem;
+    padding-bottom: 6rem;
+}
+
+@include media-breakpoint-up(sm){
+    .main-container{
+        display: flex;
+    }
+}

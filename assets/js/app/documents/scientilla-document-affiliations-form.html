@@ -1,18 +1,27 @@
-<h1>Authors affiliations</h1>
-<div>
-    <scientilla-document-authors document="vm.document"></scientilla-document-authors>
+<div class="modal-header">
+    <h3>Authors affiliations</h3>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
 </div>
-<div>
-    <span class="scientilla-document-title" ng-bind-html='vm.document | title'></span>
-</div>
-<div>
-    <scientilla-document-affiliations document="vm.document"></scientilla-document-affiliations>
-</div>
-<div>
+
+<div class="modal-body">
+    <scientilla-document-authors
+        document="vm.document"
+        collapsed="vm.collapsed"></scientilla-document-authors>
+
+    <h2 class="document-title" ng-bind-html='vm.document | title'></h2>
+
+    <scientilla-document-affiliations
+        document="vm.document"
+        collapsed="vm.collapsed"></scientilla-document-affiliations>
+
     <scientilla-document-authors-legend document="vm.document"></scientilla-document-authors-legend>
-</div>
-<div>
-    <small class="scientilla-document-source">
+
+    <small class="document-source">
         <span ng-if="vm.document.sourceType === 'journal' ">
             {{vm.document.journal}}
         </span>
@@ -23,29 +32,42 @@
             {{vm.document.bookTitle}}
         </span>
     </small>
-</div>
-<form>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <div class="form-group">
-                <label for="position">Author</label>
-                <select class="form-control" id="position"
-                        ng-model="vm.position"
-                        ng-options="+index as author for (index, author) in vm.document.getAuthors()">
+
+    <form>
+        <div class="form-group">
+            <label for="position">Author</label>
+            <div class="select-wrapper">
+                <select
+                    class="form-control"
+                    id="position"
+                    ng-model="vm.position"
+                    ng-options="+index as author for (index, author) in vm.document.getAuthors()">
                 </select>
             </div>
         </div>
-        <div class="panel-body" ng-if="vm.author">
-            <div class="form-group">
-                <scientilla-multicomplete
-                        items="vm.authorship.affiliations"
-                        query="vm.getInstitutesQuery"
-                        filter="vm.getInstitutesFilter"
-                        title="Affiliations of {{vm.author}}">
-                </scientilla-multicomplete>
-            </div>
+
+        <div
+            class="form-group"
+            ng-if="vm.author">
+            <scientilla-multicomplete
+                items="vm.authorship.affiliations"
+                query="vm.getInstitutesQuery"
+                filter="vm.getInstitutesFilter"
+                title="Affiliations of {{vm.author}}">
+            </scientilla-multicomplete>
         </div>
-    </div>
-    <scientilla-button type="submit" click="vm.submit">Save</scientilla-button>
-    <scientilla-button type="cancel" click="vm.cancel">Close</scientilla-button>
-</form>
+
+        <ul class="modal-buttons">
+            <li>
+                <scientilla-button
+                    type="submit"
+                    click="vm.submit">Save</scientilla-button>
+            </li>
+            <li>
+                <scientilla-button
+                    type="cancel"
+                    click="vm.cancel">Close</scientilla-button>
+            </li>
+        </ul>
+    </form>
+</div>

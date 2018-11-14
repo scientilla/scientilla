@@ -1,22 +1,51 @@
 <scientilla-backend-layout>
-    <div id="scientilla-chart-container">
+    <div class="summary summary-profile">
         <uib-tabset active="active">
-            <uib-tab index="0" heading="Overview" ng-click="vm.changeTab('overview')">
-                <summary-overview ng-if="vm.chartsData" charts-data="vm.chartsData"></summary-overview>
-                <span ng-if="!vm.chartsData" class="fa fa-refresh fa-5x fa-spin"></span>
+            <uib-tab
+                index="0"
+                heading="Overview"
+                ng-click="vm.changeTab('overview')">
+                <summary-overview
+                    ng-if="vm.chartsData"
+                    charts-data="vm.chartsData"></summary-overview>
+
+                <div
+                    ng-if="!vm.chartsData"
+                    class="sync-container">
+                    <i class="fas fa-sync-alt fa-spin"></i>
+                </div>
             </uib-tab>
-            <uib-tab index="1" heading="Metrics" ng-click="vm.changeTab('metrics')">
-                <summary-metrics ng-if="vm.chartsData" charts-data="vm.chartsData"></summary-metrics>
-                <span ng-if="!vm.chartsData" class="fa fa-refresh fa-5x fa-spin"></span>
+
+            <uib-tab
+                index="1"
+                heading="Metrics"
+                ng-click="vm.changeTab('metrics')">
+                <summary-metrics
+                    ng-if="vm.chartsData"
+                    charts-data="vm.chartsData"></summary-metrics>
+
+                <div
+                    ng-if="!vm.chartsData"
+                    class="sync-container">
+                    <i class="fas fa-sync-alt fa-spin"></i>
+                </div>
             </uib-tab>
-            <uib-tab ng-if="vm.isMainGroup()" index="2" heading="Data calculated on {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}">
-                <div class="scientilla-chart-widget" style="height: 200px;padding:10px">
-                    <scientilla-button click="vm.recalculate">Recalculate data</scientilla-button>
-                    <br>
-                    <span ng-if="vm.isLoading" class="fa fa-refresh fa-5x fa-spin"></span>
+
+            <uib-tab
+                ng-if="vm.isMainGroup()"
+                index="2"
+                heading="Data calculated on {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}">
+                <div class="scientilla-chart-widget">
+                    <scientilla-button
+                        click="vm.recalculate">Recalculate data</scientilla-button>
+                </div>
+
+                <div
+                    ng-if="vm.isLoading"
+                    class="sync-container">
+                    <i class="fas fa-sync-alt fa-spin"></i>
                 </div>
             </uib-tab>
         </uib-tabset>
     </div>
-
 </scientilla-backend-layout>

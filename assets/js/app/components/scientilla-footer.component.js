@@ -11,13 +11,6 @@
     scientillaFooter.$inject = [];
 
     function scientillaFooter() {
-        const vm = this;
 
-        vm.$onInit = function () {
-        };
-
-        vm.$onDestroy = function () {
-        };
     }
-
 })();
