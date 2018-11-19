@@ -34,7 +34,6 @@
             EventsService.unsubscribeAll(vm);
         };
 
-
         function refresh() {
             vm.isLogged = AuthService.isLogged;
             vm.user = AuthService.user;
