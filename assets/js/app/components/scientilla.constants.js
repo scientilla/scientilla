@@ -223,14 +223,13 @@
             matchColumn: 'sourceType',
             type: 'field'
         }
-
     };
 
     const documentFieldsRules = {
         authorsStr: {
             allowNull: false,
             regex: /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)*$/,
-            message: 'Author string is not valid. It should be in the form \"E. Molinari, F. Bozzini, F. Semprini\".'
+            message: 'Author string is not valid. It should be in the form \"Molinari E., Bozzini F., Semprini F.\".'
 
         },
         scopusId: {

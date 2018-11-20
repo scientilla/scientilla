@@ -11,7 +11,7 @@
                     placeholder="Add alias and press Enter"
                     ng-model="vm.newAlias"
                     ng-class="{'is-invalid':!vm.newAliasIsCorrect}"
-                    ng-keydown="$event.keyCode === 13 && vm.newAlias.length > 0 && vm.addAlias()"/>
+                    ng-keydown="$event.keyCode === 13 && vm.addAlias($event)"/>
                 <div
                     ng-if="!vm.newAliasIsCorrect && !vm.newAliasIsDuplicate"
                     class="invalid-feedback">
@@ -36,7 +36,6 @@
             </div>
         </li>
     </ul>
-
 
     <div
         ng-if="vm.aliases.length > 0"

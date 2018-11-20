@@ -15,6 +15,7 @@
             ng-class="vm.errors.name ? 'has-error' : ''">
             <label for="name">Name *</label>
             <input
+                id="name"
                 name="name"
                 type="text"
                 class="form-control"
@@ -28,6 +29,7 @@
         <div class="form-group">
             <label for="country">Country</label>
             <input
+                id="country"
                 name="country"
                 type="text"
                 class="form-control"
@@ -37,6 +39,7 @@
         <div class="form-group">
             <label for="city">City</label>
             <input
+                id="city"
                 name="city"
                 type="text"
                 class="form-control"
@@ -46,6 +49,7 @@
         <div class="form-group">
             <label for="shortname">Short name</label>
             <input
+                id="shortname"
                 name="shortname"
                 type="text"
                 class="form-control"
@@ -55,6 +59,7 @@
         <div class="form-group">
             <label for="scopusid">Scopus Id</label>
             <input
+                id="scopusid"
                 name="scopusid"
                 type="text"
                 class="form-control"
@@ -64,6 +69,7 @@
         <div class="form-group">
             <label for="group">Group</label>
             <input
+                id="group"
                 name="group"
                 type="text"
                 class="form-control"
@@ -73,24 +79,25 @@
         <div class="form-group">
             <label for="parentid">Parent Id</label>
             <input
+                id="parentid"
                 name="parentid"
                 type="text"
                 class="form-control"
                 ng-model="vm.institute.parentId">
         </div>
-    </form>
 
-    <ul class="modal-buttons">
-        <li>
-            <scientilla-button
-                type="button"
-                click="vm.saveInstitute()">Save
-            </scientilla-button>
-        </li>
-        <li>
-            <scientilla-button
-                type="cancel"
-                click="vm.cancel()">Close</scientilla-button>
-        </li>
-    </ul>
+        <ul class="modal-buttons">
+            <li>
+                <scientilla-button
+                    type="submit"
+                    click="vm.saveInstitute()">Save
+                </scientilla-button>
+            </li>
+            <li>
+                <scientilla-button
+                    type="cancel"
+                    click="vm.cancel()">Close</scientilla-button>
+            </li>
+        </ul>
+    </form>
 </div>

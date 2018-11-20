@@ -38,26 +38,34 @@
         vm.$onDestroy = function () {
         };
 
-        function addAlias() {
-            const newAlias = capitalizeAll(vm.newAlias, [' ', '-', '.']);
+        function addAlias($event = false) {
+            let newAlias = '';
 
-            if (typeof(vm.aliases) !== 'undefined') {
-                if (vm.aliases.filter(a => a.str === newAlias).length >= 1) {
-                    vm.newAliasIsDuplicate = true;
+            if (vm.newAlias.length > 0) {
+                newAlias = capitalizeAll(vm.newAlias, [' ', '-', '.']);
+
+                if (typeof(vm.aliases) !== 'undefined') {
+                    if (vm.aliases.filter(a => a.str === newAlias).length >= 1) {
+                        vm.newAliasIsDuplicate = true;
+                    } else {
+                        vm.newAliasIsDuplicate = false;
+                    }
                 } else {
-                    vm.newAliasIsDuplicate = false;
+                    vm.aliases = [];
                 }
-            } else {
-                vm.aliases = [];
+
+                if (newAlias.match(documentFieldsRules.authorsStr.regex) && !vm.newAliasIsDuplicate) {
+                    vm.aliases.push({str: newAlias});
+                    vm.newAlias = '';
+                    vm.newAliasIsCorrect = true;
+                    vm.newAliasIsDuplicate = false;
+                } else {
+                    vm.newAliasIsCorrect = false;
+                }
             }
 
-            if (newAlias.match(documentFieldsRules.authorsStr.regex) && !vm.newAliasIsDuplicate) {
-                vm.aliases.push({str: newAlias});
-                vm.newAlias = '';
-                vm.newAliasIsCorrect = true;
-                vm.newAliasIsDuplicate = false;
-            } else {
-                vm.newAliasIsCorrect = false;
+            if ($event) {
+                $event.preventDefault();
             }
         }
 
