@@ -49,6 +49,7 @@
         }
 
         .index-container{
+            min-height: calc(100% - 3rem);
             margin-bottom: 3rem;
             padding: 2rem 5rem;
             border: 1px solid $silver;
@@ -109,14 +110,14 @@
             }
         }
 
-        .document-totals{
-            display: flex;
+        .document-totals-chart-container,
+        .h-index-chart-container{
             min-height: calc(100% - 3rem);
             margin-bottom: 3rem;
-            padding: 2rem;
+            padding: 2rem 5rem;
             border: 1px solid $silver;
             border-radius: .25rem;
-            align-items: center;
+            text-align: center;
         }
 
         .metric-chart-container{
@@ -151,6 +152,18 @@
     }
 }
 
+@include media-breakpoint-up(sm) {
+    .summary{
+        &.summary-profile{
+            .index-listing{
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto;
+            }
+        }
+    }
+}
+
 @include media-breakpoint-between(sm, lg) {
     .summary{
         &.summary-profile{
@@ -158,18 +171,6 @@
                 .chart{
                     padding-bottom: 43.95%;
                 }
-            }
-        }
-    }
-}
-
-@include media-breakpoint-between(sm, md) {
-    .summary{
-        &.summary-profile{
-            .index-listing{
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: auto;
             }
         }
     }
@@ -258,7 +259,6 @@
                 .preview-chart-container{
                     &:nth-child(2){
                         @include set-grid(2,1,1,1);
-                        padding-top: 1.2rem;
                     }
 
                     &:nth-child(3){
@@ -299,7 +299,7 @@
                 .preview-chart-container{
                     &:nth-child(2){
                         @include set-grid(1,2,1,1);
-                        padding-top: 1.2rem;
+                        padding-top: 0.6rem;
                     }
 
                     &:nth-child(3){
@@ -316,12 +316,6 @@
                         @include h6;
                     }
                 }
-            }
-
-            .index-listing{
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: auto;
             }
         }
     }

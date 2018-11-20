@@ -30,11 +30,11 @@
 
         vm.$onInit = () => {
             vm.profileSummary.registerTab(vm);
-            vm.reload(vm.chartsData);
         };
 
         vm.reload = (chartsData) => {
             vm.charts = {};
+            vm.charts.documentTotals = ChartService.getDocumentTotals(chartsData);
             vm.charts.hindexPerYear = ChartService.getHindexPerYear(chartsData);
             vm.charts.citationsPerDocumentYear = ChartService.getCitationsPerDocumentYear(chartsData);
             vm.charts.citationsPerYear = ChartService.getCitationsPerYear(chartsData);
@@ -132,26 +132,6 @@
                 icons: ['icons-if icon-if', 'icons-if far fa-file-alt'],
                 format: 2
             });
-
-            vm.documentTotals = [
-                {
-                    title: 'Journals',
-                    value: ChartService.getTotalFilteredJournals(chartsData)
-                },
-                {
-                    title: 'Conferences',
-                    value: ChartService.getTotalFilteredConferences(chartsData)
-                },
-                {
-                    title: 'Books',
-                    value: ChartService.getTotalFilteredBooks(chartsData)
-                },
-                {
-                    title: 'Book Series',
-                    value: ChartService.getTotalFilteredBookSeries(chartsData)
-                },
-            ];
-
         };
 
         function showInfo() {

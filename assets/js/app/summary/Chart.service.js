@@ -54,7 +54,7 @@
                         left: 50
                     },*/
                     duration: 300,
-                    reduceXTicks: false,
+                    reduceXTicks: true,
                     xAxis: {
                         tickFormat: d => d3.format('')(d)
                     },
@@ -203,6 +203,7 @@
                         showLegend: false,
                         showControls: false,
                         useInteractiveGuideline: true,
+                        reduceXTicks: true,
                         //height: 300,
                         xAxis: {
                             rotateLabels: 50,
@@ -284,6 +285,7 @@
                         showLabels: true,
                         showLegend: true,
                         useInteractiveGuideline: true,
+                        reduceXTicks: true,
                         //height: 420,
                         duration: 300,
                         x: d => d.year,
@@ -432,6 +434,46 @@
             return getTotal(chartsData, ['totalIfPerYear']);
         };
 
+        service.getDocumentTotals = (chartsData) => {
+            let documentTotals = [
+                {
+                    title: 'Journals',
+                    value: service.getTotalFilteredJournals(chartsData)
+                },
+                {
+                    title: 'Conferences',
+                    value: service.getTotalFilteredConferences(chartsData)
+                },
+                {
+                    title: 'Books',
+                    value: service.getTotalFilteredBooks(chartsData)
+                },
+                {
+                    title: 'Book Series',
+                    value: service.getTotalFilteredBookSeries(chartsData)
+                },
+            ];
+
+            const baseOptions = {
+                chart: {
+                    type: 'pieChart',
+                    x: d => d.type,
+                    y: d => d.value,
+                    labelThreshold: 0.02,
+                    labelSunbeamLayout: true,
+                    showLabels: false
+                }
+            };
+
+            return {
+                title: 'Document Totals',
+                data: documentTotals.map(d => ({
+                    type: d.title,
+                    value: parseInt(d.value)
+                })),
+                options: baseOptions
+            };
+        };
 
         return service;
 
@@ -505,7 +547,7 @@
                     x: d => d.year,
                     y: d => d.value,
                     duration: 300,
-                    reduceXTicks: false,
+                    reduceXTicks: true,
                     xAxis: {
                         axisLabel: '',
                         rotateLabels: 50,
