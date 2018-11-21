@@ -19,6 +19,22 @@ const fields = [
     'oral_presentation'
 ];
 
+const documentFields = [
+    'researchEntity',
+    'affiliations',
+    'corresponding',
+    'first_coauthor',
+    'last_coauthor',
+    'oral_presentation'
+];
+
+const researchEntityFields = [
+    'researchEntity',
+    'synchronize',
+    'public',
+    'favorite'
+];
+
 module.exports = _.merge({}, BaseModel, {
 
     attributes: {
@@ -43,8 +59,8 @@ module.exports = _.merge({}, BaseModel, {
         last_coauthor: 'boolean',
         oral_presentation: 'boolean',
         unverify: function () {
-            this.researchEntity = null;
-            this.synchronize = null;
+            const empty = Authorship.getEmpty(this.authorStr, this.position, this.document);
+            researchEntityFields.forEach(f => this[f] = empty[f]);
             return this.savePromise();
         },
         isVerified() {
