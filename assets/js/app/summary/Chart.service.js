@@ -544,7 +544,7 @@
                     y: d => d.value,
                     labelThreshold: 0.02,
                     labelSunbeamLayout: true,
-                    showLabels: false,
+                    showLabels: true,
                     legendPosition: 'right'
                 }
             };

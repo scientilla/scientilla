@@ -27,12 +27,10 @@
         vm.charts = {};
 
         vm.showInfo = showInfo;
-        vm.selectLayout = selectLayout;
 
         vm.$onInit = () => {
             vm.profileSummary.registerTab(vm);
-
-            vm.selectedLayout = 'small';
+            vm.reload();
         };
 
         vm.reload = (chartsData) => {
@@ -139,10 +137,6 @@
 
         function showInfo() {
             ModalService.openWizard(['summary-metrics'], {isClosable: true});
-        }
-
-        function selectLayout(layout) {
-            vm.selectedLayout = layout;
         }
     }
 })();

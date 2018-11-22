@@ -77,10 +77,11 @@
 
         .index-listing{
             @include normalize-listing;
-            margin-bottom: 3rem;
+            margin: 0px -2rem 3rem -2rem;
 
             & > li{
                 margin-bottom: .5rem;
+                padding: 0px 2rem;
             }
 
             i{
@@ -137,7 +138,7 @@
             .chart-container{
                 position: relative;
                 display: block;
-                padding-bottom: 65.925%;
+                padding-bottom: 50%;
             }
 
             svg{
@@ -178,83 +179,6 @@
             grid-template-columns: auto 1fr;
             text-align: center;
         }
-
-        .layout{
-            &.layout-smaller{
-                .index-listing {
-                    margin: 0px -2rem 3rem -2rem;
-
-                    & > li {
-                        padding: 0px 2rem;
-                    }
-                }
-
-                .document-totals-chart-container,
-                .h-index-chart-container {
-                    .chart-container {
-                        padding-bottom: 50%;
-                    }
-                }
-            }
-
-            &.layout-small{
-                .index-container{
-                    min-height: calc(100% - 3rem);
-                }
-
-                .metric-chart-container {
-                    min-height: calc(100% - 3rem);
-                }
-
-                .document-totals-chart-container,
-                .h-index-chart-container{
-                    min-height: calc(100% - 3rem);
-                }
-            }
-
-            &.layout-big,
-            &.layout-bigger{
-                .outer-stats-container{
-                    display: flex;
-                    flex-direction: column;
-                    min-height: 100%;
-                }
-
-                .index-container{
-                    flex-grow: 2;
-                }
-
-                .metric-chart-container{
-                    min-height: calc(100% - 3rem);
-                }
-            }
-
-            &.layout-bigger{
-                .index-listing {
-                    margin: 0px -2rem 3rem -2rem;
-
-                    & > li {
-                        padding: 0px 2rem;
-                    }
-                }
-
-                .metric-chart-container{
-                    .chart{
-                        padding-bottom: 50%;
-                    }
-                }
-
-                .document-totals-chart-container,
-                .h-index-chart-container {
-                    min-height: auto;
-                    padding: 1rem 3rem;
-
-                    .chart-container {
-                        padding-bottom: 50%;
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -263,16 +187,8 @@
         &.summary-profile{
             .index-listing{
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: auto auto;
                 grid-template-rows: auto;
-            }
-
-            .layout{
-                &.layout-smaller{
-                    .index-listing{
-                        grid-template-columns: auto auto;
-                    }
-                }
             }
         }
     }
@@ -438,13 +354,8 @@
 @include media-breakpoint-up(xxl) {
     .summary {
         &.summary-profile {
-            .layout {
-                &.layout-smaller,
-                &.layout-bigger {
-                    .index-listing {
-                        display: block;
-                    }
-                }
+            .index-listing {
+                display: block;
             }
         }
     }
