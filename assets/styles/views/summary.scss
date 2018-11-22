@@ -49,14 +49,29 @@
         }
 
         .index-container{
+            display: flex;
             min-height: calc(100% - 3rem);
             margin-bottom: 3rem;
-            padding: 2rem 5rem;
+            padding: 1rem 3rem;
             border: 1px solid $silver;
             border-radius: .25rem;
+            flex-direction: row;
+            align-items: center;
 
+            .index-icon-container{
+                display: inline-block;
+                min-width: 30px;
+                vertical-align: middle;
+            }
+            
             .index-title{
+                @include h3;
                 text-align: center;
+            }
+
+            .index-inner-container{
+                margin-left: auto;
+                margin-right: auto;
             }
         }
 
@@ -114,10 +129,24 @@
         .h-index-chart-container{
             min-height: calc(100% - 3rem);
             margin-bottom: 3rem;
-            padding: 2rem 5rem;
+            padding: 1rem 3rem;
             border: 1px solid $silver;
             border-radius: .25rem;
             text-align: center;
+
+            .chart-container{
+                position: relative;
+                display: block;
+                padding-bottom: 65.925%;
+            }
+
+            svg{
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                width: 100% !important;
+                height: 100% !important;
+            }
         }
 
         .metric-chart-container{
@@ -149,6 +178,83 @@
             grid-template-columns: auto 1fr;
             text-align: center;
         }
+
+        .layout{
+            &.layout-smaller{
+                .index-listing {
+                    margin: 0px -2rem 3rem -2rem;
+
+                    & > li {
+                        padding: 0px 2rem;
+                    }
+                }
+
+                .document-totals-chart-container,
+                .h-index-chart-container {
+                    .chart-container {
+                        padding-bottom: 50%;
+                    }
+                }
+            }
+
+            &.layout-small{
+                .index-container{
+                    min-height: calc(100% - 3rem);
+                }
+
+                .metric-chart-container {
+                    min-height: calc(100% - 3rem);
+                }
+
+                .document-totals-chart-container,
+                .h-index-chart-container{
+                    min-height: calc(100% - 3rem);
+                }
+            }
+
+            &.layout-big,
+            &.layout-bigger{
+                .outer-stats-container{
+                    display: flex;
+                    flex-direction: column;
+                    min-height: 100%;
+                }
+
+                .index-container{
+                    flex-grow: 2;
+                }
+
+                .metric-chart-container{
+                    min-height: calc(100% - 3rem);
+                }
+            }
+
+            &.layout-bigger{
+                .index-listing {
+                    margin: 0px -2rem 3rem -2rem;
+
+                    & > li {
+                        padding: 0px 2rem;
+                    }
+                }
+
+                .metric-chart-container{
+                    .chart{
+                        padding-bottom: 50%;
+                    }
+                }
+
+                .document-totals-chart-container,
+                .h-index-chart-container {
+                    min-height: auto;
+                    padding: 1rem 3rem;
+
+                    .chart-container {
+                        padding-bottom: 50%;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -159,6 +265,14 @@
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 grid-template-rows: auto;
+            }
+
+            .layout{
+                &.layout-smaller{
+                    .index-listing{
+                        grid-template-columns: auto auto;
+                    }
+                }
             }
         }
     }
@@ -314,6 +428,21 @@
 
                     .chart-title{
                         @include h6;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(xxl) {
+    .summary {
+        &.summary-profile {
+            .layout {
+                &.layout-smaller,
+                &.layout-bigger {
+                    .index-listing {
+                        display: block;
                     }
                 }
             }

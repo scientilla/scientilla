@@ -17,21 +17,47 @@
 
     SummaryOverviewComponent.$inject = [
         'ChartService',
-        'ModalService'
+        'ModalService',
+        '$window',
+        '$timeout'
     ];
 
-    function SummaryOverviewComponent(ChartService, ModalService) {
+    function SummaryOverviewComponent(ChartService, ModalService, $window, $timeout) {
         const vm = this;
         vm.changeChart = changeChart;
         vm.isChartSelected = isChartSelected;
         vm.showInfo = showInfo;
+        vm.getMainChartOptions = getMainChartOptions;
 
         vm.name = 'overview';
         vm.charts = [];
 
         vm.$onInit = () => {
+            let timer = null;
+
             vm.profileSummary.registerTab(vm);
             vm.reload(vm.chartsData);
+
+            if ($window.innerWidth <= 992 && $window.innerWidth > 400) {
+                for (let i = 0; i < vm.charts.length; i++) {
+                    vm.charts[i] = getMainChartOptions(vm.charts[i]);
+                }
+            }
+
+            angular.element($window).bind('resize', function(){
+                $timeout.cancel(timer);
+                timer = $timeout(function() {
+                    if ($window.innerWidth <= 992 && $window.innerWidth > 400) {
+                        for (let i = 0; i < vm.charts.length; i++) {
+                            vm.charts[i] = getMainChartOptions(vm.charts[i]);
+                        }
+                    } else {
+                        for (let i = 0; i < vm.charts.length; i++) {
+                            vm.charts[i] = getPreviewChartOptions(vm.charts[i]);
+                        }
+                    }
+                }, 500);
+            });
         };
 
         vm.$onDestroy = () => {
@@ -58,6 +84,14 @@
 
         function showInfo() {
             ModalService.openWizard(['summary-overview'], { isClosable: true});
+        }
+
+        function getMainChartOptions(chart) {
+            return ChartService.getAsMainChart(chart);
+        }
+
+        function getPreviewChartOptions(chart) {
+            return ChartService.getAsPreviewChart(chart);
         }
     }
 })();
