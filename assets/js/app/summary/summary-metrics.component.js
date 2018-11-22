@@ -30,7 +30,6 @@
 
         vm.$onInit = () => {
             vm.profileSummary.registerTab(vm);
-            vm.reload();
         };
 
         vm.reload = (chartsData) => {
