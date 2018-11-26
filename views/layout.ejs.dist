@@ -28,6 +28,9 @@
 
     <!--STYLES-->
     <!--STYLES END-->
+
+    <!--PRINT-->
+    <!--PRINT END-->
 </head>
 <body ng-app="app" class="{{bodyLayout}}">
 <%- body %>

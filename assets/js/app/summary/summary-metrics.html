@@ -4,77 +4,74 @@
     </a>
 </div>
 
-<div class="row">
-    <div class="col-12 col-sm-12 col-md-12 col-lg-6">
-        <div class="index-container">
-            <h2 class="index-title">Statistics</h2>
-            <ul class="index-listing items-{{ vm.indexes.length }}">
-                <li ng-repeat="index in vm.indexes">
-                    <div class="outer-index">
-                        <div class="index">
-                            <i ng-class="icon" ng-repeat="icon in index.icons"></i>
-                            <span class="index-label">{{ index.label }}</span>
-                            <span class="index-value">{{ index.value | scientillaNumber:index.format }}</span>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="col-12 col-sm-12 col-md-12 col-lg-6">
-        <div class="document-totals">
-            <div class="table-responsive">
-                <table class="table table-condensed table-striped">
-                    <tr>
-                        <th ng-repeat="total in vm.documentTotals"
-                            class="text-center">
-                            {{ total.title }}
-                        </th>
-                    </tr>
-                    <tr>
-                        <td ng-repeat="total in vm.documentTotals"
-                            class="text-center">
-                            {{ total.value }}
-                        </td>
-                    </tr>
-                </table>
+<div class="layout layout-smaller">
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12 col-xxl-4">
+            <div class="index-container">
+                <div class="index-inner-container">
+                    <h2 class="index-title">Statistics</h2>
+                    <ul class="index-listing items-{{ vm.indexes.length }}">
+                        <li ng-repeat="index in vm.indexes">
+                            <div class="outer-index">
+                                <div class="index">
+                                    <div class="index-icon-container">
+                                        <i ng-class="icon" ng-repeat="icon in index.icons"></i>
+                                    </div>
+                                    <span class="index-label">{{ index.label }}</span>
+                                    <span class="index-value">{{ index.value | scientillaNumber:index.format }}</span>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="row">
-    <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-3">
-        <div class="metric-chart-container">
-            <h3>{{ vm.charts.hindexPerYear.title }}</h3>
-            <div class="chart-container">
-                <nvd3
-                    options="vm.charts.hindexPerYear.options"
-                    data="vm.charts.hindexPerYear.data"
-                    class="chart"></nvd3>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4">
+            <div class="document-totals-chart-container">
+                <h3>{{ vm.charts.documentTotals.title }}</h3>
+                <div class="chart-container">
+                    <nvd3
+                        options="vm.charts.documentTotals.options"
+                        data="vm.charts.documentTotals.data"
+                        class="chart"></nvd3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4">
+            <div class="h-index-chart-container">
+                <h3>{{ vm.charts.hindexPerYear.title }}</h3>
+                <div class="chart-container">
+                    <nvd3
+                        options="vm.charts.hindexPerYear.options"
+                        data="vm.charts.hindexPerYear.data"
+                        class="chart"></nvd3>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-3">
-        <scientilla-chart-selector
-            charts="vm.documentsCharts"
-            class="metric-chart-container">
-        </scientilla-chart-selector>
-    </div>
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4">
+            <scientilla-chart-selector
+                charts="vm.documentsCharts"
+                class="metric-chart-container">
+            </scientilla-chart-selector>
+        </div>
 
-    <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-3">
-        <scientilla-chart-selector
-            charts="vm.citationsCharts"
-            class="metric-chart-container">
-        </scientilla-chart-selector>
-    </div>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4">
+            <scientilla-chart-selector
+                charts="vm.citationsCharts"
+                class="metric-chart-container">
+            </scientilla-chart-selector>
+        </div>
 
-    <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-3">
-        <scientilla-chart-selector
-            charts="vm.metricsCharts"
-            class="metric-chart-container">
-        </scientilla-chart-selector>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4">
+            <scientilla-chart-selector
+                charts="vm.metricsCharts"
+                class="metric-chart-container">
+            </scientilla-chart-selector>
+        </div>
     </div>
 </div>

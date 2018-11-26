@@ -14,6 +14,12 @@ module.exports = function(grunt) {
         src: ['scientilla.scss'],
         dest: '.tmp/public/styles/',
         ext: '.css'
+      }, {
+          expand: true,
+          cwd: 'assets/print/',
+          src: ['print.scss'],
+          dest: '.tmp/public/print/',
+          ext: '.css'
       }]
     }
   });

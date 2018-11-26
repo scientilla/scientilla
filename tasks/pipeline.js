@@ -18,6 +18,10 @@ var cssFilesToInject = [
     'styles/**/*.css'
 ];
 
+// Print CSS files
+var printCssFilesToInject = [
+    'print/**/*.css'
+];
 
 // Client-side javascript files to inject in order
 // (uses Grunt-style wildcard/glob/splat expressions)
@@ -60,6 +64,10 @@ var templateFilesToInject = [
 // (i.e. where the other Grunt tasks spit them out, or in some cases, where
 // they reside in the first place)
 module.exports.cssFilesToInject = cssFilesToInject.map(function (path) {
+    return '.tmp/public/' + path;
+});
+
+module.exports.printCssFilesToInject = printCssFilesToInject.map(function (path) {
     return '.tmp/public/' + path;
 });
 

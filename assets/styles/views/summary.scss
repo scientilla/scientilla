@@ -35,6 +35,8 @@
 
             svg{
                 position: absolute;
+                top: 0px;
+                left: 0px;
                 width: 100% !important;
                 height: 100% !important;
             }
@@ -49,22 +51,39 @@
         }
 
         .index-container{
+            display: flex;
+            min-height: calc(100% - 3rem);
             margin-bottom: 3rem;
-            padding: 2rem 5rem;
+            padding: 1rem 3rem;
             border: 1px solid $silver;
             border-radius: .25rem;
+            flex-direction: row;
+            align-items: center;
 
+            .index-icon-container{
+                display: inline-block;
+                min-width: 30px;
+                vertical-align: middle;
+            }
+            
             .index-title{
+                @include h3;
                 text-align: center;
+            }
+
+            .index-inner-container{
+                margin-left: auto;
+                margin-right: auto;
             }
         }
 
         .index-listing{
             @include normalize-listing;
-            margin-bottom: 3rem;
+            margin: 0px -2rem 3rem -2rem;
 
             & > li{
                 margin-bottom: .5rem;
+                padding: 0px 2rem;
             }
 
             i{
@@ -109,14 +128,28 @@
             }
         }
 
-        .document-totals{
-            display: flex;
+        .document-totals-chart-container,
+        .h-index-chart-container{
             min-height: calc(100% - 3rem);
             margin-bottom: 3rem;
-            padding: 2rem;
+            padding: 1rem 3rem;
             border: 1px solid $silver;
             border-radius: .25rem;
-            align-items: center;
+            text-align: center;
+
+            .chart-container{
+                position: relative;
+                display: block;
+                padding-bottom: 50%;
+            }
+
+            svg{
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                width: 100% !important;
+                height: 100% !important;
+            }
         }
 
         .metric-chart-container{
@@ -136,6 +169,8 @@
 
             svg{
                 position: absolute;
+                top: 0px;
+                left: 0px;
                 width: 100% !important;
                 height: 100% !important;
             }
@@ -151,6 +186,18 @@
     }
 }
 
+@include media-breakpoint-up(sm) {
+    .summary{
+        &.summary-profile{
+            .index-listing{
+                display: grid;
+                grid-template-columns: auto auto;
+                grid-template-rows: auto;
+            }
+        }
+    }
+}
+
 @include media-breakpoint-between(sm, lg) {
     .summary{
         &.summary-profile{
@@ -158,18 +205,6 @@
                 .chart{
                     padding-bottom: 43.95%;
                 }
-            }
-        }
-    }
-}
-
-@include media-breakpoint-between(sm, md) {
-    .summary{
-        &.summary-profile{
-            .index-listing{
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: auto;
             }
         }
     }
@@ -258,7 +293,6 @@
                 .preview-chart-container{
                     &:nth-child(2){
                         @include set-grid(2,1,1,1);
-                        padding-top: 1.2rem;
                     }
 
                     &:nth-child(3){
@@ -299,7 +333,7 @@
                 .preview-chart-container{
                     &:nth-child(2){
                         @include set-grid(1,2,1,1);
-                        padding-top: 1.2rem;
+                        padding-top: 0.6rem;
                     }
 
                     &:nth-child(3){
@@ -317,11 +351,15 @@
                     }
                 }
             }
+        }
+    }
+}
 
-            .index-listing{
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                grid-template-rows: auto;
+@include media-breakpoint-up(xxl) {
+    .summary {
+        &.summary-profile {
+            .index-listing {
+                display: block;
             }
         }
     }
