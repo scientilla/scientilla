@@ -781,11 +781,14 @@
                 case maxY > 1000 && maxY <= 2000:
                     step = 200;
                     break;
-                case maxY > 150 && maxY <= 1000:
+                case maxY > 500 && maxY <= 1000:
                     step = 100;
                     break;
-                case maxY > 100 && maxY <= 150:
+                case maxY > 200 && maxY <= 500:
                     step = 50;
+                    break;
+                case maxY > 100 && maxY <= 200:
+                    step = 20;
                     break;
                 case maxY > 20 && maxY <= 100:
                     step = 10;
