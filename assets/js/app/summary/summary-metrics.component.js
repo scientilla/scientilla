@@ -53,7 +53,7 @@
 
             vm.documentsCharts = [
                 {
-                    icon: 'fas fa-chart-pie',
+                    icon: 'fas fa-chart-bar',
                     chartSettings: vm.charts.filteredDocumentsSourceTypeByYear,
                     default: true,
                     title: vm.charts.filteredDocumentsSourceTypeByYear.title
