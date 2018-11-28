@@ -10,14 +10,14 @@
     const metricsColors = [
         '#2ca02c', // IF
         '#9467bd', // SJR
-        '#118798' // SNIP
+        '#118798'  // SNIP
     ];
 
     const sourceTypesColors = [
         '#0072AF', // journal
         '#aec7e8', // conference
         '#ff7f0e', // book
-        '#ffbb78' // book series
+        '#ffbb78'  // book series
     ];
 
     function ChartService(DocumentTypesService) {
@@ -31,11 +31,12 @@
                     reduceXTicks: true,
                     xAxis: {
                         axisLabel: '',
+                        ticks: false,
                         tickFormat: d => d3.format('')(d)
                     },
                     yAxis: {
                         axisLabel: '',
-                        tickFormat: d => d3.format('')(d)
+                        tickFormat: d => d3.format(',.0d')(d)
                     },
                     valueFormat: d => d3.format('')(d)
                 }
@@ -51,7 +52,7 @@
                         tickFormat: d => d3.format('')(d)
                     },
                     yAxis: {
-                        tickFormat: d => d3.format('')(d)
+                        tickFormat: d => d3.format(',.0d')(d)
                     },
                     valueFormat: d => d3.format('')(d)
                 }
@@ -96,10 +97,26 @@
 
         service.getInvitedTalksByYear = (chartsData) => {
             const yearRange = getYearRange(chartsData);
-            const range = getRange(
+            const rangeX = getRangeX(
                 yearRange.min,
                 yearRange.max
             );
+
+            const data = [{
+                key: 'Dissemination',
+                values: getItemsByYear(chartsData.disseminationTalksByYear, yearRange)
+            }, {
+                key: 'Scientific Event',
+                values: getItemsByYear(chartsData.scientificTalksByYear, yearRange)
+            }];
+
+            let dataMax = [];
+            for (let i = 0; i < data.length; i++) {
+                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
+            }
+            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const rangeY = getRangeY(maxY);
+
             const baseOptions = {
                 chart: {
                     type: 'multiBarChart',
@@ -111,10 +128,12 @@
                         axisLabel: '',
                         rotateLabels: 50,
                         showMaxMin: false,
-                        tickValues: range,
+                        tickValues: rangeX,
                         tickFormat: d => d3.format('')(d)
                     },
                     yAxis: {
+                        tickValues: rangeY,
+                        tickFormat: d => d3.format(',.0d')(d),
                         axisLabel: '',
                         axisLabelDistance: -10
                     }
@@ -123,13 +142,7 @@
 
             return {
                 title: 'Invited talks by year',
-                data: [{
-                    key: 'Dissemination',
-                    values: getItemsByYear(chartsData.disseminationTalksByYear, yearRange)
-                }, {
-                    key: 'Scientific Event',
-                    values: getItemsByYear(chartsData.scientificTalksByYear, yearRange)
-                }],
+                data: data,
                 options: getDefaultOptions(baseOptions, service.previewDefaultOptions),
                 baseOptions: baseOptions
             };
@@ -138,10 +151,31 @@
         service.getDocumentsByYear = (chartsData) => {
             const yearRange = getYearRange(chartsData);
 
-            const range = getRange(
+            const data = [{
+                    key: DocumentTypesService.getSourceTypeLabel('journal'),
+                    values: getItemsByYear(chartsData.journalsByYear, yearRange)
+                }, {
+                    key: DocumentTypesService.getSourceTypeLabel('conference'),
+                    values: getItemsByYear(chartsData.conferencesByYear, yearRange)
+                }, {
+                    key: DocumentTypesService.getSourceTypeLabel('book'),
+                    values: getItemsByYear(chartsData.booksByYear, yearRange)
+                }, {
+                    key: DocumentTypesService.getSourceTypeLabel('bookseries'),
+                    values: getItemsByYear(chartsData.bookChaptersByYear, yearRange)
+                }];
+
+            const rangeX = getRangeX(
                 yearRange.min,
                 yearRange.max
             );
+
+            let dataMax = [];
+            for (let i = 0; i < data.length; i++) {
+                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
+            }
+            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const rangeY = getRangeY(maxY);
 
             const baseOptions = {
                 chart: {
@@ -156,10 +190,12 @@
                         axisLabel: '',
                         rotateLabels: 50,
                         showMaxMin: false,
-                        tickValues: range,
+                        tickValues: rangeX,
                         tickFormat: d => d3.format('')(d)
                     },
                     yAxis: {
+                        tickValues: rangeY,
+                        tickFormat: d => d3.format(',.0d')(d),
                         axisLabel: '',
                         axisLabelDistance: -10
                     }
@@ -168,19 +204,7 @@
 
             return {
                 title: 'Documents by year',
-                data: [{
-                    key: DocumentTypesService.getSourceTypeLabel('journal'),
-                    values: getItemsByYear(chartsData.journalsByYear, yearRange)
-                }, {
-                    key: DocumentTypesService.getSourceTypeLabel('conference'),
-                    values: getItemsByYear(chartsData.conferencesByYear, yearRange)
-                }, {
-                    key: DocumentTypesService.getSourceTypeLabel('book'),
-                    values: getItemsByYear(chartsData.booksByYear, yearRange)
-                }, {
-                    key: DocumentTypesService.getSourceTypeLabel('bookseries'),
-                    values: getItemsByYear(chartsData.bookChaptersByYear, yearRange)
-                }],
+                data: data,
                 options: getDefaultOptions(baseOptions, service.previewDefaultOptions),
                 baseOptions: baseOptions
             };
@@ -189,12 +213,14 @@
         service.getHindexPerYear = (chartsData) => {
             const yearRange = getYearRange(chartsData);
             const hindexPerYear = getItemsByYear(chartsData.hindexPerYear, yearRange);
+            const maxY = Math.max.apply(Math, hindexPerYear.map(function(o) { return o.value; }));
+            const rangeY = getRangeY(maxY, true);
 
             const maxYValue = parseInt(_.maxBy(hindexPerYear, 'value').value, 10);
             const maxXValue = parseInt(_.maxBy(hindexPerYear, 'year').year, 10);
             const minXValue = parseInt(_.minBy(hindexPerYear, 'year').year, 10);
 
-            const range = getRange(
+            const rangeX = getRangeX(
                 _.minBy(hindexPerYear, 'year').year,
                 _.maxBy(hindexPerYear, 'year').year
             );
@@ -219,12 +245,13 @@
                         xAxis: {
                             rotateLabels: 50,
                             showMaxMin: false,
-                            tickValues: range,
+                            tickValues: rangeX,
                             tickFormat: d => d3.format('')(d)
                         },
                         yAxis: {
                             showMaxMin: false,
-                            tickFormat: d => d3.format('')(d)
+                            tickValues: rangeY,
+                            tickFormat: d => d3.format(',.0d')(d)
                         },
                         yDomain: [0, maxYValue + (maxYValue * 0.05)],
                         xDomain: [minXValue, maxXValue + ((maxXValue - minXValue) * 0.05)],
@@ -237,17 +264,26 @@
         service.getCitationsPerDocumentYear = (chartsData) => {
             const yearRange = getYearRange(chartsData);
 
-            const range = getRange(
+            const rangeX = getRangeX(
                 yearRange.min,
                 yearRange.max
             );
 
+            const data = [{
+                key: 'Citations',
+                values: getItemsByYear(chartsData.citationsPerDocumentYear, yearRange)
+            }];
+
+            let dataMax = [];
+            for (let i = 0; i < data.length; i++) {
+                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
+            }
+            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const rangeY = getRangeY(maxY);
+
             return {
                 title: 'Citations by document year',
-                data: [{
-                    key: 'Citations',
-                    values: getItemsByYear(chartsData.citationsPerDocumentYear, yearRange)
-                }],
+                data: data,
                 options: getMultiBarChartConfig({
                     stacked: true,
                     color: () => '#ff9933',
@@ -256,8 +292,12 @@
                         axisLabel: '',
                         rotateLabels: 50,
                         showMaxMin: false,
-                        tickValues: range,
+                        tickValues: rangeX,
                         tickFormat: d => d3.format('')(d)
+                    },
+                    yAxis: {
+                        tickValues: rangeY,
+                        tickFormat: d => d3.format(',.0d')(d)
                     }
                 }),
             };
@@ -266,17 +306,26 @@
         service.getCitationsPerYear = (chartsData) => {
             const yearRange = getYearRange(chartsData);
 
-            const range = getRange(
+            const rangeX = getRangeX(
                 yearRange.min,
                 yearRange.max
             );
 
+            const data = [{
+                key: 'Citations',
+                values: getItemsByYear(chartsData.citationsPerYear, yearRange)
+            }];
+
+            let dataMax = [];
+            for (let i = 0; i < data.length; i++) {
+                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
+            }
+            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const rangeY = getRangeY(maxY);
+
             return {
                 title: 'Citations by year',
-                data: [{
-                    key: 'Citations',
-                    values: getItemsByYear(chartsData.citationsPerYear, yearRange)
-                }],
+                data: data,
                 options: getMultiBarChartConfig({
                     stacked: true,
                     color: () => '#ff9933',
@@ -285,8 +334,12 @@
                         axisLabel: '',
                         rotateLabels: 50,
                         showMaxMin: false,
-                        tickValues: range,
+                        tickValues: rangeX,
                         tickFormat: d => d3.format('')(d)
+                    },
+                    yAxis: {
+                        tickValues: rangeY,
+                        tickFormat: d => d3.format(',.0d')(d)
                     }
                 }),
             };
@@ -305,7 +358,7 @@
             const maxXValue = parseInt(_.maxBy(totalIfPerYear, 'year').year, 10);
             const minXValue = parseInt(_.minBy(totalIfPerYear, 'year').year, 10);
 
-            const range = getRange(
+            const range = getRangeX(
                 _.minBy(totalIfPerYear, 'year').year,
                 _.maxBy(totalIfPerYear, 'year').year
             );
@@ -355,7 +408,7 @@
 
         service.getJournalMetricsPerYearBarChart = (chartsData) => {
             const yearRange = getYearRange(chartsData);
-            const range = getRange(
+            const range = getRangeX(
                 yearRange.min,
                 yearRange.max
             );
@@ -402,20 +455,29 @@
             chartsData.filteredNotAffiliatedBooksByYear.forEach(getDataMerger(notAffiliatedDocuments));
             chartsData.filteredNotAffiliatedBookChaptersByYear.forEach(getDataMerger(notAffiliatedDocuments));
 
-            const range = getRange(
+            const data = [{
+                key: 'IIT',
+                values: getItemsByYear(affiliatedDocuments, yearRange)
+            }, {
+                key: 'non-IIT',
+                values: getItemsByYear(notAffiliatedDocuments, yearRange)
+            }];
+
+            const range = getRangeX(
                 yearRange.min,
                 yearRange.max
             );
 
+            let dataMax = [];
+            for (let i = 0; i < data.length; i++) {
+                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
+            }
+            const maxY = Math.max.apply(Math, dataMax);
+            const rangeY = getRangeY(maxY);
+
             return {
                 title: 'IIT vs non-IIT documents',
-                data: [{
-                    key: 'IIT',
-                    values: getItemsByYear(affiliatedDocuments, yearRange)
-                }, {
-                    key: 'non-IIT',
-                    values: getItemsByYear(notAffiliatedDocuments, yearRange)
-                }],
+                data: data,
                 options: getMultiBarChartConfig({
                     reduceXTicks: false,
                     xAxis: {
@@ -424,6 +486,10 @@
                         showMaxMin: false,
                         tickValues: range,
                         tickFormat: d => d3.format('')(d)
+                    },
+                    yAxis: {
+                        tickValues: rangeY,
+                        tickFormat: d => d3.format(',.0d')(d)
                     }
                 }),
             };
@@ -444,26 +510,35 @@
             chartsData.filteredAffiliatedBookChaptersByYear.forEach(getDataMerger(filteredBookChapters));
             chartsData.filteredNotAffiliatedBookChaptersByYear.forEach(getDataMerger(filteredBookChapters));
 
-            const range = getRange(
+            const data = [{
+                key: DocumentTypesService.getSourceTypeLabel('journal'),
+                values: getItemsByYear(filteredJournals, yearRange)
+            }, {
+                key: DocumentTypesService.getSourceTypeLabel('conference'),
+                values: getItemsByYear(filteredConferences, yearRange)
+            }, {
+                key: DocumentTypesService.getSourceTypeLabel('book'),
+                values: getItemsByYear(filteredBooks, yearRange)
+            }, {
+                key: DocumentTypesService.getSourceTypeLabel('bookseries'),
+                values: getItemsByYear(filteredBookChapters, yearRange)
+            }];
+
+            const rangeX = getRangeX(
                 yearRange.min,
                 yearRange.max
             );
 
+            let dataMax = [];
+            for (let i = 0; i < data.length; i++) {
+                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
+            }
+            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const rangeY = getRangeY(maxY);
+
             return {
                 title: 'Document by source type',
-                data: [{
-                    key: DocumentTypesService.getSourceTypeLabel('journal'),
-                    values: getItemsByYear(filteredJournals, yearRange)
-                }, {
-                    key: DocumentTypesService.getSourceTypeLabel('conference'),
-                    values: getItemsByYear(filteredConferences, yearRange)
-                }, {
-                    key: DocumentTypesService.getSourceTypeLabel('book'),
-                    values: getItemsByYear(filteredBooks, yearRange)
-                }, {
-                    key: DocumentTypesService.getSourceTypeLabel('bookseries'),
-                    values: getItemsByYear(filteredBookChapters, yearRange)
-                }],
+                data: data,
                 options: getMultiBarChartConfig({
                     stacked: true,
                     color: sourceTypesColors,
@@ -472,8 +547,12 @@
                         axisLabel: '',
                         rotateLabels: 50,
                         showMaxMin: false,
-                        tickValues: range,
+                        tickValues: rangeX,
                         tickFormat: d => d3.format('')(d)
+                    },
+                    yAxis: {
+                        tickValues: rangeY,
+                        tickFormat: d => d3.format(',.0d')(d)
                     }
                 }),
             };
@@ -641,7 +720,7 @@
                     yAxis: Object.assign({
                         axisLabel: '',
                         axisLabelDistance: -10,
-                        tickFormat: d => d3.format('')(d)
+                        tickFormat: d => d3.format(',.0d')(d)
                     }, yAxisOptions),
                     valueFormat: d => d3.format('')(d)
                 }, chartOptions)
@@ -654,7 +733,7 @@
             return total;
         }
 
-        function getRange(minX, maxX) {
+        function getRangeX(minX, maxX) {
             let step = 1;
 
             const maxXValue = parseInt(maxX, 10);
@@ -678,6 +757,58 @@
             );
 
             return range.map(r => r.getFullYear());
+        }
+
+        function getRangeY(maxY, addMax = false) {
+            let step = 1;
+
+            switch(true) {
+                case maxY > 40000:
+                    step = 10000;
+                    break;
+                case maxY > 20000 && maxY <= 40000:
+                    step = 5000;
+                    break;
+                case maxY > 10000 && maxY <= 20000:
+                    step = 2000;
+                    break;
+                case maxY > 5000 && maxY <= 10000:
+                    step = 1000;
+                    break;
+                case maxY > 2000 && maxY <= 5000:
+                    step = 500;
+                    break;
+                case maxY > 1000 && maxY <= 2000:
+                    step = 200;
+                    break;
+                case maxY > 150 && maxY <= 1000:
+                    step = 100;
+                    break;
+                case maxY > 100 && maxY <= 150:
+                    step = 50;
+                    break;
+                case maxY > 20 && maxY <= 100:
+                    step = 10;
+                    break;
+                case maxY > 14 && maxY <= 20:
+                    step = 5;
+                    break;
+                case maxY > 6 && maxY <= 14:
+                    step = 2;
+                    break;
+            }
+
+            const rangeY = d3.range(
+                0,
+                maxY,
+                step
+            );
+
+            if (addMax) {
+                rangeY.push(maxY);
+            }
+
+            return rangeY;
         }
     }
 }());
