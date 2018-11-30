@@ -135,6 +135,18 @@
             }
         }
     }
+
+    &.admin-customize{
+        .header-logo-container{
+            padding: .5rem;
+            background: $scarpa-flow;
+        }
+
+        .header-logo{
+            height: 40px;
+            width: auto;
+        }
+    }
 }
 
 @include media-breakpoint-up(sm) {

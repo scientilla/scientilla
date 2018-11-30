@@ -108,6 +108,9 @@ module.exports.routes = {
     'post /api/v1/backup/restore': 'Backup.restore',
     'post /api/v1/backup/make': 'Backup.make',
 
+    'get /api/v1/customize/institute': 'Customize.getInstitute',
+    'post /api/v1/customize/institute': 'Customize.setInstitute',
+
     //MBO
     'get /api/v1/mbo/v2017/overall_performance/researcher': 'User.getMBOOverallPerformance',
     'get /api/v1/mbo/v2017/iit_performance/researcher': 'User.getMBOInstitutePerformance',

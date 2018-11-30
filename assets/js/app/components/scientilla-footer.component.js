@@ -8,9 +8,22 @@
             controllerAs: 'vm'
         });
 
-    scientillaFooter.$inject = [];
+    scientillaFooter.$inject = [
+        'EventsService',
+        'CustomizeService'
+    ];
 
-    function scientillaFooter() {
+    function scientillaFooter(EventsService, CustomizeService) {
+        const vm = this;
 
+        vm.$onInit = function () {
+            EventsService.subscribe(vm, EventsService.CUSTOMIZATIONS_CHANGED, function (event, customizations) {
+                vm.customizations = customizations;
+            });
+
+            CustomizeService.getCustomizations().then(customizations => {
+                vm.customizations = customizations;
+            });
+        };
     }
 })();

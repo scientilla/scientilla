@@ -14,6 +14,9 @@
             })
             .when("/tools", {
                 template: '<scientilla-admin-tools></scientilla-admin-tools>'
+            })
+            .when("/customize", {
+                template: '<scientilla-admin-customize></scientilla-admin-customize>'
             });
 
     }

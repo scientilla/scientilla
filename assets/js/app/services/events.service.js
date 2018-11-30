@@ -35,7 +35,9 @@
 
             INSTITUTE_RESTORED: 'institute.restored',
 
-            CONTEXT_CHANGE: 'context.change'
+            CONTEXT_CHANGE: 'context.change',
+
+            CUSTOMIZATIONS_CHANGED: 'customizations.changed'
         };
 
         service.publish = function (event, args) {
