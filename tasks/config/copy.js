@@ -105,6 +105,22 @@ module.exports = function (grunt) {
                 src: ['**/*'],
                 dest: 'www'
             }]
+        },
+        uploadsDev: {
+            files: [{
+                expand: true,
+                cwd: './assets/uploads',
+                src: ['*'],
+                dest: '.tmp/public/uploads'
+            }]
+        },
+        uploadsBuild: {
+            files: [{
+                expand: true,
+                cwd: '.tmp/public/uploads',
+                src: ['**/*'],
+                dest: 'www/uploads'
+            }]
         }
     });
 

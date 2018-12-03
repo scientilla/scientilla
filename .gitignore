@@ -41,7 +41,7 @@
 
 config/local.js
 config/scientilla.js
-
+config/customizations.js
 
 
 
@@ -158,6 +158,15 @@ backups/*
 !backups/plain
 backups/plain/*
 !backups/plain/.gitkeep
+
+################################################
+# Assets
+#
+#
+################################################
+
+assets/uploads/*
+!assets/uploads/.gitkeep
 
 ################################################
 # Others

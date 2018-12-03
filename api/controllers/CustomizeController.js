@@ -21,7 +21,7 @@ module.exports = {
         sails.config.customizations.footer = footer;
 
         req.file('logo').upload({
-            dirname: path.resolve(sails.config.appPath, '.tmp/public/uploads')
+            dirname: path.resolve(sails.config.appPath, 'assets/uploads')
         }, function (err, files) {
             if (err)
                 return res.serverError(err);
@@ -34,6 +34,17 @@ module.exports = {
                     src: '/uploads/' + src,
                     name: files[0].filename
                 };
+
+                switch(true) {
+                    case sails.config.environment === 'development':
+                        GruntTaskRunner.run('copy:uploadsDev');
+                        break;
+                    case sails.config.environment === 'production':
+                        GruntTaskRunner.run('copy:uploadsBuild');
+                        break;
+                    default:
+                        break;
+                }
             }
 
             fs.writeFileSync(sails.config.appPath + '/config/customizations.js',

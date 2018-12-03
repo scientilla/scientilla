@@ -1,1 +1,0 @@
-module.exports.customizations = {"institute":{"name":"Istituto Italiano di Tecnologia","shortname":"IIT","country":"Italy","city":"Genoa","scopusId":"60102151"},"footer":{"text":"Data Analysis Office - Need help? Write to","email":"data.analysis@iit.it"},"header":{"logo":{"src":"/uploads/dda8516c-c6bc-4491-ac01-4785823f2a49.png","name":"iit-logo-40.png"}}}
