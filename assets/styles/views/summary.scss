@@ -48,6 +48,18 @@
             .main-chart-container{
                 display: none;
             }
+            
+            .preview-chart-container{
+                text{
+                    display: none;
+                }
+                
+                .nv-axisMaxMin{
+                    text{
+                        display: block;
+                    }
+                }
+            }
         }
 
         .index-container{
@@ -137,10 +149,14 @@
             border-radius: .25rem;
             text-align: center;
 
+            h3{
+                margin: 0px;
+            }
+
             .chart-container{
                 position: relative;
                 display: block;
-                padding-bottom: 50%;
+                padding-bottom: 60%;
             }
 
             svg{
@@ -193,18 +209,6 @@
                 display: grid;
                 grid-template-columns: auto auto;
                 grid-template-rows: auto;
-            }
-        }
-    }
-}
-
-@include media-breakpoint-between(sm, lg) {
-    .summary{
-        &.summary-profile{
-            .metric-chart-container{
-                .chart{
-                    padding-bottom: 43.95%;
-                }
             }
         }
     }
