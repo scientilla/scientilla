@@ -5,7 +5,8 @@
     z-index: 3;
     width: 100%;
     padding: 1.5rem 0px;
-    background: $mine-shaft;
+    background: $header-background-color;
+    color: color-yiq($header-background-color);
 
     .header-listing{
         @include normalize-listing;

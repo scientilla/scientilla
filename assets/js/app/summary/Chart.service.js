@@ -7,18 +7,8 @@
         'DocumentTypesService'
     ];
 
-    const metricsColors = [
-        '#2ca02c', // IF
-        '#9467bd', // SJR
-        '#118798' // SNIP
-    ];
-
-    const sourceTypesColors = [
-        '#0072AF', // journal
-        '#aec7e8', // conference
-        '#ff7f0e', // book
-        '#ffbb78' // book series
-    ];
+    let styles = {};
+    let colors = [];
 
     function ChartService(DocumentTypesService) {
         const service = {
@@ -58,6 +48,38 @@
             }
         };
 
+        service.setStyles = (customizations) => {
+            var darkenColors   = [],
+                lightenColors  = [],
+                extendedColors = [];
+
+            styles = customizations.styles;
+            colors = [
+                '#' + styles.chartColor1,
+                '#' + styles.chartColor2,
+                '#' + styles.chartColor3,
+                '#' + styles.chartColor4,
+                '#' + styles.chartColor5,
+                '#' + styles.chartColor6,
+                '#' + styles.chartColor7,
+                '#' + styles.chartColor8,
+                '#' + styles.chartColor9,
+                '#' + styles.chartColor10,
+                '#' + styles.chartColor11,
+                '#' + styles.chartColor12
+            ];
+
+            for (let i = 0; i < colors.length; i++) {
+                darkenColors.push(tinycolor(colors[i]).darken(30).toString());
+                lightenColors.push(tinycolor(colors[i]).lighten(30).toString());
+            }
+
+            extendedColors = darkenColors.concat(lightenColors);
+            extendedColors = _.shuffle(extendedColors);
+
+            colors = colors.concat(extendedColors);
+        };
+
         service.getAsMainChart = chart => {
             const mainChart = _.cloneDeep(chart);
             mainChart.options = getDefaultOptions(mainChart.baseOptions, service.mainChartDefaultOptions);
@@ -78,6 +100,7 @@
                     type: 'pieChart',
                     x: d => d.type,
                     y: d => d.value,
+                    color: colors,
                     labelThreshold: 0.02,
                     labelSunbeamLayout: true
                 }
@@ -103,6 +126,7 @@
             const baseOptions = {
                 chart: {
                     type: 'multiBarChart',
+                    color: colors,
                     x: d => d.year,
                     y: d => d.value,
                     showValues: true,
@@ -150,7 +174,7 @@
                     y: d => d.value,
                     showValues: true,
                     stacked: true,
-                    color: sourceTypesColors,
+                    color: colors,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -208,7 +232,7 @@
                 options: {
                     chart: {
                         type: 'lineChart',
-                        color: () => '#a94442',
+                        color: () => '#' + styles.errorColor,
                         x: d => d.year,
                         y: d => d.value,
                         showLabels: true,
@@ -250,7 +274,7 @@
                 }],
                 options: getMultiBarChartConfig({
                     stacked: true,
-                    color: () => '#ff9933',
+                    color: () => '#' + styles.warningColor,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -279,7 +303,7 @@
                 }],
                 options: getMultiBarChartConfig({
                     stacked: true,
-                    color: () => '#ff9933',
+                    color: () => '#' + styles.warningColor,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -325,7 +349,7 @@
                 options: {
                     chart: {
                         type: 'lineChart',
-                        color: (d, i) => metricsColors[i],
+                        color: (d, i) => colors[i],
                         showLabels: true,
                         showLegend: true,
                         useInteractiveGuideline: true,
@@ -373,7 +397,7 @@
                     values: getItemsByYear(chartsData.totalSnipPerYear, yearRange)
                 }],
                 options: getMultiBarChartConfig({
-                    color: (d, i) => metricsColors[i],
+                    color: (d, i) => colors[i],
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -424,7 +448,8 @@
                         showMaxMin: false,
                         tickValues: range,
                         tickFormat: d => d3.format('')(d)
-                    }
+                    },
+                    color: colors
                 }),
             };
         };
@@ -466,7 +491,7 @@
                 }],
                 options: getMultiBarChartConfig({
                     stacked: true,
-                    color: sourceTypesColors,
+                    color: colors,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -545,7 +570,8 @@
                     labelThreshold: 0.02,
                     labelSunbeamLayout: true,
                     showLabels: true,
-                    legendPosition: 'right'
+                    legendPosition: 'right',
+                    color: (d, i) => colors[i]
                 }
             };
 
@@ -627,7 +653,6 @@
                     showValues: true,
                     stacked: false,
                     showControls: false,
-                    //height: 420,
                     x: d => d.year,
                     y: d => d.value,
                     duration: 300,

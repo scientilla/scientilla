@@ -16,9 +16,9 @@
 
 .highlight-text{
     display: inline;
-    background: lighten($neon-carrot, 25%);
+    background: lighten($warning-color, 25%);
     vertical-align: top;
-    box-shadow: .2rem 0 0 lighten($neon-carrot, 25%), -.2rem 0 0 lighten($neon-carrot, 25%);
+    box-shadow: .2rem 0 0 lighten($warning-color, 25%), -.2rem 0 0 lighten($warning-color, 25%);
 }
 
 label{

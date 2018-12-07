@@ -17,7 +17,7 @@
                 & + li{
                     margin-top: 2rem;
                     padding-top: 2rem;
-                    border-top: 1px solid $silver;
+                    border-top: 1px solid $gray-300;
                 }
             }
 
@@ -105,7 +105,7 @@
                 padding: 1rem 1rem 1rem 1.5rem;
                 grid-template-rows: auto;
                 grid-template-columns: 1fr auto;
-                border: 1px solid $silver;
+                border: 1px solid $gray-300;
                 border-radius: .25rem;
             }
 
@@ -117,13 +117,13 @@
             }
 
             .collaborator{
-                border-color: $silver;
-                background: lighten($silver, 10%);
+                border-color: $gray-300;
+                background: $gray-200;
             }
 
             .former-collaborator{
-                border-color: $half-baked;
-                background: lighten($half-baked, 10%);
+                border-color: lighten($primary-color, 10%);
+                background: lighten($primary-color, 20%);
             }
 
             .member-info{

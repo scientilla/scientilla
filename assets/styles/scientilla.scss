@@ -4,7 +4,8 @@
 @import '../../node_modules/@fortawesome/fontawesome-free/scss/solid';
 
 @import 'mixins';
-@import 'variables';
+//@import 'variables';
+@import 'variables-overwrites';
 @import 'utilities';
 @import 'reset-overrides';
 
@@ -34,6 +35,8 @@
 @import 'ui/top-toolbar';
 @import 'ui/ui-bootstrap';
 @import 'ui/error-messages';
+@import 'ui/colorpicker';
+@import 'ui/ui-notification';
 
 @import 'components/header';
 @import 'components/footer';

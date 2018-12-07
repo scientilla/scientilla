@@ -16,7 +16,7 @@ $roboto-slab:            'Roboto Slab', serif;
 $font-awesome-brands:    'Font Awesome 5 Brands';
 $font-awesome:           'Font Awesome 5 Free';
 
-$base-gray:               $mine-shaft;
+$base-gray:               #333333;
 
 $gray-100:                lighten($base-gray, 70%);
 $gray-200:                lighten($base-gray, 60%);
@@ -28,15 +28,15 @@ $gray-700:                lighten($base-gray, 10%);
 $gray-800:                $base-gray;
 $gray-900:                darken($base-gray, 10%);
 
-$primary-color:           $curious-blue;
-$secondary-color:         $gray-200;
+$primary-color:           #2C91C2;
+$secondary-color:         #696161;
 
-$header-background-color: $mine-shaft;
-$footer-background-color: $gray-600;
+$header-background-color: #333333;
+$footer-background-color: #555555;
 
-$link-text-color:         $curious-blue;
+$link-text-color:         #2C91C2;
 
-$warning-color:           $neon-carrot;
-$success-color:           $forrest-green;
-$error-color:             $apple-blossom;
+$warning-color:           #FF9933;
+$success-color:           #2CA02C;
+$error-color:             #A94442;
 $info-color:              $cornflower-blue;

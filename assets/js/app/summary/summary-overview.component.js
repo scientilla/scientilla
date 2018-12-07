@@ -19,10 +19,11 @@
         'ChartService',
         'ModalService',
         '$window',
-        '$timeout'
+        '$timeout',
+        'CustomizeService'
     ];
 
-    function SummaryOverviewComponent(ChartService, ModalService, $window, $timeout) {
+    function SummaryOverviewComponent(ChartService, ModalService, $window, $timeout, CustomizeService) {
         const vm = this;
         vm.changeChart = changeChart;
         vm.isChartSelected = isChartSelected;
@@ -33,30 +34,35 @@
         vm.charts = [];
 
         vm.$onInit = () => {
-            let timer = null;
+            CustomizeService.getCustomizations().then(customizations => {
+                let timer = null;
 
-            vm.profileSummary.registerTab(vm);
-            vm.reload(vm.chartsData);
+                vm.customizations = customizations;
+                ChartService.setStyles(vm.customizations);
 
-            if ($window.innerWidth <= 992 && $window.innerWidth > 400) {
-                for (let i = 0; i < vm.charts.length; i++) {
-                    vm.charts[i] = getMainChartOptions(vm.charts[i]);
-                }
-            }
+                vm.profileSummary.registerTab(vm);
+                vm.reload(vm.chartsData);
 
-            angular.element($window).bind('resize', function(){
-                $timeout.cancel(timer);
-                timer = $timeout(function() {
-                    if ($window.innerWidth <= 992 && $window.innerWidth > 400) {
-                        for (let i = 0; i < vm.charts.length; i++) {
-                            vm.charts[i] = getMainChartOptions(vm.charts[i]);
-                        }
-                    } else {
-                        for (let i = 0; i < vm.charts.length; i++) {
-                            vm.charts[i] = getPreviewChartOptions(vm.charts[i]);
-                        }
+                if ($window.innerWidth <= 992 && $window.innerWidth > 400) {
+                    for (let i = 0; i < vm.charts.length; i++) {
+                        vm.charts[i] = getMainChartOptions(vm.charts[i]);
                     }
-                }, 500);
+                }
+
+                angular.element($window).bind('resize', function(){
+                    $timeout.cancel(timer);
+                    timer = $timeout(function() {
+                        if ($window.innerWidth <= 992 && $window.innerWidth > 400) {
+                            for (let i = 0; i < vm.charts.length; i++) {
+                                vm.charts[i] = getMainChartOptions(vm.charts[i]);
+                            }
+                        } else {
+                            for (let i = 0; i < vm.charts.length; i++) {
+                                vm.charts[i] = getPreviewChartOptions(vm.charts[i]);
+                            }
+                        }
+                    }, 500);
+                });
             });
         };
 

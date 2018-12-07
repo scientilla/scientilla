@@ -10,12 +10,13 @@
     function CustomizeService(Restangular) {
         var service = {
             getCustomizations: getCustomizations,
-            setCustomizations: setCustomizations
+            setCustomizations: setCustomizations,
+            resetCustomizations: resetCustomizations
         };
 
         /* jshint ignore:start */
         async function getCustomizations() {
-            return await Restangular.one('customize', 'institute').get();
+            return await Restangular.one('customize').get();
         }
         /* jshint ignore:end */
 
@@ -24,8 +25,18 @@
             var formData = new FormData();
             formData.append('institute', JSON.stringify(customizations.institute));
             formData.append('footer', JSON.stringify(customizations.footer));
-            formData.append('logo', customizations.logo);
-            return await Restangular.one('customize', 'institute')
+            formData.append('headerLogo', customizations.logos.header.file);
+            formData.append('instituteIcon', customizations.logos.institute.file);
+            formData.append('styles', JSON.stringify(customizations.styles));
+            return await Restangular.one('customize')
+                .customPOST(formData, '', undefined, {'Content-Type': undefined});
+        }
+        /* jshint ignore:end */
+
+        /* jshint ignore:start */
+        async function resetCustomizations() {
+            var formData = new FormData();
+            return await Restangular.one('customize', 'reset')
                 .customPOST(formData, '', undefined, {'Content-Type': undefined});
         }
         /* jshint ignore:end */

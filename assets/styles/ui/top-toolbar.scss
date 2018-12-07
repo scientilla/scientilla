@@ -8,8 +8,8 @@
 
 .top-toolbar{
     padding: 1.5rem 0px;
-    background: $mine-shaft;
-    color: $white;
+    background: $header-background-color;
+    color: color-yiq($header-background-color);
 
     .top-toolbar-listing{
         @include normalize-listing;
@@ -37,13 +37,13 @@
         overflow: hidden;
         white-space: nowrap;
         font-size: 1.5rem;
-        color: $white;
+        color: color-yiq($header-background-color);
 
         &:hover,
         &:focus,
         &:active:focus{
-            background: $abbey;
-            color: $white;
+            background: rgba(0,0,0,.2);
+            color: color-yiq($header-background-color);
             text-decoration: none;
         }
     }

@@ -4,14 +4,14 @@
     justify-content: center;
 
     .page-link{
-        color: $curious-blue;
+        color: $primary-color;
     }
 
     .page-item{
         &.active{
             .page-link{
-                background: $curious-blue;
-                border-color: $curious-blue;
+                background: $primary-color;
+                border-color: $primary-color;
             }
         }
     }

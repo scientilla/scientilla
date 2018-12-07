@@ -2,7 +2,7 @@
     min-width: auto;
     margin-top: 1rem !important;
     padding: 0.5rem;
-    border: 1px solid $silver;
+    border: 1px solid $gray-300;
 
     svg{
         width: auto;
@@ -10,16 +10,16 @@
     }
 
     .btn-secondary{
-        border: 1px solid $gray;
+        border: 1px solid $base-gray;
         background: none;
         color: $black;
 
         &.active{
-            border: 1px solid $silver !important;
-            background: $white!important;
+            border: 1px solid $gray-300 !important;
+            background: $white !important;
 
             .text-info{
-                color: $forrest-green !important;
+                color: $success-color !important;
             }
         }
     }
@@ -43,7 +43,7 @@
 
 .uib-typeahead-match{
     &.active{
-        background: $curious-blue;
+        background: $primary-color;
         .dropdown-item {
             color: $white;
 

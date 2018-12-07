@@ -206,7 +206,7 @@ h6,
 
 a,
 .has-action{
-    color: $curious-blue;
+    color: $link-text-color;
     cursor: pointer;
     word-wrap: break-word;
     word-break: break-word;
@@ -214,7 +214,7 @@ a,
     &:hover,
     &:focus,
     &:active:focus{
-        color: $deep-cerulean;
+        color: darken($link-text-color, 7.5%);
         text-decoration: none;
     }
 }

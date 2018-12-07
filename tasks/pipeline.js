@@ -35,6 +35,8 @@ var jsFilesToInject = [
     'js/dependencies/ui-bootstrap.min.js',
     'js/dependencies/d3.js',
     'js/dependencies/nv.d3.js',
+    'js/dependencies/tinycolor.js',
+    'js/dependencies/angularjs-color-picker.js',
 
     'js/dependencies/**/*.js',
     
