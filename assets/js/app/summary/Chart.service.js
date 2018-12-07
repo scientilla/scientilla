@@ -503,7 +503,7 @@
                 title: 'IIT vs non-IIT documents',
                 data: data,
                 options: getMultiBarChartConfig({
-                    color: colors
+                    color: colors,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
