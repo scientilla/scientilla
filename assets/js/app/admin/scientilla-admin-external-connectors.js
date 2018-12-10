@@ -10,16 +10,20 @@
         });
 
     controller.$inject = [
+        'Restangular',
+        'Notification'
     ];
 
-    function controller() {
+    function controller(Restangular, Notification) {
         const vm = this;
 
-        vm.scopus = {
-            active: false
-        };
-        vm.scival = {
-            active: false
+        vm.connectors = {
+            scopus: {
+                active: false
+            },
+            scival: {
+                active: false
+            }
         };
 
         vm.errors = {};
@@ -30,7 +34,40 @@
         vm.saveScival = saveScival;
 
         vm.$onInit = function () {
+            getConnectors();
         };
+
+        function getConnectors() {
+            return Restangular.one('external-connectors')
+                .get()
+                .then(connectors => {
+                    vm.connectors.scopus = connectors.scopus;
+                    vm.connectors.scival = connectors.scival;
+                });
+        }
+
+        function saveConnector(connector) {
+            let formData = new FormData();
+            formData.append('connector', JSON.stringify(connector));
+
+            Restangular.one('external-connector')
+                .customPOST(formData, '', undefined, {'Content-Type': undefined})
+                .then(res => {
+                    switch(connector.type) {
+                        case 'scopus':
+                            Notification.success('Scopus connector saved!');
+                            break;
+                        case 'scival':
+                            Notification.success('SciVal connector saved!');
+                            break;
+                        default:
+                            break;
+                    }
+                })
+                .catch(() => {
+                    Notification.error('An error happened');
+                });
+        }
 
         function resetErrors(type) {
             switch(type) {
@@ -48,8 +85,8 @@
         function validateScopus() {
             vm.errors.scopus = {};
 
-            if (vm.scopus.active) {
-                if (typeof vm.scopus.url === 'undefined' || vm.scopus.url === '') {
+            if (vm.connectors.scopus.active) {
+                if (typeof vm.connectors.scopus.url === 'undefined' || vm.connectors.scopus.url === '') {
                     vm.errors.scopus.url = [];
                     vm.errors.scopus.url.push({
                         rule:'required',
@@ -57,7 +94,7 @@
                     });
                 }
 
-                if (typeof vm.scopus.api === 'undefined' || vm.scopus.api === '') {
+                if (typeof vm.connectors.scopus.api === 'undefined' || vm.connectors.scopus.api === '') {
                     vm.errors.scopus.api = [];
                     vm.errors.scopus.api.push({
                         rule:'required',
@@ -65,7 +102,7 @@
                     });
                 }
 
-                if (typeof vm.scopus.token === 'undefined' || vm.scopus.token === '') {
+                if (typeof vm.connectors.scopus.token === 'undefined' || vm.connectors.scopus.token === '') {
                     vm.errors.scopus.token = [];
                     vm.errors.scopus.token.push({
                         rule:'required',
@@ -78,8 +115,8 @@
         function validateScival() {
             vm.errors.scival = {};
 
-            if (vm.scival.active) {
-                if (typeof vm.scival.url === 'undefined' || vm.scival.url === '') {
+            if (vm.connectors.scival.active) {
+                if (typeof vm.connectors.scival.url === 'undefined' || vm.connectors.scival.url === '') {
                     vm.errors.scival.url = [];
                     vm.errors.scival.url.push({
                         rule:'required',
@@ -87,7 +124,7 @@
                     });
                 }
 
-                if (typeof vm.scival.client === 'undefined' || vm.scival.client === '') {
+                if (typeof vm.connectors.scival.client === 'undefined' || vm.connectors.scival.client === '') {
                     vm.errors.scival.client = [];
                     vm.errors.scival.client.push({
                         rule:'required',
@@ -100,16 +137,22 @@
         function saveScopus(){
             validateScopus();
 
-            if (!_.isEmpty(vm.errors.scopus)) {
-                // Try to save
+            if (_.isEmpty(vm.errors.scopus)) {
+                saveConnector({
+                    type: 'scopus',
+                    data: vm.connectors.scopus
+                });
             }
         }
 
         function saveScival(){
             validateScival();
 
-            if (!_.isEmpty(vm.errors.scival)) {
-                // Try to save
+            if (_.isEmpty(vm.errors.scival)) {
+                saveConnector({
+                    type: 'scival',
+                    data: vm.connectors.scival
+                });
             }
         }
     }

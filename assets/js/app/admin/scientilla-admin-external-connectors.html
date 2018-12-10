@@ -10,7 +10,7 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label class="form-checkbox">
-                                        <input type="checkbox" ng-model="vm.scopus.active" ng-change="vm.resetErrors('scopus')"/>
+                                        <input type="checkbox" ng-model="vm.connectors.scopus.active" ng-change="vm.resetErrors('scopus')"/>
                                         <span>Enable Scopus</span>
                                     </label>
                                 </div>
@@ -23,8 +23,8 @@
                                         id="scopusUrl"
                                         type="text"
                                         class="form-control"
-                                        ng-model="vm.scopus.url"
-                                        ng-disabled="!vm.scopus.active"
+                                        ng-model="vm.connectors.scopus.url"
+                                        ng-disabled="!vm.connectors.scopus.active"
                                         ng-class="vm.errors.scopus.url ? 'is-invalid' : ''"/>
                                     <scientilla-error-messages
                                         class="error-messages"
@@ -39,8 +39,8 @@
                                         id="scopusApi"
                                         type="text"
                                         class="form-control"
-                                        ng-model="vm.scopus.api"
-                                        ng-disabled="!vm.scopus.active"
+                                        ng-model="vm.connectors.scopus.api"
+                                        ng-disabled="!vm.connectors.scopus.active"
                                         ng-class="vm.errors.scopus.api ? 'is-invalid' : ''"/>
                                     <scientilla-error-messages
                                         class="error-messages"
@@ -55,8 +55,8 @@
                                         id="scopusToken"
                                         type="text"
                                         class="form-control"
-                                        ng-model="vm.scopus.token"
-                                        ng-disabled="!vm.scopus.active"
+                                        ng-model="vm.connectors.scopus.token"
+                                        ng-disabled="!vm.connectors.scopus.active"
                                         ng-class="vm.errors.scopus.token ? 'is-invalid' : ''"/>
                                     <scientilla-error-messages
                                         class="error-messages"
@@ -77,7 +77,7 @@
                             <div class="card-body">
                                 <div class="form-group">
                                     <label class="form-checkbox">
-                                        <input type="checkbox" ng-model="vm.scival.active" ng-change="vm.resetErrors('scival')"/>
+                                        <input type="checkbox" ng-model="vm.connectors.scival.active" ng-change="vm.resetErrors('scival')"/>
                                         <span>Enable SciVal</span>
                                     </label>
                                 </div>
@@ -90,8 +90,8 @@
                                         id="scivalUrl"
                                         type="text"
                                         class="form-control"
-                                        ng-model="vm.scival.url"
-                                        ng-disabled="!vm.scival.active"
+                                        ng-model="vm.connectors.scival.url"
+                                        ng-disabled="!vm.connectors.scival.active"
                                         ng-class="vm.errors.scival.url ? 'is-invalid' : ''"/>
                                     <scientilla-error-messages
                                         class="error-messages"
@@ -106,8 +106,8 @@
                                         id="scivalClient"
                                         type="text"
                                         class="form-control"
-                                        ng-model="vm.scival.client"
-                                        ng-disabled="!vm.scival.active"
+                                        ng-model="vm.connectors.scival.client"
+                                        ng-disabled="!vm.connectors.scival.active"
                                         ng-class="vm.errors.scival.client ? 'is-invalid' : ''"/>
                                     <scientilla-error-messages
                                         class="error-messages"

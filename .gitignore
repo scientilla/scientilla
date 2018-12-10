@@ -41,7 +41,7 @@
 
 config/local.js
 config/scientilla.js
-
+config/connectors.js
 
 
 
