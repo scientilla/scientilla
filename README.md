@@ -27,6 +27,7 @@ At the moment you need to build Scientilla by yourself.
 
     ```
     cp config/scientilla.js.example config/scientilla.js
+    cp config/connectors.js.example config/connectors.js
     cp config/connections.js config/local.js
     sed -i 's/safe/alter/g' config/models.js
     ```
