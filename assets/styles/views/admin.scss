@@ -135,6 +135,20 @@
             }
         }
     }
+
+    &.admin-external-connectors{
+        .connector-listing{
+            @include normalize-listing;
+
+            & > li{
+                display: block;
+
+                & + li {
+                    margin-top: 3rem;
+                }
+            }
+        }
+    }
 }
 
 @include media-breakpoint-up(sm) {

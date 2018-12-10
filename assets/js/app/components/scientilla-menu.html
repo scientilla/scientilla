@@ -68,6 +68,11 @@
                     ng-class="{active: vm.isActive('/tools')}"
                     ng-if="vm.isAdmin()"
                     class="list-group-item list-group-item-action">Tools</a>
+                <a
+                    ng-href="#/connectors"
+                    ng-class="{active: vm.isActive('/connectors')}"
+                    ng-if="vm.isAdmin()"
+                    class="list-group-item list-group-item-action">External connectors</a>
             </div>
         </li>
     </ul>
