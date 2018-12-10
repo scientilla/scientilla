@@ -18,11 +18,10 @@
         const vm = this;
 
         vm.connectors = {
-            scopus: {
-                active: false
-            },
-            scival: {
-                active: false
+            elsevier: {
+                active: false,
+                scopus: {},
+                scival: {}
             }
         };
 
@@ -30,8 +29,7 @@
 
         vm.resetErrors = resetErrors;
 
-        vm.saveScopus = saveScopus;
-        vm.saveScival = saveScival;
+        vm.saveElsevier = saveElsevier;
 
         vm.$onInit = function () {
             getConnectors();
@@ -41,8 +39,7 @@
             return Restangular.one('external-connectors')
                 .get()
                 .then(connectors => {
-                    vm.connectors.scopus = connectors.scopus;
-                    vm.connectors.scival = connectors.scival;
+                    vm.connectors.elsevier = connectors.elsevier;
                 });
         }
 
@@ -54,11 +51,8 @@
                 .customPOST(formData, '', undefined, {'Content-Type': undefined})
                 .then(res => {
                     switch(connector.type) {
-                        case 'scopus':
-                            Notification.success('Scopus connector saved!');
-                            break;
-                        case 'scival':
-                            Notification.success('SciVal connector saved!');
+                        case 'elsevier':
+                            Notification.success('The elsevier connector is saved!');
                             break;
                         default:
                             break;
@@ -71,40 +65,59 @@
 
         function resetErrors(type) {
             switch(type) {
-                case 'scopus' :
-                    vm.errors.scopus = {};
-                    break;
-                case 'scival' :
-                    vm.errors.scival = {};
+                case 'elsevier' :
+                    vm.errors.elsevier = {
+                        scopus: {},
+                        scival: {}
+                    };
                     break;
                 default:
                     break;
             }
         }
 
-        function validateScopus() {
-            vm.errors.scopus = {};
+        function validateElsevier() {
+            vm.errors.elsevier = {
+                scopus: {},
+                scival: {}
+            };
 
-            if (vm.connectors.scopus.active) {
-                if (typeof vm.connectors.scopus.url === 'undefined' || vm.connectors.scopus.url === '') {
-                    vm.errors.scopus.url = [];
-                    vm.errors.scopus.url.push({
+            if (vm.connectors.elsevier.active) {
+                if (typeof vm.connectors.elsevier.scopus.url === 'undefined' || vm.connectors.elsevier.scopus.url === '') {
+                    vm.errors.elsevier.scopus.url = [];
+                    vm.errors.elsevier.scopus.url.push({
                         rule:'required',
                         message: 'This field is required.'
                     });
                 }
 
-                if (typeof vm.connectors.scopus.api === 'undefined' || vm.connectors.scopus.api === '') {
-                    vm.errors.scopus.api = [];
-                    vm.errors.scopus.api.push({
+                if (typeof vm.connectors.elsevier.scopus.apiKey === 'undefined' || vm.connectors.elsevier.scopus.apiKey === '') {
+                    vm.errors.elsevier.scopus.apiKey = [];
+                    vm.errors.elsevier.scopus.apiKey.push({
                         rule:'required',
                         message: 'This field is required.'
                     });
                 }
 
-                if (typeof vm.connectors.scopus.token === 'undefined' || vm.connectors.scopus.token === '') {
-                    vm.errors.scopus.token = [];
-                    vm.errors.scopus.token.push({
+                if (typeof vm.connectors.elsevier.scopus.token === 'undefined' || vm.connectors.elsevier.scopus.token === '') {
+                    vm.errors.elsevier.scopus.token = [];
+                    vm.errors.elsevier.scopus.token.push({
+                        rule:'required',
+                        message: 'This field is required.'
+                    });
+                }
+
+                if (typeof vm.connectors.elsevier.scival.url === 'undefined' || vm.connectors.elsevier.scival.url === '') {
+                    vm.errors.elsevier.scival.url = [];
+                    vm.errors.elsevier.scival.url.push({
+                        rule:'required',
+                        message: 'This field is required.'
+                    });
+                }
+
+                if (typeof vm.connectors.elsevier.scival.clientKey === 'undefined' || vm.connectors.elsevier.scival.clientKey === '') {
+                    vm.errors.elsevier.scival.clientKey = [];
+                    vm.errors.elsevier.scival.clientKey.push({
                         rule:'required',
                         message: 'This field is required.'
                     });
@@ -112,46 +125,13 @@
             }
         }
 
-        function validateScival() {
-            vm.errors.scival = {};
+        function saveElsevier(){
+            validateElsevier();
 
-            if (vm.connectors.scival.active) {
-                if (typeof vm.connectors.scival.url === 'undefined' || vm.connectors.scival.url === '') {
-                    vm.errors.scival.url = [];
-                    vm.errors.scival.url.push({
-                        rule:'required',
-                        message: 'This field is required.'
-                    });
-                }
-
-                if (typeof vm.connectors.scival.client === 'undefined' || vm.connectors.scival.client === '') {
-                    vm.errors.scival.client = [];
-                    vm.errors.scival.client.push({
-                        rule:'required',
-                        message: 'This field is required.'
-                    });
-                }
-            }
-        }
-
-        function saveScopus(){
-            validateScopus();
-
-            if (_.isEmpty(vm.errors.scopus)) {
+            if (_.isEmpty(vm.errors.elsevier.scopus) && _.isEmpty(vm.errors.elsevier.scival)) {
                 saveConnector({
-                    type: 'scopus',
-                    data: vm.connectors.scopus
-                });
-            }
-        }
-
-        function saveScival(){
-            validateScival();
-
-            if (_.isEmpty(vm.errors.scival)) {
-                saveConnector({
-                    type: 'scival',
-                    data: vm.connectors.scival
+                    type: 'elsevier',
+                    data: vm.connectors.elsevier
                 });
             }
         }

@@ -1,1 +1,1 @@
-module.exports.connectors = {"scopus":{"active":false},"scival":{"active":false}}
+module.exports.connectors = {"elsevier":{"active":false}}

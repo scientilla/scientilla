@@ -15,11 +15,8 @@ module.exports = {
         let connector = JSON.parse(req.body.connector);
 
         switch(connector.type) {
-            case 'scopus':
-                sails.config.connectors.scopus = connector.data;
-                break;
-            case 'scival':
-                sails.config.connectors.scival = connector.data;
+            case 'elsevier':
+                sails.config.connectors.elsevier = connector.data;
                 break;
             default:
                 break;
