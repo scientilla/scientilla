@@ -1,4 +1,4 @@
-/* global Document, sails, User, ObjectComparer, Authorship, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer */
+/* global Document, sails, User, ObjectComparer, Authorship, DocumentKinds, ExternalImporter, DocumentOrigins, DocumentKinds, Synchronizer */
 // Synchronizer.js - in api/services
 
 const _ = require('lodash');
@@ -24,7 +24,8 @@ async function synchronizeScopus() {
     let documentSynchronized = 0;
     let documentsToSynchronize;
     const authorshipsSynch = await Authorship.find({synchronize: true});
-    const documentIds = authorshipsSynch.map(a => a.document);
+    const draftsToSync = await Document.find({kind: DocumentKinds.DRAFT, synchronized: true});
+    const documentIds = [...authorshipsSynch.map(a => a.document), ...draftsToSync.map(d => d.id)];
     let slicedDocumentIds;
 
     do {
