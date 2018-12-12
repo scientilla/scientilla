@@ -176,6 +176,7 @@ module.exports = _.merge({}, BaseModel, {
         const selectedDraftData = _.pick(draftData, documentFields);
         selectedDraftData.kind = DocumentKinds.DRAFT;
         selectedDraftData.synchronized = false;
+        selectedDraftData.synchronized_at = null;
         await Document.fixDocumentType(selectedDraftData);
         const updatedDrafts = await Document.update({id: draftId}, selectedDraftData);
         const updatedDraft = updatedDrafts[0];

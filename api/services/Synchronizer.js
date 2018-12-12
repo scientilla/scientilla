@@ -23,16 +23,15 @@ async function synchronizeScopus() {
     let skip = 0;
     let documentSynchronized = 0;
     let documentsToSynchronize;
+    const authorshipsSynch = await Authorship.find({synchronize: true});
+    const documentIds = authorshipsSynch.map(a => a.document);
+    let slicedDocumentIds;
 
     do {
-        documentsToSynchronize = await Document.find({
-            synchronized: true,
-            kind: [DocumentKinds.DRAFT, DocumentKinds.VERIFIED],
-            origin: DocumentOrigins.SCOPUS
-        }).populate(documentPopulates)
-            .sort('id ASC')
-            .limit(limit)
-            .skip(skip);
+        slicedDocumentIds = documentIds.slice(skip, skip + limit);
+        await Document.update({id: slicedDocumentIds}, {synchronized: false});
+        documentsToSynchronize = await Document.find({id: slicedDocumentIds})
+            .populate(documentPopulates);
 
         sails.log.info('working on ' + documentsToSynchronize.length + ' documents');
         for (let doc of documentsToSynchronize) {
@@ -51,14 +50,13 @@ async function synchronizeScopus() {
                 const res = await documentSynchronize(doc, externalDoc);
                 if (res)
                     documentSynchronized++;
-            }
-            catch (e) {
+            } catch (e) {
                 sails.log.debug(e);
             }
         }
 
         skip = skip + limit;
-    } while (documentsToSynchronize.length === limit);
+    } while (slicedDocumentIds.length > 0);
     sails.log.info(documentSynchronized + ' documents synchronized');
 }
 
@@ -75,13 +73,11 @@ async function documentSynchronizeScopus(docId) {
         searchKey = 'originId';
         documentField = 'scopusId';
         exceptionMessage = 'Scopus Id rejected by Scopus, scopusId: ' + doc.scopusId;
-    }
-    else if (doc.doi) {
+    } else if (doc.doi) {
         searchKey = 'doi';
         documentField = 'doi';
         exceptionMessage = 'DOI not found on scopus (' + doc.doi + ')';
-    }
-    else
+    } else
         throw "Document's scopus id or DOI not found";
 
     const criteria = {
@@ -113,8 +109,7 @@ async function documentSynchronize(doc, externalDoc) {
     const positionsToUpdate = getAuthorshipPositionsToUpdate(doc, externalDoc);
 
     if (_.isEmpty(differences) && !positionsToUpdate.length) {
-        if (!doc.synchronized)
-            await Document.update({id: doc.id}, {synchronized: true});
+        await Document.update({id: doc.id}, {synchronized: true, synchronized_at: externalDoc.synchronized_at});
         return false;
     }
 
@@ -129,14 +124,13 @@ async function documentSynchronize(doc, externalDoc) {
 
 
     delete externalDocData.kind;
-    externalDocData.synchronized = true;
     if (docToUpdate.type !== externalDocData.type) {
         await Document.fixDocumentType(externalDocData);
     }
     await Document.update(docToUpdate.id, externalDocData);
     const updatedDoc = await Document.findOne({id: docToUpdate.id}).populate(documentPopulates);
 
-    const newAuthorships = getAuthorshipsToUpdate(updatedDoc, externalDoc);
+    const newAuthorships = getAuthorshipsToUpdate(updatedDoc, externalDoc, positionsToUpdate);
     await Authorship.updateAuthorships(updatedDoc, newAuthorships);
 
     return true;
@@ -145,9 +139,10 @@ async function documentSynchronize(doc, externalDoc) {
 function getDifferences(d1, d2) {
     if (d1.kind === DocumentKinds.EXTERNAL || d2.kind !== DocumentKinds.EXTERNAL)
         throw 'wrong method call';
-    const documentFields = Document.getFields();
-    _.remove(documentFields, f => f === 'kind' || f === 'synchronized');
-    return _.pickBy(d2, (v, k) => documentFields.includes(k) && v != d1[k]);
+
+    const excludedFields = ['kind', 'synchronized', 'synchronized_at'];
+    const filteredDocumentFields = Document.getFields().filter(f => !excludedFields.includes(f));
+    return _.pickBy(d2, (v, k) => filteredDocumentFields.includes(k) && v !== d1[k]);
 }
 
 function checkAuthors(doc, externalDoc) {
@@ -183,10 +178,7 @@ function getAuthorshipPositionsToUpdate(doc, externalDoc) {
             return acc.concat([i]);
         }
 
-        const docAffiliationIds = docAuthorship.affiliations.map(a => a.institute);
-        const externalAffiliationIds = externalAuthorship.affiliations.map(a => a.institute);
-
-        if (!_.isEqual(docAffiliationIds.sort(), externalAffiliationIds.sort()))
+        if (!Authorship.isMetadataEqual(docAuthorship, externalAuthorship, ['affiliations', 'corresponding']))
             return acc.concat([i]);
 
         return acc;
@@ -221,8 +213,7 @@ async function documentSplit(doc) {
             newAutorhsip.researchEntity = null;
             newAutorhsip.synchronize = null;
             return newAutorhsip;
-        }
-        else return a;
+        } else return a;
     });
 
     const newDocAuthorshipsData = authorshipsData.map(a => {
@@ -231,8 +222,7 @@ async function documentSplit(doc) {
             newAutorhsip.researchEntity = null;
             newAutorhsip.synchronize = null;
             return newAutorhsip;
-        }
-        else return a;
+        } else return a;
     });
 
     await Authorship.updateAuthorships(newDoc, newDocAuthorshipsData);
@@ -242,18 +232,23 @@ async function documentSplit(doc) {
 }
 
 
-function getAuthorshipsToUpdate(docToUpdate, externalDocData) {
+function getAuthorshipsToUpdate(docToUpdate, externalDocData, positionsToUpdate) {
     const verifiedPositions = docToUpdate.authorships.filter(a => a.researchEntity).map(a => a.position);
     return externalDocData.getFullAuthorships().reduce((acc, authorship) => {
         if (verifiedPositions.includes(authorship.position))
             return acc;
 
-        const a = _.cloneDeep(authorship);
-        a.affiliations = a.affiliations.map(af => af.institute);
-        delete a.researchEntity;
-        delete a.id;
+        if (positionsToUpdate.includes(authorship.position)) {
+            const a = {
+                authorStr: authorship.authorStr,
+                position: authorship.position,
+                affiliations: authorship.affiliations.map(af => af.institute),
+                corresponding: authorship.corresponding
+            };
 
-        acc.push(a);
+            acc.push(a);
+        }
+
         return acc;
     }, []);
 }

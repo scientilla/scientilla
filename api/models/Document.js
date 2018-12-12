@@ -32,7 +32,8 @@ const fields = [
     {name: 'iitPublicationsId'},
     {name: 'origin'},
     {name: 'kind'},
-    {name: 'synchronized'}
+    {name: 'synchronized'},
+    {name: 'synchronized_at'}
 ];
 
 module.exports = _.merge({}, BaseModel, {
@@ -66,6 +67,7 @@ module.exports = _.merge({}, BaseModel, {
         kind: 'STRING',
         origin: 'STRING',
         synchronized: "BOOLEAN",
+        synchronized_at: "DATETIME",
         source: {
             model: 'source'
         },
@@ -263,6 +265,7 @@ module.exports = _.merge({}, BaseModel, {
         scopusSynchronize: async function (synchronized) {
             if (!synchronized) {
                 this.synchronized = false;
+                this.synchronized_at = null;
                 return this.savePromise();
             }
 
@@ -495,6 +498,7 @@ module.exports = _.merge({}, BaseModel, {
                 continue;
 
             draft.synchronized = false;
+            draft.synchronized_at = null;
             await draft.savePromise();
             desynchronizedDrafts.push(draft);
         }

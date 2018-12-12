@@ -35,7 +35,7 @@ module.exports = {
         const externalDocuments = await Document.find({
             kind: DocumentKinds.EXTERNAL,
             origin: DocumentOrigins.SCOPUS,
-            updatedAt: {
+            synchronized_at: {
                 '<=': getUpdateLimitDate()
             }
         });
@@ -218,7 +218,7 @@ async function importDocuments(documentScopusIds) {
             scopusId: scopusId
         });
 
-        if (d && d.updatedAt > getUpdateLimitDate()) {
+        if (d && d.synchronized_at > getUpdateLimitDate()) {
             documents.push(d);
             continue;
         }

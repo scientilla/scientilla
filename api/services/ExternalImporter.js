@@ -83,6 +83,7 @@ module.exports = {
         documentData.origin = origin;
         documentData.kind = DocumentKinds.EXTERNAL;
         documentData.synchronized = synchronized;
+        documentData.synchronized_at = synchronized ? new Date() : null;
 
         try {
             return await Document.createOrUpdate(criteria, documentData);
