@@ -1,5 +1,5 @@
 module.exports.autoreload = {
-    active: true,
+    active: false,
     usePolling: false,
     overrideMigrateSetting: false,
     dirs: [
