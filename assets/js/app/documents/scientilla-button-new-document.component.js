@@ -15,15 +15,42 @@
     ScientillaButtonNewDocument.$inject = [
         'context',
         'ModalService',
-        'DocumentTypesService'
+        'DocumentTypesService',
+        'ExternalConnectorService',
+        'EventsService'
     ];
 
-    function ScientillaButtonNewDocument(context, ModalService, DocumentTypesService) {
+    function ScientillaButtonNewDocument(context, ModalService, DocumentTypesService, ExternalConnectorService, EventsService) {
         var vm = this;
 
         vm.createNewDocument = createNewDocument;
         vm.openScientillaDocumentSearch = ModalService.openScientillaDocumentSearch;
         vm.types = DocumentTypesService.getDocumentTypes();
+
+        vm.hasActiveExternalConnectors = false;
+
+        function checkActiveConnectors() {
+
+            vm.hasActiveExternalConnectors = false;
+
+            Object.keys(vm.connectors).forEach(function(connector) {
+                if (vm.connectors[connector].active) {
+                    vm.hasActiveExternalConnectors = true;
+                }
+            });
+        }
+
+        vm.$onInit = function () {
+            ExternalConnectorService.getConnectors().then((connectors) => {
+                vm.connectors = connectors;
+                checkActiveConnectors();
+            });
+
+            EventsService.subscribe(vm, EventsService.CONNECTORS_CHANGED, function (event, connectors) {
+                vm.connectors = connectors;
+                checkActiveConnectors();
+            });
+        };
 
         function createNewDocument(type) {
             var researchEntity = context.getResearchEntity();

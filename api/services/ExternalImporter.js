@@ -5,16 +5,36 @@
 
 module.exports = {
     updateUserExternal: async (id, origin) => {
-        const user = await User.findOneById(id);
+        let user;
+
+        if (!sails.config.connectors.elsevier.active) {
+            console.log('\nThe elsevier connector is not active, please fill in all necessary fields\n');
+            return false;
+        }
+
+        user = await User.findOneById(id);
+
         if (!origin || origin === DocumentOrigins.SCOPUS)
             await ScopusExternalImporter.updateUser(user);
     },
     updateGroupExternal: async (id, origin) => {
-        const group = await Group.findOneById(id);
+        let group;
+
+        if (!sails.config.connectors.elsevier.active) {
+            console.log('\nThe elsevier connector is not active, please fill in all necessary fields\n');
+            return false;
+        }
+
+        group = await Group.findOneById(id);
+
         if (!origin || origin === DocumentOrigins.SCOPUS)
             await ScopusExternalImporter.updateGroup(group);
     },
     updateAllExternal: async (origin) => {
+        if (!sails.config.connectors.elsevier.active) {
+            console.log('\nThe elsevier connector is not active, please fill in all necessary fields\n');
+            return false;
+        }
         if (!origin || origin === DocumentOrigins.SCOPUS)
             await ScopusExternalImporter.updateAll();
     },

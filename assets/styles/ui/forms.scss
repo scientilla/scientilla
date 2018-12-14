@@ -129,6 +129,13 @@ label{
         display: none;
     }
 
+    option{
+        &:disabled{
+            cursor: not-allowed;
+            background: lighten($silver, 15%);
+        }
+    }
+
     &.has-error{
         &:before{
             color: $apple-blossom;

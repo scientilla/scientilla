@@ -11,10 +11,12 @@
 
     controller.$inject = [
         'Restangular',
-        'Notification'
+        'Notification',
+        'ExternalConnectorService',
+        'EventsService'
     ];
 
-    function controller(Restangular, Notification) {
+    function controller(Restangular, Notification, ExternalConnectorService, EventsService) {
         const vm = this;
 
         vm.connectors = {
@@ -32,24 +34,19 @@
         vm.saveElsevier = saveElsevier;
 
         vm.$onInit = function () {
-            getConnectors();
+            ExternalConnectorService.getConnectors().then((connectors) => {
+                vm.connectors = connectors;
+            });
+
+            EventsService.subscribe(vm, EventsService.CONNECTORS_CHANGED, function (event, connectors) {
+                vm.connectors = connectors;
+            });
         };
 
-        function getConnectors() {
-            return Restangular.one('external-connectors')
-                .get()
-                .then(connectors => {
-                    vm.connectors.elsevier = connectors.elsevier;
-                });
-        }
-
         function saveConnector(connector) {
-            let formData = new FormData();
-            formData.append('connector', JSON.stringify(connector));
 
-            Restangular.one('external-connector')
-                .customPOST(formData, '', undefined, {'Content-Type': undefined})
-                .then(res => {
+            ExternalConnectorService.setConnector(connector)
+                .then((result) => {
                     switch(connector.type) {
                         case 'elsevier':
                             Notification.success('The elsevier connector is saved!');
@@ -57,6 +54,8 @@
                         default:
                             break;
                     }
+
+                    EventsService.publish(EventsService.CONNECTORS_CHANGED, result.connectors);
                 })
                 .catch(() => {
                     Notification.error('An error happened');

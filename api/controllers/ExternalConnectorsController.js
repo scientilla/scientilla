@@ -5,10 +5,15 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 var fs = require('fs');
+var scopusConnector = require('../services/ScopusConnector');
 
 module.exports = {
     getConnectors: function (req, res) {
-        res.halt(Promise.resolve(sails.config.connectors));
+        var config = _.merge({}, sails.config.connectors);
+
+        config.elsevier = _.merge({}, scopusConnector.getDefaults(), config.elsevier);
+
+        res.halt(Promise.resolve(config));
     },
 
     setConnector: function (req, res) {
@@ -16,7 +21,12 @@ module.exports = {
 
         switch(connector.type) {
             case 'elsevier':
-                sails.config.connectors.elsevier = connector.data;
+                sails.config.connectors.elsevier.active = connector.data.active;
+                sails.config.connectors.elsevier.scopus.url = connector.data.scopus.url;
+                sails.config.connectors.elsevier.scopus.apiKey = connector.data.scopus.apiKey;
+                sails.config.connectors.elsevier.scopus.token = connector.data.scopus.token;
+                sails.config.connectors.elsevier.scival.url = connector.data.scival.url;
+                sails.config.connectors.elsevier.scival.clientKey = connector.data.scival.clientKey;
                 break;
             default:
                 break;
