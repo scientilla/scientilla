@@ -179,8 +179,8 @@
                 ng-if="vm.document.type == 'invited_talk' && vm.sourceLabel">
                 <div
                     class="form-group has-feedback"
-                    ng-class="{'has-error': vm.document.id && form.itSource.$invalid}">
-                    <label for="source">{{vm.sourceLabel}}</label>
+                    ng-class="{'has-error': vm.errors.itSource}">
+                    <label for="source">{{vm.sourceLabel}} *</label>
                     <input
                         id="itSource"
                         name="itSource"
@@ -190,10 +190,12 @@
                         typeahead-loading="searching"
                         typeahead-no-results="noResults"
                         class="form-control"
-                        data-ng-required="true"
                         placeholder="{{vm.sourceLabel}}"
                         ng-model-options="{ allowInvalid: true }"
-                        ng-class="{'is-invalid': vm.document.id && form.itSource.$invalid}">
+                        ng-class="vm.errors.itSource ? 'is-invalid' : ''">
+                    <scientilla-error-messages
+                        class="error-messages"
+                        errors="vm.errors.itSource"></scientilla-error-messages>
                 </div>
             </div>
         </div>
@@ -264,20 +266,19 @@
                 <div
                     class="form-group has-feedback"
                     ng-if="!['invited_talk'].includes(vm.document.type)"
-                    ng-class="{'has-error': vm.document.id && form.scopusId.$invalid}">
+                    ng-class="{'has-error': vm.errors.scopusId}">
                     <label>Scopus ID</label>
                     <input
                         class="form-control"
                         name="scopusId"
                         placeholder="Scopus ID"
                         ng-model="vm.document.scopusId"
-                        ng-class="{'is-invalid': vm.document.id && form.scopusId.$invalid}">
+                        ng-class="{'is-invalid': vm.errors.scopusId}">
                     <div>(Numeric identifier in the scopus document URL: e.g., https://www.scopus.com/[..]eid=2-s2.0-<strong>84888368243</strong>[..])</div>
-                    <div
-                        ng-if="vm.document.id && form.scopusId.$invalid"
-                        class="invalid-feedback">
-                        Invalid  Scopus ID
-                    </div>
+                    <scientilla-error-messages
+                        ng-if="vm.document.id"
+                        class="error-messages"
+                        errors="vm.errors.scopusId"></scientilla-error-messages>
                 </div>
             </div>
             <div class="col-12 col-sm-6">
