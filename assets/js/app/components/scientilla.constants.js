@@ -237,6 +237,11 @@
             regex: /^\d*$/,
             message: 'The ScopusID is not valid'
         },
+        doi: {
+            allowNull: true,
+            regex: /^(10.)/,
+            message: 'The DOI is not valid. It should be like: 10.1038/nnano.2013.238'
+        },
         year: {
             allowNull: false,
             regex: /^(19|20)\d{2}$/,
