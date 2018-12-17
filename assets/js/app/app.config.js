@@ -24,7 +24,7 @@
             .setPrefix('scientilla');
 
         NotificationProvider.setOptions({
-            delay: 4000,
+            delay: 5000,
             startLeft: 15,
             positionX: 'left',
             positionY: 'bottom'
