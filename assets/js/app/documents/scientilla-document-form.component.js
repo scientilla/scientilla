@@ -137,6 +137,7 @@
                             break;
                         case state === 'failed':
                             this.message = 'Failed to save draft!';
+                            $scope.form.$setPristine();
                             break;
                     }
                 },
@@ -163,6 +164,7 @@
                             break;
                         case state === 'failed':
                             this.message = 'Failed to verify!';
+                            $scope.form.$setPristine();
                             break;
                     }
                 },
