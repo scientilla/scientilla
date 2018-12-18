@@ -1,4 +1,4 @@
-/* global Affiliation, Authorship, ResearchEntity, Document, TagLabel, SqlService, DocumentOrigins, DocumentKinds */
+/* global Affiliation, Authorship, ResearchEntity, Document, TagLabel, SqlService, DocumentOrigins, DocumentKinds, DocumentNotDuplicate, DocumentNotDuplicateGroup */
 'use strict';
 
 /**
@@ -37,7 +37,28 @@ module.exports = _.merge({}, BaseModel, {
             authorship.researchEntity = null;
             return authorship;
         });
-        return await Model.createDraft(Model, researchEntityId, documentData);
+        const draft = await Model.createDraft(Model, researchEntityId, documentData);
+
+        const dnds = await DocumentNotDuplicate.find({or: [{document: document.id}, {duplicate: document.id}]});
+        const dndgs = await DocumentNotDuplicateGroup.find({or: [{document: document.id}, {duplicate: document.id}]});
+
+        function convertDND(dnd) {
+            const d1 = dnd.document === document.id ? draft.id : dnd.document;
+            const d2 = dnd.duplicate === document.id ? draft.id : dnd.duplicate;
+            return {
+                document: Math.min(d1, d2),
+                duplicate: Math.max(d1, d2),
+                researchEntity: dnd.researchEntity
+            }
+        }
+
+        const newDnds = dnds.map(convertDND);
+        const newDndgs = dndgs.map(convertDND);
+
+        await DocumentNotDuplicate.create(newDnds);
+        await DocumentNotDuplicateGroup.create(newDndgs);
+
+        return draft
     },
     copyDocuments: async function (Model, researchEntityId, documentIds) {
         const results = [];
@@ -106,8 +127,7 @@ module.exports = _.merge({}, BaseModel, {
         let docToVerify;
         if (n === 0) {
             docToVerify = await draft.draftToDocument();
-        }
-        else {
+        } else {
             if (n > 1)
                 sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
             docToVerify = documentCopies[0];
@@ -268,15 +288,12 @@ module.exports = _.merge({}, BaseModel, {
         const document = await Document.findOneById(docToVerifyId)
             .populate('authorships')
             .populate('affiliations');
-        let docToVerify, isExternal = document.kind === DocumentKinds.EXTERNAL;
-        if (isExternal)
-            docToVerify = await ResearchEntityModel.copyDocument(ResearchEntityModel, researchEntityId, docToVerifyId);
-        else
-            docToVerify = document;
+        const isExternal = document.kind === DocumentKinds.EXTERNAL;
+        const docToVerify = isExternal ? await ResearchEntityModel.copyDocument(ResearchEntityModel, researchEntityId, docToVerifyId) : document;
+
         if (docToVerify.isDraft()) {
             errors = await ResearchEntityModel.getDraftVerifyErrors(researchEntityId, docToVerify, verificationData, true, docToRemoveId);
-        }
-        else {
+        } else {
             errors = await ResearchEntityModel.getDocumentVerifyErrors(researchEntityId, docToVerify, verificationData, true, docToRemoveId);
         }
         if (errors) {
@@ -296,7 +313,7 @@ module.exports = _.merge({}, BaseModel, {
             res = await ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, docToVerify.id, verificationData);
         return res;
     },
-    removeDiscarded: async function(ResearchEntityModel, researchEntityId, documentId) {
+    removeDiscarded: async function (ResearchEntityModel, researchEntityId, documentId) {
         const DiscardedModel = getDiscardedModel(ResearchEntityModel);
         await DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
     },
