@@ -4,10 +4,13 @@
     ng-class="vm.errors ? 'has-error' : ''">
     <scientilla-text-field
         ng-if="vm.structure.inputType==='text'"
+        name="vm.name"
         model="vm.values[vm.name]"
         field-id="vm.id"
         structure="vm.fieldStructure"
-        errors="vm.errors">
+        errors="vm.errors"
+        on-validate="vm.onValidate({name})"
+        on-change="vm.onChange({name})">
     </scientilla-text-field>
     <scientilla-select-field
         ng-if="vm.structure.inputType==='select'"

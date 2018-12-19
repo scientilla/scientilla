@@ -10,7 +10,9 @@
                 structure: '<',
                 cssClass: '@',
                 onSubmit: '&',
-                errors: '<'
+                errors: '<',
+                onValidate: '&',
+                onChange: '&'
             },
             transclude: true,
         });

@@ -8,7 +8,9 @@
     placeholder="{{vm.structure.placeholder}}"
     ng-model="vm.model"
     ng-disabled="vm.structure.disabled"
-    ng-class="vm.errors ? 'is-invalid' : ''">
+    ng-class="{'is-invalid' : vm.errors}"
+    ng-blur="vm.structure.required && vm.validate(vm.name)"
+    ng-change="vm.structure.required && vm.valueChanged(vm.name)">
 <scientilla-error-messages
     class="error-messages"
     errors="vm.errors"></scientilla-error-messages>

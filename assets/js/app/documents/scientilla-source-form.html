@@ -20,7 +20,9 @@
                 id="title"
                 placeholder="Title"
                 ng-model="vm.newSource.title"
-                ng-class="vm.errors.title ? 'is-invalid' : ''"/>
+                ng-class="vm.errors.title ? 'is-invalid' : ''"
+                ng-blur="vm.checkValidation('title')"
+                ng-change="vm.fieldValueHasChanged('title')"/>
             <scientilla-error-messages
                 class="error-messages"
                 errors="vm.errors.title"></scientilla-error-messages>

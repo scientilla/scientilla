@@ -22,19 +22,30 @@
         'Notification',
         'Restangular',
         'ModalService',
-        'EventsService'
+        'EventsService',
+        'ValidateService',
+        '$timeout'
     ];
 
-    function scientillaAdminNewInstituteController($scope, Notification, Restangular, ModalService, EventsService) {
+    function scientillaAdminNewInstituteController($scope, Notification, Restangular, ModalService, EventsService, ValidateService, $timeout) {
         const vm = this;
 
         vm.saveInstitute = saveInstitute;
         vm.cancel = cancel;
+        vm.checkValidation = checkValidation;
+        vm.isValid = isValid;
+        vm.fieldValueHasChanged = fieldValueHasChanged;
         vm.errors = {};
 
         let originalInstitute = {};
+        let timeout;
+
+        const delay = 500;
 
         vm.$onInit = function() {
+            if (!vm.institute.id) {
+                vm.institute = {};
+            }
             originalInstitute = angular.copy(vm.institute);
 
             // Listen to modal closing event
@@ -42,6 +53,14 @@
                 cancel(event, reason);
             });
         };
+
+        function isValid() {
+            if (Object.keys(vm.errors).length > 0) {
+                return false;
+            } else {
+                return true;
+            }
+        }
 
         function checkErrorMessages(errors) {
             vm.errors = {};
@@ -58,9 +77,45 @@
             });
         }
 
+        function checkValidation(field = false) {
+            const requiredFields = [
+                'name'
+            ];
+
+            if (field) {
+                vm.errors[field] = ValidateService.validate(vm.institute, field, requiredFields);
+
+                if (typeof vm.errors[field] === 'undefined') {
+                    delete vm.errors[field];
+                }
+            } else {
+                vm.errors = ValidateService.validate(vm.institute, false, requiredFields);
+            }
+
+            if (Object.keys(vm.errors).length > 0) {
+                vm.errorText = 'Please correct the errors on this form!';
+            } else {
+                vm.errorText = '';
+            }
+        }
+
+        function fieldValueHasChanged(field = false) {
+            $timeout.cancel(timeout);
+
+            timeout = $timeout(function () {
+                checkValidation(field);
+            }, delay);
+        }
+
         function saveInstitute() {
             if (!vm.institute)
                 return;
+
+            checkValidation();
+
+            if (Object.keys(vm.errors).length > 0) {
+                return;
+            }
 
             if (!vm.institute.id) {
                 Restangular.all('institutes')

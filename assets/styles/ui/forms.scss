@@ -29,6 +29,32 @@ label{
     }
 }
 
+.has-error{
+    .form-control,
+    .select-wrapper,
+    .input-group{
+        &.is-invalid{
+            border-color: $apple-blossom;
+        }
+    }
+}
+
+.has-warning{
+    .form-control,
+    .select-wrapper,
+    .input-group{
+        &.is-invalid{
+            border-color: $neon-carrot;
+        }
+    }
+
+    label,
+    i,
+    .invalid-feedback{
+        color: $neon-carrot;
+    }
+}
+
 .form-checkbox{
     &,
     label{
