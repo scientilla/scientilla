@@ -25,8 +25,12 @@
             var formData = new FormData();
             formData.append('institute', JSON.stringify(customizations.institute));
             formData.append('footer', JSON.stringify(customizations.footer));
-            formData.append('headerLogo', customizations.logos.header.file);
-            formData.append('instituteIcon', customizations.logos.institute.file);
+            if (customizations.logos && customizations.logos.header && customizations.logos.header.file) {
+                formData.append('headerLogo', customizations.logos.header.file);
+            }
+            if (customizations.logos && customizations.logos.institute && customizations.logos.institute.file) {
+                formData.append('instituteIcon', customizations.logos.institute.file);
+            }
             formData.append('styles', JSON.stringify(customizations.styles));
             return await Restangular.one('customize')
                 .customPOST(formData, '', undefined, {'Content-Type': undefined});

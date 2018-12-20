@@ -1,31 +1,22 @@
 module.exports = function(grunt) {
-    //var done = this.async();
-
-    var variables = [
-        {
-            name: 'test',
-            //from: 'rgb(0,114,175)',
-            to: 'red'
-        }
-    ];
-
     var config = require('../../config/customizations.js');
 
-    //console.log(config.customizations);
+    if (config && config.customizations && config.customizations.styles && config.customizations.styles.stylesArray) {
 
-    grunt.config.set('sass-replace', {
-        default: {
-            files: [
-                {
-                    src: 'assets/styles/variables.scss',
-                    dest: 'assets/styles/variables-overwrites.scss'
+        grunt.config.set('sass-replace', {
+            default: {
+                files: [
+                    {
+                        src: 'assets/styles/variables.scss',
+                        dest: 'assets/styles/variables-overwrites.scss'
+                    }
+                ],
+                options: {
+                    variables: config.customizations.styles.stylesArray
                 }
-            ],
-            options: {
-                variables: config.customizations.styles.stylesArray
             }
-        }
-    });
+        });
 
-    grunt.loadNpmTasks('grunt-sass-replace');
+        grunt.loadNpmTasks('grunt-sass-replace');
+    }
 };

@@ -32,6 +32,8 @@
         vm.$onInit = function () {
             CustomizeService.getCustomizations().then(customizations => {
                 vm.customizations = customizations;
+
+                console.log(vm.customizations);
             });
 
             EventsService.subscribe(vm, EventsService.CUSTOMIZATIONS_CHANGED, function (event, customizations) {

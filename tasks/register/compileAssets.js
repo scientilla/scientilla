@@ -1,10 +1,9 @@
 module.exports = function (grunt) {
-	grunt.registerTask('compileAssets', [
-		'clean:dev',
-		'babel',
-		'sass-replace',
-		'sass:dev',
-		'copy:dev',
-		'copy:uploadsDev'
-	]);
+    grunt.registerTask('compileAssets', [
+        'clean:dev',
+        'babel',
+        'sass:dev',
+        'copy:dev',
+        'copy:uploadsDev'
+    ]);
 };

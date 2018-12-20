@@ -23,36 +23,70 @@ module.exports = {
         sails.config.customizations.footer = footer;
 
         sails.config.customizations.styles = styles;
-        sails.config.customizations.styles.stylesArray = [
-            {
+        sails.config.customizations.styles.stylesArray = [];
+
+        if (styles.primaryColor) {
+            sails.config.customizations.styles.stylesArray.push({
                 name: 'primary-color',
                 to: '#' + styles.primaryColor
-            }, {
+            });
+        }
+
+        if (styles.secondaryColor) {
+            sails.config.customizations.styles.stylesArray.push({
                 name: 'secondary-color',
                 to: '#' + styles.secondaryColor
-            }, {
+            });
+        }
+
+        if (styles.headerBackgroundColor) {
+            sails.config.customizations.styles.stylesArray.push({
                 name: 'header-background-color',
                 to: '#' + styles.headerBackgroundColor
-            }, {
+            });
+        }
+
+        if (styles.footerBackgroundColor) {
+            sails.config.customizations.styles.stylesArray.push({
                 name: 'footer-background-color',
                 to: '#' + styles.footerBackgroundColor
-            }, {
+            });
+        }
+
+        if (styles.baseGray) {
+            sails.config.customizations.styles.stylesArray.push({
                 name: 'base-gray',
                 to: '#' + styles.baseGray
-            }, {
+            });
+        }
+
+        if (styles.linkTextColor) {
+            sails.config.customizations.styles.stylesArray.push({
                 name: 'link-text-color',
                 to: '#' + styles.linkTextColor
-            }, {
+            });
+        }
+
+        if (styles.warningColor) {
+            sails.config.customizations.styles.stylesArray.push({
                 name: 'warning-color',
                 to: '#' + styles.warningColor
-            }, {
+            });
+        }
+
+        if (styles.successColor) {
+            sails.config.customizations.styles.stylesArray.push({
                 name: 'success-color',
                 to: '#' + styles.successColor
-            }, {
+            });
+        }
+
+        if (styles.errorColor) {
+            sails.config.customizations.styles.stylesArray.push({
                 name: 'error-color',
                 to: '#' + styles.errorColor
-            }
-        ];
+            });
+        }
 
         promises.push(new Promise(function(resolve, reject) {
             req.file('headerLogo').upload({
