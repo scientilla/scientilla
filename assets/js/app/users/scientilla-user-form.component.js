@@ -23,16 +23,21 @@
         'Prototyper',
         'userConstants',
         'context',
-        'ModalService'
+        'ModalService',
+        'ValidateService',
+        '$timeout'
     ];
 
-    function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants, context, ModalService) {
+    function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants, context, ModalService, ValidateService, $timeout) {
         const vm = this;
         vm.getCollaborationsFilter = getCollaborationsFilter;
         vm.getGroupsQuery = GroupsService.getGroupsQuery;
         vm.groupToCollaboration = groupToCollaboration;
         vm.submit = submit;
         vm.cancel = cancel;
+        vm.checkValidation = checkValidation;
+        vm.fieldValueHasChanged = fieldValueHasChanged;
+
         vm.userIsAdmin = AuthService.user.role === userConstants.role.ADMINISTRATOR;
         vm.roleSelectOptions = [
             {label: 'User', value: userConstants.role.USER},
@@ -45,6 +50,10 @@
         vm.errorText = '';
 
         let originalUser = angular.copy(vm.user);
+
+        let timeout;
+
+        const delay = 500;
 
         vm.$onInit = function () {
             deregisteres.push($scope.$watch('vm.user.name', nameChanged));
@@ -72,7 +81,46 @@
             return UsersService.getCollaborations(vm.user);
         }
 
+        function checkValidation(field = false) {
+            const requiredFields = [
+                'username',
+                'name',
+                'surname'
+            ];
+
+            if (field) {
+                vm.errors[field] = ValidateService.validate(vm.user, field, requiredFields);
+
+                if (typeof vm.errors[field] === 'undefined') {
+                    delete vm.errors[field];
+                }
+            } else {
+                vm.errors = ValidateService.validate(vm.user, false, requiredFields);
+            }
+
+            if (Object.keys(vm.errors).length > 0) {
+                vm.errorText = 'Please correct the errors on this form!';
+            } else {
+                vm.errorText = '';
+            }
+        }
+
+        function fieldValueHasChanged(field = false) {
+            $timeout.cancel(timeout);
+
+            timeout = $timeout(function () {
+                checkValidation(field);
+            }, delay);
+        }
+
         function submit() {
+
+            checkValidation();
+
+            if (Object.keys(vm.errors).length > 0) {
+                return;
+            }
+
             UsersService
                 .doSave(vm.user)
                 .then(function (res) {

@@ -23,7 +23,9 @@
                 name="name"
                 reset="vm.reset"
                 values="vm.values"
-                errors="vm.errors[name]"></scientilla-field>
+                errors="vm.errors[name]"
+                on-validate="vm.onValidate({name})"
+                on-change="vm.onChange({name})"></scientilla-field>
         </li>
     </ul>
 

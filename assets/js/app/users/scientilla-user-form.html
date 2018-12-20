@@ -21,7 +21,9 @@
                 placeholder="Username (Email)"
                 ng-model="vm.user.username"
                 ng-disabled="!vm.userIsAdmin"
-                ng-class="vm.errors.username ? 'is-invalid' : ''">
+                ng-class="vm.errors.username ? 'is-invalid' : ''"
+                ng-blur="vm.checkValidation('username')"
+                ng-change="vm.fieldValueHasChanged('username')">
             <scientilla-error-messages
                 class="error-messages"
                 errors="vm.errors.username"></scientilla-error-messages>
@@ -38,7 +40,9 @@
                 placeholder="Name"
                 ng-model="vm.user.name"
                 ng-disabled="!vm.userIsAdmin"
-                ng-class="vm.errors.name ? 'is-invalid' : ''">
+                ng-class="vm.errors.name ? 'is-invalid' : ''"
+                ng-blur="vm.checkValidation('name')"
+                ng-change="vm.fieldValueHasChanged('namee')">
             <scientilla-error-messages
                 class="error-messages"
                 errors="vm.errors.name"></scientilla-error-messages>
@@ -55,7 +59,9 @@
                 placeholder="Surname"
                 ng-model="vm.user.surname"
                 ng-disabled="!vm.userIsAdmin"
-                ng-class="vm.errors.surname ? 'is-invalid' : ''">
+                ng-class="vm.errors.surname ? 'is-invalid' : ''"
+                ng-blur="vm.checkValidation('surname')"
+                ng-change="vm.fieldValueHasChanged('surname')">
             <scientilla-error-messages
                 class="error-messages"
                 errors="vm.errors.surname"></scientilla-error-messages>

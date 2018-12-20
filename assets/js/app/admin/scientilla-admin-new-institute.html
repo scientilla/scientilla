@@ -12,7 +12,7 @@
     <form>
         <div
             class="form-group"
-            ng-class="vm.errors.name ? 'has-error' : ''">
+            ng-class="{'has-error' : vm.errors.name}">
             <label for="name">Name *</label>
             <input
                 id="name"
@@ -20,7 +20,9 @@
                 type="text"
                 class="form-control"
                 ng-model="vm.institute.name"
-                ng-class="vm.errors.name ? 'is-invalid' : ''">
+                ng-class="{'is-invalid' : vm.errors.name}"
+                ng-blur="vm.checkValidation('name')"
+                ng-change="vm.fieldValueHasChanged('name')">
             <scientilla-error-messages
                 class="error-messages"
                 errors="vm.errors.name"></scientilla-error-messages>
@@ -99,5 +101,9 @@
                     click="vm.cancel()">Close</scientilla-button>
             </li>
         </ul>
+
+        <div ng-if="vm.errorText" class="modal-error text-danger">
+            {{ vm.errorText }}
+        </div>
     </form>
 </div>

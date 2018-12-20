@@ -65,6 +65,14 @@
         vm.errors = {};
         vm.errorText = '';
         vm.unsavedData = false;
+        vm.mode = 'draft';
+        vm.resetErrors = resetErrors;
+        vm.checkValidation = checkValidation;
+        vm.fieldValueHasChanged = fieldValueHasChanged;
+
+        let timeout;
+
+        const delay = 500;
 
         vm.$onInit = function () {
             if (_.isFunction(vm.document.clone))
@@ -86,12 +94,52 @@
             $scope.$on('modal.closing', function(event, reason) {
                 cancel(event);
             });
+
+            if (vm.document.id) {
+                vm.errorText = '';
+                vm.errors = vm.document.validateDocument();
+
+                if (Object.keys(vm.errors).length > 0) {
+                    vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
+                }
+            }
         };
 
         vm.$onDestroy = function () {
             for (const deregisterer of deregisteres)
                 deregisterer();
         };
+
+        function resetErrors() {
+            vm.errors = {};
+            vm.errorText = '';
+        }
+
+        function checkValidation(field = false) {
+            if (field) {
+                vm.errors[field] = vm.document.validateDocument(field);
+
+                if (typeof vm.errors[field] === 'undefined') {
+                    delete vm.errors[field];
+                }
+            } else {
+                vm.errors = vm.document.validateDocument();
+            }
+
+            if (Object.keys(vm.errors).length > 0) {
+                vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
+            } else {
+                vm.errorText = '';
+            }
+        }
+
+        function fieldValueHasChanged(field = false) {
+            $timeout.cancel(timeout);
+
+            timeout = $timeout(function () {
+                checkValidation(field);
+            }, delay);
+        }
 
         function watchDocumentSourceType() {
             const dereg = $scope.$watch('vm.document.sourceType', (newValue, oldValue) => {
@@ -124,6 +172,8 @@
                 setState: function (state) {
                     this.state = state;
 
+                    vm.mode = 'draft';
+
                     switch(true) {
                         case state === 'ready to save':
                             this.message = 'Save draft';
@@ -150,6 +200,8 @@
             return {
                 setState: function (state) {
                     this.state = state;
+
+                    vm.mode = 'verify';
 
                     switch(true) {
                         case state === 'ready to verify':
@@ -182,6 +234,13 @@
         function saveDocument(updateState = false) {
             if (updateState) {
                 vm.saveStatus.setState('saving');
+            }
+
+            vm.errorText = '';
+            vm.errors = vm.document.validateDocument();
+
+            if (Object.keys(vm.errors).length > 0) {
+                vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
             }
 
             if (vm.document.id) {
@@ -295,6 +354,8 @@
                 vm.getSources(source.title);
 
                 vm.errors = vm.document.validateDocument();
+
+                checkValidation();
             });
 
             ModalService
@@ -302,8 +363,11 @@
         }
 
         function checkSource($event) {
-            if (!$event.target.value)
+            if (!$event.target.value) {
                 vm.document.source = null;
+            }
+
+            checkValidation('source');
         }
 
         function verify() {
@@ -313,7 +377,7 @@
 
             $timeout(function() {
                 vm.errors = vm.document.validateDocument();
-                if (_.isEmpty(vm.errors)) {
+                if (Object.keys(vm.errors).length === 0) {
                     // Is valid
                     saveDocument()
                         .then(() => {

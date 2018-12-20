@@ -20,15 +20,19 @@
         '$scope',
         'groupTypes',
         'groupTypeLabels',
-        'ModalService'
+        'ModalService',
+        'ValidateService',
+        '$timeout'
     ];
 
-    function GroupFormController(GroupsService, Notification, AuthService, $scope, groupTypes, groupTypeLabels, ModalService) {
+    function GroupFormController(GroupsService, Notification, AuthService, $scope, groupTypes, groupTypeLabels, ModalService, ValidateService, $timeout) {
         const vm = this;
         vm.getUsersQuery = getUsersQuery;
         vm.cancel = cancel;
-
+        vm.isValid = isValid;
         vm.submit = submit;
+        vm.validate = validate;
+        vm.fieldValueHasChanged = fieldValueHasChanged;
 
         vm.errors = [];
         vm.errorText = '';
@@ -36,6 +40,15 @@
         let formValues = {};
         let originalGroup = {};
         let forcedClose = false;
+        let timeout;
+
+        const delay = 500;
+
+        const requiredFields = [
+            'name'
+        ];
+
+        const rules = [];
 
         vm.formStructure = {
             name: {
@@ -122,6 +135,40 @@
             }
         };
 
+        function validate(field = false) {
+            if (field && field.name) {
+                vm.errors[field.name] = ValidateService.validate(formValues, field.name, requiredFields, rules);
+
+                if (typeof vm.errors[field.name] === 'undefined') {
+                    delete vm.errors[field.name];
+                }
+            } else {
+                vm.errors = ValidateService.validate(formValues, false, requiredFields, rules);
+            }
+
+            if (Object.keys(vm.errors).length > 0) {
+                vm.errorText = 'Please correct the errors on this form!';
+            } else {
+                vm.errorText = '';
+            }
+        }
+
+        function fieldValueHasChanged(field = false) {
+            $timeout.cancel(timeout);
+
+            timeout = $timeout(function () {
+                validate(field);
+            }, delay);
+        }
+
+        function isValid() {
+            if (Object.keys(vm.errors).length > 0) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
         function nameChanged() {
             if (!vm.group)
                 return;
@@ -137,6 +184,12 @@
 
         function submit(group) {
             if (!group) return;
+
+            validate();
+
+            if (Object.keys(vm.errors).length > 0) {
+                return;
+            }
 
             for (const key of Object.keys(vm.formStructure))
                 vm.group[key] = group[key];

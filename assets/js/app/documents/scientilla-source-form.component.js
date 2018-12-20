@@ -22,19 +22,27 @@
         'Restangular',
         'ModalService',
         'EventsService',
-        '$scope'
+        '$scope',
+        'ValidateService',
+        '$timeout'
     ];
 
-    function scientillaSourceFormController(context, Restangular, ModalService, EventsService, $scope) {
+    function scientillaSourceFormController(context, Restangular, ModalService, EventsService, $scope, ValidateService, $timeout) {
         const vm = this;
 
         vm.createSource = createSource;
         vm.cancel = cancel;
+        vm.checkValidation = checkValidation;
+        vm.fieldValueHasChanged = fieldValueHasChanged;
+        vm.isValid = isValid;
         vm.errors = {};
         vm.errorText = '';
 
         let emptySource = {};
         let closed = false;
+        let timeout;
+
+        const delay = 500;
 
         vm.$onInit = function () {
             $scope.$on('modal.closing', function (event, reason) {
@@ -42,12 +50,56 @@
             });
         };
 
+        function isValid() {
+            if (Object.keys(vm.errors).length > 0) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+
+        function checkValidation(field = false) {
+            const requiredFields = [
+                'title'
+            ];
+
+            if (field) {
+                vm.errors[field] = ValidateService.validate(vm.newSource, field, requiredFields);
+
+                if (typeof vm.errors[field] === 'undefined') {
+                    delete vm.errors[field];
+                }
+            } else {
+                vm.errors = ValidateService.validate(vm.newSource, false, requiredFields);
+            }
+
+            if (!_.isEmpty(vm.errors)) {
+                vm.errorText = 'Please correct the errors on this form!';
+            } else {
+                vm.errorText = '';
+            }
+        }
+
+        function fieldValueHasChanged(field = false) {
+            $timeout.cancel(timeout);
+
+            timeout = $timeout(function () {
+                checkValidation(field);
+            }, delay);
+        }
+
         function createSource() {
 
             if (vm.newSource) {
                 vm.newSource.type = vm.document.sourceType;
             } else {
                 vm.newSource = {};
+            }
+
+            checkValidation();
+
+            if (Object.keys(vm.errors).length > 0) {
+                return;
             }
 
             Restangular.all('sources')
