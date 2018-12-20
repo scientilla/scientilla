@@ -377,7 +377,7 @@
 
             $timeout(function() {
                 vm.errors = vm.document.validateDocument();
-                if (!Object.keys(vm.errors).length > 0) {
+                if (Object.keys(vm.errors).length === 0) {
                     // Is valid
                     saveDocument()
                         .then(() => {
