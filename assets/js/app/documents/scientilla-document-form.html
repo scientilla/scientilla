@@ -188,7 +188,9 @@
                 class="col-12 col-sm-6"
                 ng-class="['journal', 'conference', 'book', 'bookseries'].includes(vm.document.sourceType) && vm.document.sourceType ? 'col-md-3' : 'col-md-6'"
                 ng-if="!['invited_talk'].includes(vm.document.type)">
-                <div class="form-group">
+                <div
+                    ng-class="vm.errors.doi ? 'has-error' : ''"
+                    class="form-group has-feedback">
                     <label for="doi">DOI</label>
                     <input
                         type="text"
@@ -197,7 +199,12 @@
                         placeholder="DOI"
                         ng-model="vm.document.doi"
                         ng-blur="vm.checkValidation('doi')"
-                        ng-change="vm.fieldValueHasChanged('doi')">
+                        ng-change="vm.fieldValueHasChanged('doi')"
+                        ng-class="{'is-invalid' : vm.errors.doi}">
+                    <span ng-if="!vm.errors.doi">Example: <strong>10.1038/nnano.2013.238</strong></span>
+                    <scientilla-error-messages
+                        class="error-messages"
+                        errors="vm.errors.doi"></scientilla-error-messages>
                 </div>
             </div>
 
