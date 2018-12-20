@@ -21,10 +21,11 @@
     DocumentComparisonController.$inject = [
         'context',
         'documentTypes',
-        'documentSourceTypes'
+        'documentSourceTypes',
+        'Notification'
     ];
 
-    function DocumentComparisonController(context, documentTypes, documentSourceTypes) {
+    function DocumentComparisonController(context, documentTypes, documentSourceTypes, Notification) {
         const vm = this;
         vm.keepDocument1 = keepDocument1;
         vm.keepDocument2 = keepDocument2;
@@ -36,9 +37,18 @@
 
         vm.researchEntity = context.getResearchEntity();
         vm.$onInit = function () {
+            var duplicates = vm.document1.getComparisonDuplicates();
             vm.differentFields = getDifferentFields();
             vm.verifiedCount1 = getVerifiedCount(vm.document1);
             vm.verifiedCount2 = getVerifiedCount(vm.document2);
+
+            if (vm.document1.getComparisonDuplicates().length > 2) {
+                var warning =  'Please notify that there are ' + duplicates.length;
+                warning += ' duplicates. You can only compare 2 documents at the time.';
+                warning += ' Other duplicates can be found in the drafts section.';
+
+                Notification.warning(warning);
+            }
         };
 
         vm.collapsed = true;

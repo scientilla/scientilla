@@ -40,6 +40,14 @@
                             const res = await researchEntityService.verifyDraftAsUser(user, documentId, verificationData);
 
                             if (res.error) {
+
+                                try {
+                                    const document = await researchEntityService.getDraft(user, documentId)
+                                    service.compareDocuments(document, document.getComparisonDuplicate());
+                                } catch (error) {
+                                    Notification.error(error);
+                                }
+
                                 Notification.warning(res.error);
                                 return;
                             }
