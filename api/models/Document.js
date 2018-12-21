@@ -446,6 +446,7 @@ module.exports = _.merge({}, BaseModel, {
 
         const query = _.pick(document, Document.getFields());
         query.id = {'!': document.id};
+        delete query.synchronized_at;
         if (_.isObject(document.source) && document.source.id)
             query.source = document.source.id;
         query.kind = DocumentKinds.VERIFIED;
