@@ -26,8 +26,6 @@
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
         vm.editTags = editTags;
-        vm.isSynchronized = isSynchronized;
-        vm.isDeSynchronized = isDeSynchronized;
         vm.showScopusMetrics = showScopusMetrics;
         vm.showWOSMetrics = showWOSMetrics;
         vm.getMetricValue = getMetricValue;
@@ -206,13 +204,6 @@
                 .concat(vm.document.authors.map(a => '- ' + a.name + ' ' + a.surname));
         }
 
-        function isSynchronized() {
-            return vm.document.synchronized && vm.document.origin === 'scopus';
-        }
-
-        function isDeSynchronized() {
-            return  vm.document.origin === 'scopus' && vm.document.synchronized_at && !vm.document.synchronized;
-        }
 
         function changePrivacy() {
             const authorship = getAuthorship();

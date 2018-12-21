@@ -352,6 +352,12 @@
                 const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
                 return this[f].some(re => re.id === researchEntity.id);
             },
+            isSynchronizedWith(origin) {
+                return this.synchronized && this.origin === origin;
+            },
+            isDeSynchronizedWith(origin) {
+                return this.origin === origin && this.synchronized_at && !this.synchronized;
+            },
             isExternal: function () {
                 return this.kind === DocumentKinds.EXTERNAL;
             },
