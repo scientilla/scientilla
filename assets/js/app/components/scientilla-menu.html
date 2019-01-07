@@ -12,14 +12,14 @@
             <label class="label-add-document">
                 Documents
                 <scientilla-button-new-document
-                    ng-if="vm.user.isInternal()"
+                    ng-if="!vm.user.isViewOnly()"
                     class="button-new-document-container"></scientilla-button-new-document>
             </label>
             <div class="list-group">
                 <a
                     ng-href="#/suggested"
                     ng-class="{active: vm.isActive('/suggested')}"
-                    ng-if="vm.user.isInternal()"
+                    ng-if="!vm.user.isViewOnly()"
                     class="list-group-item list-group-item-action">Suggested</a>
                 <a
                     ng-href="#/verified"
@@ -28,12 +28,12 @@
                 <a 
                     ng-href="#/drafts"
                     ng-class="{active: vm.isActive('/drafts')}"
-                    ng-if="vm.user.isInternal()"
+                    ng-if="!vm.user.isViewOnly()"
                     class="list-group-item list-group-item-action">Drafts</a>
                 <a
                     ng-href="#/external"
                     ng-class="{active: vm.isActive('/external')}"
-                    ng-if="vm.user.isInternal()"
+                    ng-if="!vm.user.isViewOnly()"
                     class="list-group-item list-group-item-action">External</a>
             </div>
         </li>

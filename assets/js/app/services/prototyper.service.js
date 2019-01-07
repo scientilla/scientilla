@@ -92,6 +92,9 @@
             },
             isInternal: function () {
                 return _.endsWith(this.username, '@iit.it');
+            },
+            isViewOnly: function () {
+                return this.role === 'guest';
             }
         };
         const groupPrototype = {
