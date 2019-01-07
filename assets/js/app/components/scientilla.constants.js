@@ -173,7 +173,6 @@
         {id: 'outreach', label: 'Outreach', section: 'Dissemination', type: 'invited-talk'}
     ];
 
-
     const documentSearchForm = {
         title: {
             inputType: 'text',
@@ -281,6 +280,19 @@
         USER: 'user-verified-documents'
     };
 
+    const accomplishmentTypes = [
+        {
+            key: 'award',
+            shortLabel: 'AW',
+            label: 'Award'
+        },
+        {
+            key: 'conference',
+            shortLabel: 'CF',
+            label: 'Conference'
+        }
+    ];
+
     angular.module('app')
         .constant('pageSize', 50)
         .constant('userConstants', userConstants)
@@ -294,5 +306,6 @@
         .constant('documentSearchForm', documentSearchForm)
         .constant('documentFieldsRules', documentFieldsRules)
         .constant('documentOrigins', documentOrigins)
-        .constant('documentListSections', documentListSections);
+        .constant('documentListSections', documentListSections)
+        .constant('accomplishmentTypes', accomplishmentTypes);
 })();

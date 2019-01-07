@@ -357,6 +357,30 @@
             return service.multipleChoiceConfirm(title, message, [], 'Close');
         };
 
+        service.openScientillaAccomplishmentForm = function (document, researchEntity) {
+            const scopeVars = {
+                document: document,
+                researchEntity: researchEntity,
+            };
+
+            let modal = openModal(
+                '<scientilla-accomplishment-form\
+                    document="vm.document"\
+                    research-entity="vm.researchEntity"\
+                    on-failure="vm.onFailure"\
+                    on-submit="vm.onSubmit" \
+                    close-fn="vm.onClose"\
+                ></scientilla-accomplishment-form>',
+                scopeVars,
+                {
+                    size: 'lg'
+                }
+            );
+
+            addModalObject(modal);
+            return modal.result;
+        };
+
         return service;
 
         // private
