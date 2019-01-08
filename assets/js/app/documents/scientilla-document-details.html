@@ -62,7 +62,7 @@
         </span>
         <span ng-if="vm.document.isDeSynchronizedWith('scopus')"
               class="badge badge-warning">
-            This document has failed the synchronization
+            {{vm.document.origin}} synchronization failed
         </span>
     </div>
 

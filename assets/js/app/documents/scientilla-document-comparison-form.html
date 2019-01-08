@@ -157,7 +157,7 @@
                             <span class="fa-stack"
                                   style="font-size: 0.5em"
                                   ng-if="vm.document1.isDeSynchronizedWith('scopus')"
-                                  uib-tooltip-html="'This document has failed the synchronization with {{vm.document.origin}}'">
+                                  uib-tooltip-html="'{{vm.document1.origin}} synchronization failed'">
                                 <i class="fas fa-sync-alt fa-stack-2x fa-rotate-90 text-danger"></i>
                                 <i class="fas fa-minus fa-stack-2x text-danger"></i>
                             </span>
@@ -312,7 +312,7 @@
                             <span class="fa-stack"
                                   style="font-size: 0.5em"
                                   ng-if="vm.document2.isDeSynchronizedWith('scopus')"
-                                  uib-tooltip-html="'This document has failed the synchronization with {{vm.document.origin}}'">
+                                  uib-tooltip-html="'{{vm.document2.origin}} synchronization failed'">
                                 <i class="fas fa-sync-alt fa-stack-2x fa-rotate-90 text-danger"></i>
                                 <i class="fas fa-minus fa-stack-2x text-danger"></i>
                             </span>
