@@ -239,7 +239,7 @@
         },
         doi: {
             allowNull: true,
-            regex: /^(10.)/,
+            regex: /^(10[.])/,
             message: 'The DOI is not valid. It should be like: 10.1038/nnano.2013.238'
         },
         year: {
