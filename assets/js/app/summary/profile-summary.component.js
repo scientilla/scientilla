@@ -9,12 +9,13 @@
             });
 
         ProfileSummaryComponent.$inject = [
-            'context'
+            'context',
+            '$scope'
         ];
 
-        function ProfileSummaryComponent(context) {
+        function ProfileSummaryComponent(context, $scope) {
             const vm = this;
-            const researchEntity = context.getResearchEntity();
+            let researchEntity = context.getResearchEntity();
 
             vm.lastRefresh = new Date();
             vm.isLoading = false;
@@ -31,6 +32,10 @@
             vm.$onInit = async () => {
                 const refresh = !isMainGroup();
                 await request(refresh);
+
+                researchEntity = context.getResearchEntity();
+
+                $scope.$apply();
             };
 
             async function recalculate() {

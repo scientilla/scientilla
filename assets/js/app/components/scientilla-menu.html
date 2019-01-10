@@ -3,7 +3,7 @@
         <li>
             <a
                 class="btn btn-dashboard"
-                ng-href="#/"
+                ng-href="{{ vm.getDashboardUrl() }}"
                 ng-class="{ 'btn-primary' : vm.isActive('/'),  'btn-light' : !vm.isActive('/') }">
                 <i class="fas fa-tachometer-alt fa-left"></i>
                 Dashboard</a>
@@ -17,22 +17,22 @@
             </label>
             <div class="list-group">
                 <a
-                    ng-href="#/suggested"
-                    ng-class="{active: vm.isActive('/suggested')}"
+                    ng-href="{{ vm.getUrl('documents/suggested') }}"
+                    ng-class="{active: vm.isActive('/documents/suggested')}"
                     ng-if="!vm.user.isViewOnly()"
                     class="list-group-item list-group-item-action">Suggested</a>
                 <a
-                    ng-href="#/verified"
-                    ng-class="{active: vm.isActive('/verified')}"
+                    ng-href="{{ vm.getUrl('documents/verified') }}"
+                    ng-class="{active: vm.isActive('/documents/verified')}"
                     class="list-group-item list-group-item-action">Verified</a>
                 <a 
-                    ng-href="#/drafts"
-                    ng-class="{active: vm.isActive('/drafts')}"
+                    ng-href="{{ vm.getUrl('documents/drafts') }}"
+                    ng-class="{active: vm.isActive('/documents/drafts')}"
                     ng-if="!vm.user.isViewOnly()"
                     class="list-group-item list-group-item-action">Drafts</a>
                 <a
-                    ng-href="#/external"
-                    ng-class="{active: vm.isActive('/external')}"
+                    ng-href="{{ vm.getUrl('documents/external') }}"
+                    ng-class="{active: vm.isActive('/documents/external')}"
                     ng-if="!vm.user.isViewOnly()"
                     class="list-group-item list-group-item-action">External</a>
             </div>
@@ -53,11 +53,6 @@
         <li>
             <label ng-if="vm.isAdmin()">Admin</label>
             <div class="list-group">
-                <!-- <a
-                    ng-href="#/admin-dashboard"
-                    ng-class="{active: vm.isActive('/admin-dashboard')}"
-                    ng-if="vm.isAdmin()"
-                    class="list-group-item list-group-item-action">Dashboard</a> -->
                 <a
                     ng-href="#/sources"
                     ng-class="{active: vm.isActive('/sources')}"
