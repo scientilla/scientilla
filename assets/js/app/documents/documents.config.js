@@ -71,7 +71,7 @@
         handleRequest.$inject = [
             '$scope',
             '$routeParams',
-            '$location',
+            'path',
             'authService',
             'context'
         ];
@@ -80,7 +80,7 @@
          * This function handles the document requests declared above.
          * It validates the group slug (optional) and redirects if the group slug is not valid.
          */
-        function handleRequest($scope, $routeParams, $location, authService, context) {
+        function handleRequest($scope, $routeParams, path, authService, context) {
             let activeGroup = false,
                 user = authService.user,
                 redirectLocation;
@@ -97,10 +97,10 @@
             if (activeGroup)
                 return context.setResearchEntity(activeGroup);
 
-            redirectLocation = $location.$$path;
+            redirectLocation = path.locationPath();
             redirectLocation = redirectLocation.replace(redirectLocation.match(/[/]*\/([^/]*)/)[0], '');
 
-            $location.path(redirectLocation);
+            path.goTo(redirectLocation);
         }
     }
 

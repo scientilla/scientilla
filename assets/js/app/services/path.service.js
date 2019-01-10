@@ -25,7 +25,7 @@
                 if (AuthService.user.role === userConstants.role.EVALUATOR)
                     rootPath = '/groups/1';
 
-                return current === '/login' ? goTo(rootPath) : goTo(next);
+                return ['/login', ''].includes(current) ? goTo(rootPath) : goTo(next);
             }
         );
 
@@ -36,6 +36,10 @@
 
         function getUrlPath(url) {
             return url.replace(/https?:\/\/[^\/]+\//, "");
+        }
+
+        function locationPath(){
+            return $location.$$path;
         }
 
         return service;

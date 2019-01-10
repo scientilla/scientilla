@@ -143,28 +143,35 @@
         return context;
     }
 
+
+    handleRequest.$inject = [
+        '$scope',
+        '$routeParams',
+        'path',
+        'authService',
+        'context'
+    ];
+
     /*
      * This function handles the request declared above.
      * It validates the group slug (optional) and redirects if the group slug is not valid.
      */
-    function handleRequest($scope, $routeParams, $location, authService, context) {
+    function handleRequest($scope, $routeParams, path, authService, context) {
         let activeGroup = false,
-            user        = authService.user;
+            user = authService.user;
 
-        if ($routeParams.group) {
-            user.administratedGroups.map(group => {
-                if (group.slug === $routeParams.group) {
-                    activeGroup = group;
-                }
-            });
+        if (!$routeParams.group)
+            return context.setResearchEntity(user);
 
-            if (!activeGroup) {
-                $location.path('/');
-            } else {
-                context.setResearchEntity(activeGroup);
+        user.administratedGroups.forEach(group => {
+            if (group.slug === $routeParams.group) {
+                activeGroup = group;
             }
-        } else {
-            context.setResearchEntity(user);
-        }
+        });
+
+        if (activeGroup)
+            return context.setResearchEntity(activeGroup);
+
+        path.goTo('/');
     }
 })();
