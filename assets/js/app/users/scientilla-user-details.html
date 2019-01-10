@@ -1,9 +1,8 @@
 <scientilla-backend-layout>
     <div class="users user-detail">
         <h1 class="user-fullname">{{vm.user.getDisplayName()}}</h1>
-        <a
-            href="mailto:{{vm.user.username}}"
-            class="user-email">{{vm.user.username}}</a>
+        <a href="mailto:{{vm.user.username}}"
+           class="user-email">{{vm.user.username}}</a>
 
         <uib-tabset active="active" class="user-information">
             <uib-tab index="0">
@@ -21,7 +20,8 @@
                         </tr>
                         <tr>
                             <td><strong>E&#8209;mail:</strong></td>
-                            <td><a href="mailto:{{vm.user.username}}" title="Contact {{vm.user.name}}">{{vm.user.username}}</a></td>
+                            <td><a href="mailto:{{vm.user.username}}" title="Contact {{vm.user.name}}">{{vm.user.username}}</a>
+                            </td>
                         </tr>
                         <tr>
                             <td><strong>Job Title:</strong></td>
@@ -39,9 +39,8 @@
                         <tr ng-if="vm.user.orcidId">
                             <td><strong>ORCID:</strong></td>
                             <td>
-                                <a
-                                    ng-href="http://orcid.org/{{vm.user.orcidId}}"
-                                    target="_blank">
+                                <a ng-href="http://orcid.org/{{vm.user.orcidId}}"
+                                   target="_blank">
                                     View profile
                                 </a>
                             </td>
@@ -63,9 +62,23 @@
             </uib-tab>
             <uib-tab index="2">
                 <uib-tab-heading>Documents</uib-tab-heading>
-                <scientilla-documents-list
-                    research-entity="vm.user"
-                    section="vm.documentListSections.USER"></scientilla-documents-list>
+                <scientilla-documents-list ng-if="vm.user"
+                                           research-entity="vm.user"
+                                           section="vm.documentListSections.USER"></scientilla-documents-list>
+            </uib-tab>
+            <uib-tab index="3"
+                     heading="Overview"
+                     ng-click="vm.changeTab('overview', vm.chartsData)"
+                     ng-if="vm.loggedUser.isSuperViewer()">
+                <summary-overview ng-if="vm.chartsData"
+                                  charts-data="vm.chartsData"></summary-overview>
+            </uib-tab>
+            <uib-tab index="4"
+                     heading="Metrics"
+                     ng-click="vm.changeTab('metrics', vm.chartsData)"
+                     ng-if="vm.loggedUser.isSuperViewer()">
+                <summary-metrics ng-if="vm.chartsData"
+                                 charts-data="vm.chartsData"></summary-metrics>
             </uib-tab>
         </uib-tabset>
     </div>

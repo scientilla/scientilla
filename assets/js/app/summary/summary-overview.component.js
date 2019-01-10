@@ -9,9 +9,6 @@
             controllerAs: 'vm',
             bindings: {
                 chartsData: '<'
-            },
-            require: {
-                profileSummary: '^profileSummary'
             }
         });
 
@@ -19,10 +16,11 @@
         'ChartService',
         'ModalService',
         '$window',
-        '$timeout'
+        '$timeout',
+        '$element'
     ];
 
-    function SummaryOverviewComponent(ChartService, ModalService, $window, $timeout) {
+    function SummaryOverviewComponent(ChartService, ModalService, $window, $timeout, $element) {
         const vm = this;
         vm.changeChart = changeChart;
         vm.isChartSelected = isChartSelected;
@@ -35,7 +33,8 @@
         vm.$onInit = () => {
             let timer = null;
 
-            vm.profileSummary.registerTab(vm);
+            const registerTab = requireParentMethod($element, 'registerTab');
+            registerTab(vm);
             vm.reload(vm.chartsData);
 
             if ($window.innerWidth <= 992 && $window.innerWidth > 400) {
@@ -44,9 +43,9 @@
                 }
             }
 
-            angular.element($window).bind('resize', function(){
+            angular.element($window).bind('resize', function () {
                 $timeout.cancel(timer);
-                timer = $timeout(function() {
+                timer = $timeout(function () {
                     if ($window.innerWidth <= 992 && $window.innerWidth > 400) {
                         for (let i = 0; i < vm.charts.length; i++) {
                             vm.charts[i] = getMainChartOptions(vm.charts[i]);
@@ -61,7 +60,8 @@
         };
 
         vm.$onDestroy = () => {
-            vm.profileSummary.unregisterTab(vm);
+            const unregisterTab = requireParentMethod($element, 'unregisterTab');
+            unregisterTab(vm);
         };
 
         vm.reload = (chartsData) => {
@@ -83,7 +83,7 @@
         }
 
         function showInfo() {
-            ModalService.openWizard(['summary-overview'], { isClosable: true});
+            ModalService.openWizard(['summary-overview'], {isClosable: true});
         }
 
         function getMainChartOptions(chart) {

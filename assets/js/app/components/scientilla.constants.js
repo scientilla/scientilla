@@ -5,6 +5,8 @@
         role: {
             USER: 'user',
             ADMINISTRATOR: 'administrator',
+            GUEST: 'guest',
+            EVALUATOR: 'evaluator',
         }
     };
 

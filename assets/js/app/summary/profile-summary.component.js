@@ -1,3 +1,4 @@
+/* global angular */
 (function () {
         "use strict";
 
@@ -9,11 +10,14 @@
             });
 
         ProfileSummaryComponent.$inject = [
-            'context'
+            'context',
+            '$scope',
+            '$controller'
         ];
 
-        function ProfileSummaryComponent(context) {
+        function ProfileSummaryComponent(context, $scope, $controller) {
             const vm = this;
+            angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
             const researchEntity = context.getResearchEntity();
 
             vm.lastRefresh = new Date();
@@ -21,11 +25,6 @@
 
             vm.isMainGroup = isMainGroup;
             vm.recalculate = recalculate;
-            vm.changeTab = changeTab;
-            vm.registerTab = registerTab;
-            vm.unregisterTab = unregisterTab;
-
-            const tabs = [];
 
             /* jshint ignore:start */
             vm.$onInit = async () => {
@@ -36,37 +35,12 @@
             async function recalculate() {
                 vm.isLoading = true;
                 await request(true);
-                reloadTabs();
+                vm.reloadTabs(vm.chartsData);
                 vm.isLoading = false;
             }
 
             async function request(refresh) {
-                const charts = [
-                    'journalsByYear',
-                    'conferencesByYear',
-                    'booksByYear',
-                    'bookChaptersByYear',
-                    'disseminationTalksByYear',
-                    'scientificTalksByYear',
-                    'documentsByType',
-                    'filteredAffiliatedJournalsByYear',
-                    'filteredAffiliatedConferencesByYear',
-                    'filteredAffiliatedBooksByYear',
-                    'filteredAffiliatedBookChaptersByYear',
-                    'filteredNotAffiliatedJournalsByYear',
-                    'filteredNotAffiliatedConferencesByYear',
-                    'filteredNotAffiliatedBooksByYear',
-                    'filteredNotAffiliatedBookChaptersByYear',
-                    'hindexPerYear',
-                    'citationsPerYear',
-                    'citationsPerDocumentYear',
-                    'totalIfPerYear',
-                    'totalSjrPerYear',
-                    'totalSnipPerYear',
-                    'chartDataDate'
-                ];
-                const res = await researchEntity.all('charts').getList({refresh: !!refresh, charts});
-                vm.chartsData = res[0];
+                vm.chartsData = await vm.getChartsData(researchEntity, refresh);
                 if (vm.chartsData.chartDataDate && vm.chartsData.chartDataDate[0].max)
                     vm.lastRefresh = new Date(vm.chartsData.chartDataDate[0].max);
             }
@@ -75,23 +49,6 @@
 
             function isMainGroup() {
                 return researchEntity.id === 1;
-            }
-
-            function changeTab(tabName) {
-                if (tabs.find(t => t.name === tabName))
-                    tabs.find(t => t.name === tabName).reload(vm.chartsData);
-            }
-
-            function reloadTabs() {
-                tabs.forEach(t => t.reload(vm.chartsData));
-            }
-
-            function registerTab(tab) {
-                tabs.push(tab);
-            }
-
-            function unregisterTab(tab) {
-                _.remove(tabs, tab);
             }
 
         }
