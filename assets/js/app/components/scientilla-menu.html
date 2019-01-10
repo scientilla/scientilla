@@ -4,7 +4,7 @@
             <a
                 class="btn btn-dashboard"
                 ng-href="{{ vm.getDashboardUrl() }}"
-                ng-class="{ 'btn-primary' : vm.isActive('/'),  'btn-light' : !vm.isActive('/') }">
+                ng-class="{ 'btn-primary' : vm.isActive('/', true),  'btn-light' : !vm.isActive('/', true) }">
                 <i class="fas fa-tachometer-alt fa-left"></i>
                 Dashboard</a>
         </li>
@@ -18,21 +18,21 @@
             <div class="list-group">
                 <a
                     ng-href="{{ vm.getUrl('documents/suggested') }}"
-                    ng-class="{active: vm.isActive('/documents/suggested')}"
+                    ng-class="{active: vm.isActive('/documents/suggested', true)}"
                     ng-if="!vm.user.isViewOnly()"
                     class="list-group-item list-group-item-action">Suggested</a>
                 <a
                     ng-href="{{ vm.getUrl('documents/verified') }}"
-                    ng-class="{active: vm.isActive('/documents/verified')}"
+                    ng-class="{active: vm.isActive('/documents/verified', true)}"
                     class="list-group-item list-group-item-action">Verified</a>
                 <a 
                     ng-href="{{ vm.getUrl('documents/drafts') }}"
-                    ng-class="{active: vm.isActive('/documents/drafts')}"
+                    ng-class="{active: vm.isActive('/documents/drafts', true)}"
                     ng-if="!vm.user.isViewOnly()"
                     class="list-group-item list-group-item-action">Drafts</a>
                 <a
                     ng-href="{{ vm.getUrl('documents/external') }}"
-                    ng-class="{active: vm.isActive('/documents/external')}"
+                    ng-class="{active: vm.isActive('/documents/external', true)}"
                     ng-if="!vm.user.isViewOnly()"
                     class="list-group-item list-group-item-action">External</a>
             </div>
