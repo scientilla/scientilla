@@ -18,7 +18,7 @@
         function ProfileSummaryComponent(context, $scope, $controller) {
             const vm = this;
             angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
-            const researchEntity = context.getResearchEntity();
+            let researchEntity;
 
             vm.lastRefresh = new Date();
             vm.isLoading = false;
@@ -28,8 +28,12 @@
 
             /* jshint ignore:start */
             vm.$onInit = async () => {
+                researchEntity = context.getResearchEntity();
+
                 const refresh = !isMainGroup();
                 await request(refresh);
+                if (!$scope.$$phase)
+                    $scope.$apply();
             };
 
             async function recalculate() {
