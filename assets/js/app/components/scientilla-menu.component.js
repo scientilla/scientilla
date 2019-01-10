@@ -43,20 +43,20 @@
             vm.user = AuthService.user;
         }
 
-        function isActive(page) {
+        function isActive(page, checkResearchEntity = false) {
             let researchEntity = context.getResearchEntity();
             //console.log(researchEntity.getType());
 
             if (page === '/') {
                 // Add the group slug to the URL when the researchEntity is a group to check the active state of an URL
-                if (researchEntity.getType() === 'group') {
+                if (researchEntity.getType() === 'group' && checkResearchEntity) {
                     return (path.current === '?#/' + researchEntity.slug || path.current === '#/' + researchEntity.slug);
                 } else {
                     return (path.current === '?#' + page || path.current === '#' + page);
                 }
             } else {
                 // Add the group slug to the URL when the researchEntity is a group to check the active state of an URL
-                if (researchEntity.getType() === 'group') {
+                if (researchEntity.getType() === 'group' && checkResearchEntity) {
                     return (
                         path.current.lastIndexOf('?#/' + researchEntity.slug + page, 0) === 0 ||
                         path.current.lastIndexOf('#/' + researchEntity.slug + page, 0) === 0
