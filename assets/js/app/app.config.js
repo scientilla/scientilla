@@ -9,8 +9,13 @@
 
     function configure(RestangularProvider, $routeProvider, localStorageServiceProvider, apiPrefix, NotificationProvider) {
         $routeProvider
-            .when("/", {
-                template: "<profile-summary></profile-summary>"
+            .when("/:group?", {
+                controller: handleRequest,
+                template: "<profile-summary></profile-summary>",
+                resolve: {
+                    authService: getAuthService,
+                    context: getContext
+                }
             })
             .otherwise({
                 redirectTo: "/"
@@ -124,5 +129,42 @@
         Restangular.extendCollection('allMembers', Prototyper.toUsersCollection);
         Restangular.extendCollection('groups', Prototyper.toGroupsCollection);
         Restangular.extendCollection('taglabels', Prototyper.toTagLabelsCollection);
+    }
+
+    getAuthService.$inject = ['AuthService'];
+
+    function getAuthService(AuthService) {
+        return AuthService;
+    }
+
+    getContext.$inject = ['context'];
+
+    function getContext(context) {
+        return context;
+    }
+
+    /*
+     * This function handles the request declared above.
+     * It validates the group slug (optional) and redirects if the group slug is not valid.
+     */
+    function handleRequest($scope, $routeParams, $location, authService, context) {
+        let activeGroup = false,
+            user        = authService.user;
+
+        if ($routeParams.group) {
+            user.administratedGroups.map(group => {
+                if (group.slug === $routeParams.group) {
+                    activeGroup = group;
+                }
+            });
+
+            if (!activeGroup) {
+                $location.path('/');
+            } else {
+                context.setResearchEntity(activeGroup);
+            }
+        } else {
+            context.setResearchEntity(user);
+        }
     }
 })();

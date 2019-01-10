@@ -44,7 +44,7 @@
         let query = {};
 
         vm.$onInit = function () {
-            vm.editable = vm.section === documentListSections.VERIFIED && AuthService.user.isInternal();
+            vm.editable = vm.section === documentListSections.VERIFIED && !AuthService.user.isViewOnly();
 
             EventsService.subscribeAll(vm, [
                 EventsService.DRAFT_VERIFIED,

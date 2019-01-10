@@ -64,25 +64,28 @@
                 .then(function (settings) {
                     vm.isRegisterEnabled = settings.registerEnabled;
                 });
+
             vm.researchEntity = context.getResearchEntity();
         }
 
         function changeContextToGroup(group) {
             return GroupsService.getGroup(group.id)
-                .then(group => context.setResearchEntity(group))
-                .then(() => redirectToHomepage());
+                .then(group => {
+                    context.setResearchEntity(group);
+                })
+                .then(() => {
+                    path.goTo('/' + group.slug);
+                });
         }
 
         function changeContextToUser(user) {
             return UsersService.getProfile(user.id)
-                .then(user => context.setResearchEntity(user))
-                .then(() => redirectToHomepage());
-        }
-
-        function redirectToHomepage() {
-            //TODO: should become dynamic
-            const researchEntityHompeage = '/';
-            path.goTo(researchEntityHompeage);
+                .then(user => {
+                    context.setResearchEntity(user);
+                })
+                .then(() => {
+                    path.goTo('/');
+                });
         }
 
         function editProfile() {
