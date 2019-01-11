@@ -57,7 +57,7 @@
                 'totalSjrPerYear',
                 'totalSnipPerYear',
                 'chartDataDate'
-            ], refresh && researchEntity.id !== 1);
+            ], refresh && researchEntity.type !== 'Institute');
             return res[0];
         }
     }
