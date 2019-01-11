@@ -1,38 +1,40 @@
-<div class="info-button-container">
-    <a
-        href=""
-        ng-click="vm.showInfo()"
-        class="btn btn-primary info-button">
-        <i class="fas fa-info-circle fa-left"></i>Info
-    </a>
-</div>
+<div class="summary-overview-container">
+    <div class="info-button-container">
+        <a
+            href=""
+            ng-click="vm.showInfo()"
+            class="btn btn-primary info-button">
+            <i class="fas fa-info-circle fa-left"></i>Info
+        </a>
+    </div>
 
-<ul class="summary-charts items-{{ vm.charts.length }}">
-    <li class="main-chart-container">
-        <h3 class="chart-title">{{ vm.mainChart.title }}</h3>
-        <div class="chart-outer-container">
-            <div class="chart-container">
-                <nvd3
-                    options="vm.mainChart.options"
-                    data="vm.mainChart.data"
-                    class="chart"></nvd3>
-            </div>
-        </div>
-    </li>
-    <li class="preview-chart-container" ng-repeat="chart in vm.charts">
-        <div
-            class="chart-preview"
-            ng-class="{'chart-selected': vm.isChartSelected(chart)}"
-            ng-click="vm.changeChart(chart)">
-            <h3 class="chart-title">{{chart.title}}</h3>
+    <ul class="summary-charts items-{{ vm.charts.length }}">
+        <li class="main-chart-container">
+            <h3 class="chart-title">{{ vm.mainChart.title }}</h3>
             <div class="chart-outer-container">
                 <div class="chart-container">
                     <nvd3
-                        options="chart.options"
-                        data="chart.data"
+                        options="vm.mainChart.options"
+                        data="vm.mainChart.data"
                         class="chart"></nvd3>
                 </div>
             </div>
-        </div>
-    </li>
-</ul>
+        </li>
+        <li class="preview-chart-container" ng-repeat="chart in vm.charts">
+            <div
+                class="chart-preview"
+                ng-class="{'chart-selected': vm.isChartSelected(chart)}"
+                ng-click="vm.changeChart(chart)">
+                <h3 class="chart-title">{{chart.title}}</h3>
+                <div class="chart-outer-container">
+                    <div class="chart-container">
+                        <nvd3
+                            options="chart.options"
+                            data="chart.data"
+                            class="chart"></nvd3>
+                    </div>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
