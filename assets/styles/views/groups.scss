@@ -48,50 +48,53 @@
     }
 
     &.group-detail{
-        .pi,
-        .interactions{
-            @include normalize-listing;
 
-            & > li{
-                display: inline-block;
-                vertical-align: top;
+        .group-info-tab{
+            .pi,
+            .interactions{
+                @include normalize-listing;
 
-                & + li{
-                    &:before{
-                        display: inline-block;
-                        content: ',';
-                        vertical-align: top;
+                & > li{
+                    display: inline-block;
+                    vertical-align: top;
+
+                    & + li{
+                        &:before{
+                            display: inline-block;
+                            content: ',';
+                            vertical-align: top;
+                        }
                     }
                 }
             }
-        }
 
-        .chart-container{
-            max-width: 800px;
-            margin-top: 5rem;
-            margin-left: auto;
-            margin-right: auto;
-
-            .chart{
-                position: relative;
-                display: block;
-                padding-bottom: 50%;
-            }
-
-            svg{
-                position: absolute;
-                top: 0px;
-                left: 0px;
-                width: 100% !important;
-                height: 100% !important;
-            }
-
-            .chart-info{
-                max-width: 500px;
-                margin-right: auto;
+            .chart-container{
+                max-width: 800px;
+                margin-top: 5rem;
                 margin-left: auto;
-                font-style: italic;
-                text-align: center;
+                margin-right: auto;
+
+                .chart{
+                    position: relative;
+                    display: block;
+                    padding-bottom: 50%;
+                }
+
+                svg{
+                    position: absolute;
+                    top: 0px;
+                    left: 0px;
+                    width: 100% !important;
+                    height: 100% !important;
+                }
+
+                .chart-info{
+                    max-width: 500px;
+                    margin-right: auto;
+                    margin-left: auto;
+                    font-style: italic;
+                    text-align: center;
+                }
             }
         }
 
