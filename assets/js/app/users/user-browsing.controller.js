@@ -8,11 +8,12 @@
         'Notification',
         'AuthService',
         'ModalService',
+        'userConstants',
         '$location'
     ];
 
-    function UserBrowsingController(UsersService, Notification, AuthService, ModalService, $location) {
-        var vm = this;
+    function UserBrowsingController(UsersService, Notification, AuthService, ModalService, userConstants, $location) {
+        const vm = this;
 
         vm.user = AuthService.user;
         vm.viewUser = viewUser;
@@ -22,7 +23,7 @@
         vm.loginAs = loginAs;
 
         vm.onFilter = onFilter;
-        var query = {};
+        let query = {};
 
         vm.searchForm = {
             name: {
@@ -43,6 +44,8 @@
 
         function onFilter(q) {
             query = q;
+
+            query.where.role = [userConstants.role.ADMINISTRATOR, userConstants.role.USER];
 
             return UsersService.getUsers(query)
                 .then(function (users) {

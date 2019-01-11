@@ -48,9 +48,6 @@
             getCollaborationGroups: function () {
                 return _.map(this.collaborations, 'group');
             },
-            isAdmin: function () {
-                return this.role === userConstants.role.ADMINISTRATOR;
-            },
             admins: function (group) {
                 var administeredGroupsId = _.map(this.administratedGroups, 'id');
                 return _.includes(administeredGroupsId, group.id);
@@ -93,8 +90,14 @@
             isInternal: function () {
                 return _.endsWith(this.username, '@iit.it');
             },
+            isAdmin: function () {
+                return this.role === userConstants.role.ADMINISTRATOR;
+            },
             isViewOnly: function () {
-                return this.role === 'guest';
+                return [userConstants.role.GUEST, userConstants.role.EVALUATOR].includes(this.role);
+            },
+            isSuperViewer: function () {
+                return [userConstants.role.ADMINISTRATOR, userConstants.role.EVALUATOR].includes(this.role);
             }
         };
         const groupPrototype = {

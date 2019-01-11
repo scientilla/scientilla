@@ -108,120 +108,116 @@ button,
     display: none !important;
 }
 
-.summary{
-    &.summary-profile{
-        .summary-charts{
+.summary-overview-container{
+    .summary-charts{
+        @include normalize-listing;
+        @include clearfix;
+        margin: 0px -1.5rem;
+
+        //.main-chart-container{
+        .preview-chart-container{
+            display: none;
+        }
+
+        .chart-outer-container{
+            padding: 1rem 3rem;
+            border: 1px solid $silver;
+            border-radius: .25rem;
+            text-align: center;
+        }
+
+        .chart-container{
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .chart{
+            position: relative;
+            display: block;
+            padding-bottom: 65.925%;
+        }
+
+        svg{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100% !important;
+            height: 100% !important;
+        }
+    }
+}
+
+.summary-metrics-container{
+    .index-container{
+        display: block;
+        margin-bottom: 3rem;
+        padding: 3rem;
+        border: 1px solid $silver;
+        border-radius: .25rem;
+
+        .index-title{
+            @include h3;
+        }
+
+        .index-icon-container{
+            display: none;
+        }
+    }
+
+    .document-totals-chart-container,
+    .h-index-chart-container{
+        margin-bottom: 3rem;
+        padding: 3rem;
+        border: 1px solid $silver;
+        border-radius: .25rem;
+        text-align: center;
+
+        .chart-container{
+            position: relative;
+            display: block;
+            padding-bottom: 50%;
+        }
+
+        svg{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100% !important;
+            height: 100% !important;
+        }
+    }
+
+    .metric-chart-container{
+        display: block;
+        margin-bottom: 3rem;
+        padding: 1rem;
+        border: 1px solid $silver;
+        border-radius: .25rem;
+        text-align: center;
+
+        .chart{
+            position: relative;
+            display: block;
+            padding-bottom: 65.925%;
+        }
+
+        svg{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .top-listing{
             @include normalize-listing;
-            @include clearfix;
-            margin: 0px -1.5rem;
-            
-            //.main-chart-container{
-            .preview-chart-container{
-                display: none;
-            }
-
-            .chart-outer-container{
-                padding: 1rem 3rem;
-                border: 1px solid $silver;
-                border-radius: .25rem;
-                text-align: center;
-            }
-
-            .chart-container{
-                max-width: 1000px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .chart{
-                position: relative;
-                display: block;
-                padding-bottom: 65.925%;
-            }
-
-            svg{
-                position: absolute;
-                top: 0px;
-                left: 0px;
-                width: 100% !important;
-                height: 100% !important;
-            }
         }
+    }
 
-        .index-container{
-            display: block;
-            margin-bottom: 3rem;
-            padding: 3rem;
-            border: 1px solid $silver;
-            border-radius: .25rem;
-
-            .index-title{
-                @include h3;
-            }
-            
-            .index-icon-container{
-                display: none;
-            }
-        }
-
-        .document-totals-chart-container,
-        .h-index-chart-container{
-            margin-bottom: 3rem;
-            padding: 3rem;
-            border: 1px solid $silver;
-            border-radius: .25rem;
-            text-align: center;
-
-            .chart-container{
-                position: relative;
-                display: block;
-                padding-bottom: 50%;
-            }
-
-            svg{
-                position: absolute;
-                top: 0px;
-                left: 0px;
-                width: 100% !important;
-                height: 100% !important;
-            }
-        }
-
-        .metric-chart-container{
-            display: block;
-            margin-bottom: 3rem;
-            padding: 1rem;
-            border: 1px solid $silver;
-            border-radius: .25rem;
-            text-align: center;
-
-            .chart{
-                position: relative;
-                display: block;
-                padding-bottom: 65.925%;
-            }
-
-            svg{
-                position: absolute;
-                top: 0px;
-                left: 0px;
-                width: 100% !important;
-                height: 100% !important;
-            }
-
-            .top-listing{
-                @include normalize-listing;
-            }
-        }
-
-        .layout{
-            &.layout-smaller{
-                & > .row{
-                    & > .col-lg-6 {
-                        max-width: 50%;
-                    }
-                }
-            }
+    & > .row{
+        & > .col-lg-6 {
+            max-width: 50%;
         }
     }
 }

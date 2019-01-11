@@ -51,3 +51,22 @@ Object.defineProperty(Array.prototype, 'unique', {
     return a;
   }
 });
+
+
+function requireParentMethod(element, fnName) {
+
+  const el = element.parent();
+
+  if (el.length === 0)
+    throw 'required method not found';
+
+  const data = el.data();
+  for (const key in data) {
+    const angularObject = data[key];
+    if (_.isFunction(angularObject[fnName])) {
+      return angularObject[fnName];
+    }
+  }
+
+  return requireParentMethod(el, fnName);
+}

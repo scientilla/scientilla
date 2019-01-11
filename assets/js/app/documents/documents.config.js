@@ -9,11 +9,9 @@
         $routeProvider
             .when("/:group?/documents/suggested", {
                 controller: handleRequest,
-                template: function(params) {
-                    return params => '' +
-                        '<scientilla-suggested-documents research-entity="$resolve.researchEntity">' +
-                        '</scientilla-suggested-documents>';
-                },
+                template: params => '' +
+                    '<scientilla-suggested-documents research-entity="$resolve.researchEntity">' +
+                    '</scientilla-suggested-documents>',
                 resolve: {
                     researchEntity: getResearchEntity,
                     authService: getAuthService,
@@ -23,8 +21,8 @@
             .when("/:group?/documents/verified", {
                 controller: handleRequest,
                 template: params => '' +
-                '<scientilla-verified-list research-entity="$resolve.researchEntity">' +
-                '</scientilla-verified-list>',
+                    '<scientilla-verified-list research-entity="$resolve.researchEntity">' +
+                    '</scientilla-verified-list>',
                 resolve: {
                     researchEntity: getResearchEntity,
                     authService: getAuthService
@@ -33,8 +31,8 @@
             .when("/:group?/documents/drafts", {
                 controller: handleRequest,
                 template: params => '' +
-                '<scientilla-drafts-list research-entity="$resolve.researchEntity">' +
-                '</scientilla-drafts-list>',
+                    '<scientilla-drafts-list research-entity="$resolve.researchEntity">' +
+                    '</scientilla-drafts-list>',
                 resolve: {
                     researchEntity: getResearchEntity,
                     authService: getAuthService
@@ -43,8 +41,8 @@
             .when("/:group?/documents/external", {
                 controller: handleRequest,
                 template: params => '' +
-                '<scientilla-external-documents research-entity="$resolve.researchEntity">' +
-                '</scientilla-external-documents>',
+                    '<scientilla-external-documents research-entity="$resolve.researchEntity">' +
+                    '</scientilla-external-documents>',
                 resolve: {
                     researchEntity: getResearchEntity,
                     authService: getAuthService
@@ -69,33 +67,40 @@
             return context;
         }
 
+
+        handleRequest.$inject = [
+            '$scope',
+            '$routeParams',
+            'path',
+            'authService',
+            'context'
+        ];
+
         /*
          * This function handles the document requests declared above.
          * It validates the group slug (optional) and redirects if the group slug is not valid.
          */
-        function handleRequest($scope, $routeParams, $location, authService, context) {
-            let activeGroup      = false,
-                user             = authService.user,
-                redirectLocation = '/';
+        function handleRequest($scope, $routeParams, path, authService, context) {
+            let activeGroup = false,
+                user = authService.user,
+                redirectLocation;
 
-            if ($routeParams.group) {
-                user.administratedGroups.map(group => {
-                    if (group.slug === $routeParams.group) {
-                        activeGroup = group;
-                    }
-                });
+            if (!$routeParams.group)
+                return context.setResearchEntity(user);
 
-                if (!activeGroup) {
-                    redirectLocation = $location.$$path;
-                    redirectLocation = redirectLocation.replace(redirectLocation.match(/[/]*\/([^/]*)/)[0], '');
-
-                    $location.path(redirectLocation);
-                } else {
-                    context.setResearchEntity(activeGroup);
+            user.administratedGroups.forEach(group => {
+                if (group.slug === $routeParams.group) {
+                    activeGroup = group;
                 }
-            } else {
-                context.setResearchEntity(user);
-            }
+            });
+
+            if (activeGroup)
+                return context.setResearchEntity(activeGroup);
+
+            redirectLocation = path.locationPath();
+            redirectLocation = redirectLocation.replace(redirectLocation.match(/[/]*\/([^/]*)/)[0], '');
+
+            path.goTo(redirectLocation);
         }
     }
 

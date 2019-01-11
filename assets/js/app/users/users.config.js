@@ -13,14 +13,7 @@
                 controllerAs: 'vm',
             })
             .when("/users/:id", {
-                templateUrl: "partials/user-details.html",
-                controller: "UserDetailsController",
-                controllerAs: 'vm',
-                resolve: {
-                    user: getCurrentUser
-                },
-                access: {
-                }
+                template: params => `<scientilla-user-details user-id="${params.id}"></scientilla-user-details>`
             });
     }
 

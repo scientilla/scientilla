@@ -52,12 +52,13 @@
 @import 'components/wizard-container';
 @import 'components/alias-listing';
 @import 'components/document-search-listing';
+@import 'components/summary-overview';
+@import 'components/summary-metrics';
 
 @import 'views/login';
 @import 'views/users';
 @import 'views/groups';
 @import 'views/admin';
-@import 'views/summary';
 @import 'views/register';
 
 @import 'responsive';
