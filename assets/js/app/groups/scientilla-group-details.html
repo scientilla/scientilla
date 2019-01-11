@@ -32,14 +32,14 @@
                         section="vm.documentListSections.GROUP"></scientilla-documents-list>
             </uib-tab>
             <uib-tab index="4"
-                     heading="Overview"
+                     heading="Documents Overview"
                      ng-click="vm.changeTab('overview', vm.chartsData)"
                      ng-if="vm.loggedUser.isSuperViewer()">
                 <summary-overview ng-if="vm.chartsData"
                                   charts-data="vm.chartsData"></summary-overview>
             </uib-tab>
             <uib-tab index="5"
-                     heading="Metrics"
+                     heading="Bibliometric Charts"
                      ng-click="vm.changeTab('metrics', vm.chartsData)"
                      ng-if="vm.loggedUser.isSuperViewer()">
                 <summary-metrics ng-if="vm.chartsData"
