@@ -33,7 +33,7 @@
             _.remove(tabs, tab);
         }
 
-        async function getChartsData(researchEntity, refresh = false) {
+        async function getChartsData(researchEntity, refresh = true) {
             const res = await ChartService.getData(researchEntity, [
                 'journalsByYear',
                 'conferencesByYear',
@@ -57,7 +57,7 @@
                 'totalSjrPerYear',
                 'totalSnipPerYear',
                 'chartDataDate'
-            ], refresh && researchEntity.id === 1);
+            ], refresh && researchEntity.type !== 'Institute');
             return res[0];
         }
     }
