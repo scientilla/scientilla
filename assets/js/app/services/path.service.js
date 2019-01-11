@@ -17,7 +17,8 @@
         const service = {
             current: current,
             goTo: goTo,
-            getUrlPath: getUrlPath
+            getUrlPath: getUrlPath,
+            locationPath: locationPath
         };
 
         EventsService.subscribe(service, EventsService.AUTH_LOGIN, () => {
