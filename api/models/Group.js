@@ -19,8 +19,7 @@ module.exports = _.merge({}, ResearchEntity, {
     searchKey: 'slug',
     attributes: {
         name: {
-            type: 'STRING',
-            required: true
+            type: 'STRING'
         },
         slug: {
             type: 'STRING'
