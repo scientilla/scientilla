@@ -42,6 +42,11 @@
         service.setAuthorshipFavorite = setAuthorshipFavorite;
         service.removeVerify = removeVerify;
 
+        service.accomplishment = {};
+        service.accomplishment.createDraft = createAccomplishmentDraft;
+        service.accomplishment.getAccomplishments = getAccomplishments;
+        service.accomplishment.getDrafts = getAccomplishmentDrafts;
+
         const documentPopulates = [
             'source',
             'authors',
@@ -217,7 +222,6 @@
                 .customGET('', {origin, searchKey, searchValue});
         }
 
-
         function removeDocument(researchEntity, doc) {
             if (doc.isDraft())
                 return deleteDraft(researchEntity, doc.id);
@@ -272,6 +276,30 @@
         }
 
         /* jshint ignore:end */
+
+        function createAccomplishmentDraft(researchEntity, draftData) {
+
+            let result = researchEntity.all('drafts').post(draftData);
+            console.log(result);
+
+            return result;
+        }
+
+        function getAccomplishments (researchEntity, query) {
+            var populate = {populate: documentPopulates};
+
+            var q = _.merge({}, query, populate);
+
+            return researchEntity.getList('documents', q);
+        }
+
+        function getAccomplishmentDrafts(researchEntity, query) {
+            var populate = {populate: documentPopulates};
+
+            var q = _.defaultsDeep({}, query, populate);
+
+            return researchEntity.getList('drafts', q);
+        }
 
         return service;
     }

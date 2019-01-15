@@ -35,7 +35,15 @@
 
             INSTITUTE_RESTORED: 'institute.restored',
 
-            CONTEXT_CHANGE: 'context.change'
+            CONTEXT_CHANGE: 'context.change',
+
+            ACCOMPLISHMENT_VERIFIED: 'accomplishment.verified',
+
+            ACCOMPLISHMENT_DRAFT_DELETED: 'accomplishment.draft.deleted',
+            ACCOMPLISHMENT_DRAFT_UPDATED: 'accomplishment.draft.updated',
+            ACCOMPLISHMENT_DRAFT_CREATED: 'accomplishment.draft.created',
+            ACCOMPLISHMENT_DRAFT_VERIFIED: 'accomplishment.draft.verified',
+            ACCOMPLISHMENT_DRAFT_UNVERIFIED: 'accomplishment.draft.unverified',
         };
 
         service.publish = function (event, args) {

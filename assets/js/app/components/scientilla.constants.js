@@ -282,18 +282,102 @@
         USER: 'user-verified-documents'
     };
 
+    const accomplishmentOrigins = {
+        SCIENTILLA: 'scientilla'
+    };
+
     const accomplishmentTypes = [
         {
+            key: 'editor',
+            shortLabel: 'ED',
+            label: 'Editor',
+            defaultSource: 'journal'
+        },{
             key: 'award',
             shortLabel: 'AW',
-            label: 'Award'
+            label: 'Award / Achievement',
+            defaultSource: null,
         },
         {
-            key: 'conference',
-            shortLabel: 'CF',
-            label: 'Conference'
+            key: 'event',
+            shortLabel: 'EV',
+            label: 'Event organization',
+            defaultSource: null,
         }
     ];
+
+    const accomplishmentSourceTypes = [
+        {id: 'book', label: 'Book', type: 'scientific'},
+        {id: 'journal', label: 'Journal', type: 'scientific'},
+        {id: 'bookseries', label: 'Book Series', type: 'scientific'},
+    ];
+
+    const accomplishmentSearchForm = {
+        title: {
+            inputType: 'text',
+            label: 'Title',
+            matchColumn: 'title',
+            matchRule: 'contains',
+            type: 'field'
+        },
+        author: {
+            inputType: 'text',
+            label: 'Author',
+            matchColumn: 'authorsStr',
+            matchRule: 'contains',
+            type: 'field'
+        },
+        maxYear: {
+            inputType: 'year',
+            label: 'Year from',
+            matchColumn: 'year',
+            matchRule: '>=',
+            type: 'field'
+        },
+        minYear: {
+            inputType: 'year',
+            label: 'Year to',
+            matchColumn: 'year',
+            matchRule: '<=',
+            type: 'field'
+        },
+        accomplishmentType: {
+            inputType: 'select',
+            label: 'Accomplishment Type',
+            values: _.concat(
+                [{value: "?", label: 'Select'}],
+                accomplishmentTypes.map(s => ({value: s.key, label: s.label}))
+            ),
+            matchColumn: 'type',
+            type: 'field'
+        },
+        sourceType: {
+            inputType: 'select',
+            label: 'Source Type',
+            values: _.concat(
+                [{value: "?", label: 'Select'}],
+                accomplishmentTypes.filter(t => t.type === 'scientific').map(s => ({value: s.id, label: s.label}))
+            ),
+            matchColumn: 'sourceType',
+            type: 'field'
+        }
+    };
+
+    const accomplishmentFieldsRules = {
+        authorsStr: {
+            allowNull: false,
+            regex: /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)*$/,
+            message: 'Author string is not valid. It should be in the form \"Molinari E., Bozzini F., Semprini F.\".'
+
+        }
+    };
+
+    const accomplishmentListSections = {
+        VERIFIED: 'verified-accomplishments',
+        DRAFT: 'draft-list-accomplishments',
+        GROUP: 'group-verified-accomplishments',
+        USER: 'user-verified-accomplishments'
+    };
 
     angular.module('app')
         .constant('pageSize', 50)
@@ -309,5 +393,10 @@
         .constant('documentFieldsRules', documentFieldsRules)
         .constant('documentOrigins', documentOrigins)
         .constant('documentListSections', documentListSections)
-        .constant('accomplishmentTypes', accomplishmentTypes);
+        .constant('accomplishmentSourceTypes', accomplishmentSourceTypes)
+        .constant('accomplishmentTypes', accomplishmentTypes)
+        .constant('accomplishmentOrigins', accomplishmentOrigins)
+        .constant('accomplishmentFieldsRules', accomplishmentFieldsRules)
+        .constant('accomplishmentListSections', accomplishmentListSections)
+        .constant('accomplishmentSearchForm', accomplishmentSearchForm);
 })();

@@ -1,16 +1,14 @@
-/* global Scientilla */
-
 (function () {
     "use strict";
 
     angular
-        .module('documents')
+        .module('accomplishments')
         .component('scientillaAccomplishmentForm', {
             templateUrl: 'partials/scientilla-accomplishment-form.html',
             controller: scientillaAccomplishmentFormController,
             controllerAs: 'vm',
             bindings: {
-                document: "<",
+                accomplishment: "<",
                 researchEntity: "<",
                 closeFn: "&"
             }
@@ -19,10 +17,10 @@
     scientillaAccomplishmentFormController.$inject = [
         '$rootScope',
         'EventsService',
-        'documentFieldsRules',
+        'accomplishmentFieldsRules',
         '$scope',
         '$timeout',
-        'DocumentTypesService',
+        'AccomplishmentTypesService',
         'context',
         'Restangular',
         'ModalService'
@@ -31,15 +29,18 @@
     function scientillaAccomplishmentFormController(
         $rootScope,
         EventsService,
-        documentFieldsRules,
+        accomplishmentFieldsRules,
         $scope,
         $timeout,
-        DocumentTypesService,
+        AccomplishmentTypesService,
         context,
         Restangular,
         ModalService
     ) {
         const vm = this;
+
+        const defaultSourceTypes = AccomplishmentTypesService.getSourceTypes();
+        const defaultTypes = AccomplishmentTypesService.getTypes();
 
         vm.saveStatus = saveStatus();
         vm.verifyStatus = verifyStatus();
@@ -47,20 +48,16 @@
         vm.cancel = cancel;
         vm.verify = verify;
         vm.save = save;
-        vm.documentTypes = DocumentTypesService.getDocumentTypes();
+        vm.types = defaultTypes;
         vm.getSources = getSources;
-        vm.getItSources = getItSources;
-        vm.openSourceTypeModal = openSourceTypeModal;
         vm.checkSource = checkSource;
-        vm.documentFieldsRules = documentFieldsRules;
-        const allSourceTypes = DocumentTypesService.getSourceTypes();
-        vm.sourceLabel = _.get(_.find(allSourceTypes, {id: vm.document.sourceType}), 'label');
+        vm.openSourceTypeModal = openSourceTypeModal;
+        vm.fieldsRules = accomplishmentFieldsRules;
+        vm.sourceLabel = _.get(_.find(defaultSourceTypes, {id: vm.accomplishment.sourceType}), 'label');
 
-        let documentBackup = null;
         let debounceTimeout = null;
         const debounceTime = 2000;
-        const documentService = context.getDocumentService();
-        const deregisteres = [];
+        const accomplishmentService = context.getAccomplishmentService();
 
         vm.newSource = {};
 
@@ -72,18 +69,18 @@
         vm.checkValidation = checkValidation;
         vm.fieldValueHasChanged = fieldValueHasChanged;
 
+        vm.getInstitutesQuery = getInstitutesQuery;
+        vm.getInstitutesFilter = getInstitutesFilter;
+
         let timeout;
 
         const delay = 500;
 
         vm.$onInit = function () {
-            if (_.isFunction(vm.document.clone))
-                documentBackup = vm.document.clone();
-            else
-                documentBackup = _.cloneDeep(vm.document);
 
-            watchDocumentSourceType();
-            watchDocumentType();
+            watchSourceType();
+
+            watchType();
 
             $scope.$watch('form.$pristine', function (formUntouched) {
                 if (!formUntouched) {
@@ -97,20 +94,29 @@
                 cancel(event);
             });
 
-            if (vm.document.id) {
+            if (vm.accomplishment.id) {
                 vm.errorText = '';
-                vm.errors = vm.document.validateDocument();
+                vm.errors = vm.accomplishment.validate();
 
                 if (Object.keys(vm.errors).length > 0) {
                     vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
                 }
             }
+
+            if (!vm.accomplishment.affiliations) {
+                vm.accomplishment.affiliations = [];
+            }
         };
 
-        vm.$onDestroy = function () {
-            for (const deregisterer of deregisteres)
-                deregisterer();
-        };
+        function getInstitutesQuery(searchText) {
+            const qs = {where: {name: {contains: searchText}, parentId: null}};
+            const model = 'institutes';
+            return {model: model, qs: qs};
+        }
+
+        function getInstitutesFilter() {
+            return vm.accomplishment.affiliations;
+        }
 
         function resetErrors() {
             vm.errors = {};
@@ -119,13 +125,13 @@
 
         function checkValidation(field = false) {
             if (field) {
-                vm.errors[field] = vm.document.validateDocument(field);
+                vm.errors[field] = vm.accomplishment.validate(field);
 
                 if (typeof vm.errors[field] === 'undefined') {
                     delete vm.errors[field];
                 }
             } else {
-                vm.errors = vm.document.validateDocument();
+                vm.errors = vm.accomplishment.validate();
             }
 
             if (Object.keys(vm.errors).length > 0) {
@@ -143,30 +149,41 @@
             }, delay);
         }
 
-        function watchDocumentSourceType() {
-            const dereg = $scope.$watch('vm.document.sourceType', (newValue, oldValue) => {
-                if (newValue === oldValue)
+        function watchSourceType() {
+            // Watch if the source type changes
+            $scope.$watch('vm.accomplishment.sourceType', (newValue, oldValue) => {
+                // Exit when the new and old value are equal
+                if (newValue === oldValue) {
                     return;
+                }
 
+                // Exit when the new value is empty
                 if (!newValue) {
                     vm.sourceLabel = '';
                     return;
                 }
 
-                vm.sourceLabel = _.find(allSourceTypes, {id: newValue}).label;
-                if (vm.document.source && vm.document.source.type !== vm.document.sourceType)
-                    vm.document.source = null;
-            });
+                // Find the label of the selected source type
+                vm.sourceLabel = _.find(defaultSourceTypes, {id: newValue}).label;
 
-            deregisteres.push(dereg);
+                // Reset the accomplishment source of the type of the source is not equal to the sourceType
+                if (vm.accomplishment.source && vm.accomplishment.source.type !== vm.accomplishment.sourceType) {
+                    vm.accomplishment.source = null;
+                }
+            });
         }
 
-        function watchDocumentType() {
-            const dereg = $scope.$watch('vm.document.type', newValue => {
-                const allowedSources = _.find(vm.documentTypes, {key: newValue}).allowedSources;
-                vm.sourceTypes = _.filter(allSourceTypes, s => allowedSources.includes(s.id));
+        function watchType() {
+            // Watch if the accomplishment type changes
+            $scope.$watch('vm.accomplishment.type', type => {
+
+                // Copy the default source types or use an empty object
+                if (type === 'editor') {
+                    vm.sourceTypes = defaultSourceTypes;
+                } else {
+                    vm.sourceTypes = {};
+                }
             });
-            deregisteres.push(dereg);
         }
 
         function saveStatus() {
@@ -230,28 +247,28 @@
         function save() {
             vm.errors = {};
             vm.errorText = '';
-            saveDocument(true);
+            processSave(true);
         }
 
-        function saveDocument(updateState = false) {
+        function processSave(updateState = false) {
             if (updateState) {
                 vm.saveStatus.setState('saving');
             }
 
             vm.errorText = '';
-            vm.errors = vm.document.validateDocument();
+            vm.errors = vm.accomplishment.validate();
 
             if (Object.keys(vm.errors).length > 0) {
                 vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
             }
 
-            if (vm.document.id) {
-                return vm.document.save().then(() => {
+            if (vm.accomplishment.id) {
+                return vm.accomplishment.save().then(() => {
                     if (updateState) {
                         vm.saveStatus.setState('saved');
                     }
 
-                    EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
+                    EventsService.publish(EventsService.ACCOMPLISHMENT_DRAFT_UPDATED, vm.accomplishment);
 
                     vm.unsavedData = false;
 
@@ -261,17 +278,17 @@
                         }, 1000);
                     }
 
-                    return vm.document;
+                    return vm.accomplishment;
                 });
             } else {
-                return documentService.createDraft(vm.document)
+                return accomplishmentService.createDraft(vm.accomplishment)
                     .then(draft => {
-                        vm.document = draft;
+                        vm.accomplishment = draft;
                         if (updateState) {
                             vm.saveStatus.setState('saved');
                         }
 
-                        EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
+                        EventsService.publish(EventsService.ACCOMPLISHMENT_DRAFT_UPDATED, vm.accomplishment);
 
                         vm.unsavedData = false;
 
@@ -281,7 +298,7 @@
                             }, 1000);
                         }
 
-                        return vm.document;
+                        return vm.accomplishment;
                     });
             }
         }
@@ -316,7 +333,7 @@
                 }
 
                 if (vm.saveStatus.state === 'saving') {
-                    saveDocument();
+                    processSave();
                 }
 
                 if (!event){
@@ -326,50 +343,35 @@
         }
 
         function getSources(searchText) {
-            const qs = {where: {title: {contains: searchText}, type: vm.document.sourceType}};
+            const qs = {where: {title: {contains: searchText}, type: vm.accomplishment.type}};
             return Restangular.all('sources').getList(qs);
-        }
-
-        function getItSources(searchText) {
-            const sourcesData = {
-                'institute': {
-                    query: {where: {name: {contains: searchText}}},
-                    model: 'institutes'
-                },
-                'conference': {
-                    query: {where: {title: {contains: searchText}, type: vm.document.sourceType}},
-                    model: 'sources'
-                }
-            };
-            const sourceData = sourcesData[vm.document.sourceType];
-            if (!sourceData)
-                return [];
-            return Restangular.all(sourceData.model).getList(sourceData.query);
-        }
-
-        function openSourceTypeModal($event) {
-
-            $event.stopPropagation();
-
-            EventsService.subscribe(vm, EventsService.SOURCE_CREATED, function(event, source) {
-                vm.document.source = source;
-                vm.getSources(source.title);
-
-                vm.errors = vm.document.validateDocument();
-
-                checkValidation();
-            });
-
-            ModalService
-                .openSourceTypeModal(vm.document);
         }
 
         function checkSource($event) {
             if (!$event.target.value) {
-                vm.document.source = null;
+                vm.accomplishment.source = null;
             }
 
             checkValidation('source');
+        }
+
+        function openSourceTypeModal($event) {
+
+            // Stop event from bubbling up to parents
+            $event.stopPropagation();
+
+            // Subscribe to custom event SOURCE_CREATED, execute following function when event is fired
+            EventsService.subscribe(vm, EventsService.SOURCE_CREATED, function(event, source) {
+                vm.accomplishment.source = source;
+                vm.getSources(source.title);
+
+                vm.errors = vm.accomplishment.validate();
+
+                checkValidation();
+            });
+
+            // Open source type modal
+            ModalService.openSourceTypeModal(vm.accomplishment);
         }
 
         function verify() {
@@ -378,23 +380,23 @@
             vm.verifyStatus.setState('verifying');
 
             $timeout(function() {
-                vm.errors = vm.document.validateDocument();
+                vm.errors = vm.accomplishment.validate();
                 if (Object.keys(vm.errors).length === 0) {
                     // Is valid
-                    saveDocument()
+                    processSave()
                         .then(() => {
                             vm.verifyStatus.setState('verified');
                             close();
                         })
                         .then(() => {
-                            documentService.verifyDraft(vm.document);
+                            accomplishmentService.verifyDraft(vm.accomplishment);
                         });
                 } else {
                     // Is not valid
                     vm.verifyStatus.setState('failed');
                     vm.errorText = 'The draft has been saved but not been verified! Please correct the errors on this form!';
 
-                    saveDocument(false);
+                    processSave(false);
 
                     $timeout(function() {
                         vm.verifyStatus.setState('ready to verify');

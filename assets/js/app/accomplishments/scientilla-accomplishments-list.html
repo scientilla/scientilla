@@ -1,0 +1,31 @@
+<scientilla-filter
+    search-form-structure="vm.searchForm"
+    on-filter="vm.onFilter"
+    elements="vm.accomplishments"
+    empty-list-message="No accomplishments found">
+
+    <scientilla-multicheck>
+        <item-list>
+            <scientilla-checkable ng-repeat="a in vm.accomplishments" item="a" class="scientilla-checkable">
+                <scientilla-accomplishment
+                    accomplishment="a"
+                    section="vm.section"
+                    class="accomplishment-container"></scientilla-accomplishment>
+                <div class="accomplishment-row-actions" ng-if="vm.editable">
+                    <button
+                        class="btn btn-primary"
+                        ng-click="vm.unverifyAccomplishment(a)"
+                        ng-disabled="d.isUnverifying()"
+                        type="button"
+                        uib-tooltip="Unlink the accomplishment from your profile"
+                        tooltip-placement="top"
+                        tooltip-class="text-left">
+                        <i class="fas fa-times fa-left"></i>
+                        Unverify
+                    </button>
+                </div>
+            </scientilla-checkable>
+        </item-list>
+    </scientilla-multicheck>
+
+</scientilla-filter>

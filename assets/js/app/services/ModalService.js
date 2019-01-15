@@ -357,15 +357,15 @@
             return service.multipleChoiceConfirm(title, message, [], 'Close');
         };
 
-        service.openScientillaAccomplishmentForm = function (document, researchEntity) {
+        service.openScientillaAccomplishmentForm = function (accomplishment, researchEntity) {
             const scopeVars = {
-                document: document,
+                accomplishment: accomplishment,
                 researchEntity: researchEntity,
             };
 
             let modal = openModal(
                 '<scientilla-accomplishment-form\
-                    document="vm.document"\
+                    accomplishment="vm.accomplishment"\
                     research-entity="vm.researchEntity"\
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit" \
@@ -378,6 +378,7 @@
             );
 
             addModalObject(modal);
+
             return modal.result;
         };
 

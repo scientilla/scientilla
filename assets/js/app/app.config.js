@@ -143,7 +143,6 @@
         return context;
     }
 
-
     handleRequest.$inject = [
         '$scope',
         '$routeParams',

@@ -16,6 +16,7 @@
         'services',
         'wizard',
         'admin',
-        'summary'
+        'summary',
+        'accomplishments'
     ]);
 })();

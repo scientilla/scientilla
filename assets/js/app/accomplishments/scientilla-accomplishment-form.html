@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h3>{{ !!vm.document.id ? 'Edit' : 'Add a new' }} accomplishment</h3>
+    <h3>{{ !!vm.accomplishment.id ? 'Edit' : 'Add a new' }} accomplishment</h3>
     <button
         type="button"
         class="close"
@@ -14,151 +14,293 @@
         class="{{vm.status.class}}"
         autocomplete="off">
 
-        <div class="row">
+        <div ng-if="vm.accomplishment.type == 'editor'">
+            <div class="row">
+                <div class="col-12 col-sm-6">
+                    <div class="form-group">
+                        <label for="accomplishmentType">Accomplishment Type *</label>
+                        <div class="select-wrapper">
+                            <select
+                                class="form-control"
+                                id="accomplishmentType"
+                                placeholder="Accomplishment Type"
+                                ng-model="vm.accomplishment.type"
+                                ng-options="option.key as option.label for option in vm.types"
+                                ng-change="vm.resetErrors()">
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-sm-6">
+                    <div
+                        class="form-group has-feedback"
+                            ng-class="{
+                            'has-error' : vm.errors.sourceType && vm.mode == 'verify',
+                            'has-warning' : vm.errors.sourceType && vm.mode == 'draft'
+                        }">
+                        <label for="sourceType">Source Type *</label>
+                        <div
+                            class="select-wrapper"
+                            ng-class="{'is-invalid' : vm.errors.sourceType}">
+                            <select
+                                class="form-control"
+                                id="sourceType"
+                                name="sourceType"
+                                required
+                                placeholder="Source Type"
+                                ng-model="vm.accomplishment.sourceType"
+                                ng-model-options="{ allowInvalid: true }"
+                                ng-options="option.id as option.label group by option.section for option in vm.sourceTypes"
+                                ng-class="{'is-invalid' : vm.errors.sourceType}"
+                                ng-blur="vm.checkValidation('sourceType')"
+                                ng-change="vm.checkValidation('sourceType')">
+                                <option value="">--Not Selected--</option>
+                            </select>
+                        </div>
+                        <scientilla-error-messages
+                            class="error-messages"
+                            errors="vm.errors.sourceType"></scientilla-error-messages>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                    <div
+                        class="form-group has-feedback"
+                        ng-class="{
+                            'has-error' : vm.errors.source && vm.mode == 'verify',
+                            'has-warning' : vm.errors.source && vm.mode == 'draft'
+                        }">
+                        <label for="source">{{ vm.sourceLabel }} *</label>
+                        <div
+                            class="input-group"
+                            ng-class="{'is-invalid' : vm.errors.source}">
+                            <input
+                                id="source"
+                                name="source"
+                                type="text"
+                                ng-model="vm.accomplishment.source"
+                                class="form-control"
+                                uib-typeahead="source as source.title for source in vm.getSources($viewValue)"
+                                typeahead-loading="searching"
+                                typeahead-no-results="noResults"
+                                data-ng-required="true"
+                                placeholder="{{vm.sourceLabel}}"
+                                ng-model-options="{ allowInvalid: true }"
+                                typeahead-editable="false"
+                                typeahead-select-on-blur="true"
+                                ng-blur="vm.checkSource($event)"
+                                ng-change="vm.fieldValueHasChanged('source')"
+                                ng-class="{'is-invalid' : vm.errors.source}">
+                            {{ $viewValue }}
+                            <div class="input-group-append">
+                                <button
+                                    ng-click="vm.openSourceTypeModal($event)"
+                                    type="button"
+                                    class="btn btn-outline-secondary">Add New</button>
+                            </div>
+                        </div>
+                        <scientilla-error-messages
+                            class="error-messages"
+                            errors="vm.errors.source"></scientilla-error-messages>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                    <div
+                        ng-class="{
+                            'has-error' : vm.errors.yearFrom && vm.mode == 'verify',
+                            'has-warning' : vm.errors.yearFrom && vm.mode == 'draft'
+                        }"
+                        class="form-group has-feedback">
+                        <label for="yearFrom">Year from (YYYY format) *</label>
+                        <input
+                            type="text"
+                            name="yearFrom"
+                            class="form-control"
+                            id="yearFrom"
+                            placeholder="Year"
+                            ng-model="vm.accomplishment.yearFrom"
+                            data-ng-required="true"
+                            ng-pattern="/^(19|20)\d{2}$/"
+                            ng-model-options="{ allowInvalid: true }"
+                            ng-class="{'is-invalid' : vm.errors.yearFrom}"
+                            ng-blur="vm.checkValidation('yearFrom')"
+                            ng-change="vm.fieldValueHasChanged('yearFrom')">
+                        <scientilla-error-messages
+                            class="error-messages"
+                            errors="vm.errors.yearFrom"></scientilla-error-messages>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                    <div
+                        ng-class="{
+                            'has-error' : vm.errors.yearTo && vm.mode == 'verify',
+                            'has-warning' : vm.errors.yearTo && vm.mode == 'draft'
+                        }"
+                        class="form-group has-feedback">
+                        <label for="yearTo">Year to (YYYY format) *</label>
+                        <input
+                            type="text"
+                            name="yearTo"
+                            class="form-control"
+                            id="yearTo"
+                            placeholder="Year"
+                            ng-model="vm.accomplishment.yearTo"
+                            data-ng-required="true"
+                            ng-pattern="/^(19|20)\d{2}$/"
+                            ng-model-options="{ allowInvalid: true }"
+                            ng-class="{'is-invalid' : vm.errors.yearTo}"
+                            ng-blur="vm.checkValidation('yearTo')"
+                            ng-change="vm.fieldValueHasChanged('yearTo')">
+                        <scientilla-error-messages
+                            class="error-messages"
+                            errors="vm.errors.yearTo"></scientilla-error-messages>
+                    </div>
+                </div>
+
+                <div
+                    class="col-12"
+                    ng-class="{
+                        'has-error' : vm.errors.authorsStr && vm.mode == 'verify',
+                        'has-warning' : vm.errors.authorsStr && vm.mode == 'draft'
+                    }"
+                    class="form-group has-feedback">
+                    <label for="authors">Authors (must be in the form "Doe J., Smith Simpson J. V.") *</label>
+                    <input
+                        type="text"
+                        name="authors"
+                        class="form-control"
+                        id="authors"
+                        placeholder="Authors"
+                        ng-model="vm.accomplishment.authorsStr"
+                        ng-pattern="vm.accomplishmentFieldsRules.authorsStr.regex"
+                        data-ng-required="true"
+                        ng-model-options="{ allowInvalid: true }"
+                        ng-class="{'is-invalid' : vm.errors.authorsStr}"
+                        ng-blur="vm.checkValidation('authorsStr')"
+                        ng-change="vm.fieldValueHasChanged('authorsStr')">
+                    <scientilla-error-messages
+                        class="error-messages"
+                        errors="vm.errors.authorsStr"></scientilla-error-messages>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-if="vm.accomplishment.type == 'award'">
             <div class="col-12 col-sm-6">
                 <div class="form-group">
-                    <label for="documentType">Document Type *</label>
+                    <label for="accomplishmentType">Accomplishment Type *</label>
                     <div class="select-wrapper">
                         <select
                             class="form-control"
-                            id="documentType"
-                            placeholder="Document Type"
-                            ng-model="vm.document.type"
-                            ng-options="option.key as option.label for option in vm.documentTypes"
+                            id="accomplishmentType"
+                            placeholder="Accomplishment Type"
+                            ng-model="vm.accomplishment.type"
+                            ng-options="option.key as option.label for option in vm.types"
                             ng-change="vm.resetErrors()">
                         </select>
                     </div>
                 </div>
             </div>
+
             <div class="col-12 col-sm-6">
                 <div
-                    class="form-group has-feedback"
                     ng-class="{
-                        'has-error' : vm.errors.sourceType && vm.mode == 'verify',
-                        'has-warning' : vm.errors.sourceType && vm.mode == 'draft'
-                    }">
-                    <label for="sourceType">Source Type *</label>
-                    <div
-                        class="select-wrapper"
-                        ng-class="{'is-invalid' : vm.errors.sourceType}">
+                    'has-error' : vm.errors.title && vm.mode == 'verify',
+                    'has-warning' : vm.errors.title && vm.mode == 'draft'
+                }"
+                    class="form-group has-feedback">
+                    <label for="title">Title *</label>
+                    <input
+                        name="title"
+                        type="text"
+                        class="form-control"
+                        id="title"
+                        placeholder="Title"
+                        ng-model="vm.accomplishment.title"
+                        data-ng-required="true"
+                        ng-class="{'is-invalid' : vm.errors.title}"
+                        ng-blur="vm.checkValidation('title')"
+                        ng-change="vm.fieldValueHasChanged('title')">
+                    <scientilla-error-messages
+                        class="error-messages"
+                        errors="vm.errors.title"></scientilla-error-messages>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div
+                    ng-class="{
+                        'has-error' : vm.errors.authorsStr && vm.mode == 'verify',
+                        'has-warning' : vm.errors.authorsStr && vm.mode == 'draft'
+                    }"
+                    class="form-group has-feedback">
+                    <label for="authors">Authors (must be in the form "Doe J., Smith Simpson J. V.") *</label>
+                    <input
+                        type="text"
+                        name="authors"
+                        class="form-control"
+                        id="authors"
+                        placeholder="Authors"
+                        ng-model="vm.accomplishment.authorsStr"
+                        ng-pattern="vm.accomplishmentFieldsRules.authorsStr.regex"
+                        data-ng-required="true"
+                        ng-model-options="{ allowInvalid: true }"
+                        ng-class="{'is-invalid' : vm.errors.authorsStr}"
+                        ng-blur="vm.checkValidation('authorsStr')"
+                        ng-change="vm.fieldValueHasChanged('authorsStr')">
+                    <scientilla-error-messages
+                        class="error-messages"
+                        errors="vm.errors.authorsStr"></scientilla-error-messages>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <label for="issuer">Issuer</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="issuer"
+                        placeholder="Issuer"
+                        ng-model="vm.accomplishment.issuer">
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <scientilla-multicomplete
+                        items="vm.accomplishment.affiliations"
+                        query="vm.getInstitutesQuery"
+                        filter="vm.getInstitutesFilter"
+                        title="Affiliations">
+                    </scientilla-multicomplete>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-if="vm.accomplishment.type == 'event'">
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <label for="accomplishmentType">Accomplishment Type *</label>
+                    <div class="select-wrapper">
                         <select
                             class="form-control"
-                            id="sourceType"
-                            name="sourceType"
-                            required
-                            placeholder="Source Type"
-                            ng-model="vm.document.sourceType"
-                            ng-model-options="{ allowInvalid: true }"
-                            ng-options="option.id as option.label group by option.section for option in vm.sourceTypes"
-                            ng-class="{'is-invalid' : vm.errors.sourceType}"
-                            ng-blur="vm.checkValidation('sourceType')"
-                            ng-change="vm.checkValidation('sourceType')">
-                            <option value="">--Not Selected--</option>
+                            id="accomplishmentType"
+                            placeholder="Accomplishment Type"
+                            ng-model="vm.accomplishment.type"
+                            ng-options="option.key as option.label for option in vm.types"
+                            ng-change="vm.resetErrors()">
                         </select>
                     </div>
-                    <scientilla-error-messages
-                        class="error-messages"
-                        errors="vm.errors.sourceType"></scientilla-error-messages>
-                </div>
-            </div>
-        </div>
-
-        <div
-            ng-class="{
-                'has-error' : vm.errors.authorsStr && vm.mode == 'verify',
-                'has-warning' : vm.errors.authorsStr && vm.mode == 'draft'
-            }"
-            class="form-group has-feedback">
-            <label for="authors">Authors (must be in the form "Doe J., Smith Simpson J. V.") *</label>
-            <input
-                type="text"
-                name="authors"
-                class="form-control"
-                id="authors"
-                placeholder="Authors"
-                ng-model="vm.document.authorsStr"
-                ng-pattern="vm.documentFieldsRules.authorsStr.regex"
-                data-ng-required="true"
-                ng-model-options="{ allowInvalid: true }"
-                ng-class="{'is-invalid' : vm.errors.authorsStr}"
-                ng-blur="vm.checkValidation('authorsStr')"
-                ng-change="vm.fieldValueHasChanged('authorsStr')">
-            <scientilla-error-messages
-                class="error-messages"
-                errors="vm.errors.authorsStr"></scientilla-error-messages>
-        </div>
-
-        <div
-            ng-class="{
-                'has-error' : vm.errors.title && vm.mode == 'verify',
-                'has-warning' : vm.errors.title && vm.mode == 'draft'
-            }"
-            class="form-group has-feedback">
-            <label for="title">Title *</label>
-            <input
-                name="title"
-                type="text"
-                class="form-control"
-                id="title"
-                placeholder="Title"
-                ng-model="vm.document.title"
-                data-ng-required="true"
-                ng-class="{'is-invalid' : vm.errors.title}"
-                ng-blur="vm.checkValidation('title')"
-                ng-change="vm.fieldValueHasChanged('title')">
-            <scientilla-error-messages
-                class="error-messages"
-                errors="vm.errors.title"></scientilla-error-messages>
-        </div>
-
-        <div class="row">
-            <div
-                class="col-12 col-sm-12 col-md-6"
-                ng-if="vm.document.sourceType && !['invited_talk'].includes(vm.document.type)">
-                <div
-                    class="form-group has-feedback"
-                    ng-class="{
-                        'has-error' : vm.errors.source && vm.mode == 'verify',
-                        'has-warning' : vm.errors.source && vm.mode == 'draft'
-                    }">
-                    <label for="source">{{ vm.sourceLabel }} *</label>
-                    <div
-                        class="input-group"
-                        ng-class="{'is-invalid' : vm.errors.source}">
-                        <input
-                            id="source"
-                            name="source"
-                            type="text"
-                            ng-model="vm.document.source"
-                            class="form-control"
-                            uib-typeahead="source as source.title for source in vm.getSources($viewValue)"
-                            typeahead-loading="searching"
-                            typeahead-no-results="noResults"
-                            data-ng-required="true"
-                            placeholder="{{vm.sourceLabel}}"
-                            ng-model-options="{ allowInvalid: true }"
-                            typeahead-editable="false"
-                            typeahead-select-on-blur="true"
-                            ng-blur="vm.checkSource($event)"
-                            ng-change="vm.fieldValueHasChanged('source')"
-                            ng-class="{'is-invalid' : vm.errors.source}">
-                        {{ $viewValue }}
-                        <div class="input-group-append">
-                            <button
-                                ng-click="vm.openSourceTypeModal($event)"
-                                type="button"
-                                class="btn btn-outline-secondary">Add New</button>
-                        </div>
-                    </div>
-                    <scientilla-error-messages
-                        class="error-messages"
-                        errors="vm.errors.source"></scientilla-error-messages>
                 </div>
             </div>
 
-            <div
-                class="col-12 col-sm-6"
-                ng-class="!['invited_talk'].includes(vm.document.sourceType) && vm.document.sourceType ? 'col-md-3' : 'col-md-6'">
+            <div class="col-12 col-sm-6">
                 <div
                     ng-class="{
                         'has-error' : vm.errors.year && vm.mode == 'verify',
@@ -172,7 +314,7 @@
                         class="form-control"
                         id="year"
                         placeholder="Year"
-                        ng-model="vm.document.year"
+                        ng-model="vm.accomplishment.year"
                         data-ng-required="true"
                         ng-pattern="/^(19|20)\d{2}$/"
                         ng-model-options="{ allowInvalid: true }"
@@ -184,156 +326,68 @@
                         errors="vm.errors.year"></scientilla-error-messages>
                 </div>
             </div>
-            <div
-                class="col-12 col-sm-6"
-                ng-class="['journal', 'conference', 'book', 'bookseries'].includes(vm.document.sourceType) && vm.document.sourceType ? 'col-md-3' : 'col-md-6'"
-                ng-if="!['invited_talk'].includes(vm.document.type)">
+
+            <div class="col-12">
                 <div
-                    ng-class="vm.errors.doi ? 'has-error' : ''"
+                    ng-class="{
+                        'has-error' : vm.errors.title && vm.mode == 'verify',
+                        'has-warning' : vm.errors.title && vm.mode == 'draft'
+                    }"
                     class="form-group has-feedback">
-                    <label for="doi">DOI</label>
+                    <label for="title">Title *</label>
                     <input
+                        name="title"
                         type="text"
                         class="form-control"
-                        id="doi"
-                        placeholder="DOI"
-                        ng-model="vm.document.doi"
-                        ng-blur="vm.checkValidation('doi')"
-                        ng-change="vm.fieldValueHasChanged('doi')"
-                        ng-class="{'is-invalid' : vm.errors.doi}">
-                    <span ng-if="!vm.errors.doi">Example: <strong>10.1038/nnano.2013.238</strong></span>
+                        id="title"
+                        placeholder="Title"
+                        ng-model="vm.accomplishment.title"
+                        data-ng-required="true"
+                        ng-class="{'is-invalid' : vm.errors.title}"
+                        ng-blur="vm.checkValidation('title')"
+                        ng-change="vm.fieldValueHasChanged('title')">
                     <scientilla-error-messages
                         class="error-messages"
-                        errors="vm.errors.doi"></scientilla-error-messages>
+                        errors="vm.errors.title"></scientilla-error-messages>
                 </div>
             </div>
 
-            <div
-                class="col-12 col-sm-6 col-md-9"
-                ng-if="vm.document.type == 'invited_talk' && vm.sourceLabel">
+            <div class="col-12">
                 <div
-                    class="form-group has-feedback"
                     ng-class="{
-                        'has-error' : vm.errors.itSource && vm.mode == 'verify',
-                        'has-warning' : vm.errors.itSource && vm.mode == 'draft'
-                    }">
-                    <label for="source">{{vm.sourceLabel}} *</label>
+                        'has-error' : vm.errors.authorsStr && vm.mode == 'verify',
+                        'has-warning' : vm.errors.authorsStr && vm.mode == 'draft'
+                    }"
+                    class="form-group has-feedback">
+                    <label for="authors">Authors (must be in the form "Doe J., Smith Simpson J. V.") *</label>
                     <input
-                        id="itSource"
-                        name="itSource"
                         type="text"
-                        ng-model="vm.document.itSource"
-                        uib-typeahead="source.title || source.name for source in vm.getItSources($viewValue)"
-                        typeahead-loading="searching"
-                        typeahead-no-results="noResults"
+                        name="authors"
                         class="form-control"
-                        placeholder="{{vm.sourceLabel}}"
+                        id="authors"
+                        placeholder="Authors"
+                        ng-model="vm.accomplishment.authorsStr"
+                        ng-pattern="vm.accomplishmentFieldsRules.authorsStr.regex"
+                        data-ng-required="true"
                         ng-model-options="{ allowInvalid: true }"
-                        ng-class="{'is-invalid' : vm.errors.itSource}"
-                        ng-blur="vm.checkValidation('itSource')"
-                        ng-change="vm.fieldValueHasChanged('itSource')">
+                        ng-class="{'is-invalid' : vm.errors.authorsStr}"
+                        ng-blur="vm.checkValidation('authorsStr')"
+                        ng-change="vm.fieldValueHasChanged('authorsStr')">
                     <scientilla-error-messages
                         class="error-messages"
-                        errors="vm.errors.itSource"></scientilla-error-messages>
+                        errors="vm.errors.authorsStr"></scientilla-error-messages>
                 </div>
             </div>
-        </div>
 
-        <div
-            class="row"
-            ng-if="['journal', 'conference'].includes(vm.document.sourceType) && !['invited_talk'].includes(vm.document.type)">
-            <div class="col-12 col-sm-6 col-md-3">
+            <div class="col-12">
                 <div class="form-group">
-                    <label for="volume">Volume</label>
-                    <input
-                        type="text"
+                    <label for="description">Description</label>
+                    <textarea
+                        rows="6"
                         class="form-control"
-                        id="volume"
-                        placeholder="Volume"
-                        ng-model="vm.document.volume">
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="form-group">
-                    <label for="issue">Issue</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="issue"
-                        placeholder="Issue"
-                        ng-model="vm.document.issue">
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="form-group">
-                    <label for="pages">Pages</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="pages"
-                        placeholder="Pages"
-                        ng-model="vm.document.pages">
-                </div>
-            </div>
-            <div class="col-12 col-sm-6 col-md-3">
-                <div class="form-group">
-                    <label for="articleNumber">Article Number</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="articleNumber"
-                        placeholder="Article Number"
-                        ng-model="vm.document.articleNumber">
-                </div>
-            </div>
-        </div>
-
-        <div
-            class="form-group"
-            ng-if="!['invited_talk'].includes(vm.document.type)">
-            <label for="abstract">Abstract</label>
-            <textarea
-                rows="6"
-                class="form-control"
-                id="abstract"
-                placeholder="Abstract"
-                ng-model="vm.document.abstract"></textarea>
-        </div>
-
-        <div class="row">
-            <div class="col-12 col-sm-6">
-                <div
-                    class="form-group has-feedback"
-                    ng-if="!['invited_talk'].includes(vm.document.type)"
-                    ng-class="{
-                        'has-error' : vm.errors.scopusId && vm.mode == 'verify',
-                        'has-warning' : vm.errors.scopusId && vm.mode == 'draft'
-                    }">
-                    <label>Scopus ID</label>
-                    <input
-                        class="form-control"
-                        name="scopusId"
-                        placeholder="Scopus ID"
-                        ng-model="vm.document.scopusId"
-                        ng-class="{'is-invalid': vm.errors.scopusId}"
-                        ng-blur="vm.checkValidation('scopusId')"
-                        ng-change="vm.fieldValueHasChanged('scopusId')">
-                    <div>(Numeric identifier in the scopus document URL: e.g., https://www.scopus.com/[..]eid=2-s2.0-<strong>84888368243</strong>[..])</div>
-                    <scientilla-error-messages
-                        ng-if="vm.document.id"
-                        class="error-messages"
-                        errors="vm.errors.scopusId"></scientilla-error-messages>
-                </div>
-            </div>
-            <div class="col-12 col-sm-6">
-                <div
-                    class="form-group"
-                    ng-if="!['invited_talk'].includes(vm.document.type)">
-                    <label>WoS ID</label>
-                    <input
-                        class="form-control"
-                        placeholder="Wos ID"
-                        ng-model="vm.document.wosId">
+                        id="description"
+                        placeholder="Description"
+                        ng-model="vm.accomplishment.description"></textarea>
                 </div>
             </div>
         </div>
@@ -342,7 +396,7 @@
             <li>
                 <scientilla-button
                     type="button"
-                    click="vm.save()"
+                    click="vm.tryToSave()"
                     ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData">{{ vm.saveStatus.message }}
                 </scientilla-button>
             </li>

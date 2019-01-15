@@ -1,79 +1,46 @@
 (function () {
 
-    angular.module("documents").factory("AccomplishmentTypesService", AccomplishmentTypesService);
+    angular.module("accomplishments")
+        .factory("AccomplishmentTypesService", AccomplishmentTypesService);
 
+    // Inject the source types & types into the service from scientilla.constants.js
     AccomplishmentTypesService.$inject = [
+        'accomplishmentSourceTypes',
         'accomplishmentTypes'
     ];
 
-    function AccomplishmentTypesService(accomplishmentTypes) {
+    function AccomplishmentTypesService(accomplishmentSourceTypes, accomplishmentTypes) {
 
+        // Define the public functions of this service
         const service = {
-            getAccomplishmentFields: getAccomplishmentFields,
-            getAccomplishmentTypes: getAccomplishmentTypes,
-            getAccomplishmentTypeLabel: getAccomplishmentTypeLabel
+            getTypes: getTypes,
+            getTypeLabel: getTypeLabel,
+            getSourceTypes: getSourceTypes,
+            getSourceTypeLabel: getSourceTypeLabel
         };
 
         return service;
 
-        function getAccomplishmentFields() {
-            let fields;
-
-            fields = {
-                title: {
-                    inputType: 'text'
-                },
-                authorsStr: {
-                    inputType: 'text',
-                    label: "Authors",
-                },
-                year: {
-                    inputType: 'text'
-                },
-                journal: {
-                    inputType: 'text'
-                },
-                volume: {
-                    inputType: 'text'
-                },
-                issue: {
-                    inputType: 'text'
-                },
-                pages: {
-                    inputType: 'text'
-                },
-                articleNumber: {
-                    label: "Article number",
-                    inputType: 'text'
-                },
-                doi: {
-                    label: "DOI",
-                    inputType: 'text'
-                },
-                abstract: {
-                    inputType: 'text',
-                    multiline: true
-                },
-                scopusId: {
-                    label: "Scopus ID",
-                    inputType: 'text'
-                },
-                wosId: {
-                    label: "WOS ID",
-                    inputType: 'text'
-                }
-            };
-
-            return fields;
+        // This function returns the source types
+        function getSourceTypes() {
+            return accomplishmentSourceTypes;
         }
 
-        function getAccomplishmentTypes() {
+        // This function returns the types
+        function getTypes() {
             return accomplishmentTypes;
         }
 
-        function getAccomplishmentTypeLabel(accomplishmentTypeKey) {
-            const accomplishmentTypes = getAccomplishmentTypes();
+        // This function returns the label of the given type
+        function getTypeLabel(accomplishmentTypeKey) {
+            const accomplishmentTypes = getTypes();
             return _.find(accomplishmentTypes, {key: accomplishmentTypeKey}).label;
+        }
+
+        // This function returns the label of the given source type
+        function getSourceTypeLabel(sourceTypeKey) {
+            const sourceTypes = getSourceTypes();
+            return _.find(sourceTypes, {id: sourceTypeKey}).label;
         }
     }
 })();

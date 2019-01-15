@@ -4,19 +4,27 @@
     context.$inject = [
         'EventsService',
         'UserDocumentsServiceFactory',
-        'GroupDocumentsServiceFactory'
+        'GroupDocumentsServiceFactory',
+        'UserAccomplishmentsServiceFactory',
+        'GroupAccomplishmentsServiceFactory'
     ];
 
-    function context(EventsService,
-                     UserDocumentsServiceFactory,
-                     GroupDocumentsServiceFactory) {
+    function context(
+        EventsService,
+        UserDocumentsServiceFactory,
+        GroupDocumentsServiceFactory,
+        UserAccomplishmentsServiceFactory,
+        GroupAccomplishmentsServiceFactory
+    ) {
 
-        let researchEntity, documentService;
+        let researchEntity, documentService, accomplishmentService;
+
         const service = {
             setResearchEntity: setResearchEntity,
             getResearchEntity: getResearchEntity,
             reset: reset,
-            getDocumentService: getDocumentService
+            getDocumentService: getDocumentService,
+            getAccomplishmentService: getAccomplishmentService
         };
 
         EventsService.subscribe(service, EventsService.AUTH_LOGIN, (e, re) => setResearchEntity(re));
@@ -30,11 +38,13 @@
 
         function setResearchEntity(re){
             researchEntity = re;
-            if (researchEntity.getType() === 'user')
+            if (researchEntity.getType() === 'user') {
                 documentService = UserDocumentsServiceFactory.create(researchEntity);
-            else
+                accomplishmentService = UserAccomplishmentsServiceFactory.create(researchEntity);
+            } else {
                 documentService = GroupDocumentsServiceFactory.create(researchEntity);
-
+                accomplishmentService = GroupAccomplishmentsServiceFactory.create(researchEntity);
+            }
 
             EventsService.publish(EventsService.CONTEXT_CHANGE);
         }
@@ -46,6 +56,10 @@
 
         function getDocumentService() {
             return documentService;
+        }
+
+        function getAccomplishmentService() {
+            return accomplishmentService;
         }
     }
 }());

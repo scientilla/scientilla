@@ -68,13 +68,13 @@
         }
 
 
-        handleRequest.$inject = [
+        /*handleRequest.$inject = [
             '$scope',
             '$routeParams',
             'path',
             'authService',
             'context'
-        ];
+        ];*/
 
         /*
          * This function handles the document requests declared above.
