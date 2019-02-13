@@ -88,6 +88,14 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/groups/:researchEntityId/remove-verify']: 'Group.removeVerify',
     ['post ' + apiPrfx + '/users/:researchEntityId/remove-verify']: 'User.removeVerify',
 
+    //Research item API
+    ['post ' + apiPrfx + '/researchentities/:researchEntityId/drafts']: 'ResearchEntity.createDraft',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/drafts/:itemId']: 'ResearchEntity.updateDraft',
+    ['delete ' + apiPrfx + '/researchentities/:researchEntityId/drafts/:itemId']: 'ResearchEntity.deleteDraft',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/items/:itemId/verified']: 'ResearchEntity.verify',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/items/:itemId/unverified']: 'ResearchEntity.unverify',
+
+
     //Site API
     ['get ' + apiPrfx + '/users/username/:username/publications']: 'User.getPublications',
     ['get ' + apiPrfx + '/groups/slug/:slug/publications']: 'Group.getPublications',

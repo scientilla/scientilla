@@ -1,4 +1,4 @@
-/* global AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group, PerformanceCalculator, DocumentKinds, DocumentNotDuplicateGroup */
+/* global require, ResearchEntity, AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group, PerformanceCalculator, DocumentKinds, DocumentNotDuplicateGroup */
 'use strict';
 
 /**
@@ -9,9 +9,9 @@
  */
 
 const _ = require('lodash');
-const ResearchEntity = require('../lib/ResearchEntity');
+const DocumentEntity = require('../lib/DocumentEntity');
 
-module.exports = _.merge({}, ResearchEntity, {
+module.exports = _.merge({}, DocumentEntity, {
     DEFAULT_SORTING: {
         name: 'asc',
         updatedAt: 'desc'
@@ -34,6 +34,10 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'group'
         },
         starting_date: 'DATE',
+        researchEntity: {
+            columnName: 'research_entity',
+            model: 'researchentity'
+        },
         administrators: {
             collection: 'user',
             via: 'administratedGroups',
@@ -153,6 +157,14 @@ module.exports = _.merge({}, ResearchEntity, {
             return DocumentNotDuplicateGroup;
         }
     },
+    afterCreate: async function (group, cb) {
+        if (!group.id)
+            return cb();
+
+        await ResearchEntity.createResearchEntity(Group, group, 'group');
+
+        cb();
+    },
     getAuthorshipsData: async function (document, groupId, newAffiliationData = {}) {
         return {
             isVerifiable: true,
@@ -178,7 +190,7 @@ module.exports = _.merge({}, ResearchEntity, {
                 item: researchEntityId
             };
 
-        if (check && (await ResearchEntity.getDuplicates(Group, researchEntityId, document, docToRemove)).length > 0) {
+        if (check && (await DocumentEntity.getDuplicates(Group, researchEntityId, document, docToRemove)).length > 0) {
             return {
                 error: 'Documents must be compared',
                 item: document
@@ -222,7 +234,7 @@ module.exports = _.merge({}, ResearchEntity, {
                 item: draft
             };
 
-        if (check && (await ResearchEntity.getDuplicates(Group, researchEntityId, draft, docToRemove)).length > 0) {
+        if (check && (await DocumentEntity.getDuplicates(Group, researchEntityId, draft, docToRemove)).length > 0) {
             return {
                 error: 'Documents must be compared',
                 item: draft
