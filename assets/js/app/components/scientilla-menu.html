@@ -28,6 +28,21 @@
                    class="list-group-item list-group-item-action">External</a>
             </div>
         </li>
+        <li ng-if="!vm.user.isViewOnly()">
+            <label class="label-add-accomplishment">
+                Accomplishments
+                <scientilla-button-new-accomplishment
+                        class="button-new-accomplishment-container"></scientilla-button-new-accomplishment>
+            </label>
+            <div class="list-group">
+                <a ng-href="{{ vm.getUrl('accomplishments/verified') }}"
+                   ng-class="{active: vm.isActive('/accomplishments/verified')}"
+                   class="list-group-item list-group-item-action">Verified</a>
+                <a ng-href="{{ vm.getUrl('accomplishments/drafts') }}"
+                   ng-class="{active: vm.isActive('/accomplishments/drafts')}"
+                   class="list-group-item list-group-item-action">Drafts</a>
+            </div>
+        </li>
         <li>
             <label>Explore</label>
             <div class="list-group">
@@ -48,22 +63,6 @@
                 <a ng-href="#/tools"
                    ng-class="{active: vm.isActive('/tools')}"
                    class="list-group-item list-group-item-action">Tools</a>
-            </div>
-        </li>
-        <li ng-if="!vm.user.isViewOnly()">
-            <label class="label-add-accomplishment">
-                Accomplishments
-                <scientilla-button-new-accomplishment class="button-new-accomplishment-container"></scientilla-button-new-accomplishment>
-            </label>
-            <div class="list-group">
-                <a
-                    ng-href="{{ vm.getUrl('accomplishments/verified') }}"
-                    ng-class="{active: vm.isActive('/accomplishments/verified')}"
-                    class="list-group-item list-group-item-action">Verified</a>
-                <a
-                    ng-href="{{ vm.getUrl('accomplishments/drafts') }}"
-                    ng-class="{active: vm.isActive('/accomplishments/drafts')}"
-                    class="list-group-item list-group-item-action">Drafts</a>
             </div>
         </li>
     </ul>
