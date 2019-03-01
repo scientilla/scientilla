@@ -143,17 +143,19 @@
             return modal.result;
         };
 
-        service.openDocumentComparisonForm = function (document1, document2) {
+        service.openDocumentComparisonForm = function (document, duplicates, category) {
 
             var scopeVars = {
-                document1: document1,
-                document2: document2
+                document: document,
+                duplicates: duplicates,
+                category: category
             };
 
             const modal = openModal(
                 '<scientilla-document-comparison-form\
-                    document1="vm.document1"\
-                    document2="vm.document2"\
+                    document="vm.document"\
+                    duplicates="vm.duplicates"\
+                    category="vm.category"\
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit"\
                 ></scientilla-document-comparison-form>',
@@ -162,7 +164,9 @@
                     size: 'lg'
                 }
             );
+
             addModalObject(modal);
+
             return modal.result;
         };
 
@@ -289,9 +293,11 @@
                     args.keyboard = false;
                 }
 
-                var buttons = scope.buttonLabels.map(function (b, i) {
-                        return '<li><scientilla-button click="vm.ok(' + i + ')">' + b + '</scientilla-button></li>';
-                    }).join('');
+                let buttons = '';
+                Object.keys(buttonLabels).forEach(function(key) {
+                    const text = buttonLabels[key];
+                    buttons += '<li><scientilla-button click="vm.ok(' + key + ')">' + text + '</scientilla-button></li>';
+                });
 
                 if (cancelLabel !== false) {
                     buttons += '<li><scientilla-button click="vm.cancel()" type="cancel">' + cancelLabel + '</scientilla-button></li>';

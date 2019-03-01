@@ -41,6 +41,7 @@
         service.setAuthorshipPrivacy = setAuthorshipPrivacy;
         service.setAuthorshipFavorite = setAuthorshipFavorite;
         service.removeVerify = removeVerify;
+        service.markAsNotDuplicates = markAsNotDuplicates;
 
         const documentPopulates = [
             'source',
@@ -55,6 +56,7 @@
             'groupTagLabels',
             'institutes',
             'duplicates',
+            'notDuplicates',
             'groups',
             'scopusDocumentMetadata'
         ];
@@ -217,7 +219,6 @@
                 .customGET('', {origin, searchKey, searchValue});
         }
 
-
         function removeDocument(researchEntity, doc) {
             if (doc.isDraft())
                 return deleteDraft(researchEntity, doc.id);
@@ -267,8 +268,19 @@
             verificationData = _.pick(verificationData, verificationFields);
             verificationData.document1Id = doc1Id;
             verificationData.document2Id = doc2Id;
+
             return researchEntity
                 .customPOST(verificationData, 'remove-verify');
+        }
+
+        async function markAsNotDuplicates(researchEntity, documentId, duplicateIds) {
+            const data = {
+                researchEntityId: researchEntity.id,
+                documentId: documentId,
+                duplicateIds: duplicateIds
+            };
+            await researchEntity.one('documents', documentId)
+                .customPOST(data, 'not-duplicates');
         }
 
         /* jshint ignore:end */

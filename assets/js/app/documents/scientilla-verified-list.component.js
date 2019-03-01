@@ -12,12 +12,14 @@
         });
 
     scientillaVerifiedList.$inject = [
-        'documentListSections'
+        'documentListSections',
+        'documentCategories'
     ];
 
-    function scientillaVerifiedList(documentListSections) {
+    function scientillaVerifiedList(documentListSections, documentCategories) {
         const vm = this;
         vm.documentListSections = documentListSections;
+        vm.documentCategories = documentCategories;
 
         vm.$onInit = function () {
         };

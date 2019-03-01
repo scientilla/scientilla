@@ -138,7 +138,6 @@
                         return;
                 }
 
-
                 try {
                     const res = await verify(user, vm.document.id, data, vm.document2id);
                     const newUser = await UsersService.getProfile(user.id);

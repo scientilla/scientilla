@@ -23,11 +23,10 @@
         ALREADY_VERIFIED: 'already verified',
         ALREADY_IN_DRAFTS: 'already in drafts',
         DISCARDED: 'discarded',
-        UVERIFYING: 'unverifying',
+        UNVERIFYING: 'unverifying',
         NEW: 'new',
         EXTERNAL: 'external'
     };
-
 
     const defaultSources = ['journal', 'conference', 'book', 'bookseries'];
     const invitedTalkSources = [
@@ -175,7 +174,6 @@
         {id: 'outreach', label: 'Outreach', section: 'Dissemination', type: 'invited-talk'}
     ];
 
-
     const documentSearchForm = {
         title: {
             inputType: 'text',
@@ -283,6 +281,44 @@
         USER: 'user-verified-documents'
     };
 
+    const documentCategories = {
+        DRAFT: 'Draft',
+        VERIFIED: 'Verified',
+        EXTERNAL: 'External',
+        SUGGESTED: 'Suggested'
+    };
+
+    const documentActions = {
+        COMPARE: {
+            KEEP_DOCUMENT: 'Keep document',
+            USE_DUPLICATE: 'Use duplicate',
+            DELETE_DRAFT: 'Delete draft',
+            DISCARD_SUGGESTED_DOCUMENT: 'Discard suggested document',
+            UNVERIFY_VERIFIED_DOCUMENT: 'Unverify verified document',
+            MARK_ALL_AS_NOT_DUPLICATE: 'Mark all as not duplicate'
+        },
+        DRAFT: {
+            VERIFY: 'Verify',
+            KEEP_DRAFT: 'Keep draft'
+        },
+        VERIFIED: {
+            REPLACE: 'Replace'
+        },
+        SUGGESTED: {
+            VERIFY: 'Verify',
+            COPY_TO_DRAFT: 'Copy to Draft'
+        },
+        KEEP: {
+            KEEP_VERIFIED_DOCUMENT: 'Keep verified document'
+        },
+        REPLACE: {
+            UNVERIFY_DOCUMENT_AND_VERIFY_DRAFT: 'Unverify simular document and verify draft',
+            UNVERIFY_DOCUMENT_AND_REPLACE: 'Unverify simular document and replace by source document',
+            COPY_EXTERNAL_DOCUMENT_AND_VERIFY: 'Copy external document and verify source document',
+            UNVERIFY_DOCUMENT_AND_VERIFY: 'Unverify simular document and verify source document'
+        }
+    };
+
     angular.module('app')
         .constant('pageSize', 50)
         .constant('userConstants', userConstants)
@@ -296,5 +332,7 @@
         .constant('documentSearchForm', documentSearchForm)
         .constant('documentFieldsRules', documentFieldsRules)
         .constant('documentOrigins', documentOrigins)
-        .constant('documentListSections', documentListSections);
+        .constant('documentListSections', documentListSections)
+        .constant('documentCategories', documentCategories)
+        .constant('documentActions', documentActions);
 })();

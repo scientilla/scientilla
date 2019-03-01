@@ -12,10 +12,11 @@
         'DocumentKinds',
         '$q',
         '$http',
-        'FormService'
+        'documentActions',
+        'documentCategories'
     ];
 
-    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, DocumentLabels, DocumentKinds, $q, $http, FormService) {
+    function DocumentsServiceFactory(Notification, researchEntityService, ModalService, EventsService, DocumentLabels, DocumentKinds, $q, $http, documentActions, documentCategories) {
         return {
             create: function (researchEntity, reService) {
                 var service = {};
@@ -109,48 +110,49 @@
                         });
                 }
 
-                function unverifyDocument(document) {
-                    document.addLabel(DocumentLabels.UVERIFYING);
-                    ModalService
-                        .multipleChoiceConfirm('Unverifying',
-                            'Unverifying a document removes it from your profile, you can choose:\n\n' +
-                            'Move to drafts: to move the document in your drafts.\n' +
-                            'Remove: to remove it completely from your profile.',
-                            ['Move to drafts', 'Remove'],
-                            'Cancel',
-                            true)
-                        .then(function (buttonIndex) {
-                            switch (buttonIndex) {
-                                case -1:
-                                    document.removeLabel(DocumentLabels.UVERIFYING);
-                                    break;
-                                case 0:
-                                    return researchEntityService.copyDocument(researchEntity, document)
-                                        .then(function (draft) {
-                                            EventsService.publish(EventsService.DRAFT_CREATED, draft);
-                                            return researchEntityService.unverify(researchEntity, document)
-                                                .then(function (draft) {
-                                                    EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
-                                                    Notification.success('Document moved to drafts');
-                                                    return draft;
-                                                })
-                                                .catch(() => Notification.warning('Failed to unverify document'));
-                                        });
-                                case 1:
+                /* jshint ignore:start */
+                async function unverifyDocument(document) {
+                    document.addLabel(DocumentLabels.UNVERIFYING);
+                    const unverifyAction = await ModalService.multipleChoiceConfirm(
+                        'Unverifying',
+                        'Unverifying a document removes it from your profile, you can choose:\n\n' +
+                        'Move to drafts: to move the document in your drafts.\n' +
+                        'Remove: to remove it completely from your profile.',
+                        ['Move to drafts', 'Remove'],
+                        'Cancel',
+                        true
+                    );
+
+                    switch (unverifyAction) {
+                        case -1:
+                            document.removeLabel(DocumentLabels.UNVERIFYING);
+                            break;
+                        case 0:
+                            return researchEntityService.copyDocument(researchEntity, document)
+                                .then(function (draft) {
+                                    EventsService.publish(EventsService.DRAFT_CREATED, draft);
                                     return researchEntityService.unverify(researchEntity, document)
                                         .then(function (draft) {
                                             EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
-                                            Notification.success("Document succesfully unverified");
+                                            Notification.success('Document moved to drafts');
+                                            return draft;
                                         })
-                                        .catch(function () {
-                                            Notification.warning("Failed to unverify document");
-                                        });
-                            }
-                        })
-                        .catch(function () {
-                            document.removeLabel(DocumentLabels.UVERIFYING);
-                        });
+                                        .catch(() => Notification.warning('Failed to unverify document'));
+                                });
+                        case 1:
+                            return researchEntityService.unverify(researchEntity, document)
+                                .then(function (draft) {
+                                    EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
+                                    Notification.success("Document succesfully unverified");
+                                })
+                                .catch(function () {
+                                    Notification.warning("Failed to unverify document");
+                                });
+                    }
+
+                    document.removeLabel(DocumentLabels.UNVERIFYING);
                 }
+                /* jshint ignore:end */
 
                 function createDraft(documentData) {
                     return researchEntityService
@@ -330,7 +332,6 @@
                             }
 
                             return researchEntityService.getExternalDocuments(researchEntity, query);
-
                         });
                 }
 
@@ -361,90 +362,279 @@
                 }
 
                 /* jshint ignore:start */
-                async function compareDocuments(doc1, duplicateInfo) {
-                    try {
-                        const doc2Id = duplicateInfo.duplicate;
-                        const doc2 = await researchEntityService.getDoc(researchEntity, doc2Id, duplicateInfo.duplicateKind);
-                        const i = await ModalService.openDocumentComparisonForm(doc1, doc2);
-                        const d = i === 1 ? 2 : 1;
-                        let chosenDoc, discardedDoc;
-                        if (i === 1) {
-                            chosenDoc = doc1;
-                            discardedDoc = doc2;
-                        }
-                        if (i === 2) {
-                            chosenDoc = doc2;
-                            discardedDoc = doc1;
-                        }
-                        if (i === 1 || i === 2) {
-                            const modalMsg = `Discarded document (${discardedDoc.getStringKind(researchEntity)}) will be removed.\nWhat do you want to do with selected document (${chosenDoc.getStringKind(researchEntity)})?`;
-                            let res, err, j;
-                            if (chosenDoc.isSuggested(researchEntity)) {
-                                j = await ModalService
-                                    .multipleChoiceConfirm('Suggested document selected',
-                                        modalMsg,
-                                        ['Verify', 'Copy to Draft']);
-                                if (j === 0 || j === 1) {
-                                    if (j === 0) {
-                                        res = await service.removeVerify(chosenDoc, discardedDoc);
-                                    }
-                                    if (j === 1) {
-                                        res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
-                                        if (!res.error)
-                                            res = await researchEntityService.copyDocument(researchEntity, chosenDoc);
-                                    }
-                                }
-                            }
-                            if (chosenDoc.isDraft()) {
-                                j = await ModalService
-                                    .multipleChoiceConfirm('Draft selected',
-                                        modalMsg,
-                                        ['Verify', 'Keep Draft']);
-                                if (j === 0 || j === 1) {
-                                    if (j === 0) {
-                                        res = await service.removeVerify(chosenDoc, discardedDoc);
-                                    }
-                                    if (j === 1) {
-                                        res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
-                                    }
-                                }
-                            }
-                            if (chosenDoc.isVerified(researchEntity)) {
-                                j = await ModalService
-                                    .multipleChoiceConfirm('Verified document selected',
-                                        modalMsg,
-                                        ['Keep verified', 'Create a draft']);
-                                if (j === 0 || j === 1) {
-                                    res = await researchEntityService.removeDocument(researchEntity, discardedDoc);
-                                    if (!res.error && j === 1) {
-                                        res = await researchEntityService.copyDocument(researchEntity, chosenDoc);
-                                        if (!res.error)
-                                            res = await researchEntityService.unverify(researchEntity, chosenDoc);
-                                    }
-                                }
-                            }
-                            if (j === 0 || j === 1) {
-                                EventsService.publish(EventsService.DOCUMENT_COMPARE, chosenDoc);
-                                if (res) {
-                                    if (res.error) {
-                                        const notificationMsg = 'The operation failed.';
-                                        Notification.warning(notificationMsg);
-                                    } else {
-                                        const notificationMsg = 'The operation was successful';
-                                        Notification.success(notificationMsg);
-                                    }
-                                }
-                            }
-                        }
-                        if (i === 3) {
-                            await researchEntityService.documentsNotDuplicate(researchEntity, doc1, doc2);
-                            EventsService.publish(EventsService.DOCUMENT_COMPARE, null);
-                            Notification.success("The documents have been marked as non-duplicates");
-                        }
-                    } catch (err) {
-                        if (!['backdrop click', 'escape key press'].includes(err))
-                            Notification.error("An error happened");
+                async function markAsNotDuplicates(document, duplicates) {
+                    const duplicateIds = duplicates.map((duplicate) => {
+                        return duplicate.duplicate;
+                    });
+                    return await researchEntityService.markAsNotDuplicates(researchEntity, document.id, duplicateIds);
+                }
 
+                /**
+                 * This asynchronous function handles to keep the source document
+                 *
+                 * @param {Object} sourceDocument - The document that will be kept
+                 * @param {string} category - The category of the source document
+                 *
+                 * @retuns {Object} Returns an object with the response and potential errors
+                 */
+                async function handleKeepDocument(sourceDocument, category) {
+                    let response,
+                        action = false,
+                        buttonLabels;
+
+                    // Check the category of the source document
+                    switch(category) {
+
+                        // If the source document is a suggested document
+                        case documentCategories.SUGGESTED:
+                            buttonLabels = [];
+                            buttonLabels['\'' + documentActions.SUGGESTED.VERIFY + '\''] = documentActions.SUGGESTED.VERIFY;
+                            buttonLabels['\'' + documentActions.SUGGESTED.COPY_TO_DRAFT + '\''] = documentActions.SUGGESTED.COPY_TO_DRAFT;
+
+                            // Show modal with multiple choice form with the options specified above
+                            action = await ModalService.multipleChoiceConfirm(
+                                'Suggested document selected',
+                                'Do you want to verify the suggested document or copy it to drafts?',
+                                buttonLabels
+                            );
+
+                            // Check to chosen action
+                            switch(action) {
+                                case documentActions.SUGGESTED.VERIFY:
+                                    // Verify the source document
+                                    response = await verify(sourceDocument);
+                                    break;
+
+                                case documentActions.SUGGESTED.COPY_TO_DRAFT:
+                                    // Copy the suggested document
+                                    researchEntityService.copyDocument(researchEntity, sourceDocument)
+                                        .then(function (draft) {
+                                            EventsService.publish(EventsService.DRAFT_CREATED, draft);
+                                        });
+                                    break;
+
+                                default:
+                                    break;
+                            }
+
+                            break;
+
+                        // If the source document is a draft
+                        case documentCategories.DRAFT:
+                            buttonLabels = [];
+                            buttonLabels['\'' + documentActions.DRAFT.VERIFY + '\''] = documentActions.DRAFT.VERIFY;
+                            buttonLabels['\'' + documentActions.DRAFT.KEEP_DRAFT + '\''] = documentActions.DRAFT.KEEP_DRAFT;
+
+                            // Show modal with multiple choice form with the options specified above
+                            action = await ModalService.multipleChoiceConfirm(
+                                'Draft selected',
+                                'Do you want to verify the draft or keep it as a draft?',
+                                buttonLabels
+                            );
+
+                            // Verify the source document
+                            if (action === documentActions.DRAFT.VERIFY) {
+                                response = await verify(sourceDocument);
+                            }
+                            break;
+
+                        // If the source document is a verified document
+                        case documentCategories.VERIFIED:
+                            action = documentActions.KEEP.KEEP_VERIFIED_DOCUMENT;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    return {
+                        action: action,
+                        response: response
+                    };
+                }
+
+                /**
+                 * This asynchronous function handles the replacement of the simular document by the source document
+                 *
+                 * @param {Object} sourceDocument - The document that will replace the simular document
+                 * @param {Object} simularDocument - The document that will be replaced by the source document
+                 * @param {string} category - The category of the source document
+                 *
+                 * @retuns {Object} Returns an object with the response and potential errors
+                 */
+                async function handleReplaceDocument(sourceDocument, simularDocument, category) {
+                    let response,
+                        action = false;
+
+                    // Check the category of the source document
+                    switch(category) {
+
+                        // If the source document is a suggested document
+                        case documentCategories.SUGGESTED:
+                            // Set the action with the related constant
+                            action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_VERIFY;
+
+                            // Unverify the simular document & verify the source document
+                            response = await service.removeVerify(sourceDocument, simularDocument);
+
+                            if (response.error) {
+                                Notification.warning(response.error);
+                            }
+                            break;
+
+                        // If the source document is a draft
+                        case documentCategories.DRAFT :
+                            // Set the action with the related constant
+                            action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_VERIFY_DRAFT;
+
+                            // Unverify the simular document & verify the source document
+                            response = await service.removeVerify(sourceDocument, simularDocument);
+
+                            if (response.error) {
+                                Notification.warning(response.error);
+                            }
+                            break;
+
+                        // If the source document is a verified document
+                        case documentCategories.VERIFIED:
+                            // Set the action with the related constant
+                            action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_REPLACE;
+
+                            // Copy not duplicates of the simular documents to the source document
+                            response = await markAsNotDuplicates(sourceDocument, simularDocument.notDuplicates);
+
+                            // Unverify the simular document
+                            response = await researchEntityService.unverify(researchEntity, simularDocument);
+                            break;
+
+                        // If the source document is a external document
+                        case documentCategories.EXTERNAL:
+                            // Set the action with the related constant
+                            action = documentActions.REPLACE.COPY_EXTERNAL_DOCUMENT_AND_VERIFY;
+
+                            // Unverify the simular document & verify the source document
+                            response = await service.removeVerify(sourceDocument, simularDocument);
+
+                            if (response.error) {
+                                Notification.warning(response.error);
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    return {
+                        action: action,
+                        response: response
+                    };
+                }
+
+                /**
+                 * This asynchronous function handles the comparison between a source document and simular documents
+                 * for that source document
+                 *
+                 * @param {Object} sourceDocument - The document selected from the listing
+                 * @param {Object[]} simularDocuments - An array with simular documents of the source document
+                 * @param {string} category - The category of the source document
+                 */
+                async function compareDocuments(sourceDocument, simularDocuments, category) {
+
+                    let result = false,
+                        duplicateIds,
+                        compareAction = {};
+
+                    // Get all the duplicates
+                    await Promise.all(simularDocuments.map(async (info, index) => {
+                        simularDocuments[index] = await researchEntityService.getDoc(researchEntity, info.duplicate, info.duplicateKind);
+                    }));
+
+                    // Open the compare modal
+                    try {
+                        compareAction = await ModalService.openDocumentComparisonForm(sourceDocument, simularDocuments, category);
+                    } catch(e) {
+                        if (e !== 'backdrop click' && e !== 'escape key press') {
+                            //console.log(e);
+                        }
+                    }
+
+                    // Check the compare action that the user has chosen
+                    switch(compareAction.option) {
+
+                        // The user wants to keep the source document and mark all the other simular documents as not duplicates
+                        case documentActions.COMPARE.KEEP_DOCUMENT:
+
+                            // Collect all the id's of the simular documents
+                            duplicateIds = simularDocuments.map((simularDocument) => {
+                                return simularDocument.id;
+                            });
+
+                            // Mark as not duplicates
+                            await researchEntityService.markAsNotDuplicates(researchEntity, sourceDocument.id, duplicateIds);
+
+                            result = await handleKeepDocument(sourceDocument, category);
+                            break;
+
+                        // Mark all the simular documents as not duplicate in the external section
+                        case documentActions.COMPARE.MARK_ALL_AS_NOT_DUPLICATE:
+
+                            // Collect all the id's of the simular documents
+                            duplicateIds = simularDocuments.map((simularDocument) => {
+                                return simularDocument.id;
+                            });
+
+                            // Mark as not duplicates
+                            await researchEntityService.markAsNotDuplicates(researchEntity, sourceDocument.id, duplicateIds);
+
+                            // Set the result action
+                            result = {
+                                action:  documentActions.COMPARE.MARK_ALL_AS_NOT_DUPLICATE
+                            };
+                            break;
+
+                        // Delete the draft
+                        case documentActions.COMPARE.DELETE_DRAFT:
+                            result = deleteDraft(sourceDocument);
+                            break;
+
+                        // Unverify the verified document
+                        case documentActions.COMPARE.UNVERIFY_VERIFIED_DOCUMENT:
+                            result = unverifyDocument(sourceDocument);
+                            break;
+
+                        // Discard the suggested document
+                        case documentActions.COMPARE.DISCARD_SUGGESTED_DOCUMENT:
+
+                            // Discard document
+                            discardDocument(sourceDocument);
+
+                            result = {
+                                action: documentActions.COMPARE.DISCARD_SUGGESTED_DOCUMENT
+                            };
+                            break;
+
+                        // Replace the simular document with the source document
+                        case documentActions.COMPARE.USE_DUPLICATE:
+                            result = await handleReplaceDocument(sourceDocument, compareAction.duplicate, category);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    // Check if the result has an action
+                    if (result.action) {
+
+                        // Fire event to update the document list
+                        EventsService.publish(EventsService.DOCUMENT_COMPARE, sourceDocument);
+
+                        // Show notification with warning or success message
+                        if (result.response) {
+                            if (result.response.error) {
+                                const notificationMsg = 'The operation failed.';
+                                Notification.warning(notificationMsg);
+                            } else {
+                                const notificationMsg = 'The operation was successful';
+                                Notification.success(notificationMsg);
+                            }
+                        }
                     }
                 }
 

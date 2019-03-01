@@ -10,6 +10,7 @@
             controller: scientillaDocumentsList,
             controllerAs: 'vm',
             bindings: {
+                category: '<',
                 researchEntity: '<',
                 section: '<'
             }

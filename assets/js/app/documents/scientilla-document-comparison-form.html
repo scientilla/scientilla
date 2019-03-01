@@ -1,347 +1,392 @@
 <div class="modal-header">
-    <h3 class="modal-title">Compare documents</h3>
-    <span class="badge badge-warning document-comparison-badge">
-        {{ vm.document1.getComparisonDuplicates().length }} duplicate(s) found
+    <h3 class="modal-title document-comparison-modal-title">Compare documents</h3>
+    <span class="badge badge-warning document-comparison-badge" ng-if="vm.duplicates.length == 1">
+        {{ vm.duplicates.length }} duplicate found
     </span>
-    <button type="button"
-            class="close"
-            ng-click="vm.cancel()">
+    <span class="badge badge-warning document-comparison-badge" ng-if="vm.duplicates.length > 1">
+        {{ vm.duplicates.length }} duplicate(s) found
+    </span>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()">
         <i class="fas fa-times"></i>
     </button>
 </div>
 
 <div class="modal-body">
-    <form>
+    <p ng-if="vm.duplicates.length > 1">Click or mouse-over a duplicate to mark the differences between the source document and the selected duplicate.</p>
+    <form class="document-compare-form">
         <ul class="document-comparison-listing">
-            <li>
-                <h4 class="research-entity-title">
-                    <span ng-class="{'highlight-text': vm.differentFields.includes('kind')}">
-                        Document 1: {{ vm.document1.getStringKind(vm.researchEntity) }}
-                    </span>
-                    <span
-                            ng-if="vm.verifiedCount1"
-                            class="scientilla-document-icons-bottom"
-                            uib-tooltip-html="vm.getVerifiedNamesHTML(vm.document1)"
-                            tooltip-class="text-left">
-                        <i class="fas fa-check fa-left"></i>{{ vm.verifiedCount1 }}
-                    </span>
-                </h4>
-            </li>
-            <li>
-                <div class="document-details-authors">
-                    <span ng-class="{'highlight-text': vm.differentFields.includes('authorsStr')}">
-                        <scientilla-document-authors
-                                document="vm.document1"
-                                collapsed="vm.collapsed"></scientilla-document-authors>
-                    </span>
+            <li class="column-original-document">
+                <div class="title-container">
+                    <h4 class="title">Source document</h4>
                 </div>
-            </li>
-            <li>
-                <h5
-                        class="document-details-title"
-                        ng-class="{'highlight-text': vm.differentFields.includes('title')}"
-                        ng-bind-html='vm.document1 | title'></h5>
-            </li>
-            <li>
-                <span ng-class="{'highlight-text': vm.differentFields.includes('institutes')}">
-                    <scientilla-document-affiliations
-                            document="vm.document1"
-                            collapsed="vm.collapsed"></scientilla-document-affiliations>
-                </span>
-            </li>
-            <li>
-                <div
-                        ng-if="vm.document1.abstract"
-                        class="document-details-abstract">
-                    <hr/>
-                    <h4>Abstract</h4>
-                    <div>
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('abstract')}">
-                            {{ vm.document1.abstract }}
-                        </span>
-                    </div>
-                </div>
-            </li>
-            <li>
-                <hr/>
-                <ul class="document-details-source">
-                    <li ng-if="vm.document1.type !== 'invited_talk'">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('source')}">
-                            {{ vm.document1.source.title }}
-                        </span>
-                    </li>
 
-                    <li ng-if="vm.document1.type === 'invited_talk'">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('itSource')}">
-                            {{ vm.document1.itSource }}
-                        </span>
-                    </li>
-
-                    <li ng-if="vm.document1.volume">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('volume')}">
-                            vol: {{ vm.document1.volume }}
-                        </span>
-                    </li>
-
-                    <li ng-if="vm.document1.issue">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('issue')}">
-                            issue: {{ vm.document1.issue }}
-                        </span>
-                    </li>
-
-                    <li ng-if="vm.document1.pages">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('pages')}">
-                            pages: {{ vm.document1.pages }}
-                        </span>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <ul ng-if="vm.document1.year"
-                    class="document-details-year"
-                    ng-class="{'highlight-text': vm.differentFields.includes('year')}">
-                    <li><strong>Year:</strong> {{ vm.document1.year }}</li>
-                </ul>
-            </li>
-            <li>
-                <ul class="document-details-ids">
-                    <li ng-if="vm.document1.doi"
-                        class="document-doi">
-                        <span ng-bind-html="vm.document1 | doi"
-                              ng-class="{'highlight-text': vm.differentFields.includes('doi')}"></span>
-                    </li>
-                    <li ng-if="vm.document1.scopusId">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('scopusId')}">
-                            <strong>scopus id:</strong>
-                            <a ng-if="vm.document1.hasValidScopusId()"
-                               href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document1.scopusId}}&origin=inward"
-                               target="_blank">{{ vm.document1.scopusId }}</a>
-                            <span ng-if="!vm.document1.hasValidScopusId()"
-                                  class="text-line-through">{{ vm.document1.scopusId }}
-                            </span>
-                        </span>
-                    </li>
-                    <li ng-if="vm.document1.wosId">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('wosId')}">
-                            <strong>WOS id:</strong> {{ vm.document1.wosId }}
-                        </span>
-
-                    </li>
-                    <li ng-if="vm.sourceType1">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('sourcetype')}">
-                            <strong>Source type:</strong> {{ vm.sourceType1 }}
-                        </span>
-                    </li>
-                    <li ng-if="vm.type1">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('type')}">
-                            <strong>Document type:</strong> {{ vm.type1 }}
-                        </span>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <ul class="document-details-ids">
-                    <li class="document-details-origin">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('origin')}">
-                            <strong>Origin:</strong> <span>{{ vm.document1.origin }}</span>
-                            <span
-                                    ng-if="vm.document1.origin==='scopus' && !vm.document1.hasValidScopusId()"
-                                    ng-bind-html="vm.scopusIdDeletedMessage">
-                            </span>
-                        </span>
-                    </li>
-                    <li class="document-details-synchronized">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('synchronized')}">
-                            <strong>Synchronized: </strong>
-                            <i class="fas" ng-class="vm.document1.synchronized_at ? 'fa-check' : 'fa-times'"></i>
-                            <span class="fa-stack"
-                                  style="font-size: 0.5em"
-                                  ng-if="vm.document1.isDeSynchronizedWith('scopus')"
-                                  uib-tooltip-html="'{{vm.document1.origin}} synchronization failed'">
-                                <i class="fas fa-sync-alt fa-stack-2x fa-rotate-90 text-danger"></i>
-                                <i class="fas fa-minus fa-stack-2x text-danger"></i>
-                            </span>
-                        </span>
-                    </li>
-                </ul>
-            </li>
-            <!-- Column 2 -->
-            <li>
-                <h4 class="research-entity-title">
-                    <span ng-class="{'highlight-text': vm.differentFields.includes('kind')}">Document 2: {{ vm.document2.getStringKind(vm.researchEntity) }}</span>
-                    <span ng-if="vm.verifiedCount2"
-                          class="scientilla-document-icons-bottom"
-                          uib-tooltip-html="vm.getVerifiedNamesHTML(vm.document2)"
-                          tooltip-class="text-left">
-                        <span class="fas fa-check fa-left"></span>{{ vm.verifiedCount2 }}
-                    </span>
-                </h4>
-            </li>
-            <li>
-                <div class="document-details-authors">
-                    <span ng-class="{'highlight-text': vm.differentFields.includes('authorsStr')}">
-                        <scientilla-document-authors document="vm.document2"
-                                                     collapsed="vm.collapsed">
-                        </scientilla-document-authors>
-                    </span>
-                </div>
-            </li>
-            <li>
-                <h5 class="document-details-title"
-                    ng-bind-html="vm.document2 | title"
-                    ng-class="{'highlight-text': vm.differentFields.includes('title')}"></h5>
-            </li>
-            <li>
-                <div>
-                    <span ng-class="{'highlight-text': vm.differentFields.includes('institutes')}">
-                        <scientilla-document-affiliations document="vm.document2"
-                                                          collapsed="vm.collapsed">
-                        </scientilla-document-affiliations>
-                    </span>
-                </div>
-            </li>
-            <li>
-                <div ng-if="vm.document2.abstract"
-                     class="document-details-abstract">
-                    <hr/>
-                    <h4>Abstract</h4>
-                    <div>
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('abstract')}">
-                            {{ vm.document2.abstract }}
-                        </span>
-                    </div>
-                </div>
-            </li>
-            <li>
-                <hr>
-                <ul class="document-details-source">
-                    <li ng-if="vm.document2.type !== 'invited_talk'">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('source')}">
-                            {{ vm.document2.source.title }}
-                        </span>
-                    </li>
-
-                    <li ng-if="vm.document2.type === 'invited_talk'">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('itSource')}">
-                            {{ vm.document2.itSource }}
-                        </span>
-                    </li>
-
-                    <li ng-if="vm.document2.volume">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('volume')}">
-                            vol: {{ vm.document2.volume }}
-                        </span>
-                    </li>
-
-                    <li ng-if="vm.document2.issue">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('issue')}">
-                            issue: {{ vm.document2.issue }}
-                        </span>
-                    </li>
-
-                    <li ng-if="vm.document2.pages">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('pages')}">
-                            pages: {{ vm.document2.pages }}
-                        </span>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <ul ng-if="vm.document2.year"
-                    class="document-details-year">
-                    <li>
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('year')}">
-                            <strong>Year:</strong> {{ vm.document2.year }}
-                        </span>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <ul class="document-details-ids">
-                    <li ng-if="vm.document2.doi"
-                        class="document-doi">
+                <div class="original-document-container" ng-style="{'margin-top': vm.positionTop}">
+                    <div class="document-kind">
                         <span
-                                ng-bind-html="vm.document2 | doi"
-                                ng-class="{'highlight-text': vm.differentFields.includes('doi')}"></span>
-                    </li>
-                    <li ng-if="vm.document2.scopusId">
+                            ng-class="{'highlight-text': vm.differentFields.includes('kind')}"
+                            class="document-type">
+                            <strong>Type:</strong> {{ vm.category }}
+                        </span>
+                        <span
+                            ng-if="vm.getVerifiedCount(vm.document) && vm.document.isVerified(vm.researchEntity)"
+                            class="document-verified-description"
+                            uib-tooltip-html="vm.getVerifiedNamesHTML(vm.document)"
+                            tooltip-class="text-left"
+                            tooltip-placement="bottom">
+                            <i class="fas fa-check fa-left"></i>Is {{ vm.getVerifiedCount(vm.document) }} time(s) been verified by users or groups.<i class="fas fa-info-circle fa-right"></i>
+                        </span>
+                    </div>
+
+                    <div class="document-details-authors">
+                        <scientilla-document-authors
+                            document="vm.document"
+                            collapsed="vm.collapsed"
+                            highlighted="vm.differentFields.includes('authorsStr')"></scientilla-document-authors>
+                    </div>
+
+                    <h5 class="document-details-title">
+                        <span
+                            ng-class="{'highlight-text': vm.differentFields.includes('title')}"
+                            ng-bind-html="vm.document | title"></span>
+                    </h5>
+
+                    <scientilla-document-affiliations
+                        document="vm.document"
+                        collapsed="vm.collapsed"
+                        highlighted="vm.differentFields.includes('institutes')"></scientilla-document-affiliations>
+
+                    <div
+                        ng-if="vm.document.abstract"
+                        class="document-details-abstract">
+                        <hr/>
+                        <h4>Abstract</h4>
+                        <div>
+                            <span ng-class="{'highlight-text': vm.differentFields.includes('abstract')}">
+                                {{ vm.document.abstract }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <ul class="document-details-source">
+                        <li ng-if="vm.document.type !== 'invited_talk'">
+                            <span ng-class="{'highlight-text': vm.differentFields.includes('source')}">
+                                {{ vm.document.source.title }}
+                            </span>
+                        </li>
+
+                        <li ng-if="vm.document.type === 'invited_talk'">
+                            <span ng-class="{'highlight-text': vm.differentFields.includes('itSource')}">
+                                {{ vm.document.itSource }}
+                            </span>
+                        </li>
+
+                        <li ng-if="vm.document.volume">
+                            <span ng-class="{'highlight-text': vm.differentFields.includes('volume')}">
+                                vol: {{ vm.document.volume }}
+                        </span>
+                        </li>
+
+                        <li ng-if="vm.document.issue">
+                            <span ng-class="{'highlight-text': vm.differentFields.includes('issue')}">
+                                issue: {{ vm.document.issue }}
+                            </span>
+                        </li>
+
+                        <li ng-if="vm.document.pages">
+                            <span ng-class="{'highlight-text': vm.differentFields.includes('pages')}">
+                                pages: {{ vm.document.pages }}
+                            </span>
+                        </li>
+                    </ul>
+
+                    <ul ng-if="vm.document.year"
+                        class="document-details-year"
+                        ng-class="{'highlight-text': vm.differentFields.includes('year')}">
+                        <li><strong>Year:</strong> {{ vm.document.year }}</li>
+                    </ul>
+
+                    <ul class="document-details-ids">
+                        <li ng-if="vm.document.doi" class="document-doi">
+                        <span ng-bind-html="vm.document | doi"
+                              ng-class="{'highlight-text': vm.differentFields.includes('doi')}"></span>
+                        </li>
+                        <li ng-if="vm.document.scopusId">
                         <span ng-class="{'highlight-text': vm.differentFields.includes('scopusId')}">
                             <strong>scopus id:</strong>
-                            <a
-                                    ng-if="vm.document2.hasValidScopusId()"
-                                    href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document2.scopusId}}&origin=inward"
-                                    target="_blank">{{ vm.document2.scopusId }}</a>
+                            <a ng-if="vm.document.hasValidScopusId()"
+                               href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document.scopusId}}&origin=inward"
+                               target="_blank">{{ vm.document.scopusId }}</a>
                             <span
-                                    ng-if="!vm.document2.hasValidScopusId()"
-                                    class="text-line-through">{{ vm.document2.scopusId }}</span>
+                                ng-if="!vm.document.hasValidScopusId()"
+                                class="text-line-through">{{ vm.document.scopusId }}
+                            </span>
                         </span>
-                    </li>
-                    <li ng-if="vm.document2.wosId">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('wosId')}">
-                            <strong>WOS id:</strong> {{ vm.document2.wosId }}
-                        </span>
-                    </li>
-                    <li ng-if="vm.sourceType2">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('sourcetype')}">
-                            <strong>Source type:</strong> {{ vm.sourceType2 }}
-                        </span>
-                    </li>
-                    <li ng-if="vm.type2">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('type')}">
-                            <strong>Document type:</strong> {{ vm.type2 }}
-                        </span>
-                    </li>
-                </ul>
-            </li>
-            <li>
-                <ul class="document-details-ids">
-                    <li class="document-details-origin">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('origin')}">
-                            <strong>Origin:</strong> <span>{{ vm.document2.origin }}</span>
-                            <span
-                                    ng-if="vm.document2.origin==='scopus' && !vm.document2.hasValidScopusId()"
+                        </li>
+                        <li ng-if="vm.document.wosId">
+                            <span ng-class="{'highlight-text': vm.differentFields.includes('wosId')}">
+                                <strong>WOS id:</strong> {{ vm.document.wosId }}
+                            </span>
+                        </li>
+                        <li ng-if="vm.getSourceType(vm.document)">
+                            <span ng-class="{'highlight-text': vm.differentFields.includes('sourcetype')}">
+                                <strong>Source type:</strong> {{ vm.getSourceType(vm.document) }}
+                            </span>
+                        </li>
+                        <li ng-if="vm.getType(vm.document)">
+                            <span ng-class="{'highlight-text': vm.differentFields.includes('type')}">
+                                <strong>Document type:</strong> {{ vm.getType(vm.document) }}
+                            </span>
+                        </li>
+                    </ul>
+
+                    <ul class="document-details-ids">
+                        <li class="document-details-origin">
+                            <span ng-class="{'highlight-text': vm.differentFields.includes('origin')}">
+                                <strong>Origin:</strong> <span>{{ vm.document.origin }}</span>
+                                <span
+                                    ng-if="vm.document.origin==='scopus' && !vm.document.hasValidScopusId()"
                                     ng-bind-html="vm.scopusIdDeletedMessage">
+                                </span>
                             </span>
-                        </span>
-                    </li>
-                    <li class="document-details-synchronized">
-                        <span ng-class="{'highlight-text': vm.differentFields.includes('synchronized')}">
-                            <strong>Synchronized: </strong>
-                            <i class="fas" ng-class="vm.document2.synchronized_at ? 'fa-check' : 'fa-times'"></i>
+                        </li>
+                        <li class="document-details-synchronized">
+                            <span ng-class="{'highlight-text': vm.differentFields.includes('synchronized')}">
+                                <strong>Synchronized: </strong>
+                                <i class="fas" ng-class="vm.document.synchronized_at ? 'fa-check' : 'fa-times'"></i>
+                                <span
+                                    class="fa-stack"
+                                    ng-if="vm.document.isDeSynchronizedWith('scopus')"
+                                    uib-tooltip-html="'{{vm.document.origin}} synchronization failed'">
+                                    <i class="fas fa-sync-alt fa-stack-2x fa-rotate-90 text-danger"></i>
+                                    <i class="fas fa-minus fa-stack-2x text-danger"></i>
+                                </span>
+                            </span>
+                        </li>
+                    </ul>
 
-                            <span class="fa-stack"
-                                  style="font-size: 0.5em"
-                                  ng-if="vm.document2.isDeSynchronizedWith('scopus')"
-                                  uib-tooltip-html="'{{vm.document2.origin}} synchronization failed'">
-                                <i class="fas fa-sync-alt fa-stack-2x fa-rotate-90 text-danger"></i>
-                                <i class="fas fa-minus fa-stack-2x text-danger"></i>
+                    <ul class="source-actions">
+                        <li ng-if="vm.category !== vm.documentCategories.EXTERNAL">
+                            <scientilla-button
+                                type="submit"
+                                click="vm.keepDocument"
+                                title="Keep source document and mark all simular documents as not duplicate">
+                                Keep and mark all as not duplicate
+                            </scientilla-button>
+                        </li>
+                        <li ng-if="vm.category === vm.documentCategories.EXTERNAL">
+                            <scientilla-button
+                                type="submit"
+                                click="vm.markAllAsNotDuplicate"
+                                title="Mark all simular documents as not duplicate">
+                                Mark all as not duplicate
+                            </scientilla-button>
+                        </li>
+                        <li ng-if="vm.category === vm.documentCategories.DRAFT">
+                            <scientilla-button type="submit" click="vm.deleteDraft">
+                                Delete draft
+                            </scientilla-button>
+                        </li>
+                        <li ng-if="vm.category === vm.documentCategories.SUGGESTED">
+                            <scientilla-button type="submit" click="vm.discardSuggestedDocument">
+                                Discard suggested document
+                            </scientilla-button>
+                        </li>
+                        <li ng-if="vm.category === vm.documentCategories.VERIFIED">
+                            <scientilla-button type="submit" click="vm.unverifyVerfiedDocument">
+                                Unverify verified document
+                            </scientilla-button>
+                        </li>
+                    </ul>
+
+                    <button
+                        ng-click="vm.useDuplicate()"
+                        class="btn btn-primary btn-overwrite"
+                        title="Replace the simular document with the source document">
+                        <i class="fas fa-long-arrow-alt-right"></i>
+                    </button>
+                </div>
+            </li>
+
+            <li class="column-icon"></li>
+
+            <li class="column-duplicates">
+                <div class="title-container">
+                    <h4 class="title">Simular documents</h4>
+                </div>
+
+                <ul class="document-duplicates-listing js-document-duplicates-listing">
+                    <li ng-repeat="duplicate in vm.duplicates" ng-click="vm.compare(duplicate)" ng-mouseover="vm.mouseover(duplicate, $event)">
+                        <div class="document-kind">
+                            <span
+                                ng-class="{'highlight-text': vm.differentFields.includes('kind') && vm.selectedDuplicate === duplicate}"
+                                class="document-type">
+                                <strong>Type:</strong> {{ duplicate.getStringKind(vm.researchEntity) }}
                             </span>
-                        </span>
+                            <span
+                                ng-if="vm.getVerifiedCount(duplicate)"
+                                class="document-verified-description"
+                                uib-tooltip-html="vm.getVerifiedNamesHTML(duplicate)"
+                                tooltip-class="text-left"
+                                tooltip-placement="bottom">
+                                <i class="fas fa-check fa-left"></i>Is {{ vm.getVerifiedCount(duplicate) }} time(s) been verified by users or groups.<i class="fas fa-info-circle fa-right"></i>
+                            </span>
+                        </div>
+
+                        <div class="document-details-authors">
+                            <scientilla-document-authors
+                                document="duplicate"
+                                collapsed="vm.collapsed"
+                                highlighted="vm.differentFields.includes('authorsStr') && vm.selectedDuplicate === duplicate">
+                            </scientilla-document-authors>
+                        </div>
+
+                        <h5 class="document-details-title">
+                            <span
+                                ng-bind-html="duplicate | title"
+                                ng-class="{'highlight-text': vm.differentFields.includes('title') && vm.selectedDuplicate === duplicate}"></span>
+                        </h5>
+
+                        <scientilla-document-affiliations
+                            document="duplicate"
+                            collapsed="vm.collapsed"
+                            highlighted="vm.differentFields.includes('institutes') && vm.selectedDuplicate === duplicate">
+                        </scientilla-document-affiliations>
+
+                        <div
+                            ng-if="duplicate.abstract"
+                            class="document-details-abstract">
+                            <hr/>
+                            <h4>Abstract</h4>
+                            <div>
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('abstract') && vm.selectedDuplicate === duplicate}">
+                                    {{ duplicate.abstract }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <ul class="document-details-source">
+                            <li ng-if="duplicate.type !== 'invited_talk'">
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('source') && vm.selectedDuplicate === duplicate}">
+                                    {{ duplicate.source.title }}
+                                </span>
+                            </li>
+
+                            <li ng-if="duplicate.type === 'invited_talk'">
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('itSource') && vm.selectedDuplicate === duplicate}">
+                                    {{ duplicate.itSource }}
+                                </span>
+                            </li>
+
+                            <li ng-if="duplicate.volume">
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('volume') && vm.selectedDuplicate === duplicate}">
+                                    vol: {{ duplicate.volume }}
+                                </span>
+                            </li>
+
+                            <li ng-if="duplicate.issue">
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('issue') && vm.selectedDuplicate === duplicate}">
+                                    issue: {{ duplicate.issue }}
+                                </span>
+                            </li>
+
+                            <li ng-if="duplicate.pages">
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('pages') && vm.selectedDuplicate === duplicate}">
+                                    pages: {{ duplicate.pages }}
+                                </span>
+                            </li>
+                        </ul>
+
+                        <ul
+                            ng-if="duplicate.year"
+                            class="document-details-year">
+                            <li>
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('year') && vm.selectedDuplicate === duplicate}">
+                                    <strong>Year:</strong> {{ duplicate.year }}
+                                </span>
+                            </li>
+                        </ul>
+
+                        <ul class="document-details-ids">
+                            <li ng-if="duplicate.doi" class="document-doi">
+                            <span
+                                ng-bind-html="duplicate | doi"
+                                ng-class="{'highlight-text': vm.differentFields.includes('doi') && vm.selectedDuplicate === duplicate}"></span>
+                            </li>
+                            <li ng-if="duplicate.scopusId">
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('scopusId') && vm.selectedDuplicate === duplicate}">
+                                    <strong>scopus id:</strong>
+                                    <a
+                                        ng-if="duplicate.hasValidScopusId()"
+                                        href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{duplicate.scopusId}}&origin=inward"
+                                        target="_blank">{{ duplicate.scopusId }}</a>
+                                    <span
+                                        ng-if="!duplicate.hasValidScopusId()"
+                                        class="text-line-through">{{ duplicate.scopusId }}</span>
+                                </span>
+                            </li>
+                            <li ng-if="duplicate.wosId">
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('wosId') && vm.selectedDuplicate === duplicate}">
+                                    <strong>WOS id:</strong> {{ duplicate.wosId }}
+                                </span>
+                            </li>
+                            <li ng-if="vm.getSourceType(duplicate)">
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('sourcetype') && vm.selectedDuplicate === duplicate}">
+                                    <strong>Source type:</strong> {{ vm.getSourceType(duplicate) }}
+                                </span>
+                            </li>
+                            <li ng-if="vm.getType(duplicate)">
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('type') && vm.selectedDuplicate === duplicate}">
+                                    <strong>Document type:</strong> {{ vm.getType(duplicate) }}
+                                </span>
+                            </li>
+                        </ul>
+
+                        <ul class="document-details-ids">
+                            <li class="document-details-origin">
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('origin') && vm.selectedDuplicate === duplicate}">
+                                    <strong>Origin:</strong> <span>{{ duplicate.origin }}</span>
+                                    <span
+                                        ng-if="duplicate.origin === 'scopus' && !duplicate.hasValidScopusId()"
+                                        ng-bind-html="vm.scopusIdDeletedMessage">
+                                    </span>
+                                </span>
+                            </li>
+                            <li class="document-details-synchronized">
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('synchronized') && vm.selectedDuplicate === duplicate}">
+                                    <strong>Synchronized: </strong>
+                                    <i class="fas" ng-class="duplicate.synchronized_at ? 'fa-check' : 'fa-times'"></i>
+
+                                    <span
+                                        class="fa-stack"
+                                        style="font-size: 0.5em"
+                                        ng-if="duplicate.isDeSynchronizedWith('scopus')"
+                                        uib-tooltip-html="'{{duplicate.origin}} synchronization failed'">
+                                        <i class="fas fa-sync-alt fa-stack-2x fa-rotate-90 text-danger"></i>
+                                        <i class="fas fa-minus fa-stack-2x text-danger"></i>
+                                    </span>
+                                </span>
+                            </li>
+                        </ul>
+
+                        <ul class="duplicate-actions">
+                            <li>
+                                <button
+                                    ng-click="vm.useDuplicate(duplicate)"
+                                    class="btn btn-primary"
+                                    title="Replace the simular document with the source document">
+                                    Replace this document
+                                </button>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
-            </li>
-        </ul>
-
-        <ul class="modal-buttons">
-            <li>
-                <scientilla-button type="submit" click="vm.keepDocument1">
-                    Keep document 1
-                </scientilla-button>
-            </li>
-            <li>
-                <scientilla-button type="submit" click="vm.keepDocument2">
-                    Keep document 2
-                </scientilla-button>
-            </li>
-            <li>
-                <scientilla-button type="submit" click="vm.documentsNotDuplicate">
-                    Mark as not duplicate
-                </scientilla-button>
-            </li>
-            <li>
-                <scientilla-button type="cancel" click="vm.cancel()">
-                    Cancel
-                </scientilla-button>
             </li>
         </ul>
     </form>

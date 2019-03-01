@@ -18,7 +18,8 @@
         'EventsService',
         'ModalService',
         'documentSearchForm',
-        'documentListSections'
+        'documentListSections',
+        'documentCategories'
     ];
 
     function scientillaSuggestedDocumentsController(context,
@@ -26,7 +27,8 @@
                                                     EventsService,
                                                     ModalService,
                                                     documentSearchForm,
-                                                    documentListSections) {
+                                                    documentListSections,
+                                                    documentCategories) {
         const vm = this;
 
         const DocumentsService = context.getDocumentService();
@@ -39,6 +41,7 @@
         vm.copyDocuments = DocumentsService.copyDocuments;
         vm.discardDocuments = DocumentsService.discardDocuments;
         vm.compareDocuments = DocumentsService.compareDocuments;
+        vm.documentCategories = documentCategories;
         vm.documents = [];
         let query = {};
 

@@ -40,7 +40,7 @@
                             <button
                                 ng-click="vm.openEditPopup(d)"
                                 ng-disabled="d.synchronized"
-                                ng-if="!d.isComparable"
+                                ng-if="!d.isComparable || !d.isValid()"
                                 type="button"
                                 class=" btn btn-primary"
                                 title="Let you edit the document, if synchronization is active the document cannot be edited">
@@ -48,8 +48,8 @@
                             </button>
 
                             <button
-                                ng-click="vm.compareDocuments(d, d.getComparisonDuplicate())"
-                                ng-if="d.isComparable"
+                                ng-click="vm.compareDocuments(d, d.getComparisonDuplicates(), vm.documentCategories.DRAFT)"
+                                ng-if="d.isComparable && d.isValid()"
                                 type="button"
                                 class="btn btn-warning">
                                 <i class="fas fa-exchange-alt fa-left"></i>Compare
@@ -58,7 +58,7 @@
                             <button
                                 type="button"
                                 class="btn dropdown-toggle only-icon"
-                                ng-class="{'btn-warning': d.isComparable, 'btn-primary': !d.isComparable}"
+                                ng-class="{'btn-warning': d.isComparable && d.isValid(), 'btn-primary': !d.isComparable || !d.isValid()}"
                                 uib-dropdown-toggle>
                             </button>
 
@@ -81,7 +81,7 @@
                                     ng-disabled="d.synchronized || !d.authorsStr.match(documentFieldsRules.authorsStr.regex)"
                                     title="{{ !d.authorsStr.match(documentFieldsRules.authorsStr.regex) ? 'Author string is not valid.' : '' }}"
                                     class="dropdown-item">
-                                    <i class="fa fa-university fa-fw"></i>Edit Affiliations
+                                    <i class="fa fa-university fa-left"></i>Edit Affiliations
                                 </button>
 
                                 <button

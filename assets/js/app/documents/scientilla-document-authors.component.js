@@ -10,7 +10,8 @@
             bindings: {
                 document: '<',
                 collapsed: '=?',
-                type: '@?'
+                type: '@?',
+                highlighted: '=?'
             },
         });
 

@@ -45,7 +45,6 @@
 
         function isActive(page, checkResearchEntity = false) {
             let researchEntity = context.getResearchEntity();
-            //console.log(researchEntity.getType());
 
             if (page === '/') {
                 // Add the group slug to the URL when the researchEntity is a group to check the active state of an URL
