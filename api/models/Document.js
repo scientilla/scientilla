@@ -137,6 +137,10 @@ module.exports = _.merge({}, BaseModel, {
             via: 'document',
             custom: true
         },
+        notDuplicates: {
+            collection: 'documentnotduplicate',
+            via: 'document'
+        },
         sourceMetrics: {
             collection: 'sourcemetric',
             via: 'document',

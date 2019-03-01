@@ -125,12 +125,12 @@ module.exports = {
         const favorite = req.body.favorite;
         res.halt(AuthorshipModel.setFavorite(documentId, researchEntityId, favorite));
     },
-    setDocumentAsNotDuplicate: function (req, res) {
+    setDocumentsAsNotDuplicate: function (req, res) {
         const researchEntityId = req.params.researchEntityId;
-        const document1Id = req.body.document1Id;
-        const document2Id = req.body.document2Id;
+        const documentId = req.params.documentId;
+        const duplicateIds = req.body.duplicateIds;
         const Model = getModel(req);
-        res.halt(Model.setDocumentAsNotDuplicate(Model, researchEntityId, document1Id, document2Id));
+        res.halt(Model.setDocumentsAsNotDuplicate(Model, researchEntityId, documentId, duplicateIds));
     },
     removeVerify: function (req, res) {
         const researchEntityId = parseInt(req.params.researchEntityId, 10);
