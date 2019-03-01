@@ -25,7 +25,9 @@ module.exports = {
     getAllMetricData,
     getUsers,
     createGroup,
+    getInstitutes,
     createInstitute,
+    getSources,
     createSource,
     registerUser,
     getUserDocuments,
@@ -33,6 +35,7 @@ module.exports = {
     getUserDiscarded,
     getUserSuggestedDocuments,
     getUserDrafts,
+    getUserDraft,
     userCreateDraft,
     userCreateDrafts,
     userUpdateDraft,
@@ -55,6 +58,7 @@ module.exports = {
     userDeleteDrafts,
     groupDeleteDrafts,
     fixDocumentsDocumenttype,
+    userMarkAllAsNotDuplicates,
     EMPTY_RES: {count: 0, items: []}
 };
 
@@ -135,6 +139,12 @@ async function createGroup(groupData, respCode = 201) {
     return res.body;
 }
 
+async function getInstitutes(respCode = 200) {
+    const res = await request(url)
+        .get('/institutes');
+    return res.body;
+}
+
 async function createInstitute(instituteData, respCode = 201) {
     const auth = getAdminAuth();
     const res = await auth.agent
@@ -142,6 +152,12 @@ async function createInstitute(instituteData, respCode = 201) {
         .set('access_token', auth.token)
         .send(instituteData)
         .expect(respCode);
+    return res.body;
+}
+
+async function getSources(respCode = 200) {
+    const res = await request(url)
+        .get('/sources');
     return res.body;
 }
 
@@ -208,9 +224,18 @@ async function getUserSuggestedDocuments(user, respCode = 200) {
     return res.body;
 }
 
-async function getUserDrafts(user, populateFields, qs = {}, respCode = 200) {
+async function getUserDrafts(user, populateFields = [], qs = {}, respCode = 200) {
     const res = await request(url)
         .get('/users/' + user.id + '/drafts')
+        .query({populate: populateFields})
+        .query(qs)
+        .expect(respCode);
+    return res.body;
+}
+
+async function getUserDraft(user, draftData, populateFields = [], qs = {}, respCode = 200) {
+    const res = await request(url)
+        .get('/users/' + user.id + '/drafts/' + draftData.id)
         .query({populate: populateFields})
         .query(qs)
         .expect(respCode);
@@ -297,7 +322,6 @@ async function userRemoveVerify(user, doc1, verificationData, doc2, respCode = 2
     return res.body;
 }
 
-
 async function userVerifyDrafts(user, drafts, respCode = 200) {
     const auth = getAuth(user.id);
     const res = await auth.agent
@@ -357,6 +381,19 @@ async function userVerifyDocument(user, document, position, affiliations, corres
             position: position,
             'affiliations': affiliations,
             'corresponding': corresponding
+        })
+        .expect(respCode);
+    return res.body;
+}
+
+async function userMarkAllAsNotDuplicates(user, documentId, duplicateIds, respCode = 200) {
+    const auth = getAuth(user.id);
+    const res = await auth.agent
+        .post('/users/' + user.id + '/documents/' + documentId + '/not-duplicates')
+        .set('access_token', auth.token)
+        .send({
+            documentId: documentId,
+            duplicateIds: duplicateIds
         })
         .expect(respCode);
     return res.body;
