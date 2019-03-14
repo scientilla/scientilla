@@ -9,9 +9,9 @@
  */
 
 const _ = require('lodash');
-const DocumentEntity = require('../lib/DocumentEntity');
+const SubResearchEntity = require('../lib/SubResearchEntity');
 
-module.exports = _.merge({}, DocumentEntity, {
+module.exports = _.merge({}, SubResearchEntity, {
     DEFAULT_SORTING: {
         name: 'asc',
         updatedAt: 'desc'
@@ -190,7 +190,7 @@ module.exports = _.merge({}, DocumentEntity, {
                 item: researchEntityId
             };
 
-        if (check && (await DocumentEntity.getDuplicates(Group, researchEntityId, document, docToRemove)).length > 0) {
+        if (check && (await SubResearchEntity.getDuplicates(Group, researchEntityId, document, docToRemove)).length > 0) {
             return {
                 error: 'Documents must be compared',
                 item: document
@@ -234,7 +234,7 @@ module.exports = _.merge({}, DocumentEntity, {
                 item: draft
             };
 
-        if (check && (await DocumentEntity.getDuplicates(Group, researchEntityId, draft, docToRemove)).length > 0) {
+        if (check && (await SubResearchEntity.getDuplicates(Group, researchEntityId, draft, docToRemove)).length > 0) {
             return {
                 error: 'Documents must be compared',
                 item: draft

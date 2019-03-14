@@ -13,12 +13,12 @@ const assert = require('assert');
 const _ = require('lodash');
 const waterlock = require('waterlock');
 const Promise = require("bluebird");
-const DocumentEntity = require('../lib/DocumentEntity');
+const SubResearchEntity = require('../lib/SubResearchEntity');
 
 const USER = 'user';
 const ADMINISTRATOR = 'administrator';
 
-module.exports = _.merge({}, DocumentEntity, {
+module.exports = _.merge({}, SubResearchEntity, {
     DEFAULT_SORTING: {
         surname: 'asc',
         name: 'asc',
@@ -376,7 +376,7 @@ module.exports = _.merge({}, DocumentEntity, {
                 item: researchEntityId
             };
 
-        if (check && (await DocumentEntity.getDuplicates(User, researchEntityId, document, docToRemove)).length > 0) {
+        if (check && (await SubResearchEntity.getDuplicates(User, researchEntityId, document, docToRemove)).length > 0) {
             return {
                 error: 'Documents must be compared',
                 item: document
@@ -437,7 +437,7 @@ module.exports = _.merge({}, DocumentEntity, {
                 error: 'Document not valid for verification',
                 item: draft
             };
-        if (check && (await DocumentEntity.getDuplicates(User, researchEntityId, draft, docToRemove)).length > 0) {
+        if (check && (await SubResearchEntity.getDuplicates(User, researchEntityId, draft, docToRemove)).length > 0) {
             return {
                 error: 'Documents must be compared',
                 item: draft

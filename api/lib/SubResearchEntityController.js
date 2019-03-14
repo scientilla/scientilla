@@ -1,13 +1,6 @@
 /* global Connector, sails */
 "use strict";
 
-/**
- * ResearchEntityController
- *
- * @description :: Server-side logic for managing Researchentities
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 
 var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 

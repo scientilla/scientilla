@@ -10,9 +10,9 @@
  */
 
 const _ = require('lodash');
-const DocumentEntityController = require('../lib/DocumentEntityController');
+const SubResearchEntityController = require('../lib/SubResearchEntityController');
 
-module.exports = require('waterlock').actions.user(_.merge({}, DocumentEntityController, {
+module.exports = require('waterlock').actions.user(_.merge({}, SubResearchEntityController, {
     //sTODO: move this function to the user model
     //sTODO: delete documents or set the owner to null
     //sTODO: refactor
