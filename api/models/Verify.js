@@ -1,4 +1,4 @@
-/* global require, Verify,  ResearchItem, ResearchItemKinds, ResearchItemType */
+/* global require, Verify,  ResearchItem, ResearchItemKinds, ResearchItemType, Author */
 'use strict';
 
 
@@ -48,9 +48,14 @@ module.exports = _.merge({}, BaseModel, {
 
 
         const verifyData = Object.assign({}, Verify.getDefaults(researchItemId, researchEntityId), verificationData);
-        await Verify.create(verifyData);
+        const verify = await Verify.create(verifyData);
         if (researchItem.kind === ResearchItemKinds.DRAFT)
             await researchItem.toVerified();
+
+        const author = await Author.find({position: verificationData.position});
+        if (!author) throw 'Critcal error: author not found';
+
+        await Author.update({id: author.id}, {verify: verify.id});
 
     },
     async unverify(researchEntityId, researchItemId) {

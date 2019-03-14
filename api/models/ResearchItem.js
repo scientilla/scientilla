@@ -1,4 +1,4 @@
-/* global require, ResearchItem, ResearchItemKinds, ResearchItemType, ResearchItemTypes, Verify */
+/* global require, ResearchItem, ResearchItemKinds, ResearchItemType, ResearchItemTypes, Verify, Author */
 'use strict';
 
 const _ = require("lodash");
@@ -13,6 +13,10 @@ module.exports = _.merge({}, BaseModel, {
     tableName: 'research_item',
     attributes: {
         kind: 'STRING',
+        authors: {
+            collection: 'author',
+            via: 'researchItem'
+        },
         type: {
             model: 'researchitemtype'
         },
@@ -50,7 +54,7 @@ module.exports = _.merge({}, BaseModel, {
         if (!researchItemType)
             throw 'Invalid item type';
 
-        let newItem;
+        let subItem;
         const item = await ResearchItem.create({
             type: researchItemType.id,
             kind: ResearchItemKinds.DRAFT,
@@ -58,13 +62,14 @@ module.exports = _.merge({}, BaseModel, {
         });
 
         try {
-            newItem = await ResearchItemType.getResearchItemModel(researchItemType.key)
+            subItem = await ResearchItemType.getResearchItemModel(researchItemType.key)
                 .create(Object.assign({}, itemData, {researchItem: item.id}));
         } catch (e) {
             await ResearchItem.destroy({id: item.id});
             return;
         }
-        return newItem;
+
+        await Author.updateAuthors(item.id, subItem.authorsStr);
     },
     async updateDraft(researchEntityId, draftId, itemData) {
         const researchItem = await ResearchItem.findOne({id: draftId});
@@ -77,8 +82,11 @@ module.exports = _.merge({}, BaseModel, {
             throw 'Invalid item type';
 
         const researchItemModel = await ResearchItemType.getResearchItemModel(researchItemType.key);
-        const draft = await researchItemModel.findOne({researchItem: researchItem.id});
-        return await researchItemModel.updateDraft(draft, itemData);
+        const currentSubResearchItemDraft = await researchItemModel.findOne({researchItem: researchItem.id});
+        const updatedSubResearchItemDraft = (await researchItemModel.updateDraft(currentSubResearchItemDraft, itemData))[0];
+        const authors = await Author.find({researchItem: researchItem.id});
+        const authorsData = Author.getMatchingAuthorsData(updatedSubResearchItemDraft.authorsStr, authors);
+        await Author.updateAuthors(researchItem.id, updatedSubResearchItemDraft.authorsStr, authorsData);
     },
     async deleteDraft(draftId) {
         const researchItem = await ResearchItem.findOne({id: draftId});

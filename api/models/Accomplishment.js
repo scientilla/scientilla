@@ -37,7 +37,11 @@ module.exports = {
         verified: {
             collection: 'accomplishmentverify',
             via: 'accomplishment'
-        }
+        },
+        authors: {
+            collection: 'accomplishmentauthor',
+            via: 'accomplishment'
+        },
     },
     migrate: 'safe',
     tableName: 'accomplishment',
