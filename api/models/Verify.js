@@ -69,4 +69,27 @@ module.exports = _.merge({}, BaseModel, {
             await ResearchItem.destroy({id: researchItem.id});
         }
     },
+    setPublic: async function (researchEntityId, researchItemId, publicFlag) {
+        const verify = await Verify.findOne({
+            researchEntity: researchEntityId,
+            researchItem: researchItemId
+        });
+
+        if (!verify)
+            throw 'Verify privacy update error: Item not found';
+
+        await Verify.update({id: verify.id}, {public: publicFlag});
+    },
+    setFavorite: async function (researchEntityId, researchItemId, favorite) {
+        const verify = await Verify.findOne({
+            researchEntity: researchEntityId,
+            researchItem: researchItemId
+        });
+
+        if (!verify)
+            throw 'Verify favorite update error: Item not found';
+
+        await Verify.update({id: verify.id}, {favorite});
+
+    }
 });

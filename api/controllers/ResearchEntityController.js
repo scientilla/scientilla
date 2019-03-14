@@ -28,4 +28,16 @@ module.exports = {
         const itemId = +req.params.itemId;
         res.halt(Verify.unverify(researchEntityId, itemId));
     },
+    setPublic(req, res, next) {
+        const researchEntityId = +req.params.researchEntityId;
+        const researchItemId = +req.params.itemId;
+        const publicFlag = req.body.public;
+        res.halt(Verify.setPublic(researchEntityId, researchItemId, publicFlag));
+    },
+    setFavorite(req, res, next) {
+        const researchEntityId = +req.params.researchEntityId;
+        const researchItemId = +req.params.itemId;
+        const favorite = req.body.favorite;
+        res.halt(Verify.setFavorite(researchEntityId, researchItemId, favorite));
+    },
 };
