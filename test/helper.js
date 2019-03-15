@@ -31,9 +31,11 @@ module.exports = {
     createSource,
     registerUser,
     getUserDocuments,
+    getUserDocument,
     getUserDocumentsWithAuthors,
     getUserDiscarded,
     getUserSuggestedDocuments,
+    getUserSuggestedDocument,
     getUserDrafts,
     getUserDraft,
     userCreateDraft,
@@ -59,6 +61,7 @@ module.exports = {
     groupDeleteDrafts,
     fixDocumentsDocumenttype,
     userMarkAllAsNotDuplicates,
+    getUniqueDuplicateIds,
     EMPTY_RES: {count: 0, items: []}
 };
 
@@ -75,6 +78,21 @@ function getAdminAuth() {
 
 function cleanAuths() {
     auths = [];
+}
+
+function getUniqueDuplicateIds(document) {
+    const ids = document.duplicates.map(duplicate => {
+        switch(document.id) {
+            case duplicate.duplicate:
+                return duplicate.document;
+            case duplicate.document:
+                return duplicate.duplicate;
+            default:
+                break;
+        }
+    });
+
+    return [...(new Set(ids))];
 }
 
 const url = 'http://localhost:1338/api/v1';
@@ -197,9 +215,18 @@ async function registerUser(userData, respCode = 302) {
     return user;
 }
 
-async function getUserDocuments(user, populateFields, qs = {}, respCode = 200) {
+async function getUserDocuments(user, populateFields = [], qs = {}, respCode = 200) {
     const res = await request(url)
         .get('/users/' + user.id + '/documents')
+        .query({populate: populateFields})
+        .query(qs)
+        .expect(respCode);
+    return res.body;
+}
+
+async function getUserDocument(user, document, populateFields = [], qs = {}, respCode = 200) {
+    const res = await request(url)
+        .get('/users/' + user.id + '/documents/' + document.id)
         .query({populate: populateFields})
         .query(qs)
         .expect(respCode);
@@ -220,6 +247,15 @@ function getUserDocumentsWithAuthors(user) {
 async function getUserSuggestedDocuments(user, respCode = 200) {
     const res = await request(url)
         .get('/users/' + user.id + '/suggestedDocuments')
+        .expect(respCode);
+    return res.body;
+}
+
+async function getUserSuggestedDocument(user, document, populateFields = [], qs = {}, respCode = 200) {
+    const res = await request(url)
+        .get('/users/' + user.id + '/suggestedDocuments/' + document.id)
+        .query({populate: populateFields})
+        .query(qs)
         .expect(respCode);
     return res.body;
 }
@@ -459,7 +495,8 @@ async function createExternalDocument(documentData, origin = DocumentOrigins.SCO
         .populate('authorships')
         .populate('affiliations')
         .populate('authors')
-        .populate('source');
+        .populate('source')
+        .populate('duplicates');
 }
 
 async function fixDocumentsDocumenttype(documents) {
