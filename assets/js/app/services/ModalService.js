@@ -311,13 +311,16 @@
                                 <div class="modal-body">
                                     <div class="confirm-message" ng-if="vm.message">{{vm.message}}</div>
                                     <ul class="modal-buttons">` +
-                                        buttons + 
+                                        buttons +
                                     `</ul>
                                 </div>`;
 
                 const modal = openModal(template, scope, args);
 
                 modal.result.catch(function (err) {
+                    if (err === 'backdrop click')
+                        return resolve(-1);
+
                     reject(err);
                 });
                 addModalObject(modal);
