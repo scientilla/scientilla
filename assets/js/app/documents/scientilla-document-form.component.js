@@ -91,7 +91,7 @@
                 }
             });
 
-            $scope.$on('modal.closing', function(event, reason) {
+            $scope.$on('modal.closing', function (event, reason) {
                 cancel(event);
             });
 
@@ -174,18 +174,18 @@
 
                     vm.mode = 'draft';
 
-                    switch(true) {
-                        case state === 'ready to save':
+                    switch (state) {
+                        case 'ready to save':
                             this.message = 'Save draft';
                             break;
-                        case state === 'saving':
+                        case 'saving':
                             this.message = 'Saving draft';
                             break;
-                        case state === 'saved':
+                        case 'saved':
                             this.message = 'Draft is saved!';
                             $scope.form.$setPristine();
                             break;
-                        case state === 'failed':
+                        case 'failed':
                             this.message = 'Failed to save draft!';
                             $scope.form.$setPristine();
                             break;
@@ -203,18 +203,18 @@
 
                     vm.mode = 'verify';
 
-                    switch(true) {
-                        case state === 'ready to verify':
+                    switch (state) {
+                        case 'ready to verify':
                             this.message = 'Save & verify';
                             break;
-                        case state === 'verifying':
+                        case 'verifying':
                             this.message = 'Verifying draft';
                             break;
-                        case state === 'verified':
+                        case 'verified':
                             this.message = 'Draft is Verified!';
                             $scope.form.$setPristine();
                             break;
-                        case state === 'failed':
+                        case 'failed':
                             this.message = 'Failed to verify!';
                             $scope.form.$setPristine();
                             break;
@@ -254,7 +254,7 @@
                     vm.unsavedData = false;
 
                     if (updateState) {
-                        $timeout(function() {
+                        $timeout(function () {
                             vm.saveStatus.setState('ready to save');
                         }, 1000);
                     }
@@ -274,7 +274,7 @@
                         vm.unsavedData = false;
 
                         if (updateState) {
-                            $timeout(function() {
+                            $timeout(function () {
                                 vm.saveStatus.setState('ready to save');
                             }, 1000);
                         }
@@ -317,7 +317,7 @@
                     saveDocument();
                 }
 
-                if (!event){
+                if (!event) {
                     close();
                 }
             }
@@ -349,7 +349,7 @@
 
             $event.stopPropagation();
 
-            EventsService.subscribe(vm, EventsService.SOURCE_CREATED, function(event, source) {
+            EventsService.subscribe(vm, EventsService.SOURCE_CREATED, function (event, source) {
                 vm.document.source = source;
                 vm.getSources(source.title);
 
@@ -358,8 +358,7 @@
                 checkValidation();
             });
 
-            ModalService
-                .openSourceTypeModal(vm.document);
+            ModalService.openSourceTypeModal(vm.document.sourceType);
         }
 
         function checkSource($event) {
@@ -375,7 +374,7 @@
             vm.errors = {};
             vm.verifyStatus.setState('verifying');
 
-            $timeout(function() {
+            $timeout(function () {
                 vm.errors = vm.document.validateDocument();
                 if (Object.keys(vm.errors).length === 0) {
                     // Is valid
@@ -394,7 +393,7 @@
 
                     saveDocument(false);
 
-                    $timeout(function() {
+                    $timeout(function () {
                         vm.verifyStatus.setState('ready to verify');
                     }, 1000);
                 }

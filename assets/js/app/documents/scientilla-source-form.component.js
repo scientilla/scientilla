@@ -10,7 +10,7 @@
             controller: scientillaSourceFormController,
             controllerAs: 'vm',
             bindings: {
-                document: "<",
+                sourceType: "<",
                 onFailure: "&",
                 onSubmit: "&",
                 closeFn: "&"
@@ -22,12 +22,13 @@
         'Restangular',
         'ModalService',
         'EventsService',
+        'DocumentTypesService',
         '$scope',
         'ValidateService',
         '$timeout'
     ];
 
-    function scientillaSourceFormController(context, Restangular, ModalService, EventsService, $scope, ValidateService, $timeout) {
+    function scientillaSourceFormController(context, Restangular, ModalService, EventsService, DocumentTypesService, $scope, ValidateService, $timeout) {
         const vm = this;
 
         vm.createSource = createSource;
@@ -45,17 +46,16 @@
         const delay = 500;
 
         vm.$onInit = function () {
+            vm.sourceTypes = DocumentTypesService.getSourceTypes().filter(st => st.type === 'scientific');
+            vm.hasSourceType = !!vm.sourceType;
+
             $scope.$on('modal.closing', function (event, reason) {
                 cancel(event);
             });
         };
 
         function isValid() {
-            if (Object.keys(vm.errors).length > 0) {
-                return false;
-            } else {
-                return true;
-            }
+            return !!_.isEmpty(vm.errors);
         }
 
         function checkValidation(field = false) {
@@ -91,14 +91,14 @@
         function createSource() {
 
             if (vm.newSource) {
-                vm.newSource.type = vm.document.sourceType;
+                vm.newSource.type = vm.sourceType;
             } else {
                 vm.newSource = {};
             }
 
             checkValidation();
 
-            if (Object.keys(vm.errors).length > 0) {
+            if (!_.isEmpty(vm.errors)) {
                 return;
             }
 
@@ -108,12 +108,12 @@
                     EventsService.publish(EventsService.SOURCE_CREATED, source);
                     vm.newSource = {};
                     cancel();
-                }, function(res) {
+                }, function (res) {
                     vm.errors = res.data.invalidAttributes;
 
-                    angular.forEach(vm.errors, function(fields, fieldIndex) {
-                        angular.forEach(fields, function(error, errorIndex) {
-                            if (error.rule === 'required'){
+                    angular.forEach(vm.errors, function (fields, fieldIndex) {
+                        angular.forEach(fields, function (error, errorIndex) {
+                            if (error.rule === 'required') {
                                 error.message = 'This field is required.';
                                 vm.errors[fieldIndex][errorIndex] = error;
                             }
@@ -125,7 +125,7 @@
         }
 
         function cancel(event = false) {
-            if (!_.isFunction(vm.closeFn())){
+            if (!_.isFunction(vm.closeFn())) {
                 return Promise.reject('no close function');
             }
 

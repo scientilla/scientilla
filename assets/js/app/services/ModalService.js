@@ -40,14 +40,14 @@
             return modal.result;
         };
 
-        service.openSourceTypeModal = function (document) {
+        service.openSourceTypeModal = function (sourceType) {
             const scopeVars = {
-                document: document
+                sourceType: sourceType
             };
 
             const modal = openModal(
                 '<scientilla-source-form\
-                    document="vm.document"\
+                    source-type="vm.sourceType"\
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit" \
                     close-fn="vm.onClose" \
