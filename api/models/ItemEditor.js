@@ -1,4 +1,4 @@
-/* global require, ItemEditor, ResearchItem, Validator */
+/* global require, ItemEditor, ResearchItem, Accomplishment, Validator */
 'use strict';
 
 const BaseModel = require("../lib/BaseModel.js");
@@ -61,5 +61,8 @@ module.exports = _.merge({}, BaseModel, {
         const selectedData = ItemEditor.selectData(itemData);
         selectedData.yearFrom = itemData.year;
         return ItemEditor.update({id: draft.id}, selectedData);
+    },
+    async getMergedItem(itemId) {
+        return Accomplishment.findOne({id: itemId});
     }
 });

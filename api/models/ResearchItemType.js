@@ -11,7 +11,7 @@ module.exports = {
         },
         type: 'STRING',
     },
-    getResearchItemModel(researchItemTypeKey) {
+    getSubResearchItemModel(researchItemTypeKey) {
         const researchItemModels = {
             'award_achievement': ItemAward,
             'editor': ItemEditor,

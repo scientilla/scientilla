@@ -38,7 +38,7 @@ module.exports = _.merge({}, BaseModel, {
         if (!researchItem)
             throw 'Item not found';
 
-        const ResearchItemModel = ResearchItemType.getResearchItemModel(researchItem.type.key);
+        const ResearchItemModel = ResearchItemType.getSubResearchItemModel(researchItem.type.key);
         const subItem = await ResearchItemModel.findOne({researchItem: researchItem.id});
         if (!subItem.isValid())
             throw 'Item not valid';

@@ -61,15 +61,17 @@ module.exports = _.merge({}, BaseModel, {
             draftCreator: researchEntityId
         });
 
+        const subResearchItemModel = ResearchItemType.getSubResearchItemModel(researchItemType.key);
         try {
-            subItem = await ResearchItemType.getResearchItemModel(researchItemType.key)
-                .create(Object.assign({}, itemData, {researchItem: item.id}));
+            subItem = await subResearchItemModel.create(Object.assign({}, itemData, {researchItem: item.id}));
         } catch (e) {
             await ResearchItem.destroy({id: item.id});
             return;
         }
 
         await Author.updateAuthors(item.id, subItem.authorsStr);
+
+        return await subResearchItemModel.getMergedItem(item.id);
     },
     async updateDraft(researchEntityId, draftId, itemData) {
         const researchItem = await ResearchItem.findOne({id: draftId});
@@ -81,7 +83,7 @@ module.exports = _.merge({}, BaseModel, {
         if (!researchItemType)
             throw 'Invalid item type';
 
-        const researchItemModel = await ResearchItemType.getResearchItemModel(researchItemType.key);
+        const researchItemModel = await ResearchItemType.getSubResearchItemModel(researchItemType.key);
         const currentSubResearchItemDraft = await researchItemModel.findOne({researchItem: researchItem.id});
         const updatedSubResearchItemDraft = (await researchItemModel.updateDraft(currentSubResearchItemDraft, itemData))[0];
         const authors = await Author.find({researchItem: researchItem.id});
