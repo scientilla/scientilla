@@ -99,7 +99,7 @@ module.exports = {
         async createDraft(user, researchEntity, draftData, respCode = 200) {
             const auth = getAuth(user.id);
             const res = await auth.agent
-                .post('/researchentities/' + researchEntity.id + '/drafts')
+                .post('/researchentities/' + researchEntity.id + '/researchitemdrafts')
                 .set('access_token', auth.token)
                 .send(draftData)
                 .expect(respCode);
@@ -108,7 +108,7 @@ module.exports = {
         async updateDraft(user, researchEntity, draftData, respCode = 200) {
             const auth = getAuth(user.id);
             const res = await auth.agent
-                .put('/researchentities/' + researchEntity.id + '/drafts/' + draftData.id)
+                .put('/researchentities/' + researchEntity.id + '/researchitemdrafts/' + draftData.id)
                 .set('access_token', auth.token)
                 .send(draftData)
                 .expect(respCode);
@@ -116,7 +116,7 @@ module.exports = {
         },
         async getItemDrafts(researchEntity, populateFields = [], qs = {}, respCode = 200) {
             const res = await request(url)
-                .get('/researchentities/' + researchEntity.id + '/drafts')
+                .get('/researchentities/' + researchEntity.id + '/researchitemdrafts')
                 .query({populate: populateFields})
                 .query(qs)
                 .expect(respCode);
@@ -141,7 +141,7 @@ module.exports = {
         async verifyItem(user, researchEntity, itemId, verifyData = {}, respCode = 200) {
             const auth = getAuth(user.id);
             const res = await auth.agent
-                .put('/researchentities/' + researchEntity.id + '/items/' + itemId + '/verified')
+                .put('/researchentities/' + researchEntity.id + '/researchitems/' + itemId + '/verified')
                 .set('access_token', auth.token)
                 .send(verifyData)
                 .expect(respCode);
@@ -150,7 +150,7 @@ module.exports = {
         async unVerifyItem(user, researchEntity, itemId, verifyData = {}, respCode = 200) {
             const auth = getAuth(user.id);
             const res = await auth.agent
-                .put('/researchentities/' + researchEntity.id + '/items/' + itemId + '/unverified')
+                .put('/researchentities/' + researchEntity.id + '/researchitems/' + itemId + '/unverified')
                 .set('access_token', auth.token)
                 .expect(respCode);
             return res.body;

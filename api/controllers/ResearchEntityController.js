@@ -17,6 +17,10 @@ module.exports = {
         const draftId = +req.params.itemId;
         res.halt(ResearchItem.deleteDraft(draftId));
     },
+    deleteDrafts(req, res, next) {
+        const draftIds = req.param('draftIds');
+        res.halt(ResearchItem.deleteDrafts(draftIds));
+    },
     verify(req, res, next) {
         const researchEntityId = +req.params.researchEntityId;
         const itemId = +req.params.itemId;

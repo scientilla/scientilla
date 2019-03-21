@@ -89,13 +89,14 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/users/:researchEntityId/remove-verify']: 'User.removeVerify',
 
     //Research item API
-    ['post ' + apiPrfx + '/researchentities/:researchEntityId/drafts']: 'ResearchEntity.createDraft',
-    ['put ' + apiPrfx + '/researchentities/:researchEntityId/drafts/:itemId']: 'ResearchEntity.updateDraft',
-    ['delete ' + apiPrfx + '/researchentities/:researchEntityId/drafts/:itemId']: 'ResearchEntity.deleteDraft',
-    ['put ' + apiPrfx + '/researchentities/:researchEntityId/items/:itemId/verified']: 'ResearchEntity.verify',
-    ['put ' + apiPrfx + '/researchentities/:researchEntityId/items/:itemId/unverified']: 'ResearchEntity.unverify',
-    ['put ' + apiPrfx + '/researchentities/:researchEntityId/items/:itemId/public']: 'ResearchEntity.setPublic',
-    ['put ' + apiPrfx + '/researchentities/:researchEntityId/items/:itemId/favorite']: 'ResearchEntity.setFavorite',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/delete']: 'ResearchEntity.deleteDrafts',
+    ['post ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts']: 'ResearchEntity.createDraft',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/:itemId']: 'ResearchEntity.updateDraft',
+    ['delete ' + apiPrfx + '/researchentities/:researchEntityId/researchItemDrafts/:itemId']: 'ResearchEntity.deleteDraft',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/verified']: 'ResearchEntity.verify',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/unverified']: 'ResearchEntity.unverify',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/public']: 'ResearchEntity.setPublic',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/favorite']: 'ResearchEntity.setFavorite',
 
 
     //Site API
