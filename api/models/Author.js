@@ -60,9 +60,11 @@ module.exports = _.merge({}, BaseModel, {
     filterFields(authorData) {
         if (!_.isObject(authorData))
             return {};
-        return Object.keys(authorData)
+        const newAuthorData = {};
+        Object.keys(authorData)
             .filter(key => fields.includes(key))
-            .map(f => authorData[f]);
+            .forEach(f => newAuthorData[f] = authorData[f]);
+        return newAuthorData;
     },
     areEquals(author1, author2) {
         const authData1 = Author.filterFields(author1);
