@@ -21,7 +21,7 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'group',
             via: 'researchEntity'
         },
-        drafts: {
+        researchItemDrafts: {
             collection: 'researchitem',
             via: 'draftCreator'
         },
