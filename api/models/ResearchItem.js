@@ -26,6 +26,7 @@ module.exports = _.merge({}, BaseModel, {
         },
         toVerified: function () {
             this.kind = ResearchItemKinds.VERIFIED;
+            this.draftCreator = null;
             return this.savePromise();
 
         },
