@@ -4,7 +4,7 @@
 
 const test = require('./../helper.js');
 
-describe.only('Authors: ', () => {
+describe('Authors: ', () => {
     const usersData = test.getAllUserData();
     const itemsData = test.getAllResearchItemData();
     const allAuthorsStrs = [
