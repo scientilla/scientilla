@@ -7,6 +7,8 @@ const fields = [
     {name: 'title'},
     {name: 'authorsStr'},
     {name: 'year'},
+    {name: 'eventType'},
+    {name: 'place'},
     {name: 'description'},
     {name: 'researchItem'}
 ];
@@ -24,6 +26,11 @@ module.exports = _.merge({}, BaseModel, {
             columnName: 'authors_str'
         },
         year: 'STRING',
+        eventType: {
+            type: 'STRING',
+            columnName: 'event_type',
+        },
+        place: 'STRING',
         description: 'STRING',
         isValid() {
             const requiredFields = [

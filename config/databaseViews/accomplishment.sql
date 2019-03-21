@@ -10,6 +10,9 @@ CREATE OR REPLACE VIEW accomplishment AS
          ia.issuer,
          NULL AS year_to,
          NULL AS medium,
+         NULL AS editor_in_chief,
+         NULL AS event_type,
+         NULL AS place,
          NULL AS description
   FROM research_item ri
          JOIN item_award ia on ri.id = ia.research_item
@@ -25,6 +28,9 @@ CREATE OR REPLACE VIEW accomplishment AS
          NULL         AS issuer,
          ie.year_to,
          ie.medium,
+         ie.editor_in_chief,
+         NULL         AS event_type,
+         NULL         AS place,
          NULL         AS description
   FROM research_item ri
          JOIN item_editor ie on ri.id = ie.research_item
@@ -35,11 +41,14 @@ CREATE OR REPLACE VIEW accomplishment AS
          ri.draft_creator,
          ieo.title,
          ieo.authors_str,
-         ieo.year AS year,
+         ieo.year,
          NULL     AS affiliation,
          NULL     AS issuer,
          NULL     AS year_to,
          NULL     AS medium,
+         NULL     AS editor_in_chief,
+         ieo.event_type,
+         ieo.place,
          ieo.description
   FROM research_item ri
          JOIN item_event_organization ieo on ri.id = ieo.research_item

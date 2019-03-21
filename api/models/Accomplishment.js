@@ -25,6 +25,15 @@ module.exports = {
         medium: {
             model: 'source'
         },
+        editorInChief: {
+            type: 'BOOLEAN',
+            columnName: 'editor_in_chief',
+        },
+        eventType: {
+            type: 'STRING',
+            columnName: 'event_type',
+        },
+        place: 'STRING',
         description: 'STRING',
         type: {
             model: 'researchitemtype'
