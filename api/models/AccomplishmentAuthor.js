@@ -29,7 +29,7 @@ module.exports = {
         }
     },
     migrate: 'safe',
-    tableName: 'accomplishment_verify',
+    tableName: 'accomplishment_author',
     autoUpdatedAt: false,
     autoCreatedAt: false
 };
