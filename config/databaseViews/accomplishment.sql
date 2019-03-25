@@ -21,7 +21,7 @@ CREATE OR REPLACE VIEW accomplishment AS
          ri.kind,
          ri.type,
          ri.draft_creator,
-         ie.title,
+         NULL         AS title,
          ie.authors_str,
          ie.year_from AS year,
          NULL         AS affiliation,

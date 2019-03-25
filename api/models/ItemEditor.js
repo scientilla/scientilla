@@ -20,7 +20,6 @@ module.exports = _.merge({}, BaseModel, {
             model: 'researchitem',
             columnName: 'research_item'
         },
-        title: 'STRING',
         authorsStr: {
             type: 'STRING',
             columnName: 'authors_str'
