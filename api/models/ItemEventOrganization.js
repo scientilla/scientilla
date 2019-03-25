@@ -47,8 +47,11 @@ module.exports = _.merge({}, BaseModel, {
         return fields.map(f => f.name);
     },
     selectData: function (draftData) {
-        const documentFields = Document.getFields();
-        return _.pick(draftData, documentFields);
+        return _.pick(draftData, ItemEventOrganization.getFields());
+    },
+    async createDraft(itemData) {
+        const selectedData = ItemEventOrganization.selectData(itemData);
+        return ItemEventOrganization.create(selectedData);
     },
     async updateDraft(draft, itemData) {
         const selectedData = ItemEventOrganization.selectData(itemData);

@@ -64,7 +64,7 @@ module.exports = _.merge({}, BaseModel, {
 
         const subResearchItemModel = ResearchItemType.getSubResearchItemModel(researchItemType.key);
         try {
-            subItem = await subResearchItemModel.create(Object.assign({}, itemData, {researchItem: item.id}));
+            subItem = await subResearchItemModel.createDraft(Object.assign({}, itemData, {researchItem: item.id}));
         } catch (e) {
             await ResearchItem.destroy({id: item.id});
             return;

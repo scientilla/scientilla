@@ -1,10 +1,9 @@
-/* global require, ItemEditor, ResearchItem, Accomplishment, Validator */
+/* global require, ItemEditor, ResearchItem, Accomplishment, Validator, Source */
 'use strict';
 
 const BaseModel = require("../lib/BaseModel.js");
 
 const fields = [
-    {name: 'title'},
     {name: 'authorsStr'},
     {name: 'yearFrom'},
     {name: 'yearTo'},
@@ -41,7 +40,6 @@ module.exports = _.merge({}, BaseModel, {
         },
         isValid() {
             const requiredFields = [
-                'title',
                 'authorsStr',
                 'yearFrom',
                 'medium',
@@ -58,12 +56,20 @@ module.exports = _.merge({}, BaseModel, {
         return fields.map(f => f.name);
     },
     selectData: function (draftData) {
-        const documentFields = Document.getFields();
-        return _.pick(draftData, documentFields);
+        return _.pick(draftData, ItemEditor.getFields());
+    },
+    async createDraft(itemData) {
+        const selectedData = ItemEditor.selectData(itemData);
+        selectedData.yearFrom = itemData.year;
+        if (itemData.medium)
+            selectedData.medium = await ItemEditor.getFixedCollection(Source, itemData.medium);
+        return ItemEditor.create(selectedData);
     },
     async updateDraft(draft, itemData) {
         const selectedData = ItemEditor.selectData(itemData);
         selectedData.yearFrom = itemData.year;
+        if (itemData.medium)
+            selectedData.medium = await ItemEditor.getFixedCollection(Source, itemData.medium);
         return ItemEditor.update({id: draft.id}, selectedData);
     },
     async getMergedItem(itemId) {

@@ -1,4 +1,4 @@
-/* global require, ItemAward, ResearchItem, Accomplishment, Validator */
+/* global require, ItemAward, ResearchItem, Accomplishment, Validator, Institute */
 'use strict';
 
 const BaseModel = require("../lib/BaseModel.js");
@@ -45,11 +45,18 @@ module.exports = _.merge({}, BaseModel, {
         return fields.map(f => f.name);
     },
     selectData: function (draftData) {
-        const documentFields = Document.getFields();
-        return _.pick(draftData, documentFields);
+        return _.pick(draftData, ItemAward.getFields());
+    },
+    async createDraft(itemData) {
+        const selectedData = ItemAward.selectData(itemData);
+        if (itemData.affiliation)
+            selectedData.affiliation = await ItemAward.getFixedCollection(Institute, itemData.affiliation);
+        return ItemAward.create(selectedData);
     },
     async updateDraft(draft, itemData) {
         const selectedData = ItemAward.selectData(itemData);
+        if (itemData.affiliation)
+            selectedData.affiliation = await ItemAward.getFixedCollection(Institute, itemData.affiliation);
         return ItemAward.update({id: draft.id}, selectedData);
     },
     async getMergedItem(itemId) {
