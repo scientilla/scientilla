@@ -32,5 +32,5 @@ module.exports = {
         });
     },
     get: () => researchItemTypes,
-    getType: (id) => researchItemTypes[id]
+    getType: (type) => _.isObject(type) ? researchItemTypes[type.id] : researchItemTypes[type]
 };
