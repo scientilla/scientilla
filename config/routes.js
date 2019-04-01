@@ -97,6 +97,8 @@ module.exports.routes = {
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/unverified']: 'ResearchEntity.unverify',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/public']: 'ResearchEntity.setPublic',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/favorite']: 'ResearchEntity.setFavorite',
+    ['post ' + apiPrfx + '/researchentities/:researchEntityId/copy-research-item']: 'ResearchEntity.copyResearchItem',
+    ['post ' + apiPrfx + '/researchentities/:researchEntityId/copy-research-items']: 'ResearchEntity.copyResearchItems',
 
 
     //Site API

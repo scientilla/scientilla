@@ -50,7 +50,7 @@ module.exports = _.merge({}, BaseModel, {
             return ResearchItemTypes.getType(this.type);
         }
     },
-    async createDraft(researchEntityId, itemData) {
+    async createDraft(researchEntityId, itemData, newAuthorsData = []) {
         const researchItemType = ResearchItemTypes.getType(itemData.type);
         if (!researchItemType)
             throw 'Invalid item type';
@@ -70,7 +70,7 @@ module.exports = _.merge({}, BaseModel, {
             return;
         }
 
-        await Author.updateAuthors(item.id, subItem.authorsStr);
+        await Author.updateAuthors(item.id, subItem.authorsStr, newAuthorsData);
 
         return await subResearchItemModel.getMergedItem(item.id);
     },
@@ -81,10 +81,9 @@ module.exports = _.merge({}, BaseModel, {
         if (researchItem.kind !== ResearchItemKinds.DRAFT) throw 'The item is not a draft';
 
         const researchItemType = ResearchItemTypes.getType(itemData.type);
-        if (!researchItemType)
-            throw 'Invalid item type';
+        if (!researchItemType) throw 'Invalid item type';
 
-        const researchItemModel = await ResearchItemType.getSubResearchItemModel(researchItemType.key);
+        const researchItemModel = ResearchItemType.getSubResearchItemModel(researchItemType.key);
         const currentSubResearchItemDraft = await researchItemModel.findOne({researchItem: researchItem.id});
         const updatedSubResearchItemDraft = (await researchItemModel.updateDraft(currentSubResearchItemDraft, itemData))[0];
         const authors = await Author.find({researchItem: researchItem.id});
@@ -99,17 +98,17 @@ module.exports = _.merge({}, BaseModel, {
 
         await ResearchItem.destroy({id: draftId});
     },
-    async deleteDrafts(draftIds) {
-        const results = [];
-        for (let draftId of draftIds) {
-            try {
-                const res = await ResearchItem.deleteDraft(draftId);
-                results.push(res);
-            } catch (e) {
-                results.push(e);
-            }
-        }
-        return results;
+    async copyResearchItem(researchItemId, researchEntityId) {
+        const itemToCopy = await ResearchItem.findOne({id: researchItemId}).populate(['type', 'authors']);
+        if (!itemToCopy) throw 'Item not found';
+
+        const researchItemModel = ResearchItemType.getSubResearchItemModel(itemToCopy.type.key);
+        const subResearchItemToCopy = await researchItemModel.findOne({researchItem: researchItemId});
+        if (!subResearchItemToCopy) throw 'Item not found';
+
+        return await ResearchItem.createDraft(researchEntityId,
+            Object.assign({}, itemToCopy, subResearchItemToCopy),
+            itemToCopy.authors);
     },
     async getItem(subItem) {
         return await ResearchItem.findOne({id: subItem.item});

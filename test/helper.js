@@ -154,6 +154,16 @@ module.exports = {
                 .set('access_token', auth.token)
                 .expect(respCode);
             return res.body;
+        },
+        async copyItemToDrafts(user, researchEntity, researchItem, respCode = 200) {
+            const auth = getAuth(user.id);
+            const res = await auth.agent
+                .post('/researchentities/' + researchEntity.id + '/copy-research-item')
+                .set('access_token', auth.token)
+                .send({researchItemId: researchItem.id})
+                .expect(respCode);
+            return res.body;
+
         }
     },
     accomplishment: {

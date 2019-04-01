@@ -19,7 +19,7 @@ module.exports = {
     },
     deleteDrafts(req, res, next) {
         const draftIds = req.param('draftIds');
-        res.halt(ResearchItem.deleteDrafts(draftIds));
+        res.halt(ResearchItem.blukAction(ResearchItem.deleteDraft, draftIds));
     },
     verify(req, res, next) {
         const researchEntityId = +req.params.researchEntityId;
@@ -43,5 +43,15 @@ module.exports = {
         const researchItemId = +req.params.itemId;
         const favorite = req.body.favorite;
         res.halt(Verify.setFavorite(researchEntityId, researchItemId, favorite));
+    },
+    copyResearchItem(req, res, next) {
+        const researchEntityId = req.params.researchEntityId;
+        const researchItemId = req.param('researchItemId');
+        res.halt(ResearchItem.copyResearchItem(researchItemId, researchEntityId));
+    },
+    copyResearchItems(req, res, next) {
+        const researchEntityId = req.params.researchEntityId;
+        const researchItemIds = req.param('researchItemIds');
+        res.halt(ResearchItem.blukAction(ResearchItem.copyResearchItems, researchItemIds, [researchEntityId]));
     },
 };
