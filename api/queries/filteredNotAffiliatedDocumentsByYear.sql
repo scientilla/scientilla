@@ -10,7 +10,7 @@ WHERE "researchEntity" = $1
       AND d.id NOT IN (SELECT DISTINCT d2.id
                        FROM document d2
                          JOIN authorship a2 ON d2.id = a2.document
-                         JOIN affiliation af ON d2.id = af.document
+                         JOIN affiliation af ON af.authorship = a2.id
                        WHERE "researchEntity" = $1
                              AND af.institute = $2)
 GROUP BY d.year
