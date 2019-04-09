@@ -60,7 +60,8 @@ module.exports = _.merge({}, BaseModel, {
     },
     async createDraft(itemData) {
         const selectedData = ItemEditor.selectData(itemData);
-        selectedData.yearFrom = itemData.year;
+        if (!selectedData.yearFrom)
+            selectedData.yearFrom = itemData.year;
         if (itemData.medium)
             selectedData.medium = await ItemEditor.getFixedCollection(Source, itemData.medium);
         return ItemEditor.create(selectedData);
