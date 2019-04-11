@@ -130,8 +130,8 @@ async function runCommand(cmd, label) {
 
 function getConnectionString() {
     const connectionData = sails.config.connections[sails.config.environment];
-    const {user, database, password} = connectionData;
-    const connectionString = `postgresql://${user}:${password}@127.0.0.1:5432/${database}`;
+    const {user, database, password, host} = connectionData;
+    const connectionString = `postgresql://${user}:${password}@${host}:5432/${database}`;
     return connectionString;
 }
 
