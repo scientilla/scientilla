@@ -20,7 +20,7 @@
 
             vm.$onInit = function () {
                 vm.accomplishment = vm.researchItem;
-            }
+            };
 
         }
     }
