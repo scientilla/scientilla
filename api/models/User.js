@@ -32,18 +32,15 @@ module.exports = _.merge({}, SubResearchEntity, {
         username: {
             type: 'email',
             defaultsTo: "",
-            required: true,
             unique: true
         },
         name: {
             type: 'STRING',
-            defaultsTo: "",
-            required: true
+            defaultsTo: ""
         },
         surname: {
             type: 'STRING',
-            defaultsTo: "",
-            required: true
+            defaultsTo: ""
         },
         slug: {
             type: 'STRING',
@@ -178,8 +175,14 @@ module.exports = _.merge({}, SubResearchEntity, {
             through: 'userattribute'
         },
         lastsynch: 'datetime',
-        active: 'boolean',
-        synchronized: 'boolean',
+        active: {
+            type: "BOOLEAN",
+            defaultsTo: true
+        },
+        synchronized: {
+            type: "BOOLEAN",
+            defaultsTo: false
+        },
         getAliases: async function () {
             const aliases = await Alias.find({user: this.id});
             if (!aliases)
