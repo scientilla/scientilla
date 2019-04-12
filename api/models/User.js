@@ -181,7 +181,7 @@ module.exports = _.merge({}, SubResearchEntity, {
         active: 'boolean',
         synchronized: 'boolean',
         getAliases: async function () {
-            const aliases = this.aliases ? this.aliases : await Alias.find({user: this.id});
+            const aliases = await Alias.find({user: this.id});
             if (!aliases)
                 return [];
             return aliases.map(a => a.str);
