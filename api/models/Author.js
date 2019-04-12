@@ -179,13 +179,18 @@ module.exports = _.merge({}, BaseModel, {
         });
 
         if (!author) throw {researchItem: researchItem, success: false, message: 'Critcal error: author not found'};
+        if (author.verify) throw {
+            researchItem: researchItem,
+            success: false,
+            message: 'Position already verified'
+        };
         await Author.update({id: author.id}, {verify: verify.id});
     },
     async getAuthorData(researchEntity, authors, verificationData) {
         if (researchEntity.isGroup())
             return {};
 
-        const aliases = (await ResearchEntity.getAliases(researchEntity)).map(a=>a.toLocaleLowerCase());
+        const aliases = (await ResearchEntity.getAliases(researchEntity)).map(a => a.toLocaleLowerCase());
         let position;
 
         if (verificationData && Number.isInteger(verificationData.position))
