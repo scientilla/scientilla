@@ -38,7 +38,7 @@
         vm.changePrivacy = changePrivacy;
         vm.changeFavorite = changeFavorite;
 
-        const researchEntity = context.getResearchEntity();
+        const subResearchEntity = context.getSubResearchEntity();
         const documentService = context.getDocumentService();
 
         vm.checkDuplicates = [
@@ -92,8 +92,8 @@
 
         function checkDuplicate() {
             function isSuggested(doc) {
-                const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
-                return !doc[f].some(re => re.id === researchEntity.id);
+                const f = subResearchEntity.getType() === 'user' ? 'authors' : 'groups';
+                return !doc[f].some(re => re.id === subResearchEntity.id);
             }
 
             if (!vm.document.duplicates || !vm.document.duplicates.length)
@@ -245,12 +245,12 @@
 
         function getAuthorship() {
             let field;
-            if (researchEntity.getType() === 'user')
+            if (subResearchEntity.getType() === 'user')
                 field = 'authorships';
             else
                 field = 'groupAuthorships';
 
-            return vm.document[field].find(a => a.researchEntity === researchEntity.id);
+            return vm.document[field].find(a => a.researchEntity === subResearchEntity.id);
         }
 
         function getScopusCitations() {

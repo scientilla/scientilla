@@ -1,0 +1,38 @@
+<scientilla-research-item-authors research-item="vm.accomplishment"
+                                  collapsed="vm.collapsed"
+                                  type="preview"></scientilla-research-item-authors>
+
+<h3 class="document-title"
+    ng-click="vm.openDetails()"
+    ng-bind-html='vm.accomplishment | accomplishmentTitle'></h3>
+
+
+<hr/>
+
+<div ng-if="vm.accomplishment.description">
+    <h4>Description</h4>
+    <div>
+        {{ vm.accomplishment.description }}
+    </div>
+</div>
+
+<br/><br/>
+
+<div>
+    <div>
+        {{vm.accomplishment.year}} <span ng-if="vm.accomplishment.yearTo"> - {{vm.accomplishment.yearTo}}</span>
+    </div>
+    <div ng-if="vm.accomplishment.issuer">
+        <label class="inline-block">Issuer:</label> {{vm.accomplishment.issuer}}
+    </div>
+
+    <div ng-if="vm.accomplishment.eventType || vm.accomplishment.place"
+         class="text-capitalize">
+        {{vm.accomplishment.eventType}}<span ng-if="vm.accomplishment.eventType && vm.accomplishment.place">,</span>
+        {{vm.accomplishment.place}}
+    </div>
+
+    <div ng-if="vm.accomplishment.editorInChief">
+        <b>Editor in chief</b>
+    </div>
+</div>

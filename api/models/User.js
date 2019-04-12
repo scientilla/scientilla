@@ -74,7 +74,7 @@ module.exports = _.merge({}, SubResearchEntity, {
         jobTitle: {
             type: 'STRING'
         },
-        researchEntity:{
+        researchEntity: {
             columnName: 'research_entity',
             model: 'researchentity'
         },
@@ -181,7 +181,7 @@ module.exports = _.merge({}, SubResearchEntity, {
         active: 'boolean',
         synchronized: 'boolean',
         getAliases: async function () {
-            const aliases = await Alias.find({user: this.id});
+            const aliases = this.aliases ? this.aliases : await Alias.find({user: this.id});
             if (!aliases)
                 return [];
             return aliases.map(a => a.str);
@@ -192,7 +192,7 @@ module.exports = _.merge({}, SubResearchEntity, {
         getModel: function () {
             return User;
         },
-        getDocumentNotDuplicateModel: function(){
+        getDocumentNotDuplicateModel: function () {
             return DocumentNotDuplicate;
         }
     }),
@@ -232,8 +232,7 @@ module.exports = _.merge({}, SubResearchEntity, {
                         sails.log.debug(`An error happened while creating a user`);
                         sails.log.debug(err);
                         reject(err);
-                    }
-                    else
+                    } else
                         resolve(user);
                 });
         });

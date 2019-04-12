@@ -18,7 +18,7 @@
         function ProfileSummaryComponent(context, $scope, $controller) {
             const vm = this;
             angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
-            let researchEntity;
+            let subResearchEntity;
 
             vm.lastRefresh = new Date();
             vm.isLoading = false;
@@ -28,7 +28,7 @@
 
             /* jshint ignore:start */
             vm.$onInit = async () => {
-                researchEntity = context.getResearchEntity();
+                subResearchEntity = context.getSubResearchEntity();
 
                 const refresh = !isMainGroup();
                 await request(refresh);
@@ -44,7 +44,7 @@
             }
 
             async function request(refresh) {
-                vm.chartsData = await vm.getChartsData(researchEntity, refresh);
+                vm.chartsData = await vm.getChartsData(subResearchEntity, refresh);
                 if (vm.chartsData.chartDataDate && vm.chartsData.chartDataDate[0].max)
                     vm.lastRefresh = new Date(vm.chartsData.chartDataDate[0].max);
             }
@@ -52,7 +52,7 @@
             /* jshint ignore:end */
 
             function isMainGroup() {
-                return researchEntity.id === 1;
+                return subResearchEntity.id === 1;
             }
 
         }

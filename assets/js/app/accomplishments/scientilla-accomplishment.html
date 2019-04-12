@@ -1,0 +1,78 @@
+<ul class="document" ng-class="{invalid: !vm.isValid(vm.accomplishment)}">
+    <li class="document-info">
+        <span class="document-year">{{ vm.accomplishment.year }}</span>
+        <span class="icon-iit" ng-if="vm.hasMainGroupAffiliation()"></span>
+    </li>
+
+    <li class="document-metadata">
+        <div>
+            <scientilla-research-item-type research-item-type="vm.accomplishment.type"></scientilla-research-item-type>
+            <scientilla-research-item-authors research-item="vm.accomplishment"
+                                              collapsed="vm.collapsed"
+                                              type="preview"></scientilla-research-item-authors>
+        </div>
+
+        <div class="document-title-container">
+            <ul ng-if="vm.accomplishment.labels"
+                class="document-labels">
+                <li ng-repeat="l in vm.accomplishment.labels">
+                    <scientilla-document-label label="l" class="document-label"></scientilla-document-label>
+                </li>
+            </ul>
+            <h2 class="document-title has-action"
+                ng-click="vm.openDetails()"
+                ng-bind-html='vm.accomplishment | accomplishmentTitle'></h2>
+        </div>
+
+        <div ng-if="vm.accomplishment.issuer">
+            <label class="inline-block">Issuer:</label> {{vm.accomplishment.issuer}}
+        </div>
+
+        <div ng-if="vm.accomplishment.eventType || vm.accomplishment.place"
+             class="text-capitalize">
+            {{vm.accomplishment.eventType}}<span ng-if="vm.accomplishment.eventType && vm.accomplishment.place">,</span>
+            {{vm.accomplishment.place}}
+        </div>
+
+        <div ng-if="vm.accomplishment.editorInChief">
+            <b>Editor in chief</b>
+        </div>
+        <div ng-if="vm.accomplishment.yearTo">
+            Ended in {{vm.accomplishment.yearTo}}
+        </div>
+
+        <ul class="document-actions">
+            <li ng-if="vm.accomplishment.verified.length"
+                class="document-verified"
+                uib-tooltip-html="vm.getVerifiedNamesHTML()"
+                tooltip-class="text-left">
+                <i class="fas fa-check"></i> {{vm.accomplishment.verified.length}}
+            </li>
+
+            <li ng-if="vm.showPrivacy"
+                class="document-privacy-actions">
+                <i ng-click="vm.changePrivacy()"
+                   ng-if="vm.isPublic()"
+                   class="fas fa-globe-africa has-action"
+                   uib-tooltip-html="'The document is visible to everyone, click to change it'"></i>
+                <i ng-click="vm.changePrivacy()"
+                   ng-if="!vm.isPublic()"
+                   class="fas fa-lock has-action"
+                   uib-tooltip-html="'The document is visible only to scientilla users, click to change it'"></i>
+            </li>
+            <li ng-if="vm.showFavorite"
+                class="document-favorite-actions">
+                <i ng-click="vm.changeFavorite()"
+                   ng-if="vm.isFavorite()"
+                   class="fas fa-star has-action"
+                   uib-tooltip-html="'This document is one of your favorite'"></i>
+                <i ng-click="vm.changeFavorite()"
+                   ng-if="!vm.isFavorite()"
+                   class="far fa-star has-action"
+                   uib-tooltip-html="'Click here to make it favorite'"></i>
+            </li>
+        </ul>
+    </li>
+
+    <li class="document-icons"></li>
+</ul>

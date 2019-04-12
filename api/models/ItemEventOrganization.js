@@ -1,4 +1,4 @@
-/* global require, ItemEventOrganization, ResearchItem, Accomplishment, Validator */
+/* global require, ItemEventOrganization, Validator */
 'use strict';
 
 const BaseModel = require("../lib/BaseModel.js");
@@ -43,21 +43,10 @@ module.exports = _.merge({}, BaseModel, {
             return _.every(requiredFields, v => this[v]) && Validator.hasValidAuthorsStr(this) && Validator.hasValidYear(this);
         },
     },
-    getFields: function () {
+    getFields() {
         return fields.map(f => f.name);
     },
-    selectData: function (draftData) {
-        return _.pick(draftData, ItemEventOrganization.getFields());
-    },
-    async createDraft(itemData) {
-        const selectedData = ItemEventOrganization.selectData(itemData);
-        return ItemEventOrganization.create(selectedData);
-    },
-    async updateDraft(draft, itemData) {
-        const selectedData = ItemEventOrganization.selectData(itemData);
-        return ItemEventOrganization.update({id: draft.id}, selectedData);
-    },
-    async getMergedItem(itemId) {
-        return Accomplishment.findOne({id: itemId});
+    async selectData(itemData) {
+        return _.pick(itemData, ItemEventOrganization.getFields());
     }
 });

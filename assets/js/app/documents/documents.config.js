@@ -13,7 +13,7 @@
                     '<scientilla-suggested-documents research-entity="$resolve.researchEntity">' +
                     '</scientilla-suggested-documents>',
                 resolve: {
-                    researchEntity: getResearchEntity,
+                    researchEntity: getSubResearchEntity,
                     authService: getAuthService,
                     context: getContext
                 }
@@ -24,7 +24,7 @@
                     '<scientilla-verified-list research-entity="$resolve.researchEntity">' +
                     '</scientilla-verified-list>',
                 resolve: {
-                    researchEntity: getResearchEntity,
+                    researchEntity: getSubResearchEntity,
                     authService: getAuthService
                 }
             })
@@ -34,7 +34,7 @@
                     '<scientilla-drafts-list research-entity="$resolve.researchEntity">' +
                     '</scientilla-drafts-list>',
                 resolve: {
-                    researchEntity: getResearchEntity,
+                    researchEntity: getSubResearchEntity,
                     authService: getAuthService
                 }
             })
@@ -44,15 +44,15 @@
                     '<scientilla-external-documents research-entity="$resolve.researchEntity">' +
                     '</scientilla-external-documents>',
                 resolve: {
-                    researchEntity: getResearchEntity,
+                    researchEntity: getSubResearchEntity,
                     authService: getAuthService
                 }
             });
 
-        getResearchEntity.$inject = ['context'];
+        getSubResearchEntity.$inject = ['context'];
 
-        function getResearchEntity(context) {
-            return context.getResearchEntity();
+        function getSubResearchEntity(context) {
+            return context.getSubResearchEntity();
         }
 
         getAuthService.$inject = ['AuthService'];
@@ -68,39 +68,31 @@
         }
 
 
-        /*handleRequest.$inject = [
+        handleRequest.$inject = [
             '$scope',
             '$routeParams',
             'path',
             'authService',
             'context'
-        ];*/
+        ];
 
         /*
-         * This function handles the document requests declared above.
+         * This function handles the request declared above.
          * It validates the group slug (optional) and redirects if the group slug is not valid.
          */
         function handleRequest($scope, $routeParams, path, authService, context) {
-            let activeGroup = false,
-                user = authService.user,
-                redirectLocation;
+            let activeGroup;
+            const user = authService.user;
 
             if (!$routeParams.group)
-                return context.setResearchEntity(user);
+                return context.setSubResearchEntity(user);
 
-            user.administratedGroups.forEach(group => {
-                if (group.slug === $routeParams.group) {
-                    activeGroup = group;
-                }
-            });
+            activeGroup = user.administratedGroups.find(g => g.slug === $routeParams.group);
 
             if (activeGroup)
-                return context.setResearchEntity(activeGroup);
+                return context.setSubResearchEntity(activeGroup);
 
-            redirectLocation = path.locationPath();
-            redirectLocation = redirectLocation.replace(redirectLocation.match(/[/]*\/([^/]*)/)[0], '');
-
-            path.goTo(redirectLocation);
+            path.goTo('/');
         }
     }
 

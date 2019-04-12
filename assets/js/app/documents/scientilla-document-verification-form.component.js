@@ -47,7 +47,7 @@
             if (vm.document2)
                 vm.document2id = vm.document2.id;
 
-            const user = context.getResearchEntity();
+            let user;
             const DocumentService = context.getDocumentService();
             const deregisteres = [];
             const coauthorsDeregisteres = [];
@@ -61,6 +61,7 @@
                 if (user.getType() === 'group')
                     return vm.onFailure()();
 
+                user = context.getSubResearchEntity();
                 vm.verificationData.position = vm.document.getUserIndex(user);
                 vm.verificationData.synchronize = vm.document.synchronized;
                 vm.verificationData.public = true;
@@ -142,7 +143,7 @@
                 try {
                     const res = await verify(user, vm.document.id, data, vm.document2id);
                     const newUser = await UsersService.getProfile(user.id);
-                    await context.setResearchEntity(newUser);
+                    context.setSubResearchEntity(newUser);
                     originalVerificationData = angular.copy(vm.verificationData);
                     executeOnSubmit({buttonIndex: 1, data: res});
                 } catch (e) {

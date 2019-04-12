@@ -1,82 +1,60 @@
 <scientilla-backend-layout>
     <h1>Draft accomplishments</h1>
     <scientilla-filter
-        search-form-structure="vm.searchForm"
-        on-filter="vm.onFilter"
-        elements="vm.drafts"
-        empty-list-message="No drafts found">
+            search-form-structure="vm.searchForm"
+            on-filter="vm.onFilter"
+            elements="vm.drafts"
+            empty-list-message="No drafts found">
 
         <scientilla-multicheck>
             <buttons>
                 <scientilla-multicheck-button
-                    subject="Verify draft"
-                    on-click="vm.verifyDrafts">
+                        subject="Verify draft"
+                        on-click="vm.verifyDrafts">
                     <i class="fas fa-check fa-left"></i>Verify
                 </scientilla-multicheck-button>
                 <scientilla-multicheck-button
-                    subject="Delete draft"
-                    on-click="vm.deleteDrafts">
+                        subject="Delete draft"
+                        on-click="vm.deleteDrafts">
                     <i class="far fa-trash-alt fa-left"></i>Delete
                 </scientilla-multicheck-button>
             </buttons>
             <item-list>
-                <scientilla-checkable
-                    ng-repeat="a in vm.drafts"
-                    item="d"
-                    class="scientilla-checkable">
+                <scientilla-checkable ng-repeat="a in vm.drafts"
+                                      item="a"
+                                      class="scientilla-checkable">
 
-                    <scientilla-accomplishment
-                        accomplishment="d"
-                        section="vm.accomplishmentListSections.DRAFT"
-                        class="accomplishment-container"></scientilla-accomplishment>
+                    <scientilla-accomplishment accomplishment="a"
+                                               section="vm.accomplishmentListSections.DRAFT"
+                                               class="accomplishment-container"></scientilla-accomplishment>
 
                     <div class="accomplishment-row-actions">
                         <div class="btn-group" uib-dropdown>
-                            <button
-                                ng-click="vm.openEditPopup(d)"
-                                type="button"
-                                class=" btn btn-primary"
-                                title="Let you edit the accomplishment">
+                            <button ng-click="vm.edit(a)"
+                                    type="button"
+                                    class=" btn btn-primary"
+                                    title="Let you edit the accomplishment">
                                 <i class="fas fa-edit fa-left"></i>Edit
                             </button>
 
                             <button
-                                type="button"
-                                class="btn dropdown-toggle only-icon"
-                                ng-class="{'btn-warning': d.isComparable, 'btn-primary': !d.isComparable}"
-                                uib-dropdown-toggle>
+                                    type="button"
+                                    class="btn dropdown-toggle only-icon"
+                                    ng-class="{'btn-warning': a.isComparable, 'btn-primary': !a.isComparable}"
+                                    uib-dropdown-toggle>
                             </button>
 
-                            <div
-                                uib-dropdown-menu
-                                class="dropdown-menu">
+                            <div uib-dropdown-menu
+                                 class="dropdown-menu">
 
-                                <button
-                                    ng-click="vm.openEditPopup(d)"
-                                    type="button"
-                                    class="dropdown-item"
-                                    title="Let you edit the accomplishment">
-                                    <i class="fa fa-edit fa-left"></i>Edit
-                                </button>
-
-                                <button
-                                    ng-click="vm.openAccomplishmentAffiliationForm(d)"
-                                    ng-disabled="!d.authorsStr.match(accomplishmentFieldsRules.authorsStr.regex)"
-                                    title="{{ !d.authorsStr.match(accomplishmentFieldsRules.authorsStr.regex) ? 'Author string is not valid.' : '' }}"
-                                    class="dropdown-item">
-                                    <i class="fa fa-university fa-fw"></i>Edit Affiliations
-                                </button>
-
-                                <button
-                                    ng-click="vm.verifyDraft(d)"
-                                    ng-disabled="!d.isValid()"
-                                    class="dropdown-item">
+                                <button ng-click="vm.verify(a)"
+                                        ng-disabled="!vm.isValid(a)"
+                                        class="dropdown-item">
                                     <i class="fas fa-check fa-left"></i>Verify
                                 </button>
 
-                                <button
-                                    ng-click="vm.deleteDraft(d)"
-                                    class="dropdown-item">
+                                <button ng-click="vm.deleteDraft(vm.researchEntity, a)"
+                                        class="dropdown-item">
                                     <i class="fas fa-trash-alt fa-left"></i>Delete
                                 </button>
                             </div>

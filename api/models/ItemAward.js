@@ -1,4 +1,4 @@
-/* global require, ItemAward, ResearchItem, Accomplishment, Validator, Institute */
+/* global require, ItemAward, Validator, Institute */
 'use strict';
 
 const BaseModel = require("../lib/BaseModel.js");
@@ -41,25 +41,12 @@ module.exports = _.merge({}, BaseModel, {
             return _.every(requiredFields, v => this[v]) && Validator.hasValidAuthorsStr(this) && Validator.hasValidYear(this);
         },
     },
-    getFields: function () {
+    getFields() {
         return fields.map(f => f.name);
     },
-    selectData: function (draftData) {
-        return _.pick(draftData, ItemAward.getFields());
-    },
-    async createDraft(itemData) {
-        const selectedData = ItemAward.selectData(itemData);
+    async selectData(itemData) {
         if (itemData.affiliation)
-            selectedData.affiliation = await ItemAward.getFixedCollection(Institute, itemData.affiliation);
-        return ItemAward.create(selectedData);
-    },
-    async updateDraft(draft, itemData) {
-        const selectedData = ItemAward.selectData(itemData);
-        if (itemData.affiliation)
-            selectedData.affiliation = await ItemAward.getFixedCollection(Institute, itemData.affiliation);
-        return ItemAward.update({id: draft.id}, selectedData);
-    },
-    async getMergedItem(itemId) {
-        return Accomplishment.findOne({id: itemId});
+            itemData.affiliation = await ItemAward.getFixedCollection(Institute, itemData.affiliation);
+        return _.pick(itemData, ItemAward.getFields());
     }
 });

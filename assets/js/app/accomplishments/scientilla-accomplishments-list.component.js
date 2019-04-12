@@ -1,7 +1,8 @@
+/* global angular */
 (function () {
     'use strict';
 
-    angular.module('accomplishments')
+    angular.module('app')
         .component('scientillaAccomplishmentsList', {
             templateUrl: 'partials/scientilla-accomplishments-list.html',
             controller: scientillaAccomplishmentsList,
@@ -13,32 +14,26 @@
         });
 
     scientillaAccomplishmentsList.$inject = [
-        'context',
-        'researchEntityService',
+        'AccomplishmentService',
         'accomplishmentSearchForm',
         'EventsService',
         'accomplishmentListSections',
-        'AuthService'
+        'AuthService',
+        'ResearchItemService'
     ];
 
-    function scientillaAccomplishmentsList(
-        context,
-        researchEntityService,
-        accomplishmentSearchForm,
-        EventsService,
-        accomplishmentListSections,
-        AuthService
-    ) {
+    function scientillaAccomplishmentsList(AccomplishmentService,
+                                           accomplishmentSearchForm,
+                                           EventsService,
+                                           accomplishmentListSections,
+                                           AuthService,
+                                           ResearchItemService) {
         const vm = this;
 
-        const AccomplishmentService = context.getAccomplishmentService();
-
         vm.accomplishments = [];
-
-        vm.unverifyAccomplishment = AccomplishmentService.unverifyAccomplishment; // Remove?
-
+        vm.unverify = AccomplishmentService.unverify;
+        vm.isUnverifying = ResearchItemService.isUnverifying;
         vm.onFilter = onFilter;
-
         vm.searchForm = accomplishmentSearchForm;
 
         let query = {};
@@ -47,8 +42,9 @@
             vm.editable = vm.section === accomplishmentListSections.VERIFIED && !AuthService.user.isViewOnly();
 
             EventsService.subscribeAll(vm, [
-                EventsService.ACCOMPLISHMENT_DRAFT_VERIFIED,
-                EventsService.ACCOMPLISHMENT_DRAFT_UNVERIFIED // Remove?
+                EventsService.RESEARCH_ITEM_DRAFT_VERIFIED,
+                EventsService.RESEARCH_ITEM_VERIFIED,
+                EventsService.RESEARCH_ITEM_UNVERIFIED
             ], updateList);
         };
 
@@ -57,17 +53,15 @@
         };
 
         function updateList() {
-            onFilter(query);
+            return onFilter(query);
         }
 
-        function onFilter(q) {
+        /* jshint ignore:start */
+        async function onFilter(q) {
             query = q;
-
-            return researchEntityService.accomplishment.getAccomplishments(vm.researchEntity, query)
-                .then(function (accomplishments) {
-                    vm.accomplishments = accomplishments;
-                });
+            vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, query);
         }
+        /* jshint ignore:end */
     }
 
 })();

@@ -17,6 +17,24 @@
                     context: getContext
                 }
             })
+            .when("/:group?/accomplishments/verified", {
+                controller: handleRequest,
+                template: params => '' +
+                    '<scientilla-accomplishment-verified-list research-entity="$resolve.researchEntity">' +
+                    '</scientilla-accomplishment-verified-list>',
+                resolve: {
+                    authService: getAuthService
+                }
+            })
+            .when("/:group?/accomplishments/drafts", {
+                controller: handleRequest,
+                template: params => '' +
+                    '<scientilla-accomplishment-drafts-list>' +
+                    '</scientilla-accomplishment-drafts-list>',
+                resolve: {
+                    authService: getAuthService
+                }
+            })
             .otherwise({
                 redirectTo: "/"
             });
@@ -156,20 +174,16 @@
      * It validates the group slug (optional) and redirects if the group slug is not valid.
      */
     function handleRequest($scope, $routeParams, path, authService, context) {
-        let activeGroup = false,
-            user = authService.user;
+        let activeGroup;
+        const user = authService.user;
 
         if (!$routeParams.group)
-            return context.setResearchEntity(user);
+            return context.setSubResearchEntity(user);
 
-        user.administratedGroups.forEach(group => {
-            if (group.slug === $routeParams.group) {
-                activeGroup = group;
-            }
-        });
+        activeGroup = user.administratedGroups.find(g => g.slug === $routeParams.group);
 
         if (activeGroup)
-            return context.setResearchEntity(activeGroup);
+            return context.setSubResearchEntity(activeGroup);
 
         path.goTo('/');
     }

@@ -94,6 +94,7 @@ module.exports.routes = {
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/:itemId']: 'ResearchEntity.updateDraft',
     ['delete ' + apiPrfx + '/researchentities/:researchEntityId/researchItemDrafts/:itemId']: 'ResearchEntity.deleteDraft',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/verified']: 'ResearchEntity.verify',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/verified']: 'ResearchEntity.verifyAll',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/unverified']: 'ResearchEntity.unverify',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/public']: 'ResearchEntity.setPublic',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/favorite']: 'ResearchEntity.setFavorite',

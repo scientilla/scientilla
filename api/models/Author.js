@@ -1,4 +1,4 @@
-/* global Author, Affiliation, Institute*/
+/* global Author, Affiliation, Institute, ResearchEntity*/
 "use strict";
 
 const _ = require('lodash');
@@ -165,6 +165,42 @@ module.exports = _.merge({}, BaseModel, {
         }
         return cleanAuthorsData;
 
+    },
+    async verify(researchEntity, researchItem, verify, verificationData) {
+        const authors = await Author.find({researchItem: researchItem.id});
+        const authorData = await Author.getAuthorData(researchEntity, authors, verificationData);
+
+        if (!Number.isInteger(authorData.position))
+            throw {researchItem: researchItem, success: false, message: 'Author position or alias not specified'};
+
+        const author = await Author.findOne({
+            researchItem: researchItem.id,
+            position: authorData.position
+        });
+
+        if (!author) throw {researchItem: researchItem, success: false, message: 'Critcal error: author not found'};
+        await Author.update({id: author.id}, {verify: verify.id});
+    },
+    async getAuthorData(researchEntity, authors, verificationData) {
+        if (researchEntity.isGroup())
+            return {};
+
+        const aliases = (await ResearchEntity.getAliases(researchEntity)).map(a=>a.toLocaleLowerCase());
+        let position;
+
+        if (verificationData && Number.isInteger(verificationData.position))
+            position = verificationData.position;
+        else {
+            const author = authors.find(a => aliases.includes(a.authorStr.toLocaleLowerCase()));
+            if (!author) return {};
+            position = author.position
+        }
+
+        const author = authors.find(a => a.position === position);
+        if (author.authorStr && !aliases.includes(author.authorStr.toLocaleLowerCase()))
+            await ResearchEntity.addAlias(researchEntity, author.authorStr);
+
+        return Object.assign({}, author, Author.filterFields(verificationData));
     }
 });
 

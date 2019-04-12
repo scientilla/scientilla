@@ -31,15 +31,16 @@
         <li ng-if="!vm.user.isViewOnly()">
             <label class="label-add-accomplishment">
                 Accomplishments
-                <scientilla-button-new-accomplishment
-                        class="button-new-accomplishment-container"></scientilla-button-new-accomplishment>
+                <scientilla-button-new-research-item
+                        category="accomplishment"
+                        class="button-new-research-entity-container"></scientilla-button-new-research-item>
             </label>
             <div class="list-group">
                 <a ng-href="{{ vm.getUrl('accomplishments/verified') }}"
-                   ng-class="{active: vm.isActive('/accomplishments/verified')}"
+                   ng-class="{active: vm.isActive('/accomplishments/verified', true)}"
                    class="list-group-item list-group-item-action">Verified</a>
                 <a ng-href="{{ vm.getUrl('accomplishments/drafts') }}"
-                   ng-class="{active: vm.isActive('/accomplishments/drafts')}"
+                   ng-class="{active: vm.isActive('/accomplishments/drafts', true)}"
                    class="list-group-item list-group-item-action">Drafts</a>
             </div>
         </li>

@@ -1,4 +1,4 @@
-/* global ItemAward, ItemEditor, ItemEventOrganization  */
+/* global ResearchItemTypes, Accomplishment  */
 
 module.exports = {
     tableName: 'research_item_type',
@@ -11,14 +11,15 @@ module.exports = {
         },
         type: 'STRING',
     },
-    getSubResearchItemModel(researchItemTypeKey) {
+    getResearchItemChildModel(type) {
         const researchItemModels = {
-            'award_achievement': ItemAward,
-            'editor': ItemEditor,
-            'organized_event': ItemEventOrganization,
+            'award_achievement': Accomplishment,
+            'editor': Accomplishment,
+            'organized_event': Accomplishment,
         };
 
-        return researchItemModels[researchItemTypeKey];
+        const researchItemType = ResearchItemTypes.getType(type);
+        return researchItemModels[researchItemType.key];
     }
 };
 

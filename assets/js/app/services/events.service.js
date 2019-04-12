@@ -37,13 +37,13 @@
 
             CONTEXT_CHANGE: 'context.change',
 
-            ACCOMPLISHMENT_VERIFIED: 'accomplishment.verified',
+            RESEARCH_ITEM_VERIFIED: 'accomplishment.verified',
+            RESEARCH_ITEM_UNVERIFIED: 'accomplishment.unverified',
 
-            ACCOMPLISHMENT_DRAFT_DELETED: 'accomplishment.draft.deleted',
-            ACCOMPLISHMENT_DRAFT_UPDATED: 'accomplishment.draft.updated',
-            ACCOMPLISHMENT_DRAFT_CREATED: 'accomplishment.draft.created',
-            ACCOMPLISHMENT_DRAFT_VERIFIED: 'accomplishment.draft.verified',
-            ACCOMPLISHMENT_DRAFT_UNVERIFIED: 'accomplishment.draft.unverified',
+            RESEARCH_ITEM_DRAFT_DELETED: 'accomplishment.draft.deleted',
+            RESEARCH_ITEM_DRAFT_UPDATED: 'accomplishment.draft.updated',
+            RESEARCH_ITEM_DRAFT_CREATED: 'accomplishment.draft.created',
+            RESEARCH_ITEM_DRAFT_VERIFIED: 'accomplishment.draft.verified',
         };
 
         service.publish = function (event, args) {

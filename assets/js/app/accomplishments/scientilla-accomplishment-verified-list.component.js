@@ -1,26 +1,29 @@
+/* global angular */
 (function () {
     'use strict';
 
-    angular.module('accomplishments')
+    angular.module('app')
         .component('scientillaAccomplishmentVerifiedList', {
             templateUrl: 'partials/scientilla-accomplishment-verified-list.html',
-            controller: scientillaAccomplishmentVerifiedList,
+            controller,
             controllerAs: 'vm',
-            bindings: {
-                researchEntity: '<'
-            }
+            bindings: {}
         });
 
-    scientillaAccomplishmentVerifiedList.$inject = [
+    controller.$inject = [
+        'context',
         'accomplishmentListSections'
     ];
 
-    function scientillaAccomplishmentVerifiedList(accomplishmentListSections) {
+    function controller(context, accomplishmentListSections) {
         const vm = this;
         vm.accomplishmentListSections = accomplishmentListSections;
-
-        vm.$onInit = function () {
+        /* jshint ignore:start */
+        vm.$onInit = async function () {
+            vm.researchEntity = await context.getResearchEntity();
         };
+        /* jshint ignore:end */
+
 
         vm.$onDestroy = function () {
         };

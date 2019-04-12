@@ -38,7 +38,7 @@
                     <div class="document-row-actions">
                         <div class="btn-group" uib-dropdown>
                             <button
-                                ng-click="vm.openEditPopup(d)"
+                                ng-click="vm.edit(d)"
                                 ng-disabled="d.synchronized"
                                 ng-if="!d.isComparable"
                                 type="button"
@@ -67,7 +67,7 @@
                                 class="dropdown-menu">
 
                                 <button
-                                    ng-click="vm.openEditPopup(d)"
+                                    ng-click="vm.edit(d)"
                                     ng-if="d.duplicates.length"
                                     type="button"
                                     ng-disabled="d.synchronized"

@@ -10,10 +10,7 @@
         'DocumentKinds',
         'documentFieldsRules',
         'documentOrigins',
-        'ValidateService',
-        'AccomplishmentKinds',
-        'accomplishmentFieldsRules',
-        'accomplishmentOrigins'
+        'ValidateService'
     ];
 
     function Prototyper(
@@ -22,10 +19,7 @@
         DocumentKinds,
         documentFieldsRules,
         documentOrigins,
-        ValidateService,
-        AccomplishmentKinds,
-        accomplishmentFieldsRules,
-        accomplishmentOrigins
+        ValidateService
     ) {
         const service = {
             toUserModel: toUserModel,
@@ -82,19 +76,6 @@
                     origin: documentOrigins.SCIENTILLA
                 };
                 return documentPrototype.create(documentData);
-            },
-            getNewAccomplishment: function (type) {
-                // Create object for a new accomplishment
-                var accomplishmentData = {
-                    draftCreator: this.id,
-                    kind: AccomplishmentKinds.DRAFT,
-                    type: type.key,
-                    sourceType: type.defaultSource,
-                    origin: accomplishmentOrigins.SCIENTILLA
-                };
-
-                // return accomplishment object
-                return accomplishmentPrototype.create(accomplishmentData);
             },
             getProfileUrl: function () {
                 return '/users/' + this.id;
@@ -422,128 +403,6 @@
                     return 0;
                 });
                 return _.uniqBy(duplicates, 'duplicate');
-            }
-        };
-
-        const accomplishmentPrototype = {
-            UNKNOWN_ACCOMPLISHMENT: 0,
-            USER_ACCOMPLISHMENT: 1,
-            GROUP_ACCOMPLISHMENT: 2,
-            labels: [],
-            fields: [
-                'authorsStr',
-                'title',
-                'year',
-                'yearFrom',
-                'yearTo',
-                'medium',
-                'affiliations',
-                'issuer',
-                'description',
-                'type',
-                'sourceType',
-                'origin'
-            ],
-            create: function (accomplishmentData) {
-
-                // Create array of unique values from the given data
-                var fields = _.union(['kind', 'draftCreator', 'draftGroupCreator'], accomplishmentPrototype.fields);
-
-                // Create object with picked fields
-                var accomplishment = _.pick(accomplishmentData, fields);
-
-                // Extend object with prototype object;
-                _.extend(accomplishment, accomplishmentPrototype);
-
-                // Return accomplishment object
-                return accomplishment;
-            },
-            isValid: function () {
-                const requiredFields = [
-                    'authorsStr'
-                ];
-
-                return _.every(requiredFields, v => this[v]) &&
-                    _.every(documentFieldsRules, (rule, k) => {
-                        if (!this[k]) return rule.allowNull;
-                        return rule.regex.test(this[k]);
-                    });
-            },
-            validate: function (field = false) {
-                let accomplishment = this;
-                let requiredFields = [];
-
-                const defaultRequiredFields = [
-                    'authorsStr',
-                ];
-
-                switch(this.type) {
-                    case 'editor':
-                        requiredFields = _.union(['sourceType', 'source', 'yearFrom', 'yearTo'], defaultRequiredFields);
-                        break;
-                    case 'award':
-                        requiredFields = _.union(['title', 'year'], defaultRequiredFields);
-                        break;
-                    case 'event':
-                        requiredFields = _.union(['title', 'year'], defaultRequiredFields);
-                        break;
-                    default:
-                        break;
-                }
-
-                return ValidateService.validate(accomplishment, field, requiredFields, accomplishmentFieldsRules);
-            },
-            getType: function () {
-                if (!!this.owner)
-                    return this.USER_ACCOMPLISHMENT;
-                else if (!!this.groupOwner)
-                    return this.GROUP_ACCOMPLISHMENT;
-                else
-                    return this.UNKNOWN_ACCOMPLISHMENT;
-            },
-            getDisplayName: function () {
-                return this.getDisplayName();
-            },
-            copyAccomplishment: function (accomplishment, creator) {
-                var excludedFields = ['kind', 'draftCreator', 'draftGroupCreator'];
-
-                var accomplishmentTypeObj = {
-                    key: accomplishment.type,
-                    defaultSource: accomplishment.sourceType
-                };
-
-                var newDoc = creator.getNewAccomplishment(accomplishmentTypeObj);
-
-                _.forEach(accomplishmentPrototype.fields, function (key) {
-                    if (_.includes(excludedFields, key))
-                        return;
-
-                    newAccomplishment[key] = accomplishment[key];
-                });
-
-                return newDoc;
-            },
-            addLabel: function (label) {
-                if (!this.hasLabel(label))
-                    this.labels.push(label);
-            },
-            removeLabel: function (label) {
-                _.remove(this.labels, function (t) {
-                    return t === label;
-                });
-            },
-            hasLabel: function (label) {
-                return this.labels.includes(label);
-            },
-            isUnverifying: function () {
-                return this.hasLabel(AccomplishmentLabels.UVERIFYING);
-            },
-            isDraft: function () {
-                return this.kind === AccomplishmentKinds.DRAFT;
-            },
-            isVerified: function (researchEntity) {
-                const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
-                return this[f].some(re => re.id === researchEntity.id);
             }
         };
 

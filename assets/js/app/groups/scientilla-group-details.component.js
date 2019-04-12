@@ -22,7 +22,7 @@
     function GroupDetailsController(GroupsService, context, AuthService, $scope, $controller) {
         const vm = this;
         angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
-        vm.researchEntity = context.getResearchEntity();
+        vm.subResearchEntity = context.getSubResearchEntity();
         vm.loggedUser = AuthService.user;
         vm.refreshGroup = refreshGroup;
 

@@ -25,7 +25,12 @@ module.exports = {
         const researchEntityId = +req.params.researchEntityId;
         const itemId = +req.params.itemId;
         const verificationData = req.body;
-        res.halt(Verify.verify(researchEntityId, itemId, verificationData));
+        res.halt(Verify.verify(itemId, researchEntityId, verificationData));
+    },
+    verifyAll(req, res, next) {
+        const researchEntityId = +req.params.researchEntityId;
+        const itemIds = req.param('itemIds');
+        res.halt(ResearchItem.blukAction(Verify.verify, itemIds, [researchEntityId]));
     },
     unverify(req, res, next) {
         const researchEntityId = +req.params.researchEntityId;

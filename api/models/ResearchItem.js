@@ -40,6 +40,11 @@ module.exports = _.merge({}, BaseModel, {
             ];
             return _.every(requiredFields, v => this[v]);
         },
+        async isVerificable() {
+            const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(this.type);
+            const childResearchItem = await ResearchItemChildModel.findOne({id: this.id});
+            return childResearchItem.isValid();
+        },
         getType: function () {
             if (!this.type)
                 return undefined;
@@ -53,62 +58,83 @@ module.exports = _.merge({}, BaseModel, {
     async createDraft(researchEntityId, itemData, newAuthorsData = []) {
         const researchItemType = ResearchItemTypes.getType(itemData.type);
         if (!researchItemType)
-            throw 'Invalid item type';
+            throw {success: false, researchItem: itemData, message: 'Invalid item type'};
 
-        let subItem;
-        const item = await ResearchItem.create({
+        const researchItem = await ResearchItem.create({
             type: researchItemType.id,
             kind: ResearchItemKinds.DRAFT,
             draftCreator: researchEntityId
         });
 
-        const subResearchItemModel = ResearchItemType.getSubResearchItemModel(researchItemType.key);
+        const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(researchItemType.key);
         try {
-            subItem = await subResearchItemModel.createDraft(Object.assign({}, itemData, {researchItem: item.id}));
+            itemData.researchItem = researchItem.id;
+            await ResearchItemChildModel.createDraft(itemData);
         } catch (e) {
-            await ResearchItem.destroy({id: item.id});
-            return;
+            await ResearchItem.destroy({id: researchItem.id});
+            throw {success: false, researchItem: itemData, message: 'Item not created'};
         }
 
-        await Author.updateAuthors(item.id, subItem.authorsStr, newAuthorsData);
+        if (ResearchItemChildModel.hasAuthors())
+            await Author.updateAuthors(researchItem.id, itemData.authorsStr, newAuthorsData);
 
-        return await subResearchItemModel.getMergedItem(item.id);
+        const newDraft = await ResearchItemChildModel.findOne({id: researchItem.id});
+        return {success: true, researchItem: newDraft, message: 'Item draft created'};
     },
     async updateDraft(researchEntityId, draftId, itemData) {
         const researchItem = await ResearchItem.findOne({id: draftId});
-        if (!researchItem) throw 'Item not found';
-        if (researchItem.draftCreator !== researchEntityId) throw 'Item not found';
-        if (researchItem.kind !== ResearchItemKinds.DRAFT) throw 'The item is not a draft';
+        if (!researchItem)
+            throw {success: false, researchItem: itemData, message: 'Item not found'};
+        if (researchItem.draftCreator !== researchEntityId)
+            throw {success: false, researchItem: itemData, message: 'Item not found'};
+        if (researchItem.kind !== ResearchItemKinds.DRAFT)
+            throw {success: false, researchItem: itemData, message: 'The item is not a draft'};
 
-        const researchItemType = ResearchItemTypes.getType(itemData.type);
-        if (!researchItemType) throw 'Invalid item type';
+        const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(itemData.type);
+        if (!ResearchItemChildModel)
+            throw {success: false, researchItem: itemData, message: 'Invalid item type'};
 
-        const researchItemModel = ResearchItemType.getSubResearchItemModel(researchItemType.key);
-        const currentSubResearchItemDraft = await researchItemModel.findOne({researchItem: researchItem.id});
-        const updatedSubResearchItemDraft = (await researchItemModel.updateDraft(currentSubResearchItemDraft, itemData))[0];
-        const authors = await Author.find({researchItem: researchItem.id});
-        const authorsData = Author.getMatchingAuthorsData(updatedSubResearchItemDraft.authorsStr, authors);
-        await Author.updateAuthors(researchItem.id, updatedSubResearchItemDraft.authorsStr, authorsData);
+        await ResearchItemChildModel.updateDraft(researchItem.id, itemData);
+        if (ResearchItemChildModel.hasAuthors()) {
+            const authorsStr = itemData.authorsStr ?
+                itemData.authorsStr :
+                (await ResearchItemChildModel.findOne({id: researchItem.id})).authorsStr;
+            const authors = await Author.find({researchItem: researchItem.id});
+            const authorsData = Author.getMatchingAuthorsData(authorsStr, authors);
+            await Author.updateAuthors(researchItem.id, authorsStr, authorsData);
+        }
+
+        const newDraft = await ResearchItemChildModel.findOne({id: researchItem.id});
+        return {success: true, researchItem: newDraft, message: 'Item draft updated'};
     },
     async deleteDraft(draftId) {
         const researchItem = await ResearchItem.findOne({id: draftId});
-
-        if (!researchItem) throw 'Item not found';
-        if (researchItem.kind !== ResearchItemKinds.DRAFT) throw 'The item is not a draft';
+        if (!researchItem)
+            throw {success: false, researchItem: draftId, message: 'Item not found'};
+        if (researchItem.kind !== ResearchItemKinds.DRAFT)
+            throw {success: false, researchItem: researchItem, message: 'The item is not a draft'};
 
         await ResearchItem.destroy({id: draftId});
+        return {success: true, researchItem: researchItem, message: 'Item draft deleted'};
     },
     async copyResearchItem(researchItemId, researchEntityId) {
         const itemToCopy = await ResearchItem.findOne({id: researchItemId}).populate(['type', 'authors']);
-        if (!itemToCopy) throw 'Item not found';
+        if (!itemToCopy)
+            throw {success: false, researchItem: researchItemId, message: 'Item not found'};
 
-        const researchItemModel = ResearchItemType.getSubResearchItemModel(itemToCopy.type.key);
-        const subResearchItemToCopy = await researchItemModel.findOne({researchItem: researchItemId});
-        if (!subResearchItemToCopy) throw 'Item not found';
+        const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(itemToCopy.type.key);
+        const researchItem = await ResearchItemChildModel.findOne({id: researchItemId});
+        if (!researchItem)
+            throw {success: false, researchItem: researchItem, message: 'Item not found'};
 
         return await ResearchItem.createDraft(researchEntityId,
-            Object.assign({}, itemToCopy, subResearchItemToCopy),
+            Object.assign({}, itemToCopy, researchItem),
             itemToCopy.authors);
+    },
+    async getVerifiedCopy(researchItem) {
+        const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(researchItem.type);
+        const copy = await ResearchItemChildModel.getVerifiedCopy(researchItem);
+        return copy ? await ResearchItem.findOne({id: copy.id}) : false;
     },
     async getItem(subItem) {
         return await ResearchItem.findOne({id: subItem.item});

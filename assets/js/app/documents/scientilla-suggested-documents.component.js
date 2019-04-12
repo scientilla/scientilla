@@ -30,7 +30,7 @@
         const vm = this;
 
         const DocumentsService = context.getDocumentService();
-        const researchEntity = context.getResearchEntity();
+        const subResearchEntity = context.getSubResearchEntity();
 
         vm.copyDocument = DocumentsService.copyDocument;
         vm.verifyDocument = DocumentsService.verifyDocument;
@@ -68,10 +68,10 @@
                 EventsService.DOCUMENT_COMPARE
             ], updateList);
 
-            if (researchEntity.getType() === 'user' && !researchEntity.alreadyOpenedSuggested) {
+            if (subResearchEntity.getType() === 'user' && !subResearchEntity.alreadyOpenedSuggested) {
                 addAliasModal();
-                researchEntity.alreadyOpenedSuggested = true;
-                researchEntity.save();
+                subResearchEntity.alreadyOpenedSuggested = true;
+                subResearchEntity.save();
             }
         };
 
@@ -97,9 +97,9 @@
             query = q;
 
             if (!discarded)
-                return researchEntityService.getSuggestedDocuments(vm.researchEntity, query);
+                return researchEntityService.getSuggestedDocuments(subResearchEntity, query);
             else
-                return researchEntityService.getDiscardedDocuments(vm.researchEntity, query);
+                return researchEntityService.getDiscardedDocuments(subResearchEntity, query);
         }
 
         function addAliasModal() {

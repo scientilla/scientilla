@@ -21,7 +21,7 @@
                         <span
                             ng-if="!vm.user.administratedGroups.length"
                             class="btn btn-link">
-                            {{vm.researchEntity.getDisplayName()}}
+                            {{vm.subResearchEntity.getDisplayName()}}
                         </span>
                         <button
                             ng-if="vm.user.administratedGroups.length"
@@ -31,7 +31,7 @@
                             uib-dropdown-toggle
                             ng-disabled="disabled">
                             <i class="fas fa-user fa-left"></i>
-                            {{ vm.researchEntity.getDisplayName() }}
+                            {{ vm.subResearchEntity.getDisplayName() }}
                         </button>
                         <ul
                             uib-dropdown-menu

@@ -1,46 +1,43 @@
+/* global angular */
 (function () {
     "use strict";
 
     angular
-        .module('accomplishments')
+        .module('app')
         .component('scientillaAccomplishmentForm', {
             templateUrl: 'partials/scientilla-accomplishment-form.html',
             controller: scientillaAccomplishmentFormController,
             controllerAs: 'vm',
             bindings: {
                 accomplishment: "<",
-                researchEntity: "<",
                 closeFn: "&"
             }
         });
 
     scientillaAccomplishmentFormController.$inject = [
-        '$rootScope',
+        'AccomplishmentService',
         'EventsService',
         'accomplishmentFieldsRules',
+        'accomplishmentEventTypes',
         '$scope',
         '$timeout',
-        'AccomplishmentTypesService',
+        'ResearchItemTypesService',
         'context',
         'Restangular',
         'ModalService'
     ];
 
-    function scientillaAccomplishmentFormController(
-        $rootScope,
-        EventsService,
-        accomplishmentFieldsRules,
-        $scope,
-        $timeout,
-        AccomplishmentTypesService,
-        context,
-        Restangular,
-        ModalService
-    ) {
+    function scientillaAccomplishmentFormController(AccomplishmentService,
+                                                    EventsService,
+                                                    accomplishmentFieldsRules,
+                                                    accomplishmentEventTypes,
+                                                    $scope,
+                                                    $timeout,
+                                                    ResearchItemTypesService,
+                                                    context,
+                                                    Restangular,
+                                                    ModalService) {
         const vm = this;
-
-        const defaultSourceTypes = AccomplishmentTypesService.getSourceTypes();
-        const defaultTypes = AccomplishmentTypesService.getTypes();
 
         vm.saveStatus = saveStatus();
         vm.verifyStatus = verifyStatus();
@@ -48,16 +45,14 @@
         vm.cancel = cancel;
         vm.verify = verify;
         vm.save = save;
-        vm.types = defaultTypes;
         vm.getSources = getSources;
-        vm.checkSource = checkSource;
-        vm.openSourceTypeModal = openSourceTypeModal;
+        vm.openSourceFormModal = openSourceFormModal;
         vm.fieldsRules = accomplishmentFieldsRules;
-        vm.sourceLabel = _.get(_.find(defaultSourceTypes, {id: vm.accomplishment.sourceType}), 'label');
+        vm.eventTypes = vm.accomplishment.eventType ?
+            accomplishmentEventTypes :
+            [{key: null, label: 'Select'}].concat(accomplishmentEventTypes);
 
         let debounceTimeout = null;
-        const debounceTime = 2000;
-        const accomplishmentService = context.getAccomplishmentService();
 
         vm.newSource = {};
 
@@ -69,54 +64,29 @@
         vm.checkValidation = checkValidation;
         vm.fieldValueHasChanged = fieldValueHasChanged;
 
-        vm.getInstitutesQuery = getInstitutesQuery;
-        vm.getInstitutesFilter = getInstitutesFilter;
-
         let timeout;
 
         const delay = 500;
 
-        vm.$onInit = function () {
+        /* jshint ignore:start */
+        vm.$onInit = async function () {
+            vm.researchEntity = await context.getResearchEntity();
+            vm.types = await ResearchItemTypesService.getTypes('accomplishment');
 
-            watchSourceType();
-
-            watchType();
-
-            $scope.$watch('form.$pristine', function (formUntouched) {
-                if (!formUntouched) {
-                    vm.unsavedData = true;
-                } else {
-                    vm.unsavedData = false;
-                }
-            });
-
-            $scope.$on('modal.closing', function(event, reason) {
-                cancel(event);
-            });
+            $scope.$watch('form.$pristine', formUntouched => vm.unsavedData = !formUntouched);
+            $scope.$on('modal.closing', (event, reason) => cancel(event));
 
             if (vm.accomplishment.id) {
                 vm.errorText = '';
-                vm.errors = vm.accomplishment.validate();
+                vm.errors = AccomplishmentService.validate(vm.accomplishment);
 
-                if (Object.keys(vm.errors).length > 0) {
-                    vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
+                if (!_.isEmpty(vm.errors)) {
+                    vm.errorText = 'Please fix the warnings before verifying!';
                 }
             }
 
-            if (!vm.accomplishment.affiliations) {
-                vm.accomplishment.affiliations = [];
-            }
         };
 
-        function getInstitutesQuery(searchText) {
-            const qs = {where: {name: {contains: searchText}, parentId: null}};
-            const model = 'institutes';
-            return {model: model, qs: qs};
-        }
-
-        function getInstitutesFilter() {
-            return vm.accomplishment.affiliations;
-        }
 
         function resetErrors() {
             vm.errors = {};
@@ -124,66 +94,19 @@
         }
 
         function checkValidation(field = false) {
-            if (field) {
-                vm.errors[field] = vm.accomplishment.validate(field);
+            vm.errors[field] = AccomplishmentService.validate(vm.accomplishment, field);
 
-                if (typeof vm.errors[field] === 'undefined') {
-                    delete vm.errors[field];
-                }
-            } else {
-                vm.errors = vm.accomplishment.validate();
-            }
+            if (!vm.errors[field])
+                delete vm.errors[field];
 
-            if (Object.keys(vm.errors).length > 0) {
-                vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
-            } else {
-                vm.errorText = '';
-            }
+            vm.errorText = !_.isEmpty(vm.errors) ? 'Please fix the warnings before verifying!' : '';
         }
 
+        /* jshint ignore:end */
         function fieldValueHasChanged(field = false) {
             $timeout.cancel(timeout);
 
-            timeout = $timeout(function () {
-                checkValidation(field);
-            }, delay);
-        }
-
-        function watchSourceType() {
-            // Watch if the source type changes
-            $scope.$watch('vm.accomplishment.sourceType', (newValue, oldValue) => {
-                // Exit when the new and old value are equal
-                if (newValue === oldValue) {
-                    return;
-                }
-
-                // Exit when the new value is empty
-                if (!newValue) {
-                    vm.sourceLabel = '';
-                    return;
-                }
-
-                // Find the label of the selected source type
-                vm.sourceLabel = _.find(defaultSourceTypes, {id: newValue}).label;
-
-                // Reset the accomplishment source of the type of the source is not equal to the sourceType
-                if (vm.accomplishment.source && vm.accomplishment.source.type !== vm.accomplishment.sourceType) {
-                    vm.accomplishment.source = null;
-                }
-            });
-        }
-
-        function watchType() {
-            // Watch if the accomplishment type changes
-            $scope.$watch('vm.accomplishment.type', type => {
-
-                // Copy the default source types or use an empty object
-                if (type === 'editor') {
-                    vm.sourceTypes = defaultSourceTypes;
-                } else {
-                    vm.sourceTypes = {};
-                }
-            });
+            timeout = $timeout(() => checkValidation(field), delay);
         }
 
         function saveStatus() {
@@ -193,18 +116,18 @@
 
                     vm.mode = 'draft';
 
-                    switch(true) {
-                        case state === 'ready to save':
+                    switch (state) {
+                        case 'ready to save':
                             this.message = 'Save draft';
                             break;
-                        case state === 'saving':
+                        case 'saving':
                             this.message = 'Saving draft';
                             break;
-                        case state === 'saved':
+                        case 'saved':
                             this.message = 'Draft is saved!';
                             $scope.form.$setPristine();
                             break;
-                        case state === 'failed':
+                        case 'failed':
                             this.message = 'Failed to save draft!';
                             $scope.form.$setPristine();
                             break;
@@ -222,18 +145,18 @@
 
                     vm.mode = 'verify';
 
-                    switch(true) {
-                        case state === 'ready to verify':
+                    switch (state) {
+                        case 'ready to verify':
                             this.message = 'Save & verify';
                             break;
-                        case state === 'verifying':
+                        case 'verifying':
                             this.message = 'Verifying draft';
                             break;
-                        case state === 'verified':
+                        case 'verified':
                             this.message = 'Draft is Verified!';
                             $scope.form.$setPristine();
                             break;
-                        case state === 'failed':
+                        case 'failed':
                             this.message = 'Failed to verify!';
                             $scope.form.$setPristine();
                             break;
@@ -247,61 +170,37 @@
         function save() {
             vm.errors = {};
             vm.errorText = '';
-            processSave(true);
+            return processSave(true);
         }
 
-        function processSave(updateState = false) {
-            if (updateState) {
+        /* jshint ignore:start */
+        async function processSave(updateState = false) {
+            if (updateState)
                 vm.saveStatus.setState('saving');
-            }
 
             vm.errorText = '';
-            vm.errors = vm.accomplishment.validate();
+            vm.errors = AccomplishmentService.validate(vm.accomplishment);
 
-            if (Object.keys(vm.errors).length > 0) {
+            if (!_.isEmpty(vm.errors))
                 vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
+
+            const filteredAccomplishment = AccomplishmentService.filterFields(vm.accomplishment);
+
+            if (filteredAccomplishment.id)
+                await AccomplishmentService.update(vm.researchEntity, filteredAccomplishment);
+            else {
+                const draft = await AccomplishmentService.create(vm.researchEntity, filteredAccomplishment);
+                vm.accomplishment.id = draft.id;
             }
 
-            if (vm.accomplishment.id) {
-                return vm.accomplishment.save().then(() => {
-                    if (updateState) {
-                        vm.saveStatus.setState('saved');
-                    }
-
-                    EventsService.publish(EventsService.ACCOMPLISHMENT_DRAFT_UPDATED, vm.accomplishment);
-
-                    vm.unsavedData = false;
-
-                    if (updateState) {
-                        $timeout(function() {
-                            vm.saveStatus.setState('ready to save');
-                        }, 1000);
-                    }
-
-                    return vm.accomplishment;
-                });
-            } else {
-                return accomplishmentService.createDraft(vm.accomplishment)
-                    .then(draft => {
-                        vm.accomplishment = draft;
-                        if (updateState) {
-                            vm.saveStatus.setState('saved');
-                        }
-
-                        EventsService.publish(EventsService.ACCOMPLISHMENT_DRAFT_UPDATED, vm.accomplishment);
-
-                        vm.unsavedData = false;
-
-                        if (updateState) {
-                            $timeout(function() {
-                                vm.saveStatus.setState('ready to save');
-                            }, 1000);
-                        }
-
-                        return vm.accomplishment;
-                    });
+            if (updateState) {
+                vm.saveStatus.setState('saved');
+                $timeout(() => vm.saveStatus.setState('ready to save'), 1000);
             }
+
+            vm.unsavedData = false;
         }
+
 
         function cancel(event = false) {
             if (vm.unsavedData) {
@@ -312,16 +211,16 @@
                 // Show the unsaved data modal
                 ModalService
                     .multipleChoiceConfirm('Unsaved data',
-                        `There is unsaved data in the form. Do you want to go back and save this data?`,
+                        `You have unsaved changes. Do you want to close the form?`,
                         ['Yes', 'No'],
                         false)
                     .then(function (buttonIndex) {
                         switch (buttonIndex) {
                             case 0:
-                                break;
-                            case 1:
                                 vm.unsavedData = false;
                                 close();
+                                break;
+                            case 1:
                                 break;
                             default:
                                 break;
@@ -336,69 +235,58 @@
                     processSave();
                 }
 
-                if (!event){
+                if (!event) {
                     close();
                 }
             }
         }
 
         function getSources(searchText) {
-            const qs = {where: {title: {contains: searchText}, type: vm.accomplishment.type}};
+            const qs = {where: {title: {contains: searchText}}};
             return Restangular.all('sources').getList(qs);
         }
 
-        function checkSource($event) {
-            if (!$event.target.value) {
-                vm.accomplishment.source = null;
-            }
-
-            checkValidation('source');
-        }
-
-        function openSourceTypeModal($event) {
+        async function openSourceFormModal($event) {
 
             // Stop event from bubbling up to parents
             $event.stopPropagation();
 
             // Subscribe to custom event SOURCE_CREATED, execute following function when event is fired
-            EventsService.subscribe(vm, EventsService.SOURCE_CREATED, function(event, source) {
-                vm.accomplishment.source = source;
+            EventsService.subscribe(vm, EventsService.SOURCE_CREATED, function (event, source) {
+                vm.accomplishment.medium = source;
                 vm.getSources(source.title);
+                vm.unsavedData = true;
 
-                vm.errors = vm.accomplishment.validate();
-
-                checkValidation();
+                vm.errors = AccomplishmentService.validate(vm.accomplishment);
+                return checkValidation();
             });
 
             // Open source type modal
-            ModalService.openSourceTypeModal(vm.accomplishment);
+            ModalService.openSourceTypeModal();
         }
 
-        function verify() {
+        async function verify() {
             vm.errorText = '';
             vm.errors = {};
             vm.verifyStatus.setState('verifying');
 
-            $timeout(function() {
-                vm.errors = vm.accomplishment.validate();
+            $timeout(async function () {
+                vm.errors = await AccomplishmentService.validate(vm.accomplishment);
+
                 if (Object.keys(vm.errors).length === 0) {
                     // Is valid
-                    processSave()
-                        .then(() => {
-                            vm.verifyStatus.setState('verified');
-                            close();
-                        })
-                        .then(() => {
-                            accomplishmentService.verifyDraft(vm.accomplishment);
-                        });
+                    await processSave();
+                    vm.verifyStatus.setState('verified');
+                    await close();
+                    AccomplishmentService.verify(vm.researchEntity, vm.accomplishment);
                 } else {
                     // Is not valid
                     vm.verifyStatus.setState('failed');
                     vm.errorText = 'The draft has been saved but not been verified! Please correct the errors on this form!';
 
-                    processSave(false);
+                    await processSave(false);
 
-                    $timeout(function() {
+                    $timeout(function () {
                         vm.verifyStatus.setState('ready to verify');
                     }, 1000);
                 }
@@ -412,5 +300,7 @@
 
             return Promise.reject('no close function');
         }
+
+        /* jshint ignore:end */
     }
 })();
