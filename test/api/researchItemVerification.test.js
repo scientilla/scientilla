@@ -4,7 +4,7 @@
 
 const test = require('./../helper.js');
 
-describe('Item Verification: ', () => {
+describe('ResearchItem Verification: ', () => {
     const usersData = test.getAllUserData();
     const itemsData = test.getAllResearchItemData();
     const users = [];
@@ -34,13 +34,13 @@ describe('Item Verification: ', () => {
         const editorTypeId = itemTypes.find(it => it.key === 'editor').id;
 
         let draft = await test.researchEntity.createDraft(user, researchEntity, {title: 'test1', type: awardTypeId});
-        await test.researchEntity.verifyItem(user, researchEntity, draft.id, {}, 400);
+        await test.researchEntity.verifyItem(user, researchEntity, draft.id, {position: 0}, 400);
 
         draft = await test.researchEntity.createDraft(user, researchEntity, {title: 'test2', type: eventTypeId});
-        await test.researchEntity.verifyItem(user, researchEntity, draft.id, {}, 400);
+        await test.researchEntity.verifyItem(user, researchEntity, draft.id, {position: 0}, 400);
 
         draft = await test.researchEntity.createDraft(user, researchEntity, {title: 'test3', type: editorTypeId});
-        await test.researchEntity.verifyItem(user, researchEntity, draft.id, {}, 400);
+        await test.researchEntity.verifyItem(user, researchEntity, draft.id, {position: 0}, 400);
 
         const verifiedAccomplishments = await test.researchEntity.getVerifiedAccomplishment(researchEntity);
         verifiedAccomplishments.length.should.be.equal(0);
@@ -54,7 +54,7 @@ describe('Item Verification: ', () => {
         await test.researchEntity.createDraft(user, researchEntity, itemData);
 
         verifiedItem = (await test.researchEntity.getAccomplishmentDrafts(researchEntity, [], {title: itemData.title}))[0];
-        await test.researchEntity.verifyItem(user, researchEntity, verifiedItem.id);
+        await test.researchEntity.verifyItem(user, researchEntity, verifiedItem.id, {position: 0});
 
         const verifiedAccomplishments = await test.researchEntity.getVerifiedAccomplishment(researchEntity);
 
@@ -70,8 +70,8 @@ describe('Item Verification: ', () => {
         const verifiedAccomplishmentsBefore = await test.researchEntity.getVerifiedAccomplishment(researchEntity);
         verifiedAccomplishmentsBefore.length.should.be.equal(0);
 
-        await test.researchEntity.verifyItem(user, researchEntity, verifiedItem.id);
-        const verifiedAccomplishmentsAfter = await test.researchEntity.getVerifiedAccomplishment(researchEntity);
+        await test.researchEntity.verifyItem(user, researchEntity, verifiedItem.id, {position: 1});
+        const verifiedAccomplishmentsAfter = await test.researchEntity.getVerifiedAccomplishment(researchEntity,);
         verifiedAccomplishmentsAfter.length.should.be.equal(1);
         verifiedAccomplishmentsAfter[0].title.should.be.equal(verifiedItem.title);
         verifiedAccomplishmentsAfter[0].kind.should.be.equal('v');
@@ -80,7 +80,7 @@ describe('Item Verification: ', () => {
     it('it should be possible to unverify an item ', async () => {
         const researchEntity = researchEntities[0];
         const user = users[0];
-        await test.researchEntity.unVerifyItem(user, researchEntity, verifiedItem.id);
+        await test.researchEntity.unVerifyItem(user, researchEntity, verifiedItem.id, {position: 0});
         const verifiedAccomplishments = await test.researchEntity.getVerifiedAccomplishment(researchEntity);
         verifiedAccomplishments.length.should.be.equal(0);
     });
@@ -88,7 +88,7 @@ describe('Item Verification: ', () => {
     it('an item without connections should be deleted', async () => {
         const researchEntity = researchEntities[1];
         const user = users[1];
-        await test.researchEntity.unVerifyItem(user, researchEntity, verifiedItem.id);
+        await test.researchEntity.unVerifyItem(user, researchEntity, verifiedItem.id, {position: 0});
         const verifiedAccomplishments = await test.researchEntity.getVerifiedAccomplishment(researchEntity);
         verifiedAccomplishments.length.should.be.equal(0);
 

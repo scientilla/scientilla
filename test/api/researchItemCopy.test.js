@@ -4,7 +4,7 @@
 
 const test = require('./../helper.js');
 
-describe('Item Copy to draft: ', () => {
+describe('ResearchItem Copy to draft: ', () => {
     const usersData = test.getAllUserData();
     const itemsData = test.getAllResearchItemData();
     const users = [];
@@ -30,7 +30,7 @@ describe('Item Copy to draft: ', () => {
         await test.researchEntity.createDraft(creatorUser, creatorResearchEntity, itemData);
 
         verifiedItem = (await test.researchEntity.getAccomplishmentDrafts(creatorResearchEntity, [], {title: itemData.title}))[0];
-        await test.researchEntity.verifyItem(creatorUser, creatorResearchEntity, verifiedItem.id);
+        await test.researchEntity.verifyItem(creatorUser, creatorResearchEntity, verifiedItem.id, {position: 0});
 
         const verifiedAccomplishments = await test.researchEntity.getVerifiedAccomplishment(creatorResearchEntity);
 
