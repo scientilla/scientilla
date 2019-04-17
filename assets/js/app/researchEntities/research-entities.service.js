@@ -236,11 +236,11 @@
             try {
                 await researchEntity.one('researchitems', researchItem.id)
                     .customPUT({public: verify.public}, 'public');
-                Notification.success('Favorite updated');
+                Notification.success('Privacy updated');
             } catch (e) {
                 console.error(e);
                 verify.public = !verify.public;
-                Notification.warning('Failed to update favorite');
+                Notification.warning('Failed to update privacy');
             }
         }
 
