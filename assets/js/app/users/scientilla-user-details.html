@@ -66,13 +66,19 @@
                                            section="vm.documentListSections.USER"></scientilla-documents-list>
             </uib-tab>
             <uib-tab index="3"
+                     heading="Accomplishments">
+                <scientilla-accomplishments-list ng-if="vm.researchEntity"
+                                           research-entity="vm.researchEntity"
+                                           section="vm.accomplishmentListSections.USER"></scientilla-accomplishments-list>
+            </uib-tab>
+            <uib-tab index="4"
                      heading="Documents Overview"
                      ng-click="vm.changeTab('overview', vm.chartsData)"
                      ng-if="vm.loggedUser.isSuperViewer()">
                 <summary-overview ng-if="vm.chartsData"
                                   charts-data="vm.chartsData"></summary-overview>
             </uib-tab>
-            <uib-tab index="4"
+            <uib-tab index="5"
                      heading="Bibliometric Charts"
                      ng-click="vm.changeTab('metrics', vm.chartsData)"
                      ng-if="vm.loggedUser.isSuperViewer()">
