@@ -15,18 +15,16 @@
         'documentListSections',
         'UsersService',
         'GroupsService',
-        'AuthService',
         'ModalService',
         'researchEntityService'
     ];
 
-    function controller(documentListSections, UsersService, GroupsService, AuthService, ModalService, researchEntityService) {
+    function controller(documentListSections, UsersService, GroupsService, ModalService, researchEntityService) {
         const vm = this;
         vm.documentListSections = documentListSections;
         vm.addCollaborator = addCollaborator;
         vm.removeCollaborator = removeCollaborator;
         vm.getUsers = getUsers;
-        vm.isAdmin = isAdmin;
 
         vm.membershipTypes = {
             MEMBER: {
@@ -48,23 +46,7 @@
         };
 
         vm.members = [];
-        vm.searchForm = {
-            name: {
-                inputType: 'text',
-                label: 'Name',
-                matchColumn: 'name',
-                matchRule: 'contains',
-                type: 'field'
-            },
-            surname: {
-                inputType: 'text',
-                label: 'Surname',
-                matchColumn: 'surname',
-                matchRule: 'contains',
-                type: 'field'
-            }
 
-        };
         vm.onFilter = onFilter;
         let query = {};
 
@@ -141,10 +123,5 @@
         }
 
         /* jshint ignore:end */
-
-        function isAdmin() {
-            return AuthService.isAdmin;
-        }
-
     }
 })();

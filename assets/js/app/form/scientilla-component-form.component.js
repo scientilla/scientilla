@@ -7,7 +7,7 @@
             controller: scientillaComponentForm,
             controllerAs: 'vm',
             bindings: {
-                structure: '<',
+                structure: '=',
                 cssClass: '@',
                 onSubmit: '&',
                 errors: '<',
@@ -83,6 +83,10 @@
 
         function onStructureChange() {
             deregisterOnChanges();
+
+            vm.fields = filterStructure('field');
+            vm.actions = filterStructure('action');
+            vm.connectors = filterStructure('connector');
 
             const oldSearchValues = _.cloneDeep(vm.values);
             vm.values = {};

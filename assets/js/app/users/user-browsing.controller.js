@@ -25,23 +25,6 @@
         vm.onFilter = onFilter;
         let query = {};
 
-        vm.searchForm = {
-            name: {
-                inputType: 'text',
-                label: 'Name',
-                matchColumn: 'name',
-                matchRule: 'contains',
-                type: 'field'
-            },
-            surname: {
-                inputType: 'text',
-                label: 'Surname',
-                matchColumn: 'surname',
-                matchRule: 'contains',
-                type: 'field'
-            }
-        };
-
         function onFilter(q) {
             query = q;
 

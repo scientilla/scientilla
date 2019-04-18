@@ -9,51 +9,6 @@ const accomplishmentSourceTypes = [
     {id: 'bookseries', label: 'Book Series', type: 'scientific'},
 ];
 
-const accomplishmentSearchForm = {
-    title: {
-        inputType: 'text',
-        label: 'Title',
-        matchColumn: 'title',
-        matchRule: 'contains',
-        type: 'field'
-    },
-    author: {
-        inputType: 'text',
-        label: 'Author',
-        matchColumn: 'authorsStr',
-        matchRule: 'contains',
-        type: 'field'
-    },
-    maxYear: {
-        inputType: 'year',
-        label: 'Year from',
-        matchColumn: 'year',
-        matchRule: '>=',
-        type: 'field'
-    },
-    minYear: {
-        inputType: 'year',
-        label: 'Year to',
-        matchColumn: 'year',
-        matchRule: '<=',
-        type: 'field'
-    },
-    accomplishmentType: {
-        inputType: 'select',
-        label: 'Accomplishment Type',
-        values: [],
-        matchColumn: 'type',
-        type: 'field'
-    },
-    sourceType: {
-        inputType: 'select',
-        label: 'Source Type',
-        values: [],
-        matchColumn: 'sourceType',
-        type: 'field'
-    }
-};
-
 const accomplishmentFieldsRules = {
     authorsStr: {
         allowNull: false,
@@ -110,6 +65,5 @@ angular.module('app')
     .constant('accomplishmentOrigins', accomplishmentOrigins)
     .constant('accomplishmentFieldsRules', accomplishmentFieldsRules)
     .constant('accomplishmentListSections', accomplishmentListSections)
-    .constant('accomplishmentSearchForm', accomplishmentSearchForm)
     .constant('accomplishmentRequiredFields', accomplishmentRequiredFields)
     .constant('accomplishmentEventTypes', accomplishmentEventTypes);

@@ -15,7 +15,6 @@
 
     scientillaAccomplishmentsList.$inject = [
         'AccomplishmentService',
-        'accomplishmentSearchForm',
         'EventsService',
         'accomplishmentListSections',
         'AuthService',
@@ -23,7 +22,6 @@
     ];
 
     function scientillaAccomplishmentsList(AccomplishmentService,
-                                           accomplishmentSearchForm,
                                            EventsService,
                                            accomplishmentListSections,
                                            AuthService,
@@ -34,7 +32,6 @@
         vm.unverify = AccomplishmentService.unverify;
         vm.isUnverifying = ResearchItemService.isUnverifying;
         vm.onFilter = onFilter;
-        vm.searchForm = accomplishmentSearchForm;
 
         let query = {};
 

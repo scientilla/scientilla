@@ -17,7 +17,6 @@
         'researchEntityService',
         'EventsService',
         'ModalService',
-        'documentSearchForm',
         'documentListSections'
     ];
 
@@ -25,7 +24,6 @@
                                                     researchEntityService,
                                                     EventsService,
                                                     ModalService,
-                                                    documentSearchForm,
                                                     documentListSections) {
         const vm = this;
 
@@ -45,17 +43,6 @@
         vm.onFilter = onFilter;
 
         vm.documentListSections = documentListSections;
-        vm.searchForm = Object.assign({},
-            documentSearchForm,
-            {
-                rejected: {
-                    inputType: 'checkbox',
-                    label: 'Show discarded documents',
-                    defaultValue: false,
-                    matchColumn: 'discarded',
-                    type: 'action'
-                }
-            });
 
         vm.$onInit = function () {
             EventsService.subscribeAll(vm, [

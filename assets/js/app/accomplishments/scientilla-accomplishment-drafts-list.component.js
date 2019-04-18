@@ -12,7 +12,6 @@
     controller.$inject = [
         'context',
         'AccomplishmentService',
-        'accomplishmentSearchForm',
         'accomplishmentListSections',
         'EventsService'
     ];
@@ -20,7 +19,6 @@
     function controller(
         context,
         AccomplishmentService,
-        accomplishmentSearchForm,
         accomplishmentListSections,
         EventsService
     ) {
@@ -34,8 +32,6 @@
         vm.verify = (draft) => AccomplishmentService.verify(vm.researchEntity, draft);
         vm.deleteDrafts = (drafts) => AccomplishmentService.multipleDelete(vm.researchEntity, drafts);
         vm.verifyDrafts = (drafts) => AccomplishmentService.verifyAll(vm.researchEntity, drafts);
-
-        vm.searchForm = accomplishmentSearchForm;
         vm.accomplishmentListSections = accomplishmentListSections;
 
         let query = {};

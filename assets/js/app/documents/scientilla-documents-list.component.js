@@ -19,13 +19,12 @@
     scientillaDocumentsList.$inject = [
         'context',
         'researchEntityService',
-        'documentSearchForm',
         'EventsService',
         'documentListSections',
         'AuthService'
     ];
 
-    function scientillaDocumentsList(context, researchEntityService, documentSearchForm, EventsService, documentListSections, AuthService) {
+    function scientillaDocumentsList(context, researchEntityService, EventsService, documentListSections, AuthService) {
         const vm = this;
 
         const DocumentsService = context.getDocumentService();
@@ -38,8 +37,6 @@
         vm.exportBibtexDocuments = documents => DocumentsService.exportDocuments(documents, 'bibtex');
 
         vm.onFilter = onFilter;
-
-        vm.searchForm = documentSearchForm;
 
         let query = {};
 
