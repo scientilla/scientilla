@@ -42,9 +42,7 @@
             accomplishmentListSections.VERIFIED
         ].includes(vm.section);
 
-        vm.showFavorite = [
-            accomplishmentListSections.VERIFIED
-        ].includes(vm.section);
+        vm.showFavorite = false;
 
         vm.collapsed = true;
 
