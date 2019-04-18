@@ -59,13 +59,13 @@
 
         /* jshint ignore:start */
         async function verify(researchEntity, researchItem) {
-            await ResearchEntitiesService.verify('accomplishment', researchEntity, researchItem)
+            const researchItems = await ResearchEntitiesService.getAccomplishmentDrafts(researchEntity, {where: {id: researchItem.id}});
+            await ResearchEntitiesService.verify('accomplishment', researchEntity, researchItems[0]);
 
             if (researchEntity.type === 'user') {
                 await context.refreshSubResearchEntity();
             }
         }
-
         /* jshint ignore:end */
 
         function isValid(accomplishment) {
@@ -76,7 +76,6 @@
             const filteredAccomplishment = {};
             fields.forEach(key => filteredAccomplishment[key] = accomplishment[key]);
             return filteredAccomplishment;
-
         }
 
         function validate(accomplishment, field = false) {

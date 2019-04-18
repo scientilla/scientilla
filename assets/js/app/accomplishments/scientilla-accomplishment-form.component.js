@@ -190,7 +190,7 @@
                 await AccomplishmentService.update(vm.researchEntity, filteredAccomplishment);
             else {
                 const draft = await AccomplishmentService.create(vm.researchEntity, filteredAccomplishment);
-                vm.accomplishment.id = draft.id;
+                vm.accomplishment.id = draft.researchItem.id;
             }
 
             if (updateState) {
@@ -200,7 +200,6 @@
 
             vm.unsavedData = false;
         }
-
 
         function cancel(event = false) {
             if (vm.unsavedData) {
