@@ -18,14 +18,16 @@
         'EventsService',
         'accomplishmentListSections',
         'AuthService',
-        'ResearchItemService'
+        'ResearchItemService',
+        'ResearchItemTypesService'
     ];
 
     function scientillaAccomplishmentsList(AccomplishmentService,
                                            EventsService,
                                            accomplishmentListSections,
                                            AuthService,
-                                           ResearchItemService) {
+                                           ResearchItemService,
+                                           ResearchItemTypesService) {
         const vm = this;
 
         vm.accomplishments = [];
@@ -56,6 +58,11 @@
         /* jshint ignore:start */
         async function onFilter(q) {
             query = q;
+            if (query && query.where && query.where.type) {
+                const types = await ResearchItemTypesService.getTypes();
+                const type = types.find(type => type.key === query.where.type);
+                query.where.type = type.id;
+            }
             vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, query);
         }
         /* jshint ignore:end */

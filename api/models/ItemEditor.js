@@ -4,6 +4,7 @@
 const BaseModel = require("../lib/BaseModel.js");
 
 const fields = [
+    {name: 'title'},
     {name: 'authorsStr'},
     {name: 'yearFrom'},
     {name: 'yearTo'},
@@ -19,6 +20,7 @@ module.exports = _.merge({}, BaseModel, {
             model: 'researchitem',
             columnName: 'research_item'
         },
+        title: 'STRING',
         authorsStr: {
             type: 'STRING',
             columnName: 'authors_str'

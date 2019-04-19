@@ -50,7 +50,7 @@
 
         function reset() {
             setDefault();
-            clearNil();
+            submit();
         }
 
         function clearNil() {

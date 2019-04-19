@@ -84,9 +84,7 @@
                     vm.errorText = 'Please fix the warnings before verifying!';
                 }
             }
-
         };
-
 
         function resetErrors() {
             vm.errors = {};
@@ -183,6 +181,10 @@
 
             if (!_.isEmpty(vm.errors))
                 vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
+
+            if (vm.accomplishment.medium && vm.accomplishment.medium.title) {
+                vm.accomplishment.title = vm.accomplishment.medium.title;
+            }
 
             const filteredAccomplishment = AccomplishmentService.filterFields(vm.accomplishment);
 
