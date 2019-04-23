@@ -46,6 +46,7 @@
         vm.verify = verify;
         vm.save = save;
         vm.getSources = getSources;
+        vm.getTitles = getTitles;
         vm.openSourceFormModal = openSourceFormModal;
         vm.fieldsRules = accomplishmentFieldsRules;
         vm.eventTypes = vm.accomplishment.eventType ?
@@ -245,6 +246,20 @@
         function getSources(searchText) {
             const qs = {where: {title: {contains: searchText}}};
             return Restangular.all('sources').getList(qs);
+        }
+
+        async function getTitles(searchText) {
+            const types = await ResearchItemTypesService.getTypes();
+            const type = types.filter(t => t.key === 'organized_event')[0];
+            const qs = {where: {title: {contains: searchText}, type: type.id}};
+            let accomplishments = await Restangular.all('accomplishments').getList(qs);
+
+            accomplishments = accomplishments.map(accomplishment => accomplishment.title);
+            const distinct = (value, index, self) => {
+                return self.indexOf(value) === index;
+            };
+
+            return accomplishments.filter(distinct);
         }
 
         async function openSourceFormModal($event) {

@@ -277,7 +277,13 @@
                            data-ng-required="true"
                            ng-class="{'is-invalid' : vm.errors.title}"
                            ng-blur="vm.checkValidation('title')"
-                           ng-change="vm.fieldValueHasChanged('title')">
+                           ng-change="vm.fieldValueHasChanged('title')"
+                           uib-typeahead="title as title for title in vm.getTitles($viewValue)"
+                           typeahead-loading="searching"
+                           typeahead-no-results="noResults"
+                           typeahead-editable="true"
+                           typeahead-select-on-blur="false">
+                    {{ $viewValue }}
                     <scientilla-error-messages class="error-messages"
                                                errors="vm.errors.title"></scientilla-error-messages>
                 </div>
