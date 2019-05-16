@@ -1,12 +1,12 @@
 (function () {
     angular.module("services")
-        .factory("EventsService", ModalService);
+        .factory("EventsService", service);
 
-    ModalService.$inject = [
+    service.$inject = [
         '$rootScope'
     ];
 
-    function ModalService($rootScope) {
+    function service($rootScope) {
         var subscriptions = [];
         var service = {
             AUTH_LOGIN: 'auth.login',
