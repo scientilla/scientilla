@@ -1,0 +1,78 @@
+image: docker:18
+
+stages:
+- build
+- push
+- prepare_staging
+- start_staging
+
+variables:
+  SSH_USER: docker
+  SSH_HOST: 10.255.7.84
+  SSH_CMD_PREPARE: "/var/docker/scientilla-deploy-with-registry.sh prepare $CI_COMMIT_REF_NAME $CI_COMMIT_SHORT_SHA"
+  SSH_CMD_START: "/var/docker/scientilla-deploy-with-registry.sh start $CI_COMMIT_REF_NAME $CI_COMMIT_SHORT_SHA"
+  DOCKER_TAG: "$CI_COMMIT_REF_NAME-$CI_COMMIT_SHORT_SHA"
+
+services:
+- docker:dind
+
+before_script:
+# Docker login
+- echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+
+Build:
+  stage: build
+  script:
+  # Fetches the latest image
+  - docker pull $CI_REGISTRY_IMAGE:latest || true
+  # Build and tag the image
+  - >
+    docker build
+    --pull
+    --build-arg GIT_BRANCH=$CI_COMMIT_REF_NAME
+    --cache-from $CI_REGISTRY_IMAGE:latest
+    --tag $CI_REGISTRY_IMAGE:$DOCKER_TAG
+    .
+  # Push the image to the registry
+  - docker push $CI_REGISTRY_IMAGE:$DOCKER_TAG
+
+# Tag only the "master" branch as "latest"
+Push latest:
+  variables:
+    # Re-uses the project workspace, but skips all Git operations
+    GIT_STRATEGY: none
+  stage: push
+  only:
+  # Only "master" should be tagged "latest"
+  - master
+  script:
+  # Pull image from registry
+  - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  # Tag it "latest"
+  - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME $CI_REGISTRY_IMAGE:latest
+  # Push image to registry.
+  - docker push $CI_REGISTRY_IMAGE:latest
+
+# Prepare the staging environment with new version of the application
+Prepare application on staging:
+  stage: prepare_staging
+  before_script:
+  - apk update
+  - apk add openssh-client
+  - eval `ssh-agent -s`
+  - echo "$KEY" | tr -d '\r' | ssh-add - > /dev/null
+  script:
+  - ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST $SSH_CMD_PREPARE
+  when: manual
+
+# Start new version of application on staging
+Start application on staging:
+  stage: start_staging
+  before_script:
+  - apk update
+  - apk add openssh-client
+  - eval `ssh-agent -s`
+  - echo "$KEY" | tr -d '\r' | ssh-add - > /dev/null
+  script:
+  - ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST $SSH_CMD_START
+  when: manual
