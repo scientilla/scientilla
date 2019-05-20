@@ -73,8 +73,11 @@ module.exports = _.merge({}, BaseModel, {
         return newAuthorData;
     },
     areEquals(author1, author2) {
-        const authData1 = Author.filterFields(author1);
-        const authData2 = Author.filterFields(author2);
+        const authData1 = _.cloneDeep(Author.filterFields(author1));
+        const authData2 = _.cloneDeep(Author.filterFields(author2));
+        authData1.affiliations = authData1.affiliations.map(af => _.isObject(af) ? af.id : af);
+        authData2.affiliations = authData2.affiliations.map(af => _.isObject(af) ? af.id : af);
+
         return !Object.keys(authData1).find(key => !_.isEqual(authData1[key], authData2[key]));
     },
     splitAuthorStr(authorsStr) {
@@ -125,7 +128,7 @@ module.exports = _.merge({}, BaseModel, {
 
         const authorsStrArr = Author.splitAuthorStr(authorsStr);
 
-        const currentAuthors = await Author.find({researchItem: researchItem.id});
+        const currentAuthors = await Author.find({researchItem: researchItem.id}).populate('affiliations');
         const currentAuthorsData = currentAuthors.map(a => {
             const af = Author.filterFields(a);
             af.id = a.id;
