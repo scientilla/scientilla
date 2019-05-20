@@ -28,11 +28,12 @@
         vm.isValid = AccomplishmentService.isValid;
 
         vm.deleteDraft = AccomplishmentService.delete;
-        vm.edit = (draft) => AccomplishmentService.edit(vm.researchEntity, draft, 'accomplishment');
+        vm.edit = (draft) => AccomplishmentService.edit(vm.researchEntity, draft);
         vm.verify = (draft) => AccomplishmentService.verify(vm.researchEntity, draft);
         vm.deleteDrafts = (drafts) => AccomplishmentService.multipleDelete(vm.researchEntity, drafts);
         vm.verifyDrafts = (drafts) => AccomplishmentService.verifyAll(vm.researchEntity, drafts);
         vm.accomplishmentListSections = accomplishmentListSections;
+        vm.editAffiliations = (draft) => AccomplishmentService.editAffiliations(vm.researchEntity, draft);
 
         let query = {};
 

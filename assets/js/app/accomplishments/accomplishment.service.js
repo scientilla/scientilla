@@ -28,7 +28,6 @@
             'authorsStr',
             'year',
             'yearTo',
-            'affiliation',
             'issuer',
             'medium',
             'description',
@@ -41,10 +40,11 @@
         ];
 
         return {
-            edit: ResearchEntitiesService.editDraft,
+            edit: (researchEntity, draft) => ResearchEntitiesService.editDraft(researchEntity, draft, 'accomplishment'),
             create: ResearchEntitiesService.createDraft,
             update: ResearchEntitiesService.updateDraft,
             delete: ResearchEntitiesService.deleteDraft,
+            editAffiliations: ResearchEntitiesService.editAffiliations,
             multipleDelete: ResearchEntitiesService.deleteDrafts,
             getDrafts: ResearchEntitiesService.getAccomplishmentDrafts,
             get: ResearchEntitiesService.getAccomplishments,
@@ -66,6 +66,7 @@
                 await context.refreshSubResearchEntity();
             }
         }
+
         /* jshint ignore:end */
 
         function isValid(accomplishment) {

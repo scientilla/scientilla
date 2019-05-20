@@ -1,0 +1,6 @@
+<ul class="document-institutes"
+    ng-class="vm.collapsed || vm.affiliationInstitutes.length < 10 ? 'in-rows' : 'in-columns'">
+    <li ng-repeat="(i, institute) in vm.affiliationInstitutes">
+        {{ vm.getAffiliationInstituteIdentifier(institute) }} - {{ institute.name }}
+    </li>
+</ul>

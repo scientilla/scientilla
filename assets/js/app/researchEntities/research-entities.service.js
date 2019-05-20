@@ -30,13 +30,15 @@
         service.verify = verify;
         service.verifyAll = verifyAll;
         service.unverify = unverify;
+        service.editAffiliations = editAffiliations;
+        service.updateAuthors = updateAuthors;
         service.getAccomplishmentDrafts = getAccomplishmentDrafts;
         service.getAccomplishments = getAccomplishments;
         service.setVerifyPrivacy = setVerifyPrivacy;
         service.setVerifyFavorite = setVerifyFavorite;
 
 
-        const accomplishmentPopulates = ['type', 'authors', 'verified', 'medium', 'verifiedUsers', 'verifiedGroups'];
+        const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'medium', 'verifiedUsers', 'verifiedGroups'];
 
 
         /* jshint ignore:start */
@@ -186,6 +188,10 @@
             return ModalService.openScientillaResearchItemForm(researchEntity, researchItem, category);
         }
 
+        async function editAffiliations(researchEntity, researchItem) {
+            return ModalService.openScientillaResearchItemAffiliationForm(researchEntity, researchItem);
+        }
+
         async function verifyResearchItem(researchEntity, researchItem, verificationData, notifications) {
             try {
                 const res = await researchEntity.one('researchitems', researchItem.id)
@@ -203,7 +209,7 @@
                     EventsService.publish(EventsService.RESEARCH_ITEM_VERIFIED, res);
 
             } catch (error) {
-                Notification.warning(error);
+                Notification.warning(error.data.message);
             }
 
         }
@@ -253,6 +259,16 @@
                 console.error(e);
                 verify.favorite = !verify.favorite;
                 Notification.warning('Failed to update favorite');
+            }
+        }
+
+        async function updateAuthors(researchEntity, researchItem, authorsData) {
+            try {
+                await researchEntity.one('researchitemdrafts', researchItem.id).customPUT(authorsData, 'authors');
+                EventsService.publish(EventsService.RESEARCH_ITEM_DRAFT_UPDATED, researchItem);
+            } catch (e) {
+                console.error(e);
+                Notification.warning('Failed to update affiliations');
             }
         }
 

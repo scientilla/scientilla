@@ -2,7 +2,6 @@ module.exports = [
     {
         year: 2018,
         title: 'Nobel prize',
-        affiliation: undefined,
         issuer: undefined,
         authorsStr: 'Semprini F., Casier D.'
     },

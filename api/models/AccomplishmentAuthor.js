@@ -26,6 +26,11 @@ module.exports = {
         },
         verify: {
             model: 'accomplishmentverify'
+        },
+        affiliations: {
+            collection: 'Institute',
+            via: 'author',
+            through: 'accomplishmentaffiliation'
         }
     },
     migrate: 'safe',

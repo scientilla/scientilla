@@ -1,11 +1,13 @@
 <scientilla-research-item-authors research-item="vm.accomplishment"
                                   collapsed="vm.collapsed"
-                                  type="preview"></scientilla-research-item-authors>
+                                  type="default"></scientilla-research-item-authors>
 
 <h3 class="document-title"
     ng-click="vm.openDetails()"
     ng-bind-html='vm.accomplishment | accomplishmentTitle'></h3>
 
+<scientilla-research-item-affiliations research-item="vm.accomplishment"
+                                       collapsed="vm.collapsed"></scientilla-research-item-affiliations>
 
 <hr/>
 

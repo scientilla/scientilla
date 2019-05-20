@@ -1,4 +1,4 @@
-/* global Author, Affiliation, Institute, ResearchEntity*/
+/* global Author, Affiliation, Institute, ResearchEntity, AuthorAffiliation*/
 "use strict";
 
 const _ = require('lodash');
@@ -12,7 +12,8 @@ const fields = [
     'lastCoauthor',
     'oralPresentation',
     'researchItem',
-    'verify'
+    'verify',
+    'affiliations',
 ];
 
 module.exports = _.merge({}, BaseModel, {
@@ -41,6 +42,11 @@ module.exports = _.merge({}, BaseModel, {
         },
         verify: {
             model: 'Verify'
+        },
+        affiliations: {
+            collection: 'Institute',
+            via: 'author',
+            through: 'authoraffiliation'
         }
     },
     getDefaults(researchItemId, authorStr, position) {
@@ -100,22 +106,26 @@ module.exports = _.merge({}, BaseModel, {
         }).filter(a => a);
 
     },
-    async updateAuthors(researchItemId, authorsStr, newAuthorsData = []) {
-        if (!researchItemId || !authorsStr)
+    async updateAuthors(researchItem, authorsStr, newAuthorsData = []) {
+        if (!researchItem || !researchItem.id || !authorsStr)
             return;
 
         if (authorsStr === '')
-            return await Author.destroy({researchItem: researchItemId});
+            return await Author.destroy({researchItem: researchItem.id});
 
         const cleanAuthorsData = Author.cleanauthorData(newAuthorsData);
         cleanAuthorsData.forEach(a => {
             delete a.authorStr;
-            a.researchItem = researchItemId;
+            a.researchItem = researchItem.id;
         });
+
+        if (researchItem.needsAffiliations())
+            for (const i in cleanAuthorsData)
+                cleanAuthorsData[i].affiliations = await Author.getFixedCollection(Institute, newAuthorsData[i].affiliations);
 
         const authorsStrArr = Author.splitAuthorStr(authorsStr);
 
-        const currentAuthors = await Author.find({researchItem: researchItemId});
+        const currentAuthors = await Author.find({researchItem: researchItem.id});
         const currentAuthorsData = currentAuthors.map(a => {
             const af = Author.filterFields(a);
             af.id = a.id;
@@ -130,20 +140,17 @@ module.exports = _.merge({}, BaseModel, {
             const currentAuthor = currentAuthorsData.find(a => a.position === position);
             const newAuthorData = cleanAuthorsData.find(a => a.position === position);
             const defaults = !!currentAuthor && currentAuthor.authorStr === authorStr ?
-                Author.filterFields(currentAuthor) : Author.getDefaults(researchItemId, authorStr, position);
+                Author.filterFields(currentAuthor) :
+                Author.getDefaults(researchItem.id, authorStr, position);
             const newAuthor = Object.assign({}, defaults, newAuthorData);
 
-            if (!!currentAuthor && !!currentAuthor.verify)
+            if (currentAuthor && currentAuthor.verify)
                 return; //TODO handle when currentAuthor is verified
 
             if (!currentAuthor) //the researchItem is new or the authorsStr is longer than before
                 authorsToCreate.push(newAuthor);
-            else if (!Author.areEquals(currentAuthor, newAuthor)) {
-                authorsToUpdate.push({
-                    current: currentAuthor,
-                    'new': newAuthor
-                });
-            }
+            else if (!Author.areEquals(currentAuthor, newAuthor))
+                authorsToUpdate.push({current: currentAuthor, 'new': newAuthor});
         });
 
         if (authorsToDelete.length)
@@ -167,11 +174,13 @@ module.exports = _.merge({}, BaseModel, {
 
     },
     async verify(researchEntity, researchItem, verify, verificationData) {
-        const authors = await Author.find({researchItem: researchItem.id});
-        const authorData = await Author.getAuthorData(researchEntity, authors, verificationData);
+        const authorData = await Author.getAuthorData(researchEntity, researchItem, verificationData);
 
         if (!Number.isInteger(authorData.position))
             throw {researchItem: researchItem, success: false, message: 'Author position or alias not specified'};
+
+        if (researchItem.needsAffiliations() && authorData.affiliations.length === 0)
+            throw {researchItem: researchItem, success: false, message: 'Affiliations not specified'};
 
         const author = await Author.findOne({
             researchItem: researchItem.id,
@@ -184,12 +193,20 @@ module.exports = _.merge({}, BaseModel, {
             success: false,
             message: 'Position already verified'
         };
-        await Author.update({id: author.id}, {verify: verify.id});
+
+        author.verify = verify.id;
+        await author.savePromise();
+
+        if (researchItem.needsAffiliations()) {
+            await AuthorAffiliation.destroy({author: author.id});
+            await AuthorAffiliation.create(authorData.affiliations.map(a => ({author: author.id, institute: a})));
+        }
     },
-    async getAuthorData(researchEntity, authors, verificationData) {
+    async getAuthorData(researchEntity, researchItem, verificationData) {
         if (researchEntity.isGroup())
             return {};
 
+        const authors = await Author.find({researchItem: researchItem.id}).populate('affiliations');
         const aliases = (await ResearchEntity.getAliases(researchEntity)).map(a => a.toLocaleLowerCase());
         let position;
 
@@ -205,7 +222,12 @@ module.exports = _.merge({}, BaseModel, {
         if (author.authorStr && !aliases.includes(author.authorStr.toLocaleLowerCase()))
             await ResearchEntity.addAlias(researchEntity, author.authorStr);
 
-        return Object.assign({}, author, Author.filterFields(verificationData));
+        return {
+            position: position,
+            affiliations: Array.isArray(verificationData.affiliations) ?
+                await Author.getFixedCollection(Institute, verificationData.affiliations) :
+                author.affiliations.map(a => a.id)
+        };
     }
 });
 

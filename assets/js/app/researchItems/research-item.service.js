@@ -11,7 +11,8 @@
             removeLabel,
             hasLabel,
             getUserIndex,
-            isUnverifying
+            isUnverifying,
+            getInstituteIdentifier
         };
 
         function addLabel(researchItem, label) {
@@ -42,6 +43,20 @@
         function getAuthorsStrings(researchItem) {
             if (!researchItem.authors) return [];
             return researchItem.authors.map(a => a.authorStr.toLocaleLowerCase());
+        }
+
+        function getInstituteIdentifier(instituteIndex) {
+            const base26Chars = '0123456789abcdefghijklmnopqrstuvwxyz'.split("");
+            const alphabetMapper = {
+                '0': 'a', '1': 'b', '2': 'c', '3': 'd', '4': 'e', '5': 'f', '6': 'g', '7': 'h', '8': 'i', '9': 'j',
+                'a': 'k', 'b': 'l', 'c': 'm', 'd': 'n', 'e': 'o', 'f': 'p', 'g': 'q', 'h': 'r', 'i': 's', 'j': 't',
+                'k': 'u', 'l': 'v', 'm': 'w', 'n': 'x', 'o': 'y', 'p': 'z'
+            };
+            const base26Value = instituteIndex.toString(Object.keys(alphabetMapper).length).split('');
+            if (base26Value.length > 1)
+                base26Value[0] = base26Chars[base26Chars.indexOf(base26Value[0]) - 1];
+
+            return base26Value.map(c => alphabetMapper[c]).join('');
         }
     }
 })();

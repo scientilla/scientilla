@@ -27,6 +27,24 @@
                 modal.close(reason);
         };
 
+        /* jshint ignore:start */
+        service.checkAndClose = async function (isCloseable, reason) {
+            if (!isCloseable()) {
+                const buttonIndex = await service.multipleChoiceConfirm('Unsaved data',
+                    `You have unsaved changes. Do you want to close the form?`,
+                    ['Yes', 'No'],
+                    false);
+
+                if (buttonIndex === 1) return;
+            }
+
+            const modal = getModalObject();
+            if (modal)
+                modal.close(reason);
+
+        };
+        /* jshint ignore:end */
+
         service.openInstituteModal = function (institute) {
             const scopeVars = {
                 institute: institute
@@ -320,7 +338,7 @@
 
             return openModal(
                 `<scientilla-${category}-form\
-                    accomplishment="vm.researchItem"\
+                    ${category}="vm.researchItem"\
                     research-entity="vm.researchEntity"\
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit" \
@@ -329,6 +347,25 @@
                 scopeVars,
                 {
                     size: 'lg'
+                }
+            );
+        };
+
+        service.openScientillaResearchItemAffiliationForm = function (researchEntity, researchItem) {
+            const scopeVars = {
+                researchItem: researchItem,
+            };
+
+            return openModal(
+                `<scientilla-research-item-affiliations-form
+                    research-item="vm.researchItem"
+                    check-and-close="vm.checkAndClose"
+                    close-fn="vm.onClose"
+                ></scientilla-research-item-affiliations-form>`,
+                scopeVars,
+                {
+                    backdrop: 'static',
+                    keyboard: false
                 }
             );
         };
@@ -438,7 +475,8 @@
             return {
                 onFailure: _.noop,
                 onSubmit: service.close,
-                onClose: service.close
+                onClose: service.close,
+                checkAndClose: service.checkAndClose
             };
         }
 

@@ -36,9 +36,6 @@ module.exports = _.merge({}, BaseModel, {
             type: 'STRING',
             columnName: 'year_to'
         },
-        affiliation: {
-            model: 'institute'
-        },
         issuer: 'STRING',
         medium: {
             model: 'source'
@@ -77,6 +74,15 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'accomplishmentauthor',
             via: 'accomplishment'
         },
+        affiliations: {
+            collection: 'accomplishmentaffiliation',
+            via: 'accomplishment',
+        },
+        institutes: {
+            collection: 'institute',
+            via: 'accomplishment',
+            through: 'accomplishmentaffiliation'
+        },
         async isValid() {
             const ResearchItemModel = Accomplishment.getResearchItemModel(this.type);
             const ri = await ResearchItemModel.findOne({researchItem: this.id});
@@ -87,9 +93,6 @@ module.exports = _.merge({}, BaseModel, {
     tableName: 'accomplishment',
     autoUpdatedAt: false,
     autoCreatedAt: false,
-    hasAuthors() {
-        return true;
-    },
     getResearchItemModel(type) {
         const researchItemModels = {
             'award_achievement': ItemAward,

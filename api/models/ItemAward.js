@@ -7,7 +7,6 @@ const fields = [
     {name: 'title'},
     {name: 'authorsStr'},
     {name: 'year'},
-    {name: 'affiliation'},
     {name: 'issuer'},
     {name: 'researchItem'}
 ];
@@ -26,9 +25,6 @@ module.exports = _.merge({}, BaseModel, {
             columnName: 'authors_str'
         },
         year: 'STRING',
-        affiliation: {
-            model: 'institute'
-        },
         issuer: 'STRING',
         isValid() {
             const requiredFields = [
@@ -45,8 +41,6 @@ module.exports = _.merge({}, BaseModel, {
         return fields.map(f => f.name);
     },
     async selectData(itemData) {
-        if (itemData.affiliation)
-            itemData.affiliation = await ItemAward.getFixedCollection(Institute, itemData.affiliation);
         return _.pick(itemData, ItemAward.getFields());
     }
 });

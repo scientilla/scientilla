@@ -64,8 +64,8 @@ module.exports = _.merge({}, BaseModel, {
         if (!verify)
             throw {researchItem: researchItem, success: false, message: 'Critcal error: verification failed'};
 
-        const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(researchItem.type);
-        if (!researchEntity.isGroup() && ResearchItemChildModel.hasAuthors()) {
+
+        if (!researchEntity.isGroup() && researchItem.needsAuthors()) {
             try {
                 await Author.verify(researchEntity, researchItem, verify, verificationData);
             } catch (e) {

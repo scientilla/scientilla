@@ -26,13 +26,15 @@
             'ModalService'
         ];
 
-        function controller($scope, context, ResearchEntitiesService, ResearchItemService,UsersService, ModalService) {
+        function controller($scope, context, ResearchEntitiesService, ResearchItemService, UsersService, ModalService) {
             const vm = this;
             vm.submit = submit;
             vm.copyToDraft = copyToDraft;
             vm.cancel = cancel;
             vm.viewCopyToDraft = viewCopyToDraft;
             vm.canBeSubmitted = canBeSubmitted;
+            vm.getInstitutesFilter = getInstitutesFilter;
+            vm.getInstitutesQuery = getInstitutesQuery;
             vm.verificationData = {};
             vm.accomplishment = vm.researchItem;
 
@@ -51,6 +53,7 @@
 
                 user = context.getSubResearchEntity();
                 vm.verificationData.position = ResearchItemService.getUserIndex(vm.accomplishment, user);
+                vm.verificationData.affiliations = [];
                 vm.verificationData.public = true;
                 vm.verificationData.favorite = false;
 
@@ -75,6 +78,7 @@
                 const data = {
                     position: vm.verificationData.position,
                     'public': vm.verificationData.public,
+                    affiliations: vm.verificationData.affiliations.map(af => af.id)
                 };
 
                 const authorStr = vm.authorsNames[vm.verificationData.position];
@@ -105,6 +109,15 @@
 
             /* jshint ignore:end */
 
+            function getInstitutesFilter() {
+                return vm.verificationData.affiliations;
+            }
+
+            function getInstitutesQuery(searchText) {
+                const qs = {where: {name: {contains: searchText}, parentId: null}};
+                const model = 'institutes';
+                return {model: model, qs: qs};
+            }
 
             function cancel() {
                 vm.verificationData = angular.copy(originalVerificationData);

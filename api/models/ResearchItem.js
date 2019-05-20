@@ -45,6 +45,22 @@ module.exports = _.merge({}, BaseModel, {
             const childResearchItem = await ResearchItemChildModel.findOne({id: this.id});
             return childResearchItem.isValid();
         },
+        needsAuthors() {
+            const needsAuthorsTypes = {
+                'award_achievement': true,
+                'editor': true,
+                'organized_event': true
+            };
+            return needsAuthorsTypes[this.getType().key];
+        },
+        needsAffiliations() {
+            const needsAffiliationTypes = {
+                'award_achievement': true,
+                'editor': true,
+                'organized_event': true
+            };
+            return needsAffiliationTypes[this.getType().key];
+        },
         getType: function () {
             if (!this.type)
                 return undefined;
@@ -75,8 +91,8 @@ module.exports = _.merge({}, BaseModel, {
             throw {success: false, researchItem: itemData, message: 'Item not created'};
         }
 
-        if (ResearchItemChildModel.hasAuthors())
-            await Author.updateAuthors(researchItem.id, itemData.authorsStr, newAuthorsData);
+        if (researchItem.needsAuthors())
+            await Author.updateAuthors(researchItem, itemData.authorsStr, newAuthorsData);
 
         const newDraft = await ResearchItemChildModel.findOne({id: researchItem.id});
         return {success: true, researchItem: newDraft, message: 'Item draft created'};
@@ -95,13 +111,13 @@ module.exports = _.merge({}, BaseModel, {
             throw {success: false, researchItem: itemData, message: 'Invalid item type'};
 
         await ResearchItemChildModel.updateDraft(researchItem.id, itemData);
-        if (ResearchItemChildModel.hasAuthors()) {
+        if (researchItem.needsAuthors()) {
             const authorsStr = itemData.authorsStr ?
                 itemData.authorsStr :
                 (await ResearchItemChildModel.findOne({id: researchItem.id})).authorsStr;
             const authors = await Author.find({researchItem: researchItem.id});
             const authorsData = Author.getMatchingAuthorsData(authorsStr, authors);
-            await Author.updateAuthors(researchItem.id, authorsStr, authorsData);
+            await Author.updateAuthors(researchItem, authorsStr, authorsData);
         }
 
         const newDraft = await ResearchItemChildModel.findOne({id: researchItem.id});
@@ -122,6 +138,10 @@ module.exports = _.merge({}, BaseModel, {
         if (!itemToCopy)
             throw {success: false, researchItem: researchItemId, message: 'Item not found'};
 
+        let authors = itemToCopy.authors;
+        if (itemToCopy.needsAuthors())
+            authors = await Author.find({researchItem: researchItemId}).populate('affiliations');
+
         const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(itemToCopy.type.key);
         const researchItem = await ResearchItemChildModel.findOne({id: researchItemId});
         if (!researchItem)
@@ -129,7 +149,17 @@ module.exports = _.merge({}, BaseModel, {
 
         return await ResearchItem.createDraft(researchEntityId,
             Object.assign({}, itemToCopy, researchItem),
-            itemToCopy.authors);
+            authors);
+    },
+    async setResearchItemAuthors(researchItemId, authorsData) {
+        if (!researchItemId) throw "setAuthors error!";
+        const researchItem = await ResearchItem.findOne({id: researchItemId}).populate(['type', 'authors']);
+        if (!researchItem) throw 'Research item not found';
+
+        const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(researchItem.type.key);
+        const researchItemChild = await ResearchItemChildModel.findOne({id: researchItemId});
+        const authData = await Author.getMatchingAuthorsData(researchItemChild.authorsStr, authorsData);
+        await Author.updateAuthors(researchItem, researchItemChild.authorsStr, authData);
     },
     async getVerifiedCopy(researchItem) {
         const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(researchItem.type);

@@ -13,7 +13,10 @@ const researchItemKinds = {
     IGNORED: 'i'
 };
 
+const authorLimit = 10;
+
 angular.module('app')
     .constant('researchItemKinds', researchItemKinds)
-    .constant('researchItemLabels', researchItemLabels);
+    .constant('researchItemLabels', researchItemLabels)
+    .constant('authorLimit', authorLimit);
 

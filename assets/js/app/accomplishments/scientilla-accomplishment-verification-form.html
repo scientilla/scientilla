@@ -14,7 +14,9 @@
 
     <h4 class="document-title" ng-bind-html='vm.accomplishment | accomplishmentTitle'></h4>
 
-
+    <research-item-affiliations
+            document="vm.accomplishment"
+            collapsed="vm.collapsed"></research-item-affiliations>
     <form>
         <div class="form-group">
             <label for="position">Who are you?</label>
@@ -25,6 +27,18 @@
                         ng-model="vm.verificationData.position"
                         ng-options="+index as author for (index, author) in vm.authorsNames">
                 </select>
+            </div>
+        </div>
+
+        <div ng-if="!Number.isInteger(vm.verificationData.position)">
+
+            <div class="form-group">
+                <scientilla-multicomplete
+                        items="vm.verificationData.affiliations"
+                        query="vm.getInstitutesQuery"
+                        filter="vm.getInstitutesFilter"
+                        title="What are your affiliations for this accomplishment?">
+                </scientilla-multicomplete>
             </div>
         </div>
 
