@@ -57,7 +57,8 @@ module.exports = _.merge({}, BaseModel, {
             corresponding: false,
             first_coauthor: false,
             last_coauthor: false,
-            oral_presentation: false
+            oral_presentation: false,
+            affiliations: []
         };
     },
     getFields() {
