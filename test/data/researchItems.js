@@ -18,6 +18,6 @@ module.exports = [
         yearTo: 2016,
         medium: 1,
         authorsStr: 'Semprini F.',
-        editorInChief: 'true'
+        editorshipRole: 'Chief'
     }
 ];

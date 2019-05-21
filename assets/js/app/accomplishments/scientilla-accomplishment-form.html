@@ -127,20 +127,16 @@
             </div>
 
             <div class="col-12 col-sm-6">
-                <div class="form-group has-feedback"
-                     ng-class="{
-                        'has-error' : vm.errors.source && vm.mode == 'verify',
-                        'has-warning' : vm.errors.source && vm.mode == 'draft'
-                     }"></div>
-                <div class="input-group"
-                     ng-class="{'is-invalid' : vm.errors.source}">
-                    <label class="form-checkbox">
-                        <input type="checkbox"
-                               ng-model="vm.accomplishment.editorInChief"/>
-                        <span>Editor in chief</span>
-                    </label>
+                <div class="form-group">
+                    <label for="editorship-editorshipRole">Role</label>
+                    <input id="editorship-editorshipRole"
+                           type="text"
+                           class="form-control"
+                           placeholder="Issuer"
+                           ng-model="vm.accomplishment.editorshipRole">
                 </div>
             </div>
+
         </div>
 
         <div class="row" ng-if="vm.accomplishment.type.key === 'award_achievement'">

@@ -34,7 +34,7 @@
             'type',
             'kind',
             'draftCreator',
-            'editorInChief',
+            'editorshipRole',
             'eventType',
             'place'
         ];

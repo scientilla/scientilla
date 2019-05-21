@@ -9,7 +9,7 @@ const fields = [
     {name: 'yearFrom'},
     {name: 'yearTo'},
     {name: 'medium'},
-    {name: 'editorInChief'},
+    {name: 'editorshipRole'},
     {name: 'researchItem'}
 ];
 
@@ -36,9 +36,9 @@ module.exports = _.merge({}, BaseModel, {
         medium: {
             model: 'source'
         },
-        editorInChief: {
-            type: 'BOOLEAN',
-            columnName: 'editor_in_chief',
+        editorshipRole: {
+            type: 'STRING',
+            columnName: 'editorship_role',
         },
         isValid() {
             const requiredFields = [

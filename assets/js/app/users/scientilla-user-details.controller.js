@@ -12,7 +12,7 @@
         });
 
     controller.$inject = [
-        'context',
+        'ResearchEntitiesService',
         'UsersService',
         'documentListSections',
         'accomplishmentListSections',
@@ -21,7 +21,7 @@
         '$controller'
     ];
 
-    function controller(context, UsersService, documentListSections, accomplishmentListSections, AuthService, $scope, $controller) {
+    function controller(ResearchEntitiesService, UsersService, documentListSections, accomplishmentListSections, AuthService, $scope, $controller) {
         const vm = this;
         angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
 
@@ -32,7 +32,7 @@
         /* jshint ignore:start */
         vm.$onInit = async () => {
             vm.user = await UsersService.getUser(vm.userId);
-            vm.researchEntity = await context.getResearchEntity();
+            vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
             vm.chartsData = await vm.getChartsData(vm.user);
         };
         /* jshint ignore:end */

@@ -10,7 +10,7 @@ const fields = [
     'yearTo',
     'issuer',
     'medium',
-    'editorInChief',
+    'editorshipRole',
     'eventType',
     'place',
     'description',
@@ -39,9 +39,9 @@ module.exports = _.merge({}, BaseModel, {
         medium: {
             model: 'source'
         },
-        editorInChief: {
-            type: 'BOOLEAN',
-            columnName: 'editor_in_chief',
+        editorshipRole: {
+            type: 'STRING',
+            columnName: 'editorship_role',
         },
         eventType: {
             type: 'STRING',

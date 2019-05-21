@@ -9,7 +9,7 @@ CREATE OR REPLACE VIEW accomplishment AS
            ria.issuer,
            NULL AS year_to,
            NULL AS medium,
-           NULL AS editor_in_chief,
+           NULL AS editorship_role,
            NULL AS event_type,
            NULL AS place,
            NULL AS description
@@ -26,7 +26,7 @@ CREATE OR REPLACE VIEW accomplishment AS
            NULL          AS issuer,
            rie.year_to,
            rie.medium,
-           rie.editor_in_chief,
+           rie.editorship_role,
            NULL          AS event_type,
            NULL          AS place,
            NULL          AS description
@@ -43,7 +43,7 @@ CREATE OR REPLACE VIEW accomplishment AS
            NULL AS issuer,
            NULL AS year_to,
            NULL AS medium,
-           NULL AS editor_in_chief,
+           NULL AS editorship_role,
            rieo.event_type,
            rieo.place,
            rieo.description
