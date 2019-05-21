@@ -1,7 +1,6 @@
 <div class="modal-header">
     <h3> {{vm.accomplishment.type.label}} Verification</h3>
-    <button
-            type="button"
+    <button type="button"
             class="close"
             ng-click="vm.cancel()">
         <i class="fas fa-times"></i>
@@ -14,52 +13,49 @@
 
     <h4 class="document-title" ng-bind-html='vm.accomplishment | accomplishmentTitle'></h4>
 
-    <research-item-affiliations
-            document="vm.accomplishment"
-            collapsed="vm.collapsed"></research-item-affiliations>
+    <scientilla-research-item-affiliations research-item="vm.accomplishment"
+                                           collapsed="vm.collapsed"></scientilla-research-item-affiliations>
+
+    <research-item-affiliations document="vm.accomplishment"
+                                collapsed="vm.collapsed"></research-item-affiliations>
     <form>
         <div class="form-group">
             <label for="position">Who are you?</label>
             <div class="select-wrapper">
-                <select
-                        class="form-control"
+                <select class="form-control"
                         id="position"
-                        ng-model="vm.verificationData.position"
+                        ng-model="vm.position"
                         ng-options="+index as author for (index, author) in vm.authorsNames">
                 </select>
             </div>
         </div>
 
-        <div ng-if="!Number.isInteger(vm.verificationData.position)">
+        <div ng-if="!Number.isInteger(vm.position)">
 
             <div class="form-group">
-                <scientilla-multicomplete
-                        items="vm.verificationData.affiliations"
-                        query="vm.getInstitutesQuery"
-                        filter="vm.getInstitutesFilter"
-                        title="What are your affiliations for this accomplishment?">
+                <scientilla-multicomplete items="vm.verificationData.affiliations"
+                                          query="vm.getInstitutesQuery"
+                                          filter="vm.getInstitutesFilter"
+                                          title="What are your affiliations for this accomplishment?">
                 </scientilla-multicomplete>
             </div>
         </div>
 
         <ul class="modal-buttons">
             <li>
-                <scientilla-button
-                        type="submit"
-                        click="vm.submit"
-                        ng-disabled="!vm.canBeSubmitted()">Verify
+                <scientilla-button type="submit"
+                                   click="vm.submit"
+                                   ng-disabled="!vm.canBeSubmitted()">Verify
                 </scientilla-button>
             </li>
             <li ng-if="vm.viewCopyToDraft()">
-                <scientilla-button
-                        type="submit"
-                        click="vm.copyToDraft">Copy to draft
+                <scientilla-button type="submit"
+                                   click="vm.copyToDraft">Copy to draft
                 </scientilla-button>
             </li>
             <li>
-                <scientilla-button
-                        type="cancel"
-                        click="vm.cancel()">Cancel
+                <scientilla-button type="cancel"
+                                   click="vm.cancel()">Cancel
                 </scientilla-button>
             </li>
         </ul>

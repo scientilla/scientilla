@@ -39,9 +39,7 @@
             vm.accomplishment = vm.researchItem;
 
             const researchEntity = context.getResearchEntity();
-            let user;
-
-            let originalVerificationData = {};
+            let authors, user, deregisterer;
 
             vm.collapsed = true;
 
@@ -49,15 +47,17 @@
                 if (researchEntity.type === 'group')
                     return vm.onFailure()();
 
-                vm.authorsNames = vm.accomplishment.authors.map(a => a.authorStr);
+
+                authors = ResearchItemService.getCompleteAuthors(vm.accomplishment);
+                vm.authorsNames = authors.map(a => a.authorStr);
 
                 user = context.getSubResearchEntity();
-                vm.verificationData.position = ResearchItemService.getUserIndex(vm.accomplishment, user);
-                vm.verificationData.affiliations = [];
-                vm.verificationData.public = true;
-                vm.verificationData.favorite = false;
+                vm.position = ResearchItemService.getUserIndex(vm.accomplishment, user);
+                deregisterer = $scope.$watch('vm.position', authorSelectedChange);
+            };
 
-                originalVerificationData = angular.copy(vm.verificationData);
+            vm.$onDestroy = function () {
+                deregisterer();
             };
 
             function copyToDraft() {
@@ -66,22 +66,28 @@
             }
 
             function canBeSubmitted() {
-                return vm.verificationData.position >= 0;
+                return vm.position >= 0;
+            }
+
+            function authorSelectedChange() {
+                vm.verificationData = _.cloneDeep(authors[vm.position]);
+                console.log(vm.verificationData);
             }
 
             /* jshint ignore:start */
 
             async function submit() {
-                if (vm.verificationData.position >= vm.authorsNames.length)
+                if (vm.position >= vm.authorsNames.length)
                     return;
 
                 const data = {
                     position: vm.verificationData.position,
                     'public': vm.verificationData.public,
+                    favorite: vm.verificationData.favorite,
                     affiliations: vm.verificationData.affiliations.map(af => af.id)
                 };
 
-                const authorStr = vm.authorsNames[vm.verificationData.position];
+                const authorStr = vm.authorsNames[vm.position];
                 const alias = user.aliases.find(a => a.str.toLocaleLowerCase() === authorStr.toLocaleLowerCase());
 
                 if (!alias) {
@@ -100,7 +106,6 @@
                     const res = await verify(data);
                     const newUser = await UsersService.getProfile(user.id);
                     context.setSubResearchEntity(newUser);
-                    originalVerificationData = angular.copy(vm.verificationData);
                     executeOnSubmit({buttonIndex: 1, data: res});
                 } catch (e) {
                     executeOnFailure();
@@ -120,7 +125,6 @@
             }
 
             function cancel() {
-                vm.verificationData = angular.copy(originalVerificationData);
                 executeOnSubmit({buttonIndex: 0});
             }
 

@@ -20,10 +20,11 @@
     controller.$inject = [
         '$scope',
         'context',
-        'ResearchEntitiesService'
+        'ResearchEntitiesService',
+        'ResearchItemService'
     ];
 
-    function controller($scope, context, ResearchEntitiesService) {
+    function controller($scope, context, ResearchEntitiesService, ResearchItemService) {
         const vm = this;
         vm.getInstitutesFilter = getInstitutesFilter;
         vm.getInstitutesQuery = getInstitutesQuery;
@@ -40,13 +41,7 @@
 
             vm.authorStrs = vm.researchItem.authors.map(a => a.authorStr);
 
-            vm.authors = _.cloneDeep(vm.researchItem.authors);
-            vm.authors.forEach(a => {
-                const instituteIds = vm.newResearchItem.affiliations.filter(af => af.author === a.id).map(af => af.institute);
-                a.affiliations = _.cloneDeep(vm.newResearchItem.institutes.filter(i => instituteIds.includes(i.id)));
-                a.affiliations.forEach(af => af.getDisplayName = () => af.name);
-            });
-
+            vm.authors = ResearchItemService.getCompleteAuthors(vm.researchItem);
             originalAuthors = _.cloneDeep(vm.authors);
 
             $scope.$watch('vm.position', userSelectedChanged);
@@ -87,6 +82,7 @@
                 vm.closeFn()();
             }
         }
+
         /* jshint ignore:end */
 
         function close() {

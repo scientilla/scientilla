@@ -12,7 +12,8 @@
             hasLabel,
             getUserIndex,
             isUnverifying,
-            getInstituteIdentifier
+            getInstituteIdentifier,
+            getCompleteAuthors
         };
 
         function addLabel(researchItem, label) {
@@ -57,6 +58,17 @@
                 base26Value[0] = base26Chars[base26Chars.indexOf(base26Value[0]) - 1];
 
             return base26Value.map(c => alphabetMapper[c]).join('');
+        }
+
+        function getCompleteAuthors(researchItem) {
+            const authors = _.cloneDeep(researchItem.authors);
+            authors.forEach(a => {
+                const instituteIds = researchItem.affiliations.filter(af => af.author === a.id).map(af => af.institute);
+                a.affiliations = _.cloneDeep(researchItem.institutes.filter(i => instituteIds.includes(i.id)));
+                a.affiliations.forEach(af => af.getDisplayName = () => af.name);
+            });
+
+            return authors;
         }
     }
 })();
