@@ -29,6 +29,7 @@
         const vm = this;
         vm.isValid = AccomplishmentService.isValid;
         vm.getVerifiedNamesHTML = getVerifiedNamesHTML;
+        vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
         vm.openDetails = openDetails;
         vm.isPublic = isPublic;
         vm.isFavorite = isFavorite;
@@ -63,6 +64,10 @@
                 return 'Nobody has verified this document yet';
 
             return '<p>This document is verified by:</p><p>' + verifiedNames.join('<br>') + '</p>';
+        }
+
+        function hasMainGroupAffiliation() {
+            return vm.accomplishment.institutes.find(i => i.id === 1);
         }
 
         function getVerfiedNames() {
