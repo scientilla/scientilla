@@ -14,7 +14,7 @@ module.exports = {
     getResearchItemChildModel(type) {
         const researchItemModels = {
             'award_achievement': Accomplishment,
-            'editor': Accomplishment,
+            'editorship': Accomplishment,
             'organized_event': Accomplishment,
         };
 

@@ -42,7 +42,7 @@ const accomplishmentEventTypes = [
 ];
 
 const accomplishmentRequiredFields = {
-    editor: [
+    editorship: [
         'authorsStr',
         'year',
         'medium'

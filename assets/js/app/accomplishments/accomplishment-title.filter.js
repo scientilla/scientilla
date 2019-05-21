@@ -8,7 +8,7 @@
     function title() {
 
         function getTitle(accomplishment) {
-            const title = accomplishment.type.key === 'editor' ? accomplishment.medium?accomplishment.medium.title: undefined : accomplishment.title;
+            const title = accomplishment.title;
             return title ? title : '<i> < No title > </i>';
         }
 

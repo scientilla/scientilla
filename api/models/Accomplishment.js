@@ -1,4 +1,4 @@
-/* global require, Accomplishment, ItemAward, ItemEditor, ItemEventOrganization, ResearchItemTypes, ResearchItemKinds, Institute */
+/* global require, Accomplishment, ResearchItemAward, ResearchItemEditorship, ResearchItemEventOrganization, ResearchItemTypes, ResearchItemKinds, Institute */
 'use strict';
 
 const BaseModel = require("../lib/BaseModel.js");
@@ -94,9 +94,9 @@ module.exports = _.merge({}, BaseModel, {
     autoCreatedAt: false,
     getResearchItemModel(type) {
         const researchItemModels = {
-            'award_achievement': ItemAward,
-            'editor': ItemEditor,
-            'organized_event': ItemEventOrganization,
+            'award_achievement': ResearchItemAward,
+            'editorship': ResearchItemEditorship,
+            'organized_event': ResearchItemEventOrganization,
         };
         const researchItemType = ResearchItemTypes.getType(type);
         return researchItemModels[researchItemType.key];

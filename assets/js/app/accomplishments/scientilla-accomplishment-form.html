@@ -14,7 +14,7 @@
             class="{{vm.status.class}}"
             autocomplete="off">
 
-        <div class="row" ng-if="vm.accomplishment.type.key === 'editor'">
+        <div class="row" ng-if="vm.accomplishment.type.key === 'editorship'">
 
             <div class="col-12">
                 <div ng-class="{
@@ -22,10 +22,10 @@
                     'has-warning' : vm.errors.authorsStr && vm.mode == 'draft'
                  }"
                      class="form-group has-feedback">
-                    <label for="editor-authors">
+                    <label for="editorship-authors">
                         Authors (must be in the form "Doe J., Smith Simpson J. V.") *
                     </label>
-                    <input id="editor-authors"
+                    <input id="editorship-authors"
                            type="text"
                            name="authors"
                            class="form-control"
@@ -48,8 +48,8 @@
                         'has-warning' : vm.errors.year && vm.mode == 'draft'
                      }"
                      class="form-group has-feedback">
-                    <label for="editor-year">Year from (YYYY format) *</label>
-                    <input id="editor-year"
+                    <label for="editorship-year">Year from (YYYY format) *</label>
+                    <input id="editorship-year"
                            type="text"
                            name="year"
                            class="form-control"
@@ -72,11 +72,11 @@
                         'has-warning' : vm.errors.yearTo && vm.mode == 'draft'
                      }"
                      class="form-group has-feedback">
-                    <label for="editor-yearTo">Year to (YYYY format)</label>
+                    <label for="editorship-yearTo">Year to (YYYY format)</label>
                     <input type="text"
-                           name="editor-yearTo"
+                           name="editorship-yearTo"
                            class="form-control"
-                           id="editor-yearTo"
+                           id="editorship-yearTo"
                            placeholder="Year to"
                            ng-model="vm.accomplishment.yearTo"
                            ng-pattern="vm.fieldsRules.yearTo.regex"
@@ -95,10 +95,10 @@
                         'has-error' : vm.errors.source && vm.mode == 'verify',
                         'has-warning' : vm.errors.source && vm.mode == 'draft'
                      }">
-                    <label for="editor-medium">Medium*</label>
+                    <label for="editorship-medium">Medium*</label>
                     <div class="input-group"
                          ng-class="{'is-invalid' : vm.errors.source}">
-                        <input id="editor-medium"
+                        <input id="editorship-medium"
                                name="source"
                                type="text"
                                ng-model="vm.accomplishment.medium"

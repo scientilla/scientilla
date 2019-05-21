@@ -47,8 +47,8 @@ describe('Item Draft: ', () => {
     });
 
 
-    it('a researchEntity should be able to create an editor item draft', async () => {
-        const typeId = itemTypes.find(it => it.key === 'editor').id;
+    it('a researchEntity should be able to create an editorship item draft', async () => {
+        const typeId = itemTypes.find(it => it.key === 'editorship').id;
         const source = await test.createSource(sourcesData[0]);
         const itemData = itemsData[2];
         itemData.medium = source.id;
@@ -58,9 +58,9 @@ describe('Item Draft: ', () => {
 
         const drafts = await test.researchEntity.getAccomplishmentDrafts(researchEntity);
 
-        const itemEditorDrafts = drafts.filter(d => d.type === typeId);
-        itemEditorDrafts.length.should.equal(1);
-        itemEditorDrafts[0].medium.should.equal(source.id);
+        const itemEditorshipDrafts = drafts.filter(d => d.type === typeId);
+        itemEditorshipDrafts.length.should.equal(1);
+        itemEditorshipDrafts[0].medium.should.equal(source.id);
     });
 
     it('should be possibile to update an item draft', async () => {

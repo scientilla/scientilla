@@ -48,7 +48,7 @@ module.exports = _.merge({}, BaseModel, {
         needsAuthors() {
             const needsAuthorsTypes = {
                 'award_achievement': true,
-                'editor': true,
+                'editorship': true,
                 'organized_event': true
             };
             return needsAuthorsTypes[this.getType().key];
@@ -56,7 +56,7 @@ module.exports = _.merge({}, BaseModel, {
         needsAffiliations() {
             const needsAffiliationTypes = {
                 'award_achievement': true,
-                'editor': true,
+                'editorship': true,
                 'organized_event': true
             };
             return needsAffiliationTypes[this.getType().key];

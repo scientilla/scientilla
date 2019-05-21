@@ -1,4 +1,4 @@
-/* global require, ItemEditor, Validator, Source */
+/* global require, ResearchItemEditorship, Validator, Source */
 'use strict';
 
 const BaseModel = require("../lib/BaseModel.js");
@@ -14,7 +14,7 @@ const fields = [
 ];
 
 module.exports = _.merge({}, BaseModel, {
-    tableName: 'item_editor',
+    tableName: 'research_item_editorship',
     attributes: {
         researchItem: {
             model: 'researchitem',
@@ -61,7 +61,7 @@ module.exports = _.merge({}, BaseModel, {
         if (!itemData.yearFrom)
             itemData.yearFrom = itemData.year;
         if (itemData.medium)
-            itemData.medium = await ItemEditor.getFixedCollection(Source, itemData.medium);
-        return _.pick(itemData, ItemEditor.getFields());
+            itemData.medium = await ResearchItemEditorship.getFixedCollection(Source, itemData.medium);
+        return _.pick(itemData, ResearchItemEditorship.getFields());
     }
 });

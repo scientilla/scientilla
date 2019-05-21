@@ -31,7 +31,7 @@ describe('ResearchItem Verification: ', () => {
         const user = users[0];
         const awardTypeId = itemTypes.find(it => it.key === 'award_achievement').id;
         const eventTypeId = itemTypes.find(it => it.key === 'organized_event').id;
-        const editorTypeId = itemTypes.find(it => it.key === 'editor').id;
+        const editorshipTypeId = itemTypes.find(it => it.key === 'editorship').id;
 
         async function testVerify(draftData) {
             const createRes = await test.researchEntity.createDraft(user, researchEntity, draftData);
@@ -45,7 +45,7 @@ describe('ResearchItem Verification: ', () => {
 
         await testVerify({title: 'test1', type: awardTypeId});
         await testVerify({title: 'test2', type: eventTypeId});
-        await testVerify({title: 'test3', type: editorTypeId});
+        await testVerify({title: 'test3', type: editorshipTypeId});
 
         const verifiedAccomplishments = await test.researchEntity.getVerifiedAccomplishment(researchEntity);
         verifiedAccomplishments.length.should.be.equal(0);

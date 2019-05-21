@@ -1,4 +1,4 @@
-/* global require, ItemEventOrganization, Validator */
+/* global require, ResearchItemAward, Validator, Institute */
 'use strict';
 
 const BaseModel = require("../lib/BaseModel.js");
@@ -7,17 +7,16 @@ const fields = [
     {name: 'title'},
     {name: 'authorsStr'},
     {name: 'year'},
-    {name: 'eventType'},
-    {name: 'place'},
-    {name: 'description'},
+    {name: 'issuer'},
     {name: 'researchItem'}
 ];
 
 module.exports = _.merge({}, BaseModel, {
-    tableName: 'item_event_organization',
+    tableName: 'research_item_award',
     attributes: {
         researchItem: {
             model: 'researchitem',
+            unique: true,
             columnName: 'research_item'
         },
         title: 'STRING',
@@ -26,12 +25,7 @@ module.exports = _.merge({}, BaseModel, {
             columnName: 'authors_str'
         },
         year: 'STRING',
-        eventType: {
-            type: 'STRING',
-            columnName: 'event_type',
-        },
-        place: 'STRING',
-        description: 'STRING',
+        issuer: 'STRING',
         isValid() {
             const requiredFields = [
                 'title',
@@ -47,6 +41,6 @@ module.exports = _.merge({}, BaseModel, {
         return fields.map(f => f.name);
     },
     async selectData(itemData) {
-        return _.pick(itemData, ItemEventOrganization.getFields());
+        return _.pick(itemData, ResearchItemAward.getFields());
     }
 });
