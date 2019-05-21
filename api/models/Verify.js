@@ -64,14 +64,11 @@ module.exports = _.merge({}, BaseModel, {
         if (!verify)
             throw {researchItem: researchItem, success: false, message: 'Critcal error: verification failed'};
 
-
-        if (!researchEntity.isGroup() && researchItem.needsAuthors()) {
-            try {
-                await Author.verify(researchEntity, researchItem, verify, verificationData);
-            } catch (e) {
-                await Verify.destroy({id: verify.id});
-                throw e;
-            }
+        try {
+            await Author.verify(researchEntity, researchItem, verify, verificationData);
+        } catch (e) {
+            await Verify.destroy({id: verify.id});
+            throw e;
         }
 
         if (researchItem.kind === ResearchItemKinds.DRAFT)

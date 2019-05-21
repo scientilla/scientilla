@@ -1,4 +1,4 @@
-/* global Author, Affiliation, Institute, ResearchEntity, AuthorAffiliation*/
+/* global Author, ResearchItem, ResearchItemType, Affiliation, Institute, ResearchEntity, AuthorAffiliation*/
 "use strict";
 
 const _ = require('lodash');
@@ -178,6 +178,21 @@ module.exports = _.merge({}, BaseModel, {
 
     },
     async verify(researchEntity, researchItem, verify, verificationData) {
+        if (!researchItem.needsAuthors())
+            return;
+
+        if (researchEntity.isGroup()) {
+            const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(researchItem.type);
+            const childResearchItem = await ResearchItemChildModel.findOne({id: researchItem.id}).populate('institutes');
+            if (!childResearchItem.institutes.find(i => i.id === 1)) // TODO remove magic number
+                throw  {
+                    researchItem: childResearchItem,
+                    success: false,
+                    message: 'Verification not allowed for non affiliated items'
+                };
+            return;
+        }
+
         const authorData = await Author.getAuthorData(researchEntity, researchItem, verificationData);
 
         if (!Number.isInteger(authorData.position))
