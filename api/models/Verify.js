@@ -107,6 +107,8 @@ module.exports = _.merge({}, BaseModel, {
             sails.log.debug('Deleting item ' + researchItem.id);
             await ResearchItem.destroy({id: researchItem.id});
         }
+
+        return {success: true, researchItem: researchItem, message: 'UnVerification completed'};
     },
     setPublic: async function (researchEntityId, researchItemId, publicFlag) {
         const verify = await Verify.findOne({

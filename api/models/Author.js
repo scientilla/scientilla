@@ -183,7 +183,7 @@ module.exports = _.merge({}, BaseModel, {
         if (!Number.isInteger(authorData.position))
             throw {researchItem: researchItem, success: false, message: 'Author position or alias not specified'};
 
-        if (researchItem.needsAffiliations() && authorData.affiliations.length === 0)
+        if (researchItem.needsAffiliations() && (!Array.isArray(authorData.affiliations) || authorData.affiliations.length === 0))
             throw {researchItem: researchItem, success: false, message: 'Affiliations not specified'};
 
         const author = await Author.findOne({

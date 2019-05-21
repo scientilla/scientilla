@@ -27,10 +27,16 @@ describe('ResearchItem Copy to draft: ', () => {
         const copierUser = users[0];
         const typeId = itemTypes.find(it => it.key === 'award_achievement').id;
         const itemData = Object.assign({}, itemsData[0], {type: typeId});
-        await test.researchEntity.createDraft(creatorUser, creatorResearchEntity, itemData);
+
+        let res = await test.researchEntity.createDraft(creatorUser, creatorResearchEntity, itemData);
+        res.success.should.be.equal(true);
 
         verifiedItem = (await test.researchEntity.getAccomplishmentDrafts(creatorResearchEntity, [], {title: itemData.title}))[0];
-        await test.researchEntity.verifyItem(creatorUser, creatorResearchEntity, verifiedItem.id, {position: 0});
+        res = await test.researchEntity.verifyItem(creatorUser, creatorResearchEntity, verifiedItem.id, {
+            position: 0,
+            affiliations: [1]
+        });
+        res.success.should.be.equal(true);
 
         const verifiedAccomplishments = await test.researchEntity.getVerifiedAccomplishment(creatorResearchEntity);
 
@@ -38,7 +44,8 @@ describe('ResearchItem Copy to draft: ', () => {
         verifiedAccomplishments[0].title.should.be.equal(verifiedItem.title);
         verifiedAccomplishments[0].kind.should.be.equal('v');
 
-        await test.researchEntity.copyItemToDrafts(copierUser, copierResearchEntity, verifiedItem);
+        res = await test.researchEntity.copyItemToDrafts(copierUser, copierResearchEntity, verifiedItem);
+        res.success.should.be.equal(true);
 
         const drafts = await test.researchEntity.getAccomplishmentDrafts(copierResearchEntity);
 

@@ -33,14 +33,19 @@ describe('ResearchItem Verification: ', () => {
         const eventTypeId = itemTypes.find(it => it.key === 'organized_event').id;
         const editorTypeId = itemTypes.find(it => it.key === 'editor').id;
 
-        let draft = await test.researchEntity.createDraft(user, researchEntity, {title: 'test1', type: awardTypeId});
-        await test.researchEntity.verifyItem(user, researchEntity, draft.id, {position: 0}, 400);
+        async function testVerify(draftData) {
+            const createRes = await test.researchEntity.createDraft(user, researchEntity, draftData);
+            const res = await test.researchEntity.verifyItem(user, researchEntity, createRes.researchItem.id, {
+                position: 0,
+                affiliations: [1]
+            }, 400);
+            res.success.should.be.equal(false);
+            res.message.should.be.equal('Item not valid');
+        }
 
-        draft = await test.researchEntity.createDraft(user, researchEntity, {title: 'test2', type: eventTypeId});
-        await test.researchEntity.verifyItem(user, researchEntity, draft.id, {position: 0}, 400);
-
-        draft = await test.researchEntity.createDraft(user, researchEntity, {title: 'test3', type: editorTypeId});
-        await test.researchEntity.verifyItem(user, researchEntity, draft.id, {position: 0}, 400);
+        await testVerify({title: 'test1', type: awardTypeId});
+        await testVerify({title: 'test2', type: eventTypeId});
+        await testVerify({title: 'test3', type: editorTypeId});
 
         const verifiedAccomplishments = await test.researchEntity.getVerifiedAccomplishment(researchEntity);
         verifiedAccomplishments.length.should.be.equal(0);
@@ -53,14 +58,17 @@ describe('ResearchItem Verification: ', () => {
         const itemData = Object.assign({}, itemsData[0], {type: typeId});
         await test.researchEntity.createDraft(user, researchEntity, itemData);
 
-        verifiedItem = (await test.researchEntity.getAccomplishmentDrafts(researchEntity, [], {title: itemData.title}))[0];
-        await test.researchEntity.verifyItem(user, researchEntity, verifiedItem.id, {position: 0});
+        const draftItem = (await test.researchEntity.getAccomplishmentDrafts(researchEntity, [], {title: itemData.title}))[0];
+        const res = await test.researchEntity.verifyItem(user, researchEntity, draftItem.id, {position: 0, affiliations: [1]});
+        res.success.should.be.equal(true);
 
         const verifiedAccomplishments = await test.researchEntity.getVerifiedAccomplishment(researchEntity);
 
         verifiedAccomplishments.length.should.be.equal(1);
-        verifiedAccomplishments[0].title.should.be.equal(verifiedItem.title);
+        verifiedAccomplishments[0].title.should.be.equal(draftItem.title);
         verifiedAccomplishments[0].kind.should.be.equal('v');
+
+        verifiedItem = verifiedAccomplishments[0];
     });
 
     it('it should be possible to verify an already verified item ', async () => {
@@ -70,7 +78,8 @@ describe('ResearchItem Verification: ', () => {
         const verifiedAccomplishmentsBefore = await test.researchEntity.getVerifiedAccomplishment(researchEntity);
         verifiedAccomplishmentsBefore.length.should.be.equal(0);
 
-        await test.researchEntity.verifyItem(user, researchEntity, verifiedItem.id, {position: 1});
+        const res = await test.researchEntity.verifyItem(user, researchEntity, verifiedItem.id, {position: 1, affiliations: [1]});
+        res.success.should.be.equal(true);
         const verifiedAccomplishmentsAfter = await test.researchEntity.getVerifiedAccomplishment(researchEntity,);
         verifiedAccomplishmentsAfter.length.should.be.equal(1);
         verifiedAccomplishmentsAfter[0].title.should.be.equal(verifiedItem.title);
@@ -80,7 +89,8 @@ describe('ResearchItem Verification: ', () => {
     it('it should be possible to unverify an item ', async () => {
         const researchEntity = researchEntities[0];
         const user = users[0];
-        await test.researchEntity.unVerifyItem(user, researchEntity, verifiedItem.id, {position: 0});
+        const res = await test.researchEntity.unVerifyItem(user, researchEntity, verifiedItem.id, {position: 0, affiliations: [1]});
+        res.success.should.be.equal(true);
         const verifiedAccomplishments = await test.researchEntity.getVerifiedAccomplishment(researchEntity);
         verifiedAccomplishments.length.should.be.equal(0);
     });
@@ -88,7 +98,8 @@ describe('ResearchItem Verification: ', () => {
     it('an item without connections should be deleted', async () => {
         const researchEntity = researchEntities[1];
         const user = users[1];
-        await test.researchEntity.unVerifyItem(user, researchEntity, verifiedItem.id, {position: 0});
+        const res = await test.researchEntity.unVerifyItem(user, researchEntity, verifiedItem.id, {position: 0});
+        res.success.should.be.equal(true);
         const verifiedAccomplishments = await test.researchEntity.getVerifiedAccomplishment(researchEntity);
         verifiedAccomplishments.length.should.be.equal(0);
 

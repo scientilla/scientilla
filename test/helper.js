@@ -96,72 +96,64 @@ module.exports = {
                 .query({populate: ['researchEntity']});
             return res.body.researchEntity;
         },
-        async createDraft(user, researchEntity, draftData, respCode = 200) {
+        async createDraft(user, researchEntity, draftData) {
             const auth = getAuth(user.id);
             const res = await auth.agent
                 .post('/researchentities/' + researchEntity.id + '/researchitemdrafts')
                 .set('access_token', auth.token)
-                .send(draftData)
-                .expect(respCode);
+                .send(draftData);
             return res.body;
         },
-        async updateDraft(user, researchEntity, draftData, respCode = 200) {
+        async updateDraft(user, researchEntity, draftData) {
             const auth = getAuth(user.id);
             const res = await auth.agent
                 .put('/researchentities/' + researchEntity.id + '/researchitemdrafts/' + draftData.id)
                 .set('access_token', auth.token)
-                .send(draftData)
-                .expect(respCode);
+                .send(draftData);
             return res.body;
         },
-        async getItemDrafts(researchEntity, populateFields = [], qs = {}, respCode = 200) {
+        async getItemDrafts(researchEntity, populateFields = [], qs = {}) {
             const res = await request(url)
                 .get('/researchentities/' + researchEntity.id + '/researchitemdrafts')
                 .query({populate: populateFields})
-                .query(qs)
-                .expect(respCode);
+                .query(qs);
             return res.body.items;
         },
-        async getAccomplishmentDrafts(researchEntity, populateFields = [], qs = {}, respCode = 200) {
+        async getAccomplishmentDrafts(researchEntity, populateFields = [], qs = {}) {
             const res = await request(url)
                 .get('/researchentities/' + researchEntity.id + '/accomplishmentdrafts')
                 .query({populate: populateFields})
-                .query(qs)
-                .expect(respCode);
+                .query(qs);
             return res.body.items;
         },
-        async getVerifiedAccomplishment(researchEntity, populateFields = [], qs = {}, respCode = 200) {
+        async getVerifiedAccomplishment(researchEntity, populateFields = [], qs = {}) {
             const res = await request(url)
                 .get('/researchentities/' + researchEntity.id + '/accomplishments')
                 .query({populate: populateFields})
-                .query(qs)
-                .expect(respCode);
+                .query(qs);
             return res.body.items;
         },
-        async verifyItem(user, researchEntity, itemId, verifyData = {}, respCode = 200) {
+        async verifyItem(user, researchEntity, itemId, verifyData = {}) {
             const auth = getAuth(user.id);
             const res = await auth.agent
                 .put('/researchentities/' + researchEntity.id + '/researchitems/' + itemId + '/verified')
                 .set('access_token', auth.token)
-                .send(verifyData)
-                .expect(respCode);
+                .send(verifyData);
             return res.body;
         },
-        async unVerifyItem(user, researchEntity, itemId, verifyData = {}, respCode = 200) {
+        async unVerifyItem(user, researchEntity, itemId) {
             const auth = getAuth(user.id);
             const res = await auth.agent
                 .put('/researchentities/' + researchEntity.id + '/researchitems/' + itemId + '/unverified')
-                .set('access_token', auth.token)
-                .expect(respCode);
+                .set('access_token', auth.token);
             return res.body;
         },
-        async copyItemToDrafts(user, researchEntity, researchItem, respCode = 200) {
+        async copyItemToDrafts(user, researchEntity, researchItem) {
             const auth = getAuth(user.id);
             const res = await auth.agent
                 .post('/researchentities/' + researchEntity.id + '/copy-research-item')
                 .set('access_token', auth.token)
-                .send({researchItemId: researchItem.id})
-                .expect(respCode);
+                .send({researchItemId: researchItem.id});
             return res.body;
 
         }

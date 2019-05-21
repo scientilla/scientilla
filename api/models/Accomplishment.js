@@ -8,7 +8,6 @@ const fields = [
     'authorsStr',
     'year',
     'yearTo',
-    'affiliation',
     'issuer',
     'medium',
     'editorInChief',
@@ -118,7 +117,7 @@ module.exports = _.merge({}, BaseModel, {
         const accomplishmentData = {};
         fields.forEach(f => accomplishmentData[f] = accomplishment[f]);
         delete accomplishmentData.draftCreator;
-        accomplishmentData.kind = ResearchItemKinds.VERIFIED
+        accomplishmentData.kind = ResearchItemKinds.VERIFIED;
 
         const copies = await Accomplishment.find(accomplishmentData);
 

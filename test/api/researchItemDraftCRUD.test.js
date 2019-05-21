@@ -22,7 +22,8 @@ describe('Item Draft: ', () => {
     it('a researchEntity should be able to create an award item draft', async () => {
         const typeId = itemTypes.find(it => it.key === 'award_achievement').id;
         const itemData = Object.assign({}, itemsData[0], {type: typeId});
-        await test.researchEntity.createDraft(user, researchEntity, itemData);
+        const res = await test.researchEntity.createDraft(user, researchEntity, itemData);
+        res.success.should.be.equal(true);
 
         const drafts = await test.researchEntity.getAccomplishmentDrafts(researchEntity);
 
@@ -35,7 +36,8 @@ describe('Item Draft: ', () => {
     it('a researchEntity should be able to create an organized event item draft', async () => {
         const typeId = itemTypes.find(it => it.key === 'organized_event').id;
         const itemData = Object.assign({}, itemsData[1], {type: typeId});
-        await test.researchEntity.createDraft(user, researchEntity, itemData);
+        const res = await test.researchEntity.createDraft(user, researchEntity, itemData);
+        res.success.should.be.equal(true);
 
         const drafts = await test.researchEntity.getAccomplishmentDrafts(researchEntity);
 
@@ -51,8 +53,8 @@ describe('Item Draft: ', () => {
         const itemData = itemsData[2];
         itemData.medium = source.id;
 
-        await test.researchEntity.createDraft(user, researchEntity,
-            Object.assign({}, itemData, {type: typeId}));
+        const res = await test.researchEntity.createDraft(user, researchEntity, Object.assign({}, itemData, {type: typeId}));
+        res.success.should.be.equal(true);
 
         const drafts = await test.researchEntity.getAccomplishmentDrafts(researchEntity);
 
@@ -64,7 +66,8 @@ describe('Item Draft: ', () => {
     it('should be possibile to update an item draft', async () => {
         let drafts = await test.researchEntity.getAccomplishmentDrafts(researchEntity);
         const draftData = Object.assign({}, drafts[0], {title: 'test'});
-        await test.researchEntity.updateDraft(user, researchEntity, draftData);
+        const res = await test.researchEntity.updateDraft(user, researchEntity, draftData);
+        res.success.should.be.equal(true);
 
         drafts = await test.researchEntity.getAccomplishmentDrafts(researchEntity, [], {title: 'test'});
 
