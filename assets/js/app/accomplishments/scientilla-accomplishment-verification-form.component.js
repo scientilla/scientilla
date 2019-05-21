@@ -71,7 +71,6 @@
 
             function authorSelectedChange() {
                 vm.verificationData = _.cloneDeep(authors[vm.position]);
-                console.log(vm.verificationData);
             }
 
             /* jshint ignore:start */
