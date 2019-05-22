@@ -28,11 +28,17 @@
         vm.toggleCollapse = toggleCollapse;
 
         vm.affiliationInstitutes = [];
+        const deregisterers = [];
 
         vm.$onInit = () => {
             vm.collapsed = !!vm.collapsed;
             reloadAffiliations();
-            $scope.$watch('vm.collapsed', () => reloadAffiliations());
+            deregisterers.push($scope.$watch('vm.collapsed', reloadAffiliations));
+            deregisterers.push($scope.$watch('vm.researchItem.institutes', reloadAffiliations, true));
+        };
+
+        vm.$onDestroy = function () {
+            deregisterers.forEach(d => d());
         };
 
         function toggleCollapse() {

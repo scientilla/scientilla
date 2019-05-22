@@ -31,7 +31,7 @@
         vm.submit = save;
         vm.cancel = close;
 
-        let researchEntity, originalAuthors;
+        let researchEntity, originalAuthors, positionDeregisterer, affiliationsDeregisterer;
         vm.collapsed = true;
         vm.newResearchItem = _.cloneDeep(vm.researchItem);
 
@@ -44,8 +44,14 @@
             vm.authors = ResearchItemService.getCompleteAuthors(vm.researchItem);
             originalAuthors = _.cloneDeep(vm.authors);
 
-            $scope.$watch('vm.position', userSelectedChanged);
+            positionDeregisterer = $scope.$watch('vm.position', userSelectedChanged);
             vm.position = 0;
+        };
+
+        vm.$onDestroy = () => {
+            positionDeregisterer();
+            if (_.isFunction(affiliationsDeregisterer))
+                affiliationsDeregisterer();
         };
 
         /* jshint ignore:end */
@@ -57,12 +63,33 @@
         }
 
         function userSelectedChanged() {
-
-            if (_.isUndefined(vm.position)) {
+            if (!Number.isInteger(vm.position))
                 return;
-            }
+
+            if (_.isFunction(affiliationsDeregisterer))
+                affiliationsDeregisterer();
 
             vm.author = vm.authors[vm.position];
+
+            affiliationsDeregisterer = $scope.$watch('vm.author.affiliations', updateResearchItemInstitutes, true);
+        }
+
+        function updateResearchItemInstitutes() {
+            vm.newResearchItem.affiliations = vm.newResearchItem.affiliations.filter(a => a.author !== vm.author.id);
+            const institutesIds = vm.newResearchItem.affiliations.map(a => a.institute);
+            vm.newResearchItem.institutes = vm.newResearchItem.institutes.filter(i => institutesIds.includes(i.id));
+
+            vm.author.affiliations.forEach(i => {
+                vm.newResearchItem.affiliations.push({
+                    author: vm.author.id,
+                    institute: i.id
+                });
+
+                vm.newResearchItem.institutes.push(i);
+            });
+
+            const uniqInstitutesIds = [...new Set(vm.newResearchItem.institutes.map(i => i.id))];
+            vm.newResearchItem.institutes = uniqInstitutesIds.map(id => vm.newResearchItem.institutes.find(i => i.id === id));
         }
 
         function getInstitutesFilter() {
