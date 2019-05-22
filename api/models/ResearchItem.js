@@ -115,7 +115,7 @@ module.exports = _.merge({}, BaseModel, {
             const authorsStr = itemData.authorsStr ?
                 itemData.authorsStr :
                 (await ResearchItemChildModel.findOne({id: researchItem.id})).authorsStr;
-            const authors = await Author.find({researchItem: researchItem.id});
+            const authors = await Author.find({researchItem: researchItem.id}).populate('affiliations');
             const authorsData = Author.getMatchingAuthorsData(authorsStr, authors);
             await Author.updateAuthors(researchItem, authorsStr, authorsData);
         }
