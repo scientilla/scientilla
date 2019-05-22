@@ -47,7 +47,7 @@
 
         function getAffiliationInstituteIdentifier(institute) {
             return ResearchItemService.getInstituteIdentifier(
-                vm.researchItem.institutes.findIndex(i => i.id === institute.id)
+                vm.affiliationInstitutes.findIndex(i => i.id === institute.id)
             );
         }
 
