@@ -19,13 +19,15 @@
         'AccomplishmentService',
         'accomplishmentListSections',
         'ModalService',
+        'accomplishmentEventTypes'
     ];
 
     function controller(context,
                         ResearchEntitiesService,
                         AccomplishmentService,
                         accomplishmentListSections,
-                        ModalService) {
+                        ModalService,
+                        accomplishmentEventTypes) {
         const vm = this;
         vm.isValid = AccomplishmentService.isValid;
         vm.getVerifiedNamesHTML = getVerifiedNamesHTML;
@@ -51,6 +53,10 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
             researchEntity = await context.getResearchEntity();
+
+            const eventType = accomplishmentEventTypes.find(aet => aet.key === vm.accomplishment.eventType);
+            vm.eventTypeLabel = eventType ? eventType.label : undefined;
+
         };
 
         /* jshint ignore:end */

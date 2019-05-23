@@ -28,9 +28,8 @@
         <label class="inline-block">Issuer:</label> {{vm.accomplishment.issuer}}
     </div>
 
-    <div ng-if="vm.accomplishment.eventType || vm.accomplishment.place"
-         class="text-capitalize">
-        {{vm.accomplishment.eventType}}<span ng-if="vm.accomplishment.eventType && vm.accomplishment.place">,</span>
+    <div ng-if="vm.accomplishment.eventType || vm.accomplishment.place">
+        <label class="inline-block">{{vm.eventTypeLabel}}<span ng-if="vm.accomplishment.place">:</span> </label>
         {{vm.accomplishment.place}}
     </div>
 

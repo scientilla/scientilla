@@ -12,14 +12,17 @@
             });
 
         controller.$inject = [
+            'accomplishmentEventTypes'
         ];
 
-        function controller() {
+        function controller(accomplishmentEventTypes) {
             const vm = this;
 
 
             vm.$onInit = function () {
                 vm.accomplishment = vm.researchItem;
+                const eventType = accomplishmentEventTypes.find(aet => aet.key === vm.accomplishment.eventType);
+                vm.eventTypeLabel = eventType ? eventType.label : undefined;
             };
 
         }
