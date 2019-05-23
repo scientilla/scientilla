@@ -45,7 +45,7 @@ const accomplishmentRequiredFields = {
     editorship: [
         'authorsStr',
         'year',
-        'medium'
+        'source'
     ],
     award_achievement: [
         'authorsStr',

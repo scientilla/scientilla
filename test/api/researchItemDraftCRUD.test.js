@@ -51,7 +51,7 @@ describe('Item Draft: ', () => {
         const typeId = itemTypes.find(it => it.key === 'editorship').id;
         const source = await test.createSource(sourcesData[0]);
         const itemData = itemsData[2];
-        itemData.medium = source.id;
+        itemData.source = source.id;
 
         const res = await test.researchEntity.createDraft(user, researchEntity, Object.assign({}, itemData, {type: typeId}));
         res.success.should.be.equal(true);
@@ -60,7 +60,7 @@ describe('Item Draft: ', () => {
 
         const itemEditorshipDrafts = drafts.filter(d => d.type === typeId);
         itemEditorshipDrafts.length.should.equal(1);
-        itemEditorshipDrafts[0].medium.should.equal(source.id);
+        itemEditorshipDrafts[0].source.should.equal(source.id);
     });
 
     it('should be possibile to update an item draft', async () => {

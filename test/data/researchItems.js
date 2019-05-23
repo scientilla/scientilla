@@ -16,7 +16,7 @@ module.exports = [
     {
         year: 2015,
         yearTo: 2016,
-        medium: 1,
+        source: 1,
         authorsStr: 'Semprini F.',
         editorshipRole: 'Chief'
     }

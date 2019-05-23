@@ -95,13 +95,13 @@
                         'has-error' : vm.errors.source && vm.mode == 'verify',
                         'has-warning' : vm.errors.source && vm.mode == 'draft'
                      }">
-                    <label for="editorship-medium">Medium*</label>
+                    <label for="editorship-source">Source*</label>
                     <div class="input-group"
                          ng-class="{'is-invalid' : vm.errors.source}">
-                        <input id="editorship-medium"
+                        <input id="editorship-source"
                                name="source"
                                type="text"
-                               ng-model="vm.accomplishment.medium"
+                               ng-model="vm.accomplishment.source"
                                class="form-control"
                                uib-typeahead="source as source.title for source in vm.getSources($viewValue)"
                                typeahead-loading="searching"

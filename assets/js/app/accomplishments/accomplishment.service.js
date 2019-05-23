@@ -29,7 +29,7 @@
             'year',
             'yearTo',
             'issuer',
-            'medium',
+            'source',
             'description',
             'type',
             'kind',

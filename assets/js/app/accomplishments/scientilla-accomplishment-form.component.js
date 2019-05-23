@@ -183,8 +183,8 @@
             if (!_.isEmpty(vm.errors))
                 vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
 
-            if (vm.accomplishment.medium && vm.accomplishment.medium.title) {
-                vm.accomplishment.title = vm.accomplishment.medium.title;
+            if (vm.accomplishment.source && vm.accomplishment.source.title) {
+                vm.accomplishment.title = vm.accomplishment.source.title;
             }
 
             const filteredAccomplishment = AccomplishmentService.filterFields(vm.accomplishment);
@@ -269,7 +269,7 @@
 
             // Subscribe to custom event SOURCE_CREATED, execute following function when event is fired
             EventsService.subscribe(vm, EventsService.SOURCE_CREATED, function (event, source) {
-                vm.accomplishment.medium = source;
+                vm.accomplishment.source = source;
                 vm.getSources(source.title);
                 vm.unsavedData = true;
 

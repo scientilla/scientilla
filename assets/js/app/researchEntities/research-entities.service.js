@@ -38,7 +38,7 @@
         service.setVerifyFavorite = setVerifyFavorite;
 
 
-        const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'medium', 'verifiedUsers', 'verifiedGroups'];
+        const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
 
 
         /* jshint ignore:start */

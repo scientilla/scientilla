@@ -8,7 +8,7 @@ const fields = [
     {name: 'authorsStr'},
     {name: 'yearFrom'},
     {name: 'yearTo'},
-    {name: 'medium'},
+    {name: 'source'},
     {name: 'editorshipRole'},
     {name: 'researchItem'}
 ];
@@ -33,7 +33,7 @@ module.exports = _.merge({}, BaseModel, {
             type: 'STRING',
             columnName: 'year_to'
         },
-        medium: {
+        source: {
             model: 'source'
         },
         editorshipRole: {
@@ -44,7 +44,7 @@ module.exports = _.merge({}, BaseModel, {
             const requiredFields = [
                 'authorsStr',
                 'yearFrom',
-                'medium',
+                'source',
                 'researchItem'
             ];
 
@@ -60,8 +60,8 @@ module.exports = _.merge({}, BaseModel, {
     async selectData(itemData) {
         if (!itemData.yearFrom)
             itemData.yearFrom = itemData.year;
-        if (itemData.medium)
-            itemData.medium = await ResearchItemEditorship.getFixedCollection(Source, itemData.medium);
+        if (itemData.source)
+            itemData.source = await ResearchItemEditorship.getFixedCollection(Source, itemData.source);
         return _.pick(itemData, ResearchItemEditorship.getFields());
     }
 });

@@ -9,7 +9,7 @@ const fields = [
     'year',
     'yearTo',
     'issuer',
-    'medium',
+    'source',
     'editorshipRole',
     'eventType',
     'place',
@@ -36,7 +36,7 @@ module.exports = _.merge({}, BaseModel, {
             columnName: 'year_to'
         },
         issuer: 'STRING',
-        medium: {
+        source: {
             model: 'source'
         },
         editorshipRole: {
