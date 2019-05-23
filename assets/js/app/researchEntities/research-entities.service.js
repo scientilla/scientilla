@@ -185,7 +185,7 @@
         }
 
         async function editDraft(researchEntity, researchItem, category) {
-            return ModalService.openScientillaResearchItemForm(researchEntity, researchItem, category);
+            return ModalService.openScientillaResearchItemForm(researchEntity, _.cloneDeep(researchItem), category);
         }
 
         async function editAffiliations(researchEntity, researchItem) {
