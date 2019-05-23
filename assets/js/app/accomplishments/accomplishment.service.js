@@ -75,7 +75,7 @@
 
         function filterFields(accomplishment) {
             const filteredAccomplishment = {};
-            fields.forEach(key => filteredAccomplishment[key] = accomplishment[key]);
+            fields.forEach(key => filteredAccomplishment[key] = accomplishment[key] ? accomplishment[key] : null);
             return filteredAccomplishment;
         }
 
