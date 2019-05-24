@@ -20,7 +20,6 @@ function accomplishmentsToCsv(researchItems) {
         'Year',
         'Year to',
         'Issuer',
-        'Source',
         'Editorship role',
         'Event type',
         'Place',
@@ -34,7 +33,6 @@ function accomplishmentsToCsv(researchItems) {
         row.push(researchItem.year);
         row.push(researchItem.yearTo);
         row.push(researchItem.issuer);
-        row.push(researchItem.source ? researchItem.source.title : '');
         row.push(researchItem.editorshipRole);
         row.push(researchItem.eventType);
         row.push(researchItem.place);
