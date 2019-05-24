@@ -82,6 +82,7 @@ module.exports = _.merge({}, BaseModel, {
         return !Object.keys(authData1).find(key => !_.isEqual(authData1[key], authData2[key]));
     },
     splitAuthorStr(authorsStr) {
+        if(!authorsStr) return [];
         return authorsStr.replace(/\s+et all\s*/i, '').split(',').map(_.trim);
     },
     getMatchingAuthorsData(authorsStr, authorsData) {
@@ -111,10 +112,10 @@ module.exports = _.merge({}, BaseModel, {
 
     },
     async updateAuthors(researchItem, authorsStr, newAuthorsData = []) {
-        if (!researchItem || !researchItem.id || !authorsStr)
+        if (!researchItem || !researchItem.id)
             return;
 
-        if (authorsStr === '')
+        if (!authorsStr)
             return await Author.destroy({researchItem: researchItem.id});
 
         const cleanAuthorsData = Author.cleanauthorData(newAuthorsData);
@@ -243,7 +244,7 @@ module.exports = _.merge({}, BaseModel, {
 
         return {
             position: position,
-            affiliations: Array.isArray(verificationData.affiliations) ?
+            affiliations: verificationData && Array.isArray(verificationData.affiliations) ?
                 await Author.getFixedCollection(Institute, verificationData.affiliations) :
                 author.affiliations.map(a => a.id)
         };

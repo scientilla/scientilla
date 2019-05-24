@@ -54,6 +54,7 @@
                                 </button>
 
                                 <button ng-click="vm.editAffiliations(a)"
+                                        ng-disabled="!a.authors.length"
                                         class="dropdown-item">
                                     <i class="fas fa-university fa-left"></i>Edit affiliations
                                 </button>

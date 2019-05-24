@@ -183,9 +183,7 @@
             if (!_.isEmpty(vm.errors))
                 vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
 
-            if (vm.accomplishment.source && vm.accomplishment.source.title) {
-                vm.accomplishment.title = vm.accomplishment.source.title;
-            }
+            vm.accomplishment.title = vm.accomplishment.source ? vm.accomplishment.source.title : null;
 
             const filteredAccomplishment = AccomplishmentService.filterFields(vm.accomplishment);
 
