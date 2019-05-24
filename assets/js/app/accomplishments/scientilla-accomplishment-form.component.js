@@ -55,6 +55,9 @@
 
         let debounceTimeout = null;
 
+        vm.eventTypesLabels = {null: {label: 'Place'}};
+        accomplishmentEventTypes.forEach(aet => vm.eventTypesLabels[aet.key] = aet);
+
         vm.newSource = {};
 
         vm.errors = {};

@@ -338,12 +338,12 @@
                         'has-warning' : vm.errors.place && vm.mode == 'draft'
                      }"
                      class="form-group has-feedback">
-                    <label for="organized-event-place">Place</label>
+                    <label for="organized-event-place">{{vm.eventTypesLabels[vm.accomplishment.eventType].label}}</label>
                     <input id="organized-event-place"
                            name="place"
                            type="text"
                            class="form-control"
-                           placeholder="Place"
+                           placeholder="{{vm.eventTypesLabels[vm.accomplishment.eventType].label}}"
                            ng-model="vm.accomplishment.place"
                            data-ng-required="true"
                            ng-class="{'is-invalid' : vm.errors.place}"
