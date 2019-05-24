@@ -126,6 +126,21 @@ module.exports = _.merge({}, BaseModel, {
 
         return copies.length > 0 ? copies[0] : false;
     },
+    async export(accomplishmentIds, format) {
+        const accomplishments = await Accomplishment.find({id: accomplishmentIds})
+            .populate([
+                'source',
+                'type'
+            ]);
+
+        if (format === 'csv')
+            return Exporter.accomplishmentsToCsv(accomplishments);
+
+        throw {
+            success: false,
+            message: 'Format not supported'
+        };
+    },
 });
 
 

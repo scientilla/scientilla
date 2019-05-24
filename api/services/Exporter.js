@@ -8,8 +8,51 @@ const _ = require('lodash');
 
 module.exports = {
     documentsToCsv,
-    documentsToBibtex
+    documentsToBibtex,
+    accomplishmentsToCsv
 };
+
+
+function accomplishmentsToCsv(researchItems) {
+    const rows = [[
+        'Title',
+        'Authors',
+        'Year',
+        'Year to',
+        'Issuer',
+        'Source',
+        'Editorship role',
+        'Event type',
+        'Place',
+        'Description',
+        'Type',
+    ]].concat(researchItems.map(ri => {
+        const researchItem = ri.toJSON();
+        const row = [];
+        row.push(researchItem.title);
+        row.push(researchItem.authorsStr);
+        row.push(researchItem.year);
+        row.push(researchItem.yearTo);
+        row.push(researchItem.issuer);
+        row.push(researchItem.source ? researchItem.source.title : '');
+        row.push(researchItem.editorshipRole);
+        row.push(researchItem.eventType);
+        row.push(researchItem.place);
+        row.push(researchItem.description);
+        row.push(researchItem.type.label);
+
+        return row;
+    }));
+
+    let csv = 'data:text/csv;charset=utf-8,';
+
+    rows.forEach(function (rowArray) {
+        csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
+            .join(',') + '\r\n';
+    });
+
+    return csv;
+}
 
 
 function documentsToCsv(documents) {
@@ -105,8 +148,7 @@ function getBibtex(document) {
             [DocumentTypes.INVITED_TALK]: 'MISC',
         };
         entryType = map[doc.documenttype.key];
-    }
-    else {
+    } else {
         const map = {
             [SourceTypes.JOURNAL]: 'ARTICLE',
             [SourceTypes.CONFERENCE]: 'CONFERENCE',

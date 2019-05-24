@@ -34,6 +34,7 @@
         vm.unverify = AccomplishmentService.unverify;
         vm.isUnverifying = ResearchItemService.isUnverifying;
         vm.onFilter = onFilter;
+        vm.exportDownload = accomplishments => AccomplishmentService.exportDownload(accomplishments, 'csv');
 
         let query = {};
 

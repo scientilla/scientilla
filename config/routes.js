@@ -101,6 +101,7 @@ module.exports.routes = {
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/favorite']: 'ResearchEntity.setFavorite',
     ['post ' + apiPrfx + '/researchentities/:researchEntityId/copy-research-item']: 'ResearchEntity.copyResearchItem',
     ['post ' + apiPrfx + '/researchentities/:researchEntityId/copy-research-items']: 'ResearchEntity.copyResearchItems',
+    ['post ' + apiPrfx + '/accomplishments/export']: 'Accomplishment.export',
 
 
     //Site API
