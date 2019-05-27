@@ -1,0 +1,15 @@
+<div class="btn-group btn-add-accomplishment"
+     uib-dropdown>
+    <button id="single-button"
+            type="button"
+            class="btn btn-light" uib-dropdown-toggle ng-disabled="disabled">
+        <i class="fas fa-plus fa-left"></i>Add
+    </button>
+    <ul uib-dropdown-menu
+        class="dropdown-menu dropdown-menu-right">
+        <li ng-repeat="type in vm.types">
+            <a ng-click="vm.openResearchItemForm(type)"
+               class="dropdown-item">{{type.label}}</a>
+        </li>
+    </ul>
+</div>

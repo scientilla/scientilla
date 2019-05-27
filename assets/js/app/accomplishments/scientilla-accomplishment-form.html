@@ -1,0 +1,403 @@
+<div class="modal-header">
+    <h3>{{ !!vm.accomplishment.id ? 'Edit' : 'New' }} {{ vm.accomplishment.type.label }}</h3>
+    <button
+            type="button"
+            class="close"
+            ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <form
+            name="form"
+            class="{{vm.status.class}}"
+            autocomplete="off">
+
+        <div class="row" ng-if="vm.accomplishment.type.key === 'editorship'">
+
+            <div class="col-12">
+                <div ng-class="{
+                    'has-error' : vm.errors.authorsStr && vm.mode == 'verify',
+                    'has-warning' : vm.errors.authorsStr && vm.mode == 'draft'
+                 }"
+                     class="form-group has-feedback">
+                    <label for="editorship-authors">
+                        Authors (must be in the form "Doe J., Smith Simpson J. V.") *
+                    </label>
+                    <input id="editorship-authors"
+                           type="text"
+                           name="authors"
+                           class="form-control"
+                           placeholder="Authors"
+                           ng-model="vm.accomplishment.authorsStr"
+                           ng-pattern="vm.fieldsRules.authorsStr.regex"
+                           data-ng-required="true"
+                           ng-model-options="{ allowInvalid: true }"
+                           ng-class="{'is-invalid' : vm.errors.authorsStr}"
+                           ng-blur="vm.checkValidation('authorsStr')"
+                           ng-change="vm.fieldValueHasChanged('authorsStr')">
+                    <scientilla-error-messages class="error-messages"
+                                               errors="vm.errors.authorsStr"></scientilla-error-messages>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6">
+                <div ng-class="{
+                        'has-error' : vm.errors.year && vm.mode == 'verify',
+                        'has-warning' : vm.errors.year && vm.mode == 'draft'
+                     }"
+                     class="form-group has-feedback">
+                    <label for="editorship-year">Year from (YYYY format) *</label>
+                    <input id="editorship-year"
+                           type="text"
+                           name="year"
+                           class="form-control"
+                           placeholder="Year"
+                           ng-model="vm.accomplishment.year"
+                           data-ng-required="true"
+                           ng-pattern="vm.fieldsRules.year.regex"
+                           ng-model-options="{ allowInvalid: true }"
+                           ng-class="{'is-invalid' : vm.errors.year}"
+                           ng-blur="vm.checkValidation('year')"
+                           ng-change="vm.fieldValueHasChanged('year')">
+                    <scientilla-error-messages class="error-messages"
+                                               errors="vm.errors.year"></scientilla-error-messages>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6">
+                <div ng-class="{
+                        'has-error' : vm.errors.yearTo && vm.mode == 'verify',
+                        'has-warning' : vm.errors.yearTo && vm.mode == 'draft'
+                     }"
+                     class="form-group has-feedback">
+                    <label for="editorship-yearTo">Year to (YYYY format)</label>
+                    <input type="text"
+                           name="editorship-yearTo"
+                           class="form-control"
+                           id="editorship-yearTo"
+                           placeholder="Year to"
+                           ng-model="vm.accomplishment.yearTo"
+                           ng-pattern="vm.fieldsRules.yearTo.regex"
+                           ng-model-options="{ allowInvalid: true }"
+                           ng-class="{'is-invalid' : vm.errors.yearTo}"
+                           ng-blur="vm.checkValidation('yearTo')"
+                           ng-change="vm.fieldValueHasChanged('yearTo')">
+                    <scientilla-error-messages class="error-messages"
+                                               errors="vm.errors.yearTo"></scientilla-error-messages>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6">
+                <div class="form-group has-feedback"
+                     ng-class="{
+                        'has-error' : vm.errors.source && vm.mode == 'verify',
+                        'has-warning' : vm.errors.source && vm.mode == 'draft'
+                     }">
+                    <label for="editorship-source">Source*</label>
+                    <div class="input-group"
+                         ng-class="{'is-invalid' : vm.errors.source}">
+                        <input id="editorship-source"
+                               name="source"
+                               type="text"
+                               ng-model="vm.accomplishment.source"
+                               class="form-control"
+                               uib-typeahead="source as source.title for source in vm.getSources($viewValue)"
+                               typeahead-loading="searching"
+                               typeahead-no-results="noResults"
+                               data-ng-required="true"
+                               ng-model-options="{ allowInvalid: true }"
+                               typeahead-editable="false"
+                               typeahead-select-on-blur="true"
+                               ng-blur="vm.checkSource($event)"
+                               ng-change="vm.fieldValueHasChanged('source')"
+                               ng-class="{'is-invalid' : vm.errors.source}">
+                        {{ $viewValue }}
+                        <div class="input-group-append">
+                            <button ng-click="vm.openSourceFormModal($event)"
+                                    type="button"
+                                    class="btn btn-outline-secondary">Add New
+                            </button>
+                        </div>
+                    </div>
+                    <scientilla-error-messages class="error-messages"
+                                               errors="vm.errors.source"></scientilla-error-messages>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <label for="editorship-editorshipRole">Role</label>
+                    <input id="editorship-editorshipRole"
+                           type="text"
+                           class="form-control"
+                           placeholder="Role"
+                           ng-model="vm.accomplishment.editorshipRole">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row" ng-if="vm.accomplishment.type.key === 'award_achievement'">
+
+            <div class="col-12">
+                <div
+                        ng-class="{
+                        'has-error' : vm.errors.authorsStr && vm.mode == 'verify',
+                        'has-warning' : vm.errors.authorsStr && vm.mode == 'draft'
+                    }"
+                        class="form-group has-feedback">
+                    <label for="award-achievement-authors">Authors (must be in the form "Doe J., Smith Simpson J. V.")
+                        *</label>
+                    <input id="award-achievement-authors"
+                           type="text"
+                           name="authors"
+                           class="form-control"
+                           placeholder="Authors"
+                           ng-model="vm.accomplishment.authorsStr"
+                           ng-pattern="vm.fieldsRules.authorsStr.regex"
+                           data-ng-required="true"
+                           ng-model-options="{ allowInvalid: true }"
+                           ng-class="{'is-invalid' : vm.errors.authorsStr}"
+                           ng-blur="vm.checkValidation('authorsStr')"
+                           ng-change="vm.fieldValueHasChanged('authorsStr')">
+                    <scientilla-error-messages class="error-messages"
+                                               errors="vm.errors.authorsStr"></scientilla-error-messages>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div
+                        ng-class="{
+                    'has-error' : vm.errors.title && vm.mode == 'verify',
+                    'has-warning' : vm.errors.title && vm.mode == 'draft'
+                }"
+                        class="form-group has-feedback">
+                    <label for="award-achievement-title">Title *</label>
+                    <input id="award-achievement-title"
+                           name="title"
+                           type="text"
+                           class="form-control"
+                           placeholder="Title"
+                           ng-model="vm.accomplishment.title"
+                           data-ng-required="true"
+                           ng-class="{'is-invalid' : vm.errors.title}"
+                           ng-blur="vm.checkValidation('title')"
+                           ng-change="vm.fieldValueHasChanged('title')">
+                    <scientilla-error-messages class="error-messages"
+                                               errors="vm.errors.title"></scientilla-error-messages>
+                </div>
+            </div>
+
+
+            <div class="col-12 col-sm-6">
+                <div
+                        ng-class="{
+                        'has-error' : vm.errors.year && vm.mode == 'verify',
+                        'has-warning' : vm.errors.year && vm.mode == 'draft'
+                    }"
+                        class="form-group has-feedback">
+                    <label for="award-achievement-year">Year (YYYY format) *</label>
+                    <input id="award-achievement-year"
+                           type="text"
+                           name="year"
+                           class="form-control"
+                           placeholder="Year"
+                           ng-model="vm.accomplishment.year"
+                           data-ng-required="true"
+                           ng-pattern="/^(19|20)\d{2}$/"
+                           ng-model-options="{ allowInvalid: true }"
+                           ng-class="{'is-invalid' : vm.errors.year}"
+                           ng-blur="vm.checkValidation('year')"
+                           ng-change="vm.fieldValueHasChanged('year')">
+                    <scientilla-error-messages class="error-messages"
+                                               errors="vm.errors.year"></scientilla-error-messages>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6">
+                <div class="form-group">
+                    <label for="award-achievement-issuer">Issuer</label>
+                    <input id="award-achievement-issuer"
+                           type="text"
+                           class="form-control"
+                           placeholder="Issuer"
+                           ng-model="vm.accomplishment.issuer">
+                </div>
+            </div>
+        </div>
+
+        <div class="row" ng-if="vm.accomplishment.type.key === 'organized_event'">
+
+            <div class="col-12">
+                <div
+                        ng-class="{
+                        'has-error' : vm.errors.authorsStr && vm.mode == 'verify',
+                        'has-warning' : vm.errors.authorsStr && vm.mode == 'draft'
+                    }"
+                        class="form-group has-feedback">
+                    <label for="organized-event-authors">Authors (must be in the form "Doe J., Smith Simpson J. V.")
+                        *</label>
+                    <input id="organized-event-authors"
+                           type="text"
+                           name="authors"
+                           class="form-control"
+                           placeholder="Authors"
+                           ng-model="vm.accomplishment.authorsStr"
+                           ng-pattern="vm.fieldsRules.authorsStr.regex"
+                           data-ng-required="true"
+                           ng-model-options="{ allowInvalid: true }"
+                           ng-class="{'is-invalid' : vm.errors.authorsStr}"
+                           ng-blur="vm.checkValidation('authorsStr')"
+                           ng-change="vm.fieldValueHasChanged('authorsStr')">
+                    <scientilla-error-messages class="error-messages"
+                                               errors="vm.errors.authorsStr"></scientilla-error-messages>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div
+                        ng-class="{
+                        'has-error' : vm.errors.title && vm.mode == 'verify',
+                        'has-warning' : vm.errors.title && vm.mode == 'draft'
+                    }"
+                        class="form-group has-feedback">
+                    <label for="organized-event-title">Title *</label>
+                    <input id="organized-event-title"
+                           name="title"
+                           type="text"
+                           class="form-control"
+                           placeholder="Title"
+                           ng-model="vm.accomplishment.title"
+                           data-ng-required="true"
+                           ng-class="{'is-invalid' : vm.errors.title}"
+                           ng-blur="vm.checkValidation('title')"
+                           ng-change="vm.fieldValueHasChanged('title')"
+                           uib-typeahead="title as title for title in vm.getTitles($viewValue)"
+                           typeahead-loading="searching"
+                           typeahead-no-results="noResults"
+                           typeahead-editable="true"
+                           typeahead-select-on-blur="false">
+                    {{ $viewValue }}
+                    <scientilla-error-messages class="error-messages"
+                                               errors="vm.errors.title"></scientilla-error-messages>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6">
+                <div
+                        ng-class="{
+                        'has-error' : vm.errors.year && vm.mode == 'verify',
+                        'has-warning' : vm.errors.year && vm.mode == 'draft'
+                    }"
+                        class="form-group has-feedback">
+                    <label for="organized-event-year">Year (YYYY format) *</label>
+                    <input id="organized-event-year"
+                           type="text"
+                           name="year"
+                           class="form-control"
+                           placeholder="Year"
+                           ng-model="vm.accomplishment.year"
+                           data-ng-required="true"
+                           ng-pattern="/^(19|20)\d{2}$/"
+                           ng-model-options="{ allowInvalid: true }"
+                           ng-class="{'is-invalid' : vm.errors.year}"
+                           ng-blur="vm.checkValidation('year')"
+                           ng-change="vm.fieldValueHasChanged('year')">
+                    <scientilla-error-messages class="error-messages"
+                                               errors="vm.errors.year"></scientilla-error-messages>
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-6">
+                <div
+                        ng-class="{
+                        'has-error' : vm.errors.eventType && vm.mode == 'verify',
+                        'has-warning' : vm.errors.eventType && vm.mode == 'draft'
+                    }"
+                        class="form-group has-feedback">
+                    <label for="organized-event-event-type">Event type *</label>
+                    <div class="select-wrapper" ng-class="{'is-invalid' : vm.errors.eventType}">
+                        <select id="organized-event-event-type"
+                                class="form-control"
+                                ng-class="{'is-invalid' : vm.errors.eventType}"
+                                ng-model="vm.accomplishment.eventType"
+                                ng-init="vm.accomplishment.eventType = vm.accomplishment.eventType || vm.eventTypes[0].key"
+                                ng-options="option.key as option.label for option in vm.eventTypes">
+                        </select>
+                    </div>
+                    <scientilla-error-messages class="error-messages"
+                                               errors="vm.errors.eventType"></scientilla-error-messages>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div ng-class="{
+                        'has-error' : vm.errors.place && vm.mode == 'verify',
+                        'has-warning' : vm.errors.place && vm.mode == 'draft'
+                     }"
+                     class="form-group has-feedback">
+                    <label for="organized-event-place">{{vm.eventTypesLabels[vm.accomplishment.eventType].label}}</label>
+                    <input id="organized-event-place"
+                           name="place"
+                           type="text"
+                           class="form-control"
+                           placeholder="{{vm.eventTypesLabels[vm.accomplishment.eventType].label}}"
+                           ng-model="vm.accomplishment.place"
+                           data-ng-required="true"
+                           ng-class="{'is-invalid' : vm.errors.place}"
+                           ng-blur="vm.checkValidation('place')"
+                           ng-change="vm.fieldValueHasChanged('place')">
+                    <scientilla-error-messages class="error-messages"
+                                               errors="vm.errors.place"></scientilla-error-messages>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="form-group">
+                    <label for="organized-event-description">Description</label>
+                    <textarea id="organized-event-description"
+                              rows="6"
+                              class="form-control"
+                              placeholder="Description"
+                              ng-model="vm.accomplishment.description"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <ul class="modal-buttons">
+            <li>
+                <scientilla-button
+                        type="button"
+                        click="vm.save"
+                        ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData">
+                    {{vm.saveStatus.message }}
+                </scientilla-button>
+            </li>
+            <li>
+                <scientilla-button
+                        type="submit"
+                        ng-disabled="vm.verifyStatus.state !== 'ready to verify'"
+                        click="vm.verify">{{ vm.verifyStatus.message }}
+                </scientilla-button>
+            </li>
+            <li>
+                <scientilla-button
+                        type="cancel"
+                        click="vm.cancel">Close
+                </scientilla-button>
+            </li>
+        </ul>
+
+        <div
+                ng-if="vm.errorText"
+                class="modal-error"
+                ng-class="{
+                'text-danger' : vm.mode == 'verify',
+                'text-warning': vm.mode == 'draft'
+            }">
+            {{ vm.errorText }}
+        </div>
+    </form>
+</div>

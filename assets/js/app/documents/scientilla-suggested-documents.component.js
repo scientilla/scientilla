@@ -17,7 +17,6 @@
         'researchEntityService',
         'EventsService',
         'ModalService',
-        'documentSearchForm',
         'documentListSections'
     ];
 
@@ -25,12 +24,11 @@
                                                     researchEntityService,
                                                     EventsService,
                                                     ModalService,
-                                                    documentSearchForm,
                                                     documentListSections) {
         const vm = this;
 
         const DocumentsService = context.getDocumentService();
-        const researchEntity = context.getResearchEntity();
+        const subResearchEntity = context.getSubResearchEntity();
 
         vm.copyDocument = DocumentsService.copyDocument;
         vm.verifyDocument = DocumentsService.verifyDocument;
@@ -45,17 +43,6 @@
         vm.onFilter = onFilter;
 
         vm.documentListSections = documentListSections;
-        vm.searchForm = Object.assign({},
-            documentSearchForm,
-            {
-                rejected: {
-                    inputType: 'checkbox',
-                    label: 'Show discarded documents',
-                    defaultValue: false,
-                    matchColumn: 'discarded',
-                    type: 'action'
-                }
-            });
 
         vm.$onInit = function () {
             EventsService.subscribeAll(vm, [
@@ -68,10 +55,10 @@
                 EventsService.DOCUMENT_COMPARE
             ], updateList);
 
-            if (researchEntity.getType() === 'user' && !researchEntity.alreadyOpenedSuggested) {
+            if (subResearchEntity.getType() === 'user' && !subResearchEntity.alreadyOpenedSuggested) {
                 addAliasModal();
-                researchEntity.alreadyOpenedSuggested = true;
-                researchEntity.save();
+                subResearchEntity.alreadyOpenedSuggested = true;
+                subResearchEntity.save();
             }
         };
 
@@ -97,9 +84,9 @@
             query = q;
 
             if (!discarded)
-                return researchEntityService.getSuggestedDocuments(vm.researchEntity, query);
+                return researchEntityService.getSuggestedDocuments(subResearchEntity, query);
             else
-                return researchEntityService.getDiscardedDocuments(vm.researchEntity, query);
+                return researchEntityService.getDiscardedDocuments(subResearchEntity, query);
         }
 
         function addAliasModal() {

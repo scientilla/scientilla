@@ -16,7 +16,7 @@
             <li>
                 <h4 class="research-entity-title">
                     <span ng-class="{'highlight-text': vm.differentFields.includes('kind')}">
-                        Document 1: {{ vm.document1.getStringKind(vm.researchEntity) }}
+                        Document 1: {{ vm.document1.getStringKind(vm.subResearchEntity) }}
                     </span>
                     <span
                             ng-if="vm.verifiedCount1"
@@ -168,7 +168,7 @@
             <!-- Column 2 -->
             <li>
                 <h4 class="research-entity-title">
-                    <span ng-class="{'highlight-text': vm.differentFields.includes('kind')}">Document 2: {{ vm.document2.getStringKind(vm.researchEntity) }}</span>
+                    <span ng-class="{'highlight-text': vm.differentFields.includes('kind')}">Document 2: {{ vm.document2.getStringKind(vm.subResearchEntity) }}</span>
                     <span ng-if="vm.verifiedCount2"
                           class="scientilla-document-icons-bottom"
                           uib-tooltip-html="vm.getVerifiedNamesHTML(vm.document2)"

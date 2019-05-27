@@ -17,7 +17,7 @@
                         refresh-group="vm.refreshGroup"></scientilla-group-members>
             </uib-tab>
             <uib-tab index="2"
-                     ng-show="vm.group.childGroups.length || vm.researchEntity.isAdmin()"
+                     ng-show="vm.group.childGroups.length || vm.subResearchEntity.isAdmin()"
                      heading="Groups">
                 <scientilla-group-groups
                         ng-if="vm.group"

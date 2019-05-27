@@ -23,8 +23,8 @@
         const vm = this;
 
         vm.currentStep = 0;
-        vm.researchEntity = context.getResearchEntity();
-        vm.originalResearchEntity = angular.copy(vm.researchEntity);
+        vm.subResearchEntity = context.getSubResearchEntity();
+        vm.originalSubResearchEntity = angular.copy(vm.subResearchEntity);
 
         vm.isStep = isStep;
         vm.closeModal = closeModal;
@@ -45,43 +45,43 @@
                 name: 'welcome',
                 component: 'wizard-welcome',
                 accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
-                researchEntityToSave: false
+                subResearchEntityToSave: false
             },
             {
                 name: 'scopus-edit',
                 component: 'wizard-scopus-edit',
                 accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
-                researchEntityToSave: false
+                subResearchEntityToSave: false
             },
             {
                 name: 'tutorial',
                 component: 'wizard-tutorial',
                 accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
-                researchEntityToSave: true
+                subResearchEntityToSave: true
             },
             {
                 name: 'admin-tutorial',
                 component: 'wizard-admin-tutorial',
                 accessLevels: [accessLevels.GROUP_ADMIN],
-                researchEntityToSave: true
+                subResearchEntityToSave: true
             },
             {
                 name: 'alias-edit',
                 component: 'wizard-alias-edit',
                 accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
-                researchEntityToSave: true
+                subResearchEntityToSave: true
             },
             {
                 name: 'summary-metrics',
                 component: 'wizard-summary-metrics',
                 accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
-                researchEntityToSave: false
+                subResearchEntityToSave: false
             },
             {
                 name: 'summary-overview',
                 component: 'wizard-summary-overview',
                 accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
-                researchEntityToSave: false
+                subResearchEntityToSave: false
             }
         ];
 
@@ -91,8 +91,8 @@
         vm.$onInit = function () {
 
             vm.currentStep = 0;
-            const accessLevel = vm.researchEntity.getType() === 'group' ? accessLevels.GROUP_ADMIN :
-                vm.researchEntity.administratedGroups.length ? accessLevels.GROUP_ADMIN : accessLevels.STANDARD;
+            const accessLevel = vm.subResearchEntity.getType() === 'group' ? accessLevels.GROUP_ADMIN :
+                vm.subResearchEntity.administratedGroups.length ? accessLevels.GROUP_ADMIN : accessLevels.STANDARD;
             steps = allSteps.filter(s => s.accessLevels.includes(accessLevel));
             if (vm.resolve.data.steps)
                 steps = steps.filter(s => vm.resolve.data.steps.includes(s.name));
@@ -113,16 +113,16 @@
         // You can close the modal once completed the wizard
         function closeModal() {
 
-            if (!steps[vm.currentStep].researchEntityToSave) {
+            if (!steps[vm.currentStep].subResearchEntityToSave) {
                 vm.resolve.callbacks.onClose();
                 return;
             }
 
-            vm.researchEntity.alreadyAccess = true;
+            vm.subResearchEntity.alreadyAccess = true;
             if (vm.resolve.data.steps.includes('alias-edit'))
-                vm.researchEntity.alreadyOpenedSuggested = true;
+                vm.subResearchEntity.alreadyOpenedSuggested = true;
 
-            return vm.researchEntity.save()
+            return vm.subResearchEntity.save()
                 .then(() => vm.resolve.callbacks.onClose())
                 .catch(() => Notification.warning("Failed to save user"));
         }
@@ -140,7 +140,7 @@
 
         function checkStep(step) {
             if (steps[vm.currentStep] && steps[vm.currentStep].name === 'scopus-edit') {
-                if (angular.toJson(vm.originalResearchEntity) === angular.toJson(vm.researchEntity)) {
+                if (angular.toJson(vm.originalSubResearchEntity) === angular.toJson(vm.subResearchEntity)) {
                     setStep(step);
                 } else {
                     // Show the unsaved data modal
@@ -154,7 +154,7 @@
                                 case 0:
                                     break;
                                 case 1:
-                                    vm.researchEntity = angular.copy(vm.originalResearchEntity);
+                                    vm.subResearchEntity = angular.copy(vm.originalSubResearchEntity);
                                     setStep(step);
                                     break;
                                 default:
@@ -183,7 +183,7 @@
             if (!closed) {
                 if (steps[vm.currentStep] && steps[vm.currentStep].name === 'alias-edit' ||
                     steps[vm.currentStep] && steps[vm.currentStep].name === 'scopus-edit') {
-                    if (angular.toJson(vm.originalResearchEntity) !== angular.toJson(vm.researchEntity)) {
+                    if (angular.toJson(vm.originalSubResearchEntity) !== angular.toJson(vm.subResearchEntity)) {
                         if (event) {
                             event.preventDefault();
                         }
@@ -199,7 +199,7 @@
                                     case 0:
                                         break;
                                     case 1:
-                                        context.setResearchEntity(vm.originalResearchEntity);
+                                        context.setSubResearchEntity(vm.originalSubResearchEntity);
                                         closed = true;
                                         vm.resolve.callbacks.onClose();
                                         break;

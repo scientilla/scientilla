@@ -1,123 +1,117 @@
 <div class="modal-header">
-    <h3>Add a new {{ vm.document.sourceType }}</h3>
-    <button
-        type="button"
-        class="close"
-        ng-click="vm.cancel()">
+    <h3>Add new {{ vm.hasSourceType?vm.sourceType: 'source' }}</h3>
+    <button type="button"
+            class="close"
+            ng-click="vm.cancel()">
         <i class="fas fa-times"></i>
     </button>
 </div>
 
 <div class="modal-body">
-    <form name="source">
-        <div
-            class="form-group"
-            ng-class="vm.errors.title ? 'has-error' : ''">
+    <div ng-if="!vm.hasSourceType">
+        <div class="form-group">
+            <label>Type</label>
+            <div class="select-wrapper">
+                <select class="form-control"
+                        ng-model="vm.sourceType"
+                        ng-options="option.id as option.label for option in vm.sourceTypes">
+                </select>
+            </div>
+        </div>
+    </div>
+    <form name="source" ng-if="vm.hasSourceType || !vm.hasSourceType && vm.sourceType">
+        <div class="form-group"
+             ng-class="vm.errors.title ? 'has-error' : ''">
             <label for="title">Title *</label>
-            <input
-                type="text"
-                class="form-control"
-                id="title"
-                placeholder="Title"
-                ng-model="vm.newSource.title"
-                ng-class="vm.errors.title ? 'is-invalid' : ''"
-                ng-blur="vm.checkValidation('title')"
-                ng-change="vm.fieldValueHasChanged('title')"/>
+            <input type="text"
+                   class="form-control"
+                   id="title"
+                   placeholder="Title"
+                   ng-model="vm.newSource.title"
+                   ng-class="vm.errors.title ? 'is-invalid' : ''"
+                   ng-blur="vm.checkValidation('title')"
+                   ng-change="vm.fieldValueHasChanged('title')"/>
             <scientilla-error-messages
-                class="error-messages"
-                errors="vm.errors.title"></scientilla-error-messages>
+                    class="error-messages"
+                    errors="vm.errors.title"></scientilla-error-messages>
         </div>
 
-        <div
-            class="form-group"
-            ng-if="['conference', 'journal'].includes(vm.document.sourceType)">
+        <div class="form-group"
+             ng-if="['conference', 'journal'].includes(vm.sourceType)">
             <label for="issn">ISSN</label>
-            <input
-                type="text"
-                class="form-control"
-                id="issn"
-                placeholder="ISSN"
-                ng-model="vm.newSource.issn"/>
+            <input type="text"
+                   class="form-control"
+                   id="issn"
+                   placeholder="ISSN"
+                   ng-model="vm.newSource.issn"/>
         </div>
 
-        <div
-            class="form-group"
-            ng-if="['conference', 'journal'].includes(vm.document.sourceType)">
+        <div class="form-group"
+             ng-if="['conference', 'journal'].includes(vm.sourceType)">
             <label for="eissn">E-ISSN</label>
-            <input
-                type="text"
-                class="form-control"
-                id="eissn"
-                placeholder="E-ISSN"
-                ng-model="vm.newSource.eissn"/>
+            <input type="text"
+                   class="form-control"
+                   id="eissn"
+                   placeholder="E-ISSN"
+                   ng-model="vm.newSource.eissn"/>
         </div>
 
-        <div
-            class="form-group"
-            ng-if="['conference', 'journal'].includes(vm.document.sourceType)">
+        <div class="form-group"
+             ng-if="['conference', 'journal'].includes(vm.sourceType)">
             <label for="acronym">Acronym</label>
-            <input
-                type="text"
-                class="form-control"
-                id="acronym"
-                placeholder="Acronym"
-                ng-model="vm.newSource.acronym"/>
+            <input type="text"
+                   class="form-control"
+                   id="acronym"
+                   placeholder="Acronym"
+                   ng-model="vm.newSource.acronym"/>
         </div>
 
-        <div
-            class="form-group"
-            ng-if="['conference', 'book'].includes(vm.document.sourceType)">
+        <div class="form-group"
+             ng-if="['conference', 'book'].includes(vm.sourceType)">
             <label for="year">Year</label>
-            <input
-                type="text"
-                class="form-control"
-                id="year"
-                placeholder="Year"
-                ng-model="vm.newSource.year"/>
+            <input type="text"
+                   class="form-control"
+                   id="year"
+                   placeholder="Year"
+                   ng-model="vm.newSource.year"/>
         </div>
 
-        <div
-            class="form-group"
-            ng-if="['book'].includes(vm.document.sourceType)">
+        <div class="form-group"
+             ng-if="['book'].includes(vm.sourceType)">
             <label for="isbn">ISBN</label>
-            <input
-                type="text"
-                class="form-control"
-                id="isbn"
-                placeholder="ISBN"
-                ng-model="vm.newSource.isbn"/>
+            <input type="text"
+                   class="form-control"
+                   id="isbn"
+                   placeholder="ISBN"
+                   ng-model="vm.newSource.isbn"/>
         </div>
 
-        <div
-            class="form-group"
-            ng-if="['book'].includes(vm.document.sourceType)">
+        <div class="form-group"
+             ng-if="['book'].includes(vm.sourceType)">
             <label for="publisher">Publisher</label>
-            <input
-                type="text"
-                class="form-control"
-                id="publisher"
-                placeholder="Publisher"
-                ng-model="vm.newSource.publisher"/>
+            <input type="text"
+                   class="form-control"
+                   id="publisher"
+                   placeholder="Publisher"
+                   ng-model="vm.newSource.publisher"/>
         </div>
 
         <ul class="modal-buttons">
             <li>
-                <scientilla-button
-                    type="submit"
-                    click="vm.createSource()">Create {{ vm.sourceLabel }}
+                <scientilla-button type="submit"
+                                   click="vm.createSource()">Create {{ vm.sourceLabel }}
                 </scientilla-button>
             </li>
 
             <li>
-                <scientilla-button
-                    type="cancel"
-                    click="vm.cancel()">Close</scientilla-button>
+                <scientilla-button type="cancel"
+                                   click="vm.cancel()">Close
+                </scientilla-button>
             </li>
         </ul>
 
-        <div
-            ng-if="vm.errorText"
-            class="modal-error text-danger">
+        <div ng-if="vm.errorText"
+             class="modal-error text-danger">
             {{ vm.errorText }}
         </div>
     </form>

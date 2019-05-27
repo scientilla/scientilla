@@ -12,17 +12,19 @@
         'AuthService',
         'EventsService',
         'path',
-        'context',
-        'GroupsService'
+        'context'
     ];
 
-    function scientillaMenu(AuthService, EventsService, path, context, GroupsService) {
+    function scientillaMenu(AuthService, EventsService, path, context) {
         const vm = this;
 
         vm.isActive = isActive;
         vm.isAdmin = isAdmin;
         vm.getUrl = getUrl;
         vm.getDashboardUrl = getDashboardUrl;
+
+        const prefix = '#/';
+        let subResearchEntity = context.getSubResearchEntity();
 
         vm.$onInit = function () {
 
@@ -41,25 +43,23 @@
         function refresh() {
             vm.isLogged = AuthService.isLogged;
             vm.user = AuthService.user;
+            subResearchEntity = context.getSubResearchEntity();
         }
 
-        function isActive(page, checkResearchEntity = false) {
-            let researchEntity = context.getResearchEntity();
-            //console.log(researchEntity.getType());
-
+        function isActive(page, checkSubResearchEntity = false) {
             if (page === '/') {
-                // Add the group slug to the URL when the researchEntity is a group to check the active state of an URL
-                if (researchEntity.getType() === 'group' && checkResearchEntity) {
-                    return (path.current === '?#/' + researchEntity.slug || path.current === '#/' + researchEntity.slug);
+                // Add the group slug to the URL when the subResearchEntity is a group to check the active state of an URL
+                if (subResearchEntity.getType() === 'group' && checkSubResearchEntity) {
+                    return (path.current === '?#/' + subResearchEntity.slug || path.current === '#/' + subResearchEntity.slug);
                 } else {
                     return (path.current === '?#' + page || path.current === '#' + page);
                 }
             } else {
-                // Add the group slug to the URL when the researchEntity is a group to check the active state of an URL
-                if (researchEntity.getType() === 'group' && checkResearchEntity) {
+                // Add the group slug to the URL when the subResearchEntity is a group to check the active state of an URL
+                if (subResearchEntity.getType() === 'group' && checkSubResearchEntity) {
                     return (
-                        path.current.lastIndexOf('?#/' + researchEntity.slug + page, 0) === 0 ||
-                        path.current.lastIndexOf('#/' + researchEntity.slug + page, 0) === 0
+                        path.current.lastIndexOf('?#/' + subResearchEntity.slug + page, 0) === 0 ||
+                        path.current.lastIndexOf('#/' + subResearchEntity.slug + page, 0) === 0
                     );
                 } else {
                     return (
@@ -75,22 +75,16 @@
         }
 
         function getUrl(url) {
-            let researchEntity = context.getResearchEntity(),
-                prefix = '#/';
-
-            if (researchEntity.getType() === 'group') {
-                return prefix + researchEntity.slug + '/' + url;
+            if (subResearchEntity.getType() === 'group') {
+                return prefix + subResearchEntity.slug + '/' + url;
             }
 
             return prefix + url;
         }
 
         function getDashboardUrl() {
-            let researchEntity = context.getResearchEntity(),
-                prefix = '#/';
-
-            if (researchEntity.getType() === 'group') {
-                return prefix + researchEntity.slug;
+            if (subResearchEntity.getType() === 'group') {
+                return prefix + subResearchEntity.slug;
             }
 
             return prefix;

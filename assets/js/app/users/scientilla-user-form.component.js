@@ -162,9 +162,9 @@
         }
 
         function aliasesChanged() {
-            const researchEntity = context.getResearchEntity();
-            if (researchEntity.getType() === 'user')
-                researchEntity.aliases = vm.user.aliases;
+            const subResearchEntity = context.getSubResearchEntity();
+            if (subResearchEntity.getType() === 'user')
+                subResearchEntity.aliases = vm.user.aliases;
         }
 
         function calculateSlug(user) {

@@ -175,7 +175,6 @@
         {id: 'outreach', label: 'Outreach', section: 'Dissemination', type: 'invited-talk'}
     ];
 
-
     const documentSearchForm = {
         title: {
             inputType: 'text',

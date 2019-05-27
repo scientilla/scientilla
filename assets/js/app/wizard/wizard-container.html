@@ -20,13 +20,13 @@
 
     <wizard-scopus-edit
         ng-if="vm.isStep('scopus-edit')"
-        user="vm.researchEntity"
-        original-user="vm.originalResearchEntity"></wizard-scopus-edit>
+        user="vm.subResearchEntity"
+        original-user="vm.originalSubResearchEntity"></wizard-scopus-edit>
 
     <wizard-alias-edit
         ng-if="vm.isStep('alias-edit')"
-        user="vm.researchEntity"
-        original-user="vm.originalResearchEntity"></wizard-alias-edit>
+        user="vm.subResearchEntity"
+        original-user="vm.originalSubResearchEntity"></wizard-alias-edit>
 
     <wizard-tutorial ng-if="vm.isStep('tutorial')"></wizard-tutorial>
 

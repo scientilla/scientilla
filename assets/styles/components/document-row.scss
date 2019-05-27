@@ -1,3 +1,12 @@
+.document-row{
+    .accomplishment-row-actions{
+        .dropdown-menu{
+            right: 0px;
+            left: auto;
+        }
+    }
+}
+
 @include media-breakpoint-up(md) {
     .document-row{
         display: grid;

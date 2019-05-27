@@ -22,6 +22,7 @@ const isLogged = ['isLogged'];
 const isAdmin = ['isAdmin'];
 const isActivityOwner = ['isActivityOwner'];
 const isGroupOwner = ['isGroupOwner'];
+const isResearchEntityOwner = ['isResearchEntityOwner'];
 
 const defaultPolicy = {
     '*': isLogged,
@@ -140,4 +141,14 @@ module.exports.policies = {
         getMBOInstitutePerformance: true,
         getMBOInvitedTalks: true,
     }, defaultPolicy),
+
+    ResearchEntityController: _.defaults({
+        createDraft: isResearchEntityOwner,
+        updateDraft: isResearchEntityOwner,
+        deleteDraft: isResearchEntityOwner,
+        verify: isResearchEntityOwner,
+        unverify: isResearchEntityOwner
+    }, defaultPolicy),
+
+    ResearchItemTypeController: defaultPolicy,
 };

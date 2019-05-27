@@ -1,0 +1,51 @@
+<div class="modal-header">
+    <h3>Authors affiliations</h3>
+    <button type="button"
+            class="close"
+            ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <scientilla-research-item-authors research-item="vm.newResearchItem"
+                                      collapsed="vm.collapsed"></scientilla-research-item-authors>
+
+    <scientilla-research-item-affiliations research-item="vm.newResearchItem"
+                                           collapsed="vm.collapsed"></scientilla-research-item-affiliations>
+
+    <form>
+        <div class="form-group">
+            <label for="position">Author</label>
+            <div class="select-wrapper">
+                <select class="form-control"
+                        id="position"
+                        ng-model="vm.position"
+                        ng-options="+index as author for (index, author) in vm.authorStrs">
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group"
+             ng-if="vm.author">
+            <scientilla-multicomplete items="vm.author.affiliations"
+                                      query="vm.getInstitutesQuery"
+                                      filter="vm.getInstitutesFilter"
+                                      title="Affiliations of {{vm.author.authorStr}}">
+            </scientilla-multicomplete>
+        </div>
+
+        <ul class="modal-buttons">
+            <li>
+                <scientilla-button type="submit"
+                                   click="vm.submit">Save
+                </scientilla-button>
+            </li>
+            <li>
+                <scientilla-button type="cancel"
+                                   click="vm.cancel">Close
+                </scientilla-button>
+            </li>
+        </ul>
+    </form>
+</div>

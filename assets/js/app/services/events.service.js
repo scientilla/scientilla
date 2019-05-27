@@ -1,12 +1,12 @@
 (function () {
     angular.module("services")
-        .factory("EventsService", ModalService);
+        .factory("EventsService", service);
 
-    ModalService.$inject = [
+    service.$inject = [
         '$rootScope'
     ];
 
-    function ModalService($rootScope) {
+    function service($rootScope) {
         var subscriptions = [];
         var service = {
             AUTH_LOGIN: 'auth.login',
@@ -35,7 +35,15 @@
 
             INSTITUTE_RESTORED: 'institute.restored',
 
-            CONTEXT_CHANGE: 'context.change'
+            CONTEXT_CHANGE: 'context.change',
+
+            RESEARCH_ITEM_VERIFIED: 'accomplishment.verified',
+            RESEARCH_ITEM_UNVERIFIED: 'accomplishment.unverified',
+
+            RESEARCH_ITEM_DRAFT_DELETED: 'accomplishment.draft.deleted',
+            RESEARCH_ITEM_DRAFT_UPDATED: 'accomplishment.draft.updated',
+            RESEARCH_ITEM_DRAFT_CREATED: 'accomplishment.draft.created',
+            RESEARCH_ITEM_DRAFT_VERIFIED: 'accomplishment.draft.verified',
         };
 
         service.publish = function (event, args) {

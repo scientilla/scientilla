@@ -6,7 +6,6 @@
     AuthService.$inject = [
         "Restangular",
         "UsersService",
-        'GroupsService',
         "ModalService",
         "localStorageService",
         "EventsService"
@@ -14,7 +13,6 @@
 
     function AuthService(Restangular,
                          UsersService,
-                         GroupsService,
                          ModalService,
                          localStorageService,
                          EventsService) {

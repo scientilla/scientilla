@@ -1,4 +1,4 @@
-/* global Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source, ExternalDocument, ExternalImporter, DocumentTypes, SourceTypes */
+/* global require, Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source, ExternalDocument, ExternalImporter, DocumentTypes, SourceTypes, ResearchItemTypes */
 'use strict';
 
 const should = require('should');
@@ -12,6 +12,25 @@ const documents = require('./data/documents');
 const institutes = require('./data/institutes');
 const sources = require('./data/sources');
 const metrics = require('./data/metrics');
+const researchItems = require('./data/researchItems');
+
+
+let auths = [];
+
+function getAuth(id) {
+    return auths.find(b => b.id === id);
+}
+
+function getAdminAuth() {
+    return auths.find(b => b.admin);
+}
+
+function cleanAuths() {
+    auths = [];
+}
+
+const url = 'http://localhost:1338/api/v1';
+
 
 module.exports = {
     cleanDb,
@@ -23,6 +42,7 @@ module.exports = {
     getAllDocumentData,
     getAllSourceData,
     getAllMetricData,
+    getAllResearchItemData,
     getUsers,
     createGroup,
     createInstitute,
@@ -55,35 +75,110 @@ module.exports = {
     userDeleteDrafts,
     groupDeleteDrafts,
     fixDocumentsDocumenttype,
-    EMPTY_RES: {count: 0, items: []}
+    EMPTY_RES: {count: 0, items: []},
+    researchItem: {
+        async getTypes() {
+            const res = await request(url)
+                .get('/researchitemtypes/');
+            return res.body.items;
+        }
+    },
+    researchEntity: {
+        async getByUser(user) {
+            const res = await request(url)
+                .get('/users/' + user.id)
+                .query({populate: ['researchEntity']});
+            return res.body.researchEntity;
+        },
+        async getByGroup(group) {
+            const res = await request(url)
+                .get('/groups/' + group.id)
+                .query({populate: ['researchEntity']});
+            return res.body.researchEntity;
+        },
+        async createDraft(user, researchEntity, draftData) {
+            const auth = getAuth(user.id);
+            const res = await auth.agent
+                .post('/researchentities/' + researchEntity.id + '/researchitemdrafts')
+                .set('access_token', auth.token)
+                .send(draftData);
+            return res.body;
+        },
+        async updateDraft(user, researchEntity, draftData) {
+            const auth = getAuth(user.id);
+            const res = await auth.agent
+                .put('/researchentities/' + researchEntity.id + '/researchitemdrafts/' + draftData.id)
+                .set('access_token', auth.token)
+                .send(draftData);
+            return res.body;
+        },
+        async getItemDrafts(researchEntity, populateFields = [], qs = {}) {
+            const res = await request(url)
+                .get('/researchentities/' + researchEntity.id + '/researchitemdrafts')
+                .query({populate: populateFields})
+                .query(qs);
+            return res.body.items;
+        },
+        async getAccomplishmentDrafts(researchEntity, populateFields = [], qs = {}) {
+            const res = await request(url)
+                .get('/researchentities/' + researchEntity.id + '/accomplishmentdrafts')
+                .query({populate: populateFields})
+                .query(qs);
+            return res.body.items;
+        },
+        async getVerifiedAccomplishment(researchEntity, populateFields = [], qs = {}) {
+            const res = await request(url)
+                .get('/researchentities/' + researchEntity.id + '/accomplishments')
+                .query({populate: populateFields})
+                .query(qs);
+            return res.body.items;
+        },
+        async verifyItem(user, researchEntity, itemId, verifyData = {}) {
+            const auth = getAuth(user.id);
+            const res = await auth.agent
+                .put('/researchentities/' + researchEntity.id + '/researchitems/' + itemId + '/verified')
+                .set('access_token', auth.token)
+                .send(verifyData);
+            return res.body;
+        },
+        async unVerifyItem(user, researchEntity, itemId) {
+            const auth = getAuth(user.id);
+            const res = await auth.agent
+                .put('/researchentities/' + researchEntity.id + '/researchitems/' + itemId + '/unverified')
+                .set('access_token', auth.token);
+            return res.body;
+        },
+        async copyItemToDrafts(user, researchEntity, researchItem) {
+            const auth = getAuth(user.id);
+            const res = await auth.agent
+                .post('/researchentities/' + researchEntity.id + '/copy-research-item')
+                .set('access_token', auth.token)
+                .send({researchItemId: researchItem.id});
+            return res.body;
+
+        }
+    },
+    accomplishment: {
+        async get(populateFields = [], qs = {}, respCode = 200) {
+            const res = await request(url)
+                .get('/accomplishments')
+                .query({populate: populateFields})
+                .query(qs)
+                .expect(respCode);
+            return res.body.items;
+        }
+    }
 };
-
-
-let auths = [];
-
-function getAuth(id) {
-    return auths.find(b => b.id === id);
-}
-
-function getAdminAuth() {
-    return auths.find(b => b.admin);
-}
-
-function cleanAuths() {
-    auths = [];
-}
-
-const url = 'http://localhost:1338/api/v1';
 
 async function cleanDb() {
 
     const models = Object.values(sails.models).filter(m => m.migrate !== 'safe');
-    const modelsName = models.map(m => m.adapter.identity);
-
+    const modelsName = models.map(m => m.tableName);
     await SqlService.query('TRUNCATE ' + modelsName.map(mn => '"' + mn + '"').join(', ') + ' RESTART IDENTITY CASCADE;');
 
     await DocumentTypes.init();
     await SourceTypes.init();
+    await ResearchItemTypes.init();
 }
 
 async function clean() {
@@ -117,6 +212,10 @@ function getAllSourceData() {
 
 function getAllMetricData() {
     return _.cloneDeep(metrics);
+}
+
+function getAllResearchItemData() {
+    return _.cloneDeep(researchItems);
 }
 
 async function getUsers(respCode = 200) {

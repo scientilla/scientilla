@@ -217,7 +217,6 @@
                 .customGET('', {origin, searchKey, searchValue});
         }
 
-
         function removeDocument(researchEntity, doc) {
             if (doc.isDraft())
                 return deleteDraft(researchEntity, doc.id);

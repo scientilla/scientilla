@@ -23,9 +23,9 @@
     ];
 
     function scientillaTagForm(Prototyper, EventsService, context, researchEntityService, $scope, ModalService) {
-        var vm = this;
+        const vm = this;
 
-        var researchEntity = context.getResearchEntity();
+        const subResearchEntity = context.getSubResearchEntity();
         let originalTags = {};
         let closed = false;
 
@@ -35,7 +35,7 @@
         vm.close = close;
 
         vm.$onInit = function () {
-            vm.tags = researchEntity.getTagsByDocument(vm.document) || [];
+            vm.tags = subResearchEntity.getTagsByDocument(vm.document) || [];
             originalTags = angular.copy(vm.tags);
 
             $scope.$on('modal.closing', function (event, reason) {
@@ -60,7 +60,7 @@
 
         function save() {
             originalTags = angular.copy(vm.tags);
-            researchEntityService.setPrivateTags(researchEntity, vm.document, vm.tags.map(t => t.value))
+            researchEntityService.setPrivateTags(subResearchEntity, vm.document, vm.tags.map(t => t.value))
                 .then(function () {
                     EventsService.publish(EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED, vm.document);
                 });

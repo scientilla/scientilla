@@ -13,7 +13,14 @@
         'ValidateService'
     ];
 
-    function Prototyper(userConstants, DocumentLabels, DocumentKinds, documentFieldsRules, documentOrigins, ValidateService) {
+    function Prototyper(
+        userConstants,
+        DocumentLabels,
+        DocumentKinds,
+        documentFieldsRules,
+        documentOrigins,
+        ValidateService
+    ) {
         const service = {
             toUserModel: toUserModel,
             toUsersCollection: applyToAll(toUserModel),

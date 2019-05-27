@@ -71,27 +71,8 @@
                 vm.authorship = newAuthorship;
             }
 
-            getAuthorInstitutes()
-                .then((institutes) => {
-                    vm.authorship.affiliations = institutes;
-                    // Copy original affiliations to compare it later
-                    originalAffiliations = angular.copy(institutes);
-                });
         }
 
-        function getAuthorInstitutes() {
-            if (_.isNil(vm.position))
-                return Promise.resolve([]);
-            const qs = {
-                where: {document: vm.document.id, position: vm.position},
-                populate: 'affiliations'
-            };
-            return Restangular.all('authorships').getList(qs).then(function (authorships) {
-                if (_.isEmpty(authorships))
-                    return [];
-                return authorships[0].affiliations;
-            });
-        }
 
         function getInstitutesFilter() {
             return vm.authorship.affiliations;

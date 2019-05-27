@@ -5,14 +5,16 @@
         font-size: 1.4rem;
     }
 
-    .label-add-document{
+    .label-add-document,
+    .label-add-accomplishment{
         display: grid;
         grid-template-columns: 1fr auto;
         grid-template-rows: auto;
         align-items: flex-end;
     }
 
-    .button-new-document-container{
+    .button-new-document-container,
+    .button-new-research-entity-container{
         display: inline-block;
         margin-left: 1rem;
     }

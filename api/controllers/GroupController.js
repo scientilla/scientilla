@@ -4,9 +4,9 @@
  * @description :: Server-side logic for managing groups
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
-var researchEntityController = require('../lib/ResearchEntityController');
+const SubResearchEntityController = require('../lib/SubResearchEntityController');
 
-module.exports = _.merge({}, researchEntityController, {
+module.exports = _.merge({}, SubResearchEntityController, {
     addTags: function (req, res) {
         var documentId = req.params.documentId;
         var groupId = req.params.researchEntityId;
