@@ -325,7 +325,7 @@ module.exports = _.merge({}, BaseModel, {
         const docToVerify = isExternal ? await ResearchEntityModel.copyDocument(ResearchEntityModel, researchEntityId, docToVerifyId) : document;
 
         // Copy the not duplicate records to doc verify
-        const notDuplicatesToBeRemoved = await this.getNotDuplicates(ResearchEntityModel, docToRemoveId);
+        const notDuplicatesToBeRemoved = await this.getNotDuplicates(ResearchEntityModel, researchEntityId, docToRemoveId);
 
         let notDuplicatesToAdd = [];
         for (const notDuplicateToBeRemoved of notDuplicatesToBeRemoved) {
@@ -356,7 +356,7 @@ module.exports = _.merge({}, BaseModel, {
                     return notDuplicate.id;
                 });
 
-                await this.deleteNotDuplicates(ResearchEntityModel, ids);
+                await this.deleteNotDuplicates(ResearchEntityModel, researchEntityId, ids);
             }
 
             return errors;
@@ -378,13 +378,14 @@ module.exports = _.merge({}, BaseModel, {
         const DiscardedModel = getDiscardedModel(ResearchEntityModel);
         await DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
     },
-    getNotDuplicates: async function (ResearchEntityModel, documentId) {
+    getNotDuplicates: async function (ResearchEntityModel, researchEntityId, documentId) {
         const DocumentNotDuplicatedModel = getDocumentNotDuplicateModel(ResearchEntityModel);
-        return await DocumentNotDuplicatedModel.find({or: [{document: documentId}, {duplicate: documentId}]});
+        return await DocumentNotDuplicatedModel.find({researchEntity: researchEntityId, or: [{document: documentId}, {duplicate: documentId}]});
     },
-    deleteNotDuplicates: async function (ResearchEntityModel, notDuplicateIds) {
+    deleteNotDuplicates: async function (ResearchEntityModel, researchEntityId, notDuplicateIds) {
         const DocumentNotDuplicatedModel = getDocumentNotDuplicateModel(ResearchEntityModel);
         return await DocumentNotDuplicatedModel.destroy({
+            researchEntity: researchEntityId,
             id: notDuplicateIds
         });
     },
