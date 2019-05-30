@@ -453,15 +453,15 @@
                 }
 
                 /**
-                 * This asynchronous function handles the replacement of the simular document by the source document
+                 * This asynchronous function handles the replacement of the similar document by the source document
                  *
-                 * @param {Object} sourceDocument - The document that will replace the simular document
-                 * @param {Object} simularDocument - The document that will be replaced by the source document
+                 * @param {Object} sourceDocument - The document that will replace the similar document
+                 * @param {Object} similarDocument - The document that will be replaced by the source document
                  * @param {string} category - The category of the source document
                  *
-                 * @retuns {Object} Returns an object with the response and potential errors
+                 * @returns {Object} Returns an object with the response and potential errors
                  */
-                async function handleReplaceDocument(sourceDocument, simularDocument, category) {
+                async function handleReplaceDocument(sourceDocument, similarDocument, category) {
                     let response,
                         action = false;
 
@@ -473,8 +473,8 @@
                             // Set the action with the related constant
                             action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_VERIFY;
 
-                            // Unverify the simular document & verify the source document
-                            response = await service.removeVerify(sourceDocument, simularDocument);
+                            // Unverify the similar document & verify the source document
+                            response = await service.removeVerify(sourceDocument, similarDocument);
 
                             if (response.error) {
                                 Notification.warning(response.error);
@@ -486,8 +486,8 @@
                             // Set the action with the related constant
                             action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_VERIFY_DRAFT;
 
-                            // Unverify the simular document & verify the source document
-                            response = await service.removeVerify(sourceDocument, simularDocument);
+                            // Unverify the similar document & verify the source document
+                            response = await service.removeVerify(sourceDocument, similarDocument);
 
                             if (response.error) {
                                 Notification.warning(response.error);
@@ -499,11 +499,11 @@
                             // Set the action with the related constant
                             action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_REPLACE;
 
-                            // Copy not duplicates of the simular documents to the source document
-                            response = await markAsNotDuplicates(sourceDocument, simularDocument.notDuplicates);
+                            // Copy not duplicates of the similar documents to the source document
+                            response = await markAsNotDuplicates(sourceDocument, similarDocument.notDuplicates);
 
-                            // Unverify the simular document
-                            response = await researchEntityService.unverify(researchEntity, simularDocument);
+                            // Unverify the similar document
+                            response = await researchEntityService.unverify(researchEntity, similarDocument);
                             break;
 
                         // If the source document is a external document
@@ -511,8 +511,8 @@
                             // Set the action with the related constant
                             action = documentActions.REPLACE.COPY_EXTERNAL_DOCUMENT_AND_VERIFY;
 
-                            // Unverify the simular document & verify the source document
-                            response = await service.removeVerify(sourceDocument, simularDocument);
+                            // Unverify the similar document & verify the source document
+                            response = await service.removeVerify(sourceDocument, similarDocument);
 
                             if (response.error) {
                                 Notification.warning(response.error);
@@ -529,27 +529,27 @@
                 }
 
                 /**
-                 * This asynchronous function handles the comparison between a source document and simular documents
+                 * This asynchronous function handles the comparison between a source document and similar documents
                  * for that source document
                  *
                  * @param {Object} sourceDocument - The document selected from the listing
-                 * @param {Object[]} simularDocuments - An array with simular documents of the source document
+                 * @param {Object[]} similarDocuments - An array with similar documents of the source document
                  * @param {string} category - The category of the source document
                  */
-                async function compareDocuments(sourceDocument, simularDocuments, category) {
+                async function compareDocuments(sourceDocument, similarDocuments, category) {
 
                     let result = false,
                         duplicateIds,
                         compareAction = {};
 
                     // Get all the duplicates
-                    await Promise.all(simularDocuments.map(async (info, index) => {
-                        simularDocuments[index] = await researchEntityService.getDoc(researchEntity, info.duplicate, info.duplicateKind);
+                    await Promise.all(similarDocuments.map(async (info, index) => {
+                        similarDocuments[index] = await researchEntityService.getDoc(researchEntity, info.duplicate, info.duplicateKind);
                     }));
 
                     // Open the compare modal
                     try {
-                        compareAction = await ModalService.openDocumentComparisonForm(sourceDocument, simularDocuments, category);
+                        compareAction = await ModalService.openDocumentComparisonForm(sourceDocument, similarDocuments, category);
                     } catch(e) {
                         if (e !== 'backdrop click' && e !== 'escape key press') {
                             //console.log(e);
@@ -559,12 +559,12 @@
                     // Check the compare action that the user has chosen
                     switch(compareAction.option) {
 
-                        // The user wants to keep the source document and mark all the other simular documents as not duplicates
+                        // The user wants to keep the source document and mark all the other similar documents as not duplicates
                         case documentActions.COMPARE.KEEP_DOCUMENT:
 
-                            // Collect all the id's of the simular documents
-                            duplicateIds = simularDocuments.map((simularDocument) => {
-                                return simularDocument.id;
+                            // Collect all the id's of the similar documents
+                            duplicateIds = similarDocuments.map((similarDocument) => {
+                                return similarDocument.id;
                             });
 
                             // Mark as not duplicates
@@ -573,12 +573,12 @@
                             result = await handleKeepDocument(sourceDocument, category);
                             break;
 
-                        // Mark all the simular documents as not duplicate in the external section
+                        // Mark all the similar documents as not duplicate in the external section
                         case documentActions.COMPARE.MARK_ALL_AS_NOT_DUPLICATE:
 
-                            // Collect all the id's of the simular documents
-                            duplicateIds = simularDocuments.map((simularDocument) => {
-                                return simularDocument.id;
+                            // Collect all the id's of the similar documents
+                            duplicateIds = similarDocuments.map((similarDocument) => {
+                                return similarDocument.id;
                             });
 
                             // Mark as not duplicates
@@ -611,7 +611,7 @@
                             };
                             break;
 
-                        // Replace the simular document with the source document
+                        // Replace the similar document with the source document
                         case documentActions.COMPARE.USE_DUPLICATE:
                             result = await handleReplaceDocument(sourceDocument, compareAction.duplicate, category);
                             break;

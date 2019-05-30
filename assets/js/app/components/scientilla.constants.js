@@ -312,10 +312,10 @@
             KEEP_VERIFIED_DOCUMENT: 'Keep verified document'
         },
         REPLACE: {
-            UNVERIFY_DOCUMENT_AND_VERIFY_DRAFT: 'Unverify simular document and verify draft',
-            UNVERIFY_DOCUMENT_AND_REPLACE: 'Unverify simular document and replace by source document',
+            UNVERIFY_DOCUMENT_AND_VERIFY_DRAFT: 'Unverify similar document and verify draft',
+            UNVERIFY_DOCUMENT_AND_REPLACE: 'Unverify similar document and replace by source document',
             COPY_EXTERNAL_DOCUMENT_AND_VERIFY: 'Copy external document and verify source document',
-            UNVERIFY_DOCUMENT_AND_VERIFY: 'Unverify simular document and verify source document'
+            UNVERIFY_DOCUMENT_AND_VERIFY: 'Unverify similar document and verify source document'
         }
     };
 
