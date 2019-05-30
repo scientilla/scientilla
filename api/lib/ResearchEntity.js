@@ -258,6 +258,9 @@ module.exports = _.merge({}, BaseModel, {
         return results;
     },
     setDocumentAsNotDuplicate: async function (researchEntityModel, researchEntityId, document1Id, document2Id) {
+        if (document1Id === document2Id)
+            return;
+
         const DocumentNotDuplicatedModel = getDocumentNotDuplicateModel(researchEntityModel);
         const minDocId = Math.min(document1Id, document2Id);
         const maxDocId = Math.max(document1Id, document2Id);
