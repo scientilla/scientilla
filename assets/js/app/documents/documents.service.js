@@ -66,16 +66,27 @@
                         'Cancel',
                         true)
                         .then(res => {
-                                if (res === 0)
-                                    researchEntityService
-                                        .deleteDraft(researchEntity, draft.id)
-                                        .then(function (d) {
-                                            Notification.success("Draft deleted");
-                                            EventsService.publish(EventsService.DRAFT_DELETED, d);
-                                        })
-                                        .catch(function () {
-                                            Notification.warning("Failed to delete draft");
-                                        });
+                                switch (res) {
+                                    // Proceed
+                                    case 0:
+                                        researchEntityService
+                                            .deleteDraft(researchEntity, draft.id)
+                                            .then(function (d) {
+                                                Notification.success("Draft deleted");
+                                                EventsService.publish(EventsService.DRAFT_DELETED, d);
+                                            })
+                                            .catch(function () {
+                                                Notification.warning("Failed to delete draft");
+                                            });
+                                        break;
+                                    // Cancel
+                                    case -1:
+                                        const notificationMsg = 'The operation is been canceled.';
+                                        Notification.warning(notificationMsg);
+                                        break;
+                                    default:
+                                        break;
+                                }
                             }
                         ).catch(() => true);
                 }
@@ -126,6 +137,8 @@
                     switch (unverifyAction) {
                         case -1:
                             document.removeLabel(DocumentLabels.UNVERIFYING);
+                            const notificationMsg = 'The operation is been canceled.';
+                            Notification.warning(notificationMsg);
                             break;
                         case 0:
                             return researchEntityService.copyDocument(researchEntity, document)
@@ -133,20 +146,20 @@
                                     EventsService.publish(EventsService.DRAFT_CREATED, draft);
                                     return researchEntityService.unverify(researchEntity, document)
                                         .then(function (draft) {
-                                            EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
-                                            Notification.success('Document moved to drafts');
+                                            EventsService.publish(EventsService.DOCUMENT_UNVERIFIED, {});
+                                            Notification.success('Document is been moved to drafts!');
                                             return draft;
                                         })
-                                        .catch(() => Notification.warning('Failed to unverify document'));
+                                        .catch(() => Notification.warning('Failed to unverify document!'));
                                 });
                         case 1:
                             return researchEntityService.unverify(researchEntity, document)
                                 .then(function (draft) {
-                                    EventsService.publish(EventsService.DRAFT_UNVERIFIED, {});
-                                    Notification.success("Document succesfully unverified");
+                                    EventsService.publish(EventsService.DOCUMENT_UNVERIFIED, {});
+                                    Notification.success("Document successfully removed!");
                                 })
                                 .catch(function () {
-                                    Notification.warning("Failed to unverify document");
+                                    Notification.warning("Failed to remove document!");
                                 });
                     }
 
@@ -247,15 +260,35 @@
                 }
 
                 function discardDocument(document) {
-                    researchEntityService
-                        .discardDocument(researchEntity, document.id)
-                        .then(function () {
-                            Notification.success('Document discarded');
-                            EventsService.publish(EventsService.NOTIFICATION_DISCARDED, document);
-                        })
-                        .catch(function () {
-                            Notification.warning('Failed to discard document');
-                        });
+                    return ModalService.multipleChoiceConfirm(
+                        'Discard',
+                        'This action will discard this document from the suggested documents. Do you want to proceed?',
+                        ['Proceed'],
+                        'Cancel',
+                        true)
+                        .then(res => {
+                            switch (res) {
+                                // Proceed
+                                case 0:
+                                    researchEntityService
+                                        .discardDocument(researchEntity, document.id)
+                                        .then(function () {
+                                            Notification.success('Document discarded');
+                                            EventsService.publish(EventsService.NOTIFICATION_DISCARDED, document);
+                                        })
+                                        .catch(function () {
+                                            Notification.warning('Failed to discard document');
+                                        });
+                                    break;
+                                // Cancel
+                                case -1:
+                                    const notificationMsg = 'The operation is been canceled.';
+                                    Notification.warning(notificationMsg);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }).catch(() => true);
                 }
 
                 function discardDocuments(documents) {
@@ -375,10 +408,11 @@
                  * @param {Object} sourceDocument - The document that will be kept
                  * @param {string} category - The category of the source document
                  *
-                 * @retuns {Object} Returns an object with the response and potential errors
+                 * @returns {Object} Returns an object with the response and potential errors
                  */
-                async function handleKeepDocument(sourceDocument, category) {
+                async function handleKeepDocument(sourceDocument, category, duplicateIds) {
                     let response,
+                        hideFinalNotification = false,
                         action = false,
                         buttonLabels;
 
@@ -401,20 +435,29 @@
                             // Check to chosen action
                             switch(action) {
                                 case documentActions.SUGGESTED.VERIFY:
+                                    // Mark as not duplicates
+                                    await researchEntityService.markAsNotDuplicates(researchEntity, sourceDocument.id, duplicateIds);
+
                                     // Verify the source document
                                     response = await verify(sourceDocument);
+
                                     break;
 
                                 case documentActions.SUGGESTED.COPY_TO_DRAFT:
+                                    // Mark as not duplicates
+                                    await researchEntityService.markAsNotDuplicates(researchEntity, sourceDocument.id, duplicateIds);
+
                                     // Copy the suggested document
-                                    researchEntityService.copyDocument(researchEntity, sourceDocument)
+                                    response = researchEntityService.copyDocument(researchEntity, sourceDocument)
                                         .then(function (draft) {
                                             EventsService.publish(EventsService.DRAFT_CREATED, draft);
                                         });
                                     break;
 
                                 default:
-                                    break;
+                                    return {
+                                        action: documentActions.CANCEL
+                                    };
                             }
 
                             break;
@@ -432,23 +475,53 @@
                                 buttonLabels
                             );
 
-                            // Verify the source document
-                            if (action === documentActions.DRAFT.VERIFY) {
-                                response = await verify(sourceDocument);
+                            switch(action) {
+                                case documentActions.DRAFT.VERIFY:
+                                    // Mark as not duplicates
+                                    await researchEntityService.markAsNotDuplicates(researchEntity, sourceDocument.id, duplicateIds);
+
+                                    response = await verify(sourceDocument);
+
+                                    if (response && response.buttonIndex === 0) {
+                                        Notification.success('Similar documents marked as not duplicates!');
+                                        Notification.warning('Verification canceled! Document is still a draft!');
+                                    }
+
+                                    hideFinalNotification = true;
+
+                                    break;
+                                case documentActions.DRAFT.KEEP_DRAFT:
+                                    // Mark as not duplicates
+                                    await researchEntityService.markAsNotDuplicates(researchEntity, sourceDocument.id, duplicateIds);
+
+                                    // Nothing to do because it's already a draft, but pass response to show notification
+                                    response = true;
+                                    break;
+                                default:
+                                    return {
+                                        action: documentActions.CANCEL
+                                    };
                             }
+
                             break;
 
                         // If the source document is a verified document
                         case documentCategories.VERIFIED:
                             action = documentActions.KEEP.KEEP_VERIFIED_DOCUMENT;
+
+                            // Mark as not duplicates
+                            await researchEntityService.markAsNotDuplicates(researchEntity, sourceDocument.id, duplicateIds);
                             break;
                         default:
-                            break;
+                            return {
+                                action: documentActions.NO_CATEGORY
+                            };
                     }
 
                     return {
                         action: action,
-                        response: response
+                        response: response,
+                        hideFinalNotification: hideFinalNotification
                     };
                 }
 
@@ -462,69 +535,217 @@
                  * @returns {Object} Returns an object with the response and potential errors
                  */
                 async function handleReplaceDocument(sourceDocument, similarDocument, category) {
-                    let response,
-                        action = false;
+                    let response = false,
+                        action = false,
+                        hideFinalNotification = false,
+                        buttonLabels,
+                        notDuplicates;
 
                     // Check the category of the source document
                     switch(category) {
 
                         // If the source document is a suggested document
                         case documentCategories.SUGGESTED:
-                            // Set the action with the related constant
-                            action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_VERIFY;
 
-                            // Unverify the similar document & verify the source document
-                            response = await service.removeVerify(sourceDocument, similarDocument);
+                            buttonLabels = [];
+                            buttonLabels['\'' + documentActions.SUGGESTED.VERIFY + '\''] = documentActions.SUGGESTED.VERIFY;
+                            buttonLabels['\'' + documentActions.SUGGESTED.COPY_TO_DRAFT + '\''] = documentActions.SUGGESTED.COPY_TO_DRAFT;
 
-                            if (response.error) {
+                            // Show modal with multiple choice form with the options specified above
+                            action = await ModalService.multipleChoiceConfirm(
+                                'Replace document',
+                                'You are going to replace the similar document with source document. The similar document will be unverified. Do you want to verify the source document or copy it to drafts?',
+                                buttonLabels
+                            );
+
+                            switch (action) {
+                                case documentActions.SUGGESTED.VERIFY:
+                                    // Set the action with the related constant
+                                    action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_VERIFY;
+
+                                    // Unverify the similar document & verify the source document
+                                    response = await service.removeVerify(sourceDocument, similarDocument);
+
+                                    // Check if verification is been canceled
+                                    if (response.buttonIndex === 0) {
+                                        action = documentActions.CANCEL;
+                                    }
+
+                                    break;
+                                case documentActions.SUGGESTED.COPY_TO_DRAFT:
+                                    // Set the action with the related constant
+                                    action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_COPY_SUGGESTED_TO_DRAFT;
+
+                                    // Unverify similar document
+                                    response = researchEntityService.unverify(researchEntity, similarDocument)
+                                        .then(() => {
+                                            EventsService.publish(EventsService.DOCUMENT_UNVERIFIED, {});
+                                        })
+                                        .catch(function () {
+                                            Notification.warning("Failed to unverify document");
+                                        });
+
+                                    // Copy the suggested document to draft
+                                    researchEntityService.copyDocument(researchEntity, sourceDocument)
+                                        .then(function (draft) {
+                                            EventsService.publish(EventsService.DRAFT_CREATED, draft);
+                                        });
+
+                                    break;
+                                default:
+                                    return {
+                                        action: documentActions.CANCEL
+                                    };
+                            }
+
+                            if (response && response.error) {
                                 Notification.warning(response.error);
                             }
                             break;
 
                         // If the source document is a draft
                         case documentCategories.DRAFT :
-                            // Set the action with the related constant
-                            action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_VERIFY_DRAFT;
 
-                            // Unverify the similar document & verify the source document
-                            response = await service.removeVerify(sourceDocument, similarDocument);
+                            buttonLabels = [];
+                            buttonLabels['\'' + documentActions.DRAFT.VERIFY + '\''] = documentActions.DRAFT.VERIFY;
+                            buttonLabels['\'' + documentActions.DRAFT.KEEP_DRAFT + '\''] = documentActions.DRAFT.KEEP_DRAFT;
 
-                            if (response.error) {
+                            // Show modal with multiple choice form with the options specified above
+                            action = await ModalService.multipleChoiceConfirm(
+                                'Replace document',
+                                'You are going to replace the similar document with the source document. The similar document will be unverified. Do you want to verify the source document or keep it as a draft?',
+                                buttonLabels
+                            );
+
+                            switch (action) {
+                                case documentActions.DRAFT.VERIFY:
+                                    // Set the action with the related constant
+                                    action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_VERIFY_DRAFT;
+
+                                    // Unverify the similar document & verify the source document
+                                    response = await service.removeVerify(sourceDocument, similarDocument);
+
+                                    // Check if verification is been canceled
+                                    if (response.buttonIndex === 0) {
+                                        action = documentActions.CANCEL;
+                                    }
+
+                                    break;
+                                case documentActions.DRAFT.KEEP_DRAFT:
+                                    // Set the action with the related constant
+                                    action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_KEEP_DRAFT;
+
+                                    // Replace similar document with source document
+                                    response = await researchEntityService.replace(researchEntity, sourceDocument, similarDocument);
+
+                                    break;
+                                default:
+                                    return {
+                                        action: documentActions.CANCEL
+                                    };
+                            }
+
+                            if (response && response.error) {
                                 Notification.warning(response.error);
                             }
                             break;
 
                         // If the source document is a verified document
                         case documentCategories.VERIFIED:
-                            // Set the action with the related constant
-                            action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_REPLACE;
+                            buttonLabels = [];
+                            buttonLabels['\'' + documentActions.VERIFIED.KEEP + '\''] = documentActions.VERIFIED.KEEP;
+                            buttonLabels['\'' + documentActions.VERIFIED.MOVE_TO_DRAFT + '\''] = documentActions.VERIFIED.MOVE_TO_DRAFT;
 
-                            // Copy not duplicates of the similar documents to the source document
-                            response = await markAsNotDuplicates(sourceDocument, similarDocument.notDuplicates);
+                            // Show modal with multiple choice form with the options specified above
+                            action = await ModalService.multipleChoiceConfirm('Replace document', 'You are going to replace the similar document with the source document. Do you want to keep that source document verified or move it to drafts?', buttonLabels);
 
-                            // Unverify the similar document
-                            response = await researchEntityService.unverify(researchEntity, similarDocument);
+                            switch (action) {
+                                case documentActions.VERIFIED.KEEP:
+                                    // Set the action with the related constant
+                                    action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_REPLACE;
+
+                                    // Replace similar document with source document
+                                    response = await researchEntityService.replace(researchEntity, sourceDocument, similarDocument);
+
+                                    break;
+                                case documentActions.VERIFIED.MOVE_TO_DRAFT:
+                                    // Set the action with the related constant
+                                    action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_MOVE_TO_DRAFT;
+
+                                    // Replace similar document with source document
+                                    response = await researchEntityService.replace(researchEntity, sourceDocument, similarDocument);
+
+                                    response = researchEntityService.copyDocument(researchEntity, sourceDocument)
+                                        .then(function (draft) {
+                                            EventsService.publish(EventsService.DRAFT_CREATED, draft);
+                                            return researchEntityService.unverify(researchEntity, sourceDocument)
+                                                .then(function (draft) {
+                                                    EventsService.publish(EventsService.DOCUMENT_UNVERIFIED, {});
+                                                    return draft;
+                                                })
+                                                .catch(() => Notification.warning('Failed to unverify document!'));
+                                        });
+
+                                    break;
+                                default:
+                                    return {
+                                        action: documentActions.CANCEL
+                                    };
+                            }
+
                             break;
 
                         // If the source document is a external document
                         case documentCategories.EXTERNAL:
-                            // Set the action with the related constant
-                            action = documentActions.REPLACE.COPY_EXTERNAL_DOCUMENT_AND_VERIFY;
 
-                            // Unverify the similar document & verify the source document
-                            response = await service.removeVerify(sourceDocument, similarDocument);
+                            buttonLabels = [];
+                            buttonLabels['\'' + documentActions.EXTERNAL.VERIFY + '\''] = documentActions.EXTERNAL.VERIFY;
+                            buttonLabels['\'' + documentActions.EXTERNAL.COPY_TO_DRAFT + '\''] = documentActions.EXTERNAL.COPY_TO_DRAFT;
 
-                            if (response.error) {
+                            // Show modal with multiple choice form with the options specified above
+                            action = await ModalService.multipleChoiceConfirm('Replace document', 'You are going to replace the similar document with the source document. The similar document will be unverified. Do you want to verify the source document or copy it to drafts?', buttonLabels);
+
+                            switch (action) {
+                                case documentActions.EXTERNAL.VERIFY:
+                                    // Set the action with the related constant
+                                    action = documentActions.REPLACE.COPY_EXTERNAL_DOCUMENT_AND_VERIFY;
+
+                                    // Replace similar document with source document
+                                    response = await researchEntityService.replace(researchEntity, sourceDocument, similarDocument);
+
+                                    break;
+                                case documentActions.EXTERNAL.COPY_TO_DRAFT:
+                                    // Set the action with the related constant
+                                    action = documentActions.REPLACE.UNVERIFY_DOCUMENT_AND_COPY_EXTERNAL_TO_DRAFT;
+
+                                    // Replace similar document with source document
+                                    response = await researchEntityService.replace(researchEntity, sourceDocument, similarDocument);
+
+                                    // Copy the suggested document to draft
+                                    response = researchEntityService.copyDocument(researchEntity, sourceDocument).then(function (draft) {
+                                        EventsService.publish(EventsService.DRAFT_CREATED, draft);
+                                    });
+                                    break;
+                                default:
+                                    return {
+                                        action: documentActions.CANCEL
+                                    };
+                            }
+
+                            if (response && response.error) {
                                 Notification.warning(response.error);
                             }
                             break;
                         default:
-                            break;
+                            return {
+                                action: documentActions.NO_CATEGORY
+                            };
                     }
 
                     return {
                         action: action,
-                        response: response
+                        response: response,
+                        hideFinalNotification: hideFinalNotification
                     };
                 }
 
@@ -567,10 +788,8 @@
                                 return similarDocument.id;
                             });
 
-                            // Mark as not duplicates
-                            await researchEntityService.markAsNotDuplicates(researchEntity, sourceDocument.id, duplicateIds);
+                            result = await handleKeepDocument(sourceDocument, category, duplicateIds);
 
-                            result = await handleKeepDocument(sourceDocument, category);
                             break;
 
                         // Mark all the similar documents as not duplicate in the external section
@@ -586,7 +805,7 @@
 
                             // Set the result action
                             result = {
-                                action:  documentActions.COMPARE.MARK_ALL_AS_NOT_DUPLICATE
+                                action: documentActions.COMPARE.MARK_ALL_AS_NOT_DUPLICATE
                             };
                             break;
 
@@ -597,7 +816,7 @@
 
                         // Unverify the verified document
                         case documentActions.COMPARE.UNVERIFY_VERIFIED_DOCUMENT:
-                            result = unverifyDocument(sourceDocument);
+                            result = await unverifyDocument(sourceDocument);
                             break;
 
                         // Discard the suggested document
@@ -620,29 +839,35 @@
                     }
 
                     // Check if the result has an action
-                    if (result.action) {
-
-                        // Fire event to update the document list
-                        EventsService.publish(EventsService.DOCUMENT_COMPARE, sourceDocument);
-
-                        // Show notification with warning or success message
-                        if (result.response) {
-                            if (result.response.error) {
-                                const notificationMsg = 'The operation failed.';
+                    if (result && result.action) {
+                        if (result.action === documentActions.CANCEL) {
+                            if (!result.hideFinalNotification) {
+                                const notificationMsg = 'The operation is been canceled.';
                                 Notification.warning(notificationMsg);
-                            } else {
-                                const notificationMsg = 'The operation was successful';
-                                Notification.success(notificationMsg);
+                            }
+                        } else {
+                            // Fire event to update the document list
+                            EventsService.publish(EventsService.DOCUMENT_COMPARE, sourceDocument);
+
+                            // Show notification with warning or success message
+                            if (result.response && !result.hideFinalNotification) {
+                                if (result.response.error) {
+                                    const notificationMsg = 'The operation failed.';
+                                    Notification.warning(notificationMsg);
+                                } else {
+                                    const notificationMsg = 'The operation was successful';
+                                    Notification.success(notificationMsg);
+                                }
                             }
                         }
                     }
                 }
 
-                function verify(d, notifications = true) {
+                async function verify(d, notifications = true) {
                     if (d.isDraft())
-                        return service.verifyDraft(d, notifications);
+                        return await service.verifyDraft(d, notifications);
                     else
-                        return service.verifyDocument(d, notifications);
+                        return await service.verifyDocument(d, notifications);
                 }
 
                 /* jshint ignore:end */

@@ -51,6 +51,7 @@
 
                             <button
                                 ng-click="vm.compareDocuments(d, d.getComparisonDuplicates(), vm.documentCategories.EXTERNAL)"
+                                ng-disabled="!d.isValid()"
                                 type="button"
                                 ng-if="d.isComparable"
                                 class="btn btn-primary"

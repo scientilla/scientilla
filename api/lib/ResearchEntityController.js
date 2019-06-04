@@ -141,6 +141,13 @@ module.exports = {
         const Model = getModel(req);
         res.halt(Model.removeVerify(Model, researchEntityId, document1Id, verificationData, document2Id));
     },
+    replace: function (req, res) {
+        const researchEntityId = parseInt(req.params.researchEntityId, 10);
+        const documentId = req.body.documentId;
+        const documentToBeReplacedId = req.body.documentToBeReplacedId;
+        const Model = getModel(req);
+        res.halt(Model.replace(Model, researchEntityId, documentId, documentToBeReplacedId));
+    },
     getPublicDocuments: async (req, res) => makePublicAPIrequest(req, res, 'documents'),
     getPublications: async (req, res) => makePublicAPIrequest(req, res, 'publications'),
     getDisseminationTalks: async (req, res) => makePublicAPIrequest(req, res, 'disseminationTalks'),

@@ -66,8 +66,7 @@
                     }
 
                     const d = await researchEntityService.getDraft(researchEntity, draft.id);
-                    ModalService.openDocumentVerificationForm(d, verificationCallback);
-
+                    return ModalService.openDocumentVerificationForm(d, verificationCallback);
                 }
 
                 /* jshint ignore:end */
@@ -93,7 +92,7 @@
                         }
                     }
 
-                    ModalService.openDocumentVerificationForm(document, verificationCallback);
+                    return ModalService.openDocumentVerificationForm(document, verificationCallback);
                 }
 
                 /* jshint ignore:end */
@@ -141,9 +140,7 @@
                         return await researchEntityService.removeVerify(researchEntity, docToVerifyId, verificationData, docToRemoveId);
                     }
 
-                    const res = await ModalService.openDocumentVerificationForm(docToVerify, verificationCallback, docToRemove);
-                    if (res)
-                        return res.data;
+                    return await ModalService.openDocumentVerificationForm(docToVerify, verificationCallback, docToRemove);
                 }
                 /* jshint ignore:end */
 

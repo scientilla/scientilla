@@ -299,24 +299,36 @@
         },
         DRAFT: {
             VERIFY: 'Verify',
-            KEEP_DRAFT: 'Keep draft'
+            KEEP_DRAFT: 'Keep as draft'
         },
         VERIFIED: {
-            REPLACE: 'Replace'
+            REPLACE: 'Replace',
+            KEEP: 'Keep verified document',
+            MOVE_TO_DRAFT: 'Move to drafts'
         },
         SUGGESTED: {
             VERIFY: 'Verify',
-            COPY_TO_DRAFT: 'Copy to Draft'
+            COPY_TO_DRAFT: 'Copy to drafts'
+        },
+        EXTERNAL: {
+            VERIFY: 'Verify',
+            COPY_TO_DRAFT: 'Copy to drafts'
         },
         KEEP: {
             KEEP_VERIFIED_DOCUMENT: 'Keep verified document'
         },
         REPLACE: {
             UNVERIFY_DOCUMENT_AND_VERIFY_DRAFT: 'Unverify similar document and verify draft',
+            UNVERIFY_DOCUMENT_AND_KEEP_DRAFT: 'Unverify similar document and keep as draft',
+            UNVERIFY_DOCUMENT_AND_COPY_SUGGESTED_TO_DRAFT: 'Unverify similar document and copy suggested document to draft',
             UNVERIFY_DOCUMENT_AND_REPLACE: 'Unverify similar document and replace by source document',
             COPY_EXTERNAL_DOCUMENT_AND_VERIFY: 'Copy external document and verify source document',
-            UNVERIFY_DOCUMENT_AND_VERIFY: 'Unverify similar document and verify source document'
-        }
+            UNVERIFY_DOCUMENT_AND_VERIFY: 'Unverify similar document and verify source document',
+            UNVERIFY_DOCUMENT_AND_COPY_EXTERNAL_TO_DRAFT: 'Unverify similar document and copy external document to draft',
+            UNVERIFY_DOCUMENT_AND_MOVE_TO_DRAFT: 'Unverify similar document and move document to draft'
+        },
+        CANCEL: 'Cancel',
+        NO_CATEGORY: 'No category selected'
     };
 
     angular.module('app')

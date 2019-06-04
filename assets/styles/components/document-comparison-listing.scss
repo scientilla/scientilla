@@ -15,7 +15,7 @@
     margin-top: 3rem;
 
     .column-icon{
-        width: 5.3rem;
+        width: 7rem;
     }
 
     .column-duplicates,
@@ -48,16 +48,44 @@
         border-radius: $border-radius;
         transition: margin-top .5s;
 
-        .btn-overwrite{
+        .button-replace-container{
             position: absolute;
             top: 50%;
-            right: -5.3rem;
+            right: -7rem;
             bottom: auto;
             left: auto;
             display: none;
             margin-top: -1.5rem;
             margin-left: 0px;
+            text-align: center;
             transform: rotate(0deg);
+            
+            span{
+                display: block;
+                margin-bottom: .5rem;
+                color: $gray;
+                font-weight: bold;
+            }
+
+            .btn{
+                padding: 1rem 0;
+                font-size: 1.8rem;
+
+                i{
+                    margin-right: 1.5rem;
+                    margin-left: 1.5rem;
+                }
+
+                &:hover{
+                    i{
+                        opacity: 0;
+                        -webkit-animation: arrow-right 1.5s ease-in-out infinite;
+                        -moz-animation:    arrow-right 1.5s ease-in-out infinite;
+                        -o-animation:      arrow-right 1.5s ease-in-out infinite;
+                        animation:         arrow-right 1.5s ease-in-out infinite;
+                    }
+                }
+            }
         }
     }
 
@@ -211,7 +239,7 @@
             margin-bottom: 0px;
             padding: 3rem;
 
-            .btn-overwrite{
+            .button-replace-container{
                 display: block;
             }
         }
@@ -220,4 +248,38 @@
             display: none;
         }
     }
+}
+
+// Keyframes
+@-webkit-keyframes arrow-right {
+    0%   { margin-left: 1.5rem; margin-right: 1.5rem; opacity: 0; }
+    5%   { margin-left: .5rem; margin-right: 2.5rem; opacity: 0; }
+    10%  { margin-left: .5rem; margin-right: 2.5rem; opacity: 1; }
+    90%  { margin-left: 2.5rem; margin-right: .5rem; opacity: 1; }
+    95%  { margin-left: 2.5rem; margin-right: .5rem; opacity: 0; }
+    100% { margin-left: 1.5rem; margin-right: 1.5rem; opacity: 0; }
+}
+@-moz-keyframes arrow-right {
+    0%   { margin-left: 1.5rem; margin-right: 1.5rem; opacity: 0; }
+    5%   { margin-left: .5rem; margin-right: 2.5rem; opacity: 0; }
+    10%  { margin-left: .5rem; margin-right: 2.5rem; opacity: 1; }
+    90%  { margin-left: 2.5rem; margin-right: .5rem; opacity: 1; }
+    95%  { margin-left: 2.5rem; margin-right: .5rem; opacity: 0; }
+    100% { margin-left: 1.5rem; margin-right: 1.5rem; opacity: 0; }
+}
+@-o-keyframes arrow-right {
+    0%   { margin-left: 1.5rem; margin-right: 1.5rem; opacity: 0; }
+    5%   { margin-left: .5rem; margin-right: 2.5rem; opacity: 0; }
+    10%  { margin-left: .5rem; margin-right: 2.5rem; opacity: 1; }
+    90%  { margin-left: 2.5rem; margin-right: .5rem; opacity: 1; }
+    95%  { margin-left: 2.5rem; margin-right: .5rem; opacity: 0; }
+    100% { margin-left: 1.5rem; margin-right: 1.5rem; opacity: 0; }
+}
+@keyframes arrow-right {
+    0%   { margin-left: 1.5rem; margin-right: 1.5rem; opacity: 0; }
+    5%   { margin-left: .5rem; margin-right: 2.5rem; opacity: 0; }
+    10%  { margin-left: .5rem; margin-right: 2.5rem; opacity: 1; }
+    90%  { margin-left: 2.5rem; margin-right: .5rem; opacity: 1; }
+    95%  { margin-left: 2.5rem; margin-right: .5rem; opacity: 0; }
+    100% { margin-left: 1.5rem; margin-right: 1.5rem; opacity: 0; }
 }

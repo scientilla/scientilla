@@ -85,6 +85,8 @@ module.exports.routes = {
     'post /api/v1/groups/:researchEntityId/documents/:documentId/not-duplicates': 'Group.setDocumentsAsNotDuplicate',
     'post /api/v1/groups/:researchEntityId/remove-verify': 'Group.removeVerify',
     'post /api/v1/users/:researchEntityId/remove-verify': 'User.removeVerify',
+    'post /api/v1/groups/:researchEntityId/replace': 'Group.replace',
+    'post /api/v1/users/:researchEntityId/replace': 'User.replace',
 
     //Site API
     'get /api/v1/users/username/:username/publications': 'User.getPublications',

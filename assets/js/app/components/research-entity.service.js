@@ -42,6 +42,7 @@
         service.setAuthorshipFavorite = setAuthorshipFavorite;
         service.removeVerify = removeVerify;
         service.markAsNotDuplicates = markAsNotDuplicates;
+        service.replace = replace;
 
         const documentPopulates = [
             'source',
@@ -56,7 +57,6 @@
             'groupTagLabels',
             'institutes',
             'duplicates',
-            'notDuplicates',
             'groups',
             'scopusDocumentMetadata'
         ];
@@ -271,6 +271,13 @@
 
             return researchEntity
                 .customPOST(verificationData, 'remove-verify');
+        }
+
+        async function replace(researchEntity, document, documentToBeReplaced) {
+            return researchEntity.customPOST({
+                documentId: document.id,
+                documentToBeReplacedId: documentToBeReplaced.id
+            }, 'replace');
         }
 
         async function markAsNotDuplicates(researchEntity, documentId, duplicateIds) {

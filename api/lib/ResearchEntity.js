@@ -251,7 +251,7 @@ module.exports = _.merge({}, BaseModel, {
         let results = [];
 
         for (const id of duplicateIds) {
-            const res = await researchEntityModel.setDocumentAsNotDuplicate(researchEntityModel, researchEntityId,documentId,id);
+            const res = await researchEntityModel.setDocumentAsNotDuplicate(researchEntityModel, researchEntityId, documentId, id);
             results.push(res);
         }
 
@@ -377,6 +377,36 @@ module.exports = _.merge({}, BaseModel, {
             res = await ResearchEntityModel.verifyDocument(ResearchEntityModel, researchEntityId, docToVerify.id, verificationData);
         return res;
     },
+    replace: async function(ResearchEntityModel, researchEntityId, documentId, documentToBeReplacedId) {
+        // Get not duplicates of the document that will be replaced
+        let notDuplicates = await this.getNotDuplicates(ResearchEntityModel, researchEntityId, documentToBeReplacedId);
+
+        // Unverify document
+        await this.unverifyDocument(ResearchEntityModel, researchEntityId, documentToBeReplacedId);
+
+        // Change the id of the to be replaced document to the other document.
+        const notDuplicatesToAdd = notDuplicates.map(notDuplicate => {
+            switch(documentToBeReplacedId) {
+                case notDuplicate.duplicate:
+                    return notDuplicate.document;
+                case notDuplicate.document:
+                    return notDuplicate.duplicate;
+                default:
+                    return false;
+            }
+        });
+
+        // Copy the not duplicates to the document
+        await this.setDocumentsAsNotDuplicate(ResearchEntityModel, researchEntityId, documentId, notDuplicatesToAdd);
+
+        // Get the id's of the not duplicates that will be deleted.
+        const notDuplicatesToDelete = notDuplicates.map(notDuplicate => {
+            return notDuplicate.id;
+        });
+
+        // Delete the not duplicates of the replaced document
+        return await this.deleteNotDuplicates(ResearchEntityModel, researchEntityId, notDuplicatesToDelete);
+    },
     removeDiscarded: async function (ResearchEntityModel, researchEntityId, documentId) {
         const DiscardedModel = getDiscardedModel(ResearchEntityModel);
         await DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
@@ -387,10 +417,18 @@ module.exports = _.merge({}, BaseModel, {
     },
     deleteNotDuplicates: async function (ResearchEntityModel, researchEntityId, notDuplicateIds) {
         const DocumentNotDuplicatedModel = getDocumentNotDuplicateModel(ResearchEntityModel);
-        return await DocumentNotDuplicatedModel.destroy({
-            researchEntity: researchEntityId,
-            id: notDuplicateIds
-        });
+        let results = [];
+
+        for (let i = 0; i < notDuplicateIds.length; i++) {
+            const notDuplicateId = notDuplicateIds[i];
+            const res = await DocumentNotDuplicatedModel.destroy({
+                researchEntity: researchEntityId,
+                id: notDuplicateId
+            });
+            results.push(res);
+        }
+
+        return results;
     },
     _config: {
         actions: false,

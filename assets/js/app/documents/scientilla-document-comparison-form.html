@@ -191,7 +191,7 @@
                                 Delete draft
                             </scientilla-button>
                         </li>
-                        <li ng-if="vm.category === vm.documentCategories.SUGGESTED">
+                        <li ng-if="vm.category === vm.documentCategories.SUGGESTED && !vm.document.isDiscarded()">
                             <scientilla-button type="submit" click="vm.discardSuggestedDocument">
                                 Discard suggested document
                             </scientilla-button>
@@ -203,12 +203,17 @@
                         </li>
                     </ul>
 
-                    <button
-                        ng-click="vm.useDuplicate()"
-                        class="btn btn-primary btn-overwrite"
-                        title="Replace the similar document with the source document">
-                        <i class="fas fa-long-arrow-alt-right"></i>
-                    </button>
+                    <div class="button-replace-container">
+
+                        <span>Replace</span>
+
+                        <button
+                            ng-click="vm.useDuplicate()"
+                            class="btn btn-primary"
+                            title="Replace the similar document with the source document">
+                            <i class="fas fa-long-arrow-alt-right"></i>
+                        </button>
+                    </div>
                 </div>
             </li>
 
