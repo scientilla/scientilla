@@ -59,13 +59,13 @@ Test application:
   - echo POSTGRES_USER="$POSTGRES_USER" >> .env
   - echo POSTGRES_PASSWORD="$POSTGRES_PASSWORD" >> .env
   - touch docker/db/database_structure.sql
-  - docker-compose -f docker-compose-testing-before.yml up -d db-test
-  - docker-compose -f docker-compose-testing-before.yml logs -f db-test > docker/db-test/logs &
-  - docker-compose -f docker-compose-testing-before.yml build npm
-  - docker-compose -f docker-compose-testing-before.yml run --rm npm test
+  - docker-compose -f docker-compose-testing.yml up -d db-test
+  - docker-compose -f docker-compose-testing.yml logs -f db-test > docker/db-test/logs &
+  - docker-compose -f docker-compose-testing.yml build npm
+  - docker-compose -f docker-compose-testing.yml run --rm npm test
   after_script:
   - cd scientilla-docker
-  - docker-compose -f docker-compose-testing-before.yml down
+  - docker-compose -f docker-compose-testing.yml down
 
 Build:
   stage: build
