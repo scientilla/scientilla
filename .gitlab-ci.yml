@@ -93,7 +93,7 @@ Push latest:
     # Re-uses the project workspace, but skips all Git operations
     GIT_STRATEGY: none
   stage: push
-  <<: *add_docker_login
+  <<: *add_docker_login"
   only:
   # Only "master" should be tagged "latest"
   - master
