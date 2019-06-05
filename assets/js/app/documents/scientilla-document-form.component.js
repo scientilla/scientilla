@@ -25,7 +25,8 @@
         'DocumentTypesService',
         'context',
         'Restangular',
-        'ModalService'
+        'ModalService',
+        'documentCategories'
     ];
 
     function scientillaDocumentFormController($rootScope,
@@ -36,7 +37,8 @@
                                               DocumentTypesService,
                                               context,
                                               Restangular,
-                                              ModalService) {
+                                              ModalService,
+                                              documentCategories) {
         const vm = this;
 
         vm.saveStatus = saveStatus();
@@ -380,11 +382,15 @@
                     // Is valid
                     saveDocument()
                         .then(() => {
-                            vm.verifyStatus.setState('verified');
-                            close();
+                            if (vm.document.getComparisonDuplicates().length > 0) {
+                                documentService.compareDocuments(vm.document, vm.document.getComparisonDuplicates(), documentCategories.DRAFT);
+                            } else {
+                                documentService.verifyDraft(vm.document);
+                            }
                         })
                         .then(() => {
-                            documentService.verifyDraft(vm.document);
+                            vm.verifyStatus.setState('verified');
+                            close();
                         });
                 } else {
                     // Is not valid

@@ -19,6 +19,14 @@
     background: lighten($neon-carrot, 25%);
     vertical-align: top;
     box-shadow: .2rem 0 0 lighten($neon-carrot, 25%), -.2rem 0 0 lighten($neon-carrot, 25%);
+
+    &.block{
+        display: block;
+    }
+
+    &.inline-block{
+        display: inline-block;
+    }
 }
 
 label{

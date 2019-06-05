@@ -14,10 +14,11 @@
     scientillaExternalDocuments.$inject = [
         'context',
         'documentListSections',
-        'EventsService'
+        'EventsService',
+        'documentCategories'
     ];
 
-    function scientillaExternalDocuments(context, documentListSections, EventsService) {
+    function scientillaExternalDocuments(context, documentListSections, EventsService, documentCategories) {
         const vm = this;
 
         const DocumentService = context.getDocumentService();
@@ -27,6 +28,9 @@
         vm.verifyDocument = DocumentService.verifyDocument;
         vm.verifyDocuments = DocumentService.verifyDocuments;
         vm.copyUncopiedDocuments = DocumentService.copyUncopiedDocuments;
+        vm.compareDocuments = DocumentService.compareDocuments;
+        vm.documentCategories = documentCategories;
+
         vm.onFilter = onFilter;
 
         vm.documentListSections = documentListSections;
@@ -38,7 +42,8 @@
                 EventsService.NOTIFICATION_ACCEPTED,
                 EventsService.NOTIFICATION_DISCARDED,
                 EventsService.DRAFT_UNVERIFIED,
-                EventsService.DOCUMENT_VERIFIED
+                EventsService.DOCUMENT_VERIFIED,
+                EventsService.DOCUMENT_COMPARE
             ], updateList);
         };
 

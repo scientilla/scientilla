@@ -91,16 +91,18 @@
                 }
 
                 /* jshint ignore:start */
-
                 async function removeVerify(docToVerify, docToRemove) {
                     const verificationData = {};
                     const res = await researchEntityService.removeVerify(researchEntity, docToVerify.id, verificationData, docToRemove.id)
                     return res;
-
                 }
-
                 /* jshint ignore:end */
 
+                /* jshint ignore:start */
+                async function markAsNotDuplicates(researchEntity, documentId, duplicateIds) {
+                    return await researchEntityService.markAsNotDuplicates(researchEntity, documentId, duplicateIds);
+                }
+                /* jshint ignore:end */
             }
         };
     }

@@ -16,8 +16,6 @@
             DRAFT_UPDATED: 'draft.updated',
             DRAFT_CREATED: 'draft.created',
             DRAFT_VERIFIED: 'draft.verified',
-            DRAFT_UNVERIFIED: 'draft.unverified',
-
             DRAFT_SYNCHRONIZED: 'draft.synchronized',
 
             DOCUMENT_VERIFIED: 'document.verified',
@@ -27,6 +25,7 @@
             DOCUMENT_DISCARDED: 'document.discarded',
             DOCUMENT_NOT_DUPLICATED: 'document.notDuplicated',
             DOCUMENT_COMPARE: 'document.compare',
+            DOCUMENT_UNVERIFIED: 'document.unverified',
 
             NOTIFICATION_ACCEPTED: 'notification.accepted',
             NOTIFICATION_DISCARDED: 'notification.discarded',

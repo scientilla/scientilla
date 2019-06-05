@@ -23,11 +23,10 @@
         ALREADY_VERIFIED: 'already verified',
         ALREADY_IN_DRAFTS: 'already in drafts',
         DISCARDED: 'discarded',
-        UVERIFYING: 'unverifying',
+        UNVERIFYING: 'unverifying',
         NEW: 'new',
         EXTERNAL: 'external'
     };
-
 
     const defaultSources = ['journal', 'conference', 'book', 'bookseries'];
     const invitedTalkSources = [
@@ -282,6 +281,56 @@
         USER: 'user-verified-documents'
     };
 
+    const documentCategories = {
+        DRAFT: 'Draft',
+        VERIFIED: 'Verified',
+        EXTERNAL: 'External',
+        SUGGESTED: 'Suggested'
+    };
+
+    const documentActions = {
+        COMPARE: {
+            KEEP_DOCUMENT: 'Keep document',
+            USE_DUPLICATE: 'Use duplicate',
+            DELETE_DRAFT: 'Delete draft',
+            DISCARD_SUGGESTED_DOCUMENT: 'Discard suggested document',
+            UNVERIFY_VERIFIED_DOCUMENT: 'Unverify verified document',
+            MARK_ALL_AS_NOT_DUPLICATE: 'Mark all as not duplicate'
+        },
+        DRAFT: {
+            VERIFY: 'Verify',
+            KEEP_DRAFT: 'Keep as draft'
+        },
+        VERIFIED: {
+            REPLACE: 'Replace',
+            KEEP: 'Keep verified document',
+            MOVE_TO_DRAFT: 'Move to drafts'
+        },
+        SUGGESTED: {
+            VERIFY: 'Verify',
+            COPY_TO_DRAFT: 'Copy to drafts'
+        },
+        EXTERNAL: {
+            VERIFY: 'Verify',
+            COPY_TO_DRAFT: 'Copy to drafts'
+        },
+        KEEP: {
+            KEEP_VERIFIED_DOCUMENT: 'Keep verified document'
+        },
+        REPLACE: {
+            UNVERIFY_DOCUMENT_AND_VERIFY_DRAFT: 'Unverify similar document and verify draft',
+            UNVERIFY_DOCUMENT_AND_KEEP_DRAFT: 'Unverify similar document and keep as draft',
+            UNVERIFY_DOCUMENT_AND_COPY_SUGGESTED_TO_DRAFT: 'Unverify similar document and copy suggested document to draft',
+            UNVERIFY_DOCUMENT_AND_REPLACE: 'Unverify similar document and replace by source document',
+            COPY_EXTERNAL_DOCUMENT_AND_VERIFY: 'Copy external document and verify source document',
+            UNVERIFY_DOCUMENT_AND_VERIFY: 'Unverify similar document and verify source document',
+            UNVERIFY_DOCUMENT_AND_COPY_EXTERNAL_TO_DRAFT: 'Unverify similar document and copy external document to draft',
+            UNVERIFY_DOCUMENT_AND_MOVE_TO_DRAFT: 'Unverify similar document and move document to draft'
+        },
+        CANCEL: 'Cancel',
+        NO_CATEGORY: 'No category selected'
+    };
+
     angular.module('app')
         .constant('pageSize', 50)
         .constant('userConstants', userConstants)
@@ -295,5 +344,7 @@
         .constant('documentSearchForm', documentSearchForm)
         .constant('documentFieldsRules', documentFieldsRules)
         .constant('documentOrigins', documentOrigins)
-        .constant('documentListSections', documentListSections);
+        .constant('documentListSections', documentListSections)
+        .constant('documentCategories', documentCategories)
+        .constant('documentActions', documentActions);
 })();

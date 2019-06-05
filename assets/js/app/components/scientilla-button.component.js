@@ -9,6 +9,7 @@
             bindings: {
                 type: '@?',
                 size: '@?',
+                title: '@?',
                 ngDisabled: '<',
                 click: '&'
             },

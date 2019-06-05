@@ -17,13 +17,15 @@
         'context',
         'researchEntityService',
         'documentListSections',
-        'EventsService'
+        'EventsService',
+        'documentCategories'
     ];
 
     function scientillaDrafsList(context,
                                  researchEntityService,
                                  documentListSections,
-                                 EventsService) {
+                                 EventsService,
+                                 documentCategories) {
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
@@ -40,6 +42,7 @@
         vm.synchronizeDraft = DocumentsService.synchronizeDraft;
         vm.desynchronizeDrafts = DocumentsService.desynchronizeDrafts;
         vm.compareDocuments = DocumentsService.compareDocuments;
+        vm.documentCategories = documentCategories;
 
         vm.documentListSections = documentListSections;
 

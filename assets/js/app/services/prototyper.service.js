@@ -341,7 +341,7 @@
                 return this.hasLabel(DocumentLabels.DISCARDED);
             },
             isUnverifying: function () {
-                return this.hasLabel(DocumentLabels.UVERIFYING);
+                return this.hasLabel(DocumentLabels.UNVERIFYING);
             },
             getInstituteIdentifier: function (instituteIndex) {
                 const base26Chars = "0123456789abcdefghijklmnopqrstuvwxyz".split("");
@@ -391,10 +391,9 @@
             },
             getComparisonDuplicates() {
                 let duplicates;
-                if (this.isDraft())
-                    duplicates = this.duplicates;
-                else
-                    duplicates = this.duplicates.filter(d => d.duplicateKind === 'v');
+
+                duplicates = this.duplicates.filter(d => d.duplicateKind === 'v');
+
                 duplicates.sort((a, b) => {
                     if (a.duplicateKind === DocumentKinds.VERIFIED)
                         return -1;
@@ -487,16 +486,9 @@
         }
 
         function checkDuplicates(document) {
-            document.isComparable = (
-                    document.isDraft() &&
-                    document.duplicates.length
-                ) ||
-                (
-                    !document.isDraft() &&
-                    document.duplicates &&
-                    document.duplicates.length &&
-                    document.duplicates.some(d => d.duplicateKind === 'v')
-                );
+            document.isComparable = document.duplicates &&
+                document.duplicates.length &&
+                document.duplicates.some(d => d.duplicateKind === 'v');
         }
 
         function toMembershipModel(membership) {

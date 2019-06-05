@@ -41,6 +41,8 @@
         service.setAuthorshipPrivacy = setAuthorshipPrivacy;
         service.setAuthorshipFavorite = setAuthorshipFavorite;
         service.removeVerify = removeVerify;
+        service.markAsNotDuplicates = markAsNotDuplicates;
+        service.replace = replace;
 
         const documentPopulates = [
             'source',
@@ -266,8 +268,26 @@
             verificationData = _.pick(verificationData, verificationFields);
             verificationData.document1Id = doc1Id;
             verificationData.document2Id = doc2Id;
+
             return researchEntity
                 .customPOST(verificationData, 'remove-verify');
+        }
+
+        async function replace(researchEntity, document, documentToBeReplaced) {
+            return researchEntity.customPOST({
+                documentId: document.id,
+                documentToBeReplacedId: documentToBeReplaced.id
+            }, 'replace');
+        }
+
+        async function markAsNotDuplicates(researchEntity, documentId, duplicateIds) {
+            const data = {
+                researchEntityId: researchEntity.id,
+                documentId: documentId,
+                duplicateIds: duplicateIds
+            };
+            await researchEntity.one('documents', documentId)
+                .customPOST(data, 'not-duplicates');
         }
 
         /* jshint ignore:end */

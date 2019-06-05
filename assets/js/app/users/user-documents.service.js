@@ -9,10 +9,11 @@
         'ModalService',
         'EventsService',
         'UsersService',
+        'documentCategories',
         '$q'
     ];
 
-    function UserDocumentsServiceFactory(DocumentsServiceFactory, Notification, researchEntityService, ModalService, EventsService, UsersService, $q) {
+    function UserDocumentsServiceFactory(DocumentsServiceFactory, Notification, researchEntityService, ModalService, EventsService, UsersService, documentCategories, $q) {
         return {
             create: function (researchEntity) {
                 var service = DocumentsServiceFactory.create(researchEntity, UsersService);
@@ -22,6 +23,7 @@
                 service.synchronizeDraft = synchronizeDraft;
                 service.verify = verify;
                 service.removeVerify = removeVerify;
+                service.markAsNotDuplicates = markAsNotDuplicates;
 
                 return service;
 
@@ -42,8 +44,8 @@
                             if (res.error) {
 
                                 try {
-                                    const document = await researchEntityService.getDraft(user, documentId)
-                                    service.compareDocuments(document, document.getComparisonDuplicate());
+                                    const document = await researchEntityService.getDraft(user, documentId);
+                                    service.compareDocuments(document, document.getComparisonDuplicates(), documentCategories.DRAFT);
                                 } catch (error) {
                                     Notification.error(error);
                                 }
@@ -64,8 +66,7 @@
                     }
 
                     const d = await researchEntityService.getDraft(researchEntity, draft.id);
-                    ModalService.openDocumentVerificationForm(d, verificationCallback);
-
+                    return ModalService.openDocumentVerificationForm(d, verificationCallback);
                 }
 
                 /* jshint ignore:end */
@@ -91,7 +92,7 @@
                         }
                     }
 
-                    ModalService.openDocumentVerificationForm(document, verificationCallback);
+                    return ModalService.openDocumentVerificationForm(document, verificationCallback);
                 }
 
                 /* jshint ignore:end */
@@ -105,8 +106,7 @@
                             'You can edit your affiliation during the document verification process without disabling the\n' +
                             'synchronization.\n\n' +
                             'WARNING! It may overwrite the current data.';
-                    }
-                    else {
+                    } else {
                         title = 'Disable synchronization';
                         msg = 'This action will disable the synchronization with scopus.\n' +
                             'Remember: you can edit your affiliation during the document verification process without\n' +
@@ -134,17 +134,16 @@
                 }
 
                 /* jshint ignore:start */
-
                 async function removeVerify(docToVerify, docToRemove) {
                     async function verificationCallback(researchEntity, docToVerifyId, verificationData, docToRemoveId) {
-                        const res = await researchEntityService.removeVerify(researchEntity, docToVerifyId, verificationData, docToRemoveId);
-                        return res;
-
+                        return await researchEntityService.removeVerify(researchEntity, docToVerifyId, verificationData, docToRemoveId);
                     }
 
-                    const res = await ModalService.openDocumentVerificationForm(docToVerify, verificationCallback, docToRemove);
-                    if (res)
-                        return res.data;
+                    return await ModalService.openDocumentVerificationForm(docToVerify, verificationCallback, docToRemove);
+                }
+
+                async function markAsNotDuplicates(researchEntity, documentId, duplicateIds) {
+                    return await researchEntityService.markAsNotDuplicates(researchEntity, documentId, duplicateIds);
                 }
 
                 /* jshint ignore:end */

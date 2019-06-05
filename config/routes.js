@@ -83,10 +83,12 @@ module.exports.routes = {
     ['put ' + apiPrfx + '/users/:researchEntityId/drafts/:documentId/authorships']: 'User.setAuthorhips',
     ['get ' + apiPrfx + '/externals']: 'Document.externalSearch',
     ['post ' + apiPrfx + '/documents/export']: 'Document.export',
-    ['post ' + apiPrfx + '/users/:researchEntityId/documents-not-duplicate']: 'User.setDocumentAsNotDuplicate',
-    ['post ' + apiPrfx + '/groups/:researchEntityId/documents-not-duplicate']: 'Group.setDocumentAsNotDuplicate',
+    ['post ' + apiPrfx + '/users/:researchEntityId/documents/:documentId/not-duplicates']: 'User.setDocumentsAsNotDuplicate',
+    ['post ' + apiPrfx + '/groups/:researchEntityId/documents/:documentId/not-duplicates']: 'Group.setDocumentsAsNotDuplicate',
     ['post ' + apiPrfx + '/groups/:researchEntityId/remove-verify']: 'Group.removeVerify',
     ['post ' + apiPrfx + '/users/:researchEntityId/remove-verify']: 'User.removeVerify',
+    ['post ' + apiPrfx + 'post /api/v1/groups/:researchEntityId/replace']: 'Group.replace',
+    ['post ' + apiPrfx + 'post /api/v1/users/:researchEntityId/replace']: 'User.replace',
 
     //Research item API
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/delete']: 'ResearchEntity.deleteDrafts',

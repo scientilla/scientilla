@@ -149,17 +149,19 @@
             );
         };
 
-        service.openDocumentComparisonForm = function (document1, document2) {
+        service.openDocumentComparisonForm = function (document, duplicates, category) {
 
             const scopeVars = {
-                document1: document1,
-                document2: document2
+                document: document,
+                duplicates: duplicates,
+                category: category
             };
 
             return openModal(
                 '<scientilla-document-comparison-form\
-                    document1="vm.document1"\
-                    document2="vm.document2"\
+                    document="vm.document"\
+                    duplicates="vm.duplicates"\
+                    category="vm.category"\
                     on-failure="vm.onFailure"\
                     on-submit="vm.onSubmit"\
                 ></scientilla-document-comparison-form>',
@@ -254,7 +256,7 @@
         };
 
         service.multipleChoiceConfirm = function (title, message, buttonLabels, cancelLabel = 'Cancel', closeable = false) {
-            buttonLabels = buttonLabels || [];
+            buttonLabels = buttonLabels || {};
 
             const scope = {
                 title: title,
@@ -270,12 +272,12 @@
                 args.keyboard = false;
             }
 
-            let buttons = scope.buttonLabels.map(
-                (b, i) => '<li><scientilla-button click="vm.onSubmit(' + i + ')">' + b + '</scientilla-button></li>'
+            let buttons = Object.keys(buttonLabels).map(
+                key => '<li><scientilla-button click="vm.onSubmit(' + key + ')">' + buttonLabels[key] + '</scientilla-button></li>'
             ).join('');
 
             if (cancelLabel !== false) {
-                buttons += '<li><scientilla-button click="vm.onSubmit(-1)" type="cancel">' + cancelLabel + '</scientilla-button></li>';
+                buttons += '<li><scientilla-button click="vm.onSubmit(\'cancel\')" type="cancel">' + cancelLabel + '</scientilla-button></li>';
             }
 
             const template = `<div class="modal-header">
