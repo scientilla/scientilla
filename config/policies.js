@@ -90,9 +90,7 @@ module.exports.policies = {
         getMBOInvitedTalks: true,
     }, defaultPolicy),
 
-    InstituteController: _.defaults({
-        create: isLogged,
-    }, defaultPolicy),
+    InstituteController: defaultPolicy,
 
     MembershipController: defaultPolicy,
 
