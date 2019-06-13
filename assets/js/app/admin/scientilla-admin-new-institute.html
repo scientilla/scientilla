@@ -1,104 +1,102 @@
 <div class="modal-header">
     <h3>{{ !!vm.institute.id ? 'Edit' : 'Add a new' }} institute</h3>
     <button
-        type="button"
-        class="close"
-        ng-click="vm.cancel()">
+            type="button"
+            class="close"
+            ng-click="vm.cancel()">
         <i class="fas fa-times"></i>
     </button>
 </div>
 
 <div class="modal-body">
-    <form>
-        <div
-            class="form-group"
-            ng-class="{'has-error' : vm.errors.name}">
+    <form name="form">
+        <div class="form-group"
+             ng-class="{'has-error' : vm.errors.name}">
             <label for="name">Name *</label>
-            <input
-                id="name"
-                name="name"
-                type="text"
-                class="form-control"
-                ng-model="vm.institute.name"
-                ng-class="{'is-invalid' : vm.errors.name}"
-                ng-blur="vm.checkValidation('name')"
-                ng-change="vm.fieldValueHasChanged('name')">
+            <input id="name"
+                   name="name"
+                   type="text"
+                   class="form-control"
+                   ng-model="vm.institute.name"
+                   ng-class="{'is-invalid' : vm.errors.name}"
+                   ng-blur="vm.checkValidation('name')">
             <scientilla-error-messages
-                class="error-messages"
-                errors="vm.errors.name"></scientilla-error-messages>
+                    class="error-messages"
+                    errors="vm.errors.name"></scientilla-error-messages>
         </div>
 
         <div class="form-group">
             <label for="country">Country</label>
             <input
-                id="country"
-                name="country"
-                type="text"
-                class="form-control"
-                ng-model="vm.institute.country">
+                    id="country"
+                    name="country"
+                    type="text"
+                    class="form-control"
+                    ng-model="vm.institute.country">
         </div>
 
         <div class="form-group">
             <label for="city">City</label>
             <input
-                id="city"
-                name="city"
-                type="text"
-                class="form-control"
-                ng-model="vm.institute.city">
+                    id="city"
+                    name="city"
+                    type="text"
+                    class="form-control"
+                    ng-model="vm.institute.city">
         </div>
 
         <div class="form-group">
             <label for="shortname">Short name</label>
             <input
-                id="shortname"
-                name="shortname"
-                type="text"
-                class="form-control"
-                ng-model="vm.institute.shortname">
+                    id="shortname"
+                    name="shortname"
+                    type="text"
+                    class="form-control"
+                    ng-model="vm.institute.shortname">
         </div>
 
         <div class="form-group">
             <label for="scopusid">Scopus Id</label>
             <input
-                id="scopusid"
-                name="scopusid"
-                type="text"
-                class="form-control"
-                ng-model="vm.institute.scopusId">
+                    id="scopusid"
+                    name="scopusid"
+                    type="text"
+                    class="form-control"
+                    ng-model="vm.institute.scopusId">
         </div>
 
         <div class="form-group">
             <label for="group">Group</label>
             <input
-                id="group"
-                name="group"
-                type="text"
-                class="form-control"
-                ng-model="vm.institute.group">
+                    id="group"
+                    name="group"
+                    type="text"
+                    class="form-control"
+                    ng-model="vm.institute.group">
         </div>
 
         <div class="form-group">
             <label for="parentid">Parent Id</label>
             <input
-                id="parentid"
-                name="parentid"
-                type="text"
-                class="form-control"
-                ng-model="vm.institute.parentId">
+                    id="parentid"
+                    name="parentid"
+                    type="text"
+                    class="form-control"
+                    ng-model="vm.institute.parentId">
         </div>
 
         <ul class="modal-buttons">
             <li>
                 <scientilla-button
-                    type="submit"
-                    click="vm.saveInstitute()">Save
+                        type="submit"
+                        click="vm.saveInstitute">Save
                 </scientilla-button>
             </li>
             <li>
                 <scientilla-button
-                    type="cancel"
-                    click="vm.cancel()">Close</scientilla-button>
+                        type="cancel"
+                        click="vm.cancel">Close
+                </scientilla-button>
             </li>
         </ul>
 

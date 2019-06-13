@@ -7,12 +7,13 @@
         'GroupsService',
         'Notification',
         'ModalService',
-        '$location'
+        'AuthService'
     ];
 
-    function GroupBrowsingController(GroupsService, Notification, ModalService, $location) {
+    function GroupBrowsingController(GroupsService, Notification, ModalService, AuthService) {
         const vm = this;
 
+        vm.user = AuthService.user;
         vm.deleteGroup = deleteGroup;
         vm.editGroup = editGroup;
         vm.createNew = createNew;

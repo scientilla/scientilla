@@ -91,13 +91,13 @@
 
                 if (!alias) {
                     const aliases = user.aliases.map(a => a.str).join(', ');
-                    const result = await ModalService.multipleChoiceConfirm('New alias!',
+                    const buttonKey = await ModalService.multipleChoiceConfirm('New alias!',
                         'You are verifying the item as "' + authorStr + '".\n' +
                         'By clicking on Proceed "' + authorStr + '" will be automatically added to your aliases (' + aliases + ').\n' +
                         'You can always manage them from your profile settings.\n',
-                        ['Proceed']);
+                        {proceed: 'Proceed'});
 
-                    if (result === -1)
+                    if (buttonKey === 'cancel')
                         return;
                 }
 

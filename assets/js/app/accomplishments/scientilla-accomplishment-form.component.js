@@ -10,7 +10,8 @@
             controllerAs: 'vm',
             bindings: {
                 accomplishment: "<",
-                closeFn: "&"
+                closeFn: "&",
+                checkAndClose: "&"
             }
         });
 
@@ -42,7 +43,7 @@
         vm.saveStatus = saveStatus();
         vm.verifyStatus = verifyStatus();
 
-        vm.cancel = cancel;
+        vm.cancel = close;
         vm.verify = verify;
         vm.save = save;
         vm.getSources = getSources;
@@ -52,8 +53,6 @@
         vm.eventTypes = vm.accomplishment.eventType ?
             accomplishmentEventTypes :
             [{key: null, label: 'Select'}].concat(accomplishmentEventTypes);
-
-        let debounceTimeout = null;
 
         vm.eventTypesLabels = {null: {label: 'Place'}};
         accomplishmentEventTypes.forEach(aet => vm.eventTypesLabels[aet.key] = aet);
@@ -78,7 +77,6 @@
             vm.types = await ResearchItemTypesService.getTypes('accomplishment');
 
             $scope.$watch('form.$pristine', formUntouched => vm.unsavedData = !formUntouched);
-            $scope.$on('modal.closing', (event, reason) => cancel(event));
 
             if (vm.accomplishment.id) {
                 vm.errorText = '';
@@ -206,45 +204,6 @@
             vm.unsavedData = false;
         }
 
-        function cancel(event = false) {
-            if (vm.unsavedData) {
-                if (event) {
-                    event.preventDefault();
-                }
-
-                // Show the unsaved data modal
-                ModalService
-                    .multipleChoiceConfirm('Unsaved data',
-                        `You have unsaved changes. Do you want to close the form?`,
-                        ['Yes', 'No'],
-                        false)
-                    .then(function (buttonIndex) {
-                        switch (buttonIndex) {
-                            case 0:
-                                vm.unsavedData = false;
-                                close();
-                                break;
-                            case 1:
-                                break;
-                            default:
-                                break;
-                        }
-                    });
-            } else {
-                if (debounceTimeout !== null) {
-                    $timeout.cancel(debounceTimeout);
-                }
-
-                if (vm.saveStatus.state === 'saving') {
-                    processSave();
-                }
-
-                if (!event) {
-                    close();
-                }
-            }
-        }
-
         function getSources(searchText) {
             const qs = {where: {title: {contains: searchText}}};
             return Restangular.all('sources').getList(qs);
@@ -295,7 +254,7 @@
                     // Is valid
                     await processSave();
                     vm.verifyStatus.setState('verified');
-                    await close();
+                    await vm.closeFn()();
                     AccomplishmentService.verify(vm.researchEntity, vm.accomplishment);
                 } else {
                     // Is not valid
@@ -312,11 +271,8 @@
         }
 
         function close() {
-            if (_.isFunction(vm.closeFn())) {
-                return vm.closeFn()();
-            }
-
-            return Promise.reject('no close function');
+            if (_.isFunction(vm.checkAndClose()))
+                vm.checkAndClose()(() => !vm.unsavedData);
         }
 
         /* jshint ignore:end */

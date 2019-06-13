@@ -79,11 +79,11 @@
             const res = await ModalService.multipleChoiceConfirm(
                 'Delete',
                 'This action will permanently delete this item.\n Do you want to proceed?',
-                ['Proceed'],
+                {proceed: 'Proceed'},
                 'Cancel',
                 true);
 
-            if (res === 0) {
+            if (res === 'proceed') {
                 try {
                     const deletedDraft = await researchEntity.one('researchItemDrafts', draft.id).remove();
 
@@ -140,23 +140,23 @@
         async function unverify(researchEntity, researchItem) {
             ResearchItemService.addLabel(researchItem, researchItemLabels.UVERIFYING);
 
-            const buttonIndex = await ModalService.multipleChoiceConfirm('Unverifying',
+            const buttonKey = await ModalService.multipleChoiceConfirm('Unverifying',
                 'Unverifying an item removes it from your profile, you can choose:\n\n' +
                 'Move to drafts: to move the item in your drafts.\n' +
                 'Remove: to remove it completely from your profile.',
-                ['Move to drafts', 'Remove'],
+                {move: 'Move to drafts', remove: 'Remove'},
                 'Cancel',
                 true);
             try {
-                switch (buttonIndex) {
-                    case -1: //cancel
+                switch (buttonKey) {
+                    case 'cancel':
                         ResearchItemService.removeLabel(researchItem, researchItemLabels.UVERIFYING);
                         return;
-                    case 0: // Move to drafts
+                    case 'move':
                         await copyResearchItem(researchEntity, researchItem.id);
                         EventsService.publish(EventsService.RESEARCH_ITEM_DRAFT_CREATED, {});
                         break;
-                    case 1: // Remove
+                    case 'remove':
                         break;
                 }
 

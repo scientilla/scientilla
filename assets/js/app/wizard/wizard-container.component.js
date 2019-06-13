@@ -97,7 +97,7 @@
             if (vm.resolve.data.steps)
                 steps = steps.filter(s => vm.resolve.data.steps.includes(s.name));
 
-            $scope.$on('modal.closing', function(event, reason) {
+            $scope.$on('modal.closing', function (event, reason) {
                 close(event);
             });
         };
@@ -128,7 +128,7 @@
         }
 
         function setStep(step) {
-            switch(true) {
+            switch (true) {
                 case step === 'next':
                     vm.currentStep += (vm.currentStep < steps.length ? 1 : 0);
                     break;
@@ -145,15 +145,15 @@
                 } else {
                     // Show the unsaved data modal
                     ModalService
-                        .multipleChoiceConfirm('Unsaved data',
-                            `There is unsaved data in the form. Do you want to go back and save this data?`,
-                            ['Yes', 'No'],
+                        .multipleChoiceConfirm('Unsaved data!',
+                            '',
+                            {'continue': 'Continue editing', 'discard': 'Discard changes'},
                             false)
                         .then(function (buttonIndex) {
                             switch (buttonIndex) {
-                                case 0:
+                                case 'continue':
                                     break;
-                                case 1:
+                                case 'discard':
                                     vm.subResearchEntity = angular.copy(vm.originalSubResearchEntity);
                                     setStep(step);
                                     break;
@@ -175,7 +175,7 @@
             return vm.currentStep === (steps.length - 1);
         }
 
-        function getStepsNumber(){
+        function getStepsNumber() {
             return steps.length;
         }
 
@@ -190,15 +190,15 @@
 
                         // Show the unsaved data modal
                         ModalService
-                            .multipleChoiceConfirm('Unsaved data',
-                                `There is unsaved data in the form. Do you want to go back and save this data?`,
-                                ['Yes', 'No'],
+                            .multipleChoiceConfirm('Unsaved data!',
+                                ``,
+                                {'continue': 'Continue editing', 'discard': 'Discard changes'},
                                 false)
                             .then(function (buttonIndex) {
                                 switch (buttonIndex) {
-                                    case 0:
+                                    case 'continue':
                                         break;
-                                    case 1:
+                                    case 'discard':
                                         context.setSubResearchEntity(vm.originalSubResearchEntity);
                                         closed = true;
                                         vm.resolve.callbacks.onClose();

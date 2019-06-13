@@ -113,9 +113,9 @@
                             'disabling the synchronization.';
                     }
 
-                    return ModalService.multipleChoiceConfirm(title, msg, ['Proceed'])
+                    return ModalService.multipleChoiceConfirm(title, msg, {proceed: 'Proceed'})
                         .then(res => {
-                                if (res === 0)
+                                if (res === 'proceed')
                                     researchEntity.one('drafts', document.id)
                                         .customPUT({synchronized: sync}, 'synchronized')
                                         .then(newDocData => {

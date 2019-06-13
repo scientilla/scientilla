@@ -1,4 +1,4 @@
-/* global Scientilla */
+/* global angular */
 
 (function () {
     "use strict";
@@ -12,7 +12,7 @@
             bindings: {
                 document: "<",
                 researchEntity: "<",
-                closeFn: "&"
+                checkAndClose: "&"
             }
         });
 
@@ -44,7 +44,7 @@
         vm.saveStatus = saveStatus();
         vm.verifyStatus = verifyStatus();
 
-        vm.cancel = cancel;
+        vm.cancel = close;
         vm.verify = verify;
         vm.save = save;
         vm.documentTypes = DocumentTypesService.getDocumentTypes();
@@ -57,8 +57,6 @@
         vm.sourceLabel = _.get(_.find(allSourceTypes, {id: vm.document.sourceType}), 'label');
 
         let documentBackup = null;
-        let debounceTimeout = null;
-        const debounceTime = 2000;
         const documentService = context.getDocumentService();
         const deregisteres = [];
 
@@ -85,17 +83,7 @@
             watchDocumentSourceType();
             watchDocumentType();
 
-            $scope.$watch('form.$pristine', function (formUntouched) {
-                if (!formUntouched) {
-                    vm.unsavedData = true;
-                } else {
-                    vm.unsavedData = false;
-                }
-            });
-
-            $scope.$on('modal.closing', function (event, reason) {
-                cancel(event);
-            });
+            $scope.$watch('form.$pristine', formUntouched => vm.unsavedData = !formUntouched);
 
             if (vm.document.id) {
                 vm.errorText = '';
@@ -227,102 +215,76 @@
             };
         }
 
-        function save() {
+        /* jshint ignore:start */
+
+        async function save() {
             vm.errors = {};
             vm.errorText = '';
-            saveDocument(true);
+            await saveDocument(true);
         }
 
-        function saveDocument(updateState = false) {
-            if (updateState) {
+        async function saveDocument(updateState = false) {
+            if (updateState)
                 vm.saveStatus.setState('saving');
-            }
 
             vm.errorText = '';
             vm.errors = vm.document.validateDocument();
 
-            if (Object.keys(vm.errors).length > 0) {
+            if (updateState && Object.keys(vm.errors).length > 0)
                 vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
-            }
 
-            if (vm.document.id) {
-                return vm.document.save().then(() => {
-                    if (updateState) {
-                        vm.saveStatus.setState('saved');
-                    }
+            if (vm.document.id) await vm.document.save();
+            else vm.document = await documentService.createDraft(vm.document);
 
-                    EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
+            if (updateState)
+                vm.saveStatus.setState('saved');
 
-                    vm.unsavedData = false;
+            EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
 
-                    if (updateState) {
-                        $timeout(function () {
-                            vm.saveStatus.setState('ready to save');
-                        }, 1000);
-                    }
+            vm.unsavedData = false;
 
-                    return vm.document;
-                });
+            if (updateState)
+                $timeout(function () {
+                    vm.saveStatus.setState('ready to save');
+                }, 1000);
+
+
+            return vm.document;
+        }
+
+        async function verify() {
+            vm.errorText = '';
+            vm.errors = {};
+            vm.verifyStatus.setState('verifying');
+
+            await saveDocument();
+
+            vm.errors = vm.document.validateDocument();
+            if (Object.keys(vm.errors).length === 0) {
+                // Is valid
+                if (vm.document.getComparisonDuplicates().length > 0)
+                    documentService.compareDocuments(vm.document, vm.document.getComparisonDuplicates(), documentCategories.DRAFT);
+                else
+                    documentService.verifyDraft(vm.document);
+
+                vm.verifyStatus.setState('verified');
+                close();
             } else {
-                return documentService.createDraft(vm.document)
-                    .then(draft => {
-                        vm.document = draft;
-                        if (updateState) {
-                            vm.saveStatus.setState('saved');
-                        }
+                // Is not valid
+                vm.verifyStatus.setState('failed');
+                vm.errorText = 'The draft has been saved but not been verified! Please correct the errors on this form!';
 
-                        EventsService.publish(EventsService.DRAFT_UPDATED, vm.document);
-
-                        vm.unsavedData = false;
-
-                        if (updateState) {
-                            $timeout(function () {
-                                vm.saveStatus.setState('ready to save');
-                            }, 1000);
-                        }
-
-                        return vm.document;
-                    });
+                $timeout(function () {
+                    vm.verifyStatus.setState('ready to verify');
+                }, 1000);
             }
         }
 
-        function cancel(event = false) {
-            if (vm.unsavedData) {
-                if (event) {
-                    event.preventDefault();
-                }
+        /* jshint ignore:end */
 
-                // Show the unsaved data modal
-                ModalService
-                    .multipleChoiceConfirm('Unsaved data',
-                        `There is unsaved data in the form. Do you want to go back and save this data?`,
-                        ['Yes', 'No'],
-                        false)
-                    .then(function (buttonIndex) {
-                        switch (buttonIndex) {
-                            case 0:
-                                break;
-                            case 1:
-                                vm.unsavedData = false;
-                                close();
-                                break;
-                            default:
-                                break;
-                        }
-                    });
-            } else {
-                if (debounceTimeout !== null) {
-                    $timeout.cancel(debounceTimeout);
-                }
-
-                if (vm.saveStatus.state === 'saving') {
-                    saveDocument();
-                }
-
-                if (!event) {
-                    close();
-                }
-            }
+        function close() {
+            if (_.isFunction(vm.checkAndClose()))
+                vm.checkAndClose()(() => !vm.unsavedData);
         }
 
         function getSources(searchText) {
@@ -369,49 +331,6 @@
             }
 
             checkValidation('source');
-        }
-
-        function verify() {
-            vm.errorText = '';
-            vm.errors = {};
-            vm.verifyStatus.setState('verifying');
-
-            $timeout(function () {
-                vm.errors = vm.document.validateDocument();
-                if (Object.keys(vm.errors).length === 0) {
-                    // Is valid
-                    saveDocument()
-                        .then(() => {
-                            if (vm.document.getComparisonDuplicates().length > 0) {
-                                documentService.compareDocuments(vm.document, vm.document.getComparisonDuplicates(), documentCategories.DRAFT);
-                            } else {
-                                documentService.verifyDraft(vm.document);
-                            }
-                        })
-                        .then(() => {
-                            vm.verifyStatus.setState('verified');
-                            close();
-                        });
-                } else {
-                    // Is not valid
-                    vm.verifyStatus.setState('failed');
-                    vm.errorText = 'The draft has been saved but not been verified! Please correct the errors on this form!';
-
-                    saveDocument(false);
-
-                    $timeout(function () {
-                        vm.verifyStatus.setState('ready to verify');
-                    }, 1000);
-                }
-            }, 200);
-        }
-
-        function close() {
-            if (_.isFunction(vm.closeFn())) {
-                return vm.closeFn()();
-            }
-
-            return Promise.reject('no close function');
         }
     }
 })();

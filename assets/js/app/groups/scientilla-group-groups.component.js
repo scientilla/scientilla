@@ -45,13 +45,12 @@
             ModalService
                 .multipleChoiceConfirm('Removing group member',
                     `Are you sure you want to remove ${child.getDisplayName()} from the group members?`,
-                    ['Proceed'])
+                    {proceed: 'Proceed'})
                 .then(function (buttonIndex) {
-                    switch (buttonIndex) {
-                        case 0:
-                            return GroupsService.removeChild(vm.group, child)
-                                .then(() => vm.refreshGroup()());
-                    }
+                    if (buttonIndex === 'proceed')
+                        return GroupsService.removeChild(vm.group, child)
+                            .then(() => vm.refreshGroup()());
+
                 });
         }
 

@@ -11,7 +11,7 @@
             controllerAs: 'vm',
             bindings: {
                 researchItem: "<",
-                closeFn: "&",
+                onSubmit: "&",
                 checkAndClose: "&"
             }
         });
@@ -105,9 +105,7 @@
         async function save() {
             await ResearchEntitiesService.updateAuthors(researchEntity, vm.researchItem, vm.authors);
 
-            if (_.isFunction(vm.closeFn())) {
-                vm.closeFn()();
-            }
+            vm.onSubmit()(1);
         }
 
         /* jshint ignore:end */
