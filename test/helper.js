@@ -592,3 +592,18 @@ async function fixDocumentsDocumenttype(documents) {
     }
     return newDocs;
 }
+
+function getUniqueDuplicateIds(document) {
+    const ids = document.duplicates.map(duplicate => {
+        switch(document.id) {
+            case duplicate.duplicate:
+                return duplicate.document;
+            case duplicate.document:
+                return duplicate.duplicate;
+            default:
+                break;
+        }
+    });
+
+    return [...(new Set(ids))];
+}
