@@ -418,9 +418,9 @@
 
                         // If the source document is a suggested document
                         case documentCategories.SUGGESTED:
-                            buttonLabels = [];
-                            buttonLabels['\'' + documentActions.SUGGESTED.VERIFY + '\''] = documentActions.SUGGESTED.VERIFY;
-                            buttonLabels['\'' + documentActions.SUGGESTED.COPY_TO_DRAFT + '\''] = documentActions.SUGGESTED.COPY_TO_DRAFT;
+                            buttonLabels = {};
+                            buttonLabels[documentActions.SUGGESTED.VERIFY] = documentActions.SUGGESTED.VERIFY;
+                            buttonLabels[documentActions.SUGGESTED.COPY_TO_DRAFT] = documentActions.SUGGESTED.COPY_TO_DRAFT;
 
                             // Show modal with multiple choice form with the options specified above
                             action = await ModalService.multipleChoiceConfirm(
@@ -461,9 +461,9 @@
 
                         // If the source document is a draft
                         case documentCategories.DRAFT:
-                            buttonLabels = [];
-                            buttonLabels['\'' + documentActions.DRAFT.VERIFY + '\''] = documentActions.DRAFT.VERIFY;
-                            buttonLabels['\'' + documentActions.DRAFT.KEEP_DRAFT + '\''] = documentActions.DRAFT.KEEP_DRAFT;
+                            buttonLabels = {};
+                            buttonLabels[documentActions.DRAFT.VERIFY] = documentActions.DRAFT.VERIFY;
+                            buttonLabels[documentActions.DRAFT.KEEP_DRAFT] = documentActions.DRAFT.KEEP_DRAFT;
 
                             // Show modal with multiple choice form with the options specified above
                             action = await ModalService.multipleChoiceConfirm(
@@ -537,14 +537,11 @@
                         hideFinalNotification = false,
                         buttonLabels;
 
-                    console.log(category);
-
                     // Check the category of the source document
                     switch (category) {
 
                         // If the source document is a suggested document
                         case documentCategories.SUGGESTED:
-
                             buttonLabels = {};
                             buttonLabels[documentActions.SUGGESTED.VERIFY] = documentActions.SUGGESTED.VERIFY;
                             buttonLabels[documentActions.SUGGESTED.COPY_TO_DRAFT] = documentActions.SUGGESTED.COPY_TO_DRAFT;
@@ -603,7 +600,6 @@
 
                         // If the source document is a draft
                         case documentCategories.DRAFT :
-
                             buttonLabels = {};
                             buttonLabels[documentActions.DRAFT.VERIFY] = documentActions.DRAFT.VERIFY;
                             buttonLabels[documentActions.DRAFT.KEEP_DRAFT] = documentActions.DRAFT.KEEP_DRAFT;
@@ -650,7 +646,6 @@
 
                         // If the source document is a verified document
                         case documentCategories.VERIFIED:
-
                             buttonLabels = {};
                             buttonLabels[documentActions.VERIFIED.KEEP] = documentActions.VERIFIED.KEEP;
                             buttonLabels[documentActions.VERIFIED.MOVE_TO_DRAFT] = documentActions.VERIFIED.MOVE_TO_DRAFT;
@@ -699,7 +694,6 @@
 
                         // If the source document is a external document
                         case documentCategories.EXTERNAL:
-
                             buttonLabels = {};
                             buttonLabels[documentActions.EXTERNAL.VERIFY] = documentActions.EXTERNAL.VERIFY;
                             buttonLabels[documentActions.EXTERNAL.COPY_TO_DRAFT] = documentActions.EXTERNAL.COPY_TO_DRAFT;
