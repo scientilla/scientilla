@@ -23,7 +23,7 @@
     ];
 
     function scientillaMulticheckButtonController(ModalService) {
-        var vm = this;
+        const vm = this;
 
         vm.executeOnClick = executeOnClick;
 
@@ -32,12 +32,11 @@
         };
 
         function executeOnClick() {
-            var checkedItems = vm.scientillaMulticheck.getCheckedItems();
+            const checkedItems = vm.scientillaMulticheck.getCheckedItems();
 
-            ModalService
-                    .confirm(vm.subject, "Apply this action to " + checkedItems.length + " elements?")
+            ModalService.confirm(vm.subject, "Apply this action to " + checkedItems.length + " elements?")
                     .then(function (res) {
-                        if (res === 0)
+                        if (res === 'ok')
                             vm.onClick()(checkedItems);
                     })
                     .catch(function () {});
