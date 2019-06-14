@@ -1,4 +1,4 @@
-/* global Affiliation, Authorship, ResearchEntity, Document, TagLabel, SqlService, DocumentOrigins, DocumentKinds, DocumentNotDuplicate, DocumentNotDuplicateGroup */
+/* global Affiliation, Authorship, ResearchEntity, Document, TagLabel, SqlService, DocumentOrigins, DocumentKinds, DocumentNotDuplicate, DocumentNotDuplicateGroup, DocumentDuplicate */
 'use strict';
 
 /**
@@ -24,7 +24,7 @@ module.exports = _.merge({}, BaseModel, {
                 this.id === re.id;
         }
     },
-    copyDocument: async function (Model, researchEntityId, documentId) {
+    copyDocument: async function (ResearchEntityModel, researchEntityId, documentId) {
         const document = await Document.findOneById(documentId);
 
         if (!document)
@@ -37,28 +37,10 @@ module.exports = _.merge({}, BaseModel, {
             authorship.researchEntity = null;
             return authorship;
         });
-        const draft = await Model.createDraft(Model, researchEntityId, documentData);
+        const draft = await ResearchEntityModel.createDraft(ResearchEntityModel, researchEntityId, documentData);
+        await Document.moveDocumentNotDuplicates(document.id, draft.id);
 
-        const dnds = await DocumentNotDuplicate.find({or: [{document: document.id}, {duplicate: document.id}]});
-        const dndgs = await DocumentNotDuplicateGroup.find({or: [{document: document.id}, {duplicate: document.id}]});
-
-        function convertDND(dnd) {
-            const d1 = dnd.document === document.id ? draft.id : dnd.document;
-            const d2 = dnd.duplicate === document.id ? draft.id : dnd.duplicate;
-            return {
-                document: Math.min(d1, d2),
-                duplicate: Math.max(d1, d2),
-                researchEntity: dnd.researchEntity
-            }
-        }
-
-        const newDnds = dnds.map(convertDND);
-        const newDndgs = dndgs.map(convertDND);
-
-        await DocumentNotDuplicate.create(newDnds);
-        await DocumentNotDuplicateGroup.create(newDndgs);
-
-        return draft
+        return draft;
     },
     copyDocuments: async function (Model, researchEntityId, documentIds) {
         const results = [];
@@ -130,11 +112,7 @@ module.exports = _.merge({}, BaseModel, {
         } else {
             if (n > 1)
                 sails.log.debug('Too many similar documents to ' + draft.id + ' ( ' + n + ')');
-            docToVerify = documentCopies[0];
-
-            await Document.mergeAuthorships(draft, docToVerify);
-            sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + docToVerify.id);
-            await Document.destroy({id: draft.id});
+            docToVerify = await Document.mergeDraft(documentCopies[0], draft);
         }
         return await ResearchEntityModel.doVerifyDocument(docToVerify, researchEntityId, authorshipData);
     },
@@ -257,16 +235,15 @@ module.exports = _.merge({}, BaseModel, {
 
         return results;
     },
-    setDocumentAsNotDuplicate: async function (researchEntityModel, researchEntityId, document1Id, document2Id) {
+    setDocumentAsNotDuplicate: async function (ResearchEntityModel, researchEntityId, document1Id, document2Id) {
         if (document1Id === document2Id)
             return;
 
-        const DocumentNotDuplicatedModel = getDocumentNotDuplicateModel(researchEntityModel);
         const minDocId = Math.min(document1Id, document2Id);
         const maxDocId = Math.max(document1Id, document2Id);
 
 
-        return await DocumentNotDuplicatedModel.findOrCreate({
+        return await ResearchEntityModel.getDocumentNotDuplicateModel().findOrCreate({
             researchEntity: researchEntityId,
             document: minDocId,
             duplicate: maxDocId
@@ -282,8 +259,7 @@ module.exports = _.merge({}, BaseModel, {
         };
         if (excludeDocument)
             duplicateCondition.duplicate = {'!': excludeDocument};
-        const duplicates = await DocumentDuplicate.find(duplicateCondition);
-        return duplicates;
+        return await DocumentDuplicate.find(duplicateCondition);
     },
     makeInternalRequest: async function (researchEntityModel, researchEntitySearchCriteria, baseUrl, qs, attribute) {
         const researchEntity = await researchEntityModel.findOne(researchEntitySearchCriteria);
@@ -401,19 +377,17 @@ module.exports = _.merge({}, BaseModel, {
         await DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
     },
     getNotDuplicates: async function (ResearchEntityModel, researchEntityId, documentId) {
-        const DocumentNotDuplicatedModel = getDocumentNotDuplicateModel(ResearchEntityModel);
-        return await DocumentNotDuplicatedModel.find({
+        return await ResearchEntityModel.getDocumentNotDuplicateModel().find({
             researchEntity: researchEntityId,
             or: [{document: documentId}, {duplicate: documentId}]
         });
     },
     deleteNotDuplicates: async function (ResearchEntityModel, researchEntityId, notDuplicateIds) {
-        const DocumentNotDuplicatedModel = getDocumentNotDuplicateModel(ResearchEntityModel);
         let results = [];
 
         for (let i = 0; i < notDuplicateIds.length; i++) {
             const notDuplicateId = notDuplicateIds[i];
-            const res = await DocumentNotDuplicatedModel.destroy({
+            const res = await ResearchEntityModel.getDocumentNotDuplicateModel().destroy({
                 researchEntity: researchEntityId,
                 id: notDuplicateId
             });
@@ -440,8 +414,4 @@ function getAuthorshipModel(ResearchEntityModel) {
 
 function getDiscardedModel(ResearchEntityModel) {
     return getThroughModel(ResearchEntityModel, 'discardedDocuments');
-}
-
-function getDocumentNotDuplicateModel(ResearchEntityModel) {
-    return getThroughModel(ResearchEntityModel, 'notDuplicateDocuments');
 }

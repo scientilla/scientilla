@@ -129,11 +129,6 @@ module.exports = _.merge({}, SubResearchEntity, {
             via: 'researchEntity',
             through: 'externaldocument'
         },
-        notDuplicateDocuments: {
-            collection: 'document',
-            via: 'researchEntity',
-            through: 'documentnotduplicate'
-        },
         authorships: {
             collection: 'authorship',
             via: 'researchEntity',
@@ -199,6 +194,7 @@ module.exports = _.merge({}, SubResearchEntity, {
             return DocumentNotDuplicate;
         }
     }),
+    getDocumentNotDuplicateModel: () => DocumentNotDuplicate,
     getAdministeredGroups: function (userId) {
         return User.findOneById(userId)
             .populate('administratedGroups')

@@ -1,4 +1,4 @@
-/* global Document, sails, User, ObjectComparer, Connector, Source, Authorship, Affiliation, Institute, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer, DocumentTypes, SourceTypes */
+/* global Document, sails, User, ObjectComparer, Connector, Source, Authorship, Affiliation, Institute, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer, DocumentTypes, SourceTypes, Exporter, DocumentNotDuplicate, DocumentNotDuplicateGroup */
 'use strict';
 
 /**
@@ -482,8 +482,7 @@ module.exports = _.merge({}, BaseModel, {
         if (oldDoc) {
             await Document.update(criteria, selectedData);
             doc = await Document.findOne(criteria);
-        }
-        else doc = await Document.create(selectedData);
+        } else doc = await Document.create(selectedData);
         if (!doc)
             throw 'Document not created';
 
@@ -578,5 +577,34 @@ module.exports = _.merge({}, BaseModel, {
             sails.log.error(`Document.beforeCreate, document without documenttype ${document.id}`);
         // fixDocumentType(document);
         cb();
+    },
+    async moveDocumentNotDuplicates(docFromId, docToId) {
+        const dnds = await DocumentNotDuplicate.find({or: [{document: docFromId}, {duplicate: docFromId}]});
+        const dndgs = await DocumentNotDuplicateGroup.find({or: [{document: docFromId}, {duplicate: docFromId}]});
+
+        function convertDND(dnd) {
+            const d1 = dnd.document === docFromId ? docToId : dnd.document;
+            const d2 = dnd.duplicate === docFromId ? docToId : dnd.duplicate;
+            return {
+                document: Math.min(d1, d2),
+                duplicate: Math.max(d1, d2),
+                researchEntity: dnd.researchEntity
+            }
+        }
+
+        const newDnds = dnds.map(convertDND);
+        const newDndgs = dndgs.map(convertDND);
+
+        await DocumentNotDuplicate.create(newDnds);
+        await DocumentNotDuplicateGroup.create(newDndgs);
+    },
+    async mergeDraft(document, draft) {
+        await Document.mergeAuthorships(draft, document);
+        await Document.moveDocumentNotDuplicates(draft.id, document.id);
+
+        sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + document.id);
+        await Document.destroy({id: draft.id});
+
+        return document;
     }
 });
