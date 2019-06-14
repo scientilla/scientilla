@@ -1,0 +1,89 @@
+<% layout('/layouts/master') -%>
+
+<% include ../partials/step-navigation -%>
+
+<h2>Database</h2>
+<p>You can upload a <strong>.sql</strong> or <strong>.dump</strong> file. The query inside the .sql file will be executed in the background and will return the result.<br>The .dump file will be used while restoring the database with <strong>pg_restore</strong>.</p>
+
+<form method="POST" action="/database" encType="multipart/form-data" id="js-form">
+    <div class="row">
+        <div class="col-12 col-xl-6">
+            <div class="form-group">
+                <label for="database-file">File</label>
+                <input
+                    name="database-file"
+                    id="database-file"
+                    type="file"
+                    class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+<div class="response-message">
+    <pre class="js-response-message"></pre>
+</div>
+
+<script>
+    const form = document.getElementById('js-form')
+    form.addEventListener('submit', (evt) => {
+        evt.preventDefault()
+        const responseMessage = document.getElementsByClassName('js-response-message')[0]
+        responseMessage.innerHTML = ''
+        responseMessage.classList.remove('error')
+        const file = document.getElementById('database-file').files[0]
+        const xhr = new XMLHttpRequest()
+        xhr.open('POST', '/database', true)
+        xhr.onload = function (e) {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText)
+                    switch (response.type) {
+                        case 'sql':
+                            if (response.steps.database.ok) {
+                                document.getElementsByClassName('js-database-ok')[0].classList.remove('not-done')
+                                document.getElementsByClassName('js-database-ok')[0].classList.add('done')
+                            } else {
+                                document.getElementsByClassName('js-database-ok')[0].classList.add('not-done')
+                                document.getElementsByClassName('js-database-ok')[0].classList.remove('done')
+                            }
+
+                            responseMessage.innerHTML = response.message
+                            responseMessage.innerHTML += '<br>Result:'
+                            responseMessage.innerHTML += '<br><br>'
+
+                            //response.result.rows.forEach(row => {
+                                responseMessage.innerHTML += JSON.stringify(response.result, null, 4)
+                            //})
+
+                            break
+                        case 'dump':
+                            if (response.steps.database.ok) {
+                                document.getElementsByClassName('js-database-ok')[0].classList.remove('not-done')
+                                document.getElementsByClassName('js-database-ok')[0].classList.add('done')
+                            } else {
+                                document.getElementsByClassName('js-database-ok')[0].classList.add('not-done')
+                                document.getElementsByClassName('js-database-ok')[0].classList.remove('done')
+                            }
+
+                            responseMessage.innerHTML = response.message
+
+                            break
+                        default:
+                            break
+                    }
+                } else {
+                    responseMessage.innerHTML = xhr.responseText
+                    responseMessage.classList.add('error')
+                }
+
+            }
+        }
+        const formData = new FormData()
+        formData.append('database-file', file)
+        xhr.send(formData)
+        document.getElementById('database-file').value = ''
+    })
+</script>

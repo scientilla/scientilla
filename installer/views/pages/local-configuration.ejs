@@ -1,0 +1,241 @@
+<% layout('/layouts/master') -%>
+
+<% include ../partials/step-navigation -%>
+
+<h2>Local configuration</h2>
+
+<form method="POST" action="/local-configuration">
+    <label for="">Production</label>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-xl-6">
+                    <div class="form-group">
+                        <label for="production-adapter">Adapter</label>
+                        <input
+                            name="production-adapter"
+                            id="production-adapter"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.production.adapter -%>">
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-6">
+                    <div class="form-group">
+                        <label for="production-host">Host</label>
+                        <input
+                            name="production-host"
+                            id="production-host"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.production.host -%>">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-xl-4">
+                    <div class="form-group">
+                        <label for="production-user">User</label>
+                        <input
+                            name="production-user"
+                            id="production-user"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.production.user -%>">
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-4">
+                    <div class="form-group">
+                        <label for="production-password">Password</label>
+                        <input
+                            name="production-password"
+                            id="production-password"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.production.password -%>">
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-4">
+                    <div class="form-group">
+                        <label for="production-database">Database</label>
+                        <input
+                            name="production-database"
+                            id="production-database"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.production.database -%>">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <label for="">Development</label>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-xl-6">
+                    <div class="form-group">
+                        <label for="development-adapter">Adapter</label>
+                        <input
+                            name="development-adapter"
+                            id="development-adapter"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.development.adapter -%>">
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-6">
+                    <div class="form-group">
+                        <label for="development-host">Host</label>
+                        <input
+                            name="development-host"
+                            id="development-host"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.development.host -%>">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-xl-4">
+                    <div class="form-group">
+                        <label for="development-user">User</label>
+                        <input
+                            name="development-user"
+                            id="development-user"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.development.user -%>">
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-4">
+                    <div class="form-group">
+                        <label for="development-password">Password</label>
+                        <input
+                            name="development-password"
+                            id="development-password"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.development.password -%>">
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-4">
+                    <div class="form-group">
+                        <label for="development-database">Database</label>
+                        <input
+                            name="development-database"
+                            id="development-database"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.development.database -%>">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <label for="">Test</label>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-xl-6">
+                    <div class="form-group">
+                        <label for="test-adapter">Adapter</label>
+                        <input
+                            name="test-adapter"
+                            id="test-adapter"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.test.adapter -%>">
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-6">
+                    <div class="form-group">
+                        <label for="test-host">Host</label>
+                        <input
+                            name="test-host"
+                            id="test-host"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.test.host -%>">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-xl-4">
+                    <div class="form-group">
+                        <label for="test-user">User</label>
+                        <input
+                            name="test-user"
+                            id="test-user"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.test.user -%>">
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-4">
+                    <div class="form-group">
+                        <label for="test-password">Password</label>
+                        <input
+                            name="test-password"
+                            id="test-password"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.test.password -%>">
+                    </div>
+                </div>
+
+                <div class="col-12 col-xl-4">
+                    <div class="form-group">
+                        <label for="test-database">Database</label>
+                        <input
+                            name="test-database"
+                            id="test-database"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.test.database -%>">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <ul class="form-actions">
+        <li>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </li>
+        <li>
+            <a href="/local-configuration/reset" class="btn btn-outline-secondary">Reset to defaults</a>
+        </li>
+    </ul>
+</form>

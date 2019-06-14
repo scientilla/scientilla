@@ -159,6 +159,11 @@ backups/*
 backups/plain/*
 !backups/plain/.gitkeep
 
+installer/.env
+!installer/uploads
+installer/uploads/*
+!installer/uploads/.gitkeep
+
 ################################################
 # Others
 #

@@ -1,0 +1,16 @@
+<p>Please complete all of the following steps before starting the Scientilla application.</p>
+
+<ul class="step-navigation">
+    <li class="<%- steps.basicConfiguration.done ? 'done' : 'not-done' -%>">
+        <a href="/basic-configuration">Basic configuration</a>
+    </li>
+    <li class="<%- steps.localConfiguration.done ? 'done' : 'not-done' -%>">
+        <a href="/local-configuration">Local configuration</a>
+    </li>
+    <li class="js-database-ok <%- steps.database.ok ? 'done' : 'not-done' -%>">
+        <a href="/database">Database configuration</a>
+    </li>
+    <li class="launch">
+        <a href="/application">Start application</a>
+    </li>
+</ul>

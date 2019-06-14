@@ -1,0 +1,27 @@
+<% layout('/layouts/master') -%>
+
+<% include ../partials/step-navigation -%>
+
+<h2>Start application</h2>
+
+<form action="/application/start" method="POST" id="js-form">
+    <button type="submit" class="btn btn-primary js-submit">Start</button>
+</form>
+
+<script>
+    const form = document.getElementById('js-form')
+    form.addEventListener('submit', (evt) => {
+        evt.preventDefault()
+
+        const xhr = new XMLHttpRequest()
+        xhr.open('POST', '/application/start', true)
+        xhr.onload = function (e) {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                setTimeout(() => {
+                    window.location.href = xhr.responseText
+                }, 6000)
+            }
+        }
+        xhr.send(null)
+    })
+</script>
