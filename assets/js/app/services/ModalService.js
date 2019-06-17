@@ -386,7 +386,7 @@
                 `<scientilla-research-item-affiliations-form
                     research-item="vm.researchItem"
                     check-and-close="vm.checkAndClose"
-                    close-fn="vm.onClose"
+                    on-submit="vm.onSubmit"
                 ></scientilla-research-item-affiliations-form>`,
                 scopeVars,
                 {
