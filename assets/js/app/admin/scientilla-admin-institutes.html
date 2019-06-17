@@ -1,8 +1,8 @@
 <div class="title-container">
     <h2 class="title">Institute management</h2>
     <button
-        ng-click="vm.openInstituteModal()"
-        class="btn btn-primary btn-add-institute">
+            ng-click="vm.openInstituteModal()"
+            class="btn btn-primary btn-add-institute">
         Create new institute<i class="fas fa-plus fa-right"></i>
     </button>
 </div>
@@ -10,23 +10,23 @@
 <span class="d-print-none">Search for an institute to edit or delete</span>
 <div class="dropdown-container add-scroll search-field-container">
     <input
-        type="text"
-        class="form-control"
-        ng-model="vm.selectedInstitute"
-        uib-typeahead="institute as vm.formatInstitute(institute) for institute in vm.getInstitutes($viewValue)"
-        typeahead-loading="searching"
-        data-ng-required="true"
-        placeholder="Search institute"
-        ng-model-options="{ allowInvalid: true }"
-        typeahead-editable="false"
-        typeahead-select-on-blur="true"
-        typeahead-wait-ms="300"
-        ng-keydown="vm.onInstituteSearchKey($event)">
+            type="text"
+            class="form-control"
+            ng-model="vm.selectedInstitute"
+            uib-typeahead="institute as vm.formatInstitute(institute) for institute in vm.getInstitutes($viewValue)"
+            typeahead-loading="searching"
+            data-ng-required="true"
+            placeholder="Search institute"
+            ng-model-options="{ allowInvalid: true }"
+            typeahead-editable="false"
+            typeahead-select-on-blur="true"
+            typeahead-wait-ms="300"
+            ng-keydown="vm.onInstituteSearchKey($event)">
 </div>
 
 <div
-    ng-if="vm.selectedInstitute"
-    class="card institute-card">
+        ng-if="vm.selectedInstitute"
+        class="card institute-card">
     <div class="card-body">
         <h3><i class="fas fa-university fa-left"></i>Institute details</h3>
         <ul class="institute-listing">
@@ -63,18 +63,16 @@
             <li>
                 <ul class="institute-buttons">
                     <li>
-                        <button
-                            class="btn btn-primary"
-                            ng-click="vm.editInstitute()">
+                        <button class="btn btn-primary"
+                                ng-click="vm.editInstitute()">
                             Edit
                         </button>
                     </li>
                     <li>
-                        <button
-                            class="btn btn-primary"
-                            scientilla-click-confirm="Are you sure?"
-                            ng-click="vm.deleteInstitute()"
-                            href="javascript:void(0)">
+                        <button class="btn btn-primary"
+                                scientilla-click-confirm="Are you sure?"
+                                ng-click="vm.deleteInstitute()"
+                                href="javascript:void(0)">
                             Delete
                         </button>
                     </li>

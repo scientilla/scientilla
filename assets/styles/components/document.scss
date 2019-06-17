@@ -13,6 +13,10 @@
 
     .document-info{
         position: relative;
+
+        &.add-year-postfix{
+            min-height: 120px;
+        }
     }
 
     .document-authors{

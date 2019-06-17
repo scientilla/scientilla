@@ -1,7 +1,7 @@
 <scientilla-backend-layout>
     <h1>External documents</h1>
     <scientilla-filter
-        search-form-structure="vm.searchForm"
+        category="external"
         on-filter="vm.onFilter"
         elements="vm.documents"
         empty-list-message="No documents"
@@ -14,6 +14,7 @@
                     on-click="vm.verifyDocuments">
                     <i class="fas fa-check fa-left"></i>Verify
                 </scientilla-multicheck-button>
+
                 <scientilla-multicheck-button
                     subject="Copy document"
                     on-click="vm.copyDocuments">
@@ -43,8 +44,19 @@
                                 ng-disabled="!d.isValid()"
                                 ng-click="vm.verifyDocument(d)"
                                 type="button"
-                                class="btn btn-primary">
+                                class="btn btn-primary"
+                                ng-if="!d.isComparable">
                                 <i class="fas fa-check fa-left"></i>Verify
+                            </button>
+
+                            <button
+                                ng-click="vm.compareDocuments(d, d.getComparisonDuplicates(), vm.documentCategories.EXTERNAL)"
+                                ng-disabled="!d.isValid()"
+                                type="button"
+                                ng-if="d.isComparable"
+                                class="btn btn-primary"
+                                title="Already verified but comparable">
+                                <i class="fas fa-exchange-alt fa-left"></i>Compare
                             </button>
 
                             <button

@@ -2,109 +2,99 @@
     <li class="document-info">
         <span class="document-year">{{ vm.document.year }}</span>
         <img
-            ng-src="{{ vm.customizations.logos.institute.src }}"
-            ng-if="vm.customizations.logos.institute.src && vm.hasMainGroupAffiliation()"
-            class="icon-iit"/>
+                ng-src="{{ vm.customizations.logos.institute.src }}"
+                ng-if="vm.customizations.logos.institute.src && vm.hasMainGroupAffiliation()"
+                class="icon-iit"/>
     </li>
 
     <li class="document-metadata">
         <div>
             <scientilla-document-type document="vm.document"></scientilla-document-type>
-            <scientilla-document-authors
-                document="vm.document"
-                collapsed="vm.collapsed"
-                type="preview"></scientilla-document-authors>
+            <scientilla-document-authors document="vm.document"
+                                         collapsed="vm.collapsed"
+                                         type="preview"></scientilla-document-authors>
         </div>
 
         <div class="document-title-container">
-            <ul
-                ng-if="vm.document.labels"
+            <ul ng-if="vm.document.labels"
                 class="document-labels">
                 <li ng-repeat="l in vm.document.labels">
-                    <scientilla-document-label
-                        label="l"
-                        class="document-label"></scientilla-document-label>
+                    <scientilla-document-label label="l" class="document-label"></scientilla-document-label>
                 </li>
             </ul>
-            <h2
-                class="document-title has-action"
+            <h2 class="document-title has-action"
                 ng-click="vm.openDetails()"
                 ng-bind-html='vm.document | title'></h2>
         </div>
 
         <scientilla-document-source document="vm.document"></scientilla-document-source>
 
-        <div
-            class="document-doi"
-            ng-if="vm.document.doi"
-            ng-bind-html='vm.document | doi'>
+        <div class="document-doi"
+             ng-if="vm.document.doi"
+             ng-bind-html='vm.document | doi'>
         </div>
 
         <div ng-if="vm.showPrivateTags">
-            <i
-                class="fa fa-tags has-action"
-                ng-click="vm.editTags()"
-                title="Edit your tags"></i>
+            <i class="fa fa-tags has-action"
+               ng-click="vm.editTags()"
+               title="Edit your tags"></i>
             <span ng-bind-html='vm.document | documentusertags'></span>
         </div>
 
         <ul class="document-actions">
-            <li
-                ng-if="vm.verifiedCount"
+            <li ng-if="vm.verifiedCount"
                 class="document-verified"
                 uib-tooltip-html="vm.getVerifiedNamesHTML()"
                 tooltip-class="text-left">
                 <i class="fas fa-check"></i> {{vm.verifiedCount}}
             </li>
-            <li
-                ng-if="vm.document.origin==='scopus'"
+            <li ng-if="vm.document.origin==='scopus'"
                 class="document-origin">
-                <img
-                    src="/images/icon-scopus.png"
-                    ng-if="vm.document.hasValidScopusId()"
-                    class="icon-scopus"
-                    uib-tooltip-html="'This document has been imported from Scopus'"
-                    tooltip-class="text-left"/>
-                <img
-                    src="/images/icon-scopus-deleted.png"
-                    ng-if="!vm.document.hasValidScopusId()"
-                    class="icon-scopus-deleted"
-                    uib-tooltip-html="'This document has been imported from Scopus but this ID is not available in Scopus anymore - IT IS STRONGLY ADVISED TO LOOK FOR A WORKING SCOPUS ID NOT TO MISS NEW CITATIONS!'"
-                    tooltip-class="text-left"/>
+                <img src="/images/icon-scopus.png"
+                     ng-if="vm.document.hasValidScopusId()"
+                     class="icon-scopus"
+                     uib-tooltip-html="'This document has been imported from Scopus'"
+                     tooltip-class="text-left"/>
+                <img src="/images/icon-scopus-deleted.png"
+                     ng-if="!vm.document.hasValidScopusId()"
+                     class="icon-scopus-deleted"
+                     uib-tooltip-html="'This document has been imported from Scopus but this ID is not available in Scopus anymore - IT IS STRONGLY ADVISED TO LOOK FOR A WORKING SCOPUS ID NOT TO MISS NEW CITATIONS!'"
+                     tooltip-class="text-left"/>
             </li>
             <li ng-if="vm.document.origin==='scopus'">
-                <i
-                    class="fas fa-sync-alt"
-                    ng-if="vm.isSynchronized()"
-                    uib-tooltip-html="'This document will update automatically from {{vm.document.origin}}'"></i>
+                <i class="fas fa-sync-alt"
+                   ng-if="vm.document.isSynchronizedWith('scopus')"
+                   uib-tooltip-html="'This document will update automatically from {{vm.document.origin}}.<br/>(last synch. {{vm.document.synchronized_at | date : 'dd/MM/yyyy' }})'"></i>
+
+                <span class="fa-stack"
+                      style="font-size: 0.5em"
+                      ng-if="vm.document.isDeSynchronizedWith('scopus')"
+                      uib-tooltip-html="'{{vm.document.origin}} synchronization failed'">
+                <i class="fas fa-sync-alt fa-stack-2x fa-rotate-90 text-danger"></i>
+                <i class="fas fa-minus fa-stack-2x text-danger"></i>
+                </span>
             </li>
-            <li
-                ng-if="vm.isPrivacyToShow()"
+            <li ng-if="vm.isPrivacyToShow()"
                 class="document-privacy-actions">
-                <i
-                    ng-click="vm.changePrivacy()"
-                    ng-if="vm.isPublic()"
-                    class="fas fa-globe-africa has-action"
-                    uib-tooltip-html="'The document is visible to everyone, click to change it'"></i>
-                <i
-                    ng-click="vm.changePrivacy()"
-                    ng-if="!vm.isPublic()"
-                    class="fas fa-lock has-action"
-                    uib-tooltip-html="'The document is visible only to scientilla users, click to change it'"></i>
+                <i ng-click="vm.changePrivacy()"
+                   ng-if="vm.isPublic()"
+                   class="fas fa-globe-africa has-action"
+                   uib-tooltip-html="'The document is visible to everyone, click to change it'"></i>
+                <i ng-click="vm.changePrivacy()"
+                   ng-if="!vm.isPublic()"
+                   class="fas fa-lock has-action"
+                   uib-tooltip-html="'The document is visible only to scientilla users, click to change it'"></i>
             </li>
-            <li
-                ng-if="vm.isFavoriteToShow()"
+            <li ng-if="vm.isFavoriteToShow()"
                 class="document-favorite-actions">
-                <i
-                    ng-click="vm.changeFavorite()"
-                    ng-if="vm.isFavorite()"
-                    class="fas fa-star has-action"
-                    uib-tooltip-html="'This document is one of your favorite'"></i>
-                <i
-                    ng-click="vm.changeFavorite()"
-                    ng-if="!vm.isFavorite()"
-                    class="far fa-star has-action"
-                    uib-tooltip-html="'Click here to make it favorite'"></i>
+                <i ng-click="vm.changeFavorite()"
+                   ng-if="vm.isFavorite()"
+                   class="fas fa-star has-action"
+                   uib-tooltip-html="'This document is one of your favorite'"></i>
+                <i ng-click="vm.changeFavorite()"
+                   ng-if="!vm.isFavorite()"
+                   class="far fa-star has-action"
+                   uib-tooltip-html="'Click here to make it favorite'"></i>
             </li>
         </ul>
     </li>
@@ -112,23 +102,19 @@
     <li class="document-icons">
         <ul ng-if="vm.showScopusMetrics()">
             <li>
-                <img
-                    src="/images/icon-scopus.png"
-                    class="icon-scopus"
-                    title="Scopus metrics"></img>
+                <img src="/images/icon-scopus.png"
+                     class="icon-scopus"
+                     title="Scopus metrics">
             </li>
-            <li
-                ng-if="vm.hasMetric(vm.metrics.CITATIONS)"
+            <li ng-if="vm.hasMetric(vm.metrics.CITATIONS)"
                 title="Citations in scopus - {{vm.scopusCitationsYearStr}}">
                 Cit. {{ vm.getMetricValue(vm.metrics.CITATIONS) }}
             </li>
-            <li
-                ng-if="vm.hasMetric(vm.metrics.SNIP)"
+            <li ng-if="vm.hasMetric(vm.metrics.SNIP)"
                 title="Source Normalized Impact per Paper">
                 SNIP {{ vm.getMetricValue(vm.metrics.SNIP) | number:1 }}
             </li>
-            <li
-                ng-if="vm.hasMetric(vm.metrics.SJR)"
+            <li ng-if="vm.hasMetric(vm.metrics.SJR)"
                 title="Scimago Journal Rank">
                 SJR {{ vm.getMetricValue(vm.metrics.SJR) | number:1 }}
             </li>
@@ -136,15 +122,13 @@
 
         <ul ng-if="vm.showWOSMetrics()">
             <li>
-                <img
-                    src="/images/icon-wos.png"
-                    class="icon-wos"
-                    title="Web of Science metrics"/>
+                <img src="/images/icon-wos.png"
+                     class="icon-wos"
+                     title="Web of Science metrics"/>
             </li>
-            <li
-                ng-if="vm.hasMetric(vm.metrics.IF)"
+            <li ng-if="vm.hasMetric(vm.metrics.IF)"
                 title="Impact factor">
-                    IF {{ vm.getMetricValue(vm.metrics.IF) | number:1 }}
+                IF {{ vm.getMetricValue(vm.metrics.IF) | number:1 }}
             </li>
         </ul>
     </li>

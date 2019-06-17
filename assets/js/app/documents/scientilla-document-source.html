@@ -8,7 +8,7 @@
     <span ng-if="vm.document.type != 'invited_talk'">
         {{vm.document.source.title}}
     </span>
-    <span ng-if="vm.document.type == 'invited_talk'">
+    <span ng-if="vm.document.type === 'invited_talk'">
         {{vm.document.itSource}}
     </span>
 </div>

@@ -53,53 +53,50 @@
             }
         }
 
-        function restoreBackup() {
-            ModalService
-                .multipleChoiceConfirm('Restoring backup',
-                    `Are you sure you want to restore the backup ${vm.dumpSelected.filename}?`,
-                    ['Proceed'])
-                .then(function (buttonIndex) {
-                    switch (buttonIndex) {
-                        case 0:
-                            const postData = {filename: vm.dumpSelected.filename};
-                            vm.loading = true;
-                            return Restangular.one('backup', 'restore')
-                                .customPOST(postData)
-                                .then(e => {
-                                    vm.loading = false;
-                                    Notification.success('Backup correctly restored');
-                                })
-                                .catch(() => {
-                                    Notification.error('An error happened');
-                                    vm.loading = false;
-                                });
-                    }
-                });
+        /* jshint ignore:start */
+
+        async function restoreBackup() {
+            const buttonKey = await ModalService.multipleChoiceConfirm('Restoring backup',
+                `Are you sure you want to restore the backup ${vm.dumpSelected.filename}?`,
+                {'proceed': 'Proceed'});
+
+            if (buttonKey === 'proceed') {
+                const postData = {filename: vm.dumpSelected.filename};
+                vm.loading = true;
+
+                try {
+                    await Restangular.one('backup', 'restore').customPOST(postData);
+                    vm.loading = false;
+                    Notification.success('Backup correctly restored');
+                } catch (e) {
+                    Notification.error('An error happened');
+                    vm.loading = false;
+                }
+            }
+
         }
 
-        function makeBackup() {
-            ModalService
-                .multipleChoiceConfirm('Making backup',
-                    `Are you sure you want to make a new backup?`,
-                    ['Proceed'])
-                .then(function (buttonIndex) {
-                    switch (buttonIndex) {
-                        case 0:
-                            vm.loading = true;
-                            return Restangular.one('backup', 'make')
-                                .customPOST()
-                                .then(res => {
-                                    vm.loading = false;
-                                    Notification.success(`Backup ${res.filename} correctly created`);
-                                    loadDumps();
-                                })
-                                .catch(() => {
-                                    Notification.error('An error happened');
-                                    vm.loading = false;
-                                });
-                    }
-                });
+        async function makeBackup() {
+            const buttonKey = await ModalService.multipleChoiceConfirm('Making backup',
+                `Are you sure you want to make a new backup?`,
+                {'proceed': 'Proceed'});
+
+            if (buttonKey === 'proceed') {
+                vm.loading = true;
+
+                try {
+                    const res = await Restangular.one('backup', 'make').customPOST();
+                    vm.loading = false;
+                    Notification.success(`Backup ${res.filename} correctly created`);
+                    loadDumps();
+                } catch (e) {
+                    Notification.error('An error happened');
+                    vm.loading = false;
+                }
+            }
         }
+
+        /* jshint ignore:end */
 
         function loadDumps() {
             getDumps().then(dumps => {

@@ -11,7 +11,9 @@
                 values: '=',
                 name: '<',
                 reset: '&',
-                errors: '<'
+                errors: '<',
+                onValidate: '&',
+                onChange: '&'
             }
         });
 
@@ -45,8 +47,6 @@
                 vm.ngIf = () => true;
 
             // TODO move all events handlers inside this component
-
-
         };
 
         function isButton() {

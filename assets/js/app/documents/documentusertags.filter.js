@@ -9,8 +9,8 @@
     function documentusertags(context) {
 
         return function(document) {
-            var researchEntity = context.getResearchEntity();
-            var tags = researchEntity.getTagsByDocument(document);
+            const subResearchEntity = context.getSubResearchEntity();
+            const tags = subResearchEntity.getTagsByDocument(document);
 
             return tags.map(function (tag) {
                 return "<span class='label label-scientilla-grey'>"+tag.value+"</span>";

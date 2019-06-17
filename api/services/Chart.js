@@ -194,11 +194,37 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
     }
 
     function getSql(queryName) {
-        const chartQueryPath = `api/queries/${queryName}.sql`;
-        const chartQuerySqlRaw = SqlService.readQueryFromFs(chartQueryPath);
-        const table = researchEntityType === 'user' ? 'authorship' : 'authorshipgroup';
-        //TODO change database structure to handle groups as users
-        return chartQuerySqlRaw.replace(new RegExp('authorship', 'g'), table);
+        const queries = {
+            'user': {
+                'chartDataDate': 'chartDataDate',
+                'documentsByType': 'documentsByType',
+                'documentsByYear': 'documentsByYear',
+                'filteredAffiliatedDocumentsByYear': 'filteredAffiliatedDocumentsByYear',
+                'filteredNotAffiliatedDocumentsByYear': 'filteredNotAffiliatedDocumentsByYear',
+                'invitedTalksByYear': 'invitedTalksByYear'
+            },
+            'group': {
+                'chartDataDate': 'chartDataDate',
+                'documentsByType': 'documentsByType',
+                'documentsByYear': 'documentsByYear',
+                'filteredAffiliatedDocumentsByYear': 'filteredAffiliatedDocumentsByYearGroup',
+                'filteredNotAffiliatedDocumentsByYear': 'filteredNotAffiliatedDocumentsByYearGroup',
+                'invitedTalksByYear': 'invitedTalksByYear'
+            }
+        };
+        const transforms = {
+            'user': {},
+            'group': {
+                'documentsByType': (q) => q.replace(/authorship/g, 'authorshipgroup'),
+                'documentsByYear': (q) => q.replace(/authorship/g, 'authorshipgroup'),
+                'invitedTalksByYear': (q) => q.replace(/authorship/g, 'authorshipgroup')
+            }
+        };
+        const chartQueryPath = `api/queries/${queries[researchEntityType][queryName]}.sql`;
+        const chartQuerySql = SqlService.readQueryFromFs(chartQueryPath);
+        return transforms[researchEntityType][queryName] ?
+            transforms[researchEntityType][queryName](chartQuerySql) :
+            chartQuerySql;
     }
 
     async function hindexPerYear() {

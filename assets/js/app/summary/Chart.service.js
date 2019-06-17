@@ -1,4 +1,4 @@
-/* global d3 */
+/* global d3, tinycolor */
 (function () {
     "use strict";
     angular.module("services").factory("ChartService", ChartService);
@@ -49,10 +49,13 @@
             }
         };
 
+        service.getData = (researchEntity, charts, refresh = false) =>
+            researchEntity.all('charts').getList({refresh: !!refresh, charts});
+
         service.setStyles = (customizations) => {
-            var darkenColors   = [],
-                lightenColors  = [],
-                extendedColors = [];
+            const darkenColors = [],
+                lightenColors = [];
+            let extendedColors = [];
 
             styles = customizations.styles;
             colors = [
@@ -70,10 +73,10 @@
                 '#' + styles.chartColor12
             ];
 
-            for (let i = 0; i < colors.length; i++) {
-                darkenColors.push(tinycolor(colors[i]).darken(30).toString());
-                lightenColors.push(tinycolor(colors[i]).lighten(30).toString());
-            }
+            colors.forEach(color => {
+                darkenColors.push(tinycolor(color).darken(30).toString());
+                lightenColors.push(tinycolor(color).lighten(30).toString());
+            });
 
             extendedColors = darkenColors.concat(lightenColors);
             extendedColors = _.shuffle(extendedColors);
@@ -133,11 +136,7 @@
                 values: getItemsByYear(chartsData.scientificTalksByYear, yearRange)
             }];
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             const baseOptions = {
@@ -176,29 +175,25 @@
             const yearRange = getYearRange(chartsData);
 
             const data = [{
-                    key: DocumentTypesService.getSourceTypeLabel('journal'),
-                    values: getItemsByYear(chartsData.journalsByYear, yearRange)
-                }, {
-                    key: DocumentTypesService.getSourceTypeLabel('conference'),
-                    values: getItemsByYear(chartsData.conferencesByYear, yearRange)
-                }, {
-                    key: DocumentTypesService.getSourceTypeLabel('book'),
-                    values: getItemsByYear(chartsData.booksByYear, yearRange)
-                }, {
-                    key: DocumentTypesService.getSourceTypeLabel('bookseries'),
-                    values: getItemsByYear(chartsData.bookChaptersByYear, yearRange)
-                }];
+                key: DocumentTypesService.getSourceTypeLabel('journal'),
+                values: getItemsByYear(chartsData.journalsByYear, yearRange)
+            }, {
+                key: DocumentTypesService.getSourceTypeLabel('conference'),
+                values: getItemsByYear(chartsData.conferencesByYear, yearRange)
+            }, {
+                key: DocumentTypesService.getSourceTypeLabel('book'),
+                values: getItemsByYear(chartsData.booksByYear, yearRange)
+            }, {
+                key: DocumentTypesService.getSourceTypeLabel('bookseries'),
+                values: getItemsByYear(chartsData.bookChaptersByYear, yearRange)
+            }];
 
             const rangeX = getRangeX(
                 yearRange.min,
                 yearRange.max
             );
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             const baseOptions = {
@@ -237,7 +232,7 @@
         service.getHindexPerYear = (chartsData) => {
             const yearRange = getYearRange(chartsData);
             const hindexPerYear = getItemsByYear(chartsData.hindexPerYear, yearRange);
-            const maxY = Math.max.apply(Math, hindexPerYear.map(function(o) { return o.value; }));
+            const maxY = Math.max.apply(Math, hindexPerYear.map(o => o.value));
             const rangeY = getRangeY(maxY, true);
 
             const maxYValue = parseInt(_.maxBy(hindexPerYear, 'value').value, 10);
@@ -298,11 +293,7 @@
                 values: getItemsByYear(chartsData.citationsPerDocumentYear, yearRange)
             }];
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             return {
@@ -340,11 +331,7 @@
                 values: getItemsByYear(chartsData.citationsPerYear, yearRange)
             }];
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             return {
@@ -492,11 +479,7 @@
                 yearRange.max
             );
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
-            }
-            const maxY = Math.max.apply(Math, dataMax);
+            const maxY = Math.max.apply(null, getDatamax(data));
             const rangeY = getRangeY(maxY);
 
             return {
@@ -554,11 +537,7 @@
                 yearRange.max
             );
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             return {
@@ -764,7 +743,7 @@
             const maxXValue = parseInt(maxX, 10);
             const minXValue = parseInt(minX, 10);
 
-            switch(true) {
+            switch (true) {
                 case maxXValue - minXValue > 20:
                     step = 5;
                     break;
@@ -787,7 +766,7 @@
         function getRangeY(maxY, addMax = false) {
             let step = 1;
 
-            switch(true) {
+            switch (true) {
                 case maxY > 40000:
                     step = 10000;
                     break;
@@ -837,6 +816,10 @@
             }
 
             return rangeY;
+        }
+
+        function getDatamax(data) {
+            return data.map(d => Math.max.apply(null, d.values.map(o => o.value)));
         }
     }
 }());

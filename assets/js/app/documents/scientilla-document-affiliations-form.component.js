@@ -1,4 +1,4 @@
-/* global Scientilla */
+/* global angular */
 
 (function () {
     "use strict";
@@ -12,35 +12,34 @@
             bindings: {
                 document: "<",
                 onFailure: "&",
-                onSubmit: "&"
+                onSubmit: "&",
+                checkAndClose: "&"
             }
         });
 
 
     controller.$inject = [
-        '$scope',
-        'Restangular',
-        'ModalService'
+        '$scope'
     ];
 
-    function controller($scope, Restangular, ModalService) {
+    function controller($scope) {
         const vm = this;
         vm.getInstitutesFilter = getInstitutesFilter;
         vm.getInstitutesQuery = getInstitutesQuery;
         vm.submit = submit;
-        vm.cancel = cancel;
+        vm.cancel = close;
 
-        let originalAffiliations = [];
+        let originalObjectJson = [];
         vm.collapsed = true;
 
         vm.$onInit = () => {
+            originalObjectJson = angular.toJson(vm.document.authorships);
+
             $scope.$watch('vm.position', userSelectedChanged);
             $scope.$watch('vm.authorship.affiliations', resetInstitutes, true);
 
-            // Listen to modal closing event
-            $scope.$on('modal.closing', function(event, reason) {
-                cancel(event, reason);
-            });
+            if (Array.isArray(vm.document.authorships) && vm.document.authorships.length)
+                vm.position = 0;
         };
 
         function getInstitutesQuery(searchText) {
@@ -71,97 +70,31 @@
                 vm.authorship = newAuthorship;
             }
 
-            getAuthorInstitutes()
-                .then((institutes) => {
-                    vm.authorship.affiliations = institutes;
-                    // Copy original affiliations to compare it later
-                    originalAffiliations = angular.copy(institutes);
-                });
-        }
-
-        function getAuthorInstitutes() {
-            if (_.isNil(vm.position))
-                return Promise.resolve([]);
-            const qs = {
-                where: {document: vm.document.id, position: vm.position},
-                populate: 'affiliations'
-            };
-            return Restangular.all('authorships').getList(qs).then(function (authorships) {
-                if (_.isEmpty(authorships))
-                    return [];
-                return authorships[0].affiliations;
-            });
         }
 
         function getInstitutesFilter() {
             return vm.authorship.affiliations;
         }
 
-        function cancel(event = false) {
-            // Check if an position/author is selected or the authorshop is set
-            if (_.isUndefined(vm.position) || _.isUndefined(vm.authorship)) {
-                if (!event) {
-                    executeOnSubmit(0);
-                }
-            } else {
-                // Compare the current state with the original state of the affiliations
-                if (angular.toJson(vm.authorship.affiliations) === angular.toJson(originalAffiliations)) {
-                    if (!event) {
-                        executeOnSubmit(0);
-                    }
-                } else {
-                    if (event) {
-                        // Prevent modal from closing
-                        event.preventDefault();
-                    }
-
-                    // Show the unsaved data modal
-                    ModalService
-                        .multipleChoiceConfirm('Unsaved data',
-                            `There is unsaved data in the form. Do you want to go back and save this data?`,
-                            ['Yes', 'No'],
-                            false)
-                        .then(function (buttonIndex) {
-                            switch (buttonIndex) {
-                                case 0:
-                                    break;
-                                case 1:
-                                    vm.authorship.affiliations = angular.copy(originalAffiliations);
-                                    executeOnSubmit(0);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        });
-                }
+        /* jshint ignore:start */
+        async function submit() {
+            try {
+                await save();
+            } catch (e) {
+                vm.onFailure()();
             }
+            vm.onSubmit()(1);
         }
 
-        function submit() {
-            return save()
-                .then(function (user) {
-                    // Copy the new affiliations to the originalAffiliations variable
-                    originalAffiliations = angular.copy(vm.authorship.affiliations);
-                    executeOnSubmit(1);
-                })
-                .catch(function () {
-                    executeOnFailure();
-                });
-        }
+        /* jshint ignore:end */
 
         function save() {
             return vm.document.customPUT(vm.document.authorships, 'authorships');
         }
 
-        function executeOnSubmit(i) {
-            if (_.isFunction(vm.onSubmit())) {
-                vm.onSubmit()(i);
-            }
-        }
-
-        function executeOnFailure() {
-            if (_.isFunction(vm.onFailure())) {
-                vm.onFailure()();
+        function close() {
+            if (_.isFunction(vm.checkAndClose())) {
+                vm.checkAndClose()(() => originalObjectJson === angular.toJson(vm.document.authorships));
             }
         }
     }

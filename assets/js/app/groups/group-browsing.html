@@ -3,19 +3,16 @@
         <div class="title-container">
             <h1 class="title">Groups</h1>
 
-            <button
-                ng-if="vm.user.isAdmin()"
-                ng-click="vm.createNew()"
-                class="btn btn-primary btn-add-group">
+            <button ng-if="vm.user.isAdmin()"
+                    ng-click="vm.createNew()"
+                    class="btn btn-primary btn-add-group">
                 Create New Group<i class="fas fa-plus fa-right"></i>
             </button>
         </div>
 
-        <scientilla-filter
-            search-form-structure="vm.searchForm"
-            on-filter="vm.onFilter"
-            elements="vm.groups"
-        >
+        <scientilla-filter category="group"
+                           on-filter="vm.onFilter"
+                           elements="vm.groups">
             <ul class="group-listing">
                 <li ng-repeat="g in vm.groups">
                     <div class="group-info-container">
@@ -55,31 +52,30 @@
 
                     <div class="group-action-container">
                         <div
-                            class="btn-group"
-                            ng-if="vm.user.isAdmin() || vm.user.admins(g)"
-                            uib-dropdown>
+                                class="btn-group"
+                                ng-if="vm.user.isAdmin() || vm.user.admins(g)"
+                                uib-dropdown>
                             <button
-                                ng-click="vm.editGroup(g)"
-                                type="button"
-                                class="btn btn-primary">
-                                    <i class="fas fa-edit fa-left"></i>Edit
-                                </button>
+                                    ng-click="vm.editGroup(g)"
+                                    type="button"
+                                    class="btn btn-primary">
+                                <i class="fas fa-edit fa-left"></i>Edit
+                            </button>
 
-                                <button
+                            <button
                                     type="button"
                                     class="btn btn-primary only-icon"
                                     uib-dropdown-toggle>
-                                </button>
+                            </button>
 
-                                <div uib-dropdown-menu>
-                                    <button
+                            <div uib-dropdown-menu>
+                                <button
                                         class="dropdown-item"
                                         scientilla-click-confirm="Are you sure?"
                                         ng-click="vm.deleteGroup(g)"
                                         href="javascript:void(0)">
-                                        <i class="fas fa-trash fa-left"></i>Delete
-                                    </button>
-                                </div>
+                                    <i class="fas fa-trash fa-left"></i>Delete
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -1,18 +1,18 @@
 <scientilla-document-authors
-    document="vm.document"
-    collapsed="vm.collapsed"></scientilla-document-authors>
+        document="vm.document"
+        collapsed="vm.collapsed"></scientilla-document-authors>
 
 <h3 class="document-title" ng-bind-html='vm.document | title'></h3>
 
 <scientilla-document-affiliations
-    document="vm.document"
-    collapsed="vm.collapsed"></scientilla-document-affiliations>
+        document="vm.document"
+        collapsed="vm.collapsed"></scientilla-document-affiliations>
 
 <scientilla-document-authors-legend document="vm.document"></scientilla-document-authors-legend>
 
 <div
-    ng-if="vm.document.abstract"
-    class="document-details-abstract">
+        ng-if="vm.document.abstract"
+        class="document-details-abstract">
     <h4>Abstract</h4>
     <div>
         {{ vm.document.abstract }}
@@ -30,8 +30,8 @@
     </small>
 
     <ul
-        class="document-details-info" 
-        ng-if="vm.document.doi || vm.sourceType || vm.type">
+            class="document-details-info"
+            ng-if="vm.document.doi || vm.sourceType || vm.type">
         <li ng-if="vm.document.doi">
             <span ng-bind-html='vm.document | doi'></span>
         </li>
@@ -45,20 +45,24 @@
 </div>
 
 <div
-    ng-if="vm.document.scopusId || vm.document.wosId"
-    class="document-details-ids">
+        ng-if="vm.document.scopusId || vm.document.wosId"
+        class="document-details-ids">
     <div ng-if="vm.document.scopusId">
         <label class="inline-block">Scopus id:</label>
         <span ng-if="vm.document.hasValidScopusId()">
             {{vm.document.scopusId}}
             <a
-                href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document.scopusId}}&origin=inward"
-                target="_blank">[View at Scopus]</a>
+                    href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document.scopusId}}&origin=inward"
+                    target="_blank">[View at Scopus]</a>
         </span>
 
         <span ng-if="!vm.document.hasValidScopusId()">
             <s class="text-danger">{{vm.document.scopusId}}</s>
             <span class="text-danger">- This ID is not available in Scopus</span>
+        </span>
+        <span ng-if="vm.document.isDeSynchronizedWith('scopus')"
+              class="badge badge-warning">
+            {{vm.document.origin}} synchronization failed
         </span>
     </div>
 

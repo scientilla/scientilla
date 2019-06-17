@@ -1,4 +1,4 @@
-/* global Scientilla */
+/* global Scientilla, angular */
 
 (function () {
     "use strict";
@@ -7,48 +7,62 @@
         .module('documents')
         .component('scientillaAdminNewInstitute', {
             templateUrl: 'partials/scientilla-admin-new-institute.html',
-            controller: scientillaAdminNewInstituteController,
+            controller,
             controllerAs: 'vm',
             bindings: {
                 institute: "<",
-                onFailure: "&",
                 onSubmit: "&",
-                closeFn: "&"
+                checkAndClose: "&"
             }
         });
 
-    scientillaAdminNewInstituteController.$inject = [
+    controller.$inject = [
         '$scope',
+        '$timeout',
         'Notification',
         'Restangular',
         'ModalService',
-        'EventsService'
+        'EventsService',
+        'ValidateService'
     ];
 
-    function scientillaAdminNewInstituteController($scope, Notification, Restangular, ModalService, EventsService) {
+    function controller($scope, $timeout, Notification, Restangular, ModalService, EventsService, ValidateService) {
         const vm = this;
 
         vm.saveInstitute = saveInstitute;
-        vm.cancel = cancel;
+        vm.cancel = close;
+        vm.checkValidation = checkValidation;
+        vm.isValid = isValid;
         vm.errors = {};
 
-        let originalInstitute = {};
+        let timeout;
+        let unsavedData = false;
+        let deregisterers = [];
 
-        vm.$onInit = function() {
-            originalInstitute = angular.copy(vm.institute);
+        const delay = 500;
 
-            // Listen to modal closing event
-            $scope.$on('modal.closing', function(event, reason) {
-                cancel(event, reason);
-            });
+        vm.$onInit = function () {
+            if (!vm.institute.id)
+                vm.institute = {};
+
+            deregisterers.push($scope.$watch('form.$pristine', formUntouched => unsavedData = !formUntouched));
+            deregisterers.push($scope.$watch('vm.institute', fieldValueHasChanged));
         };
+
+        vm.$onDestroy = function () {
+            deregisterers.forEach(d => d());
+        };
+
+        function isValid() {
+            return Object.keys(vm.errors).length === 0;
+        }
 
         function checkErrorMessages(errors) {
             vm.errors = {};
 
-            angular.forEach(errors, function(fields, fieldIndex) {
-                angular.forEach(fields, function(error, errorIndex) {
-                    if (error.rule === 'required'){
+            angular.forEach(errors, function (fields, fieldIndex) {
+                angular.forEach(fields, function (error, errorIndex) {
+                    if (error.rule === 'required') {
                         error.message = 'This field is required.';
                         errors[fieldIndex][errorIndex] = error;
                     }
@@ -58,77 +72,86 @@
             });
         }
 
-        function saveInstitute() {
+        function checkValidation(field = false) {
+            const requiredFields = [
+                'name'
+            ];
+
+            if (field) {
+                vm.errors[field] = ValidateService.validate(vm.institute, field, requiredFields);
+
+                if (typeof vm.errors[field] === 'undefined') {
+                    delete vm.errors[field];
+                }
+            } else {
+                vm.errors = ValidateService.validate(vm.institute, false, requiredFields);
+            }
+
+            if (Object.keys(vm.errors).length > 0) {
+                vm.errorText = 'Please correct the errors on this form!';
+            } else {
+                vm.errorText = '';
+            }
+        }
+
+        function fieldValueHasChanged(field = false) {
+            $timeout.cancel(timeout);
+
+            timeout = $timeout(function () {
+                checkValidation(field);
+            }, delay);
+        }
+
+        /* jshint ignore:start */
+        async function saveInstitute() {
             if (!vm.institute)
                 return;
 
+            checkValidation();
+
+            if (!isValid())
+                return;
+
+            if (!vm.institute.parentId) vm.institute.parentId = null;
+            if (!vm.institute.group) vm.institute.group = null;
+
             if (!vm.institute.id) {
-                Restangular.all('institutes')
-                    .post(vm.institute)
-                    .then(() => {
-                        Notification.info('Institute created');
-                        vm.institute = {};
-                        originalInstitute = angular.copy(vm.institute);
-                        vm.errors = {};
-                        cancel();
-                    }, function (res) {
-                        checkErrorMessages(res.data.invalidAttributes);
-                    });
+                try {
+                    await Restangular.all('institutes').post(vm.institute);
+                    Notification.info('Institute created');
+                    vm.institute = {};
+                    vm.errors = {};
+                } catch (err) {
+                    checkErrorMessages(err.data.invalidAttributes);
+                    vm.onFailure()();
+                    return;
+                }
             } else {
                 for (const field in vm.institute)
                     if (vm.institute[field] === '')
                         vm.institute[field] = null;
 
-                vm.institute.save()
-                    .then(() => {
-                        Notification.info('Institute saved');
-                        vm.institute = {};
-                        originalInstitute = angular.copy(vm.institute);
-                        vm.errors = {};
-                        cancel();
-                    }, function (res) {
-                        checkErrorMessages(res.data.invalidAttributes);
-                    });
+                try {
+                    await vm.institute.save();
+                    Notification.info('Institute saved');
+                    vm.institute = {};
+                    vm.errors = {};
+                } catch (err) {
+                    checkErrorMessages(err.data.invalidAttributes);
+                    vm.onFailure()();
+                    return;
+                }
             }
+
+
+            vm.onSubmit()(1);
         }
 
-        function cancel(event = false) {
-            // Compare the current state with the original state of the institute
-            if (angular.toJson(vm.institute) === angular.toJson(originalInstitute)) {
-                if (!event) {
-                    executeOnSubmit(0);
-                }
-            } else {
-                if (event) {
-                    // Prevent modal from closing
-                    event.preventDefault();
-                }
+        /* jshint ignore:end */
 
-                // Show the unsaved data modal
-                ModalService
-                    .multipleChoiceConfirm('Unsaved data',
-                        `There is unsaved data in the form. Do you want to go back and save this data?`,
-                        ['Yes', 'No'],
-                        false)
-                    .then(function (buttonIndex) {
-                        switch (buttonIndex) {
-                            case 0:
-                                break;
-                            case 1:
-                                vm.institute = angular.copy(originalInstitute);
-                                EventsService.publish(EventsService.INSTITUTE_RESTORED, originalInstitute);
-                                executeOnSubmit(0);
-                                break;
-                            default:
-                                break;
-                        }
-                    });
-            }
-        }
-
-        function executeOnSubmit(i) {
-            if (_.isFunction(vm.onSubmit()))
-                vm.onSubmit()(i);
+        function close() {
+            if (_.isFunction(vm.checkAndClose()))
+                vm.checkAndClose()(() => !unsavedData);
         }
     }
 })();

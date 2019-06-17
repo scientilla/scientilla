@@ -10,7 +10,8 @@
             controllerAs: 'vm',
             bindings: {
                 document: "<",
-                collapsed: '=?'
+                collapsed: '=?',
+                highlighted: '=?'
             }
         });
 

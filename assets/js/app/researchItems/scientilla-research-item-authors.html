@@ -1,0 +1,16 @@
+<span class="document-authors"
+      ng-if="vm.type==='default'"
+      ng-bind-html='vm.researchItem.authorsStr | itemAuthorsLength: vm.collapsed ? vm.researchItem.getAuthorLimit() : 0 | itemAuthorsOralPresentations:vm.researchItem | itemAuthorsCorresponding:vm.researchItem | itemAuthorsCoauthors:vm.researchItem | itemAuthorsVerified:vm.researchItem | itemAuthorsAffiliations:vm.researchItem'>
+</span>
+
+<span class="document-authors"
+      ng-if="vm.type==='preview'"
+      ng-bind-html='vm.researchItem.authorsStr | itemAuthorsLength: vm.collapsed ? vm.researchItem.getAuthorLimit() : 0 | itemAuthorsOralPresentations:vm.researchItem | itemAuthorsCorresponding:vm.researchItem | itemAuthorsCoauthors:vm.researchItem | itemAuthorsVerified:vm.researchItem | itemAuthorsMainGroup:vm.researchItem '>
+</span>
+
+<span class="badge badge-secondary badge-click"
+      ng-click="vm.toggleCollapse()"
+      ng-if="vm.researchItem.authorsStr && vm.researchItem.authorsStr !== (vm.researchItem.authorsStr | authorsLength: vm.researchItem.getAuthorLimit())">
+    <span ng-if="vm.collapsed">Show all authors</span>
+    <span ng-if="!vm.collapsed">Show fewer authors</span>
+</span>

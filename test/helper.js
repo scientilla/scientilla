@@ -1,4 +1,4 @@
-/* global Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source, ExternalDocument, ExternalImporter, DocumentTypes, SourceTypes */
+/* global require, Auth, User, Group, Document, Authorship, AuthorshipGroup, Affiliation, Institute, Source, ExternalDocument, ExternalImporter, DocumentTypes, SourceTypes, ResearchItemTypes */
 'use strict';
 
 const should = require('should');
@@ -12,6 +12,25 @@ const documents = require('./data/documents');
 const institutes = require('./data/institutes');
 const sources = require('./data/sources');
 const metrics = require('./data/metrics');
+const researchItems = require('./data/researchItems');
+
+
+let auths = [];
+
+function getAuth(id) {
+    return auths.find(b => b.id === id);
+}
+
+function getAdminAuth() {
+    return auths.find(b => b.admin);
+}
+
+function cleanAuths() {
+    auths = [];
+}
+
+const url = 'http://localhost:1338/api/v1';
+
 
 module.exports = {
     cleanDb,
@@ -23,16 +42,22 @@ module.exports = {
     getAllDocumentData,
     getAllSourceData,
     getAllMetricData,
+    getAllResearchItemData,
     getUsers,
     createGroup,
+    getInstitutes,
     createInstitute,
+    getSources,
     createSource,
     registerUser,
     getUserDocuments,
+    getUserDocument,
     getUserDocumentsWithAuthors,
     getUserDiscarded,
     getUserSuggestedDocuments,
+    getUserSuggestedDocument,
     getUserDrafts,
+    getUserDraft,
     userCreateDraft,
     userCreateDrafts,
     userUpdateDraft,
@@ -55,35 +80,112 @@ module.exports = {
     userDeleteDrafts,
     groupDeleteDrafts,
     fixDocumentsDocumenttype,
-    EMPTY_RES: {count: 0, items: []}
+    userMarkAllAsNotDuplicates,
+    getUniqueDuplicateIds,
+    EMPTY_RES: {count: 0, items: []},
+    researchItem: {
+        async getTypes() {
+            const res = await request(url)
+                .get('/researchitemtypes/');
+            return res.body.items;
+        }
+    },
+    researchEntity: {
+        async getByUser(user) {
+            const res = await request(url)
+                .get('/users/' + user.id)
+                .query({populate: ['researchEntity']});
+            return res.body.researchEntity;
+        },
+        async getByGroup(group) {
+            const res = await request(url)
+                .get('/groups/' + group.id)
+                .query({populate: ['researchEntity']});
+            return res.body.researchEntity;
+        },
+        async createDraft(user, researchEntity, draftData) {
+            const auth = getAuth(user.id);
+            const res = await auth.agent
+                .post('/researchentities/' + researchEntity.id + '/researchitemdrafts')
+                .set('access_token', auth.token)
+                .send(draftData);
+            return res.body;
+        },
+        async updateDraft(user, researchEntity, draftData) {
+            const auth = getAuth(user.id);
+            const res = await auth.agent
+                .put('/researchentities/' + researchEntity.id + '/researchitemdrafts/' + draftData.id)
+                .set('access_token', auth.token)
+                .send(draftData);
+            return res.body;
+        },
+        async getItemDrafts(researchEntity, populateFields = [], qs = {}) {
+            const res = await request(url)
+                .get('/researchentities/' + researchEntity.id + '/researchitemdrafts')
+                .query({populate: populateFields})
+                .query(qs);
+            return res.body.items;
+        },
+        async getAccomplishmentDrafts(researchEntity, populateFields = [], qs = {}) {
+            const res = await request(url)
+                .get('/researchentities/' + researchEntity.id + '/accomplishmentdrafts')
+                .query({populate: populateFields})
+                .query(qs);
+            return res.body.items;
+        },
+        async getVerifiedAccomplishment(researchEntity, populateFields = [], qs = {}) {
+            const res = await request(url)
+                .get('/researchentities/' + researchEntity.id + '/accomplishments')
+                .query({populate: populateFields})
+                .query(qs);
+            return res.body.items;
+        },
+        async verifyItem(user, researchEntity, itemId, verifyData = {}) {
+            const auth = getAuth(user.id);
+            const res = await auth.agent
+                .put('/researchentities/' + researchEntity.id + '/researchitems/' + itemId + '/verified')
+                .set('access_token', auth.token)
+                .send(verifyData);
+            return res.body;
+        },
+        async unVerifyItem(user, researchEntity, itemId) {
+            const auth = getAuth(user.id);
+            const res = await auth.agent
+                .put('/researchentities/' + researchEntity.id + '/researchitems/' + itemId + '/unverified')
+                .set('access_token', auth.token);
+            return res.body;
+        },
+        async copyItemToDrafts(user, researchEntity, researchItem) {
+            const auth = getAuth(user.id);
+            const res = await auth.agent
+                .post('/researchentities/' + researchEntity.id + '/copy-research-item')
+                .set('access_token', auth.token)
+                .send({researchItemId: researchItem.id});
+            return res.body;
+
+        }
+    },
+    accomplishment: {
+        async get(populateFields = [], qs = {}, respCode = 200) {
+            const res = await request(url)
+                .get('/accomplishments')
+                .query({populate: populateFields})
+                .query(qs)
+                .expect(respCode);
+            return res.body.items;
+        }
+    }
 };
-
-
-let auths = [];
-
-function getAuth(id) {
-    return auths.find(b => b.id === id);
-}
-
-function getAdminAuth() {
-    return auths.find(b => b.admin);
-}
-
-function cleanAuths() {
-    auths = [];
-}
-
-const url = 'http://localhost:1338/api/v1';
 
 async function cleanDb() {
 
     const models = Object.values(sails.models).filter(m => m.migrate !== 'safe');
-    const modelsName = models.map(m => m.adapter.identity);
-
+    const modelsName = models.map(m => m.tableName);
     await SqlService.query('TRUNCATE ' + modelsName.map(mn => '"' + mn + '"').join(', ') + ' RESTART IDENTITY CASCADE;');
 
     await DocumentTypes.init();
     await SourceTypes.init();
+    await ResearchItemTypes.init();
 }
 
 async function clean() {
@@ -119,6 +221,10 @@ function getAllMetricData() {
     return _.cloneDeep(metrics);
 }
 
+function getAllResearchItemData() {
+    return _.cloneDeep(researchItems);
+}
+
 async function getUsers(respCode = 200) {
     const res = await request(url)
         .get('/users');
@@ -135,6 +241,12 @@ async function createGroup(groupData, respCode = 201) {
     return res.body;
 }
 
+async function getInstitutes(respCode = 200) {
+    const res = await request(url)
+        .get('/institutes');
+    return res.body;
+}
+
 async function createInstitute(instituteData, respCode = 201) {
     const auth = getAdminAuth();
     const res = await auth.agent
@@ -142,6 +254,12 @@ async function createInstitute(instituteData, respCode = 201) {
         .set('access_token', auth.token)
         .send(instituteData)
         .expect(respCode);
+    return res.body;
+}
+
+async function getSources(respCode = 200) {
+    const res = await request(url)
+        .get('/sources');
     return res.body;
 }
 
@@ -181,9 +299,18 @@ async function registerUser(userData, respCode = 302) {
     return user;
 }
 
-async function getUserDocuments(user, populateFields, qs = {}, respCode = 200) {
+async function getUserDocuments(user, populateFields = [], qs = {}, respCode = 200) {
     const res = await request(url)
         .get('/users/' + user.id + '/documents')
+        .query({populate: populateFields})
+        .query(qs)
+        .expect(respCode);
+    return res.body;
+}
+
+async function getUserDocument(user, document, populateFields = [], qs = {}, respCode = 200) {
+    const res = await request(url)
+        .get('/users/' + user.id + '/documents/' + document.id)
         .query({populate: populateFields})
         .query(qs)
         .expect(respCode);
@@ -208,9 +335,27 @@ async function getUserSuggestedDocuments(user, respCode = 200) {
     return res.body;
 }
 
-async function getUserDrafts(user, populateFields, qs = {}, respCode = 200) {
+async function getUserSuggestedDocument(user, document, populateFields = [], qs = {}, respCode = 200) {
+    const res = await request(url)
+        .get('/users/' + user.id + '/suggestedDocuments/' + document.id)
+        .query({populate: populateFields})
+        .query(qs)
+        .expect(respCode);
+    return res.body;
+}
+
+async function getUserDrafts(user, populateFields = [], qs = {}, respCode = 200) {
     const res = await request(url)
         .get('/users/' + user.id + '/drafts')
+        .query({populate: populateFields})
+        .query(qs)
+        .expect(respCode);
+    return res.body;
+}
+
+async function getUserDraft(user, draftData, populateFields = [], qs = {}, respCode = 200) {
+    const res = await request(url)
+        .get('/users/' + user.id + '/drafts/' + draftData.id)
         .query({populate: populateFields})
         .query(qs)
         .expect(respCode);
@@ -297,7 +442,6 @@ async function userRemoveVerify(user, doc1, verificationData, doc2, respCode = 2
     return res.body;
 }
 
-
 async function userVerifyDrafts(user, drafts, respCode = 200) {
     const auth = getAuth(user.id);
     const res = await auth.agent
@@ -357,6 +501,19 @@ async function userVerifyDocument(user, document, position, affiliations, corres
             position: position,
             'affiliations': affiliations,
             'corresponding': corresponding
+        })
+        .expect(respCode);
+    return res.body;
+}
+
+async function userMarkAllAsNotDuplicates(user, documentId, duplicateIds, respCode = 200) {
+    const auth = getAuth(user.id);
+    const res = await auth.agent
+        .post('/users/' + user.id + '/documents/' + documentId + '/not-duplicates')
+        .set('access_token', auth.token)
+        .send({
+            documentId: documentId,
+            duplicateIds: duplicateIds
         })
         .expect(respCode);
     return res.body;
@@ -422,7 +579,8 @@ async function createExternalDocument(documentData, origin = DocumentOrigins.SCO
         .populate('authorships')
         .populate('affiliations')
         .populate('authors')
-        .populate('source');
+        .populate('source')
+        .populate('duplicates');
 }
 
 async function fixDocumentsDocumenttype(documents) {
@@ -433,4 +591,19 @@ async function fixDocumentsDocumenttype(documents) {
         newDocs.push(newD);
     }
     return newDocs;
+}
+
+function getUniqueDuplicateIds(document) {
+    const ids = document.duplicates.map(duplicate => {
+        switch(document.id) {
+            case duplicate.duplicate:
+                return duplicate.document;
+            case duplicate.document:
+                return duplicate.duplicate;
+            default:
+                break;
+        }
+    });
+
+    return [...(new Set(ids))];
 }

@@ -9,10 +9,18 @@
         'DocumentLabels',
         'DocumentKinds',
         'documentFieldsRules',
-        'documentOrigins'
+        'documentOrigins',
+        'ValidateService'
     ];
 
-    function Prototyper(userConstants, DocumentLabels, DocumentKinds, documentFieldsRules, documentOrigins) {
+    function Prototyper(
+        userConstants,
+        DocumentLabels,
+        DocumentKinds,
+        documentFieldsRules,
+        documentOrigins,
+        ValidateService
+    ) {
         const service = {
             toUserModel: toUserModel,
             toUsersCollection: applyToAll(toUserModel),
@@ -46,9 +54,6 @@
             },
             getCollaborationGroups: function () {
                 return _.map(this.collaborations, 'group');
-            },
-            isAdmin: function () {
-                return this.role === userConstants.role.ADMINISTRATOR;
             },
             admins: function (group) {
                 var administeredGroupsId = _.map(this.administratedGroups, 'id');
@@ -91,6 +96,15 @@
             },
             isInternal: function () {
                 return _.endsWith(this.username, '@iit.it');
+            },
+            isAdmin: function () {
+                return this.role === userConstants.role.ADMINISTRATOR;
+            },
+            isViewOnly: function () {
+                return [userConstants.role.GUEST, userConstants.role.EVALUATOR].includes(this.role);
+            },
+            isSuperViewer: function () {
+                return [userConstants.role.ADMINISTRATOR, userConstants.role.EVALUATOR].includes(this.role);
             }
         };
         const groupPrototype = {
@@ -237,7 +251,7 @@
                         return rule.regex.test(this[k]);
                     });
             },
-            validateDocument: function () {
+            validateDocument: function (field = false) {
                 const requiredFields = [
                     'authorsStr',
                     'title',
@@ -245,8 +259,6 @@
                     'type',
                     'sourceType'
                 ];
-
-                let errors = {};
 
                 // TODO: refactor, invited_talk should be read by a service;
                 const invitedTalkType = 'invited_talk';
@@ -256,33 +268,8 @@
                     requiredFields.push('source');
 
                 let document = this;
-                _.forEach(documentFieldsRules, function(rule, field) {
-                    if (document[field]) {
-                        if (!rule.regex.test(document[field])) {
-                            if (typeof errors[field] === 'undefined') {
-                                errors[field] = [];
-                            }
-                            errors[field].push({
-                                rule: 'valid',
-                                message: rule.message
-                            });
-                        }
-                    }
-                });
 
-                _.forEach(requiredFields, function(field) {
-                    if (!document[field]) {
-                        if (typeof errors[field] === 'undefined') {
-                            errors[field] = [];
-                        }
-                        errors[field].push({
-                            rule: 'required',
-                            message: 'This field is required.'
-                        });
-                    }
-                });
-
-                return errors;
+                return ValidateService.validate(document, field, requiredFields, documentFieldsRules);
             },
             getAllCoauthors: function () {
                 return this.authors;
@@ -354,7 +341,7 @@
                 return this.hasLabel(DocumentLabels.DISCARDED);
             },
             isUnverifying: function () {
-                return this.hasLabel(DocumentLabels.UVERIFYING);
+                return this.hasLabel(DocumentLabels.UNVERIFYING);
             },
             getInstituteIdentifier: function (instituteIndex) {
                 const base26Chars = "0123456789abcdefghijklmnopqrstuvwxyz".split("");
@@ -378,6 +365,12 @@
                 const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
                 return this[f].some(re => re.id === researchEntity.id);
             },
+            isSynchronizedWith(origin) {
+                return this.synchronized && this.origin === origin;
+            },
+            isDeSynchronizedWith(origin) {
+                return this.origin === origin && this.synchronized_at && !this.synchronized;
+            },
             isExternal: function () {
                 return this.kind === DocumentKinds.EXTERNAL;
             },
@@ -398,10 +391,9 @@
             },
             getComparisonDuplicates() {
                 let duplicates;
-                if (this.isDraft())
-                    duplicates = this.duplicates;
-                else
-                    duplicates = this.duplicates.filter(d => d.duplicateKind === 'v');
+
+                duplicates = this.duplicates.filter(d => d.duplicateKind === 'v');
+
                 duplicates.sort((a, b) => {
                     if (a.duplicateKind === DocumentKinds.VERIFIED)
                         return -1;
@@ -494,16 +486,9 @@
         }
 
         function checkDuplicates(document) {
-            document.isComparable = (
-                    document.isDraft() &&
-                    document.duplicates.length
-                ) ||
-                (
-                    !document.isDraft() &&
-                    document.duplicates &&
-                    document.duplicates.length &&
-                    document.duplicates.some(d => d.duplicateKind === 'v')
-                );
+            document.isComparable = document.duplicates &&
+                document.duplicates.length &&
+                document.duplicates.some(d => d.duplicateKind === 'v');
         }
 
         function toMembershipModel(membership) {

@@ -1,13 +1,6 @@
 /* global Connector, sails */
 "use strict";
 
-/**
- * ResearchEntityController
- *
- * @description :: Server-side logic for managing Researchentities
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
-
 
 var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 
@@ -125,12 +118,12 @@ module.exports = {
         const favorite = req.body.favorite;
         res.halt(AuthorshipModel.setFavorite(documentId, researchEntityId, favorite));
     },
-    setDocumentAsNotDuplicate: function (req, res) {
+    setDocumentsAsNotDuplicate: function (req, res) {
         const researchEntityId = req.params.researchEntityId;
-        const document1Id = req.body.document1Id;
-        const document2Id = req.body.document2Id;
+        const documentId = req.params.documentId;
+        const duplicateIds = req.body.duplicateIds;
         const Model = getModel(req);
-        res.halt(Model.setDocumentAsNotDuplicate(Model, researchEntityId, document1Id, document2Id));
+        res.halt(Model.setDocumentsAsNotDuplicate(Model, researchEntityId, documentId, duplicateIds));
     },
     removeVerify: function (req, res) {
         const researchEntityId = parseInt(req.params.researchEntityId, 10);
@@ -140,6 +133,13 @@ module.exports = {
         verificationData.affiliationInstituteIds = req.body.affiliations;
         const Model = getModel(req);
         res.halt(Model.removeVerify(Model, researchEntityId, document1Id, verificationData, document2Id));
+    },
+    replace: function (req, res) {
+        const researchEntityId = parseInt(req.params.researchEntityId, 10);
+        const documentId = req.body.documentId;
+        const documentToBeReplacedId = req.body.documentToBeReplacedId;
+        const Model = getModel(req);
+        res.halt(Model.replace(Model, researchEntityId, documentId, documentToBeReplacedId));
     },
     getPublicDocuments: async (req, res) => makePublicAPIrequest(req, res, 'documents'),
     getPublications: async (req, res) => makePublicAPIrequest(req, res, 'publications'),

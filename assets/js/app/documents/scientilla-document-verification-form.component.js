@@ -47,33 +47,25 @@
             if (vm.document2)
                 vm.document2id = vm.document2.id;
 
-            const user = context.getResearchEntity();
+            let user;
             const DocumentService = context.getDocumentService();
             const deregisteres = [];
             const coauthorsDeregisteres = [];
 
-            let originalVerificationData = {};
-            let closed = false;
-
             vm.collapsed = true;
 
             vm.$onInit = function () {
+
+                user = context.getSubResearchEntity();
+                vm.verificationData.position = vm.document.getUserIndex(user);
+
                 if (user.getType() === 'group')
                     return vm.onFailure()();
 
-                vm.verificationData.position = vm.document.getUserIndex(user);
                 vm.verificationData.synchronize = vm.document.synchronized;
                 vm.verificationData.public = true;
 
                 deregisteres.push($scope.$watch('vm.verificationData.position', userSelectedChanged));
-
-                $scope.$on('modal.closing', function (event, reason) {
-                    if (!closed) {
-                        cancel(event);
-                    }
-                });
-
-                originalVerificationData = angular.copy(vm.verificationData);
             };
 
             vm.$onDestroy = () => {
@@ -132,18 +124,16 @@
                         'You are verifying the document as "' + authorStr + '".\n' +
                         'By clicking on Proceed "' + authorStr + '" will be automatically added to your aliases (' + aliases + ').\n' +
                         'You can always manage them from your profile settings.\n',
-                        ['Proceed']);
+                        {proceed: 'Proceed'});
 
-                    if (result === -1)
+                    if (result !== 'proceed')
                         return;
                 }
-
 
                 try {
                     const res = await verify(user, vm.document.id, data, vm.document2id);
                     const newUser = await UsersService.getProfile(user.id);
-                    await context.setResearchEntity(newUser);
-                    originalVerificationData = angular.copy(vm.verificationData);
+                    context.setSubResearchEntity(newUser);
                     executeOnSubmit({buttonIndex: 1, data: res});
                 } catch (e) {
                     executeOnFailure();
@@ -159,13 +149,10 @@
                     vm.verificationData.first_coauthor = authorship.first_coauthor;
                     vm.verificationData.last_coauthor = authorship.last_coauthor;
                     vm.verificationData.oral_presentation = authorship.oral_presentation;
-
-                    originalVerificationData = angular.copy(vm.verificationData);
                 }
 
                 getInstitutes().then(function (institutes) {
                     vm.verificationData.affiliations = institutes;
-                    originalVerificationData = angular.copy(vm.verificationData);
                 });
 
                 if (coauthorsDeregisteres.length) {
@@ -204,41 +191,8 @@
                 return vm.verificationData.affiliations;
             }
 
-            function cancel(event = false) {
-                if (!closed) {
-                    // Check if the original verification data is the same as the current verification data
-                    if (angular.toJson(originalVerificationData) === angular.toJson(vm.verificationData)) {
-                        closed = true;
-                        if (!event) {
-                            executeOnSubmit({buttonIndex: 0});
-                        }
-                    } else {
-                        if (event) {
-                            // Prevent modal from closing
-                            event.preventDefault();
-                        }
-
-                        // Show the unsaved data modal
-                        ModalService
-                            .multipleChoiceConfirm('Unsaved data',
-                                `There is unsaved data in the form. Do you want to go back and save this data?`,
-                                ['Yes', 'No'],
-                                false)
-                            .then(function (buttonIndex) {
-                                switch (buttonIndex) {
-                                    case 0:
-                                        break;
-                                    case 1:
-                                        vm.verificationData = angular.copy(originalVerificationData);
-                                        closed = true;
-                                        executeOnSubmit({buttonIndex: 0});
-                                        break;
-                                    default:
-                                        break;
-                                }
-                            });
-                    }
-                }
+            function cancel() {
+                executeOnSubmit({buttonIndex: 0});
             }
 
             function viewSynchFields() {

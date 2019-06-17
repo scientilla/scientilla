@@ -8,16 +8,14 @@
         "UsersService",
         "ModalService",
         "localStorageService",
-        "EventsService",
-        '$rootScope'
+        "EventsService"
     ];
 
     function AuthService(Restangular,
                          UsersService,
                          ModalService,
                          localStorageService,
-                         EventsService,
-                         $rootScope) {
+                         EventsService) {
 
         const service = {
             isLogged: false,
@@ -54,14 +52,7 @@
                     service.expiration = jwt.expires;
                     Restangular.setDefaultHeaders({access_token: service.jwtToken});
 
-                    localStorageService.set("authService", {
-                        isLogged: service.isLogged,
-                        userId: service.userId,
-                        username: service.username,
-                        user: service.user,
-                        jwtToken: service.jwtToken,
-                        expiration: service.expiration
-                    });
+                    setLocaleStorage();
 
                     EventsService.publish(EventsService.AUTH_LOGIN, service.user);
                     if (!service.user.alreadyAccess) {
@@ -134,6 +125,17 @@
                     EventsService.publish(EventsService.AUTH_LOGOUT);
                     clearUserAccount();
                 });
+        }
+
+        function setLocaleStorage() {
+            localStorageService.set("authService", {
+                isLogged: service.isLogged,
+                userId: service.userId,
+                username: service.username,
+                user: service.user,
+                jwtToken: service.jwtToken,
+                expiration: service.expiration
+            });
         }
     }
 

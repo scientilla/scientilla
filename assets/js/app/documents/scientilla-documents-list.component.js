@@ -10,6 +10,7 @@
             controller: scientillaDocumentsList,
             controllerAs: 'vm',
             bindings: {
+                category: '<',
                 researchEntity: '<',
                 section: '<'
             }
@@ -19,13 +20,12 @@
     scientillaDocumentsList.$inject = [
         'context',
         'researchEntityService',
-        'documentSearchForm',
         'EventsService',
         'documentListSections',
         'AuthService'
     ];
 
-    function scientillaDocumentsList(context, researchEntityService, documentSearchForm, EventsService, documentListSections, AuthService) {
+    function scientillaDocumentsList(context, researchEntityService, EventsService, documentListSections, AuthService) {
         const vm = this;
 
         const DocumentsService = context.getDocumentService();
@@ -39,17 +39,15 @@
 
         vm.onFilter = onFilter;
 
-        vm.searchForm = documentSearchForm;
-
         let query = {};
 
         vm.$onInit = function () {
-            vm.editable = vm.section === documentListSections.VERIFIED && AuthService.user.isInternal();
+            vm.editable = vm.section === documentListSections.VERIFIED && !AuthService.user.isViewOnly();
 
             EventsService.subscribeAll(vm, [
                 EventsService.DRAFT_VERIFIED,
                 EventsService.DOCUMENT_VERIFIED,
-                EventsService.DRAFT_UNVERIFIED,
+                EventsService.DOCUMENT_UNVERIFIED,
                 EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED,
                 EventsService.DOCUMENT_AUTORSHIP_PRIVACY_UPDATED,
                 EventsService.DOCUMENT_AUTORSHIP_FAVORITE_UPDATED,

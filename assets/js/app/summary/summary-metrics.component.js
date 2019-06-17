@@ -9,18 +9,16 @@
             controllerAs: 'vm',
             bindings: {
                 chartsData: '<'
-            },
-            require: {
-                profileSummary: '^profileSummary'
             }
         });
 
     SummaryMetricsComponent.$inject = [
         'ChartService',
-        'ModalService'
+        'ModalService',
+        '$element'
     ];
 
-    function SummaryMetricsComponent(ChartService, ModalService) {
+    function SummaryMetricsComponent(ChartService, ModalService, $element) {
         const vm = this;
 
         vm.name = 'metrics';
@@ -29,7 +27,13 @@
         vm.showInfo = showInfo;
 
         vm.$onInit = () => {
-            vm.profileSummary.registerTab(vm);
+            const registerTab = requireParentMethod($element, 'registerTab');
+            registerTab(vm);
+        };
+
+        vm.$onDestroy = () => {
+            const unregisterTab = requireParentMethod($element, 'unregisterTab');
+            unregisterTab(vm);
         };
 
         vm.reload = (chartsData) => {

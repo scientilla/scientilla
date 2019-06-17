@@ -1,3 +1,5 @@
+/* global angular */
+
 (function () {
     'use strict';
 
@@ -9,7 +11,7 @@
             bindings: {
                 document: "<",
                 onSubmit: "&",
-                closeFn: "&"
+                checkAndClose: "&"
             }
         });
 
@@ -23,11 +25,10 @@
     ];
 
     function scientillaTagForm(Prototyper, EventsService, context, researchEntityService, $scope, ModalService) {
-        var vm = this;
+        const vm = this;
 
-        var researchEntity = context.getResearchEntity();
-        let originalTags = {};
-        let closed = false;
+        const subResearchEntity = context.getSubResearchEntity();
+        let originalTags = '';
 
         vm.getTagsQuery = getTagsQuery;
         vm.tagLabelContructor = tagLabelContructor;
@@ -35,14 +36,8 @@
         vm.close = close;
 
         vm.$onInit = function () {
-            vm.tags = researchEntity.getTagsByDocument(vm.document) || [];
-            originalTags = angular.copy(vm.tags);
-
-            $scope.$on('modal.closing', function (event, reason) {
-                if (!closed) {
-                    close(event);
-                }
-            });
+            vm.tags = subResearchEntity.getTagsByDocument(vm.document) || [];
+            originalTags = angular.toJson(vm.tags);
         };
 
         vm.$onDestroy = function () {
@@ -60,7 +55,7 @@
 
         function save() {
             originalTags = angular.copy(vm.tags);
-            researchEntityService.setPrivateTags(researchEntity, vm.document, vm.tags.map(t => t.value))
+            researchEntityService.setPrivateTags(subResearchEntity, vm.document, vm.tags.map(t => t.value))
                 .then(function () {
                     EventsService.publish(EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED, vm.document);
                 });
@@ -69,44 +64,8 @@
                 vm.onSubmit()(0);
         }
 
-        function close(event = false) {
-            if (!_.isFunction(vm.closeFn())) {
-                return Promise.reject('no close function');
-            }
-
-            if (!closed) {
-                // Check if the tags are the same as the original ones
-                if (angular.toJson(originalTags) === angular.toJson(vm.tags)) {
-                    closed = true;
-                    if (!event) {
-                        return vm.closeFn()();
-                    }
-                } else {
-                    if (event) {
-                        // Prevent modal from closing
-                        event.preventDefault();
-                    }
-
-                    // Show the unsaved data modal
-                    ModalService
-                        .multipleChoiceConfirm('Unsaved data',
-                            `There is unsaved data in the form. Do you want to go back and save this data?`,
-                            ['Yes', 'No'],
-                            false)
-                        .then(function (buttonIndex) {
-                            switch (buttonIndex) {
-                                case 0:
-                                    break;
-                                case 1:
-                                    vm.tags = angular.copy(originalTags);
-                                    closed = true;
-                                    return vm.closeFn()();
-                                default:
-                                    break;
-                            }
-                        });
-                }
-            }
+        function close() {
+            vm.checkAndClose()(() => originalTags === angular.toJson(vm.tags));
         }
     }
 

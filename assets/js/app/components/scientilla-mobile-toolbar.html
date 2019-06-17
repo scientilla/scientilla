@@ -1,12 +1,12 @@
 <ul
     class="mobile-toolbar-listing"
-    ng-class="{ 'not-logged-in': !vm.isLogged, 'logged-in': vm.isLogged, 'has-wizard': vm.showWizardVisible() && vm.user.isInternal() }">
+    ng-class="{ 'not-logged-in': !vm.isLogged, 'logged-in': vm.isLogged, 'has-wizard': vm.showWizardVisible() && !vm.user.isViewOnly() }">
     <li>
         <div uib-dropdown class="btn-group" is-open="status.isopen">
             <span
                 ng-if="!vm.user.administratedGroups.length"
                 class="btn btn-outline-secondary">
-                {{vm.researchEntity.getDisplayName()}}
+                {{vm.subResearchEntity.getDisplayName()}}
             </span>
             <button
                 ng-if="vm.user.administratedGroups.length"
@@ -16,7 +16,7 @@
                 uib-dropdown-toggle
                 ng-disabled="disabled">
                 <i class="fas fa-user fa-left"></i>
-                {{ vm.researchEntity.getDisplayName() }}
+                {{ vm.subResearchEntity.getDisplayName() }}
             </button>
             <ul
                 uib-dropdown-menu
@@ -53,7 +53,7 @@
         </a>
     </li>
     
-    <li ng-if="vm.isLogged && vm.showWizardVisible() && vm.user.isInternal()">
+    <li ng-if="vm.isLogged && vm.showWizardVisible() && !vm.user.isViewOnly()">
         <div uib-dropdown class="dropdown">
             <button
                 class="btn btn-outline-secondary"
@@ -81,7 +81,7 @@
         <button
             class="btn btn-outline-secondary"
             ng-click="vm.editProfile()"
-            ng-if="vm.user.isInternal()">
+            ng-if="!vm.user.isViewOnly()">
             <i class="fas fa-cogs"></i>
         </button>
     </li>

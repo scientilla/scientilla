@@ -1,6 +1,7 @@
 <button
     type="{{vm.buttonType}}"
     class="btn {{vm.getClasses()}}"
+    title="{{ vm.title }}"
     ng-disabled="vm.ngDisabled"
     ng-click="vm.click()()"
     ng-transclude></button>

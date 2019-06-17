@@ -9,8 +9,31 @@
 
     function configure(RestangularProvider, $routeProvider, localStorageServiceProvider, apiPrefix, NotificationProvider) {
         $routeProvider
-            .when("/", {
-                template: "<profile-summary></profile-summary>"
+            .when("/:group?", {
+                controller: handleRequest,
+                template: "<profile-summary></profile-summary>",
+                resolve: {
+                    authService: getAuthService,
+                    context: getContext
+                }
+            })
+            .when("/:group?/accomplishments/verified", {
+                controller: handleRequest,
+                template: params => '' +
+                    '<scientilla-accomplishment-verified-list research-entity="$resolve.researchEntity">' +
+                    '</scientilla-accomplishment-verified-list>',
+                resolve: {
+                    authService: getAuthService
+                }
+            })
+            .when("/:group?/accomplishments/drafts", {
+                controller: handleRequest,
+                template: params => '' +
+                    '<scientilla-accomplishment-drafts-list>' +
+                    '</scientilla-accomplishment-drafts-list>',
+                resolve: {
+                    authService: getAuthService
+                }
             })
             .otherwise({
                 redirectTo: "/"
@@ -24,7 +47,7 @@
             .setPrefix('scientilla');
 
         NotificationProvider.setOptions({
-            delay: 4000,
+            delay: 5000,
             startLeft: 15,
             positionX: 'left',
             positionY: 'bottom'
@@ -124,5 +147,44 @@
         Restangular.extendCollection('allMembers', Prototyper.toUsersCollection);
         Restangular.extendCollection('groups', Prototyper.toGroupsCollection);
         Restangular.extendCollection('taglabels', Prototyper.toTagLabelsCollection);
+    }
+
+    getAuthService.$inject = ['AuthService'];
+
+    function getAuthService(AuthService) {
+        return AuthService;
+    }
+
+    getContext.$inject = ['context'];
+
+    function getContext(context) {
+        return context;
+    }
+
+    handleRequest.$inject = [
+        '$scope',
+        '$routeParams',
+        'path',
+        'authService',
+        'context'
+    ];
+
+    /*
+     * This function handles the request declared above.
+     * It validates the group slug (optional) and redirects if the group slug is not valid.
+     */
+    function handleRequest($scope, $routeParams, path, authService, context) {
+        let activeGroup;
+        const user = authService.user;
+
+        if (!$routeParams.group)
+            return context.setSubResearchEntity(user);
+
+        activeGroup = user.administratedGroups.find(g => g.slug === $routeParams.group);
+
+        if (activeGroup)
+            return context.setSubResearchEntity(activeGroup);
+
+        path.goTo('/');
     }
 })();

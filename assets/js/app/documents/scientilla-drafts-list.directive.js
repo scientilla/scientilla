@@ -16,16 +16,16 @@
     scientillaDrafsList.$inject = [
         'context',
         'researchEntityService',
-        'documentSearchForm',
         'documentListSections',
-        'EventsService'
+        'EventsService',
+        'documentCategories'
     ];
 
     function scientillaDrafsList(context,
                                  researchEntityService,
-                                 documentSearchForm,
                                  documentListSections,
-                                 EventsService) {
+                                 EventsService,
+                                 documentCategories) {
         var vm = this;
 
         var DocumentsService = context.getDocumentService();
@@ -42,8 +42,8 @@
         vm.synchronizeDraft = DocumentsService.synchronizeDraft;
         vm.desynchronizeDrafts = DocumentsService.desynchronizeDrafts;
         vm.compareDocuments = DocumentsService.compareDocuments;
+        vm.documentCategories = documentCategories;
 
-        vm.searchForm = documentSearchForm;
         vm.documentListSections = documentListSections;
 
         var query = {};
