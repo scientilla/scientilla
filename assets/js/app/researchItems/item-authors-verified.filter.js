@@ -21,7 +21,7 @@
                 if (!user)
                     return authorStr;
 
-                return '<a href="#/users/' + verified.researchEntity + '">' + authorStr + '</a>';
+                return '<a href="#/users/' + user.id + '">' + authorStr + '</a>';
 
 
             }).join(', ');
