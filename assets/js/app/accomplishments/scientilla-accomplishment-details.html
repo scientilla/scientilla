@@ -22,7 +22,17 @@
 
 <div>
     <div>
-        {{vm.accomplishment.year}} <span ng-if="vm.accomplishment.yearTo"> - {{vm.accomplishment.yearTo}}</span>
+        <label class="inline-block">
+            <span ng-if="vm.accomplishment.type.key !== 'editorship'">Year: </span>
+            <span ng-if="vm.accomplishment.type.key === 'editorship'">Period: </span>
+        </label>
+        {{vm.accomplishment.year}}
+        <span ng-if="vm.accomplishment.type.key === 'editorship'">
+        - <span ng-if="vm.accomplishment.yearTo">{{vm.accomplishment.yearTo}}</span>
+        <span ng-if="!vm.accomplishment.yearTo">Present</span>
+    </span>
+
+
     </div>
     <div ng-if="vm.accomplishment.issuer">
         <label class="inline-block">Issuer:</label> {{vm.accomplishment.issuer}}
