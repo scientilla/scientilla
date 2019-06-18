@@ -1,12 +1,15 @@
 <footer class="footer js-footer" sticky-footer>
     <div class="container-fluid">
         <ul class="footer-listing">
-            <li>&copy; Istituto Italiano di Tecnologia | Data Analysis Office - Need help? Write to
-                <a href="mailto:data.analysis@iit.it?Subject=Scientilla%20request"
-                   target="_top">data.analysis@iit.it</a>
+            <li>&copy; {{ vm.customizations.institute.name }} | {{ vm.customizations.footer.text }}
+                <a href="mailto:{{ vm.customizations.footer.email }}?Subject=Scientilla%20request"
+                   target="_top">{{ vm.customizations.footer.email }}</a>
             </li>
             <li>
-                <img src="/images/iit-logo-40.png">
+                <img
+                    ng-if="vm.customizations.logos && vm.customizations.logos.header && vm.customizations.logos.header.src"
+                    ng-src="{{ vm.customizations.logos.header.src }}"
+                    alt="{{ vm.customizations.logos.header.name }}">
             </li>
         </ul>
     </div>

@@ -128,6 +128,10 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/backup/restore']: 'Backup.restore',
     ['post ' + apiPrfx + '/backup/make']: 'Backup.make',
 
+    'get /api/v1/customize': 'Customize.getCustomizations',
+    'post /api/v1/customize/reset': 'Customize.resetCustomizations',
+    'post /api/v1/customize': 'Customize.setCustomizations',
+
     //MBO
     ['get ' + apiPrfx + '/mbo/v2017/overall_performance/researcher']: 'User.getMBOOverallPerformance',
     ['get ' + apiPrfx + '/mbo/v2017/iit_performance/researcher']: 'User.getMBOInstitutePerformance',

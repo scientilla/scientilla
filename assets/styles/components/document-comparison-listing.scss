@@ -59,7 +59,7 @@
             margin-left: 0px;
             text-align: center;
             transform: rotate(0deg);
-            
+
             span{
                 display: block;
                 margin-bottom: .5rem;
@@ -95,7 +95,7 @@
 
         & > li{
             padding: 1.5rem;
-            border: 1px solid $gray-400;
+            border: 1px solid $gray-300;
             border-radius: $border-radius;
             cursor: pointer;
 
@@ -243,7 +243,7 @@
                 display: block;
             }
         }
-        
+
         .duplicate-actions{
             display: none;
         }

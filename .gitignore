@@ -41,7 +41,7 @@
 
 config/local.js
 config/scientilla.js
-
+config/customizations.js
 
 
 
@@ -163,6 +163,15 @@ installer/.env
 !installer/uploads
 installer/uploads/*
 !installer/uploads/.gitkeep
+
+################################################
+# Assets
+#
+#
+################################################
+
+assets/uploads/*
+!assets/uploads/.gitkeep
 
 ################################################
 # Others

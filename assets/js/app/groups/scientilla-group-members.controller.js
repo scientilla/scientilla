@@ -15,16 +15,18 @@
         'documentListSections',
         'UsersService',
         'GroupsService',
+        'AuthService',
         'ModalService',
         'researchEntityService'
     ];
 
-    function controller(documentListSections, UsersService, GroupsService, ModalService, researchEntityService) {
+    function controller(documentListSections, UsersService, GroupsService, AuthService, ModalService, researchEntityService) {
         const vm = this;
         vm.documentListSections = documentListSections;
         vm.addCollaborator = addCollaborator;
         vm.removeCollaborator = removeCollaborator;
         vm.getUsers = getUsers;
+        vm.isAdmin = isAdmin;
 
         vm.membershipTypes = {
             MEMBER: {
@@ -77,14 +79,12 @@
         async function removeCollaborator(user) {
             const buttonIndex = await ModalService.multipleChoiceConfirm('Removing group member',
                 `Are you sure you want to remove ${user.getDisplayName()} from the group members?`,
-                ['Proceed']);
+                {proceed: 'Proceed'});
 
-            switch (buttonIndex) {
-                case 0:
-                    await GroupsService.removeCollaborator(vm.group, user);
-                    refresh();
+            if (buttonIndex === 'proceed') {
+                await GroupsService.removeCollaborator(vm.group, user);
+                refresh();
             }
-
         }
 
         async function onFilter(q) {
@@ -123,5 +123,9 @@
         }
 
         /* jshint ignore:end */
+
+        function isAdmin() {
+            return AuthService.isAdmin;
+        }
     }
 })();

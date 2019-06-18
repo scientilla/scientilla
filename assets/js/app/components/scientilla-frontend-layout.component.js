@@ -10,14 +10,24 @@
         });
 
     scientillaFrontendLayout.$inject = [
-        '$rootScope'
+        '$rootScope',
+        'EventsService',
+        'CustomizeService'
     ];
 
-    function scientillaFrontendLayout($rootScope) {
+    function scientillaFrontendLayout($rootScope, EventsService, CustomizeService) {
         var vm = this;
 
         vm.$onInit = function () {
             $rootScope.bodyLayout = 'frontend';
+
+            EventsService.subscribe(vm, EventsService.CUSTOMIZATIONS_CHANGED, function (event, customizations) {
+                vm.customizations = customizations;
+            });
+
+            CustomizeService.getCustomizations().then(customizations => {
+                vm.customizations = customizations;
+            });
         };
 
         vm.$onDestroy = function () {

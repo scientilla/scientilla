@@ -8,23 +8,20 @@
     ];
 
     function Settings(Restangular) {
-        var settings;
-        var service = {
+        let settings;
+        return {
             getSettings: getSettings
         };
 
-        function getSettings(refresh) {
-            refresh = refresh || false;
+        function getSettings(refresh = false) {
             if (settings && !refresh)
                 return Promise.resolve(settings);
-            var url = 'settings';
-            return Restangular.one(url).get()
-                .then(function(data) {
+
+            return Restangular.one('settings').get()
+                .then(data => {
                     settings = data;
                     return settings;
                 });
         }
-
-        return service;
     }
 })();

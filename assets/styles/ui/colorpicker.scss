@@ -1,0 +1,19 @@
+.color-picker-wrapper{
+    margin-bottom: .5rem;
+    .input-group{
+        .input-group-addon{
+            width: 30px;
+            border: 0px;
+            border-top-left-radius: 0.25rem;
+            border-bottom-left-radius: 0.25rem;
+        }
+
+        .color-picker-input-swatch{
+            padding: 0.5rem 1rem;
+            border: 1px solid $gray-300;
+            border-left: 0px;
+            border-top-right-radius: 0.25rem;
+            border-bottom-right-radius: 0.25rem;
+        }
+    }
+}

@@ -5,15 +5,17 @@
     z-index: 4;
     width: 100%;
     padding: 1rem 0px;
-    background: $scarpa-flow;
-    color: $white;
+    background: $footer-background-color;
+    color: color-yiq($footer-background-color);
 
     a{
-        color: $white;
+        color: color-yiq($footer-background-color);
         text-decoration: underline;
     }
 
     img{
+        height: 40px;
+        width: auto;
         margin-left: -5px;
     }
 

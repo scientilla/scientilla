@@ -19,7 +19,7 @@ label{
 .select-wrapper,
 .input-group{
     &.is-invalid{
-        border-color: $apple-blossom;
+        border-color: $error-color;
 
         & ~ .error-messages{
             .invalid-feedback{
@@ -76,7 +76,7 @@ label{
                 margin: 3px 5px 3px 0px;
                 vertical-align: top;
                 border-radius: 0.25rem;
-                border: 1px solid $silver;
+                border: 1px solid $gray-300;
                 content: '';
             }
         }
@@ -98,10 +98,10 @@ label{
         &:disabled{
             & + span{
                 cursor: not-allowed;
-                color: $gray;
+                color: $base-gray;
 
                 &:before{
-                    background: lighten($silver, 20%);
+                    background: $gray-100;
                 }
             }
         }
@@ -112,7 +112,7 @@ label{
     @include normalize-listing;
 
     .list-group-item{
-        border-color: $silver;
+        border-color: $gray-300;
     }
 }
 
@@ -138,8 +138,8 @@ label{
         width: 100%;
         height: 30px;
         padding-right: 2rem;
-        color: $mine-shaft;
-        border: 1px solid $silver;
+        color: $base-gray;
+        border: 1px solid $gray-300;
         border-radius: 0.25rem;
         background: none;
         -webkit-appearance: none;
@@ -157,7 +157,7 @@ label{
 
     &.has-error{
         &:before{
-            color: $apple-blossom;
+            color: $error-color;
         }
     }
 }
@@ -179,7 +179,7 @@ label{
 .has-error{
     label,
     i{
-        color: $apple-blossom;
+        color: $error-color;
     }
 }
 
@@ -187,7 +187,7 @@ label{
     margin-top: .5rem;
     font-size: 100%;
     line-height: 1;
-    color: $apple-blossom;
+    color: $error-color;
 }
 
 .filter-form-container{
@@ -216,7 +216,7 @@ label{
         .open-collapse,
         .close-collapse{
             font-size: 1.2rem;
-            color: $silver;
+            color: $gray-300;
         }
 
         .open-collapse{

@@ -1,4 +1,4 @@
-/* global d3 */
+/* global d3, tinycolor */
 (function () {
     "use strict";
     angular.module("services").factory("ChartService", ChartService);
@@ -7,18 +7,8 @@
         'DocumentTypesService'
     ];
 
-    const metricsColors = [
-        '#2ca02c', // IF
-        '#9467bd', // SJR
-        '#118798'  // SNIP
-    ];
-
-    const sourceTypesColors = [
-        '#0072AF', // journal
-        '#aec7e8', // conference
-        '#ff7f0e', // book
-        '#ffbb78'  // book series
-    ];
+    let styles = {};
+    let colors = [];
 
     function ChartService(DocumentTypesService) {
         const service = {
@@ -62,6 +52,37 @@
         service.getData = (researchEntity, charts, refresh = false) =>
             researchEntity.all('charts').getList({refresh: !!refresh, charts});
 
+        service.setStyles = (customizations) => {
+            const darkenColors = [],
+                lightenColors = [];
+            let extendedColors = [];
+
+            styles = customizations.styles;
+            colors = [
+                '#' + styles.chartColor1,
+                '#' + styles.chartColor2,
+                '#' + styles.chartColor3,
+                '#' + styles.chartColor4,
+                '#' + styles.chartColor5,
+                '#' + styles.chartColor6,
+                '#' + styles.chartColor7,
+                '#' + styles.chartColor8,
+                '#' + styles.chartColor9,
+                '#' + styles.chartColor10,
+                '#' + styles.chartColor11,
+                '#' + styles.chartColor12
+            ];
+
+            colors.forEach(color => {
+                darkenColors.push(tinycolor(color).darken(30).toString());
+                lightenColors.push(tinycolor(color).lighten(30).toString());
+            });
+
+            extendedColors = darkenColors.concat(lightenColors);
+            extendedColors = _.shuffle(extendedColors);
+
+            colors = colors.concat(extendedColors);
+        };
 
         service.getAsMainChart = chart => {
             const mainChart = _.cloneDeep(chart);
@@ -83,6 +104,7 @@
                     type: 'pieChart',
                     x: d => d.type,
                     y: d => d.value,
+                    color: colors,
                     labelThreshold: 0.02,
                     labelSunbeamLayout: true
                 }
@@ -114,18 +136,13 @@
                 values: getItemsByYear(chartsData.scientificTalksByYear, yearRange)
             }];
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function (o) {
-                    return o.value;
-                })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             const baseOptions = {
                 chart: {
                     type: 'multiBarChart',
+                    color: colors,
                     x: d => d.year,
                     y: d => d.value,
                     showValues: true,
@@ -176,13 +193,7 @@
                 yearRange.max
             );
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function (o) {
-                    return o.value;
-                })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             const baseOptions = {
@@ -192,7 +203,7 @@
                     y: d => d.value,
                     showValues: true,
                     stacked: true,
-                    color: sourceTypesColors,
+                    color: colors,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -221,9 +232,7 @@
         service.getHindexPerYear = (chartsData) => {
             const yearRange = getYearRange(chartsData);
             const hindexPerYear = getItemsByYear(chartsData.hindexPerYear, yearRange);
-            const maxY = Math.max.apply(Math, hindexPerYear.map(function (o) {
-                return o.value;
-            }));
+            const maxY = Math.max.apply(Math, hindexPerYear.map(o => o.value));
             const rangeY = getRangeY(maxY, true);
 
             const maxYValue = parseInt(_.maxBy(hindexPerYear, 'value').value, 10);
@@ -244,7 +253,7 @@
                 options: {
                     chart: {
                         type: 'lineChart',
-                        color: () => '#a94442',
+                        color: () => '#' + styles.errorColor,
                         x: d => d.year,
                         y: d => d.value,
                         showLabels: true,
@@ -284,13 +293,7 @@
                 values: getItemsByYear(chartsData.citationsPerDocumentYear, yearRange)
             }];
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function (o) {
-                    return o.value;
-                })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             return {
@@ -298,7 +301,7 @@
                 data: data,
                 options: getMultiBarChartConfig({
                     stacked: true,
-                    color: () => '#ff9933',
+                    color: () => '#' + styles.warningColor,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -328,13 +331,7 @@
                 values: getItemsByYear(chartsData.citationsPerYear, yearRange)
             }];
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function (o) {
-                    return o.value;
-                })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             return {
@@ -342,7 +339,7 @@
                 data: data,
                 options: getMultiBarChartConfig({
                     stacked: true,
-                    color: () => '#ff9933',
+                    color: () => '#' + styles.warningColor,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -392,7 +389,7 @@
                 options: {
                     chart: {
                         type: 'lineChart',
-                        color: (d, i) => metricsColors[i],
+                        color: (d, i) => colors[i],
                         showLabels: true,
                         showLegend: true,
                         useInteractiveGuideline: true,
@@ -440,7 +437,7 @@
                     values: getItemsByYear(chartsData.totalSnipPerYear, yearRange)
                 }],
                 options: getMultiBarChartConfig({
-                    color: (d, i) => metricsColors[i],
+                    color: (d, i) => colors[i],
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -482,19 +479,14 @@
                 yearRange.max
             );
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function (o) {
-                    return o.value;
-                })));
-            }
-            const maxY = Math.max.apply(Math, dataMax);
+            const maxY = Math.max.apply(null, getDatamax(data));
             const rangeY = getRangeY(maxY);
 
             return {
                 title: 'IIT vs non-IIT documents',
                 data: data,
                 options: getMultiBarChartConfig({
+                    color: colors,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -545,13 +537,7 @@
                 yearRange.max
             );
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function (o) {
-                    return o.value;
-                })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             return {
@@ -559,7 +545,7 @@
                 data: data,
                 options: getMultiBarChartConfig({
                     stacked: true,
-                    color: sourceTypesColors,
+                    color: colors,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -642,7 +628,8 @@
                     labelThreshold: 0.02,
                     labelSunbeamLayout: true,
                     showLabels: true,
-                    legendPosition: 'right'
+                    legendPosition: 'right',
+                    color: (d, i) => colors[i]
                 }
             };
 
@@ -724,7 +711,6 @@
                     showValues: true,
                     stacked: false,
                     showControls: false,
-                    //height: 420,
                     x: d => d.year,
                     y: d => d.value,
                     duration: 300,
@@ -830,6 +816,10 @@
             }
 
             return rangeY;
+        }
+
+        function getDatamax(data) {
+            return data.map(d => Math.max.apply(null, d.values.map(o => o.value)));
         }
     }
 }());

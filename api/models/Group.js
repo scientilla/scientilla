@@ -128,11 +128,6 @@ module.exports = _.merge({}, SubResearchEntity, {
             via: 'researchEntity',
             through: 'externaldocumentgroup'
         },
-        notDuplicateDocuments: {
-            collection: 'document',
-            via: 'researchEntity',
-            through: 'documentnotduplicategroup'
-        },
         scopusId: {
             type: 'STRING'
         },
@@ -157,6 +152,7 @@ module.exports = _.merge({}, SubResearchEntity, {
             return DocumentNotDuplicateGroup;
         }
     },
+    getDocumentNotDuplicateModel: () => DocumentNotDuplicateGroup,
     afterCreate: async function (group, cb) {
         if (!group.id)
             return cb();

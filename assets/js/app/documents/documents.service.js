@@ -62,13 +62,12 @@
                     return ModalService.multipleChoiceConfirm(
                         'Delete',
                         'This action will permanently delete this document.\n Do you want to proceed?',
-                        ['Proceed'],
+                        {proceed: 'Proceed'},
                         'Cancel',
                         true)
                         .then(res => {
                                 switch (res) {
-                                    // Proceed
-                                    case 0:
+                                    case 'proceed':
                                         researchEntityService
                                             .deleteDraft(researchEntity, draft.id)
                                             .then(function (d) {
@@ -79,8 +78,7 @@
                                                 Notification.warning("Failed to delete draft");
                                             });
                                         break;
-                                    // Cancel
-                                    case -1:
+                                    case 'cancel':
                                         const notificationMsg = 'The operation is been canceled.';
                                         Notification.warning(notificationMsg);
                                         break;
@@ -129,18 +127,18 @@
                         'Unverifying a document removes it from your profile, you can choose:\n\n' +
                         'Move to drafts: to move the document in your drafts.\n' +
                         'Remove: to remove it completely from your profile.',
-                        ['Move to drafts', 'Remove'],
+                        {move: 'Move to drafts', remove: 'Remove'},
                         'Cancel',
                         true
                     );
 
                     switch (unverifyAction) {
-                        case -1:
+                        case 'cancel':
                             document.removeLabel(DocumentLabels.UNVERIFYING);
                             const notificationMsg = 'The operation is been canceled.';
                             Notification.warning(notificationMsg);
                             break;
-                        case 0:
+                        case 'move':
                             return researchEntityService.copyDocument(researchEntity, document)
                                 .then(function (draft) {
                                     EventsService.publish(EventsService.DRAFT_CREATED, draft);
@@ -152,7 +150,7 @@
                                         })
                                         .catch(() => Notification.warning('Failed to unverify document!'));
                                 });
-                        case 1:
+                        case 'remove':
                             return researchEntityService.unverify(researchEntity, document)
                                 .then(function (draft) {
                                     EventsService.publish(EventsService.DOCUMENT_UNVERIFIED, {});
@@ -165,6 +163,7 @@
 
                     document.removeLabel(DocumentLabels.UNVERIFYING);
                 }
+
                 /* jshint ignore:end */
 
                 function createDraft(documentData) {
@@ -263,13 +262,12 @@
                     return ModalService.multipleChoiceConfirm(
                         'Discard',
                         'This action will discard this document from the suggested documents. Do you want to proceed?',
-                        ['Proceed'],
+                        {proceed: 'Proceed'},
                         'Cancel',
                         true)
                         .then(res => {
                             switch (res) {
-                                // Proceed
-                                case 0:
+                                case 'proceed':
                                     researchEntityService
                                         .discardDocument(researchEntity, document.id)
                                         .then(function () {
@@ -280,8 +278,7 @@
                                             Notification.warning('Failed to discard document');
                                         });
                                     break;
-                                // Cancel
-                                case -1:
+                                case 'cancel':
                                     const notificationMsg = 'The operation is been canceled.';
                                     Notification.warning(notificationMsg);
                                     break;
@@ -417,13 +414,13 @@
                         buttonLabels;
 
                     // Check the category of the source document
-                    switch(category) {
+                    switch (category) {
 
                         // If the source document is a suggested document
                         case documentCategories.SUGGESTED:
-                            buttonLabels = [];
-                            buttonLabels['\'' + documentActions.SUGGESTED.VERIFY + '\''] = documentActions.SUGGESTED.VERIFY;
-                            buttonLabels['\'' + documentActions.SUGGESTED.COPY_TO_DRAFT + '\''] = documentActions.SUGGESTED.COPY_TO_DRAFT;
+                            buttonLabels = {};
+                            buttonLabels[documentActions.SUGGESTED.VERIFY] = documentActions.SUGGESTED.VERIFY;
+                            buttonLabels[documentActions.SUGGESTED.COPY_TO_DRAFT] = documentActions.SUGGESTED.COPY_TO_DRAFT;
 
                             // Show modal with multiple choice form with the options specified above
                             action = await ModalService.multipleChoiceConfirm(
@@ -433,7 +430,7 @@
                             );
 
                             // Check to chosen action
-                            switch(action) {
+                            switch (action) {
                                 case documentActions.SUGGESTED.VERIFY:
                                     // Mark as not duplicates
                                     await researchEntityService.markAsNotDuplicates(researchEntity, sourceDocument.id, duplicateIds);
@@ -464,9 +461,9 @@
 
                         // If the source document is a draft
                         case documentCategories.DRAFT:
-                            buttonLabels = [];
-                            buttonLabels['\'' + documentActions.DRAFT.VERIFY + '\''] = documentActions.DRAFT.VERIFY;
-                            buttonLabels['\'' + documentActions.DRAFT.KEEP_DRAFT + '\''] = documentActions.DRAFT.KEEP_DRAFT;
+                            buttonLabels = {};
+                            buttonLabels[documentActions.DRAFT.VERIFY] = documentActions.DRAFT.VERIFY;
+                            buttonLabels[documentActions.DRAFT.KEEP_DRAFT] = documentActions.DRAFT.KEEP_DRAFT;
 
                             // Show modal with multiple choice form with the options specified above
                             action = await ModalService.multipleChoiceConfirm(
@@ -475,7 +472,7 @@
                                 buttonLabels
                             );
 
-                            switch(action) {
+                            switch (action) {
                                 case documentActions.DRAFT.VERIFY:
                                     // Mark as not duplicates
                                     await researchEntityService.markAsNotDuplicates(researchEntity, sourceDocument.id, duplicateIds);
@@ -538,18 +535,16 @@
                     let response = false,
                         action = false,
                         hideFinalNotification = false,
-                        buttonLabels,
-                        notDuplicates;
+                        buttonLabels;
 
                     // Check the category of the source document
-                    switch(category) {
+                    switch (category) {
 
                         // If the source document is a suggested document
                         case documentCategories.SUGGESTED:
-
-                            buttonLabels = [];
-                            buttonLabels['\'' + documentActions.SUGGESTED.VERIFY + '\''] = documentActions.SUGGESTED.VERIFY;
-                            buttonLabels['\'' + documentActions.SUGGESTED.COPY_TO_DRAFT + '\''] = documentActions.SUGGESTED.COPY_TO_DRAFT;
+                            buttonLabels = {};
+                            buttonLabels[documentActions.SUGGESTED.VERIFY] = documentActions.SUGGESTED.VERIFY;
+                            buttonLabels[documentActions.SUGGESTED.COPY_TO_DRAFT] = documentActions.SUGGESTED.COPY_TO_DRAFT;
 
                             // Show modal with multiple choice form with the options specified above
                             action = await ModalService.multipleChoiceConfirm(
@@ -605,10 +600,9 @@
 
                         // If the source document is a draft
                         case documentCategories.DRAFT :
-
-                            buttonLabels = [];
-                            buttonLabels['\'' + documentActions.DRAFT.VERIFY + '\''] = documentActions.DRAFT.VERIFY;
-                            buttonLabels['\'' + documentActions.DRAFT.KEEP_DRAFT + '\''] = documentActions.DRAFT.KEEP_DRAFT;
+                            buttonLabels = {};
+                            buttonLabels[documentActions.DRAFT.VERIFY] = documentActions.DRAFT.VERIFY;
+                            buttonLabels[documentActions.DRAFT.KEEP_DRAFT] = documentActions.DRAFT.KEEP_DRAFT;
 
                             // Show modal with multiple choice form with the options specified above
                             action = await ModalService.multipleChoiceConfirm(
@@ -652,12 +646,15 @@
 
                         // If the source document is a verified document
                         case documentCategories.VERIFIED:
-                            buttonLabels = [];
-                            buttonLabels['\'' + documentActions.VERIFIED.KEEP + '\''] = documentActions.VERIFIED.KEEP;
-                            buttonLabels['\'' + documentActions.VERIFIED.MOVE_TO_DRAFT + '\''] = documentActions.VERIFIED.MOVE_TO_DRAFT;
+                            buttonLabels = {};
+                            buttonLabels[documentActions.VERIFIED.KEEP] = documentActions.VERIFIED.KEEP;
+                            buttonLabels[documentActions.VERIFIED.MOVE_TO_DRAFT] = documentActions.VERIFIED.MOVE_TO_DRAFT;
 
                             // Show modal with multiple choice form with the options specified above
-                            action = await ModalService.multipleChoiceConfirm('Replace document', 'You are going to replace the similar document with the source document. Do you want to keep that source document verified or move it to drafts?', buttonLabels);
+                            action = await ModalService.multipleChoiceConfirm(
+                                'Replace document',
+                                'You are going to replace the similar document with the source document. Do you want to keep that source document verified or move it to drafts?',
+                                buttonLabels);
 
                             switch (action) {
                                 case documentActions.VERIFIED.KEEP:
@@ -697,13 +694,15 @@
 
                         // If the source document is a external document
                         case documentCategories.EXTERNAL:
-
-                            buttonLabels = [];
-                            buttonLabels['\'' + documentActions.EXTERNAL.VERIFY + '\''] = documentActions.EXTERNAL.VERIFY;
-                            buttonLabels['\'' + documentActions.EXTERNAL.COPY_TO_DRAFT + '\''] = documentActions.EXTERNAL.COPY_TO_DRAFT;
+                            buttonLabels = {};
+                            buttonLabels[documentActions.EXTERNAL.VERIFY] = documentActions.EXTERNAL.VERIFY;
+                            buttonLabels[documentActions.EXTERNAL.COPY_TO_DRAFT] = documentActions.EXTERNAL.COPY_TO_DRAFT;
 
                             // Show modal with multiple choice form with the options specified above
-                            action = await ModalService.multipleChoiceConfirm('Replace document', 'You are going to replace the similar document with the source document. The similar document will be unverified. Do you want to verify the source document or copy it to drafts?', buttonLabels);
+                            action = await ModalService.multipleChoiceConfirm(
+                                'Replace document',
+                                'You are going to replace the similar document with the source document. The similar document will be unverified. Do you want to verify the source document or copy it to drafts?',
+                                buttonLabels);
 
                             switch (action) {
                                 case documentActions.EXTERNAL.VERIFY:
@@ -771,14 +770,14 @@
                     // Open the compare modal
                     try {
                         compareAction = await ModalService.openDocumentComparisonForm(sourceDocument, similarDocuments, category);
-                    } catch(e) {
+                    } catch (e) {
                         if (e !== 'backdrop click' && e !== 'escape key press') {
                             //console.log(e);
                         }
                     }
 
                     // Check the compare action that the user has chosen
-                    switch(compareAction.option) {
+                    switch (compareAction.option) {
 
                         // The user wants to keep the source document and mark all the other similar documents as not duplicates
                         case documentActions.COMPARE.KEEP_DOCUMENT:

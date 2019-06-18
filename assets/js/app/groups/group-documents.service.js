@@ -64,15 +64,14 @@
                         msg = 'This action will synchronize your document and keep it consistent with the Scopus version.\n' +
                             'To edit the document disable the synchronization.\n\n' +
                             'WARNING! It may overwrite the current data.';
-                    }
-                    else {
+                    } else {
                         title = 'Disable synchronization';
                         msg = 'This action will disable the synchronization with scopus.';
                     }
 
-                    return ModalService.multipleChoiceConfirm(title, msg, ['Proceed'])
+                    return ModalService.multipleChoiceConfirm(title, msg, {proceed: 'Proceed'})
                         .then(res => {
-                                if (res === 0)
+                                if (res === 'proceed')
                                     researchEntity.one('drafts', document.id)
                                         .customPUT({synchronized: sync}, 'synchronized')
                                         .then(newDocData => {
@@ -96,12 +95,14 @@
                     const res = await researchEntityService.removeVerify(researchEntity, docToVerify.id, verificationData, docToRemove.id)
                     return res;
                 }
+
                 /* jshint ignore:end */
 
                 /* jshint ignore:start */
                 async function markAsNotDuplicates(researchEntity, documentId, duplicateIds) {
                     return await researchEntityService.markAsNotDuplicates(researchEntity, documentId, duplicateIds);
                 }
+
                 /* jshint ignore:end */
             }
         };

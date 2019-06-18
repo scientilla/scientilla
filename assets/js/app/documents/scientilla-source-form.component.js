@@ -1,4 +1,4 @@
-/* global Scientilla */
+/* global angular */
 
 (function () {
     "use strict";
@@ -13,7 +13,7 @@
                 sourceType: "<",
                 onFailure: "&",
                 onSubmit: "&",
-                closeFn: "&"
+                checkAndClose: "&"
             }
         });
 
@@ -39,8 +39,6 @@
         vm.errors = {};
         vm.errorText = '';
 
-        let emptySource = {};
-        let closed = false;
         let timeout;
 
         const delay = 500;
@@ -48,10 +46,6 @@
         vm.$onInit = function () {
             vm.sourceTypes = DocumentTypesService.getSourceTypes().filter(st => st.type === 'scientific');
             vm.hasSourceType = !!vm.sourceType;
-
-            $scope.$on('modal.closing', function (event, reason) {
-                cancel(event);
-            });
         };
 
         function isValid() {
@@ -124,44 +118,8 @@
                 });
         }
 
-        function cancel(event = false) {
-            if (!_.isFunction(vm.closeFn())) {
-                return Promise.reject('no close function');
-            }
-
-            if (!closed) {
-                // Check if the new source is still empty
-                if (typeof vm.newSource === 'undefined' || angular.toJson(emptySource) === angular.toJson(vm.newSource)) {
-                    closed = true;
-                    if (!event) {
-                        return vm.closeFn()();
-                    }
-                } else {
-                    if (event) {
-                        // Prevent modal from closing
-                        event.preventDefault();
-                    }
-
-                    // Show the unsaved data modal
-                    ModalService
-                        .multipleChoiceConfirm('Unsaved data',
-                            `There is unsaved data in the form. Do you want to go back and save this data?`,
-                            ['Yes', 'No'],
-                            false)
-                        .then(function (buttonIndex) {
-                            switch (buttonIndex) {
-                                case 0:
-                                    break;
-                                case 1:
-                                    vm.newSource = emptySource;
-                                    closed = true;
-                                    return vm.closeFn()();
-                                default:
-                                    break;
-                            }
-                        });
-                }
-            }
+        function cancel() {
+            vm.checkAndClose()(() => typeof vm.newSource === 'undefined' || angular.toJson({}) === angular.toJson(vm.newSource));
         }
     }
 })();

@@ -1,3 +1,5 @@
+/* global angular */
+
 (function () {
 
     angular
@@ -9,7 +11,8 @@
             bindings: {
                 group: "<",
                 onFailure: "&",
-                onSubmit: "&"
+                onSubmit: "&",
+                checkAndClose: "&"
             }
         });
 
@@ -38,8 +41,7 @@
         vm.errorText = '';
 
         let formValues = {};
-        let originalGroup = {};
-        let forcedClose = false;
+        let originalGroupJson = '';
         let timeout;
 
         const delay = 500;
@@ -109,7 +111,7 @@
                 ngIf: isAdmin,
                 type: 'field'
             },
-            onChange: function(values) {
+            onChange: function (values) {
                 formValues = values;
             }
         };
@@ -119,20 +121,17 @@
             delete vm.group.memberships;
             $scope.$watch('vm.group.name', nameChanged);
 
-            $scope.$on('modal.closing', function(event, reason) {
-                cancel(event);
-            });
-
-            originalGroup = angular.copy(vm.group);
-            if (!originalGroup.slug) {
+            const originalGroup = angular.copy(vm.group);
+            if (!originalGroup.slug)
                 originalGroup.slug = calculateSlug(originalGroup);
-            }
-            if (originalGroup.type === undefined) {
+
+            if (originalGroup.type === undefined)
                 originalGroup.type = groupTypes.RESEARCH_LINE;
-            }
-            if (originalGroup.active === undefined) {
+
+            if (originalGroup.active === undefined)
                 originalGroup.active = true;
-            }
+
+            originalGroupJson = angular.toJson(originalGroup);
         };
 
         function validate(field = false) {
@@ -162,11 +161,7 @@
         }
 
         function isValid() {
-            if (Object.keys(vm.errors).length > 0) {
-                return false;
-            } else {
-                return true;
-            }
+            return Object.keys(vm.errors).length === 0;
         }
 
         function nameChanged() {
@@ -191,26 +186,22 @@
                 return;
             }
 
-            for (const key of Object.keys(vm.formStructure))
-                vm.group[key] = group[key];
-
-            if (!vm.group.slug)
-                vm.group.slug = calculateSlug(group);
+            updateGroupData();
 
             GroupsService.doSave(vm.group)
                 .then(function () {
                     vm.errorText = '';
                     Notification.success("Group data saved");
-                    originalGroup = angular.copy(vm.group);
+                    originalGroupJson = angular.copy(vm.group);
                     if (_.isFunction(vm.onSubmit()))
                         vm.onSubmit()(1);
                 }, function (res) {
                     var errors = res.data.invalidAttributes;
                     vm.errors = {};
 
-                    angular.forEach(errors, function(fields, fieldIndex) {
-                        angular.forEach(fields, function(error, errorIndex) {
-                            if (error.rule === 'required'){
+                    angular.forEach(errors, function (fields, fieldIndex) {
+                        angular.forEach(fields, function (error, errorIndex) {
+                            if (error.rule === 'required') {
                                 error.message = 'This field is required.';
                                 errors[fieldIndex][errorIndex] = error;
                             }
@@ -229,56 +220,19 @@
             return {model: model, qs: qs};
         }
 
-        function cancel(event = false) {
-            if (!forcedClose) {
-                for (const key of Object.keys(vm.formStructure)) {
-                    vm.group[key] = formValues[key];
-                }
+        function cancel() {
+            updateGroupData();
+            vm.checkAndClose()(() => originalGroupJson === angular.toJson(vm.group));
+        }
 
-                if (!vm.group.slug) {
-                    vm.group.slug = calculateSlug(formValues);
-                }
-
-                if (angular.toJson(originalGroup) !== angular.toJson(vm.group)) {
-                    if (event) {
-                        event.preventDefault();
-                    }
-
-                    // Show the unsaved data modal
-                    ModalService
-                        .multipleChoiceConfirm('Unsaved data',
-                            `There is unsaved data in the form. Do you want to go back and save this data?`,
-                            ['Yes', 'No'],
-                            false)
-                        .then(function (buttonIndex) {
-                            switch (buttonIndex) {
-                                case 0:
-                                    break;
-                                case 1:
-                                    forcedClose = true;
-                                    executeOnSubmit(0);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        });
-                } else {
-                    forcedClose = true;
-                    if (!event) {
-                        executeOnSubmit(0);
-                    }
-                }
+        function updateGroupData() {
+            for (const key of Object.keys(vm.formStructure)) {
+                vm.group[key] = formValues[key];
             }
-        }
 
-        function executeOnSubmit(i) {
-            if (_.isFunction(vm.onSubmit()))
-                vm.onSubmit()(i);
-        }
+            if (!vm.group.slug)
+                vm.group.slug = calculateSlug(formValues);
 
-        function executeOnFailure() {
-            if (_.isFunction(vm.onFailure()))
-                vm.onFailure()();
         }
 
         function isAdmin() {

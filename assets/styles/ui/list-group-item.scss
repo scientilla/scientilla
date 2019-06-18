@@ -1,22 +1,38 @@
 .list-group-item{
     padding: 1rem 1rem;
     font-size: 1.2rem;
-    border-color: $silver;
+    border-color: $gray-300;
     transition: .1s all;
 
+    &,
+    a:not(.badge):not(.btn){
+        color: color-yiq($gray-300);
+    }
+
     &.active{
-        border-color: $deep-cerulean;
-        background: $deep-cerulean;
+        border-color: $primary-color;
+        background: $primary-color;
+        color: color-yiq($primary-color);
 
         &:hover,
         &:focus,
         &:active:focus{
-            color: $white;
+            background: darken($primary-color, 7.5%);
+
+            &,
+            a:not(.badge):not(.btn){
+                color: color-yiq($primary-color);
+            }
         }
     }
 
     &:hover,
     &:active:focus{
-        color: $abbey;
+        background: $gray-300;
+
+        &,
+        a:not(.badge):not(.btn){
+            color: color-yiq($gray-300);
+        }
     }
 }

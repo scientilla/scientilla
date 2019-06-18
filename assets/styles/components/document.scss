@@ -1,14 +1,14 @@
 .document{
     @include normalize-listing;
     font-size: 1.2rem;
-    border-left: 2px solid $curious-blue;
+    border-left: 2px solid $primary-color;
 
     & > li{
         padding: 0px 1rem;
     }
 
     &.invalid{
-        border-left: 2px solid $apple-blossom;
+        border-left: 2px solid $error-color;
     }
 
     .document-info{
@@ -96,7 +96,7 @@
         border-left: 0px;
 
         .document-info{
-            border-right: 2px solid $curious-blue;
+            border-right: 2px solid $primary-color;
 
             .document-year{
                 position: absolute;
@@ -119,7 +119,7 @@
             border-left: 0px;
 
             .document-info{
-                border-right: 2px solid $apple-blossom;
+                border-right: 2px solid $error-color;
             }
         }
 

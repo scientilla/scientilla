@@ -60,10 +60,16 @@
             <div class="list-group">
                 <a ng-href="#/sources"
                    ng-class="{active: vm.isActive('/sources')}"
+                   ng-if="vm.isAdmin()"
                    class="list-group-item list-group-item-action">Sources</a>
                 <a ng-href="#/tools"
                    ng-class="{active: vm.isActive('/tools')}"
+                   ng-if="vm.isAdmin()"
                    class="list-group-item list-group-item-action">Tools</a>
+                <a ng-href="#/customize"
+                   ng-class="{active: vm.isActive('/customize')}"
+                   ng-if="vm.isAdmin()"
+                   class="list-group-item list-group-item-action">Customize</a>
             </div>
         </li>
     </ul>

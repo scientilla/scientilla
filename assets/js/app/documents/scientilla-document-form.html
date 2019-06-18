@@ -342,7 +342,7 @@
             <li>
                 <scientilla-button
                     type="button"
-                    click="vm.save()"
+                    click="vm.save"
                     ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData">{{ vm.saveStatus.message }}
                 </scientilla-button>
             </li>
@@ -350,13 +350,13 @@
                 <scientilla-button
                     type="submit"
                     ng-disabled="vm.verifyStatus.state !== 'ready to verify'"
-                    click="vm.verify()">{{ vm.verifyStatus.message }}
+                    click="vm.verify">{{ vm.verifyStatus.message }}
                 </scientilla-button>
             </li>
             <li>
                 <scientilla-button
                     type="cancel"
-                    click="vm.cancel()">Close</scientilla-button>
+                    click="vm.cancel">Close</scientilla-button>
             </li>
         </ul>
 

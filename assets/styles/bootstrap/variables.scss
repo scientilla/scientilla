@@ -1,37 +1,27 @@
-$gray-100:                          $silver;
-$gray-200:                          $silver;
-$gray-300:                          $silver;
-$gray-400:                          $silver;
-$gray-500:                          $gray;
-$gray-600:                          $pale-sky;
-$gray-700:                          $abbey;
-$gray-800:                          $scarpa-flow;
-$gray-900:                          $mine-shaft;
-
-$primary:                           $curious-blue;
-$secondary:                         $silver;
-$success:                           $forrest-green;
-$info:                              $blue-chill;
-$warning:                           $neon-carrot;
-$danger:                            $apple-blossom;
+$primary:                           $primary-color;
+$secondary:                         $secondary-color;
+$success:                           $success-color;
+$info:                              $info-color;
+$warning:                           $warning-color;
+$danger:                            $error-color;
 $light:                             $gray-100;
 $dark:                              $gray-800;
 
 $grid-breakpoints: (
-  xs: 0,
-  sm: 576px,
-  md: 768px,
-  lg: 992px,
-  xl: 1200px,
-  xxl: 1600px
+        xs: 0,
+        sm: 576px,
+        md: 768px,
+        lg: 992px,
+        xl: 1200px,
+        xxl: 1600px
 );
 
 $container-max-widths: (
-  sm: 540px,
-  md: 720px,
-  lg: 960px,
-  xl: 1140px,
-  xxl: 1540px
+        sm: 540px,
+        md: 720px,
+        lg: 960px,
+        xl: 1140px,
+        xxl: 1540px
 );
 
 $font-size-base:                    1.2rem;

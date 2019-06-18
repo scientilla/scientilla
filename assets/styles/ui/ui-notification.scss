@@ -1,0 +1,21 @@
+.ui-notification{
+    &.warning {
+        color: color-yiq($warning-color);
+        background: $warning-color;
+    }
+
+    &.error {
+        color: color-yiq($error-color);
+        background: $error-color;
+    }
+
+    &.success {
+        color: color-yiq($success-color);
+        background: $success-color;
+    }
+
+    &.info {
+        color: color-yiq($info-color);
+        background: $info-color;
+    }
+}

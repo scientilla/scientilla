@@ -6,23 +6,14 @@
 
 .btn-primary{
     &.selected{
-        border-color: $deep-cerulean;
-        background: $deep-cerulean;
-        color: $white;
-    }
-
-    &:focus,
-    &.focus{
-        color: $white;
+        border-color: darken($primary-color, 7.5%);
+        background: darken($primary-color, 7.5%);
+        color: color-yiq(darken($primary-color, 7.5%));
     }
 }
 
 .btn-warning{
     color: $white !important;
-}
-
-.btn-outline-secondary {
-    color: $mine-shaft;
 }
 
 .btn-dashboard{

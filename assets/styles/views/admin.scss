@@ -67,13 +67,13 @@
 
         .status-enabled{
             .status-dot{
-                background: $forrest-green;
+                background: $success-color;
             }
         }
 
         .status-disabled{
             .status-dot{
-                background: $apple-blossom;
+                background: $error-color;
             }
         }
 
@@ -132,6 +132,62 @@
                 display: block;
                 float: left;
                 padding: 0px 1rem 2rem 1rem;
+            }
+        }
+    }
+
+    &.admin-customize{
+        margin-bottom: 3rem;
+
+        .header-logo-info,
+        .chart-colors-discription{
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .logo-container{
+            margin-bottom: 1rem;
+            padding: .5rem;
+
+            &.header-logo-container{
+                background: $header-background-color;
+            }
+
+            &.footer-logo-container{
+                background: $footer-background-color;
+            }
+        }
+
+        .header-logo{
+            height: 40px;
+            width: auto;
+        }
+
+        .institute-icon{
+            height: 16px;
+            width: auto;
+            margin-bottom: .5rem;
+        }
+
+        .customize-categories{
+            @include normalize-listing;
+
+            & > li{
+                & + li{
+                    margin-top: 4rem;
+                }
+            }
+        }
+
+        .customize-actions{
+            @include normalize-listing;
+            @include clearfix;
+            margin: 2rem -1.5rem 0px -1.5rem;
+
+            & > li{
+                display: block;
+                padding: 0px 1.5rem;
+                float: left;
             }
         }
     }

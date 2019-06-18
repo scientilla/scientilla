@@ -1,5 +1,6 @@
-(function () {
+/* global angular */
 
+(function () {
     angular
         .module('users')
         .component('scientillaUserForm', {
@@ -9,7 +10,8 @@
             bindings: {
                 user: "<",
                 onFailure: "&",
-                onSubmit: "&"
+                onSubmit: "&",
+                checkAndClose: "&"
             }
         });
 
@@ -30,9 +32,6 @@
 
     function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants, context, ModalService, ValidateService, $timeout) {
         const vm = this;
-        vm.getCollaborationsFilter = getCollaborationsFilter;
-        vm.getGroupsQuery = GroupsService.getGroupsQuery;
-        vm.groupToCollaboration = groupToCollaboration;
         vm.submit = submit;
         vm.cancel = cancel;
         vm.checkValidation = checkValidation;
@@ -49,8 +48,7 @@
         vm.errors = [];
         vm.errorText = '';
 
-        let originalUser = angular.copy(vm.user);
-
+        let originalUserJson = '';
         let timeout;
 
         const delay = 500;
@@ -58,28 +56,17 @@
         vm.$onInit = function () {
             deregisteres.push($scope.$watch('vm.user.name', nameChanged));
             deregisteres.push($scope.$watch('vm.user.surname', nameChanged));
-            getCollaborations();
 
-            // Listen to modal closing event
-            $scope.$on('modal.closing', function(event, reason) {
-                cancel(event, reason);
-            });
-
-            if (!_.isArray(originalUser.aliases)) {
+            const originalUser = angular.copy(vm.user);
+            if (!Array.isArray(originalUser.aliases))
                 originalUser.aliases = [];
-            }
+            originalUserJson = angular.toJson(originalUser);
         };
 
         vm.$onDestroy = function () {
             for (const deregisterer of deregisteres)
                 deregisterer();
         };
-
-        //sTODO to be removed when deep populate exists
-        function getCollaborations() {
-            UsersService.getCollaborations(originalUser);
-            return UsersService.getCollaborations(vm.user);
-        }
 
         function checkValidation(field = false) {
             const requiredFields = [
@@ -128,9 +115,9 @@
                         var errors = res.data.invalidAttributes;
                         vm.errors = {};
 
-                        angular.forEach(errors, function(fields, fieldIndex) {
-                            angular.forEach(fields, function(error, errorIndex) {
-                                if (error.rule === 'required'){
+                        angular.forEach(errors, function (fields, fieldIndex) {
+                            angular.forEach(fields, function (error, errorIndex) {
+                                if (error.rule === 'required') {
                                     error.message = 'This field is required.';
                                     errors[fieldIndex][errorIndex] = error;
                                 }
@@ -147,11 +134,11 @@
                         if (_.isFunction(vm.onSubmit()))
                             vm.onSubmit()(1);
                     }
-                    
+
                 }).catch(function () {
-                    Notification.warning("Failed to save user");
-                    executeOnFailure();
-                });
+                Notification.warning("Failed to save user");
+                executeOnFailure();
+            });
         }
 
         function nameChanged() {
@@ -168,59 +155,16 @@
         }
 
         function calculateSlug(user) {
-            var name = user.name ? user.name : "";
-            var surname = user.surname ? user.surname : "";
-            var fullName = _.trim(name + " " + surname);
-            var slug = fullName.toLowerCase().replace(/\s+/gi, '-');
-            return slug;
+            const name = user.name ? user.name : "";
+            const surname = user.surname ? user.surname : "";
+            const fullName = _.trim(name + " " + surname);
+            return fullName.toLowerCase().replace(/\s+/gi, '-');
         }
 
-        function getCollaborationsFilter() {
-            return vm.user.getCollaborationGroups();
-        }
-
-        function groupToCollaboration(g) {
-            var collaboration = {group: g, user: vm.user.id};
-            Prototyper.toCollaborationModel(collaboration);
-            return collaboration;
-        }
-
-        function cancel(event = false) {
-            // Compare the current state with the original state of the user
-            if (angular.toJson(vm.user) === angular.toJson(originalUser)) {
-                if (!event) {
-                    executeOnSubmit(0);
-                }
-            } else {
-                if (event) {
-                    // Prevent modal from closing
-                    event.preventDefault();
-                }
-
-                // Show the unsaved data modal
-                ModalService
-                    .multipleChoiceConfirm('Unsaved data',
-                        `There is unsaved data in the form. Do you want to go back and save this data?`,
-                        ['Yes', 'No'],
-                        false)
-                    .then(function (buttonIndex) {
-                        switch (buttonIndex) {
-                            case 0:
-                                break;
-                            case 1:
-                                vm.user = angular.copy(originalUser);
-                                executeOnSubmit(0);
-                                break;
-                            default:
-                                break;
-                        }
-                    });
-            }
-        }
-
-        function executeOnSubmit(i) {
-            if (_.isFunction(vm.onSubmit()))
-                vm.onSubmit()(i);
+        function cancel() {
+            console.log(angular.toJson(vm.user));
+            console.log(originalUserJson);
+            vm.checkAndClose()(() => angular.toJson(vm.user) === originalUserJson);
         }
 
         function executeOnFailure() {

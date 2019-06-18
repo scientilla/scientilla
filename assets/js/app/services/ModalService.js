@@ -30,12 +30,12 @@
         /* jshint ignore:start */
         service.checkAndClose = async function (isCloseable, reason) {
             if (!isCloseable()) {
-                const buttonIndex = await service.multipleChoiceConfirm('Unsaved data',
-                    `You have unsaved changes. Do you want to close the form?`,
-                    ['Yes', 'No'],
+                const buttonKey = await service.multipleChoiceConfirm('Unsaved data!',
+                    '',
+                    {'continue': 'Continue editing', 'discard': 'Discard changes'},
                     false);
 
-                if (buttonIndex === 1) return;
+                if (buttonKey === 'continue') return;
             }
 
             const modal = getModalObject();
@@ -50,15 +50,16 @@
                 institute: institute
             };
 
-            return openModal(
-                '<scientilla-admin-new-institute\
-                    institute="vm.institute"\
-                    on-failure="vm.onFailure"\
-                    on-submit="vm.onSubmit" \
-                    close-fn="vm.onClose" \
-                ></scientilla-admin-new-institute>',
-                scopeVars
-            );
+            return openModal(`<scientilla-admin-new-institute
+                    institute="vm.institute"
+                    close-fn="vm.onClose"
+                    check-and-close="vm.checkAndClose"
+                ></scientilla-admin-new-institute>`,
+                scopeVars,
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                });
         };
 
         service.openSourceTypeModal = function (sourceType) {
@@ -66,15 +67,18 @@
                 sourceType: sourceType
             };
 
-            return openModal(
-                '<scientilla-source-form\
-                    source-type="vm.sourceType"\
-                    on-failure="vm.onFailure"\
-                    on-submit="vm.onSubmit" \
-                    close-fn="vm.onClose" \
-                ></scientilla-source-form>',
-                scopeVars
-            );
+            return openModal(`<scientilla-source-form\
+                    source-type="vm.sourceType"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    close-fn="vm.onClose"
+                    check-and-close="vm.checkAndClose"
+                ></scientilla-source-form>`,
+                scopeVars,
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                });
         };
 
         service.openScientillaDocumentForm = function (document, researchEntity) {
@@ -83,19 +87,20 @@
                 researchEntity: researchEntity,
             };
 
-            let modal = openModal(
-                '<scientilla-document-form\
-                    document="vm.document"\
-                    research-entity="vm.researchEntity"\
-                    on-failure="vm.onFailure"\
-                    on-submit="vm.onSubmit" \
-                    close-fn="vm.onClose"\
-                ></scientilla-document-form>',
+            return openModal(`<scientilla-document-form
+                    document="vm.document"
+                    research-entity="vm.researchEntity"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    close-fn="vm.onClose"
+                    check-and-close="vm.checkAndClose"
+                ></scientilla-document-form>`,
                 scopeVars,
                 {
-                    size: 'lg'
-                }
-            );
+                    size: 'lg',
+                    backdrop: 'static',
+                    keyboard: false
+                });
         };
 
         service.openScientillaDocumentSearch = function () {
@@ -114,7 +119,7 @@
                 document: document
             };
 
-            var template = `<div class="modal-header">
+            return openModal(`<div class="modal-header">
                                 <h3>Document details</h3>
                                 <button
                                     type="button"
@@ -128,9 +133,9 @@
                                 <scientilla-document-details
                                     document="vm.document"
                                     class="document-details"></scientilla-document-details>
-                            </div>`;
-
-            return openModal(template, scopeVars, {size: 'lg'});
+                            </div>`,
+                scopeVars,
+                {size: 'lg'});
         };
 
         service.openScientillaUserForm = function (user) {
@@ -140,13 +145,17 @@
             };
 
             return openModal(
-                '<scientilla-user-form\
-                    user="vm.user"\
-                    on-failure="vm.onFailure"\
-                    on-submit="vm.onSubmit"\
-                ></scientilla-user-form>',
-                scopeVars
-            );
+                `<scientilla-user-form
+                    user="vm.user"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"
+                ></scientilla-user-form>`,
+                scopeVars,
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                });
         };
 
         service.openDocumentComparisonForm = function (document, duplicates, category) {
@@ -157,19 +166,20 @@
                 category: category
             };
 
-            return openModal(
-                '<scientilla-document-comparison-form\
-                    document="vm.document"\
-                    duplicates="vm.duplicates"\
-                    category="vm.category"\
-                    on-failure="vm.onFailure"\
-                    on-submit="vm.onSubmit"\
-                ></scientilla-document-comparison-form>',
+            return openModal(`<scientilla-document-comparison-form\
+                    document="vm.document"
+                    duplicates="vm.duplicates"
+                    category="vm.category"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"
+                ></scientilla-document-comparison-form>`,
                 scopeVars,
                 {
-                    size: 'lg'
-                }
-            );
+                    size: 'lg',
+                    backdrop: 'static',
+                    keyboard: false
+                });
         };
 
 
@@ -179,14 +189,16 @@
                 document: document
             };
 
-            return openModal(
-                '<scientilla-tag-form\
-                    document="vm.document"\
-                    on-submit="vm.onSubmit" \
-                    close-fn="vm.onClose" \
-                 ></scientilla-tag-form>',
-                scopeVars
-            );
+            return openModal(`<scientilla-tag-form
+                    document="vm.document"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"
+                 ></scientilla-tag-form>`,
+                scopeVars,
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                });
         };
 
 
@@ -196,14 +208,17 @@
                 group: group
             };
 
-            return openModal(
-                '<scientilla-group-form\
-                    group="vm.group"\
-                    on-failure="vm.onFailure"\
-                    on-submit="vm.onSubmit"\
-                 ></scientilla-group-form>',
-                scopeVars
-            );
+            return openModal(`<scientilla-group-form
+                    group="vm.group"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"
+                 ></scientilla-group-form>`,
+                scopeVars,
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                });
         };
 
         service.openDocumentAffiliationForm = function (document) {
@@ -211,14 +226,17 @@
                 document: document
             };
 
-            return openModal(
-                '<scientilla-document-affiliations-form\
-                    document="vm.document"\
-                    on-failure="vm.onFailure"\
-                    on-submit="vm.onSubmit"\
-                ></scientilla-document-affiliations-form>',
-                scopeVars
-            );
+            return openModal(`<scientilla-document-affiliations-form
+                    document="vm.document"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"
+                ></scientilla-document-affiliations-form>`,
+                scopeVars,
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                });
         };
 
         service.openDocumentAuthorsForm = function (document) {
@@ -226,14 +244,17 @@
                 document: document
             };
 
-            return openModal(
-                '<scientilla-document-authors-form\
-                    document="vm.document"\
-                    on-failure="vm.onFailure"\
-                    on-submit="vm.onSubmit"\
-                ></scientilla-document-authors-form>',
-                scopeVars
-            );
+            return openModal(`<scientilla-document-authors-form
+                    document="vm.document"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"
+                ></scientilla-document-authors-form>`,
+                scopeVars,
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                });
         };
 
         service.openDocumentVerificationForm = function (document, verificationFn, document2) {
@@ -273,7 +294,7 @@
             }
 
             let buttons = Object.keys(buttonLabels).map(
-                key => '<li><scientilla-button click="vm.onSubmit(' + key + ')">' + buttonLabels[key] + '</scientilla-button></li>'
+                key => '<li><scientilla-button click="vm.onSubmit(\'' + key + '\')">' + buttonLabels[key] + '</scientilla-button></li>'
             ).join('');
 
             if (cancelLabel !== false) {
@@ -325,7 +346,7 @@
         };
 
         service.confirm = function (title, message) {
-            return service.multipleChoiceConfirm(title, message, ['Ok']);
+            return service.multipleChoiceConfirm(title, message, {ok:'Ok'});
         };
 
         service.alert = function (title, message) {
@@ -339,16 +360,19 @@
             };
 
             return openModal(
-                `<scientilla-${category}-form\
-                    ${category}="vm.researchItem"\
-                    research-entity="vm.researchEntity"\
-                    on-failure="vm.onFailure"\
-                    on-submit="vm.onSubmit" \
-                    close-fn="vm.onClose"\
+                `<scientilla-${category}-form
+                    ${category}="vm.researchItem"
+                    research-entity="vm.researchEntity"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"
+                    close-fn="vm.onClose"
                 ></scientilla-${category}-form>`,
                 scopeVars,
                 {
-                    size: 'lg'
+                    size: 'lg',
+                    backdrop: 'static',
+                    keyboard: false
                 }
             );
         };
@@ -362,7 +386,7 @@
                 `<scientilla-research-item-affiliations-form
                     research-item="vm.researchItem"
                     check-and-close="vm.checkAndClose"
-                    close-fn="vm.onClose"
+                    on-submit="vm.onSubmit"
                 ></scientilla-research-item-affiliations-form>`,
                 scopeVars,
                 {
@@ -465,7 +489,7 @@
                 return await modal.result;
             } catch (e) {
                 if (allowedClosingExceptions.includes(e))
-                    return -1;
+                    return 'cancel';
 
                 throw e;
             }

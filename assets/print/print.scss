@@ -1,5 +1,4 @@
 @import '../styles/variables';
-
 @import '../../node_modules/bootstrap/scss/functions';
 @import '../../node_modules/bootstrap/scss/variables';
 @import '../styles/bootstrap/variables';
@@ -10,91 +9,90 @@
 @import '../../node_modules/bootstrap/scss/grid';
 @import '../../node_modules/bootstrap/scss/utilities';
 @import '../../node_modules/bootstrap/scss/tables';
-
 @import '../styles/mixins';
 @import '../styles/ui/type';
 @import '../styles/ui/icons';
 
-body{
-    padding-top: 1.5rem;
+body {
+  padding-top: 1.5rem;
 }
 
 a,
-.has-action{
-    &,
-    &:hover{
-        color: $mine-shaft;
-        text-decoration: none !important;
-    }
+.has-action {
+  &,
+  &:hover {
+    color: $mine-shaft;
+    text-decoration: none !important;
+  }
 }
 
-.main-container{
-    padding-top: 0px !important;
-    padding-bottom: 0px !important;
+.main-container {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
 }
 
-.container{
-    max-width: 100% !important;
+.container {
+  max-width: 100% !important;
 }
 
 .header,
 .toolbar-header,
-.sidebar-container{
-    display: none;
+.sidebar-container {
+  display: none;
 }
 
-.footer{
-    .footer-listing{
-        @include normalize-listing;
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid $mine-shaft;
+.footer {
+  .footer-listing {
+    @include normalize-listing;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid $mine-shaft;
 
-        & > li{
-            &:nth-child(2) {
-                display: none;
-            }
-        }
-    }
-}
-
-.print-header{
-    .print-header-listing{
-        @include normalize-listing;
-        @include clearfix;
-        margin-bottom: 2rem;
-        padding-bottom: 2rem;
-        border-bottom: 1px solid $mine-shaft;
-
-        & > li{
-            &:first-child{
-                float: left;
-            }
-
-            &:last-child{
-                float: right;
-            }
-        }
-    }
-
-    img{
-        max-height: 40px;
-        width: auto;
-    }
-}
-
-.nav{
-    &.nav-tabs{
+    & > li {
+      &:nth-child(2) {
         display: none;
+      }
     }
+  }
 }
 
-.tab-pane{
-    display: none;
-    
-    &.active{
-        display: block;
+.print-header {
+  .print-header-listing {
+    @include normalize-listing;
+    @include clearfix;
+    margin-bottom: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid $mine-shaft;
+
+    & > li {
+      &:first-child {
+        float: left;
+      }
+
+      &:last-child {
+        float: right;
+      }
     }
+  }
+
+  img {
+    max-height: 40px;
+    width: auto;
+  }
+}
+
+.nav {
+  &.nav-tabs {
+    display: none;
+  }
+}
+
+.tab-pane {
+  display: none;
+
+  &.active {
+    display: block;
+  }
 }
 
 form,
@@ -105,288 +103,288 @@ button,
 .dropdown-container,
 .form-checkbox,
 .badge,
-.tooltip{
-    display: none !important;
+.tooltip {
+  display: none !important;
 }
 
-.summary-overview-container{
-    .summary-charts{
+.summary-overview-container {
+  .summary-charts {
+    @include normalize-listing;
+    @include clearfix;
+    margin: 0px -1.5rem;
+
+    //.main-chart-container{
+    .preview-chart-container {
+      display: none;
+    }
+
+    .chart-outer-container {
+      padding: 1rem 3rem;
+      border: 1px solid lighten($base-gray, 60%);
+      border-radius: .25rem;
+      text-align: center;
+    }
+
+    .chart-container {
+      max-width: 1000px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .chart {
+      position: relative;
+      display: block;
+      padding-bottom: 65.925%;
+    }
+
+    svg {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+}
+
+.summary-metrics-container {
+  .index-container {
+    display: block;
+    margin-bottom: 3rem;
+    padding: 3rem;
+    border: 1px solid lighten($base-gray, 60%);
+    border-radius: .25rem;
+
+    .index-title {
+      @include h3;
+    }
+
+    .index-icon-container {
+      display: none;
+    }
+  }
+
+  .document-totals-chart-container,
+  .h-index-chart-container {
+    margin-bottom: 3rem;
+    padding: 3rem;
+    border: 1px solid lighten($base-gray, 60%);
+    border-radius: .25rem;
+    text-align: center;
+
+    .chart-container {
+      position: relative;
+      display: block;
+      padding-bottom: 50%;
+    }
+
+    svg {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      width: 100% !important;
+      height: 100% !important;
+    }
+  }
+
+  .metric-chart-container {
+    display: block;
+    margin-bottom: 3rem;
+    padding: 1rem;
+    border: 1px solid lighten($base-gray, 60%);
+    border-radius: .25rem;
+    text-align: center;
+
+    .chart {
+      position: relative;
+      display: block;
+      padding-bottom: 65.925%;
+    }
+
+    svg {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .top-listing {
+      @include normalize-listing;
+    }
+  }
+
+  & > .row {
+    & > .col-lg-6 {
+      max-width: 50%;
+    }
+  }
+}
+
+.admin {
+  &.admin-tools {
+    .backup-actions,
+    .institute-buttons {
+      display: none;
+    }
+
+    .institute-listing {
+      @include normalize-listing;
+    }
+  }
+
+  &.admin-sources {
+    .source-listing {
+      @include normalize-listing;
+      margin-bottom: 2rem;
+    }
+
+    .search-metrics-container {
+      display: none;
+    }
+  }
+}
+
+.groups {
+  &.groups-browsing {
+    .group-listing {
+      @include normalize-listing;
+
+      & > li {
+        display: block;
+        margin-bottom: 2rem;
+      }
+
+      .group-info-listing {
+        & > li {
+          display: block;
+        }
+      }
+
+      .group-title {
+        @include h5;
+        margin-bottom: .5rem;
+      }
+
+      ul {
         @include normalize-listing;
-        @include clearfix;
-        margin: 0px -1.5rem;
+        display: inline-block;
 
-        //.main-chart-container{
-        .preview-chart-container{
-            display: none;
+        & > li {
+          display: inline-block;
         }
-
-        .chart-outer-container{
-            padding: 1rem 3rem;
-            border: 1px solid $silver;
-            border-radius: .25rem;
-            text-align: center;
-        }
-
-        .chart-container{
-            max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .chart{
-            position: relative;
-            display: block;
-            padding-bottom: 65.925%;
-        }
-
-        svg{
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            width: 100% !important;
-            height: 100% !important;
-        }
+      }
     }
-}
+  }
 
-.summary-metrics-container{
-    .index-container{
+  &.group-detail {
+    .pi,
+    .interactions {
+      @include normalize-listing;
+    }
+
+    .chart-container {
+      max-width: 400px;
+      margin-top: 5rem;
+      margin-left: auto;
+      margin-right: auto;
+
+      .chart {
+        position: relative;
         display: block;
-        margin-bottom: 3rem;
-        padding: 3rem;
-        border: 1px solid $silver;
-        border-radius: .25rem;
+        padding-bottom: 50%;
+      }
 
-        .index-title{
-            @include h3;
-        }
+      svg {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 100% !important;
+        height: 100% !important;
+      }
 
-        .index-icon-container{
-            display: none;
-        }
-    }
-
-    .document-totals-chart-container,
-    .h-index-chart-container{
-        margin-bottom: 3rem;
-        padding: 3rem;
-        border: 1px solid $silver;
-        border-radius: .25rem;
+      .chart-info {
+        max-width: 500px;
+        margin-right: auto;
+        margin-left: auto;
+        font-style: italic;
         text-align: center;
-
-        .chart-container{
-            position: relative;
-            display: block;
-            padding-bottom: 50%;
-        }
-
-        svg{
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            width: 100% !important;
-            height: 100% !important;
-        }
+      }
     }
 
-    .metric-chart-container{
+    .group-member-listing,
+    .member-info {
+      @include normalize-listing;
+    }
+
+    .group-member-listing {
+      & > li {
         display: block;
-        margin-bottom: 3rem;
-        padding: 1rem;
-        border: 1px solid $silver;
-        border-radius: .25rem;
-        text-align: center;
-
-        .chart{
-            position: relative;
-            display: block;
-            padding-bottom: 65.925%;
-        }
-
-        svg{
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            width: 100% !important;
-            height: 100% !important;
-        }
-
-        .top-listing{
-            @include normalize-listing;
-        }
+        margin-bottom: 2rem;
+      }
     }
-
-    & > .row{
-        & > .col-lg-6 {
-            max-width: 50%;
-        }
-    }
+  }
 }
 
-.admin{
-    &.admin-tools{
-        .backup-actions,
-        .institute-buttons{
-            display: none;
-        }
+.users {
+  &.users-browsing {
+    .user-listing {
+      @include normalize-listing;
 
-        .institute-listing{
-            @include normalize-listing;
-        }
+      & > li {
+        display: block;
+        margin-bottom: 2rem;
+      }
+
+      .user-fullname {
+        margin-bottom: .5rem;
+      }
     }
-
-    &.admin-sources{
-        .source-listing{
-            @include normalize-listing;
-            margin-bottom: 2rem;
-        }
-        
-        .search-metrics-container{
-            display: none;
-        }
-    }
-}
-
-.groups{
-    &.groups-browsing{
-        .group-listing{
-            @include normalize-listing;
-
-            & > li{
-                display: block;
-                margin-bottom: 2rem;
-            }
-
-            .group-info-listing{
-                & > li{
-                    display: block;
-                }
-            }
-
-            .group-title{
-                @include h5;
-                margin-bottom: .5rem;
-            }
-
-            ul{
-                @include normalize-listing;
-                display: inline-block;
-
-                & > li{
-                    display: inline-block;
-                }
-            }
-        }
-    }
-
-    &.group-detail{
-        .pi,
-        .interactions{
-            @include normalize-listing;
-        }
-
-        .chart-container{
-            max-width: 400px;
-            margin-top: 5rem;
-            margin-left: auto;
-            margin-right: auto;
-
-            .chart{
-                position: relative;
-                display: block;
-                padding-bottom: 50%;
-            }
-
-            svg{
-                position: absolute;
-                top: 0px;
-                left: 0px;
-                width: 100% !important;
-                height: 100% !important;
-            }
-
-            .chart-info{
-                max-width: 500px;
-                margin-right: auto;
-                margin-left: auto;
-                font-style: italic;
-                text-align: center;
-            }
-        }
-
-        .group-member-listing,
-        .member-info{
-            @include normalize-listing;
-        }
-
-        .group-member-listing{
-            & > li{
-                display: block;
-                margin-bottom: 2rem;
-            }
-        }
-    }
-}
-
-.users{
-    &.users-browsing{
-        .user-listing{
-            @include normalize-listing;
-
-            & > li{
-                display: block;
-                margin-bottom: 2rem;
-            }
-
-            .user-fullname{
-                margin-bottom: .5rem;
-            }
-        }
-    }
+  }
 }
 
 /* Documents */
 .filter-form-container,
 .filter-result-actions,
 .multi-check,
-.document-row-actions{
+.document-row-actions {
+  display: none;
+}
+
+.scientilla-checkable {
+  & + .scientilla-checkable {
+    .document {
+      padding-top: 2rem;
+      border-top: 1px solid $mine-shaft;
+    }
+  }
+}
+
+.document {
+  @include normalize-listing;
+  margin-bottom: 2rem;
+
+  .document-title {
+    @include h5;
+    margin-bottom: 0.5rem;
+  }
+
+  .document-labels,
+  .document-actions {
     display: none;
-}
+  }
 
-.scientilla-checkable{
-    & + .scientilla-checkable{
-        .document{
-            padding-top: 2rem;
-            border-top: 1px solid $mine-shaft;
-        }
+  .document-icons {
+    ul {
+      @include normalize-listing;
+      @include clearfix;
+      margin: 0px -1.5rem;
+
+      & > li {
+        display: block;
+        float: left;
+        padding: 0px 1.5rem;
+      }
     }
-}
-
-.document{
-    @include normalize-listing;
-    margin-bottom: 2rem;
-
-    .document-title{
-        @include h5;
-        margin-bottom: 0.5rem;
-    }
-
-    .document-labels,
-    .document-actions{
-        display: none;
-    }
-
-    .document-icons{
-        ul{
-            @include normalize-listing;
-            @include clearfix;
-            margin: 0px -1.5rem;
-
-            & > li{
-                display: block;
-                float: left;
-                padding: 0px 1.5rem;
-            }
-        }
-    }
+  }
 }

@@ -11,10 +11,9 @@
                     const msg = '';
                     const clickAction = attr.ngClick;
                     element.bind('click', function () {
-                        ModalService
-                            .confirm(title, msg)
+                        ModalService.confirm(title, msg)
                             .then(function (res) {
-                                if (res === 0)
+                                if (res === 'ok')
                                     scope.$eval(clickAction);
                             });
                     });

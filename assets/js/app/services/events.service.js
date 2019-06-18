@@ -43,6 +43,8 @@
             RESEARCH_ITEM_DRAFT_UPDATED: 'accomplishment.draft.updated',
             RESEARCH_ITEM_DRAFT_CREATED: 'accomplishment.draft.created',
             RESEARCH_ITEM_DRAFT_VERIFIED: 'accomplishment.draft.verified',
+
+            CUSTOMIZATIONS_CHANGED: 'customizations.changed'
         };
 
         service.publish = function (event, args) {

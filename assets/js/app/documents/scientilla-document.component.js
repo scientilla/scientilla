@@ -18,10 +18,12 @@
         'DocumentLabels',
         'context',
         'documentOrigins',
-        'documentListSections'
+        'documentListSections',
+        'EventsService',
+        'CustomizeService'
     ];
 
-    function scientillaDocument(ModalService, config, DocumentLabels, context, documentOrigins, documentListSections) {
+    function scientillaDocument(ModalService, config, DocumentLabels, context, documentOrigins, documentListSections, EventsService, CustomizeService) {
         const vm = this;
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
@@ -88,6 +90,14 @@
                 checkDuplicate();
 
             addLabels();
+
+            EventsService.subscribe(vm, EventsService.CUSTOMIZATIONS_CHANGED, function (event, customizations) {
+                vm.customizations = customizations;
+            });
+
+            CustomizeService.getCustomizations().then(customizations => {
+                vm.customizations = customizations;
+            });
         };
 
         function checkDuplicate() {
