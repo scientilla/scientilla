@@ -52,8 +52,7 @@ async function makeBackup(postfix = '') {
             await runCommand(binaryBackupCmd, 'binary backup creation');
             await runCommand(plainBackupCmd, 'plain backup creation');
             resolve(binaryBackupFilename);
-        }
-        catch (e) {
+        } catch (e) {
             reject(e);
             if (fs.existsSync(restoreLockFilename))
                 fs.unlinkSync(restoreLockFilename);
@@ -88,8 +87,7 @@ async function restoreBackup(filename = null) {
             if (fs.existsSync(restoreLockFilename))
                 fs.unlinkSync(restoreLockFilename);
             resolve(0);
-        }
-        catch (e) {
+        } catch (e) {
             if (fs.existsSync(restoreLockFilename))
                 fs.unlinkSync(restoreLockFilename);
             reject(e);
@@ -121,7 +119,7 @@ async function runCommand(cmd, label) {
         taskObj.on('close', code => {
             const now = new Date();
 
-            sails.log.info(label + ' finished in ' + ( (now - startedAt) / 1000) + ' seconds with code ' + code);
+            sails.log.info(label + ' finished in ' + ((now - startedAt) / 1000) + ' seconds with code ' + code);
 
             resolve(code);
         });
@@ -130,9 +128,8 @@ async function runCommand(cmd, label) {
 
 function getConnectionString() {
     const connectionData = sails.config.connections[sails.config.environment];
-    const {user, database, password} = connectionData;
-    const connectionString = `postgresql://${user}:${password}@127.0.0.1:5432/${database}`;
-    return connectionString;
+    const {user, database, password, host} = connectionData;
+    return `postgresql://${user}:${password}@${host}:5432/${database}`;
 }
 
 function createFile(filepath) {
