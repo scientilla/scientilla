@@ -2,11 +2,12 @@
     angular.module("app").filter('itemAuthorsMainGroup', filter);
 
     filter.$inject = [
-        'config'
+        'CustomizeService'
     ];
 
-    function filter(config) {
+    function filter(CustomizeService) {
 
+        const customizations = CustomizeService.getCustomizationsSync();
         return function (authorsStr, researchItem) {
             authorsStr = authorsStr || '';
 
@@ -16,8 +17,8 @@
                 const author = researchItem.authors.find(a => a.position === index);
 
                 if (author) {
-                    if (researchItem.affiliations.find(af => af.author === author.id && af.institute === config.mainInstitute.id))
-                        htmlAuthor += '<a href="#/groups/' + config.mainInstitute.id + '"><sup class="superscript">' + config.mainInstitute.shortname + '</sup></a>';
+                    if (researchItem.affiliations.find(af => af.author === author.id && af.institute === customizations.institute.id))
+                        htmlAuthor += '<a href="#/groups/' + customizations.institute.id + '"><sup class="superscript">' + customizations.institute.shortname + '</sup></a>';
                 }
                 return htmlAuthor;
             }).join(', ');

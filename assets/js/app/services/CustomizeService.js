@@ -10,10 +10,15 @@
     function CustomizeService(Restangular) {
         let customizationSettings = null;
         return {
+            getCustomizationsSync: getCustomizationsSync,
             getCustomizations: getCustomizations,
             setCustomizations: setCustomizations,
             resetCustomizations: resetCustomizations
         };
+
+        function getCustomizationsSync() {
+            return customizationSettings;
+        }
 
         /* jshint ignore:start */
         async function getCustomizations() {
