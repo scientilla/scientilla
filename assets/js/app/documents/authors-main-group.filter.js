@@ -3,12 +3,13 @@
         .filter('authorsMainGroup', authorsMainGroup);
 
     authorsMainGroup.$inject = [
-        'config'
+        'CustomizeService'
     ];
 
-    function authorsMainGroup(config) {
+    function authorsMainGroup(CustomizeService) {
 
-        return function(authorsStr, document) {
+        const customizations = CustomizeService.getCustomizationsSync();
+        return function (authorsStr, document) {
             authorsStr = authorsStr || '';
 
             return authorsStr.split(/,\s?/).map(function (author, index) {
@@ -18,8 +19,8 @@
 
                 if (authorship) {
                     const institutes = authorship.affiliations.map(a => a.id);
-                    if (institutes.includes(config.mainInstitute.id))
-                        htmlAuthor += '<a href="#/groups/' + config.mainInstitute.id + '"><sup class="superscript">' + config.mainInstitute.shortname + '</sup></a>';
+                    if (institutes.includes(customizations.institute.id))
+                        htmlAuthor += '<a href="#/groups/' + customizations.institute.id + '"><sup class="superscript">' + customizations.institute.shortname + '</sup></a>';
                 }
                 return htmlAuthor;
             }).join(', ');
