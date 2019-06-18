@@ -27,7 +27,7 @@ module.exports.scientilla = {
         "name": "Istituto Italiano di Tecnologia",
         "slug": "istituto-italiano-di-tecnologia",
         "shortname": "IIT",
-        "country": "Select",
+        "country": "Italy",
         "city": "Genoa",
         "scopusId": "60102151"
     },

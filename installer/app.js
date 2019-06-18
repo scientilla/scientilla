@@ -22,11 +22,15 @@ app.use(bodyParser.urlencoded({extended: true}))
 
 app.use(fileUpload())
 
+const configFolder = './config'
 const basicConfigurationFile = './config/scientilla.js'
 const defaultBasicConfigurationFile = './installer/defaults/scientilla.js'
 
 const localConfigurationFile = './config/local.js'
 const defaultLocalConfigurationFile = './installer/defaults/local.js'
+
+const customizationsConfigurationFile = './config/customizations.js'
+const defaultCustomizationsConfigurationFile = './installer/defaults/customizations.js'
 
 const prefixBasic = 'module.exports.scientilla = '
 const prefixLocal = 'module.exports.connections = '
@@ -177,7 +181,7 @@ app.post('/basic-configuration', (req, res) => {
     configuration.externalConnectors.elsevier.scopus.url = req.body['external-connectors-elsevier-scopus-url']
     configuration.externalConnectors.elsevier.scopus.apiKey = req.body['external-connectors-elsevier-scopus-api-key']
     configuration.externalConnectors.elsevier.scopus.token = req.body['external-connectors-elsevier-scopus-token']
-    configuration.externalConnectors.elsevier.scival.url = req.body['external-connectors-elsevier-scival-client-key']
+    configuration.externalConnectors.elsevier.scival.url = req.body['external-connectors-elsevier-scival-url']
     configuration.externalConnectors.elsevier.scival.clientKey = req.body['external-connectors-elsevier-scival-client-key']
 
     configuration.crons = JSON.parse(req.body['crons'])
@@ -203,6 +207,9 @@ app.get('/local-configuration/:reset?', async (req, res) => {
     if (reset === 'reset') {
         if (fs.existsSync(defaultLocalConfigurationFile)) {
             configuration = JSON.parse(fs.readFileSync(defaultLocalConfigurationFile).toString().replace(prefixLocal, ''))
+            configuration.production.password = process.env.DATABASE_PASSWORD
+            configuration.development.password = process.env.DATABASE_PASSWORD
+            configuration.test.password = process.env.DATABASE_PASSWORD
         } else {
             throw new Error('No default local configuration file found!')
         }
@@ -212,6 +219,9 @@ app.get('/local-configuration/:reset?', async (req, res) => {
         } else {
             if (fs.existsSync(defaultLocalConfigurationFile)) {
                 configuration = JSON.parse(fs.readFileSync(defaultLocalConfigurationFile).toString().replace(prefixLocal, ''))
+                configuration.production.password = process.env.DATABASE_PASSWORD
+                configuration.development.password = process.env.DATABASE_PASSWORD
+                configuration.test.password = process.env.DATABASE_PASSWORD
             } else {
                 throw new Error('No default local configuration file found!')
             }
@@ -373,13 +383,36 @@ function runCommand(cmd) {
 }
 
 function getConnectionstring() {
-    const user = process.env.DATABASE_USER
-    const password = process.env.DATABASE_PASSWORD
-    const address = process.env.DATABASE_HOST
-    const port = process.env.DATABASE_PORT
-    const name = process.env.DATABASE_NAME
 
-    return `postgresql://${user}:${password}@${address}:${port}/${name}`
+    if (fs.existsSync(localConfigurationFile)) {
+        const configuration = JSON.parse(fs.readFileSync(localConfigurationFile).toString().replace(prefixLocal, ''))
+        let user,
+            password,
+            address,
+            name
+        const port = process.env.DATABASE_PORT
+
+        switch (process.env.ENVIRONMENT) {
+            case 'development':
+                user = configuration.development.user
+                password = configuration.development.password
+                address = configuration.development.host
+                name = configuration.development.database
+                break
+            case 'production':
+                user = configuration.production.user
+                password = configuration.production.password
+                address = configuration.production.host
+                name = configuration.production.database
+                break
+            default:
+                break
+        }
+
+        return `postgresql://${user}:${password}@${address}:${port}/${name}`
+    }
+
+    return false
 }
 
 /*
@@ -407,26 +440,33 @@ async function checkSteps() {
 }
 
 async function checkDatabase() {
-    let missingTables = []
-    const path = 'installer/defaults/database-test.sql'
-    const sql = fs.readFileSync(path).toString()
-    const pgClient = new pg.Client(getConnectionstring())
-    pgClient.connect()
-    const result = await pgClient.query(sql)
-    await pgClient.end()
+    try{
+        let missingTables = []
+        const path = 'installer/defaults/database-test.sql'
+        const sql = fs.readFileSync(path).toString()
+        const pgClient = new pg.Client(getConnectionstring())
 
-    Object.keys(result.rows[0]).forEach(function(key,index) {
-        if (!result.rows[0][key]) {
-            missingTables.push(key)
+        pgClient.connect()
+        const result = await pgClient.query(sql)
+        await pgClient.end()
+
+        Object.keys(result.rows[0]).forEach(function(key,index) {
+            if (!result.rows[0][key]) {
+                missingTables.push(key)
+            }
+        })
+
+        if (missingTables.length > 0) {
+            console.log('Missing tables: ' + missingTables.join(', '))
+            return false
         }
-    })
 
-    if (missingTables.length > 0) {
-        console.log('Missing tables: ' + missingTables.join(', '))
+        return true
+    } catch(err) {
+        console.log(err);
+
         return false
     }
-
-    return true
 }
 
 /*
@@ -440,6 +480,16 @@ function startInstaller() {
     })
 }
 
+function copyFile (file, dir2) {
+    const f = path.basename(file)
+    const source = fs.createReadStream(file)
+    const dest = fs.createWriteStream(path.resolve(dir2, f))
+
+    source.pipe(dest)
+    //source.on('end', function() { console.log('Succesfully copied') })
+    source.on('error', function(err) { console.log(err) })
+}
+
 /*
  * Initialize function
  *
@@ -447,6 +497,33 @@ function startInstaller() {
  */
 async function initialize() {
     let forced = false
+
+    // Check if local configuration exists and is empty
+    if (fs.existsSync(localConfigurationFile)) {
+        const stats = fs.statSync(localConfigurationFile)
+
+        if (stats.size == 0) {
+            copyFile(defaultLocalConfigurationFile, configFolder)
+        }
+    }
+
+    // Check if basic configuration exists and is empty
+    if (fs.existsSync(basicConfigurationFile)) {
+        const stats = fs.statSync(basicConfigurationFile)
+
+        if (stats.size == 0) {
+            copyFile(defaultBasicConfigurationFile, configFolder)
+        }
+    }
+
+    // Check if customizations configuration exists and is empty
+    if (fs.existsSync(customizationsConfigurationFile)) {
+        const stats = fs.statSync(customizationsConfigurationFile)
+
+        if (stats.size == 0) {
+            copyFile(defaultCustomizationsConfigurationFile, configFolder)
+        }
+    }
 
     // Check if the forced flag is been added to the command
     process.argv.forEach(function (val) {
