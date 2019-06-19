@@ -15,7 +15,7 @@ app.engine('ejs', require('ejs-locals'))
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, '/views'))
 
-app.use(express.static(path.join(__dirname, '../.tmp/public')))
+app.use(express.static(path.join(__dirname, 'public')))
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended: true}))
@@ -481,7 +481,7 @@ async function checkDatabase() {
  * Let the application listen to associated port
  */
 function startInstaller() {
-    server = app.listen(process.env.PORT_INSTALLER, () => {
+    server = app.listen(1337, () => {
         console.log(`Scientilla Installer listening on port ${process.env.PORT_INSTALLER}!`)
     })
 }
