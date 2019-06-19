@@ -190,12 +190,7 @@ app.post('/basic-configuration', (req, res) => {
     configuration.maxUserFavorite = req.body['max-user-favorite']
     configuration.maxGroupFavorite = req.body['max-group-favorite']
 
-    fs.writeFile(basicConfigurationFile, prefixBasic + JSON.stringify(configuration, null, 4), (err) => {
-        if (err) {
-            console.error(err)
-            return
-        }
-    })
+    fs.writeFileSync(basicConfigurationFile, prefixBasic + JSON.stringify(configuration, null, 4))
     res.redirect('/')
 })
 
@@ -263,12 +258,7 @@ app.post('/local-configuration', (req, res) => {
     configuration.test.password = req.body['test-password']
     configuration.test.database = req.body['test-database']
 
-    fs.writeFile(localConfigurationFile, prefixLocal + JSON.stringify(configuration, null, 4), (err) => {
-        if (err) {
-            console.error(err)
-            return
-        }
-    })
+    fs.writeFileSync(localConfigurationFile, prefixLocal + JSON.stringify(configuration, null, 4))
     res.redirect('/')
 })
 
@@ -385,7 +375,12 @@ function runCommand(cmd) {
 function getConnectionstring() {
 
     if (fs.existsSync(localConfigurationFile)) {
-        const configuration = JSON.parse(fs.readFileSync(localConfigurationFile).toString().replace(prefixLocal, ''))
+        let configuration
+        try {
+            configuration = JSON.parse(fs.readFileSync(localConfigurationFile).toString().replace(prefixLocal, ''))
+        } catch(e) {
+            console.log(e)
+        }
         let user,
             password,
             address,
@@ -519,12 +514,7 @@ async function initialize() {
                     "database": process.env.DATABASE_NAME
                 }
             }
-            fs.writeFile(localConfigurationFile, prefixLocal + JSON.stringify(localJs, null, 4), (err) => {
-                if (err) {
-                    console.error(err)
-                    return
-                }
-            })
+            fs.writeFileSync(localConfigurationFile, prefixLocal + JSON.stringify(localJs, null, 4))
         }
     }
 
