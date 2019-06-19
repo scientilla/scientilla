@@ -519,7 +519,7 @@ async function initialize() {
                     "database": process.env.DATABASE_NAME
                 }
             }
-            fs.writeFile(basicConfigurationFile, prefixLocal + JSON.stringify(localJs, null, 4), (err) => {
+            fs.writeFile(localConfigurationFile, prefixLocal + JSON.stringify(localJs, null, 4), (err) => {
                 if (err) {
                     console.error(err)
                     return
