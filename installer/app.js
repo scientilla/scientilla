@@ -200,7 +200,7 @@ app.get('/local-configuration/:reset?', async (req, res) => {
     let configuration
 
     if (reset === 'reset') {
-        if (fs.existsSync(defaultLocalConfigurationFile)) {
+        if (fs.existsSync(defaultLocalConfigurationFile) && fs.statSync(defaultLocalConfigurationFile).size !== 0) {
             configuration = JSON.parse(fs.readFileSync(defaultLocalConfigurationFile).toString().replace(prefixLocal, ''))
             configuration.production.password = process.env.DATABASE_PASSWORD
             configuration.development.password = process.env.DATABASE_PASSWORD
@@ -209,10 +209,10 @@ app.get('/local-configuration/:reset?', async (req, res) => {
             throw new Error('No default local configuration file found!')
         }
     } else {
-        if (fs.existsSync(localConfigurationFile)) {
+        if (fs.existsSync(localConfigurationFile) && fs.statSync(localConfigurationFile).size !== 0) {
             configuration = JSON.parse(fs.readFileSync(localConfigurationFile).toString().replace(prefixLocal, ''))
         } else {
-            if (fs.existsSync(defaultLocalConfigurationFile)) {
+            if (fs.existsSync(defaultLocalConfigurationFile) && fs.statSync(defaultLocalConfigurationFile).size !== 0) {
                 configuration = JSON.parse(fs.readFileSync(defaultLocalConfigurationFile).toString().replace(prefixLocal, ''))
                 configuration.production.password = process.env.DATABASE_PASSWORD
                 configuration.development.password = process.env.DATABASE_PASSWORD
@@ -294,7 +294,7 @@ app.post('/database', (req, res) => {
             if (file.name.endsWith('.sql')) {
                 try {
                     const sql = fs.readFileSync(path).toString()
-                    const pgClient = new pg.Client(getConnectionstring())
+                    const pgClient = new pg.Client(getConnectionObject())
                     pgClient.connect()
                     const result = await pgClient.query(sql)
                     await pgClient.end()
@@ -312,7 +312,7 @@ app.post('/database', (req, res) => {
             } else {
                 const restore = new Promise(async (resolve, reject) => {
                     try {
-                        const cmd = `pg_restore --dbname=${getConnectionstring()} --format=c -j2 --clean --if-exists "${path}"`
+                        const cmd = `pg_restore --dbname=${getConnectionObject()} --format=c -j2 --clean --if-exists "${path}"`
                         await runCommand(cmd)
                         resolve('Restoring the database is done!')
                     }
@@ -372,7 +372,7 @@ function runCommand(cmd) {
     })
 }
 
-function getConnectionstring() {
+function getConnectionObject() {
 
     if (fs.existsSync(localConfigurationFile)) {
         let configuration
@@ -400,11 +400,22 @@ function getConnectionstring() {
                 address = configuration.production.host
                 name = configuration.production.database
                 break
+            case 'staging':
+                user = configuration.production.user
+                password = configuration.production.password
+                address = configuration.production.host
+                name = configuration.production.database
+                break
             default:
                 break
         }
 
-        return `postgresql://${user}:${password}@${address}:${port}/${name}`
+        return {
+            user: user,
+            host:address,
+            password: password,
+            database: name
+        }
     }
 
     return false
@@ -439,7 +450,7 @@ async function checkDatabase() {
         let missingTables = []
         const path = 'installer/defaults/database-test.sql'
         const sql = fs.readFileSync(path).toString()
-        const pgClient = new pg.Client(getConnectionstring())
+        const pgClient = new pg.Client(getConnectionObject())
 
         pgClient.connect()
         const result = await pgClient.query(sql)
@@ -494,28 +505,31 @@ async function initialize() {
     let forced = false
 
     // Check if local configuration exists and is empty
-    if (fs.existsSync(localConfigurationFile)) {
-        const stats = fs.statSync(localConfigurationFile)
-
-        if (stats.size == 0) {
-            const localJs = {
-                production:{
-                    "adapter": "sails-postgresql",
-                    "host": process.env.DATABASE_HOST,
-                    "user": process.env.DATABASE_USER,
-                    "password": process.env.DATABASE_PASSWORD,
-                    "database": process.env.DATABASE_NAME
-                },
-                staging:{
-                    "adapter": "sails-postgresql",
-                    "host": process.env.DATABASE_HOST,
-                    "user": process.env.DATABASE_USER,
-                    "password": process.env.DATABASE_PASSWORD,
-                    "database": process.env.DATABASE_NAME
-                }
+    if (!fs.existsSync(localConfigurationFile) || fs.statSync(localConfigurationFile).size === 0)  {
+        const localJs = {
+            development:{
+                "adapter": "sails-postgresql",
+                "host": process.env.DATABASE_HOST,
+                "user": process.env.DATABASE_USER,
+                "password": process.env.DATABASE_PASSWORD,
+                "database": process.env.DATABASE_NAME
+            },
+            production:{
+                "adapter": "sails-postgresql",
+                "host": process.env.DATABASE_HOST,
+                "user": process.env.DATABASE_USER,
+                "password": process.env.DATABASE_PASSWORD,
+                "database": process.env.DATABASE_NAME
+            },
+            test:{
+                "adapter": "sails-postgresql",
+                "host": process.env.DATABASE_HOST,
+                "user": process.env.DATABASE_USER,
+                "password": process.env.DATABASE_PASSWORD,
+                "database": process.env.DATABASE_NAME
             }
-            fs.writeFileSync(localConfigurationFile, prefixLocal + JSON.stringify(localJs, null, 4))
         }
+        fs.writeFileSync(localConfigurationFile, prefixLocal + JSON.stringify(localJs, null, 4))
     }
 
     // Check if basic configuration exists and is empty
