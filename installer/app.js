@@ -55,14 +55,14 @@ const steps = {
  */
 const scientilla = {
     start: (launch = false) => {
-        console.log('Stopping installer listen to port :' + process.env.PORT_INSTALLER)
+        console.log('Stopping installer listen to port :' + process.env.WEB_APPLICATION_PORT)
 
         // Stop listen to port by closing server
         if (server) {
             server.close()
         }
 
-        console.log('Starting Scientilla on port :' + process.env.PORT_SCIENTILLA)
+        console.log('Starting Scientilla on port :' + process.env.WEB_APPLICATION_PORT)
 
         // Execute sails lift command
         const application = spawn('node', ['./node_modules/.bin/sails', 'lift'])
@@ -83,7 +83,7 @@ const scientilla = {
 
         // Open a new tab with the scientilla application
         if (launch && process.env.OPEN_BROWSER === 'true') {
-            open(process.env.URL_SCIENTILLA + ':' + process.env.PORT_SCIENTILLA)
+            open(process.env.WEB_APPLICATION_URL + ':' + process.env.WEB_APPLICATION_PORT)
         }
     }
 }
@@ -339,7 +339,7 @@ app.post('/database', (req, res) => {
 })
 
 app.post('/application/start', (req, res) => {
-    res.send(process.env.URL_SCIENTILLA + ':' + process.env.PORT_SCIENTILLA)
+    res.send(process.env.WEB_APPLICATION_URL + ':' + process.env.WEB_APPLICATION_PORT)
     scientilla.start()
 })
 
@@ -482,7 +482,7 @@ async function checkDatabase() {
  */
 function startInstaller() {
     server = app.listen(1337, () => {
-        console.log(`Scientilla Installer listening on port ${process.env.PORT_INSTALLER}!`)
+        console.log(`Scientilla Installer listening on port ${process.env.WEB_APPLICATION_PORT}!`)
     })
 }
 
@@ -567,7 +567,7 @@ async function initialize() {
 
             if (process.env.OPEN_BROWSER === 'true') {
                 // Open new tab and show the installer page
-                open(process.env.URL_INSTALLER + ':' + process.env.PORT_INSTALLER)
+                open(process.env.WEB_APPLICATION_URL + ':' + process.env.WEB_APPLICATION_PORT)
             }
         }
     } else {
@@ -577,7 +577,7 @@ async function initialize() {
 
         if (process.env.OPEN_BROWSER === 'true') {
             // Open new tab and show the basic configuration page.
-            open(process.env.URL_INSTALLER + ':' + process.env.PORT_INSTALLER + '/basic-configuration')
+            open(process.env.WEB_APPLICATION_URL + ':' + process.env.WEB_APPLICATION_PORT + '/basic-configuration')
         }
     }
 }
