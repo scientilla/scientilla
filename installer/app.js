@@ -80,11 +80,6 @@ const scientilla = {
             delete(application)
             setTimeout(scientilla.start, 2000)
         })
-
-        // Open a new tab with the scientilla application
-        if (launch && process.env.OPEN_BROWSER === 'true') {
-            open(process.env.WEB_APPLICATION_URL + ':' + process.env.WEB_APPLICATION_PORT)
-        }
     }
 }
 
@@ -564,21 +559,11 @@ async function initialize() {
             scientilla.start(true)
         } else {
             startInstaller()
-
-            if (process.env.OPEN_BROWSER === 'true') {
-                // Open new tab and show the installer page
-                open(process.env.WEB_APPLICATION_URL + ':' + process.env.WEB_APPLICATION_PORT)
-            }
         }
     } else {
         console.log('Installer forced!')
         // If the installer is been forced to start even if the configuration is complete.
         startInstaller()
-
-        if (process.env.OPEN_BROWSER === 'true') {
-            // Open new tab and show the basic configuration page.
-            open(process.env.WEB_APPLICATION_URL + ':' + process.env.WEB_APPLICATION_PORT + '/basic-configuration')
-        }
     }
 }
 
