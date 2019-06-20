@@ -39,6 +39,4 @@ RUN yarn global add grunt
 
 RUN yarn global add grunt-cli
 
-ENTRYPOINT npm run installer
-
 EXPOSE 1337
