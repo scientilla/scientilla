@@ -571,6 +571,7 @@ async function initialize() {
             }
         }
     } else {
+        console.log('Installer forced!')
         // If the installer is been forced to start even if the configuration is complete.
         startInstaller()
 
