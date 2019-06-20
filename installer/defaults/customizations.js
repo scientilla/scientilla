@@ -1,4 +1,4 @@
-module.exports.customizationDefaults ={
+module.exports.customizations ={
     "institute":{
         "name":"Institute name"
     },

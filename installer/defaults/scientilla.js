@@ -29,7 +29,7 @@ module.exports.scientilla = {
         "shortname": "IIT",
         "country": "Italy",
         "city": "Genoa",
-        "scopusId": "60102151"
+        "scopusId": ""
     },
     "mainInstituteImport": {
         "userImportUrl": "http://example.com/users",
