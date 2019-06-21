@@ -41,24 +41,43 @@
     }
 
     .original-document-container{
-        position: relative;
         padding: 1.5rem;
         margin-bottom: 3rem;
         border: 1px solid $gray-400;
         border-radius: $border-radius;
         transition: margin-top .5s;
+    }
+
+    .document-duplicates-listing{
+        @include normalize-listing;
+        position: relative;
+
+        & > li{
+            position: relative;
+            padding: 1.5rem;
+            border: 1px solid $gray-300;
+            border-radius: $border-radius;
+            cursor: pointer;
+
+            & + li{
+                margin-top: 3rem;
+            }
+        }
 
         .button-replace-container{
             position: absolute;
             top: 50%;
-            right: -7rem;
+            right: auto;
             bottom: auto;
-            left: auto;
-            display: none;
-            margin-top: -1.5rem;
+            left: -7rem;
+            display: block;
+            margin-top: -3.6rem;
             margin-left: 0px;
+            opacity: 0;
+            pointer-events: none;
             text-align: center;
             transform: rotate(0deg);
+            transition: .2s all;
 
             span{
                 display: block;
@@ -85,22 +104,6 @@
                         animation:         arrow-right 1.5s ease-in-out infinite;
                     }
                 }
-            }
-        }
-    }
-
-    .document-duplicates-listing{
-        @include normalize-listing;
-        position: relative;
-
-        & > li{
-            padding: 1.5rem;
-            border: 1px solid $gray-300;
-            border-radius: $border-radius;
-            cursor: pointer;
-
-            & + li{
-                margin-top: 3rem;
             }
         }
     }
@@ -233,15 +236,18 @@
             & > li {
                 padding: 3rem;
             }
+
+            .selected-duplicate{
+                .button-replace-container{
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+            }
         }
 
         .original-document-container{
             margin-bottom: 0px;
             padding: 3rem;
-
-            .button-replace-container{
-                display: block;
-            }
         }
 
         .duplicate-actions{

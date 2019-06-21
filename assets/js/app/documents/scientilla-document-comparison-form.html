@@ -197,18 +197,6 @@
                             </scientilla-button>
                         </li>
                     </ul>
-
-                    <div class="button-replace-container">
-
-                        <span>Replace</span>
-
-                        <button
-                            ng-click="vm.useDuplicate()"
-                            class="btn btn-primary"
-                            title="Replace the similar document with the source document">
-                            <i class="fas fa-long-arrow-alt-right"></i>
-                        </button>
-                    </div>
                 </div>
             </li>
 
@@ -220,7 +208,10 @@
                 </div>
 
                 <ul class="document-duplicates-listing js-document-duplicates-listing">
-                    <li ng-repeat="duplicate in vm.duplicates" ng-click="vm.compare(duplicate)" ng-mouseover="vm.mouseover(duplicate, $event)">
+                    <li ng-repeat="duplicate in vm.duplicates"
+                        ng-click="vm.compare(duplicate)"
+                        ng-mouseover="vm.mouseover(duplicate, $event)"
+                        ng-class="{'selected-duplicate': vm.selectedDuplicate === duplicate}">
                         <div class="document-kind">
                             <span
                                 ng-class="{'highlight-text': vm.differentFields.includes('kind') && vm.selectedDuplicate === duplicate}"
@@ -385,6 +376,17 @@
                                 </button>
                             </li>
                         </ul>
+
+                        <div class="button-replace-container">
+                            <span>Replace</span>
+
+                            <button
+                                ng-click="vm.useDuplicate()"
+                                class="btn btn-primary"
+                                title="Replace the similar document with the source document">
+                                <i class="fas fa-long-arrow-alt-right"></i>
+                            </button>
+                        </div>
                     </li>
                 </ul>
             </li>
