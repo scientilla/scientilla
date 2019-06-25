@@ -585,6 +585,7 @@ module.exports = _.merge({}, BaseModel, {
         function convertDND(dnd) {
             const d1 = dnd.document === docFromId ? docToId : dnd.document;
             const d2 = dnd.duplicate === docFromId ? docToId : dnd.duplicate;
+            if (d1 === d2) return;
             return {
                 document: Math.min(d1, d2),
                 duplicate: Math.max(d1, d2),
@@ -592,8 +593,8 @@ module.exports = _.merge({}, BaseModel, {
             }
         }
 
-        const newDnds = dnds.map(convertDND);
-        const newDndgs = dndgs.map(convertDND);
+        const newDnds = dnds.map(convertDND).filter(dnd => dnd);
+        const newDndgs = dndgs.map(convertDND).filter(dnd => dnd);
 
         await DocumentNotDuplicate.create(newDnds);
         await DocumentNotDuplicateGroup.create(newDndgs);
