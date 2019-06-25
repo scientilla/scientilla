@@ -257,8 +257,11 @@ module.exports = _.merge({}, BaseModel, {
             researchEntityType,
             duplicateKind: 'v'
         };
-        if (excludeDocument)
-            duplicateCondition.duplicate = {'!': excludeDocument};
+        if (excludeDocument) {
+            const notduplicates = await ResearchEntityModel.getNotDuplicatesIds(ResearchEntityModel, researchEntityId, excludeDocument);
+            const excludedDocuments = notduplicates.concat(excludeDocument);
+            duplicateCondition.duplicate = {'!': excludedDocuments};
+        }
         return await DocumentDuplicate.find(duplicateCondition);
     },
     makeInternalRequest: async function (researchEntityModel, researchEntitySearchCriteria, baseUrl, qs, attribute) {
@@ -292,21 +295,6 @@ module.exports = _.merge({}, BaseModel, {
         const isExternal = document.kind === DocumentKinds.EXTERNAL;
         const docToVerify = isExternal ? await ResearchEntityModel.copyDocument(ResearchEntityModel, researchEntityId, docToVerifyId) : document;
 
-        // Copy the not duplicate records to doc verify
-        const notDuplicatesToBeRemoved = await this.getNotDuplicates(ResearchEntityModel, researchEntityId, docToRemoveId);
-
-        let notDuplicatesToAdd = [];
-        for (const notDuplicateToBeRemoved of notDuplicatesToBeRemoved) {
-            const id = notDuplicateToBeRemoved.document === docToRemoveId ? notDuplicateToBeRemoved.duplicate : notDuplicateToBeRemoved.document;
-            const notDuplicate = await ResearchEntityModel.setDocumentAsNotDuplicate(
-                ResearchEntityModel,
-                researchEntityId,
-                id,
-                docToVerifyId
-            );
-            notDuplicatesToAdd.push(notDuplicate);
-        }
-
         if (docToVerify.isDraft()) {
             errors = await ResearchEntityModel.getDraftVerifyErrors(researchEntityId, docToVerify, verificationData, true, docToRemoveId);
         } else {
@@ -314,21 +302,14 @@ module.exports = _.merge({}, BaseModel, {
         }
 
         if (errors) {
-            if (isExternal) {
+            if (isExternal)
                 await ResearchEntityModel.deleteDraft(ResearchEntityModel, docToVerify.id);
-            }
-
-            // If errors remove not duplicates of the to be verified document
-            if (notDuplicatesToAdd.length > 0) {
-                const ids = notDuplicatesToAdd.map((notDuplicate) => {
-                    return notDuplicate.id;
-                });
-
-                await this.deleteNotDuplicates(ResearchEntityModel, researchEntityId, ids);
-            }
 
             return errors;
         }
+
+        const notDuplicatesToAdd = await this.getNotDuplicatesIds(ResearchEntityModel, researchEntityId, docToRemoveId);
+        await this.setDocumentsAsNotDuplicate(ResearchEntityModel, researchEntityId, docToVerify.id, notDuplicatesToAdd);
 
         const docToRemove = await Document.findOneById(docToVerifyId);
         if (docToRemove.isDraft()) {
@@ -344,43 +325,34 @@ module.exports = _.merge({}, BaseModel, {
     },
     replace: async function (ResearchEntityModel, researchEntityId, documentId, documentToBeReplacedId) {
         // Get not duplicates of the document that will be replaced
-        let notDuplicates = await this.getNotDuplicates(ResearchEntityModel, researchEntityId, documentToBeReplacedId);
+        const notDuplicates = await this.getNotDuplicates(ResearchEntityModel, researchEntityId, documentToBeReplacedId);
+        const notDuplicatesDocumentIds = notDuplicates.map(dnd => dnd.document === documentId ? dnd.duplicate : dnd.document);
 
         // Unverify document
         await this.unverifyDocument(ResearchEntityModel, researchEntityId, documentToBeReplacedId);
 
-        // Change the id of the to be replaced document to the other document.
-        const notDuplicatesToAdd = notDuplicates.map(notDuplicate => {
-            switch (documentToBeReplacedId) {
-                case notDuplicate.duplicate:
-                    return notDuplicate.document;
-                case notDuplicate.document:
-                    return notDuplicate.duplicate;
-                default:
-                    return false;
-            }
-        });
-
         // Copy the not duplicates to the document
-        await this.setDocumentsAsNotDuplicate(ResearchEntityModel, researchEntityId, documentId, notDuplicatesToAdd);
-
-        // Get the id's of the not duplicates that will be deleted.
-        const notDuplicatesToDelete = notDuplicates.map(notDuplicate => {
-            return notDuplicate.id;
-        });
+        await this.setDocumentsAsNotDuplicate(ResearchEntityModel, researchEntityId, documentId, notDuplicatesDocumentIds);
 
         // Delete the not duplicates of the replaced document
-        return await this.deleteNotDuplicates(ResearchEntityModel, researchEntityId, notDuplicatesToDelete);
+        await this.deleteNotDuplicates(ResearchEntityModel, researchEntityId, notDuplicates.map(nd => nd.id));
+
+        return {success: true};
     },
     removeDiscarded: async function (ResearchEntityModel, researchEntityId, documentId) {
         const DiscardedModel = getDiscardedModel(ResearchEntityModel);
         await DiscardedModel.destroy({document: documentId, researchEntity: researchEntityId});
     },
+    getNotDuplicatesIds: async function (ResearchEntityModel, researchEntityId, documentId) {
+        const dnds = await this.getNotDuplicates(ResearchEntityModel, researchEntityId, documentId);
+        return dnds.map(dnd => dnd.document === documentId ? dnd.duplicate : dnd.document);
+    },
     getNotDuplicates: async function (ResearchEntityModel, researchEntityId, documentId) {
-        return await ResearchEntityModel.getDocumentNotDuplicateModel().find({
-            researchEntity: researchEntityId,
-            or: [{document: documentId}, {duplicate: documentId}]
-        });
+        const query = {researchEntity: researchEntityId};
+        if (documentId)
+            query.or = [{document: documentId}, {duplicate: documentId}];
+
+        return await ResearchEntityModel.getDocumentNotDuplicateModel().find(query);
     },
     deleteNotDuplicates: async function (ResearchEntityModel, researchEntityId, notDuplicateIds) {
         let results = [];
