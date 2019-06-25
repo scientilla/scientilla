@@ -109,7 +109,7 @@
                                ng-model-options="{ allowInvalid: true }"
                                typeahead-editable="false"
                                typeahead-select-on-blur="true"
-                               ng-blur="vm.checkSource($event)"
+                               ng-blur="vm.checkValidation('source')"
                                ng-change="vm.fieldValueHasChanged('source')"
                                ng-class="{'is-invalid' : vm.errors.source}">
                         {{ $viewValue }}
@@ -323,7 +323,9 @@
                                 ng-class="{'is-invalid' : vm.errors.eventType}"
                                 ng-model="vm.accomplishment.eventType"
                                 ng-init="vm.accomplishment.eventType = vm.accomplishment.eventType || vm.eventTypes[0].key"
-                                ng-options="option.key as option.label for option in vm.eventTypes">
+                                ng-options="option.key as option.label for option in vm.eventTypes"
+                                ng-blur="vm.checkValidation('eventType')"
+                                ng-change="vm.fieldValueHasChanged('eventType')">
                         </select>
                     </div>
                     <scientilla-error-messages class="error-messages"
