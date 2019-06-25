@@ -24,7 +24,7 @@
                     <div class="login-form-container">
                         <div class="card">
                             <div class="card-body">
-                                <form>
+                                <form ng-keyup="$event.keyCode == 13 && vm.submit()">
                                     <div ng-class="vm.user.error ? 'has-error' : ''"
                                          class="form-group has-feedback">
                                         <label for="username">Username</label>
