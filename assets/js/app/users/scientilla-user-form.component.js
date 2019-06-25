@@ -162,8 +162,6 @@
         }
 
         function cancel() {
-            console.log(angular.toJson(vm.user));
-            console.log(originalUserJson);
             vm.checkAndClose()(() => angular.toJson(vm.user) === originalUserJson);
         }
 

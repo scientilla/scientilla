@@ -256,25 +256,23 @@ async function documentCitationsRequest(eId) {
 function formatDocumentCitations(XMLDocumentCitations) {
     const documentCitations = XML.parse(XMLDocumentCitations);
 
-    if (documentCitations.citeColumnTotalXML.citeCountHeader.grandTotal === '0')
+    const grandTotal = documentCitations.citeColumnTotalXML.citeCountHeader.grandTotal;
+    if (grandTotal && grandTotal._Data === '0')
         return [{
             year: (new Date()).getFullYear(),
             value: 0
         }];
 
-    const years = documentCitations.citeColumnTotalXML.citeCountHeader.columnHeading;
-    const values = documentCitations.citeColumnTotalXML.citeCountHeader.columnTotal;
+    const years = [].concat(documentCitations.citeColumnTotalXML.citeCountHeader.columnHeading || []);
+    const values = [].concat(documentCitations.citeColumnTotalXML.citeCountHeader.columnTotal || []);
 
-    if (_.isArray(years))
+    if (_.isArray(years)) {
+        const formattedValues = values.map(v => v.selfCitations ? v._Data : v);
         return years.map((y, i) => ({
             year: y,
-            value: parseInt(values[i], 10)
+            value: parseInt(formattedValues[i], 10)
         }));
-
-    return [{
-        year: years,
-        value: parseInt(values, 10)
-    }];
+    }
 }
 
 
