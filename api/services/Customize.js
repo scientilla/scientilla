@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const {promisify} = require("util");
-const writeFile = promisify(fs.writeFile);
+const writeFileSync = promisify(fs.writeFileSync);
 
 module.exports = {
     getCustomizations,
@@ -16,7 +16,6 @@ async function getCustomizations() {
     return sails.config.customizations;
 }
 
-//TODO remove req
 async function setCustomizations(req, footer, styles) {
     let promises = [];
 
@@ -88,6 +87,34 @@ async function setCustomizations(req, footer, styles) {
         });
     }
 
+    if (styles.documentColor) {
+        sails.config.customizations.styles.stylesArray.push({
+            name: 'document-color',
+            to: '#' + styles.documentColor
+        });
+    }
+
+    if (styles.hIndexColor) {
+        sails.config.customizations.styles.stylesArray.push({
+            name: 'h-index-color',
+            to: '#' + styles.hIndexColor
+        });
+    }
+
+    if (styles.citationColor) {
+        sails.config.customizations.styles.stylesArray.push({
+            name: 'citation-color',
+            to: '#' + styles.citationColor
+        });
+    }
+
+    if (styles.impactFactorColor) {
+        sails.config.customizations.styles.stylesArray.push({
+            name: 'impact-factor-color',
+            to: '#' + styles.impactFactorColor
+        });
+    }
+
     promises.push(new Promise(function (resolve, reject) {
         req.file('headerLogo').upload({
             dirname: path.resolve(sails.config.appPath, 'assets/uploads')
@@ -141,13 +168,13 @@ async function setCustomizations(req, footer, styles) {
     }));
 
     await Promise.all(promises);
+
+    writeFileSync(
+        sails.config.appPath + '/config/customizations.js',
+        'module.exports.customizations = ' + JSON.stringify(sails.config.customizations, null, 4)
+    );
+
     await runGruntTasks();
-
-    const err = await writeFile(sails.config.appPath + '/config/customizations.js',
-        'module.exports.customizations = ' + JSON.stringify(sails.config.customizations));
-
-    if (err)
-        return err;
 
     return {
         type: 'success',
@@ -160,11 +187,10 @@ async function setCustomizations(req, footer, styles) {
 async function resetCustomizations() {
     sails.config.customizations = sails.config.customizationDefaults;
 
-    const err = await writeFile(sails.config.appPath + '/config/customizations.js',
-        'module.exports.customizations = ' + JSON.stringify(sails.config.customizationDefaults));
-
-    if (err)
-        return err;
+    writeFileSync(
+        sails.config.appPath + '/config/customizations.js',
+        'module.exports.customizations = ' + JSON.stringify(sails.config.customizationDefaults, null, 4)
+    );
 
     await runGruntTasks();
 
