@@ -116,7 +116,7 @@
                 };
 
                 const authorStr = authorsArr[vm.verificationData.position];
-                const alias = user.aliases.find(a => a.str === authorStr);
+                const alias = user.aliases.find(a => a.str.toLocaleLowerCase() === authorStr.toLocaleLowerCase());
 
                 if (!alias) {
                     const aliases = user.aliases.map(a => a.str).join(', ');

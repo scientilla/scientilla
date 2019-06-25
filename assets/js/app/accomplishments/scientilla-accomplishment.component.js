@@ -19,7 +19,8 @@
         'AccomplishmentService',
         'accomplishmentListSections',
         'ModalService',
-        'accomplishmentEventTypes'
+        'accomplishmentEventTypes',
+        'CustomizeService'
     ];
 
     function controller(context,
@@ -27,7 +28,8 @@
                         AccomplishmentService,
                         accomplishmentListSections,
                         ModalService,
-                        accomplishmentEventTypes) {
+                        accomplishmentEventTypes,
+                        CustomizeService) {
         const vm = this;
         vm.isValid = AccomplishmentService.isValid;
         vm.getVerifiedNamesHTML = getVerifiedNamesHTML;
@@ -57,6 +59,7 @@
             const eventType = accomplishmentEventTypes.find(aet => aet.key === vm.accomplishment.eventType);
             vm.eventTypeLabel = eventType ? eventType.label : undefined;
 
+            vm.customizations = await CustomizeService.getCustomizations();
         };
 
         /* jshint ignore:end */

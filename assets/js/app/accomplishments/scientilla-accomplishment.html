@@ -1,8 +1,13 @@
 <ul class="document" ng-class="{invalid: !vm.isValid(vm.accomplishment)}">
     <li class="document-info" ng-class="{ 'add-year-postfix': vm.accomplishment.type.key==='editorship'}">
         <span class="document-year">
-            {{ vm.accomplishment.year }}<span ng-if="vm.accomplishment.type.key==='editorship'">&nbsp;-&nbsp;<span ng-if="vm.accomplishment.yearTo">{{vm.accomplishment.yearTo}}</span><span ng-if="!vm.accomplishment.yearTo">Present</span></span>
+            {{ vm.accomplishment.year }}<span ng-if="vm.accomplishment.type.key==='editorship'">&nbsp;-&nbsp;<span
+                ng-if="vm.accomplishment.yearTo">{{vm.accomplishment.yearTo}}</span><span
+                ng-if="!vm.accomplishment.yearTo">Present</span></span>
         </span>
+        <img ng-src="{{ vm.customizations.logos.institute.src }}"
+             ng-if="vm.customizations.logos.institute.src && vm.hasMainGroupAffiliation()"
+             class="icon-iit"/>
         <span class="icon-iit" ng-if="vm.hasMainGroupAffiliation()"></span>
     </li>
 
