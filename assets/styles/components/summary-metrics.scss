@@ -22,6 +22,7 @@
 
         .index-icon-container{
             display: inline-block;
+            margin-right: .5rem;
             min-width: 30px;
             vertical-align: middle;
         }
@@ -42,15 +43,13 @@
         margin: 0px -2rem 3rem -2rem;
 
         & > li{
-            margin-bottom: .5rem;
+            margin-bottom: 1.5rem;
             padding: 0px 2rem;
         }
 
         i{
             display: inline-block;
-            margin-bottom: .5rem;
             font-size: 2rem;
-            vertical-align: top;
 
             & + i {
                 position: relative;
@@ -58,11 +57,12 @@
                 padding-left: 10px;
 
                 &:after{
-                    @include h6;
                     position: absolute;
                     top: 0px;
                     left: 0px;
                     display: inline-block;
+                    font-size: 2rem;
+                    line-height: 2rem;
                     font-weight: bold;
                     content: '/';
                     vertical-align: middle;
@@ -74,7 +74,7 @@
         .index-value{
             font-family: $roboto-slab;
             font-size: 1.4rem;
-            line-height: 2rem;
+            line-height: 1.4rem;
         }
 
         .index-value{

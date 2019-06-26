@@ -74,12 +74,45 @@
             ];
 
             colors.forEach(color => {
-                darkenColors.push(tinycolor(color).darken(30).toString());
-                lightenColors.push(tinycolor(color).lighten(30).toString());
+                const dark = tinycolor(color).darken(30).toString();
+                const light = tinycolor(color).lighten(30).toString();
+
+                if (dark !== '#ffffff' && dark !== '#000000' && typeof dark !== 'undefined') {
+                    darkenColors.push(dark);
+                }
+
+                if (light !== '#ffffff' && light !== '#000000' && typeof light !== 'undefined') {
+                    lightenColors.push(light);
+                }
             });
 
-            extendedColors = darkenColors.concat(lightenColors);
-            extendedColors = _.shuffle(extendedColors);
+            extendedColors.push(darkenColors[1]);
+            extendedColors.push(lightenColors[2]);
+            extendedColors.push(darkenColors[3]);
+            extendedColors.push(lightenColors[4]);
+            extendedColors.push(darkenColors[5]);
+            extendedColors.push(lightenColors[6]);
+            extendedColors.push(darkenColors[7]);
+            extendedColors.push(lightenColors[8]);
+            extendedColors.push(darkenColors[9]);
+            extendedColors.push(lightenColors[10]);
+            extendedColors.push(darkenColors[11]);
+            extendedColors.push(lightenColors[12]);
+
+            extendedColors.push(darkenColors[12]);
+            extendedColors.push(lightenColors[11]);
+            extendedColors.push(darkenColors[10]);
+            extendedColors.push(lightenColors[9]);
+            extendedColors.push(darkenColors[8]);
+            extendedColors.push(lightenColors[7]);
+            extendedColors.push(darkenColors[6]);
+            extendedColors.push(lightenColors[5]);
+            extendedColors.push(darkenColors[4]);
+            extendedColors.push(lightenColors[3]);
+            extendedColors.push(darkenColors[2]);
+            extendedColors.push(lightenColors[1]);
+
+            extendedColors = extendedColors.filter(color => color !== '#ffffff' && color !== '#000000' && typeof color !== 'undefined');
 
             colors = colors.concat(extendedColors);
         };
@@ -253,7 +286,7 @@
                 options: {
                     chart: {
                         type: 'lineChart',
-                        color: () => '#' + styles.errorColor,
+                        color: () => '#' + styles.hIndexColor,
                         x: d => d.year,
                         y: d => d.value,
                         showLabels: true,
@@ -301,7 +334,7 @@
                 data: data,
                 options: getMultiBarChartConfig({
                     stacked: true,
-                    color: () => '#' + styles.warningColor,
+                    color: () => '#' + styles.citationColor,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -339,7 +372,7 @@
                 data: data,
                 options: getMultiBarChartConfig({
                     stacked: true,
-                    color: () => '#' + styles.warningColor,
+                    color: () => '#' + styles.citationColor,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -374,6 +407,10 @@
                 _.maxBy(totalIfPerYear, 'year').year
             );
 
+            let journalMetricsColors = [];
+            journalMetricsColors.push('#' + styles.impactFactorColor);
+            journalMetricsColors = journalMetricsColors.concat(colors);
+
             return {
                 title: 'Journal metrics by year',
                 data: [{
@@ -389,7 +426,7 @@
                 options: {
                     chart: {
                         type: 'lineChart',
-                        color: (d, i) => colors[i],
+                        color: (d, i) => journalMetricsColors[i],
                         showLabels: true,
                         showLegend: true,
                         useInteractiveGuideline: true,
@@ -424,6 +461,10 @@
                 yearRange.max
             );
 
+            let journalMetricsColors = [];
+            journalMetricsColors.push('#' + styles.impactFactorColor);
+            journalMetricsColors = journalMetricsColors.concat(colors);
+
             return {
                 title: 'Journal metrics by year',
                 data: [{
@@ -437,7 +478,7 @@
                     values: getItemsByYear(chartsData.totalSnipPerYear, yearRange)
                 }],
                 options: getMultiBarChartConfig({
-                    color: (d, i) => colors[i],
+                    color: (d, i) => journalMetricsColors[i],
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',

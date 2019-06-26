@@ -45,7 +45,8 @@
 
 .icon-if{
     &:before{
-        @include h4;
+        font-family: $roboto-slab;
+        font-size: 2rem;
         line-height: 2rem;
         font-weight: bold;
         font-style: normal;
