@@ -616,6 +616,13 @@
             ]);
         };
 
+        service.getTotalImpactFactorDocuments = function (chartsData) {
+            return getTotal(chartsData, [
+                'filteredAffiliatedJournalsByYear',
+                'filteredNotAffiliatedJournalsByYear',
+            ]);
+        };
+
         service.getTotalFilteredJournals = function (chartsData) {
             return getTotal(chartsData, ['filteredAffiliatedJournalsByYear', 'filteredNotAffiliatedJournalsByYear']);
         };
