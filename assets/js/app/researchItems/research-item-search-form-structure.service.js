@@ -199,10 +199,6 @@
                 defaultValue: defaultValue,
                 type: 'connector'
             };
-
-            //const values = connectors.map(c => ({value: c.value, label: c.label}));
-
-
         }
         /* jshint ignore:end */
     }
