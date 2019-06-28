@@ -1,4 +1,4 @@
-/* global d3 */
+/* global d3, tinycolor */
 (function () {
     "use strict";
     angular.module("services").factory("ChartService", ChartService);
@@ -7,18 +7,8 @@
         'DocumentTypesService'
     ];
 
-    const metricsColors = [
-        '#2ca02c', // IF
-        '#9467bd', // SJR
-        '#118798'  // SNIP
-    ];
-
-    const sourceTypesColors = [
-        '#0072AF', // journal
-        '#aec7e8', // conference
-        '#ff7f0e', // book
-        '#ffbb78'  // book series
-    ];
+    let styles = {};
+    let colors = [];
 
     function ChartService(DocumentTypesService) {
         const service = {
@@ -59,6 +49,74 @@
             }
         };
 
+        service.getData = (researchEntity, charts, refresh = false) =>
+            researchEntity.all('charts').getList({refresh: !!refresh, charts});
+
+        service.setStyles = (customizations) => {
+            const darkenColors = [],
+                lightenColors = [];
+            let extendedColors = [];
+
+            styles = customizations.styles;
+            colors = [
+                '#' + styles.chartColor1,
+                '#' + styles.chartColor2,
+                '#' + styles.chartColor3,
+                '#' + styles.chartColor4,
+                '#' + styles.chartColor5,
+                '#' + styles.chartColor6,
+                '#' + styles.chartColor7,
+                '#' + styles.chartColor8,
+                '#' + styles.chartColor9,
+                '#' + styles.chartColor10,
+                '#' + styles.chartColor11,
+                '#' + styles.chartColor12
+            ];
+
+            colors.forEach(color => {
+                const dark = tinycolor(color).darken(30).toString();
+                const light = tinycolor(color).lighten(30).toString();
+
+                if (dark !== '#ffffff' && dark !== '#000000' && typeof dark !== 'undefined') {
+                    darkenColors.push(dark);
+                }
+
+                if (light !== '#ffffff' && light !== '#000000' && typeof light !== 'undefined') {
+                    lightenColors.push(light);
+                }
+            });
+
+            extendedColors.push(darkenColors[1]);
+            extendedColors.push(lightenColors[2]);
+            extendedColors.push(darkenColors[3]);
+            extendedColors.push(lightenColors[4]);
+            extendedColors.push(darkenColors[5]);
+            extendedColors.push(lightenColors[6]);
+            extendedColors.push(darkenColors[7]);
+            extendedColors.push(lightenColors[8]);
+            extendedColors.push(darkenColors[9]);
+            extendedColors.push(lightenColors[10]);
+            extendedColors.push(darkenColors[11]);
+            extendedColors.push(lightenColors[12]);
+
+            extendedColors.push(darkenColors[12]);
+            extendedColors.push(lightenColors[11]);
+            extendedColors.push(darkenColors[10]);
+            extendedColors.push(lightenColors[9]);
+            extendedColors.push(darkenColors[8]);
+            extendedColors.push(lightenColors[7]);
+            extendedColors.push(darkenColors[6]);
+            extendedColors.push(lightenColors[5]);
+            extendedColors.push(darkenColors[4]);
+            extendedColors.push(lightenColors[3]);
+            extendedColors.push(darkenColors[2]);
+            extendedColors.push(lightenColors[1]);
+
+            extendedColors = extendedColors.filter(color => color !== '#ffffff' && color !== '#000000' && typeof color !== 'undefined');
+
+            colors = colors.concat(extendedColors);
+        };
+
         service.getAsMainChart = chart => {
             const mainChart = _.cloneDeep(chart);
             mainChart.options = getDefaultOptions(mainChart.baseOptions, service.mainChartDefaultOptions);
@@ -79,6 +137,7 @@
                     type: 'pieChart',
                     x: d => d.type,
                     y: d => d.value,
+                    color: colors,
                     labelThreshold: 0.02,
                     labelSunbeamLayout: true
                 }
@@ -110,16 +169,13 @@
                 values: getItemsByYear(chartsData.scientificTalksByYear, yearRange)
             }];
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             const baseOptions = {
                 chart: {
                     type: 'multiBarChart',
+                    color: colors,
                     x: d => d.year,
                     y: d => d.value,
                     showValues: true,
@@ -152,29 +208,25 @@
             const yearRange = getYearRange(chartsData);
 
             const data = [{
-                    key: DocumentTypesService.getSourceTypeLabel('journal'),
-                    values: getItemsByYear(chartsData.journalsByYear, yearRange)
-                }, {
-                    key: DocumentTypesService.getSourceTypeLabel('conference'),
-                    values: getItemsByYear(chartsData.conferencesByYear, yearRange)
-                }, {
-                    key: DocumentTypesService.getSourceTypeLabel('book'),
-                    values: getItemsByYear(chartsData.booksByYear, yearRange)
-                }, {
-                    key: DocumentTypesService.getSourceTypeLabel('bookseries'),
-                    values: getItemsByYear(chartsData.bookChaptersByYear, yearRange)
-                }];
+                key: DocumentTypesService.getSourceTypeLabel('journal'),
+                values: getItemsByYear(chartsData.journalsByYear, yearRange)
+            }, {
+                key: DocumentTypesService.getSourceTypeLabel('conference'),
+                values: getItemsByYear(chartsData.conferencesByYear, yearRange)
+            }, {
+                key: DocumentTypesService.getSourceTypeLabel('book'),
+                values: getItemsByYear(chartsData.booksByYear, yearRange)
+            }, {
+                key: DocumentTypesService.getSourceTypeLabel('bookseries'),
+                values: getItemsByYear(chartsData.bookChaptersByYear, yearRange)
+            }];
 
             const rangeX = getRangeX(
                 yearRange.min,
                 yearRange.max
             );
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             const baseOptions = {
@@ -184,7 +236,7 @@
                     y: d => d.value,
                     showValues: true,
                     stacked: true,
-                    color: sourceTypesColors,
+                    color: colors,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -213,7 +265,7 @@
         service.getHindexPerYear = (chartsData) => {
             const yearRange = getYearRange(chartsData);
             const hindexPerYear = getItemsByYear(chartsData.hindexPerYear, yearRange);
-            const maxY = Math.max.apply(Math, hindexPerYear.map(function(o) { return o.value; }));
+            const maxY = Math.max.apply(Math, hindexPerYear.map(o => o.value));
             const rangeY = getRangeY(maxY, true);
 
             const maxYValue = parseInt(_.maxBy(hindexPerYear, 'value').value, 10);
@@ -234,7 +286,7 @@
                 options: {
                     chart: {
                         type: 'lineChart',
-                        color: () => '#a94442',
+                        color: () => '#' + styles.hIndexColor,
                         x: d => d.year,
                         y: d => d.value,
                         showLabels: true,
@@ -274,11 +326,7 @@
                 values: getItemsByYear(chartsData.citationsPerDocumentYear, yearRange)
             }];
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             return {
@@ -286,7 +334,7 @@
                 data: data,
                 options: getMultiBarChartConfig({
                     stacked: true,
-                    color: () => '#ff9933',
+                    color: () => '#' + styles.citationColor,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -316,11 +364,7 @@
                 values: getItemsByYear(chartsData.citationsPerYear, yearRange)
             }];
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             return {
@@ -328,7 +372,7 @@
                 data: data,
                 options: getMultiBarChartConfig({
                     stacked: true,
-                    color: () => '#ff9933',
+                    color: () => '#' + styles.citationColor,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -363,6 +407,10 @@
                 _.maxBy(totalIfPerYear, 'year').year
             );
 
+            let journalMetricsColors = [];
+            journalMetricsColors.push('#' + styles.impactFactorColor);
+            journalMetricsColors = journalMetricsColors.concat(colors);
+
             return {
                 title: 'Journal metrics by year',
                 data: [{
@@ -378,7 +426,7 @@
                 options: {
                     chart: {
                         type: 'lineChart',
-                        color: (d, i) => metricsColors[i],
+                        color: (d, i) => journalMetricsColors[i],
                         showLabels: true,
                         showLegend: true,
                         useInteractiveGuideline: true,
@@ -413,6 +461,10 @@
                 yearRange.max
             );
 
+            let journalMetricsColors = [];
+            journalMetricsColors.push('#' + styles.impactFactorColor);
+            journalMetricsColors = journalMetricsColors.concat(colors);
+
             return {
                 title: 'Journal metrics by year',
                 data: [{
@@ -426,7 +478,7 @@
                     values: getItemsByYear(chartsData.totalSnipPerYear, yearRange)
                 }],
                 options: getMultiBarChartConfig({
-                    color: (d, i) => metricsColors[i],
+                    color: (d, i) => journalMetricsColors[i],
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -468,17 +520,14 @@
                 yearRange.max
             );
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
-            }
-            const maxY = Math.max.apply(Math, dataMax);
+            const maxY = Math.max.apply(null, getDatamax(data));
             const rangeY = getRangeY(maxY);
 
             return {
                 title: 'IIT vs non-IIT documents',
                 data: data,
                 options: getMultiBarChartConfig({
+                    color: colors,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -529,11 +578,7 @@
                 yearRange.max
             );
 
-            let dataMax = [];
-            for (let i = 0; i < data.length; i++) {
-                dataMax.push(Math.max.apply(Math, data[i].values.map(function(o) { return o.value; })));
-            }
-            const maxY = dataMax.reduce((a, b) => a + b, 0);
+            const maxY = getDatamax(data).reduce((a, b) => a + b, 0);
             const rangeY = getRangeY(maxY);
 
             return {
@@ -541,7 +586,7 @@
                 data: data,
                 options: getMultiBarChartConfig({
                     stacked: true,
-                    color: sourceTypesColors,
+                    color: colors,
                     reduceXTicks: false,
                     xAxis: {
                         axisLabel: '',
@@ -624,7 +669,8 @@
                     labelThreshold: 0.02,
                     labelSunbeamLayout: true,
                     showLabels: true,
-                    legendPosition: 'right'
+                    legendPosition: 'right',
+                    color: (d, i) => colors[i]
                 }
             };
 
@@ -706,7 +752,6 @@
                     showValues: true,
                     stacked: false,
                     showControls: false,
-                    //height: 420,
                     x: d => d.year,
                     y: d => d.value,
                     duration: 300,
@@ -739,7 +784,7 @@
             const maxXValue = parseInt(maxX, 10);
             const minXValue = parseInt(minX, 10);
 
-            switch(true) {
+            switch (true) {
                 case maxXValue - minXValue > 20:
                     step = 5;
                     break;
@@ -762,7 +807,7 @@
         function getRangeY(maxY, addMax = false) {
             let step = 1;
 
-            switch(true) {
+            switch (true) {
                 case maxY > 40000:
                     step = 10000;
                     break;
@@ -812,6 +857,10 @@
             }
 
             return rangeY;
+        }
+
+        function getDatamax(data) {
+            return data.map(d => Math.max.apply(null, d.values.map(o => o.value)));
         }
     }
 }());

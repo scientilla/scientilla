@@ -7,10 +7,12 @@
             controller: scientillaComponentForm,
             controllerAs: 'vm',
             bindings: {
-                structure: '<',
+                structure: '=',
                 cssClass: '@',
                 onSubmit: '&',
-                errors: '<'
+                errors: '<',
+                onValidate: '&',
+                onChange: '&'
             },
             transclude: true,
         });
@@ -48,7 +50,7 @@
 
         function reset() {
             setDefault();
-            clearNil();
+            submit();
         }
 
         function clearNil() {
@@ -82,19 +84,23 @@
         function onStructureChange() {
             deregisterOnChanges();
 
+            vm.fields = filterStructure('field');
+            vm.actions = filterStructure('action');
+            vm.connectors = filterStructure('connector');
+
             const oldSearchValues = _.cloneDeep(vm.values);
             vm.values = {};
 
             _.forEach(vm.structure, function (struct, key) {
                 if (!_.isUndefined(oldSearchValues[key]))
                     vm.values[key] = oldSearchValues[key];
-                else if (!_.isUndefined(struct.defaultValue)) {
+                else if (struct && !_.isUndefined(struct.defaultValue)) {
                     vm.values[key] = struct.defaultValue;
                 }
             });
 
             _.forEach(vm.structure, function (struct, key) {
-                if (!_.isUndefined(struct.onChange)) {
+                if (struct && !_.isUndefined(struct.onChange)) {
                     onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, execEvent(struct.onChange)));
                 }
 
@@ -128,7 +134,7 @@
             Object.keys(vm.structure).forEach(function(name) {
                 let struct = vm.structure[name];
 
-                if (struct.type === type) {
+                if (struct && struct.type === type) {
                     structs[name] = struct;
                 }
             });

@@ -1,0 +1,22 @@
+{
+  "values": [
+    {
+      "key": "award_achievement",
+      "shortLabel": "AA",
+      "label": "Award/Achievement",
+      "type": "accomplishment"
+    },
+    {
+      "key": "organized_event",
+      "shortLabel": "OE",
+      "label": "Organized Event",
+      "type": "accomplishment"
+    },
+    {
+      "key": "editorship",
+      "shortLabel": "ED",
+      "label": "Editorship",
+      "type": "accomplishment"
+    }
+  ]
+}

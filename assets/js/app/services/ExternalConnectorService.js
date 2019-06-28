@@ -10,7 +10,7 @@
     function ExternalConnectorService(Restangular) {
         var service = {
             getConnectors: getConnectors,
-            setConnector: setConnector,
+            setConnectors: setConnectors,
         };
 
         /* jshint ignore:start */
@@ -22,11 +22,11 @@
         /* jshint ignore:end */
 
         /* jshint ignore:start */
-        async function setConnector(connector) {
+        async function setConnectors(connectors) {
             let formData = new FormData();
-            formData.append('connector', JSON.stringify(connector));
+            formData.append('connectors', JSON.stringify(connectors));
 
-            return await Restangular.one('external-connector')
+            return await Restangular.one('external-connectors')
                 .customPOST(formData, '', undefined, {'Content-Type': undefined});
         }
         /* jshint ignore:end */

@@ -17,6 +17,9 @@
             })
             .when("/connectors", {
                 template: '<scientilla-admin-external-connectors></scientilla-admin-external-connectors>'
+            })
+            .when("/customize", {
+                template: '<scientilla-admin-customize></scientilla-admin-customize>'
             });
 
     }

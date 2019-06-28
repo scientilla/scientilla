@@ -19,19 +19,13 @@
     function controller(Restangular, Notification, ExternalConnectorService, EventsService) {
         const vm = this;
 
-        vm.connectors = {
-            elsevier: {
-                active: false,
-                scopus: {},
-                scival: {}
-            }
-        };
+        vm.connectors = {};
 
         vm.errors = {};
 
         vm.resetErrors = resetErrors;
 
-        vm.saveElsevier = saveElsevier;
+        vm.save = save;
 
         vm.$onInit = function () {
             ExternalConnectorService.getConnectors().then((connectors) => {
@@ -43,17 +37,11 @@
             });
         };
 
-        function saveConnector(connector) {
+        function saveConnectors(connectors) {
 
-            ExternalConnectorService.setConnector(connector)
+            ExternalConnectorService.setConnectors(connectors)
                 .then((result) => {
-                    switch(connector.type) {
-                        case 'elsevier':
-                            Notification.success('The elsevier connector is saved!');
-                            break;
-                        default:
-                            break;
-                    }
+                    Notification.success('The connectors are saved!');
 
                     EventsService.publish(EventsService.CONNECTORS_CHANGED, result.connectors);
                 })
@@ -105,33 +93,14 @@
                         message: 'This field is required.'
                     });
                 }
-
-                if (typeof vm.connectors.elsevier.scival.url === 'undefined' || vm.connectors.elsevier.scival.url === '') {
-                    vm.errors.elsevier.scival.url = [];
-                    vm.errors.elsevier.scival.url.push({
-                        rule:'required',
-                        message: 'This field is required.'
-                    });
-                }
-
-                if (typeof vm.connectors.elsevier.scival.clientKey === 'undefined' || vm.connectors.elsevier.scival.clientKey === '') {
-                    vm.errors.elsevier.scival.clientKey = [];
-                    vm.errors.elsevier.scival.clientKey.push({
-                        rule:'required',
-                        message: 'This field is required.'
-                    });
-                }
             }
         }
 
-        function saveElsevier(){
+        function save(){
             validateElsevier();
 
-            if (_.isEmpty(vm.errors.elsevier.scopus) && _.isEmpty(vm.errors.elsevier.scival)) {
-                saveConnector({
-                    type: 'elsevier',
-                    data: vm.connectors.elsevier
-                });
+            if (_.isEmpty(vm.errors.elsevier.scopus)) {
+                saveConnectors(vm.connectors);
             }
         }
     }

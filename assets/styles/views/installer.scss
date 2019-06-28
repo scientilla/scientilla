@@ -1,0 +1,112 @@
+.installer-view{
+    .step-navigation{
+        @include normalize-listing;
+        margin-bottom: 2rem;
+
+        & > li {
+            display: block;
+            counter-increment: counter;
+
+            &.done{
+                color: $forrest-green;
+
+                a{
+                    color: $forrest-green;
+
+                    &:after{
+                        margin-left: .5rem;
+                        font-family: $font-awesome;
+                        font-style: normal;
+                        font-weight: normal;
+                        content: '\f058';
+                    }
+                }
+            }
+
+            &.not-done{
+                color: $apple-blossom;
+
+                a{
+                    color: $apple-blossom;
+
+                    &:after{
+                        margin-left: .5rem;
+                        font-family: $font-awesome;
+                        font-style: normal;
+                        font-weight: normal;
+                        content: '\f057';
+                    }
+                }
+            }
+
+            &.launch{
+                a{
+                    &:after{
+                        margin-left: .5rem;
+                        font-family: $font-awesome;
+                        font-style: normal;
+                        font-weight: 900;
+                        content: '\f135';
+                    }
+                }
+            }
+
+            a{
+                color: $primary-color;
+
+                &:before{
+                    display: inline-block;
+                    margin-right: .5rem;
+                    content: counter(counter) '.';
+                }
+            }
+        }
+    }
+
+    .sub-listing{
+        @include normalize-listing;
+        padding-left: 2rem;
+    }
+
+    .form-actions{
+        @include normalize-listing;
+        @include clearfix;
+        margin-left: -.75rem;
+        margin-right: -.75rem;
+
+        & > li{
+            padding: .75rem;
+            float: left;
+        }
+    }
+
+    .main-container{
+        padding-bottom: 10rem;
+    }
+
+    .response-message{
+        margin-top: 2rem;
+
+        .error{
+            color: $apple-blossom;
+        }
+    }
+
+    @include media-breakpoint-up(sm){
+        .main-container{
+            padding-bottom: 6rem;
+        }
+    }
+
+    @include media-breakpoint-up(md){
+        .step-navigation{
+            @include clearfix;
+            margin: 0px -2rem 4rem -2rem;
+
+            & > li {
+                padding: 2rem;
+                float: left;
+            }
+        }
+    }
+}

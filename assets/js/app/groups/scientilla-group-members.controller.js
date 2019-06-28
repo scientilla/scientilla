@@ -48,23 +48,7 @@
         };
 
         vm.members = [];
-        vm.searchForm = {
-            name: {
-                inputType: 'text',
-                label: 'Name',
-                matchColumn: 'name',
-                matchRule: 'contains',
-                type: 'field'
-            },
-            surname: {
-                inputType: 'text',
-                label: 'Surname',
-                matchColumn: 'surname',
-                matchRule: 'contains',
-                type: 'field'
-            }
 
-        };
         vm.onFilter = onFilter;
         let query = {};
 
@@ -95,14 +79,12 @@
         async function removeCollaborator(user) {
             const buttonIndex = await ModalService.multipleChoiceConfirm('Removing group member',
                 `Are you sure you want to remove ${user.getDisplayName()} from the group members?`,
-                ['Proceed']);
+                {proceed: 'Proceed'});
 
-            switch (buttonIndex) {
-                case 0:
-                    await GroupsService.removeCollaborator(vm.group, user);
-                    refresh();
+            if (buttonIndex === 'proceed') {
+                await GroupsService.removeCollaborator(vm.group, user);
+                refresh();
             }
-
         }
 
         async function onFilter(q) {
@@ -145,6 +127,5 @@
         function isAdmin() {
             return AuthService.isAdmin;
         }
-
     }
 })();

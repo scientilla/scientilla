@@ -1,5 +1,5 @@
 <scientilla-filter
-    search-form-structure="vm.searchForm"
+    category="document"
     on-filter="vm.onFilter"
     elements="vm.documents"
     empty-list-message="No documents found">
@@ -38,7 +38,8 @@
                     </button>
                     <button
                         class="btn btn-warning"
-                        ng-click="vm.compareDocuments(d, d.getComparisonDuplicate())"
+                        ng-click="vm.compareDocuments(d, d.getComparisonDuplicates(), vm.category)"
+                        ng-disabled="!d.isValid()"
                         type="button"
                         uib-tooltip="Open the comparison form"
                         tooltip-placement="top"

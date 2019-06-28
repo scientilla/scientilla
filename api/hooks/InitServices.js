@@ -1,4 +1,4 @@
-/* global sails,DocumentTypes,SourceTypes */
+/* global sails,DocumentTypes,SourceTypes, ResearchItemTypes */
 "use strict";
 
 module.exports = sails => {
@@ -7,6 +7,7 @@ module.exports = sails => {
             sails.after('hook:orm:loaded', async () => {
                 await DocumentTypes.init();
                 await SourceTypes.init();
+                await ResearchItemTypes.init();
                 next();
             });
         }

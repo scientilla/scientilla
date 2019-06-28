@@ -1,0 +1,410 @@
+<scientilla-backend-layout>
+    <div class="admin admin-customize">
+        <h1>Customize</h1>
+        <form enctype="multipart/form-data">
+            <ul class="customize-categories">
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2>Text</h2>
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-6">
+                                    <div
+                                        class="form-group"
+                                        ng-class="vm.errors.footer.text ? 'has-error' : ''">
+                                        <label for="footerText">Footer text</label>
+                                        <input
+                                            id="footerText"
+                                            name="footerText"
+                                            type="text"
+                                            class="form-control"
+                                            ng-model="vm.customizations.footer.text"
+                                            ng-class="vm.errors.footer.text ? 'is-invalid' : ''">
+                                        <scientilla-error-messages
+                                            class="error-messages"
+                                            errors="vm.errors.footer.text"></scientilla-error-messages>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6">
+                                    <div
+                                        class="form-group"
+                                        ng-class="vm.errors.footer.email ? 'has-error' : ''">
+                                        <label for="footerEmail">Footer email</label>
+                                        <input
+                                            id="footerEmail"
+                                            name="footerEmail"
+                                            type="email"
+                                            class="form-control"
+                                            ng-model="vm.customizations.footer.email"
+                                            ng-class="vm.errors.footer.email ? 'is-invalid' : ''">
+                                        <scientilla-error-messages
+                                            class="error-messages"
+                                            errors="vm.errors.footer.email"></scientilla-error-messages>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2>Logos</h2>
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-6">
+                                    <div
+                                        class="form-group"
+                                        ng-class="vm.errors.logos.header ? 'has-error' : ''">
+                                        <label for="headerLogo">Header & footer logo</label>
+                                        <em class="header-logo-info">This image is been used in the footer but also in the
+                                            header when the user is logged out. Here is an example how it looks like:</em>
+                                        <div class="row"
+                                             ng-if="vm.customizations.logos && vm.customizations.logos.header && vm.customizations.logos.header.src">
+                                            <div class="col-12 col-sm-6 col-md-12 col-lg-6">
+                                                <strong>Header logo:</strong>
+                                                <div class="logo-container header-logo-container">
+                                                    <img ng-src="{{ vm.customizations.logos.header.src }}" class="header-logo">
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-sm-6 col-md-12 col-lg-6">
+                                                <strong>Footer logo:</strong>
+                                                <div class="logo-container footer-logo-container">
+                                                    <img ng-src="{{ vm.customizations.logos.header.src }}" class="header-logo">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <input
+                                            id="headerLogo"
+                                            name="headerLogo"
+                                            type="file"
+                                            class="form-control"
+                                            file="vm.customizations.logos.header.file"
+                                            ng-class="vm.errors.logos.header ? 'is-invalid' : ''">
+                                        <scientilla-error-messages
+                                            class="error-messages"
+                                            errors="vm.errors.logos.header"></scientilla-error-messages>
+                                        <em>The recommended image height is 40px.</em>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-6">
+                                    <div
+                                        class="form-group"
+                                        ng-class="vm.errors.logos.institute ? 'has-error' : ''">
+                                        <label for="instituteLogo">Institute logo</label>
+                                        <div ng-if="vm.customizations.logos.institute.src">
+                                            <img ng-src="{{ vm.customizations.logos.institute.src }}" class="institute-icon">
+                                        </div>
+
+                                        <input
+                                            id="instituteLogo"
+                                            name="instituteLogo"
+                                            type="file"
+                                            class="form-control"
+                                            file="vm.customizations.logos.institute.file"
+                                            ng-class="vm.errors.logos.institute ? 'is-invalid' : ''">
+                                        <scientilla-error-messages
+                                            class="error-messages"
+                                            errors="vm.errors.logos.institute"></scientilla-error-messages>
+                                        <em>The recommended image height is 16px.</em>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2>Base colors</h2>
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="primaryColor">Primary color</label>
+                                        <color-picker
+                                            id="primaryColor"
+                                            ng-model="vm.customizations.styles.primaryColor"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                        <em>This color is used for the primary elements such as save buttons, active menu
+                                            items.</em>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="secondaryColor">Secondary color</label>
+                                        <color-picker
+                                            id="secondaryColor"
+                                            ng-model="vm.customizations.styles.secondaryColor"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                        <em>This color is been used for the secondary elements such as cancel button.</em>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="headerBackgroundColor">Header background color</label>
+                                        <color-picker
+                                            id="headerBackgroundColor"
+                                            ng-model="vm.customizations.styles.headerBackgroundColor"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                        <em>This color is been used as background of the header.</em>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="footerBackgroundColor">Footer background color</label>
+                                        <color-picker
+                                            id="footerBackgroundColor"
+                                            ng-model="vm.customizations.styles.footerBackgroundColor"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                        <em>This color is been used as background color of the footer.</em>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="baseGray">Base gray</label>
+                                        <color-picker
+                                            id="baseGray"
+                                            ng-model="vm.customizations.styles.baseGray"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                        <em>This color is been used as base color for the text and to generate gray tints.</em>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="linkTextColor">Link text color</label>
+                                        <color-picker
+                                            id="linkTextColor"
+                                            ng-model="vm.customizations.styles.linkTextColor"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                        <em>This color is been used to show regular anchor links inside text.</em>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="warningColor">Warning color</label>
+                                        <color-picker
+                                            id="warningColor"
+                                            ng-model="vm.customizations.styles.warningColor"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                        <em>This color is been used to show warning messages and to show citation
+                                            statistics.</em>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="successColor">Success color</label>
+                                        <color-picker
+                                            id="successColor"
+                                            ng-model="vm.customizations.styles.successColor"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                        <em>This color is been used to show success messages and to show IF statistics.</em>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="errorColor">Error color</label>
+                                        <color-picker
+                                            id="errorColor"
+                                            ng-model="vm.customizations.styles.errorColor"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                        <em>This color is been used to show error messages and change the color of form
+                                            elements.</em>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2>Metrics statistics colors</h2>
+                            <em>These colors will be used on the dashboard.</em><br><br>
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="chartColor1">Document color</label>
+                                        <color-picker
+                                            id="documentColor"
+                                            ng-model="vm.customizations.styles.documentColor"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="hIndexColor">H-index color</label>
+                                        <color-picker
+                                            id="hIndexColor"
+                                            ng-model="vm.customizations.styles.hIndexColor"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="citationColor">Citation color</label>
+                                        <color-picker
+                                            id="citationColor"
+                                            ng-model="vm.customizations.styles.citationColor"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="impactFactorColor">Impact factor color</label>
+                                        <color-picker
+                                            id="impactFactorColor"
+                                            ng-model="vm.customizations.styles.impactFactorColor"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2>Chart colors</h2>
+                            <em class="chart-colors-discription">Pick the 12 base colors that will be used to show the graphs on
+                                the dashboard. Extra colors will be generated automatically starting from these colors.</em>
+                            <div class="row">
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="chartColor1">Chart color 1</label>
+                                        <color-picker
+                                            id="chartColor1"
+                                            ng-model="vm.customizations.styles.chartColor1"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="chartColor2">Chart color 2</label>
+                                        <color-picker
+                                            id="chartColor2"
+                                            ng-model="vm.customizations.styles.chartColor2"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="chartColor3">Chart color 3</label>
+                                        <color-picker
+                                            id="chartColor3"
+                                            ng-model="vm.customizations.styles.chartColor3"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="chartColor4">Chart color 4</label>
+                                        <color-picker
+                                            id="chartColor4"
+                                            ng-model="vm.customizations.styles.chartColor4"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="chartColor5">Chart color 5</label>
+                                        <color-picker
+                                            id="chartColor5"
+                                            ng-model="vm.customizations.styles.chartColor5"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="chartColor6">Chart color 6</label>
+                                        <color-picker
+                                            id="chartColor6"
+                                            ng-model="vm.customizations.styles.chartColor6"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="chartColor7">Chart color 7</label>
+                                        <color-picker
+                                            id="chartColor7"
+                                            ng-model="vm.customizations.styles.chartColor7"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="chartColor8">Chart color 8</label>
+                                        <color-picker
+                                            id="chartColor8"
+                                            ng-model="vm.customizations.styles.chartColor8"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="chartColor9">Chart color 9</label>
+                                        <color-picker
+                                            id="chartColor9"
+                                            ng-model="vm.customizations.styles.chartColor9"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="chartColor10">Chart color 10</label>
+                                        <color-picker
+                                            id="chartColor10"
+                                            ng-model="vm.customizations.styles.chartColor10"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="chartColor11">Chart color 11</label>
+                                        <color-picker
+                                            id="chartColor11"
+                                            ng-model="vm.customizations.styles.chartColor11"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                                    <div class="form-group">
+                                        <label for="chartColor12">Chart color 12</label>
+                                        <color-picker
+                                            id="chartColor12"
+                                            ng-model="vm.customizations.styles.chartColor12"
+                                            options="vm.colorPickerOptions"></color-picker>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <ul class="customize-actions">
+                <li>
+                    <button
+                        class="btn btn-primary"
+                        type="submit"
+                        ng-click="vm.save()"
+                        scientilla-click-confirm="Are you sure?">
+                        Save
+                    </button>
+                </li>
+                <li>
+                    <button
+                        class="btn btn-primary"
+                        type="secondary"
+                        ng-click="vm.reset()"
+                        scientilla-click-confirm="Are you sure?">
+                        Reset to default
+                    </button>
+                </li>
+            </ul>
+        </form>
+    </div>
+</scientilla-backend-layout>

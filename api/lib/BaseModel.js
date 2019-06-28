@@ -43,6 +43,19 @@ module.exports = {
         }
 
         return await checkCollection(collection);
+    },
+    async blukAction(method, elements, params) {
+
+        const results = [];
+        for (const element of elements) {
+            try {
+                const res = await method(...[element, params]);
+                results.push(res);
+            } catch (e) {
+                results.push(e);
+            }
+        }
+        return results;
     }
 
 };

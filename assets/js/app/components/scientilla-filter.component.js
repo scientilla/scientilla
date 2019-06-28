@@ -9,7 +9,7 @@
             transclude: true,
             bindings: {
                 onFilter: '&',
-                searchFormStructure: '<',
+                category: '@',
                 filterLabel: '@?',
                 elements: '<?'
             }
@@ -17,12 +17,14 @@
 
 
     scientillaFilter.$inject = [
+        'ResearchItemTypesService',
         'pageSize',
         '$scope',
-        '$timeout'
+        '$timeout',
+        'ResearchItemSearchFormStructureService'
     ];
 
-    function scientillaFilter(pageSize, $scope, $timeout) {
+    function scientillaFilter(ResearchItemTypesService, pageSize, $scope, $timeout, ResearchItemSearchFormStructureService) {
         const vm = this;
 
         vm.onSubmit = onSubmit;
@@ -52,7 +54,8 @@
         let searchQuery = {};
         let onDataCountChangeDeregisterer = null;
 
-        vm.$onInit = function () {
+        /* jshint ignore:start */
+        vm.$onInit = async function () {
             vm.itemsPerPage = pageSize;
             vm.status = vm.STATUS_INITIAL_LOADING;
 
@@ -63,6 +66,8 @@
                 vm.elements = [];
 
             onDataCountChangeDeregisterer = $scope.$watch('vm.elements.count', onDataCountChange, true);
+
+            vm.searchFormStructure = await ResearchItemSearchFormStructureService.getStructure(vm.category);
 
             vm.filterSearchFormStructure = _.assign({}, vm.searchFormStructure, {
                 buttonSearch: {
@@ -87,8 +92,8 @@
                     type: 'action'
                 }
             });
-
         };
+        /* jshint ignore:end */
 
         vm.$onDestroy = function () {
             onDataCountChangeDeregisterer();

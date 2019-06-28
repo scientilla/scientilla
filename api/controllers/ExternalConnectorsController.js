@@ -16,24 +16,19 @@ module.exports = {
         res.halt(Promise.resolve(config));
     },
 
-    setConnector: function (req, res) {
-        let connector = JSON.parse(req.body.connector);
+    setConnectors: function (req, res) {
+        let connectors = JSON.parse(req.body.connectors);
 
-        switch(connector.type) {
-            case 'elsevier':
-                sails.config.connectors.elsevier.active = connector.data.active;
-                sails.config.connectors.elsevier.scopus.url = connector.data.scopus.url;
-                sails.config.connectors.elsevier.scopus.apiKey = connector.data.scopus.apiKey;
-                sails.config.connectors.elsevier.scopus.token = connector.data.scopus.token;
-                sails.config.connectors.elsevier.scival.url = connector.data.scival.url;
-                sails.config.connectors.elsevier.scival.clientKey = connector.data.scival.clientKey;
-                break;
-            default:
-                break;
-        }
+        sails.config.connectors.publications.active = connectors.publications.active;
+        sails.config.connectors.elsevier.active = connectors.elsevier.active;
+        sails.config.connectors.elsevier.scopus.url = connectors.elsevier.scopus.url;
+        sails.config.connectors.elsevier.scopus.apiKey = connectors.elsevier.scopus.apiKey;
+        sails.config.connectors.elsevier.scopus.token = connectors.elsevier.scopus.token;
+        sails.config.connectors.elsevier.scival.url = connectors.elsevier.scival.url;
+        sails.config.connectors.elsevier.scival.clientKey = connectors.elsevier.scival.clientKey;
 
         fs.writeFile(sails.config.appPath + '/config/connectors.js',
-            'module.exports.connectors = ' + JSON.stringify(sails.config.connectors),
+            'module.exports.connectors = ' + JSON.stringify(sails.config.connectors, null, 4),
             function(err) {
                 if (err) {
                     return console.log(err);

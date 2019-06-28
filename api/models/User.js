@@ -1,4 +1,4 @@
-/* global User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate */
+/* global require, User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate, ResearchEntity */
 'use strict';
 
 /**
@@ -13,12 +13,12 @@ const assert = require('assert');
 const _ = require('lodash');
 const waterlock = require('waterlock');
 const Promise = require("bluebird");
-const ResearchEntity = require('../lib/ResearchEntity');
+const SubResearchEntity = require('../lib/SubResearchEntity');
 
 const USER = 'user';
 const ADMINISTRATOR = 'administrator';
 
-module.exports = _.merge({}, ResearchEntity, {
+module.exports = _.merge({}, SubResearchEntity, {
     DEFAULT_SORTING: {
         surname: 'asc',
         name: 'asc',
@@ -32,18 +32,15 @@ module.exports = _.merge({}, ResearchEntity, {
         username: {
             type: 'email',
             defaultsTo: "",
-            required: true,
             unique: true
         },
         name: {
             type: 'STRING',
-            defaultsTo: "",
-            required: true
+            defaultsTo: ""
         },
         surname: {
             type: 'STRING',
-            defaultsTo: "",
-            required: true
+            defaultsTo: ""
         },
         slug: {
             type: 'STRING',
@@ -73,6 +70,10 @@ module.exports = _.merge({}, ResearchEntity, {
         },
         jobTitle: {
             type: 'STRING'
+        },
+        researchEntity: {
+            columnName: 'research_entity',
+            model: 'researchentity'
         },
         drafts: {
             collection: 'Document',
@@ -128,11 +129,6 @@ module.exports = _.merge({}, ResearchEntity, {
             via: 'researchEntity',
             through: 'externaldocument'
         },
-        notDuplicateDocuments: {
-            collection: 'document',
-            via: 'researchEntity',
-            through: 'documentnotduplicate'
-        },
         authorships: {
             collection: 'authorship',
             via: 'researchEntity',
@@ -174,8 +170,14 @@ module.exports = _.merge({}, ResearchEntity, {
             through: 'userattribute'
         },
         lastsynch: 'datetime',
-        active: 'boolean',
-        synchronized: 'boolean',
+        active: {
+            type: "BOOLEAN",
+            defaultsTo: true
+        },
+        synchronized: {
+            type: "BOOLEAN",
+            defaultsTo: false
+        },
         getAliases: async function () {
             const aliases = await Alias.find({user: this.id});
             if (!aliases)
@@ -188,10 +190,11 @@ module.exports = _.merge({}, ResearchEntity, {
         getModel: function () {
             return User;
         },
-        getDocumentNotDuplicateModel: function(){
+        getDocumentNotDuplicateModel: function () {
             return DocumentNotDuplicate;
         }
     }),
+    getDocumentNotDuplicateModel: () => DocumentNotDuplicate,
     getAdministeredGroups: function (userId) {
         return User.findOneById(userId)
             .populate('administratedGroups')
@@ -228,8 +231,7 @@ module.exports = _.merge({}, ResearchEntity, {
                         sails.log.debug(`An error happened while creating a user`);
                         sails.log.debug(err);
                         reject(err);
-                    }
-                    else
+                    } else
                         resolve(user);
                 });
         });
@@ -372,7 +374,7 @@ module.exports = _.merge({}, ResearchEntity, {
                 item: researchEntityId
             };
 
-        if (check && (await ResearchEntity.getDuplicates(User, researchEntityId, document, docToRemove)).length > 0) {
+        if (check && (await SubResearchEntity.getDuplicates(User, researchEntityId, document, docToRemove)).length > 0) {
             return {
                 error: 'Documents must be compared',
                 item: document
@@ -433,7 +435,7 @@ module.exports = _.merge({}, ResearchEntity, {
                 error: 'Document not valid for verification',
                 item: draft
             };
-        if (check && (await ResearchEntity.getDuplicates(User, researchEntityId, draft, docToRemove)).length > 0) {
+        if (check && (await SubResearchEntity.getDuplicates(User, researchEntityId, draft, docToRemove)).length > 0) {
             return {
                 error: 'Documents must be compared',
                 item: draft
@@ -528,6 +530,8 @@ module.exports = _.merge({}, ResearchEntity, {
     afterCreate: async function (user, cb) {
         if (!user.id)
             return cb();
+
+        await ResearchEntity.createResearchEntity(User, user, 'user');
 
         await User.createAliases(user);
         if (User.isInternalUser(user))

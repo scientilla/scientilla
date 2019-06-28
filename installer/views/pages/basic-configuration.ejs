@@ -1,0 +1,283 @@
+<% layout('/layouts/master') -%>
+
+<% include ../partials/step-navigation -%>
+
+<h2>Basic configuration</h2>
+
+<form method="POST" action="/basic-configuration">
+    <label for="">Institute</label>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12 col-xl-5">
+                    <div class="form-group">
+                        <label for="institute-name">Name *</label>
+                        <input
+                            name="institute-name"
+                            id="institute-name"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.institute.name -%>">
+                    </div>
+                </div>
+                <div class="col-12 col-xl-5">
+                    <div class="form-group">
+                        <label for="institute-slug">Slug *</label>
+                        <input
+                            name="institute-slug"
+                            id="institute-slug"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.institute.slug -%>">
+                    </div>
+                </div>
+                <div class="col-12 col-xl-2">
+                    <div class="form-group">
+                        <label for="institute-shortname">Shortname *</label>
+                        <input
+                            name="institute-shortname"
+                            id="institute-shortname"
+                            type="text"
+                            class="form-control"
+                            required="required"
+                            value="<%-configuration.institute.shortname -%>">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-xl-4">
+                    <div class="form-group">
+                        <label for="institute-country">Country</label>
+                        <input
+                            name="institute-country"
+                            id="institute-country"
+                            type="text"
+                            class="form-control"
+                            value="<%-configuration.institute.country -%>">
+                    </div>
+                </div>
+                <div class="col-12 col-xl-4">
+                    <div class="form-group">
+                        <label for="institute-city">City</label>
+                        <input
+                            name="institute-city"
+                            id="institute-city"
+                            type="text"
+                            class="form-control"
+                            value="<%-configuration.institute.city -%>">
+                    </div>
+                </div>
+                <div class="col-12 col-xl-4">
+                    <div class="form-group">
+                        <label for="institute-scopus-id">ScopusId</label>
+                        <input
+                            name="institute-scopus-id"
+                            id="institute-scopus-id"
+                            type="text"
+                            class="form-control"
+                            value="<%-configuration.institute.scopusId -%>">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <label>LDAP</label>
+    <div class="card">
+        <div class="card-body">
+            <div class="form-group">
+                <label for="ldap-connection-url">URL</label>
+                <input
+                    name="ldap-connection-url"
+                    id="ldap-connection-url"
+                    type="text"
+                    class="form-control"
+                    value="<%-configuration.ldap.connection.url -%>">
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-xl-6">
+                    <div class="form-group">
+                        <label for="ldap-connection-bind-dn">Bind dn</label>
+                        <input
+                            name="ldap-connection-bind-dn"
+                            id="ldap-connection-bind-dn"
+                            type="text"
+                            class="form-control"
+                            value="<%-configuration.ldap.connection.bindDn -%>">
+                    </div>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <div class="form-group">
+                        <label for="ldap-connection-bind-credentials">Bind credentials</label>
+                        <input
+                            name="ldap-connection-bind-credentials"
+                            id="ldap-connection-bind-credentials"
+                            type="text"
+                            class="form-control"
+                            value="<%-configuration.ldap.connection.bindCredentials -%>">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12 col-xl-6">
+                    <div class="form-group">
+                        <label for="ldap-connection-search-base">Search base</label>
+                        <input
+                            name="ldap-connection-search-base"
+                            id="ldap-connection-search-base"
+                            type="text"
+                            class="form-control"
+                            value="<%-configuration.ldap.connection.searchBase -%>">
+                    </div>
+                </div>
+                <div class="col-12 col-xl-6">
+                    <div class="form-group">
+                        <label for="ldap-connection-search-filter">Search filter</label>
+                        <input
+                            name="ldap-connection-search-filter"
+                            id="ldap-connection-search-filter"
+                            type="text"
+                            class="form-control"
+                            value="<%-configuration.ldap.connection.searchFilter -%>">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="ldap-connection-cache">Cache</label>
+                <label class="form-checkbox">
+                    <input
+                        name="ldap-connection-cache"
+                        id="ldap-connection-cache"
+                        type="checkbox"
+                        <%= configuration.ldap.connection.cache ? 'checked' : '' %>>
+                    <span>Enabled</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <br>
+    <label>Main institute import</label>
+    <div class="card">
+        <div class="card-body">
+            <div class="form-group">
+                <label for="main-institute-import-user-import-url">User import URL</label>
+                <input
+                    name="main-institute-import-user-import-url"
+                    id="main-institute-import-user-import-url"
+                    type="text"
+                    class="form-control"
+                    value="<%-configuration.mainInstituteImport.userImportUrl -%>">
+            </div>
+
+            <label>Users creation condition</label>
+            <ul class="sub-listing">
+                <li>
+                    <div class="form-group">
+                        <label for="main-institute-import-users-creation-condition-attribute">Attribute</label>
+                        <input
+                            name="main-institute-import-users-creation-condition-attribute"
+                            id="main-institute-import-users-creation-condition-attribute"
+                            type="text"
+                            class="form-control"
+                            value="<%-configuration.mainInstituteImport.usersCreationCondition.attribute -%>">
+                    </div>
+                </li>
+                <li>
+                    <div class="form-group">
+                        <label for="main-institute-import-users-creation-condition-value">Value</label>
+                        <label class="form-checkbox">
+                            <input
+                                name="main-institute-import-users-creation-condition-value"
+                                id="main-institute-import-users-creation-condition-value"
+                                type="checkbox"
+                                <%= configuration.mainInstituteImport.usersCreationCondition.value ? 'checked' : '' %>>
+                            <span>Enabled</span>
+                        </label>
+                    </div>
+                </li>
+            </ul>
+
+            <div class="form-group">
+                <label for="main-institute-import-official-groups-import-url">Official groups import URL</label>
+                <input
+                    name="main-institute-import-official-groups-import-url"
+                    id="main-institute-import-official-groups-import-url"
+                    type="text"
+                    class="form-control"
+                    value="<%-configuration.mainInstituteImport.officialGroupsImportUrl -%>">
+            </div>
+        </div>
+    </div>
+    <br>
+    <label for="">Cron jobs</label>
+    <div class="card">
+        <div class="card-body">
+            <div class="form-group">
+            <label for="crons">JSON</label>
+            <textarea
+                name="crons"
+                id="crons"
+                class="form-control"
+                rows="10"
+            ><%= JSON.stringify(configuration.crons, null, 4) %></textarea>
+        </div>
+        </div>
+    </div>
+    <br>
+    <div class="form-group">
+        <label for="">Registration</label>
+        <label class="form-checkbox">
+            <input
+                name="registration"
+                id="registration"
+                type="checkbox"
+                <%= configuration.registerEnabled ? 'checked' : '' %>>
+            <span>Enabled</span>
+        </label>
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="form-group">
+                <label for="max-user-favorite">Max user favorite</label>
+                <input
+                    name="max-user-favorite"
+                    id="max-user-favorite"
+                    type="number"
+                    min="0"
+                    value="5"
+                    class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="form-group">
+                <label for="max-group-favorite">Max group favorite</label>
+                <input
+                    name="max-group-favorite"
+                    id="max-group-favorite"
+                    type="number"
+                    min="0"
+                    value="5"
+                    class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <ul class="form-actions">
+        <li>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </li>
+        <li>
+            <a href="/basic-configuration/reset" class="btn btn-outline-secondary">Reset to defaults</a>
+        </li>
+    </ul>
+</form>

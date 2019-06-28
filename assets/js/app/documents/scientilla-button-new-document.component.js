@@ -53,11 +53,10 @@
         };
 
         function createNewDocument(type) {
-            var researchEntity = context.getResearchEntity();
-            var draft = researchEntity.getNewDocument(type);
+            const subResearchEntity = context.getSubResearchEntity();
+            const draft = subResearchEntity.getNewDocument(type);
 
-            ModalService
-                .openScientillaDocumentForm(draft, researchEntity);
+            ModalService.openScientillaDocumentForm(draft, subResearchEntity);
         }
     }
 })();

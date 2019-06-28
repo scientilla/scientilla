@@ -18,15 +18,16 @@
         'DocumentLabels',
         'context',
         'documentOrigins',
-        'documentListSections'
+        'documentListSections',
+        'EventsService',
+        'CustomizeService'
     ];
 
-    function scientillaDocument(ModalService, config, DocumentLabels, context, documentOrigins, documentListSections) {
+    function scientillaDocument(ModalService, config, DocumentLabels, context, documentOrigins, documentListSections, EventsService, CustomizeService) {
         const vm = this;
         vm.openDetails = openDetails;
         vm.hasMainGroupAffiliation = hasMainGroupAffiliation;
         vm.editTags = editTags;
-        vm.isSynchronized = isSynchronized;
         vm.showScopusMetrics = showScopusMetrics;
         vm.showWOSMetrics = showWOSMetrics;
         vm.getMetricValue = getMetricValue;
@@ -39,7 +40,7 @@
         vm.changePrivacy = changePrivacy;
         vm.changeFavorite = changeFavorite;
 
-        const researchEntity = context.getResearchEntity();
+        const subResearchEntity = context.getSubResearchEntity();
         const documentService = context.getDocumentService();
 
         vm.checkDuplicates = [
@@ -89,12 +90,20 @@
                 checkDuplicate();
 
             addLabels();
+
+            EventsService.subscribe(vm, EventsService.CUSTOMIZATIONS_CHANGED, function (event, customizations) {
+                vm.customizations = customizations;
+            });
+
+            CustomizeService.getCustomizations().then(customizations => {
+                vm.customizations = customizations;
+            });
         };
 
         function checkDuplicate() {
             function isSuggested(doc) {
-                const f = researchEntity.getType() === 'user' ? 'authors' : 'groups';
-                return !doc[f].some(re => re.id === researchEntity.id);
+                const f = subResearchEntity.getType() === 'user' ? 'authors' : 'groups';
+                return !doc[f].some(re => re.id === subResearchEntity.id);
             }
 
             if (!vm.document.duplicates || !vm.document.duplicates.length)
@@ -205,9 +214,6 @@
                 .concat(vm.document.authors.map(a => '- ' + a.name + ' ' + a.surname));
         }
 
-        function isSynchronized() {
-            return vm.document.synchronized && vm.document.origin === 'scopus';
-        }
 
         function changePrivacy() {
             const authorship = getAuthorship();
@@ -249,12 +255,12 @@
 
         function getAuthorship() {
             let field;
-            if (researchEntity.getType() === 'user')
+            if (subResearchEntity.getType() === 'user')
                 field = 'authorships';
             else
                 field = 'groupAuthorships';
 
-            return vm.document[field].find(a => a.researchEntity === researchEntity.id);
+            return vm.document[field].find(a => a.researchEntity === subResearchEntity.id);
         }
 
         function getScopusCitations() {

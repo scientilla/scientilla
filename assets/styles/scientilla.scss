@@ -4,7 +4,8 @@
 @import '../../node_modules/@fortawesome/fontawesome-free/scss/solid';
 
 @import 'mixins';
-@import 'variables';
+//@import 'variables';
+@import 'variables-overwrites';
 @import 'utilities';
 @import 'reset-overrides';
 
@@ -34,6 +35,8 @@
 @import 'ui/top-toolbar';
 @import 'ui/ui-bootstrap';
 @import 'ui/error-messages';
+@import 'ui/colorpicker';
+@import 'ui/ui-notification';
 
 @import 'components/header';
 @import 'components/footer';
@@ -52,12 +55,14 @@
 @import 'components/wizard-container';
 @import 'components/alias-listing';
 @import 'components/document-search-listing';
+@import 'components/summary-overview';
+@import 'components/summary-metrics';
 
 @import 'views/login';
 @import 'views/users';
 @import 'views/groups';
 @import 'views/admin';
-@import 'views/summary';
 @import 'views/register';
+@import 'views/installer';
 
 @import 'responsive';

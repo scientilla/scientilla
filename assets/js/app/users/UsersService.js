@@ -36,8 +36,8 @@
                 slug: "",
                 username: "",
                 role: userConstants.role.USER,
-		active: true,
-		synchronized: false
+                active: true,
+                synchronized: false
             };
             Prototyper.toUserModel(user);
             return user;
@@ -90,6 +90,11 @@
                     Prototyper.toCollaborationsCollection(user.collaborations);
                     return user;
                 });
+        };
+
+        service.getUser = function (userId) {
+            const populate = {populate: ['collaborations', 'attributes', 'aliases', 'memberships']};
+            return service.one(userId).get(populate);
         };
 
         service.getUsers = function (query) {

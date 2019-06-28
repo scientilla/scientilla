@@ -24,7 +24,8 @@
                             id="documentType"
                             placeholder="Document Type"
                             ng-model="vm.document.type"
-                            ng-options="option.key as option.label for option in vm.documentTypes">
+                            ng-options="option.key as option.label for option in vm.documentTypes"
+                            ng-change="vm.resetErrors()">
                         </select>
                     </div>
                 </div>
@@ -32,11 +33,14 @@
             <div class="col-12 col-sm-6">
                 <div
                     class="form-group has-feedback"
-                    ng-class="vm.errors.sourceType ? 'has-error' : ''">
+                    ng-class="{
+                        'has-error' : vm.errors.sourceType && vm.mode == 'verify',
+                        'has-warning' : vm.errors.sourceType && vm.mode == 'draft'
+                    }">
                     <label for="sourceType">Source Type *</label>
                     <div
                         class="select-wrapper"
-                        ng-class="vm.errors.sourceType ? 'is-invalid' : ''">
+                        ng-class="{'is-invalid' : vm.errors.sourceType}">
                         <select
                             class="form-control"
                             id="sourceType"
@@ -46,7 +50,9 @@
                             ng-model="vm.document.sourceType"
                             ng-model-options="{ allowInvalid: true }"
                             ng-options="option.id as option.label group by option.section for option in vm.sourceTypes"
-                            ng-class="vm.errors.sourceType ? 'is-invalid' : ''">
+                            ng-class="{'is-invalid' : vm.errors.sourceType}"
+                            ng-blur="vm.checkValidation('sourceType')"
+                            ng-change="vm.checkValidation('sourceType')">
                             <option value="">--Not Selected--</option>
                         </select>
                     </div>
@@ -58,7 +64,10 @@
         </div>
 
         <div
-            ng-class="vm.errors.authorsStr ? 'has-error' : ''"
+            ng-class="{
+                'has-error' : vm.errors.authorsStr && vm.mode == 'verify',
+                'has-warning' : vm.errors.authorsStr && vm.mode == 'draft'
+            }"
             class="form-group has-feedback">
             <label for="authors">Authors (must be in the form "Doe J., Smith Simpson J. V.") *</label>
             <input
@@ -71,14 +80,19 @@
                 ng-pattern="vm.documentFieldsRules.authorsStr.regex"
                 data-ng-required="true"
                 ng-model-options="{ allowInvalid: true }"
-                ng-class="vm.errors.authorsStr ? 'is-invalid' : ''">
+                ng-class="{'is-invalid' : vm.errors.authorsStr}"
+                ng-blur="vm.checkValidation('authorsStr')"
+                ng-change="vm.fieldValueHasChanged('authorsStr')">
             <scientilla-error-messages
                 class="error-messages"
                 errors="vm.errors.authorsStr"></scientilla-error-messages>
         </div>
 
         <div
-            ng-class="vm.errors.title ? 'has-error' : ''"
+            ng-class="{
+                'has-error' : vm.errors.title && vm.mode == 'verify',
+                'has-warning' : vm.errors.title && vm.mode == 'draft'
+            }"
             class="form-group has-feedback">
             <label for="title">Title *</label>
             <input
@@ -89,7 +103,9 @@
                 placeholder="Title"
                 ng-model="vm.document.title"
                 data-ng-required="true"
-                ng-class="vm.errors.title ? 'is-invalid' : ''">
+                ng-class="{'is-invalid' : vm.errors.title}"
+                ng-blur="vm.checkValidation('title')"
+                ng-change="vm.fieldValueHasChanged('title')">
             <scientilla-error-messages
                 class="error-messages"
                 errors="vm.errors.title"></scientilla-error-messages>
@@ -101,11 +117,14 @@
                 ng-if="vm.document.sourceType && !['invited_talk'].includes(vm.document.type)">
                 <div
                     class="form-group has-feedback"
-                    ng-class="vm.errors.source ? 'has-error' : ''">
+                    ng-class="{
+                        'has-error' : vm.errors.source && vm.mode == 'verify',
+                        'has-warning' : vm.errors.source && vm.mode == 'draft'
+                    }">
                     <label for="source">{{ vm.sourceLabel }} *</label>
                     <div
                         class="input-group"
-                        ng-class="vm.errors.source ? 'is-invalid' : ''">
+                        ng-class="{'is-invalid' : vm.errors.source}">
                         <input
                             id="source"
                             name="source"
@@ -121,7 +140,8 @@
                             typeahead-editable="false"
                             typeahead-select-on-blur="true"
                             ng-blur="vm.checkSource($event)"
-                            ng-class="vm.errors.source ? 'is-invalid' : ''">
+                            ng-change="vm.fieldValueHasChanged('source')"
+                            ng-class="{'is-invalid' : vm.errors.source}">
                         {{ $viewValue }}
                         <div class="input-group-append">
                             <button
@@ -140,7 +160,10 @@
                 class="col-12 col-sm-6"
                 ng-class="!['invited_talk'].includes(vm.document.sourceType) && vm.document.sourceType ? 'col-md-3' : 'col-md-6'">
                 <div
-                    ng-class="vm.errors.year ? 'has-error' : ''"
+                    ng-class="{
+                        'has-error' : vm.errors.year && vm.mode == 'verify',
+                        'has-warning' : vm.errors.year && vm.mode == 'draft'
+                    }"
                     class="form-group has-feedback">
                     <label for="year">Year (YYYY format) *</label>
                     <input
@@ -153,7 +176,9 @@
                         data-ng-required="true"
                         ng-pattern="/^(19|20)\d{2}$/"
                         ng-model-options="{ allowInvalid: true }"
-                        ng-class="vm.errors.year ? 'is-invalid' : ''">
+                        ng-class="{'is-invalid' : vm.errors.year}"
+                        ng-blur="vm.checkValidation('year')"
+                        ng-change="vm.fieldValueHasChanged('year')">
                     <scientilla-error-messages
                         class="error-messages"
                         errors="vm.errors.year"></scientilla-error-messages>
@@ -163,14 +188,23 @@
                 class="col-12 col-sm-6"
                 ng-class="['journal', 'conference', 'book', 'bookseries'].includes(vm.document.sourceType) && vm.document.sourceType ? 'col-md-3' : 'col-md-6'"
                 ng-if="!['invited_talk'].includes(vm.document.type)">
-                <div class="form-group">
+                <div
+                    ng-class="vm.errors.doi ? 'has-error' : ''"
+                    class="form-group has-feedback">
                     <label for="doi">DOI</label>
                     <input
                         type="text"
                         class="form-control"
                         id="doi"
                         placeholder="DOI"
-                        ng-model="vm.document.doi">
+                        ng-model="vm.document.doi"
+                        ng-blur="vm.checkValidation('doi')"
+                        ng-change="vm.fieldValueHasChanged('doi')"
+                        ng-class="{'is-invalid' : vm.errors.doi}">
+                    <span ng-if="!vm.errors.doi">Example: <strong>10.1038/nnano.2013.238</strong></span>
+                    <scientilla-error-messages
+                        class="error-messages"
+                        errors="vm.errors.doi"></scientilla-error-messages>
                 </div>
             </div>
 
@@ -179,8 +213,11 @@
                 ng-if="vm.document.type == 'invited_talk' && vm.sourceLabel">
                 <div
                     class="form-group has-feedback"
-                    ng-class="{'has-error': vm.document.id && form.itSource.$invalid}">
-                    <label for="source">{{vm.sourceLabel}}</label>
+                    ng-class="{
+                        'has-error' : vm.errors.itSource && vm.mode == 'verify',
+                        'has-warning' : vm.errors.itSource && vm.mode == 'draft'
+                    }">
+                    <label for="source">{{vm.sourceLabel}} *</label>
                     <input
                         id="itSource"
                         name="itSource"
@@ -190,10 +227,14 @@
                         typeahead-loading="searching"
                         typeahead-no-results="noResults"
                         class="form-control"
-                        data-ng-required="true"
                         placeholder="{{vm.sourceLabel}}"
                         ng-model-options="{ allowInvalid: true }"
-                        ng-class="{'is-invalid': vm.document.id && form.itSource.$invalid}">
+                        ng-class="{'is-invalid' : vm.errors.itSource}"
+                        ng-blur="vm.checkValidation('itSource')"
+                        ng-change="vm.fieldValueHasChanged('itSource')">
+                    <scientilla-error-messages
+                        class="error-messages"
+                        errors="vm.errors.itSource"></scientilla-error-messages>
                 </div>
             </div>
         </div>
@@ -264,20 +305,24 @@
                 <div
                     class="form-group has-feedback"
                     ng-if="!['invited_talk'].includes(vm.document.type)"
-                    ng-class="{'has-error': vm.document.id && form.scopusId.$invalid}">
+                    ng-class="{
+                        'has-error' : vm.errors.scopusId && vm.mode == 'verify',
+                        'has-warning' : vm.errors.scopusId && vm.mode == 'draft'
+                    }">
                     <label>Scopus ID</label>
                     <input
                         class="form-control"
                         name="scopusId"
                         placeholder="Scopus ID"
                         ng-model="vm.document.scopusId"
-                        ng-class="{'is-invalid': vm.document.id && form.scopusId.$invalid}">
+                        ng-class="{'is-invalid': vm.errors.scopusId}"
+                        ng-blur="vm.checkValidation('scopusId')"
+                        ng-change="vm.fieldValueHasChanged('scopusId')">
                     <div>(Numeric identifier in the scopus document URL: e.g., https://www.scopus.com/[..]eid=2-s2.0-<strong>84888368243</strong>[..])</div>
-                    <div
-                        ng-if="vm.document.id && form.scopusId.$invalid"
-                        class="invalid-feedback">
-                        Invalid  Scopus ID
-                    </div>
+                    <scientilla-error-messages
+                        ng-if="vm.document.id"
+                        class="error-messages"
+                        errors="vm.errors.scopusId"></scientilla-error-messages>
                 </div>
             </div>
             <div class="col-12 col-sm-6">
@@ -297,7 +342,7 @@
             <li>
                 <scientilla-button
                     type="button"
-                    click="vm.save()"
+                    click="vm.save"
                     ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData">{{ vm.saveStatus.message }}
                 </scientilla-button>
             </li>
@@ -305,19 +350,23 @@
                 <scientilla-button
                     type="submit"
                     ng-disabled="vm.verifyStatus.state !== 'ready to verify'"
-                    click="vm.verify()">{{ vm.verifyStatus.message }}
+                    click="vm.verify">{{ vm.verifyStatus.message }}
                 </scientilla-button>
             </li>
             <li>
                 <scientilla-button
                     type="cancel"
-                    click="vm.cancel()">Close</scientilla-button>
+                    click="vm.cancel">Close</scientilla-button>
             </li>
         </ul>
 
         <div
             ng-if="vm.errorText"
-            class="modal-error text-danger">
+            class="modal-error"
+            ng-class="{
+                'text-danger' : vm.mode == 'verify',
+                'text-warning': vm.mode == 'draft'
+            }">
             {{ vm.errorText }}
         </div>
     </form>

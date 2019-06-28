@@ -1,3 +1,4 @@
+/* global angular */
 (function () {
     angular
         .module('groups')
@@ -12,19 +13,28 @@
 
     GroupDetailsController.$inject = [
         'GroupsService',
-        'context'
+        'context',
+        'AuthService',
+        '$scope',
+        '$controller'
     ];
 
-    function GroupDetailsController(GroupsService, context) {
+    function GroupDetailsController(GroupsService, context, AuthService, $scope, $controller) {
         const vm = this;
-        vm.researchEntity = context.getResearchEntity();
-        vm.getGroup = getGroup;
+        angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
+        vm.subResearchEntity = context.getSubResearchEntity();
+        vm.loggedUser = AuthService.user;
+        vm.refreshGroup = refreshGroup;
 
-        vm.$onInit = function () {
-            getGroup();
+        /* jshint ignore:start */
+        vm.$onInit = async function () {
+            await refreshGroup();
+            vm.chartsData = await vm.getChartsData(vm.group);
         };
 
-        function getGroup() {
+        /* jshint ignore:end */
+
+        function refreshGroup() {
             return GroupsService.getGroup(vm.groupId)
                 .then(group => vm.group = group);
         }

@@ -1,4 +1,4 @@
-/* global Document, sails, User, ObjectComparer, Connector, Source, Authorship, Affiliation, Institute, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer, DocumentTypes, SourceTypes */
+/* global Document, sails, User, ObjectComparer, Connector, Source, Authorship, Affiliation, Institute, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer, DocumentTypes, SourceTypes, Exporter, DocumentNotDuplicate, DocumentNotDuplicateGroup */
 'use strict';
 
 /**
@@ -32,7 +32,8 @@ const fields = [
     {name: 'iitPublicationsId'},
     {name: 'origin'},
     {name: 'kind'},
-    {name: 'synchronized'}
+    {name: 'synchronized'},
+    {name: 'synchronized_at'}
 ];
 
 module.exports = _.merge({}, BaseModel, {
@@ -66,6 +67,7 @@ module.exports = _.merge({}, BaseModel, {
         kind: 'STRING',
         origin: 'STRING',
         synchronized: "BOOLEAN",
+        synchronized_at: "DATETIME",
         source: {
             model: 'source'
         },
@@ -263,6 +265,7 @@ module.exports = _.merge({}, BaseModel, {
         scopusSynchronize: async function (synchronized) {
             if (!synchronized) {
                 this.synchronized = false;
+                this.synchronized_at = null;
                 return this.savePromise();
             }
 
@@ -443,6 +446,7 @@ module.exports = _.merge({}, BaseModel, {
 
         const query = _.pick(document, Document.getFields());
         query.id = {'!': document.id};
+        delete query.synchronized_at;
         if (_.isObject(document.source) && document.source.id)
             query.source = document.source.id;
         query.kind = DocumentKinds.VERIFIED;
@@ -478,8 +482,7 @@ module.exports = _.merge({}, BaseModel, {
         if (oldDoc) {
             await Document.update(criteria, selectedData);
             doc = await Document.findOne(criteria);
-        }
-        else doc = await Document.create(selectedData);
+        } else doc = await Document.create(selectedData);
         if (!doc)
             throw 'Document not created';
 
@@ -495,6 +498,7 @@ module.exports = _.merge({}, BaseModel, {
                 continue;
 
             draft.synchronized = false;
+            draft.synchronized_at = null;
             await draft.savePromise();
             desynchronizedDrafts.push(draft);
         }
@@ -573,5 +577,35 @@ module.exports = _.merge({}, BaseModel, {
             sails.log.error(`Document.beforeCreate, document without documenttype ${document.id}`);
         // fixDocumentType(document);
         cb();
+    },
+    async moveDocumentNotDuplicates(docFromId, docToId) {
+        const dnds = await DocumentNotDuplicate.find({or: [{document: docFromId}, {duplicate: docFromId}]});
+        const dndgs = await DocumentNotDuplicateGroup.find({or: [{document: docFromId}, {duplicate: docFromId}]});
+
+        function convertDND(dnd) {
+            const d1 = dnd.document === docFromId ? docToId : dnd.document;
+            const d2 = dnd.duplicate === docFromId ? docToId : dnd.duplicate;
+            if (d1 === d2) return;
+            return {
+                document: Math.min(d1, d2),
+                duplicate: Math.max(d1, d2),
+                researchEntity: dnd.researchEntity
+            }
+        }
+
+        const newDnds = dnds.map(convertDND).filter(dnd => dnd);
+        const newDndgs = dndgs.map(convertDND).filter(dnd => dnd);
+
+        await DocumentNotDuplicate.create(newDnds);
+        await DocumentNotDuplicateGroup.create(newDndgs);
+    },
+    async mergeDraft(document, draft) {
+        await Document.mergeAuthorships(draft, document);
+        await Document.moveDocumentNotDuplicates(draft.id, document.id);
+
+        sails.log.debug('Draft ' + draft.id + ' will be deleted and substituted by ' + document.id);
+        await Document.destroy({id: draft.id});
+
+        return document;
     }
 });

@@ -21,6 +21,7 @@ describe('Synchronization', function () {
         doc1.source = journal.id;
         doc1.origin = 'scopus';
         doc1.synchronized = true;
+        doc1.synchronized_at = new Date();
         doc1.authorships = [{corresponding: true, affiliations: [institute.id], position: 0}];
         externalDocument = await test.createExternalDocument(doc1);
         draft = await User.createDraft(User, user.id, externalDocument);

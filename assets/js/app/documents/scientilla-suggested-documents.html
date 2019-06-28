@@ -1,7 +1,7 @@
 <scientilla-backend-layout>
     <h1>Suggested documents</h1>
     <scientilla-filter
-        search-form-structure="vm.searchForm"
+        category="suggested"
         on-filter="vm.onFilter"
         elements="vm.documents">
 
@@ -46,7 +46,8 @@
                             </button>
 
                             <button
-                                ng-click="vm.compareDocuments(document, document.getComparisonDuplicate())"
+                                ng-click="vm.compareDocuments(document, document.getComparisonDuplicates(), vm.documentCategories.SUGGESTED)"
+                                ng-disabled="!document.isValid()"
                                 type="button"
                                 ng-if="document.isComparable"
                                 class="btn btn-warning">

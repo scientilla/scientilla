@@ -19,10 +19,6 @@
     }
 }
 
-.filter-results{
-    //margin: 2rem 0px;
-}
-
 .filter-result-actions{
     @include normalize-listing;
     margin: 1rem -1rem;
@@ -76,15 +72,14 @@
         .filter-field-listing{
             &.fields-2,
             &.fields-3,
+            &.fields-5,
             &.fields-6{
                 grid-template-columns: 1fr 1fr;
             }
         }
 
         .filter-connector-listing{
-            &.connectors-1{
-                grid-template-columns: 1fr 1fr;
-            }
+            grid-template-columns: 1fr 1fr;
         }
     }
 }
@@ -100,15 +95,17 @@
                 grid-template-columns: 1fr 200px 1fr;
             }
 
+            &.fields-5{
+                grid-template-columns: 3fr 3fr 100px 100px 2fr;
+            }
+
             &.fields-6{
                 grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
             }
         }
 
         .filter-connector-listing{
-            &.connectors-1{
-                grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
-            }
+            grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
         }
     }
 }

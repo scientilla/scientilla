@@ -8,6 +8,7 @@
         'ui-notification',
         'LocalStorageModule',
         'scientilla-form',
+        'color.picker',
 
         /* Feature areas */
         'users',

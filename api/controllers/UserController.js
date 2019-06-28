@@ -9,10 +9,10 @@
  * @docs        :: http://waterlock.ninja/documentation
  */
 
-var _ = require('lodash');
-var researchEntityController = require('../lib/ResearchEntityController');
+const _ = require('lodash');
+const SubResearchEntityController = require('../lib/SubResearchEntityController');
 
-module.exports = require('waterlock').actions.user(_.merge({}, researchEntityController, {
+module.exports = require('waterlock').actions.user(_.merge({}, SubResearchEntityController, {
     //sTODO: move this function to the user model
     //sTODO: delete documents or set the owner to null
     //sTODO: refactor

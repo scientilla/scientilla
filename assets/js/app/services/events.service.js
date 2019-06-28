@@ -1,12 +1,12 @@
 (function () {
     angular.module("services")
-        .factory("EventsService", ModalService);
+        .factory("EventsService", service);
 
-    ModalService.$inject = [
+    service.$inject = [
         '$rootScope'
     ];
 
-    function ModalService($rootScope) {
+    function service($rootScope) {
         var subscriptions = [];
         var service = {
             AUTH_LOGIN: 'auth.login',
@@ -16,8 +16,6 @@
             DRAFT_UPDATED: 'draft.updated',
             DRAFT_CREATED: 'draft.created',
             DRAFT_VERIFIED: 'draft.verified',
-            DRAFT_UNVERIFIED: 'draft.unverified',
-
             DRAFT_SYNCHRONIZED: 'draft.synchronized',
 
             DOCUMENT_VERIFIED: 'document.verified',
@@ -27,6 +25,7 @@
             DOCUMENT_DISCARDED: 'document.discarded',
             DOCUMENT_NOT_DUPLICATED: 'document.notDuplicated',
             DOCUMENT_COMPARE: 'document.compare',
+            DOCUMENT_UNVERIFIED: 'document.unverified',
 
             NOTIFICATION_ACCEPTED: 'notification.accepted',
             NOTIFICATION_DISCARDED: 'notification.discarded',
@@ -35,7 +34,18 @@
 
             INSTITUTE_RESTORED: 'institute.restored',
 
-            CONTEXT_CHANGE: 'context.change'
+            CONTEXT_CHANGE: 'context.change',
+
+            RESEARCH_ITEM_VERIFIED: 'accomplishment.verified',
+            RESEARCH_ITEM_UNVERIFIED: 'accomplishment.unverified',
+
+            RESEARCH_ITEM_DRAFT_DELETED: 'accomplishment.draft.deleted',
+            RESEARCH_ITEM_DRAFT_UPDATED: 'accomplishment.draft.updated',
+            RESEARCH_ITEM_DRAFT_CREATED: 'accomplishment.draft.created',
+            RESEARCH_ITEM_DRAFT_VERIFIED: 'accomplishment.draft.verified',
+
+            CUSTOMIZATIONS_CHANGED: 'customizations.changed',
+            CONNECTORS_CHANGED: 'external.connectors.changed'
         };
 
         service.publish = function (event, args) {

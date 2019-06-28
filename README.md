@@ -27,13 +27,18 @@ At the moment you need to build Scientilla by yourself.
 
     ```
     cp config/scientilla.js.example config/scientilla.js
+
     cp config/connectors.js.example config/connectors.js
+
+    cp config/customizations.js.example config/customizations.js
+
     cp config/connections.js config/local.js
     sed -i 's/safe/alter/g' config/models.js
     ```
 
     And edit the config/scientilla.js and config/local.js files with your system settings.
-
+    
+    The customizations and external connectors config file can be changed by the UI of Scientilla.
 
 4. The next step is to install the dependencies of Scientilla. 
  

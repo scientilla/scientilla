@@ -13,12 +13,12 @@
 
     scientillaExternalDocuments.$inject = [
         'context',
-        'documentSearchForm',
         'documentListSections',
-        'EventsService'
+        'EventsService',
+        'documentCategories'
     ];
 
-    function scientillaExternalDocuments(context, documentSearchForm, documentListSections, EventsService) {
+    function scientillaExternalDocuments(context, documentListSections, EventsService, documentCategories) {
         const vm = this;
 
         const DocumentService = context.getDocumentService();
@@ -28,6 +28,9 @@
         vm.verifyDocument = DocumentService.verifyDocument;
         vm.verifyDocuments = DocumentService.verifyDocuments;
         vm.copyUncopiedDocuments = DocumentService.copyUncopiedDocuments;
+        vm.compareDocuments = DocumentService.compareDocuments;
+        vm.documentCategories = documentCategories;
+
         vm.onFilter = onFilter;
 
         vm.documentListSections = documentListSections;
@@ -39,15 +42,9 @@
                 EventsService.NOTIFICATION_ACCEPTED,
                 EventsService.NOTIFICATION_DISCARDED,
                 EventsService.DRAFT_UNVERIFIED,
-                EventsService.DOCUMENT_VERIFIED
+                EventsService.DOCUMENT_VERIFIED,
+                EventsService.DOCUMENT_COMPARE
             ], updateList);
-
-            vm.searchForm = Object.assign({},
-                {
-                    connector: getConnectorField()
-                },
-                documentSearchForm
-            );
         };
 
         vm.$onDestroy = function () {
@@ -66,21 +63,5 @@
                     vm.documents = documents;
                 });
         }
-
-        function getConnectorField() {
-            const connectors = vm.researchEntity.getExternalConnectors();
-            const values = connectors.map(c => ({value: c.value, label: c.label}));
-
-            return {
-                inputType: 'select',
-                label: 'Connector',
-                values: values,
-                matchColumn: 'origin',
-                defaultValue: 'scopus',
-                type: 'connector'
-            };
-        }
-
-
     }
 })();

@@ -19,6 +19,21 @@ const fields = [
     'oral_presentation'
 ];
 
+const documentFields = [
+    'affiliations',
+    'corresponding',
+    'first_coauthor',
+    'last_coauthor',
+    'oral_presentation'
+];
+
+const researchEntityFields = [
+    'researchEntity',
+    'synchronize',
+    'public',
+    'favorite'
+];
+
 module.exports = _.merge({}, BaseModel, {
 
     attributes: {
@@ -43,8 +58,8 @@ module.exports = _.merge({}, BaseModel, {
         last_coauthor: 'boolean',
         oral_presentation: 'boolean',
         unverify: function () {
-            this.researchEntity = null;
-            this.synchronize = null;
+            const empty = Authorship.getEmpty(this.authorStr, this.position, this.document);
+            researchEntityFields.forEach(f => this[f] = empty[f]);
             return this.savePromise();
         },
         isVerified() {
@@ -94,12 +109,12 @@ module.exports = _.merge({}, BaseModel, {
             .forEach(f => newAuthorship[f] = authorshipData[f]);
         return newAuthorship;
     },
-    isMetadataEqual(a1, a2) {
-        return _.isEmpty(_.xor(a1.affiliations.map(a => a.institute), a2.affiliations.map(a => a.institute))) &&
-            a1.corresponding === a2.corresponding &&
-            a1.first_coauthor === a2.first_coauthor &&
-            a1.last_coauthor === a2.last_coauthor &&
-            a1.oral_presentation === a2.oral_presentation;
+    isMetadataEqual(a1, a2, fields = documentFields) {
+        if (fields.includes('affiliations') && !_.isEmpty(_.xor(a1.affiliations.map(a => a.institute), a2.affiliations.map(a => a.institute))))
+            return false;
+
+        const fieldsToCheck = fields.filter(f => f !== 'affiliations');
+        return fieldsToCheck.every(f => a1[f] === a2[f]);
     },
     async cleanAuthorshipsData(authorshipsData) {
         const cleanAuthorshipsData = [];
@@ -138,8 +153,7 @@ module.exports = _.merge({}, BaseModel, {
                     else if (correctPositionNewAuthorship.authorStr && correctPositionNewAuthorship.authorStr !== newAuthorship.authorStr) {
                         correctPositionNewAuthorship.position = undefined;
                         newAuthorship.position = correctPosition;
-                    }
-                    else
+                    } else
                         fixedNewAuthorshipsData.splice(fixedNewAuthorshipsData.length - 1 - index, 1);
                     return;
                 }
@@ -190,8 +204,7 @@ module.exports = _.merge({}, BaseModel, {
                     current: currentAuthorship,
                     'new': newAuthorship
                 });
-            }
-            else if (currentAuthorship.authorStr !== authorStr) {
+            } else if (currentAuthorship.authorStr !== authorStr) {
                 //there is a wrong current authorship and no new authorship is passed.
 
                 if (currentAuthorship.researchEntity)

@@ -5,5 +5,5 @@
 module.exports = {
     DUPLICATE: 'duplicate?',
     DISCARDED: 'discarded',
-    UVERIFYING: 'unverifying'
+    UNVERIFYING: 'unverifying'
 };

@@ -3,18 +3,17 @@
         <div class="title-container">
             <h1 class="title">People</h1>
 
-            <button
-                ng-if="vm.user.isAdmin()"
-                ng-click="vm.createNew()"
-                class="btn btn-primary btn-add-user">
+            <button ng-if="vm.user.isAdmin()"
+                    ng-click="vm.createNew()"
+                    class="btn btn-primary btn-add-user">
                 Create New User<i class="fas fa-plus fa-right"></i>
             </button>
         </div>
 
         <scientilla-filter
-            search-form-structure="vm.searchForm"
-            on-filter="vm.onFilter"
-            elements="vm.users">
+                category="user"
+                on-filter="vm.onFilter"
+                elements="vm.users">
 
             <ul class="user-listing">
                 <li ng-repeat="u in vm.users">
@@ -24,52 +23,45 @@
                     </div>
 
                     <div class="dropdown-container">
-                        <div
-                            class="btn-group"
-                            uib-dropdown>
-                            <button
-                                ng-click="vm.viewUser(u)"
-                                type="button"
-                                class="btn btn-primary">
+                        <div class="btn-group"
+                             uib-dropdown>
+                            <button ng-click="vm.viewUser(u)"
+                                    type="button"
+                                    class="btn btn-primary">
                                 <i class="fas fa-user fa-left"></i>View profile
                             </button>
 
-                            <button
-                                ng-if="vm.user.isAdmin()"
-                                type="button"
-                                class="btn btn-primary only-icon"
-                                uib-dropdown-toggle>
+                            <button ng-if="vm.user.isAdmin()"
+                                    type="button"
+                                    class="btn btn-primary only-icon"
+                                    uib-dropdown-toggle>
                             </button>
 
-                            <div
-                                ng-if="vm.user.isAdmin()"
-                                uib-dropdown-menu>
-                                <button
-                                    class="dropdown-item"
-                                    ng-click="vm.loginAs(u)"
-                                    href="javascript:void(0)">
+                            <div ng-if="vm.user.isAdmin()"
+                                 uib-dropdown-menu>
+                                <button class="dropdown-item"
+                                        ng-click="vm.loginAs(u)"
+                                        href="javascript:void(0)">
                                     <i class="fas fa-user fa-left"></i>Login as
                                 </button>
 
-                                <button
-                                    class="dropdown-item"
-                                    ng-click="vm.editUser(u)"
-                                    href="javascript:void(0)">
+                                <button class="dropdown-item"
+                                        ng-click="vm.editUser(u)"
+                                        href="javascript:void(0)">
                                     <i class="fas fa-edit fa-left"></i>Edit
                                 </button>
 
-                                <button
-                                    class="dropdown-item"
-                                    scientilla-click-confirm="Are you sure?"
-                                    ng-click="vm.deleteUser(u)"
-                                    href="javascript:void(0)">
+                                <button class="dropdown-item"
+                                        scientilla-click-confirm="Are you sure?"
+                                        ng-click="vm.deleteUser(u)"
+                                        href="javascript:void(0)">
                                     <i class="fas fa-trash fa-left"></i>Delete
                                 </button>
                             </div>
                         </div>
                     </div>
                 </li>
-            </div>
+            </ul>
         </scientilla-filter>
     </div>
 </scientilla-backend-layout>

@@ -1,4 +1,4 @@
-/* global Scientilla */
+/* global angular */
 
 (function () {
     "use strict";
@@ -10,10 +10,10 @@
             controller: scientillaSourceFormController,
             controllerAs: 'vm',
             bindings: {
-                document: "<",
+                sourceType: "<",
                 onFailure: "&",
                 onSubmit: "&",
-                closeFn: "&"
+                checkAndClose: "&"
             }
         });
 
@@ -22,32 +22,78 @@
         'Restangular',
         'ModalService',
         'EventsService',
-        '$scope'
+        'DocumentTypesService',
+        '$scope',
+        'ValidateService',
+        '$timeout'
     ];
 
-    function scientillaSourceFormController(context, Restangular, ModalService, EventsService, $scope) {
+    function scientillaSourceFormController(context, Restangular, ModalService, EventsService, DocumentTypesService, $scope, ValidateService, $timeout) {
         const vm = this;
 
         vm.createSource = createSource;
         vm.cancel = cancel;
+        vm.checkValidation = checkValidation;
+        vm.fieldValueHasChanged = fieldValueHasChanged;
+        vm.isValid = isValid;
         vm.errors = {};
         vm.errorText = '';
 
-        let emptySource = {};
-        let closed = false;
+        let timeout;
+
+        const delay = 500;
 
         vm.$onInit = function () {
-            $scope.$on('modal.closing', function (event, reason) {
-                cancel(event);
-            });
+            vm.sourceTypes = DocumentTypesService.getSourceTypes().filter(st => st.type === 'scientific');
+            vm.hasSourceType = !!vm.sourceType;
         };
+
+        function isValid() {
+            return !!_.isEmpty(vm.errors);
+        }
+
+        function checkValidation(field = false) {
+            const requiredFields = [
+                'title'
+            ];
+
+            if (field) {
+                vm.errors[field] = ValidateService.validate(vm.newSource, field, requiredFields);
+
+                if (typeof vm.errors[field] === 'undefined') {
+                    delete vm.errors[field];
+                }
+            } else {
+                vm.errors = ValidateService.validate(vm.newSource, false, requiredFields);
+            }
+
+            if (!_.isEmpty(vm.errors)) {
+                vm.errorText = 'Please correct the errors on this form!';
+            } else {
+                vm.errorText = '';
+            }
+        }
+
+        function fieldValueHasChanged(field = false) {
+            $timeout.cancel(timeout);
+
+            timeout = $timeout(function () {
+                checkValidation(field);
+            }, delay);
+        }
 
         function createSource() {
 
             if (vm.newSource) {
-                vm.newSource.type = vm.document.sourceType;
+                vm.newSource.type = vm.sourceType;
             } else {
                 vm.newSource = {};
+            }
+
+            checkValidation();
+
+            if (!_.isEmpty(vm.errors)) {
+                return;
             }
 
             Restangular.all('sources')
@@ -56,12 +102,12 @@
                     EventsService.publish(EventsService.SOURCE_CREATED, source);
                     vm.newSource = {};
                     cancel();
-                }, function(res) {
+                }, function (res) {
                     vm.errors = res.data.invalidAttributes;
 
-                    angular.forEach(vm.errors, function(fields, fieldIndex) {
-                        angular.forEach(fields, function(error, errorIndex) {
-                            if (error.rule === 'required'){
+                    angular.forEach(vm.errors, function (fields, fieldIndex) {
+                        angular.forEach(fields, function (error, errorIndex) {
+                            if (error.rule === 'required') {
                                 error.message = 'This field is required.';
                                 vm.errors[fieldIndex][errorIndex] = error;
                             }
@@ -72,44 +118,8 @@
                 });
         }
 
-        function cancel(event = false) {
-            if (!_.isFunction(vm.closeFn())){
-                return Promise.reject('no close function');
-            }
-
-            if (!closed) {
-                // Check if the new source is still empty
-                if (typeof vm.newSource === 'undefined' || angular.toJson(emptySource) === angular.toJson(vm.newSource)) {
-                    closed = true;
-                    if (!event) {
-                        return vm.closeFn()();
-                    }
-                } else {
-                    if (event) {
-                        // Prevent modal from closing
-                        event.preventDefault();
-                    }
-
-                    // Show the unsaved data modal
-                    ModalService
-                        .multipleChoiceConfirm('Unsaved data',
-                            `There is unsaved data in the form. Do you want to go back and save this data?`,
-                            ['Yes', 'No'],
-                            false)
-                        .then(function (buttonIndex) {
-                            switch (buttonIndex) {
-                                case 0:
-                                    break;
-                                case 1:
-                                    vm.newSource = emptySource;
-                                    closed = true;
-                                    return vm.closeFn()();
-                                default:
-                                    break;
-                            }
-                        });
-                }
-            }
+        function cancel() {
+            vm.checkAndClose()(() => typeof vm.newSource === 'undefined' || angular.toJson({}) === angular.toJson(vm.newSource));
         }
     }
 })();

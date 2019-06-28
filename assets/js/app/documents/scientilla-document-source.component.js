@@ -18,7 +18,6 @@
     function scientillaDocumentSource(DocumentTypesService) {
         var vm = this;
 
-
         var iconClasses = {
             'journal': 'far fa-file-alt',
             'conference': 'far fa-comment',

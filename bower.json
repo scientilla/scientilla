@@ -9,7 +9,7 @@
     "angular-aria": "~1.5.8",
     "angular-sanitize": "~1.5.8",
     "lodash": "^4.15.0",
-    "restangular": "~1.5.2",
+    "restangular": "~1.6.1",
     "jquery": "^3.1.0",
     "angular-local-storage": "^0.2.5",
     "angular-ui-notification": "^0.1.0",
