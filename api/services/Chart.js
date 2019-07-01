@@ -40,7 +40,7 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
         fn: query,
         params: [researchEntityId, SourceTypes.BOOK]
     }, {
-        key: 'bookChaptersByYear',
+        key: 'bookSeriesByYear',
         queryName: 'documentsByYear',
         fn: query,
         params: [researchEntityId, SourceTypes.BOOKSERIES]
@@ -75,7 +75,7 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
         fn: query,
         params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOK]
     }, {
-        key: 'filteredAffiliatedBookChaptersByYear',
+        key: 'filteredAffiliatedBookSeriesByYear',
         queryName: 'filteredAffiliatedDocumentsByYear',
         fn: query,
         params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES]
@@ -95,7 +95,7 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
         fn: query,
         params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOK]
     }, {
-        key: 'filteredNotAffiliatedBookChaptersByYear',
+        key: 'filteredNotAffiliatedBookSeriesByYear',
         queryName: 'filteredNotAffiliatedDocumentsByYear',
         fn: query,
         params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES]

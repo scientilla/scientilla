@@ -37,7 +37,6 @@
         };
 
         vm.reload = (chartsData) => {
-            console.log(chartsData);
             vm.charts = {};
             vm.charts.documentTotals = ChartService.getDocumentTotals(chartsData);
             vm.charts.hindexPerYear = ChartService.getHindexPerYear(chartsData);
