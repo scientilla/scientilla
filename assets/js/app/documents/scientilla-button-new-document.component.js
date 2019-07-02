@@ -27,27 +27,16 @@
         vm.openScientillaDocumentSearch = ModalService.openScientillaDocumentSearch;
         vm.types = DocumentTypesService.getDocumentTypes();
 
-        vm.hasActiveExternalConnectors = false;
-
-        function checkActiveConnectors() {
-
-            vm.hasActiveExternalConnectors = false;
-
-            Object.keys(vm.connectors).forEach(function(connector) {
-                if (vm.connectors[connector].active) {
-                    vm.hasActiveExternalConnectors = true;
-                }
-            });
+        /* jshint ignore:start */
+        async function checkActiveConnectors() {
+            vm.showSearchAndImport = await ExternalConnectorService.searchAndImportEnabled('document');
         }
+        /* jshint ignore:end */
 
         vm.$onInit = function () {
-            ExternalConnectorService.getConnectors().then((connectors) => {
-                vm.connectors = connectors;
-                checkActiveConnectors();
-            });
+            checkActiveConnectors();
 
-            EventsService.subscribe(vm, EventsService.CONNECTORS_CHANGED, function (event, connectors) {
-                vm.connectors = connectors;
+            EventsService.subscribe(vm, EventsService.CONNECTORS_CHANGED,() => {
                 checkActiveConnectors();
             });
         };
