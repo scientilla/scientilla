@@ -55,12 +55,14 @@
                 setState: function (state) {
                     this.state = state;
 
-                    switch(true) {
-                        case state === 'idle':
+                    switch(state) {
+                        case 'idle':
                             this.message = 'Search';
                             break;
-                        case state === 'searching':
+                        case 'searching':
                             this.message = 'Searching';
+                            break;
+                        default:
                             break;
                     }
                 },
