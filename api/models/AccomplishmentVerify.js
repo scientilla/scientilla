@@ -6,6 +6,7 @@ module.exports = {
         public: 'BOOLEAN',
         favorite: 'BOOLEAN',
         accomplishment: {
+            columnName: 'research_item',
             model: 'accomplishment'
         },
         researchEntity: {
@@ -14,7 +15,7 @@ module.exports = {
         },
     },
     migrate: 'safe',
-    tableName: 'accomplishment_verify',
+    tableName: 'verify',
     autoUpdatedAt: false,
     autoCreatedAt: false
 };
