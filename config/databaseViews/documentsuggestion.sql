@@ -22,7 +22,7 @@ FROM (
          )
          AND NOT EXISTS(
            SELECT ds.id
-           FROM "discarded" ds
+           FROM "discarded_document" ds
            WHERE ds."researchEntity" = u.id
              AND ds."document" = d.id
          )
@@ -50,7 +50,7 @@ FROM (
          )
          AND NOT EXISTS(
            SELECT ds.id
-           FROM "discarded" ds
+           FROM "discarded_document" ds
            WHERE ds."researchEntity" = e."researchEntity"
              AND ds."document" = d.id
          )
@@ -76,7 +76,7 @@ FROM (
              )
              AND NOT EXISTS(
                SELECT ds.id
-               FROM "discarded" ds
+               FROM "discarded_document" ds
                WHERE ds."researchEntity" = u3.id
                  AND ds."document" = d3.id
              )

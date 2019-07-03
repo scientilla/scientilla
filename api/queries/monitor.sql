@@ -11,7 +11,7 @@ SELECT
   (
     SELECT count(DISTINCT d.id)
     FROM document d
-      LEFT JOIN discarded a
+      LEFT JOIN discarded_document a
         ON d.id = a.document
       LEFT JOIN discardedgroup ag
         ON d.id = ag.document
@@ -53,7 +53,7 @@ SELECT
                         FROM externaldocumentgroup a
                         WHERE a.document = d.id AND a."researchEntity" IS NOT NULL)
          AND NOT exists(SELECT id
-                        FROM discarded a
+                        FROM discarded_document a
                         WHERE a.document = d.id AND a."researchEntity" IS NOT NULL)
          AND NOT exists(SELECT id
                         FROM discardedgroup a
