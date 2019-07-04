@@ -39,18 +39,11 @@ async function makeBackup(postfix = '') {
             if (fs.existsSync(binaryBackupFilepath))
                 reject(`File ${binaryBackupFilename} already exists`);
 
-            const plainBackupFilename = `dump${currentDate}${postfix}-plain.sql`;
-            const plainBackupFilepath = `backups/plain/${plainBackupFilename}`;
-            if (fs.existsSync(plainBackupFilepath))
-                reject(`File ${plainBackupFilename} already exists`);
-
             sails.log.info(`Creating backup file ${binaryBackupFilename}`);
 
             const connectionString = getConnectionString();
             const binaryBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${binaryBackupFilepath}" --inserts -F c`;
-            const plainBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${plainBackupFilepath}" --inserts`;
             await runCommand(binaryBackupCmd, 'binary backup creation');
-            await runCommand(plainBackupCmd, 'plain backup creation');
             resolve(binaryBackupFilename);
         } catch (e) {
             reject(e);
