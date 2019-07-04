@@ -204,7 +204,6 @@ app.get('/local-configuration/:reset?', async (req, res) => {
             configuration = JSON.parse(fs.readFileSync(defaultLocalConfigurationFile).toString().replace(prefixLocal, ''))
             configuration.production.password = process.env.DATABASE_PASSWORD
             configuration.development.password = process.env.DATABASE_PASSWORD
-            configuration.test.password = process.env.DATABASE_PASSWORD
         } else {
             throw new Error('No default local configuration file found!')
         }
@@ -216,7 +215,6 @@ app.get('/local-configuration/:reset?', async (req, res) => {
                 configuration = JSON.parse(fs.readFileSync(defaultLocalConfigurationFile).toString().replace(prefixLocal, ''))
                 configuration.production.password = process.env.DATABASE_PASSWORD
                 configuration.development.password = process.env.DATABASE_PASSWORD
-                configuration.test.password = process.env.DATABASE_PASSWORD
             } else {
                 throw new Error('No default local configuration file found!')
             }
@@ -251,12 +249,6 @@ app.post('/local-configuration', (req, res) => {
     configuration.development.user = req.body['development-user']
     configuration.development.password = req.body['development-password']
     configuration.development.database = req.body['development-database']
-
-    configuration.test.adapter = req.body['test-adapter']
-    configuration.test.host = req.body['test-host']
-    configuration.test.user = req.body['test-user']
-    configuration.test.password = req.body['test-password']
-    configuration.test.database = req.body['test-database']
 
     fs.writeFileSync(localConfigurationFile, prefixLocal + JSON.stringify(configuration, null, 4))
     res.redirect('/')
@@ -582,10 +574,10 @@ async function initialize() {
             },
             test:{
                 "adapter": "sails-postgresql",
-                "host": process.env.DATABASE_HOST,
-                "user": process.env.DATABASE_USER,
-                "password": process.env.DATABASE_PASSWORD,
-                "database": process.env.DATABASE_NAME
+                "host": "db-test",
+                "user": "scientilla",
+                "password": "scientillapassword",
+                "database": "scientillatest"
             }
         }
         fs.writeFileSync(localConfigurationFile, prefixLocal + JSON.stringify(localJs, null, 4))
