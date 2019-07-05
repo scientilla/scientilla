@@ -127,6 +127,8 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/backup/dumps']: 'Backup.getDumps',
     ['post ' + apiPrfx + '/backup/restore']: 'Backup.restore',
     ['post ' + apiPrfx + '/backup/make']: 'Backup.make',
+    ['post ' + apiPrfx + '/backup/upload']: 'Backup.upload',
+    ['post ' + apiPrfx + '/backup/remove']: 'Backup.remove',
 
     'get /api/v1/customize': 'Customize.getCustomizations',
     'post /api/v1/customize/reset': 'Customize.resetCustomizations',
