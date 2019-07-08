@@ -130,9 +130,12 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/backup/upload']: 'Backup.upload',
     ['post ' + apiPrfx + '/backup/remove']: 'Backup.remove',
 
-    'get /api/v1/customize': 'Customize.getCustomizations',
-    'post /api/v1/customize/reset': 'Customize.resetCustomizations',
-    'post /api/v1/customize': 'Customize.setCustomizations',
+    ['get ' + apiPrfx + '/customize']: 'Customize.getCustomizations',
+    ['post ' + apiPrfx + '/customize/reset']: 'Customize.resetCustomizations',
+    ['post ' + apiPrfx + '/customize']: 'Customize.setCustomizations',
+
+    ['get ' + apiPrfx + '/external-connectors']: 'ExternalConnectors.getConnectors',
+    ['post ' + apiPrfx + '/external-connectors']: 'ExternalConnectors.setConnectors',
 
     //MBO
     ['get ' + apiPrfx + '/mbo/v2017/overall_performance/researcher']: 'User.getMBOOverallPerformance',

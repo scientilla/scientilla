@@ -1,0 +1,148 @@
+<scientilla-backend-layout>
+    <div class="admin admin-external-connectors">
+        <h1>External connectors</h1>
+        <ul class="connector-listing">
+            <li>
+                <div class="card">
+                    <div class="card-body">
+                        <h2>Publications</h2>
+                        <div class="form-group">
+                            <label class="form-checkbox">
+                                <input type="checkbox" ng-model="vm.connectors.publications.active"/>
+                                <span>Enable publications connector</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <li>
+                <div class="card">
+                    <div class="card-body">
+                        <h2>Elsevier</h2>
+                        <div class="form-group">
+                            <label class="form-checkbox">
+                                <input type="checkbox" ng-model="vm.connectors.elsevier.active" ng-change="vm.resetErrors('elsevier')"/>
+                                <span>Enable elsevier connector</span>
+                            </label>
+                        </div>
+
+                        <h3 class="h4">Scopus</h3>
+                        <div class="row">
+                            <div class="col-12 col-sm-4">
+                                <div
+                                    class="form-group"
+                                    ng-class="vm.errors.elsevier.scopus.url ? 'has-error' : ''">
+                                    <label for="scopusUrl">URL *</label>
+                                    <input
+                                        id="scopusUrl"
+                                        type="text"
+                                        class="form-control"
+                                        ng-model="vm.connectors.elsevier.scopus.url"
+                                        ng-disabled="!vm.connectors.elsevier.active"
+                                        ng-class="vm.errors.elsevier.scopus.url ? 'is-invalid' : ''"/>
+                                    <scientilla-error-messages
+                                        class="error-messages"
+                                        errors="vm.errors.elsevier.scopus.url"></scientilla-error-messages>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div
+                                    class="form-group"
+                                    ng-class="vm.errors.elsevier.scopus.apiKey ? 'has-error' : ''">
+                                    <label for="scopusApiKey">API key *</label>
+                                    <input
+                                        id="scopusApiKey"
+                                        type="text"
+                                        class="form-control"
+                                        ng-model="vm.connectors.elsevier.scopus.apiKey"
+                                        ng-disabled="!vm.connectors.elsevier.active"
+                                        ng-class="vm.errors.elsevier.scopus.apiKey ? 'is-invalid' : ''"/>
+                                    <scientilla-error-messages
+                                        class="error-messages"
+                                        errors="vm.errors.elsevier.scopus.apiKey"></scientilla-error-messages>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-4">
+                                <div
+                                    class="form-group"
+                                    ng-class="vm.errors.elsevier.scopus.token ? 'has-error' : ''">
+                                    <label for="scopusToken">Token *</label>
+                                    <input
+                                        id="scopusToken"
+                                        type="text"
+                                        class="form-control"
+                                        ng-model="vm.connectors.elsevier.scopus.token"
+                                        ng-disabled="!vm.connectors.elsevier.active"
+                                        ng-class="vm.errors.elsevier.scopus.token ? 'is-invalid' : ''"/>
+                                    <scientilla-error-messages
+                                        class="error-messages"
+                                        errors="vm.errors.elsevier.scopus.token"></scientilla-error-messages>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 class="h4">SciVal</h3>
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <div
+                                    class="form-group"
+                                    ng-class="vm.errors.elsevier.scival.url ? 'has-error' : ''">
+                                    <label for="scivalUrl">URL</label>
+                                    <input
+                                        id="scivalUrl"
+                                        type="text"
+                                        class="form-control"
+                                        ng-model="vm.connectors.elsevier.scival.url"
+                                        ng-disabled="!vm.connectors.elsevier.active"
+                                        ng-class="vm.errors.elsevier.scival.url ? 'is-invalid' : ''"/>
+                                    <scientilla-error-messages
+                                        class="error-messages"
+                                        errors="vm.errors.elsevier.scival.url"></scientilla-error-messages>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div
+                                    class="form-group"
+                                    ng-class="vm.errors.elsevier.scival.clientKey ? 'has-error' : ''">
+                                    <label for="scivalClientKey">Client key</label>
+                                    <input
+                                        id="scivalClientKey"
+                                        type="text"
+                                        class="form-control"
+                                        ng-model="vm.connectors.elsevier.scival.clientKey"
+                                        ng-disabled="!vm.connectors.elsevier.active"
+                                        ng-class="vm.errors.elsevier.scival.clientKey ? 'is-invalid' : ''"/>
+                                    <scientilla-error-messages
+                                        class="error-messages"
+                                        errors="vm.errors.elsevier.scival.clientKey"></scientilla-error-messages>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+
+            <ul class="connector-actions">
+                <li>
+                    <button
+                        class="btn btn-primary"
+                        type="submit"
+                        ng-click="vm.save()"
+                        scientilla-click-confirm="Are you sure?">
+                        Save
+                    </button>
+                </li>
+                <li>
+                    <button
+                        class="btn btn-primary"
+                        type="secondary"
+                        ng-click="vm.reset()"
+                        scientilla-click-confirm="Are you sure?">
+                        Reset to default
+                    </button>
+                </li>
+            </ul>
+        </ul>
+    </div>
+</scientilla-backend-layout>

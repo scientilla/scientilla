@@ -9,10 +9,10 @@
         'groupTypes',
         'groupTypeLabels',
         'AuthService',
-        'context'
+        'ExternalConnectorService'
     ];
 
-    function ResearchItemSearchFormStructureService(ResearchItemTypesService, documentSearchForm, groupTypes, groupTypeLabels, AuthService, context) {
+    function ResearchItemSearchFormStructureService(ResearchItemTypesService, documentSearchForm, groupTypes, groupTypeLabels, AuthService, ExternalConnectorService) {
 
         const service = {
             getStructure
@@ -173,16 +173,30 @@
         }
 
         async function getConnectorField() {
-            const researchEntity = await context.getSubResearchEntity();
-            const connectors = researchEntity.getExternalConnectors();
-            const values = connectors.map(c => ({value: c.value, label: c.label}));
+            let externalConnectors = [],
+                defaultValue = '';
+
+            await ExternalConnectorService.getConnectors().then((connectors) => {
+                if (connectors && connectors.publications && connectors.publications.active) {
+                    externalConnectors.push({value: 'publications', label: 'Publications'});
+                }
+
+                if (connectors && connectors.elsevier && connectors.elsevier.active) {
+                    externalConnectors.push({value: 'scopus', label: 'Scopus'});
+                    defaultValue = 'scopus';
+                } else {
+                    if (externalConnectors.length > 0) {
+                        defaultValue = externalConnectors[0].value;
+                    }
+                }
+            });
 
             return {
                 inputType: 'select',
                 label: 'Connector',
-                values: values,
+                values: externalConnectors,
                 matchColumn: 'origin',
-                defaultValue: 'scopus',
+                defaultValue: defaultValue,
                 type: 'connector'
             };
         }

@@ -36,7 +36,6 @@ const accomplishmentListSections = {
 
 const accomplishmentEventTypes = [
     {key: 'scientific_conference', label: 'Conference'},
-    {key: 'institute', label: 'Institute'},
     {key: 'workshop', label: 'Workshop/Symposium'},
     {key: 'school', label: 'School (Summer school, ...)'},
 ];

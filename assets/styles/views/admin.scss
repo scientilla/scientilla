@@ -164,6 +164,32 @@
         }
     }
 
+    &.admin-external-connectors {
+        .connector-listing {
+            @include normalize-listing;
+
+            & > li {
+                display: block;
+
+                & + li {
+                    margin-top: 3rem;
+                }
+            }
+        }
+
+        .connector-actions{
+            @include normalize-listing;
+            @include clearfix;
+            margin: 2rem -1.5rem 0px -1.5rem;
+
+            & > li{
+                display: block;
+                padding: 0px 1.5rem;
+                float: left;
+            }
+        }
+    }
+
     &.admin-customize{
         margin-bottom: 3rem;
 

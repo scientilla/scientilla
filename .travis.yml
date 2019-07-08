@@ -19,6 +19,7 @@ services:
   - postgresql
 before_script:
   - cp config/scientilla.js.example config/scientilla.js
+  - cp config/connectors.js.example config/connectors.js
   - cp config/customizations.js.example config/customizations.js
   - npm i -g mocha@3.X
   - psql -c "CREATE DATABASE scientillatest;" -U postgres

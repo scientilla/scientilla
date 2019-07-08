@@ -12,10 +12,11 @@
         class="dropdown-menu dropdown-menu-right">
         <a
             ng-click="vm.openScientillaDocumentSearch()"
+            ng-if="vm.showSearchAndImport"
             class="dropdown-item">
             <i class="fas fa-search fa-left"></i>Search and import
         </a>
-        <div class="dropdown-divider"></div>
+        <div class="dropdown-divider" ng-if="vm.showSearchAndImport"></div>
         <a
             ng-repeat="type in vm.types"
             ng-click="vm.createNewDocument(type)"

@@ -10,28 +10,32 @@
 
 <div class="modal-body">
     <form autocomplete="off" ng-submit="vm.doSearch()">
-        <ul class="document-search-listing">
+        <ul
+            class="document-search-listing"
+            ng-class="vm.searchOptions ? 'items-3' : 'items-2'">
             <li>
                 <div class="form-group">
                     <label>Origin</label>
                     <div class="select-wrapper">
                         <select
                             class="form-control"
+                            ng-disabled="!vm.origins"
                             ng-model="vm.origin"
-                            ng-options="option.key as option.label for option in vm.documentOrigins">
+                            ng-options="origin as data.label disable when data.disabled for (origin, data) in vm.origins"
+                            ng-change="vm.getSearchOptions()">
                         </select>
                     </div>
                 </div>
             </li>
-            <li>
+            <li ng-if="vm.searchOptions">
                 <div class="form-group">
                     <label>Search by</label>
                     <div class="select-wrapper">
                         <select
                             class="form-control"
-                            ng-model="vm.search.key">
-                            <option value="doi">DOI</option>
-                            <option value="originId">Scopus ID</option>
+                            ng-model="vm.search.key"
+                            ng-disabled="!vm.searchOptions"
+                            ng-options="key as value.label for (key, value) in vm.searchOptions">
                         </select>
                     </div>
                 </div>
@@ -42,21 +46,22 @@
                     <input
                         class="form-control"
                         placeholder="Search"
-                        ng-model="vm.search.value">
+                        ng-model="vm.search.value"
+                        ng-change="vm.searchValueChanged()">
                     <em class="small" ng-bind-html="vm.getValueExplanation()"></em>
                 </div>
             </li>
         </ul>
 
-        <div ng-if="vm.status===vm.statuses.SEARCHING">
-            Searching
+        <div class="help-block text-danger" ng-if="vm.error">
+            {{ vm.error }}
         </div>
 
         <ul class="modal-buttons">
             <li>
                 <scientilla-button
                     type="submit"
-                    ng-disabled="vm.isSearchDisabled()">Search</scientilla-button>
+                    ng-disabled="vm.isSearchDisabled()">{{ vm.status.message }}</scientilla-button>
             </li>
             <li>
                 <scientilla-button

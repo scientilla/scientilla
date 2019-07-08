@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-12 col-xl-5">
                     <div class="form-group">
-                        <label for="institute-name">Name</label>
+                        <label for="institute-name">Name *</label>
                         <input
                             name="institute-name"
                             id="institute-name"
@@ -23,7 +23,7 @@
                 </div>
                 <div class="col-12 col-xl-5">
                     <div class="form-group">
-                        <label for="institute-slug">Slug</label>
+                        <label for="institute-slug">Slug *</label>
                         <input
                             name="institute-slug"
                             id="institute-slug"
@@ -35,7 +35,7 @@
                 </div>
                 <div class="col-12 col-xl-2">
                     <div class="form-group">
-                        <label for="institute-shortname">Shortname</label>
+                        <label for="institute-shortname">Shortname *</label>
                         <input
                             name="institute-shortname"
                             id="institute-shortname"
@@ -212,88 +212,6 @@
                     class="form-control"
                     value="<%-configuration.mainInstituteImport.officialGroupsImportUrl -%>">
             </div>
-        </div>
-    </div>
-    <br>
-    <label>External connectors</label>
-    <div class="card">
-        <div class="card-body">
-            <label>Elsevier</label>
-            <ul class="sub-listing">
-                <li>
-                    <label>Scopus</label>
-                    <ul class="sub-listing row">
-                        <li>
-                            <div class="row">
-                                <div class="col-12 col-xl-4">
-                                    <div class="form-group">
-                                        <label for="external-connectors-elsevier-scopus-url">URL</label>
-                                        <input
-                                            name="external-connectors-elsevier-scopus-url"
-                                            id="external-connectors-elsevier-scopus-url"
-                                            type="text"
-                                            class="form-control"
-                                            value="<%-configuration.externalConnectors.elsevier.scopus.url -%>">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-xl-4">
-                                    <div class="form-group">
-                                        <label for="external-connectors-elsevier-scopus-api-key">API key</label>
-                                        <input
-                                            name="external-connectors-elsevier-scopus-api-key"
-                                            id="external-connectors-elsevier-scopus-api-key"
-                                            type="text"
-                                            class="form-control"
-                                            value="<%-configuration.externalConnectors.elsevier.scopus.apiKey -%>">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-xl-4">
-                                    <div class="form-group">
-                                        <label for="external-connectors-elsevier-scopus-token">Token</label>
-                                        <input
-                                            name="external-connectors-elsevier-scopus-token"
-                                            id="external-connectors-elsevier-scopus-token"
-                                            type="text"
-                                            class="form-control"
-                                            value="<%-configuration.externalConnectors.elsevier.scopus.token -%>">
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    <label>SciVal</label>
-                    <ul class="sub-listing">
-                        <li>
-                            <div class="row">
-                                <div class="col-12 col-xl-6">
-                                    <div class="form-group">
-                                        <label for="external-connectors-elsevier-scival-url">URL</label>
-                                        <input
-                                            name="external-connectors-elsevier-scival-url"
-                                            id="external-connectors-elsevier-scival-url"
-                                            type="text"
-                                            class="form-control"
-                                            value="<%-configuration.externalConnectors.elsevier.scival.url -%>">
-                                    </div>
-                                </div>
-                                <div class="col-12 col-xl-6">
-                                    <div class="form-group">
-                                        <label for="external-connectors-elsevier-scival-client-key">Client key</label>
-                                        <input
-                                            name="external-connectors-elsevier-scival-client-key"
-                                            id="external-connectors-elsevier-scival-client-key"
-                                            type="text"
-                                            class="form-control"
-                                            value="<%-configuration.externalConnectors.elsevier.scival.clientKey -%>">
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
         </div>
     </div>
     <br>
