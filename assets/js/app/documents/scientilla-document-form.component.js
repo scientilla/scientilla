@@ -298,8 +298,8 @@
                     query: {where: {name: {contains: searchText}}},
                     model: 'institutes'
                 },
-                'conference': {
-                    query: {where: {title: {contains: searchText}, type: vm.document.sourceType}},
+                'scientific_conference': {
+                    query: {where: {title: {contains: searchText}, type: 'conference'}},
                     model: 'sources'
                 }
             };
