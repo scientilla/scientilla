@@ -67,7 +67,6 @@
         }
 
         async function onFilter(q) {
-            console.log(q);
             query = q;
 
             if (!vm.researchEntity)
