@@ -88,76 +88,94 @@
     <label>LDAP</label>
     <div class="card">
         <div class="card-body">
+            <label>Connection</label>
+            <ul class="sub-listing">
+                <li>
+                    <div class="form-group">
+                        <label for="ldap-connection-url">URL</label>
+                        <input
+                            name="ldap-connection-url"
+                            id="ldap-connection-url"
+                            type="text"
+                            class="form-control"
+                            value="<%-configuration.ldap.connection.url -%>">
+                    </div>
+                </li>
+                <li>
+                    <div class="row">
+                        <div class="col-12 col-xl-6">
+                            <div class="form-group">
+                                <label for="ldap-connection-bind-dn">Bind dn</label>
+                                <input
+                                    name="ldap-connection-bind-dn"
+                                    id="ldap-connection-bind-dn"
+                                    type="text"
+                                    class="form-control"
+                                    value="<%-configuration.ldap.connection.bindDn -%>">
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-6">
+                            <div class="form-group">
+                                <label for="ldap-connection-bind-credentials">Bind credentials</label>
+                                <input
+                                    name="ldap-connection-bind-credentials"
+                                    id="ldap-connection-bind-credentials"
+                                    type="text"
+                                    class="form-control"
+                                    value="<%-configuration.ldap.connection.bindCredentials -%>">
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="row">
+                        <div class="col-12 col-xl-6">
+                            <div class="form-group">
+                                <label for="ldap-connection-search-base">Search base</label>
+                                <input
+                                    name="ldap-connection-search-base"
+                                    id="ldap-connection-search-base"
+                                    type="text"
+                                    class="form-control"
+                                    value="<%-configuration.ldap.connection.searchBase -%>">
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-6">
+                            <div class="form-group">
+                                <label for="ldap-connection-search-filter">Search filter</label>
+                                <input
+                                    name="ldap-connection-search-filter"
+                                    id="ldap-connection-search-filter"
+                                    type="text"
+                                    class="form-control"
+                                    value="<%-configuration.ldap.connection.searchFilter -%>">
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="form-group">
+                        <label for="ldap-connection-cache">Cache</label>
+                        <label class="form-checkbox">
+                            <input
+                                name="ldap-connection-cache"
+                                id="ldap-connection-cache"
+                                type="checkbox"
+                                <%= configuration.ldap.connection.cache ? 'checked' : '' %>>
+                            <span>Enabled</span>
+                        </label>
+                    </div>
+                </li>
+            </ul>
+
             <div class="form-group">
-                <label for="ldap-connection-url">URL</label>
+                <label for="ldap-domain">Domain</label>
                 <input
-                    name="ldap-connection-url"
-                    id="ldap-connection-url"
+                    name="ldap-domain"
+                    id="ldap-domain"
                     type="text"
                     class="form-control"
-                    value="<%-configuration.ldap.connection.url -%>">
-            </div>
-
-            <div class="row">
-                <div class="col-12 col-xl-6">
-                    <div class="form-group">
-                        <label for="ldap-connection-bind-dn">Bind dn</label>
-                        <input
-                            name="ldap-connection-bind-dn"
-                            id="ldap-connection-bind-dn"
-                            type="text"
-                            class="form-control"
-                            value="<%-configuration.ldap.connection.bindDn -%>">
-                    </div>
-                </div>
-                <div class="col-12 col-xl-6">
-                    <div class="form-group">
-                        <label for="ldap-connection-bind-credentials">Bind credentials</label>
-                        <input
-                            name="ldap-connection-bind-credentials"
-                            id="ldap-connection-bind-credentials"
-                            type="text"
-                            class="form-control"
-                            value="<%-configuration.ldap.connection.bindCredentials -%>">
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 col-xl-6">
-                    <div class="form-group">
-                        <label for="ldap-connection-search-base">Search base</label>
-                        <input
-                            name="ldap-connection-search-base"
-                            id="ldap-connection-search-base"
-                            type="text"
-                            class="form-control"
-                            value="<%-configuration.ldap.connection.searchBase -%>">
-                    </div>
-                </div>
-                <div class="col-12 col-xl-6">
-                    <div class="form-group">
-                        <label for="ldap-connection-search-filter">Search filter</label>
-                        <input
-                            name="ldap-connection-search-filter"
-                            id="ldap-connection-search-filter"
-                            type="text"
-                            class="form-control"
-                            value="<%-configuration.ldap.connection.searchFilter -%>">
-                    </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="ldap-connection-cache">Cache</label>
-                <label class="form-checkbox">
-                    <input
-                        name="ldap-connection-cache"
-                        id="ldap-connection-cache"
-                        type="checkbox"
-                        <%= configuration.ldap.connection.cache ? 'checked' : '' %>>
-                    <span>Enabled</span>
-                </label>
+                    value="<%-configuration.ldap.domain -%>">
             </div>
         </div>
     </div>

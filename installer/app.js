@@ -178,6 +178,7 @@ app.post('/basic-configuration', (req, res) => {
     configuration.ldap.connection.searchBase = req.body['ldap-connection-search-base']
     configuration.ldap.connection.searchFilter = req.body['ldap-connection-search-filter']
     configuration.ldap.connection.cache = req.body['ldap-connection-cache'] === 'on' ? true : false
+    configuration.ldap.domain = req.body['ldap-domain']
 
     configuration.mainInstituteImport.userImportUrl = req.body['main-institute-import-user-import-url']
     configuration.mainInstituteImport.usersCreationCondition.attribute = req.body['main-institute-import-users-creation-condition-attribute']
