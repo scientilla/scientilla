@@ -1,9 +1,11 @@
 /*global angular*/
 
 const researchItemLabels = {
+    NEW: 'new',
     UVERIFYING: 'unverifying',
     EXTERNAL: 'external',
     DISCARDED: 'discarded',
+    ALREADY_IN_DRAFTS: 'already in drafts',
 };
 
 const researchItemKinds = {

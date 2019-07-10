@@ -36,13 +36,14 @@
 
             CONTEXT_CHANGE: 'context.change',
 
-            RESEARCH_ITEM_VERIFIED: 'accomplishment.verified',
-            RESEARCH_ITEM_UNVERIFIED: 'accomplishment.unverified',
+            RESEARCH_ITEM_VERIFIED: 'researchItem.verified',
+            RESEARCH_ITEM_UNVERIFIED: 'researchItem.unverified',
+            RESEARCH_ITEM_DISCARDED: 'researchItem.discarded',
 
-            RESEARCH_ITEM_DRAFT_DELETED: 'accomplishment.draft.deleted',
-            RESEARCH_ITEM_DRAFT_UPDATED: 'accomplishment.draft.updated',
-            RESEARCH_ITEM_DRAFT_CREATED: 'accomplishment.draft.created',
-            RESEARCH_ITEM_DRAFT_VERIFIED: 'accomplishment.draft.verified',
+            RESEARCH_ITEM_DRAFT_DELETED: 'researchItem.draft.deleted',
+            RESEARCH_ITEM_DRAFT_UPDATED: 'researchItem.draft.updated',
+            RESEARCH_ITEM_DRAFT_CREATED: 'researchItem.draft.created',
+            RESEARCH_ITEM_DRAFT_VERIFIED: 'researchItem.draft.verified',
 
             CUSTOMIZATIONS_CHANGED: 'customizations.changed'
         };

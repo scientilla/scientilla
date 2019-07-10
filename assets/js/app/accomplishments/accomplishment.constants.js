@@ -28,6 +28,7 @@ const accomplishmentFieldsRules = {
 };
 
 const accomplishmentListSections = {
+    SUGGESTED: 'suggested-accomplishments',
     VERIFIED: 'verified-accomplishments',
     DRAFT: 'draft-list-accomplishments',
     GROUP: 'group-verified-accomplishments',

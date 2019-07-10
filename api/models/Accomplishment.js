@@ -53,6 +53,8 @@ module.exports = _.merge({}, BaseModel, {
             model: 'researchitemtype'
         },
         kind: 'STRING',
+        createdAt: 'Number',
+        updatedAt: 'Number',
         draftCreator: {
             model: 'researchentity',
             columnName: 'draft_creator'
@@ -81,6 +83,11 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'institute',
             via: 'accomplishment',
             through: 'accomplishmentaffiliation'
+        },
+        suggestions: {
+            collection: 'researchentity',
+            via: 'suggestedaccomplishments',
+            through: 'accomplishmentsuggestion'
         },
         async isValid() {
             const ResearchItemModel = Accomplishment.getResearchItemModel(this.type);

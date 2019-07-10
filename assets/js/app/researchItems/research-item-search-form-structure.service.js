@@ -18,44 +18,47 @@
             getStructure
         };
 
-        const formStructures = {
-            accomplishment: {
-                title: {
-                    inputType: 'text',
-                    label: 'Title',
-                    matchColumn: 'title',
-                    matchRule: 'contains',
-                    type: 'field'
-                },
-                author: {
-                    inputType: 'text',
-                    label: 'Author',
-                    matchColumn: 'authorsStr',
-                    matchRule: 'contains',
-                    type: 'field'
-                },
-                maxYear: {
-                    inputType: 'year',
-                    label: 'Year from',
-                    matchColumn: 'year',
-                    matchRule: '>=',
-                    type: 'field'
-                },
-                minYear: {
-                    inputType: 'year',
-                    label: 'Year to',
-                    matchColumn: 'year',
-                    matchRule: '<=',
-                    type: 'field'
-                },
-                accomplishmentType: {
-                    inputType: 'select',
-                    label: 'Accomplishment Type',
-                    values: [],
-                    matchColumn: 'type',
-                    type: 'field'
-                }
+        const accomplishmentFormStructure = {
+            title: {
+                inputType: 'text',
+                label: 'Title',
+                matchColumn: 'title',
+                matchRule: 'contains',
+                type: 'field'
             },
+            author: {
+                inputType: 'text',
+                label: 'Author',
+                matchColumn: 'authorsStr',
+                matchRule: 'contains',
+                type: 'field'
+            },
+            maxYear: {
+                inputType: 'year',
+                label: 'Year from',
+                matchColumn: 'year',
+                matchRule: '>=',
+                type: 'field'
+            },
+            minYear: {
+                inputType: 'year',
+                label: 'Year to',
+                matchColumn: 'year',
+                matchRule: '<=',
+                type: 'field'
+            },
+            accomplishmentType: {
+                inputType: 'select',
+                label: 'Accomplishment Type',
+                values: [],
+                matchColumn: 'type',
+                type: 'field'
+            }
+        };
+
+        const formStructures = {
+            accomplishment: accomplishmentFormStructure,
+            'accomplishment-suggested': accomplishmentFormStructure,
             group: {
                 name: {
                     inputType: 'text',
@@ -110,23 +113,43 @@
         /* jshint ignore:start */
         async function getStructure(constant) {
 
-            let structure;
+            let structure, accomplishmentTypes;
 
-            switch(constant) {
+            switch (constant) {
                 case 'accomplishment':
-                    const types = await ResearchItemTypesService.getTypes('accomplishment');
+                    accomplishmentTypes = await ResearchItemTypesService.getTypes('accomplishment');
 
                     formStructures[constant].accomplishmentType.values = _.concat(
                         [{value: "?", label: 'Select'}],
-                        types.map(s => ({value: s.key, label: s.label}))
+                        accomplishmentTypes.map(s => ({value: s.key, label: s.label}))
                     );
 
                     structure = formStructures[constant];
                     break;
+                case 'accomplishment-suggested':
+                    accomplishmentTypes = await ResearchItemTypesService.getTypes('accomplishment');
+
+                    formStructures[constant].accomplishmentType.values = _.concat(
+                        [{value: "?", label: 'Select'}],
+                        accomplishmentTypes.map(s => ({value: s.key, label: s.label}))
+                    );
+
+                    structure = Object.assign({},
+                        formStructures[constant],
+                        {
+                            discarded: {
+                                inputType: 'checkbox',
+                                label: 'Show discarded accomplishments',
+                                defaultValue: false,
+                                matchColumn: 'discarded',
+                                type: 'action'
+                            }
+                        });
+                    break;
                 case 'document':
                     structure = documentSearchForm;
                     break;
-                case 'external':
+                case 'external-document':
                     structure = Object.assign({},
                         {
                             connector: await getConnectorField()
@@ -134,7 +157,7 @@
                         documentSearchForm
                     );
                     break;
-                case 'suggested':
+                case 'suggested-document':
                     structure = Object.assign({},
                         documentSearchForm,
                         {
@@ -186,6 +209,7 @@
                 type: 'connector'
             };
         }
+
         /* jshint ignore:end */
     }
 })();

@@ -97,12 +97,14 @@ module.exports.routes = {
     ['delete ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/:itemId']: 'ResearchEntity.deleteDraft',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/:itemId/authors']: 'ResearchEntity.setResearchItemAuthors',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/verified']: 'ResearchEntity.verify',
-    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/verified']: 'ResearchEntity.verifyAll',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/verified']: 'ResearchEntity.multipleVerify',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/unverified']: 'ResearchEntity.unverify',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/public']: 'ResearchEntity.setPublic',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/favorite']: 'ResearchEntity.setFavorite',
     ['post ' + apiPrfx + '/researchentities/:researchEntityId/copy-research-item']: 'ResearchEntity.copyResearchItem',
     ['post ' + apiPrfx + '/researchentities/:researchEntityId/copy-research-items']: 'ResearchEntity.copyResearchItems',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/discarded']: 'ResearchEntity.discard',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/discarded']: 'ResearchEntity.multipleDiscard',
     ['post ' + apiPrfx + '/accomplishments/export']: 'Accomplishment.export',
 
 
