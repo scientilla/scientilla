@@ -12,16 +12,18 @@
         'AuthService',
         'EventsService',
         'path',
-        'context'
+        'context',
+        'ExternalConnectorService'
     ];
 
-    function scientillaMenu(AuthService, EventsService, path, context) {
+    function scientillaMenu(AuthService, EventsService, path, context, ExternalConnectorService) {
         const vm = this;
 
         vm.isActive = isActive;
         vm.isAdmin = isAdmin;
         vm.getUrl = getUrl;
         vm.getDashboardUrl = getDashboardUrl;
+        vm.hasActiveExternalConnectors = false;
 
         const prefix = '#/';
         let subResearchEntity = context.getSubResearchEntity();
@@ -34,6 +36,16 @@
             ], refresh);
 
             refresh();
+
+            ExternalConnectorService.getConnectors().then((connectors) => {
+                vm.connectors = connectors;
+                checkActiveConnectors();
+            });
+
+            EventsService.subscribe(vm, EventsService.CONNECTORS_CHANGED, function (event, connectors) {
+                vm.connectors = connectors;
+                checkActiveConnectors();
+            });
         };
 
         vm.$onDestroy = function () {
@@ -88,6 +100,17 @@
             }
 
             return prefix;
+        }
+
+        function checkActiveConnectors() {
+
+            vm.hasActiveExternalConnectors = false;
+
+            Object.keys(vm.connectors).forEach(function(connector) {
+                if (vm.connectors[connector].active) {
+                    vm.hasActiveExternalConnectors = true;
+                }
+            });
         }
     }
 

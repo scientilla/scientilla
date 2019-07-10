@@ -4,6 +4,7 @@
 
 const _ = require('lodash');
 const fs = require('fs');
+const path = require('path');
 const exec = require('child_process').exec;
 const moment = require('moment');
 
@@ -13,7 +14,9 @@ module.exports = {
     makeTimestampedBackup,
     restoreBackup,
     getDumps,
-    isRestoring
+    isRestoring,
+    upload,
+    remove
 };
 
 
@@ -39,18 +42,11 @@ async function makeBackup(postfix = '') {
             if (fs.existsSync(binaryBackupFilepath))
                 reject(`File ${binaryBackupFilename} already exists`);
 
-            const plainBackupFilename = `dump${currentDate}${postfix}-plain.sql`;
-            const plainBackupFilepath = `backups/plain/${plainBackupFilename}`;
-            if (fs.existsSync(plainBackupFilepath))
-                reject(`File ${plainBackupFilename} already exists`);
-
             sails.log.info(`Creating backup file ${binaryBackupFilename}`);
 
             const connectionString = getConnectionString();
             const binaryBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${binaryBackupFilepath}" --inserts -F c`;
-            const plainBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${plainBackupFilepath}" --inserts`;
             await runCommand(binaryBackupCmd, 'binary backup creation');
-            await runCommand(plainBackupCmd, 'plain backup creation');
             resolve(binaryBackupFilename);
         } catch (e) {
             reject(e);
@@ -96,9 +92,27 @@ async function restoreBackup(filename = null) {
 }
 
 function getDumps() {
-    const dumpFilenames = fs.readdirSync('backups').filter(f => f.startsWith('dump'));
-    const dumps = dumpFilenames.map(f => ({filename: f}));
-    return dumps;
+    const folder = 'backups';
+    return fs.readdirSync(folder)
+        .map(file => {
+            const extension = path.extname(file);
+            const filename = path.basename(file, extension);
+            const stats = fs.statSync(path.join(folder, file));
+            const date = new Date(stats.birthtime);
+            moment.tz.setDefault('Europe/Rome');
+
+            return {
+                filename: filename,
+                uploaded: !filename.startsWith('dump'),
+                extension: extension,
+                size: formatBytes(stats.size),
+                created: moment(date, 'YYYY-MM-DDTHH:mm:ss.sssZ').format('DD/MM/YYYY HH:mm:ss')
+            };
+        })
+        .filter(file => file.filename !== '.gitkeep')
+        .sort((a, b) => {
+            return moment(b.created, 'DD/MM/YYYY HH:mm:ss').format('DDMMYYYYHHmmss') - moment(a.created, 'DD/MM/YYYY HH:mm:ss').format('DDMMYYYYHHmmss');
+        });
 }
 
 async function runCommand(cmd, label) {
@@ -114,6 +128,7 @@ async function runCommand(cmd, label) {
         taskObj.stderr.on('data', data => {
             sails.log.debug(`${label}: ${data}`);
             reject(data);
+            throw data;
         });
 
         taskObj.on('close', code => {
@@ -138,4 +153,65 @@ function createFile(filepath) {
 
 function isRestoring() {
     return fs.existsSync(restoreLockFilename);
+}
+
+function formatBytes(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+
+    const k = 1000;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
+
+async function upload(req) {
+    return new Promise(function (resolve, reject) {
+        req.file('file').upload({
+            maxBytes:10000000000000,
+            saveAs: req.file('file')._files[0].stream.filename,
+            dirname: path.resolve(sails.config.appPath, 'backups')
+        }, function (err, file) {
+            if (err) {
+                reject(err);
+            }
+
+            resolve(file);
+        });
+    }).then(file => {
+        return {
+            type: 'success',
+            message: 'Backup successfully uploaded!',
+            file: file
+        };
+    }).catch(() => {
+        return {
+            type: 'failed',
+            message: 'Failed to upload the backup!'
+        };
+    });
+}
+
+async function remove(filename) {
+    return new Promise(function (resolve, reject) {
+        fs.unlink(path.join(sails.config.appPath, 'backups', filename), function(err) {
+            if (err) {
+                reject(err);
+            }
+
+            resolve();
+        });
+    }).then(() => {
+        return {
+            type: 'success',
+            message: 'Backup successfully removed!'
+        };
+    }).catch(() => {
+        return {
+            type: 'failed',
+            message: 'Failed to remove the backup!'
+        };
+    });
 }

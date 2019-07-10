@@ -10,7 +10,6 @@ module.exports = {
 
         res.halt(Customize.setCustomizations(req, footer, styles));
     },
-
     resetCustomizations: function (req, res) {
         res.halt(Customize.resetCustomizations());
     }

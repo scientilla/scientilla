@@ -25,5 +25,14 @@ module.exports = {
         Status.enable();
         res.halt(Promise.resolve({}));
     },
+    upload: async function (req, res) {
+        const result = await Backup.upload(req);
+        res.halt(Promise.resolve(result));
+    },
+    remove: async function (req, res) {
+        const filename = req.body.filename;
+        const result = await Backup.remove(filename);
+        res.halt(Promise.resolve(result));
+    },
 };
 

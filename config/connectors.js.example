@@ -1,0 +1,8 @@
+module.exports.connectors = {
+  "publications": {
+    "active": true
+  },
+  "elsevier": {
+    "active": false
+  }
+}

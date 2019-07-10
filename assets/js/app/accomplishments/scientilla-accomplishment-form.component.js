@@ -46,6 +46,7 @@
         vm.cancel = close;
         vm.verify = verify;
         vm.save = save;
+        vm.getConferences = getConferences;
         vm.getSources = getSources;
         vm.getTitles = getTitles;
         vm.openSourceFormModal = openSourceFormModal;
@@ -207,6 +208,15 @@
         function getSources(searchText) {
             const qs = {where: {title: {contains: searchText}}};
             return Restangular.all('sources').getList(qs);
+        }
+
+        function getConferences(searchText) {
+            if (vm.accomplishment.eventType === 'scientific_conference') {
+                const qs = {where: {title: {contains: searchText}, type: 'conference'}};
+                return Restangular.all('sources').getList(qs);
+            }
+
+            return false;
         }
 
         async function getTitles(searchText) {

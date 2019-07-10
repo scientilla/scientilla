@@ -54,7 +54,7 @@
                 EventsService.DRAFT_UPDATED,
                 EventsService.DRAFT_CREATED,
                 EventsService.DRAFT_VERIFIED,
-                EventsService.DRAFT_UNVERIFIED,
+                EventsService.DOCUMENT_UNVERIFIED,
                 EventsService.DRAFT_SYNCHRONIZED,
                 EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED,
                 EventsService.DOCUMENT_DISCARDED,

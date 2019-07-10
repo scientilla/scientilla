@@ -1,27 +1,101 @@
 <h2>Backup management</h2>
 
-<ul
-    class="list-group"
-    ng-if="vm.dumps.length > 0">
-    <li class="list-group-item"
-        ng-repeat="dump in vm.dumps"
-        ng-class="{active: dump.selected}"
-        ng-click="vm.toggleDump(dump.filename)">
-        {{ dump.filename }}
-    </li>
-</ul>
+<div class="backup-table-container table-responsive">
+    <table class="backup-table table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Filename</th>
+                <th scope="col">Extension</th>
+                <th scope="col">Size</th>
+                <th scope="col">Created on</th>
+                <th scope="col">Uploaded</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="dump in vm.dumps">
+                <td>{{ dump.filename }}</td>
+                <td>{{ dump.extension }}</td>
+                <td>{{ dump.size }}</td>
+                <td>{{ dump.created }}</td>
+                <td>
+                    <i class="fa fa-check" ng-if="dump.uploaded"></i>
+                </td>
+                <td class="action-column">
+                    <ul class="backup-table-actions">
+                        <li>
+                            <scientilla-button
+                                ng-disabled="vm.makingBackup || vm.restoringBackup"
+                                ng-click="vm.restoreBackup(dump)"
+                                type="danger"
+                                title="Restore backup">
+                                <i class="fas fa-angle-double-right"></i>
+                                <i class="fas fa-database"></i>
+                            </scientilla-button>
+                        </li>
+                        <li ng-if="dump.uploaded">
+                            <scientilla-button
+                                ng-click="vm.removeBackup(dump)"
+                                type="danger"
+                                title="Remove backup">
+                                <i class="fas fa-trash"></i>
+                            </scientilla-button>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
 
-<ul class="backup-actions">
-    <li>
-        <scientilla-button
-            ng-disabled="vm.loading"
-            ng-click="vm.makeBackup()">Make Backup</scientilla-button>
-    </li>
-    <li>
-        <scientilla-button
-            ng-disabled="!vm.dumpSelected || vm.loading"
-            ng-click="vm.restoreBackup()">Restore Backup</scientilla-button>
-    </li>
-</ul>
+<br>
+<br>
+<br>
 
-<span ng-show="vm.loading">Loading...</span>
+<form enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-6">
+            <div
+                class="form-group"
+                ng-class="vm.errors.backupUpload ? 'has-error' : ''">
+                <label for="backupUpload">Upload backup file</label>
+                <input
+                    id="backupUpload"
+                    name="backupUpload"
+                    type="file"
+                    class="form-control"
+                    file="vm.backupUpload">
+            </div>
+            <div class="form-group">
+                <scientilla-button
+                    ng-disabled="!vm.backupUpload"
+                    ng-click="vm.uploadBackup()"
+                    title="Upload backup">
+                    <span ng-if="!vm.uploadingBackup">Upload backup</span>
+                    <span ng-if="vm.uploadingBackup">Uploading backup ...</span>
+                </scientilla-button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<br>
+<br>
+<br>
+
+<form enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-12 col-sm-12 col-md-6">
+            <div class="form-group">
+                <label>Make backup file</label>
+                <scientilla-button
+                    ng-disabled="vm.makingBackup || vm.restoringBackup"
+                    ng-click="vm.makeBackup()"
+                    title="Make backup">
+                    <span ng-if="!vm.makingBackup">Make backup</span>
+                    <span ng-if="vm.makingBackup">Creating backup ...</span>
+                </scientilla-button>
+            </div>
+        </div>
+    </div>
+</form>

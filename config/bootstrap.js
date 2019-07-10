@@ -47,7 +47,6 @@ function initializeGroups() {
                 return;
             const fields = ['name', 'slug', 'shortname', 'scopusId'];
             const groupData = _.pick(sails.config.scientilla.institute, fields);
-            groupData.institute = (await Institute.findOneByScopusId(groupData.scopusId)).id;
             sails.log.info('Creating group ' + groupData.name);
             return Group.create(groupData);
         });

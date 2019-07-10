@@ -14,10 +14,12 @@
     scientillaDocumentSearch.$inject = [
         'researchEntityService',
         'ModalService',
-        'Notification'
+        'Notification',
+        'ExternalConnectorService',
+        'EventsService'
     ];
 
-    function scientillaDocumentSearch(researchEntityService, ModalService, Notification) {
+    function scientillaDocumentSearch(researchEntityService, ModalService, Notification, ExternalConnectorService, EventsService) {
         const vm = this;
 
         vm.doSearch = doSearch;
@@ -25,32 +27,92 @@
         vm.isSearchDisabled = isSearchDisabled;
         vm.getValueExplanation = getValueExplanation;
 
+        vm.getSearchOptions = getSearchOptions;
+        vm.status = status();
+        vm.searchValueChanged = searchValueChanged;
+
+        vm.origins = [];
+
         vm.$onInit = function () {
-            vm.statuses = {
-                IDLE: 'Idle',
-                SEARCHING: 'searching'
-            };
-            vm.status = vm.statuses.IDLE;
+            vm.status.setState('idle');
 
-            vm.search = {
-                key: 'doi',
-                value: ''
-            };
+            vm.search = {};
+            vm.origin = null;
 
-            vm.origin = 'scopus';
-            vm.documentOrigins = [
-                {
-                    key: 'scopus',
-                    label: 'Scopus'
-                }
-            ];
+            ExternalConnectorService.getConnectors().then((connectors) => {
+                vm.connectors = connectors;
+                getOrigins();
+            });
+
+            EventsService.subscribe(vm, EventsService.CONNECTORS_CHANGED, function (event, connectors) {
+                vm.connectors = connectors;
+                getOrigins();
+            });
         };
 
-        function doSearch() {
-            if (!vm.search.value)
-                return;
+        function status() {
+            return {
+                setState: function (state) {
+                    this.state = state;
 
-            vm.status = 'searching';
+                    switch(state) {
+                        case 'idle':
+                            this.message = 'Search';
+                            break;
+                        case 'searching':
+                            this.message = 'Searching';
+                            break;
+                        default:
+                            break;
+                    }
+                },
+                state: 'idle',
+                message: 'Search'
+            };
+        }
+
+        function getOrigins() {
+            Object.keys(vm.connectors).forEach(function(connector) {
+                Object.keys(vm.connectors[connector]).forEach(function(origin) {
+                    if (_.has(vm.connectors[connector][origin], 'searchOptions')) {
+                        vm.origins[origin] = {
+                            disabled: !vm.connectors[connector].active,
+                            label: vm.connectors[connector][origin].label,
+                            searchOptions: vm.connectors[connector][origin].searchOptions
+                        };
+                    }
+                });
+            });
+
+            if (_.keys(vm.origins).length > 0) {
+                vm.origin = Object.keys(vm.origins)[0];
+            }
+
+            getSearchOptions();
+        }
+
+        function getSearchOptions() {
+            vm.searchOptions = null;
+
+            Object.keys(vm.connectors).forEach(function(connector) {
+                if (vm.connectors[connector].active) {
+                    Object.keys(vm.connectors[connector]).forEach(function (origin) {
+                        if (vm.origin === origin && _.keysIn(vm.connectors[connector][origin].searchOptions).length > 0) {
+                            vm.searchOptions = vm.connectors[connector][origin].searchOptions;
+                        }
+                    });
+                }
+            });
+
+            if (_.keys(vm.searchOptions).length > 0) {
+                vm.search.key = Object.keys(vm.searchOptions)[0];
+            }
+        }
+
+        function doSearch() {
+            vm.error = '';
+            vm.status.setState('searching');
+
             researchEntityService.searchExternalDocument(vm.origin, vm.search.key, vm.search.value)
                 .then(document => {
                     if (!document.id) throw 'document not found';
@@ -58,13 +120,14 @@
                     return document;
                 })
                 .then(document => {
-                    vm.status = 'idle';
+                    vm.status.setState('idle');
                     close();
                     ModalService.openScientillaDocumentSearchView(document);
                 })
                 .catch(err => {
-                    vm.status = 'idle';
-                    Notification.warning(err);
+                    vm.error = 'No search results.';
+                    vm.status.setState('idle');
+                    Notification.warning(vm.error);
                 });
         }
 
@@ -73,16 +136,17 @@
         }
 
         function getValueExplanation() {
-            if (vm.origin === 'scopus' && vm.search.key === 'originId')
-                return '(Numeric identifier in the scopus document URL: e.g., https://www.scopus.com/[..]eid=2-s2.0-<b>84888368243</b>[..])';
-            if (vm.origin === 'scopus' && vm.search.key === 'doi')
-                return '(e.g., 10.1038/nnano.2013.238)';
+            if (vm.origins[vm.origin] &&
+                vm.origins[vm.origin].searchOptions[vm.search.key] &&
+                vm.origins[vm.origin].searchOptions[vm.search.key].info) {
+                return vm.origins[vm.origin].searchOptions[vm.search.key].info;
+            }
 
             return '';
         }
 
         function isSearchDisabled() {
-            return vm.status === vm.statuses.SEARCHING;
+            return vm.status === 'searching' || !vm.search.value;
         }
 
         function close() {
@@ -91,6 +155,9 @@
 
         }
 
+        function searchValueChanged() {
+            vm.error = '';
+        }
     }
 
 })();

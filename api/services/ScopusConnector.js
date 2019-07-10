@@ -8,14 +8,36 @@ const XML = require('pixl-xml');
 const SourceTypes = require("./SourceTypes");
 const DocumentTypes = require("./DocumentTypes");
 
-const elsevierConfig = sails.config.scientilla.externalConnectors.elsevier;
+const elsevierConfig = sails.config.connectors.elsevier;
 
 module.exports = {
+    getDefaults,
     getConfig,
     getDocument: documentDataRequest,
     getDocumentCitations,
     getSingleSearchConfig
 };
+
+function getDefaults() {
+    return {
+        scopus: {
+            label: 'Scopus',
+            searchOptions: {
+                doi: {
+                    label: 'DOI',
+                    info: '(e.g., 10.1038/nnano.2013.238)'
+                },
+                originId: {
+                    label: 'Scopus ID',
+                    info: '(Numeric identifier in the scopus document URL: e.g., https://www.scopus.com/[..]eid=2-s2.0-<b>84888368243</b>[..])'
+                }
+            }
+        },
+        scival: {
+            label: 'SciVal'
+        }
+    };
+}
 
 function getConfig(scopusId, params) {
     const search = {};

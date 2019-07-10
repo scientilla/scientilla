@@ -58,6 +58,7 @@ label{
 .form-checkbox{
     &,
     label{
+        margin-bottom: 0px;
         font-weight: normal;
     }
 
@@ -153,6 +154,13 @@ label{
 
     select::-ms-expand {
         display: none;
+    }
+
+    option{
+        &:disabled{
+            cursor: not-allowed;
+            background: lighten($silver, 15%);
+        }
     }
 
     &.has-error{

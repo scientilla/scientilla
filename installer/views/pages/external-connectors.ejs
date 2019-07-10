@@ -1,0 +1,151 @@
+<% layout('/layouts/master') -%>
+
+<% include ../partials/step-navigation -%>
+
+<h2>External connectors</h2>
+
+<form method="POST" action="/external-connectors">
+    <label for="">Publications</label>
+    <div class="card">
+        <div class="card-body">
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input
+                        name="external-connectors-publications-active"
+                        id="external-connectors-publications-active"
+                        type="checkbox"
+                        <%= configuration.publications.active ? 'checked' : '' %>>
+                    <span>Enabled</span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <label for="">Elsevier</label>
+    <div class="card">
+        <div class="card-body">
+            <div class="form-group">
+                <label class="form-checkbox">
+                    <input
+                        name="external-connectors-elsevier-active"
+                        id="external-connectors-elsevier-active"
+                        type="checkbox"
+                        onchange="onChangeCheckbox(this, 'external-connectors-elsevier')"
+                        <%= configuration.elsevier.active ? 'checked' : '' %>>
+                    <span>Enabled</span>
+                </label>
+            </div>
+
+            <label>Scopus</label>
+            <ul class="sub-listing row">
+                <li>
+                    <div class="row">
+                        <div class="col-12 col-xl-4">
+                            <div class="form-group">
+                                <label for="external-connectors-elsevier-scopus-url">URL *</label>
+                                <input
+                                    name="external-connectors-elsevier-scopus-url"
+                                    id="external-connectors-elsevier-scopus-url"
+                                    type="text"
+                                    class="form-control"
+                                    required="required"
+                                    value="<%-configuration.elsevier.scopus.url -%>"
+                                    <%= configuration.elsevier.active ? '' : 'disabled="disabled"' %>>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-4">
+                            <div class="form-group">
+                                <label for="external-connectors-elsevier-scopus-api-key">API key *</label>
+                                <input
+                                    name="external-connectors-elsevier-scopus-api-key"
+                                    id="external-connectors-elsevier-scopus-api-key"
+                                    type="text"
+                                    class="form-control"
+                                    required="required"
+                                    value="<%-configuration.elsevier.scopus.apiKey -%>"
+                                    <%= configuration.elsevier.active ? '' : 'disabled="disabled"' %>>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-4">
+                            <div class="form-group">
+                                <label for="external-connectors-elsevier-scopus-token">Token *</label>
+                                <input
+                                    name="external-connectors-elsevier-scopus-token"
+                                    id="external-connectors-elsevier-scopus-token"
+                                    type="text"
+                                    class="form-control"
+                                    required="required"
+                                    value="<%-configuration.elsevier.scopus.token -%>"
+                                <%= configuration.elsevier.active ? '' : 'disabled="disabled"' %>>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <label>SciVal</label>
+            <ul class="sub-listing">
+                <li>
+                    <div class="row">
+                        <div class="col-12 col-xl-6">
+                            <div class="form-group">
+                                <label for="external-connectors-elsevier-scival-url">URL</label>
+                                <input
+                                    name="external-connectors-elsevier-scival-url"
+                                    id="external-connectors-elsevier-scival-url"
+                                    type="text"
+                                    class="form-control"
+                                    value="<%-configuration.elsevier.scival.url -%>"
+                                    <%= configuration.elsevier.active ? '' : 'disabled="disabled"' %>>
+                            </div>
+                        </div>
+                        <div class="col-12 col-xl-6">
+                            <div class="form-group">
+                                <label for="external-connectors-elsevier-scival-client-key">Client key</label>
+                                <input
+                                    name="external-connectors-elsevier-scival-client-key"
+                                    id="external-connectors-elsevier-scival-client-key"
+                                    type="text"
+                                    class="form-control"
+                                    value="<%-configuration.elsevier.scival.clientKey -%>"
+                                    <%= configuration.elsevier.active ? '' : 'disabled="disabled"' %>>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <br>
+
+    <ul class="form-actions">
+        <li>
+            <button type="submit" class="btn btn-primary">Save</button>
+        </li>
+        <li>
+            <a href="/external-connectors/reset" class="btn btn-outline-secondary">Reset to defaults</a>
+        </li>
+    </ul>
+</form>
+
+<script>
+    function onChangeCheckbox (checkbox, prefix) {
+
+        let inputs = document.getElementsByTagName('input')
+        inputs =  Array.prototype.slice.call(inputs)
+        inputs = inputs.filter(input => input.name.indexOf(prefix) == 0 && input.type != 'checkbox')
+
+        if (checkbox.checked) {
+            inputs.map(input => {
+                input.removeAttribute('disabled')
+                return input
+            })
+        } else {
+            inputs.map(input => {
+                input.setAttribute('disabled', 'disabled')
+                return input
+            })
+        }
+    }
+</script>

@@ -18,62 +18,44 @@
     function scientillaAdminBackup(Restangular, ModalService, Notification) {
         const vm = this;
         vm.getDumps = getDumps;
-        vm.toggleDump = toggleDump;
         vm.restoreBackup = restoreBackup;
         vm.makeBackup = makeBackup;
+        vm.removeBackup = removeBackup;
+        vm.uploadBackup = uploadBackup;
 
         vm.dumps = [];
-        vm.loading = false;
-
+        vm.makingBackup = false;
+        vm.restoringBackup = false;
+        vm.backupUpload = null;
+        vm.uploadingBackup = false;
 
         vm.$onInit = function () {
             loadDumps();
         };
 
         function getDumps() {
-            return Restangular.one('backup', 'dumps').getList()
-                .then(dumps =>
-                    dumps.sort(function (a, b) {
-                        if (a.filename > b.filename) return -1;
-                        if (a.filename < b.filename) return 1;
-                        return 0;
-                    }));
-        }
-
-        function toggleDump(dumpFilename) {
-            if (vm.loading)
-                return;
-            vm.dumpSelected = !vm.dumpSelected;
-            vm.dumps.filter(d => d.selected && d.filename !== dumpFilename).forEach(d => d.selected = false);
-            vm.dumpSelected = vm.dumps.find(d => d.filename === dumpFilename);
-            if (vm.dumpSelected) {
-                vm.dumpSelected.selected = !vm.dumpSelected.selected;
-                if (!vm.dumpSelected.selected)
-                    delete vm.dumpSelected;
-            }
+            return Restangular.one('backup', 'dumps').getList();
         }
 
         /* jshint ignore:start */
-
-        async function restoreBackup() {
+        async function restoreBackup(dump) {
             const buttonKey = await ModalService.multipleChoiceConfirm('Restoring backup',
-                `Are you sure you want to restore the backup ${vm.dumpSelected.filename}?`,
+                `Are you sure you want to restore the backup ${dump.filename}${dump.extension}?`,
                 {'proceed': 'Proceed'});
 
             if (buttonKey === 'proceed') {
-                const postData = {filename: vm.dumpSelected.filename};
-                vm.loading = true;
+                const postData = {filename: dump.filename + dump.extension};
+                vm.restoringBackup = true;
 
                 try {
                     await Restangular.one('backup', 'restore').customPOST(postData);
-                    vm.loading = false;
-                    Notification.success('Backup correctly restored');
+                    vm.restoringBackup = false;
+                    Notification.success('Backup successfully restored!');
                 } catch (e) {
-                    Notification.error('An error happened');
-                    vm.loading = false;
+                    Notification.error('An error happened!');
+                    vm.restoringBackup = false;
                 }
             }
-
         }
 
         async function makeBackup() {
@@ -82,20 +64,61 @@
                 {'proceed': 'Proceed'});
 
             if (buttonKey === 'proceed') {
-                vm.loading = true;
+                vm.makingBackup = true;
 
                 try {
                     const res = await Restangular.one('backup', 'make').customPOST();
-                    vm.loading = false;
-                    Notification.success(`Backup ${res.filename} correctly created`);
+                    vm.makingBackup = false;
+                    Notification.success(`Backup ${res.filename} successfully created!`);
                     loadDumps();
                 } catch (e) {
-                    Notification.error('An error happened');
-                    vm.loading = false;
+                    Notification.error('An error happened!');
+                    vm.makingBackup = false;
                 }
             }
         }
 
+        async function removeBackup(dump) {
+            const buttonKey = await ModalService.multipleChoiceConfirm('Remove backup',
+                `Are you sure you want to remove the backup ${dump.filename}${dump.extension}?`,
+                {'proceed': 'Proceed'});
+
+            if (buttonKey === 'proceed') {
+                const postData = {filename: dump.filename + dump.extension};
+
+                const res = await Restangular.one('backup', 'remove').customPOST(postData);
+
+                if (res.type && res.type === 'success') {
+                    Notification.success(res.message);
+                    loadDumps();
+                } else if (res.type && res.type === 'failed') {
+                    Notification.warning(res.message);
+                }
+            }
+        }
+
+        async function uploadBackup() {
+            const formData = new FormData();
+            if (vm.backupUpload) {
+                formData.append('file', vm.backupUpload);
+            }
+
+            vm.uploadingBackup = true;
+
+            const res = await Restangular.one('backup/upload').customPOST(formData, '', undefined, {'Content-Type': undefined});
+
+            vm.backupUpload = null;
+            document.getElementById('backupUpload').value = null;
+
+            if (res.type && res.type === 'success') {
+                Notification.success(res.message);
+                loadDumps();
+                vm.uploadingBackup = false;
+            } else if (res.type && res.type === 'failed') {
+                Notification.warning(res.message);
+                vm.uploadingBackup = false;
+            }
+        }
         /* jshint ignore:end */
 
         function loadDumps() {
@@ -103,7 +126,6 @@
                 vm.dumps = dumps;
             });
         }
-
     }
 
 })();

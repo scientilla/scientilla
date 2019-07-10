@@ -10,7 +10,8 @@
         'DocumentKinds',
         'documentFieldsRules',
         'documentOrigins',
-        'ValidateService'
+        'ValidateService',
+        'ExternalConnectorService'
     ];
 
     function Prototyper(
@@ -19,7 +20,8 @@
         DocumentKinds,
         documentFieldsRules,
         documentOrigins,
-        ValidateService
+        ValidateService,
+        ExternalConnectorService
     ) {
         const service = {
             toUserModel: toUserModel,
@@ -58,14 +60,6 @@
             admins: function (group) {
                 var administeredGroupsId = _.map(this.administratedGroups, 'id');
                 return _.includes(administeredGroupsId, group.id);
-            },
-            getExternalConnectors: function () {
-                var connectors = [];
-                var publicationsConnector = {value: 'publications', label: 'Publications'};
-                var scopusConnector = {value: 'scopus', label: 'Scopus'};
-                connectors.push(publicationsConnector);
-                connectors.push(scopusConnector);
-                return connectors;
             },
             getNewDocument: function (documentTypeObj) {
                 var documentData = {
@@ -113,17 +107,6 @@
             },
             getType: function () {
                 return 'group';
-            },
-            getExternalConnectors: function () {
-                var connectors = [];
-                var publicationsConnector = {
-                    value: 'publications',
-                    label: 'Publications'
-                };
-                var scopusConnector = {value: 'scopus', label: 'Scopus'};
-                connectors.push(publicationsConnector);
-                connectors.push(scopusConnector);
-                return connectors;
             },
             getNewDocument: function (documentTypeObj) {
                 var documentData = {
