@@ -159,7 +159,7 @@ module.exports.policies = {
     },
 
     CustomizeController: {
-        getCustomizations: isAdmin,
+        getCustomizations: true,
         setCustomizations: isAdmin,
         resetCustomizations: isAdmin
     }
