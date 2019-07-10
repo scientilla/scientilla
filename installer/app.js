@@ -338,7 +338,7 @@ app.post('/database', (req, res) => {
             if (file.name.endsWith('.sql')) {
                 try {
                     const sql = fs.readFileSync(path).toString()
-                    const pgClient = new pg.Client(getConnectionObject())
+                    const pgClient = new pg.Client(getConnectionConfig())
                     pgClient.connect()
                     const result = await pgClient.query(sql)
                     await pgClient.end()
@@ -356,7 +356,7 @@ app.post('/database', (req, res) => {
             } else {
                 const restore = new Promise(async (resolve, reject) => {
                     try {
-                        const cmd = `pg_restore --dbname=${getConnectionObject()} --format=c -j2 --clean --if-exists "${path}"`
+                        const cmd = `pg_restore --dbname=${getConnectionConfig(false)} --format=c -j2 --clean --if-exists "${path}"`
                         await runCommand(cmd)
                         resolve('Restoring the database is done!')
                     }
@@ -416,7 +416,7 @@ function runCommand(cmd) {
     })
 }
 
-function getConnectionObject() {
+function getConnectionConfig(object = true) {
 
     if (fs.existsSync(localConfigurationFile)) {
         let configuration
@@ -454,11 +454,15 @@ function getConnectionObject() {
                 break
         }
 
-        return {
-            user: user,
-            host:address,
-            password: password,
-            database: name
+        if (object) {
+            return {
+                user: user,
+                host:address,
+                password: password,
+                database: name
+            }
+        } else {
+            return `postgresql://${user}:${password}@${address}:${port}/${name}`
         }
     }
 
@@ -501,7 +505,7 @@ async function checkDatabase() {
         let missingTables = []
         const path = 'installer/defaults/database-test.sql'
         const sql = fs.readFileSync(path).toString()
-        const pgClient = new pg.Client(getConnectionObject())
+        const pgClient = new pg.Client(getConnectionConfig())
 
         pgClient.connect()
         const result = await pgClient.query(sql)
