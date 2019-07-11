@@ -87,8 +87,8 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/groups/:researchEntityId/documents/:documentId/not-duplicates']: 'Group.setDocumentsAsNotDuplicate',
     ['post ' + apiPrfx + '/groups/:researchEntityId/remove-verify']: 'Group.removeVerify',
     ['post ' + apiPrfx + '/users/:researchEntityId/remove-verify']: 'User.removeVerify',
-    ['post ' + apiPrfx + 'post /api/v1/groups/:researchEntityId/replace']: 'Group.replace',
-    ['post ' + apiPrfx + 'post /api/v1/users/:researchEntityId/replace']: 'User.replace',
+    ['post ' + apiPrfx + '/groups/:researchEntityId/replace']: 'Group.replace',
+    ['post ' + apiPrfx + '/users/:researchEntityId/replace']: 'User.replace',
 
     //Research item API
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/delete']: 'ResearchEntity.deleteDrafts',
