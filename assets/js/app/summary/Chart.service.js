@@ -679,7 +679,8 @@
                     labelSunbeamLayout: true,
                     showLabels: true,
                     legendPosition: 'right',
-                    color: (d, i) => colors[i]
+                    color: (d, i) => colors[i],
+                    valueFormat: d => d3.format('')(d)
                 }
             };
 
