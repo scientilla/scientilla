@@ -129,7 +129,6 @@
                         vm.errorText = 'Please correct the errors on this form!';
                     } else {
                         Notification.success("User data saved");
-                        originalUser = angular.copy(vm.user);
                         aliasesChanged();
                         if (_.isFunction(vm.onSubmit()))
                             vm.onSubmit()(1);

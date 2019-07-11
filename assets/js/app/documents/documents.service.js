@@ -772,7 +772,6 @@
                         compareAction = await ModalService.openDocumentComparisonForm(sourceDocument, similarDocuments, category);
                     } catch (e) {
                         if (e !== 'backdrop click' && e !== 'escape key press') {
-                            //console.log(e);
                         }
                     }
 

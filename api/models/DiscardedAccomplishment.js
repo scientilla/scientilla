@@ -3,21 +3,21 @@
 
 module.exports = {
     attributes: {
-        public: 'BOOLEAN',
-        favorite: 'BOOLEAN',
         accomplishment: {
             columnName: 'research_item',
-            model: 'accomplishment'
+            model: 'accomplishment',
+            primaryKey: true
         },
         researchEntity: {
             columnName: 'research_entity',
-            model: 'researchentity'
-        },
+            model: 'researchentity',
+            primaryKey: true
+        }
     },
+
     migrate: 'safe',
-    tableName: 'verify',
+    tableName: 'discarded',
     autoUpdatedAt: false,
     autoCreatedAt: false
+
 };
-
-

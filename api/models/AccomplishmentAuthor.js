@@ -22,6 +22,7 @@ module.exports = {
             type: 'boolean'
         },
         accomplishment: {
+            columnName: 'research_item',
             model: 'accomplishment'
         },
         verify: {
@@ -34,7 +35,7 @@ module.exports = {
         }
     },
     migrate: 'safe',
-    tableName: 'accomplishment_author',
+    tableName: 'author',
     autoUpdatedAt: false,
     autoCreatedAt: false
 };

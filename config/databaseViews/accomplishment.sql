@@ -12,7 +12,9 @@ CREATE OR REPLACE VIEW accomplishment AS
            NULL AS editorship_role,
            NULL AS event_type,
            NULL AS place,
-           NULL AS description
+           NULL AS description,
+           ria."createdAt",
+           ria."updatedAt"
     FROM research_item ri
              JOIN research_item_award ria on ri.id = ria.research_item
     UNION
@@ -29,7 +31,9 @@ CREATE OR REPLACE VIEW accomplishment AS
            rie.editorship_role,
            NULL          AS event_type,
            NULL          AS place,
-           NULL          AS description
+           NULL          AS description,
+           rie."createdAt",
+           rie."updatedAt"
     FROM research_item ri
              JOIN research_item_editorship rie on ri.id = rie.research_item
     UNION
@@ -46,6 +50,8 @@ CREATE OR REPLACE VIEW accomplishment AS
            NULL AS editorship_role,
            rieo.event_type,
            rieo.place,
-           rieo.description
+           rieo.description,
+           rieo."createdAt",
+           rieo."updatedAt"
     FROM research_item ri
              JOIN research_item_event_organization rieo on ri.id = rieo.research_item
