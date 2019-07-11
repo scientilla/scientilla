@@ -46,6 +46,7 @@
                 EventsService.RESEARCH_ITEM_DRAFT_UPDATED,
                 EventsService.RESEARCH_ITEM_DRAFT_CREATED,
                 EventsService.RESEARCH_ITEM_DRAFT_VERIFIED,
+                EventsService.RESEARCH_ITEM_VERIFIED,
                 EventsService.RESEARCH_ITEM_UNVERIFIED
             ], updateList);
         };
