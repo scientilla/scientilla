@@ -34,5 +34,14 @@ module.exports = {
         const result = await Backup.remove(filename);
         res.halt(Promise.resolve(result));
     },
+    download: async function (req, res) {
+        const filename = req.body.filename;
+        try {
+            const download = await Backup.download(filename);
+            download.pipe(res, {end: true});
+        } catch (err) {
+            res.halt(Promise.reject(err));
+        }
+    }
 };
 

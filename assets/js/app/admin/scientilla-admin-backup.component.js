@@ -10,18 +10,20 @@
         });
 
     scientillaAdminBackup.$inject = [
+        '$http',
         'Restangular',
         'ModalService',
         'Notification'
     ];
 
-    function scientillaAdminBackup(Restangular, ModalService, Notification) {
+    function scientillaAdminBackup($http, Restangular, ModalService, Notification) {
         const vm = this;
         vm.getDumps = getDumps;
         vm.restoreBackup = restoreBackup;
         vm.makeBackup = makeBackup;
         vm.removeBackup = removeBackup;
         vm.uploadBackup = uploadBackup;
+        vm.downloadBackup = downloadBackup;
 
         vm.dumps = [];
         vm.makingBackup = false;
@@ -118,6 +120,39 @@
                 Notification.warning(res.message);
                 vm.uploadingBackup = false;
             }
+        }
+
+        function downloadBackup(dump) {
+            const filename = dump.filename + dump.extension
+
+            function createObjectURL(file) {
+                if (window.webkitURL) {
+                    return window.webkitURL.createObjectURL(file);
+                } else if (window.URL && window.URL.createObjectURL) {
+                    return window.URL.createObjectURL(file);
+                } else {
+                    return null;
+                }
+            }
+
+            $http.post('/api/v1/backup/download', {
+                filename: filename
+            }, {responseType: 'blob'}).then(res => {
+                const element = document.createElement('a');
+                element.setAttribute('href', createObjectURL(res.data));
+                element.setAttribute('download', filename);
+
+                element.style.display = 'none';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            }).catch(err => {
+                const reader = new FileReader();
+                reader.addEventListener('loadend', (e) => {
+                    Notification.warning(JSON.parse(e.srcElement['result']));
+                });
+                reader.readAsText(err.data);
+            })
         }
         /* jshint ignore:end */
 

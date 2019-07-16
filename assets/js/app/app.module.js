@@ -1,6 +1,7 @@
 (function () {
     angular.module('app', [
         /* Shared modules */
+        'ngZone',
         'app.core',
         'auth',
         'components',
