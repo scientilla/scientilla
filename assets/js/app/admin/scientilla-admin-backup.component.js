@@ -10,12 +10,13 @@
         });
 
     scientillaAdminBackup.$inject = [
+        '$http',
         'Restangular',
         'ModalService',
         'Notification'
     ];
 
-    function scientillaAdminBackup(Restangular, ModalService, Notification) {
+    function scientillaAdminBackup($http, Restangular, ModalService, Notification) {
         const vm = this;
         vm.getDumps = getDumps;
         vm.restoreBackup = restoreBackup;
@@ -121,7 +122,8 @@
             }
         }
 
-        async function downloadBackup(dump) {
+        function downloadBackup(dump) {
+            const filename = dump.filename + dump.extension
 
             function createObjectURL(file) {
                 if (window.webkitURL) {
@@ -133,32 +135,29 @@
                 }
             }
 
-            try {
+            $http.post('/api/v1/backup/download', {
+                filename: filename
+            }, {responseType: 'blob'}).then(res => {
+                const element = document.createElement('a');
+                element.setAttribute('href', createObjectURL(res.data));
+                element.setAttribute('download', filename);
 
-                const formData = new FormData();
-                formData.append('filename', dump.filename + dump.extension);
-                const res = await Restangular.one('backup', 'download')
-                    .withHttpConfig({responseType: 'blob'})
-                    .customPOST(formData, '', undefined, {'Content-Type': undefined})
-                    .then(response => {
-                        const blob = new Blob([response]);
-                        const link = document.createElement('a');
+                element.style.display = 'none';
+                document.body.appendChild(element);
 
-                        link.style.display = 'none';
-                        link.setAttribute('href', createObjectURL(blob));
-                        link.setAttribute('target', '_blank');
-                        link.setAttribute('download', dump.filename + dump.extension);
-                        document.body.append(link);
-
-                        (link[0] || link).click();
-                        link.remove();
-                    }).catch(err => {
-                        Notification.warning('Failed to download the backup!');
-                    })
-            } catch(err) {
-                console.log(err)
-                throw err;
-            }
+                try {
+                    element.click();
+                } catch(err) {
+                    console.log(err);
+                }
+                document.body.removeChild(element);
+            }).catch(err => {
+                const reader = new FileReader();
+                reader.addEventListener('loadend', (e) => {
+                    Notification.warning(JSON.parse(e.srcElement['result']));
+                });
+                reader.readAsText(err.data);
+            })
         }
         /* jshint ignore:end */
 

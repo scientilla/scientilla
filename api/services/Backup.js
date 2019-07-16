@@ -217,24 +217,15 @@ async function remove(filename) {
     });
 }
 
-function download(filename) {
-    return new Promise(async function (resolve, reject) {
-        const filePath = path.resolve(sails.config.appPath, 'backups', filename);
+async function download(filename) {
+    const filePath = path.resolve(sails.config.appPath, 'backups', filename);
 
-        if (fs.existsSync(filePath)) {
-            const readStream = fs.createReadStream(filePath)
-            resolve(readStream)
-        } else {
-            reject();
-        }
-    }).then(response => {
-        return {
-            type: 'success',
-            response: response
+    if (fs.existsSync(filePath)) {
+        return fs.createReadStream(filePath)
+    } else {
+        throw {
+            success: false,
+            message: 'Backup not found!'
         };
-    }).catch(() => {
-        return {
-            type: 'failed'
-        };
-    });
+    }
 }

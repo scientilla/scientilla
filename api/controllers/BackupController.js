@@ -39,12 +39,11 @@ module.exports = {
     },
     download: async function (req, res) {
         const filename = req.body.filename;
-        const download = await Backup.download(filename);
-
-        if (download.type === 'success') {
-            download.response.pipe(res, {end: true});
-        } else {
-            res.halt(Promise.reject(download));
+        try {
+            const download = await Backup.download(filename);
+            download.pipe(res, {end: true});
+        } catch (err) {
+            res.halt(Promise.reject(err));
         }
     }
 };
