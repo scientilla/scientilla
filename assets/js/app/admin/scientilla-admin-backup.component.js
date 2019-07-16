@@ -144,12 +144,7 @@
 
                 element.style.display = 'none';
                 document.body.appendChild(element);
-
-                try {
-                    element.click();
-                } catch(err) {
-                    console.log(err);
-                }
+                element.click();
                 document.body.removeChild(element);
             }).catch(err => {
                 const reader = new FileReader();

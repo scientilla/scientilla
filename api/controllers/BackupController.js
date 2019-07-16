@@ -5,9 +5,6 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-const fs = require('fs');
-const path = require('path');
-
 module.exports = {
     getDumps: function (req, res) {
         const dumps = Backup.getDumps();
