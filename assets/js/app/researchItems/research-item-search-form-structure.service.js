@@ -113,26 +113,15 @@
         /* jshint ignore:start */
         async function getStructure(constant) {
 
-            let structure, accomplishmentTypes;
+            let structure;
 
             switch (constant) {
                 case 'accomplishment':
-                    accomplishmentTypes = await ResearchItemTypesService.getTypes('accomplishment');
-
-                    formStructures[constant].accomplishmentType.values = _.concat(
-                        [{value: "?", label: 'Select'}],
-                        accomplishmentTypes.map(s => ({value: s.key, label: s.label}))
-                    );
-
+                    formStructures[constant].accomplishmentType.values = await getAccomplishmentTypeSelect();
                     structure = formStructures[constant];
                     break;
                 case 'accomplishment-suggested':
-                    accomplishmentTypes = await ResearchItemTypesService.getTypes('accomplishment');
-
-                    formStructures[constant].accomplishmentType.values = _.concat(
-                        [{value: "?", label: 'Select'}],
-                        accomplishmentTypes.map(s => ({value: s.key, label: s.label}))
-                    );
+                    formStructures[constant].accomplishmentType.values = await getAccomplishmentTypeSelect();
 
                     structure = Object.assign({},
                         formStructures[constant],
@@ -222,6 +211,14 @@
                 defaultValue: defaultValue,
                 type: 'connector'
             };
+        }
+
+        async function getAccomplishmentTypeSelect() {
+            const accomplishmentTypes = await ResearchItemTypesService.getTypes('accomplishment');
+            return _.concat(
+                [{value: "?", label: 'Select'}],
+                accomplishmentTypes.map(s => ({value: s.id, label: s.label}))
+            );
         }
 
         /* jshint ignore:end */
