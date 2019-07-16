@@ -22,6 +22,7 @@
         vm.makeBackup = makeBackup;
         vm.removeBackup = removeBackup;
         vm.uploadBackup = uploadBackup;
+        vm.downloadBackup = downloadBackup;
 
         vm.dumps = [];
         vm.makingBackup = false;
@@ -117,6 +118,46 @@
             } else if (res.type && res.type === 'failed') {
                 Notification.warning(res.message);
                 vm.uploadingBackup = false;
+            }
+        }
+
+        async function downloadBackup(dump) {
+
+            function createObjectURL(file) {
+                if (window.webkitURL) {
+                    return window.webkitURL.createObjectURL(file);
+                } else if (window.URL && window.URL.createObjectURL) {
+                    return window.URL.createObjectURL(file);
+                } else {
+                    return null;
+                }
+            }
+
+            try {
+
+                const formData = new FormData();
+                formData.append('filename', dump.filename + dump.extension);
+                const res = await Restangular.one('backup', 'download')
+                    .withHttpConfig({responseType: 'blob'})
+                    .customPOST(formData, '', undefined, {'Content-Type': undefined})
+                    .then(response => {
+                        const blob = new Blob([response]);
+                        const link = document.createElement('a');
+
+                        link.style.display = 'none';
+                        link.setAttribute('href', createObjectURL(blob));
+                        link.setAttribute('target', '_blank');
+                        link.setAttribute('download', dump.filename + dump.extension);
+                        document.body.append(link);
+
+                        (link[0] || link).click();
+                        link.remove();
+                    }).catch(err => {
+                        Notification.warning('Failed to download the backup!');
+                    })
+            } catch(err) {
+                console.log(err)
+                throw err;
             }
         }
         /* jshint ignore:end */

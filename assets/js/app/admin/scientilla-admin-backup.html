@@ -25,6 +25,14 @@
                     <ul class="backup-table-actions">
                         <li>
                             <scientilla-button
+                                ng-click="vm.downloadBackup(dump)"
+                                type="secondary"
+                                title="Download backup">
+                                <i class="fas fa-download"></i>
+                            </scientilla-button>
+                        </li>
+                        <li>
+                            <scientilla-button
                                 ng-disabled="vm.makingBackup || vm.restoringBackup"
                                 ng-click="vm.restoreBackup(dump)"
                                 type="danger"

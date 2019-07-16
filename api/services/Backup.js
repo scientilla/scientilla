@@ -16,7 +16,8 @@ module.exports = {
     getDumps,
     isRestoring,
     upload,
-    remove
+    remove,
+    download
 };
 
 
@@ -212,6 +213,28 @@ async function remove(filename) {
         return {
             type: 'failed',
             message: 'Failed to remove the backup!'
+        };
+    });
+}
+
+function download(filename) {
+    return new Promise(async function (resolve, reject) {
+        const filePath = path.resolve(sails.config.appPath, 'backups', filename);
+
+        if (fs.existsSync(filePath)) {
+            const readStream = fs.createReadStream(filePath)
+            resolve(readStream)
+        } else {
+            reject();
+        }
+    }).then(response => {
+        return {
+            type: 'success',
+            response: response
+        };
+    }).catch(() => {
+        return {
+            type: 'failed'
         };
     });
 }

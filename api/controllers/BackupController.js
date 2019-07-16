@@ -5,6 +5,9 @@
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
+const fs = require('fs');
+const path = require('path');
+
 module.exports = {
     getDumps: function (req, res) {
         const dumps = Backup.getDumps();
@@ -34,5 +37,15 @@ module.exports = {
         const result = await Backup.remove(filename);
         res.halt(Promise.resolve(result));
     },
+    download: async function (req, res) {
+        const filename = req.body.filename;
+        const download = await Backup.download(filename);
+
+        if (download.type === 'success') {
+            download.response.pipe(res, {end: true});
+        } else {
+            res.halt(Promise.reject(download));
+        }
+    }
 };
 
