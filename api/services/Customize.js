@@ -178,7 +178,7 @@ async function setCustomizations(req, footer, styles) {
 
     return {
         type: 'success',
-        message: 'Customizations succesfully saved!',
+        message: 'Customizations successfully saved!',
         customizations: sails.config.customizations,
     };
 }

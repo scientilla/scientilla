@@ -27,6 +27,8 @@
 
         vm.save = save;
 
+        vm.reset = reset;
+
         vm.$onInit = function () {
             ExternalConnectorService.getConnectors().then((connectors) => {
                 vm.connectors = connectors;
@@ -38,11 +40,9 @@
         };
 
         function saveConnectors(connectors) {
-
             ExternalConnectorService.setConnectors(connectors)
                 .then((result) => {
                     Notification.success('The connectors are saved!');
-
                     EventsService.publish(EventsService.CONNECTORS_CHANGED, result.connectors);
                 })
                 .catch(() => {
@@ -102,6 +102,18 @@
             if (_.isEmpty(vm.errors.elsevier.scopus)) {
                 saveConnectors(vm.connectors);
             }
+        }
+
+        function reset() {
+            ExternalConnectorService.resetConnectors().then(result => {
+                EventsService.publish(EventsService.CONNECTORS_CHANGED, result.connectors);
+
+                if (result.type === 'success') {
+                    Notification.success(result.message);
+                } else {
+                    Notification.warning(result.message);
+                }
+            });
         }
     }
 

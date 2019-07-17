@@ -196,7 +196,7 @@
                 try {
                     await unverifyResearchItem(researchEntity, researchItem.id);
                     EventsService.publish(EventsService.RESEARCH_ITEM_UNVERIFIED, {});
-                    Notification.success("Item succesfully unverified");
+                    Notification.success("Item successfully unverified");
                 } catch (e) {
                     Notification.warning("Failed to unverify");
                 }

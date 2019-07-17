@@ -548,7 +548,7 @@ function copyFile (file, dir2) {
     const dest = fs.createWriteStream(path.resolve(dir2, f))
 
     source.pipe(dest)
-    //source.on('end', function() { console.log('Succesfully copied') })
+    //source.on('end', function() { console.log('Successfully copied') })
     source.on('error', function(err) { console.log(err) })
 }
 
