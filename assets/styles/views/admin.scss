@@ -136,7 +136,7 @@
         }
 
         .backup-table-container{
-            max-height: 400px;
+            max-height: 300px;
             overflow-y: auto;
         }
 
@@ -145,8 +145,8 @@
                 vertical-align: middle;
 
                 &.action-column{
-                    width: 104px;
-                    min-width: 104px;
+                    width: 149px;
+                    min-width: 149px;
                 }
             }
         }
