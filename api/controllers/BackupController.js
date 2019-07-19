@@ -6,8 +6,8 @@
  */
 
 module.exports = {
-    getDumps: function (req, res) {
-        const dumps = Backup.getDumps();
+    getDumps: async function (req, res) {
+        const dumps = await Backup.getDumps();
         const dumpsList = {
             items: dumps,
             count: dumps.length
@@ -42,6 +42,10 @@ module.exports = {
         } catch (err) {
             res.halt(Promise.reject(err));
         }
+    },
+    autoDelete: async function (req, res) {
+        const result = await Backup.autoDelete();
+        res.halt(Promise.resolve(result));
     }
 };
 
