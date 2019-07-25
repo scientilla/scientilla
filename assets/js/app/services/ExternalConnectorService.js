@@ -9,35 +9,38 @@
     ];
 
     function ExternalConnectorService(Restangular, researchItemTypes) {
-        var service = {
+        let _connectors = null;
+        return {
             getConnectors: getConnectors,
             setConnectors: setConnectors,
-            searchAndImportEnabled: searchAndImportEnabled
+            searchAndImportEnabled: searchAndImportEnabled,
+            resetConnectors: resetConnectors
         };
 
         /* jshint ignore:start */
         async function getConnectors() {
-            return await Restangular.one('external-connectors').get().then(function(result) {
-                return result.plain();
-            });
-        }
-        /* jshint ignore:end */
+            if (!_connectors) {
+                await refreshConnectors()
+            }
 
-        /* jshint ignore:start */
+            return _connectors;
+        }
+
         async function setConnectors(connectors) {
             let formData = new FormData();
             formData.append('connectors', JSON.stringify(connectors));
 
-            return await Restangular.one('external-connectors')
+            const res = await Restangular.one('external-connectors')
                 .customPOST(formData, '', undefined, {'Content-Type': undefined});
+            _connectors = res.connectors;
+            return res;
         }
-        /* jshint ignore:end */
 
-        /* jshint ignore:start */
         async function searchAndImportEnabled(category) {
 
             return await getConnectors().then((connectors) => {
 
+                let tmpConnectors = angular.copy(connectors);
                 let active = false;
 
                 switch(category) {
@@ -46,11 +49,11 @@
                     case 'document':
                         const excludedConnectors = ['publications'];
                         excludedConnectors.forEach(excludedConnector => {
-                            delete connectors[excludedConnector];
+                            delete tmpConnectors[excludedConnector];
                         });
 
-                        Object.keys(connectors).forEach(function(connector) {
-                            if (connectors[connector].active) {
+                        Object.keys(tmpConnectors).forEach(function(connector) {
+                            if (tmpConnectors[connector].active) {
                                 active = true;
                             }
                         });
@@ -62,8 +65,20 @@
                 return active;
             });
         }
-        /* jshint ignore:end */
 
-        return service;
+        async function resetConnectors() {
+            const formData = new FormData();
+            const res = await Restangular.one('external-connectors', 'reset')
+                .customPOST(formData, '', undefined, {'Content-Type': undefined});
+            _connectors = res.connectors;
+            return res;
+        }
+
+        async function refreshConnectors() {
+            _connectors = await Restangular.one('external-connectors').get().then(result => {
+                return result.plain();
+            });
+        }
+        /* jshint ignore:end */
     }
 })();

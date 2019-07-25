@@ -12,14 +12,14 @@
         });
 
     scientillaDocumentSearch.$inject = [
+        'EventsService',
         'researchEntityService',
         'ModalService',
         'Notification',
-        'ExternalConnectorService',
-        'EventsService'
+        'ExternalConnectorService'
     ];
 
-    function scientillaDocumentSearch(researchEntityService, ModalService, Notification, ExternalConnectorService, EventsService) {
+    function scientillaDocumentSearch(EventsService, researchEntityService, ModalService, Notification, ExternalConnectorService) {
         const vm = this;
 
         vm.doSearch = doSearch;

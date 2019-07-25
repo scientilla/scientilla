@@ -13,17 +13,12 @@
                     <ul class="index-listing items-{{ vm.indexes.length }}">
                         <li ng-repeat="index in vm.indexes">
                             <div class="outer-index">
-                                <div
-                                    class="index"
-                                    tooltip-enable="index.label === 'IF per document'"
-                                    uib-tooltip-html="'Only documents on journals and bookseries.'"
-                                    tooltip-class="text-top">
+                                <div class="index">
                                     <div class="index-icon-container">
                                         <i ng-class="icon" ng-repeat="icon in index.icons"></i>
                                     </div>
                                     <span class="index-label">{{ index.label }}</span>
                                     <span class="index-value">{{ index.value | scientillaNumber:index.format }}</span>
-                                    <i class="fas fa-info-circle fa-right fa-sm" ng-if="index.label === 'IF per document'"></i>
                                 </div>
                             </div>
                         </li>

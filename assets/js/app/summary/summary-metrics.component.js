@@ -48,7 +48,8 @@
             vm.charts.filteredDocumentsSourceTypeByYear = ChartService.getFilteredDocumentsSourceTypeByYear(chartsData);
 
             const totalDocuments = ChartService.getTotalFilteredDocuments(chartsData);
-            const totalImpactFactorDocuments = ChartService.getTotalImpactFactorDocuments(chartsData);
+            const totalImpactFactorDocuments = ChartService.getTotalFilteredDocuments(chartsData);
+            const totalImpactFactorDocumentsOnJournals = ChartService.getTotalImpactFactorDocumentsOnJournals(chartsData);
             const hIndex = ChartService.getHindex(chartsData);
             const totalCitations = ChartService.getTotalCitations(chartsData);
             const totalImpactFactor = ChartService.getTotalImpactFactor(chartsData);
@@ -135,6 +136,12 @@
                 label: 'IF per document',
                 value: (totalImpactFactor / totalImpactFactorDocuments) || 0,
                 icons: ['icons-if icon-if', 'icons-if far fa-file-alt'],
+                format: 2
+            });
+            vm.indexes.push({
+                label: 'IF per document on journals',
+                value: (totalImpactFactor / totalImpactFactorDocumentsOnJournals) || 0,
+                icons: ['icons-if icon-if', 'icons-if far fa-newspaper'],
                 format: 2
             });
         };

@@ -138,6 +138,7 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/customize']: 'Customize.setCustomizations',
 
     ['get ' + apiPrfx + '/external-connectors']: 'ExternalConnectors.getConnectors',
+    ['post ' + apiPrfx + '/external-connectors/reset']: 'ExternalConnectors.resetConnectors',
     ['post ' + apiPrfx + '/external-connectors']: 'ExternalConnectors.setConnectors',
 
     //MBO

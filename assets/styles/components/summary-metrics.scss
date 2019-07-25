@@ -23,7 +23,6 @@
         .index-icon-container{
             display: inline-block;
             margin-right: .5rem;
-            min-width: 30px;
             vertical-align: middle;
         }
 
@@ -43,8 +42,7 @@
         margin: 0px -2rem 3rem -2rem;
 
         & > li{
-            margin-bottom: 1.5rem;
-            padding: 0px 2rem;
+            padding: .5rem 2rem;
         }
 
         i{
@@ -153,21 +151,23 @@
     }
 }
 
-@include media-breakpoint-up(sm) {
+@include media-breakpoint-between(lg, xl) {
     .summary-metrics-container{
         .index-listing{
             display: grid;
-            grid-template-columns: auto auto;
+            grid-template-columns: 1fr 1fr;
             grid-template-rows: auto;
-        }
 
-    }
-}
+            .index{
+                white-space: nowrap;
+            }
 
-@include media-breakpoint-up(xxl) {
-    .summary-metrics-container{
-        .index-listing {
-            display: block;
+            & > li{
+                &:nth-child(5) {
+                    grid-column-start: 1;
+                    grid-column-end: 3;
+                }
+            }
         }
     }
 }
