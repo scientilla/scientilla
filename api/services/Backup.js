@@ -35,61 +35,51 @@ async function makeTimestampedBackup() {
 }
 
 async function makeBackup(postfix = '') {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const currentDate = moment().format('YYMMDD');
-            const binaryBackupFilename = `dump${currentDate}${postfix}.sql`;
-            const binaryBackupFilepath = `backups/${binaryBackupFilename}`;
-            if (fs.existsSync(binaryBackupFilepath))
-                reject(`File ${binaryBackupFilename} already exists`);
+    const currentDate = moment().format('YYMMDD');
+    const binaryBackupFilename = `dump${currentDate}${postfix}.sql`;
+    const binaryBackupFilepath = `backups/${binaryBackupFilename}`;
+    if (fs.existsSync(binaryBackupFilepath))
+        throw `File ${binaryBackupFilename} already exists`;
+    try {
+        sails.log.info(`Creating backup file ${binaryBackupFilename}`);
+        const binaryBackupCmd = `pg_dump -d ${getConnectionString()} -c -C -f "${binaryBackupFilepath}" --inserts -F c`;
+        await runCommand(binaryBackupCmd, 'binary backup creation');
+        return binaryBackupFilename;
+    } catch (e) {
+        if (fs.existsSync(restoreLockFilename))
+            fs.unlinkSync(restoreLockFilename);
 
-            sails.log.info(`Creating backup file ${binaryBackupFilename}`);
-
-            const connectionString = getConnectionString();
-            const binaryBackupCmd = `pg_dump -d ${connectionString} -c -C -f "${binaryBackupFilepath}" --inserts -F c`;
-            await runCommand(binaryBackupCmd, 'binary backup creation');
-            resolve(binaryBackupFilename);
-        } catch (e) {
-            reject(e);
-            if (fs.existsSync(restoreLockFilename))
-                fs.unlinkSync(restoreLockFilename);
-        }
-    });
+        throw e;
+    }
 }
 
 async function restoreBackup(filename = null) {
     function getLastAutomaticBackupFilename() {
         const backupFilenames = fs.readdirSync('backups').filter(f => f.startsWith('dump'));
         const automaticBackupFilenames = backupFilenames.filter(f => /dump\d{6}\.sql/.test(f));
-        const lastAutomaticBackupFilename = _.last(automaticBackupFilenames.sort());
-        return lastAutomaticBackupFilename;
+        return _.last(automaticBackupFilenames.sort());
     }
 
-    return new Promise(async (resolve, reject) => {
-        try {
-            if (!fs.existsSync(restoreLockFilename))
-                createFile(restoreLockFilename);
-            const backupFilename = filename ? filename : getLastAutomaticBackupFilename();
-            if (!backupFilename)
-                reject('No backup found');
-            const backupFilepath = `backups/${backupFilename}`;
-            if (!fs.existsSync(backupFilepath))
-                reject(`File ${backupFilename} does not exists`);
+    const backupFilename = filename ? filename : getLastAutomaticBackupFilename();
+    if (!backupFilename)
+        throw 'No backup found';
+    const backupFilepath = `backups/${backupFilename}`;
+    if (!fs.existsSync(backupFilepath))
+        throw `File ${backupFilename} does not exists`;
 
-            sails.log.info(`Restoring backup file ${backupFilename}`);
+    try {
+        if (!fs.existsSync(restoreLockFilename))
+            createFile(restoreLockFilename);
+        sails.log.info(`Restoring backup file ${backupFilename}`);
+        const connectionString = getConnectionString();
+        const binaryBackupCmd = `pg_restore -d ${connectionString} -n public -c -F c -j 3 ${backupFilepath}`;
+        await runCommand(binaryBackupCmd, 'binary backup restore');
+    } finally {
+        if (fs.existsSync(restoreLockFilename))
+            fs.unlinkSync(restoreLockFilename);
+    }
 
-            const connectionString = getConnectionString();
-            const binaryBackupCmd = `pg_restore -d ${connectionString} -n public -c -F c -j 3 ${backupFilepath}`;
-            await runCommand(binaryBackupCmd, 'binary backup restore');
-            if (fs.existsSync(restoreLockFilename))
-                fs.unlinkSync(restoreLockFilename);
-            resolve(0);
-        } catch (e) {
-            if (fs.existsSync(restoreLockFilename))
-                fs.unlinkSync(restoreLockFilename);
-            reject(e);
-        }
-    })
+    return 0;
 }
 
 function getDumps() {
@@ -116,7 +106,7 @@ function getDumps() {
         });
 }
 
-async function runCommand(cmd, label) {
+function runCommand(cmd, label) {
     return new Promise((resolve, reject) => {
         const startedAt = new Date();
         const taskObj = exec(cmd);
@@ -128,16 +118,16 @@ async function runCommand(cmd, label) {
 
         taskObj.stderr.on('data', data => {
             sails.log.debug(`${label}: ${data}`);
-            reject(data);
-            throw data;
         });
 
         taskObj.on('close', code => {
             const now = new Date();
 
             sails.log.info(label + ' finished in ' + ((now - startedAt) / 1000) + ' seconds with code ' + code);
-
-            resolve(code);
+            if (code > 0)
+                reject(code);
+            else
+                resolve(code);
         });
     });
 }
@@ -171,13 +161,11 @@ function formatBytes(bytes, decimals = 2) {
 async function upload(req) {
     return new Promise(function (resolve, reject) {
         req.file('file').upload({
-            maxBytes:10000000000000,
+            maxBytes: 10000000000000,
             saveAs: req.file('file')._files[0].stream.filename,
             dirname: path.resolve(sails.config.appPath, 'backups')
         }, function (err, file) {
-            if (err) {
-                reject(err);
-            }
+            if (err) reject(err);
 
             resolve(file);
         });
@@ -197,7 +185,7 @@ async function upload(req) {
 
 async function remove(filename) {
     return new Promise(function (resolve, reject) {
-        fs.unlink(path.join(sails.config.appPath, 'backups', filename), function(err) {
+        fs.unlink(path.join(sails.config.appPath, 'backups', filename), function (err) {
             if (err) {
                 reject(err);
             }
