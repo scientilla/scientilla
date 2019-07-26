@@ -19,7 +19,7 @@ module.exports.connections = {
   
   test: {
     adapter: 'sails-postgresql',
-    host: 'testdb',
+    host: 'db-test',
     user: 'scientilla',
     password: 'scientillapassword',
     database: 'scientillatest'

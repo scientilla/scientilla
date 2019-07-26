@@ -37,7 +37,7 @@
                     function stickyFooter(){
                         let height = 0;
 
-                        if (footer) {
+                        if (footer && container) {
                             height = footer.offsetHeight;
                             container.style.paddingBottom = height + 'px';
                         }

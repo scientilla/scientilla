@@ -10,7 +10,6 @@
  * @docs        :: http://waterlock.ninja/documentation
  */
 module.exports = function (req, res, next) {
-//  console.log(res.session);
     waterlock.validator.validateTokenRequest(req, function (err, user) {
         if (err) {
             sails.log.debug('access forbidden ' + req.path);

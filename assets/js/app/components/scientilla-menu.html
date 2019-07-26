@@ -23,9 +23,11 @@
                 <a ng-href="{{ vm.getUrl('documents/drafts') }}"
                    ng-class="{active: vm.isActive('/documents/drafts', true)}"
                    class="list-group-item list-group-item-action">Drafts</a>
-                <a ng-href="{{ vm.getUrl('documents/external') }}"
-                   ng-class="{active: vm.isActive('/documents/external', true)}"
-                   class="list-group-item list-group-item-action">External</a>
+                <a
+                    ng-href="{{ vm.getUrl('documents/external') }}"
+                    ng-class="{active: vm.isActive('/documents/external', true)}"
+                    ng-if="vm.hasActiveExternalConnectors"
+                    class="list-group-item list-group-item-action">External</a>
             </div>
         </li>
         <li ng-if="!vm.user.isViewOnly()">
@@ -36,6 +38,9 @@
                         class="button-new-research-entity-container"></scientilla-button-new-research-item>
             </label>
             <div class="list-group">
+                <a ng-href="{{ vm.getUrl('accomplishments/suggested') }}"
+                   ng-class="{active: vm.isActive('/accomplishments/suggested', true)}"
+                   class="list-group-item list-group-item-action">Suggested</a>
                 <a ng-href="{{ vm.getUrl('accomplishments/verified') }}"
                    ng-class="{active: vm.isActive('/accomplishments/verified', true)}"
                    class="list-group-item list-group-item-action">Verified</a>
@@ -58,18 +63,26 @@
         <li ng-if="vm.isAdmin()">
             <label>Admin</label>
             <div class="list-group">
-                <a ng-href="#/sources"
-                   ng-class="{active: vm.isActive('/sources')}"
-                   ng-if="vm.isAdmin()"
-                   class="list-group-item list-group-item-action">Sources</a>
-                <a ng-href="#/tools"
-                   ng-class="{active: vm.isActive('/tools')}"
-                   ng-if="vm.isAdmin()"
-                   class="list-group-item list-group-item-action">Tools</a>
-                <a ng-href="#/customize"
-                   ng-class="{active: vm.isActive('/customize')}"
-                   ng-if="vm.isAdmin()"
-                   class="list-group-item list-group-item-action">Customize</a>
+                <a
+                    ng-href="#/sources"
+                    ng-class="{active: vm.isActive('/sources')}"
+                    ng-if="vm.isAdmin()"
+                    class="list-group-item list-group-item-action">Sources</a>
+                <a
+                    ng-href="#/tools"
+                    ng-class="{active: vm.isActive('/tools')}"
+                    ng-if="vm.isAdmin()"
+                    class="list-group-item list-group-item-action">Tools</a>
+                <a
+                    ng-href="#/customize"
+                    ng-class="{active: vm.isActive('/customize')}"
+                    ng-if="vm.isAdmin()"
+                    class="list-group-item list-group-item-action">Customize</a>
+                <a
+                    ng-href="#/connectors"
+                    ng-class="{active: vm.isActive('/connectors')}"
+                    ng-if="vm.isAdmin()"
+                    class="list-group-item list-group-item-action">External connectors</a>
             </div>
         </li>
     </ul>

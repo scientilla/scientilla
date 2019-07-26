@@ -9,53 +9,56 @@
         'groupTypes',
         'groupTypeLabels',
         'AuthService',
-        'context'
+        'ExternalConnectorService'
     ];
 
-    function ResearchItemSearchFormStructureService(ResearchItemTypesService, documentSearchForm, groupTypes, groupTypeLabels, AuthService, context) {
+    function ResearchItemSearchFormStructureService(ResearchItemTypesService, documentSearchForm, groupTypes, groupTypeLabels, AuthService, ExternalConnectorService) {
 
         const service = {
             getStructure
         };
 
-        const formStructures = {
-            accomplishment: {
-                title: {
-                    inputType: 'text',
-                    label: 'Title',
-                    matchColumn: 'title',
-                    matchRule: 'contains',
-                    type: 'field'
-                },
-                author: {
-                    inputType: 'text',
-                    label: 'Author',
-                    matchColumn: 'authorsStr',
-                    matchRule: 'contains',
-                    type: 'field'
-                },
-                maxYear: {
-                    inputType: 'year',
-                    label: 'Year from',
-                    matchColumn: 'year',
-                    matchRule: '>=',
-                    type: 'field'
-                },
-                minYear: {
-                    inputType: 'year',
-                    label: 'Year to',
-                    matchColumn: 'year',
-                    matchRule: '<=',
-                    type: 'field'
-                },
-                accomplishmentType: {
-                    inputType: 'select',
-                    label: 'Accomplishment Type',
-                    values: [],
-                    matchColumn: 'type',
-                    type: 'field'
-                }
+        const accomplishmentFormStructure = {
+            title: {
+                inputType: 'text',
+                label: 'Title',
+                matchColumn: 'title',
+                matchRule: 'contains',
+                type: 'field'
             },
+            author: {
+                inputType: 'text',
+                label: 'Author',
+                matchColumn: 'authorsStr',
+                matchRule: 'contains',
+                type: 'field'
+            },
+            maxYear: {
+                inputType: 'year',
+                label: 'Year from',
+                matchColumn: 'year',
+                matchRule: '>=',
+                type: 'field'
+            },
+            minYear: {
+                inputType: 'year',
+                label: 'Year to',
+                matchColumn: 'year',
+                matchRule: '<=',
+                type: 'field'
+            },
+            accomplishmentType: {
+                inputType: 'select',
+                label: 'Accomplishment Type',
+                values: [],
+                matchColumn: 'type',
+                type: 'field'
+            }
+        };
+
+        const formStructures = {
+            accomplishment: accomplishmentFormStructure,
+            'accomplishment-suggested': accomplishmentFormStructure,
             group: {
                 name: {
                     inputType: 'text',
@@ -112,21 +115,30 @@
 
             let structure;
 
-            switch(constant) {
+            switch (constant) {
                 case 'accomplishment':
-                    const types = await ResearchItemTypesService.getTypes('accomplishment');
-
-                    formStructures[constant].accomplishmentType.values = _.concat(
-                        [{value: "?", label: 'Select'}],
-                        types.map(s => ({value: s.key, label: s.label}))
-                    );
-
+                    formStructures[constant].accomplishmentType.values = await getAccomplishmentTypeSelect();
                     structure = formStructures[constant];
+                    break;
+                case 'accomplishment-suggested':
+                    formStructures[constant].accomplishmentType.values = await getAccomplishmentTypeSelect();
+
+                    structure = Object.assign({},
+                        formStructures[constant],
+                        {
+                            discarded: {
+                                inputType: 'checkbox',
+                                label: 'Show discarded accomplishments',
+                                defaultValue: false,
+                                matchColumn: 'discarded',
+                                type: 'action'
+                            }
+                        });
                     break;
                 case 'document':
                     structure = documentSearchForm;
                     break;
-                case 'external':
+                case 'external-document':
                     structure = Object.assign({},
                         {
                             connector: await getConnectorField()
@@ -134,7 +146,7 @@
                         documentSearchForm
                     );
                     break;
-                case 'suggested':
+                case 'suggested-document':
                     structure = Object.assign({},
                         documentSearchForm,
                         {
@@ -173,19 +185,42 @@
         }
 
         async function getConnectorField() {
-            const researchEntity = await context.getSubResearchEntity();
-            const connectors = researchEntity.getExternalConnectors();
-            const values = connectors.map(c => ({value: c.value, label: c.label}));
+            let externalConnectors = [],
+                defaultValue = '';
+
+            await ExternalConnectorService.getConnectors().then((connectors) => {
+                if (connectors && connectors.publications && connectors.publications.active) {
+                    externalConnectors.push({value: 'publications', label: 'Publications'});
+                }
+
+                if (connectors && connectors.elsevier && connectors.elsevier.active) {
+                    externalConnectors.push({value: 'scopus', label: 'Scopus'});
+                    defaultValue = 'scopus';
+                } else {
+                    if (externalConnectors.length > 0) {
+                        defaultValue = externalConnectors[0].value;
+                    }
+                }
+            });
 
             return {
                 inputType: 'select',
                 label: 'Connector',
-                values: values,
+                values: externalConnectors,
                 matchColumn: 'origin',
-                defaultValue: 'scopus',
+                defaultValue: defaultValue,
                 type: 'connector'
             };
         }
+
+        async function getAccomplishmentTypeSelect() {
+            const accomplishmentTypes = await ResearchItemTypesService.getTypes('accomplishment');
+            return _.concat(
+                [{value: "?", label: 'Select'}],
+                accomplishmentTypes.map(s => ({value: s.id, label: s.label}))
+            );
+        }
+
         /* jshint ignore:end */
     }
 })();

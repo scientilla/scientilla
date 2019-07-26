@@ -50,9 +50,15 @@
             multipleDelete: ResearchEntitiesService.deleteDrafts,
             getDrafts: ResearchEntitiesService.getAccomplishmentDrafts,
             get: ResearchEntitiesService.getAccomplishments,
+            getDiscarded: ResearchEntitiesService.getDiscardedAccomplishments,
+            copy: ResearchEntitiesService.copy,
+            multipleCopy: ResearchEntitiesService.multipleCopy,
             verify,
-            verifyAll: ResearchEntitiesService.verifyAll,
+            multipleVerify: ResearchEntitiesService.multipleVerify,
             unverify: ResearchEntitiesService.unverify,
+            getSuggested: ResearchEntitiesService.getSuggestedAccomplishments,
+            discard: ResearchEntitiesService.discard,
+            multipleDiscard: ResearchEntitiesService.multipleDiscard,
             isValid,
             validate,
             filterFields,
@@ -62,8 +68,8 @@
 
         /* jshint ignore:start */
         async function verify(researchEntity, researchItem) {
-            const researchItems = await ResearchEntitiesService.getAccomplishmentDrafts(researchEntity, {where: {id: researchItem.id}});
-            await ResearchEntitiesService.verify('accomplishment', researchEntity, researchItems[0]);
+            const completeResearchItem = await ResearchEntitiesService.getAccomplishment(researchItem.id);
+            await ResearchEntitiesService.verify('accomplishment', researchEntity, completeResearchItem);
 
             if (researchEntity.type === 'user') {
                 await context.refreshSubResearchEntity();

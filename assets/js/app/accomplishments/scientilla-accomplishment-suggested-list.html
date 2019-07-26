@@ -1,0 +1,71 @@
+<scientilla-backend-layout>
+    <h1>Suggested accomplishments</h1>
+    <scientilla-filter
+            category="accomplishment-suggested"
+            on-filter="vm.onFilter"
+            elements="vm.accomplishments"
+            empty-list-message="No drafts found">
+
+        <scientilla-multicheck>
+            <buttons>
+                <scientilla-multicheck-button
+                        subject="Verify accomplishments"
+                        on-click="vm.multipleVerify">
+                    <i class="fas fa-check fa-left"></i>Verify
+                </scientilla-multicheck-button>
+                <scientilla-multicheck-button
+                        subject="Discard accomplishments"
+                        on-click="vm.multipleCopy">
+                    <i class="fas fa-copy fa-left"></i>Copy to draft
+                </scientilla-multicheck-button>
+                <scientilla-multicheck-button
+                        subject="Discard accomplishments"
+                        on-click="vm.multipleDiscard">
+                    <i class="fas fa-ban fa-left"></i>Discard
+                </scientilla-multicheck-button>
+            </buttons>
+            <item-list>
+                <scientilla-checkable ng-repeat="a in vm.accomplishments"
+                                      item="a"
+                                      class="scientilla-checkable">
+
+                    <scientilla-accomplishment accomplishment="a"
+                                               section="vm.accomplishmentListSections.SUGGESTED"
+                                               class="accomplishment-container"></scientilla-accomplishment>
+
+                    <div class="accomplishment-row-actions">
+                        <div class="btn-group" uib-dropdown>
+                            <button ng-click="vm.verify(a)"
+                                    ng-disabled="!vm.isValid(a)"
+                                    type="button"
+                                    class="btn btn-primary"
+                                    title="Verify the suggested accomplishment">
+                                <i class="fas fa-check fa-left"></i>Verify
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-primary dropdown-toggle only-icon"
+                                    uib-dropdown-toggle>
+                            </button>
+
+                            <div uib-dropdown-menu
+                                 class="dropdown-menu">
+
+                                <button ng-click="vm.copy(a)"
+                                        class="dropdown-item">
+                                    <i class="far fa-copy fa-left"></i>Copy to draft
+                                </button>
+
+                                <button ng-click="vm.discard(a)"
+                                        class="dropdown-item">
+                                    <i class="fas fa-ban fa-left"></i>Discard
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </scientilla-checkable>
+            </item-list>
+        </scientilla-multicheck>
+
+    </scientilla-filter>
+</scientilla-backend-layout>

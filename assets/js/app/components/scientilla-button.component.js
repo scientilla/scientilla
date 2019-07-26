@@ -40,7 +40,8 @@
                 button: 'btn-primary',
                 secondary: 'btn-outline-secondary',
                 cancel: 'btn-outline-secondary',
-                link: 'btn-link'
+                link: 'btn-link',
+                danger: 'btn-danger'
             };
             const sizeClassesTable = {
                 small: '',

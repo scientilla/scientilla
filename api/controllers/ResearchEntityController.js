@@ -32,7 +32,7 @@ module.exports = {
         const verificationData = req.body;
         res.halt(Verify.verify(itemId, researchEntityId, verificationData));
     },
-    verifyAll(req, res, next) {
+    multipleVerify(req, res, next) {
         const researchEntityId = +req.params.researchEntityId;
         const itemIds = req.param('itemIds');
         res.halt(ResearchItem.blukAction(Verify.verify, itemIds, [researchEntityId]));
@@ -41,6 +41,16 @@ module.exports = {
         const researchEntityId = +req.params.researchEntityId;
         const itemId = +req.params.itemId;
         res.halt(Verify.unverify(researchEntityId, itemId));
+    },
+    discard(req, res, next) {
+        const researchEntityId = +req.params.researchEntityId;
+        const itemId = +req.params.itemId;
+        res.halt(ResearchEntity.discardResearchItem(itemId, researchEntityId));
+    },
+    multipleDiscard(req, res, next) {
+        const researchEntityId = +req.params.researchEntityId;
+        const itemIds = req.param('itemIds');
+        res.halt(ResearchEntity.blukAction(ResearchEntity.discardResearchItem, itemIds, [researchEntityId]));
     },
     setPublic(req, res, next) {
         const researchEntityId = +req.params.researchEntityId;
@@ -61,7 +71,7 @@ module.exports = {
     },
     copyResearchItems(req, res, next) {
         const researchEntityId = req.params.researchEntityId;
-        const researchItemIds = req.param('researchItemIds');
-        res.halt(ResearchItem.blukAction(ResearchItem.copyResearchItems, researchItemIds, [researchEntityId]));
+        const researchItemIds = req.param('itemIds');
+        res.halt(ResearchItem.blukAction(ResearchItem.copyResearchItem, researchItemIds, [researchEntityId]));
     },
 };

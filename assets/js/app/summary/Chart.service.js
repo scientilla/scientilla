@@ -218,7 +218,7 @@
                 values: getItemsByYear(chartsData.booksByYear, yearRange)
             }, {
                 key: DocumentTypesService.getSourceTypeLabel('bookseries'),
-                values: getItemsByYear(chartsData.bookChaptersByYear, yearRange)
+                values: getItemsByYear(chartsData.bookSeriesByYear, yearRange)
             }];
 
             const rangeX = getRangeX(
@@ -500,12 +500,12 @@
             chartsData.filteredAffiliatedJournalsByYear.forEach(getDataMerger(affiliatedDocuments));
             chartsData.filteredAffiliatedConferencesByYear.forEach(getDataMerger(affiliatedDocuments));
             chartsData.filteredAffiliatedBooksByYear.forEach(getDataMerger(affiliatedDocuments));
-            chartsData.filteredAffiliatedBookChaptersByYear.forEach(getDataMerger(affiliatedDocuments));
+            chartsData.filteredAffiliatedBookSeriesByYear.forEach(getDataMerger(affiliatedDocuments));
             const notAffiliatedDocuments = [];
             chartsData.filteredNotAffiliatedJournalsByYear.forEach(getDataMerger(notAffiliatedDocuments));
             chartsData.filteredNotAffiliatedConferencesByYear.forEach(getDataMerger(notAffiliatedDocuments));
             chartsData.filteredNotAffiliatedBooksByYear.forEach(getDataMerger(notAffiliatedDocuments));
-            chartsData.filteredNotAffiliatedBookChaptersByYear.forEach(getDataMerger(notAffiliatedDocuments));
+            chartsData.filteredNotAffiliatedBookSeriesByYear.forEach(getDataMerger(notAffiliatedDocuments));
 
             const data = [{
                 key: 'IIT',
@@ -555,9 +555,9 @@
             const filteredBooks = [];
             chartsData.filteredAffiliatedBooksByYear.forEach(getDataMerger(filteredBooks));
             chartsData.filteredNotAffiliatedBooksByYear.forEach(getDataMerger(filteredBooks));
-            const filteredBookChapters = [];
-            chartsData.filteredAffiliatedBookChaptersByYear.forEach(getDataMerger(filteredBookChapters));
-            chartsData.filteredNotAffiliatedBookChaptersByYear.forEach(getDataMerger(filteredBookChapters));
+            const filteredBookSeries = [];
+            chartsData.filteredAffiliatedBookSeriesByYear.forEach(getDataMerger(filteredBookSeries));
+            chartsData.filteredNotAffiliatedBookSeriesByYear.forEach(getDataMerger(filteredBookSeries));
 
             const data = [{
                 key: DocumentTypesService.getSourceTypeLabel('journal'),
@@ -570,7 +570,7 @@
                 values: getItemsByYear(filteredBooks, yearRange)
             }, {
                 key: DocumentTypesService.getSourceTypeLabel('bookseries'),
-                values: getItemsByYear(filteredBookChapters, yearRange)
+                values: getItemsByYear(filteredBookSeries, yearRange)
             }];
 
             const rangeX = getRangeX(
@@ -608,11 +608,18 @@
                 'filteredAffiliatedJournalsByYear',
                 'filteredAffiliatedConferencesByYear',
                 'filteredAffiliatedBooksByYear',
-                'filteredAffiliatedBookChaptersByYear',
+                'filteredAffiliatedBookSeriesByYear',
                 'filteredNotAffiliatedJournalsByYear',
                 'filteredNotAffiliatedConferencesByYear',
                 'filteredNotAffiliatedBooksByYear',
-                'filteredNotAffiliatedBookChaptersByYear',
+                'filteredNotAffiliatedBookSeriesByYear',
+            ]);
+        };
+
+        service.getTotalImpactFactorDocumentsOnJournals = function (chartsData) {
+            return getTotal(chartsData, [
+                'filteredAffiliatedJournalsByYear',
+                'filteredNotAffiliatedJournalsByYear'
             ]);
         };
 
@@ -626,7 +633,7 @@
             return getTotal(chartsData, ['filteredAffiliatedBooksByYear', 'filteredNotAffiliatedBooksByYear']);
         };
         service.getTotalFilteredBookSeries = function (chartsData) {
-            return getTotal(chartsData, ['filteredAffiliatedBookChaptersByYear', 'filteredNotAffiliatedBookChaptersByYear']);
+            return getTotal(chartsData, ['filteredAffiliatedBookSeriesByYear', 'filteredNotAffiliatedBookSeriesByYear']);
         };
 
         service.getHindex = function (chartsData) {
@@ -670,7 +677,8 @@
                     labelSunbeamLayout: true,
                     showLabels: true,
                     legendPosition: 'right',
-                    color: (d, i) => colors[i]
+                    color: (d, i) => colors[i],
+                    valueFormat: d => d3.format('')(d)
                 }
             };
 
@@ -718,7 +726,7 @@
             flattenedData = flattenedData.concat(chartsData.journalsByYear);
             flattenedData = flattenedData.concat(chartsData.conferencesByYear);
             flattenedData = flattenedData.concat(chartsData.booksByYear);
-            flattenedData = flattenedData.concat(chartsData.bookChaptersByYear);
+            flattenedData = flattenedData.concat(chartsData.bookSeriesByYear);
 
             const years = flattenedData.map(v => parseInt(v.year, 10));
             const currentYear = new Date().getFullYear();

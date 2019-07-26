@@ -37,7 +37,7 @@
                     function fixedHeader(){
                         let height = 0;
 
-                        if (header) {
+                        if (header && container) {
                             height = header.offsetHeight;
                             container.style.paddingTop = height + 'px';
                         }

@@ -19,10 +19,6 @@
     }
 }
 
-.filter-results{
-    //margin: 2rem 0px;
-}
-
 .filter-result-actions{
     @include normalize-listing;
     margin: 1rem -1rem;
@@ -83,9 +79,7 @@
         }
 
         .filter-connector-listing{
-            &.connectors-1{
-                grid-template-columns: 1fr 1fr;
-            }
+            grid-template-columns: 1fr 1fr;
         }
     }
 }
@@ -111,9 +105,7 @@
         }
 
         .filter-connector-listing{
-            &.connectors-1{
-                grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
-            }
+            grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
         }
     }
 }

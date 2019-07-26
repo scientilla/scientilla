@@ -51,7 +51,7 @@
             EventsService.subscribeAll(vm, [
                 EventsService.NOTIFICATION_ACCEPTED,
                 EventsService.NOTIFICATION_DISCARDED,
-                EventsService.DRAFT_UNVERIFIED,
+                EventsService.DOCUMENT_UNVERIFIED,
                 EventsService.DOCUMENT_VERIFIED,
                 EventsService.DOCUMENT_PRIVATE_TAGS_UPDATED,
                 EventsService.DOCUMENT_DISCARDED,

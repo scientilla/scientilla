@@ -163,7 +163,7 @@ module.exports = _.merge({}, BaseModel, {
         discardedCoauthors: {
             collection: 'User',
             via: 'discardedDocuments',
-            through: 'discarded'
+            through: 'discardeddocument'
         },
         discardedGroups: {
             collection: 'Group',
@@ -171,7 +171,7 @@ module.exports = _.merge({}, BaseModel, {
             through: 'discardedgroup'
         },
         discarded: {
-            collection: 'discarded',
+            collection: 'discardeddocument',
             via: 'document'
         },
         discardedG: {

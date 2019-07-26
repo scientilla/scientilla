@@ -63,8 +63,8 @@ SELECT EXISTS(
     FROM information_schema.tables
     WHERE
         table_schema = 'public' AND
-        table_name = 'discarded'
-) as discarded, EXISTS(
+        table_name = 'discarded_document'
+) as discarded_document, EXISTS(
     SELECT *
     FROM information_schema.tables
     WHERE
@@ -232,7 +232,7 @@ SELECT EXISTS(
     WHERE
         table_schema = 'public' AND
         table_name = 'user'
-) as user, EXISTS(
+) as "user", EXISTS(
     SELECT *
     FROM information_schema.tables
     WHERE

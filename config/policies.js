@@ -149,4 +149,18 @@ module.exports.policies = {
     }, defaultPolicy),
 
     ResearchItemTypeController: defaultPolicy,
+
+    BackupController: {
+        getDumps: isAdmin,
+        make: isAdmin,
+        restore: isAdmin,
+        upload: isAdmin,
+        remove: isAdmin
+    },
+
+    CustomizeController: {
+        getCustomizations: true,
+        setCustomizations: isAdmin,
+        resetCustomizations: isAdmin
+    }
 };

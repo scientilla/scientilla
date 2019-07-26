@@ -1,4 +1,4 @@
-/* global require, Verify, ResearchEntity, ResearchItem, ResearchItemKinds, ResearchItemType, Author */
+/* global require, Verify, ResearchEntity, ResearchItem, ResearchItemKinds, ResearchItemType, Author, Discarded */
 'use strict';
 
 
@@ -79,6 +79,7 @@ module.exports = _.merge({}, BaseModel, {
             await ResearchItem.destroy({id: oldResearchItem.id});
         }
 
+        await Discarded.destroy({researchEntity: researchEntityId, researchItem: researchItemId});
         return {researchItem: researchItem, success: true, message: 'Verification completed'};
 
     },

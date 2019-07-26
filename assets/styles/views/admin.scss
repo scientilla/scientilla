@@ -134,6 +134,60 @@
                 padding: 0px 1rem 2rem 1rem;
             }
         }
+
+        .backup-table-container{
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .backup-table{
+            td{
+                vertical-align: middle;
+
+                &.action-column{
+                    width: 149px;
+                    min-width: 149px;
+                }
+            }
+        }
+
+        .backup-table-actions{
+            @include normalize-listing;
+            @include clearfix;
+            margin: -.5rem;
+
+            & > li{
+                display: block;
+                float: left;
+                padding: .5rem;
+            }
+        }
+    }
+
+    &.admin-external-connectors {
+        .connector-listing {
+            @include normalize-listing;
+
+            & > li {
+                display: block;
+
+                & + li {
+                    margin-top: 3rem;
+                }
+            }
+        }
+
+        .connector-actions{
+            @include normalize-listing;
+            @include clearfix;
+            margin: 2rem -1.5rem 0px -1.5rem;
+
+            & > li{
+                display: block;
+                padding: 0px 1.5rem;
+                float: left;
+            }
+        }
     }
 
     &.admin-customize{

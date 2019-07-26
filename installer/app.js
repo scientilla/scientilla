@@ -32,8 +32,12 @@ const defaultLocalConfigurationFile = './installer/defaults/local.js'
 const customizationsConfigurationFile = './config/customizations.js'
 const defaultCustomizationsConfigurationFile = './installer/defaults/customizations.js'
 
+const connectorsConfigurationFile = './config/connectors.js'
+const defaultConnectorsConfigurationFile = './installer/defaults/connectors.js'
+
 const prefixBasic = 'module.exports.scientilla = '
 const prefixLocal = 'module.exports.connections = '
+const prefixConnectors = 'module.exports.connectors = '
 
 /*
  * Define the steps of the installer
@@ -43,6 +47,9 @@ const steps = {
         done: false
     },
     localConfiguration: {
+        done: false
+    },
+    externalConnectors: {
         done: false
     },
     database: {
@@ -101,10 +108,14 @@ app.get('/', async (req, res) => {
     // Go to the correct step
     if (steps.basicConfiguration.done) {
         if (steps.localConfiguration.done) {
-            if (steps.database.ok) {
-                res.redirect('/application')
+            if (steps.externalConnectors.done) {
+                if (steps.database.ok) {
+                    res.redirect('/application')
+                } else {
+                    res.redirect('/database')
+                }
             } else {
-                res.redirect('/database')
+                res.redirect('/external-connectors')
             }
         } else {
             res.redirect('/local-configuration')
@@ -167,17 +178,12 @@ app.post('/basic-configuration', (req, res) => {
     configuration.ldap.connection.searchBase = req.body['ldap-connection-search-base']
     configuration.ldap.connection.searchFilter = req.body['ldap-connection-search-filter']
     configuration.ldap.connection.cache = req.body['ldap-connection-cache'] === 'on' ? true : false
+    configuration.ldap.domain = req.body['ldap-domain']
 
     configuration.mainInstituteImport.userImportUrl = req.body['main-institute-import-user-import-url']
     configuration.mainInstituteImport.usersCreationCondition.attribute = req.body['main-institute-import-users-creation-condition-attribute']
     configuration.mainInstituteImport.usersCreationCondition.value = req.body['main-institute-import-users-creation-condition-value'] === 'on' ? true : false
     configuration.mainInstituteImport.officialGroupsImportUrl = req.body['main-institute-import-official-groups-import-url']
-
-    configuration.externalConnectors.elsevier.scopus.url = req.body['external-connectors-elsevier-scopus-url']
-    configuration.externalConnectors.elsevier.scopus.apiKey = req.body['external-connectors-elsevier-scopus-api-key']
-    configuration.externalConnectors.elsevier.scopus.token = req.body['external-connectors-elsevier-scopus-token']
-    configuration.externalConnectors.elsevier.scival.url = req.body['external-connectors-elsevier-scival-url']
-    configuration.externalConnectors.elsevier.scival.clientKey = req.body['external-connectors-elsevier-scival-client-key']
 
     configuration.crons = JSON.parse(req.body['crons'])
 
@@ -199,7 +205,6 @@ app.get('/local-configuration/:reset?', async (req, res) => {
             configuration = JSON.parse(fs.readFileSync(defaultLocalConfigurationFile).toString().replace(prefixLocal, ''))
             configuration.production.password = process.env.DATABASE_PASSWORD
             configuration.development.password = process.env.DATABASE_PASSWORD
-            configuration.test.password = process.env.DATABASE_PASSWORD
         } else {
             throw new Error('No default local configuration file found!')
         }
@@ -211,7 +216,6 @@ app.get('/local-configuration/:reset?', async (req, res) => {
                 configuration = JSON.parse(fs.readFileSync(defaultLocalConfigurationFile).toString().replace(prefixLocal, ''))
                 configuration.production.password = process.env.DATABASE_PASSWORD
                 configuration.development.password = process.env.DATABASE_PASSWORD
-                configuration.test.password = process.env.DATABASE_PASSWORD
             } else {
                 throw new Error('No default local configuration file found!')
             }
@@ -247,13 +251,59 @@ app.post('/local-configuration', (req, res) => {
     configuration.development.password = req.body['development-password']
     configuration.development.database = req.body['development-database']
 
-    configuration.test.adapter = req.body['test-adapter']
-    configuration.test.host = req.body['test-host']
-    configuration.test.user = req.body['test-user']
-    configuration.test.password = req.body['test-password']
-    configuration.test.database = req.body['test-database']
-
     fs.writeFileSync(localConfigurationFile, prefixLocal + JSON.stringify(configuration, null, 4))
+    res.redirect('/')
+})
+
+app.get('/external-connectors/:reset?', async (req, res) => {
+
+    const reset = req.params.reset
+    let configuration
+
+    if (reset === 'reset') {
+        if (fs.existsSync(defaultConnectorsConfigurationFile)) {
+            configuration = JSON.parse(fs.readFileSync(defaultConnectorsConfigurationFile).toString().replace(prefixConnectors, ''))
+        } else {
+            throw new Error('No default basic configuration file found!')
+        }
+    } else {
+        if (fs.existsSync(connectorsConfigurationFile)) {
+            configuration = JSON.parse(fs.readFileSync(connectorsConfigurationFile).toString().replace(prefixConnectors, ''))
+        } else {
+            if (fs.existsSync(defaultConnectorsConfigurationFile)) {
+                configuration = JSON.parse(fs.readFileSync(defaultConnectorsConfigurationFile).toString().replace(prefixConnectors, ''))
+            } else {
+                throw new Error('No default basic configuration file found!')
+            }
+        }
+    }
+
+    res.render('pages/external-connectors', {configuration: configuration, steps: await checkSteps()})
+})
+
+app.post('/external-connectors', (req, res) => {
+
+    let configuration
+
+    if (fs.existsSync(connectorsConfigurationFile)) {
+        configuration = JSON.parse(fs.readFileSync(connectorsConfigurationFile).toString().replace(prefixConnectors, ''))
+    } else {
+        if (fs.existsSync(defaultConnectorsConfigurationFile)) {
+            configuration = JSON.parse(fs.readFileSync(defaultConnectorsConfigurationFile).toString().replace(prefixConnectors, ''))
+        } else {
+            throw new Error('No default connectors configuration file found!')
+        }
+    }
+
+    configuration.publications.active = req.body['external-connectors-publications-active'] === 'on' ? true : false
+    configuration.elsevier.active = req.body['external-connectors-elsevier-active'] === 'on' ? true : false
+    configuration.elsevier.scopus.url = req.body['external-connectors-elsevier-scopus-url']
+    configuration.elsevier.scopus.apiKey = req.body['external-connectors-elsevier-scopus-api-key']
+    configuration.elsevier.scopus.token = req.body['external-connectors-elsevier-scopus-token']
+    configuration.elsevier.scival.url = req.body['external-connectors-elsevier-scival-url']
+    configuration.elsevier.scival.clientKey = req.body['external-connectors-elsevier-scival-client-key']
+
+    fs.writeFileSync(connectorsConfigurationFile, prefixConnectors + JSON.stringify(configuration, null, 4))
     res.redirect('/')
 })
 
@@ -289,7 +339,7 @@ app.post('/database', (req, res) => {
             if (file.name.endsWith('.sql')) {
                 try {
                     const sql = fs.readFileSync(path).toString()
-                    const pgClient = new pg.Client(getConnectionObject())
+                    const pgClient = new pg.Client(getConnectionConfig())
                     pgClient.connect()
                     const result = await pgClient.query(sql)
                     await pgClient.end()
@@ -307,7 +357,7 @@ app.post('/database', (req, res) => {
             } else {
                 const restore = new Promise(async (resolve, reject) => {
                     try {
-                        const cmd = `pg_restore --dbname=${getConnectionObject()} --format=c -j2 --clean --if-exists "${path}"`
+                        const cmd = `pg_restore --dbname=${getConnectionConfig(false)} --format=c -j2 --clean --if-exists "${path}"`
                         await runCommand(cmd)
                         resolve('Restoring the database is done!')
                     }
@@ -367,7 +417,7 @@ function runCommand(cmd) {
     })
 }
 
-function getConnectionObject() {
+function getConnectionConfig(object = true) {
 
     if (fs.existsSync(localConfigurationFile)) {
         let configuration
@@ -405,11 +455,15 @@ function getConnectionObject() {
                 break
         }
 
-        return {
-            user: user,
-            host:address,
-            password: password,
-            database: name
+        if (object) {
+            return {
+                user: user,
+                host:address,
+                password: password,
+                database: name
+            }
+        } else {
+            return `postgresql://${user}:${password}@${address}:${port}/${name}`
         }
     }
 
@@ -434,6 +488,13 @@ async function checkSteps() {
         steps.localConfiguration.done = false
     }
 
+    // Check if connectors configuration file exists
+    if (fs.existsSync(connectorsConfigurationFile)) {
+        steps.externalConnectors.done = true
+    } else {
+        steps.externalConnectors.done = false
+    }
+
     // Check if database has all tables
     steps.database.ok = await checkDatabase()
 
@@ -445,7 +506,7 @@ async function checkDatabase() {
         let missingTables = []
         const path = 'installer/defaults/database-test.sql'
         const sql = fs.readFileSync(path).toString()
-        const pgClient = new pg.Client(getConnectionObject())
+        const pgClient = new pg.Client(getConnectionConfig())
 
         pgClient.connect()
         const result = await pgClient.query(sql)
@@ -487,7 +548,7 @@ function copyFile (file, dir2) {
     const dest = fs.createWriteStream(path.resolve(dir2, f))
 
     source.pipe(dest)
-    //source.on('end', function() { console.log('Succesfully copied') })
+    //source.on('end', function() { console.log('Successfully copied') })
     source.on('error', function(err) { console.log(err) })
 }
 
@@ -518,10 +579,10 @@ async function initialize() {
             },
             test:{
                 "adapter": "sails-postgresql",
-                "host": process.env.DATABASE_HOST,
-                "user": process.env.DATABASE_USER,
-                "password": process.env.DATABASE_PASSWORD,
-                "database": process.env.DATABASE_NAME
+                "host": "db-test",
+                "user": "scientilla",
+                "password": "scientillapassword",
+                "database": "scientillatest"
             }
         }
         fs.writeFileSync(localConfigurationFile, prefixLocal + JSON.stringify(localJs, null, 4))
@@ -542,6 +603,15 @@ async function initialize() {
 
         if (stats.size == 0) {
             copyFile(defaultCustomizationsConfigurationFile, configFolder)
+        }
+    }
+
+    // Check if connectors configuration exists and is empty
+    if (fs.existsSync(connectorsConfigurationFile)) {
+        const stats = fs.statSync(connectorsConfigurationFile)
+
+        if (stats.size == 0) {
+            copyFile(defaultConnectorsConfigurationFile, configFolder)
         }
     }
 

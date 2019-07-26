@@ -349,7 +349,12 @@
                            data-ng-required="true"
                            ng-class="{'is-invalid' : vm.errors.place}"
                            ng-blur="vm.checkValidation('place')"
-                           ng-change="vm.fieldValueHasChanged('place')">
+                           ng-change="vm.fieldValueHasChanged('place')"
+                           uib-typeahead="conference.title for conference in vm.getConferences($viewValue)"
+                           typeahead-loading="searching"
+                           typeahead-no-results="noResults"
+                           typeahead-select-on-blur="true">
+                    {{ $viewValue }}
                     <scientilla-error-messages class="error-messages"
                                                errors="vm.errors.place"></scientilla-error-messages>
                 </div>

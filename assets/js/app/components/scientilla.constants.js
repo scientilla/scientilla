@@ -331,6 +331,11 @@
         NO_CATEGORY: 'No category selected'
     };
 
+    const researchItemTypes = {
+        ACCOMPLISHMENT: 'accomplishment',
+        DOCUMENT: 'document'
+    };
+
     angular.module('app')
         .constant('pageSize', 50)
         .constant('userConstants', userConstants)
@@ -346,5 +351,6 @@
         .constant('documentOrigins', documentOrigins)
         .constant('documentListSections', documentListSections)
         .constant('documentCategories', documentCategories)
-        .constant('documentActions', documentActions);
+        .constant('documentActions', documentActions)
+        .constant('researchItemTypes', researchItemTypes);
 })();

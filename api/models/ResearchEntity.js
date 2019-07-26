@@ -1,4 +1,4 @@
-/* global require, ResearchEntity, User, Alias */
+/* global require, ResearchEntity, User, Alias, Discarded */
 'use strict';
 
 
@@ -33,6 +33,14 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'accomplishment',
             through: 'accomplishmentverify'
         },
+        suggestedAccomplishments: {
+            collection: 'accomplishment',
+            through: 'accomplishmentsuggestion'
+        },
+        discardedAccomplishments: {
+            collection: 'accomplishment',
+            through: 'discardedaccomplishment'
+        },
         isGroup() {
             return this.type === 'group';
         }
@@ -53,10 +61,35 @@ module.exports = _.merge({}, BaseModel, {
     },
     async addAlias(researchEntity, authorStr) {
         if (!researchEntity || researchEntity.isGroup())
-            return;
+            throw {
+                success: false,
+                message: 'Invalid research entity'
+            };
 
         const user = await ResearchEntity.getUser(researchEntity.id);
         await Alias.addAlias(user.id, authorStr, 0);
+
+        return {
+            success: true
+        };
+    },
+    async discardResearchItem(researchItemId, researchEntityId) {
+        if (!researchEntityId || !researchItemId)
+            throw {
+                researchItem: researchItemId,
+                success: false,
+                message: 'Invalid research item or entity'
+            };
+
+        const discarded = await Discarded.findOrCreate({
+            researchEntity: researchEntityId,
+            researchItem: researchItemId
+        });
+
+        return {
+            discarded,
+            success: true
+        };
     },
     getUser(researchEntityId) {
         return User.findOne({researchEntity: researchEntityId});

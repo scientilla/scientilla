@@ -27,12 +27,19 @@
         service.updateDraft = updateDraft;
         service.deleteDraft = deleteDraft;
         service.deleteDrafts = deleteDrafts;
+        service.copy = copy;
+        service.multipleCopy = multipleCopy;
         service.verify = verify;
-        service.verifyAll = verifyAll;
+        service.multipleVerify = multipleVerify;
         service.unverify = unverify;
+        service.discard = discard;
+        service.multipleDiscard = multipleDiscard;
         service.editAffiliations = editAffiliations;
         service.updateAuthors = updateAuthors;
         service.getAccomplishmentDrafts = getAccomplishmentDrafts;
+        service.getSuggestedAccomplishments = getSuggestedAccomplishments;
+        service.getDiscardedAccomplishments = getDiscardedAccomplishments;
+        service.getAccomplishment = getAccomplishment;
         service.getAccomplishments = getAccomplishments;
         service.setVerifyPrivacy = setVerifyPrivacy;
         service.setVerifyFavorite = setVerifyFavorite;
@@ -87,10 +94,10 @@
                 try {
                     const deletedDraft = await researchEntity.one('researchItemDrafts', draft.id).remove();
 
-                    Notification.success("Draft deleted");
+                    Notification.success('Draft deleted');
                     EventsService.publish(EventsService.RESEARCH_ITEM_DRAFT_DELETED, deletedDraft);
                 } catch (e) {
-                    Notification.warning("Failed to delete draft");
+                    Notification.warning('Failed to delete draft');
                     console.error(e);
                 }
             }
@@ -100,10 +107,38 @@
             const draftIds = drafts.map(d => d.id);
             try {
                 const results = await researchEntity.all('researchItemDrafts').customPUT({draftIds: draftIds}, 'delete');
-                Notification.success(results.length + " draft(s) deleted");
+                Notification.success(results.length + ' draft(s) deleted');
                 EventsService.publish(EventsService.RESEARCH_ITEM_DRAFT_DELETED, results);
             } catch (err) {
                 Notification.warning("An error happened");
+            }
+        }
+
+        async function copy(researchEntity, researchItem) {
+            try {
+                const res = await copyResearchItem(researchEntity, researchItem.id);
+                if (res.success) {
+                    Notification.success('Item copied to drafts');
+                    EventsService.publish(EventsService.RESEARCH_ITEM_DRAFT_CREATED);
+                    ResearchItemService.addLabel(researchItem, researchItemLabels.ALREADY_IN_DRAFTS);
+                }
+            } catch (err) {
+                Notification.warning("An error happened");
+            }
+        }
+
+        async function multipleCopy(researchEntity, researchItems) {
+            const itemIds = researchItems.map(ri => ri.id);
+            try {
+                const res = await researchEntity.customPOST({itemIds}, 'copy-research-items');
+                if (res.error)
+                    return Notification.warning(res.error);
+
+                EventsService.publish(EventsService.RESEARCH_ITEM_DRAFT_CREATED, res);
+                Notification.success("item(s) copied to drafts");
+
+            } catch (error) {
+                Notification.warning(error);
             }
         }
 
@@ -116,9 +151,9 @@
                     category);
         }
 
-        async function verifyAll(researchEntity, researchItems) {
+        async function multipleVerify(researchEntity, researchItems) {
             const itemIds = researchItems.map(ri => ri.id);
-            const res = await verifyAllResearchItem(researchEntity, itemIds);
+            const res = await researchItemMultipleVerify(researchEntity, itemIds);
 
             const success = res.filter(r => r.success);
             const failed = res.filter(r => !r.success);
@@ -127,14 +162,12 @@
                 if (success.find(r => r.researchItem.kind === researchItemKinds.DRAFT))
                     EventsService.publish(EventsService.RESEARCH_ITEM_DRAFT_VERIFIED, res);
                 if (success.find(r => r.researchItem.kind === researchItemKinds.VERIFIED))
-                    EventsService.publish(EventsService.RESEARCH_ITEM_DRAFT_DELETED, res);
+                    EventsService.publish(EventsService.RESEARCH_ITEM_VERIFIED, res);
 
                 Notification.success(success.length + " item(s) verified");
             }
             if (failed.length > 0)
                 Notification.warning(failed.length + " item(s) not verified: \n" + failed.map(f => f.message).join('\n'));
-
-
         }
 
         async function unverify(researchEntity, researchItem) {
@@ -163,13 +196,46 @@
                 try {
                     await unverifyResearchItem(researchEntity, researchItem.id);
                     EventsService.publish(EventsService.RESEARCH_ITEM_UNVERIFIED, {});
-                    Notification.success("Item succesfully unverified");
+                    Notification.success("Item successfully unverified");
                 } catch (e) {
                     Notification.warning("Failed to unverify");
                 }
             } catch (e) {
                 ResearchItemService.removeLabel(researchItem, researchItemLabels.UVERIFYING);
             }
+        }
+
+        async function discard(researchEntity, researchItem) {
+            try {
+                const res = await researchEntity.one('researchitems', researchItem.id)
+                    .customPUT({}, 'discarded');
+
+                if (!res.success)
+                    return Notification.warning(res.message);
+
+                EventsService.publish(EventsService.RESEARCH_ITEM_DISCARDED, res);
+
+            } catch (error) {
+                if (error.data)
+                    Notification.warning(error.data.message);
+                console.error(error);
+            }
+        }
+
+        async function multipleDiscard(researchEntity, researchItems) {
+            try {
+                const itemIds = researchItems.map(ri => ri.id);
+                const res = await researchEntity.all('researchitems').customPUT({itemIds}, 'discarded');
+                EventsService.publish(EventsService.RESEARCH_ITEM_DISCARDED, res);
+            } catch (error) {
+                if (error.data)
+                    Notification.warning(error.data.message);
+                console.error(error);
+            }
+        }
+
+        async function getAccomplishment(id) {
+            return await Restangular.one('accomplishments', id).get({populate: accomplishmentPopulates});
         }
 
         async function getAccomplishments(researchEntity, query) {
@@ -181,7 +247,27 @@
         async function getAccomplishmentDrafts(researchEntity, query) {
             const populate = {populate: accomplishmentPopulates};
             const q = _.defaultsDeep({}, query, populate);
-            return await researchEntity.getList('accomplishmentDrafts', q);
+            const draftList = await researchEntity.getList('accomplishmentDrafts', q);
+
+            draftList.forEach(d => {
+                if (d.kind === 'd' && (new Date(d.createdAt)).toDateString() === (new Date()).toDateString())
+                    ResearchItemService.addLabel(d, researchItemLabels.NEW);
+            });
+            return draftList;
+        }
+
+        async function getSuggestedAccomplishments(researchEntity, query) {
+            const populate = {populate: accomplishmentPopulates};
+            const q = _.defaultsDeep({}, query, populate);
+            return await researchEntity.getList('suggestedAccomplishments', q);
+        }
+
+        async function getDiscardedAccomplishments(researchEntity, query) {
+            const populate = {populate: accomplishmentPopulates};
+            const q = _.defaultsDeep({}, query, populate);
+            const discarded = await researchEntity.getList('discardedAccomplishments', q);
+            discarded.forEach(d => ResearchItemService.addLabel(d, researchItemLabels.DISCARDED));
+            return discarded
         }
 
         async function editDraft(researchEntity, researchItem, category) {
@@ -209,12 +295,14 @@
                     EventsService.publish(EventsService.RESEARCH_ITEM_VERIFIED, res);
 
             } catch (error) {
-                Notification.warning(error.data.message);
+                if (error.data)
+                    Notification.warning(error.data.message);
+                console.error(error);
             }
 
         }
 
-        async function verifyAllResearchItem(researchEntity, itemIds) {
+        async function researchItemMultipleVerify(researchEntity, itemIds) {
             try {
                 const res = await researchEntity.all('researchitems').customPUT({itemIds}, 'verified');
 

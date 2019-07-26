@@ -17,6 +17,15 @@
                     context: getContext
                 }
             })
+            .when("/:group?/accomplishments/suggested", {
+                controller: handleRequest,
+                template: params => '' +
+                    '<scientilla-accomplishment-suggested-list research-entity="$resolve.researchEntity">' +
+                    '</scientilla-accomplishment-suggested-list>',
+                resolve: {
+                    authService: getAuthService
+                }
+            })
             .when("/:group?/accomplishments/verified", {
                 controller: handleRequest,
                 template: params => '' +

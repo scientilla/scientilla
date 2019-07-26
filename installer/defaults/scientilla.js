@@ -8,7 +8,7 @@ module.exports.scientilla = {
             "searchFilter": "",
             "cache": true
         },
-        "domain": "iit.it"
+        "domain": ""
     },
     "externalConnectors": {
         "elsevier": {

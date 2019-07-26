@@ -87,8 +87,8 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/groups/:researchEntityId/documents/:documentId/not-duplicates']: 'Group.setDocumentsAsNotDuplicate',
     ['post ' + apiPrfx + '/groups/:researchEntityId/remove-verify']: 'Group.removeVerify',
     ['post ' + apiPrfx + '/users/:researchEntityId/remove-verify']: 'User.removeVerify',
-    ['post ' + apiPrfx + 'post /api/v1/groups/:researchEntityId/replace']: 'Group.replace',
-    ['post ' + apiPrfx + 'post /api/v1/users/:researchEntityId/replace']: 'User.replace',
+    ['post ' + apiPrfx + '/groups/:researchEntityId/replace']: 'Group.replace',
+    ['post ' + apiPrfx + '/users/:researchEntityId/replace']: 'User.replace',
 
     //Research item API
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/delete']: 'ResearchEntity.deleteDrafts',
@@ -97,12 +97,14 @@ module.exports.routes = {
     ['delete ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/:itemId']: 'ResearchEntity.deleteDraft',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/:itemId/authors']: 'ResearchEntity.setResearchItemAuthors',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/verified']: 'ResearchEntity.verify',
-    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/verified']: 'ResearchEntity.verifyAll',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/verified']: 'ResearchEntity.multipleVerify',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/unverified']: 'ResearchEntity.unverify',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/public']: 'ResearchEntity.setPublic',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/favorite']: 'ResearchEntity.setFavorite',
     ['post ' + apiPrfx + '/researchentities/:researchEntityId/copy-research-item']: 'ResearchEntity.copyResearchItem',
     ['post ' + apiPrfx + '/researchentities/:researchEntityId/copy-research-items']: 'ResearchEntity.copyResearchItems',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/discarded']: 'ResearchEntity.discard',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/discarded']: 'ResearchEntity.multipleDiscard',
     ['post ' + apiPrfx + '/accomplishments/export']: 'Accomplishment.export',
 
 
@@ -127,10 +129,17 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/backup/dumps']: 'Backup.getDumps',
     ['post ' + apiPrfx + '/backup/restore']: 'Backup.restore',
     ['post ' + apiPrfx + '/backup/make']: 'Backup.make',
+    ['post ' + apiPrfx + '/backup/upload']: 'Backup.upload',
+    ['post ' + apiPrfx + '/backup/remove']: 'Backup.remove',
+    ['post ' + apiPrfx + '/backup/download']: 'Backup.download',
 
-    'get /api/v1/customize': 'Customize.getCustomizations',
-    'post /api/v1/customize/reset': 'Customize.resetCustomizations',
-    'post /api/v1/customize': 'Customize.setCustomizations',
+    ['get ' + apiPrfx + '/customize']: 'Customize.getCustomizations',
+    ['post ' + apiPrfx + '/customize/reset']: 'Customize.resetCustomizations',
+    ['post ' + apiPrfx + '/customize']: 'Customize.setCustomizations',
+
+    ['get ' + apiPrfx + '/external-connectors']: 'ExternalConnectors.getConnectors',
+    ['post ' + apiPrfx + '/external-connectors/reset']: 'ExternalConnectors.resetConnectors',
+    ['post ' + apiPrfx + '/external-connectors']: 'ExternalConnectors.setConnectors',
 
     //MBO
     ['get ' + apiPrfx + '/mbo/v2017/overall_performance/researcher']: 'User.getMBOOverallPerformance',

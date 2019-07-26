@@ -136,7 +136,7 @@ module.exports = _.merge({}, SubResearchEntity, {
         discardedDocuments: {
             collection: 'Document',
             via: 'discardedCoauthors',
-            through: 'discarded'
+            through: 'discardeddocument'
         },
         jsonWebTokens: {
             collection: 'jwt',
