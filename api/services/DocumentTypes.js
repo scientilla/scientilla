@@ -13,6 +13,7 @@ module.exports = {
     BOOK_CHAPTER: 'book_chapter',
     CONFERENCE_PAPER: 'conference_paper',
     CONFERENCE_REVIEW: 'conference_review',
+    DATA_PAPER: 'data_paper',
     EDITORIAL: 'editorial',
     ERRATUM: 'erratum',
     INVITED_TALK: 'invited_talk',

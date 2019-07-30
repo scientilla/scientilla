@@ -141,7 +141,8 @@ async function documentDataRequest(scopusId, attempt = 0) {
             le: DocumentTypes.LETTER,
             no: DocumentTypes.NOTE,
             re: DocumentTypes.REVIEW,
-            sh: DocumentTypes.SHORT_SURVEY
+            sh: DocumentTypes.SHORT_SURVEY,
+            dp: DocumentTypes.DATA_PAPER
         };
 
         const sourceType = sourceTypeMappings[getDollars(scopusSource, '@type')];

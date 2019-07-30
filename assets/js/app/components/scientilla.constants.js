@@ -89,6 +89,13 @@
             allowedSources: defaultSources
         },
         {
+            key: 'data_paper',
+            shortLabel: 'DP',
+            label: 'Data Paper',
+            defaultSource: 'journal',
+            allowedSources: defaultSources
+        },
+        {
             key: 'editorial',
             shortLabel: 'ED',
             label: 'Editorial',
