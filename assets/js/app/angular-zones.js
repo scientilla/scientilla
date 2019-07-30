@@ -1,14 +1,16 @@
+/* global angular, Zone*/
+
 angular.module("ngZone", []).run(["$rootScope", "$exceptionHandler", function ($rootScope, $exceptionHandler) {
-    var scopePrototype = $rootScope.constructor.prototype;
+    const scopePrototype = $rootScope.constructor.prototype;
 
-    var originalApply = scopePrototype.$apply;
+    const originalApply = scopePrototype.$apply;
 
-    var zoneOptions = {
-        afterTask: function () {
+    const zoneOptions = {
+        name: 'zone',
+        onHasTask: () => {
             try {
-                if(!$rootScope.$$phase) {
+                if (!$rootScope.$$phase)
                     $rootScope.$digest();
-                }
             } catch (e) {
                 $exceptionHandler(e);
                 throw e;
@@ -17,10 +19,10 @@ angular.module("ngZone", []).run(["$rootScope", "$exceptionHandler", function ($
     };
 
     scopePrototype.$apply = function () {
-        var scope = this;
-        var applyArgs = arguments;
+        const scope = this;
+        const applyArgs = arguments;
 
-        zone.fork(zoneOptions).run(function () {
+        Zone.current.fork(zoneOptions).run(function () {
             originalApply.apply(scope, applyArgs);
         });
     };
