@@ -50,6 +50,10 @@ module.exports.scientilla = {
                     "params": []
                 },
                 {
+                    "fn": "Backup.autoDelete",
+                    "params": []
+                },
+                {
                     "fn": "GruntTaskRunner.run",
                     "params": [
                         "import:external:all"
