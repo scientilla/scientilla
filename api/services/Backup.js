@@ -9,14 +9,14 @@ const exec = require('child_process').exec;
 const moment = require('moment');
 const util = require('util');
 
-const folder = 'backups';
+const baseFolder = 'backups';
+const folderAutomaticBackups = path.join(baseFolder, 'automatic');
 
 moment.locale('en');
 
 module.exports = {
-    makeBackup,
     makeManualBackup,
-    makeTimestampedBackup,
+    makeAutoBackup,
     restoreBackup,
     getDumps,
     isRestoring,
@@ -26,26 +26,22 @@ module.exports = {
     autoDelete
 };
 
-
 const restoreLockFilename = '.restorelock';
 
-async function makeManualBackup(postfix) {
-    if (!postfix) {
-        return Promise.reject('A postfix is needed to name the backup');
-    }
-
-    return await makeBackup(postfix);
+async function makeManualBackup() {
+    return await makeBackup();
 }
 
-async function makeTimestampedBackup() {
-    const postfix = moment().format('hhmmss');
-    return await makeBackup(postfix);
+async function makeAutoBackup() {
+    sails.log.info('Creating automatic backup!');
+    return await makeBackup(true);
 }
 
-async function makeBackup(postfix = '') {
-    const currentDate = moment().format('YYMMDD');
-    const binaryBackupFilename = `dump${currentDate}${postfix}.sql`;
-    const binaryBackupFilepath = folder + `/${binaryBackupFilename}`;
+async function makeBackup(autoBackup = false) {
+    const backupFolder = autoBackup ? folderAutomaticBackups : baseFolder;
+    const currentDate = autoBackup ? moment().format('YYMMDD') : moment().format('YYMMDDHHmmss');
+    const binaryBackupFilename = `dump${currentDate}.dump`;
+    const binaryBackupFilepath = backupFolder + `/${binaryBackupFilename}`;
     const stat = util.promisify(fs.stat)
     const unlink = util.promisify(fs.unlink)
 
@@ -67,10 +63,12 @@ async function makeBackup(postfix = '') {
     }
 }
 
-async function restoreBackup(filename = null) {
+async function restoreBackup(filename = null, autoBackup = false) {
+    const backupFolder = autoBackup ? folderAutomaticBackups : baseFolder;
+
     async function getLastAutomaticBackupFilename() {
         const readFolder = util.promisify(fs.readdir)
-        return await readFolder(folder).then(files => {
+        return await readFolder(folderAutomaticBackups).then(files => {
             files = files.filter(f => f.startsWith('dump'))
             files = files.filter(f => /dump\d{6}\.sql/.test(f))
             return _.last(files.sort());
@@ -91,7 +89,7 @@ async function restoreBackup(filename = null) {
         return message
     }
 
-    const backupFilepath = folder + `/${backupFilename}`;
+    const backupFilepath = backupFolder + `/${backupFilename}`;
     await stat(backupFilepath).catch(err => {
         const message = `File ${backupFilename} does not exists`
         sails.debug.log(message)
@@ -117,32 +115,51 @@ async function restoreBackup(filename = null) {
 async function getDumps() {
     const readdir = util.promisify(fs.readdir)
     const stat = util.promisify(fs.stat)
+    let backupFiles = []
+    let filteredBackupFiles = []
 
-    return await readdir(folder).then(async(files) => {
-        const promises = files.map(async (file) => {
-                const extension = path.extname(file);
-                const filename = path.basename(file, extension);
-                const stats = await stat(path.join(folder, file)).then(stats => {
-                    return stats
-                });
-                const date = new Date(stats.birthtime);
-                moment.tz.setDefault('Europe/Rome');
-
-                return {
-                    filename: filename,
-                    uploaded: !filename.startsWith('dump'),
-                    extension: extension,
-                    size: formatBytes(stats.size),
-                    created: moment(date, 'YYYY-MM-DDTHH:mm:ss.sssZ').format('DD/MM/YYYY HH:mm:ss')
-                };
-            })
-            .filter(file => file.filename !== '.gitkeep')
-            .sort((a, b) => {
-                return moment(b.created, 'DD/MM/YYYY HH:mm:ss').format('DDMMYYYYHHmmss') - moment(a.created, 'DD/MM/YYYY HH:mm:ss').format('DDMMYYYYHHmmss');
+    await readdir(baseFolder).then(async(files) => {
+        files.map(async (file) => {
+            backupFiles.push({
+                filename: file,
+                folder: baseFolder
             });
+        })
+    })
 
-        return await Promise.all(promises).then(files => {
-            return files
+    await readdir(folderAutomaticBackups).then(async(files) => {
+        files.map(async (file) => {
+            backupFiles.push({
+                filename: file,
+                folder: folderAutomaticBackups
+            });
+        })
+    })
+
+    backupFiles = backupFiles.map(async (file) => {
+        const extension = path.extname(file.filename);
+        const filename = path.basename(file.filename, extension);
+        const stats = await stat(path.join(file.folder, file.filename)).then(stats => {
+            return stats
+        });
+        const date = new Date(stats.birthtime);
+        moment.tz.setDefault('Europe/Rome');
+
+        return {
+            filename: filename,
+            folder: stats.isDirectory(),
+            autoBackup: file.folder === baseFolder ? false : true,
+            extension: extension,
+            size: formatBytes(stats.size),
+            created: moment(date, 'YYYY-MM-DDTHH:mm:ss.sssZ').format('DD/MM/YYYY HH:mm:ss')
+        }
+    })
+
+    return await Promise.all(backupFiles).then(files => {
+        return files.filter(file => {
+            return file.filename !== '.gitkeep' && file.folder !== true
+        }).sort((a, b) => {
+            return moment(b.created, 'DD/MM/YYYY HH:mm:ss').format('DDMMYYYYHHmmss') - moment(a.created, 'DD/MM/YYYY HH:mm:ss').format('DDMMYYYYHHmmss');
         })
     })
 }
@@ -209,7 +226,7 @@ async function upload(req) {
         req.file('file').upload({
             maxBytes:10000000000000,
             saveAs: req.file('file')._files[0].stream.filename,
-            dirname: path.resolve(sails.config.appPath, folder)
+            dirname: path.resolve(sails.config.appPath, baseFolder)
         }, function (err, file) {
             if (err) {
                 reject(err);
@@ -231,9 +248,11 @@ async function upload(req) {
     });
 }
 
-async function remove(filename) {
+async function remove(filename, autoBackup = false) {
+    const backupFolder = autoBackup ? folderAutomaticBackups : baseFolder;
+
     return new Promise(function (resolve, reject) {
-        fs.unlink(path.join(sails.config.appPath, folder, filename), function(err) {
+        fs.unlink(path.join(sails.config.appPath, backupFolder, filename), function(err) {
             if (err) {
                 reject(err);
             }
@@ -253,8 +272,9 @@ async function remove(filename) {
     });
 }
 
-async function download(filename) {
-    const filePath = path.resolve(sails.config.appPath, folder, filename);
+async function download(filename, autoBackup = false) {
+    const backupFolder = autoBackup ? folderAutomaticBackups : baseFolder;
+    const filePath = path.resolve(sails.config.appPath, backupFolder, filename);
     const stat = util.promisify(fs.stat)
 
     return stat(filePath).then(() => {
@@ -323,23 +343,27 @@ async function removeSelectedBackups(dates) {
     sails.log.debug('-----------------')
     sails.log.debug('Deleting files...')
 
+    const backupFolder = folderAutomaticBackups;
     const readFolder = util.promisify(fs.readdir)
-    await readFolder(folder).then(async (files) => {
+    await readFolder(backupFolder).then(async (files) => {
         const promises = files.map(async (file) => {
             const extension = path.extname(file)
             const filename = path.basename(file, extension).replace('dump', '')
-            const date = moment(filename, 'YYMMDDHHmmss')
 
-            const filteredDates = dates.filter(d => {
-                return d === date.format('YYYY-MM-DD')
-            })
+            if (filename !== '.gitkeep') {
+                const date = moment(filename, 'YYMMDDHHmmss')
 
-            if (filteredDates.length === 0) {
-                const deleteFile = util.promisify(fs.unlink)
-                return await deleteFile(path.join(folder, file)).then(() => {
-                    sails.log.debug('Deleting ' + file + ' for date ' + dates[0])
-                    deletedFiles++
+                const filteredDates = dates.filter(d => {
+                    return d === date.format('YYYY-MM-DD')
                 })
+
+                if (filteredDates.length === 0) {
+                    const deleteFile = util.promisify(fs.unlink)
+                    return await deleteFile(path.join(backupFolder, file)).then(() => {
+                        sails.log.debug('Deleting ' + file + ' for date ' + dates[0])
+                        deletedFiles++
+                    })
+                }
             }
         })
 

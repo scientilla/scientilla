@@ -46,7 +46,10 @@
                 {'proceed': 'Proceed'});
 
             if (buttonKey === 'proceed') {
-                const postData = {filename: dump.filename + dump.extension};
+                const postData = {
+                    filename: dump.filename + dump.extension,
+                    autoBackup: dump.autoBackup
+                };
                 vm.restoringBackup = true;
 
                 try {
@@ -136,7 +139,8 @@
             }
 
             $http.post('/api/v1/backup/download', {
-                filename: filename
+                filename: filename,
+                autoBackup: dump.autoBackup
             }, {responseType: 'blob'}).then(res => {
                 const element = document.createElement('a');
                 element.setAttribute('href', createObjectURL(res.data));

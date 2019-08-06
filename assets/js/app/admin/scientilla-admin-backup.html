@@ -8,7 +8,7 @@
                 <th scope="col">Extension</th>
                 <th scope="col">Size</th>
                 <th scope="col">Created on</th>
-                <th scope="col">Uploaded</th>
+                <th scope="col">Auto-backup *</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
@@ -19,7 +19,7 @@
                 <td>{{ dump.size }}</td>
                 <td>{{ dump.created }}</td>
                 <td>
-                    <i class="fa fa-check" ng-if="dump.uploaded"></i>
+                    <i class="fa fa-check" ng-if="dump.autoBackup"></i>
                 </td>
                 <td class="action-column">
                     <ul class="backup-table-actions">
@@ -41,7 +41,7 @@
                                 <i class="fas fa-database"></i>
                             </scientilla-button>
                         </li>
-                        <li ng-if="dump.uploaded">
+                        <li ng-if="!dump.autoBackup">
                             <scientilla-button
                                 ng-click="vm.removeBackup(dump)"
                                 type="danger"
@@ -55,6 +55,8 @@
         </tbody>
     </table>
 </div>
+
+<em>* <strong>Auto-backups</strong> are backups that are being created automatically. Therefore they cannot be deleted.</em>
 
 <br>
 <br>
