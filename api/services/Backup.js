@@ -164,7 +164,7 @@ async function getDumps() {
     })
 }
 
-async function runCommand(cmd, label) {
+function runCommand(cmd, label) {
     return new Promise((resolve, reject) => {
         const startedAt = new Date();
         const taskObj = exec(cmd);
@@ -176,16 +176,16 @@ async function runCommand(cmd, label) {
 
         taskObj.stderr.on('data', data => {
             sails.log.debug(`${label}: ${data}`);
-            reject(data);
-            throw data;
         });
 
         taskObj.on('close', code => {
             const now = new Date();
 
             sails.log.info(label + ' finished in ' + ((now - startedAt) / 1000) + ' seconds with code ' + code);
-
-            resolve(code);
+            if (code > 0)
+                reject(code);
+            else
+                resolve(code);
         });
     });
 }
@@ -224,13 +224,11 @@ function formatBytes(bytes, decimals = 2) {
 async function upload(req) {
     return new Promise(function (resolve, reject) {
         req.file('file').upload({
-            maxBytes:10000000000000,
+            maxBytes: 10000000000000,
             saveAs: req.file('file')._files[0].stream.filename,
             dirname: path.resolve(sails.config.appPath, baseFolder)
         }, function (err, file) {
-            if (err) {
-                reject(err);
-            }
+            if (err) reject(err);
 
             resolve(file);
         });

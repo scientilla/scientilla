@@ -58,6 +58,14 @@
     },
     {
       "defaultSourceType": null,
+      "key": "data_paper",
+      "shortLabel": "DP",
+      "label": "Data Paper",
+      "type": "journal",
+      "highimpact": true
+    },
+    {
+      "defaultSourceType": null,
       "key": "editorial",
       "shortLabel": "ED",
       "label": "Editorial",
