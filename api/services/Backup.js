@@ -156,11 +156,15 @@ async function getDumps() {
     })
 
     return await Promise.all(backupFiles).then(files => {
-        return files.filter(file => {
+        files = files.filter(file => {
             return file.filename !== '.gitkeep' && file.folder !== true
-        }).sort((a, b) => {
-            return moment(b.created, 'DD/MM/YYYY HH:mm:ss').format('DDMMYYYYHHmmss') - moment(a.created, 'DD/MM/YYYY HH:mm:ss').format('DDMMYYYYHHmmss');
-        })
+        });
+
+        files = files.map(({folder, ...file}) => file);
+
+        return _.orderBy(files, (file) => {
+            return moment(file.created, 'DD/MM/YYYY HH:mm:ss');
+        }, ['desc']);
     })
 }
 
@@ -289,10 +293,6 @@ async function download(filename, autoBackup = false) {
  * Get the dates of the backups that should be kept
  */
 function getBackupDates(startDate = false) {
-
-    sails.log.debug('-----------------')
-    sails.log.debug('Calculating dates')
-
     if (!startDate) {
         startDate = moment()
     }
@@ -327,7 +327,7 @@ function getBackupDates(startDate = false) {
 
     const dates = lastSevenDays.concat(fourMondaysBeforeLastSevenDays, firstDayOfLastSixMonths)
 
-    sails.log.debug(dates.length + ' file(s) will be kept!')
+    sails.log.info(dates.length + ' automatic backup(s) will be kept!')
 
     return dates
 }
@@ -337,9 +337,6 @@ function getBackupDates(startDate = false) {
  */
 async function removeSelectedBackups(dates) {
     let deletedFiles = 0
-
-    sails.log.debug('-----------------')
-    sails.log.debug('Deleting files...')
 
     const backupFolder = folderAutomaticBackups;
     const readFolder = util.promisify(fs.readdir)
@@ -358,7 +355,7 @@ async function removeSelectedBackups(dates) {
                 if (filteredDates.length === 0) {
                     const deleteFile = util.promisify(fs.unlink)
                     return await deleteFile(path.join(backupFolder, file)).then(() => {
-                        sails.log.debug('Deleting ' + file + ' for date ' + dates[0])
+                        sails.log.info('Deleting ' + file + ' for date ' + dates[0])
                         deletedFiles++
                     })
                 }
@@ -366,7 +363,7 @@ async function removeSelectedBackups(dates) {
         })
 
         await Promise.all(promises).then(() => {
-            sails.log.debug(deletedFiles + ' file(s) deleted!')
+            sails.log.info(deletedFiles + ' file(s) deleted!')
         })
     }).catch(err => {
         throw err
@@ -374,6 +371,8 @@ async function removeSelectedBackups(dates) {
 }
 
 async function autoDelete() {
+    sails.log.info('------------------')
+    sails.log.info('Cleaning up backups')
     const startDate = moment()
     const dates = getBackupDates(startDate)
     await removeSelectedBackups(dates)
