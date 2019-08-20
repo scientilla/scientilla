@@ -156,6 +156,9 @@ data/*
 
 backups/*
 !backups/.gitkeep
+!backups/automatic
+backups/automatic/*
+!backups/automatic/.gitkeep
 
 installer/.env
 !installer/uploads
