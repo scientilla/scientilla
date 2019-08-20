@@ -6,8 +6,8 @@
  */
 
 module.exports = {
-    getDumps: function (req, res) {
-        const dumps = Backup.getDumps();
+    getDumps: async function (req, res) {
+        const dumps = await Backup.getDumps();
         const dumpsList = {
             items: dumps,
             count: dumps.length
@@ -15,13 +15,14 @@ module.exports = {
         res.halt(Promise.resolve(dumpsList));
     },
     make: async function (req, res) {
-        const filename = await Backup.makeTimestampedBackup();
+        const filename = await Backup.makeManualBackup();
         res.halt(Promise.resolve({filename: filename}));
     },
     restore: async function (req, res) {
         const filename = req.body.filename;
+        const autoBackup = req.body.autoBackup;
         Status.disable();
-        await Backup.restoreBackup(filename);
+        await Backup.restoreBackup(filename, autoBackup);
         Status.enable();
         res.halt(Promise.resolve({}));
     },
@@ -36,8 +37,9 @@ module.exports = {
     },
     download: async function (req, res) {
         const filename = req.body.filename;
+        const autoBackup = req.body.autoBackup;
         try {
-            const download = await Backup.download(filename);
+            const download = await Backup.download(filename, autoBackup);
             download.pipe(res, {end: true});
         } catch (err) {
             res.halt(Promise.reject(err));
