@@ -13,11 +13,19 @@ const fs = require('fs');
 const env = sails.config.environment;
 const connectionParams = sails.config.connections[env];
 const connectionStr = [
-    'postgres://', connectionParams.user, ':', connectionParams.password,
-    '@', connectionParams.host, ':', connectionParams.port, '/', connectionParams.database
+    'postgres://',
+    encodeURIComponent(connectionParams.user),
+    ':',
+    encodeURIComponent(connectionParams.password),
+    '@',
+    connectionParams.host,
+    ':',
+    connectionParams.port,
+    '/',
+    connectionParams.database
 ].join('');
 
-var db = pgp(connectionStr);
+const db = pgp(connectionStr);
 
 module.exports = {
     generateFromJson: query => {
@@ -39,7 +47,7 @@ module.exports = {
                     if (_.includes(['FALSE', 'TRUE'], uppercaseBinding))
                         value = uppercaseBinding === "TRUE";
                     else if (/^\w+\.?\w*$/.test(binding))
-                        value = parseInt(binding, 10)
+                        value = parseInt(binding, 10);
                     else
                         value = "'" + binding + "'";
 
