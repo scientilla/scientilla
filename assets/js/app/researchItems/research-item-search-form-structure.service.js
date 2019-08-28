@@ -164,11 +164,11 @@
                     structure = Object.assign({},
                         documentSearchForm,
                         {
-                            rejected: {
+                            favorites: {
                                 inputType: 'checkbox',
                                 label: 'Show only favorite documents',
                                 defaultValue: false,
-                                matchColumn: 'discarded',
+                                matchColumn: 'favorites',
                                 type: 'action'
                             }
                         }

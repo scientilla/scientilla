@@ -62,12 +62,23 @@
         }
 
         function onFilter(q) {
+            var favorites = q.where.favorites;
+            delete q.where.favorites;
+
             query = q;
 
-            return researchEntityService.getDocuments(vm.researchEntity, query)
-                .then(function (documents) {
-                    vm.documents = documents;
-                });
+            if (!favorites) {
+                return researchEntityService.getDocuments(vm.researchEntity, query)
+                    .then(function (documents) {
+                        vm.documents = documents;
+                    });
+            } else {
+                console.log('Todo')
+                return researchEntityService.getDocuments(vm.researchEntity, query)
+                    .then(function (documents) {
+                        vm.documents = documents;
+                    });
+            }
         }
     }
 
