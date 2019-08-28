@@ -160,6 +160,20 @@
                         }
                     );
                     break;
+                case 'verified-document':
+                    structure = Object.assign({},
+                        documentSearchForm,
+                        {
+                            rejected: {
+                                inputType: 'checkbox',
+                                label: 'Show only favorite documents',
+                                defaultValue: false,
+                                matchColumn: 'discarded',
+                                type: 'action'
+                            }
+                        }
+                    );
+                    break;
                 case 'group':
                     const user = AuthService.user;
                     formStructures[constant].type.values = [{
