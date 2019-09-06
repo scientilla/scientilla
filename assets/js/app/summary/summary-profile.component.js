@@ -45,7 +45,6 @@
                         <div class="modal-body profile">
                             <ul class="company-listing">
                                 <li>
-                                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
                                     <span class="company">Company</span>
                                     <ul class="job-listing">
                                         <li>
@@ -59,7 +58,6 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
                                     <span class="company">Company</span>
                                     <span class="company-description">Amount of years if multiple jobs</span>
                                     <ul class="job-listing multiple">
@@ -82,7 +80,6 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
                                     <span class="company">Company</span>
                                     <ul class="job-listing">
                                         <li>
@@ -123,28 +120,24 @@
                         <div class="modal-body profile">
                             <ul class="education-listing">
                                 <li>
-                                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
                                     <span class="institute">University/Institute</span>
                                     <span class="title">Title</span>
                                     <span class="period">From - to</span>
                                     <span class="location">Location - Country</span>
                                 </li>
                                 <li>
-                                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
                                     <span class="institute">University/Institute</span>
                                     <span class="title">Title</span>
                                     <span class="period">From - to</span>
                                     <span class="location">Location - Country</span>
                                 </li>
                                 <li>
-                                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
                                     <span class="institute">University/Institute</span>
                                     <span class="title">Title</span>
                                     <span class="period">From - to</span>
                                     <span class="location">Location - Country</span>
                                 </li>
                                 <li>
-                                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
                                     <span class="institute">University/Institute</span>
                                     <span class="title">Title</span>
                                     <span class="period">From - to</span>

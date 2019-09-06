@@ -263,12 +263,6 @@
             margin-bottom: 3rem;
         }
 
-        .logo{
-            margin-left: 1rem;
-            margin-bottom: 1rem;
-            float: right;
-        }
-
         .company{
             @include h4;
         }
@@ -345,12 +339,6 @@
         & > li{
             @include clearfix;
             margin-bottom: 3rem;
-        }
-
-        .logo{
-            margin-left: 1rem;
-            margin-bottom: 1rem;
-            float: right;
         }
 
         .institute,
