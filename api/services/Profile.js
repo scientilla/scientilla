@@ -171,7 +171,6 @@ const profile = {
                     {
                         title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                         source: 'Investigative Ophthalmology and Visual Science',
-                        bibliographicInfo: 'vol. 60, issue 2, pp. 741-747 (2019)',
                         doi: {
                             number: '10.1093',
                             link: '#'
@@ -179,7 +178,6 @@ const profile = {
                     }, {
                         title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                         source: 'Investigative Ophthalmology and Visual Science',
-                        bibliographicInfo: 'vol. 60, issue 2, pp. 741-747 (2019)',
                         doi: {
                             number: '10.1093',
                             link: '#'
@@ -187,7 +185,6 @@ const profile = {
                     }, {
                         title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                         source: 'Investigative Ophthalmology and Visual Science',
-                        bibliographicInfo: 'vol. 60, issue 2, pp. 741-747 (2019)',
                         doi: {
                             number: '10.1093',
                             link: '#'
@@ -200,7 +197,6 @@ const profile = {
                     {
                         title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                         source: 'PhD Thesis',
-                        bibliographicInfo: 'vol. 60, issue 2, pp. 741-747 (2019)',
                         doi: {
                             number: '10.1093',
                             link: '#'
@@ -208,7 +204,6 @@ const profile = {
                     }, {
                         title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                         source: 'PhD Thesis',
-                        bibliographicInfo: 'vol. 60, issue 2, pp. 741-747 (2019)',
                         doi: {
                             number: '10.1093',
                             link: '#'
@@ -221,7 +216,6 @@ const profile = {
                     {
                         title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                         source: 'International winterschool in bioelectronics',
-                        bibliographicInfo: 'vol. 60, issue 2, pp. 741-747 (2019)',
                         doi: {
                             number: '10.1093',
                             link: '#'
@@ -229,7 +223,6 @@ const profile = {
                     }, {
                         title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                         source: 'International winterschool in bioelectronics',
-                        bibliographicInfo: 'vol. 60, issue 2, pp. 741-747 (2019)',
                         doi: {
                             number: '10.1093',
                             link: '#'
@@ -237,7 +230,6 @@ const profile = {
                     }, {
                         title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                         source: 'International winterschool in bioelectronics',
-                        bibliographicInfo: 'vol. 60, issue 2, pp. 741-747 (2019)',
                         doi: {
                             number: '10.1093',
                             link: '#'
@@ -245,7 +237,6 @@ const profile = {
                     }, {
                         title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                         source: 'International winterschool in bioelectronics',
-                        bibliographicInfo: 'vol. 60, issue 2, pp. 741-747 (2019)',
                         doi: {
                             number: '10.1093',
                             link: '#'
@@ -253,7 +244,6 @@ const profile = {
                     }, {
                         title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
                         source: 'International winterschool in bioelectronics',
-                        bibliographicInfo: 'vol. 60, issue 2, pp. 741-747 (2019)',
                         doi: {
                             number: '10.1093',
                             link: '#'
@@ -515,12 +505,6 @@ async function toPDF() {
                 if (!_.isEmpty(publication.source)) {
                     stack.push({
                         text: 'Document source: ' + publication.source,
-                    });
-                }
-
-                if (!_.isEmpty(publication.bibliographicInfo)) {
-                    stack.push({
-                        text: 'Bibliographic info: ' + publication.bibliographicInfo
                     });
                 }
 
@@ -1313,9 +1297,6 @@ async function toDoc() {
                         }).break(),
                         new TextRun({
                             text: 'Document source: ' + publication.source
-                        }).break(),
-                        new TextRun({
-                            text: 'Bibliographic info: ' + publication.bibliographicInfo
                         }).break(),
                         new TextRun({
                             text: 'Doi: ' + publication.doi.number

@@ -332,7 +332,6 @@
                                                     Investigative Ophthalmology and Visual Science
                                                 </span>
                                             </div>
-                                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
                                             <ul class="publication-details">
                                                 <li><strong>DOI: </strong><a href="#">10.1093</a></li>
                                             </ul>
@@ -345,7 +344,6 @@
                                                     Investigative Ophthalmology and Visual Science
                                                 </span>
                                             </div>
-                                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
                                             <ul class="publication-details">
                                                 <li><strong>DOI: </strong><a href="#">10.1093</a></li>
                                             </ul>
@@ -358,7 +356,6 @@
                                                     Investigative Ophthalmology and Visual Science
                                                 </span>
                                             </div>
-                                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
                                             <ul class="publication-details">
                                                 <li><strong>DOI: </strong><a href="#">10.1093</a></li>
                                             </ul>
@@ -376,7 +373,6 @@
                                                     PhD Thesis
                                                 </span>
                                             </div>
-                                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
                                             <ul class="publication-details">
                                                 <li><strong>DOI: </strong><a href="#">10.1093</a></li>
                                             </ul>
@@ -389,7 +385,6 @@
                                                     PhD Thesis
                                                 </span>
                                             </div>
-                                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
                                             <ul class="publication-details">
                                                 <li><strong>DOI: </strong><a href="#">10.1093</a></li>
                                             </ul>
@@ -407,7 +402,6 @@
                                                     international winterschool in bioelectronics
                                                 </span>
                                             </div>
-                                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
                                             <ul class="publication-details">
                                                 <li><strong>DOI: </strong><a href="#">10.1093</a></li>
                                             </ul>
@@ -420,7 +414,6 @@
                                                     international winterschool in bioelectronics
                                                 </span>
                                             </div>
-                                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
                                             <ul class="publication-details">
                                                 <li><strong>DOI: </strong><a href="#">10.1093</a></li>
                                             </ul>
@@ -433,7 +426,6 @@
                                                     international winterschool in bioelectronics
                                                 </span>
                                             </div>
-                                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
                                             <ul class="publication-details">
                                                 <li><strong>DOI: </strong><a href="#">10.1093</a></li>
                                             </ul>
@@ -446,7 +438,6 @@
                                                     international winterschool in bioelectronics
                                                 </span>
                                             </div>
-                                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
                                             <ul class="publication-details">
                                                 <li><strong>DOI: </strong><a href="#">10.1093</a></li>
                                             </ul>
