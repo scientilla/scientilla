@@ -59,6 +59,7 @@
         const formStructures = {
             accomplishment: accomplishmentFormStructure,
             'accomplishment-suggested': accomplishmentFormStructure,
+            'verified-accomplishment': accomplishmentFormStructure,
             group: {
                 name: {
                     inputType: 'text',
@@ -131,6 +132,21 @@
                                 label: 'Show discarded accomplishments',
                                 defaultValue: false,
                                 matchColumn: 'discarded',
+                                type: 'action'
+                            }
+                        });
+                    break;
+                case 'verified-accomplishment':
+                    formStructures[constant].accomplishmentType.values = await getAccomplishmentTypeSelect();
+
+                    structure = Object.assign({},
+                        formStructures[constant],
+                        {
+                            favorites: {
+                                inputType: 'checkbox',
+                                label: 'Show only favorite documents',
+                                defaultValue: false,
+                                matchColumn: 'favorites',
                                 type: 'action'
                             }
                         });
