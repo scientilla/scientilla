@@ -1,0 +1,592 @@
+<div class="summary-profile-container profile-v2">
+    <ul class="basic-info">
+        <li>
+            <img src="https://via.placeholder.com/150" alt="" class="img-fluid rounded-circle profile-image">
+        </li>
+        <li class="content-column">
+            <h2 class="name">Firstname Lastname</h2>
+            <p class="company">Company - Jobtitle / Role</p>
+            <p class="position">Research Line or Administration Organization - Office</p>
+            <ul class="titles">
+                <li>Title</li>
+                <li>Title</li>
+            </ul>
+        </li>
+        <li>
+            <ul class="contact-listing">
+                <li>
+                    <a href="#"><i class="fas fa-envelope"></i> example@domain.com</a>
+                </li>
+                <li>
+                    <a href="#"><i class="fas fa-phone"></i> +39 123 456 789</a>
+                </li>
+                <li>
+                    <ul class="socials-listing">
+                        <li>
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fab fa-github-square"></i></a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fab fa-facebook-square"></i></a>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <ul class="block-navigation">
+        <li>
+            <a href="#about" class="btn btn-outline-secondary" scroll-to>
+                About
+            </a>
+        </li>
+        <li>
+            <a href="#experiences" class="btn btn-outline-secondary" scroll-to>
+                Experience
+            </a>
+        </li>
+        <li>
+            <a href="#educations" class="btn btn-outline-secondary" scroll-to>
+                Education
+            </a>
+        </li>
+        <li>
+            <a href="#certificates" class="btn btn-outline-secondary" scroll-to>
+                Certificates
+            </a>
+        </li>
+        <li>
+            <a href="#skills" class="btn btn-outline-secondary" scroll-to>
+                Skills
+            </a>
+        </li>
+        <li>
+            <a href="#publications" class="btn btn-outline-secondary" scroll-to>
+                Publications
+                <span class="badge">15</span>
+            </a>
+        </li>
+        <li>
+            <a href="#accomplishments" class="btn btn-outline-secondary" scroll-to>
+                Accomplishments
+                <span class="badge">5</span>
+            </a>
+        </li>
+    </ul>
+
+    <div class="profile-block" id="about">
+        <h2>About</h2>
+        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+            industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+            scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into
+            electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release
+            of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software
+            like Aldus PageMaker including versions of Lorem Ipsum.</p>
+    </div>
+
+    <div class="profile-block" id="experiences">
+        <h2>Experience</h2>
+
+        <div uib-collapse="vm.isExperienceCollapsed">
+            <ul class="company-listing">
+                <li>
+                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
+                    <span class="company">Company</span>
+                    <ul class="job-listing">
+                        <li>
+                            <span class="job-title">Job title</span>
+                            <span class="period">From  - to</span>
+                            <span class="location">Location, Country</span>
+                            <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                                scrambled it to make a type specimen book. It has survived not only five centuries</p>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <button class="show-all has-action" ng-click="vm.isExperienceCollapsed = !vm.isExperienceCollapsed">Show all experiences</button>
+        </div>
+
+        <div uib-collapse="!vm.isExperienceCollapsed">
+            <ul class="company-listing">
+                <li>
+                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
+                    <span class="company">Company</span>
+                    <ul class="job-listing">
+                        <li>
+                            <span class="job-title">Job title</span>
+                            <span class="period">From  - to</span>
+                            <span class="location">Location, Country</span>
+                            <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                                scrambled it to make a type specimen book. It has survived not only five centuries</p>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
+                    <span class="company">Company</span>
+                    <span class="company-description">Amount of years if multiple jobs</span>
+                    <ul class="job-listing multiple">
+                        <li>
+                            <span class="job-title">Job title</span>
+                            <span class="period">From  - to</span>
+                            <span class="location">Location, Country</span>
+                            <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                                scrambled it to make a type specimen book. It has survived not only five centuries</p>
+                        </li>
+                        <li>
+                            <span class="job-title">Job title</span>
+                            <span class="period">From  - to</span>
+                            <span class="location">Location, Country</span>
+                            <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                                scrambled it to make a type specimen book. It has survived not only five centuries</p>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
+                    <span class="company">Company</span>
+                    <ul class="job-listing">
+                        <li>
+                            <span class="job-title">Job title</span>
+                            <span class="period">From  - to</span>
+                            <span class="location">Location, Country</span>
+                            <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                                scrambled it to make a type specimen book. It has survived not only five centuries</p>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <button class="show-all has-action" ng-click="vm.isExperienceCollapsed = !vm.isExperienceCollapsed">Show less experiences</button>
+        </div>
+    </div>
+
+    <div class="profile-block" id="educations">
+        <h2>Education</h2>
+
+        <div uib-collapse="vm.isEducationCollapsed">
+            <ul class="education-listing">
+                <li>
+                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
+                    <span class="institute">University/Institute</span>
+                    <span class="title">Title</span>
+                    <span class="period">From - to</span>
+                    <span class="location">Location - Country</span>
+                </li>
+                <li>
+                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
+                    <span class="institute">University/Institute</span>
+                    <span class="title">Title</span>
+                    <span class="period">From - to</span>
+                    <span class="location">Location - Country</span>
+                </li>
+            </ul>
+
+            <button class="show-all has-action" ng-click="vm.isEducationCollapsed = !vm.isEducationCollapsed">Show all educations</button>
+        </div>
+
+        <div uib-collapse="!vm.isEducationCollapsed">
+            <ul class="education-listing">
+                <li>
+                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
+                    <span class="institute">University/Institute</span>
+                    <span class="title">Title</span>
+                    <span class="period">From - to</span>
+                    <span class="location">Location - Country</span>
+                </li>
+                <li>
+                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
+                    <span class="institute">University/Institute</span>
+                    <span class="title">Title</span>
+                    <span class="period">From - to</span>
+                    <span class="location">Location - Country</span>
+                </li>
+                <li>
+                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
+                    <span class="institute">University/Institute</span>
+                    <span class="title">Title</span>
+                    <span class="period">From - to</span>
+                    <span class="location">Location - Country</span>
+                </li>
+                <li>
+                    <img src="https://via.placeholder.com/150x100" alt="" class="img-fluid logo">
+                    <span class="institute">University/Institute</span>
+                    <span class="title">Title</span>
+                    <span class="period">From - to</span>
+                    <span class="location">Location - Country</span>
+                </li>
+            </ul>
+
+            <button class="show-all has-action" ng-click="vm.isEducationCollapsed = !vm.isEducationCollapsed">Show less educations</button>
+        </div>
+    </div>
+
+    <div class="profile-block" id="certificates">
+        <h2>Cerificates</h2>
+
+        <div uib-collapse="vm.isCertificateCollapsed">
+            <ul class="certificate-listing">
+                <li>
+                    <span class="title">Title of certificate</span>
+                    <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                        industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                        scrambled it to make a type specimen book. It has survived not only five centuries</p>
+                    <span class="date">date</span>
+                </li>
+            </ul>
+
+            <button class="show-all has-action" ng-click="vm.isCertificateCollapsed = !vm.isCertificateCollapsed">Show all certificates</button>
+        </div>
+
+        <div uib-collapse="!vm.isCertificateCollapsed">
+            <ul class="certificate-listing">
+                <li>
+                    <span class="title">Title of certificate</span>
+                    <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                        industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                        scrambled it to make a type specimen book. It has survived not only five centuries</p>
+                    <span class="date">date</span>
+                </li>
+                <li>
+                    <span class="title">Title of certificate</span>
+                    <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                        industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                        scrambled it to make a type specimen book. It has survived not only five centuries</p>
+                    <span class="date">date</span>
+                </li>
+                <li>
+                    <span class="title">Title of certificate</span>
+                    <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
+                        industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
+                        scrambled it to make a type specimen book. It has survived not only five centuries</p>
+                    <span class="date">date</span>
+                </li>
+            </ul>
+
+            <button class="show-all has-action" ng-click="vm.isCertificateCollapsed = !vm.isCertificateCollapsed">Show less certificates</button>
+        </div>
+    </div>
+
+    <div class="profile-block" id="skills">
+        <h2>Skills</h2>
+
+        <div uib-collapse="!vm.isSkillsCollapsed">
+            <ul class="skill-listing">
+                <li>Leadership</li>
+                <li>Databases</li>
+                <li>C#</li>
+                <li>C++</li>
+                <li>HTML</li>
+                <li>JavaScript</li>
+                <li>CSS</li>
+            </ul>
+
+            <button class="show-all has-action" ng-click="vm.isSkillsCollapsed = !vm.isSkillsCollapsed">Show all skills</button>
+        </div>
+
+        <div uib-collapse="vm.isSkillsCollapsed">
+            <ul class="skill-categories">
+                <li>
+                    <span class="skill-category">Industry Knowledge</span>
+                    <ul class="skill-listing">
+                        <li>E-commerce</li>
+                        <li>Integration</li>
+                        <li>Strategy</li>
+                        <li>Marketing</li>
+                        <li>Big Data</li>
+                        <li>Virualization</li>
+                        <li>Mobile devices</li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="skill-category">Tools & Technologies</span>
+                    <ul class="skill-listing">
+                        <li>Python</li>
+                        <li>C#</li>
+                        <li>C++</li>
+                        <li>HTML</li>
+                        <li>JavaScript</li>
+                        <li>CSS</li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="skill-category">Interpersonal Skills</span>
+                    <ul class="skill-listing">
+                        <li>Strategic partnerships</li>
+                        <li>Business alliances</li>
+                        <li>Cross-functional team leadership</li>
+                        <li>Leadership</li>
+                        <li>Team building</li>
+                        <li>Executive management</li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="skill-category">Languages</span>
+                    <ul class="skill-listing">
+                        <li>English</li>
+                        <li>French</li>
+                        <li>Italian</li>
+                        <li>Dutch</li>
+                        <li>German</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <button class="show-all has-action" ng-click="vm.isSkillsCollapsed = !vm.isSkillsCollapsed">Show less skills</button>
+        </div>
+    </div>
+
+    <div class="profile-block block-publications" ng-class="{'collapsed' : vm.isPublicationsCollapsed}" id="publications">
+        <h2 class="title">Publications</h2>
+        <span class="amount">15</span>
+
+        <div uib-collapse="!vm.isPublicationsCollapsed">
+            <ul class="publication-listing multiple">
+                <li>Lorem Ipsum is simply dummy text of the printing and typesetting industry, Source type, Document type</li>
+                <li>Lorem Ipsum is simply dummy text of the printing and typesetting industry, Source type, Document type</li>
+                <li>Lorem Ipsum is simply dummy text of the printing and typesetting industry, Source type, Document type</li>
+            </ul>
+
+            <button class="show-all has-action" ng-click="vm.isPublicationsCollapsed = !vm.isPublicationsCollapsed">Show all publications</button>
+        </div>
+
+        <div uib-collapse="vm.isPublicationsCollapsed">
+            <ul class="publication-categories">
+                <li>
+                    <span class="publication-category">Journal</span>
+                    <ul class="publication-listing">
+                        <li>
+                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
+                            <div class="document-source">
+                                <i class="fas fa-file-alt" title="Journal"></i>
+                                <span>
+                                    Investigative Ophthalmology and Visual Science
+                                </span>
+                            </div>
+                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
+                            <ul class="publication-details">
+                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
+                            <div class="document-source">
+                                <i class="fas fa-file-alt" title="Journal"></i>
+                                <span>
+                                    Investigative Ophthalmology and Visual Science
+                                </span>
+                            </div>
+                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
+                            <ul class="publication-details">
+                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
+                            <div class="document-source">
+                                <i class="fas fa-file-alt" title="Journal"></i>
+                                <span>
+                                    Investigative Ophthalmology and Visual Science
+                                </span>
+                            </div>
+                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
+                            <ul class="publication-details">
+                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="publication-category">Book</span>
+                    <ul class="publication-listing">
+                        <li>
+                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
+                            <div class="document-source">
+                                <i class="fas fa-book" title="Book"></i>
+                                <span>
+                                    PhD Thesis
+                                </span>
+                            </div>
+                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
+                            <ul class="publication-details">
+                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
+                            <div class="document-source">
+                                <i class="fas fa-book" title="Book"></i>
+                                <span>
+                                    PhD Thesis
+                                </span>
+                            </div>
+                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
+                            <ul class="publication-details">
+                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="publication-category">Conference</span>
+                    <ul class="publication-listing">
+                        <li>
+                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
+                            <div class="document-source">
+                                <i class="far fa-comment" title="Conference"></i>
+                                <span>
+                                    international winterschool in bioelectronics
+                                </span>
+                            </div>
+                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
+                            <ul class="publication-details">
+                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
+                            <div class="document-source">
+                                <i class="far fa-comment" title="Conference"></i>
+                                <span>
+                                    international winterschool in bioelectronics
+                                </span>
+                            </div>
+                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
+                            <ul class="publication-details">
+                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
+                            <div class="document-source">
+                                <i class="far fa-comment" title="Conference"></i>
+                                <span>
+                                    international winterschool in bioelectronics
+                                </span>
+                            </div>
+                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
+                            <ul class="publication-details">
+                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
+                            <div class="document-source">
+                                <i class="far fa-comment" title="Conference"></i>
+                                <span>
+                                    international winterschool in bioelectronics
+                                </span>
+                            </div>
+                            <small class="publication-bibliographic-info">vol. 60, issue 2, pp. 741-747 (2019)</small>
+                            <ul class="publication-details">
+                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <button class="show-all has-action" ng-click="vm.isPublicationsCollapsed = !vm.isPublicationsCollapsed">Show less publications</button>
+        </div>
+    </div>
+
+    <div class="profile-block block-accomplishments" ng-class="{'collapsed' : vm.isAccomplishmentsCollapsed}" id="accomplishments">
+        <h2 class="title">Accomplishments</h2>
+        <span class="amount">5</span>
+
+        <div uib-collapse="!vm.isAccomplishmentsCollapsed">
+            <ul class="accomplishment-listing multiple">
+                <li>Lorem Ipsum is simply dummy text of the printing and typesetting industry,Type</li>
+                <li>Lorem Ipsum is simply dummy text of the printing and typesetting industry,Type</li>
+                <li>Lorem Ipsum is simply dummy text of the printing and typesetting industry,Type</li>
+            </ul>
+            <button class="show-all has-action" ng-click="vm.isAccomplishmentsCollapsed = !vm.isAccomplishmentsCollapsed">Show all accomplishments</button>
+        </div>
+
+        <div uib-collapse="vm.isAccomplishmentsCollapsed">
+            <ul class="accomplishment-categories">
+                <li>
+                    <span class="accomplishment-category">Award / Achievement</span>
+                    <ul class="accomplishment-listing">
+                        <li>
+                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
+                            <ul class="accomplishment-details">
+                                <li><strong>Issuer: </strong>Lorem ipsum</li>
+                                <li><strong>Year:</strong> 2019</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
+                            <ul class="accomplishment-details">
+                                <li><strong>Issuer: </strong>Lorem ipsum</li>
+                                <li><strong>Year:</strong> 2019</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="accomplishment-category">Organized Event</span>
+                    <ul class="accomplishment-listing">
+                        <li>
+                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
+                            <ul class="accomplishment-details">
+                                <li><strong>Issuer: </strong>Lorem ipsum</li>
+                                <li><strong>Year:</strong> 2019</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
+                            <ul class="accomplishment-details">
+                                <li><strong>Issuer: </strong>Lorem ipsum</li>
+                                <li><strong>Year:</strong> 2019</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
+                            <ul class="accomplishment-details">
+                                <li><strong>Issuer: </strong>Lorem ipsum</li>
+                                <li><strong>Year:</strong> 2019</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <span class="accomplishment-category">Editorship</span>
+                    <ul class="accomplishment-listing">
+                        <li>
+                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
+                            <ul class="accomplishment-details">
+                                <li><strong>Issuer: </strong>Lorem ipsum</li>
+                                <li><strong>Year:</strong> 2019</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
+                            <ul class="accomplishment-details">
+                                <li><strong>Issuer: </strong>Lorem ipsum</li>
+                                <li><strong>Year:</strong> 2019</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <button class="show-all has-action" ng-click="vm.isAccomplishmentsCollapsed = !vm.isAccomplishmentsCollapsed"> Show less accomplishments</button>
+        </div>
+    </div>
+</div>

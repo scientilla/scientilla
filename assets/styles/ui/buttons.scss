@@ -2,6 +2,12 @@
     &:disabled{
         cursor: not-allowed;
     }
+
+    &.btn-inline{
+        margin: 0px;
+        padding: 0px;
+        border: none;
+    }
 }
 
 .btn-primary{

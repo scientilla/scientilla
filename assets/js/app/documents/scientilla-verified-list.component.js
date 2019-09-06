@@ -73,7 +73,7 @@
                         vm.documents = documents;
                     });
             } else {
-                console.log('Todo')
+                console.log('Todo');
                 return researchEntityService.getDocuments(vm.researchEntity, query)
                     .then(function (documents) {
                         vm.documents = documents;

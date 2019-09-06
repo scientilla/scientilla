@@ -7,6 +7,7 @@
         'components',
         'ui.bootstrap',
         'ui-notification',
+        'ui.sortable',
         'LocalStorageModule',
         'scientilla-form',
         'color.picker',

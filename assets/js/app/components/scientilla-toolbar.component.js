@@ -38,6 +38,7 @@
         vm.showWizardVisible = showWizardVisible;
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
+        vm.getUrl = getUrl;
         vm.originalUser = {};
 
         vm.$onInit = function () {
@@ -56,6 +57,9 @@
         vm.$onDestroy = function () {
             EventsService.unsubscribeAll(vm);
         };
+
+        const prefix = '#/';
+        let subResearchEntity = context.getSubResearchEntity();
 
         function refresh() {
             vm.isLogged = AuthService.isLogged;
@@ -134,6 +138,14 @@
                 isClosable: true,
                 size: 'lg'
             });
+        }
+
+        function getUrl(url) {
+            if (subResearchEntity.getType() === 'group') {
+                return prefix + subResearchEntity.slug + '/' + url;
+            }
+
+            return prefix + url;
         }
     }
 })();

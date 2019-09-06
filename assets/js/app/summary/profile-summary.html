@@ -3,7 +3,21 @@
         <uib-tabset active="active">
             <uib-tab
                 index="0"
-                heading="Overview"
+                heading="Profile"
+                ng-click="vm.changeTab('profile')">
+                <summary-profile></summary-profile>
+            </uib-tab>
+
+            <uib-tab
+                index="1"
+                heading="Profile v2"
+                ng-click="vm.changeTab('profile-v2')">
+                <summary-profile-v2></summary-profile-v2>
+            </uib-tab>
+
+            <uib-tab
+                index="2"
+                heading="Documents Overview"
                 ng-click="vm.changeTab('overview', vm.chartsData)">
                 <summary-overview
                     ng-if="vm.chartsData"
@@ -17,7 +31,7 @@
             </uib-tab>
 
             <uib-tab
-                index="1"
+                index="3"
                 heading="Metrics"
                 ng-click="vm.changeTab('metrics', vm.chartsData)">
                 <summary-metrics
@@ -33,7 +47,7 @@
 
             <uib-tab
                 ng-if="vm.isMainGroup()"
-                index="2"
+                index="4"
                 heading="Data calculated on {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}">
                 <div class="scientilla-chart-widget">
                     <scientilla-button

@@ -32,6 +32,7 @@ module.exports = function (grunt) {
                     'angular-ui-notification/dist/angular-ui-notification.min.js',
                     'bootstrap/dist/js/bootstrap.min.js',
                     'jquery/dist/jquery.min.js',
+                    'jquery-ui/jquery-ui.js',
                     'lodash/dist/lodash.min.js',
                     'restangular/dist/restangular.min.js',
                     'd3/d3.js',
@@ -66,7 +67,8 @@ module.exports = function (grunt) {
                     'ui-bootstrap4/dist/ui-bootstrap.js',
                     'ui-bootstrap4/dist/ui-bootstrap-tpls.js',
                     'tinycolor2/tinycolor.js',
-                    'angularjs-color-picker/dist/angularjs-color-picker.js'
+                    'angularjs-color-picker/dist/angularjs-color-picker.js',
+                    'angular-ui-sortable/dist/sortable.js'
                 ],
                 flatten: true,
                 dest: '.tmp/public/js/dependencies'

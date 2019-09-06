@@ -60,6 +60,7 @@ label{
     label{
         margin-bottom: 0px;
         font-weight: normal;
+        line-height: 1;
     }
 
     input{
@@ -69,15 +70,120 @@ label{
             position: relative;
             display: inline-block;
             vertical-align: top;
+            line-height: 1;
 
             &:before{
                 display: inline-block;
                 width: 12px;
                 height: 12px;
-                margin: 3px 5px 3px 0px;
+                margin-right: 5px;
                 vertical-align: top;
                 border-radius: 0.25rem;
                 border: 1px solid $gray-300;
+                background: $white;
+                content: '';
+            }
+        }
+
+        &:checked{
+            & + span{
+                &:after{
+                    position: absolute;
+                    top: 2px;
+                    left: 2px;
+                    font-family: $font-awesome;
+                    font-size: .8rem;
+                    font-weight: 900;
+                    content: '\f00c';
+                }
+            }
+        }
+
+        &:disabled{
+            & + span{
+                cursor: not-allowed;
+                color: $base-gray;
+
+                &:before{
+                    background: $gray-100;
+                }
+            }
+        }
+    }
+}
+
+.form-privacy {
+    &,
+    label {
+        margin-bottom: 0px;
+        font-weight: normal;
+        line-height: 1;
+    }
+
+    input {
+        display: none;
+
+        & + span {
+            position: relative;
+            display: inline-block;
+            width: 14px;
+            vertical-align: top;
+            line-height: 1;
+
+            &:before {
+                font-family: $font-awesome;
+                font-size: 1.4rem;
+                font-weight: 900;
+                content: '\f023';
+            }
+        }
+
+        &:checked {
+            & + span {
+                &:before {
+                    content: '\f57c';
+                }
+            }
+        }
+    }
+}
+
+.radio-options{
+    @include normalize-listing;
+
+    & > li {
+        & + li {
+            margin-top: 1rem;
+        }
+    }
+}
+
+.form-radiobutton{
+    &,
+    label{
+        margin-bottom: 0px;
+        font-weight: normal;
+        line-height: 1;
+    }
+
+    input{
+        display: none;
+
+        & + span{
+            position: relative;
+            display: inline-block;
+            vertical-align: top;
+            line-height: 1;
+
+            &:before{
+                display: inline-block;
+                width: 12px;
+                height: 12px;
+                margin-right: 5px;
+                vertical-align: top;
+                border-radius: 50%;
+                border: 1px solid $gray-300;
+                background: $white;
                 content: '';
             }
         }
@@ -87,11 +193,13 @@ label{
                 &:after{
                     position: absolute;
                     top: 3px;
-                    left: 2px;
-                    font-family: $font-awesome;
-                    font-size: .8rem;
-                    font-weight: 900;
-                    content: '\f00c';
+                    left: 3px;
+                    display: block;
+                    height: 6px;
+                    width: 6px;
+                    border-radius: 50%;
+                    content: '';
+                    background: $mine-shaft;
                 }
             }
         }

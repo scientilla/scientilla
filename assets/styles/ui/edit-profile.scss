@@ -1,0 +1,197 @@
+.edit-profile{
+    padding-bottom: 4rem;
+
+    .card-listing{
+        @include normalize-listing;
+
+        & > li{
+            & + li{
+                margin-top: 3rem;
+            }
+        }
+    }
+
+    .enable-listing{
+        @include normalize-listing;
+        @include clearfix;
+        display: grid;
+        margin-left: -.75rem;
+        margin-right: -.75rem;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto;
+
+        & > li{
+            padding: 0px .75rem;
+
+            &:nth-child(1) {
+                padding-right: 6rem;
+            }
+
+            &:nth-child(2){
+                label {
+                    padding: 2rem;
+                }
+            }
+
+            &.center{
+                align-self: center;
+            }
+        }
+
+        .checkbox-container{
+            min-height: 100%;
+
+            &.add-background{
+                background: $gray-100;
+            }
+
+            .form-checkbox{
+                //line-height: 1;
+
+                input{
+                    & + span {
+                        //line-height: 1;
+
+                        &:before{
+                            margin: 0px;
+                        }
+                    }
+                }
+            }
+        }
+
+        .checkbox-legend{
+            margin-bottom: .5rem;
+            width: 6.7rem;
+            font-size: .9rem;
+            line-height: 1rem;
+            text-align: center;
+        }
+    }
+
+    .listing-title{
+        @include h4;
+    }
+
+    .item-listing{
+        @include normalize-listing;
+
+        /*& > li{
+            & + li{
+                margin-top: 2rem;
+            }
+        }*/
+
+        &.add-lines{
+            & > li{
+                & + li{
+                    margin-top: 2rem;
+                    padding-top: 2rem;
+                    border-top: 2px solid $gray-100;
+
+                    &:last-child{
+                        padding-top: 0px;
+                        border-top: none;
+                    }
+                }
+            }
+        }
+    }
+
+    .field-listing{
+        @include normalize-listing;
+        display: grid;
+        margin: 0px -.75rem;
+        grid-template-columns: 1fr auto auto;
+        grid-template-rows: auto;
+
+        & > li{
+            padding-right: .75rem;
+            padding-left: .75rem;
+        }
+    }
+
+    .skill-category-field-listing{
+        @include normalize-listing;
+        display: grid;
+        margin: 0px -.75rem;
+        grid-template-columns: 1fr auto auto auto;
+        grid-template-rows: auto;
+
+        & > li{
+            padding-right: .75rem;
+            padding-left: .75rem;
+        }
+    }
+
+    .category-skills{
+        @include normalize-listing;
+        padding-left: 5rem;
+    }
+
+    /*.button-container{
+        @include clearfix;
+
+        .listing-title,
+        .label-title{
+            float: left;
+        }
+
+        .btn{
+            float: right;
+        }
+    }*/
+
+    .enable-about-label{
+        display: block;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .action-column{
+        padding-top: 2.2rem;
+    }
+
+    .form-actions{
+        @include normalize-listing;
+        @include clearfix;
+        margin: 3rem -.75rem 0px -.75rem;
+
+        & > li{
+            display: block;
+            float: left;
+            padding-right: .75rem;
+            padding-left: .75rem;
+        }
+    }
+
+    .experience-form{
+        @include normalize-listing;
+        display: grid;
+        margin: 0px -.75rem;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+
+        & > li{
+            padding-right: .75rem;
+            padding-left: .75rem;
+
+            &:nth-child(7) {
+                @include set-grid(4,1,1, 2);
+            }
+        }
+    }
+
+    .education-form{
+        @include normalize-listing;
+        display: grid;
+        margin: 0px -.75rem;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+
+        & > li {
+            padding-right: .75rem;
+            padding-left: .75rem;
+        }
+    }
+}

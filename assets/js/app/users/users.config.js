@@ -12,6 +12,9 @@
                 controller: "UserBrowsingController",
                 controllerAs: 'vm',
             })
+            .when("/users/edit", {
+                template: '<user-edit></user-edit>'
+            })
             .when("/users/:id", {
                 template: params => `<scientilla-user-details user-id="${params.id}"></scientilla-user-details>`
             });

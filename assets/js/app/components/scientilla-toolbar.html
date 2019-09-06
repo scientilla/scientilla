@@ -104,6 +104,15 @@
                         </li>
 
                         <li ng-if="vm.isLogged">
+                            <a
+                                ng-href="{{ vm.getUrl('users/edit') }}"
+                                class="btn btn-link"
+                                ng-if="!vm.user.isViewOnly()">
+                                <i class="fas fa-user-edit"></i>
+                            </a>
+                        </li>
+
+                        <li ng-if="vm.isLogged">
                             <button
                                 class="btn btn-link"
                                 ng-click="vm.editProfile()"

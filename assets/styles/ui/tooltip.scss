@@ -16,3 +16,17 @@
         }
     }
 }
+
+.bs-tooltip-top-right,
+.bs-tooltip-auto[x-placement^="top-right"]{
+    .arrow{
+        bottom: -4px !important;
+        right: 25px !important;
+
+        &::before {
+            top: 0;
+            border-width: 0.4rem 0.4rem 0;
+            border-top-color: $black;
+        }
+    }
+}

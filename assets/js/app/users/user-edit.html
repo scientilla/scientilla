@@ -1,0 +1,1173 @@
+<scientilla-backend-layout>
+    <div class="edit-profile">
+        <h1>Edit profile</h1>
+        <form>
+            <ul class="card-listing">
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="h4">Basic information</h2>
+
+                            <ul class="enable-listing">
+                                <li></li>
+                                <li class="checkbox-legend">Privacy setting</li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li class="center">
+                                    <em>Show or hide all basic information on the Scientilla and/or IIT website.</em>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy settings of the basic information section to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="basic-info-public" class="form-privacy">
+                                            <input type="checkbox" id="basic-info-public" ng-click="vm.uncheckAllBasicInformation($event)">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="username">Username (Email) *</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="username"
+                                            placeholder="Username (Email)">
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="username-public" class="form-privacy">
+                                            <input type="checkbox" id="username-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="name">Name *</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="name"
+                                            placeholder="Name">
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="name-public" class="form-privacy">
+                                            <input type="checkbox" id="name-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="surname">Surname *</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="surname"
+                                            placeholder="Surname">
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="surname-public" class="form-privacy">
+                                            <input type="checkbox" id="surname-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="phone">Phone</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="phone"
+                                            placeholder="Phone">
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="phone-public" class="form-privacy">
+                                            <input type="checkbox" id="phone-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label>Type of position</label>
+                                        <ul class="radio-options">
+                                            <li>
+                                                <label for="type-scientific" class="form-radiobutton">
+                                                    <input type="radio" id="type-scientific" value="type-scientific" name="type" ng-model="vm.type">
+                                                    <span>Scientific position</span>
+                                                </label>
+                                            </li>
+                                            <li>
+                                                <label for="type-administrative" class="form-radiobutton" ng-model="vm.type">
+                                                    <input type="radio" id="type-administrative" value="type-administrative" name="type" ng-model="vm.type">
+                                                    <span>Technical or Administrative position</span>
+                                                </label>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="type-public" class="form-privacy">
+                                            <input type="checkbox" id="type-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing" ng-if="vm.type === 'type-scientific'">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="center">Center</label>
+                                        <div class="select-wrapper">
+                                            <select name="center" id="center" class="form-control">
+                                                <option ng-repeat="center in vm.centers">{{ center }}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="center-public" class="form-privacy">
+                                            <input type="checkbox" id="center-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing" ng-if="vm.type === 'type-scientific'">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="research-line">Research Line</label>
+                                        <div class="select-wrapper">
+                                            <select name="research-line" id="research-line" class="form-control">
+                                                <option ng-repeat="researchLine in vm.researchLines">{{ researchLine }}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="research-line-public" class="form-privacy">
+                                            <input type="checkbox" id="research-line-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing" ng-if="vm.type === 'type-administrative'">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="administrative-organization">Administrative organization</label>
+                                        <div class="select-wrapper">
+                                            <select name="administrative-organization" id="administrative-organization" class="form-control">
+                                                <option ng-repeat="organization in vm.administrativeOrganizations">{{ organization }}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="administrative-organization-public" class="form-privacy">
+                                            <input type="checkbox" id="administrative-organization-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing" ng-if="vm.type === 'type-administrative'">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="office">Office</label>
+                                        <div class="select-wrapper">
+                                            <select name="office" id="office" class="form-control">
+                                                <option ng-repeat="office in vm.offices">{{ office }}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="office-public" class="form-privacy">
+                                            <input type="checkbox" id="office-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="position">Position</label>
+                                        <div class="select-wrapper">
+                                            <select
+                                                name="position"
+                                                id="position"
+                                                class="form-control"
+                                                ng-if="vm.type === 'type-administrative'">
+                                                <option ng-repeat="position in vm.administrativePositions">{{ position }}</option>
+                                            </select>
+                                            <select
+                                                name="position"
+                                                id="position"
+                                                class="form-control"
+                                                ng-if="vm.type === 'type-scientific'">
+                                                <option ng-repeat="position in vm.scientificPositions">{{ position }}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="position-public" class="form-privacy">
+                                            <input type="checkbox" id="position-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="facility">Facility</label>
+                                        <div class="select-wrapper">
+                                            <select name="facility" id="facility" class="form-control">
+                                                <option ng-repeat="facility in vm.facilities">{{ facility }}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="facility-public" class="form-privacy">
+                                            <input type="checkbox" id="facility-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li class="center">
+                                    <div class="form-group">
+                                        <label class="label-title">Titles</label>
+                                        <em>Show or hide all titles on the Scientilla and/or IIT website.</em>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy settings of the titles to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="titles-public" class="form-privacy">
+                                            <input type="checkbox" id="titles-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="item-listing" ui-sortable ng-model="vm.titles">
+                                <li ng-repeat="(key, title) in vm.titles">
+                                    <ul class="enable-listing">
+                                        <li>
+                                            <ul class="field-listing">
+                                                <li>
+                                                    <div class="form-group">
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            placeholder="Title">
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="form-group">
+                                                        <div class="btn btn-outline-secondary">
+                                                            <i class="fas fa-arrows-alt"></i>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="form-group">
+                                                        <button class="btn btn-outline-secondary" ng-click="vm.removeTitle(title)">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <div
+                                                class="checkbox-container"
+                                                uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                                tooltip-placement="top-right">
+                                                <label for="titles[{{ key }}]-public" class="form-privacy">
+                                                    <input type="checkbox" id="titles[{{ key }}]-public">
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <button class="btn btn-link btn-inline" ng-click="vm.addTitle()">
+                                        <i class="fas fa-plus fa-left"></i>Add
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="h4">Socials</h2>
+
+                            <ul class="enable-listing">
+                                <li></li>
+                                <li class="checkbox-legend">Privacy setting</li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li class="center">
+                                    <em>Show or hide all socials on the Scientilla and/or IIT website.</em>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy settings of the socials section to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="socials-public" class="form-privacy">
+                                            <input type="checkbox" id="socials-public" ng-click="vm.uncheckAllSocials($event)">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="linkedin"><i class="fab fa-linkedin fa-left"></i>Linkedin</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="linkedin"
+                                            placeholder="Linkedin URL">
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="linkedin-public" class="form-privacy">
+                                            <input type="checkbox" id="linkedin-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="twitter"><i class="fab fa-twitter fa-left"></i>Twitter</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="twitter"
+                                            placeholder="Twitter URL">
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="twitter-public" class="form-privacy">
+                                            <input type="checkbox" id="twitter-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="github"><i class="fab fa-github-square fa-left"></i>Github</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="github"
+                                            placeholder="Github URL">
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="github-public" class="form-privacy">
+                                            <input type="checkbox" id="github-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="facebook"><i class="fab fa-facebook-square fa-left"></i>Facebook</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="facebook"
+                                            placeholder="Facebook URL">
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="facebook-public" class="form-privacy">
+                                            <input type="checkbox" id="facebook-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="instagram"><i class="fab fa-instagram fa-left"></i>Instagram</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="instagram"
+                                            placeholder="Instagram URL">
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="instagram-public" class="form-privacy">
+                                            <input type="checkbox" id="instagram-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="h4">About</h2>
+
+                            <ul class="enable-listing">
+                                <li></li>
+                                <li class="checkbox-legend">Privacy setting</li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <em class="enable-about-label">Show or hide the about section on the Scientilla and/or IIT website.</em>
+                                    <div class="form-group">
+                                        <label for="about">Description *</label>
+                                        <textarea name="about" id="about" cols="30" rows="10" class="form-control"></textarea>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy setting of the about section to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="about-public" class="form-privacy">
+                                            <input type="checkbox" id="about-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="listing-title">Experiences</h2>
+
+                            <ul class="enable-listing">
+                                <li></li>
+                                <li class="checkbox-legend">Visible on IIT website</li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li class="center">
+                                    <em>Show or hide the experience section on the Scientilla and/or IIT website.</em>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy settings of the experience section to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="experiences-public" class="form-privacy">
+                                            <input type="checkbox" id="experiences-public" ng-click="vm.uncheckAllExperiences($event)">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="item-listing add-lines" ui-sortable ng-model="vm.experiences">
+                                <li ng-repeat="(key, experience) in vm.experiences">
+                                    <ul class="enable-listing">
+                                        <li>
+                                            <ul class="field-listing">
+                                                <li>
+                                                    <ul class="experience-form">
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="experience[{{ key }}]-company">Company</label>
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="experience[{{ key }}]-company"
+                                                                    placeholder="Company">
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="experience[{{ key }}]-job-title">Job title</label>
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="experience[{{ key }}]-job-title"
+                                                                    placeholder="Job title">
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="experience[{{ key }}]-from">From</label>
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="experience[{{ key }}]-from"
+                                                                    placeholder="From"
+                                                                    ng-model="experience.from"
+                                                                    uib-datepicker-popup="dd/MM/yyyy"
+                                                                    datepicker-options="vm.datePickerOptions"
+                                                                    is-open="vm.dateExperienceFromPopups[key]"
+                                                                    ng-click="vm.dateExperienceFromPopups[key] = true"
+                                                                    close-text="Close">
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="experience[{{ key }}]-to">To</label>
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="experience[{{ key }}]-to"
+                                                                    placeholder="To"
+                                                                    ng-model="experience.to"
+                                                                    uib-datepicker-popup="dd/MM/yyyy"
+                                                                    datepicker-options="vm.datePickerOptions"
+                                                                    is-open="vm.dateExperienceToPopups[key]"
+                                                                    ng-click="vm.dateExperienceToPopups[key] = true"
+                                                                    close-text="Close">
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="experience[{{ key }}]-location">Location</label>
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="experience[{{ key }}]-location"
+                                                                    placeholder="Location">
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="experience[{{ key }}]-country">Country</label>
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="experience[{{ key }}]-country"
+                                                                    placeholder="Country">
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="experience[{{ key }}]-job-description">Job description</label>
+                                                                <textarea name="experience[{{ key }}]-job-description" id="experience[{{ key }}]-job-description" cols="30" rows="10" class="form-control"></textarea>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li class="action-column">
+                                                    <div class="form-group">
+                                                        <div class="btn btn-outline-secondary">
+                                                            <i class="fas fa-arrows-alt"></i>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="action-column">
+                                                    <div class="form-group">
+                                                        <button class="btn btn-outline-secondary" ng-click="vm.removeExperience(experience)">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <div
+                                                class="checkbox-container"
+                                                uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                                tooltip-placement="top-right">
+                                                <label for="experiences[{{ key }}]-public" class="form-privacy">
+                                                    <input type="checkbox" id="experiences[{{ key }}]-public">
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <button class="btn btn-link btn-inline" ng-click="vm.addExperience()">
+                                        <i class="fas fa-plus fa-left"></i>Add
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="listing-title">Education</h2>
+
+                            <ul class="enable-listing">
+                                <li></li>
+                                <li class="checkbox-legend">Privacy setting</li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li class="center">
+                                    <em>Show or hide the education section on the Scientilla and/or IIT website.</em>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy settings of the education section to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="education-public" class="form-privacy">
+                                            <input type="checkbox" id="education-public" ng-click="vm.uncheckAllEducation($event)">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="item-listing add-lines" ui-sortable ng-model="vm.education">
+                                <li ng-repeat="(key, education) in vm.education">
+                                    <ul class="enable-listing">
+                                        <li>
+                                            <ul class="field-listing">
+                                                <li>
+                                                    <ul class="education-form">
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="education[{{ key }}]-institute">University/Institute</label>
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="education[{{ key }}]-institute"
+                                                                    placeholder="University/Institute">
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="education[{{ key }}]-title">Title</label>
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="education[{{ key }}]-title"
+                                                                    placeholder="Title">
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="education[{{ key }}]-from">From</label>
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="education[{{ key }}]-from"
+                                                                    placeholder="From"
+                                                                    ng-model="education.from"
+                                                                    uib-datepicker-popup="dd/MM/yyyy"
+                                                                    datepicker-options="vm.datePickerOptions"
+                                                                    is-open="vm.dateEducationFromPopups[key]"
+                                                                    ng-click="vm.dateEducationFromPopups[key] = true"
+                                                                    close-text="Close">
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="education[{{ key }}]-to">To</label>
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="education[{{ key }}]-to"
+                                                                    placeholder="To"
+                                                                    ng-model="education.to"
+                                                                    uib-datepicker-popup="dd/MM/yyyy"
+                                                                    datepicker-options="vm.datePickerOptions"
+                                                                    is-open="vm.dateEducationToPopups[key]"
+                                                                    ng-click="vm.dateEducationToPopups[key] = true"
+                                                                    close-text="Close">
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="education[{{ key }}]-location">Location</label>
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="education[{{ key }}]-location"
+                                                                    placeholder="Location">
+                                                            </div>
+                                                        </li>
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="education[{{ key }}]-country">Country</label>
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="education[{{ key }}]-country"
+                                                                    placeholder="Country">
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li class="action-column">
+                                                    <div class="form-group">
+                                                        <div class="btn btn-outline-secondary">
+                                                            <i class="fas fa-arrows-alt"></i>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="action-column">
+                                                    <div class="form-group">
+                                                        <button class="btn btn-outline-secondary" ng-click="vm.removeEducation(education)">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <div
+                                                class="checkbox-container"
+                                                uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                                tooltip-placement="top-right">
+                                                <label for="education[{{ key }}]-public" class="form-privacy">
+                                                    <input type="checkbox" id="education[{{ key }}]-public">
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <button class="btn btn-link btn-inline" ng-click="vm.addEducation()">
+                                        <i class="fas fa-plus fa-left"></i>Add
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="listing-title">Certificates</h2>
+
+                            <ul class="enable-listing">
+                                <li></li>
+                                <li class="checkbox-legend">Privacy setting</li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li class="center">
+                                    <em>Show or hide the certificate section on the Scientilla and/or IIT website.</em>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy settings of the certificate section to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="certificates-public" class="form-privacy">
+                                            <input type="checkbox" id="certificates-public" ng-click="vm.uncheckAllCertificates($event)">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="item-listing add-lines" ui-sortable ng-model="vm.certificates">
+                                <li ng-repeat="(key, certificate) in vm.certificates">
+                                    <ul class="enable-listing">
+                                        <li>
+                                            <ul class="field-listing">
+                                                <li>
+                                                    <div class="form-group">
+                                                        <label for="certificate[{{ key }}]-title">Title</label>
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="certificate[{{ key }}]-title"
+                                                            placeholder="Title">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="certificate[{{ key }}]-description">Description</label>
+                                                        <textarea name="certificate[{{ key }}]-description" id="certificate[{{ key }}]-description" cols="30" rows="10" class="form-control"></textarea>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="certificate[{{ key }}]-date">Date</label>
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="certificate[{{ key }}]-date"
+                                                            placeholder="Date"
+                                                            ng-model="certificate.date"
+                                                            uib-datepicker-popup="dd/MM/yyyy"
+                                                            datepicker-options="vm.datePickerOptions"
+                                                            is-open="vm.dateCertificateDatePopups[key]"
+                                                            ng-click="vm.dateCertificateDatePopups[key] = true"
+                                                            close-text="Close">
+                                                    </div>
+                                                </li>
+                                                <li class="action-column">
+                                                    <div class="form-group">
+                                                        <div class="btn btn-outline-secondary">
+                                                            <i class="fas fa-arrows-alt"></i>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="action-column">
+                                                    <div class="form-group">
+                                                        <button class="btn btn-outline-secondary" ng-click="vm.removeCertificate(certificate)">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <div
+                                                class="checkbox-container"
+                                                uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                                tooltip-placement="top-right">
+                                                <label for="certificate[{{ key }}]-public" class="form-privacy">
+                                                    <input type="checkbox" id="certificate[{{ key }}]-public">
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <button class="btn btn-link btn-inline" ng-click="vm.addCertificate()">
+                                        <i class="fas fa-plus fa-left"></i>Add
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="listing-title">Skills</h2>
+
+                            <ul class="enable-listing">
+                                <li></li>
+                                <li class="checkbox-legend">Privacy setting</li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li class="center">
+                                    <em>Show or hide the skill section on the Scientilla and/or IIT website.</em>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy settings of the skill section to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="skills-public" class="form-privacy">
+                                            <input type="checkbox" id="skills-public" ng-click="vm.uncheckAllSkills($event)">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="item-listing" ui-sortable ng-model="vm.skillCategories">
+                                <li ng-repeat="(key, category) in vm.skillCategories">
+                                    <ul class="enable-listing">
+                                        <li>
+                                            <ul class="skill-category-field-listing">
+                                                <li>
+                                                    <div class="form-group">
+                                                        <label for="skill-category">Category</label>
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            id="skill-category"
+                                                            placeholder="Category">
+                                                    </div>
+                                                </li>
+                                                <li class="action-column">
+                                                    <div class="form-group">
+                                                        <div class="btn btn-outline-secondary">
+                                                            <i class="fas fa-arrows-alt"></i>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li class="action-column">
+                                                    <div class="form-group">
+                                                        <button class="btn btn-outline-secondary" ng-click="vm.removeSkillCategory(category)">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </li>
+                                                <li class="action-column">
+                                                    <button class="btn btn-link" ng-click="vm.addSkill(category)">
+                                                        <i class="fas fa-plus fa-left"></i>Add skill
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <div
+                                                class="checkbox-container"
+                                                uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                                tooltip-placement="top-right">
+                                                <label for="skill-category[{{ key }}]-public" class="form-privacy">
+                                                    <input type="checkbox" id="skill-category[{{ key }}]-public">
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </li>
+                                    </ul>
+
+                                    <ul class="category-skills" ui-sortable ng-model="category.skills">
+                                        <li ng-repeat="(keySkill, skill) in category.skills">
+                                            <ul class="enable-listing">
+                                                <li>
+                                                    <ul class="field-listing">
+                                                        <li>
+                                                            <div class="form-group">
+                                                                <label for="skill[{{ keySkill }}]">Skill</label>
+                                                                <input
+                                                                    type="text"
+                                                                    class="form-control"
+                                                                    id="skill[{{ keySkill }}]"
+                                                                    placeholder="Category">
+                                                            </div>
+                                                        </li>
+                                                        <li class="action-column">
+                                                            <div class="form-group">
+                                                                <div class="btn btn-outline-secondary">
+                                                                    <i class="fas fa-arrows-alt"></i>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                        <li class="action-column">
+                                                            <div class="form-group">
+                                                                <button class="btn btn-outline-secondary" ng-click="vm.removeSkill(category, skill)">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li>
+                                                    <div
+                                                        class="checkbox-container"
+                                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                                        tooltip-placement="top-right">
+                                                        <label for="skill[{{ key }}][{{ keySkill }}]-public" class="form-privacy">
+                                                            <input type="checkbox" id="skill[{{ key }}][{{ keySkill }}]-public">
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <button class="btn btn-link btn-inline" ng-click="vm.addSkillCategory()">
+                                        <i class="fas fa-plus fa-left"></i>Add category
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="listing-title">Publications</h2>
+
+                            <ul class="enable-listing">
+                                <li></li>
+                                <li class="checkbox-legend">Privacy setting</li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li class="center">
+                                    <em>Publications are been automatically taken from Scientilla, you can choose to hide or show this in your profile here on the Scientilla website and on the IIT website.</em>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of publication section to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="publications-public" class="form-privacy">
+                                            <input type="checkbox" id="publications-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="listing-title">Accomplishments</h2>
+
+                            <ul class="enable-listing">
+                                <li></li>
+                                <li class="checkbox-legend">Privacy setting</li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li class="center">
+                                    <em>Accomplisments are been automatically taken from Scientilla, you can choose to hide or show this in your profile here on the Scientilla website and on the IIT website.</em>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of the accomplishment section to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="accomplishments-public" class="form-privacy">
+                                            <input type="checkbox" id="accomplishments-public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <ul class="form-actions">
+                <li>
+                    <button class="btn btn-primary">
+                        <i class="fas fa-save fa-left"></i>Save
+                    </button>
+                </li>
+                <li>
+                    <button class="btn btn-outline-secondary">
+                        <i class="fas fa-eye fa-left"></i>Preview
+                    </button>
+                </li>
+            </ul>
+        </form>
+    </div>
+</scientilla-backend-layout>

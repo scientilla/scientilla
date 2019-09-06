@@ -23,6 +23,11 @@ var printCssFilesToInject = [
     'print/**/*.css'
 ];
 
+// Font files
+var fontFilesToInject = [
+    'fonts/*.*'
+];
+
 // Client-side javascript files to inject in order
 // (uses Grunt-style wildcard/glob/splat expressions)
 var jsFilesToInject = [
@@ -31,12 +36,14 @@ var jsFilesToInject = [
     
     // Dependencies like jQuery, or Angular are brought in here
     'js/dependencies/jquery.min.js',
+    'js/dependencies/jquery-ui.js',
     'js/dependencies/angular.min.js',
     'js/dependencies/ui-bootstrap.min.js',
     'js/dependencies/d3.js',
     'js/dependencies/nv.d3.js',
     'js/dependencies/tinycolor.js',
     'js/dependencies/angularjs-color-picker.js',
+    'js/dependencies/sortable.js',
 
     'js/dependencies/**/*.js',
     
