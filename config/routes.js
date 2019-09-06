@@ -89,6 +89,7 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/users/:researchEntityId/remove-verify']: 'User.removeVerify',
     ['post ' + apiPrfx + '/groups/:researchEntityId/replace']: 'Group.replace',
     ['post ' + apiPrfx + '/users/:researchEntityId/replace']: 'User.replace',
+    ['post ' + apiPrfx + '/users/:researchEntityId/profile/export']: 'User.exportProfile',
 
     //Research item API
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/delete']: 'ResearchEntity.deleteDrafts',
