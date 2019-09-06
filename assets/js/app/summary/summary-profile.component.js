@@ -13,12 +13,10 @@
 
         SummaryProfileComponent.$inject = [
             '$element',
-            '$uibModal',
-            'AuthService',
-            'ProfileService',
+            '$uibModal'
         ];
 
-        function SummaryProfileComponent($element, $uibModal, AuthService, ProfileService) {
+        function SummaryProfileComponent($element, $uibModal) {
             const vm = this;
 
             vm.$onInit = () => {
@@ -29,29 +27,6 @@
                 const unregisterTab = requireParentMethod($element, 'unregisterTab');
                 unregisterTab(vm);
             };
-
-            /* jshint ignore:start */
-            vm.exportProfile = async (type) => {
-                vm.user = AuthService.user;
-                const data = await ProfileService.exportProfile(vm.user, type);
-                var a = document.createElement('a');
-                document.body.appendChild(a);
-                a.href = 'data:application/octet-stream;base64,' + data;
-
-                switch (type) {
-                    case 'doc':
-                        a.download = 'profile.docx';
-                        a.click();
-                        break;
-                    case 'pdf':
-                        a.download = 'profile.pdf';
-                        a.click();
-                        break;
-                    default:
-                        break;
-                }
-            };
-            /* jshint ignore:end */
 
             vm.showExperiencesModal = () => {
                 $uibModal.open({
