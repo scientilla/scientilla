@@ -304,6 +304,19 @@ const profile = {
     }
 };
 
+function concatStrings(strings = [], options = {}) {
+    options = _.extend({
+        seperator: ', ',
+        hideEmpty: true
+    }, options);
+
+    if (options.hideEmpty) {
+        strings = strings.filter(string => string !== '')
+    }
+
+    return strings.join(options.seperator)
+}
+
 module.exports = {
     toPDF,
     toDoc
@@ -311,64 +324,47 @@ module.exports = {
 
 async function toPDF() {
 
+    let tmpText = '';
+
     function getExperienceText(experience) {
         const stack = [];
 
-        if (!_.isEmpty(experience) && !_.isEmpty(experience.company)) {
-            stack.push({
-                text: experience.company,
-                style: 'bold'
-            });
-        }
-
-        if (!_.isEmpty(experience) && !_.isEmpty(experience.jobTitle)) {
-            stack.push({
-                text: experience.jobTitle,
-            });
-        }
-
         if (!_.isEmpty(experience)) {
-            const dates = [];
 
-            if (!_.isEmpty(experience.from)) {
-                dates.push(experience.from);
-            }
-
-            if (!_.isEmpty(experience.to)) {
-                dates.push(experience.to);
-            }
-
-            if (!_.isEmpty(dates)) {
+            if (!_.isEmpty(experience.company)) {
                 stack.push({
-                    text: dates.join(' - '),
+                    text: experience.company,
+                    style: 'bold'
+                });
+            }
+
+            if (!_.isEmpty(experience.jobTitle)) {
+                stack.push({
+                    text: experience.jobTitle,
+                });
+            }
+
+            tmpText = concatStrings([experience.from, experience.to], {seperator: ' - '});
+            if (!_.isEmpty(tmpText)) {
+                stack.push({
+                    text: tmpText,
                     style: 'lighten'
                 });
             }
-        }
 
-        if (!_.isEmpty(experience)) {
-            const locationData = [];
-
-            if (!_.isEmpty(experience.location)) {
-                locationData.push(experience.location);
-            }
-
-            if (!_.isEmpty(experience.country)) {
-                locationData.push(experience.country);
-            }
-
-            if (!_.isEmpty(locationData)) {
+            tmpText = concatStrings([experience.location, experience.country]);
+            if (!_.isEmpty(tmpText)) {
                 stack.push({
-                    text: locationData.join(', '),
+                    text: tmpText,
                     style: 'lighten'
                 });
             }
-        }
 
-        if (!_.isEmpty(experience) && !_.isEmpty(experience.description)) {
-            stack.push({
-                text: experience.description
-            });
+            if (!_.isEmpty(experience.description)) {
+                stack.push({
+                    text: experience.description
+                });
+            }
         }
 
         return stack;
@@ -377,50 +373,31 @@ async function toPDF() {
     function getEducationText(educationItem) {
         const stack = [];
 
-        if (!_.isEmpty(educationItem) && !_.isEmpty(educationItem.institute)) {
-            stack.push(educationItem.institute);
-        }
-
-        if (!_.isEmpty(educationItem) && !_.isEmpty(educationItem.title)) {
-            stack.push({
-                text: educationItem.title,
-                style: 'bold'
-            });
-        }
-
         if (!_.isEmpty(educationItem)) {
-            const dates = [];
 
-            if (!_.isEmpty(educationItem.from)) {
-                dates.push(educationItem.from);
+            if (!_.isEmpty(educationItem.institute)) {
+                stack.push(educationItem.institute);
             }
 
-            if (!_.isEmpty(educationItem.to)) {
-                dates.push(educationItem.to);
-            }
-
-            if (!_.isEmpty(dates)) {
+            if (!_.isEmpty(educationItem.title)) {
                 stack.push({
-                    text: dates.join(' - '),
+                    text: educationItem.title,
+                    style: 'bold'
+                });
+            }
+
+            tmpText = concatStrings([educationItem.from, educationItem.to], {seperator: ' - '});
+            if (!_.isEmpty(tmpText)) {
+                stack.push({
+                    text: tmpText,
                     style: 'lighten'
                 });
             }
-        }
 
-        if (!_.isEmpty(educationItem)) {
-            const locationData = [];
-
-            if (!_.isEmpty(educationItem.location)) {
-                locationData.push(educationItem.location);
-            }
-
-            if (!_.isEmpty(educationItem.country)) {
-                locationData.push(educationItem.country);
-            }
-
-            if (!_.isEmpty(locationData)) {
+            tmpText = concatStrings([educationItem.location, educationItem.country]);
+            if (!_.isEmpty(tmpText)) {
                 stack.push({
-                    text: locationData.join(', '),
+                    text: tmpText,
                     style: 'lighten'
                 });
             }
@@ -432,24 +409,26 @@ async function toPDF() {
     function getCertificateText(certificate) {
         const stack = [];
 
-        if (!_.isEmpty(certificate) && !_.isEmpty(certificate.title)) {
-            stack.push({
-                text: certificate.title,
-                style: 'bold'
-            });
-        }
+        if (!_.isEmpty(certificate)) {
+            if (!_.isEmpty(certificate.title)) {
+                stack.push({
+                    text: certificate.title,
+                    style: 'bold'
+                });
+            }
 
-        if (!_.isEmpty(certificate) && !_.isEmpty(certificate.text)) {
-            stack.push({
-                text: certificate.text
-            });
-        }
+            if (!_.isEmpty(certificate.text)) {
+                stack.push({
+                    text: certificate.text
+                });
+            }
 
-        if (!_.isEmpty(certificate) && !_.isEmpty(certificate.date)) {
-            stack.push({
-                text: certificate.date,
-                style: 'lighten'
-            });
+            if (!_.isEmpty(certificate.date)) {
+                stack.push({
+                    text: certificate.date,
+                    style: 'lighten'
+                });
+            }
         }
 
         return stack;
@@ -458,17 +437,19 @@ async function toPDF() {
     function getSkillCategoryText(category) {
         const stack = [];
 
-        if (!_.isEmpty(category) && !_.isEmpty(category.title)) {
-            stack.push({
-                text: category.title,
-                style: 'bold'
-            });
-        }
+        if (!_.isEmpty(category)) {
+            if (!_.isEmpty(category.title)) {
+                stack.push({
+                    text: category.title,
+                    style: 'bold'
+                });
+            }
 
-        if (!_.isEmpty(category) && !_.isEmpty(category.items)) {
-            stack.push({
-                ul: category.items
-            });
+            if (!_.isEmpty(category.items)) {
+                stack.push({
+                    ul: category.items
+                });
+            }
         }
 
         return stack;
@@ -600,29 +581,46 @@ async function toPDF() {
         const basicProfile = [];
 
         // Basic profile
-        basicProfile.push(
-            {
-                text: profile.firstName + ' ' + profile.lastName,
-                style: 'h1'
-            }
-        );
+        tmpText = concatStrings([profile.firstName, profile.lastName], {seperator: ' '});
+        if (!_.isEmpty(tmpText)) {
+            basicProfile.push(
+                {
+                    text: tmpText,
+                    style: 'h1'
+                }
+            );
+        }
 
         switch(profile.position.type) {
             case 'administrative':
-                basicProfile.push({
-                    text: sails.config.scientilla.institute.name + ' - ' + profile.position.role
-                });
-                basicProfile.push({
-                    text: profile.position.administrativeOrganization + ' - ' + profile.position.office
-                });
+                tmpText = concatStrings([sails.config.scientilla.institute.name, profile.position.role], {seperator: ' - '});
+                if (!_.isEmpty(tmpText)) {
+                    basicProfile.push({
+                        text: tmpText
+                    });
+                }
+
+                tmpText = concatStrings([profile.position.administrativeOrganization, profile.position.office], {seperator: ' - '});
+                if (!_.isEmpty(tmpText)) {
+                    basicProfile.push({
+                        text: tmpText
+                    });
+                }
                 break;
             case 'scientific':
-                basicProfile.push({
-                    text: sails.config.scientilla.institute.name + ' - ' + profile.position.title
-                });
-                basicProfile.push({
-                    text: profile.position.researchLine
-                });
+                tmpText = concatStrings([sails.config.scientilla.institute.name, profile.position.title], {seperator: ' - '});
+                if (!_.isEmpty(tmpText)) {
+                    basicProfile.push({
+                        text: tmpText
+                    });
+                }
+
+                if (!_.isEmpty(profile.position.researchLine)) {
+                    basicProfile.push({
+                        text: profile.position.researchLine
+                    });
+                }
+
                 if (!_.isEmpty(profile.position.center)) {
                     basicProfile.push({
                         text: profile.position.center
@@ -639,17 +637,19 @@ async function toPDF() {
             });
         }
 
-        basicProfile.push({
-            text: ' ',
-            fontSize: 5
-        });
-
-        for (let i = 0; i < profile.titles.length; i++) {
-            const title = profile.titles[i];
+        if (!_.isEmpty(profile.titles)) {
             basicProfile.push({
-                text: title,
-                style: 'lighten'
+                text: ' ',
+                fontSize: 5
             });
+
+            for (let i = 0; i < profile.titles.length; i++) {
+                const title = profile.titles[i];
+                basicProfile.push({
+                    text: title,
+                    style: 'lighten'
+                });
+            }
         }
 
         basicProfile.push({
@@ -838,7 +838,7 @@ async function toPDF() {
         }
 
         // Education
-        if (!_.isEmpty(profile.education) && !_.isEmpty(profile.education.items)) {
+        if (!_.isEmpty(profile.education) && !_.isEmpty(profile.education.title) && !_.isEmpty(profile.education.items)) {
             const educationItems = profile.education.items;
             const firstEducationItem = educationItems.shift();
 
@@ -872,7 +872,7 @@ async function toPDF() {
         }
 
         // Certificates
-        if (!_.isEmpty(profile.certificates) && !_.isEmpty(profile.certificates.items)) {
+        if (!_.isEmpty(profile.certificates) && !_.isEmpty(profile.certificates.title) && !_.isEmpty(profile.certificates.items)) {
             const certificates = profile.certificates.items;
             const firstCertificate = certificates.shift();
 
@@ -906,7 +906,7 @@ async function toPDF() {
         }
 
         // Skills
-        if (!_.isEmpty(profile.skills) && !_.isEmpty(profile.skills.categories)) {
+        if (!_.isEmpty(profile.skills) && !_.isEmpty(profile.skills.title) && !_.isEmpty(profile.skills.categories)) {
             const skillCategories = profile.skills.categories;
             const firstSkillCategory = skillCategories.shift();
 
@@ -940,7 +940,7 @@ async function toPDF() {
         }
 
         // Publications
-        if (!_.isEmpty(profile.publications) && !_.isEmpty(profile.publications.categories)) {
+        if (!_.isEmpty(profile.publications) && !_.isEmpty(profile.publications.title) && !_.isEmpty(profile.publications.categories)) {
             const publicationCategories = profile.publications.categories;
             const firstPublicationCategory = publicationCategories.shift();
 
@@ -974,7 +974,7 @@ async function toPDF() {
         }
 
         // Accomplishments
-        if (!_.isEmpty(profile.accomplishments) && !_.isEmpty(profile.accomplishments.categories)) {
+        if (!_.isEmpty(profile.accomplishments) && !_.isEmpty(profile.accomplishments.title) && !_.isEmpty(profile.accomplishments.categories)) {
             const accomplishmentsCategories = profile.accomplishments.categories;
             const firstAccomplishmentCategory = accomplishmentsCategories.shift();
 
@@ -1089,10 +1089,7 @@ async function toPDF() {
             }
         };
 
-        const options = {
-            // ...
-        }
-
+        const options = {};
         const pdfDoc = printer.createPdfKitDocument(docDefinition, options);
         const stream = pdfDoc.pipe(new Base64Encode());
         pdfDoc.end();
@@ -1121,44 +1118,66 @@ async function toDoc() {
             });
         });
 
+        let tmpText = '';
+
         const titles = [];
         for (let i = 0; i < profile.titles.length; i++) {
             const title = profile.titles[i];
-            titles.push(
-                new TextRun({
-                    text: title,
-                    color: '999999'
-                }).break()
-            );
+
+            if (!_.isEmpty(title)) {
+                titles.push(
+                    new TextRun({
+                        text: title,
+                        color: '999999'
+                    }).break()
+                );
+            }
         }
 
         const experiences = [];
         for (let i = 0; i < profile.experiences.items.length; i++) {
             const experience = profile.experiences.items[i];
-            experiences.push(
-                new TextRun({
-                    text: experience.company,
-                    bold: true
-                })
-            );
-            experiences.push(
-                new TextRun(experience.jobTitle).break()
-            );
-            experiences.push(
-                new TextRun({
-                    text: experience.from + ' - ' + experience.to,
-                    color: '999999'
-                }).break()
-            );
-            experiences.push(
-                new TextRun({
-                    text: experience.location + ', ' + experience.country,
-                    color: '999999'
-                }).break()
-            );
-            experiences.push(
-                new TextRun(experience.description).break()
-            );
+
+            if (!_.isEmpty(experience.company)) {
+                experiences.push(
+                    new TextRun({
+                        text: experience.company,
+                        bold: true
+                    })
+                );
+            }
+
+            if (!_.isEmpty(experience.jobTitle)) {
+                experiences.push(
+                    new TextRun(experience.jobTitle).break()
+                );
+            }
+
+            tmpText = concatStrings([experience.from, experience.to], {seperator: ' - '});
+            if (!_.isEmpty(tmpText)) {
+                experiences.push(
+                    new TextRun({
+                        text: tmpText,
+                        color: '999999'
+                    }).break()
+                );
+            }
+
+            tmpText = concatStrings([experience.location, experience.country]);
+            if (!_.isEmpty(tmpText)) {
+                experiences.push(
+                    new TextRun({
+                        text: tmpText,
+                        color: '999999'
+                    }).break()
+                );
+            }
+
+            if (!_.isEmpty(experience.description)) {
+                experiences.push(
+                    new TextRun(experience.description).break()
+                );
+            }
 
             if (i < profile.experiences.items.length - 1) {
                 experiences.push(
@@ -1174,27 +1193,42 @@ async function toDoc() {
         const education = [];
         for (let i = 0; i < profile.education.items.length; i++) {
             const educationItem = profile.education.items[i];
-            education.push(
-                new TextRun(educationItem.institute)
-            );
-            education.push(
-                new TextRun({
-                    text: educationItem.title,
-                    bold: true
-                }).break()
-            );
-            education.push(
-                new TextRun({
-                    text: educationItem.from + ' - ' + educationItem.to,
-                    color: '999999'
-                }).break()
-            );
-            education.push(
-                new TextRun({
-                    text: educationItem.location + ', ' + educationItem.country,
-                    color: '999999'
-                }).break()
-            );
+
+            if (!_.isEmpty(educationItem.institute)) {
+                education.push(
+                    new TextRun(educationItem.institute)
+                );
+            }
+
+            if (!_.isEmpty(educationItem.title)) {
+                education.push(
+                    new TextRun({
+                        text: educationItem.title,
+                        bold: true
+                    }).break()
+                );
+            }
+
+            tmpText = concatStrings([educationItem.from, educationItem.to], {seperator: ' - '});
+            if (!_.isEmpty(tmpText)) {
+                education.push(
+                    new TextRun({
+                        text: tmpText,
+                        color: '999999'
+                    }).break()
+                );
+            }
+
+            tmpText = concatStrings([educationItem.location, educationItem.country]);
+            if (!_.isEmpty(tmpText)) {
+                education.push(
+                    new TextRun({
+                        text: tmpText,
+                        color: '999999'
+                    }).break()
+                );
+            }
+
             if (i < profile.education.items.length - 1) {
                 education.push(
                     new TextRun('').break()
@@ -1208,21 +1242,31 @@ async function toDoc() {
         const certificates = [];
         for (let i = 0; i < profile.certificates.items.length; i++) {
             const certificate = profile.certificates.items[i];
-            certificates.push(
-                new TextRun({
-                    text: certificate.title,
-                    bold: true
-                })
-            );
-            certificates.push(
-                new TextRun(certificate.text).break()
-            );
-            certificates.push(
-                new TextRun({
-                    text: certificate.date,
-                    color: '999999'
-                }).break()
-            );
+
+            if (!_.isEmpty(certificate.title)) {
+                certificates.push(
+                    new TextRun({
+                        text: certificate.title,
+                        bold: true
+                    })
+                );
+            }
+
+            if (!_.isEmpty(certificate.text)) {
+                certificates.push(
+                    new TextRun(certificate.text).break()
+                );
+            }
+
+            if (!_.isEmpty(certificate.date)) {
+                certificates.push(
+                    new TextRun({
+                        text: certificate.date,
+                        color: '999999'
+                    }).break()
+                );
+            }
+
             if (i < profile.certificates.items.length - 1) {
                 certificates.push(
                     new TextRun('').break()
@@ -1279,32 +1323,52 @@ async function toDoc() {
         for (let i = 0; i < profile.publications.categories.length; i++) {
             const category = profile.publications.categories[i];
 
-            publications.push(
-                new Paragraph({
-                    text: category.title,
-                    heading: HeadingLevel.HEADING_3
-                })
-            );
+            if (!_.isEmpty(category.title)) {
+                publications.push(
+                    new Paragraph({
+                        text: category.title,
+                        heading: HeadingLevel.HEADING_3
+                    })
+                );
+            }
 
             for (let j = 0; j < category.items.length; j++) {
                 const publication = category.items[j];
 
-                const paragraph = new Paragraph({
-                    children: [
-                        new TextRun({
-                            text: publication.title,
-                            bold: true
-                        }).break(),
-                        new TextRun({
-                            text: 'Document source: ' + publication.source
-                        }).break(),
-                        new TextRun({
-                            text: 'Doi: ' + publication.doi.number
-                        }).break(),
-                    ]
-                });
+                if (!_.isEmpty(publication) && (!_.isEmpty(publication.title) || !_.isEmpty(publication.source) || !_.isEmpty(publication.doi.number))) {
+                    const children = [];
 
-                publications.push(paragraph);
+                    if (!_.isEmpty(publication.title)) {
+                        children.push(
+                            new TextRun({
+                                text: publication.title,
+                                bold: true
+                            }).break()
+                        );
+                    }
+
+                    if (!_.isEmpty(publication.source)) {
+                        children.push(
+                            new TextRun({
+                                text: 'Document source: ' + publication.source
+                            }).break()
+                        );
+                    }
+
+                    if (!_.isEmpty(publication.doi.number)) {
+                        children.push(
+                            new TextRun({
+                                text: 'Doi: ' + publication.doi.number
+                            }).break()
+                        );
+                    }
+
+                    const paragraph = new Paragraph({
+                        children: children
+                    });
+
+                    publications.push(paragraph);
+                }
             }
         }
 
@@ -1312,36 +1376,67 @@ async function toDoc() {
         for (let i = 0; i < profile.accomplishments.categories.length; i++) {
             const category = profile.accomplishments.categories[i];
 
-            accomplishments.push(
-                new Paragraph({
-                    text: category.title,
-                    heading: HeadingLevel.HEADING_3
-                })
-            );
+            if (!_.isEmpty(category.title)) {
+                accomplishments.push(
+                    new Paragraph({
+                        text: category.title,
+                        heading: HeadingLevel.HEADING_3
+                    })
+                );
+            }
 
             for (let j = 0; j < category.items.length; j++) {
                 const accomplishment = category.items[j];
 
-                const paragraph = new Paragraph({
-                    children: [
-                        new TextRun({
-                            text: accomplishment.title,
-                            bold: true
-                        }).break(),
-                        new TextRun({
-                            text: 'Issuer: ' + accomplishment.issuer
-                        }).break(),
-                        new TextRun({
-                            text: 'Year: ' + accomplishment.year
-                        }).break()
-                    ]
-                });
+                if (!_.isEmpty(accomplishment) && (!_.isEmpty(accomplishment.title) || !_.isEmpty(accomplishment.issuer) || !_.isEmpty(accomplishment.year))) {
+                    const children = [];
 
-                accomplishments.push(paragraph);
+                    if (!_.isEmpty(accomplishment.title)) {
+                        children.push(
+                            new TextRun({
+                                text: accomplishment.title,
+                                bold: true
+                            }).break()
+                        );
+                    }
+
+                    if (!_.isEmpty(accomplishment.issuer)) {
+                        children.push(
+                            new TextRun({
+                                text: 'Issuer: ' + accomplishment.issuer
+                            }).break()
+                        );
+                    }
+
+                    if (!_.isEmpty(accomplishment.year)) {
+                        children.push(
+                            new TextRun({
+                                text: 'Year: ' + accomplishment.year
+                            }).break()
+                        );
+                    }
+
+                    const paragraph = new Paragraph({
+                        children: children
+                    });
+
+                    accomplishments.push(paragraph);
+                }
             }
         }
 
         let text = [];
+
+        tmpText = concatStrings([profile.firstName, profile.lastName], {seperator: ' '});
+        if (!_.isEmpty(tmpText)) {
+            text.push(
+                new Paragraph({
+                    text:  tmpText,
+                    heading: HeadingLevel.HEADING_1
+                })
+            );
+        }
+
         text.push(
             new Paragraph({
                 children: [
@@ -1364,29 +1459,37 @@ async function toDoc() {
                 ]
             })
         );
-        text.push(
-            new Paragraph({
-                text: profile.firstName + ' ' + profile.lastName,
-                heading: HeadingLevel.HEADING_1
-            })
-        );
+
         const baseProfile = [];
         switch(profile.position.type) {
             case 'administrative':
-                baseProfile.push(
-                    new TextRun(sails.config.scientilla.institute.name + ' - ' + profile.position.role)
-                );
-                baseProfile.push(
-                    new TextRun(profile.position.administrativeOrganization + ' - ' + profile.position.office).break()
-                );
+                tmpText = concatStrings([sails.config.scientilla.institute.name, profile.position.role], {seperator: ' - '});
+                if (!_.isEmpty(tmpText)) {
+                    baseProfile.push(
+                        new TextRun(tmpText)
+                    );
+                }
+
+                tmpText = concatStrings([profile.position.administrativeOrganization, profile.position.office], {seperator: ' - '});
+                if (!_.isEmpty(tmpText)) {
+                    baseProfile.push(
+                        new TextRun(tmpText).break()
+                    );
+                }
                 break;
             case 'scientific':
-                baseProfile.push(
-                    new TextRun(sails.config.scientilla.institute.name + ' - ' + profile.position.title)
-                );
-                baseProfile.push(
-                    new TextRun(profile.position.researchLine).break()
-                );
+                tmpText = concatStrings([sails.config.scientilla.institute.name, profile.position.title], {seperator: ' - '});
+                if (!_.isEmpty(tmpText)) {
+                    baseProfile.push(
+                        new TextRun(tmpText)
+                    );
+                }
+                if (!_.isEmpty(profile.position.researchLine)) {
+                    baseProfile.push(
+                        new TextRun(profile.position.researchLine).break()
+                    );
+                }
+
                 if (!_.isEmpty(profile.position.center)) {
                     baseProfile.push(
                         new TextRun(profile.position.center).break()
@@ -1401,78 +1504,166 @@ async function toDoc() {
                 new TextRun(profile.position.facility).break()
             );
         }
-        text.push(
-            new Paragraph({
-                children: _.concat(baseProfile, titles)
-            })
-        );
-        text.push(
-            new Paragraph({
-                text: profile.about.title,
-                heading: HeadingLevel.HEADING_2
-            })
-        );
-        text.push(
-            new Paragraph({
-                children: [
-                    new TextRun(profile.about.description)
-                ]
-            })
-        );
-        text.push(
-            new Paragraph({
-                text: profile.experiences.title,
-                heading: HeadingLevel.HEADING_2
-            })
-        );
-        text.push(
-            new Paragraph({
-                children: experiences
-            })
-        );
-        text.push(
-            new Paragraph({
-                text: profile.education.title,
-                heading: HeadingLevel.HEADING_2
-            })
-        );
-        text.push(
-            new Paragraph({
-                children: education
-            })
-        );
-        text.push(
-            new Paragraph({
-                text: profile.certificates.title,
-                heading: HeadingLevel.HEADING_2
-            })
-        );
-        text.push(
-            new Paragraph({
-                children: certificates
-            })
-        );
-        text.push(
-            new Paragraph({
-                text: profile.skills.title,
-                heading: HeadingLevel.HEADING_2
-            })
-        );
-        text = _.concat(text, skills);
-        text.push(
-            new Paragraph({
-                text: profile.publications.title,
-                heading: HeadingLevel.HEADING_2
-            })
-        );
-        text = _.concat(text, publications);
-        text.push(
-            new Paragraph({
-                text: profile.accomplishments.title,
-                heading: HeadingLevel.HEADING_2
-            })
-        );
-        text = _.concat(text, accomplishments);
+
+        const contacts = [];
+        if (!_.isEmpty(profile.email)) {
+            contacts.push(new TextRun(profile.email).break());
+        }
+
+        if (!_.isEmpty(profile.phone)) {
+            contacts.push(new TextRun(profile.phone).break());
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.linkedin)) {
+            contacts.push(new TextRun(profile.socials.linkedin).break());
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.twitter)) {
+            contacts.push(new TextRun(profile.socials.twitter).break());
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.github)) {
+            contacts.push(new TextRun(profile.socials.github).break());
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.facebook)) {
+            contacts.push(new TextRun(profile.socials.facebook).break());
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.instagram)) {
+            contacts.push(new TextRun(profile.socials.instagram).break());
+        }
+
+        if (!_.isEmpty(baseProfile)) {
+            text.push(
+                new Paragraph({
+                    children: baseProfile
+                })
+            );
+        }
+
+        if (!_.isEmpty(titles)) {
+            text.push(
+                new Paragraph({
+                    children: titles
+                })
+            );
+        }
+
+        if (!_.isEmpty(contacts)) {
+            text.push(
+                new Paragraph({
+                    children: contacts
+                })
+            );
+        }
+
+        // About
+        if (!_.isEmpty(profile.about) && !_.isEmpty(profile.about.title) && !_.isEmpty(profile.about.description)) {
+            text.push(
+                new Paragraph({
+                    text: profile.about.title,
+                    heading: HeadingLevel.HEADING_2
+                })
+            );
+            text.push(
+                new Paragraph({
+                    children: [
+                        new TextRun(profile.about.description)
+                    ]
+                })
+            );
+        }
+
+        // Experiences
+        if (!_.isEmpty(experiences)) {
+            if (!_.isEmpty(profile.experiences.title)) {
+                text.push(
+                    new Paragraph({
+                        text: profile.experiences.title,
+                        heading: HeadingLevel.HEADING_2
+                    })
+                );
+            }
+            text.push(
+                new Paragraph({
+                    children: experiences
+                })
+            );
+        }
+
+        // Education
+        if (!_.isEmpty(education)) {
+            if (!_.isEmpty(profile.education.title)) {
+                text.push(
+                    new Paragraph({
+                        text: profile.education.title,
+                        heading: HeadingLevel.HEADING_2
+                    })
+                );
+            }
+            text.push(
+                new Paragraph({
+                    children: education
+                })
+            );
+        }
+
+        // Certificates
+        if (!_.isEmpty(certificates)) {
+            if (!_.isEmpty(profile.certificates.title)) {
+                text.push(
+                    new Paragraph({
+                        text: profile.certificates.title,
+                        heading: HeadingLevel.HEADING_2
+                    })
+                );
+            }
+            text.push(
+                new Paragraph({
+                    children: certificates
+                })
+            );
+        }
+
+        // Skills
+        if (!_.isEmpty(skills)) {
+            if (!_.isEmpty(profile.skills.title)) {
+                text.push(
+                    new Paragraph({
+                        text: profile.skills.title,
+                        heading: HeadingLevel.HEADING_2
+                    })
+                );
+            }
+            text = _.concat(text, skills);
+        }
+
+        // Publications
+        if (!_.isEmpty(publications)) {
+            if (!_.isEmpty(profile.publications.title)) {
+                text.push(
+                    new Paragraph({
+                        text: profile.publications.title,
+                        heading: HeadingLevel.HEADING_2
+                    })
+                );
+            }
+            text = _.concat(text, publications);
+        }
+
+        // Accomplishments
+        if (!_.isEmpty(accomplishments)) {
+            if (!_.isEmpty(profile.publications.title)) {
+                text.push(
+                    new Paragraph({
+                        text: profile.publications.title,
+                        heading: HeadingLevel.HEADING_2
+                    })
+                );
+            }
+            text = _.concat(text, accomplishments);
+        }
 
         doc.addSection({
             properties: {},
