@@ -61,7 +61,7 @@
             vm.exportProfile = async (type) => {
                 vm.user = AuthService.user;
                 const data = await ProfileService.exportProfile(vm.user, type);
-                var a = document.createElement('a');
+                const a = document.createElement('a');
                 document.body.appendChild(a);
                 a.href = 'data:application/octet-stream;base64,' + data;
 

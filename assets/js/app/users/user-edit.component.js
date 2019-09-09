@@ -244,11 +244,12 @@
         };
 
         vm.uncheckAllBasicInformation = (evt) => {
-            console.log(evt.target.checked);
             if (!evt.target.checked) {
                 document.getElementById('username-public').checked = false;
                 document.getElementById('name-public').checked = false;
                 document.getElementById('surname-public').checked = false;
+                document.getElementById('display-name-public').checked = false;
+                document.getElementById('display-surname-public').checked = false;
                 document.getElementById('phone-public').checked = false;
                 document.getElementById('type-public').checked = false;
                 document.getElementById('center-public').checked = false;

@@ -102,6 +102,70 @@
                                 </li>
                             </ul>
 
+                            <div class="form-group">
+                                <label class="form-checkbox">
+                                    <input type="checkbox" id="use-display-name" ng-model="vm.useDisplayNames"/>
+                                    <span>Use display names</span>
+                                </label>
+                                <em class="form-checkbox-description">Show the display name and surname on your profile instead of name and surname.</em>
+                            </div>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="display-name">Display name</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="display-name"
+                                            placeholder="Display name"
+                                            ng-disabled="!vm.useDisplayNames">
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="display-name-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="display-name-public"
+                                                ng-disabled="!vm.useDisplayNames">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="display-surname">Display surname</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="display-surname"
+                                            placeholder="Display surname"
+                                            ng-disabled="!vm.useDisplayNames">
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="display-surname-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="display-surname-public"
+                                                ng-disabled="!vm.useDisplayNames">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
                             <ul class="enable-listing">
                                 <li>
                                     <div class="form-group">
