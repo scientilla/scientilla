@@ -74,8 +74,8 @@
                                 Login
                             </a>
                         </li>
-                        <li>
-                            <div uib-dropdown ng-if="vm.isLogged" class="dropdown">
+                        <li ng-if="vm.isLogged">
+                            <div uib-dropdown class="dropdown">
                                 <button
                                     ng-if="vm.showWizardVisible() && !vm.user.isViewOnly()"
                                     class="btn btn-link"
@@ -103,22 +103,32 @@
                             </div>
                         </li>
 
-                        <li ng-if="vm.isLogged">
-                            <a
-                                ng-href="{{ vm.getUrl('users/edit') }}"
-                                class="btn btn-link"
-                                ng-if="!vm.user.isViewOnly()">
-                                <i class="fas fa-user-edit"></i>
-                            </a>
-                        </li>
-
-                        <li ng-if="vm.isLogged">
-                            <button
-                                class="btn btn-link"
-                                ng-click="vm.editProfile()"
-                                ng-if="!vm.user.isViewOnly()">
-                                <i class="fas fa-cogs"></i>
-                            </button>
+                        <li ng-if="vm.isLogged && !vm.user.isViewOnly()">
+                            <div uib-dropdown class="dropdown">
+                                <button
+                                    class="btn btn-link"
+                                    uib-dropdown-toggle>
+                                    <i class="fas fa-user-edit" aria-hidden="true"></i>
+                                </button>
+                                <ul
+                                    uib-dropdown-menu
+                                    class="dropdown-menu dropdown-menu-right">
+                                    <li>
+                                        <a
+                                            ng-href="{{ vm.getUrl('users/edit') }}"
+                                            class="dropdown-item">
+                                            Public profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <button
+                                            class="dropdown-item"
+                                            ng-click="vm.editProfile()">
+                                            Settings
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
 
                         <li ng-if="vm.isLogged">
