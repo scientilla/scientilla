@@ -136,6 +136,7 @@
         ];
 
         vm.facilities = [
+            'None',
             'Mechanical Workshop',
             'Electronic Design Laboratory',
             'Electron Microscopy',
@@ -164,6 +165,7 @@
         ];
 
         vm.offices = [
+            'None',
             'Projects Office',
             'Outreach and Digital Production Office',
             'Tenure Track Office',
