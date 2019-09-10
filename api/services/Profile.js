@@ -13,6 +13,11 @@ const {Base64Encode} = require('base64-stream');
 const profile = {
     firstName: 'Firstname',
     lastName: 'Lastname',
+    displayNames: {
+        use: true,
+        firstName: 'Display firstname',
+        lastName: 'Display lastname'
+    },
     position: {
         type: 'administrative',
         center: '',
@@ -581,7 +586,12 @@ async function toPDF() {
         const basicProfile = [];
 
         // Basic profile
-        tmpText = concatStrings([profile.firstName, profile.lastName], {seperator: ' '});
+        if (profile.displayNames.use) {
+            tmpText = concatStrings([profile.displayNames.firstName, profile.displayNames.lastName], {seperator: ' '});
+        } else {
+            tmpText = concatStrings([profile.firstName, profile.lastName], {seperator: ' '});
+        }
+
         if (!_.isEmpty(tmpText)) {
             basicProfile.push(
                 {
@@ -1427,7 +1437,11 @@ async function toDoc() {
 
         let text = [];
 
-        tmpText = concatStrings([profile.firstName, profile.lastName], {seperator: ' '});
+        if (profile.displayNames.use) {
+            tmpText = concatStrings([profile.displayNames.firstName, profile.displayNames.lastName], {seperator: ' '});
+        } else {
+            tmpText = concatStrings([profile.firstName, profile.lastName], {seperator: ' '});
+        }
         if (!_.isEmpty(tmpText)) {
             text.push(
                 new Paragraph({
