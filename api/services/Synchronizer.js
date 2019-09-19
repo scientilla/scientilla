@@ -23,10 +23,18 @@ async function synchronizeScopus() {
     let skip = 0;
     let documentSynchronized = 0;
     let documentsToSynchronize;
-    const authorshipsSynch = await Authorship.find({synchronize: true});
-    const draftsToSync = await Document.find({kind: DocumentKinds.DRAFT, synchronized: true});
-    const documentIds = [...authorshipsSynch.map(a => a.document), ...draftsToSync.map(d => d.id)];
     let slicedDocumentIds;
+
+    const authorshipsSynch = await Authorship.find({synchronize: true});
+    const authorshipsGroupSynch = await AuthorshipGroup.find({synchronize: true});
+    const draftsToSync = await Document.find({kind: DocumentKinds.DRAFT, synchronized: true});
+    const documentIds = _.uniq([
+        ...authorshipsSynch.map(a => a.document),
+        ...authorshipsGroupSynch.map(a => a.document),
+        ...draftsToSync.map(d => d.id)
+    ]);
+
+    sails.log.info('working on ' + documentIds.length + ' documents');
 
     do {
         slicedDocumentIds = documentIds.slice(skip, skip + limit);
@@ -34,7 +42,6 @@ async function synchronizeScopus() {
         documentsToSynchronize = await Document.find({id: slicedDocumentIds})
             .populate(documentPopulates);
 
-        sails.log.info('working on ' + documentsToSynchronize.length + ' documents');
         for (let doc of documentsToSynchronize) {
             const externalDoc = await Document.findOne({
                 scopusId: doc.scopusId,
@@ -196,12 +203,12 @@ async function documentSplit(doc) {
 
     const notSynchronizingAuthorships = doc.authorships.filter(isSynchronizing);
 
-    if (notSynchronizingAuthorships.length === doc.authorships.filter(a => !_.isNil(a.synchronize)).length)
+    // groups always synchronize
+    if (doc.groupAuthorships.length === 0 && notSynchronizingAuthorships.length === doc.authorships.filter(a => !_.isNil(a.synchronize)).length)
         return false;
     if (!notSynchronizingAuthorships.length)
         return doc;
 
-    const newDoc = await Document.clone(doc, {synchronized: false});
 
     const authorshipsData = doc.getFullAuthorships().map(a => {
         const newAutorhsip = _.cloneDeep(a);
@@ -226,6 +233,7 @@ async function documentSplit(doc) {
         } else return a;
     });
 
+    const newDoc = await Document.clone(doc, {synchronized: false});
     await Authorship.updateAuthorships(newDoc, newDocAuthorshipsData);
     await Authorship.updateAuthorships(doc, oldDocAuthorshipsData);
 
