@@ -21,6 +21,9 @@ module.exports.scientilla = {
                 "url": "http://sais.scivalcontent.com",
                 "clientKey": ""
             }
+        },
+        "openaire": {
+            "url": "http://api.openaire.eu/search/publications"
         }
     },
     "institute": {
@@ -122,4 +125,4 @@ module.exports.scientilla = {
     "registerEnabled": true,
     "maxUserFavorite": "5",
     "maxGroupFavorite": "5"
-}
+};

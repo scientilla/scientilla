@@ -1,4 +1,4 @@
-/* global Document, sails, User, ObjectComparer, Connector, Source, Authorship, Affiliation, Institute, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer, DocumentTypes, SourceTypes, Exporter, DocumentNotDuplicate, DocumentNotDuplicateGroup */
+/* global Document, sails, User, ObjectComparer, Connector, Source, Authorship, Affiliation, Institute, DocumentKinds, ExternalImporter, DocumentOrigins, Synchronizer, DocumentTypes, SourceTypes, Exporter, DocumentNotDuplicate, DocumentNotDuplicateGroup, SqlService */
 'use strict';
 
 /**
@@ -10,7 +10,6 @@
 
 const _ = require('lodash');
 const BaseModel = require("../lib/BaseModel.js");
-const actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
 
 const fields = [
     {name: 'authorsStr'},
@@ -88,6 +87,10 @@ module.exports = _.merge({}, BaseModel, {
         },
         scopusDocumentMetadata: {
             collection: 'scopusdocumentmetadata',
+            via: 'document'
+        },
+        openaireMetadata: {
+            collection: 'openairedocumentmetadata',
             via: 'document'
         },
         externalUsers: {
@@ -227,11 +230,10 @@ module.exports = _.merge({}, BaseModel, {
             return this.authorsStr.replace(/\s+et all\s*/i, '').split(',').map(_.trim);
         },
         getUcAuthors: function () {
-            var authors = this.getAuthors();
-            var ucAuthors = _.map(authors, function (a) {
+            const authors = this.getAuthors();
+            return _.map(authors, function (a) {
                 return a.toUpperCase();
             });
-            return ucAuthors;
         },
         getAuthorIndex: async function (author) {
             const authors = this.getAuthors().map(a => a.toLocaleLowerCase());
@@ -428,6 +430,14 @@ module.exports = _.merge({}, BaseModel, {
             suggestedDocuments.push(r1);
         });
         return suggestedDocuments;
+    },
+    async getDOIs() {
+        const res = await SqlService.query('SELECT distinct doi FROM document WHERE doi is not null and doi <> \'\'');
+        return res.map(d => d.doi);
+    },
+    async getScopusIds() {
+        const res = await SqlService.query('SELECT distinct "scopusId" FROM document WHERE "scopusId" is not null and "scopusId" <> \'\'');
+        return res.map(d => d.scopusId);
     },
     findCopies: async function (document, AuthorshipPositionNotToCheck = null) {
         function areAuthorshipsAffiliationsMergeable(as1, as2) {
