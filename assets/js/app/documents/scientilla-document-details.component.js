@@ -20,8 +20,10 @@
         const vm = this;
 
         vm.collapsed = true;
+        vm.openaireMetadata = vm.document.openaireMetadata.length ? vm.document.openaireMetadata[0].data : undefined;
 
         vm.$onInit = function () {
+
             vm.type = _.get(documentTypes.find(dt => dt.key === vm.document.type), 'label');
             vm.sourceType = _.get(documentSourceTypes.find(dt => dt.id === vm.document.sourceType), 'label');
 
@@ -38,6 +40,13 @@
 
             if (vm.document.pages)
                 vm.bibliographicInformations.push('pp. ' + vm.document.pages);
+        };
+
+        vm.hasOpenaireOpenLinks = function () {
+            console.log(vm.openaireMetadata);
+            if (!vm.openaireMetadata) return false;
+            if (!Array.isArray(vm.openaireMetadata.links)) return false;
+            return !!vm.openaireMetadata.links.find(l => l.accessRight === 'OPEN');
         };
     }
 
