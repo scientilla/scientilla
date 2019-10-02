@@ -53,6 +53,8 @@
             return openModal(`<scientilla-admin-new-institute
                     institute="vm.institute"
                     close-fn="vm.onClose"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
                     check-and-close="vm.checkAndClose"
                 ></scientilla-admin-new-institute>`,
                 scopeVars,
