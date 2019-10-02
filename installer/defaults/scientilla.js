@@ -63,6 +63,12 @@ module.exports.scientilla = {
                     ]
                 },
                 {
+                    "fn": "GruntTaskRunner.run",
+                    "params": [
+                        "import:external:metadata"
+                    ]
+                },
+                {
                     "fn": "Status.disable",
                     "params": []
                 },
