@@ -41,13 +41,6 @@
             if (vm.document.pages)
                 vm.bibliographicInformations.push('pp. ' + vm.document.pages);
         };
-
-        vm.hasOpenaireOpenLinks = function () {
-            console.log(vm.openaireMetadata);
-            if (!vm.openaireMetadata) return false;
-            if (!Array.isArray(vm.openaireMetadata.links)) return false;
-            return !!vm.openaireMetadata.links.find(l => l.accessRight === 'OPEN');
-        };
     }
 
 })();

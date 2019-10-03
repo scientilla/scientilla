@@ -367,6 +367,12 @@ module.exports = _.merge({}, BaseModel, {
 
             return this.scopusDocumentMetadata[0].data.citations;
         },
+        getOpenaireOpenLinks() {
+            if (!this.openaireMetadata || !this.openaireMetadata[0] || !Array.isArray(this.openaireMetadata[0].data.links))
+                return undefined;
+
+            return this.openaireMetadata[0].data.links.filter(l => l.accessRight === 'OPEN');
+        },
         toJSON: function () {
             const document = this.toObject();
             document.sourceDetails = this.getSourceDetails();
@@ -380,6 +386,7 @@ module.exports = _.merge({}, BaseModel, {
             document.SNIP = this.getMetric('SNIP');
             document.IF = this.getMetric('IF');
             document.scopusCitations = this.getCitations(DocumentOrigins.SCOPUS);
+            document.openLinks = this.getOpenaireOpenLinks();
 
             return document;
         }

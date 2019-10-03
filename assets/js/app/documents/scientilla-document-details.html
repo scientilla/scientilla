@@ -69,10 +69,10 @@
     <div ng-if="vm.document.wosId">
         <label class="inline-block">WOS id:</label> {{vm.document.wosId}}
     </div>
-    <div ng-if="vm.hasOpenaireOpenLinks()">
+    <div ng-if="vm.document.openLinks">
         <hr/>
         <h4>Openaire links</h4>
-        <ul ng-repeat="link in vm.openaireMetadata.links" ng-if="link.accessRight==='OPEN'">
+        <ul ng-repeat="link in vm.document.openLinks">
             <li ng-repeat="url in link.urls">
                 <a href="{{url}}" target="_blank">{{link.collectedFrom}}</a>
             </li>

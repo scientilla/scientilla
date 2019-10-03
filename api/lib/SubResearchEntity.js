@@ -74,8 +74,7 @@ module.exports = _.merge({}, BaseModel, {
             sails.log.info(`${Model.identity} ${researchEntityId} tried to discard document ${documentId} but was already discarded`);
             return alreadyDiscarded[0];
         }
-        const newDiscarded = await DiscardedModel.create({researchEntity: researchEntityId, document: documentId});
-        return newDiscarded;
+        return await DiscardedModel.create({researchEntity: researchEntityId, document: documentId});
     },
     discardDocuments: async function (Model, researchEntityId, documentIds) {
         const results = [];
@@ -273,7 +272,7 @@ module.exports = _.merge({}, BaseModel, {
             };
         const path = `/api/v1/${researchEntity.getUrlSection()}/${researchEntity.id}/${attribute}`;
         if (!_.isArray(qs.populate)) qs.populate = [qs.populate];
-        qs.populate = _.union(['source', 'affiliations', 'authorships', 'institutes'], qs.populate);
+        qs.populate = _.union(['source', 'affiliations', 'authorships', 'institutes', 'openaireMetadata'], qs.populate);
         const reqOptions = {
             uri: baseUrl + path,
             json: true,
