@@ -4,5 +4,5 @@ SELECT m.id   AS id,
        m.data AS "data"
 FROM document d
          JOIN externaldocumentmetadata m
-              ON d.doi = m.origin_id
+              ON LOWER(d.doi) = LOWER(m.origin_id)
                   AND m.origin = 'openaire' :: TEXT;
