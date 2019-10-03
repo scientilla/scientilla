@@ -71,10 +71,11 @@
     </div>
     <div ng-if="vm.document.openLinks">
         <hr/>
-        <h4>Openaire links</h4>
+        <h4>Open links</h4>
         <ul ng-repeat="link in vm.document.openLinks">
-            <li ng-repeat="url in link.urls">
-                <a href="{{url}}" target="_blank">{{link.collectedFrom}}</a>
+            <li>
+                {{link.collectedFrom}}
+                <a ng-repeat="url in link.urls" href="{{url}}" target="_blank">Link{{$index+1}} </a>
             </li>
         </ul>
     </div>

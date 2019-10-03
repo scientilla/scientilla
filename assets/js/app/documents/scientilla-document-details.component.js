@@ -20,7 +20,6 @@
         const vm = this;
 
         vm.collapsed = true;
-        vm.openaireMetadata = vm.document.openaireMetadata.length ? vm.document.openaireMetadata[0].data : undefined;
 
         vm.$onInit = function () {
 
