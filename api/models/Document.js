@@ -367,11 +367,18 @@ module.exports = _.merge({}, BaseModel, {
 
             return this.scopusDocumentMetadata[0].data.citations;
         },
-        getOpenaireOpenLinks() {
+        getOpenaireOpenAccessLinks() {
             if (!this.openaireMetadata || !this.openaireMetadata[0] || !Array.isArray(this.openaireMetadata[0].data.links))
                 return undefined;
 
-            return this.openaireMetadata[0].data.links.filter(l => l.accessRight === 'OPEN');
+            return this.openaireMetadata[0].data.links
+                .filter(l => l.accessRight === 'OPEN')
+                .map(l => {
+                    const newLink = _.cloneDeep(l);
+                    newLink.url = newLink.urls.length > 0 ? newLink.urls[0] : undefined;
+                    delete newLink.urls;
+                    return newLink;
+                });
         },
         toJSON: function () {
             const document = this.toObject();
@@ -386,7 +393,7 @@ module.exports = _.merge({}, BaseModel, {
             document.SNIP = this.getMetric('SNIP');
             document.IF = this.getMetric('IF');
             document.scopusCitations = this.getCitations(DocumentOrigins.SCOPUS);
-            document.openLinks = this.getOpenaireOpenLinks();
+            document.openAccessLinks = this.getOpenaireOpenAccessLinks();
 
             return document;
         }
