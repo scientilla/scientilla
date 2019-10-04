@@ -21,6 +21,9 @@ module.exports.scientilla = {
                 "url": "http://sais.scivalcontent.com",
                 "clientKey": ""
             }
+        },
+        "openaire": {
+            "url": "http://api.openaire.eu/search/publications"
         }
     },
     "institute": {
@@ -57,6 +60,12 @@ module.exports.scientilla = {
                     "fn": "GruntTaskRunner.run",
                     "params": [
                         "import:external:all"
+                    ]
+                },
+                {
+                    "fn": "GruntTaskRunner.run",
+                    "params": [
+                        "import:external:metadata"
                     ]
                 },
                 {
@@ -122,4 +131,4 @@ module.exports.scientilla = {
     "registerEnabled": true,
     "maxUserFavorite": "5",
     "maxGroupFavorite": "5"
-}
+};

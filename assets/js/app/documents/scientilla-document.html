@@ -29,10 +29,16 @@
 
         <scientilla-document-source document="vm.document"></scientilla-document-source>
 
-        <div class="document-doi"
-             ng-if="vm.document.doi"
-             ng-bind-html='vm.document | doi'>
-        </div>
+        <span class="document-doi"
+              ng-if="vm.document.doi"
+              ng-bind-html='vm.document | doi'>
+        </span>
+        <img ng-if="vm.document.openAccessLinks"
+             ng-click="vm.openDetails()"
+             src="/images/icon-open-access.png"
+             class="icon-open-access ng-scope"
+             uib-tooltip-html="'Open access'"
+             tooltip-class="text-left">
 
         <div ng-if="vm.showPrivateTags">
             <i class="fa fa-tags has-action"

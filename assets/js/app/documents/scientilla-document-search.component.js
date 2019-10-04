@@ -55,7 +55,7 @@
                 setState: function (state) {
                     this.state = state;
 
-                    switch(state) {
+                    switch (state) {
                         case 'idle':
                             this.message = 'Search';
                             break;
@@ -72,8 +72,8 @@
         }
 
         function getOrigins() {
-            Object.keys(vm.connectors).forEach(function(connector) {
-                Object.keys(vm.connectors[connector]).forEach(function(origin) {
+            Object.keys(vm.connectors).forEach(function (connector) {
+                Object.keys(vm.connectors[connector]).forEach(function (origin) {
                     if (_.has(vm.connectors[connector][origin], 'searchOptions')) {
                         vm.origins[origin] = {
                             disabled: !vm.connectors[connector].active,
@@ -94,7 +94,7 @@
         function getSearchOptions() {
             vm.searchOptions = null;
 
-            Object.keys(vm.connectors).forEach(function(connector) {
+            Object.keys(vm.connectors).forEach(function (connector) {
                 if (vm.connectors[connector].active) {
                     Object.keys(vm.connectors[connector]).forEach(function (origin) {
                         if (vm.origin === origin && _.keysIn(vm.connectors[connector][origin].searchOptions).length > 0) {

@@ -53,6 +53,27 @@ module.exports = {
         total += importedDocuments.length;
         sails.log.info('updated/inserted ' + total + ' scopus external documents');
     },
+    async updateAllMetadata() {
+        const parallelRequests = 200;
+        const errors = [];
+        const allScopusIds = await Document.getScopusIds();
+        const invalidScopusIds = await getInvalidScopusIds();
+        const scopusIds = allScopusIds.filter(sid => !invalidScopusIds.includes(sid));
+
+        for (let i = 0; i < scopusIds.length; i += parallelRequests)
+            await Promise.all(scopusIds.slice(i, i + parallelRequests).map(
+                scopusId => updateCitations(scopusId).catch(err => errors.push(err))
+            ));
+
+        sails.log.info('updated ' + scopusIds.length + ' citations');
+        sails.log.info('errors: ');
+        sails.log.info(errors.reduce((res, err) => {
+            if (!res[err.message]) res[err.message] = {count: 0, eIds: []};
+            res[err.message].count++;
+            res[err.message].eIds.push(err.eId);
+            return res;
+        }, {}));
+    },
     updateDocument: getAndCreateOrUpdateDocument
 };
 
@@ -224,11 +245,8 @@ async function importDocuments(documentScopusIds) {
         }
 
         try {
-            const document = await getAndCreateOrUpdateDocument(scopusId);
-            await updateCitations(document);
-            documents.push(document);
-        }
-        catch (err) {
+            documents.push(await getAndCreateOrUpdateDocument(scopusId));
+        } catch (err) {
             sails.log.debug(err);
         }
     }
@@ -269,16 +287,16 @@ async function getAndCreateOrUpdateDocument(scopusId) {
     return document;
 }
 
-async function updateCitations(document) {
-    const citations = await ScopusConnector.getDocumentCitations(document.scopusId);
+async function updateCitations(scopusId) {
+    const citations = await ScopusConnector.getDocumentCitations(scopusId);
     if (!citations)
         return;
 
-    citations.sort((a, b) => a.year > b.year);
+    citations.sort((a, b) => parseInt(a.year, 10) > parseInt(b.year, 10));
 
     await ExternalDocumentMetadata.setData(
         DocumentOrigins.SCOPUS,
-        document.scopusId,
+        scopusId,
         'citations',
         citations);
 }

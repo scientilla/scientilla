@@ -13,5 +13,8 @@ module.exports.connectors = {
             "url": "",
             "clientKey": ""
         }
+    },
+    "openaire": {
+        "url": "http://api.openaire.eu/search/publications"
     }
-}
+};

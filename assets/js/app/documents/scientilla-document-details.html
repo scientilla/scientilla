@@ -10,9 +10,8 @@
 
 <scientilla-document-authors-legend document="vm.document"></scientilla-document-authors-legend>
 
-<div
-        ng-if="vm.document.abstract"
-        class="document-details-abstract">
+<div ng-if="vm.document.abstract"
+     class="document-details-abstract">
     <h4>Abstract</h4>
     <div>
         {{ vm.document.abstract }}
@@ -29,31 +28,42 @@
         ({{vm.document.year}})
     </small>
 
-    <ul
-            class="document-details-info"
-            ng-if="vm.document.doi || vm.sourceType || vm.type">
-        <li ng-if="vm.document.doi">
-            <span ng-bind-html='vm.document | doi'></span>
-        </li>
-        <li ng-if="vm.sourceType">
-            <label class="inline-block">Source type:</label> {{vm.sourceType}}
-        </li>
-        <li ng-if="vm.type">
-            <label class="inline-block">Document type:</label> {{vm.type}}
-        </li>
-    </ul>
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            <ul class="document-details-info"
+                ng-if="vm.document.doi || vm.sourceType || vm.type">
+                <li ng-if="vm.document.doi">
+                    <span ng-bind-html='vm.document | doi'></span>
+                </li>
+                <li ng-if="vm.sourceType">
+                    <label class="inline-block">Source type:</label> {{vm.sourceType}}
+                </li>
+                <li ng-if="vm.type">
+                    <label class="inline-block">Document type:</label> {{vm.type}}
+                </li>
+            </ul>
+        </div>
+        <div class="col-12 col-md-6">
+            <ul ng-if="vm.document.openAccessLinks"
+                class="document-details-info">
+                <li ng-repeat="link in vm.document.openAccessLinks">
+                    <img src="/images/icon-open-access.png" class="icon-open-access ng-scope"
+                         uib-tooltip-html="'Open access'" tooltip-class="text-left">
+                    <a href="{{link.url}}" target="_blank">{{link.collectedFrom}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>
 
-<div
-        ng-if="vm.document.scopusId || vm.document.wosId"
-        class="document-details-ids">
+<div ng-if="vm.document.scopusId || vm.document.wosId"
+     class="document-details-ids">
     <div ng-if="vm.document.scopusId">
         <label class="inline-block">Scopus id:</label>
         <span ng-if="vm.document.hasValidScopusId()">
             {{vm.document.scopusId}}
-            <a
-                    href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document.scopusId}}&origin=inward"
-                    target="_blank">[View at Scopus]</a>
+            <a href="https://www.scopus.com/record/display.uri?eid=2-s2.0-{{vm.document.scopusId}}&origin=inward"
+               target="_blank">[View at Scopus]</a>
         </span>
 
         <span ng-if="!vm.document.hasValidScopusId()">
