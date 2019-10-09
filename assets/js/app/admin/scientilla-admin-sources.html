@@ -1,0 +1,13 @@
+<scientilla-backend-layout>
+    <div class="admin admin-sources">
+        <h1>Source and metrics</h1>
+        <uib-tabset active="active">
+            <uib-tab index="0" heading="Source">
+                <scientilla-admin-source></scientilla-admin-source>
+            </uib-tab>
+            <uib-tab index="1" heading="Metrics import" select="vm.selectTab('admin-metrics')">
+                <scientilla-admin-metrics></scientilla-admin-metrics>
+            </uib-tab>
+        </uib-tabset>
+    </div>
+</scientilla-backend-layout>

@@ -9,6 +9,9 @@
 const _ = require('lodash');
 const BaseModel = require("../lib/BaseModel.js");
 
+const moment = require('moment');
+moment.locale('en');
+
 const fields = [
     'source',
     'origin',
@@ -55,9 +58,17 @@ module.exports = _.merge({}, BaseModel, {
         else
             await SourceMetric.create(selectedData);
     },
-    assignMetrics: async function () {
-        sails.log.info('Source metrics assign started');
-        const metricsToAssign = await SourceMetric.find();
+    assignMetrics: async function (year = false) {
+        const startedAt = moment();
+        sails.log.info('Source metrics assign started - ' + startedAt.format('DD/MM/YYYY HH:mm:ss'));
+
+        let metricsToAssign;
+
+        if (year) {
+            metricsToAssign = await SourceMetric.find({year: year});
+        } else {
+            metricsToAssign = await SourceMetric.find();
+        }
 
         const searchKeys = ['issn', 'sourceOriginId'];
 
@@ -120,6 +131,12 @@ module.exports = _.merge({}, BaseModel, {
         sails.log.info('assigned ' + assignedCount + ' sources');
         sails.log.info(notSourceFoundCount + ' metrics without sources');
         sails.log.info(multipleSourceFound + ' multiple sources found');
-        sails.log.info('Source metrics assign finished');
+
+        const endedAt = moment();
+        sails.log.info('Source metrics assign finished - ' + endedAt.format('DD/MM/YYYY HH:mm:ss'));
+
+        const duration = moment.utc(endedAt.diff(startedAt));
+        sails.log.info('------------------------------------');
+        sails.log.info('It took ' + duration.format('HH:mm:ss') + ' to assign the metrics.');
     }
 });
