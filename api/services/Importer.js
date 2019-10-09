@@ -386,7 +386,7 @@ async function importSourceMetrics(filename) {
     let recordsCount = 0;
 
     const cols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-    const filePath = 'config/init/' + filename;
+    const filePath = 'metrics/' + filename;
 
     const errors = [];
 

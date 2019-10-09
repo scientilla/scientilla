@@ -6,7 +6,7 @@
 const _ = require('lodash');
 const path = require('path');
 
-const baseFolder = path.join('config', 'init');
+const metricsFolder = path.join('metrics');
 
 const sqlQueries = {
     'import': 'api/queries/sourceMetricsByOriginAndYear.sql',
@@ -38,7 +38,7 @@ async function importMetrics(req) {
         req.file('file').upload({
             maxBytes: 10000000000000,
             saveAs: filename,
-            dirname: path.resolve(sails.config.appPath, baseFolder)
+            dirname: path.resolve(sails.config.appPath, metricsFolder)
         }, async function (err, file) {
             if (err) {
                 reject('Failed to upload the source metrics file!');
