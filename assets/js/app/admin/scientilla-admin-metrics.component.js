@@ -115,11 +115,8 @@
             }
 
             $timeout(() => {
-                angular.element(vm.types[type].element).scrollTop(99999999);
-            }, 0);
-
-            $timeout(() => {
                 vm.types[type].refreshingLogs = false;
+                angular.element(vm.types[type].element).scrollTop(99999999);
             }, 500);
         }
         /* jshint ignore:end */
