@@ -133,6 +133,13 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/backup/remove']: 'Backup.remove',
     ['post ' + apiPrfx + '/backup/download']: 'Backup.download',
 
+    ['get ' + apiPrfx + '/logs/tasks']: 'Log.getTasks',
+    ['get ' + apiPrfx + '/logs/:taskName/:date?']: 'Log.read',
+
+    ['get ' + apiPrfx + '/source-metrics/:type']: 'SourceMetric.getMetrics',
+    ['post ' + apiPrfx + '/source-metrics/import']: 'SourceMetric.importMetrics',
+    ['post ' + apiPrfx + '/source-metrics/assign']: 'SourceMetric.assignMetrics',
+
     ['get ' + apiPrfx + '/customize']: 'Customize.getCustomizations',
     ['post ' + apiPrfx + '/customize/reset']: 'Customize.resetCustomizations',
     ['post ' + apiPrfx + '/customize']: 'Customize.setCustomizations',

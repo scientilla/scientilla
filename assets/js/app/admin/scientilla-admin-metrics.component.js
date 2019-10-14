@@ -10,146 +10,115 @@
         });
 
     scientillaAdminMetrics.$inject = [
-        'Restangular'
+        'Restangular',
+        'Notification',
+        '$timeout',
+        '$scope'
     ];
 
-    function scientillaAdminMetrics(Restangular) {
+    function scientillaAdminMetrics(Restangular, Notification, $timeout, $scope) {
         const vm = this;
-        vm.getSources = getSources;
-        vm.formatSource = formatSource;
-        vm.onMetricSearchKey = onMetricSearchKey;
-        vm.searchMetrics = searchMetrics;
-        vm.selectMetric = selectMetric;
-        vm.addMetric = addMetric;
-        vm.removeMetric = removeMetric;
 
-        vm.selectedSource = null;
-        vm.metrics = [];
-        vm.metricsSearch = '';
+        vm.importMetrics = importMetrics;
+        vm.assignMetrics = assignMetrics;
+        vm.getLogs = getLogs;
+        vm.getMetrics = getMetrics;
 
-        vm.metricsToAdd = [];
-        vm.metricsToRemove = [];
-
-        vm.$onInit = function () {
+        vm.types = {
+            'import': {
+                taskName: 'import:sourcesMetrics',
+                element: '#log-viewer-import',
+                refreshingLogs: false,
+                logs: [],
+                refreshingMetrics: false,
+                metrics: []
+            },
+            'assign': {
+                taskName: 'documents:assignMetrics',
+                element: '#log-viewer-assign',
+                refreshingLogs: false,
+                logs: [],
+                refreshingMetrics: false,
+                metrics: []
+            }
         };
 
-        function getSources(searchText) {
+        vm.$onInit = function () {
+            vm.years = getYears();
+            vm.years.unshift('All');
+            vm.year = vm.years[0];
+        };
 
-            const token = searchText.split(' | ')[0];
-
-            const qs = {
-                populate: 'metrics',
-                where: {
-                    title: {
-                        contains: token
-                    }
+        $scope.$on('tab-selected', (evt, args) => {
+            const name = args.name;
+            if (name === 'admin-metrics') {
+                for (const type in vm.types) {
+                    getLogs(type);
+                    getMetrics(type);
                 }
-            };
-            return Restangular.all('sources').getList(qs);
-        }
+            }
+        });
 
-        function formatSource(source) {
-            if (!source) return '';
-            return source.title + ' | ' + source.issn + ' | ' + source.eissn + ' | ' + source.scopusId;
+        function getYears() {
+            const years = [];
+            const today = new Date();
+            let year = today.getFullYear();
+
+            while(year >= 2016) {
+                years.push(year);
+                year--;
+            }
+
+            return years;
         }
 
         /* jshint ignore:start */
-        function onMetricSearchKey(event) {
-            if (event.key === 'Enter') {
-                event.preventDefault();
-                searchMetrics();
-
+        async function importMetrics() {
+            const formData = new FormData();
+            if (vm.sourceMetricsFile) {
+                formData.append('file', vm.sourceMetricsFile);
             }
-            else if (event.key === 'Escape') {
-                event.preventDefault();
-                vm.metricsSearch = '';
-                vm.foundMetrics = [];
+
+            await Restangular.one('source-metrics/import').customPOST(formData, '', undefined, {'Content-Type': undefined});
+
+            vm.sourceMetricsFile = null;
+            document.getElementById('sourceMetricsFile').value = null;
+
+            Notification.success('Import source metrics is been started!');
+        }
+
+        async function assignMetrics() {
+            await Restangular.one('source-metrics/assign').customPOST({year: vm.year});
+
+            vm.sourceMetricsFile = null;
+            document.getElementById('year').selectedIndex = 0;
+            vm.year = vm.years[0];
+
+            Notification.success('Assignment source metrics is been started!');
+        }
+
+        async function getMetrics(type) {
+            vm.types[type].refreshingMetrics = true;
+            vm.types[type].metrics = await Restangular.one('source-metrics/' + type).get();
+            $timeout(() => {
+                vm.types[type].refreshingMetrics = false;
+            }, 500);
+        }
+
+        async function getLogs(type) {
+            vm.types[type].refreshingLogs = true;
+
+            const res = await Restangular.one('logs/' + vm.types[type].taskName).get();
+
+            if (res.type === 'success') {
+                vm.types[type].logs = res.logs;
             }
+
+            $timeout(() => {
+                vm.types[type].refreshingLogs = false;
+                angular.element(vm.types[type].element).scrollTop(99999999);
+            }, 500);
         }
-
-        async function searchMetrics() {
-            if (!vm.metricsSearch)
-                return;
-
-            const qs = {
-                where: {
-                    or: [
-                        {sourceTitle: {contains: vm.metricsSearch}},
-                        {issn: vm.metricsSearch},
-                        {eissn: vm.metricsSearch},
-                        {sourceOriginId: vm.metricsSearch}
-                    ]
-                }
-            };
-            vm.foundMetrics = await Restangular.all('sourceMetrics').getList(qs);
-        }
-
-        /* jshint ignore:end */
-
-        function selectMetric(metric) {
-            metric.selected = !metric.selected;
-
-            if (vm.foundMetrics)
-                vm.metricsToAdd = vm.foundMetrics.filter(m => m.selected);
-
-            if(vm.selectedSource)
-                vm.metricsToRemove = vm.selectedSource.metrics.filter(m => m.selected);
-        }
-
-        /* jshint ignore:start */
-        async function addMetric() {
-            if (!vm.selectedSource || !vm.foundMetrics)
-                return;
-
-            if (!vm.metricsToAdd.length)
-                return;
-
-            const sourceMetricSources = vm.metricsToAdd.map(m => ({
-                sourceMetric: m.id,
-                source: vm.selectedSource.id
-            }));
-
-            await Restangular.all('sourcemetricsources')
-                .post(sourceMetricSources)
-                .then(() => {
-                    vm.metricsToAdd = [];
-                    vm.foundMetrics.forEach(function(metric) {
-                        metric.selected = false;
-                    });
-                });
-
-            vm.selectedSource = await Restangular.one('sources', vm.selectedSource.id)
-                .get({populate: 'metrics'});
-        }
-
-        async function removeMetric() {
-            if (!vm.selectedSource || !vm.selectedSource.metrics)
-                return;
-
-            if (!vm.metricsToRemove.length)
-                return;
-
-            const criteria = {
-                where: {
-                    or: vm.metricsToRemove.map(m => ({
-                        sourceMetric: m.id,
-                        source: vm.selectedSource.id
-                    }))
-                }
-            };
-
-            const sourceMetricSourcesToDelete = await Restangular.all('sourcemetricsources').getList(criteria);
-
-            for (const sms of sourceMetricSourcesToDelete)
-                await sms.remove()
-                    .then(() => {
-                        vm.metricsToRemove = [];
-                    });
-
-            vm.selectedSource = await Restangular.one('sources', vm.selectedSource.id)
-                .get({populate: 'metrics'});
-        }
-
         /* jshint ignore:end */
     }
 

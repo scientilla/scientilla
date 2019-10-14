@@ -1,0 +1,55 @@
+<h2>Log viewer</h2>
+
+<ul class="admin-log-viewer">
+    <li>
+        <div class="form-group">
+            <label for="task">Task</label>
+            <div class="select-wrapper">
+                <select
+                    name="task"
+                    id="task"
+                    class="form-control"
+                    ng-model="vm.task"
+                    ng-options="task.taskName for task in vm.tasks">
+                </select>
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="form-group">
+            <label for="date">Date</label>
+            <div class="select-wrapper">
+                <select
+                    name="date"
+                    id="date"
+                    class="form-control"
+                    ng-model="vm.date"
+                    ng-options="date as parseDate(date) for date in vm.task.dates">
+                </select>
+            </div>
+        </div>
+    </li>
+    <li>
+        <div class="form-group">
+            <button
+                class="btn btn-primary"
+                type="submit"
+                ng-click="vm.getTasks()"
+                ng-disabled="vm.refreshingTasks">
+                <span ng-if="!vm.refreshingTasks">
+                    <i class="fas fa-sync fa-left"></i>Refresh
+                </span>
+                <span ng-if="vm.refreshingTasks">
+                    <i class="fas fa-sync fa-left fa-spin"></i>Refreshing
+                </span>
+            </button>
+        </div>
+    </li>
+    <li>
+        <label>Log output</label>
+        <div class="log-output-container">
+            <div class="log-output large" id="log-viewer" ng-bind-html="vm.logs">
+            </div>
+        </div>
+    </li>
+</ul>

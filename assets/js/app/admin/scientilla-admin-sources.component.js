@@ -2,8 +2,8 @@
     'use strict';
 
     angular.module('admin')
-        .component('scientillaAdminTools', {
-            templateUrl: 'partials/scientilla-admin-tools.html',
+        .component('scientillaAdminSources', {
+            templateUrl: 'partials/scientilla-admin-sources.html',
             controller: controller,
             controllerAs: 'vm',
             bindings: {}

@@ -2,6 +2,11 @@
 
 "use strict";
 const exec = require('child_process').exec;
+const path = require('path');
+const logFolder = 'logs';
+
+const moment = require('moment');
+moment.locale('en');
 
 let tasks = [];
 
@@ -11,12 +16,12 @@ module.exports = {
 
 async function run(command) {
 
-    return new Promise((resolve, reject) => {
-
+    return new Promise(async (resolve, reject) => {
         try {
-            const startedAt = new Date();
-            const taskObj = exec('grunt ' + command);
-
+            const startedAt = moment();
+            const taskName = command.split(':').slice(0, 2).join(':');
+            const file = path.join(logFolder, taskName + '_' + startedAt.format('YYYYMMDD')) + '.log';
+            const taskObj = exec('grunt ' + command + ' >> ' + file);
             const task = {
                 command,
                 taskObj,
@@ -33,19 +38,17 @@ async function run(command) {
             });
 
             taskObj.on('close', code => {
-                const now = new Date();
+                const endedAt = moment();
 
-                sails.log.info('grunt ' + task.command + ' finished in ' + ( (now - task.startedAt) / 1000) + ' seconds with code ' + code);
+                sails.log.info('grunt ' + task.command + ' finished in ' + endedAt.diff(startedAt, 'seconds') + ' seconds with code ' + code);
                 tasks = tasks.filter(t => t.taskObj !== taskObj);
 
                 resolve(code);
             });
 
-            sails.log.info('grunt ' + task.command + ' started at ' + task.startedAt.toISOString());
+            sails.log.info('grunt ' + task.command + ' started at ' + task.startedAt.format('DD/MM/YYYY HH:mm:ss'));
+        } catch (e) {
+            reject(e);
         }
-        catch (e) {
-            reject();
-        }
-
     });
 }

@@ -2,13 +2,16 @@
     <div class="admin admin-tools">
         <h1>Tools</h1>
         <uib-tabset active="active">
-            <uib-tab index="0" heading="Status">
+            <uib-tab index="0" heading="Log viewer" select="vm.selectTab('admin-log-viewer')">
+                <scientilla-admin-log-viewer></scientilla-admin-log-viewer>
+            </uib-tab>
+            <uib-tab index="1" heading="Status">
                 <scientilla-admin-status></scientilla-admin-status>
             </uib-tab>
-            <uib-tab index="1" heading="Backup">
+            <uib-tab index="2" heading="Backup">
                 <scientilla-admin-backup></scientilla-admin-backup>
             </uib-tab>
-            <uib-tab index="2" heading="Institutes">
+            <uib-tab index="3" heading="Institutes">
                 <scientilla-admin-institutes></scientilla-admin-institutes>
             </uib-tab>
         </uib-tabset>
