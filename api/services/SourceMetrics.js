@@ -6,7 +6,7 @@
 const _ = require('lodash');
 const path = require('path');
 
-const metricsFolder = path.join('metrics');
+const metricsFolder = path.join('metrics_import');
 
 const sqlQueries = {
     'import': 'api/queries/sourceMetricsByOriginAndYear.sql',

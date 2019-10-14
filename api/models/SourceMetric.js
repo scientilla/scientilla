@@ -58,17 +58,25 @@ module.exports = _.merge({}, BaseModel, {
         else
             await SourceMetric.create(selectedData);
     },
-    assignMetrics: async function (year = false) {
+    assignMetrics: async function (year) {
         const startedAt = moment();
-        sails.log.info('Source metrics assign started - ' + startedAt.format('DD/MM/YYYY HH:mm:ss'));
+        sails.log.info('Source metrics assign {' + (year?year:'all')  + '} started - ' + startedAt.format('DD/MM/YYYY HH:mm:ss'));
 
-        let metricsToAssign;
+
+        const search={};
+
+        if (year) {
+            search.year = year;
+        }
+        const metricsToAssign = await SourceMetric.find(search);
+
+        /*let metricsToAssign;
 
         if (year) {
             metricsToAssign = await SourceMetric.find({year: year});
         } else {
             metricsToAssign = await SourceMetric.find();
-        }
+        }*/
 
         const searchKeys = ['issn', 'sourceOriginId'];
 
