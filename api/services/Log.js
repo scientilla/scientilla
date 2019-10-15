@@ -30,22 +30,24 @@ function getTasks() {
             let tasks = [];
 
             files.map(name => {
-                const fileInfo = name.split('_');
-                const taskName = fileInfo.shift();
-                const date = fileInfo.pop().replace('.log', '');
+                if (name.match(/_[0-9]{8}.log/g)) {
+                    const fileInfo = name.split('_');
+                    const taskName = fileInfo.shift();
+                    const date = fileInfo.pop().replace('.log', '');
 
-                const index = tasks.findIndex((task => task.taskName === taskName));
-                if (index === -1) {
-                    tasks.push({
-                        taskName: taskName,
-                        dates: [date]
-                    });
-                } else {
-                    tasks[index].dates.push(date);
+                    const index = tasks.findIndex((task => task.taskName === taskName));
+                    if (index === -1) {
+                        tasks.push({
+                            taskName: taskName,
+                            dates: [date]
+                        });
+                    } else {
+                        tasks[index].dates.push(date);
 
-                    tasks[index].dates = _.orderBy(tasks[index].dates, date => {
-                        return new moment(date).format('YYYMMDD');
-                    }, ['desc']);
+                        tasks[index].dates = _.orderBy(tasks[index].dates, date => {
+                            return new moment(date).format('YYYMMDD');
+                        }, ['desc']);
+                    }
                 }
             });
 
