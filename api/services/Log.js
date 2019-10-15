@@ -75,7 +75,7 @@ function read(req) {
 
         await readdirPromise(baseFolder).then(async fileNames => {
             let files = fileNames.filter(name => {
-                return name !== '.gitkeep';
+                return name !== '.gitkeep' && name.match(/_[0-9]{8}.log/g);
             });
 
             files = files.map(name => {
