@@ -19,11 +19,18 @@
         const vm = this;
 
         vm.refreshingTasks = false;
+        let deregisterers = [];
 
         vm.getTasks = getTasks;
 
         vm.$onInit = function () {
             getTasks();
+
+            deregisterers.push($scope.$watch('vm.task', taskHasChanged));
+        };
+
+        vm.$onDestroy = function () {
+            deregisterers.forEach(d => d());
         };
 
         $scope.$watch('vm.task', () => {
@@ -48,6 +55,10 @@
             }
         });
 
+        function taskHasChanged() {
+            vm.date = !_.isEmpty(vm.task) ? vm.task.dates[0] : '';
+        }
+
         /* jshint ignore:start */
         async function getTasks() {
             vm.refreshingTasks = true;
@@ -55,8 +66,8 @@
 
             if (res.type === 'success') {
                 vm.tasks = res.tasks;
-                vm.task = vm.tasks[0];
-                vm.date = vm.task.dates[0];
+                vm.task = Array.isArray(vm.tasks) ? vm.tasks[0] : {};
+                vm.date = !_.isEmpty(vm.task) ? vm.task.dates[0] : '';
             }
 
             $timeout(() => {
