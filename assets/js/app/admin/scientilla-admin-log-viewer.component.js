@@ -55,8 +55,8 @@
 
             if (res.type === 'success') {
                 vm.tasks = res.tasks;
-                vm.task = Array.isArray(vm.tasks) ? vm.tasks[0] : {};
-                vm.date = !_.isEmpty(vm.task) ? vm.task.dates[0] : '';
+                vm.task = vm.tasks[0];
+                vm.date = vm.task.dates[0];
             }
 
             $timeout(() => {
