@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 const {promisify} = require("util");
-const writeFileSync = promisify(fs.writeFileSync);
+const writeFile = promisify(fs.writeFile);
 
 module.exports = {
     getCustomizations,
@@ -169,7 +169,7 @@ async function setCustomizations(req, footer, styles) {
 
     await Promise.all(promises);
 
-    writeFileSync(
+    await writeFile(
         sails.config.appPath + '/config/customizations.js',
         'module.exports.customizations = ' + JSON.stringify(sails.config.customizations, null, 4)
     );
@@ -187,7 +187,7 @@ async function setCustomizations(req, footer, styles) {
 async function resetCustomizations() {
     sails.config.customizations = sails.config.customizationDefaults;
 
-    writeFileSync(
+    await writeFile(
         sails.config.appPath + '/config/customizations.js',
         'module.exports.customizations = ' + JSON.stringify(sails.config.customizationDefaults, null, 4)
     );

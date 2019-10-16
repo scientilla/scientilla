@@ -371,7 +371,6 @@ async function removeSelectedBackups(dates) {
 }
 
 async function autoDelete() {
-    sails.log.info('------------------')
     sails.log.info('Cleaning up backups')
     const startDate = moment()
     const dates = getBackupDates(startDate)
