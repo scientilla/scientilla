@@ -142,6 +142,9 @@ docker/db-test/logs
 logs/*
 !logs/.gitkeep
 
+metrics_import/*
+!metrics_import/.gitkeep
+
 ################################################
 # Program files
 #
