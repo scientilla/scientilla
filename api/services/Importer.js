@@ -375,9 +375,6 @@ async function importGroups() {
 
 
 async function importSourceMetrics(filename) {
-    const startedAt = moment();
-    sails.log.info('Source metrics import started - ' + startedAt.format('DD/MM/YYYY HH:mm:ss'));
-
     const sourceIdentifiers = SourceMetric.sourceIdentifiers;
 
     const originCellCoord = 'B1';
@@ -493,11 +490,4 @@ async function importSourceMetrics(filename) {
     }
 
     sails.log.info('imported ' + recordsCount + ' records');
-
-    const endedAt = moment();
-    sails.log.info('Source metrics import finished - ' + endedAt.format('DD/MM/YYYY HH:mm:ss'));
-
-    const duration = moment.utc(endedAt.diff(startedAt));
-    sails.log.info('------------------------------------');
-    sails.log.info('It took ' + duration.format('HH:mm:ss') + ' to import the metrics.');
 }
