@@ -37,10 +37,10 @@
                 ng-click="vm.getTasks()"
                 ng-disabled="vm.refreshingTasks">
                 <span ng-if="!vm.refreshingTasks">
-                    <i class="fas fa-sync fa-left"></i>Refresh
+                    <i class="fas fa-sync fa-left"></i>Refresh tasks & dates
                 </span>
                 <span ng-if="vm.refreshingTasks">
-                    <i class="fas fa-sync fa-left fa-spin"></i>Refreshing
+                    <i class="fas fa-sync fa-left fa-spin"></i>Refreshing tasks & dates
                 </span>
             </button>
         </div>
@@ -51,5 +51,18 @@
             <div class="log-output large" id="log-viewer" ng-bind-html="vm.logs">
             </div>
         </div>
+
+        <button
+            class="btn btn-primary"
+            type="submit"
+            ng-click="vm.refreshLogs()"
+            ng-disabled="vm.refreshingLogs">
+                <span ng-if="!vm.refreshingLogs">
+                    <i class="fas fa-sync fa-left"></i>Refresh log output
+                </span>
+            <span ng-if="vm.refreshingLogs">
+                    <i class="fas fa-sync fa-left fa-spin"></i>Refreshing log output
+                </span>
+        </button>
     </li>
 </ul>
