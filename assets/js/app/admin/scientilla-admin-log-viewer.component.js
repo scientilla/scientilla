@@ -19,9 +19,11 @@
         const vm = this;
 
         vm.refreshingTasks = false;
+        vm.refreshingLogs = false;
         let deregisterers = [];
 
         vm.getTasks = getTasks;
+        vm.refreshLogs = refreshLogs;
 
         vm.$onInit = function () {
             getTasks();
@@ -76,6 +78,7 @@
         }
 
         async function getLogs() {
+
             if (vm.task && vm.task.taskName && vm.date) {
                 const res = await Restangular.one('logs/' + vm.task.taskName + '/' + vm.date).get();
 
@@ -84,9 +87,15 @@
                 }
 
                 $timeout(() => {
+                    vm.refreshingLogs = false;
                     angular.element('#log-viewer').scrollTop(99999999);
                 }, 0);
             }
+        }
+
+        async function refreshLogs() {
+            vm.refreshingLogs = true;
+            getLogs();
         }
 
         /* jshint ignore:end */
