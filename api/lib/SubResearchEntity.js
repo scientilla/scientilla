@@ -1,4 +1,4 @@
-/* global Affiliation, Authorship, ResearchEntity, Document, TagLabel, SqlService, DocumentOrigins, DocumentKinds, DocumentNotDuplicate, DocumentNotDuplicateGroup, DocumentDuplicate */
+/* global Affiliation, Authorship, ResearchEntity, Document, TagLabel, SqlService, DocumentOrigins, DocumentKinds, DocumentNotDuplicate, DocumentNotDuplicateGroup, DocumentDuplicate, ExternalImporter */
 'use strict';
 
 /**
@@ -159,6 +159,7 @@ module.exports = _.merge({}, BaseModel, {
         researchEntity.drafts.add(draft);
         await researchEntity.savePromise();
         await Authorship.updateAuthorships(draft, draftData.authorships);
+        ExternalImporter.updateDocumentMetadata(selectedDraftData);
         draft = await Document.findOneById(draft.id)
             .populate('authorships')
             .populate('affiliations')
@@ -184,6 +185,7 @@ module.exports = _.merge({}, BaseModel, {
         const updatedDraft = updatedDrafts[0];
         const authorshipsData = await Authorship.getMatchingAuthorshipsData(updatedDraft, draftData.authorships);
         await Authorship.updateAuthorships(updatedDraft, authorshipsData);
+        ExternalImporter.updateDocumentMetadata(selectedDraftData);
         return updatedDraft;
     },
     getDraft: async function (ResearchEntityModel, draftId) {

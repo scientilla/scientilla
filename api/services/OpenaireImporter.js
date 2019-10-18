@@ -10,7 +10,8 @@ const XML = require('pixl-xml');
 const openaireConfig = sails.config.connectors.openaire;
 
 module.exports = {
-    updateMetadata: async () => {
+    updateMetadata,
+    updateAllMetadata: async () => {
         const DOIs = await Document.getDOIs();
         await importAll(DOIs);
     }
@@ -22,18 +23,11 @@ async function importAll(inDOIs) {
     const errors = [];
     const done = [];
 
-    const importFns = async doi => {
-        const metaData = await getMetadata(doi);
-
-        for (const key of Object.keys(metaData))
-            await ExternalDocumentMetadata.setData(DocumentOrigins.OPENAIRE, doi, key, metaData[key]);
-
-        done.push(metaData);
-    };
-
     for (let i = 0; i < DOIs.length; i += parallelRequests) {
         await Promise.all(DOIs.slice(i, i + parallelRequests).map(
-            doi => importFns(doi).catch(err => errors.push(err))
+            doi => updateMetadata(doi)
+                .then(res => done.push(res.metaData))
+                .catch(err => errors.push(err))
         ));
     }
 
@@ -46,6 +40,19 @@ async function importAll(inDOIs) {
 
         return res;
     }, {}));
+}
+
+async function updateMetadata(doi) {
+    try {
+        const metaData = await getMetadata(doi);
+
+        for (const key of Object.keys(metaData))
+            await ExternalDocumentMetadata.setData(DocumentOrigins.OPENAIRE, doi, key, metaData[key]);
+
+        return {metaData, done: true};
+    } catch (e) {
+        throw {...e, done: false};
+    }
 }
 
 async function getMetadata(doi) {

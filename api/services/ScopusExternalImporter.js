@@ -74,6 +74,7 @@ module.exports = {
             return res;
         }, {}));
     },
+    updateMetadata: updateCitations,
     updateDocument: getAndCreateOrUpdateDocument
 };
 
