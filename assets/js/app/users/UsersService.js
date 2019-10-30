@@ -104,7 +104,7 @@
             return service.getList(q);
         };
 
-        service.getProfile = function (userId) {
+        service.getUser = function (userId) {
             return this
                 .one(userId)
                 .get({populate: ['administratedGroups', 'attributes', 'aliases']})
@@ -113,6 +113,14 @@
                     user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
                     return user;
                 });
+        };
+
+        service.getProfile = userId => {
+            return Restangular.one('researchentities', userId).customGET('get-profile');
+        };
+
+        service.saveProfile = (userId, profile) => {
+            return Restangular.one('researchentities', userId).customPUT(profile, 'save-profile');
         };
 
         return service;

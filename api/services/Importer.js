@@ -9,12 +9,12 @@ const fs = require('fs');
 const request = require('request-promise');
 const moment = require('moment');
 
-
 module.exports = {
     importSources,
     importPeople,
     importGroups,
-    importSourceMetrics
+    importSourceMetrics,
+    importUserContracts
 };
 
 async function importSources() {
@@ -139,14 +139,19 @@ async function importPeople() {
 
     let people;
     try {
+        // Get all people
         people = await request(reqOptions);
         sails.log.info(people.length + ' entries found');
+        // Save start time
         const importTime = moment.utc().format();
         //groups are loaded in memory because waterline doesn't allow case-insensitive queries with postegres
         let allGroups = await Group.find();
         let numUsersInserted = 0, numUsersUpdated = 0, numGroupsInserted = 0;
+        // Loop over people
         for (let [i, p] of people.entries()) {
+            //Lowercase username
             p.username = _.toLower(p.username);
+            // Get a new array of all the group names of the person
             const groupsToSearch = allGroups.filter(g => p.groups.some(g2 => _.toLower(g2) == _.toLower(g.name))).map(g => g.name);
             if (groupInsertionEnabled) {
                 const groupsToBeInserted = p.groups.filter(g => !allGroups.some(g2 => _.toLower(g2.name) == _.toLower(g)));
@@ -468,4 +473,85 @@ async function importSourceMetrics(filename) {
 
     sails.log.info('imported ' + recordsCount + ' records');
     sails.log.info('Source metrics import finished');
+}
+
+async function importUserContracts(email = 'all') {
+    const reqOptions = {
+        uri: sails.config.scientilla.userImport.endpoint,
+        qs: {
+            rep: 'PROD',
+            trans: '/public/scheda_persona_flat',
+            output: 'json',
+            email: email
+        },
+        headers: {
+            username: sails.config.scientilla.userImport.username,
+            password: sails.config.scientilla.userImport.password
+        },
+        json: true
+    };
+
+    const info = {
+        invalidEmails:0,
+        updatedRecords: 0,
+        newRecords: 0,
+        upToDateRecords: 0
+    };
+
+    try {
+        const res = await request(reqOptions);
+        const contracts = res._.scheda;
+        //sails.log(contracts);
+        for (const contract of contracts) {
+            if (contract.contratto_secondario === 'X') {
+                continue;
+            }
+
+            if (!/\S+@\S+\.\S+/.test(contract.email)) {
+                info.invalidEmails++;
+                continue;
+            }
+
+            let user = await User.findOne({username: contract.email});
+
+            // TMP
+            if (!user) {
+                sails.log.debug(contract.email + ' not found!');
+                continue;
+            }
+
+            let researchEntityData = await ResearchEntityData.findOne({
+                researchEntity: user.researchEntity
+            });
+
+            //sails.log.debug(researchEntityData);
+
+            if (researchEntityData) {
+                if (!_.isEqual(researchEntityData.imported_data, contract)) {
+                    await ResearchEntityData.update(
+                        { id: researchEntityData.id },
+                        { imported_data: JSON.stringify(contract) }
+                    );
+                    info.updatedRecords++;
+                    sails.log.debug(researchEntityData.imported_data, contract);
+                } else {
+                    info.upToDateRecords++;
+                }
+            } else {
+                await ResearchEntityData.create({
+                    researchEntity: user.researchEntity,
+                    imported_data: JSON.stringify(contract)
+                });
+                info.newRecords++;
+            }
+        }
+
+        sails.log.debug(info.invalidEmails + ' invalid emails');
+        sails.log.debug(info.updatedRecords + ' updatedRecords');
+        sails.log.debug(info.newRecords + ' newRecords');
+        sails.log.debug(info.upToDateRecords + ' upToDateRecords');
+    } catch (e) {
+        sails.log.debug('importUserContracts');
+        sails.log.debug(e);
+    }
 }

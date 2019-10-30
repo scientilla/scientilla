@@ -10,19 +10,25 @@
         });
 
     controller.$inject = [
+        'UsersService',
+        'AuthService'
     ];
 
-    function controller() {
+    function controller(UsersService, AuthService) {
         const vm = this;
 
-        vm.administrativePositions = [
+        vm.positions = {};
+
+        vm.positions.administrative = [
+            'None',
             'Administrative/Support',
             'Director General',
             'Scientific Director',
             'Technician'
         ];
 
-        vm.scientificPositions = [
+        vm.positions.scientific = [
+            'None',
             'Affiliated Researcher',
             'PhD Student',
             'PI',
@@ -33,6 +39,7 @@
         ];
 
         vm.centers = [
+            'None',
             'CSFT@PoliTo Torino',
             'CNST@PoliMi Milano',
             'CGS@SEMM Milano',
@@ -51,6 +58,7 @@
         ];
 
         vm.researchLines = [
+            'None',
             '2D Materials Engineering',
             'Advanced Materials for Optoelectronics',
             'Advanced Materials for Sustainable Future Technologies',
@@ -148,6 +156,7 @@
         ];
 
         vm.administrativeOrganizations = [
+            'None',
             'Administrative Directorate',
             'Communication and External Relations Directorate',
             'Director General',
@@ -185,130 +194,176 @@
         vm.dateEducationToPopups = [];
         vm.dateCertificateDatePopups = [];
 
-        vm.$onInit = function () {
+        const defaultProfile = {
+            basic: {
+                username: {
+                    public: false
+                },
+                name: {
+                    public: false
+                },
+                surname: {
+                    public: false
+                },
+                useDisplayNames: false,
+                displayName: {
+                    public: false
+                },
+                displaySurname: {
+                    public: false
+                },
+                phone: {
+                    public: false
+                },
+                positionType: {
+                    value: 'scientific',
+                    public: false
+                },
+                center: {
+                    public: false
+                },
+                researchLine: {
+                    public: false
+                },
+                administrativeOrganization: {
+                    public: false
+                },
+                office: {
+                    public: false
+                },
+                position: {
+                    public: false
+                },
+                facility: {
+                    public: false
+                },
+                titles: [],
+            },
+            socials: {
+                linkedin: {
+                    public: false
+                },
+                twitter: {
+                    public: false
+                },
+                github: {
+                    public: false
+                },
+                facebook: {
+                    public: false
+                },
+                instagram: {
+                    public: false
+                }
+            },
+            about: {
+                public: false
+            },
+            experiences: [],
+            education: [],
+            certificates: [],
+            skills: {
+                categories: []
+            },
+            publications: {
+                public: false
+            },
+            accomplishments: {
+                public: false
+            },
+        };
+
+        function getProfile() {
+            UsersService.getProfile(AuthService.user.id).then(response => {
+                vm.profile = _.merge(defaultProfile, response.profile);
+
+                vm.reloadPositions();
+            });
+        }
+
+        /* jshint ignore:start */
+        vm.$onInit = async function () {
             vm.type = 'type-scientific';
+
+            getProfile();
+        };
+        /* jshint ignore:end */
+
+        vm.addItem = (options = {}) => {
+            if (!options.item) {
+                options.item = {
+                    public: false
+                };
+            }
+
+            if (options.property) {
+                options.property.push(options.item);
+            }
+
+            console.log(vm.profile);
         };
 
-        vm.addTitle = () => {
-            vm.titles.push({});
-        };
-
-        vm.removeTitle = (title) => {
-            const index = vm.titles.indexOf(title);
-            vm.titles.splice(index, 1);
-        };
-
-        vm.addExperience = () => {
-            vm.experiences.push({from: '', to: ''});
-        };
-
-        vm.removeExperience = (experience) => {
-            const index = vm.experiences.indexOf(experience);
-            vm.experiences.splice(index, 1);
-        };
-
-        vm.addEducation = () => {
-            vm.education.push({});
-        };
-
-        vm.removeEducation = (education) => {
-            const index = vm.education.indexOf(education);
-            vm.education.splice(index, 1);
-        };
-
-        vm.addCertificate = () => {
-            vm.certificates.push({});
-        };
-
-        vm.removeCertificate = (certificate) => {
-            const index = vm.certificates.indexOf(certificate);
-            vm.certificates.splice(index, 1);
-        };
-
-        vm.addSkillCategory = () => {
-            vm.skillCategories.push({skills: []});
-        };
-
-        vm.removeSkillCategory = (category) => {
-            const index = vm.skillCategories.indexOf(category);
-            vm.skillCategories.splice(index, 1);
-        };
-
-        vm.addSkill = (category) => {
-            const index = vm.skillCategories.indexOf(category);
-            vm.skillCategories[index].skills.push({});
-        };
-
-        vm.removeSkill = (category, skill) => {
-            const categoryIndex = vm.skillCategories.indexOf(category);
-            const skillIndex = vm.skillCategories[categoryIndex].indexOf(skill);
-            vm.skillCategories[categoryIndex].splice(skillIndex, 1);
-        };
-
-        vm.uncheckAllBasicInformation = (evt) => {
-            if (!evt.target.checked) {
-                document.getElementById('username-public').checked = false;
-                document.getElementById('name-public').checked = false;
-                document.getElementById('surname-public').checked = false;
-                document.getElementById('display-name-public').checked = false;
-                document.getElementById('display-surname-public').checked = false;
-                document.getElementById('phone-public').checked = false;
-                document.getElementById('type-public').checked = false;
-                document.getElementById('center-public').checked = false;
-                document.getElementById('research-line-public').checked = false;
-                document.getElementById('position-public').checked = false;
-                document.getElementById('facility-public').checked = false;
-                document.getElementById('titles-public').checked = false;
-
-                for (let i = 0; i < vm.titles.length; i++) {
-                    document.getElementById('titles[' + i + ']-public').checked = false;
-                }
+        vm.removeItem = (options = {}) => {
+            if (typeof(options.property) !== 'undefined' && typeof(options.index) !== 'undefined') {
+                options.property.splice(options.index, 1);
             }
         };
 
-        vm.uncheckAllSocials = (evt) => {
-            if (!evt.target.checked) {
-                document.getElementById('linkedin-public').checked = false;
-                document.getElementById('twitter-public').checked = false;
-                document.getElementById('github-public').checked = false;
-                document.getElementById('facebook-public').checked = false;
-                document.getElementById('instagram-public').checked = false;
-            }
+        /*vm.changePrivacy = (type, makePublic) => {
+            Object.keys(defaultProfile[type]).forEach((key, index) => {
+                console.log(Object.keys(defaultProfile[type][key]).length);
+                //vm.profile[type][key].public = makePublic;
+            });
         };
 
-        vm.uncheckAllExperiences = (evt) => {
+        vm.uncheckAll = (evt, type) => {
             if (!evt.target.checked) {
-                for (let i = 0; i < vm.experiences.length; i++) {
-                    document.getElementById('experiences[' + i + ']-public').checked = false;
-                }
+                console.log(defaultProfile);
+                Object.keys(defaultProfile[type]).forEach(function(key, index) {
+                    console.log(key);
+                    //console.log(Object.keys(vm.profile[type]).length);
+                    //vm.profile[type][key].public = false;
+                });
+
+
+                //const checkboxes = document.querySelectorAll('[data-checkbox="' + type + '"]');
+                //for (let i = 0; i < checkboxes.length; i++) {
+                //    checkboxes[i].checked = false;
+                //}
             }
+        };*/
+
+        vm.save = () => {
+            console.log(vm.profile);
+            const profile = JSON.stringify(vm.profile);
+            const result = UsersService.saveProfile(AuthService.user.id, profile);
         };
 
-        vm.uncheckAllEducation = (evt) => {
-            if (!evt.target.checked) {
-                for (let i = 0; i < vm.education.length; i++) {
-                    document.getElementById('education[' + i + ']-public').checked = false;
+        vm.reloadPositions = () => {
+            if (vm.profile.basic.positionType.value === 'scientific') {
+                if (!vm.profile.basic.center.value) {
+                    vm.profile.basic.center.value = vm.centers[0];
+                }
+
+                if (!vm.profile.basic.researchLine.value) {
+                    vm.profile.basic.researchLine.value = vm.researchLines[0];
+                }
+            } else {
+                if (!vm.profile.basic.administrativeOrganization.value) {
+                    vm.profile.basic.administrativeOrganization.value = vm.administrativeOrganizations[0];
+                }
+
+                if (!vm.profile.basic.office.value) {
+                    vm.profile.basic.office.value = vm.offices[0];
                 }
             }
-        };
 
-        vm.uncheckAllCertificates = (evt) => {
-            if (!evt.target.checked) {
-                for (let i = 0; i < vm.certificates.length; i++) {
-                    document.getElementById('certificate[' + i + ']-public').checked = false;
-                }
+            if (!vm.profile.basic.position.value) {
+                vm.profile.basic.position.value = vm.positions[vm.profile.basic.positionType.value][0];
             }
-        };
 
-        vm.uncheckAllSkills = (evt) => {
-            if (!evt.target.checked) {
-                for (let i = 0; i < vm.skillCategories.length; i++) {
-                    document.getElementById('skill-category[' + i + ']-public').checked = false;
-
-                    for (let j= 0; j < vm.skillCategories[i].skills.length; j++) {
-                        document.getElementById('skill[' + i + '][' + j + ']-public').checked = false;
-                    }
-                }
+            if (!vm.profile.basic.facility.value) {
+                vm.profile.basic.facility.value = vm.facilities[0];
             }
         };
     }

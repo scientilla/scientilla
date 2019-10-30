@@ -69,7 +69,7 @@
         }
 
         function changeContextToUser(user) {
-            return UsersService.getProfile(user.id)
+            return UsersService.getUser(user.id)
                 .then(user => context.setSubResearchEntity(user))
                 .then(() => redirectToHomepage());
         }

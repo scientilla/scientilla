@@ -107,6 +107,8 @@ module.exports.routes = {
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/discarded']: 'ResearchEntity.discard',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/discarded']: 'ResearchEntity.multipleDiscard',
     ['post ' + apiPrfx + '/accomplishments/export']: 'Accomplishment.export',
+    ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-profile']: 'ResearchEntity.getProfile',
+    ['put ' + apiPrfx + '/researchentities/:researchEntityId/save-profile']: 'ResearchEntity.saveProfile',
 
 
     //Site API

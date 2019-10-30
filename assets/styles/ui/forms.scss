@@ -131,15 +131,19 @@ label{
         & + span {
             position: relative;
             display: inline-block;
-            width: 14px;
+            padding: 2rem;
             vertical-align: top;
             line-height: 1;
+            cursor: pointer;
 
             &:before {
+                display: block;
+                width: 14px;
                 font-family: $font-awesome;
                 font-size: 1.4rem;
                 font-weight: 900;
                 content: '\f023';
+                text-align: center;
             }
         }
 
@@ -147,6 +151,16 @@ label{
             & + span {
                 &:before {
                     content: '\f57c';
+                }
+            }
+        }
+
+        &:disabled{
+            & + span{
+                cursor: not-allowed;
+
+                &:before{
+                    color: $gray;
                 }
             }
         }

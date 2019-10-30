@@ -20,7 +20,6 @@
         service.doSave = doSave;
         service.getGroups = getGroups;
         service.getGroup = getGroup;
-        service.getProfile = getProfile;
         service.addCollaborator = addCollaborator;
         service.removeCollaborator = removeCollaborator;
         service.addRelative = addRelative;
@@ -92,10 +91,6 @@
             const q = _.merge({}, query, populate);
 
             return service.getList(q);
-        }
-
-        function getProfile(groupId) {
-            return getGroup(groupId);
         }
 
         function addCollaborator(group, user, active) {

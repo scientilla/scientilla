@@ -1,4 +1,5 @@
 .edit-profile{
+    max-width: 1200px;
     padding-bottom: 4rem;
 
     .card-listing{
@@ -11,27 +12,52 @@
         }
     }
 
+    /*.toggle-privacy-listing{
+        @include normalize-listing;
+        @include clearfix;
+
+        & > li{
+            display: block;
+            float: left;
+
+            & + li{
+                &:before{
+                    content: '/';
+                    font-weight: bold;
+                }
+            }
+        }
+
+        button{
+            padding: 1rem 2.1rem;
+            font-size: 1.4rem;
+            border: 0px;
+            background: none;
+        }
+    }*/
+
     .enable-listing{
         @include normalize-listing;
         @include clearfix;
         display: grid;
         margin-left: -.75rem;
         margin-right: -.75rem;
-        grid-template-columns: 1fr auto;
+        grid-template-columns: 1fr 134px;
         grid-template-rows: auto;
 
         & > li{
             padding: 0px .75rem;
 
             &:nth-child(1) {
-                padding-right: 6rem;
+                //padding-right: 6rem;
             }
 
             &:nth-child(2){
                 align-self: center;
+                text-align: center;
 
                 label {
-                    padding: 2rem;
+                    //padding: 2rem;
                 }
             }
 
@@ -40,7 +66,36 @@
             }
         }
 
+        &.no-labels,
+        &.one-label{
+            & > li{
+                &:nth-child(2){
+                    align-self: start;
+
+                    .form-privacy{
+                        input{
+                            & + span{
+                                padding-top: .8rem;
+                                padding-bottom: .8rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        &.one-label{
+            & > li{
+                &:nth-child(2){
+                    label {
+                        margin-top: 2.1rem;
+                    }
+                }
+            }
+        }
+
         .checkbox-container{
+            display: inline-block;
             min-height: 100%;
 
             &.add-background{
@@ -64,7 +119,6 @@
 
         .checkbox-legend{
             margin-bottom: .5rem;
-            width: 6.7rem;
             font-size: .9rem;
             line-height: 1rem;
             text-align: center;

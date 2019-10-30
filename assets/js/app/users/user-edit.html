@@ -13,22 +13,32 @@
                                 <li class="checkbox-legend">Privacy setting</li>
                             </ul>
 
+                            <!--
                             <ul class="enable-listing">
                                 <li class="center">
-                                    <em>Show or hide all basic information on the Scientilla and/or IIT website.</em>
+                                    <em>Change the privacy setting for all items.</em>
                                 </li>
                                 <li>
-                                    <div
-                                        class="checkbox-container"
-                                        uib-tooltip-html="'You can set the privacy settings of the basic information section to visible for everyone or only visible for Scientilla users.'"
-                                        tooltip-placement="top-right">
-                                        <label for="basic-info-public" class="form-privacy">
-                                            <input type="checkbox" id="basic-info-public" ng-click="vm.uncheckAllBasicInformation($event)">
-                                            <span></span>
-                                        </label>
-                                    </div>
+                                    <ul class="toggle-privacy-listing">
+                                        <li>
+                                            <button
+                                                uib-tooltip-html="'Make all basic information public for the IIT website and Scientilla'"
+                                                tooltip-placement="top-right"
+                                                ng-click="vm.changePrivacy('basic', true)">
+                                                <i class="fas fa-globe-africa"></i>
+                                            </button>
+                                        </li>
+                                        <li>
+                                            <button
+                                                uib-tooltip-html="'Make all basic information public only for Scientilla'"
+                                                tooltip-placement="top-right"
+                                                ng-click="vm.changePrivacy('basic', false)">
+                                                <i class="fas fa-lock"></i>
+                                            </button>
+                                        </li>
+                                    </ul>
                                 </li>
-                            </ul>
+                            </ul>-->
 
                             <ul class="enable-listing">
                                 <li>
@@ -38,7 +48,8 @@
                                             type="text"
                                             class="form-control"
                                             id="username"
-                                            placeholder="Username (Email)">
+                                            placeholder="Username (Email)"
+                                            ng-model="vm.profile.basic.username.value">
                                     </div>
                                 </li>
                                 <li>
@@ -47,7 +58,10 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="username-public" class="form-privacy">
-                                            <input type="checkbox" id="username-public">
+                                            <input
+                                                type="checkbox"
+                                                id="username-public"
+                                                ng-model="vm.profile.basic.username.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -62,7 +76,8 @@
                                             type="text"
                                             class="form-control"
                                             id="name"
-                                            placeholder="Name">
+                                            placeholder="Name"
+                                            ng-model="vm.profile.basic.name.value">
                                     </div>
                                 </li>
                                 <li>
@@ -71,7 +86,10 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="name-public" class="form-privacy">
-                                            <input type="checkbox" id="name-public">
+                                            <input
+                                                type="checkbox"
+                                                id="name-public"
+                                                ng-model="vm.profile.basic.name.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -86,7 +104,8 @@
                                             type="text"
                                             class="form-control"
                                             id="surname"
-                                            placeholder="Surname">
+                                            placeholder="Surname"
+                                            ng-model="vm.profile.basic.surname.value">
                                     </div>
                                 </li>
                                 <li>
@@ -95,7 +114,10 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="surname-public" class="form-privacy">
-                                            <input type="checkbox" id="surname-public">
+                                            <input
+                                                type="checkbox"
+                                                id="surname-public"
+                                                ng-model="vm.profile.basic.surname.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -104,7 +126,10 @@
 
                             <div class="form-group">
                                 <label class="form-checkbox">
-                                    <input type="checkbox" id="use-display-name" ng-model="vm.useDisplayNames"/>
+                                    <input
+                                        type="checkbox"
+                                        id="use-display-name"
+                                        ng-model="vm.profile.basic.useDisplayNames">
                                     <span>Use display names</span>
                                 </label>
                                 <em class="form-checkbox-description">Show the display name and surname on your profile instead of name and surname.</em>
@@ -119,7 +144,8 @@
                                             class="form-control"
                                             id="display-name"
                                             placeholder="Display name"
-                                            ng-disabled="!vm.useDisplayNames">
+                                            ng-disabled="!vm.profile.basic.useDisplayNames"
+                                            ng-model="vm.profile.basic.displayName.value">
                                     </div>
                                 </li>
                                 <li>
@@ -131,7 +157,8 @@
                                             <input
                                                 type="checkbox"
                                                 id="display-name-public"
-                                                ng-disabled="!vm.useDisplayNames">
+                                                ng-disabled="!vm.profile.basic.useDisplayNames"
+                                                ng-model="vm.profile.basic.displayName.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -147,7 +174,8 @@
                                             class="form-control"
                                             id="display-surname"
                                             placeholder="Display surname"
-                                            ng-disabled="!vm.useDisplayNames">
+                                            ng-disabled="!vm.profile.basic.useDisplayNames"
+                                            ng-model="vm.profile.basic.displaySurname.value">
                                     </div>
                                 </li>
                                 <li>
@@ -159,7 +187,8 @@
                                             <input
                                                 type="checkbox"
                                                 id="display-surname-public"
-                                                ng-disabled="!vm.useDisplayNames">
+                                                ng-disabled="!vm.profile.basic.useDisplayNames"
+                                                ng-model="vm.profile.basic.displaySurname.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -174,7 +203,8 @@
                                             type="text"
                                             class="form-control"
                                             id="phone"
-                                            placeholder="Phone">
+                                            placeholder="Phone"
+                                            ng-model="vm.profile.basic.phone.value">
                                     </div>
                                 </li>
                                 <li>
@@ -183,7 +213,10 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="phone-public" class="form-privacy">
-                                            <input type="checkbox" id="phone-public">
+                                            <input
+                                                type="checkbox"
+                                                id="phone-public"
+                                                ng-model="vm.profile.basic.phone.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -197,13 +230,25 @@
                                         <ul class="radio-options">
                                             <li>
                                                 <label for="type-scientific" class="form-radiobutton">
-                                                    <input type="radio" id="type-scientific" value="type-scientific" name="type" ng-model="vm.type">
+                                                    <input
+                                                        type="radio"
+                                                        id="type-scientific"
+                                                        value="scientific"
+                                                        name="type"
+                                                        ng-model="vm.profile.basic.positionType.value"
+                                                        ng-click="vm.reloadPositions()">
                                                     <span>Scientific position</span>
                                                 </label>
                                             </li>
                                             <li>
-                                                <label for="type-administrative" class="form-radiobutton" ng-model="vm.type">
-                                                    <input type="radio" id="type-administrative" value="type-administrative" name="type" ng-model="vm.type">
+                                                <label for="type-administrative" class="form-radiobutton">
+                                                    <input
+                                                        type="radio"
+                                                        id="type-administrative"
+                                                        value="administrative"
+                                                        name="type"
+                                                        ng-model="vm.profile.basic.positionType.value"
+                                                        ng-click="vm.reloadPositions()">
                                                     <span>Technical or Administrative position</span>
                                                 </label>
                                             </li>
@@ -216,20 +261,27 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="type-public" class="form-privacy">
-                                            <input type="checkbox" id="type-public">
+                                            <input
+                                                type="checkbox"
+                                                id="type-public"
+                                                ng-model="vm.profile.basic.positionType.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
                             </ul>
 
-                            <ul class="enable-listing" ng-if="vm.type === 'type-scientific'">
+                            <ul class="enable-listing" ng-if="vm.profile.basic.positionType.value === 'scientific'">
                                 <li>
                                     <div class="form-group">
                                         <label for="center">Center</label>
                                         <div class="select-wrapper">
-                                            <select name="center" id="center" class="form-control">
-                                                <option ng-repeat="center in vm.centers">{{ center }}</option>
+                                            <select
+                                                name="center"
+                                                id="center"
+                                                class="form-control"
+                                                ng-model="vm.profile.basic.center.value"
+                                                ng-options="center for center in vm.centers">
                                             </select>
                                         </div>
                                     </div>
@@ -240,20 +292,27 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="center-public" class="form-privacy">
-                                            <input type="checkbox" id="center-public">
+                                            <input
+                                                type="checkbox"
+                                                id="center-public"
+                                                ng-model="vm.profile.basic.center.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
                             </ul>
 
-                            <ul class="enable-listing" ng-if="vm.type === 'type-scientific'">
+                            <ul class="enable-listing" ng-if="vm.profile.basic.positionType.value === 'scientific'">
                                 <li>
                                     <div class="form-group">
                                         <label for="research-line">Research Line</label>
                                         <div class="select-wrapper">
-                                            <select name="research-line" id="research-line" class="form-control">
-                                                <option ng-repeat="researchLine in vm.researchLines">{{ researchLine }}</option>
+                                            <select
+                                                name="research-line"
+                                                id="research-line"
+                                                class="form-control"
+                                                ng-model="vm.profile.basic.researchLine.value"
+                                                ng-options="researchLine for researchLine in vm.researchLines">
                                             </select>
                                         </div>
                                     </div>
@@ -264,20 +323,27 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="research-line-public" class="form-privacy">
-                                            <input type="checkbox" id="research-line-public">
+                                            <input
+                                                type="checkbox"
+                                                id="research-line-public"
+                                                ng-model="vm.profile.basic.researchLine.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
                             </ul>
 
-                            <ul class="enable-listing" ng-if="vm.type === 'type-administrative'">
+                            <ul class="enable-listing" ng-if="vm.profile.basic.positionType.value === 'administrative'">
                                 <li>
                                     <div class="form-group">
                                         <label for="administrative-organization">Administrative organization</label>
                                         <div class="select-wrapper">
-                                            <select name="administrative-organization" id="administrative-organization" class="form-control">
-                                                <option ng-repeat="organization in vm.administrativeOrganizations">{{ organization }}</option>
+                                            <select
+                                                name="administrative-organization"
+                                                id="administrative-organization"
+                                                class="form-control"
+                                                ng-model="vm.profile.basic.administrativeOrganization.value"
+                                                ng-options="organization for organization in vm.administrativeOrganizations">
                                             </select>
                                         </div>
                                     </div>
@@ -288,20 +354,29 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="administrative-organization-public" class="form-privacy">
-                                            <input type="checkbox" id="administrative-organization-public">
+                                            <input
+                                                type="checkbox"
+                                                id="administrative-organization-public"
+                                                ng-model="vm.profile.basic.administrativeOrganization.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
                             </ul>
 
-                            <ul class="enable-listing" ng-if="vm.type === 'type-administrative'">
+                            <ul
+                                class="enable-listing"
+                                ng-if="vm.profile.basic.positionType.value === 'administrative'">
                                 <li>
                                     <div class="form-group">
                                         <label for="office">Office</label>
                                         <div class="select-wrapper">
-                                            <select name="office" id="office" class="form-control">
-                                                <option ng-repeat="office in vm.offices">{{ office }}</option>
+                                            <select
+                                                name="office"
+                                                id="office"
+                                                class="form-control"
+                                                ng-model="vm.profile.basic.office.value"
+                                                ng-options="office for office in vm.offices">
                                             </select>
                                         </div>
                                     </div>
@@ -312,7 +387,10 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="office-public" class="form-privacy">
-                                            <input type="checkbox" id="office-public">
+                                            <input
+                                                type="checkbox"
+                                                id="office-public"
+                                                ng-model="vm.profile.basic.office.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -328,15 +406,8 @@
                                                 name="position"
                                                 id="position"
                                                 class="form-control"
-                                                ng-if="vm.type === 'type-administrative'">
-                                                <option ng-repeat="position in vm.administrativePositions">{{ position }}</option>
-                                            </select>
-                                            <select
-                                                name="position"
-                                                id="position"
-                                                class="form-control"
-                                                ng-if="vm.type === 'type-scientific'">
-                                                <option ng-repeat="position in vm.scientificPositions">{{ position }}</option>
+                                                ng-model="vm.profile.basic.position.value"
+                                                ng-options="position for position in vm.positions[vm.profile.basic.positionType.value]">
                                             </select>
                                         </div>
                                     </div>
@@ -347,7 +418,10 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="position-public" class="form-privacy">
-                                            <input type="checkbox" id="position-public">
+                                            <input
+                                                type="checkbox"
+                                                id="position-public"
+                                                ng-model="vm.profile.basic.position.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -359,8 +433,12 @@
                                     <div class="form-group">
                                         <label for="facility">Facility</label>
                                         <div class="select-wrapper">
-                                            <select name="facility" id="facility" class="form-control">
-                                                <option ng-repeat="facility in vm.facilities">{{ facility }}</option>
+                                            <select
+                                                name="facility"
+                                                id="facility"
+                                                class="form-control"
+                                                ng-model="vm.profile.basic.facility.value"
+                                                ng-options="facility for facility in vm.facilities">
                                             </select>
                                         </div>
                                     </div>
@@ -371,14 +449,17 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="facility-public" class="form-privacy">
-                                            <input type="checkbox" id="facility-public">
+                                            <input
+                                                type="checkbox"
+                                                id="facility-public"
+                                                ng-model="vm.profile.basic.facility.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
                             </ul>
 
-                            <ul class="enable-listing">
+                            <!--<ul class="enable-listing">
                                 <li class="center">
                                     <div class="form-group">
                                         <label class="label-title">Titles</label>
@@ -391,16 +472,20 @@
                                         uib-tooltip-html="'You can set the privacy settings of the titles to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="titles-public" class="form-privacy">
-                                            <input type="checkbox" id="titles-public">
+                                            <input
+                                                type="checkbox"
+                                                id="titles-public"
+                                                ng-model="vm.profile.basic.titles.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
-                            </ul>
+                            </ul>-->
 
-                            <ul class="item-listing" ui-sortable ng-model="vm.titles">
-                                <li ng-repeat="(key, title) in vm.titles">
-                                    <ul class="enable-listing">
+                            <label class="label-title">Titles</label>
+                            <ul class="item-listing" ui-sortable ng-model="vm.profile.basic.titles">
+                                <li ng-repeat="(key, title) in vm.profile.basic.titles">
+                                    <ul class="enable-listing no-labels">
                                         <li>
                                             <ul class="field-listing">
                                                 <li>
@@ -408,7 +493,8 @@
                                                         <input
                                                             type="text"
                                                             class="form-control"
-                                                            placeholder="Title">
+                                                            placeholder="Title"
+                                                            ng-model="title.value">
                                                     </div>
                                                 </li>
                                                 <li>
@@ -420,7 +506,12 @@
                                                 </li>
                                                 <li>
                                                     <div class="form-group">
-                                                        <button class="btn btn-outline-secondary" ng-click="vm.removeTitle(title)">
+                                                        <button
+                                                            class="btn btn-outline-secondary"
+                                                            ng-click="vm.removeItem({
+                                                                property: vm.profile.basic.titles,
+                                                                index: key
+                                                            })">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </div>
@@ -433,7 +524,10 @@
                                                 uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                                 tooltip-placement="top-right">
                                                 <label for="titles[{{ key }}]-public" class="form-privacy">
-                                                    <input type="checkbox" id="titles[{{ key }}]-public">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="titles[{{ key }}]-public"
+                                                        ng-model="title.public">
                                                     <span></span>
                                                 </label>
                                             </div>
@@ -442,8 +536,12 @@
                                 </li>
 
                                 <li>
-                                    <button class="btn btn-link btn-inline" ng-click="vm.addTitle()">
-                                        <i class="fas fa-plus fa-left"></i>Add
+                                    <button
+                                        class="btn btn-link btn-inline"
+                                        ng-click="vm.addItem({
+                                            property: vm.profile.basic.titles
+                                        })">
+                                        <i class="fas fa-plus fa-left"></i>Add title
                                     </button>
                                 </li>
                             </ul>
@@ -460,7 +558,7 @@
                                 <li class="checkbox-legend">Privacy setting</li>
                             </ul>
 
-                            <ul class="enable-listing">
+                            <!--<ul class="enable-listing">
                                 <li class="center">
                                     <em>Show or hide all socials on the Scientilla and/or IIT website.</em>
                                 </li>
@@ -470,12 +568,15 @@
                                         uib-tooltip-html="'You can set the privacy settings of the socials section to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="socials-public" class="form-privacy">
-                                            <input type="checkbox" id="socials-public" ng-click="vm.uncheckAllSocials($event)">
+                                            <input
+                                                type="checkbox"
+                                                id="socials-public"
+                                                ng-click="vm.uncheckAll($event, 'socials')">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
-                            </ul>
+                            </ul>-->
 
                             <ul class="enable-listing">
                                 <li>
@@ -485,7 +586,8 @@
                                             type="text"
                                             class="form-control"
                                             id="linkedin"
-                                            placeholder="Linkedin URL">
+                                            placeholder="Linkedin URL"
+                                            ng-model="vm.profile.socials.linkedin.value">
                                     </div>
                                 </li>
                                 <li>
@@ -494,7 +596,10 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="linkedin-public" class="form-privacy">
-                                            <input type="checkbox" id="linkedin-public">
+                                            <input
+                                                type="checkbox"
+                                                id="linkedin-public"
+                                                ng-model="vm.profile.socials.linkedin.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -509,7 +614,8 @@
                                             type="text"
                                             class="form-control"
                                             id="twitter"
-                                            placeholder="Twitter URL">
+                                            placeholder="Twitter URL"
+                                            ng-model="vm.profile.socials.twitter.value">
                                     </div>
                                 </li>
                                 <li>
@@ -518,7 +624,10 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="twitter-public" class="form-privacy">
-                                            <input type="checkbox" id="twitter-public">
+                                            <input
+                                                type="checkbox"
+                                                id="twitter-public"
+                                                ng-model="vm.profile.socials.twitter.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -533,7 +642,8 @@
                                             type="text"
                                             class="form-control"
                                             id="github"
-                                            placeholder="Github URL">
+                                            placeholder="Github URL"
+                                            ng-model="vm.profile.socials.github.value">
                                     </div>
                                 </li>
                                 <li>
@@ -542,7 +652,10 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="github-public" class="form-privacy">
-                                            <input type="checkbox" id="github-public">
+                                            <input
+                                                type="checkbox"
+                                                id="github-public"
+                                                ng-model="vm.profile.socials.github.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -552,12 +665,15 @@
                             <ul class="enable-listing">
                                 <li>
                                     <div class="form-group">
-                                        <label for="facebook"><i class="fab fa-facebook-square fa-left"></i>Facebook</label>
+                                        <label for="facebook">
+                                            <i class="fab fa-facebook-square fa-left"></i>Facebook
+                                        </label>
                                         <input
                                             type="text"
                                             class="form-control"
                                             id="facebook"
-                                            placeholder="Facebook URL">
+                                            placeholder="Facebook URL"
+                                            ng-model="vm.profile.socials.facebook.value">
                                     </div>
                                 </li>
                                 <li>
@@ -566,7 +682,10 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="facebook-public" class="form-privacy">
-                                            <input type="checkbox" id="facebook-public">
+                                            <input
+                                                type="checkbox"
+                                                id="facebook-public"
+                                                ng-model="vm.profile.socials.facebook.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -581,7 +700,8 @@
                                             type="text"
                                             class="form-control"
                                             id="instagram"
-                                            placeholder="Instagram URL">
+                                            placeholder="Instagram URL"
+                                            ng-model="vm.profile.socials.instagram.value">
                                     </div>
                                 </li>
                                 <li>
@@ -590,7 +710,10 @@
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="instagram-public" class="form-privacy">
-                                            <input type="checkbox" id="instagram-public">
+                                            <input
+                                                type="checkbox"
+                                                id="instagram-public"
+                                                ng-model="vm.profile.socials.instagram.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -609,12 +732,17 @@
                                 <li class="checkbox-legend">Privacy setting</li>
                             </ul>
 
-                            <ul class="enable-listing">
+                            <ul class="enable-listing one-label">
                                 <li>
-                                    <em class="enable-about-label">Show or hide the about section on the Scientilla and/or IIT website.</em>
                                     <div class="form-group">
                                         <label for="about">Description *</label>
-                                        <textarea name="about" id="about" cols="30" rows="10" class="form-control"></textarea>
+                                        <textarea
+                                            name="about"
+                                            id="about"
+                                            cols="30"
+                                            rows="10"
+                                            class="form-control"
+                                            ng-model="vm.profile.about.value"></textarea>
                                     </div>
                                 </li>
                                 <li>
@@ -623,7 +751,10 @@
                                         uib-tooltip-html="'You can set the privacy setting of the about section to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="about-public" class="form-privacy">
-                                            <input type="checkbox" id="about-public">
+                                            <input
+                                                type="checkbox"
+                                                id="about-public"
+                                                ng-model="vm.profile.about.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -637,12 +768,14 @@
                         <div class="card-body">
                             <h2 class="listing-title">Experiences</h2>
 
-                            <ul class="enable-listing">
+                            <ul
+                                class="enable-listing"
+                                ng-if="vm.profile.experiences.length > 0">
                                 <li></li>
-                                <li class="checkbox-legend">Visible on IIT website</li>
+                                <li class="checkbox-legend">Privacy setting</li>
                             </ul>
 
-                            <ul class="enable-listing">
+                            <!--<ul class="enable-listing">
                                 <li class="center">
                                     <em>Show or hide the experience section on the Scientilla and/or IIT website.</em>
                                 </li>
@@ -652,38 +785,48 @@
                                         uib-tooltip-html="'You can set the privacy settings of the experience section to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="experiences-public" class="form-privacy">
-                                            <input type="checkbox" id="experiences-public" ng-click="vm.uncheckAllExperiences($event)">
+                                            <input
+                                                type="checkbox"
+                                                id="experiences-public"
+                                                ng-click="vm.uncheckAll($event, 'experiences')"
+                                                ng-model="vm.profile.experiences.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
-                            </ul>
+                            </ul>-->
 
-                            <ul class="item-listing add-lines" ui-sortable ng-model="vm.experiences">
-                                <li ng-repeat="(key, experience) in vm.experiences">
-                                    <ul class="enable-listing">
+                            <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.experiences">
+                                <li ng-repeat="(key, experience) in vm.profile.experiences">
+                                    <ul class="enable-listing one-label">
                                         <li>
                                             <ul class="field-listing">
                                                 <li>
                                                     <ul class="experience-form">
                                                         <li>
                                                             <div class="form-group">
-                                                                <label for="experience[{{ key }}]-company">Company</label>
+                                                                <label for="experience[{{ key }}]-company">
+                                                                    Company
+                                                                </label>
                                                                 <input
                                                                     type="text"
                                                                     class="form-control"
                                                                     id="experience[{{ key }}]-company"
-                                                                    placeholder="Company">
+                                                                    placeholder="Company"
+                                                                    ng-model="experience.company">
                                                             </div>
                                                         </li>
                                                         <li>
                                                             <div class="form-group">
-                                                                <label for="experience[{{ key }}]-job-title">Job title</label>
+                                                                <label for="experience[{{ key }}]-job-title">
+                                                                    Job title
+                                                                </label>
                                                                 <input
                                                                     type="text"
                                                                     class="form-control"
                                                                     id="experience[{{ key }}]-job-title"
-                                                                    placeholder="Job title">
+                                                                    placeholder="Job title"
+                                                                    ng-model="experience.jobTitle">
                                                             </div>
                                                         </li>
                                                         <li>
@@ -720,28 +863,42 @@
                                                         </li>
                                                         <li>
                                                             <div class="form-group">
-                                                                <label for="experience[{{ key }}]-location">Location</label>
+                                                                <label for="experience[{{ key }}]-location">
+                                                                    Location
+                                                                </label>
                                                                 <input
                                                                     type="text"
                                                                     class="form-control"
                                                                     id="experience[{{ key }}]-location"
-                                                                    placeholder="Location">
+                                                                    placeholder="Location"
+                                                                    ng-model="experience.location">
                                                             </div>
                                                         </li>
                                                         <li>
                                                             <div class="form-group">
-                                                                <label for="experience[{{ key }}]-country">Country</label>
+                                                                <label for="experience[{{ key }}]-country">
+                                                                    Country
+                                                                </label>
                                                                 <input
                                                                     type="text"
                                                                     class="form-control"
                                                                     id="experience[{{ key }}]-country"
-                                                                    placeholder="Country">
+                                                                    placeholder="Country"
+                                                                    ng-model="experience.country">
                                                             </div>
                                                         </li>
                                                         <li>
                                                             <div class="form-group">
-                                                                <label for="experience[{{ key }}]-job-description">Job description</label>
-                                                                <textarea name="experience[{{ key }}]-job-description" id="experience[{{ key }}]-job-description" cols="30" rows="10" class="form-control"></textarea>
+                                                                <label for="experience[{{ key }}]-job-description">
+                                                                    Job description
+                                                                </label>
+                                                                <textarea
+                                                                    name="experience[{{ key }}]-job-description"
+                                                                    id="experience[{{ key }}]-job-description"
+                                                                    cols="30"
+                                                                    rows="10"
+                                                                    class="form-control"
+                                                                    ng-model="experience.jobDescription"></textarea>
                                                             </div>
                                                         </li>
                                                     </ul>
@@ -755,7 +912,12 @@
                                                 </li>
                                                 <li class="action-column">
                                                     <div class="form-group">
-                                                        <button class="btn btn-outline-secondary" ng-click="vm.removeExperience(experience)">
+                                                        <button
+                                                            class="btn btn-outline-secondary"
+                                                            ng-click="vm.removeItem({
+                                                                property: vm.profile.experiences,
+                                                                index: key
+                                                            })">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </div>
@@ -768,7 +930,10 @@
                                                 uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                                 tooltip-placement="top-right">
                                                 <label for="experiences[{{ key }}]-public" class="form-privacy">
-                                                    <input type="checkbox" id="experiences[{{ key }}]-public">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="experiences[{{ key }}]-public"
+                                                        ng-model="experience.public">
                                                     <span></span>
                                                 </label>
                                             </div>
@@ -777,8 +942,13 @@
                                 </li>
 
                                 <li>
-                                    <button class="btn btn-link btn-inline" ng-click="vm.addExperience()">
-                                        <i class="fas fa-plus fa-left"></i>Add
+                                    <button
+                                        class="btn btn-link btn-inline"
+                                        ng-click="vm.addItem({
+                                            property: vm.profile.experiences,
+                                            item: {from: '', to: ''}
+                                        })">
+                                        <i class="fas fa-plus fa-left"></i>Add experience
                                     </button>
                                 </li>
                             </ul>
@@ -790,12 +960,14 @@
                         <div class="card-body">
                             <h2 class="listing-title">Education</h2>
 
-                            <ul class="enable-listing">
+                            <ul
+                                class="enable-listing"
+                                ng-if="vm.profile.education.length > 0">
                                 <li></li>
                                 <li class="checkbox-legend">Privacy setting</li>
                             </ul>
 
-                            <ul class="enable-listing">
+                            <!--<ul class="enable-listing">
                                 <li class="center">
                                     <em>Show or hide the education section on the Scientilla and/or IIT website.</em>
                                 </li>
@@ -805,28 +977,35 @@
                                         uib-tooltip-html="'You can set the privacy settings of the education section to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="education-public" class="form-privacy">
-                                            <input type="checkbox" id="education-public" ng-click="vm.uncheckAllEducation($event)">
+                                            <input
+                                                type="checkbox"
+                                                id="education-public"
+                                                ng-click="vm.uncheckAll($event, 'education')"
+                                                ng-model="vm.profile.education.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
-                            </ul>
+                            </ul>-->
 
-                            <ul class="item-listing add-lines" ui-sortable ng-model="vm.education">
-                                <li ng-repeat="(key, education) in vm.education">
-                                    <ul class="enable-listing">
+                            <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.education">
+                                <li ng-repeat="(key, education) in vm.profile.education">
+                                    <ul class="enable-listing one-label">
                                         <li>
                                             <ul class="field-listing">
                                                 <li>
                                                     <ul class="education-form">
                                                         <li>
                                                             <div class="form-group">
-                                                                <label for="education[{{ key }}]-institute">University/Institute</label>
+                                                                <label for="education[{{ key }}]-institute">
+                                                                    University/Institute
+                                                                </label>
                                                                 <input
                                                                     type="text"
                                                                     class="form-control"
                                                                     id="education[{{ key }}]-institute"
-                                                                    placeholder="University/Institute">
+                                                                    placeholder="University/Institute"
+                                                                    ng-model="education.institute">
                                                             </div>
                                                         </li>
                                                         <li>
@@ -836,7 +1015,8 @@
                                                                     type="text"
                                                                     class="form-control"
                                                                     id="education[{{ key }}]-title"
-                                                                    placeholder="Title">
+                                                                    placeholder="Title"
+                                                                    ng-model="education.title">
                                                             </div>
                                                         </li>
                                                         <li>
@@ -873,22 +1053,28 @@
                                                         </li>
                                                         <li>
                                                             <div class="form-group">
-                                                                <label for="education[{{ key }}]-location">Location</label>
+                                                                <label for="education[{{ key }}]-location">
+                                                                    Location
+                                                                </label>
                                                                 <input
                                                                     type="text"
                                                                     class="form-control"
                                                                     id="education[{{ key }}]-location"
-                                                                    placeholder="Location">
+                                                                    placeholder="Location"
+                                                                    ng-model="education.location">
                                                             </div>
                                                         </li>
                                                         <li>
                                                             <div class="form-group">
-                                                                <label for="education[{{ key }}]-country">Country</label>
+                                                                <label for="education[{{ key }}]-country">
+                                                                    Country
+                                                                </label>
                                                                 <input
                                                                     type="text"
                                                                     class="form-control"
                                                                     id="education[{{ key }}]-country"
-                                                                    placeholder="Country">
+                                                                    placeholder="Country"
+                                                                    ng-model="education.country">
                                                             </div>
                                                         </li>
                                                     </ul>
@@ -902,7 +1088,12 @@
                                                 </li>
                                                 <li class="action-column">
                                                     <div class="form-group">
-                                                        <button class="btn btn-outline-secondary" ng-click="vm.removeEducation(education)">
+                                                        <button
+                                                            class="btn btn-outline-secondary"
+                                                            ng-click="vm.removeItem({
+                                                                property: vm.profile.education,
+                                                                index: key
+                                                            })">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </div>
@@ -915,7 +1106,10 @@
                                                 uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                                 tooltip-placement="top-right">
                                                 <label for="education[{{ key }}]-public" class="form-privacy">
-                                                    <input type="checkbox" id="education[{{ key }}]-public">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="education[{{ key }}]-public"
+                                                        ng-model="education.public">
                                                     <span></span>
                                                 </label>
                                             </div>
@@ -923,8 +1117,12 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <button class="btn btn-link btn-inline" ng-click="vm.addEducation()">
-                                        <i class="fas fa-plus fa-left"></i>Add
+                                    <button
+                                        class="btn btn-link btn-inline"
+                                        ng-click="vm.addItem({
+                                            property: vm.profile.education
+                                        })">
+                                        <i class="fas fa-plus fa-left"></i>Add education
                                     </button>
                                 </li>
                             </ul>
@@ -936,12 +1134,14 @@
                         <div class="card-body">
                             <h2 class="listing-title">Certificates</h2>
 
-                            <ul class="enable-listing">
+                            <ul
+                                class="enable-listing"
+                                ng-if="vm.profile.certificates.length > 0">
                                 <li></li>
                                 <li class="checkbox-legend">Privacy setting</li>
                             </ul>
 
-                            <ul class="enable-listing">
+                            <!--<ul class="enable-listing">
                                 <li class="center">
                                     <em>Show or hide the certificate section on the Scientilla and/or IIT website.</em>
                                 </li>
@@ -951,44 +1151,58 @@
                                         uib-tooltip-html="'You can set the privacy settings of the certificate section to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="certificates-public" class="form-privacy">
-                                            <input type="checkbox" id="certificates-public" ng-click="vm.uncheckAllCertificates($event)">
+                                            <input
+                                                type="checkbox"
+                                                id="certificates-public"
+                                                ng-click="vm.uncheckAll($event, 'certificates')"
+                                                ng-model="vm.profile.certificates.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
-                            </ul>
+                            </ul>-->
 
-                            <ul class="item-listing add-lines" ui-sortable ng-model="vm.certificates">
-                                <li ng-repeat="(key, certificate) in vm.certificates">
-                                    <ul class="enable-listing">
+                            <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.certificates">
+                                <li ng-repeat="(key, certificate) in vm.profile.certificates">
+                                    <ul class="enable-listing one-label">
                                         <li>
                                             <ul class="field-listing">
                                                 <li>
                                                     <div class="form-group">
-                                                        <label for="certificate[{{ key }}]-title">Title</label>
+                                                        <label for="certificates[{{ key }}]-title">Title</label>
                                                         <input
                                                             type="text"
                                                             class="form-control"
-                                                            id="certificate[{{ key }}]-title"
-                                                            placeholder="Title">
+                                                            id="certificates[{{ key }}]-title"
+                                                            placeholder="Title"
+                                                            ng-model="certificate.title">
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="certificate[{{ key }}]-description">Description</label>
-                                                        <textarea name="certificate[{{ key }}]-description" id="certificate[{{ key }}]-description" cols="30" rows="10" class="form-control"></textarea>
+                                                        <label for="certificates[{{ key }}]-description">
+                                                            Description
+                                                        </label>
+                                                        <textarea
+                                                            name="certificates[{{ key }}]-description"
+                                                            id="certificates[{{ key }}]-description"
+                                                            cols="30"
+                                                            rows="10"
+                                                            class="form-control"
+                                                            ng-model="certificate.description"></textarea>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label for="certificate[{{ key }}]-date">Date</label>
+                                                        <label for="certificates[{{ key }}]-date">Date</label>
                                                         <input
                                                             type="text"
                                                             class="form-control"
-                                                            id="certificate[{{ key }}]-date"
+                                                            id="certificates[{{ key }}]-date"
                                                             placeholder="Date"
                                                             ng-model="certificate.date"
                                                             uib-datepicker-popup="dd/MM/yyyy"
                                                             datepicker-options="vm.datePickerOptions"
                                                             is-open="vm.dateCertificateDatePopups[key]"
                                                             ng-click="vm.dateCertificateDatePopups[key] = true"
-                                                            close-text="Close">
+                                                            close-text="Close"
+                                                            ng-model="certificate.date">
                                                     </div>
                                                 </li>
                                                 <li class="action-column">
@@ -1000,7 +1214,12 @@
                                                 </li>
                                                 <li class="action-column">
                                                     <div class="form-group">
-                                                        <button class="btn btn-outline-secondary" ng-click="vm.removeCertificate(certificate)">
+                                                        <button
+                                                            class="btn btn-outline-secondary"
+                                                            ng-click="vm.removeItem({
+                                                                property: vm.profile.certificates,
+                                                                index: key
+                                                            })">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </div>
@@ -1012,8 +1231,11 @@
                                                 class="checkbox-container"
                                                 uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                                 tooltip-placement="top-right">
-                                                <label for="certificate[{{ key }}]-public" class="form-privacy">
-                                                    <input type="checkbox" id="certificate[{{ key }}]-public">
+                                                <label for="certificates[{{ key }}]-public" class="form-privacy">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="certificates[{{ key }}]-public"
+                                                        ng-model="certificate.public">
                                                     <span></span>
                                                 </label>
                                             </div>
@@ -1021,8 +1243,12 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <button class="btn btn-link btn-inline" ng-click="vm.addCertificate()">
-                                        <i class="fas fa-plus fa-left"></i>Add
+                                    <button
+                                        class="btn btn-link btn-inline"
+                                        ng-click="vm.addItem({
+                                            property: vm.profile.certificates
+                                        })">
+                                        <i class="fas fa-plus fa-left"></i>Add certificate
                                     </button>
                                 </li>
                             </ul>
@@ -1034,12 +1260,14 @@
                         <div class="card-body">
                             <h2 class="listing-title">Skills</h2>
 
-                            <ul class="enable-listing">
+                            <ul
+                                class="enable-listing"
+                                ng-if="vm.profile.skills.categories.length > 0">
                                 <li></li>
                                 <li class="checkbox-legend">Privacy setting</li>
                             </ul>
 
-                            <ul class="enable-listing">
+                            <!--<ul class="enable-listing">
                                 <li class="center">
                                     <em>Show or hide the skill section on the Scientilla and/or IIT website.</em>
                                 </li>
@@ -1049,15 +1277,19 @@
                                         uib-tooltip-html="'You can set the privacy settings of the skill section to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="skills-public" class="form-privacy">
-                                            <input type="checkbox" id="skills-public" ng-click="vm.uncheckAllSkills($event)">
+                                            <input
+                                                type="checkbox"
+                                                id="skills-public"
+                                                ng-click="vm.uncheckAll($event, 'skills')"
+                                                ng-model="vm.profile.skills.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
-                            </ul>
+                            </ul>-->
 
-                            <ul class="item-listing" ui-sortable ng-model="vm.skillCategories">
-                                <li ng-repeat="(key, category) in vm.skillCategories">
+                            <ul class="item-listing" ui-sortable ng-model="vm.profile.skills.categories">
+                                <li ng-repeat="(categoryKey, category) in vm.profile.skills.categories">
                                     <ul class="enable-listing">
                                         <li>
                                             <ul class="skill-category-field-listing">
@@ -1068,7 +1300,8 @@
                                                             type="text"
                                                             class="form-control"
                                                             id="skill-category"
-                                                            placeholder="Category">
+                                                            placeholder="Category"
+                                                            ng-model="category.category">
                                                     </div>
                                                 </li>
                                                 <li class="action-column">
@@ -1080,13 +1313,22 @@
                                                 </li>
                                                 <li class="action-column">
                                                     <div class="form-group">
-                                                        <button class="btn btn-outline-secondary" ng-click="vm.removeSkillCategory(category)">
+                                                        <button
+                                                            class="btn btn-outline-secondary"
+                                                            ng-click="vm.removeItem({
+                                                                property: vm.profile.skills.categories,
+                                                                index: categoryKey
+                                                            })">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </div>
                                                 </li>
                                                 <li class="action-column">
-                                                    <button class="btn btn-link" ng-click="vm.addSkill(category)">
+                                                    <button
+                                                        class="btn btn-link"
+                                                        ng-click="vm.addItem({
+                                                            property: vm.profile.skills.categories[categoryKey].items
+                                                        })">
                                                         <i class="fas fa-plus fa-left"></i>Add skill
                                                     </button>
                                                 </li>
@@ -1097,27 +1339,31 @@
                                                 class="checkbox-container"
                                                 uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                                 tooltip-placement="top-right">
-                                                <label for="skill-category[{{ key }}]-public" class="form-privacy">
-                                                    <input type="checkbox" id="skill-category[{{ key }}]-public">
+                                                <label for="skill-category[{{ categoryKey }}]-public" class="form-privacy">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="skill-category[{{ categoryKey }}]-public"
+                                                        ng-model="category.public">
                                                     <span></span>
                                                 </label>
                                             </div>
                                         </li>
                                     </ul>
 
-                                    <ul class="category-skills" ui-sortable ng-model="category.skills">
-                                        <li ng-repeat="(keySkill, skill) in category.skills">
+                                    <ul class="category-skills" ui-sortable ng-model="category.items">
+                                        <li ng-repeat="(skillKey, skill) in category.items">
                                             <ul class="enable-listing">
                                                 <li>
                                                     <ul class="field-listing">
                                                         <li>
                                                             <div class="form-group">
-                                                                <label for="skill[{{ keySkill }}]">Skill</label>
+                                                                <label for="skill[{{ skillKey }}]">Skill</label>
                                                                 <input
                                                                     type="text"
                                                                     class="form-control"
-                                                                    id="skill[{{ keySkill }}]"
-                                                                    placeholder="Category">
+                                                                    id="skill[{{ skillKey }}]"
+                                                                    placeholder="Skill"
+                                                                    ng-model="skill.skill">
                                                             </div>
                                                         </li>
                                                         <li class="action-column">
@@ -1129,7 +1375,12 @@
                                                         </li>
                                                         <li class="action-column">
                                                             <div class="form-group">
-                                                                <button class="btn btn-outline-secondary" ng-click="vm.removeSkill(category, skill)">
+                                                                <button
+                                                                    class="btn btn-outline-secondary"
+                                                                    ng-click="vm.removeItem({
+                                                                        property: vm.profile.skills.categories[categoryKey].items,
+                                                                        index: skillKey
+                                                                    })">
                                                                     <i class="fas fa-trash"></i>
                                                                 </button>
                                                             </div>
@@ -1141,8 +1392,13 @@
                                                         class="checkbox-container"
                                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                                         tooltip-placement="top-right">
-                                                        <label for="skill[{{ key }}][{{ keySkill }}]-public" class="form-privacy">
-                                                            <input type="checkbox" id="skill[{{ key }}][{{ keySkill }}]-public">
+                                                        <label
+                                                            for="skill[{{ categoryKey }}][{{ skillKey }}]-public"
+                                                            class="form-privacy">
+                                                            <input
+                                                                type="checkbox"
+                                                                id="skill[{{ categoryKey }}][{{ skillKey }}]-public"
+                                                                ng-model="skill.public">
                                                             <span></span>
                                                         </label>
                                                     </div>
@@ -1152,7 +1408,12 @@
                                     </ul>
                                 </li>
                                 <li>
-                                    <button class="btn btn-link btn-inline" ng-click="vm.addSkillCategory()">
+                                    <button
+                                        class="btn btn-link btn-inline"
+                                        ng-click="vm.addItem({
+                                            property: vm.profile.skills.categories,
+                                            item: {items: []}
+                                        })">
                                         <i class="fas fa-plus fa-left"></i>Add category
                                     </button>
                                 </li>
@@ -1180,7 +1441,10 @@
                                         uib-tooltip-html="'You can set the privacy of publication section to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="publications-public" class="form-privacy">
-                                            <input type="checkbox" id="publications-public">
+                                            <input
+                                                type="checkbox"
+                                                id="publications-public"
+                                                ng-model="vm.profile.publications.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -1209,7 +1473,10 @@
                                         uib-tooltip-html="'You can set the privacy of the accomplishment section to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
                                         <label for="accomplishments-public" class="form-privacy">
-                                            <input type="checkbox" id="accomplishments-public">
+                                            <input
+                                                type="checkbox"
+                                                id="accomplishments-public"
+                                                ng-model="vm.profile.accomplishments.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -1222,7 +1489,7 @@
 
             <ul class="form-actions">
                 <li>
-                    <button class="btn btn-primary">
+                    <button class="btn btn-primary" ng-click="vm.save()">
                         <i class="fas fa-save fa-left"></i>Save
                     </button>
                 </li>
