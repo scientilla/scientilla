@@ -594,6 +594,11 @@
                             }
 
                             if (response && response.error) {
+                                if (response.error === 'Documents must be compared') {
+                                    response.error = 'We found <strong>duplicates</strong> of this document, please ' +
+                                        'compare these documents in the <strong>verified section</strong> first!';
+                                }
+
                                 Notification.warning(response.error);
                             }
                             break;
