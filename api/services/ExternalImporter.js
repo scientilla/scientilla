@@ -1,4 +1,4 @@
-/* global sails, ScopusExternalImporter, User, Group, DocumentOrigins, DocumentKinds */
+/* global sails, ScopusExternalImporter, User, Group, DocumentOrigins, DocumentKinds, OpenaireImporter */
 // ExternalImporter.js - in api/services
 
 "use strict";
@@ -37,6 +37,18 @@ module.exports = {
         }
         if (!origin || origin === DocumentOrigins.SCOPUS)
             await ScopusExternalImporter.updateAll();
+    },
+    async updateMetadata(origin) {
+        if (!origin || origin === DocumentOrigins.SCOPUS)
+            await ScopusExternalImporter.updateAllMetadata();
+        if (!origin || origin === DocumentOrigins.OPENAIRE)
+            await OpenaireImporter.updateAllMetadata();
+    },
+    async updateDocumentMetadata(document, origin) {
+        if ((!origin || origin === DocumentOrigins.SCOPUS) && document.scopusId)
+            await ScopusExternalImporter.updateMetadata(document.scopusId);
+        if ((!origin || origin === DocumentOrigins.OPENAIRE) && document.doi)
+            await OpenaireImporter.updateMetadata(document.doi);
     },
     updateDocument: async (origin, id) => {
         if (origin === DocumentOrigins.SCOPUS)

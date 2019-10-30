@@ -142,6 +142,9 @@ docker/db-test/logs
 logs/*
 !logs/.gitkeep
 
+metrics_import/*
+!metrics_import/.gitkeep
+
 ################################################
 # Program files
 #
@@ -156,6 +159,9 @@ data/*
 
 backups/*
 !backups/.gitkeep
+!backups/automatic
+backups/automatic/*
+!backups/automatic/.gitkeep
 
 installer/.env
 !installer/uploads

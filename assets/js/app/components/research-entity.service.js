@@ -58,7 +58,8 @@
             'institutes',
             'duplicates',
             'groups',
-            'scopusDocumentMetadata'
+            'scopusDocumentMetadata',
+            'openaireMetadata'
         ];
 
         const verificationFields = [

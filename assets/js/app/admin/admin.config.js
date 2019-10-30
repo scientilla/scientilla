@@ -9,7 +9,7 @@
         $routeProvider
             .when("/sources", {
                 template: params => '' +
-                    '<scientilla-admin-metrics></scientilla-admin-metrics>',
+                    '<scientilla-admin-sources></scientilla-admin-sources>',
                 resolve: {}
             })
             .when("/tools", {

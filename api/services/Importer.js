@@ -7,7 +7,9 @@ const xlsx = require('xlsx');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request-promise');
+
 const moment = require('moment');
+moment.locale('en');
 
 module.exports = {
     importSources,
@@ -377,10 +379,7 @@ async function importGroups() {
     sails.log.info('Group import finished');
 }
 
-
 async function importSourceMetrics(filename) {
-    sails.log.info('Source metrics import started');
-
     const sourceIdentifiers = SourceMetric.sourceIdentifiers;
 
     const originCellCoord = 'B1';
@@ -389,18 +388,41 @@ async function importSourceMetrics(filename) {
     let recordsCount = 0;
 
     const cols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-    const filePath = 'config/init/' + filename;
+    const filePath = 'metrics_import/' + filename;
+
+    const errors = [];
+
+    let workbook;
+    let year;
+
     if (fs.existsSync(filePath)) {
-        const workbook = xlsx.readFile(filePath);
+        try {
+            workbook = xlsx.readFile(filePath);
+        } catch(err) {
+            sails.log.info('Source metrics import stopped: Unsupported file!');
+        }
         const sheetNameList = workbook.SheetNames;
 
         const workSheet = workbook.Sheets[sheetNameList[0]];
 
-        if (!workSheet[originCellCoord] || !workSheet[yearCellCoord])
-            throw 'Invalid file format';
+        if (!workSheet[originCellCoord] || !workSheet[yearCellCoord]) {
+            sails.log.info('Source metrics import stopped: Invalid file format!');
+        }
 
         const origin = workSheet[originCellCoord].v;
-        const year = workSheet[yearCellCoord].v;
+        if (origin !== 'wos' && origin !== 'scopus') {
+            sails.log.info('The origin on cell ' + originCellCoord + ' is not valid!');
+        }
+
+        year = workSheet[yearCellCoord].v;
+        const yearRegex = /^(19|20)\d{2}$/;
+        if (!yearRegex.test(year)) {
+            sails.log.info('The year on cell ' + yearCellCoord + ' is not valid!');
+        }
+
+        if (errors.length > 0) {
+            sails.log.info('Source metrics import stopped: ' + errors.join(', '));
+        }
 
         const columnsMapping = {};
 
@@ -414,7 +436,6 @@ async function importSourceMetrics(filename) {
 
         const keyColumns = Object.keys(columnsMapping).filter(c => sourceIdentifiers.includes(c));
         const valueColumns = Object.keys(columnsMapping).filter(c => !sourceIdentifiers.includes(c));
-
 
         let i = 3;
         while (true) {
@@ -469,10 +490,11 @@ async function importSourceMetrics(filename) {
                     sails.log.debug('source metrics inserted/updated: ' + recordsCount);
             }
         }
+    } else {
+        sails.log.info('Source metrics import stopped: File not found!');
     }
 
     sails.log.info('imported ' + recordsCount + ' records');
-    sails.log.info('Source metrics import finished');
 }
 
 async function importUserContracts(email = 'all') {

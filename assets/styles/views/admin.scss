@@ -53,6 +53,29 @@
         .source-listing{
             @include normalize-listing;
         }
+
+        .source-metrics-table-container{
+            margin-bottom: 2rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .import-form,
+        .assign-metrics-form{
+            margin-bottom: 3rem;
+        }
+        
+        .metrics-content-container{
+            @include normalize-listing;
+            
+            & > li{
+                display: block;
+
+                & + li{
+                    margin-top: 10rem;
+                }
+            }
+        }
     }
 
     &.admin-tools{
@@ -162,6 +185,10 @@
                 padding: .5rem;
             }
         }
+
+        .admin-log-viewer{
+            @include normalize-listing;
+        }
     }
 
     &.admin-external-connectors {
@@ -250,7 +277,10 @@
 @include media-breakpoint-up(sm) {
     .admin{
         &.admin-sources{
-
+            .import-metrics-file,
+            .assign-metrics-select{
+                max-width: 400px;
+            }
         }
 
         &.admin-tools{
@@ -263,6 +293,24 @@
 
             .btn-add-institute{
                 height: fit-content;
+            }
+
+            .admin-log-viewer{
+                display: grid;
+                margin-right: -15px;
+                margin-left: -15px;
+                grid-template-columns: 200px 200px auto;
+                grid-template-rows: auto;
+
+                & > li{
+                    padding-right: 15px;
+                    padding-left: 15px;
+                    align-self: end;
+
+                    &:nth-child(4) {
+                        @include set-grid(2,1,1,3);
+                    }
+                }
             }
         }
     }

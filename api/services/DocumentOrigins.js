@@ -6,5 +6,6 @@ module.exports = {
     SCIENTILLA: 'scientilla',
     SCOPUS: 'scopus',
     ORCID: 'orcid',
-    PUBLICATIONS: 'publications'
+    PUBLICATIONS: 'publications',
+    OPENAIRE: 'openaire'
 };

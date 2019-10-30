@@ -1,191 +1,186 @@
-<scientilla-backend-layout>
-    <div class="admin admin-sources">
-        <h1>Source and metrics</h1>
+<ul class="metrics-content-container">
+    <li>
+        <h2 class="h3">Import source metrics</h2>
+        <form enctype="multipart/form-data" class="import-form">
+            <div
+                class="form-group"
+                ng-class="vm.errors.file ? 'has-error' : ''">
+                <input
+                    id="sourceMetricsFile"
+                    name="sourceMetricsFile"
+                    type="file"
+                    class="form-control import-metrics-file"
+                    file="vm.sourceMetricsFile"
+                    ng-class="vm.errors.file ? 'is-invalid' : ''">
+                <scientilla-error-messages
+                    class="error-messages"
+                    errors="vm.errors.file"></scientilla-error-messages>
+                <em>Please select a proper formatted .xlsx file!</em>
+            </div>
 
-        <uib-tabset active="active">
-            <uib-tab index="0" heading="Source">
+            <div class="form-group">
+                <button
+                    class="btn btn-primary"
+                    type="submit"
+                    ng-click="vm.importMetrics()"
+                    ng-disabled="!vm.sourceMetricsFile">
+                    Import source metrics
+                </button>
+            </div>
+        </form>
 
-                <span class="d-print-none">Search for a specific source</span>
-                <div class="dropdown-container add-scroll search-field-container">
-                    <input
-                        type="text"
+        <div class="row">
+            <div class="col-12 col-lg-6">
+                <label>Log output</label>
+                <div class="log-output-container">
+                    <div ng-bind-html="vm.types['import'].logs" id="log-viewer-import" class="log-output"></div>
+                </div>
+
+                <div class="form-group">
+                    <button
+                        class="btn btn-primary btn-refresh"
+                        type="submit"
+                        ng-click="vm.getLogs('import')"
+                        ng-disabled="vm.types['import'].refreshingLogs">
+                        <span ng-if="!vm.types['import'].refreshingLogs">
+                            <i class="fas fa-sync fa-left"></i>Refresh
+                        </span>
+                        <span ng-if="vm.types['import'].refreshingLogs">
+                            <i class="fas fa-sync fa-left fa-spin"></i>Refreshing
+                        </span>
+                    </button>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <label>Source metrics by year</label>
+
+                <div class="source-metrics-table-container">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Year</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Count</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="metric in vm.types['import'].metrics">
+                            <td>{{ metric.year }}</td>
+                            <td>{{ metric.name }}</td>
+                            <td>{{ metric.count  }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="form-group">
+                    <button
+                        class="btn btn-primary btn-refresh"
+                        type="submit"
+                        ng-click="vm.getMetrics('import')"
+                        ng-disabled="vm.types['import'].refreshingMetrics">
+                        <span ng-if="!vm.types['import'].refreshingMetrics">
+                            <i class="fas fa-sync fa-left"></i>Refresh
+                        </span>
+                        <span ng-if="vm.types['import'].refreshingMetrics">
+                            <i class="fas fa-sync fa-left fa-spin"></i>Refreshing
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </li>
+    <li>
+        <h2 class="h3">Assign source metrics</h2>
+        <form class="assign-metrics-form">
+            <div
+                class="form-group"
+                ng-class="vm.errors.year ? 'has-error' : ''">
+                <label for="year">Year</label>
+                <div class="select-wrapper assign-metrics-select">
+                    <select
+                        name="year"
+                        id="year"
                         class="form-control"
-                        ng-model="vm.selectedSource"
-                        uib-typeahead="source as vm.formatSource(source) for source in vm.getSources($viewValue)"
-                        typeahead-loading="searching"
-                        typeahead-no-results="noResults"
-                        data-ng-required="true"
-                        placeholder="Search source"
-                        ng-model-options="{ allowInvalid: true }"
-                        typeahead-editable="false"
-                        typeahead-select-on-blur="true">
+                        ng-model="vm.year"
+                        ng-options="year for year in vm.years">
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button
+                    class="btn btn-primary"
+                    type="submit"
+                    ng-click="vm.assignMetrics()">
+                    Assign source metrics
+                </button>
+
+                <div ng-if="vm.assigning">
+                    <em>Please note that this can take some time!</em>
+                </div>
+            </div>
+        </form>
+
+        <div class="row">
+            <div class="col-12 col-lg-6">
+                <label>Log output</label>
+                <div class="log-output-container">
+                    <div ng-bind-html="vm.types['assign'].logs" id="log-viewer-assign" class="log-output"></div>
                 </div>
 
-                <div
-                    class="card"
-                    ng-if="vm.selectedSource">
-                    <div class="card-body">
-                        <h2><i class="fas fa-code fa-left"></i>Source details</h2>
-
-                        <ul class="source-listing">
-                           <li>
-                                <strong>Id</strong>: {{ vm.selectedSource.id }}
-                            </li>
-                            <li>
-                                <strong>Title</strong>: {{vm.selectedSource.title}}
-                            </li>
-                            <li>
-                                <strong>Type</strong>: {{vm.selectedSource.type}}
-                            </li>
-                            <li>
-                                <strong>ScopusId</strong>: {{vm.selectedSource.scopusId}}
-                            </li>
-                            <li>
-                                <strong>ISSN</strong>: {{vm.selectedSource.issn}}
-                            </li>
-                            <li>
-                                <strong>EISSN</strong>: {{vm.selectedSource.eissn}}
-                            </li>
-                            <li>
-                                <strong>Acronym</strong>: {{vm.selectedSource.acronym}}
-                            </li>
-                            <li>
-                                <strong>Location</strong>: {{vm.selectedSource.location}}
-                            </li>
-                            <li>
-                                <strong>Year</strong>: {{vm.selectedSource.year}}
-                            </li>
-                            <li>
-                                <strong>Publisher</strong>: {{vm.selectedSource.publisher}}
-                            </li>
-                            <li>
-                                <strong>Isbn</strong>: {{vm.selectedSource.isbn}}
-                            </li>
-                            <li>
-                                <strong>Website</strong>:  <a
-                                href="{{ vm.selectedSource.website }}"
-                                title="{{ vm.selectedSource.title }}"
-                                target="_blank"
-                                ng-if="vm.selectedSource.website">{{ vm.selectedSource.website }}</a>
-                            </li>
-                        </ul>
-
-                        <div class="associated-metrics">
-                            <h3>Associated metrics</h3>
-                            <div class="associated-metrics-container">
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-condensed">
-                                        <tr>
-                                            <th></th>
-                                            <th>Name</th>
-                                            <th>Value</th>
-                                            <th>Year</th>
-                                            <th>Source title</th>
-                                            <th>ISSN</th>
-                                            <th>EISSN</th>
-                                            <th>Or. ID</th>
-                                        </tr>
-                                        <tr
-                                            ng-repeat="metric in vm.selectedSource.metrics"
-                                            ng-click="vm.selectMetric(metric)"
-                                            class="scientilla-clickable">
-                                            <td>
-                                                <div class="form-checkbox">
-                                                    <input type="checkbox" ng-checked="metric.selected">
-                                                    <span></span>
-                                                </div>
-                                            </td>
-                                            <td><strong>{{ metric.name }}</strong></td>
-                                            <td><strong>{{ metric.value }}</strong></td>
-                                            <th>{{metric.year}}</th>
-                                            <td>{{ metric.sourceTitle }}</td>
-                                            <td>{{ metric.issn }}</td>
-                                            <td>{{ metric.eissn }}</td>
-                                            <td>{{ metric.sourceOriginId }}</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-                            <button
-                                class="btn btn-primary"
-                                ng-click="vm.removeMetric()"
-                                ng-disabled="vm.metricsToRemove.length === 0">
-                                    <i class="fas fa-times fa-left"></i>Remove selected items
-                            </button>
-                        </div>
-                        
-                        <div class="search-metrics">
-                            <h3>Add associated metrics</h3>
-                            <span class="d-print-none">Search for metrics</span>
-                            <div class="search-metrics-container">
-                                <div class="input-group">
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        ng-model="vm.metricsSearch"
-                                        ng-keydown="vm.onMetricSearchKey($event)"
-                                        placeholder="Type and press enter">
-                                    <div class="input-group-append">
-                                        <button
-                                            class="btn btn-outline-secondary"
-                                            type="button"
-                                            ng-click="vm.searchMetrics()">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="search-metrics-results-container">
-                                <div class="table-responsive">
-                                    <table class="table table-striped table-condensed">
-                                        <tr>
-                                            <th></th>
-                                            <th>Name</th>
-                                            <th>Value</th>
-                                            <th>Year</th>
-                                            <th>Source title</th>
-                                            <th>ISSN</th>
-                                            <th>EISSN</th>
-                                            <th>Or. ID</th>
-                                        </tr>
-                                        <tr ng-repeat="metric in vm.foundMetrics"
-                                            ng-click="vm.selectMetric(metric)"
-                                            class="scientilla-clickable">
-                                            <td>
-                                                <div class="form-checkbox">
-                                                    <input
-                                                        type="checkbox"
-                                                        ng-checked="metric.selected">
-                                                    <span></span>
-                                                </div>
-                                            </td>
-                                            <th>{{metric.name}}</th>
-                                            <th>{{metric.value}}</th>
-                                            <th>{{metric.year}}</th>
-                                            <td>{{metric.sourceTitle}}</td>
-                                            <td>{{metric.issn}}</td>
-                                            <td>{{metric.eissn}}</td>
-                                            <td>{{metric.sourceOriginId}}</td>
-                                        </tr>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <button
-                                class="btn btn-primary"
-                                ng-click="vm.addMetric()"
-                                ng-disabled="vm.metricsToAdd.length === 0">
-                                <i class="fas fa-plus fa-left"></i>Associate selected items
-                            </button>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <button
+                        class="btn btn-primary btn-refresh"
+                        type="submit"
+                        ng-click="vm.getLogs('assign')"
+                        ng-disabled="vm.types['assign'].refreshingLogs">
+                        <span ng-if="!vm.types['assign'].refreshingLogs">
+                            <i class="fas fa-sync fa-left"></i>Refresh
+                        </span>
+                        <span ng-if="vm.types['assign'].refreshingLogs">
+                            <i class="fas fa-sync fa-left fa-spin"></i>Refreshing
+                        </span>
+                    </button>
                 </div>
-            </uib-tab>
+            </div>
+            <div class="col-12 col-lg-6">
+                <label>Assigned source metrics by year</label>
 
-            <uib-tab index="1" heading="Metrics import">
+                <div class="source-metrics-table-container">
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">Year</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Count</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="metric in vm.types['assign'].metrics">
+                            <td>{{ metric.year }}</td>
+                            <td>{{ metric.name }}</td>
+                            <td>{{ metric.count  }}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            </uib-tab>
-        </uib-tabset>
-    </div>
-</scientilla-backend-layout>
+                <div class="form-group">
+                    <button
+                        class="btn btn-primary btn-refresh"
+                        type="submit"
+                        ng-click="vm.getMetrics('assign')"
+                        ng-disabled="vm.types['assign'].refreshingMetrics">
+                        <span ng-if="!vm.types['assign'].refreshingMetrics">
+                            <i class="fas fa-sync fa-left"></i>Refresh
+                        </span>
+                        <span ng-if="vm.types['assign'].refreshingMetrics">
+                            <i class="fas fa-sync fa-left fa-spin"></i>Refreshing
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>

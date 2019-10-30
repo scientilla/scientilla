@@ -253,27 +253,28 @@ async function documentDataRequest(scopusId, attempt = 0) {
 
 
 async function documentCitationsRequest(eId) {
-    let res, citations, body;
+    let res;
     const requestParams = getScivalRequestParams('/REST/', {citations: eId});
     try {
         res = await request.get(requestParams);
     } catch (err) {
-        sails.log.debug('Scopus citations request failed. eId = ' + eId);
-        sails.log.debug(err.error);
-        return false;
+        throw {
+            eId: eId,
+            message: 'Scopus citations request failed',
+            error: err
+        };
     }
 
     try {
-        body = res.body;
-        citations = formatDocumentCitations(body);
+        return formatDocumentCitations(res.body);
     } catch (err) {
-        sails.log.debug('Document citations failed to parse XML. eId = ' + eId);
-        sails.log.debug('XML: ' + body);
-        sails.log.debug(err);
-
-        return false;
+        throw {
+            eId: eId,
+            xml: res.body,
+            message: 'Document citations failed to parse XML',
+            error: err
+        };
     }
-    return citations;
 }
 
 function formatDocumentCitations(XMLDocumentCitations) {

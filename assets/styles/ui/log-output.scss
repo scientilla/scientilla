@@ -1,0 +1,35 @@
+.log-output-container{
+    display: block;
+    width: 100%;
+    max-width: 765px;
+    margin-bottom: 2rem;
+}
+
+.log-output{
+    display: block;
+    height: 200px;
+    max-height: 200px;
+    padding: 2rem;
+    font-family: $inconsolata;
+    font-size: 1.1rem;
+    background: $black;
+    overflow-y: scroll;
+
+    &,
+    .white{
+        color: $white;
+    }
+
+    &.large{
+        height: 400px;
+        max-height: 400px;
+    }
+
+    .red{
+        color: $apple-blossom;
+    }
+
+    .green{
+        color: $forrest-green;
+    }
+}

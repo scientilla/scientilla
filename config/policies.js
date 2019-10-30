@@ -162,5 +162,16 @@ module.exports.policies = {
         getCustomizations: true,
         setCustomizations: isAdmin,
         resetCustomizations: isAdmin
+    },
+
+    SourceMetricController: {
+        getMetrics: isAdmin,
+        importMetrics: isAdmin,
+        assignMetrics: isAdmin
+    },
+
+    LogController: {
+        getTasks: isAdmin,
+        read: isAdmin
     }
 };

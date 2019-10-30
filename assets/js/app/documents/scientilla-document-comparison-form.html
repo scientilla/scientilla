@@ -128,7 +128,7 @@
                             </span>
                         </li>
                         <li ng-if="vm.getSourceType(vm.document)">
-                            <span ng-class="{'highlight-text': vm.differentFields.includes('sourcetype')}">
+                            <span ng-class="{'highlight-text': vm.differentFields.includes('sourceType')}">
                                 <strong>Source type:</strong> {{ vm.getSourceType(vm.document) }}
                             </span>
                         </li>
@@ -328,7 +328,7 @@
                                 </span>
                             </li>
                             <li ng-if="vm.getSourceType(duplicate)">
-                                <span ng-class="{'highlight-text': vm.differentFields.includes('sourcetype') && vm.selectedDuplicate === duplicate}">
+                                <span ng-class="{'highlight-text': vm.differentFields.includes('sourceType') && vm.selectedDuplicate === duplicate}">
                                     <strong>Source type:</strong> {{ vm.getSourceType(duplicate) }}
                                 </span>
                             </li>

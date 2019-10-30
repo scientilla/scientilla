@@ -1,4 +1,4 @@
-/* global Affiliation, Authorship, ResearchEntity, Document, TagLabel, SqlService, DocumentOrigins, DocumentKinds, DocumentNotDuplicate, DocumentNotDuplicateGroup, DocumentDuplicate */
+/* global Affiliation, Authorship, ResearchEntity, Document, TagLabel, SqlService, DocumentOrigins, DocumentKinds, DocumentNotDuplicate, DocumentNotDuplicateGroup, DocumentDuplicate, ExternalImporter */
 'use strict';
 
 /**
@@ -74,8 +74,7 @@ module.exports = _.merge({}, BaseModel, {
             sails.log.info(`${Model.identity} ${researchEntityId} tried to discard document ${documentId} but was already discarded`);
             return alreadyDiscarded[0];
         }
-        const newDiscarded = await DiscardedModel.create({researchEntity: researchEntityId, document: documentId});
-        return newDiscarded;
+        return await DiscardedModel.create({researchEntity: researchEntityId, document: documentId});
     },
     discardDocuments: async function (Model, researchEntityId, documentIds) {
         const results = [];
@@ -160,6 +159,7 @@ module.exports = _.merge({}, BaseModel, {
         researchEntity.drafts.add(draft);
         await researchEntity.savePromise();
         await Authorship.updateAuthorships(draft, draftData.authorships);
+        ExternalImporter.updateDocumentMetadata(selectedDraftData);
         draft = await Document.findOneById(draft.id)
             .populate('authorships')
             .populate('affiliations')
@@ -185,6 +185,7 @@ module.exports = _.merge({}, BaseModel, {
         const updatedDraft = updatedDrafts[0];
         const authorshipsData = await Authorship.getMatchingAuthorshipsData(updatedDraft, draftData.authorships);
         await Authorship.updateAuthorships(updatedDraft, authorshipsData);
+        ExternalImporter.updateDocumentMetadata(selectedDraftData);
         return updatedDraft;
     },
     getDraft: async function (ResearchEntityModel, draftId) {
@@ -273,7 +274,7 @@ module.exports = _.merge({}, BaseModel, {
             };
         const path = `/api/v1/${researchEntity.getUrlSection()}/${researchEntity.id}/${attribute}`;
         if (!_.isArray(qs.populate)) qs.populate = [qs.populate];
-        qs.populate = _.union(['source', 'affiliations', 'authorships', 'institutes'], qs.populate);
+        qs.populate = _.union(['source', 'affiliations', 'authorships', 'institutes', 'openaireMetadata'], qs.populate);
         const reqOptions = {
             uri: baseUrl + path,
             json: true,

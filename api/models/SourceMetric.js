@@ -55,9 +55,13 @@ module.exports = _.merge({}, BaseModel, {
         else
             await SourceMetric.create(selectedData);
     },
-    assignMetrics: async function () {
-        sails.log.info('Source metrics assign started');
-        const metricsToAssign = await SourceMetric.find();
+    assignMetrics: async function (year) {
+        const search = {};
+
+        if (year) {
+            search.year = year;
+        }
+        const metricsToAssign = await SourceMetric.find(search);
 
         const searchKeys = ['issn', 'sourceOriginId'];
 
@@ -120,6 +124,5 @@ module.exports = _.merge({}, BaseModel, {
         sails.log.info('assigned ' + assignedCount + ' sources');
         sails.log.info(notSourceFoundCount + ' metrics without sources');
         sails.log.info(multipleSourceFound + ' multiple sources found');
-        sails.log.info('Source metrics assign finished');
     }
 });

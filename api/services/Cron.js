@@ -2,6 +2,7 @@
 
 "use strict";
 const CronJob = require('cron').CronJob;
+const _ = require('lodash');
 
 const crons = [];
 
