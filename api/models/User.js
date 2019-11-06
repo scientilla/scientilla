@@ -216,6 +216,20 @@ module.exports = _.merge({}, SubResearchEntity, {
         user.slug = slug;
         return user;
     },
+    // Search for this function
+    // Create incompleteUser function
+    // Change login
+    // 1) user and auth exists
+    // 2) user exists, auth doesn't exists => create auth
+    // 3) user and auth doesn't exsist,do both
+    createUserWithoutAuth: async (newUser) => {
+        // Lowercase email
+        newUser.username = _.toLower(newUser.username);
+        // Check if username is unique
+        await User.checkUsername(newUser);
+        // Return created user
+        return await User.create(newUser);
+    },
     createCompleteUser: async function (params) {
         params.username = _.toLower(params.username);
         const attributes = _.keys(User._attributes);

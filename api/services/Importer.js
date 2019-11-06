@@ -11,6 +11,8 @@ const request = require('request-promise');
 const moment = require('moment');
 moment.locale('en');
 
+const defaultEmail = 'all';
+
 module.exports = {
     importSources,
     importPeople,
@@ -155,6 +157,7 @@ async function importPeople() {
             p.username = _.toLower(p.username);
             // Get a new array of all the group names of the person
             const groupsToSearch = allGroups.filter(g => p.groups.some(g2 => _.toLower(g2) == _.toLower(g.name))).map(g => g.name);
+            // can be removed
             if (groupInsertionEnabled) {
                 const groupsToBeInserted = p.groups.filter(g => !allGroups.some(g2 => _.toLower(g2.name) == _.toLower(g)));
                 if (groupsToBeInserted.length) {
@@ -168,40 +171,57 @@ async function importPeople() {
                 }
             }
             const groupSearchCriteria = {or: groupsToSearch.map(g => ({name: g}))};
+            // Find all groups with members and administrators
             const groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
             const criteria = {username: p.username};
+            // Find user by username
             let user = await User.findOne(criteria);
+            // If the user is empty get the user by distingiushed name from the Auth table
             if (!user) {
                 const auth = await Auth.findOne({dn: p.dn}).populate('user');
                 if (auth) user = auth.user;
             }
+            // Set some parameters
             p.lastsynch = moment().utc().format();
             p.synchronized = true;
+            // Store current state of active
             const activeMembership = p.active;
             p.active = true;
+            // If user is not empty
             if (user) {
+                // Update user with data
                 const u = await User.update({id: user.id}, p);
+                // Check if some specific fields changed
                 if (userShouldBeUpdated(user, p)) {
                     sails.log.info(`Updating user ${p.username}`);
                     numUsersUpdated++;
                 }
             }
+            // If user is empty
             else {
+                // If userCreationCondition is false or the user usersCreationCondition attribute is the same as the the config
                 if (!usersCreationCondition || p[usersCreationCondition.attribute] === usersCreationCondition.value) {
                     sails.log.info(`Inserting user ${p.username}`);
+                    // Create new user
                     user = await User.createCompleteUser(p);
                     numUsersInserted++;
                 }
             }
+
+            // If the user is still empty, go to the next person
             if (!user)
                 continue;
 
+            // Loop over the groups of the specific person
             for (let g of groups) {
                 const membershipCriteria = {user: user.id, group: g.id};
+                // Search for a membership where the user and group have the specified id
                 let membership = await Membership.findOne(membershipCriteria);
+                // if the membership doesn't exsist add the user as member
                 if (!membership) {
                     membership = await Group.addMember(g, user);
                 }
+                // Else update the membership
                 if (membership) {
                     membership.lastsynch = moment.utc().format();
                     membership.synchronized = true;
@@ -216,12 +236,18 @@ async function importPeople() {
                     await Membership.update({id: m.id}, {active: true});
             }
         }
+        // Update membership, which membership?
         const membershipUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
         const membershipDisabled = await Membership.update(membershipUpdateCriteria, {active: false});
+
+        // Update user, which user?
         const userUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
         const usersDisabled = await User.update(userUpdateCriteria, {active: false});
+
+        // Set the membership active to false for the disabled users
         const collaborationUpdateCriteria = {synchronized: false, user: usersDisabled.map(u => u.id), active: true};
         const collaborationDisabled = await Membership.update(collaborationUpdateCriteria, {active: false});
+
         const numUsersDisabled = usersDisabled.length;
         const numMembershipDisabled = membershipDisabled.length + collaborationDisabled.length;
         await Membership.update({user: usersDisabled.map(u => u.id), active: true, group: 1}, {active: false});
@@ -497,7 +523,26 @@ async function importSourceMetrics(filename) {
     sails.log.info('imported ' + recordsCount + ' records');
 }
 
-async function importUserContracts(email = 'all') {
+async function importUserContracts(email = defaultEmail) {
+    const userIsBeenChanged = (user, values) => {
+        const fields = [
+            'jobTitle',
+            'name',
+            'surname'
+        ];
+        return fields.some(f => values[f] !== user[f]);
+    };
+
+    const collectGroupCodes = (contract) => {
+        const codes = [];
+        for (let i = 1; i <= 6; i++) {
+            if (!_.isEmpty(contract['linea_' + i])) {
+                codes.push(contract['linea_' + i]);
+            }
+        }
+        return codes;
+    };
+
     const reqOptions = {
         uri: sails.config.scientilla.userImport.endpoint,
         qs: {
@@ -513,65 +558,187 @@ async function importUserContracts(email = 'all') {
         json: true
     };
 
-    const info = {
-        invalidEmails:0,
-        updatedRecords: 0,
-        newRecords: 0,
-        upToDateRecords: 0
-    };
+    const invalidEmails = [];
+    const updatedResearchEntityDataItems = [];
+    const newResearchEntityDataItems = [];
+    const upToDateResearchEntityDataItems = [];
+    const updatedUsers = [];
+    const insertedUsers = [];
+
+    const importTime = moment.utc().format();
+
+    sails.log.info('Started at ' + importTime);
 
     try {
+        const groups = await Group.find();
         const res = await request(reqOptions);
-        const contracts = res._.scheda;
-        //sails.log(contracts);
-        for (const contract of contracts) {
-            if (contract.contratto_secondario === 'X') {
-                continue;
+        const responseData = res._.scheda;
+        let contracts = [];
+
+        if (email !== defaultEmail) {
+            contracts.push(responseData);
+        } else {
+            contracts = responseData;
+        }
+
+        // Get primary contracts of people with a valid email address
+        const primaryContractsWithValidEmail = contracts.filter(contract => {
+            if (contract.contratto_secondario !== 'X' && /\S+@\S+\.\S+/.test(contract.email)) {
+                return true;
             }
 
-            if (!/\S+@\S+\.\S+/.test(contract.email)) {
-                info.invalidEmails++;
-                continue;
+            if (contract.contratto_secondario !== 'X' && !/\S+@\S+\.\S+/.test(contract.email)) {
+                invalidEmails.push(contract.email);
+                return false;
             }
 
-            let user = await User.findOne({username: contract.email});
+            return false;
+        });
 
-            // TMP
+        for (const contract of primaryContractsWithValidEmail) {
+
+            const groupCodesOfContract = collectGroupCodes(contract);
+
+            const groupNamesOfContract = groups.filter(group => groupCodesOfContract.some(groupCode => {
+                return _.toLower(groupCode) === _.toLower(group.code)
+            })).map(group => group.name);
+
+            const filteredGroups = await Group.find({
+                or: groupNamesOfContract.map(name => ({ name: name }))
+            }).populate('members').populate('administrators');
+
+            let user = await User.findOne({ username: contract.email });
+
+            const userObject = {
+                username: contract.email,
+                name: contract.nome,
+                surname: contract.cognome,
+                jobTitle: contract.Ruolo_AD,
+                lastsynch: moment().utc().format(),
+                active: true,
+                synchronized: true,
+            };
+
             if (!user) {
-                sails.log.debug(contract.email + ' not found!');
-                continue;
+                await User.createUserWithoutAuth(userObject);
+                // Search user again to populate ResearchEntity after creation
+                user = await User.findOne({ username: contract.email });
+                insertedUsers.push(user);
+            } else {
+                await User.update({ id: user.id }, userObject);
+
+                if (userIsBeenChanged(user, userObject)) {
+                    updatedUsers.push(user);
+                }
+            }
+
+            if (!user) {
+                throw new Error('No user!');
+            }
+
+            for (let group of filteredGroups) {
+                const condition = {
+                    user: user.id,
+                    group: group.id
+                };
+                let membership = await Membership.findOne(condition);
+
+                if (!membership) {
+                    membership = await Group.addMember(group, user);
+                }
+
+                membership.lastsynch = moment.utc().format();
+                membership.synchronized = true;
+                membership.active = true;
+
+                await Membership.update(condition, membership);
+            }
+
+            // Activate the membership if the user is an internal user and the membership is not active
+            if (User.isInternalUser(user)) {
+                const membership = await Membership.findOne({ group: 1, user: user.id });
+                if (membership && !membership.active) {
+                    await Membership.update({ id: membership.id }, { active: true });
+                }
             }
 
             let researchEntityData = await ResearchEntityData.findOne({
                 researchEntity: user.researchEntity
             });
 
-            //sails.log.debug(researchEntityData);
-
+            // Create or update researchEntityData record
             if (researchEntityData) {
                 if (!_.isEqual(researchEntityData.imported_data, contract)) {
-                    await ResearchEntityData.update(
+                    researchEntityData = await ResearchEntityData.update(
                         { id: researchEntityData.id },
                         { imported_data: JSON.stringify(contract) }
                     );
-                    info.updatedRecords++;
-                    sails.log.debug(researchEntityData.imported_data, contract);
+                    updatedResearchEntityDataItems.push(researchEntityData);
                 } else {
-                    info.upToDateRecords++;
+                    upToDateResearchEntityDataItems.push(researchEntityData);
                 }
             } else {
-                await ResearchEntityData.create({
+                researchEntityData = await ResearchEntityData.create({
                     researchEntity: user.researchEntity,
                     imported_data: JSON.stringify(contract)
                 });
-                info.newRecords++;
+                newResearchEntityDataItems.push(researchEntityData);
             }
         }
 
-        sails.log.debug(info.invalidEmails + ' invalid emails');
-        sails.log.debug(info.updatedRecords + ' updatedRecords');
-        sails.log.debug(info.newRecords + ' newRecords');
-        sails.log.debug(info.upToDateRecords + ' upToDateRecords');
+        // Select all items where lastsync is before importTime and synchronized and active is true
+        const condition = {
+            lastsynch: { '<' : importTime },
+            synchronized: true,
+            active: true
+        };
+        // Deactivate all memberships of users that aren't in sync
+        const disabledSynchronizedMemberships = await Membership.update(condition, { active: false });
+
+        // Deactivate all users that aren't in sync
+        const disabledUsers = await User.update(condition, { active: false });
+
+        // Set the membership active to false for the disabled users
+        const disabledCollaborations = await Membership.update({
+            synchronized: false,
+            user: disabledUsers.map(user => user.id),
+            active: true
+        }, { active: false });
+
+        const disabledMemberships = disabledSynchronizedMemberships.length + disabledCollaborations.length;
+
+        sails.log.info(invalidEmails.length + ' invalid email addresses found in the Pentaho response!');
+        sails.log.info(primaryContractsWithValidEmail.length + ' primary contracts found with a valid email address!');
+        sails.log.info(insertedUsers.length + ' Users created!');
+        //if (insertedUsers.length > 0 && insertedUsers.length < 10) {
+            sails.log.info(JSON.stringify(insertedUsers));
+        //}
+        sails.log.info(updatedUsers.length + ' Users updated!');
+        //if (info.length > 0 && updatedUsers.length < 10) {
+            sails.log.info(JSON.stringify(updatedUsers));
+        //}
+        sails.log.info(disabledUsers.length + ' Users disabled!');
+        //if (disabledUsers.length > 0 && disabledUsers.length < 10) {
+            sails.log.info(JSON.stringify(disabledUsers));
+        //}
+        sails.log.info(disabledMemberships + ' Memberships disabled!');
+        //if (disabledMemberships.length > 0 && disabledMemberships.length < 10) {
+            sails.log.info(JSON.stringify(disabledSynchronizedMemberships));
+            sails.log.info(JSON.stringify(disabledCollaborations));
+        //}
+        sails.log.info(updatedResearchEntityDataItems.length + ' ResearchEntityData records updated!');
+        //if (updatedResearchEntityDataItems.length > 0 && updatedResearchEntityDataItems.length < 10) {
+            sails.log.info(JSON.stringify(updatedResearchEntityDataItems));
+        //}
+        sails.log.info(newResearchEntityDataItems.length + ' ResearchEntityData records created!');
+        //if (newResearchEntityDataItems.length > 0 && newResearchEntityDataItems.length < 10) {
+            sails.log.info(JSON.stringify(newResearchEntityDataItems));
+        //}
+        sails.log.info(upToDateResearchEntityDataItems.length + ' ResearchEntityData records are already up-to-date!');
+        //if (upToDateResearchEntityDataItems.length > 0 && upToDateResearchEntityDataItems.length < 10) {
+            sails.log.info(JSON.stringify(upToDateResearchEntityDataItems));
+        //}
+        sails.log.info('Stopped at ' +  moment.utc().format());
     } catch (e) {
         sails.log.debug('importUserContracts');
         sails.log.debug(e);
