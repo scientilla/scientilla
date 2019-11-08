@@ -22,56 +22,56 @@ module.exports.customizationDefaults = {
     "styles": {
         "stylesArray": [
             {
-                "name": "primary-color",
-                "to": "#2C91C2"
+                "match": "primary-color",
+                "replacement": "#2C91C2"
             },
             {
-                "name": "secondary-color",
-                "to": "#696161"
+                "match": "secondary-color",
+                "replacement": "#696161"
             },
             {
-                "name": "header-background-color",
-                "to": "#333333"
+                "match": "header-background-color",
+                "replacement": "#333333"
             },
             {
-                "name": "footer-background-color",
-                "to": "#555555"
+                "match": "footer-background-color",
+                "replacement": "#555555"
             },
             {
-                "name": "base-gray",
-                "to": "#333333"
+                "match": "base-gray",
+                "replacement": "#333333"
             },
             {
-                "name": "link-text-color",
-                "to": "#2C91C2"
+                "match": "link-text-color",
+                "replacement": "#2C91C2"
             },
             {
-                "name": "warning-color",
-                "to": "#FF9933"
+                "match": "warning-color",
+                "replacement": "#FF9933"
             },
             {
-                "name": "success-color",
-                "to": "#2CA02C"
+                "match": "success-color",
+                "replacement": "#2CA02C"
             },
             {
-                "name": "error-color",
-                "to": "#A94442"
+                "match": "error-color",
+                "replacement": "#A94442"
             },
             {
-                "name": "document-color",
-                "to": "#2C91C2"
+                "match": "document-color",
+                "replacement": "#2C91C2"
             },
             {
-                "name": "h-index-color",
-                "to": "#A94442"
+                "match": "h-index-color",
+                "replacement": "#A94442"
             },
             {
-                "name": "citation-color",
-                "to": "#FF9933"
+                "match": "citation-color",
+                "replacement": "#FF9933"
             },
             {
-                "name": "impact-factor-color",
-                "to": "#2CA02C"
+                "match": "impact-factor-color",
+                "replacement": "#2CA02C"
             }
         ],
         "primaryColor": "2C91C2",

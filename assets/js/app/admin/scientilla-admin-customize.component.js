@@ -45,13 +45,12 @@
 
                 if (result.type === 'success') {
                     Notification.success(result.message);
+                    $timeout(function() {
+                        $window.location.reload();
+                    }, 1000);
                 } else {
                     Notification.warning(result.message);
                 }
-
-                $timeout(function() {
-                    $window.location.reload();
-                }, 1000);
             });
         }
 
@@ -61,13 +60,12 @@
 
                 if (result.type === 'success') {
                     Notification.success(result.message);
+                    $timeout(function() {
+                        $window.location.reload();
+                    }, 1000);
                 } else {
                     Notification.warning(result.message);
                 }
-
-                $timeout(function() {
-                    $window.location.reload();
-                }, 1000);
             });
         }
     }
