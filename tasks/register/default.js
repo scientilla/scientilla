@@ -1,5 +1,5 @@
 module.exports = function (grunt) {
 	grunt.registerTask('default',
-        ['jshint', 'compileAssets', 'linkAssets']
+        ['jshint', 'compileAssets', 'linkAssets', 'watch']
     );
 };
