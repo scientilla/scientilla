@@ -1,6 +1,5 @@
 "use strict";
 
-const path = require('path');
 const Sails = require('sails');
 const _ = require('lodash');
 
@@ -9,9 +8,7 @@ module.exports = function (grunt) {
         const done = this.async();
         Sails.load({ hooks: { grunt: false } }, async () => {
             try {
-                const filePath = path.resolve('config', 'scientilla.js');
-                const config = require(filePath);
-                const crons = config.scientilla.crons.filter(cron => cron.name === args[0]);
+                const crons = sails.config.scientilla.crons.filter(cron => cron.name === args[0]);
 
                 if (crons.length > 0) {
                     for (const cron of crons) {
