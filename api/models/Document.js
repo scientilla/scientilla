@@ -369,7 +369,7 @@ module.exports = _.merge({}, BaseModel, {
         },
         getOpenaireOpenAccessLinks() {
             if (!this.openaireMetadata || !this.openaireMetadata[0] || !Array.isArray(this.openaireMetadata[0].data.links))
-                return undefined;
+                return [];
 
             return this.openaireMetadata[0].data.links
                 .filter(l => l.accessRight === 'OPEN')
