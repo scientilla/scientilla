@@ -1,6 +1,6 @@
 module.exports = function (grunt) {
 	grunt.registerTask('recompileAssets', [
-		'sass-replace',
+		'replace',
 		'sass:dev',
 		'copy:dev'
 	]);
