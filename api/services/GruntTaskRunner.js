@@ -65,7 +65,7 @@ async function run(command) {
 
 async function writeLine(taskName, date, text) {
     const logFile = path.join(logFolder, taskName + '_' + date.format('YYYYMMDD')) + '.log';
-    await appendFile(logFile, text, function (err) {
+    await appendFile(logFile, text + '\r\n', function (err) {
         if (err) {
             throw err;
         }
