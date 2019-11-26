@@ -8,8 +8,9 @@ const fs = require('fs');
 const path = require('path');
 const util = require('util');
 const PdfPrinter = require('pdfmake');
-const {Base64Encode} = require('base64-stream');
+const { Base64Encode } = require('base64-stream');
 
+// Todo change this to new version
 const profile = {
     firstName: 'Firstname',
     lastName: 'Lastname',

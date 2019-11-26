@@ -9,9 +9,13 @@ label{
 
 .form-control{
     height: auto;
+    min-height: 3rem;
 
-    &:disabled{
+    &:disabled,
+    &.disabled{
         cursor: not-allowed;
+        color: $base-gray;
+        background: $gray-100;
     }
 }
 
@@ -323,6 +327,14 @@ label{
     font-size: 100%;
     line-height: 1;
     color: $error-color;
+
+    ul{
+        list-style-type: disc;
+
+        & > li {
+            margin-bottom: .5rem;
+        }
+    }
 }
 
 .filter-form-container{

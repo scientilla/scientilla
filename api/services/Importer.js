@@ -571,7 +571,9 @@ async function importUserContracts(email = defaultEmail) {
 
     try {
         const groups = await Group.find();
-        const res = await request(reqOptions);
+        let res = await request(reqOptions).catch(err => {
+            console.log(res.status);
+        });
         const responseData = res._.scheda;
         let contracts = [];
 

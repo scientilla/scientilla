@@ -74,11 +74,15 @@ module.exports = {
         const researchItemIds = req.param('itemIds');
         res.halt(ResearchItem.blukAction(ResearchItem.copyResearchItem, researchItemIds, [researchEntityId]));
     },
+    // todo add policies
     getProfile(req, res, next) {
         const researchEntityId = req.params.researchEntityId;
-        //sails.log.debug(researchEntityId);
-        //res.halt(new Promise((resolve) => resolve(researchEntityId)));
         res.halt(ResearchEntityData.getProfile(researchEntityId));
+    },
+    // todo add policies
+    getEditProfile(req, res, next) {
+        const researchEntityId = req.params.researchEntityId;
+        res.halt(ResearchEntityData.getEditProfile(researchEntityId));
     },
     saveProfile(req, res, next) {
         const researchEntityId = req.params.researchEntityId;

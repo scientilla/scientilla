@@ -43,13 +43,10 @@
                             <ul class="enable-listing">
                                 <li>
                                     <div class="form-group">
-                                        <label for="username">Username (Email) *</label>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            id="username"
-                                            placeholder="Username (Email)"
-                                            ng-model="vm.profile.basic.username.value">
+                                        <label>Username (Email)</label>
+                                        <div class="form-control disabled">
+                                            {{ vm.profile.username.value }}
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
@@ -61,7 +58,7 @@
                                             <input
                                                 type="checkbox"
                                                 id="username-public"
-                                                ng-model="vm.profile.basic.username.public">
+                                                ng-model="vm.profile.username.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -71,13 +68,10 @@
                             <ul class="enable-listing">
                                 <li>
                                     <div class="form-group">
-                                        <label for="name">Name *</label>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            id="name"
-                                            placeholder="Name"
-                                            ng-model="vm.profile.basic.name.value">
+                                        <label>Name</label>
+                                        <div class="form-control disabled">
+                                            {{ vm.profile.name.value }}
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
@@ -89,7 +83,7 @@
                                             <input
                                                 type="checkbox"
                                                 id="name-public"
-                                                ng-model="vm.profile.basic.name.public">
+                                                ng-model="vm.profile.name.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -99,13 +93,10 @@
                             <ul class="enable-listing">
                                 <li>
                                     <div class="form-group">
-                                        <label for="surname">Surname *</label>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            id="surname"
-                                            placeholder="Surname"
-                                            ng-model="vm.profile.basic.surname.value">
+                                        <label>Surname</label>
+                                        <div class="form-control disabled">
+                                            {{ vm.profile.surname.value }}
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
@@ -117,35 +108,20 @@
                                             <input
                                                 type="checkbox"
                                                 id="surname-public"
-                                                ng-model="vm.profile.basic.surname.public">
+                                                ng-model="vm.profile.surname.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
                             </ul>
 
-                            <div class="form-group">
-                                <label class="form-checkbox">
-                                    <input
-                                        type="checkbox"
-                                        id="use-display-name"
-                                        ng-model="vm.profile.basic.useDisplayNames">
-                                    <span>Use display names</span>
-                                </label>
-                                <em class="form-checkbox-description">Show the display name and surname on your profile instead of name and surname.</em>
-                            </div>
-
                             <ul class="enable-listing">
                                 <li>
                                     <div class="form-group">
-                                        <label for="display-name">Display name</label>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            id="display-name"
-                                            placeholder="Display name"
-                                            ng-disabled="!vm.profile.basic.useDisplayNames"
-                                            ng-model="vm.profile.basic.displayName.value">
+                                        <label>Job title</label>
+                                        <div class="form-control disabled">
+                                            {{ vm.profile.jobTitle.value }}
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
@@ -153,12 +129,11 @@
                                         class="checkbox-container"
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
-                                        <label for="display-name-public" class="form-privacy">
+                                        <label for="job-description-public" class="form-privacy">
                                             <input
                                                 type="checkbox"
-                                                id="display-name-public"
-                                                ng-disabled="!vm.profile.basic.useDisplayNames"
-                                                ng-model="vm.profile.basic.displayName.public">
+                                                id="job-description-public"
+                                                ng-model="vm.profile.jobTitle.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -168,43 +143,10 @@
                             <ul class="enable-listing">
                                 <li>
                                     <div class="form-group">
-                                        <label for="display-surname">Display surname</label>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            id="display-surname"
-                                            placeholder="Display surname"
-                                            ng-disabled="!vm.profile.basic.useDisplayNames"
-                                            ng-model="vm.profile.basic.displaySurname.value">
-                                    </div>
-                                </li>
-                                <li>
-                                    <div
-                                        class="checkbox-container"
-                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
-                                        tooltip-placement="top-right">
-                                        <label for="display-surname-public" class="form-privacy">
-                                            <input
-                                                type="checkbox"
-                                                id="display-surname-public"
-                                                ng-disabled="!vm.profile.basic.useDisplayNames"
-                                                ng-model="vm.profile.basic.displaySurname.public">
-                                            <span></span>
-                                        </label>
-                                    </div>
-                                </li>
-                            </ul>
-
-                            <ul class="enable-listing">
-                                <li>
-                                    <div class="form-group">
-                                        <label for="phone">Phone</label>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            id="phone"
-                                            placeholder="Phone"
-                                            ng-model="vm.profile.basic.phone.value">
+                                        <label>Phone</label>
+                                        <div class="form-control disabled">
+                                            {{ vm.profile.phone.value }}
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
@@ -216,73 +158,23 @@
                                             <input
                                                 type="checkbox"
                                                 id="phone-public"
-                                                ng-model="vm.profile.basic.phone.public">
+                                                ng-model="vm.profile.phone.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
                             </ul>
 
-                            <ul class="enable-listing">
+                            <h3 ng-if="vm.profile.centers.length > 0">Centers</h3>
+                            <ul
+                                class="enable-listing"
+                                ng-repeat="(key, center) in vm.profile.centers"
+                                ng-if="vm.profile.centers.length > 0">
                                 <li>
                                     <div class="form-group">
-                                        <label>Type of position</label>
-                                        <ul class="radio-options">
-                                            <li>
-                                                <label for="type-scientific" class="form-radiobutton">
-                                                    <input
-                                                        type="radio"
-                                                        id="type-scientific"
-                                                        value="scientific"
-                                                        name="type"
-                                                        ng-model="vm.profile.basic.positionType.value"
-                                                        ng-click="vm.reloadPositions()">
-                                                    <span>Scientific position</span>
-                                                </label>
-                                            </li>
-                                            <li>
-                                                <label for="type-administrative" class="form-radiobutton">
-                                                    <input
-                                                        type="radio"
-                                                        id="type-administrative"
-                                                        value="administrative"
-                                                        name="type"
-                                                        ng-model="vm.profile.basic.positionType.value"
-                                                        ng-click="vm.reloadPositions()">
-                                                    <span>Technical or Administrative position</span>
-                                                </label>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div
-                                        class="checkbox-container"
-                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
-                                        tooltip-placement="top-right">
-                                        <label for="type-public" class="form-privacy">
-                                            <input
-                                                type="checkbox"
-                                                id="type-public"
-                                                ng-model="vm.profile.basic.positionType.public">
-                                            <span></span>
-                                        </label>
-                                    </div>
-                                </li>
-                            </ul>
-
-                            <ul class="enable-listing" ng-if="vm.profile.basic.positionType.value === 'scientific'">
-                                <li>
-                                    <div class="form-group">
-                                        <label for="center">Center</label>
-                                        <div class="select-wrapper">
-                                            <select
-                                                name="center"
-                                                id="center"
-                                                class="form-control"
-                                                ng-model="vm.profile.basic.center.value"
-                                                ng-options="center for center in vm.centers">
-                                            </select>
+                                        <label>Facility</label>
+                                        <div class="form-control disabled">
+                                            {{ center.value }}
                                         </div>
                                     </div>
                                 </li>
@@ -291,29 +183,27 @@
                                         class="checkbox-container"
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
-                                        <label for="center-public" class="form-privacy">
+                                        <label for="center[{{ key }}]-public" class="form-privacy">
                                             <input
                                                 type="checkbox"
-                                                id="center-public"
-                                                ng-model="vm.profile.basic.center.public">
+                                                id="center[{{ key }}]-public"
+                                                ng-model="center.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
                             </ul>
 
-                            <ul class="enable-listing" ng-if="vm.profile.basic.positionType.value === 'scientific'">
+                            <h3 ng-if="vm.profile.facilities.length > 0">facilities</h3>
+                            <ul
+                                class="enable-listing"
+                                ng-repeat="(key, facility) in vm.profile.facilities"
+                                ng-if="vm.profile.facilities.length > 0">
                                 <li>
                                     <div class="form-group">
-                                        <label for="research-line">Research Line</label>
-                                        <div class="select-wrapper">
-                                            <select
-                                                name="research-line"
-                                                id="research-line"
-                                                class="form-control"
-                                                ng-model="vm.profile.basic.researchLine.value"
-                                                ng-options="researchLine for researchLine in vm.researchLines">
-                                            </select>
+                                        <label>Facility</label>
+                                        <div class="form-control disabled">
+                                            {{ facility.value }}
                                         </div>
                                     </div>
                                 </li>
@@ -322,29 +212,27 @@
                                         class="checkbox-container"
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
-                                        <label for="research-line-public" class="form-privacy">
+                                        <label for="facility[{{ key }}]-public" class="form-privacy">
                                             <input
                                                 type="checkbox"
-                                                id="research-line-public"
-                                                ng-model="vm.profile.basic.researchLine.public">
+                                                id="facility[{{ key }}]-public"
+                                                ng-model="facility.public'">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
                             </ul>
 
-                            <ul class="enable-listing" ng-if="vm.profile.basic.positionType.value === 'administrative'">
+                            <h3 ng-if="vm.profile.researchLines.length > 0">Research lines</h3>
+                            <ul
+                                class="enable-listing"
+                                ng-repeat="(key, researchLine) in vm.profile.researchLines"
+                                ng-if="vm.profile.researchLines.length > 0">
                                 <li>
                                     <div class="form-group">
-                                        <label for="administrative-organization">Administrative organization</label>
-                                        <div class="select-wrapper">
-                                            <select
-                                                name="administrative-organization"
-                                                id="administrative-organization"
-                                                class="form-control"
-                                                ng-model="vm.profile.basic.administrativeOrganization.value"
-                                                ng-options="organization for organization in vm.administrativeOrganizations">
-                                            </select>
+                                        <label>Reseach line</label>
+                                        <div class="form-control disabled">
+                                            {{ researchLine.value }}
                                         </div>
                                     </div>
                                 </li>
@@ -353,11 +241,11 @@
                                         class="checkbox-container"
                                         uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
-                                        <label for="administrative-organization-public" class="form-privacy">
+                                        <label for="researchLine[{{ key }}]-public" class="form-privacy">
                                             <input
                                                 type="checkbox"
-                                                id="administrative-organization-public"
-                                                ng-model="vm.profile.basic.administrativeOrganization.public">
+                                                id="researchLine[{{ key }}]-public"
+                                                ng-model="researchLine.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -366,18 +254,39 @@
 
                             <ul
                                 class="enable-listing"
-                                ng-if="vm.profile.basic.positionType.value === 'administrative'">
+                                ng-if="vm.profile.administrativeOrganization">
                                 <li>
                                     <div class="form-group">
-                                        <label for="office">Office</label>
-                                        <div class="select-wrapper">
-                                            <select
-                                                name="office"
-                                                id="office"
-                                                class="form-control"
-                                                ng-model="vm.profile.basic.office.value"
-                                                ng-options="office for office in vm.offices">
-                                            </select>
+                                        <label>Administrative Organization</label>
+                                        <div class="form-control disabled">
+                                            {{ vm.profile.administrativeOrganization.value }}
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="administrativeOrganization-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="administrativeOrganization-public"
+                                                ng-model="vm.profile.administrativeOrganization.public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul
+                                class="enable-listing"
+                                ng-if="vm.profile.office">
+                                <li>
+                                    <div class="form-group">
+                                        <label>Office</label>
+                                        <div class="form-control disabled">
+                                            {{ vm.profile.office.value }}
                                         </div>
                                     </div>
                                 </li>
@@ -390,161 +299,14 @@
                                             <input
                                                 type="checkbox"
                                                 id="office-public"
-                                                ng-model="vm.profile.basic.office.public">
+                                                ng-model="vm.profile.office.public">
                                             <span></span>
                                         </label>
                                     </div>
                                 </li>
                             </ul>
 
-                            <ul class="enable-listing">
-                                <li>
-                                    <div class="form-group">
-                                        <label for="position">Position</label>
-                                        <div class="select-wrapper">
-                                            <select
-                                                name="position"
-                                                id="position"
-                                                class="form-control"
-                                                ng-model="vm.profile.basic.position.value"
-                                                ng-options="position for position in vm.positions[vm.profile.basic.positionType.value]">
-                                            </select>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div
-                                        class="checkbox-container"
-                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
-                                        tooltip-placement="top-right">
-                                        <label for="position-public" class="form-privacy">
-                                            <input
-                                                type="checkbox"
-                                                id="position-public"
-                                                ng-model="vm.profile.basic.position.public">
-                                            <span></span>
-                                        </label>
-                                    </div>
-                                </li>
-                            </ul>
-
-                            <ul class="enable-listing">
-                                <li>
-                                    <div class="form-group">
-                                        <label for="facility">Facility</label>
-                                        <div class="select-wrapper">
-                                            <select
-                                                name="facility"
-                                                id="facility"
-                                                class="form-control"
-                                                ng-model="vm.profile.basic.facility.value"
-                                                ng-options="facility for facility in vm.facilities">
-                                            </select>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div
-                                        class="checkbox-container"
-                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
-                                        tooltip-placement="top-right">
-                                        <label for="facility-public" class="form-privacy">
-                                            <input
-                                                type="checkbox"
-                                                id="facility-public"
-                                                ng-model="vm.profile.basic.facility.public">
-                                            <span></span>
-                                        </label>
-                                    </div>
-                                </li>
-                            </ul>
-
-                            <!--<ul class="enable-listing">
-                                <li class="center">
-                                    <div class="form-group">
-                                        <label class="label-title">Titles</label>
-                                        <em>Show or hide all titles on the Scientilla and/or IIT website.</em>
-                                    </div>
-                                </li>
-                                <li>
-                                    <div
-                                        class="checkbox-container"
-                                        uib-tooltip-html="'You can set the privacy settings of the titles to visible for everyone or only visible for Scientilla users.'"
-                                        tooltip-placement="top-right">
-                                        <label for="titles-public" class="form-privacy">
-                                            <input
-                                                type="checkbox"
-                                                id="titles-public"
-                                                ng-model="vm.profile.basic.titles.public">
-                                            <span></span>
-                                        </label>
-                                    </div>
-                                </li>
-                            </ul>-->
-
-                            <label class="label-title">Titles</label>
-                            <ul class="item-listing" ui-sortable ng-model="vm.profile.basic.titles">
-                                <li ng-repeat="(key, title) in vm.profile.basic.titles">
-                                    <ul class="enable-listing no-labels">
-                                        <li>
-                                            <ul class="field-listing">
-                                                <li>
-                                                    <div class="form-group">
-                                                        <input
-                                                            type="text"
-                                                            class="form-control"
-                                                            placeholder="Title"
-                                                            ng-model="title.value">
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="form-group">
-                                                        <div class="btn btn-outline-secondary">
-                                                            <i class="fas fa-arrows-alt"></i>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                <li>
-                                                    <div class="form-group">
-                                                        <button
-                                                            class="btn btn-outline-secondary"
-                                                            ng-click="vm.removeItem({
-                                                                property: vm.profile.basic.titles,
-                                                                index: key
-                                                            })">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </div>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <div
-                                                class="checkbox-container"
-                                                uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
-                                                tooltip-placement="top-right">
-                                                <label for="titles[{{ key }}]-public" class="form-privacy">
-                                                    <input
-                                                        type="checkbox"
-                                                        id="titles[{{ key }}]-public"
-                                                        ng-model="title.public">
-                                                    <span></span>
-                                                </label>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                </li>
-
-                                <li>
-                                    <button
-                                        class="btn btn-link btn-inline"
-                                        ng-click="vm.addItem({
-                                            property: vm.profile.basic.titles
-                                        })">
-                                        <i class="fas fa-plus fa-left"></i>Add title
-                                    </button>
-                                </li>
-                            </ul>
+                            <em>The above information has been obtained from HR. If something is incorrect please contact HR.</em>
                         </div>
                     </div>
                 </li>
@@ -587,7 +349,17 @@
                                             class="form-control"
                                             id="linkedin"
                                             placeholder="Linkedin URL"
-                                            ng-model="vm.profile.socials.linkedin.value">
+                                            ng-model="vm.profile.socials.linkedin.value"
+                                            ng-class="{'is-invalid': vm.errors.socials.linkedin.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.socials.linkedin.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.socials.linkedin.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
@@ -615,7 +387,17 @@
                                             class="form-control"
                                             id="twitter"
                                             placeholder="Twitter URL"
-                                            ng-model="vm.profile.socials.twitter.value">
+                                            ng-model="vm.profile.socials.twitter.value"
+                                            ng-class="{'is-invalid': vm.errors.socials.twitter.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.socials.twitter.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.socials.twitter.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
@@ -637,34 +419,6 @@
                             <ul class="enable-listing">
                                 <li>
                                     <div class="form-group">
-                                        <label for="github"><i class="fab fa-github-square fa-left"></i>Github</label>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            id="github"
-                                            placeholder="Github URL"
-                                            ng-model="vm.profile.socials.github.value">
-                                    </div>
-                                </li>
-                                <li>
-                                    <div
-                                        class="checkbox-container"
-                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
-                                        tooltip-placement="top-right">
-                                        <label for="github-public" class="form-privacy">
-                                            <input
-                                                type="checkbox"
-                                                id="github-public"
-                                                ng-model="vm.profile.socials.github.public">
-                                            <span></span>
-                                        </label>
-                                    </div>
-                                </li>
-                            </ul>
-
-                            <ul class="enable-listing">
-                                <li>
-                                    <div class="form-group">
                                         <label for="facebook">
                                             <i class="fab fa-facebook-square fa-left"></i>Facebook
                                         </label>
@@ -673,7 +427,17 @@
                                             class="form-control"
                                             id="facebook"
                                             placeholder="Facebook URL"
-                                            ng-model="vm.profile.socials.facebook.value">
+                                            ng-model="vm.profile.socials.facebook.value"
+                                            ng-class="{'is-invalid': vm.errors.socials.facebook.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.socials.facebook.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.socials.facebook.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
@@ -701,7 +465,17 @@
                                             class="form-control"
                                             id="instagram"
                                             placeholder="Instagram URL"
-                                            ng-model="vm.profile.socials.instagram.value">
+                                            ng-model="vm.profile.socials.instagram.value"
+                                            ng-class="{'is-invalid': vm.errors.socials.instagram.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.socials.instagram.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.socials.instagram.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
@@ -719,30 +493,419 @@
                                     </div>
                                 </li>
                             </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="researchgate"><i class="fab fa-researchgate fa-left"></i>Researchgate</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="researchgate"
+                                            placeholder="Researchgate URL"
+                                            ng-model="vm.profile.socials.researchgate.value"
+                                            ng-class="{'is-invalid': vm.errors.socials.researchgate.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.socials.researchgate.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.socials.researchgate.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="researchgate-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="researchgate-public"
+                                                ng-model="vm.profile.socials.researchgate.public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="github"><i class="fab fa-github-square fa-left"></i>Github</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="github"
+                                            placeholder="Github URL"
+                                            ng-model="vm.profile.socials.github.value"
+                                            ng-class="{'is-invalid': vm.errors.socials.github.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.socials.github.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.socials.github.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="github-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="github-public"
+                                                ng-model="vm.profile.socials.github.public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="bitbucket"><i class="fab fa-bitbucket fa-left"></i>Bitbucket</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="bitbucket"
+                                            placeholder="Bitbucket URL"
+                                            ng-model="vm.profile.socials.bitbucket.value"
+                                            ng-class="{'is-invalid': vm.errors.socials.bitbucket.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.socials.bitbucket.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.socials.bitbucket.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="bitbucket-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="bitbucket-public"
+                                                ng-model="vm.profile.socials.bitbucket.public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="youtube"><i class="fab fa-youtube fa-left"></i>YouTube</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="youtube"
+                                            placeholder="YouTube URL"
+                                            ng-model="vm.profile.socials.youtube.value"
+                                            ng-class="{'is-invalid': vm.errors.socials.youtube.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.socials.youtube.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.socials.youtube.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="youtube-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="youtube-public"
+                                                ng-model="vm.profile.socials.youtube.public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="github"><i class="fab fa-flickr fa-left"></i>Flickr</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="flickr"
+                                            placeholder="Flickr URL"
+                                            ng-model="vm.profile.socials.flickr.value"
+                                            ng-class="{'is-invalid': vm.errors.socials.flickr.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.socials.flickr.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.socials.flickr.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="flickr-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="flickr-public"
+                                                ng-model="vm.profile.socials.flickr.public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </li>
                 <li>
                     <div class="card">
                         <div class="card-body">
-                            <h2 class="h4">About</h2>
+                            <h2 class="h4">About me</h2>
 
                             <ul class="enable-listing">
                                 <li></li>
                                 <li class="checkbox-legend">Privacy setting</li>
                             </ul>
 
-                            <ul class="enable-listing one-label">
+                            <div class="form-group">
+                                <label for="use-display-name">Display names</label>
+                                <label class="form-checkbox">
+                                    <input
+                                        type="checkbox"
+                                        id="use-display-name"
+                                        ng-model="vm.profile.displayNames.use">
+                                    <span>Use display names</span>
+                                </label>
+                                <em class="form-checkbox-description">Show the display name and surname on your profile instead of name and surname.</em>
+                            </div>
+
+                            <ul class="enable-listing" ng-if="vm.profile.displayNames.use">
                                 <li>
                                     <div class="form-group">
-                                        <label for="about">Description *</label>
+                                        <label for="display-name">Display name</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="display-name"
+                                            placeholder="Display name"
+                                            ng-disabled="!vm.profile.displayNames.use"
+                                            ng-model="vm.profile.displayNames.name.value"
+                                            ng-class="{'is-invalid': vm.errors.displayNames.name.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.displayNames.name.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.displayNames.name.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="display-name-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="display-name-public"
+                                                ng-disabled="!vm.profile.displayNames.use"
+                                                ng-model="vm.profile.displayNames.name.public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing" ng-if="vm.profile.displayNames.use">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="display-surname">Display surname</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="display-surname"
+                                            placeholder="Display surname"
+                                            ng-disabled="!vm.profile.displayNames.use"
+                                            ng-model="vm.profile.displayNames.surname.value"
+                                            ng-class="{'is-invalid': vm.errors.displayNames.surname.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.displayNames.surname.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.displayNames.surname.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="display-surname-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="display-surname-public"
+                                                ng-disabled="!vm.profile.displayNames.use"
+                                                ng-model="vm.profile.displayNames.surname.public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <!--<ul class="enable-listing">
+                                <li class="center">
+                                    <div class="form-group">
+                                        <label class="label-title">Titles</label>
+                                        <em>Show or hide all titles on the Scientilla and/or IIT website.</em>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy settings of the titles to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="titles-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="titles-public"
+                                                ng-model="vm.profile.titles.public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>-->
+
+                            <label class="label-title">Titles</label>
+                            <ul class="item-listing title-listing" ui-sortable ng-model="vm.profile.titles">
+                                <li ng-repeat="(key, title) in vm.profile.titles">
+                                    <ul class="enable-listing no-labels">
+                                        <li>
+                                            <ul class="field-listing">
+                                                <li>
+                                                    <div class="form-group">
+                                                        <input
+                                                            type="text"
+                                                            class="form-control"
+                                                            placeholder="Title"
+                                                            ng-model="title.value"
+                                                            ng-class="{'is-invalid': vm.errors.titles[key].value}">
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            ng-if="vm.errors.titles[key].value">
+                                                            <ul>
+                                                                <li ng-repeat="error in vm.errors.titles[key].value">
+                                                                    {{ error.message }}
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="form-group">
+                                                        <div class="btn btn-outline-secondary">
+                                                            <i class="fas fa-arrows-alt"></i>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li>
+                                                    <div class="form-group">
+                                                        <button
+                                                            class="btn btn-outline-secondary"
+                                                            ng-click="vm.removeItem({
+                                                                property: vm.profile.titles,
+                                                                index: key
+                                                            })">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <div
+                                                class="checkbox-container"
+                                                uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                                tooltip-placement="top-right">
+                                                <label for="titles[{{ key }}]-public" class="form-privacy">
+                                                    <input
+                                                        type="checkbox"
+                                                        id="titles[{{ key }}]-public"
+                                                        ng-model="title.public">
+                                                    <span></span>
+                                                </label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <li>
+                                    <button
+                                        class="btn btn-link btn-inline"
+                                        ng-click="vm.addItem({
+                                            property: vm.profile.titles
+                                        })">
+                                        <i class="fas fa-plus fa-left"></i>Add title
+                                    </button>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="description">Description</label>
                                         <textarea
-                                            name="about"
-                                            id="about"
+                                            name="description"
+                                            id="description"
                                             cols="30"
                                             rows="10"
                                             class="form-control"
-                                            ng-model="vm.profile.about.value"></textarea>
+                                            ng-model="vm.profile.description.value"
+                                            ng-class="{'is-invalid': vm.errors.description.value}"></textarea>
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.description.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.description.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </li>
                                 <li>
@@ -750,11 +913,163 @@
                                         class="checkbox-container"
                                         uib-tooltip-html="'You can set the privacy setting of the about section to visible for everyone or only visible for Scientilla users.'"
                                         tooltip-placement="top-right">
-                                        <label for="about-public" class="form-privacy">
+                                        <label for="description-public" class="form-privacy">
                                             <input
                                                 type="checkbox"
-                                                id="about-public"
-                                                ng-model="vm.profile.about.public">
+                                                id="description-public"
+                                                ng-model="vm.profile.description.public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="role">Role</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="role"
+                                            placeholder="Role"
+                                            ng-model="vm.profile.role.value"
+                                            ng-class="{'is-invalid': vm.errors.role.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.role.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.role.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="role-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="role-public"
+                                                ng-model="vm.profile.role.public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="website">Website</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="website"
+                                            placeholder="Website"
+                                            ng-model="vm.profile.website.value"
+                                            ng-class="{'is-invalid': vm.errors.website.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.website.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.website.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="website-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="website-public"
+                                                ng-model="vm.profile.website.public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="address">Address</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="address"
+                                            placeholder="Address"
+                                            ng-model="vm.profile.address.value"
+                                            ng-class="{'is-invalid': vm.errors.address.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.address.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.address.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="address-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="address-public"
+                                                ng-model="vm.profile.address.public">
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <ul class="enable-listing">
+                                <li>
+                                    <div class="form-group">
+                                        <label for="interests">Interests</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            id="interests"
+                                            placeholder="Interests"
+                                            ng-model="vm.profile.interests.value"
+                                            ng-class="{'is-invalid': vm.errors.interests.value}">
+                                        <div
+                                            class="invalid-feedback"
+                                            ng-if="vm.errors.interests.value">
+                                            <ul>
+                                                <li ng-repeat="error in vm.errors.interests.value">
+                                                    {{ error.message }}
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div
+                                        class="checkbox-container"
+                                        uib-tooltip-html="'You can set the privacy of this field to visible for everyone or only visible for Scientilla users.'"
+                                        tooltip-placement="top-right">
+                                        <label for="interests-public" class="form-privacy">
+                                            <input
+                                                type="checkbox"
+                                                id="interests-public"
+                                                ng-model="vm.profile.interests.public">
                                             <span></span>
                                         </label>
                                     </div>
@@ -798,7 +1113,7 @@
 
                             <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.experiences">
                                 <li ng-repeat="(key, experience) in vm.profile.experiences">
-                                    <ul class="enable-listing one-label">
+                                    <ul class="enable-listing">
                                         <li>
                                             <ul class="field-listing">
                                                 <li>
@@ -813,7 +1128,17 @@
                                                                     class="form-control"
                                                                     id="experience[{{ key }}]-company"
                                                                     placeholder="Company"
-                                                                    ng-model="experience.company">
+                                                                    ng-model="experience.company"
+                                                                    ng-class="{'is-invalid': vm.errors.experiences[key].company}">
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.experiences[key].company">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.experiences[key].company">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                         <li>
@@ -826,7 +1151,17 @@
                                                                     class="form-control"
                                                                     id="experience[{{ key }}]-job-title"
                                                                     placeholder="Job title"
-                                                                    ng-model="experience.jobTitle">
+                                                                    ng-model="experience.jobTitle"
+                                                                    ng-class="{'is-invalid': vm.errors.experiences[key].jobTitle}">
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.experiences[key].jobTitle">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.experiences[key].jobTitle">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                         <li>
@@ -842,7 +1177,17 @@
                                                                     datepicker-options="vm.datePickerOptions"
                                                                     is-open="vm.dateExperienceFromPopups[key]"
                                                                     ng-click="vm.dateExperienceFromPopups[key] = true"
-                                                                    close-text="Close">
+                                                                    close-text="Close"
+                                                                    ng-class="{'is-invalid': vm.errors.experiences[key].from}">
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.experiences[key].from">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.experiences[key].from">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                         <li>
@@ -858,7 +1203,17 @@
                                                                     datepicker-options="vm.datePickerOptions"
                                                                     is-open="vm.dateExperienceToPopups[key]"
                                                                     ng-click="vm.dateExperienceToPopups[key] = true"
-                                                                    close-text="Close">
+                                                                    close-text="Close"
+                                                                    ng-class="{'is-invalid': vm.errors.experiences[key].to}">
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.experiences[key].to">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.experiences[key].to">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                         <li>
@@ -871,7 +1226,17 @@
                                                                     class="form-control"
                                                                     id="experience[{{ key }}]-location"
                                                                     placeholder="Location"
-                                                                    ng-model="experience.location">
+                                                                    ng-model="experience.location"
+                                                                    ng-class="{'is-invalid': vm.errors.experiences[key].location}">
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.experiences[key].location">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.experiences[key].location">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                         <li>
@@ -884,7 +1249,17 @@
                                                                     class="form-control"
                                                                     id="experience[{{ key }}]-country"
                                                                     placeholder="Country"
-                                                                    ng-model="experience.country">
+                                                                    ng-model="experience.country"
+                                                                    ng-class="{'is-invalid': vm.errors.experiences[key].country}">
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.experiences[key].country">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.experiences[key].country">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                         <li>
@@ -898,7 +1273,17 @@
                                                                     cols="30"
                                                                     rows="10"
                                                                     class="form-control"
-                                                                    ng-model="experience.jobDescription"></textarea>
+                                                                    ng-model="experience.jobDescription"
+                                                                    ng-class="{'is-invalid': vm.errors.experiences[key].jobDescription}"></textarea>
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.experiences[key].jobDescription">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.experiences[key].jobDescription">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                     </ul>
@@ -990,7 +1375,7 @@
 
                             <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.education">
                                 <li ng-repeat="(key, education) in vm.profile.education">
-                                    <ul class="enable-listing one-label">
+                                    <ul class="enable-listing">
                                         <li>
                                             <ul class="field-listing">
                                                 <li>
@@ -1005,7 +1390,17 @@
                                                                     class="form-control"
                                                                     id="education[{{ key }}]-institute"
                                                                     placeholder="University/Institute"
-                                                                    ng-model="education.institute">
+                                                                    ng-model="education.institute"
+                                                                    ng-class="{'is-invalid': vm.errors.education[key].institute}">
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.education[key].institute">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.education[key].institute">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                         <li>
@@ -1016,7 +1411,17 @@
                                                                     class="form-control"
                                                                     id="education[{{ key }}]-title"
                                                                     placeholder="Title"
-                                                                    ng-model="education.title">
+                                                                    ng-model="education.title"
+                                                                    ng-class="{'is-invalid': vm.errors.education[key].title}">
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.education[key].title">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.education[key].title">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                         <li>
@@ -1032,7 +1437,17 @@
                                                                     datepicker-options="vm.datePickerOptions"
                                                                     is-open="vm.dateEducationFromPopups[key]"
                                                                     ng-click="vm.dateEducationFromPopups[key] = true"
-                                                                    close-text="Close">
+                                                                    close-text="Close"
+                                                                    ng-class="{'is-invalid': vm.errors.education[key].from}">
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.education[key].from">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.education[key].from">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                         <li>
@@ -1048,7 +1463,17 @@
                                                                     datepicker-options="vm.datePickerOptions"
                                                                     is-open="vm.dateEducationToPopups[key]"
                                                                     ng-click="vm.dateEducationToPopups[key] = true"
-                                                                    close-text="Close">
+                                                                    close-text="Close"
+                                                                    ng-class="{'is-invalid': vm.errors.education[key].to}">
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.education[key].to">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.education[key].to">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                         <li>
@@ -1061,7 +1486,17 @@
                                                                     class="form-control"
                                                                     id="education[{{ key }}]-location"
                                                                     placeholder="Location"
-                                                                    ng-model="education.location">
+                                                                    ng-model="education.location"
+                                                                    ng-class="{'is-invalid': vm.errors.education[key].location}">
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.education[key].location">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.education[key].location">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                         <li>
@@ -1074,7 +1509,17 @@
                                                                     class="form-control"
                                                                     id="education[{{ key }}]-country"
                                                                     placeholder="Country"
-                                                                    ng-model="education.country">
+                                                                    ng-model="education.country"
+                                                                    ng-class="{'is-invalid': vm.errors.education[key].country}">
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.education[key].country">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.education[key].country">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                     </ul>
@@ -1164,7 +1609,7 @@
 
                             <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.certificates">
                                 <li ng-repeat="(key, certificate) in vm.profile.certificates">
-                                    <ul class="enable-listing one-label">
+                                    <ul class="enable-listing">
                                         <li>
                                             <ul class="field-listing">
                                                 <li>
@@ -1175,7 +1620,17 @@
                                                             class="form-control"
                                                             id="certificates[{{ key }}]-title"
                                                             placeholder="Title"
-                                                            ng-model="certificate.title">
+                                                            ng-model="certificate.title"
+                                                            ng-class="{'is-invalid': vm.errors.certificates[key].title}">
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            ng-if="vm.errors.certificates[key].title">
+                                                            <ul>
+                                                                <li ng-repeat="error in vm.errors.certificates[key].title">
+                                                                    {{ error.message }}
+                                                                </li>
+                                                            </ul>
+                                                        </div>
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="certificates[{{ key }}]-description">
@@ -1187,7 +1642,17 @@
                                                             cols="30"
                                                             rows="10"
                                                             class="form-control"
-                                                            ng-model="certificate.description"></textarea>
+                                                            ng-model="certificate.description"
+                                                            ng-class="{'is-invalid': vm.errors.certificates[key].description}"></textarea>
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            ng-if="vm.errors.certificates[key].description">
+                                                            <ul>
+                                                                <li ng-repeat="error in vm.errors.certificates[key].description">
+                                                                    {{ error.message }}
+                                                                </li>
+                                                            </ul>
+                                                        </div>
                                                     </div>
                                                     <div class="form-group">
                                                         <label for="certificates[{{ key }}]-date">Date</label>
@@ -1202,7 +1667,17 @@
                                                             is-open="vm.dateCertificateDatePopups[key]"
                                                             ng-click="vm.dateCertificateDatePopups[key] = true"
                                                             close-text="Close"
-                                                            ng-model="certificate.date">
+                                                            ng-model="certificate.date"
+                                                            ng-class="{'is-invalid': vm.errors.certificates[key].date}">
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            ng-if="vm.errors.certificates[key].date">
+                                                            <ul>
+                                                                <li ng-repeat="error in vm.errors.certificates[key].date">
+                                                                    {{ error.message }}
+                                                                </li>
+                                                            </ul>
+                                                        </div>
                                                     </div>
                                                 </li>
                                                 <li class="action-column">
@@ -1262,7 +1737,7 @@
 
                             <ul
                                 class="enable-listing"
-                                ng-if="vm.profile.skills.categories.length > 0">
+                                ng-if="vm.profile.skillCategories.length > 0">
                                 <li></li>
                                 <li class="checkbox-legend">Privacy setting</li>
                             </ul>
@@ -1288,8 +1763,8 @@
                                 </li>
                             </ul>-->
 
-                            <ul class="item-listing" ui-sortable ng-model="vm.profile.skills.categories">
-                                <li ng-repeat="(categoryKey, category) in vm.profile.skills.categories">
+                            <ul class="item-listing" ui-sortable ng-model="vm.profile.skillCategories">
+                                <li ng-repeat="(categoryKey, category) in vm.profile.skillCategories">
                                     <ul class="enable-listing">
                                         <li>
                                             <ul class="skill-category-field-listing">
@@ -1301,7 +1776,17 @@
                                                             class="form-control"
                                                             id="skill-category"
                                                             placeholder="Category"
-                                                            ng-model="category.category">
+                                                            ng-model="category.name"
+                                                            ng-class="{'is-invalid': vm.errors.skillCategories[categoryKey].name}">
+                                                        <div
+                                                            class="invalid-feedback"
+                                                            ng-if="vm.errors.skillCategories[categoryKey].name">
+                                                            <ul>
+                                                                <li ng-repeat="error in vm.errors.skillCategories[categoryKey].name">
+                                                                    {{ error.message }}
+                                                                </li>
+                                                            </ul>
+                                                        </div>
                                                     </div>
                                                 </li>
                                                 <li class="action-column">
@@ -1316,7 +1801,7 @@
                                                         <button
                                                             class="btn btn-outline-secondary"
                                                             ng-click="vm.removeItem({
-                                                                property: vm.profile.skills.categories,
+                                                                property: vm.profile.skillCategories,
                                                                 index: categoryKey
                                                             })">
                                                             <i class="fas fa-trash"></i>
@@ -1327,7 +1812,7 @@
                                                     <button
                                                         class="btn btn-link"
                                                         ng-click="vm.addItem({
-                                                            property: vm.profile.skills.categories[categoryKey].items
+                                                            property: vm.profile.skillCategories[categoryKey].skills
                                                         })">
                                                         <i class="fas fa-plus fa-left"></i>Add skill
                                                     </button>
@@ -1350,8 +1835,8 @@
                                         </li>
                                     </ul>
 
-                                    <ul class="category-skills" ui-sortable ng-model="category.items">
-                                        <li ng-repeat="(skillKey, skill) in category.items">
+                                    <ul class="category-skills" ui-sortable ng-model="category.skills">
+                                        <li ng-repeat="(skillKey, skill) in category.skills">
                                             <ul class="enable-listing">
                                                 <li>
                                                     <ul class="field-listing">
@@ -1363,7 +1848,17 @@
                                                                     class="form-control"
                                                                     id="skill[{{ skillKey }}]"
                                                                     placeholder="Skill"
-                                                                    ng-model="skill.skill">
+                                                                    ng-model="skill.name"
+                                                                    ng-class="{'is-invalid': vm.errors.skillCategories[categoryKey].skills[skillKey].name}">
+                                                                <div
+                                                                    class="invalid-feedback"
+                                                                    ng-if="vm.errors.skillCategories[categoryKey].skills[skillKey].name">
+                                                                    <ul>
+                                                                        <li ng-repeat="error in vm.errors.skillCategories[categoryKey].skills[skillKey].name">
+                                                                            {{ error.message }}
+                                                                        </li>
+                                                                    </ul>
+                                                                </div>
                                                             </div>
                                                         </li>
                                                         <li class="action-column">
@@ -1378,7 +1873,7 @@
                                                                 <button
                                                                     class="btn btn-outline-secondary"
                                                                     ng-click="vm.removeItem({
-                                                                        property: vm.profile.skills.categories[categoryKey].items,
+                                                                        property: vm.profile.skillCategories[categoryKey].skills,
                                                                         index: skillKey
                                                                     })">
                                                                     <i class="fas fa-trash"></i>
@@ -1411,8 +1906,8 @@
                                     <button
                                         class="btn btn-link btn-inline"
                                         ng-click="vm.addItem({
-                                            property: vm.profile.skills.categories,
-                                            item: {items: []}
+                                            property: vm.profile.skillCategories,
+                                            item: {skills: []}
                                         })">
                                         <i class="fas fa-plus fa-left"></i>Add category
                                     </button>
@@ -1431,7 +1926,7 @@
                                 <li class="checkbox-legend">Privacy setting</li>
                             </ul>
 
-                            <ul class="enable-listing">
+                            <ul class="enable-listing no-labels">
                                 <li class="center">
                                     <em>Publications are been automatically taken from Scientilla, you can choose to hide or show this in your profile here on the Scientilla website and on the IIT website.</em>
                                 </li>
@@ -1463,7 +1958,7 @@
                                 <li class="checkbox-legend">Privacy setting</li>
                             </ul>
 
-                            <ul class="enable-listing">
+                            <ul class="enable-listing no-labels">
                                 <li class="center">
                                     <em>Accomplisments are been automatically taken from Scientilla, you can choose to hide or show this in your profile here on the Scientilla website and on the IIT website.</em>
                                 </li>

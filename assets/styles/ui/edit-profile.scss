@@ -1,14 +1,51 @@
 .edit-profile{
-    max-width: 1200px;
+    //max-width: 1200px;
     padding-bottom: 4rem;
 
     .card-listing{
         @include normalize-listing;
+        display: grid;
+        margin-right: -1.5rem;
+        margin-left: -1.5rem;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
 
         & > li{
-            & + li{
+            padding-right: 1.5rem;
+            padding-left: 1.5rem;
+
+            &:nth-child(3) {
                 margin-top: 3rem;
+                @include set-grid(2,1,1,2);
             }
+            &:nth-child(4) {
+                margin-top: 3rem;
+                @include set-grid(3,1,1,2);
+            }
+            &:nth-child(5) {
+                margin-top: 3rem;
+                @include set-grid(4,1,1,2);
+            }
+            &:nth-child(6) {
+                margin-top: 3rem;
+                @include set-grid(5,1,1,2);
+            }
+            &:nth-child(7) {
+                margin-top: 3rem;
+                @include set-grid(6,1,1,2);
+            }
+            &:nth-child(8) {
+                margin-top: 3rem;
+                @include set-grid(7,1,1,2);
+            }
+            &:nth-child(9) {
+                margin-top: 3rem;
+                @include set-grid(8,1,1,2);
+            }
+        }
+
+        .card{
+            min-height: 100%;
         }
     }
 
@@ -42,7 +79,7 @@
         display: grid;
         margin-left: -.75rem;
         margin-right: -.75rem;
-        grid-template-columns: 1fr 134px;
+        grid-template-columns: 1fr 80px;
         grid-template-rows: auto;
 
         & > li{
@@ -53,11 +90,20 @@
             }
 
             &:nth-child(2){
-                align-self: center;
+                align-self: start;
                 text-align: center;
 
                 label {
-                    //padding: 2rem;
+                    margin-top: 2.1rem;
+                }
+
+                .form-privacy{
+                    input{
+                        & + span{
+                            padding-top: .8rem;
+                            padding-bottom: .8rem;
+                        }
+                    }
                 }
             }
 
@@ -66,29 +112,11 @@
             }
         }
 
-        &.no-labels,
-        &.one-label{
-            & > li{
-                &:nth-child(2){
-                    align-self: start;
-
-                    .form-privacy{
-                        input{
-                            & + span{
-                                padding-top: .8rem;
-                                padding-bottom: .8rem;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        &.one-label{
+        &.no-labels{
             & > li{
                 &:nth-child(2){
                     label {
-                        margin-top: 2.1rem;
+                        margin-top: 0rem;
                     }
                 }
             }
@@ -97,6 +125,7 @@
         .checkbox-container{
             display: inline-block;
             min-height: 100%;
+            vertical-align: top;
 
             &.add-background{
                 background: $gray-100;
@@ -152,6 +181,10 @@
                 }
             }
         }
+    }
+
+    .title-listing{
+        margin-bottom: 2rem;
     }
 
     .field-listing{

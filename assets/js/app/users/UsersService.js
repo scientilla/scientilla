@@ -115,12 +115,15 @@
                 });
         };
 
-        service.getProfile = userId => {
-            return Restangular.one('researchentities', userId).customGET('get-profile');
+        service.getProfile = (researchEntityId, edit = false) => {
+            if (edit) {
+                return Restangular.one('researchentities', researchEntityId).customGET('get-edit-profile');
+            }
+            return Restangular.one('researchentities', researchEntityId).customGET('get-profile');
         };
 
-        service.saveProfile = (userId, profile) => {
-            return Restangular.one('researchentities', userId).customPUT(profile, 'save-profile');
+        service.saveProfile = (researchEntityId, profile) => {
+            return Restangular.one('researchentities', researchEntityId).customPUT(profile, 'save-profile');
         };
 
         return service;

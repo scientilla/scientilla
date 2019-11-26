@@ -12,21 +12,30 @@
             });
 
         SummaryProfileComponent.$inject = [
+            'UsersService',
+            'AuthService',
             '$element',
             '$uibModal'
         ];
 
-        function SummaryProfileComponent($element, $uibModal) {
+        function SummaryProfileComponent(UsersService, AuthService, $element, $uibModal) {
             const vm = this;
 
             vm.$onInit = () => {
-
+                getProfile();
             };
 
             vm.$onDestroy = () => {
                 const unregisterTab = requireParentMethod($element, 'unregisterTab');
                 unregisterTab(vm);
             };
+
+            function getProfile() {
+                UsersService.getProfile(AuthService.user.researchEntity).then(response => {
+                    vm.profile = response.plain();
+                    console.log(vm.profile);
+                });
+            }
 
             vm.showExperiencesModal = () => {
                 $uibModal.open({
