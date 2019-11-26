@@ -10,10 +10,10 @@ const readdirPromise = promisify(fs.readdir);
 const moment = require('moment');
 const readline = require('readline');
 const stream = require('stream');
-const Convert = require('ansi-to-html');
 const baseFolder = path.join('logs');
 
-moment.locale('en');
+const AU = require('ansi_up');
+const ansi_up = new AU.default;
 
 module.exports = {
     getTasks,
@@ -108,12 +108,8 @@ function read(req) {
             const output = [];
 
             rl.on('line', line => {
-                const convert = new Convert();
-                const lineHtml = convert.toHtml(line)
-                    .replace(/style="color:#A00"/g, 'class="red"')
-                    .replace(/style="color:#FFF"/g, 'class="white"')
-                    .replace(/style="color:#0A0"/g, 'class="green"');
-
+                ansi_up.use_classes = true;
+                const lineHtml = ansi_up.ansi_to_html(line);
                 output.push(lineHtml);
             });
 
