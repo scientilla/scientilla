@@ -10,306 +10,6 @@ const util = require('util');
 const PdfPrinter = require('pdfmake');
 const { Base64Encode } = require('base64-stream');
 
-// Todo change this to new version
-const profile = {
-    firstName: 'Firstname',
-    lastName: 'Lastname',
-    displayNames: {
-        use: true,
-        firstName: 'Display firstname',
-        lastName: 'Display lastname'
-    },
-    position: {
-        type: 'administrative',
-        center: '',
-        researchLine: '',
-        administrativeOrganization: 'Research Organization Directorate',
-        office: 'Data Analysis Office',
-        title: '',
-        role: 'Research Support Administrative Senior',
-        facility: ''
-    },
-    email: 'example@domain.com',
-    phone: ' +39 123 456 789',
-    titles: [
-        'Title',
-        'Title'
-    ],
-    socials: {
-        linkedin: 'http://linkedin.com',
-        twitter: 'http://twittter.com',
-        github: 'http://github.com',
-        facebook: 'http://facebook.com',
-        instagram: 'http://instagram.com'
-    },
-    about: {
-        title: 'About',
-        description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.'
-    },
-    experiences: {
-        title: 'Experiences',
-        items: [
-            {
-                company: 'Company',
-                jobTitle: 'Job title',
-                from: 'From',
-                to: 'To',
-                location: 'Location',
-                country: 'Country',
-                description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries'
-            }, {
-                company: 'Company',
-                jobTitle: 'Job title',
-                from: 'From',
-                to: 'To',
-                location: 'Location',
-                country: 'Country',
-                description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries'
-            }, {
-                company: 'Company',
-                jobTitle: 'Job title',
-                from: 'From',
-                to: 'To',
-                location: 'Location',
-                country: 'Country',
-                description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries'
-            }, {
-                company: 'Company',
-                jobTitle: 'Job title',
-                from: 'From',
-                to: 'To',
-                location: 'Location',
-                country: 'Country',
-                description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries'
-            }
-        ]
-    },
-    education: {
-        title: 'Education',
-        items: [
-            {
-                institute: 'University/Institute',
-                title: 'Title',
-                from: 'From',
-                to: 'To',
-                location: 'Location',
-                country: 'Country'
-            }, {
-                    institute: 'University/Institute',
-                    title: 'Title',
-                    from: 'From',
-                    to: 'To',
-                    location: 'Location',
-                    country: 'Country'
-                }
-            ]
-        },
-    certificates: {
-        title: 'Certificates',
-        items:[
-            {
-                title: 'Title of certificate',
-                text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries',
-                date: '14/09/2019'
-            }, {
-                title: 'Title of certificate',
-                text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries',
-                date: '14/09/2019'
-            }, {
-                title: 'Title of certificate',
-                text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries',
-                date: '14/09/2019'
-            }
-        ]
-    },
-    skills: {
-        title: 'Skills',
-        categories: [
-            {
-                title: 'Industry knowledge',
-                items: [
-                    'E-commerce',
-                    'Integration',
-                    'Strategy',
-                    'Marketing',
-                    'Big Data',
-                    'Virtualization',
-                    'Mobile devices'
-                ]
-            }, {
-                title: 'Tools & technologies',
-                items: [
-                    'Python',
-                    'C#',
-                    'C++',
-                    'HTML',
-                    'JavaScript',
-                    'CSS'
-                ]
-            }, {
-                title: 'Interpersonal Skills',
-                items: [
-                    'Strategic partnerships',
-                    'Business alliances',
-                    'Cross-functional team leadership',
-                    'Leadership',
-                    'Team building',
-                    'Executive management'
-                ]
-            }, {
-                title: 'Languages',
-                items: [
-                    'English',
-                    'French',
-                    'Italian',
-                    'Dutch',
-                    'German'
-                ]
-            }
-        ]
-    },
-    publications: {
-        title: 'Publications',
-        categories: [
-            {
-                title: 'Journals',
-                items: [
-                    {
-                        title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-                        source: 'Investigative Ophthalmology and Visual Science',
-                        doi: {
-                            number: '10.1093',
-                            link: '#'
-                        }
-                    }, {
-                        title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-                        source: 'Investigative Ophthalmology and Visual Science',
-                        doi: {
-                            number: '10.1093',
-                            link: '#'
-                        }
-                    }, {
-                        title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-                        source: 'Investigative Ophthalmology and Visual Science',
-                        doi: {
-                            number: '10.1093',
-                            link: '#'
-                        }
-                    }
-                ]
-            }, {
-                title: 'Books',
-                items: [
-                    {
-                        title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-                        source: 'PhD Thesis',
-                        doi: {
-                            number: '10.1093',
-                            link: '#'
-                        }
-                    }, {
-                        title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-                        source: 'PhD Thesis',
-                        doi: {
-                            number: '10.1093',
-                            link: '#'
-                        }
-                    }
-                ]
-            }, {
-                title: 'Conferences',
-                items: [
-                    {
-                        title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-                        source: 'International winterschool in bioelectronics',
-                        doi: {
-                            number: '10.1093',
-                            link: '#'
-                        }
-                    }, {
-                        title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-                        source: 'International winterschool in bioelectronics',
-                        doi: {
-                            number: '10.1093',
-                            link: '#'
-                        }
-                    }, {
-                        title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-                        source: 'International winterschool in bioelectronics',
-                        doi: {
-                            number: '10.1093',
-                            link: '#'
-                        }
-                    }, {
-                        title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-                        source: 'International winterschool in bioelectronics',
-                        doi: {
-                            number: '10.1093',
-                            link: '#'
-                        }
-                    }, {
-                        title: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry',
-                        source: 'International winterschool in bioelectronics',
-                        doi: {
-                            number: '10.1093',
-                            link: '#'
-                        }
-                    }
-                ]
-            }
-        ]
-    },
-    accomplishments: {
-        title: 'Accomplishments',
-        categories: [
-            {
-                title: 'Award / Achievement',
-                items: [
-                    {
-                        title: 'Lorem Ipsum is simply dummy text',
-                        issuer: 'Lorem ipsum',
-                        year: '2019'
-                    }, {
-                        title: 'Lorem Ipsum is simply dummy text',
-                        issuer: 'Lorem ipsum',
-                        year: '2019'
-                    }
-                ]
-            }, {
-                title: 'Organized Event',
-                items: [
-                    {
-                        title: 'Lorem Ipsum is simply dummy text',
-                        issuer: 'Lorem ipsum',
-                        year: '2019'
-                    }, {
-                        title: 'Lorem Ipsum is simply dummy text',
-                        issuer: 'Lorem ipsum',
-                        year: '2019'
-                    }, {
-                        title: 'Lorem Ipsum is simply dummy text',
-                        issuer: 'Lorem ipsum',
-                        year: '2019'
-                    }
-                ]
-            }, {
-                title: 'Editorship',
-                items: [
-                    {
-                        title: 'Lorem Ipsum is simply dummy text',
-                        issuer: 'Lorem ipsum',
-                        year: '2019'
-                    }, {
-                        title: 'Lorem Ipsum is simply dummy text',
-                        issuer: 'Lorem ipsum',
-                        year: '2019'
-                    }
-                ]
-            }
-        ]
-    }
-};
-
 function concatStrings(strings = [], options = {}) {
     options = _.extend({
         seperator: ', ',
@@ -317,10 +17,27 @@ function concatStrings(strings = [], options = {}) {
     }, options);
 
     if (options.hideEmpty) {
-        strings = strings.filter(string => string !== '')
+        strings = strings.filter(string => string !== '' && typeof string !== 'undefined')
     }
 
     return strings.join(options.seperator)
+}
+
+function formatDate(date) {
+    date = new Date(date);
+    let dd = date.getDate();
+    let mm = date.getMonth() + 1;
+
+    const yyyy = date.getFullYear();
+    if (dd < 10) {
+        dd = '0' + dd;
+    }
+
+    if (mm < 10) {
+        mm = '0' + mm;
+    }
+
+    return dd + '/' + mm + '/' + yyyy;
 }
 
 module.exports = {
@@ -328,9 +45,13 @@ module.exports = {
     toDoc
 };
 
-async function toPDF() {
+async function toPDF(researchEntityId) {
 
     let tmpText = '';
+
+    const profile = await ResearchEntityData.getProfile(researchEntityId);
+
+    //sails.log.debug(util.inspect(profile, false, null, true));
 
     function getExperienceText(experience) {
         const stack = [];
@@ -350,6 +71,14 @@ async function toPDF() {
                 });
             }
 
+            experience.from = formatDate(experience.from);
+
+            if (!_.has(experience, 'to') || _.isEmpty(experience.to)) {
+                experience.to = 'Present';
+            } else {
+                experience.to = formatDate(experience.to);
+            }
+
             tmpText = concatStrings([experience.from, experience.to], {seperator: ' - '});
             if (!_.isEmpty(tmpText)) {
                 stack.push({
@@ -366,9 +95,9 @@ async function toPDF() {
                 });
             }
 
-            if (!_.isEmpty(experience.description)) {
+            if (!_.isEmpty(experience.jobDescription)) {
                 stack.push({
-                    text: experience.description
+                    text: experience.jobDescription
                 });
             }
         }
@@ -390,6 +119,14 @@ async function toPDF() {
                     text: educationItem.title,
                     style: 'bold'
                 });
+            }
+
+            educationItem.from = formatDate(educationItem.from);
+
+            if (!_.has(educationItem, 'to') || _.isEmpty(educationItem.to)) {
+                educationItem.to = 'Present';
+            } else {
+                educationItem.to = formatDate(educationItem.to);
             }
 
             tmpText = concatStrings([educationItem.from, educationItem.to], {seperator: ' - '});
@@ -423,15 +160,15 @@ async function toPDF() {
                 });
             }
 
-            if (!_.isEmpty(certificate.text)) {
+            if (!_.isEmpty(certificate.description)) {
                 stack.push({
-                    text: certificate.text
+                    text: certificate.description
                 });
             }
 
             if (!_.isEmpty(certificate.date)) {
                 stack.push({
-                    text: certificate.date,
+                    text: formatDate(certificate.date),
                     style: 'lighten'
                 });
             }
@@ -444,16 +181,23 @@ async function toPDF() {
         const stack = [];
 
         if (!_.isEmpty(category)) {
-            if (!_.isEmpty(category.title)) {
+            if (!_.isEmpty(category.value)) {
                 stack.push({
-                    text: category.title,
+                    text: category.value,
                     style: 'bold'
                 });
             }
 
-            if (!_.isEmpty(category.items)) {
+            if (!_.isEmpty(category.skills)) {
+
+                const skills = [];
+                for (let i = 0; i < category.skills.length; i++) {
+                    const skill = category.skills[i];
+                    skills.push(skill.value);
+                }
+
                 stack.push({
-                    ul: category.items
+                    ul: skills
                 });
             }
         }
@@ -461,43 +205,43 @@ async function toPDF() {
         return stack;
     }
 
-    function getPublicationCategoryText(category) {
+    function getDocumentCategoryText(category, documents) {
         const text = [];
 
-        if (!_.isEmpty(category.title)) {
+        if (!_.isEmpty(category)) {
             text.push({
-                text: category.title,
+                text: category,
                 style: 'h3'
             });
         }
 
-        for (let j = 0; j < category.items.length; j++) {
-            const publication = category.items[j];
+        for (let i = 0; i < documents.length; i++) {
+            const document = documents[i];
             const stack = [];
 
-            if (!_.isEmpty(publication)) {
-                if (j > 0) {
+            if (!_.isEmpty(document)) {
+                if (i > 0) {
                     text.push({
                         text: ' '
                     });
                 }
 
-                if (!_.isEmpty(publication.title)) {
+                if (!_.isEmpty(document.title)) {
                     stack.push({
-                        text: publication.title,
+                        text: document.title,
                         style: 'bold'
                     });
                 }
 
-                if (!_.isEmpty(publication.source)) {
+                if (!_.isEmpty(document.source)) {
                     stack.push({
-                        text: 'Document source: ' + publication.source,
+                        text: 'Document source: ' + document.source,
                     });
                 }
 
-                if (!_.isEmpty(publication.doi.number)) {
+                if (!_.isEmpty(document.doi)) {
                     stack.push({
-                        text: 'Doi: ' + publication.doi.number,
+                        text: 'Doi: ' + document.doi,
                     });
                 }
 
@@ -512,22 +256,22 @@ async function toPDF() {
         return text;
     }
 
-    function getAccomplishmentCategoryText(category) {
+    function getAccomplishmentCategoryText(category, accomplishments) {
         const text = [];
 
-        if (!_.isEmpty(category.title)) {
+        if (!_.isEmpty(category)) {
             text.push({
-                text: category.title,
+                text: category,
                 style: 'h3'
             });
         }
 
-        for (let j = 0; j < category.items.length; j++) {
-            const accomplishment = category.items[j];
+        for (let i = 0; i < accomplishments.length; i++) {
+            const accomplishment = accomplishments[i];
             const stack = [];
 
             if (!_.isEmpty(accomplishment)) {
-                if (j > 0) {
+                if (i > 0) {
                     text.push({
                         text: ' '
                     });
@@ -587,12 +331,7 @@ async function toPDF() {
         const basicProfile = [];
 
         // Basic profile
-        if (profile.displayNames.use) {
-            tmpText = concatStrings([profile.displayNames.firstName, profile.displayNames.lastName], {seperator: ' '});
-        } else {
-            tmpText = concatStrings([profile.firstName, profile.lastName], {seperator: ' '});
-        }
-
+        tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
         if (!_.isEmpty(tmpText)) {
             basicProfile.push(
                 {
@@ -602,49 +341,67 @@ async function toPDF() {
             );
         }
 
-        switch(profile.position.type) {
-            case 'administrative':
-                tmpText = concatStrings([sails.config.scientilla.institute.name, profile.position.role], {seperator: ' - '});
-                if (!_.isEmpty(tmpText)) {
-                    basicProfile.push({
-                        text: tmpText
-                    });
-                }
-
-                tmpText = concatStrings([profile.position.administrativeOrganization, profile.position.office], {seperator: ' - '});
-                if (!_.isEmpty(tmpText)) {
-                    basicProfile.push({
-                        text: tmpText
-                    });
-                }
-                break;
-            case 'scientific':
-                tmpText = concatStrings([sails.config.scientilla.institute.name, profile.position.title], {seperator: ' - '});
-                if (!_.isEmpty(tmpText)) {
-                    basicProfile.push({
-                        text: tmpText
-                    });
-                }
-
-                if (!_.isEmpty(profile.position.researchLine)) {
-                    basicProfile.push({
-                        text: profile.position.researchLine
-                    });
-                }
-
-                if (!_.isEmpty(profile.position.center)) {
-                    basicProfile.push({
-                        text: profile.position.center
-                    });
-                }
-                break;
-            default:
-                break;
+        if (!_.isEmpty(profile.jobTitle)) {
+            basicProfile.push({
+                text: profile.jobTitle
+            });
         }
 
-        if (!_.isEmpty(profile.position.facility)) {
+        if (!_.isEmpty(profile.centers)) {
             basicProfile.push({
-                text: profile.position.facility
+                text: ' ',
+                fontSize: 5
+            });
+
+            for (let i = 0; i < profile.centers.length; i++) {
+                const center = profile.centers[i];
+                basicProfile.push({
+                    text: center
+                });
+            }
+        }
+
+        if (!_.isEmpty(profile.researchLines)) {
+            basicProfile.push({
+                text: ' ',
+                fontSize: 5
+            });
+
+            for (let i = 0; i < profile.researchLines.length; i++) {
+                const researchLine = profile.researchLines[i];
+                basicProfile.push({
+                    text: researchLine
+                });
+            }
+        }
+
+        if (!_.isEmpty(profile.administrativeOrganization)) {
+            basicProfile.push({
+                text: profile.administrativeOrganization
+            });
+        }
+
+        if (!_.isEmpty(profile.office)) {
+            basicProfile.push({
+                text: profile.office
+            });
+        }
+
+        if (!_.isEmpty(profile.position)) {
+            basicProfile.push({
+                text: profile.position
+            });
+        }
+
+        if (!_.isEmpty(profile.role)) {
+            basicProfile.push({
+                text: profile.role
+            });
+        }
+
+        if (!_.isEmpty(profile.facility)) {
+            basicProfile.push({
+                text: profile.facility
             });
         }
 
@@ -669,21 +426,20 @@ async function toPDF() {
         });
 
         // Contacts
-        let contacts = [];
-        if (!_.isEmpty(profile.email)) {
-            contacts.push({
+        if (!_.isEmpty(profile.username)) {
+            basicProfile.push({
                 text: [
                     {
                         text: '',
                         style: 'fontAwesome'
                     },
-                    ' ' + profile.email
+                    ' ' + profile.username
                 ]
             });
         }
 
         if (!_.isEmpty(profile.phone)) {
-            contacts.push({
+            basicProfile.push({
                 text: [
                     {
                         text: '',
@@ -697,8 +453,40 @@ async function toPDF() {
             });
         }
 
+        if (!_.isEmpty(profile.address)) {
+            basicProfile.push({
+                text: [
+                    {
+                        text: '',
+                        style: [
+                            'fontAwesome',
+                            'solid'
+                        ]
+                    },
+                    ' ' + profile.address
+                ]
+            });
+        }
+
+        if (!_.isEmpty(profile.website)) {
+            basicProfile.push({
+                text: [
+                    {
+                        text: '',
+                        style: [
+                            'fontAwesome',
+                            'solid'
+                        ]
+                    },
+                    ' ' + profile.website
+                ]
+            });
+        }
+
+        // Socials
+        let socials = [];
         if (!_.isEmpty(profile.socials && profile.socials.linkedin)) {
-            contacts.push({
+            socials.push({
                 text: [
                     {
                         text: '',
@@ -713,7 +501,7 @@ async function toPDF() {
         }
 
         if (!_.isEmpty(profile.socials && profile.socials.twitter)) {
-            contacts.push({
+            socials.push({
                 text: [
                     {
                         text: '',
@@ -727,23 +515,8 @@ async function toPDF() {
             });
         }
 
-        if (!_.isEmpty(profile.socials && profile.socials.github)) {
-            contacts.push({
-                text: [
-                    {
-                        text: '',
-                        style: [
-                            'fontAwesome',
-                            'brands'
-                        ]
-                    },
-                    ' ' + profile.socials.github
-                ]
-            });
-        }
-
         if (!_.isEmpty(profile.socials && profile.socials.facebook)) {
-            contacts.push({
+            socials.push({
                 text: [
                     {
                         text: '',
@@ -758,7 +531,7 @@ async function toPDF() {
         }
 
         if (!_.isEmpty(profile.socials && profile.socials.instagram)) {
-            contacts.push({
+            socials.push({
                 text: [
                     {
                         text: '',
@@ -772,11 +545,93 @@ async function toPDF() {
             });
         }
 
-        contacts = _.chunk(contacts, _.round(contacts.length / 2));
+        if (!_.isEmpty(profile.socials && profile.socials.researchgate)) {
+            socials.push({
+                text: [
+                    {
+                        text: '',
+                        style: [
+                            'fontAwesome',
+                            'brands'
+                        ]
+                    },
+                    ' ' + profile.socials.researchgate
+                ]
+            });
+        }
 
-        basicProfile.push({
-            columns: contacts
-        });
+        if (!_.isEmpty(profile.socials && profile.socials.github)) {
+            socials.push({
+                text: [
+                    {
+                        text: '',
+                        style: [
+                            'fontAwesome',
+                            'brands'
+                        ]
+                    },
+                    ' ' + profile.socials.github
+                ]
+            });
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.bitbucket)) {
+            socials.push({
+                text: [
+                    {
+                        text: '',
+                        style: [
+                            'fontAwesome',
+                            'brands'
+                        ]
+                    },
+                    ' ' + profile.socials.bitbucket
+                ]
+            });
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.youtube)) {
+            socials.push({
+                text: [
+                    {
+                        text: '',
+                        style: [
+                            'fontAwesome',
+                            'brands'
+                        ]
+                    },
+                    ' ' + profile.socials.youtube
+                ]
+            });
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.flickr)) {
+            socials.push({
+                text: [
+                    {
+                        text: '',
+                        style: [
+                            'fontAwesome',
+                            'brands'
+                        ]
+                    },
+                    ' ' + profile.socials.flickr
+                ]
+            });
+        }
+
+        if (!_.isEmpty(socials)) {
+            socials = _.chunk(socials, _.round(socials.length / 2));
+
+            basicProfile.push({
+                text: ' ',
+                fontSize: 5
+            });
+
+            basicProfile.push({
+                columns: socials
+            });
+        }
 
         content.push({
             columns: [{
@@ -795,17 +650,35 @@ async function toPDF() {
         });
 
         // About
-        if (!_.isEmpty(profile.about) && !_.isEmpty(profile.about.title) && !_.isEmpty(profile.about.description)) {
+        if (!_.isEmpty(profile.description)) {
             content.push({
                 unbreakable: true,
                 stack: [
                     {
-                        text: profile.about.title,
+                        text: 'About me',
                         style: 'h2'
                     }, {
-                        text: profile.about.description
+                        text: profile.description
                     }
                 ]
+            });
+        }
+
+        // Interests
+        if (!_.isEmpty(profile.interests)) {
+            content.push({
+                text: ' ',
+                fontSize: 10
+            });
+
+            content.push({
+                text: 'Interests',
+                style: 'h3'
+            });
+
+            content.push({
+                ul: profile.interests,
+                style: 'lighten'
             });
 
             content.push({
@@ -815,31 +688,41 @@ async function toPDF() {
         }
 
         // Experiences
-        if (!_.isEmpty(profile.experiences) && !_.isEmpty(profile.experiences.items)) {
-            const experiences = profile.experiences.items;
-            const firstExperience = experiences.shift();
+        if (!_.isEmpty(profile.experiences)) {
+            const experiences = profile.experiences;
 
             content.push({
                 unbreakable: true,
-                stack: [
-                    {
-                        text: profile.experiences.title,
-                        style: 'h2'
-                    }
-                ].concat(getExperienceText(firstExperience))
+                text: 'Experiences',
+                style: 'h2'
             });
 
-            for (let i = 0; i < experiences.length; i++) {
-                const experience = experiences[i];
+            let count = 0;
+            for (const company in experiences) {
+                if (count > 0) {
+                    content.push({
+                        text: ' '
+                    });
+                }
 
-                content.push({
-                    text: ' '
-                });
+                for (let i = 0; i < experiences[company].length; i++) {
+                    const experience = experiences[company][i];
 
-                content.push({
-                    unbreakable: true,
-                    stack: getExperienceText(experience)
-                });
+                    experience.company = company;
+
+                    if (i > 0) {
+                        content.push({
+                            text: ' '
+                        });
+                    }
+
+                    content.push({
+                        unbreakable: true,
+                        stack: getExperienceText(experience)
+                    });
+                }
+
+                count++;
             }
 
             content.push({
@@ -849,26 +732,23 @@ async function toPDF() {
         }
 
         // Education
-        if (!_.isEmpty(profile.education) && !_.isEmpty(profile.education.title) && !_.isEmpty(profile.education.items)) {
-            const educationItems = profile.education.items;
-            const firstEducationItem = educationItems.shift();
+        if (!_.isEmpty(profile.education)) {
+            const educationItems = profile.education;
 
             content.push({
                 unbreakable: true,
-                stack: [
-                    {
-                        text: profile.education.title,
-                        style: 'h2'
-                    }
-                ].concat(getEducationText(firstEducationItem))
+                text: 'Education',
+                style: 'h2'
             });
 
             for (let i = 0; i < educationItems.length; i++) {
                 const educationItem = educationItems[i];
 
-                content.push({
-                    text: ' ',
-                });
+                if (i > 0) {
+                    content.push({
+                        text: ' '
+                    });
+                }
 
                 content.push({
                     unbreakable: true,
@@ -883,26 +763,23 @@ async function toPDF() {
         }
 
         // Certificates
-        if (!_.isEmpty(profile.certificates) && !_.isEmpty(profile.certificates.title) && !_.isEmpty(profile.certificates.items)) {
-            const certificates = profile.certificates.items;
-            const firstCertificate = certificates.shift();
+        if (!_.isEmpty(profile.certificates)) {
+            const certificates = profile.certificates;
 
             content.push({
                 unbreakable: true,
-                stack: [
-                    {
-                        text: profile.certificates.title,
-                        style: 'h2'
-                    }
-                ].concat(getCertificateText(firstCertificate))
+                text: 'Certificates',
+                style: 'h2'
             });
 
             for (let i = 0; i < certificates.length; i++) {
                 const certificate = certificates[i];
 
-                content.push({
-                    text: ' '
-                });
+                if (i > 0) {
+                    content.push({
+                        text: ' '
+                    });
+                }
 
                 content.push({
                     unbreakable: true,
@@ -917,26 +794,22 @@ async function toPDF() {
         }
 
         // Skills
-        if (!_.isEmpty(profile.skills) && !_.isEmpty(profile.skills.title) && !_.isEmpty(profile.skills.categories)) {
-            const skillCategories = profile.skills.categories;
-            const firstSkillCategory = skillCategories.shift();
+        if (!_.isEmpty(profile.skillCategories)) {
 
             content.push({
                 unbreakable: true,
-                stack: [
-                    {
-                        text: profile.skills.title,
-                        style: 'h2'
-                    }
-                ].concat(getSkillCategoryText(firstSkillCategory))
+                text: 'Skills',
+                style: 'h2'
             });
 
-            for (let i = 0; i < skillCategories.length; i++) {
-                const category = skillCategories[i];
+            for (let i = 0; i < profile.skillCategories.length; i++) {
+                const category = profile.skillCategories[i];
 
-                content.push({
-                    text: ' '
-                });
+                if (i > 0) {
+                    content.push({
+                        text: ' '
+                    });
+                }
 
                 content.push({
                     unbreakable: true,
@@ -950,32 +823,31 @@ async function toPDF() {
             });
         }
 
-        // Publications
-        if (!_.isEmpty(profile.publications) && !_.isEmpty(profile.publications.title) && !_.isEmpty(profile.publications.categories)) {
-            const publicationCategories = profile.publications.categories;
-            const firstPublicationCategory = publicationCategories.shift();
+        // Documents
+        if (!_.isEmpty(profile.documents)) {
 
             content.push({
                 unbreakable: true,
-                stack: [
-                    {
-                        text: profile.publications.title,
-                        style: 'h2'
-                    }
-                ].concat(getPublicationCategoryText(firstPublicationCategory))
+                text: 'Documents',
+                style: 'h2'
+
             });
 
-            for (let i = 0; i < publicationCategories.length; i++) {
-                const category = publicationCategories[i];
+            let i = 0;
+            for (const category in profile.documents) {
 
-                content.push({
-                    text: ' '
-                });
+                if (i > 0) {
+                    content.push({
+                        text: ' '
+                    });
+                }
 
                 content.push({
                     unbreakable: true,
-                    stack: getPublicationCategoryText(category)
+                    stack: getDocumentCategoryText(category, profile.documents[category])
                 });
+
+                i++;
             }
 
             content.push({
@@ -985,31 +857,29 @@ async function toPDF() {
         }
 
         // Accomplishments
-        if (!_.isEmpty(profile.accomplishments) && !_.isEmpty(profile.accomplishments.title) && !_.isEmpty(profile.accomplishments.categories)) {
-            const accomplishmentsCategories = profile.accomplishments.categories;
-            const firstAccomplishmentCategory = accomplishmentsCategories.shift();
+        if (!_.isEmpty(profile.accomplishments)) {
 
             content.push({
                 unbreakable: true,
-                stack: [
-                    {
-                        text: profile.accomplishments.title,
-                        style: 'h2'
-                    }
-                ].concat(getAccomplishmentCategoryText(firstAccomplishmentCategory))
+                text: 'Accomplishments',
+                style: 'h2'
             });
 
-            for (let i = 0; i < accomplishmentsCategories.length; i++) {
-                const category = accomplishmentsCategories[i];
+            let i = 0;
+            for (const category in profile.accomplishments) {
 
-                content.push({
-                    text: ' '
-                });
+                if (i > 0) {
+                    content.push({
+                        text: ' '
+                    });
+                }
 
                 content.push({
                     unbreakable: true,
-                    stack: getAccomplishmentCategoryText(category)
+                    stack: getAccomplishmentCategoryText(category, profile.accomplishments[category])
                 });
+
+                i++;
             }
 
             content.push({
@@ -1085,11 +955,6 @@ async function toPDF() {
                     }, {
                         columns: [
                             {
-                                image: 'assets/images/IIT-v4-logo-t2.png',
-                                width: 50,
-                                alignment: 'left',
-                                margin: [38, 10, 40, 10]
-                            }, {
                                 text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
                                 alignment: 'right',
                                 margin: [40, 10]
@@ -1115,7 +980,7 @@ async function toPDF() {
     });
 }
 
-async function toDoc() {
+async function toDoc(researchEntityId) {
     return new Promise(async (resolve) => {
         const doc = new Document();
 
@@ -1129,320 +994,585 @@ async function toDoc() {
             });
         });
 
+        const profile = await ResearchEntityData.getProfile(researchEntityId);
+
         let tmpText = '';
 
+        const profileImage = Media.addImage(doc, image, 150, 150, {
+            floating: {
+                horizontalPosition: {
+                    relative: HorizontalPositionRelativeFrom.INSIDE_MARGIN,
+                    align: HorizontalPositionAlign.RIGHT,
+                },
+                verticalPosition: {
+                    relative: VerticalPositionRelativeFrom.INSIDE_MARGIN,
+                    offset: 0
+                },
+                wrap: {
+                    type: TextWrappingType.SQUARE,
+                    side: TextWrappingSide.LEFT,
+                },
+                margins: {
+                    left: 360,
+                    bottom: 360
+                }
+            }
+        });
+
+        const baseProfile = [];
+        if (!_.isEmpty(profile.jobTitle)) {
+            baseProfile.push(
+                new TextRun({
+                    text: 'Job title: ',
+                    bold: true
+                }).break()
+            );
+
+            baseProfile.push(new TextRun(profile.jobTitle));
+        }
+
+        if (!_.isEmpty(profile.centers)) {
+            for (let i = 0; i < profile.centers.length; i++) {
+                const center = profile.centers[i];
+                baseProfile.push(
+                    new TextRun(center).break()
+                );
+            }
+        }
+
+        if (!_.isEmpty(profile.researchLines)) {
+            for (let i = 0; i < profile.researchLines.length; i++) {
+                const researchLine = profile.researchLines[i];
+                baseProfile.push(
+                    new TextRun(researchLine).break()
+                );
+            }
+        }
+
+        if (!_.isEmpty(profile.administrativeOrganization)) {
+            baseProfile.push(
+                new TextRun({
+                    text: 'Administrative organization: ',
+                    bold: true
+                }).break()
+            );
+
+            baseProfile.push(new TextRun(profile.administrativeOrganization));
+        }
+
+        if (!_.isEmpty(profile.office)) {
+            baseProfile.push(
+                new TextRun({
+                    text: 'Office: ',
+                    bold: true
+                }).break()
+            );
+
+            baseProfile.push(new TextRun(profile.office));
+        }
+
+        if (!_.isEmpty(profile.position)) {
+            baseProfile.push(
+                new TextRun({
+                    text: 'Position: ',
+                    bold: true
+                }).break()
+            );
+
+            baseProfile.push(new TextRun(profile.position));
+        }
+
+        if (!_.isEmpty(profile.role)) {
+            baseProfile.push(
+                new TextRun({
+                    text: 'Role: ',
+                    bold: true
+                }).break()
+            );
+
+            baseProfile.push(new TextRun(profile.role));
+        }
+
+        if (!_.isEmpty(profile.facilities)) {
+            for (let i = 0; i < profile.facilities.length; i++) {
+                const facility = profile.facilities[i];
+                baseProfile.push(
+                    new TextRun(facility).break()
+                );
+            }
+        }
+
+        const contacts = [];
+        if (!_.isEmpty(profile.username)) {
+            contacts.push(new TextRun(profile.username).break());
+        }
+
+        if (!_.isEmpty(profile.phone)) {
+            contacts.push(new TextRun(profile.phone).break());
+        }
+
+        if (!_.isEmpty(profile.address)) {
+            contacts.push(new TextRun(profile.address).break());
+        }
+
+        if (!_.isEmpty(profile.website)) {
+            contacts.push(new TextRun(profile.website).break());
+        }
+
+        if (!_.isEmpty(contacts)) {
+            contacts.unshift(new TextRun({
+                text: 'Contact: ',
+                bold: true
+            }).break())
+        }
+
+        const socials = [];
+        if (!_.isEmpty(profile.socials && profile.socials.linkedin)) {
+            socials.push(new TextRun(profile.socials.linkedin).break());
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.twitter)) {
+            socials.push(new TextRun(profile.socials.twitter).break());
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.facebook)) {
+            socials.push(new TextRun(profile.socials.facebook).break());
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.instagram)) {
+            socials.push(new TextRun(profile.socials.instagram).break());
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.researchgate)) {
+            socials.push(new TextRun(profile.socials.researchgate).break());
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.github)) {
+            socials.push(new TextRun(profile.socials.github).break());
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.bitbucket)) {
+            socials.push(new TextRun(profile.socials.bitbucket).break());
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.youtube)) {
+            socials.push(new TextRun(profile.socials.youtube).break());
+        }
+
+        if (!_.isEmpty(profile.socials && profile.socials.flickr)) {
+            socials.push(new TextRun(profile.socials.flickr).break());
+        }
+
+        if (!_.isEmpty(socials)) {
+            socials.unshift(new TextRun({
+                text: 'Socials: ',
+                bold: true
+            }).break())
+        }
+
         const titles = [];
-        for (let i = 0; i < profile.titles.length; i++) {
-            const title = profile.titles[i];
+        if (!_.isEmpty(profile.titles)) {
+            for (let i = 0; i < profile.titles.length; i++) {
+                const title = profile.titles[i];
 
-            if (!_.isEmpty(title)) {
-                titles.push(
-                    new TextRun({
-                        text: title,
-                        color: '999999'
-                    }).break()
-                );
+                if (!_.isEmpty(title)) {
+                    titles.push(title);
+                }
             }
         }
 
-        const experiences = [];
-        for (let i = 0; i < profile.experiences.items.length; i++) {
-            const experience = profile.experiences.items[i];
-
-            if (!_.isEmpty(experience.company)) {
-                experiences.push(
-                    new TextRun({
-                        text: experience.company,
-                        bold: true
-                    })
-                );
-            }
-
-            if (!_.isEmpty(experience.jobTitle)) {
-                experiences.push(
-                    new TextRun(experience.jobTitle).break()
-                );
-            }
-
-            tmpText = concatStrings([experience.from, experience.to], {seperator: ' - '});
-            if (!_.isEmpty(tmpText)) {
-                experiences.push(
-                    new TextRun({
-                        text: tmpText,
-                        color: '999999'
-                    }).break()
-                );
-            }
-
-            tmpText = concatStrings([experience.location, experience.country]);
-            if (!_.isEmpty(tmpText)) {
-                experiences.push(
-                    new TextRun({
-                        text: tmpText,
-                        color: '999999'
-                    }).break()
-                );
-            }
-
-            if (!_.isEmpty(experience.description)) {
-                experiences.push(
-                    new TextRun(experience.description).break()
-                );
-            }
-
-            if (i < profile.experiences.items.length - 1) {
-                experiences.push(
-                    new TextRun('').break()
-                );
-
-                experiences.push(
-                    new TextRun('').break()
-                );
-            }
-        }
-
-        const education = [];
-        for (let i = 0; i < profile.education.items.length; i++) {
-            const educationItem = profile.education.items[i];
-
-            if (!_.isEmpty(educationItem.institute)) {
-                education.push(
-                    new TextRun(educationItem.institute)
-                );
-            }
-
-            if (!_.isEmpty(educationItem.title)) {
-                education.push(
-                    new TextRun({
-                        text: educationItem.title,
-                        bold: true
-                    }).break()
-                );
-            }
-
-            tmpText = concatStrings([educationItem.from, educationItem.to], {seperator: ' - '});
-            if (!_.isEmpty(tmpText)) {
-                education.push(
-                    new TextRun({
-                        text: tmpText,
-                        color: '999999'
-                    }).break()
-                );
-            }
-
-            tmpText = concatStrings([educationItem.location, educationItem.country]);
-            if (!_.isEmpty(tmpText)) {
-                education.push(
-                    new TextRun({
-                        text: tmpText,
-                        color: '999999'
-                    }).break()
-                );
-            }
-
-            if (i < profile.education.items.length - 1) {
-                education.push(
-                    new TextRun('').break()
-                );
-                education.push(
-                    new TextRun('').break()
-                );
-            }
-        }
-
-        const certificates = [];
-        for (let i = 0; i < profile.certificates.items.length; i++) {
-            const certificate = profile.certificates.items[i];
-
-            if (!_.isEmpty(certificate.title)) {
-                certificates.push(
-                    new TextRun({
-                        text: certificate.title,
-                        bold: true
-                    })
-                );
-            }
-
-            if (!_.isEmpty(certificate.text)) {
-                certificates.push(
-                    new TextRun(certificate.text).break()
-                );
-            }
-
-            if (!_.isEmpty(certificate.date)) {
-                certificates.push(
-                    new TextRun({
-                        text: certificate.date,
-                        color: '999999'
-                    }).break()
-                );
-            }
-
-            if (i < profile.certificates.items.length - 1) {
-                certificates.push(
-                    new TextRun('').break()
-                );
-                certificates.push(
-                    new TextRun('').break()
-                );
-            }
-        }
-
-        const skills = [];
-        for (let i = 0; i < profile.skills.categories.length; i++) {
-            const category = profile.skills.categories[i];
-
-            if (i === 0) {
-                skills.push(
-                    new Paragraph({
-                        children: [
-                            new TextRun({
-                                text: category.title,
-                                bold: true
-                            })
-                        ]
-                    })
-                );
-            } else {
-                skills.push(
-                    new Paragraph({
-                        children: [
-                            new TextRun({
-                                text: category.title,
-                                bold: true
-                            }).break()
-                        ]
-                    })
-                );
-            }
-
-            for (let j = 0; j < category.items.length; j++) {
-                const skill = category.items[j];
+        const interests = [];
+        if (!_.isEmpty(profile.interests)) {
+            for (let i = 0; i < profile.interests.length; i++) {
+                const interest = profile.interests[i];
 
                 const paragraph = new Paragraph({
-                    text: skill,
+                    text: interest,
                     bullet: {
                         level: 0
                     }
                 });
 
-                skills.push(paragraph);
+                interests.push(paragraph);
             }
         }
 
-        const publications = [];
-        for (let i = 0; i < profile.publications.categories.length; i++) {
-            const category = profile.publications.categories[i];
+        const experiences = [];
+        let companyCount = 0;
+        for (const company in profile.experiences) {
+            if (!_.isEmpty(profile.experiences[company])) {
+                for (let i = 0; i < profile.experiences[company].length; i++) {
+                    const experience = profile.experiences[company][i];
 
-            if (!_.isEmpty(category.title)) {
-                publications.push(
+                    experiences.push(
+                        new TextRun({
+                            text: company,
+                            bold: true
+                        })
+                    );
+
+                    if (!_.isEmpty(experience.jobTitle)) {
+                        experiences.push(
+                            new TextRun(experience.jobTitle).break()
+                        );
+                    }
+
+                    experience.from = formatDate(experience.from);
+
+                    if (!_.has(experience, 'to') || _.isEmpty(experience.to)) {
+                        experience.to = 'Present';
+                    } else {
+                        experience.to = formatDate(experience.to);
+                    }
+
+                    tmpText = concatStrings([experience.from, experience.to], {seperator: ' - '});
+                    if (!_.isEmpty(tmpText)) {
+                        experiences.push(
+                            new TextRun({
+                                text: tmpText,
+                                color: '999999'
+                            }).break()
+                        );
+                    }
+
+                    tmpText = concatStrings([experience.location, experience.country]);
+                    if (!_.isEmpty(tmpText)) {
+                        experiences.push(
+                            new TextRun({
+                                text: tmpText,
+                                color: '999999'
+                            }).break()
+                        );
+                    }
+
+                    if (!_.isEmpty(experience.description)) {
+                        experiences.push(
+                            new TextRun(experience.description).break()
+                        );
+                    }
+
+                    if (i < profile.experiences[company].length - 1) {
+                        experiences.push(
+                            new TextRun('').break()
+                        );
+                        experiences.push(
+                            new TextRun('').break()
+                        );
+                    }
+                }
+
+                if (companyCount < Object.keys(profile.experiences).length - 1) {
+                    experiences.push(
+                        new TextRun('').break()
+                    );
+                    experiences.push(
+                        new TextRun('').break()
+                    );
+                }
+            }
+
+            companyCount++;
+        }
+
+        const education = [];
+        if (!_.isEmpty(profile.education)) {
+            for (let i = 0; i < profile.education.length; i++) {
+                const educationItem = profile.education[i];
+
+                if (!_.isEmpty(educationItem.institute)) {
+                    education.push(
+                        new TextRun(educationItem.institute)
+                    );
+                }
+
+                if (!_.isEmpty(educationItem.title)) {
+                    education.push(
+                        new TextRun({
+                            text: educationItem.title,
+                            bold: true
+                        }).break()
+                    );
+                }
+
+                educationItem.from = formatDate(educationItem.from);
+
+                if (!_.has(educationItem, 'to') || _.isEmpty(educationItem.to)) {
+                    educationItem.to = 'Present';
+                } else {
+                    educationItem.to = formatDate(educationItem.to);
+                }
+
+                tmpText = concatStrings([educationItem.from, educationItem.to], {seperator: ' - '});
+                if (!_.isEmpty(tmpText)) {
+                    education.push(
+                        new TextRun({
+                            text: tmpText,
+                            color: '999999'
+                        }).break()
+                    );
+                }
+
+                tmpText = concatStrings([educationItem.location, educationItem.country]);
+                if (!_.isEmpty(tmpText)) {
+                    education.push(
+                        new TextRun({
+                            text: tmpText,
+                            color: '999999'
+                        }).break()
+                    );
+                }
+
+                if (i < profile.education.length - 1) {
+                    education.push(
+                        new TextRun('').break()
+                    );
+                    education.push(
+                        new TextRun('').break()
+                    );
+                }
+            }
+        }
+
+        const certificates = [];
+        if (!_.isEmpty(profile.certificates)) {
+            for (let i = 0; i < profile.certificates.length; i++) {
+                const certificate = profile.certificates[i];
+
+                if (!_.isEmpty(certificate.title)) {
+                    certificates.push(
+                        new TextRun({
+                            text: certificate.title,
+                            bold: true
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(certificate.text)) {
+                    certificates.push(
+                        new TextRun(certificate.text).break()
+                    );
+                }
+
+                if (!_.isEmpty(certificate.date)) {
+                    certificates.push(
+                        new TextRun({
+                            text: formatDate(certificate.date),
+                            color: '999999'
+                        }).break()
+                    );
+                }
+
+                if (i < profile.certificates.length - 1) {
+                    certificates.push(
+                        new TextRun('').break()
+                    );
+                    certificates.push(
+                        new TextRun('').break()
+                    );
+                }
+            }
+        }
+
+        const skills = [];
+        if (!_.isEmpty(profile.skillCategories)) {
+            for (let i = 0; i < profile.skillCategories.length; i++) {
+                const category = profile.skillCategories[i];
+
+                if (i === 0) {
+                    skills.push(
+                        new Paragraph({
+                            children: [
+                                new TextRun({
+                                    text: category.value,
+                                    bold: true
+                                })
+                            ]
+                        })
+                    );
+                } else {
+                    skills.push(
+                        new Paragraph({
+                            children: [
+                                new TextRun({
+                                    text: category.value,
+                                    bold: true
+                                }).break()
+                            ]
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(category.skills)) {
+                    for (let i = 0; i < category.skills.length; i++) {
+                        const skill = category.skills[i];
+                        const paragraph = new Paragraph({
+                            text: skill.value,
+                            bullet: {
+                                level: 0
+                            }
+                        });
+
+                        skills.push(paragraph);
+                    }
+                }
+            }
+        }
+
+        const documents = [];
+        for (const type in profile.documents) {
+
+            if (!_.isEmpty(type)) {
+                documents.push(
                     new Paragraph({
-                        text: category.title,
+                        text: type,
                         heading: HeadingLevel.HEADING_3
                     })
                 );
             }
 
-            for (let j = 0; j < category.items.length; j++) {
-                const publication = category.items[j];
+            if (!_.isEmpty(profile.documents[type])) {
+                for (let i = 0; i < profile.documents[type].length; i++) {
+                    const document = profile.documents[type][i];
 
-                if (!_.isEmpty(publication) && (!_.isEmpty(publication.title) || !_.isEmpty(publication.source) || !_.isEmpty(publication.doi.number))) {
-                    const children = [];
+                    if (!_.isEmpty(document) &&
+                        (
+                            !_.isEmpty(document.title) ||
+                            !_.isEmpty(document.source) ||
+                            !_.isEmpty(document.doi)
+                        )
+                    ) {
+                        const children = [];
 
-                    if (!_.isEmpty(publication.title)) {
-                        children.push(
-                            new TextRun({
-                                text: publication.title,
-                                bold: true
-                            }).break()
-                        );
+                        if (!_.isEmpty(document.title)) {
+                            children.push(
+                                new TextRun({
+                                    text: document.title,
+                                    bold: true
+                                })
+                            );
+
+                            children.push(
+                                new TextRun({}).break()
+                            );
+                        }
+
+                        if (!_.isEmpty(document.source)) {
+                            children.push(
+                                new TextRun({
+                                    text: 'Document source: ' + document.source
+                                })
+                            );
+
+                            children.push(
+                                new TextRun({}).break()
+                            );
+                        }
+
+                        if (!_.isEmpty(document.doi)) {
+                            children.push(
+                                new TextRun({
+                                    text: 'Doi: ' + document.doi
+                                })
+                            );
+
+                            children.push(
+                                new TextRun({}).break()
+                            );
+                        }
+
+                        const paragraph = new Paragraph({
+                            children: children,
+                            indent: {
+                                left: 360,
+                            }
+                        });
+
+                        documents.push(paragraph);
                     }
-
-                    if (!_.isEmpty(publication.source)) {
-                        children.push(
-                            new TextRun({
-                                text: 'Document source: ' + publication.source
-                            }).break()
-                        );
-                    }
-
-                    if (!_.isEmpty(publication.doi.number)) {
-                        children.push(
-                            new TextRun({
-                                text: 'Doi: ' + publication.doi.number
-                            }).break()
-                        );
-                    }
-
-                    const paragraph = new Paragraph({
-                        children: children
-                    });
-
-                    publications.push(paragraph);
                 }
             }
         }
 
         const accomplishments = [];
-        for (let i = 0; i < profile.accomplishments.categories.length; i++) {
-            const category = profile.accomplishments.categories[i];
+        for (const type in profile.accomplishments) {
 
-            if (!_.isEmpty(category.title)) {
+            if (!_.isEmpty(type)) {
                 accomplishments.push(
                     new Paragraph({
-                        text: category.title,
+                        text: type,
                         heading: HeadingLevel.HEADING_3
                     })
                 );
             }
 
-            for (let j = 0; j < category.items.length; j++) {
-                const accomplishment = category.items[j];
+            if (!_.isEmpty(profile.accomplishments[type])) {
+                for (let i = 0; i < profile.accomplishments[type].length; i++) {
+                    const accomplishment = profile.accomplishments[type][i];
 
-                if (!_.isEmpty(accomplishment) && (!_.isEmpty(accomplishment.title) || !_.isEmpty(accomplishment.issuer) || !_.isEmpty(accomplishment.year))) {
-                    const children = [];
+                    if (
+                        !_.isEmpty(accomplishment) &&
+                        (
+                            !_.isEmpty(accomplishment.title) ||
+                            !_.isEmpty(accomplishment.issuer) ||
+                            !_.isEmpty(accomplishment.year)
+                        )
+                    ) {
+                        const children = [];
 
-                    if (!_.isEmpty(accomplishment.title)) {
-                        children.push(
-                            new TextRun({
-                                text: accomplishment.title,
-                                bold: true
-                            }).break()
-                        );
+                        if (!_.isEmpty(accomplishment.title)) {
+                            children.push(
+                                new TextRun({
+                                    text: accomplishment.title,
+                                    bold: true
+                                })
+                            );
+
+                            children.push(
+                                new TextRun({}).break()
+                            );
+                        }
+
+                        if (!_.isEmpty(accomplishment.issuer)) {
+                            children.push(
+                                new TextRun({
+                                    text: 'Issuer: ' + accomplishment.issuer
+                                })
+                            );
+
+                            children.push(
+                                new TextRun({}).break()
+                            );
+                        }
+
+                        if (!_.isEmpty(accomplishment.year)) {
+                            children.push(
+                                new TextRun({
+                                    text: 'Year: ' + accomplishment.year
+                                })
+                            );
+
+                            children.push(
+                                new TextRun({}).break()
+                            );
+                        }
+
+                        const paragraph = new Paragraph({
+                            children: children,
+                            indent: {
+                                left: 360,
+                            }
+                        });
+
+                        accomplishments.push(paragraph);
                     }
-
-                    if (!_.isEmpty(accomplishment.issuer)) {
-                        children.push(
-                            new TextRun({
-                                text: 'Issuer: ' + accomplishment.issuer
-                            }).break()
-                        );
-                    }
-
-                    if (!_.isEmpty(accomplishment.year)) {
-                        children.push(
-                            new TextRun({
-                                text: 'Year: ' + accomplishment.year
-                            }).break()
-                        );
-                    }
-
-                    const paragraph = new Paragraph({
-                        children: children
-                    });
-
-                    accomplishments.push(paragraph);
                 }
             }
         }
 
         let text = [];
 
-        if (profile.displayNames.use) {
-            tmpText = concatStrings([profile.displayNames.firstName, profile.displayNames.lastName], {seperator: ' '});
-        } else {
-            tmpText = concatStrings([profile.firstName, profile.lastName], {seperator: ' '});
-        }
+        tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
+
         if (!_.isEmpty(tmpText)) {
             text.push(
                 new Paragraph({
@@ -1452,115 +1582,47 @@ async function toDoc() {
             );
         }
 
-        text.push(
-            new Paragraph({
-                children: [
-                    Media.addImage(doc, image, 150, 150, {
-                        floating: {
-                            horizontalPosition: {
-                                relative: HorizontalPositionRelativeFrom.INSIDE_MARGIN,
-                                align: HorizontalPositionAlign.RIGHT,
-                            },
-                            verticalPosition: {
-                                relative: VerticalPositionRelativeFrom.INSIDE_MARGIN,
-                                align: VerticalPositionAlign.TOP,
-                            },
-                            wrap: {
-                                type: TextWrappingType.SQUARE,
-                                side: TextWrappingSide.BOTH_SIDES,
-                            }
-                        }
-                    })
-                ]
-            })
-        );
-
-        const baseProfile = [];
-        switch(profile.position.type) {
-            case 'administrative':
-                tmpText = concatStrings([sails.config.scientilla.institute.name, profile.position.role], {seperator: ' - '});
-                if (!_.isEmpty(tmpText)) {
-                    baseProfile.push(
-                        new TextRun(tmpText)
-                    );
-                }
-
-                tmpText = concatStrings([profile.position.administrativeOrganization, profile.position.office], {seperator: ' - '});
-                if (!_.isEmpty(tmpText)) {
-                    baseProfile.push(
-                        new TextRun(tmpText).break()
-                    );
-                }
-                break;
-            case 'scientific':
-                tmpText = concatStrings([sails.config.scientilla.institute.name, profile.position.title], {seperator: ' - '});
-                if (!_.isEmpty(tmpText)) {
-                    baseProfile.push(
-                        new TextRun(tmpText)
-                    );
-                }
-                if (!_.isEmpty(profile.position.researchLine)) {
-                    baseProfile.push(
-                        new TextRun(profile.position.researchLine).break()
-                    );
-                }
-
-                if (!_.isEmpty(profile.position.center)) {
-                    baseProfile.push(
-                        new TextRun(profile.position.center).break()
-                    );
-                }
-                break;
-            default:
-                break;
-        }
-        if (!_.isEmpty(profile.position.facility)) {
-            baseProfile.push(
-                new TextRun(profile.position.facility).break()
-            );
-        }
-
-        const contacts = [];
-        if (!_.isEmpty(profile.email)) {
-            contacts.push(new TextRun(profile.email).break());
-        }
-
-        if (!_.isEmpty(profile.phone)) {
-            contacts.push(new TextRun(profile.phone).break());
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.linkedin)) {
-            contacts.push(new TextRun(profile.socials.linkedin).break());
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.twitter)) {
-            contacts.push(new TextRun(profile.socials.twitter).break());
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.github)) {
-            contacts.push(new TextRun(profile.socials.github).break());
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.facebook)) {
-            contacts.push(new TextRun(profile.socials.facebook).break());
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.instagram)) {
-            contacts.push(new TextRun(profile.socials.instagram).break());
-        }
-
-        if (!_.isEmpty(baseProfile)) {
+        if (!_.isEmpty(baseProfile) && !_.isEmpty(profileImage)) {
             text.push(
                 new Paragraph({
-                    children: baseProfile
+                    children: _.concat(baseProfile, profileImage)
                 })
             );
+        } else {
+            if (!_.isEmpty(baseProfile)) {
+                text.push(
+                    new Paragraph({
+                        children: [
+                            baseProfile
+                        ]
+                    })
+                );
+            }
+
+            if (!_.isEmpty(profileImage)) {
+                text.push(
+                    new Paragraph({
+                        children: [
+                            profileImage
+                        ]
+                    })
+                );
+            }
         }
 
         if (!_.isEmpty(titles)) {
             text.push(
                 new Paragraph({
-                    children: titles
+                    children: [
+                        new TextRun({
+                            text: 'Titles: ',
+                            bold: true
+                        }),
+                        new TextRun({
+                            text: titles.join(', ')
+                        }),
+
+                    ]
                 })
             );
         }
@@ -1573,33 +1635,52 @@ async function toDoc() {
             );
         }
 
-        // About
-        if (!_.isEmpty(profile.about) && !_.isEmpty(profile.about.title) && !_.isEmpty(profile.about.description)) {
+        if (!_.isEmpty(socials)) {
             text.push(
                 new Paragraph({
-                    text: profile.about.title,
+                    children: socials
+                })
+            );
+        }
+
+        // About me
+        if (!_.isEmpty(profile.description)) {
+            text.push(
+                new Paragraph({
+                    text: 'About me',
                     heading: HeadingLevel.HEADING_2
                 })
             );
             text.push(
                 new Paragraph({
                     children: [
-                        new TextRun(profile.about.description)
+                        new TextRun(profile.description)
                     ]
                 })
             );
         }
 
+        // Interests
+        if (!_.isEmpty(profile.interests)) {
+            text.push(
+                new Paragraph({
+                    text: 'Interests',
+                    heading: HeadingLevel.HEADING_3
+                })
+            );
+
+            text = _.concat(text, interests);
+        }
+
         // Experiences
         if (!_.isEmpty(experiences)) {
-            if (!_.isEmpty(profile.experiences.title)) {
-                text.push(
-                    new Paragraph({
-                        text: profile.experiences.title,
-                        heading: HeadingLevel.HEADING_2
-                    })
-                );
-            }
+            text.push(
+                new Paragraph({
+                    text: 'Experiences',
+                    heading: HeadingLevel.HEADING_2
+                })
+            );
+
             text.push(
                 new Paragraph({
                     children: experiences
@@ -1609,14 +1690,14 @@ async function toDoc() {
 
         // Education
         if (!_.isEmpty(education)) {
-            if (!_.isEmpty(profile.education.title)) {
-                text.push(
-                    new Paragraph({
-                        text: profile.education.title,
-                        heading: HeadingLevel.HEADING_2
-                    })
-                );
-            }
+
+            text.push(
+                new Paragraph({
+                    text: 'Education',
+                    heading: HeadingLevel.HEADING_2
+                })
+            );
+
             text.push(
                 new Paragraph({
                     children: education
@@ -1626,14 +1707,14 @@ async function toDoc() {
 
         // Certificates
         if (!_.isEmpty(certificates)) {
-            if (!_.isEmpty(profile.certificates.title)) {
-                text.push(
-                    new Paragraph({
-                        text: profile.certificates.title,
-                        heading: HeadingLevel.HEADING_2
-                    })
-                );
-            }
+
+            text.push(
+                new Paragraph({
+                    text: 'Certificates',
+                    heading: HeadingLevel.HEADING_2
+                })
+            );
+
             text.push(
                 new Paragraph({
                     children: certificates
@@ -1643,40 +1724,39 @@ async function toDoc() {
 
         // Skills
         if (!_.isEmpty(skills)) {
-            if (!_.isEmpty(profile.skills.title)) {
-                text.push(
-                    new Paragraph({
-                        text: profile.skills.title,
-                        heading: HeadingLevel.HEADING_2
-                    })
-                );
-            }
+
+            text.push(
+                new Paragraph({
+                    text: 'Skills',
+                    heading: HeadingLevel.HEADING_2
+                })
+            );
+
             text = _.concat(text, skills);
         }
 
-        // Publications
-        if (!_.isEmpty(publications)) {
-            if (!_.isEmpty(profile.publications.title)) {
-                text.push(
-                    new Paragraph({
-                        text: profile.publications.title,
-                        heading: HeadingLevel.HEADING_2
-                    })
-                );
-            }
-            text = _.concat(text, publications);
+        // Documents
+        if (!_.isEmpty(documents)) {
+
+            text.push(
+                new Paragraph({
+                    text: 'Documents',
+                    heading: HeadingLevel.HEADING_2
+                })
+            );
+
+            text = _.concat(text, documents);
         }
 
         // Accomplishments
         if (!_.isEmpty(accomplishments)) {
-            if (!_.isEmpty(profile.publications.title)) {
-                text.push(
-                    new Paragraph({
-                        text: profile.publications.title,
-                        heading: HeadingLevel.HEADING_2
-                    })
-                );
-            }
+
+            text.push(
+                new Paragraph({
+                    text: 'Accomplishments',
+                    heading: HeadingLevel.HEADING_2
+                })
+            );
             text = _.concat(text, accomplishments);
         }
 

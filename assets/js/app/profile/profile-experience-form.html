@@ -1,0 +1,192 @@
+<ul class="enable-listing">
+    <li>
+        <ul class="field-listing">
+            <li>
+                <ul class="experience-form">
+                    <li>
+                        <div
+                            class="form-group"
+                            ng-class="{'has-error': vm.errors.experiences[vm.key].company}">
+                            <label for="experience[{{ vm.key }}]-company">
+                                Company
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="experience[{{ vm.key }}]-company"
+                                placeholder="Company"
+                                ng-model="vm.experience.company"
+                                ng-class="{
+                                    'is-invalid': vm.errors.experiences[vm.key].company,
+                                    'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
+                                }">
+                            <scientilla-field-errors
+                                errors="vm.errors.experiences[vm.key].company"></scientilla-field-errors>
+                        </div>
+                    </li>
+                    <li>
+                        <div
+                            class="form-group"
+                            ng-class="{'has-error': vm.errors.experiences[vm.key].jobTitle}">
+                            <label for="experience[{{ vm.key }}]-job-title">
+                                Job title
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="experience[{{ vm.key }}]-job-title"
+                                placeholder="Job title"
+                                ng-model="vm.experience.jobTitle"
+                                ng-class="{
+                                    'is-invalid': vm.errors.experiences[vm.key].jobTitle,
+                                    'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
+                                }">
+                            <scientilla-field-errors
+                                errors="vm.errors.experiences[vm.key].jobTitle"></scientilla-field-errors>
+                        </div>
+                    </li>
+                    <li>
+                        <div
+                            class="form-group"
+                            ng-class="{'has-error': vm.errors.experiences[vm.key].from}">
+                            <label for="experience[{{ vm.key }}]-from">From</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="experience[{{ vm.key }}]-from"
+                                placeholder="From"
+                                transform-date
+                                ng-model="vm.experience.from"
+                                ng-model-options="{allowInvalid: true}"
+                                uib-datepicker-popup="dd/MM/yyyy"
+                                show-button-bar="false"
+                                datepicker-options="vm.datePickerOptions"
+                                is-open="vm.dateExperienceFromPopups[vm.key]"
+                                ng-click="vm.dateExperienceFromPopups[vm.key] = true"
+                                ng-class="{
+                                    'is-invalid': vm.errors.experiences[vm.key].from,
+                                    'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
+                                }">
+                            <scientilla-field-errors
+                                errors=" vm.errors.experiences[vm.key].from"></scientilla-field-errors>
+                        </div>
+                    </li>
+                    <li>
+                        <div
+                            class="form-group"
+                            ng-class="{'has-error': vm.errors.experiences[vm.key].to}">
+                            <label for="experience[{{ vm.key }}]-to">To</label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="experience[{{ vm.key }}]-to"
+                                placeholder="To"
+                                transform-date
+                                ng-model="vm.experience.to"
+                                ng-model-options="{allowInvalid: true}"
+                                uib-datepicker-popup="dd/MM/yyyy"
+                                show-button-bar="false"
+                                datepicker-options="vm.datePickerOptions"
+                                is-open="vm.dateExperienceToPopups[vm.key]"
+                                ng-click="vm.dateExperienceToPopups[vm.key] = true"
+                                ng-class="{
+                                    'is-invalid': vm.errors.experiences[vm.key].to,
+                                    'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
+                                }">
+                            <scientilla-field-errors
+                                errors="vm.errors.experiences[vm.key].to"></scientilla-field-errors>
+                        </div>
+                    </li>
+                    <li>
+                        <div
+                            class="form-group"
+                            ng-class="{'has-error': vm.errors.experiences[vm.key].location}">
+                            <label for="experience[{{ vm.key }}]-location">
+                                Location
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="experience[{{ vm.key }}]-location"
+                                placeholder="Location"
+                                ng-model="vm.experience.location"
+                                ng-class="{
+                                    'is-invalid': vm.errors.experiences[vm.key].location,
+                                    'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
+                                }">
+                            <scientilla-field-errors
+                                errors="vm.errors.experiences[vm.key].location"></scientilla-field-errors>
+                        </div>
+                    </li>
+                    <li>
+                        <div
+                            class="form-group"
+                            ng-class="{'has-error': vm.errors.experiences[vm.key].country}">
+                            <label for="experience[{{ vm.key }}]-country">
+                                Country
+                            </label>
+                            <input
+                                type="text"
+                                class="form-control"
+                                id="experience[{{ vm.key }}]-country"
+                                placeholder="Country"
+                                ng-model="vm.experience.country"
+                                ng-class="{
+                                    'is-invalid': vm.errors.experiences[vm.key].country,
+                                    'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
+                                }">
+                            <scientilla-field-errors
+                                errors="vm.errors.experiences[vm.key].country"></scientilla-field-errors>
+                        </div>
+                    </li>
+                    <li>
+                        <div
+                            class="form-group"
+                            ng-class="{'has-error': vm.errors.experiences[vm.key].jobDescription}">
+                            <label for="experience[{{ vm.key }}]-job-description">
+                                Job description
+                            </label>
+                            <textarea
+                                name="experience[{{ vm.key }}]-job-description"
+                                id="experience[{{ vm.key }}]-job-description"
+                                cols="30"
+                                rows="10"
+                                class="form-control"
+                                ng-model="vm.experience.jobDescription"
+                                ng-class="{
+                                    'is-invalid': vm.errors.experiences[vm.key].jobDescription,
+                                    'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
+                                }"></textarea>
+                            <scientilla-field-errors
+                                errors="vm.errors.experiences[vm.key].jobDescription"></scientilla-field-errors>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <li class="action-column">
+                <div class="form-group">
+                    <div class="btn btn-outline-secondary">
+                        <i class="fas fa-arrows-alt"></i>
+                    </div>
+                </div>
+            </li>
+            <li class="action-column">
+                <div class="form-group">
+                    <button
+                        class="btn btn-outline-secondary"
+                        ng-click="vm.removeItem({
+                            property: vm.profile.experiences,
+                            index: vm.key
+                        })">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <scientilla-privacy-selector
+            context-object="vm.context"
+            model="vm.experience.privacy"></scientilla-privacy-selector>
+    </li>
+</ul>

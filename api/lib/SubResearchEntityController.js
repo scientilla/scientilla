@@ -141,14 +141,6 @@ module.exports = {
         const Model = getModel(req);
         res.halt(Model.replace(Model, researchEntityId, documentId, documentToBeReplacedId));
     },
-    exportProfile:async function (req, res) {
-        const researchEntityId = parseInt(req.params.researchEntityId, 10);
-        const type = req.body.type;
-        const Model = getModel(req);
-        const string = await Model.exportProfile(researchEntityId, type);
-        res.set('Content-Type', 'application/octet-stream');
-        res.send(string);
-    },
     getPublicDocuments: async (req, res) => makePublicAPIrequest(req, res, 'documents'),
     getPublications: async (req, res) => makePublicAPIrequest(req, res, 'publications'),
     getDisseminationTalks: async (req, res) => makePublicAPIrequest(req, res, 'disseminationTalks'),

@@ -15,10 +15,11 @@
             'UsersService',
             'AuthService',
             '$element',
-            '$uibModal'
+            '$uibModal',
+            '$scope'
         ];
 
-        function SummaryProfileComponent(UsersService, AuthService, $element, $uibModal) {
+        function SummaryProfileComponent(UsersService, AuthService, $element, $uibModal, $scope) {
             const vm = this;
 
             vm.$onInit = () => {
@@ -30,10 +31,75 @@
                 unregisterTab(vm);
             };
 
+            vm.getSourceTypeIcon = type => {
+                switch(type) {
+                    case 'Book Series' :
+                        return 'fas fa-file-alt';
+                    case 'Book' :
+                        return 'fas fa-file-alt';
+                    case 'Journal' :
+                        return 'fas fa-book';
+                    case 'Conference' :
+                        return 'far fa-comment';
+                    default:
+                        return 'fas fa-file-alt';
+                }
+            };
+
+            vm.getNumberOfItems = obj => {
+                let length = 0;
+                for (const item in obj) {
+                    length += obj[item].length;
+                }
+                return length;
+            };
+
+            function getFavoriteSkills(profile) {
+                const allSkills = [];
+                const favoriteSkills = [];
+                if (!_.isEmpty(profile.skillCategories)) {
+                    profile.skillCategories.map(category => {
+                        category.skills.map(skill => {
+                            if (skill.favorite) {
+                                favoriteSkills.push(skill.value);
+                            }
+                            allSkills.push(skill.value);
+                        });
+                    });
+                }
+
+                if (favoriteSkills.length > 0) {
+                    return favoriteSkills;
+                }
+
+                return allSkills;
+            }
+
+            function getFavoriteCertificates(profile) {
+                const allCertificates = [];
+                const favoriteCertificates = [];
+                if (!_.isEmpty(profile.certificates)) {
+                    profile.certificates.map(certificate => {
+                        if (certificate.favorite) {
+                            favoriteCertificates.push(certificate.title);
+                        }
+                        allCertificates.push(certificate.title);
+                    });
+                }
+
+                if (favoriteCertificates.length > 0) {
+                    return favoriteCertificates;
+                }
+
+                return allCertificates;
+            }
+
             function getProfile() {
                 UsersService.getProfile(AuthService.user.researchEntity).then(response => {
                     vm.profile = response.plain();
-                    console.log(vm.profile);
+                    vm.favoriteSkills = getFavoriteSkills(vm.profile);
+                    vm.favoriteCertificates = getFavoriteCertificates(vm.profile);
+                    console.log(vm.favoriteCertificates);
                 });
             }
 
@@ -53,56 +119,20 @@
 
                         <div class="modal-body profile">
                             <ul class="company-listing">
-                                <li>
-                                    <span class="company">Company</span>
-                                    <ul class="job-listing">
-                                        <li>
-                                            <span class="job-title">Job title</span>
-                                            <span class="period">From  - to</span>
-                                            <span class="location">Location, Country</span>
-                                            <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                                                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-                                                scrambled it to make a type specimen book. It has survived not only five centuries</p>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <span class="company">Company</span>
-                                    <span class="company-description">Amount of years if multiple jobs</span>
-                                    <ul class="job-listing multiple">
-                                        <li>
-                                            <span class="job-title">Job title</span>
-                                            <span class="period">From  - to</span>
-                                            <span class="location">Location, Country</span>
-                                            <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                                                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-                                                scrambled it to make a type specimen book. It has survived not only five centuries</p>
-                                        </li>
-                                        <li>
-                                            <span class="job-title">Job title</span>
-                                            <span class="period">From  - to</span>
-                                            <span class="location">Location, Country</span>
-                                            <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                                                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-                                                scrambled it to make a type specimen book. It has survived not only five centuries</p>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <span class="company">Company</span>
-                                    <ul class="job-listing">
-                                        <li>
-                                            <span class="job-title">Job title</span>
-                                            <span class="period">From  - to</span>
-                                            <span class="location">Location, Country</span>
-                                            <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                                                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-                                                scrambled it to make a type specimen book. It has survived not only five centuries</p>
+                                <li ng-repeat="(company, experiences) in vm.profile.experiences">
+                                    <span class="company">{{ company }}</span>
+                                    <ul class="job-listing" ng-class="experiences.length > 1 ? 'multiple' : ''">
+                                        <li ng-repeat="experience in experiences">
+                                            <span class="job-title">{{ experience.jobTitle }}</span>
+                                            <span class="period">{{ experience.from | date: 'dd/MM/yyyy' }} - {{ experience.to ? (experience.to | date: 'dd/MM/yyyy') : 'present' }}</span>
+                                            <span class="location">{{ experience.location }}, {{ experience.country }}</span>
+                                            <div class="description">{{ experience.jobDescription }}</div>
                                         </li>
                                     </ul>
                                 </li>
                             </ul>
                         </div>`,
+                    scope: $scope,
                     controller: ($scope, $uibModalInstance) => {
                         $scope.close = () => {
                             $uibModalInstance.close();
@@ -128,32 +158,15 @@
 
                         <div class="modal-body profile">
                             <ul class="education-listing">
-                                <li>
-                                    <span class="institute">University/Institute</span>
-                                    <span class="title">Title</span>
-                                    <span class="period">From - to</span>
-                                    <span class="location">Location - Country</span>
-                                </li>
-                                <li>
-                                    <span class="institute">University/Institute</span>
-                                    <span class="title">Title</span>
-                                    <span class="period">From - to</span>
-                                    <span class="location">Location - Country</span>
-                                </li>
-                                <li>
-                                    <span class="institute">University/Institute</span>
-                                    <span class="title">Title</span>
-                                    <span class="period">From - to</span>
-                                    <span class="location">Location - Country</span>
-                                </li>
-                                <li>
-                                    <span class="institute">University/Institute</span>
-                                    <span class="title">Title</span>
-                                    <span class="period">From - to</span>
-                                    <span class="location">Location - Country</span>
+                                <li ng-repeat="education in vm.profile.education">
+                                    <span class="institute">{{ education.institution }}</span>
+                                    <span class="title">{{ education.title }}</span>
+                                    <span class="period">{{ education.from | date: 'dd/MM/yyyy' }} - {{ education.to ? (education.to | date: 'dd/MM/yyyy') : 'present' }}</span>
+                                    <span class="location">{{ education.location }} - {{ education.country }}</span>
                                 </li>
                             </ul>
                         </div>`,
+                    scope: $scope,
                     controller: ($scope, $uibModalInstance) => {
                         $scope.close = () => {
                             $uibModalInstance.close();
@@ -179,29 +192,14 @@
 
                         <div class="modal-body profile">
                             <ul class="certificate-listing">
-                                <li>
-                                    <span class="title">Title of certificate</span>
-                                    <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                                        industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-                                        scrambled it to make a type specimen book. It has survived not only five centuries</p>
-                                    <span class="date">date</span>
-                                </li>
-                                <li>
-                                    <span class="title">Title of certificate</span>
-                                    <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                                        industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-                                        scrambled it to make a type specimen book. It has survived not only five centuries</p>
-                                    <span class="date">date</span>
-                                </li>
-                                <li>
-                                    <span class="title">Title of certificate</span>
-                                    <p class="description">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                                        industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-                                        scrambled it to make a type specimen book. It has survived not only five centuries</p>
-                                    <span class="date">date</span>
+                                <li ng-repeat="certificate in vm.profile.certificates">
+                                    <span class="title">{{ certificate.title }}</span>
+                                    <div class="description">{{ certificate.description }}</div>
+                                    <span class="date">{{ certificate.date | date: 'dd/MM/yyyy' }}</span>
                                 </li>
                             </ul>
                         </div>`,
+                    scope: $scope,
                     controller: ($scope, $uibModalInstance) => {
                         $scope.close = () => {
                             $uibModalInstance.close();
@@ -227,52 +225,15 @@
 
                         <div class="modal-body profile">
                             <ul class="skill-categories">
-                                <li>
-                                    <span class="skill-category">Industry Knowledge</span>
+                                <li ng-repeat="category in vm.profile.skillCategories">
+                                    <span class="skill-category">{{ category.value }}</span>
                                     <ul class="skill-listing">
-                                        <li>E-commerce</li>
-                                        <li>Integration</li>
-                                        <li>Strategy</li>
-                                        <li>Marketing</li>
-                                        <li>Big Data</li>
-                                        <li>Virualization</li>
-                                        <li>Mobile devices</li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <span class="skill-category">Tools & Technologies</span>
-                                    <ul class="skill-listing">
-                                        <li>Python</li>
-                                        <li>C#</li>
-                                        <li>C++</li>
-                                        <li>HTML</li>
-                                        <li>JavaScript</li>
-                                        <li>CSS</li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <span class="skill-category">Interpersonal Skills</span>
-                                    <ul class="skill-listing">
-                                        <li>Strategic partnerships</li>
-                                        <li>Business alliances</li>
-                                        <li>Cross-functional team leadership</li>
-                                        <li>Leadership</li>
-                                        <li>Team building</li>
-                                        <li>Executive management</li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <span class="skill-category">Languages</span>
-                                    <ul class="skill-listing">
-                                        <li>English</li>
-                                        <li>French</li>
-                                        <li>Italian</li>
-                                        <li>Dutch</li>
-                                        <li>German</li>
+                                        <li ng-repeat="skill in category.skills">{{ skill.value }}</li>
                                     </ul>
                                 </li>
                             </ul>
                         </div>`,
+                    scope: $scope,
                     controller: ($scope, $uibModalInstance) => {
                         $scope.close = () => {
                             $uibModalInstance.close();
@@ -282,12 +243,12 @@
                 });
             };
 
-            vm.showPublicationsModal = () => {
+            vm.showDocumentsModal = () => {
                 $uibModal.open({
                     animation: true,
                     template:
                         `<div class="modal-header">
-                            <h3 class="text-capitalize">Publications</h3>
+                            <h3 class="text-capitalize">Documents</h3>
                             <button
                                 type="button"
                                 class="close"
@@ -297,132 +258,25 @@
                         </div>
 
                         <div class="modal-body profile">
-                            <ul class="publication-categories">
-                                <li>
-                                    <span class="publication-category">Journal</span>
-                                    <ul class="publication-listing">
-                                        <li>
-                                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
+                            <ul class="document-categories">
+                                <li ng-repeat="(category, documents) in vm.profile.documents">
+                                    <span class="document-category">{{ category }}</span>
+                                    <ul class="document-listing">
+                                        <li ng-repeat="document in documents">
+                                            <h4 class="document-title">{{ document.title}}</h4>
                                             <div class="document-source">
-                                                <i class="fas fa-file-alt" title="Journal"></i>
-                                                <span>
-                                                    Investigative Ophthalmology and Visual Science
-                                                </span>
+                                                <i ng-class="vm.getSourceTypeIcon(category)" title="{{ category }}"></i>
+                                                <span>{{ document.source }}</span>
                                             </div>
-                                            <ul class="publication-details">
-                                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
-                                            <div class="document-source">
-                                                <i class="fas fa-file-alt" title="Journal"></i>
-                                                <span>
-                                                    Investigative Ophthalmology and Visual Science
-                                                </span>
-                                            </div>
-                                            <ul class="publication-details">
-                                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
-                                            <div class="document-source">
-                                                <i class="fas fa-file-alt" title="Journal"></i>
-                                                <span>
-                                                    Investigative Ophthalmology and Visual Science
-                                                </span>
-                                            </div>
-                                            <ul class="publication-details">
-                                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <span class="publication-category">Book</span>
-                                    <ul class="publication-listing">
-                                        <li>
-                                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
-                                            <div class="document-source">
-                                                <i class="fas fa-book" title="Book"></i>
-                                                <span>
-                                                    PhD Thesis
-                                                </span>
-                                            </div>
-                                            <ul class="publication-details">
-                                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
-                                            <div class="document-source">
-                                                <i class="fas fa-book" title="Book"></i>
-                                                <span>
-                                                    PhD Thesis
-                                                </span>
-                                            </div>
-                                            <ul class="publication-details">
-                                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <span class="publication-category">Conference</span>
-                                    <ul class="publication-listing">
-                                        <li>
-                                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
-                                            <div class="document-source">
-                                                <i class="far fa-comment" title="Conference"></i>
-                                                <span>
-                                                    international winterschool in bioelectronics
-                                                </span>
-                                            </div>
-                                            <ul class="publication-details">
-                                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
-                                            <div class="document-source">
-                                                <i class="far fa-comment" title="Conference"></i>
-                                                <span>
-                                                    international winterschool in bioelectronics
-                                                </span>
-                                            </div>
-                                            <ul class="publication-details">
-                                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
-                                            <div class="document-source">
-                                                <i class="far fa-comment" title="Conference"></i>
-                                                <span>
-                                                    international winterschool in bioelectronics
-                                                </span>
-                                            </div>
-                                            <ul class="publication-details">
-                                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <h4 class="publication-title">Lorem Ipsum is simply dummy text of the printing and typesetting industry</h4>
-                                            <div class="document-source">
-                                                <i class="far fa-comment" title="Conference"></i>
-                                                <span>
-                                                    international winterschool in bioelectronics
-                                                </span>
-                                            </div>
-                                            <ul class="publication-details">
-                                                <li><strong>DOI: </strong><a href="#">10.1093</a></li>
+                                            <ul class="document-details" ng-if="document.doi">
+                                                <li><strong>DOI: </strong><a href="#">{{ document.doi }}</a></li>
                                             </ul>
                                         </li>
                                     </ul>
                                 </li>
                             </ul>
                         </div>`,
+                    scope: $scope,
                     controller: ($scope, $uibModalInstance) => {
                         $scope.close = () => {
                             $uibModalInstance.close();
@@ -448,72 +302,25 @@
 
                         <div class="modal-body profile">
                             <ul class="accomplishment-categories">
-                                <li>
-                                    <span class="accomplishment-category">Award / Achievement</span>
+                                <li ng-repeat="(category, accomplishments) in vm.profile.accomplishments">
+                                    <span class="accomplishment-category">{{ category }}</span>
                                     <ul class="accomplishment-listing">
-                                        <li>
-                                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
+                                        <li ng-repeat="accomplishment in accomplishments">
+                                            <h4 class="accomplishment-title">{{ accomplishment.title }}</h4>
                                             <ul class="accomplishment-details">
-                                                <li><strong>Issuer: </strong>Lorem ipsum</li>
-                                                <li><strong>Year:</strong> 2019</li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
-                                            <ul class="accomplishment-details">
-                                                <li><strong>Issuer: </strong>Lorem ipsum</li>
-                                                <li><strong>Year:</strong> 2019</li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <span class="accomplishment-category">Organized Event</span>
-                                    <ul class="accomplishment-listing">
-                                        <li>
-                                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
-                                            <ul class="accomplishment-details">
-                                                <li><strong>Issuer: </strong>Lorem ipsum</li>
-                                                <li><strong>Year:</strong> 2019</li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
-                                            <ul class="accomplishment-details">
-                                                <li><strong>Issuer: </strong>Lorem ipsum</li>
-                                                <li><strong>Year:</strong> 2019</li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
-                                            <ul class="accomplishment-details">
-                                                <li><strong>Issuer: </strong>Lorem ipsum</li>
-                                                <li><strong>Year:</strong> 2019</li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <span class="accomplishment-category">Editorship</span>
-                                    <ul class="accomplishment-listing">
-                                        <li>
-                                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
-                                            <ul class="accomplishment-details">
-                                                <li><strong>Issuer: </strong>Lorem ipsum</li>
-                                                <li><strong>Year:</strong> 2019</li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <h4 class="accomplishment-title">Lorem Ipsum is simply dummy text</h4>
-                                            <ul class="accomplishment-details">
-                                                <li><strong>Issuer: </strong>Lorem ipsum</li>
-                                                <li><strong>Year:</strong> 2019</li>
+                                                <li ng-if="accomplishment.issuer">
+                                                    <strong>Issuer: </strong>{{ accomplishment.issuer }}
+                                                </li>
+                                                <li ng-if="accomplishment.year">
+                                                    <strong>Year: </strong>{{ accomplishment.year }}
+                                                </li>
                                             </ul>
                                         </li>
                                     </ul>
                                 </li>
                             </ul>
                         </div>`,
+                    scope: $scope,
                     controller: ($scope, $uibModalInstance) => {
                         $scope.close = () => {
                             $uibModalInstance.close();

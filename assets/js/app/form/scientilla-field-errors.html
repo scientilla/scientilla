@@ -1,0 +1,9 @@
+<div
+    class="invalid-feedback"
+    ng-if="vm.errors">
+    <ul>
+        <li ng-repeat="error in vm.errors">
+            {{ error.message }}
+        </li>
+    </ul>
+</div>

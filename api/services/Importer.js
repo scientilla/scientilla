@@ -7,6 +7,7 @@ const xlsx = require('xlsx');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request-promise');
+const util = require('util');
 
 const moment = require('moment');
 moment.locale('en');
@@ -523,6 +524,40 @@ async function importSourceMetrics(filename) {
     sails.log.info('imported ' + recordsCount + ' records');
 }
 
+async function waitForSuccesfulRequest(options) {
+    let attempts = 0;
+    let maxAttempts = 5;
+
+    function sleep(ms){
+        return new Promise(resolve=>{
+            setTimeout(resolve,ms)
+        })
+    }
+
+    async function tryRequest(options) {
+        attempts++;
+
+        return await request(options).catch(async () => {
+            if (attempts < maxAttempts) {
+                await sleep(1000);
+                return await tryRequest(options);
+            } else {
+                return false;
+            }
+        });
+    }
+
+    let response = await tryRequest(options);
+
+    if (response) {
+        sails.log.info('Reached the API after ' + attempts + ' attempt(s)!');
+        return response._.scheda;
+    }
+
+    sails.log.error('Tried ' + attempts + ' time(s), but failed to reach the API!');
+    return [];
+}
+
 async function importUserContracts(email = defaultEmail) {
     const userIsBeenChanged = (user, values) => {
         const fields = [
@@ -571,10 +606,12 @@ async function importUserContracts(email = defaultEmail) {
 
     try {
         const groups = await Group.find();
-        let res = await request(reqOptions).catch(err => {
-            console.log(res.status);
-        });
-        const responseData = res._.scheda;
+        if (groups.length <= 0) {
+            sails.log.debug('No groups found...');
+        }
+
+        const responseData = await waitForSuccesfulRequest(reqOptions);
+
         let contracts = [];
 
         if (email !== defaultEmail) {
@@ -694,13 +731,28 @@ async function importUserContracts(email = defaultEmail) {
             synchronized: true,
             active: true
         };
-        // Deactivate all memberships of users that aren't in sync
-        const disabledSynchronizedMemberships = await Membership.update(condition, { active: false });
 
-        // Deactivate all users that aren't in sync
-        const disabledUsers = await User.update(condition, { active: false });
+        let disabledSynchronizedMemberships,
+            disabledUsers;
 
-        // Set the membership active to false for the disabled users
+        // If a specific email is used
+        if (email !== defaultEmail) {
+            const user = await User.findOne({ username: email });
+
+            // Deactivate all memberships of the selected user that aren't in sync
+            disabledSynchronizedMemberships = await Membership.update(_.merge({ user: user.id }, condition), { active: false });
+
+            // Deactivate the selected user if it's not in sync
+            disabledUsers = await User.update(_.merge({ id: user.id }, condition), { active: false });
+        } else {
+            // Deactivate all memberships of users that aren't in sync
+            disabledSynchronizedMemberships = await Membership.update(condition, { active: false });
+
+            // Deactivate all users that aren't in sync
+            disabledUsers = await User.update(condition, { active: false });
+        }
+
+        // Set the membership active to false for the disabled users or user
         const disabledCollaborations = await Membership.update({
             synchronized: false,
             user: disabledUsers.map(user => user.id),
@@ -709,37 +761,80 @@ async function importUserContracts(email = defaultEmail) {
 
         const disabledMemberships = disabledSynchronizedMemberships.length + disabledCollaborations.length;
 
-        sails.log.info(invalidEmails.length + ' invalid email addresses found in the Pentaho response!');
+        sails.log.info(invalidEmails.length + ' invalid email addresses found in the Pentaho response for these user(s)!');
         sails.log.info(primaryContractsWithValidEmail.length + ' primary contracts found with a valid email address!');
+        sails.log.info('....................................');
+
         sails.log.info(insertedUsers.length + ' Users created!');
-        //if (insertedUsers.length > 0 && insertedUsers.length < 10) {
-            sails.log.info(JSON.stringify(insertedUsers));
-        //}
+        if (insertedUsers.length > 0) {
+            sails.log.info('Username(s): ' + insertedUsers.map(user => user.username).join(', '));
+        }
+        sails.log.info('....................................');
+
         sails.log.info(updatedUsers.length + ' Users updated!');
-        //if (info.length > 0 && updatedUsers.length < 10) {
-            sails.log.info(JSON.stringify(updatedUsers));
-        //}
+        if (updatedUsers.length > 0) {
+            sails.log.info('Username(s): ' + updatedUsers.map(user => user.username).join(', '));
+        }
+        sails.log.info('....................................');
+
         sails.log.info(disabledUsers.length + ' Users disabled!');
-        //if (disabledUsers.length > 0 && disabledUsers.length < 10) {
-            sails.log.info(JSON.stringify(disabledUsers));
-        //}
+        if (disabledUsers.length > 0) {
+            sails.log.info('Username(s): ' + disabledUsers.map(user => user.username).join(', '));
+        }
+        sails.log.info('....................................');
+
         sails.log.info(disabledMemberships + ' Memberships disabled!');
-        //if (disabledMemberships.length > 0 && disabledMemberships.length < 10) {
-            sails.log.info(JSON.stringify(disabledSynchronizedMemberships));
-            sails.log.info(JSON.stringify(disabledCollaborations));
-        //}
+        if (disabledSynchronizedMemberships.length > 0) {
+            await Promise.all(disabledSynchronizedMemberships.map(async membership => {
+                let user = await User.findOne({ id: membership.user });
+                return user.username;
+            })).then(usernames => {
+                sails.log.info('Email address(es): ' + usernames.join(', '));
+            });
+        }
+        if (disabledCollaborations.length > 0) {
+            await Promise.all(disabledCollaborations.map(async membership => {
+                let user = await User.findOne({ id: membership.user });
+                return user.username;
+            })).then(usernames => {
+                sails.log.info('Email address(es): ' + usernames.join(', '));
+            });
+        }
+        sails.log.info('....................................');
+
         sails.log.info(updatedResearchEntityDataItems.length + ' ResearchEntityData records updated!');
-        //if (updatedResearchEntityDataItems.length > 0 && updatedResearchEntityDataItems.length < 10) {
-            sails.log.info(JSON.stringify(updatedResearchEntityDataItems));
-        //}
+        if (updatedResearchEntityDataItems.length > 0) {
+            await Promise.all(updatedResearchEntityDataItems.map(async item => {
+                let user = await User.findOne({ researchEntity: item.researchEntity });
+                return user.username;
+            })).then(usernames => {
+                sails.log.info('Email address(es): ' + usernames.join(', '));
+            });
+        }
+        sails.log.info('....................................');
+
         sails.log.info(newResearchEntityDataItems.length + ' ResearchEntityData records created!');
-        //if (newResearchEntityDataItems.length > 0 && newResearchEntityDataItems.length < 10) {
-            sails.log.info(JSON.stringify(newResearchEntityDataItems));
-        //}
+        if (newResearchEntityDataItems.length > 0) {
+            await Promise.all(newResearchEntityDataItems.map(async item => {
+                let user = await User.findOne({ researchEntity: item.researchEntity });
+                return user.username;
+            })).then(usernames => {
+                sails.log.info('Email address(es): ' + usernames.join(', '));
+            });
+        }
+        sails.log.info('....................................');
+
         sails.log.info(upToDateResearchEntityDataItems.length + ' ResearchEntityData records are already up-to-date!');
-        //if (upToDateResearchEntityDataItems.length > 0 && upToDateResearchEntityDataItems.length < 10) {
-            sails.log.info(JSON.stringify(upToDateResearchEntityDataItems));
-        //}
+        if (upToDateResearchEntityDataItems.length > 0) {
+            await Promise.all(upToDateResearchEntityDataItems.map(async item => {
+                let user = await User.findOne({ researchEntity: item.researchEntity });
+                return user.username;
+            })).then(usernames => {
+                sails.log.info('Email address(es): ' + usernames.join(', '));
+            });
+        }
+        sails.log.info('....................................');
+
         sails.log.info('Stopped at ' +  moment.utc().format());
     } catch (e) {
         sails.log.debug('importUserContracts');

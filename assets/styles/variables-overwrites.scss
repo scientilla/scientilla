@@ -27,6 +27,7 @@ $font-awesome:               'Font Awesome 5 Free';
 
 $base-gray:                   #333333;
 
+$gray-50:                     lighten($base-gray, 73%);
 $gray-100:                    lighten($base-gray, 70%);
 $gray-200:                    lighten($base-gray, 60%);
 $gray-300:                    lighten($base-gray, 50%);

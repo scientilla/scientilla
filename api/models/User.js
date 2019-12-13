@@ -608,20 +608,4 @@ module.exports = _.merge({}, SubResearchEntity, {
 
         return await PerformanceCalculator.getUsersMBOInvitedTalks(year);
     },
-    exportProfile: async function (researchEntityId, type) {
-        let result;
-        switch(type) {
-            case 'doc':
-                result = await Profile.toDoc();
-                break;
-            case 'pdf':
-                result = await Profile.toPDF();
-                break;
-            default:
-                result = 'Wrong request!';
-                break;
-        }
-
-        return result;
-    }
 });

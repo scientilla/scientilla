@@ -34,12 +34,12 @@
                 @include set-grid(2, 10, 2, 12);
             }
 
-            &.block-publications-and-accomplishments{
+            &.block-documents-and-accomplishments{
                 @include set-grid(3, 1, 1, 9);
                 margin-bottom: 0px;
             }
 
-            &.block-publications{
+            &.block-documents{
                 @include set-grid(1, 1, 1, 6);
             }
 
@@ -85,6 +85,11 @@
         .contact-listing{
             @include normalize-listing;
 
+            & > li{
+                display: block;
+                margin-bottom: 1rem;
+            }
+
             .fas,
             .fab{
                 font-size: 1.5rem;
@@ -98,12 +103,16 @@
         .socials-listing{
             @include normalize-listing('true');
             @include clearfix;
-            margin: 1rem -.5rem;
 
             & > li{
                 display: block;
                 float: left;
                 padding: .5rem;
+            }
+
+            a{
+                display: block;
+                line-height: 1;
             }
         }
 
@@ -161,20 +170,36 @@
     .block-educations,
     .block-certificates,
     .block-skills,
-    .block-publications,
+    .block-documents,
     .block-accomplishments{
         .profile-block {
             display: flex;
             flex-direction: column;
         }
 
-        .content-container{
-            align-self: center;
-        }
-
         .button-container{
             margin-top: auto;
             margin-left: auto;
+        }
+    }
+
+    .block-experiences,
+    .block-educations,
+    .block-certificates,
+    .block-documents,
+    .block-accomplishments{
+        .content-container{
+            align-self: center;
+        }
+    }
+
+    .profile-about{
+        margin-bottom: 4rem;
+    }
+
+    .profile-interests{
+        .block-title{
+            margin-bottom: 1rem;
         }
     }
 
@@ -195,12 +220,13 @@
         }
     }
 
-    .skill-listing{
+    .skill-listing,
+    .interest-listing{
         @include normalize-listing;
         @include clearfix;
         margin: 0px -.5rem;
 
-        & > li{
+        li{
             display: block;
             margin: .5rem;
             padding: .5rem 1rem;
@@ -219,7 +245,7 @@
         color: $primary-color;
     }
 
-    .block-publications,
+    .block-documents,
     .block-accomplishments{
         .amount{
             font-family: $roboto-slab;
@@ -252,6 +278,18 @@
         .title-icon{
             margin-right: .5rem;
             font-size: 2rem;
+        }
+    }
+
+    .favorite-certificates-listing{
+        @include normalize-listing;
+        margin-top: .5rem;
+        margin-bottom: 1rem;
+
+        & > li{
+            & + li{
+                margin-top: 1rem;
+            }
         }
     }
 
@@ -383,8 +421,8 @@
     }
 
     .skill-categories,
-    .publication-categories,
-    .publication-listing,
+    .document-categories,
+    .document-listing,
     .accomplishment-categories,
     .accomplishment-listing{
         @include normalize-listing;
@@ -397,7 +435,7 @@
     }
 
     .skill-category,
-    .publication-category,
+    .document-category,
     .accomplishment-category{
         display: block;
         margin-bottom: 1rem;
@@ -406,13 +444,13 @@
         color: $gray-300;
     }
 
-    .publication-details,
+    .document-details,
     .accomplishment-details{
         @include normalize-listing;
         margin-top: .5rem;
     }
 
-    .publication-title,
+    .document-title,
     .accomplishment-title{
         margin-bottom: 0px;
     }

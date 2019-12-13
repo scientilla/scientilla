@@ -15,13 +15,17 @@
             text-align: left;
         }
     }
+
+    &.tooltip-favorite{
+        margin-right: -21px;
+    }
 }
 
 .bs-tooltip-top-right,
 .bs-tooltip-auto[x-placement^="top-right"]{
     .arrow{
         bottom: -4px !important;
-        right: 25px !important;
+        right: 24px !important;
 
         &::before {
             top: 0;

@@ -1,0 +1,42 @@
+<ng-container ng-repeat="item in vm.basicInformation">
+    <ng-container ng-if="item.type === 'array' && item.items && item.items.length > 0">
+        <label>{{ item.title }}</label>
+        <ul
+            class="enable-listing"
+            ng-repeat="(key, element) in item.items">
+            <li>
+                <div class="form-group">
+                    <div class="form-control disabled">
+                        {{ element.value }}
+                    </div>
+                </div>
+            </li>
+            <li>
+                <scientilla-privacy-selector
+                    css-class="no-label"
+                    context-object="element.context"
+                    model="vm.profile[element.model][key].privacy"
+                    disable-invisible="true"></scientilla-privacy-selector>
+            </li>
+        </ul>
+    </ng-container>
+
+    <ng-container ng-if="item.type === undefined">
+        <ul class="enable-listing">
+            <li>
+                <div class="form-group">
+                    <label>{{ item.label }}</label>
+                    <div class="form-control disabled">
+                        {{ item.value }}
+                    </div>
+                </div>
+            </li>
+            <li>
+                <scientilla-privacy-selector
+                    context-object="item.model"
+                    model="vm.profile[item.model].privacy"
+                    disable-invisible="item.disableInvisible"></scientilla-privacy-selector>
+            </li>
+        </ul>
+    </ng-container>
+</ng-container>

@@ -17,6 +17,10 @@ label{
         color: $base-gray;
         background: $gray-100;
     }
+
+    &.is-invisible{
+        background: $gray-50;
+    }
 }
 
 .form-control,
@@ -155,6 +159,126 @@ label{
             & + span {
                 &:before {
                     content: '\f57c';
+                }
+            }
+        }
+
+        &:disabled{
+            & + span{
+                cursor: not-allowed;
+
+                &:before{
+                    color: $gray;
+                }
+            }
+        }
+    }
+}
+
+.privacy-selector{
+    @include normalize-listing;
+    margin-top: 2.3rem;
+
+    &.no-label{
+        margin-top: 0px;
+    }
+
+    & > li {
+        display: block;
+    }
+
+    label{
+        margin: 0px;
+    }
+
+    input[type='radio'] {
+        display: none;
+
+        & + span {
+            position: relative;
+            display: none;
+            padding: .8rem 2rem;
+            vertical-align: top;
+            line-height: 1;
+            cursor: pointer;
+
+            &:before {
+                display: block;
+                //width: 14px;
+                font-family: $font-awesome;
+                font-size: 1.4rem;
+                font-weight: 900;
+                //content: '\f023';
+                text-align: center;
+            }
+        }
+
+        &[value='public'] {
+            & + span {
+                &:before {
+                    content: '\f57c';
+                }
+            }
+        }
+
+        &[value='locked'] {
+            & + span {
+                &:before {
+                    content: '\f023';
+                }
+            }
+        }
+
+        &[value='invisible'] {
+            & + span {
+                &:before {
+                    content: '\f070';
+                }
+            }
+        }
+
+        &:checked {
+            & + span {
+                display: block;
+            }
+        }
+    }
+}
+
+.form-favorite {
+    &,
+    label {
+        margin-bottom: 0px;
+        font-weight: normal;
+        line-height: 1;
+    }
+
+    input {
+        display: none;
+
+        & + span {
+            position: relative;
+            display: inline-block;
+            padding: 0.8rem 0px;
+            vertical-align: middle;
+            line-height: 1;
+            cursor: pointer;
+
+            &:before {
+                display: block;
+                width: 14px;
+                font-family: $font-awesome;
+                font-size: 1.4rem;
+                font-weight: normal;
+                content: '\f005';
+                text-align: center;
+            }
+        }
+
+        &:checked {
+            & + span {
+                &:before {
+                    font-weight: 900;
                 }
             }
         }
@@ -323,13 +447,14 @@ label{
 }
 
 .invalid-feedback{
+    display: block;
     margin-top: .5rem;
     font-size: 100%;
     line-height: 1;
     color: $error-color;
 
     ul{
-        list-style-type: disc;
+        @include normalize-listing;
 
         & > li {
             margin-bottom: .5rem;

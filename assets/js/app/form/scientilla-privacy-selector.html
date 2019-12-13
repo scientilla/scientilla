@@ -1,0 +1,19 @@
+<ul
+    class="privacy-selector"
+    ng-class="vm.cssClass"
+    uib-tooltip-html="vm.getTooltipText()"
+    tooltip-placement="top-right">
+    <li ng-repeat="option in vm.options">
+        <label for="{{ vm.context }}-{{ option }}">
+            <input
+                type="radio"
+                id="{{ vm.context }}-{{ option }}"
+                value="{{ option }}"
+                data-context="{{ vm.context }}"
+                name="{{ vm.context }}-privacy"
+                ng-model="vm.model"
+                ng-click="vm.changeOption($event)"/>
+            <span></span>
+        </label>
+    </li>
+</ul>

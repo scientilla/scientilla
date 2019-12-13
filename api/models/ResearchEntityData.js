@@ -2,55 +2,118 @@ const Ajv = require('ajv');
 const ajv = new Ajv({
     allErrors: true,
     removeAdditional: 'all',
-    useDefaults: true
+    useDefaults: true,
+    jsonPointers: true
 });
+require('ajv-errors')(ajv);
+
 const defaults = require('json-schema-defaults');
 const dot = require('dot-object');
 // remove after debugging
-const util = require('util')
+const util = require('util');
 
+
+const requiredDatePattern = '^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z';
+const requiredMessage = 'This field is required.';
+
+const datePattern = '^$|' + requiredDatePattern;
+const datePatternMessage = 'This should be a valid date.';
+
+const urlPattern = '^$|^(http|https)://';
+const urlPatternMessage = 'This should be a valid URL starting with http:// or https://';
+
+const emptyPattern = '([^\\s])';
+const emptyPatternMessage = requiredMessage;
+
+const defaultPrivacy = 'locked';
 
 const schema = {
     type: 'object',
     definitions: {
+        privacy: {
+            type: 'string',
+            enum: ['locked', 'public', 'invisible'],
+            default: 'locked'
+        },
         onlyPrivacy: {
             type: 'object',
-            properties : {
-                public: {
-                    type: 'boolean',
-                    default : false
-                }
+            properties: {
+                privacy: {
+                    type: 'string',
+                    enum: ['locked', 'public'],
+                    default: 'locked'
+                },
             }
         },
         stringAndPrivacy: {
             type: 'object',
-            properties : {
+            properties: {
                 value: {
                     type: 'string'
                 },
-                public: {
-                    type: 'boolean',
-                    default : false
+                privacy: {
+                    type: 'string',
+                    enum: ['locked', 'public', 'invisible'],
+                    default: 'locked'
                 }
             },
-            //required: ['value']
+            required: ['privacy']
+        },
+        notEmptyStringAndPrivacy: {
+            type: 'object',
+            properties: {
+                value: {
+                    pattern: emptyPattern
+                },
+                privacy: {
+                    type: 'string',
+                    enum: ['locked', 'public', 'invisible'],
+                    default: 'locked'
+                }
+            },
+            errorMessage: {
+                properties:{
+                    value: emptyPatternMessage
+                }
+            },
+            required: ['privacy']
+        },
+        urlAndPrivacy: {
+            type: 'object',
+            properties: {
+                value: {
+                    pattern: urlPattern
+                },
+                privacy: {
+                    type: 'string',
+                    enum: ['locked', 'public', 'invisible'],
+                    default: 'locked'
+                }
+            },
+            errorMessage: {
+                properties:{
+                    value: urlPatternMessage
+                }
+            },
+            required: ['privacy']
         },
         experience: {
             type: 'object',
             properties: {
                 company: {
-                    type: 'string'
+                    type: 'string',
+                    pattern: emptyPattern
                 },
                 jobTitle: {
-                    type: 'string'
+                    type: 'string',
+                    pattern: emptyPattern
                 },
                 from: {
                     type: 'string',
-                    //format: 'date'
+                    pattern: requiredDatePattern
                 },
                 to: {
-                    type: 'string',
-                    //format: 'date'
+                    pattern: datePattern
                 },
                 location: {
                     type: 'string'
@@ -61,29 +124,39 @@ const schema = {
                 jobDescription: {
                     type: 'string'
                 },
-                public: {
-                    type: 'boolean',
-                    default: false
+                privacy: {
+                    type: 'string',
+                    enum: ['locked', 'public', 'invisible'],
+                    default: 'locked'
                 }
             },
-            required: ['company', 'jobTitle', 'location', 'country', 'jobDescription']
+            errorMessage: {
+                properties:{
+                    company: requiredMessage,
+                    jobTitle: requiredMessage,
+                    from: datePatternMessage,
+                    to: datePatternMessage
+                }
+            },
+            required: ['company', 'jobTitle', 'from']
         },
         educationItem: {
             type: 'object',
             properties: {
                 institute: {
-                    type: 'string'
+                    type: 'string',
+                    pattern: emptyPattern
                 },
                 title: {
-                    type: 'string'
+                    type: 'string',
+                    pattern: emptyPattern
                 },
                 from: {
                     type: 'string',
-                    //format: 'date'
+                    pattern: requiredDatePattern
                 },
                 to: {
-                    type: 'string',
-                    //format: 'date'
+                    pattern: datePattern
                 },
                 location: {
                     type: 'string'
@@ -91,35 +164,102 @@ const schema = {
                 country: {
                     type: 'string'
                 },
-                public: {
-                    type: 'boolean',
-                    default: false
+                privacy: {
+                    type: 'string',
+                    enum: ['locked', 'public', 'invisible'],
+                    default: 'locked'
                 }
             },
-            required: ['institute', 'title', 'location', 'country']
+            errorMessage: {
+                properties:{
+                    institute: requiredMessage,
+                    title: requiredMessage,
+                    from: datePatternMessage,
+                    to: datePatternMessage
+                }
+            },
+            required: ['institute', 'title', 'from']
         },
         certificate: {
             type: 'object',
             properties: {
                 title: {
-                    type: 'string'
+                    type: 'string',
+                    pattern: emptyPattern
                 },
                 description: {
                     type: 'string'
                 },
                 date: {
-                    type: 'string',
-                    //format: 'date'
+                    pattern: datePattern
                 },
-                public: {
+                favorite: {
                     type: 'boolean',
                     default: false
+                },
+                privacy: {
+                    type: 'string',
+                    enum: ['locked', 'public', 'invisible'],
+                    default: 'locked'
                 }
             },
-            required: ['title', 'description']
+            errorMessage: {
+                properties:{
+                    title: requiredMessage,
+                    date: datePatternMessage
+                }
+            },
+            required: ['title', 'favorite']
+        },
+        skillCategory: {
+            type: 'object',
+            properties: {
+                value: {
+                    pattern: emptyPattern
+                },
+                skills: {
+                    type: 'array',
+                    items: { $ref: '#/definitions/skill' },
+                    default: []
+                },
+                privacy: {
+                    type: 'string',
+                    enum: ['locked', 'public', 'invisible'],
+                    default: 'locked'
+                }
+            },
+            errorMessage: {
+                properties:{
+                    value: emptyPatternMessage
+                }
+            },
+            required: ['value', 'privacy']
+        },
+        skill: {
+            type: 'object',
+            properties: {
+                value: {
+                    pattern: emptyPattern
+                },
+                favorite: {
+                    type: 'boolean',
+                    default: false
+                },
+                privacy: {
+                    type: 'string',
+                    enum: ['locked', 'public', 'invisible'],
+                    default: 'locked'
+                }
+            },
+            errorMessage: {
+                properties:{
+                    value: emptyPatternMessage
+                }
+            },
+            required: ['value', 'favorite', 'privacy']
         }
     },
-    properties : {
+    properties: {
         username: { $ref: '#/definitions/onlyPrivacy' },
         name: { $ref: '#/definitions/onlyPrivacy' },
         surname: { $ref: '#/definitions/onlyPrivacy' },
@@ -138,19 +278,23 @@ const schema = {
         administrativeOrganization: { $ref: '#/definitions/onlyPrivacy' },
         office: { $ref: '#/definitions/onlyPrivacy' },
         position: { $ref: '#/definitions/onlyPrivacy' },
-        facility: { $ref: '#/definitions/onlyPrivacy' },
+        facilities: {
+            type: 'array',
+            items: { $ref: '#/definitions/onlyPrivacy' },
+            default: []
+        },
         socials: {
             type: 'object',
             properties: {
-                linkedin: { $ref: '#/definitions/stringAndPrivacy' },
-                twitter: { $ref: '#/definitions/stringAndPrivacy' },
-                facebook: { $ref: '#/definitions/stringAndPrivacy' },
-                instagram: { $ref: '#/definitions/stringAndPrivacy' },
-                researchgate: { $ref: '#/definitions/stringAndPrivacy' },
-                github: { $ref: '#/definitions/stringAndPrivacy' },
-                bitbucket: { $ref: '#/definitions/stringAndPrivacy' },
-                youtube: { $ref: '#/definitions/stringAndPrivacy' },
-                flickr: { $ref: '#/definitions/stringAndPrivacy' },
+                linkedin: { $ref: '#/definitions/urlAndPrivacy' },
+                twitter: { $ref: '#/definitions/urlAndPrivacy' },
+                facebook: { $ref: '#/definitions/urlAndPrivacy' },
+                instagram: { $ref: '#/definitions/urlAndPrivacy' },
+                researchgate: { $ref: '#/definitions/urlAndPrivacy' },
+                github: { $ref: '#/definitions/urlAndPrivacy' },
+                bitbucket: { $ref: '#/definitions/urlAndPrivacy' },
+                youtube: { $ref: '#/definitions/urlAndPrivacy' },
+                flickr: { $ref: '#/definitions/urlAndPrivacy' },
             }
         },
         displayNames: {
@@ -160,20 +304,68 @@ const schema = {
                     type: 'boolean',
                     default: false
                 },
-                name: { $ref: '#/definitions/stringAndPrivacy' },
-                surname: { $ref: '#/definitions/stringAndPrivacy' },
+                name: {$ref: '#/definitions/stringAndPrivacy'},
+                surname: {$ref: '#/definitions/stringAndPrivacy'},
+            },
+            required: ['use'],
+            if: {
+                properties: {
+                    use: {
+                        type: 'boolean',
+                        const: true
+                    },
+                    name: {$ref: '#/definitions/stringAndPrivacy'},
+                    surname: {$ref: '#/definitions/stringAndPrivacy'},
+                },
+                required: ['use']
+            },
+            then: {
+                properties: {
+                    use: {
+                        type: 'boolean',
+                        default: false
+                    },
+                    name: { $ref: '#/definitions/notEmptyStringAndPrivacy' },
+                    surname: { $ref: '#/definitions/notEmptyStringAndPrivacy' },
+                },
+                required: ['use', 'name', 'surname']
+            },
+            else: {
+                properties: {
+                    use: {
+                        type: 'boolean',
+                        default: false
+                    },
+                    name: {$ref: '#/definitions/stringAndPrivacy'},
+                    surname: {$ref: '#/definitions/stringAndPrivacy'},
+                },
+                required: ['use', 'name', 'surname']
             }
         },
         titles: {
             type: 'array',
-            items: { $ref: '#/definitions/stringAndPrivacy' },
+            items: {
+                allOf: [
+                    { $ref: '#/definitions/stringAndPrivacy' },
+                    { required: ['value'] }
+                ]
+            },
             default: []
         },
         description: { $ref: '#/definitions/stringAndPrivacy' },
         role: { $ref: '#/definitions/stringAndPrivacy' },
-        website: { $ref: '#/definitions/stringAndPrivacy' },
+        website: { $ref: '#/definitions/urlAndPrivacy' },
         address: { $ref: '#/definitions/stringAndPrivacy' },
-        interests: { $ref: '#/definitions/stringAndPrivacy' },
+        interests: {
+            type: 'array',
+            items: {
+                allOf: [
+                    { $ref: '#/definitions/notEmptyStringAndPrivacy' },
+                    { required: ['value'] }
+                ]
+            },
+            default: []
+        },
         experiences: {
             type: 'array',
             items: { $ref: '#/definitions/experience' },
@@ -191,45 +383,147 @@ const schema = {
         },
         skillCategories: {
             type: 'array',
-            items: {
-                type: 'object',
-                properties: {
-                    name: {
-                        type: 'string',
-                        //minLength: 5,
-                        //maxLength: 1,
-                    },
-                    skills: {
-                        type: 'array',
-                        items: {
-                            type: 'object',
-                            properties: {
-                                name: {
-                                    type: 'string'
-                                },
-                                public: {
-                                    type: 'boolean',
-                                    default: false
-                                }
-                            },
-                            required: ['name']
-                        },
-                        default: []
-                    },
-                    public: {
-                        type: 'boolean',
-                        default: false
-                    }
-                },
-                required: ['name']
-            },
+            items: { $ref: '#/definitions/skillCategory' },
             default: []
         },
-        publications: { $ref: '#/definitions/onlyPrivacy' },
+        documents: { $ref: '#/definitions/onlyPrivacy' },
         accomplishments: { $ref: '#/definitions/onlyPrivacy' },
-    },
-    required: ['description']
+    }
 };
+
+/*function filterProperties(object) {
+
+    // Loop over the properties of the object
+    for (const property in object) {
+
+        // Check which type the object is
+        switch(true) {
+            case _.isArray(object[property]) :
+                // If it's an Array loop over the items
+                const len = object[property].length;
+
+                if (len > 0) {
+                    for (let i = 0;i < len; i++) {
+                        const filteredProperty = filterProperties(object[property][i]);
+
+                        // Set the object property to the filteredProperty or remove it from the array
+                        if (!_.isEmpty(filteredProperty)) {
+                            object[property][i] = filteredProperty;
+                        } else {
+                            delete object[property].splice(i, 1);
+                        }
+                    }
+                } else {
+                    delete object[property];
+                }
+
+                break;
+            case _.isObject(object[property]):
+
+                const filteredProperty = filterProperties(object[property]);
+
+                // Set the object property to the filteredProperty or delete it
+                if (!_.isEmpty(filteredProperty)) {
+                    object[property] = filteredProperty;
+                } else {
+                    delete object[property];
+                }
+
+                break;
+            default:
+                // If it's not an Array or an Object
+
+                // If it has a property named 'value' return that.
+                if (property === 'value') {
+                    return object[property];
+                }
+
+                // If the property is named 'public' or the property is empty and not a boolean delete it.
+                if (
+                    (property === 'public') ||
+                    (typeof object[property] !== 'boolean' && _.isEmpty(object[property]))
+                ) {
+                    delete object[property];
+                }
+
+                break;
+        }
+    }
+    return object;
+}*/
+function filterProperty(object) {
+    switch(true) {
+        case _.isArray(object) :
+
+            const len = object.length;
+
+            if (len > 0) {
+                const array = [];
+                for (let i = 0; i < len; i++) {
+                    const filteredProperty = filterProperty(object[i]);
+                    if (filteredProperty) {
+                        array.push(filteredProperty);
+                    }
+                }
+
+                if (array.length > 0) {
+                    return array;
+                }
+            }
+
+            return false;
+        case _.isObject(object) :
+
+            if (Object.keys(object).length === 2 && _.has(object, 'privacy') && _.has(object, 'value')) {
+                return object['value'];
+            }
+
+            if (_.has(object, 'privacy')) {
+                delete object['privacy'];
+            }
+
+            const tmpObject = {};
+            for (const property in object) {
+                const filteredProperty = filterProperty(object[property]);
+                if (filteredProperty) {
+                    tmpObject[property] = filteredProperty;
+                }
+            }
+
+            if (!_.isEmpty(tmpObject)) {
+                return tmpObject;
+            }
+
+            return false;
+
+
+
+            /*if (_.has(object, 'public') && object['public'] === false) {
+
+            }*/
+
+            /*for (const property in object) {
+                sails.log.debug(property);
+            }*/
+
+            break;
+        default:
+            return object;
+    }
+}
+
+function filterProfile(profile) {
+
+    const object = {};
+    // Loop over the properties of the object
+    for (const property in profile) {
+        const filteredProperty = filterProperty(profile[property]);
+        if (filteredProperty) {
+            object[property] = filteredProperty
+        }
+    }
+    return object;
+}
 
 module.exports = {
     attributes: {
@@ -243,15 +537,20 @@ module.exports = {
     tableName: 'research_entity_data',
     async getEditProfile(researchEntityId) {
         const allGroups = await Group.find({ active: true });
+        const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
         const researchEntityData = await ResearchEntityData.findOne({
             researchEntity: researchEntityId
         });
+        const defaultProfile = defaults(schema);
 
-        let profile;
+        //sails.log.debug(defaultProfile);
+
+        let profile = {};
         if (researchEntityData && !_.isEmpty(researchEntityData.profile)) {
-            profile = researchEntityData.profile;
+            //profile = researchEntityData.profile;
+            profile = _.merge(defaultProfile, researchEntityData.profile);
         } else {
-            profile = defaults(schema);
+            profile = _.cloneDeep(defaultProfile);
             //const validate = ajv.compile(schema);
             /*profile = defaults({
                 type: 'object',
@@ -259,6 +558,8 @@ module.exports = {
                 properties: validate.schema.properties
             });*/
         }
+
+        //sails.log.debug(profile);
 
         if (researchEntityData && researchEntityData.imported_data) {
             const importedData = _.cloneDeep(researchEntityData.imported_data);
@@ -274,70 +575,64 @@ module.exports = {
             const researchLines = [];
             const institutes = [];
 
+            function handleGroup (group) {
+                switch (group.type) {
+                    case 'Center':
+                        sails.log.debug(util.inspect(group, false, null, true));
+                        const center = profile.centers.find(c => c.value === group.name);
+                        if (!center) {
+                            centers.push({
+                                value: group.name,
+                                privacy: defaultPrivacy
+                            });
+                        }
+                        break;
+                    case 'Facility':
+                        const facility = profile.facilities.find(f => f.value === group.name);
+                        if (!facility) {
+                            facilities.push({
+                                value: group.name,
+                                privacy: defaultPrivacy
+                            });
+                        }
+                        break;
+                    case 'Institute':
+                        const institute = profile.institutes.find(i => i.value === group.name);
+                        if (!institute) {
+                            institutes.push({
+                                value: group.name,
+                                privacy: defaultPrivacy
+                            });
+                        }
+                        break;
+                    case 'Research Line':
+                        sails.log.debug(util.inspect(group, false, null, true));
+                        const researchLine = profile.researchLines.find(f => f.value === group.name);
+                        if (!researchLine) {
+                            researchLines.push({
+                                value: group.name,
+                                privacy: defaultPrivacy
+                            });
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                const membershipGroup = allMembershipGroups.find(g => g.child_group === group.id && g.parent_group.active);
+
+                if (membershipGroup) {
+                    handleGroup(membershipGroup.parent_group);
+                }
+            }
+
             for (let i = 1; i < 7; i++) {
                 if (!_.isEmpty(importedData['linea_' + i])) {
                     const code = importedData['linea_' + i];
-                    const groups = allGroups.filter(group => group.code === code);
-                    const group = groups.shift();
-
-                    if (groups.length > 1) {
-                        sails.log.debug('Multiple groups with the same code!');
-                    }
+                    const group = allGroups.find(group => group.code === code);
 
                     if (group) {
-                        switch (group.type) {
-                            case 'Center':
-                                break;
-                            case 'Facility':
-                                const facility = profile.facilities.filter(f => f.value === group.name).shift();
-                                if (!facility) {
-                                    facilities.push({
-                                        value: group.name,
-                                        public: false
-                                    });
-                                }
-
-                                break;
-                            case 'Institute':
-                                const institute = profile.institutes.filter(f => f.value === group.name).shift();
-                                if (!institute) {
-                                    institutes.push({
-                                        value: group.name,
-                                        public: false
-                                    });
-                                }
-                                break;
-                            case 'Research Line':
-                                const researchLine = profile.researchLines.filter(f => f.value === group.name).shift();
-                                if (!researchLine) {
-                                    researchLines.push({
-                                        value: group.name,
-                                        public: false
-                                    });
-                                }
-                                const memberships = await MembershipGroup.find({
-                                    child_group: group.researchEntity
-                                });
-
-                                for (let membership of memberships) {
-                                    const membershipGroups = allGroups.filter(
-                                        g => g.researchEntity === membership.parent_group && g.type === 'Center'
-                                    );
-
-                                    for (let membershipGroup of membershipGroups) {
-                                        const center = profile.centers.filter(f => f.value === group.name).shift();
-                                        if (!center) {
-                                            centers.push({
-                                                value: membershipGroup.name,
-                                                public: false
-                                            });
-                                        }
-                                    }
-                                }
-                                break;
-                            default:
-                                break;
-                        }
+                        handleGroup(group);
                     } else {
                         sails.log.debug('Group not found! Code:' + code);
                     }
@@ -345,15 +640,15 @@ module.exports = {
             }
 
             if (centers.length > 0) {
-                profile.centers = _.merge(profile.centers, centers);
+                profile.centers = _.merge(centers, profile.centers);
             }
 
             if (facilities.length > 0) {
-                profile.facilities = _.merge(profile.facilities, facilities);
+                profile.facilities = _.merge(facilities, profile.facilities);
             }
 
             if (researchLines.length > 0) {
-                profile.researchLines = _.merge(profile.researchLines, researchLines);
+                profile.researchLines = _.merge(researchLines, profile.researchLines);
             }
 
             if (facilities.length === 0 && researchLines.length === 0) {
@@ -369,68 +664,8 @@ module.exports = {
 
         let profile = _.cloneDeep(editProfile);
 
-        function filterProperties(object) {
-
-            // Loop over the properties of the object
-            for (const property in object) {
-
-                // Check which type the object is
-                switch(true) {
-                    case _.isArray(object[property]) :
-                        // If it's an Array loop over the items
-                        const len = object[property].length;
-
-                        if (len > 0) {
-                            for (let i = 0;i < len; i++) {
-                                const filteredProperty = filterProperties(object[property][i]);
-
-                                // Set the object property to the filteredProperty or remove it from the array
-                                if (!_.isEmpty(filteredProperty)) {
-                                    object[property][i] = filteredProperty;
-                                } else {
-                                    delete object[property].splice(i, 1);
-                                }
-                            }
-                        } else {
-                            delete object[property];
-                        }
-
-                        break;
-                    case _.isObject(object[property]):
-
-                        const filteredProperty = filterProperties(object[property]);
-
-                        // Set the object property to the filteredProperty or delete it
-                        if (!_.isEmpty(filteredProperty)) {
-                            object[property] = filteredProperty;
-                        } else {
-                            delete object[property];
-                        }
-
-                        break;
-                    default:
-                        // If it's not an Array or an Object
-
-                        // If it has a property named 'value' return that.
-                        if (property === 'value') {
-                            return object[property];
-                        }
-
-                        // If the property is named 'public' or the property is empty  and not a boolean delete it.
-                        if (
-                            (property === 'public') ||
-                            (typeof object[property] !== 'boolean' && _.isEmpty(object[property]))
-                        ) {
-                            delete object[property];
-                        }
-
-                        break;
-                }
-            }
-            return object;
-        }
-
-        profile = filterProperties(profile);
+        profile = filterProfile(profile);
+        //sails.log.debug(util.inspect(profile, false, null, true));
 
         if (_.has(profile, 'displayNames')) {
             if (_.has(profile.displayNames, 'use') === true) {
@@ -446,15 +681,42 @@ module.exports = {
             delete profile.displayNames;
         }
 
-        // todo Change this
-        //delete profile.publications;
-        //delete profile.accomplishments;
+        // Sort experiences
+        if (!_.isEmpty(profile.experiences)) {
+            profile.experiences = _.groupBy(profile.experiences, 'company');
+        }
+
+        const researchEntity = await ResearchEntity.findOne({id: researchEntityId}).populate('accomplishments');
+        if (researchEntity && !researchEntity.isGroup()) {
+            const user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
+            if (!_.isEmpty(user.documents)) {
+                const sourceTypes = SourceTypes.get();
+                const documents = _.groupBy(user.documents, 'sourceType');
+                profile.documents = {};
+
+                for (const type in documents) {
+                    const sourceType = sourceTypes.find(sourceType => sourceType.key === type);
+                    profile.documents[sourceType.label] = documents[type];
+                }
+            }
+        }
+
+        const accomplishments = _.groupBy(researchEntity.accomplishments, 'type');
+        if (!_.isEmpty(accomplishments)) {
+            profile.accomplishments = {};
+
+            for (const type in accomplishments) {
+                const researchItemType = ResearchItemTypes.getType(type);
+                profile.accomplishments[researchItemType.label] = accomplishments[type];
+            }
+        }
 
         //sails.log.debug(util.inspect(profile, false, null, true));
 
         return profile;
     },
     async saveProfile(researchEntityId, profile) {
+        sails.log.debug(util.inspect(profile, false, null, true));
         let researchEntityData = await ResearchEntityData.findOne({
             researchEntity: researchEntityId
         });
@@ -463,15 +725,26 @@ module.exports = {
 
         try {
             const validate = ajv.compile(schema);
-            const valid = validate(profile);
-            const row = {};
+            validate(profile);
+            //sails.log.debug(util.inspect(validate, false, null, true));
+            sails.log.debug(util.inspect(profile, false, null, true));
+            //sails.log.debug(util.inspect(validate.errors, false, null, true));
             if (validate.errors) {
-                validate.errors.forEach(error => {
-                    let path = error.dataPath;
-                    path = path.substring(1);
+
+                const row = {};
+
+                for (let i = 0; i < validate.errors.length; i++) {
+                    let error = validate.errors[i];
+
+                    if (error.keyword === 'if') {
+                        continue;
+                    }
+
+                    let path = error.dataPath.substring(1).replace(/\//g, '.');
 
                     if (error.keyword === 'required') {
                         path += '.' + error.params.missingProperty;
+                        error.message = requiredMessage;
                     }
 
                     if (typeof row[path] === 'undefined') {
@@ -482,31 +755,48 @@ module.exports = {
                         keyword: error.keyword,
                         message: error.message
                     });
-                });
+                }
+
                 errors = dot.object(row);
+
                 message = 'Please correct the errors!';
+            } else {
+                if (researchEntityData) {
+                    const response = await ResearchEntityData.update(
+                        { id: researchEntityData.id },
+                        { profile: profile }
+                    );
+                    researchEntityData = response[0];
+                } else {
+                    researchEntityData = await ResearchEntityData.create({
+                        researchEntity: researchEntityId,
+                        profile: profile
+                    });
+                }
             }
         } catch (e) {
             sails.log.debug(e);
         }
 
-        if (researchEntityData) {
-            const response = await ResearchEntityData.update(
-                { id: researchEntityData.id },
-                { profile: profile }
-            );
-            researchEntityData = response[0];
-        } else {
-            researchEntityData = await ResearchEntityData.create({
-                researchEntity: researchEntityId,
-                profile: profile
-            });
-        }
-
         return {
-            profile: profile,
             errors: errors,
             message: message
         };
     },
+    async exportProfile (researchEntityId, type) {
+        let result;
+        switch(type) {
+            case 'doc':
+                result = await Profile.toDoc(researchEntityId);
+                break;
+            case 'pdf':
+                result = await Profile.toPDF(researchEntityId);
+                break;
+            default:
+                result = 'Wrong request!';
+                break;
+        }
+
+        return result;
+    }
 };

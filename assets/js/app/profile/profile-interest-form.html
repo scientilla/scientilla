@@ -1,0 +1,48 @@
+<ul class="enable-listing no-labels">
+    <li>
+        <ul class="field-listing">
+            <li>
+                <div
+                    class="form-group"
+                    ng-class="{'has-error': vm.errors.interests[vm.key].value}">
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Interest"
+                        ng-model="vm.interest.value"
+                        ng-class="{
+                            'is-invalid': vm.errors.interests[vm.key].value,
+                            'is-invisible' : vm.profile.interests[vm.key].privacy === 'invisible'
+                        }">
+                    <scientilla-field-errors
+                        errors="vm.errors.interests[vm.key].value"></scientilla-field-errors>
+                </div>
+            </li>
+            <li>
+                <div class="form-group">
+                    <div class="btn btn-outline-secondary">
+                        <i class="fas fa-arrows-alt"></i>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="form-group">
+                    <button
+                        class="btn btn-outline-secondary"
+                        ng-click="vm.removeItem({
+                            property: vm.profile.interests,
+                            index: vm.key
+                        })">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <scientilla-privacy-selector
+            css-class="no-label"
+            context-object="vm.context"
+            model="vm.interest.privacy"></scientilla-privacy-selector>
+    </li>
+</ul>

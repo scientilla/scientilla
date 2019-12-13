@@ -11,57 +11,38 @@
 
     controller.$inject = [
         'UsersService',
-        'AuthService'
+        'AuthService',
+        'Notification',
+        'ProfileService',
+        '$scope'
     ];
 
-    function controller(UsersService, AuthService) {
+    function controller(UsersService, AuthService, Notification, ProfileService, $scope) {
         const vm = this;
 
-        vm.titles = [];
-        vm.experiences = [];
-        vm.education = [];
-        vm.certificates = [];
-        vm.skillCategories = [];
-
-        vm.datePickerOptions = {};
-        vm.dateExperienceFromPopups = [];
-        vm.dateExperienceToPopups = [];
-        vm.dateEducationFromPopups = [];
-        vm.dateEducationToPopups = [];
-        vm.dateCertificateDatePopups = [];
+        vm.errors = [];
+        vm.profile = {};
 
         function getEditProfile() {
             UsersService.getProfile(AuthService.user.researchEntity, true).then(response => {
                 vm.profile = response.plain();
+
+                $scope.$broadcast('setupBasicInformation', vm.profile);
             });
         }
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
-            vm.profile = {};
-
             getEditProfile();
         };
         /* jshint ignore:end */
 
-        vm.addItem = (options = {}) => {
-            if (!options.item) {
-                options.item = {
-                    public: false
-                };
-            }
-
-            if (options.property) {
-                options.property.push(options.item);
-            }
-
-            console.log(vm.profile);
+        vm.removeItem = (options) => {
+            ProfileService.removeItem(options);
         };
 
-        vm.removeItem = (options = {}) => {
-            if (typeof(options.property) !== 'undefined' && typeof(options.index) !== 'undefined') {
-                options.property.splice(options.index, 1);
-            }
+        vm.addItem = (options) => {
+            ProfileService.addItem(options);
         };
 
         vm.save = () => {
@@ -69,9 +50,14 @@
             UsersService.saveProfile(AuthService.user.researchEntity, profile).then(response => {
                 response = response.plain();
                 vm.errors = response.errors;
-                console.log(vm.errors);
-                //vm.profile = ;
-                //console.log(response.plain());
+
+                if (response.message) {
+                    if (!_.isEmpty(response.errors)) {
+                        Notification.error(response.message);
+                    } else {
+                        Notification.success(response.message);
+                    }
+                }
             });
         };
     }

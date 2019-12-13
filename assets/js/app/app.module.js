@@ -19,6 +19,7 @@
         'services',
         'wizard',
         'admin',
-        'summary'
+        'summary',
+        'profile'
     ]);
 })();

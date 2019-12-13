@@ -89,7 +89,6 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/users/:researchEntityId/remove-verify']: 'User.removeVerify',
     ['post ' + apiPrfx + '/groups/:researchEntityId/replace']: 'Group.replace',
     ['post ' + apiPrfx + '/users/:researchEntityId/replace']: 'User.replace',
-    ['post ' + apiPrfx + '/users/:researchEntityId/profile/export']: 'User.exportProfile',
 
     //Research item API
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/delete']: 'ResearchEntity.deleteDrafts',
@@ -110,6 +109,7 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-profile']: 'ResearchEntity.getProfile',
     ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-edit-profile']: 'ResearchEntity.getEditProfile',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/save-profile']: 'ResearchEntity.saveProfile',
+    ['post ' + apiPrfx + '/researchentities/:researchEntityId/profile/export']: 'ResearchEntity.exportProfile',
 
 
     //Site API

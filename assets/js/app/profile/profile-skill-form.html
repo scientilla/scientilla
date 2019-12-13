@@ -1,0 +1,66 @@
+<ul class="enable-listing">
+    <li>
+        <ul class="skill-field-listing">
+            <li>
+                <div
+                    class="form-group"
+                    ng-class="{'has-error': vm.errors.skillCategories[vm.categoryKey].skills[vm.key].value}">
+                    <label for="skill[{{ vm.key }}]">Skill</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="skill[{{ vm.key }}]"
+                        placeholder="Skill"
+                        ng-model="vm.skill.value"
+                        ng-class="{
+                            'is-invalid': vm.errors.skillCategories[vm.categoryKey].skills[vm.key].value,
+                            'is-invisible' : vm.profile.skillCategories[vm.categoryKey].skills[vm.key].privacy === 'invisible'
+                        }">
+                    <scientilla-field-errors
+                        errors="vm.errors.skillCategories[vm.categoryKey].skills[vm.key].value"></scientilla-field-errors>
+                </div>
+            </li>
+            <li class="action-column">
+                <div class="form-group">
+                    <div class="btn btn-outline-secondary">
+                        <i class="fas fa-arrows-alt"></i>
+                    </div>
+                </div>
+            </li>
+            <li class="action-column">
+                <div class="form-group">
+                    <button
+                        class="btn btn-outline-secondary"
+                        ng-click="vm.removeItem({
+                            property: vm.profile.skillCategories[vm.categoryKey].skills,
+                            index: vm.key
+                        })">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </li>
+            <li class="action-column">
+                <div
+                    class="checkbox-container"
+                    uib-tooltip-html="vm.getTooltipText()"
+                    tooltip-placement="top-right"
+                    tooltip-class="tooltip-favorite">
+                    <label
+                        for="skill[{{ vm.categoryKey }}][{{ vm.key }}]-favorite"
+                        class="form-favorite">
+                        <input
+                            type="checkbox"
+                            id="skill[{{ vm.categoryKey }}][{{ vm.key }}]-favorite"
+                            ng-model="vm.skill.favorite">
+                        <span></span>
+                    </label>
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <scientilla-privacy-selector
+            context-object="vm.context"
+            model="vm.skill.privacy"></scientilla-privacy-selector>
+    </li>
+</ul>

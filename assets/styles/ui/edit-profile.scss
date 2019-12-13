@@ -93,10 +93,6 @@
                 align-self: start;
                 text-align: center;
 
-                label {
-                    margin-top: 2.1rem;
-                }
-
                 .form-privacy{
                     input{
                         & + span{
@@ -125,10 +121,15 @@
         .checkbox-container{
             display: inline-block;
             min-height: 100%;
+
             vertical-align: top;
 
             &.add-background{
                 background: $gray-100;
+            }
+
+            &.privacy{
+                margin-top: 2.3rem;
             }
 
             .form-checkbox{
@@ -200,6 +201,8 @@
         }
     }
 
+    .certificate-field-listing,
+    .skill-field-listing,
     .skill-category-field-listing{
         @include normalize-listing;
         display: grid;
@@ -238,7 +241,7 @@
     }
 
     .action-column{
-        padding-top: 2.2rem;
+        padding-top: 2.3rem;
     }
 
     .form-actions{
