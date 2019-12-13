@@ -30,3 +30,11 @@
 .btn-form-no-label{
     margin-top: 2.3rem;
 }
+
+@each $color, $value in $theme-colors {
+    .btn-#{$color} {
+        &:focus{
+            color: color-yiq(darken($value, 7.5%));
+        }
+    }
+}

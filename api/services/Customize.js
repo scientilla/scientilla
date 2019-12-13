@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const {promisify} = require("util");
+const { promisify } = require("util");
 const writeFile = promisify(fs.writeFile);
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
 };
 
 async function getCustomizations() {
-    sails.config.customizations.institute =  await Group.findOne({id: 1});
+    sails.config.customizations.institute = await Group.findOne({id: 1});
     return sails.config.customizations;
 }
 
@@ -26,92 +26,92 @@ async function setCustomizations(req, footer, styles) {
 
     if (styles.primaryColor) {
         sails.config.customizations.styles.stylesArray.push({
-            name: 'primary-color',
-            to: '#' + styles.primaryColor
+            match: 'primary-color',
+            replacement: '#' + styles.primaryColor
         });
     }
 
     if (styles.secondaryColor) {
         sails.config.customizations.styles.stylesArray.push({
-            name: 'secondary-color',
-            to: '#' + styles.secondaryColor
+            match: 'secondary-color',
+            replacement: '#' + styles.secondaryColor
         });
     }
 
     if (styles.headerBackgroundColor) {
         sails.config.customizations.styles.stylesArray.push({
-            name: 'header-background-color',
-            to: '#' + styles.headerBackgroundColor
+            match: 'header-background-color',
+            replacement: '#' + styles.headerBackgroundColor
         });
     }
 
     if (styles.footerBackgroundColor) {
         sails.config.customizations.styles.stylesArray.push({
-            name: 'footer-background-color',
-            to: '#' + styles.footerBackgroundColor
+            match: 'footer-background-color',
+            replacement: '#' + styles.footerBackgroundColor
         });
     }
 
     if (styles.baseGray) {
         sails.config.customizations.styles.stylesArray.push({
-            name: 'base-gray',
-            to: '#' + styles.baseGray
+            match: 'base-gray',
+            replacement: '#' + styles.baseGray
         });
     }
 
     if (styles.linkTextColor) {
         sails.config.customizations.styles.stylesArray.push({
-            name: 'link-text-color',
-            to: '#' + styles.linkTextColor
+            match: 'link-text-color',
+            replacement: '#' + styles.linkTextColor
         });
     }
 
     if (styles.warningColor) {
         sails.config.customizations.styles.stylesArray.push({
-            name: 'warning-color',
-            to: '#' + styles.warningColor
+            match: 'warning-color',
+            replacement: '#' + styles.warningColor
         });
     }
 
     if (styles.successColor) {
         sails.config.customizations.styles.stylesArray.push({
-            name: 'success-color',
-            to: '#' + styles.successColor
+            match: 'success-color',
+            replacement: '#' + styles.successColor
         });
     }
 
     if (styles.errorColor) {
         sails.config.customizations.styles.stylesArray.push({
-            name: 'error-color',
-            to: '#' + styles.errorColor
+            match: 'error-color',
+            replacement: '#' + styles.errorColor
         });
     }
 
     if (styles.documentColor) {
         sails.config.customizations.styles.stylesArray.push({
-            name: 'document-color',
-            to: '#' + styles.documentColor
+            match: 'document-color',
+            replacement: '#' + styles.documentColor
         });
     }
 
     if (styles.hIndexColor) {
         sails.config.customizations.styles.stylesArray.push({
-            name: 'h-index-color',
-            to: '#' + styles.hIndexColor
+            match: 'h-index-color',
+            replacement: '#' + styles.hIndexColor
         });
     }
 
     if (styles.citationColor) {
         sails.config.customizations.styles.stylesArray.push({
-            name: 'citation-color',
-            to: '#' + styles.citationColor
+            match: 'citation-color',
+            replacement: '#' + styles.citationColor
         });
     }
 
     if (styles.impactFactorColor) {
         sails.config.customizations.styles.stylesArray.push({
-            name: 'impact-factor-color',
-            to: '#' + styles.impactFactorColor
+            match: 'impact-factor-color',
+            replacement: '#' + styles.impactFactorColor
         });
     }
 
@@ -174,42 +174,60 @@ async function setCustomizations(req, footer, styles) {
         'module.exports.customizations = ' + JSON.stringify(sails.config.customizations, null, 4)
     );
 
-    await runGruntTasks();
+    const response = await runGruntTasks(
+        'Customizations successfully saved!',
+        'Something went wrong while saving the customizations!'
+    );
 
     return {
-        type: 'success',
-        message: 'Customizations successfully saved!',
+        type: response.type,
+        message: response.message,
         customizations: sails.config.customizations,
     };
 }
 
 
 async function resetCustomizations() {
-    sails.config.customizations = sails.config.customizationDefaults;
+    sails.config.customizations = _.cloneDeep(sails.config.customizationDefaults);
 
     await writeFile(
         sails.config.appPath + '/config/customizations.js',
         'module.exports.customizations = ' + JSON.stringify(sails.config.customizationDefaults, null, 4)
     );
 
-    await runGruntTasks();
+    const response = await runGruntTasks(
+        'Default settings are set!',
+        'Something went wrong while resetting the customizations!'
+    );
 
     return {
-        type: 'success',
-        message: 'Default settings are set!',
+        type: response.type,
+        message: response.message,
         customizations: sails.config.customizations,
     };
 }
 
-async function runGruntTasks() {
+async function runGruntTasks(successMessage, errorMessage) {
+    const tasks = [];
     switch (sails.config.environment) {
-        case  'development':
-            await GruntTaskRunner.run('copy:uploadsDev');
-            await GruntTaskRunner.run('recompileAssets');
+        case 'development':
+            tasks.push(await GruntTaskRunner.run('copy:uploadsDev'));
+            tasks.push(await GruntTaskRunner.run('recompileAssets'));
             break;
         case 'production':
-            await GruntTaskRunner.run('copy:uploadsBuild');
-            await GruntTaskRunner.run('rebuildProd');
+            tasks.push(await GruntTaskRunner.run('copy:uploadsBuild'));
+            tasks.push(await GruntTaskRunner.run('rebuildProd'));
             break;
     }
+
+    if (tasks.filter(task => task.type !== 'success').length > 0) {
+        return {
+            type: 'error',
+            message: errorMessage
+        }
+    }
+    return {
+        type: 'success',
+        message: successMessage
+    };
 }

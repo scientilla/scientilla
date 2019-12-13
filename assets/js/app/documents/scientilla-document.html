@@ -33,7 +33,7 @@
               ng-if="vm.document.doi"
               ng-bind-html='vm.document | doi'>
         </span>
-        <img ng-if="vm.document.openAccessLinks"
+        <img ng-if="vm.document.openAccessLinks.length"
              ng-click="vm.openDetails()"
              src="/images/icon-open-access.png"
              class="icon-open-access ng-scope"

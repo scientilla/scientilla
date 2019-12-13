@@ -12,24 +12,52 @@
     padding: 2rem;
     font-family: $inconsolata;
     font-size: 1.1rem;
+    color: $white;
     background: $black;
     overflow-y: scroll;
-
-    &,
-    .white{
-        color: $white;
-    }
 
     &.large{
         height: 400px;
         max-height: 400px;
     }
 
-    .red{
+    span[class^='ansi-black'] {
+        color: $black;
+    }
+
+    span[class^='ansi-red'] {
         color: $apple-blossom;
     }
 
-    .green{
+    span[class^='ansi-green'] {
         color: $forrest-green;
+    }
+
+    span[class^='ansi-yellow'] {
+        color: $neon-carrot;
+    }
+
+    span[class^='ansi-blue'] {
+        color: $curious-blue;
+    }
+
+    span[class^='ansi-magenta'] {
+        color: $wisteria;
+    }
+
+    span[class^='ansi-cyan'] {
+        color: $blue-chill;
+    }
+
+    span[class^='ansi-white'] {
+        color: $white;
+    }
+
+
+    span[class^='ansi-']{
+        &:before {
+            content: '';
+            display: block;
+        }
     }
 }
