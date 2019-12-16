@@ -8,13 +8,18 @@
                         <h2 class="name" ng-if="vm.profile.name || vm.profile.surname">
                             {{ vm.profile.name }} {{ vm.profile.surname }}
                         </h2>
-                        <p class="job-title" ng-if="vm.profile.jobTitle">{{ vm.profile.jobTitle }}</p>
-                        <p class="position" ng-if="vm.profile.administrativeOrganization || vm.profile.office">
-                            {{ vm.profile.administrativeOrganization }}
-                            {{ vm.profile.administrativeOrganization && vm.profile.office ? '-' : '' }}
-                            {{ vm.profile.office }}
+                        <p class="job-title" ng-if="vm.profile.jobTitle || vm.profile.role">
+                            {{ vm.joinStrings([vm.profile.jobTitle, vm.profile.role], ' - ') }}
                         </p>
-                        <!--Todo Research lines & lines-->
+                        <p class="position" ng-if="vm.profile.administrativeOrganization || vm.profile.office">
+                            {{ vm.joinStrings([vm.profile.administrativeOrganization, vm.profile.office], ' - ') }}
+                        </p>
+                        <ul class="research-lines" ng-if="vm.profile.researchLines.length > 0">
+                            <li ng-repeat="(key, researchLine) in vm.profile.researchLines">{{ researchLine }}</li>
+                        </ul>
+                        <ul class="centers" ng-if="vm.profile.centers.length > 0">
+                            <li ng-repeat="(key, center) in vm.profile.centers">{{ center }}</li>
+                        </ul>
                         <ul class="titles" ng-if="vm.profile.titles.length > 0">
                             <li ng-repeat="(key, title) in vm.profile.titles">{{ title }}</li>
                         </ul>
@@ -110,7 +115,9 @@
             <div class="profile-block" ng-repeat="(company, experiences) in vm.profile.experiences" ng-if="$index < 1">
                 <div class="content-container" ng-repeat="experience in experiences | limitTo: 1">
                     <i class="fas fa-briefcase title-icon"></i><span>My {{ experience.to ? 'last' : 'current' }} experience:</span>
-                    <h2 class="block-title">{{ experience.jobTitle }} at {{ company }}</h2>
+                    <h2 class="block-title">
+                        {{ vm.joinStrings([experience.jobTitle, company]) }}
+                    </h2>
                 </div>
                 <div class="button-container">
                     <button class="show-more has-action" ng-click="vm.showExperiencesModal()">Show all experiences</button>
@@ -121,7 +128,7 @@
             <div class="profile-block" ng-repeat="education in vm.profile.education | limitTo: 1">
                 <div class="content-container">
                     <i class="fas fa-graduation-cap title-icon"></i><span>My {{ education.to ? 'last' : 'current' }} education:</span>
-                    <h2 class="block-title">{{ education.title }}</h2>
+                    <h2 class="block-title">{{ vm.joinStrings([education.title, education.institute]) }}</h2>
                 </div>
                 <div class="button-container">
                     <button class="show-more has-action" ng-click="vm.showEducationsModal()">Show all educations</button>

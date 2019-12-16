@@ -67,19 +67,45 @@
             margin-bottom: .5rem;
         }
 
-        .name{
+        .name,
+        .job-title,
+        .position{
             margin-bottom: .5rem;
+        }
+
+        .research-lines,
+        .centers{
+            @include normalize-listing;
+            @include clearfix;
+            margin-bottom: .5rem;
+
+            & > li {
+                display: block;
+                float: left;
+
+                & + li{
+                    &:before{
+                        content: ', ';
+                    }
+                }
+            }
         }
 
         .titles{
             @include normalize-listing;
-            margin-top: .5rem;
+            @include clearfix;
             color: $gray-500;
-        }
 
-        .job-title,
-        .position{
-            margin-bottom: 0px;
+            & > li {
+                display: block;
+                float: left;
+
+                & + li{
+                    &:before{
+                        content: ', ';
+                    }
+                }
+            }
         }
 
         .contact-listing{

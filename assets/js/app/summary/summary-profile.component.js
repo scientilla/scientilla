@@ -54,6 +54,10 @@
                 return length;
             };
 
+            vm.joinStrings = (strings = [], seperator = ', ') => {
+                return _.filter(strings).join(seperator);
+            };
+
             function getFavoriteSkills(profile) {
                 const allSkills = [];
                 const favoriteSkills = [];
