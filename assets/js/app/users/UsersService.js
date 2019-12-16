@@ -104,7 +104,7 @@
             return service.getList(q);
         };
 
-        service.getUser = function (userId) {
+        service.getUserSettings = function (userId) {
             return this
                 .one(userId)
                 .get({populate: ['administratedGroups', 'attributes', 'aliases']})

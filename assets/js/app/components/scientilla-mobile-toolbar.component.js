@@ -93,12 +93,12 @@
             }
 
             researchEntityService
-                .getProfile(vm.subResearchEntity.id)
+                .getUserSettings(vm.subResearchEntity.id)
                 .then(openForm)
                 .then(function (status) {
                     if (status !== 1)
                         return vm.subResearchEntity;
-                    return researchEntityService.getProfile(vm.subResearchEntity.id);
+                    return researchEntityService.getUserSettings(vm.subResearchEntity.id);
                 })
                 .then(function (subResearchEntity) {
                     vm.subResearchEntity = subResearchEntity;

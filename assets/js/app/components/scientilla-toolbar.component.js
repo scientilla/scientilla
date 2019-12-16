@@ -34,7 +34,7 @@
         vm.isRegisterEnabled = false;
         vm.changeContextToGroup = changeContextToGroup;
         vm.changeContextToUser = changeContextToUser;
-        vm.editProfile = editProfile;
+        vm.editUserSettings = editUserSettings;
         vm.showWizardVisible = showWizardVisible;
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
@@ -92,7 +92,7 @@
                 });
         }
 
-        function editProfile() {
+        function editUserSettings() {
             let openForm;
             let researchEntityService;
             if (vm.subResearchEntity.getType() === 'user') {
@@ -105,12 +105,12 @@
             }
 
             researchEntityService
-                .getProfile(vm.subResearchEntity.id)
+                .getUserSettings(vm.subResearchEntity.id)
                 .then(openForm)
                 .then(function (status) {
                     if (status !== 1)
                         return vm.subResearchEntity;
-                    return researchEntityService.getProfile(vm.subResearchEntity.id);
+                    return researchEntityService.getUserSettings(vm.subResearchEntity.id);
                 })
                 .then(function (subResearchEntity) {
                     vm.subResearchEntity = subResearchEntity;
