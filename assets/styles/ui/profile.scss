@@ -15,7 +15,11 @@
             }
 
             &.block-about{
-                @include set-grid(1, 5, 1, 12);
+                @include set-grid(1, 5, 1, 6);
+            }
+
+            &.block-export{
+                @include set-grid(1, 11, 1, 2)
             }
 
             &.block-experiences{
@@ -31,7 +35,7 @@
             }
 
             &.block-skills{
-                @include set-grid(2, 10, 2, 12);
+                @include set-grid(2, 10, 2, 3);
             }
 
             &.block-documents-and-accomplishments{
@@ -80,8 +84,7 @@
             margin-bottom: .5rem;
 
             & > li {
-                display: block;
-                float: left;
+                display: inline;
 
                 & + li{
                     &:before{
@@ -192,6 +195,21 @@
         }
     }
 
+    .block-export{
+        ul{
+            @include normalize-listing;
+
+            & > li{
+                display: block;
+                margin-bottom: 1rem;
+            }
+        }
+
+        .btn{
+            width: 100%;
+        }
+    }
+
     .block-experiences,
     .block-educations,
     .block-certificates,
@@ -209,9 +227,6 @@
         }
     }
 
-    .block-experiences,
-    .block-educations,
-    .block-certificates,
     .block-documents,
     .block-accomplishments{
         .content-container{

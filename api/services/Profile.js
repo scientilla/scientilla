@@ -235,7 +235,7 @@ async function toPDF(researchEntityId) {
 
                 if (!_.isEmpty(document.source)) {
                     stack.push({
-                        text: 'Document source: ' + document.source,
+                        text: 'Document source: ' + document.source.title,
                     });
                 }
 
@@ -689,7 +689,7 @@ async function toPDF(researchEntityId) {
 
         // Experiences
         if (!_.isEmpty(profile.experiences)) {
-            const experiences = profile.experiences;
+            const experiences = _.groupBy(profile.experiences, 'company');
 
             content.push({
                 unbreakable: true,
@@ -826,6 +826,8 @@ async function toPDF(researchEntityId) {
         // Documents
         if (!_.isEmpty(profile.documents)) {
 
+            const documents = _.groupBy(profile.documents, 'source.sourcetype');
+
             content.push({
                 unbreakable: true,
                 text: 'Documents',
@@ -834,7 +836,8 @@ async function toPDF(researchEntityId) {
             });
 
             let i = 0;
-            for (const category in profile.documents) {
+            for (const sourceTypeId in documents) {
+                const sourceType = SourceTypes.get().find(st => st.id === parseInt(sourceTypeId));
 
                 if (i > 0) {
                     content.push({
@@ -844,7 +847,7 @@ async function toPDF(researchEntityId) {
 
                 content.push({
                     unbreakable: true,
-                    stack: getDocumentCategoryText(category, profile.documents[category])
+                    stack: getDocumentCategoryText(sourceType.label, documents[sourceTypeId])
                 });
 
                 i++;
@@ -859,6 +862,8 @@ async function toPDF(researchEntityId) {
         // Accomplishments
         if (!_.isEmpty(profile.accomplishments)) {
 
+            const accomplishments = _.groupBy(profile.accomplishments, 'type.label');
+
             content.push({
                 unbreakable: true,
                 text: 'Accomplishments',
@@ -866,7 +871,7 @@ async function toPDF(researchEntityId) {
             });
 
             let i = 0;
-            for (const category in profile.accomplishments) {
+            for (const category in accomplishments) {
 
                 if (i > 0) {
                     content.push({
@@ -876,7 +881,7 @@ async function toPDF(researchEntityId) {
 
                 content.push({
                     unbreakable: true,
-                    stack: getAccomplishmentCategoryText(category, profile.accomplishments[category])
+                    stack: getAccomplishmentCategoryText(category, accomplishments[category])
                 });
 
                 i++;
@@ -989,7 +994,7 @@ async function toDoc(researchEntityId) {
             const readFile = util.promisify(fs.readFile);
             const image = path.resolve(sails.config.appPath, 'assets/images/150.png')
 
-            await readFile(image).then(async(file) => {
+            await readFile(image).then(async (file) => {
                 resolve(file);
             });
         });
@@ -1198,11 +1203,12 @@ async function toDoc(researchEntityId) {
         }
 
         const experiences = [];
+        const experiencesByCompany = _.groupBy(profile.experiences, 'company');
         let companyCount = 0;
-        for (const company in profile.experiences) {
-            if (!_.isEmpty(profile.experiences[company])) {
-                for (let i = 0; i < profile.experiences[company].length; i++) {
-                    const experience = profile.experiences[company][i];
+        for (const company in experiencesByCompany) {
+            if (!_.isEmpty(experiencesByCompany[company])) {
+                for (let i = 0; i < experiencesByCompany[company].length; i++) {
+                    const experience = experiencesByCompany[company][i];
 
                     experiences.push(
                         new TextRun({
@@ -1251,7 +1257,7 @@ async function toDoc(researchEntityId) {
                         );
                     }
 
-                    if (i < profile.experiences[company].length - 1) {
+                    if (i < experiencesByCompany[company].length - 1) {
                         experiences.push(
                             new TextRun('').break()
                         );
@@ -1261,7 +1267,7 @@ async function toDoc(researchEntityId) {
                     }
                 }
 
-                if (companyCount < Object.keys(profile.experiences).length - 1) {
+                if (companyCount < Object.keys(experiencesByCompany).length - 1) {
                     experiences.push(
                         new TextRun('').break()
                     );
@@ -1419,20 +1425,24 @@ async function toDoc(researchEntityId) {
         }
 
         const documents = [];
-        for (const type in profile.documents) {
+        const documentsBySourceType = _.groupBy(profile.documents, 'source.sourcetype');
 
-            if (!_.isEmpty(type)) {
+        for (const sourceTypeId in documentsBySourceType) {
+
+            const sourceType = SourceTypes.get().find(st => st.id === parseInt(sourceTypeId));
+
+            if (!_.isEmpty(sourceType)) {
                 documents.push(
                     new Paragraph({
-                        text: type,
+                        text: sourceType.label,
                         heading: HeadingLevel.HEADING_3
                     })
                 );
             }
 
-            if (!_.isEmpty(profile.documents[type])) {
-                for (let i = 0; i < profile.documents[type].length; i++) {
-                    const document = profile.documents[type][i];
+            if (!_.isEmpty(documentsBySourceType[sourceTypeId])) {
+                for (let i = 0; i < documentsBySourceType[sourceTypeId].length; i++) {
+                    const document = documentsBySourceType[sourceTypeId][i];
 
                     if (!_.isEmpty(document) &&
                         (
@@ -1459,7 +1469,7 @@ async function toDoc(researchEntityId) {
                         if (!_.isEmpty(document.source)) {
                             children.push(
                                 new TextRun({
-                                    text: 'Document source: ' + document.source
+                                    text: 'Document source: ' + document.source.title
                                 })
                             );
 
@@ -1494,7 +1504,8 @@ async function toDoc(researchEntityId) {
         }
 
         const accomplishments = [];
-        for (const type in profile.accomplishments) {
+        const accomplishmentsByType = _.groupBy(profile.accomplishments, 'type.label');
+        for (const type in accomplishmentsByType) {
 
             if (!_.isEmpty(type)) {
                 accomplishments.push(
@@ -1505,9 +1516,9 @@ async function toDoc(researchEntityId) {
                 );
             }
 
-            if (!_.isEmpty(profile.accomplishments[type])) {
-                for (let i = 0; i < profile.accomplishments[type].length; i++) {
-                    const accomplishment = profile.accomplishments[type][i];
+            if (!_.isEmpty(accomplishmentsByType[type])) {
+                for (let i = 0; i < accomplishmentsByType[type].length; i++) {
+                    const accomplishment = accomplishmentsByType[type][i];
 
                     if (
                         !_.isEmpty(accomplishment) &&

@@ -12,12 +12,10 @@
         ProfileSummaryComponent.$inject = [
             'context',
             '$scope',
-            '$controller',
-            'AuthService',
-            'ProfileService'
+            '$controller'
         ];
 
-        function ProfileSummaryComponent(context, $scope, $controller, AuthService, ProfileService) {
+        function ProfileSummaryComponent(context, $scope, $controller) {
             const vm = this;
             angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
             let subResearchEntity;
@@ -56,29 +54,6 @@
             function isMainGroup() {
                 return subResearchEntity.id === 1;
             }
-
-            /* jshint ignore:start */
-            vm.exportProfile = async (type) => {
-                vm.user = AuthService.user;
-                const data = await ProfileService.exportProfile(vm.user, type);
-                const a = document.createElement('a');
-                document.body.appendChild(a);
-                a.href = 'data:application/octet-stream;base64,' + data;
-
-                switch (type) {
-                    case 'doc':
-                        a.download = 'profile.docx';
-                        a.click();
-                        break;
-                    case 'pdf':
-                        a.download = 'profile.pdf';
-                        a.click();
-                        break;
-                    default:
-                        break;
-                }
-            };
-            /* jshint ignore:end */
         }
     }
 

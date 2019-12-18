@@ -16,11 +16,21 @@
             'AuthService',
             '$element',
             '$uibModal',
-            '$scope'
+            '$scope',
+            'context',
+            'ProfileService'
         ];
 
-        function SummaryProfileComponent(UsersService, AuthService, $element, $uibModal, $scope) {
+        function SummaryProfileComponent(UsersService, AuthService, $element, $uibModal, $scope, context, ProfileService) {
             const vm = this;
+
+            vm.experiencesByCompany = [];
+            vm.favoriteSkills = [];
+            vm.favoriteCertificates = [];
+            vm.documentsBySourceType = [];
+            vm.favoriteDocuments = [];
+            vm.accomplishmentsByType = [];
+            vm.favoriteAccomplishments = [];
 
             vm.$onInit = () => {
                 getProfile();
@@ -46,13 +56,13 @@
                 }
             };
 
-            vm.getNumberOfItems = obj => {
+            /*vm.getNumberOfItems = obj => {
                 let length = 0;
                 for (const item in obj) {
                     length += obj[item].length;
                 }
                 return length;
-            };
+            };*/
 
             vm.joinStrings = (strings = [], seperator = ', ') => {
                 return _.filter(strings).join(seperator);
@@ -98,12 +108,62 @@
                 return allCertificates;
             }
 
+            function getExperiencesByCompany(profile) {
+                if (!_.isEmpty(profile.experiences)) {
+                    return _.groupBy(profile.experiences, 'company');
+                }
+
+                return [];
+            }
+
+            function getDocumentsBySourceType(profile) {
+                if (!_.isEmpty(profile.documents)) {
+                    return _.groupBy(profile.documents, 'sourceTypeObj.label');
+                }
+
+                return [];
+            }
+
+            function getAccomplishmentsByType(profile) {
+                if (!_.isEmpty(profile.accomplishments)) {
+                    return _.groupBy(profile.accomplishments, 'type.label');
+                }
+
+                return [];
+            }
+
+            function getFavoriteDocuments(profile) {
+                const subResearchEntity = context.getSubResearchEntity();
+                if (!_.isEmpty(profile.documents)) {
+                    return profile.documents.filter(document => {
+                        let field;
+                        if (subResearchEntity.getType() === 'user') {
+                            field = 'authorships';
+                        } else {
+                            field = 'groupAuthorships';
+                        }
+                        const authorship = document[field].find(a => a.researchEntity === subResearchEntity.id);
+
+                        if (authorship && authorship.favorite) {
+                            return document;
+                        }
+                    });
+                }
+
+                return [];
+            }
+
             function getProfile() {
                 UsersService.getProfile(AuthService.user.researchEntity).then(response => {
                     vm.profile = response.plain();
+                    vm.experiencesByCompany = getExperiencesByCompany(vm.profile);
                     vm.favoriteSkills = getFavoriteSkills(vm.profile);
                     vm.favoriteCertificates = getFavoriteCertificates(vm.profile);
-                    console.log(vm.favoriteCertificates);
+                    vm.documentsBySourceType = getDocumentsBySourceType(vm.profile);
+                    vm.favoriteDocuments = getFavoriteDocuments(vm.profile);
+                    vm.accomplishmentsByType = getAccomplishmentsByType(vm.profile);
+                    //vm.favoriteAccomplishments = [];
+                    console.log(vm.accomplishmentsByType);
                 });
             }
 
@@ -123,7 +183,7 @@
 
                         <div class="modal-body profile">
                             <ul class="company-listing">
-                                <li ng-repeat="(company, experiences) in vm.profile.experiences">
+                                <li ng-repeat="(company, experiences) in vm.experiencesByCompany">
                                     <span class="company">{{ company }}</span>
                                     <ul class="job-listing" ng-class="experiences.length > 1 ? 'multiple' : ''">
                                         <li ng-repeat="experience in experiences">
@@ -263,14 +323,14 @@
 
                         <div class="modal-body profile">
                             <ul class="document-categories">
-                                <li ng-repeat="(category, documents) in vm.profile.documents">
-                                    <span class="document-category">{{ category }}</span>
+                                <li ng-repeat="(sourceType, documents) in vm.documentsBySourceType">
+                                    <span class="document-category">{{ sourceType }}</span>
                                     <ul class="document-listing">
                                         <li ng-repeat="document in documents">
                                             <h4 class="document-title">{{ document.title}}</h4>
                                             <div class="document-source">
-                                                <i ng-class="vm.getSourceTypeIcon(category)" title="{{ category }}"></i>
-                                                <span>{{ document.source }}</span>
+                                                <i ng-class="vm.getSourceTypeIcon(sourceType)" title="{{ sourceType }}"></i>
+                                                <span>{{ document.source.title }}</span>
                                             </div>
                                             <ul class="document-details" ng-if="document.doi">
                                                 <li><strong>DOI: </strong><a href="#">{{ document.doi }}</a></li>
@@ -306,8 +366,8 @@
 
                         <div class="modal-body profile">
                             <ul class="accomplishment-categories">
-                                <li ng-repeat="(category, accomplishments) in vm.profile.accomplishments">
-                                    <span class="accomplishment-category">{{ category }}</span>
+                                <li ng-repeat="(type, accomplishments) in vm.accomplishmentsByType">
+                                    <span class="accomplishment-category">{{ type }}</span>
                                     <ul class="accomplishment-listing">
                                         <li ng-repeat="accomplishment in accomplishments">
                                             <h4 class="accomplishment-title">{{ accomplishment.title }}</h4>
@@ -333,6 +393,28 @@
                     size: 'lg'
                 });
             };
+
+            /* jshint ignore:start */
+            vm.exportProfile = async (type) => {
+                const data = await ProfileService.exportProfile(AuthService.user, type);
+                const a = document.createElement('a');
+                document.body.appendChild(a);
+                a.href = 'data:application/octet-stream;base64,' + data;
+
+                switch (type) {
+                    case 'doc':
+                        a.download = 'profile.docx';
+                        a.click();
+                        break;
+                    case 'pdf':
+                        a.download = 'profile.pdf';
+                        a.click();
+                        break;
+                    default:
+                        break;
+                }
+            };
+            /* jshint ignore:end */
         }
     }
 

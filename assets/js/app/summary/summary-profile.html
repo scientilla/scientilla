@@ -111,12 +111,34 @@
                 </div>
             </div>
         </li>
+        <li class="block-export">
+            <div class="profile-block">
+                <h2 class="block-title">Export</h2>
+                <p>Export your profile to:</p>
+                <ul>
+                    <li>
+                        <button
+                            class="btn btn-outline-primary"
+                            ng-click="vm.exportProfile('doc')">
+                            <i class="far fa-file-word fa-left"></i>DOCX
+                        </button>
+                    </li>
+                    <li>
+                        <button
+                            class="btn btn-outline-primary"
+                            ng-click="vm.exportProfile('pdf')">
+                            <i class="far fa-file-pdf fa-left"></i>PDF
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </li>
         <li class="block-experiences" ng-if="vm.profile.experiences">
-            <div class="profile-block" ng-repeat="(company, experiences) in vm.profile.experiences" ng-if="$index < 1">
-                <div class="content-container" ng-repeat="experience in experiences | limitTo: 1">
+            <div class="profile-block">
+                <div class="content-container" ng-repeat="experience in vm.profile.experiences | limitTo: 1">
                     <i class="fas fa-briefcase title-icon"></i><span>My {{ experience.to ? 'last' : 'current' }} experience:</span>
                     <h2 class="block-title">
-                        {{ vm.joinStrings([experience.jobTitle, company]) }}
+                        {{ vm.joinStrings([experience.jobTitle, experience.company], ' at ') }}
                     </h2>
                 </div>
                 <div class="button-container">
@@ -168,27 +190,31 @@
                 <li class="block-documents" ng-if="vm.profile.documents">
                     <div class="profile-block">
                         <div class="content-container">
-                            <span class="amount">{{ vm.getNumberOfItems(vm.profile.documents) }}</span>
+                            <span class="amount">{{ vm.profile.documents.length }}</span>
                             <i class="fas fa-file title-icon"></i>
                             <h2 class="block-title">Documents</h2>
                         </div>
-                        <div class="content-container last-item-container">
+                        <div
+                            class="content-container last-item-container"
+                            ng-if="vm.favoriteDocuments.length > 0">
                             <span>My favorite documents:</span>
                             <ul class="favorite-listing">
-                                <li><h2 class="block-title">Title document</h2></li>
-                                <li><h2 class="block-title">Title document</h2></li>
-                                <li><h2 class="block-title">Title document</h2></li>
+                                <li ng-repeat="document in vm.favoriteDocuments">
+                                    <h2 class="block-title">{{ document.title }}</h2>
+                                </li>
                             </ul>
                         </div>
                         <div class="button-container">
-                            <button class="show-more has-action" ng-click="vm.showDocumentsModal()">Show all documents</button>
+                            <button
+                                class="show-more has-action"
+                                ng-click="vm.showDocumentsModal()">Show all documents</button>
                         </div>
                     </div>
                 </li>
                 <li class="block-accomplishments" ng-if="vm.profile.accomplishments">
                     <div class="profile-block">
                         <div class="content-container">
-                            <span class="amount">{{ vm.getNumberOfItems(vm.profile.accomplishments) }}</span>
+                            <span class="amount">{{ vm.profile.accomplishments.length }}</span>
                             <i class="fas fa-trophy title-icon"></i>
                             <h2 class="block-title">Accomplishments</h2>
                         </div>
@@ -201,7 +227,9 @@
                             </ul>
                         </div>
                         <div class="button-container">
-                            <button class="show-more has-action" ng-click="vm.showAccomplishmentsModal()">Show all accomplishments</button>
+                            <button
+                                class="show-more has-action"
+                                ng-click="vm.showAccomplishmentsModal()">Show all accomplishments</button>
                         </div>
                     </div>
                 </li>

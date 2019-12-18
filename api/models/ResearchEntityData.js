@@ -579,7 +579,7 @@ module.exports = {
                 switch (group.type) {
                     case 'Center':
                         sails.log.debug(util.inspect(group, false, null, true));
-                        const center = profile.centers.find(c => c.value === group.name);
+                        const center = centers.find(c => c.value === group.name);
                         if (!center) {
                             centers.push({
                                 value: group.name,
@@ -588,7 +588,7 @@ module.exports = {
                         }
                         break;
                     case 'Facility':
-                        const facility = profile.facilities.find(f => f.value === group.name);
+                        const facility = facilities.find(f => f.value === group.name);
                         if (!facility) {
                             facilities.push({
                                 value: group.name,
@@ -597,7 +597,7 @@ module.exports = {
                         }
                         break;
                     case 'Institute':
-                        const institute = profile.institutes.find(i => i.value === group.name);
+                        const institute = institutes.find(i => i.value === group.name);
                         if (!institute) {
                             institutes.push({
                                 value: group.name,
@@ -607,7 +607,7 @@ module.exports = {
                         break;
                     case 'Research Line':
                         sails.log.debug(util.inspect(group, false, null, true));
-                        const researchLine = profile.researchLines.find(f => f.value === group.name);
+                        const researchLine = researchLines.find(f => f.value === group.name);
                         if (!researchLine) {
                             researchLines.push({
                                 value: group.name,
@@ -665,7 +665,6 @@ module.exports = {
         let profile = _.cloneDeep(editProfile);
 
         profile = filterProfile(profile);
-        //sails.log.debug(util.inspect(profile, false, null, true));
 
         if (_.has(profile, 'displayNames')) {
             if (_.has(profile.displayNames, 'use') === true) {
@@ -681,37 +680,46 @@ module.exports = {
             delete profile.displayNames;
         }
 
-        // Sort experiences
-        if (!_.isEmpty(profile.experiences)) {
-            profile.experiences = _.groupBy(profile.experiences, 'company');
-        }
-
-        const researchEntity = await ResearchEntity.findOne({id: researchEntityId}).populate('accomplishments');
+        const researchEntity = await ResearchEntity.findOne({id: researchEntityId});
         if (researchEntity && !researchEntity.isGroup()) {
+
+            const verifiedAccomplishments = await AccomplishmentVerify.find({researchEntity: researchEntityId});
+            const accomplishmentIds = verifiedAccomplishments.map(a => a.accomplishment);
+
+            // Check populates
+            const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'source', 'verifiedUsers', 'verifiedGroups'];
+            const accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
+
+            if (!_.isEmpty(accomplishments)) {
+                profile.accomplishments = accomplishments;
+            }
+
             const user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
             if (!_.isEmpty(user.documents)) {
-                const sourceTypes = SourceTypes.get();
-                const documents = _.groupBy(user.documents, 'sourceType');
-                profile.documents = {};
 
-                for (const type in documents) {
-                    const sourceType = sourceTypes.find(sourceType => sourceType.key === type);
-                    profile.documents[sourceType.label] = documents[type];
-                }
+                const documentIds = user.documents.map(d => d.id);
+
+                // Check populates
+                const documentPopulates = [
+                    'source',
+                    'authors',
+                    'authorships',
+                    'groupAuthorships',
+                    'affiliations',
+                    'sourceMetrics',
+                    'userTags',
+                    'tagLabels',
+                    'groupTags',
+                    'groupTagLabels',
+                    'institutes',
+                    //'duplicates',
+                    'groups',
+                    'scopusDocumentMetadata',
+                    'openaireMetadata'
+                ];
+                profile.documents = await Document.find({kind: DocumentKinds.VERIFIED, id: documentIds}).populate(documentPopulates);
             }
         }
-
-        const accomplishments = _.groupBy(researchEntity.accomplishments, 'type');
-        if (!_.isEmpty(accomplishments)) {
-            profile.accomplishments = {};
-
-            for (const type in accomplishments) {
-                const researchItemType = ResearchItemTypes.getType(type);
-                profile.accomplishments[researchItemType.label] = accomplishments[type];
-            }
-        }
-
-        //sails.log.debug(util.inspect(profile, false, null, true));
 
         return profile;
     },

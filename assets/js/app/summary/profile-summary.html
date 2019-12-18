@@ -1,30 +1,5 @@
 <scientilla-backend-layout>
     <div class="summary summary-profile">
-        <div
-            class="btn-group btn-export-profile"
-            uib-dropdown>
-            <button
-                id="single-button"
-                type="button"
-                class="btn btn-light" uib-dropdown-toggle>
-                <i class="fas fa-download fa-left"></i>Export profile
-            </button>
-            <ul
-                uib-dropdown-menu
-                class="dropdown-menu dropdown-menu-right">
-                <a
-                    ng-click="vm.exportProfile('doc')"
-                    class="dropdown-item">
-                    <i class="far fa-file-word fa-left"></i>docx
-                </a>
-                <a
-                    ng-click="vm.exportProfile('pdf')"
-                    class="dropdown-item">
-                    <i class="far fa-file-pdf fa-left"></i>pdf
-                </a>
-            </ul>
-        </div>
-
         <uib-tabset active="active">
             <uib-tab
                 index="0"
