@@ -25,7 +25,7 @@ $roboto-slab:                 'Roboto Slab', serif;
 $font-awesome-brands:         'Font Awesome 5 Brands';
 $font-awesome:                'Font Awesome 5 Free';
 
-$base-gray:                   #333333; // $mine-shaft;
+$base-gray:                   #base-gray; // $mine-shaft;
 
 $gray-50:                     lighten($base-gray, 73%);
 $gray-100:                    lighten($base-gray, 70%);
@@ -38,20 +38,20 @@ $gray-700:                    lighten($base-gray, 10%);
 $gray-800:                    $base-gray;
 $gray-900:                    darken($base-gray, 10%);
 
-$primary-color:               #2C91C2; // $curious-blue;
-$secondary-color:             #696161; // $gray-200;
+$primary-color:               #primary-color; // $curious-blue;
+$secondary-color:             #secondary-color; // $gray-200;
 
-$header-background-color:     #333333; // $mine-shaft;
-$footer-background-color:     #555555; // $gray-600;
+$header-background-color:     #header-background-color; // $mine-shaft;
+$footer-background-color:     #footer-background-color; // $gray-600;
 
-$link-text-color:             #2C91C2; // $curious-blue;
+$link-text-color:             #link-text-color; // $curious-blue;
 
-$warning-color:               #FF9933; // $neon-carrot;
-$success-color:               #2CA02C; // $forrest-green;
-$error-color:                 #A94442; // $apple-blossom;
+$warning-color:               #warning-color; // $neon-carrot;
+$success-color:               #success-color; // $forrest-green;
+$error-color:                 #error-color; // $apple-blossom;
 $info-color:                  $cornflower-blue;
 
-$document-color:              #2C91C2; // $curious-blue;
-$h-index-color:               #A94442; // $apple-blossom;
-$citation-color:              #FF9933; // $neon-carrot;
-$impact-factor-color:         #2CA02C; // $forrest-green;
+$document-color:              #document-color; // $curious-blue;
+$h-index-color:               #h-index-color; // $apple-blossom;
+$citation-color:              #citation-color; // $neon-carrot;
+$impact-factor-color:         #impact-factor-color; // $forrest-green;
