@@ -817,7 +817,7 @@ async function importUserContracts(email = defaultEmail) {
                 if (user) {
                     return user.username;
                 } else {
-                    sails.log.debug(user);
+                    sails.log.debug(item);
                 }
             })).then(usernames => {
                 sails.log.info('Email address(es): ' + usernames.join(', '));
@@ -841,18 +841,6 @@ async function importUserContracts(email = defaultEmail) {
         sails.log.info('....................................');
 
         sails.log.info(upToDateResearchEntityDataItems.length + ' ResearchEntityData records are already up-to-date!');
-        if (upToDateResearchEntityDataItems.length > 0) {
-            await Promise.all(upToDateResearchEntityDataItems.map(async item => {
-                let user = await User.findOne({ researchEntity: item.researchEntity });
-                if (user) {
-                    return user.username;
-                } else {
-                    sails.log.debug(user);
-                }
-            })).then(usernames => {
-                //sails.log.info('Email address(es): ' + usernames.join(', '));
-            });
-        }
         sails.log.info('....................................');
 
         sails.log.info('Stopped at ' +  moment.utc().format());
