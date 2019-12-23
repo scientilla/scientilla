@@ -8,6 +8,7 @@
             controller: UserFormController,
             controllerAs: 'vm',
             bindings: {
+                settings: '<?',
                 user: "<",
                 onFailure: "&",
                 onSubmit: "&",
@@ -53,6 +54,8 @@
 
         const delay = 500;
 
+        vm.title = 'Create a new user';
+
         vm.$onInit = function () {
             deregisteres.push($scope.$watch('vm.user.name', nameChanged));
             deregisteres.push($scope.$watch('vm.user.surname', nameChanged));
@@ -61,6 +64,14 @@
             if (!Array.isArray(originalUser.aliases))
                 originalUser.aliases = [];
             originalUserJson = angular.toJson(originalUser);
+
+            if (typeof vm.settings === 'undefined' || vm.settings === false) {
+                if (vm.user.id) {
+                    vm.title = 'Edit user'
+                }
+            } else {
+                vm.title  = 'Edit user settings';
+            }
         };
 
         vm.$onDestroy = function () {

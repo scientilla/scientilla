@@ -140,15 +140,17 @@
                 {size: 'lg'});
         };
 
-        service.openScientillaUserForm = function (user) {
+        service.openScientillaUserForm = function (user, settings = false) {
 
             const scopeVars = {
-                user: user
+                user: user,
+                settings: settings
             };
 
             return openModal(
                 `<scientilla-user-form
                     user="vm.user"
+                    settings="vm.settings"
                     on-failure="vm.onFailure"
                     on-submit="vm.onSubmit"
                     check-and-close="vm.checkAndClose"

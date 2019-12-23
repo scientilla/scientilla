@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h3>{{ !!vm.user.id ? 'Edit' : 'Create a new' }} user</h3>
+    <h3>{{ vm.title }}</h3>
     <button
         type="button"
         class="close"
@@ -12,7 +12,8 @@
     <form>
         <div
             class="form-group"
-            ng-class="vm.errors.username ? 'has-error' : ''">
+            ng-class="vm.errors.username ? 'has-error' : ''"
+            ng-if="!vm.settings">
             <label for="username">Username (Email) *</label>
             <input
                 type="text"
@@ -31,7 +32,8 @@
 
         <div
             class="form-group"
-            ng-class="vm.errors.name ? 'has-error' : ''">
+            ng-class="vm.errors.name ? 'has-error' : ''"
+            ng-if="!vm.settings">
             <label for="name">Name *</label>
             <input
                 type="text"
@@ -50,7 +52,8 @@
 
         <div
             class="form-group"
-            ng-class="vm.errors.surname ? 'has-error' : ''">
+            ng-class="vm.errors.surname ? 'has-error' : ''"
+            ng-if="!vm.settings">
             <label for="surname">Surname *</label>
             <input
                 type="text"
@@ -84,7 +87,9 @@
                 ng-disabled="!vm.userIsAdmin">
         </div>
 
-        <div class="form-group">
+        <div
+            class="form-group"
+             ng-if="!vm.settings">
             <label for="jobtitle">Job Title</label>
             <input
                 type="text"

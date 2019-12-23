@@ -96,7 +96,7 @@
             let openForm;
             let researchEntityService;
             if (vm.subResearchEntity.getType() === 'user') {
-                openForm = ModalService.openScientillaUserForm;
+                openForm = ModalService.openScientillaUserForm(vm.user, true);
                 researchEntityService = UsersService;
             }
             else {
