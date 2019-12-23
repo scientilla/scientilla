@@ -1,0 +1,20 @@
+<div class="profile-block">
+    <div class="content-container">
+        <span class="amount">{{ vm.profile.accomplishments.length }}</span>
+        <i class="fas fa-trophy title-icon"></i>
+        <h2 class="block-title">Accomplishments</h2>
+    </div>
+    <div class="content-container last-item-container">
+        <span>My favorite accomplishments:</span>
+        <ul class="favorite-listing">
+            <li><h2 class="block-title">Title accomplishment</h2></li>
+            <li><h2 class="block-title">Title accomplishment</h2></li>
+            <li><h2 class="block-title">Title accomplishment</h2></li>
+        </ul>
+    </div>
+    <div class="button-container">
+        <button
+            class="show-more has-action"
+            ng-click="vm.showAccomplishmentsModal()">Show all accomplishments</button>
+    </div>
+</div>

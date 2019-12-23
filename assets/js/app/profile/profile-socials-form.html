@@ -1,8 +1,8 @@
-<ul class="enable-listing" ng-repeat="social in vm.socials">
+<ul class="enable-listing" ng-repeat="social in vm.socials track by $index">
     <li>
         <div
             class="form-group"
-            ng-class="{'has-error': vm.errors.socials[social.model].value}">
+            ng-class="{'has-error': vm.profile.socials[social.model].errors.value}">
             <label for="{{ social.model }}" ng-bind-html="social.label"></label>
             <input
                 type="text"
@@ -11,11 +11,11 @@
                 placeholder="{{ social.placeholder }}"
                 ng-model="vm.profile.socials[social.model].value"
                 ng-class="{
-                    'is-invalid': vm.errors.socials[social.model].value,
+                    'is-invalid': vm.profile.socials[social.model].errors.value,
                     'is-invisible' : vm.profile.socials[social.model].privacy === 'invisible'
                 }">
             <scientilla-field-errors
-                errors="vm.errors.socials[social.model].value"></scientilla-field-errors>
+                errors="vm.profile.socials[social.model].errors.value"></scientilla-field-errors>
         </div>
     </li>
     <li>

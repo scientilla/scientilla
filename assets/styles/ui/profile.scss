@@ -1,61 +1,15 @@
 .profile{
     .profile-blocks{
         @include normalize-listing;
-        display: grid;
-        margin: 0px -1.5rem;
-        grid-template-columns: repeat(12, [col] 1fr);
-        grid-template-rows: auto;
 
         & > li{
             margin-bottom: 3rem;
-            padding: 0px 1.5rem;
-
-            &.block-basic-info{
-                @include set-grid(1, 1, 1, 4);
-            }
-
-            &.block-about{
-                @include set-grid(1, 5, 1, 6);
-            }
-
-            &.block-export{
-                @include set-grid(1, 11, 1, 2)
-            }
-
-            &.block-experiences{
-                @include set-grid(2, 1, 1, 3);
-            }
-
-            &.block-educations{
-                @include set-grid(2, 4, 1, 3);
-            }
-
-            &.block-certificates{
-                @include set-grid(2, 7, 1, 3);
-            }
-
-            &.block-skills{
-                @include set-grid(2, 10, 2, 3);
-            }
-
-            &.block-documents-and-accomplishments{
-                @include set-grid(3, 1, 1, 9);
-                margin-bottom: 0px;
-            }
-
-            &.block-documents{
-                @include set-grid(1, 1, 1, 6);
-            }
-
-            &.block-accomplishments{
-                @include set-grid(1, 7, 1, 6);
-            }
         }
     }
 
     .profile-block{
         height: 100%;
-        padding: 4rem;
+        padding: 2rem;
         border: 1px solid $gray-300;
         border-radius: 0.25rem;
     }
@@ -111,71 +65,14 @@
             }
         }
 
-        .contact-listing{
-            @include normalize-listing;
-
-            & > li{
-                display: block;
-                margin-bottom: 1rem;
-            }
-
-            .fas,
-            .fab{
-                font-size: 1.5rem;
-            }
-
-            .fas{
-                margin-right: .5rem;
-            }
-        }
-
-        .socials-listing{
-            @include normalize-listing('true');
-            @include clearfix;
-
-            & > li{
-                display: block;
-                float: left;
-                padding: .5rem;
-            }
-
-            a{
-                display: block;
-                line-height: 1;
-            }
-        }
-
         .card-container{
             @include normalize-listing;
-            position: relative;
 
             .profile-block{
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 flex-direction: column;
-            }
-
-            &:after{
-                position: absolute;
-                bottom: 6px;
-                right: 10px;
-                font-family: $font-awesome;
-                font-style: normal;
-                font-weight: 900;
-                content: '\f25a';
-                color: $gray-200;
-            }
-
-            &:hover,
-            &:focus{
-                .contact-card{
-                    opacity: 1;
-                }
-
-                &:after{
-                    color: $white;
-                }
             }
         }
 
@@ -227,15 +124,44 @@
         }
     }
 
-    .block-documents,
-    .block-accomplishments{
-        .content-container{
-            align-self: center;
+    .contact-listing{
+        @include normalize-listing;
+
+        & > li{
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .fas,
+        .fab{
+            font-size: 1.5rem;
+        }
+
+        .fas{
+            margin-right: .5rem;
+        }
+    }
+
+    .socials-listing{
+        @include normalize-listing('true');
+        @include clearfix;
+
+        & > li{
+            display: block;
+            float: left;
+            padding: .5rem;
+        }
+
+        a{
+            display: block;
+            line-height: 1;
         }
     }
 
     .profile-about{
-        margin-bottom: 4rem;
+        & + .profile-interests{
+            margin-bottom: 4rem;
+        }
     }
 
     .profile-interests{
@@ -502,6 +428,379 @@
 
         .block-title{
             margin-bottom: .5rem;
+        }
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .profile {
+        .profile-blocks {
+            display: grid;
+            margin: 0px -1.5rem;
+            grid-template-columns: repeat(12, [col] 1fr);
+            grid-template-rows: auto;
+
+            & > li {
+                margin-bottom: 3rem;
+                padding: 0px 1.5rem;
+            }
+        }
+
+        .profile-block{
+            padding: 4rem;
+        }
+
+        .block-documents,
+        .block-accomplishments{
+            .content-container{
+                align-self: center;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-between(lg, xl) {
+    .profile {
+        .profile-blocks {
+            &.top {
+                &.has-about-me {
+                    & > li {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 12);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(2, 1, 1, 8);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 9, 1, 4);
+                        }
+                    }
+                }
+
+                &.has-not-about-me {
+                    & > li {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 8);
+                        }
+
+                        &:nth-child(1) {
+                            @include set-grid(1, 9, 1, 4);
+                        }
+                    }
+                }
+            }
+
+            &.bottom {
+
+                &.items-1 {
+                    & > li {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 12);
+                        }
+                    }
+                }
+
+                &.items-2 {
+                    & > li {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+                    }
+                }
+
+                &.items-3 {
+                    & > li {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 4);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 5, 1, 4);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(1, 9, 1, 4);
+                        }
+                    }
+                }
+
+                &.items-4 {
+                    & > li {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 6);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(2, 7, 1, 6);
+                        }
+                    }
+                }
+
+                &.items-5 {
+                    & > li {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 12);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(3, 1, 1, 6);
+                        }
+
+                        &:nth-child(5) {
+                            @include set-grid(3, 7, 1, 6);
+                        }
+                    }
+                }
+
+                &.items-6 {
+                    & > li {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 6);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(2, 7, 1, 6);
+                        }
+
+                        &:nth-child(5) {
+                            @include set-grid(3, 1, 1, 12);
+                            margin-bottom: 0px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(xl) {
+    .profile {
+        .profile-blocks {
+            &.top{
+                &.has-about-me{
+                    & > li{
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 5);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 6, 1, 5);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(1, 11, 1, 2);
+                        }
+                    }
+                }
+
+                &.has-not-about-me{
+                    & > li{
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(1) {
+                            @include set-grid(1, 7, 1, 13);
+                        }
+                    }
+                }
+            }
+
+            &.bottom{
+
+                &.items-1{
+                    & > li{
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 12);
+                        }
+                    }
+                }
+
+                &.items-2{
+                    & > li{
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+                    }
+                }
+
+                &.items-3{
+                    & > li{
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 4);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 5, 1, 4);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(1, 9, 1, 4);
+                        }
+                    }
+                }
+
+                &.items-4{
+                    & > li{
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 6);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(2, 7, 1, 6);
+                        }
+                    }
+                }
+
+                &.items-5{
+                    & > li{
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 4);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 5, 1, 4);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(1, 9, 1, 4);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(2, 1, 1, 6);
+                        }
+
+                        &:nth-child(5) {
+                            @include set-grid(2, 7, 1, 6);
+                        }
+                    }
+                }
+
+                &.items-6{
+                    & > li{
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 3);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 4, 1, 3);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(1, 7, 1, 3);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(1, 10, 2, 3);
+                        }
+
+                        &:nth-child(5) {
+                            @include set-grid(2, 1, 1, 9);
+                            margin-bottom: 0px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (pointer:coarse) {
+    .profile {
+        .block-basic-info {
+            .contact-card{
+                display: none;
+            }
+        }
+
+        .block-about{
+            .contact-listing{
+                display: block;
+            }
+        }
+    }
+}
+
+@media (pointer:fine) {
+    .profile {
+        .block-basic-info {
+            .card-container {
+                position: relative;
+
+                &:after {
+                    position: absolute;
+                    bottom: 6px;
+                    right: 10px;
+                    font-family: $font-awesome;
+                    font-style: normal;
+                    font-weight: 900;
+                    content: '\f25a';
+                    color: $gray-200;
+                }
+
+                &:hover,
+                &:focus {
+                    .contact-card {
+                        opacity: 1;
+                    }
+
+                    &:after {
+                        color: $white;
+                    }
+                }
+            }
+            
+            .contact-card{
+                display: block;
+            }
+        }
+
+        .block-about{
+            .contact-listing{
+                display: none;
+            }
         }
     }
 }

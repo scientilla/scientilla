@@ -14,7 +14,7 @@
     <li>
         <div
             class="form-group"
-            ng-class="{'has-error': vm.errors.displayNames.name}">
+            ng-class="{'has-error': vm.profile.displayNames.name.errors}">
             <label for="display-name">Display name</label>
             <input
                 type="text"
@@ -24,11 +24,11 @@
                 ng-disabled="!vm.profile.displayNames.use"
                 ng-model="vm.profile.displayNames.name.value"
                 ng-class="{
-                    'is-invalid': vm.errors.displayNames.name,
+                    'is-invalid': vm.profile.displayNames.name.errors,
                     'is-invisible' : vm.profile.displayNames.name.privacy === 'invisible'
                 }">
             <scientilla-field-errors
-                errors="vm.errors.displayNames.name.value"></scientilla-field-errors>
+                errors="vm.profile.displayNames.name.errors.value"></scientilla-field-errors>
         </div>
     </li>
     <li>
@@ -42,7 +42,7 @@
     <li>
         <div
             class="form-group"
-            ng-class="{'has-error': vm.errors.displayNames.surname}">
+            ng-class="{'has-error': vm.profile.displayNames.surname.errors}">
             <label for="display-surname">Display surname</label>
             <input
                 type="text"
@@ -52,11 +52,11 @@
                 ng-disabled="!vm.profile.displayNames.use"
                 ng-model="vm.profile.displayNames.surname.value"
                 ng-class="{
-                    'is-invalid': vm.errors.displayNames.surname,
+                    'is-invalid': vm.profile.displayNames.surname.errors,
                     'is-invisible' : vm.profile.displayNames.surname.privacy === 'invisible'
                 }">
             <scientilla-field-errors
-                errors="vm.errors.displayNames.surname.value"></scientilla-field-errors>
+                errors="vm.profile.displayNames.surname.errors.value"></scientilla-field-errors>
         </div>
     </li>
     <li>
@@ -67,26 +67,26 @@
 </ul>
 
 <label class="label-title">Titles</label>
-<ul class="item-listing title-listing" ui-sortable ng-model="vm.profile.titles">
-    <li ng-repeat="(key, title) in vm.profile.titles">
+<ul class="item-listing title-listing" ui-sortable="vm.options" ng-model="vm.profile.titles">
+    <li ng-repeat="(key, title) in vm.profile.titles track by $index">
         <ul class="enable-listing no-labels">
             <li>
                 <ul class="field-listing">
                     <li>
                         <div
                             class="form-group"
-                            ng-class="{'has-error': vm.errors.titles[key].value}">
+                            ng-class="{'has-error': vm.profile.titles[key].errors.value}">
                             <input
                                 type="text"
                                 class="form-control"
                                 placeholder="Title"
                                 ng-model="title.value"
                                 ng-class="{
-                                    'is-invalid': vm.errors.titles[key].value,
+                                    'is-invalid': vm.profile.titles[key].errors.value,
                                     'is-invisible' : vm.profile.titles[key].privacy === 'invisible'
                                 }">
                             <scientilla-field-errors
-                                errors="vm.errors.titles[key].value"></scientilla-field-errors>
+                                errors="vm.profile.titles[key].errors.value"></scientilla-field-errors>
                         </div>
                     </li>
                     <li>
@@ -134,7 +134,7 @@
     <li>
         <div
             class="form-group"
-            ng-class="{'has-error': vm.errors.description.value}">
+            ng-class="{'has-error': vm.profile.description.errors.value}">
             <label for="description">Description</label>
             <textarea
                 name="description"
@@ -144,11 +144,11 @@
                 class="form-control"
                 ng-model="vm.profile.description.value"
                 ng-class="{
-                    'is-invalid': vm.errors.description.value,
+                    'is-invalid': vm.profile.description.errors.value,
                     'is-invisible' : vm.profile.description.privacy === 'invisible'
                 }"></textarea>
             <scientilla-field-errors
-                errors="vm.errors.description.value"></scientilla-field-errors>
+                errors="vm.profile.description.errors.value"></scientilla-field-errors>
         </div>
     </li>
     <li>
@@ -162,7 +162,7 @@
     <li>
         <div
             class="form-group"
-            ng-class="{'has-error': vm.errors.role.value}">
+            ng-class="{'has-error': vm.profile.role.errors.value}">
             <label for="role">Role</label>
             <input
                 type="text"
@@ -171,11 +171,11 @@
                 placeholder="Role"
                 ng-model="vm.profile.role.value"
                 ng-class="{
-                    'is-invalid': vm.errors.role.value,
+                    'is-invalid': vm.profile.role.errors.value,
                     'is-invisible' : vm.profile.role.privacy === 'invisible'
                 }">
             <scientilla-field-errors
-                errors="vm.errors.role.value"></scientilla-field-errors>
+                errors="vm.profile.role.errors.value"></scientilla-field-errors>
         </div>
     </li>
     <li>
@@ -189,7 +189,7 @@
     <li>
         <div
             class="form-group"
-            ng-class="{'has-error': vm.errors.website.value}">
+            ng-class="{'has-error': vm.profile.website.errors.value}">
             <label for="website">Website</label>
             <input
                 type="text"
@@ -198,11 +198,11 @@
                 placeholder="Website"
                 ng-model="vm.profile.website.value"
                 ng-class="{
-                    'is-invalid': vm.errors.website.value,
+                    'is-invalid': vm.profile.website.errors.value,
                     'is-invisible' : vm.profile.website.privacy === 'invisible'
                 }">
             <scientilla-field-errors
-                errors="vm.errors.website.value"></scientilla-field-errors>
+                errors="vm.profile.website.errors.value"></scientilla-field-errors>
         </div>
     </li>
     <li>
@@ -216,7 +216,7 @@
     <li>
         <div
             class="form-group"
-            ng-class="{'has-error': vm.errors.address.value}">
+            ng-class="{'has-error': vm.profile.address.errors.value}">
             <label for="address">Address</label>
             <input
                 type="text"
@@ -225,11 +225,11 @@
                 placeholder="Address"
                 ng-model="vm.profile.address.value"
                 ng-class="{
-                    'is-invalid': vm.errors.address.value,
+                    'is-invalid': vm.profile.address.errors.value,
                     'is-invisible' : vm.profile.address.privacy === 'invisible'
                 }">
             <scientilla-field-errors
-                errors="vm.errors.address.value"></scientilla-field-errors>
+                errors="vm.profile.address.errors.value"></scientilla-field-errors>
         </div>
     </li>
     <li>
@@ -241,10 +241,9 @@
 
 <label class="label-title">Interests</label>
 <ul class="item-listing title-listing" ui-sortable ng-model="vm.profile.interests">
-    <li ng-repeat="(key, interest) in vm.profile.interests">
+    <li ng-repeat="(key, interest) in vm.profile.interests track by $index">
         <profile-interest-form
             profile="vm.profile"
-            errors="vm.errors"
             interest="interest"
             key="key"></profile-interest-form>
     </li>

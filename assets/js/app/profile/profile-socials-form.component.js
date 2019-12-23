@@ -7,8 +7,7 @@
             controller: profileSocialsForm,
             controllerAs: 'vm',
             bindings: {
-                profile: '<',
-                errors: '<'
+                profile: '<'
             }
         });
 

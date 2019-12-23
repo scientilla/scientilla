@@ -7,8 +7,7 @@
             controller: profileAboutMeForm,
             controllerAs: 'vm',
             bindings: {
-                profile: '<',
-                errors: '<',
+                profile: '<'
             }
         });
 

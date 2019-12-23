@@ -4,7 +4,7 @@
             <li>
                 <div
                     class="form-group"
-                    ng-class="{'has-error': vm.errors.skillCategories[vm.key].value}">
+                    ng-class="{'has-error': vm.profile.skillCategories[vm.key].errors.value}">
                     <label for="skill-category">Category</label>
                     <input
                         type="text"
@@ -13,11 +13,11 @@
                         placeholder="Category"
                         ng-model="vm.category.value"
                         ng-class="{
-                            'is-invalid': vm.errors.skillCategories[vm.key].value,
+                            'is-invalid': vm.profile.skillCategories[vm.key].errors.value,
                             'is-invisible' : vm.profile.skillCategories[vm.key].privacy === 'invisible'
                         }">
                     <scientilla-field-errors
-                        errors="vm.errors.skillCategories[vm.key].value"></scientilla-field-errors>
+                        errors="vm.profile.skillCategories[vm.key].errors.value"></scientilla-field-errors>
                 </div>
             </li>
             <li class="action-column">

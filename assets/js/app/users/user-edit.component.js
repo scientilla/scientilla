@@ -20,7 +20,7 @@
     function controller(UsersService, AuthService, Notification, ProfileService, $scope) {
         const vm = this;
 
-        vm.errors = [];
+        vm.count = 0;
         vm.profile = {};
 
         function getEditProfile() {
@@ -49,14 +49,21 @@
             const profile = JSON.stringify(vm.profile);
             UsersService.saveProfile(AuthService.user.researchEntity, profile).then(response => {
                 response = response.plain();
-                vm.errors = response.errors;
+
+                if (response.profile) {
+                    vm.profile = response.profile;
+                }
 
                 if (response.message) {
-                    if (!_.isEmpty(response.errors)) {
+                    if (!_.isEmpty(response.count) || response.count > 0) {
+                        vm.count = response.count;
                         Notification.error(response.message);
                     } else {
+                        vm.count = 0;
                         Notification.success(response.message);
                     }
+
+                    angular.element('html, body').animate({scrollTop: 0});
                 }
             });
         };

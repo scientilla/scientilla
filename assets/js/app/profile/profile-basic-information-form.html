@@ -1,9 +1,9 @@
-<ng-container ng-repeat="item in vm.basicInformation">
+<ng-container ng-repeat="item in vm.basicInformation track by $index">
     <ng-container ng-if="item.type === 'array' && item.items && item.items.length > 0">
         <label>{{ item.title }}</label>
         <ul
             class="enable-listing"
-            ng-repeat="(key, element) in item.items">
+            ng-repeat="(key, element) in item.items track by $index">
             <li>
                 <div class="form-group">
                     <div class="form-control disabled">

@@ -1,0 +1,22 @@
+<div class="profile-block">
+    <div class="content-container">
+        <span class="amount">{{ vm.profile.documents.length }}</span>
+        <i class="fas fa-file title-icon"></i>
+        <h2 class="block-title">Documents</h2>
+    </div>
+    <div
+        class="content-container last-item-container"
+        ng-if="vm.favoriteDocuments.length > 0">
+        <span>My favorite documents:</span>
+        <ul class="favorite-listing">
+            <li ng-repeat="document in vm.favoriteDocuments track by $index">
+                <h2 class="block-title">{{ document.title }}</h2>
+            </li>
+        </ul>
+    </div>
+    <div class="button-container">
+        <button
+            class="show-more has-action"
+            ng-click="vm.showDocumentsModal()">Show all documents</button>
+    </div>
+</div>

@@ -7,7 +7,6 @@
             controller: profileSkillForm,
             controllerAs: 'vm',
             bindings: {
-                errors: '<',
                 profile: '<',
                 categoryKey: '<',
                 skill: '<',

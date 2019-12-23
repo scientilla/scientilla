@@ -1,5 +1,7 @@
 <div class="summary-profile-container profile">
-    <ul class="profile-blocks">
+    <ul
+        class="profile-blocks top"
+        ng-class="vm.profile.description || vm.profile.interests ? 'has-about-me' : 'has-not-about-me'">
         <li class="block-basic-info">
             <ul class="card-container">
                 <li class="main-card">
@@ -15,83 +17,19 @@
                             {{ vm.joinStrings([vm.profile.administrativeOrganization, vm.profile.office], ' - ') }}
                         </p>
                         <ul class="research-lines" ng-if="vm.profile.researchLines.length > 0">
-                            <li ng-repeat="(key, researchLine) in vm.profile.researchLines">{{ researchLine }}</li>
+                            <li ng-repeat="researchLine in vm.profile.researchLines track by $index">{{ researchLine }}</li>
                         </ul>
                         <ul class="centers" ng-if="vm.profile.centers.length > 0">
-                            <li ng-repeat="(key, center) in vm.profile.centers">{{ center }}</li>
+                            <li ng-repeat="center in vm.profile.centers track by $index">{{ center }}</li>
                         </ul>
                         <ul class="titles" ng-if="vm.profile.titles.length > 0">
-                            <li ng-repeat="(key, title) in vm.profile.titles">{{ title }}</li>
+                            <li ng-repeat="title in vm.profile.titles track by $index">{{ title }}</li>
                         </ul>
                     </div>
                 </li>
                 <li class="contact-card">
                     <div class="profile-block">
-                        <ul class="contact-listing">
-                            <li ng-if="vm.profile.address">
-                                <i class="fas fa-home"></i> {{ vm.profile.address }}
-                            </li>
-                            <li ng-if="vm.profile.username">
-                                <a href="#"><i class="fas fa-envelope"></i> {{ vm.profile.username }}</a>
-                            </li>
-                            <li ng-if="vm.profile.telephone">
-                                <a href="#"><i class="fas fa-phone"></i> {{ vm.profile.telephone }}</a>
-                            </li>
-                            <li ng-if="vm.profile.socials">
-                                <ul class="socials-listing">
-                                    <li ng-if="vm.profile.socials.linkedin">
-                                        <a ng-href="{{ vm.profile.socials.linkedin }}" target="_blank">
-                                            <i class="fab fa-linkedin"></i>
-                                        </a>
-                                    </li>
-                                    <li ng-if="vm.profile.socials.twitter">
-                                        <a ng-href="{{ vm.profile.socials.twitter }}" target="_blank">
-                                            <i class="fab fa-twitter"></i>
-                                        </a>
-                                    </li>
-                                    <li ng-if="vm.profile.socials.facebook">
-                                        <a ng-href="{{ vm.profile.socials.facebook }}" target="_blank">
-                                            <i class="fab fa-facebook-square"></i>
-                                        </a>
-                                    </li>
-                                    <li ng-if="vm.profile.socials.instagram">
-                                        <a ng-href="{{ vm.profile.socials.instagram }}" target="_blank">
-                                            <i class="fab fa-instagram"></i>
-                                        </a>
-                                    </li>
-                                    <li ng-if="vm.profile.socials.researchgate">
-                                        <a ng-href="{{ vm.profile.socials.researchgate }}" target="_blank">
-                                            <i class="fab fa-researchgate"></i>
-                                        </a>
-                                    </li>
-                                    <li ng-if="vm.profile.socials.github">
-                                        <a ng-href="{{ vm.profile.socials.github }}" target="_blank">
-                                            <i class="fab fa-github-square"></i>
-                                        </a>
-                                    </li>
-                                    <li ng-if="vm.profile.socials.bitbucket">
-                                        <a ng-href="{{ vm.profile.socials.bitbucket }}" target="_blank">
-                                            <i class="fab fa-bitbucket"></i>
-                                        </a>
-                                    </li>
-                                    <li ng-if="vm.profile.socials.youtube">
-                                        <a ng-href="{{ vm.profile.socials.youtube }}" target="_blank">
-                                            <i class="fab fa-youtube"></i>
-                                        </a>
-                                    </li>
-                                    <li ng-if="vm.profile.socials.flickr">
-                                        <a ng-href="{{ vm.profile.socials.flickr }}" target="_blank">
-                                            <i class="fab fa-flickr"></i>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li ng-if="vm.profile.website">
-                                <a href="{{ vm.profile.website }}" target="_blank">
-                                    <i class="fas fa-external-link-alt"></i> {{ vm.profile.website }}
-                                </a>
-                            </li>
-                        </ul>
+                        <profile-contact-listing profile="vm.profile"></profile-contact-listing>
                     </div>
                 </li>
             </ul>
@@ -106,9 +44,11 @@
                 <div class="profile-interests" ng-if="vm.profile.interests">
                     <h2 class="block-title">Interests</h2>
                     <ul class="interest-listing">
-                        <li ng-repeat="interest in vm.profile.interests">{{ interest }}</li>
+                        <li ng-repeat="interest in vm.profile.interests track by $index">{{ interest }}</li>
                     </ul>
                 </div>
+
+                <profile-contact-listing profile="vm.profile"></profile-contact-listing>
             </div>
         </li>
         <li class="block-export">
@@ -133,7 +73,13 @@
                 </ul>
             </div>
         </li>
-        <li class="block-experiences" ng-if="vm.profile.experiences">
+    </ul>
+    <ul
+        class="profile-blocks bottom"
+        ng-class="'items-' + vm.numberOfItems">
+        <li
+            class="block-experiences"
+            ng-if="vm.profile.experiences && vm.profile.experiences.length > 0">
             <div class="profile-block">
                 <div class="content-container" ng-repeat="experience in vm.profile.experiences | limitTo: 1">
                     <i class="fas fa-briefcase title-icon"></i><span>My {{ experience.to ? 'last' : 'current' }} experience:</span>
@@ -146,7 +92,9 @@
                 </div>
             </div>
         </li>
-        <li class="block-educations" ng-if="vm.profile.education">
+        <li
+            class="block-educations"
+            ng-if="vm.profile.education && vm.profile.education.length > 0">
             <div class="profile-block" ng-repeat="education in vm.profile.education | limitTo: 1">
                 <div class="content-container">
                     <i class="fas fa-graduation-cap title-icon"></i><span>My {{ education.to ? 'last' : 'current' }} education:</span>
@@ -157,12 +105,14 @@
                 </div>
             </div>
         </li>
-        <li class="block-certificates" ng-if="vm.favoriteCertificates.length > 0">
+        <li
+            class="block-certificates"
+            ng-if="vm.profile.certificates && vm.profile.certificates.length > 0">
             <div class="profile-block">
                 <div class="content-container">
                     <i class="fas fa-certificate title-icon"></i><span>My certificates:</span>
                     <ul class="favorite-certificates-listing">
-                        <li ng-repeat="certificate in vm.favoriteCertificates">
+                        <li ng-repeat="certificate in vm.favoriteCertificates track by $index">
                             {{ certificate }}
                         </li>
                     </ul>
@@ -172,12 +122,14 @@
                 </div>
             </div>
         </li>
-        <li class="block-skills" ng-if="vm.favoriteSkills.length > 0">
+        <li
+            class="block-skills"
+            ng-if="vm.profile.skillCategories && vm.profile.skillCategories.length > 0">
             <div class="profile-block">
                 <div class="content-container">
                     <h2 class="block-title"><i class="fas fa-bolt title-icon"></i>Skills</h2>
                     <ul class="skill-listing">
-                        <li ng-repeat="skill in vm.favoriteSkills">{{ skill }}</li>
+                        <li ng-repeat="skill in vm.favoriteSkills track by $index">{{ skill }}</li>
                     </ul>
                 </div>
                 <div class="button-container">
@@ -185,53 +137,40 @@
                 </div>
             </div>
         </li>
-        <li class="block-documents-and-accomplishments" ng-if="vm.profile.documents || vm.profile.accomplishments">
-            <ul class="profile-blocks">
-                <li class="block-documents" ng-if="vm.profile.documents">
-                    <div class="profile-block">
-                        <div class="content-container">
-                            <span class="amount">{{ vm.profile.documents.length }}</span>
-                            <i class="fas fa-file title-icon"></i>
-                            <h2 class="block-title">Documents</h2>
-                        </div>
-                        <div
-                            class="content-container last-item-container"
-                            ng-if="vm.favoriteDocuments.length > 0">
-                            <span>My favorite documents:</span>
-                            <ul class="favorite-listing">
-                                <li ng-repeat="document in vm.favoriteDocuments">
-                                    <h2 class="block-title">{{ document.title }}</h2>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="button-container">
-                            <button
-                                class="show-more has-action"
-                                ng-click="vm.showDocumentsModal()">Show all documents</button>
-                        </div>
-                    </div>
+        <li
+            class="block-documents"
+            ng-if="vm.profile.documents && vm.profile.documents.length > 0 && vm.numberOfItems < 6">
+            <profile-documents-block
+                profile="vm.profile"
+                documents-by-source-type="vm.documentsBySourceType"
+                favorite-documents="vm.favoriteDocuments"></profile-documents-block>
+        </li>
+        <li
+            class="block-accomplishments"
+            ng-if="vm.profile.accomplishments && vm.profile.accomplishments.length > 0 && vm.numberOfItems < 6">
+            <profile-accomplishments-block
+                profile="vm.profile"
+                accomplishments-by-type="vm.accomplishmentsByType"></profile-accomplishments-block>
+        </li>
+        <li ng-if="vm.numberOfItems == 6 && (
+            (vm.profile.documents && vm.profile.documents.length > 0) ||
+            (vm.profile.accomplishments && vm.profile.accomplishments.length > 0)
+        )">
+            <ul class="profile-blocks bottom items-2">
+                <li
+                    class="block-documents"
+                    ng-if="vm.profile.documents && vm.profile.documents.length > 0"></profile-documents-block>
+                    <profile-documents-block
+                        profile="vm.profile"
+                        documents-by-source-type="vm.documentsBySourceType"
+                        favorite-documents="vm.favoriteDocuments">
                 </li>
-                <li class="block-accomplishments" ng-if="vm.profile.accomplishments">
-                    <div class="profile-block">
-                        <div class="content-container">
-                            <span class="amount">{{ vm.profile.accomplishments.length }}</span>
-                            <i class="fas fa-trophy title-icon"></i>
-                            <h2 class="block-title">Accomplishments</h2>
-                        </div>
-                        <div class="content-container last-item-container">
-                            <span>My favorite accomplishments:</span>
-                            <ul class="favorite-listing">
-                                <li><h2 class="block-title">Title accomplishment</h2></li>
-                                <li><h2 class="block-title">Title accomplishment</h2></li>
-                                <li><h2 class="block-title">Title accomplishment</h2></li>
-                            </ul>
-                        </div>
-                        <div class="button-container">
-                            <button
-                                class="show-more has-action"
-                                ng-click="vm.showAccomplishmentsModal()">Show all accomplishments</button>
-                        </div>
-                    </div>
+                <li
+                    class="block-accomplishments"
+                    ng-if="vm.profile.accomplishments && vm.profile.accomplishments.length > 0">
+                    <profile-accomplishments-block
+                        profile="vm.profile"
+                        accomplishments-by-type="vm.accomplishmentsByType"></profile-accomplishments-block>
                 </li>
             </ul>
         </li>

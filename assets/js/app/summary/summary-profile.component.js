@@ -31,6 +31,7 @@
             vm.favoriteDocuments = [];
             vm.accomplishmentsByType = [];
             vm.favoriteAccomplishments = [];
+            vm.numberOfItems = 0;
 
             vm.$onInit = () => {
                 getProfile();
@@ -163,8 +164,44 @@
                     vm.favoriteDocuments = getFavoriteDocuments(vm.profile);
                     vm.accomplishmentsByType = getAccomplishmentsByType(vm.profile);
                     //vm.favoriteAccomplishments = [];
-                    console.log(vm.accomplishmentsByType);
+
+                    // Todo remove, used for testing
+                    //vm.profile.accomplishments = [];
+                    //vm.profile.documents = [];
+                    //vm.profile.certificates = [];
+                    //vm.profile.experiences = [];
+                    setNumberOfItems();
                 });
+            }
+
+            function setNumberOfItems() {
+                let count = 0;
+
+                if (_.has(vm.profile, 'experiences') && vm.profile.experiences.length > 0) {
+                    count++;
+                }
+
+                if (_.has(vm.profile, 'education') && vm.profile.education.length > 0) {
+                    count++;
+                }
+
+                if (_.has(vm.profile, 'certificates') && vm.profile.certificates.length > 0) {
+                    count++;
+                }
+
+                if (_.has(vm.profile, 'skillCategories') && vm.profile.skillCategories.length > 0) {
+                    count++;
+                }
+
+                if (_.has(vm.profile, 'accomplishments') && vm.profile.accomplishments.length > 0) {
+                    count++;
+                }
+
+                if (_.has(vm.profile, 'documents') && vm.profile.documents.length > 0) {
+                    count++;
+                }
+
+                vm.numberOfItems = count;
             }
 
             vm.showExperiencesModal = () => {
@@ -293,93 +330,6 @@
                                     <span class="skill-category">{{ category.value }}</span>
                                     <ul class="skill-listing">
                                         <li ng-repeat="skill in category.skills">{{ skill.value }}</li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>`,
-                    scope: $scope,
-                    controller: ($scope, $uibModalInstance) => {
-                        $scope.close = () => {
-                            $uibModalInstance.close();
-                        };
-                    },
-                    size: 'lg'
-                });
-            };
-
-            vm.showDocumentsModal = () => {
-                $uibModal.open({
-                    animation: true,
-                    template:
-                        `<div class="modal-header">
-                            <h3 class="text-capitalize">Documents</h3>
-                            <button
-                                type="button"
-                                class="close"
-                                ng-click="close()">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-
-                        <div class="modal-body profile">
-                            <ul class="document-categories">
-                                <li ng-repeat="(sourceType, documents) in vm.documentsBySourceType">
-                                    <span class="document-category">{{ sourceType }}</span>
-                                    <ul class="document-listing">
-                                        <li ng-repeat="document in documents">
-                                            <h4 class="document-title">{{ document.title}}</h4>
-                                            <div class="document-source">
-                                                <i ng-class="vm.getSourceTypeIcon(sourceType)" title="{{ sourceType }}"></i>
-                                                <span>{{ document.source.title }}</span>
-                                            </div>
-                                            <ul class="document-details" ng-if="document.doi">
-                                                <li><strong>DOI: </strong><a href="#">{{ document.doi }}</a></li>
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>`,
-                    scope: $scope,
-                    controller: ($scope, $uibModalInstance) => {
-                        $scope.close = () => {
-                            $uibModalInstance.close();
-                        };
-                    },
-                    size: 'lg'
-                });
-            };
-
-            vm.showAccomplishmentsModal = () => {
-                $uibModal.open({
-                    animation: true,
-                    template:
-                        `<div class="modal-header">
-                            <h3 class="text-capitalize">Accomplishments</h3>
-                            <button
-                                type="button"
-                                class="close"
-                                ng-click="close()">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-
-                        <div class="modal-body profile">
-                            <ul class="accomplishment-categories">
-                                <li ng-repeat="(type, accomplishments) in vm.accomplishmentsByType">
-                                    <span class="accomplishment-category">{{ type }}</span>
-                                    <ul class="accomplishment-listing">
-                                        <li ng-repeat="accomplishment in accomplishments">
-                                            <h4 class="accomplishment-title">{{ accomplishment.title }}</h4>
-                                            <ul class="accomplishment-details">
-                                                <li ng-if="accomplishment.issuer">
-                                                    <strong>Issuer: </strong>{{ accomplishment.issuer }}
-                                                </li>
-                                                <li ng-if="accomplishment.year">
-                                                    <strong>Year: </strong>{{ accomplishment.year }}
-                                                </li>
-                                            </ul>
-                                        </li>
                                     </ul>
                                 </li>
                             </ul>

@@ -1,6 +1,9 @@
 <scientilla-backend-layout>
     <div class="edit-profile">
         <h1>Edit profile</h1>
+        <div class="form-group text-danger" role="alert" ng-if="vm.count > 0">
+            {{ vm.count > 1 ? 'Please correct the ' + vm.count + ' errors below.' : 'Please correct the error below.' }}
+        </div>
         <form>
             <ul class="card-listing">
                 <li>
@@ -25,7 +28,7 @@
 
                             <profile-socials-form
                                 profile="vm.profile"
-                                errors="vm.erors"></profile-socials-form>
+                                errors="vm.errors"></profile-socials-form>
                         </div>
                     </div>
                 </li>

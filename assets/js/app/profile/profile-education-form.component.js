@@ -7,7 +7,6 @@
             controller: profileEducationForm,
             controllerAs: 'vm',
             bindings: {
-                errors: '<',
                 profile: '<',
                 education: '<',
                 key: '<',

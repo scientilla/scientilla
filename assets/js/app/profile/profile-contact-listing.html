@@ -1,0 +1,65 @@
+<ul class="contact-listing">
+    <li ng-if="vm.profile.address">
+        <i class="fas fa-home"></i> {{ vm.profile.address }}
+    </li>
+    <li ng-if="vm.profile.username">
+        <a href="#"><i class="fas fa-envelope"></i> {{ vm.profile.username }}</a>
+    </li>
+    <li ng-if="vm.profile.telephone">
+        <a href="#"><i class="fas fa-phone"></i> {{ vm.profile.telephone }}</a>
+    </li>
+    <li ng-if="vm.profile.socials">
+        <ul class="socials-listing">
+            <li ng-if="vm.profile.socials.linkedin">
+                <a ng-href="{{ vm.profile.socials.linkedin }}" target="_blank">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+            </li>
+            <li ng-if="vm.profile.socials.twitter">
+                <a ng-href="{{ vm.profile.socials.twitter }}" target="_blank">
+                    <i class="fab fa-twitter"></i>
+                </a>
+            </li>
+            <li ng-if="vm.profile.socials.facebook">
+                <a ng-href="{{ vm.profile.socials.facebook }}" target="_blank">
+                    <i class="fab fa-facebook-square"></i>
+                </a>
+            </li>
+            <li ng-if="vm.profile.socials.instagram">
+                <a ng-href="{{ vm.profile.socials.instagram }}" target="_blank">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </li>
+            <li ng-if="vm.profile.socials.researchgate">
+                <a ng-href="{{ vm.profile.socials.researchgate }}" target="_blank">
+                    <i class="fab fa-researchgate"></i>
+                </a>
+            </li>
+            <li ng-if="vm.profile.socials.github">
+                <a ng-href="{{ vm.profile.socials.github }}" target="_blank">
+                    <i class="fab fa-github-square"></i>
+                </a>
+            </li>
+            <li ng-if="vm.profile.socials.bitbucket">
+                <a ng-href="{{ vm.profile.socials.bitbucket }}" target="_blank">
+                    <i class="fab fa-bitbucket"></i>
+                </a>
+            </li>
+            <li ng-if="vm.profile.socials.youtube">
+                <a ng-href="{{ vm.profile.socials.youtube }}" target="_blank">
+                    <i class="fab fa-youtube"></i>
+                </a>
+            </li>
+            <li ng-if="vm.profile.socials.flickr">
+                <a ng-href="{{ vm.profile.socials.flickr }}" target="_blank">
+                    <i class="fab fa-flickr"></i>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <li ng-if="vm.profile.website">
+        <a href="{{ vm.profile.website }}" target="_blank">
+            <i class="fas fa-external-link-alt"></i> {{ vm.profile.website }}
+        </a>
+    </li>
+</ul>

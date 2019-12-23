@@ -7,7 +7,6 @@
             controller: profileSkillCategoryForm,
             controllerAs: 'vm',
             bindings: {
-                errors: '<',
                 profile: '<',
                 category: '<',
                 key: '<',

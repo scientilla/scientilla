@@ -20,7 +20,7 @@
         function addItem (options = {}) {
             if (!options.item) {
                 options.item = {
-                    public: false
+                    privacy: 'locked'
                 };
             }
 
@@ -32,8 +32,6 @@
         function removeItem (options = {}) {
             if (typeof(options.property) !== 'undefined' && typeof(options.index) !== 'undefined') {
                 options.property.splice(options.index, 1);
-
-                // todo remove errors
             }
         }
 

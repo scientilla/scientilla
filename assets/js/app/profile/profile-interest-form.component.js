@@ -7,7 +7,6 @@
             controller: profileInterestForm,
             controllerAs: 'vm',
             bindings: {
-                errors: '<',
                 profile: '<',
                 interest: '<',
                 key: '<',

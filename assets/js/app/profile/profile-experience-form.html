@@ -6,7 +6,7 @@
                     <li>
                         <div
                             class="form-group"
-                            ng-class="{'has-error': vm.errors.experiences[vm.key].company}">
+                            ng-class="{'has-error': vm.profile.experiences[vm.key].errors.company}">
                             <label for="experience[{{ vm.key }}]-company">
                                 Company
                             </label>
@@ -17,17 +17,17 @@
                                 placeholder="Company"
                                 ng-model="vm.experience.company"
                                 ng-class="{
-                                    'is-invalid': vm.errors.experiences[vm.key].company,
+                                    'is-invalid': vm.profile.experiences[vm.key].errors.company,
                                     'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
                                 }">
                             <scientilla-field-errors
-                                errors="vm.errors.experiences[vm.key].company"></scientilla-field-errors>
+                                errors="vm.profile.experiences[vm.key].errors.company"></scientilla-field-errors>
                         </div>
                     </li>
                     <li>
                         <div
                             class="form-group"
-                            ng-class="{'has-error': vm.errors.experiences[vm.key].jobTitle}">
+                            ng-class="{'has-error': vm.profile.experiences[vm.key].errors.jobTitle}">
                             <label for="experience[{{ vm.key }}]-job-title">
                                 Job title
                             </label>
@@ -38,17 +38,17 @@
                                 placeholder="Job title"
                                 ng-model="vm.experience.jobTitle"
                                 ng-class="{
-                                    'is-invalid': vm.errors.experiences[vm.key].jobTitle,
+                                    'is-invalid': vm.profile.experiences[vm.key].errors.jobTitle,
                                     'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
                                 }">
                             <scientilla-field-errors
-                                errors="vm.errors.experiences[vm.key].jobTitle"></scientilla-field-errors>
+                                errors="vm.profile.experiences[vm.key].errors.jobTitle"></scientilla-field-errors>
                         </div>
                     </li>
                     <li>
                         <div
                             class="form-group"
-                            ng-class="{'has-error': vm.errors.experiences[vm.key].from}">
+                            ng-class="{'has-error': vm.profile.experiences[vm.key].errors.from}">
                             <label for="experience[{{ vm.key }}]-from">From</label>
                             <input
                                 type="text"
@@ -64,17 +64,17 @@
                                 is-open="vm.dateExperienceFromPopups[vm.key]"
                                 ng-click="vm.dateExperienceFromPopups[vm.key] = true"
                                 ng-class="{
-                                    'is-invalid': vm.errors.experiences[vm.key].from,
+                                    'is-invalid': vm.profile.experiences[vm.key].errors.from,
                                     'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
                                 }">
                             <scientilla-field-errors
-                                errors=" vm.errors.experiences[vm.key].from"></scientilla-field-errors>
+                                errors=" vm.profile.experiences[vm.key].errors.from"></scientilla-field-errors>
                         </div>
                     </li>
                     <li>
                         <div
                             class="form-group"
-                            ng-class="{'has-error': vm.errors.experiences[vm.key].to}">
+                            ng-class="{'has-error': vm.profile.experiences[vm.key].errors.to}">
                             <label for="experience[{{ vm.key }}]-to">To</label>
                             <input
                                 type="text"
@@ -90,17 +90,17 @@
                                 is-open="vm.dateExperienceToPopups[vm.key]"
                                 ng-click="vm.dateExperienceToPopups[vm.key] = true"
                                 ng-class="{
-                                    'is-invalid': vm.errors.experiences[vm.key].to,
+                                    'is-invalid': vm.profile.experiences[vm.key].errors.to,
                                     'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
                                 }">
                             <scientilla-field-errors
-                                errors="vm.errors.experiences[vm.key].to"></scientilla-field-errors>
+                                errors="vm.profile.experiences[vm.key].errors.to"></scientilla-field-errors>
                         </div>
                     </li>
                     <li>
                         <div
                             class="form-group"
-                            ng-class="{'has-error': vm.errors.experiences[vm.key].location}">
+                            ng-class="{'has-error': vm.profile.experiences[vm.key].errors.location}">
                             <label for="experience[{{ vm.key }}]-location">
                                 Location
                             </label>
@@ -111,17 +111,17 @@
                                 placeholder="Location"
                                 ng-model="vm.experience.location"
                                 ng-class="{
-                                    'is-invalid': vm.errors.experiences[vm.key].location,
+                                    'is-invalid': vm.profile.experiences[vm.key].errors.location,
                                     'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
                                 }">
                             <scientilla-field-errors
-                                errors="vm.errors.experiences[vm.key].location"></scientilla-field-errors>
+                                errors="vm.profile.experiences[vm.key].errors.location"></scientilla-field-errors>
                         </div>
                     </li>
                     <li>
                         <div
                             class="form-group"
-                            ng-class="{'has-error': vm.errors.experiences[vm.key].country}">
+                            ng-class="{'has-error': vm.profile.experiences[vm.key].errors.country}">
                             <label for="experience[{{ vm.key }}]-country">
                                 Country
                             </label>
@@ -132,17 +132,17 @@
                                 placeholder="Country"
                                 ng-model="vm.experience.country"
                                 ng-class="{
-                                    'is-invalid': vm.errors.experiences[vm.key].country,
+                                    'is-invalid': vm.profile.experiences[vm.key].errors.country,
                                     'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
                                 }">
                             <scientilla-field-errors
-                                errors="vm.errors.experiences[vm.key].country"></scientilla-field-errors>
+                                errors="vm.profile.experiences[vm.key].errors.country"></scientilla-field-errors>
                         </div>
                     </li>
                     <li>
                         <div
                             class="form-group"
-                            ng-class="{'has-error': vm.errors.experiences[vm.key].jobDescription}">
+                            ng-class="{'has-error': vm.profile.experiences[vm.key].errors.jobDescription}">
                             <label for="experience[{{ vm.key }}]-job-description">
                                 Job description
                             </label>
@@ -154,11 +154,11 @@
                                 class="form-control"
                                 ng-model="vm.experience.jobDescription"
                                 ng-class="{
-                                    'is-invalid': vm.errors.experiences[vm.key].jobDescription,
+                                    'is-invalid': vm.profile.experiences[vm.key].errors.jobDescription,
                                     'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
                                 }"></textarea>
                             <scientilla-field-errors
-                                errors="vm.errors.experiences[vm.key].jobDescription"></scientilla-field-errors>
+                                errors="vm.profile.experiences[vm.key].errors.jobDescription"></scientilla-field-errors>
                         </div>
                     </li>
                 </ul>

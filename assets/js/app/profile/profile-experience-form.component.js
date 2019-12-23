@@ -7,7 +7,6 @@
             controller: profileExperienceForm,
             controllerAs: 'vm',
             bindings: {
-                errors: '<',
                 profile: '<',
                 experience: '<',
                 key: '<',

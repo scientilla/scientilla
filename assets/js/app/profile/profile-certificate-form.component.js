@@ -7,7 +7,6 @@
             controller: profileCertificateForm,
             controllerAs: 'vm',
             bindings: {
-                errors: '<',
                 profile: '<',
                 certificate: '<',
                 key: '<',

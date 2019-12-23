@@ -787,7 +787,11 @@ async function importUserContracts(email = defaultEmail) {
         if (disabledSynchronizedMemberships.length > 0) {
             await Promise.all(disabledSynchronizedMemberships.map(async membership => {
                 let user = await User.findOne({ id: membership.user });
-                return user.username;
+                if (user) {
+                    return user.username;
+                } else {
+                    sails.log.debug(user);
+                }
             })).then(usernames => {
                 sails.log.info('Email address(es): ' + usernames.join(', '));
             });
@@ -795,7 +799,11 @@ async function importUserContracts(email = defaultEmail) {
         if (disabledCollaborations.length > 0) {
             await Promise.all(disabledCollaborations.map(async membership => {
                 let user = await User.findOne({ id: membership.user });
-                return user.username;
+                if (user) {
+                    return user.username;
+                } else {
+                    sails.log.debug(user);
+                }
             })).then(usernames => {
                 sails.log.info('Email address(es): ' + usernames.join(', '));
             });
@@ -806,7 +814,11 @@ async function importUserContracts(email = defaultEmail) {
         if (updatedResearchEntityDataItems.length > 0) {
             await Promise.all(updatedResearchEntityDataItems.map(async item => {
                 let user = await User.findOne({ researchEntity: item.researchEntity });
-                return user.username;
+                if (user) {
+                    return user.username;
+                } else {
+                    sails.log.debug(user);
+                }
             })).then(usernames => {
                 sails.log.info('Email address(es): ' + usernames.join(', '));
             });
@@ -817,7 +829,11 @@ async function importUserContracts(email = defaultEmail) {
         if (newResearchEntityDataItems.length > 0) {
             await Promise.all(newResearchEntityDataItems.map(async item => {
                 let user = await User.findOne({ researchEntity: item.researchEntity });
-                return user.username;
+                if (user) {
+                    return user.username;
+                } else {
+                    sails.log.debug(user);
+                }
             })).then(usernames => {
                 sails.log.info('Email address(es): ' + usernames.join(', '));
             });
@@ -828,9 +844,13 @@ async function importUserContracts(email = defaultEmail) {
         if (upToDateResearchEntityDataItems.length > 0) {
             await Promise.all(upToDateResearchEntityDataItems.map(async item => {
                 let user = await User.findOne({ researchEntity: item.researchEntity });
-                return user.username;
+                if (user) {
+                    return user.username;
+                } else {
+                    sails.log.debug(user);
+                }
             })).then(usernames => {
-                sails.log.info('Email address(es): ' + usernames.join(', '));
+                //sails.log.info('Email address(es): ' + usernames.join(', '));
             });
         }
         sails.log.info('....................................');

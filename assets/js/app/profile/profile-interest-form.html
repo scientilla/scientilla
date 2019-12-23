@@ -4,18 +4,18 @@
             <li>
                 <div
                     class="form-group"
-                    ng-class="{'has-error': vm.errors.interests[vm.key].value}">
+                    ng-class="{'has-error': vm.profile.interests[vm.key].errors.value}">
                     <input
                         type="text"
                         class="form-control"
                         placeholder="Interest"
                         ng-model="vm.interest.value"
                         ng-class="{
-                            'is-invalid': vm.errors.interests[vm.key].value,
+                            'is-invalid': vm.profile.interests[vm.key].errors.value,
                             'is-invisible' : vm.profile.interests[vm.key].privacy === 'invisible'
                         }">
                     <scientilla-field-errors
-                        errors="vm.errors.interests[vm.key].value"></scientilla-field-errors>
+                        errors="vm.profile.interests[vm.key].errors.value"></scientilla-field-errors>
                 </div>
             </li>
             <li>
