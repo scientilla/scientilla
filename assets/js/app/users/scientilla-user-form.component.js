@@ -67,7 +67,7 @@
 
             if (typeof vm.settings === 'undefined' || vm.settings === false) {
                 if (vm.user.id) {
-                    vm.title = 'Edit user'
+                    vm.title = 'Edit user';
                 }
             } else {
                 vm.title  = 'Edit user settings';
