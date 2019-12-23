@@ -9,7 +9,7 @@ const crons = [];
 module.exports = {
     start: () => {
         sails.config.scientilla.crons.forEach(cron => {
-            crons.push(new CronJob(cron.time, onTick(cron), null, false, 'Europe/Rome'))
+            crons.push(new CronJob(cron.time, generateOnTick(cron), null, false, 'Europe/Rome'))
         });
         crons.forEach(cron => cron.start());
     },
@@ -18,15 +18,18 @@ module.exports = {
     }
 };
 
-function onTick(cron) {
+function generateOnTick(cron) {
     return async function () {
         if (!cron.enabled) {
             return;
         }
 
         sails.log.info('Cron ' + cron.name + ' started at ' + new Date().toISOString());
-
-        await GruntTaskRunner.run('cron:' + cron.name);
+        try{
+            await GruntTaskRunner.run('cron:' + cron.name);
+        } catch(e) {
+            sails.log.debug(e);
+        }
 
         sails.log.info('Cron ' + cron.name + ' finished at ' + new Date().toISOString());
     }
