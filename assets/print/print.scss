@@ -362,7 +362,7 @@ button,
 
 .document {
   @include normalize-listing;
-  margin-bottom: 2rem;
+    margin-bottom: 2rem;
 
   .document-title {
     @include h5;
@@ -387,4 +387,30 @@ button,
       }
     }
   }
+}
+
+/* Profile */
+.profile{
+    .profile-blocks,
+    .card-container{
+        @include normalize-listing;
+    }
+
+    .profile-blocks{
+        & > li {
+            margin-bottom: 2rem;
+        }
+    }
+
+    .block-export,
+    .amount,
+    .socials-list-item{
+        display: none;
+    }
+
+    .block-about{
+        .contact-listing{
+            display: none;
+        }
+    }
 }
