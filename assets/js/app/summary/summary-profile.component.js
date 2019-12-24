@@ -32,6 +32,7 @@
             vm.accomplishmentsByType = [];
             vm.favoriteAccomplishments = [];
             vm.numberOfItems = 0;
+            vm.loading = true;
 
             vm.$onInit = () => {
                 getProfile();
@@ -171,6 +172,7 @@
                     //vm.profile.certificates = [];
                     //vm.profile.experiences = [];
                     setNumberOfItems();
+                    vm.loading = false;
                 });
             }
 

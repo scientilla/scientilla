@@ -1,7 +1,14 @@
 <div class="summary-profile-container profile">
+    <div
+        class="loading-container"
+        ng-if="vm.loading">
+        <span>Loading ...</span>
+        <i class="fas fa-spinner fa-spin"></i>
+    </div>
     <ul
         class="profile-blocks top"
-        ng-class="vm.profile.description || vm.profile.interests ? 'has-about-me' : 'has-not-about-me'">
+        ng-class="vm.profile.description || vm.profile.interests ? 'has-about-me' : 'has-not-about-me'"
+        ng-if="!vm.loading">
         <li class="block-basic-info">
             <ul class="card-container">
                 <li class="main-card">
@@ -76,7 +83,8 @@
     </ul>
     <ul
         class="profile-blocks bottom"
-        ng-class="'items-' + vm.numberOfItems">
+        ng-class="'items-' + vm.numberOfItems"
+        ng-if="!vm.loading">
         <li
             class="block-experiences"
             ng-if="vm.profile.experiences && vm.profile.experiences.length > 0">
