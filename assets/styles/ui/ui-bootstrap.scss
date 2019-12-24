@@ -2,7 +2,7 @@
     min-width: auto;
     margin-top: 1rem !important;
     padding: 0.5rem;
-    border: 1px solid $gray-300;
+    border: 1px solid $dusty-gray;
 
     svg{
         width: auto;
@@ -10,17 +10,38 @@
     }
 
     .btn-secondary{
-        border: 1px solid $base-gray;
+        border: 1px solid $dusty-gray;
         background: none;
         color: $black;
 
-        &.active{
-            border: 1px solid $gray-300 !important;
-            background: $white !important;
-
-            .text-info{
-                color: $success-color !important;
+        &:not(:disabled){
+            &:not(.disabled){
+                &:active,
+                &.active{
+                    color: $black;
+                    background: none;
+                    border: 1px solid $dusty-gray;
+                }
             }
+        }
+
+        &:hover{
+            background: $gray-200;
+        }
+    }
+
+    .text-muted{
+        color: $gray-500 !important;
+    }
+
+    // Selected date
+    .btn-info{
+        border: 1px solid $primary-color !important;
+        background: $primary-color !important;
+        color: color-yiq($primary-color) !important;
+
+        .text-muted{
+            color: $gray-100 !important;
         }
     }
 
