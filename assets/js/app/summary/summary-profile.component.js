@@ -226,8 +226,16 @@
                                         <li ng-repeat="experience in experiences">
                                             <span class="job-title">{{ experience.jobTitle }}</span>
                                             <span class="period">{{ experience.from | date: 'dd/MM/yyyy' }} - {{ experience.to ? (experience.to | date: 'dd/MM/yyyy') : 'present' }}</span>
-                                            <span class="location">{{ experience.location }}, {{ experience.country }}</span>
-                                            <div class="description">{{ experience.jobDescription }}</div>
+                                            <span
+                                                class="location"
+                                                ng-if="experience.location || experience.country">
+                                                {{ vm.joinStrings([experience.location, experience.country], ', ') }}
+                                            </span>
+                                            <div
+                                                class="description"
+                                                ng-if="experience.jobDescription">
+                                                {{ experience.jobDescription }}
+                                            </div>
                                         </li>
                                     </ul>
                                 </li>
@@ -263,7 +271,11 @@
                                     <span class="institute">{{ education.institution }}</span>
                                     <span class="title">{{ education.title }}</span>
                                     <span class="period">{{ education.from | date: 'dd/MM/yyyy' }} - {{ education.to ? (education.to | date: 'dd/MM/yyyy') : 'present' }}</span>
-                                    <span class="location">{{ education.location }} - {{ education.country }}</span>
+                                    <span
+                                        class="location"
+                                        ng-if="education.location || education.country">
+                                        {{ vm.joinStrings([education.location, education.country], ' - ') }}
+                                    </span>
                                 </li>
                             </ul>
                         </div>`,
@@ -295,8 +307,12 @@
                             <ul class="certificate-listing">
                                 <li ng-repeat="certificate in vm.profile.certificates">
                                     <span class="title">{{ certificate.title }}</span>
-                                    <div class="description">{{ certificate.description }}</div>
-                                    <span class="date">{{ certificate.date | date: 'dd/MM/yyyy' }}</span>
+                                    <div
+                                        class="description"
+                                        ng-if="certificate.description">{{ certificate.description }}</div>
+                                    <span
+                                        class="date"
+                                        ng-if="certificate.date">{{ certificate.date | date: 'dd/MM/yyyy' }}</span>
                                 </li>
                             </ul>
                         </div>`,

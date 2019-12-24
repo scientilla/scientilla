@@ -8,7 +8,7 @@
     <li ng-if="vm.profile.telephone">
         <a href="#"><i class="fas fa-phone"></i> {{ vm.profile.telephone }}</a>
     </li>
-    <li ng-if="vm.profile.socials">
+    <li ng-if="vm.profile.socials" class="socials-list-item">
         <ul class="socials-listing">
             <li ng-if="vm.profile.socials.linkedin">
                 <a ng-href="{{ vm.profile.socials.linkedin }}" target="_blank">
