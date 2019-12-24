@@ -612,6 +612,10 @@ async function importUserContracts(email = defaultEmail) {
 
         const responseData = await waitForSuccesfulRequest(reqOptions);
 
+        if (_.isEmpty(responseData)) {
+            return;
+        }
+
         let contracts = [];
 
         if (email !== defaultEmail) {
