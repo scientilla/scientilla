@@ -712,7 +712,7 @@ async function importUserContracts(email = defaultEmail) {
                         { id: researchEntityData.id },
                         { imported_data: JSON.stringify(contract) }
                     );
-                    updatedResearchEntityDataItems.push(researchEntityData);
+                    updatedResearchEntityDataItems.push(researchEntityData[0]);
                 } else {
                     upToDateResearchEntityDataItems.push(researchEntityData);
                 }
@@ -790,7 +790,7 @@ async function importUserContracts(email = defaultEmail) {
                 if (user) {
                     return user.username;
                 } else {
-                    sails.log.debug(user);
+                    return 'User not found!';
                 }
             })).then(usernames => {
                 sails.log.info('Email address(es): ' + usernames.join(', '));
@@ -802,7 +802,7 @@ async function importUserContracts(email = defaultEmail) {
                 if (user) {
                     return user.username;
                 } else {
-                    sails.log.debug(user);
+                    return 'User not found!';
                 }
             })).then(usernames => {
                 sails.log.info('Email address(es): ' + usernames.join(', '));
@@ -817,7 +817,7 @@ async function importUserContracts(email = defaultEmail) {
                 if (user) {
                     return user.username;
                 } else {
-                    sails.log.debug(item);
+                    return 'User not found!';
                 }
             })).then(usernames => {
                 sails.log.info('Email address(es): ' + usernames.join(', '));
@@ -832,7 +832,7 @@ async function importUserContracts(email = defaultEmail) {
                 if (user) {
                     return user.username;
                 } else {
-                    sails.log.debug(user);
+                    return 'User not found!';
                 }
             })).then(usernames => {
                 sails.log.info('Email address(es): ' + usernames.join(', '));
