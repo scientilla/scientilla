@@ -619,26 +619,34 @@
     }
 }
 
+@include media-breakpoint-between(xl, xxl) {
+    .profile {
+        .profile-blocks {
+            &.top {
+                &.has-about-me {
+                    & > li {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 4);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 5, 1, 4);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(1, 9, 1, 4);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 @include media-breakpoint-up(xl) {
     .profile {
         .profile-blocks {
             &.top{
-                &.has-about-me{
-                    & > li{
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 5);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 6, 1, 5);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(1, 11, 1, 2);
-                        }
-                    }
-                }
-
                 &.has-not-about-me{
                     & > li{
                         &:nth-child(1) {
@@ -657,7 +665,6 @@
                 &.items-1{
                     & > li{
                         &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 6);
                             @include set-grid(1, 1, 1, 6);
                         }
                     }
@@ -756,6 +763,30 @@
                         &:nth-child(5) {
                             @include set-grid(2, 1, 1, 9);
                             margin-bottom: 0px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(xxl) {
+    .profile {
+        .profile-blocks {
+            &.top {
+                &.has-about-me {
+                    & > li {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 5);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 6, 1, 5);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(1, 11, 1, 2);
                         }
                     }
                 }
