@@ -162,6 +162,26 @@
                 });
         };
 
+        service.openProfileForm = function () {
+
+            const scopeVars = {
+                profile: {}
+            };
+
+            return openModal(
+                `<profile-form
+                    profile="vm.profile"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"></profile-form>`,
+                scopeVars,
+                {
+                    size: 'md',
+                    backdrop: 'static',
+                    keyboard: false
+                });
+        };
+
         service.openDocumentComparisonForm = function (document, duplicates, category) {
 
             const scopeVars = {

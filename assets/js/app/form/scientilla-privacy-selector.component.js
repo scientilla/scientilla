@@ -11,7 +11,8 @@
                 contextObject: '<?',
                 contextString: '@?',
                 model: '=?',
-                disableInvisible: '<?'
+                disableInvisible: '<?',
+                onlyPublic: '<?'
             }
         });
 
@@ -20,7 +21,7 @@
     function scientillaPrivacySelector(ProfileService) {
         const vm = this;
 
-        const defaultOptions = ['locked', 'public', 'invisible'];
+        let defaultOptions = ['locked', 'public', 'invisible'];
         const defaultOption = 'locked';
 
         vm.$onInit = function () {
@@ -55,6 +56,17 @@
             }
 
             vm.options = defaultOptions;
+
+            if (typeof vm.onlyPublic !== 'undefined' || vm.onlyPublic === true) {
+                vm.options = ['public'];
+                vm.model = 'public';
+
+                if (typeof vm.cssClass !== 'undefined') {
+                    vm.cssClass += ' only-public';
+                } else {
+                    vm.cssClass = 'only-public';
+                }
+            }
         };
 
         vm.changeOption = $event => {
@@ -82,7 +94,7 @@
         };
 
         vm.getTooltipText = () => {
-            return ProfileService.getPrivacyTooltipText({disableInvisible: vm.disableInvisible});
+            return ProfileService.getPrivacyTooltipText({onlyPublic: vm.onlyPublic});
         };
     }
 

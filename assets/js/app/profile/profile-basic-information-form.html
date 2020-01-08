@@ -15,8 +15,7 @@
                 <scientilla-privacy-selector
                     css-class="no-label"
                     context-object="element.context"
-                    model="vm.profile[element.model][key].privacy"
-                    disable-invisible="true"></scientilla-privacy-selector>
+                    only-public="true"></scientilla-privacy-selector>
             </li>
         </ul>
     </ng-container>
@@ -34,8 +33,7 @@
             <li>
                 <scientilla-privacy-selector
                     context-object="item.model"
-                    model="vm.profile[item.model].privacy"
-                    disable-invisible="item.disableInvisible"></scientilla-privacy-selector>
+                    only-public="true"></scientilla-privacy-selector>
             </li>
         </ul>
     </ng-container>

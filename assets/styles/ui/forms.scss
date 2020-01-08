@@ -183,6 +183,14 @@ label{
         margin-top: 0px;
     }
 
+    &.only-public{
+        input[type='radio'] {
+            & + span {
+                cursor: default;
+            }
+        }
+    }
+
     & > li {
         display: block;
     }

@@ -40,6 +40,10 @@
                 return 'Set the privacy of this field to public, only for Scientilla users';
             }
 
+            if (typeof(options.onlyPublic) !== 'undefined' || options.onlyPublic === true) {
+                return 'This field can only be public!';
+            }
+
             return 'Set the privacy of this field to public, only for Scientilla users or hidden';
         }
 

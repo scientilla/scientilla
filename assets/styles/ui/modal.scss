@@ -72,6 +72,11 @@
         }
     }
 
+    .modal-md{
+        max-width: 992px;
+        width: calc(100% - 3rem);
+    }
+
     .modal-lg{
         max-width: 1200px;
         width: calc(100% - 3rem);

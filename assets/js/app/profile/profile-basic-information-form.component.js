@@ -29,8 +29,7 @@
                 vm.basicInformation.push({
                     label: 'Username (Email)',
                     value: vm.profile.username.value,
-                    model: 'username',
-                    disableInvisible: true
+                    model: 'username'
                 });
             }
 
@@ -38,8 +37,7 @@
                 vm.basicInformation.push({
                     label: 'Name',
                     value: vm.profile.name.value,
-                    model: 'name',
-                    disableInvisible: true
+                    model: 'name'
                 });
             }
 
@@ -47,8 +45,7 @@
                 vm.basicInformation.push({
                     label: 'Surname',
                     value: vm.profile.surname.value,
-                    model: 'surname',
-                    disableInvisible: true
+                    model: 'surname'
                 });
             }
 
@@ -56,8 +53,7 @@
                 vm.basicInformation.push({
                     label: 'Job title',
                     value: vm.profile.jobTitle.value,
-                    model: 'jobTitle',
-                    disableInvisible: true
+                    model: 'jobTitle'
                 });
             }
 
@@ -65,8 +61,7 @@
                 vm.basicInformation.push({
                     label: 'Phone',
                     value: vm.profile.phone.value,
-                    model: 'phone',
-                    disableInvisible: true
+                    model: 'phone'
                 });
             }
 
@@ -77,8 +72,7 @@
                     items.push({
                         value: center.value,
                         context: 'centers[' + i + ']',
-                        model: 'centers',
-                        disableInvisible: true
+                        model: 'centers'
                     });
                 }
                 vm.basicInformation.push({
@@ -95,8 +89,7 @@
                     items.push({
                         value: facility.value,
                         context: 'facilities[' + i + ']',
-                        model: 'facilities',
-                        disableInvisible: true
+                        model: 'facilities'
                     });
                 }
                 vm.basicInformation.push({
@@ -113,8 +106,7 @@
                     items.push({
                         value: researchLine.value,
                         context: 'researchLines[' + i + ']',
-                        model: 'researchLines',
-                        disableInvisible: true
+                        model: 'researchLines'
                     });
                 }
                 vm.basicInformation.push({
@@ -124,12 +116,14 @@
                 });
             }
 
-            if (_.has(vm.profile, 'administrativeOrganization.value') && _.has(vm.profile, 'administrativeOrganization.privacy')) {
+            if (
+                _.has(vm.profile, 'administrativeOrganization.value') &&
+                _.has(vm.profile, 'administrativeOrganization.privacy')
+            ) {
                 vm.basicInformation.push({
                     label: 'Administrative Organization',
                     value: vm.profile.administrativeOrganization.value,
-                    model: 'administrativeOrganization',
-                    disableInvisible: true
+                    model: 'administrativeOrganization'
                 });
             }
 
@@ -137,8 +131,7 @@
                 vm.basicInformation.push({
                     label: 'Office',
                     value: vm.profile.office.value,
-                    model: 'office',
-                    disableInvisible: true
+                    model: 'office'
                 });
             }
         }

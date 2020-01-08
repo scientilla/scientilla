@@ -114,10 +114,15 @@
                                     uib-dropdown-menu
                                     class="dropdown-menu dropdown-menu-right">
                                     <li>
+                                        <button
+                                            class="dropdown-item"
+                                            ng-click="vm.editUserProfile()">
+                                            My profile modal
+                                        </button>
                                         <a
                                             ng-href="{{ vm.getUrl('users/edit') }}"
                                             class="dropdown-item">
-                                            My profile
+                                            My profile view
                                         </a>
                                     </li>
                                     <li>

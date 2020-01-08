@@ -38,6 +38,7 @@
         vm.showWizardVisible = showWizardVisible;
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
+        vm.editUserProfile = editUserProfile;
         vm.getUrl = getUrl;
         vm.originalUser = {};
 
@@ -115,6 +116,10 @@
                 .then(function (subResearchEntity) {
                     vm.subResearchEntity = subResearchEntity;
                 });
+        }
+
+        function editUserProfile() {
+            ModalService.openProfileForm();
         }
 
         function showWizardVisible() {

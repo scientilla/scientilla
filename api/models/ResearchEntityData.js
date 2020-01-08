@@ -783,6 +783,7 @@ module.exports = {
         // We return an object with the profile, the error count and the message.
         return {
             profile: profileWithErrors,
+            errors: errors,
             count: count,
             message: message
         };
