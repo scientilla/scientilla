@@ -80,6 +80,20 @@ function initializeOptions(options) {
     return options;
 }
 
+function insertIntoArray(arr, value) {
+
+    return arr.reduce((result, element, index, array) => {
+
+        result.push(element);
+
+        if (index < array.length - 1) {
+            result.push(value);
+        }
+
+        return result;
+    }, []);
+}
+
 module.exports = {
     toPDF,
     toDoc
@@ -259,7 +273,6 @@ async function toPDF(researchEntityId, options = {}) {
 
         for (let i = 0; i < documents.length; i++) {
             const document = documents[i];
-            const stack = [];
 
             if (!_.isEmpty(document)) {
                 if (i > 0) {
@@ -268,28 +281,44 @@ async function toPDF(researchEntityId, options = {}) {
                     });
                 }
 
+                const documentText = [];
+                let subText = [];
+
+                if (!_.isEmpty(document.authorsStr)) {
+                    documentText.push(document.authorsStr);
+                }
+
+                if (!_.isEmpty(document.year)) {
+                    documentText.push(' (' + document.year + '). ');
+                }
+
                 if (!_.isEmpty(document.title)) {
-                    stack.push({
-                        text: document.title,
-                        style: 'bold'
-                    });
+                    subText.push(document.title);
                 }
 
                 if (!_.isEmpty(document.source)) {
-                    stack.push({
-                        text: 'Document source: ' + document.source.title,
+                    subText.push({
+                        text: document.source.title,
+                        style: 'italics'
                     });
                 }
 
-                if (!_.isEmpty(document.doi)) {
-                    stack.push({
-                        text: 'Doi: ' + document.doi,
-                    });
+                if (!_.isEmpty(document.volume)) {
+                    subText.push(document.volume);
+                }
+
+                if (!_.isEmpty(document.pages)) {
+                    subText.push(document.pages);
+                }
+
+                if (subText.length > 0) {
+                    subText = insertIntoArray(subText, ', ');
+                    subText.push('.');
                 }
 
                 text.push({
                     unbreakable: true,
-                    stack: stack,
+                    text: _.concat(documentText, subText),
                     margin: [20,0,0,0]
                 });
             }
@@ -357,7 +386,8 @@ async function toPDF(researchEntityId, options = {}) {
             },
             OpenSans: {
                 normal: 'assets/fonts/OpenSans-Regular.ttf',
-                bold: 'assets/fonts/OpenSans-Bold.ttf'
+                bold: 'assets/fonts/OpenSans-Bold.ttf',
+                italics: 'assets/fonts/OpenSans-RegularItalic.ttf'
             },
             FontAwesome: {
                 normal: 'assets/fonts/fa-regular-400.ttf',
@@ -386,81 +416,132 @@ async function toPDF(researchEntityId, options = {}) {
 
             if (!_.isEmpty(profile.jobTitle)) {
                 basicProfile.push({
-                    text: profile.jobTitle
+                    text: [
+                        {
+                            text: 'Job title: ',
+                            style: 'bold'
+                        },
+                        profile.jobTitle
+                    ]
                 });
             }
 
             if (!_.isEmpty(profile.centers)) {
-                basicProfile.push({
-                    text: ' ',
-                    fontSize: 5
-                });
 
-                for (let i = 0; i < profile.centers.length; i++) {
-                    const center = profile.centers[i];
-                    basicProfile.push({
-                        text: center
-                    });
+                let title = 'Center: ';
+                if (profile.centers.length > 1) {
+                    title = 'Centers: ';
                 }
+
+                basicProfile.push({
+                    text: [
+                        {
+                            text: title,
+                            style: 'bold'
+                        },
+                        concatStrings(profile.centers)
+                    ]
+                });
             }
 
             if (!_.isEmpty(profile.researchLines)) {
-                basicProfile.push({
-                    text: ' ',
-                    fontSize: 5
-                });
 
-                for (let i = 0; i < profile.researchLines.length; i++) {
-                    const researchLine = profile.researchLines[i];
-                    basicProfile.push({
-                        text: researchLine
-                    });
+                let title = 'Line: ';
+                if (profile.researchLines.length > 1) {
+                    title = 'Lines: ';
                 }
+
+                basicProfile.push({
+                    text: [
+                        {
+                            text: title,
+                            style: 'bold'
+                        },
+                        concatStrings(profile.researchLines)
+                    ]
+                });
+            }
+
+            if (!_.isEmpty(profile.facilities)) {
+                let title = 'Facility: ';
+                if (profile.facilities.length > 1) {
+                    title = 'Facilities: ';
+                }
+
+                basicProfile.push({
+                    text: [
+                        {
+                            text: title,
+                            style: 'bold'
+                        },
+                        concatStrings(profile.facilities)
+                    ]
+                });
             }
 
             if (!_.isEmpty(profile.administrativeOrganization)) {
                 basicProfile.push({
-                    text: profile.administrativeOrganization
+                    text: [
+                        {
+                            text: 'Administrative organization: ',
+                            style: 'bold'
+                        },
+                        profile.administrativeOrganization
+                    ]
                 });
             }
 
             if (!_.isEmpty(profile.office)) {
                 basicProfile.push({
-                    text: profile.office
+                    text: [
+                        {
+                            text: 'Office: ',
+                            style: 'bold'
+                        },
+                        profile.office
+                    ]
                 });
             }
 
             if (!_.isEmpty(profile.position)) {
                 basicProfile.push({
-                    text: profile.position
+                    text: [
+                        {
+                            text: 'Position: ',
+                            style: 'bold'
+                        },
+                        profile.position
+                    ]
                 });
             }
 
             if (!_.isEmpty(profile.role)) {
                 basicProfile.push({
-                    text: profile.role
-                });
-            }
-
-            if (!_.isEmpty(profile.facility)) {
-                basicProfile.push({
-                    text: profile.facility
+                    text: [
+                        {
+                            text: 'Role: ',
+                            style: 'bold'
+                        },
+                        profile.role
+                    ]
                 });
             }
 
             if (!_.isEmpty(profile.titles)) {
-                basicProfile.push({
-                    text: ' ',
-                    fontSize: 5
-                });
-
-                for (let i = 0; i < profile.titles.length; i++) {
-                    const title = profile.titles[i];
-                    basicProfile.push({
-                        text: title,
-                        style: 'lighten'
-                    });
+                let title = 'Title: ';
+                if (profile.titles.length > 1) {
+                    title = 'Titles: ';
                 }
+
+                basicProfile.push({
+                    text: [
+                        {
+                            text: title,
+                            style: 'bold'
+                        },
+                        concatStrings(profile.titles)
+                    ]
+                });
             }
 
             basicProfile.push({
@@ -978,6 +1059,9 @@ async function toPDF(researchEntityId, options = {}) {
             bold: {
                 bold: true
             },
+            italics: {
+                italics: true
+            },
             brands: {
                 italics: true
             },
@@ -1094,21 +1178,51 @@ async function toDoc(researchEntityId, options = {}) {
         }
 
         if (!_.isEmpty(profile.centers)) {
-            for (let i = 0; i < profile.centers.length; i++) {
-                const center = profile.centers[i];
-                baseProfile.push(
-                    new TextRun(center).break()
-                );
+            let title = 'Center: ';
+            if (profile.centers.length > 1) {
+                title = 'Centers: ';
             }
+            baseProfile.push(
+                new TextRun({
+                    text: title,
+                    bold: true
+                }).break()
+            );
+            baseProfile.push(
+                new TextRun(concatStrings(profile.centers))
+            );
         }
 
         if (!_.isEmpty(profile.researchLines)) {
-            for (let i = 0; i < profile.researchLines.length; i++) {
-                const researchLine = profile.researchLines[i];
-                baseProfile.push(
-                    new TextRun(researchLine).break()
-                );
+            let title = 'Line: ';
+            if (profile.researchLines.length > 1) {
+                title = 'Lines: ';
             }
+            baseProfile.push(
+                new TextRun({
+                    text: title,
+                    bold: true
+                }).break()
+            );
+            baseProfile.push(
+                new TextRun(concatStrings(profile.researchLines))
+            );
+        }
+
+        if (!_.isEmpty(profile.facilities)) {
+            let title = 'Facility: ';
+            if (profile.facilities.length > 1) {
+                title = 'Facilities: ';
+            }
+            baseProfile.push(
+                new TextRun({
+                    text: title,
+                    bold: true
+                }).break()
+            );
+            baseProfile.push(
+                new TextRun(concatStrings(profile.facilities))
+            );
         }
 
         if (!_.isEmpty(profile.administrativeOrganization)) {
@@ -1153,15 +1267,6 @@ async function toDoc(researchEntityId, options = {}) {
             );
 
             baseProfile.push(new TextRun(profile.role));
-        }
-
-        if (!_.isEmpty(profile.facilities)) {
-            for (let i = 0; i < profile.facilities.length; i++) {
-                const facility = profile.facilities[i];
-                baseProfile.push(
-                    new TextRun(facility).break()
-                );
-            }
         }
 
         const contacts = [];
@@ -1503,52 +1608,89 @@ async function toDoc(researchEntityId, options = {}) {
 
                     if (!_.isEmpty(document) &&
                         (
+                            !_.isEmpty(document.authorsStr) ||
+                            !_.isEmpty(document.year) ||
                             !_.isEmpty(document.title) ||
                             !_.isEmpty(document.source) ||
-                            !_.isEmpty(document.doi)
+                            !_.isEmpty(document.volume) ||
+                            !_.isEmpty(document.pages)
                         )
                     ) {
-                        const children = [];
+                        const documentText = [];
+                        let subText = [];
 
-                        if (!_.isEmpty(document.title)) {
-                            children.push(
+                        if (i > 0) {
+                            documentText.push(
+                                new TextRun({}).break()
+                            );
+                        }
+
+                        if (!_.isEmpty(document.authorsStr)) {
+                            documentText.push(
                                 new TextRun({
-                                    text: document.title,
-                                    bold: true
+                                    text: document.authorsStr
                                 })
                             );
+                        }
 
-                            children.push(
-                                new TextRun({}).break()
+                        if (!_.isEmpty(document.year)) {
+                            documentText.push(
+                                new TextRun({
+                                    text: ' (' + document.year + '). '
+                                })
+                            );
+                        }
+
+                        if (!_.isEmpty(document.title)) {
+                            subText.push(
+                                new TextRun({
+                                    text: document.title
+                                })
                             );
                         }
 
                         if (!_.isEmpty(document.source)) {
-                            children.push(
+                            subText.push(
                                 new TextRun({
-                                    text: 'Document source: ' + document.source.title
+                                    text: document.source.title,
+                                    italics: true
                                 })
-                            );
-
-                            children.push(
-                                new TextRun({}).break()
                             );
                         }
 
-                        if (!_.isEmpty(document.doi)) {
-                            children.push(
+                        if (!_.isEmpty(document.volume)) {
+                            subText.push(
                                 new TextRun({
-                                    text: 'Doi: ' + document.doi
+                                    text: document.volume
+                                })
+                            );
+                        }
+
+                        if (!_.isEmpty(document.pages)) {
+                            subText.push(
+                                new TextRun({
+                                    text: document.pages
+                                })
+                            );
+                        }
+
+                        if (subText.length > 0) {
+                            subText = insertIntoArray(
+                                subText,
+                                new TextRun({
+                                    text: ', '
                                 })
                             );
 
-                            children.push(
-                                new TextRun({}).break()
+                            subText.push(
+                                new TextRun({
+                                    text: '.'
+                                })
                             );
                         }
 
                         const paragraph = new Paragraph({
-                            children: children,
+                            children: _.concat(documentText, subText),
                             indent: {
                                 left: 360,
                             }
