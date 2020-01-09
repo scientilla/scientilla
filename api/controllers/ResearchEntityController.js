@@ -92,7 +92,8 @@ module.exports = {
    async exportProfile(req, res) {
         const researchEntityId = parseInt(req.params.researchEntityId, 10);
         const type = req.body.type;
-        const string = await ResearchEntityData.exportProfile(researchEntityId, type);
+        const options = req.body.options;
+        const string = await ResearchEntityData.exportProfile(researchEntityId, type, options);
         res.set('Content-Type', 'application/octet-stream');
         res.send(string);
     },

@@ -61,6 +61,82 @@
         <li class="block-export">
             <div class="profile-block">
                 <h2 class="block-title">Export</h2>
+
+                <ul class="export-options">
+                    <li>
+                        <label class="form-checkbox">
+                            <input
+                                type="checkbox"
+                                ng-model="vm.exportOptions.basic">
+                            <span>Basic information</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label class="form-checkbox">
+                            <input
+                                type="checkbox"
+                                ng-model="vm.exportOptions.socials">
+                            <span>Socials</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label class="form-checkbox">
+                            <input
+                                type="checkbox"
+                                ng-model="vm.exportOptions.about">
+                            <span>About me</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label class="form-checkbox">
+                            <input
+                                type="checkbox"
+                                ng-model="vm.exportOptions.experiences">
+                            <span>Experiences</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label class="form-checkbox">
+                            <input
+                                type="checkbox"
+                                ng-model="vm.exportOptions.education">
+                            <span>Education</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label class="form-checkbox">
+                            <input
+                                type="checkbox"
+                                ng-model="vm.exportOptions.certificates">
+                            <span>Certificates</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label class="form-checkbox">
+                            <input
+                                type="checkbox"
+                                ng-model="vm.exportOptions.skills">
+                            <span>Skills</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label class="form-checkbox">
+                            <input
+                                type="checkbox"
+                                ng-model="vm.exportOptions.documents">
+                            <span>Documents</span>
+                        </label>
+                    </li>
+                    <li>
+                        <label class="form-checkbox">
+                            <input
+                                type="checkbox"
+                                ng-model="vm.exportOptions.accomplishments">
+                            <span>Accomplishments</span>
+                        </label>
+                    </li>
+                </ul>
+
                 <p>Export your profile to:</p>
                 <ul>
                     <li>

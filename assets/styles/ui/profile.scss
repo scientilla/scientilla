@@ -121,6 +121,14 @@
         .btn{
             width: 100%;
         }
+
+        .export-options{
+            margin-bottom: 2rem;
+
+            & > li{
+                margin-bottom: .5rem;
+            }
+        }
     }
 
     .block-experiences,

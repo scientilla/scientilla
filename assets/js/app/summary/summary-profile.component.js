@@ -34,6 +34,18 @@
             vm.numberOfItems = 0;
             vm.loading = true;
 
+            vm.exportOptions = {
+                basic: true,
+                socials: true,
+                about: true,
+                experiences: true,
+                education: true,
+                certificates: true,
+                skills: true,
+                documents: true,
+                accomplishments: true
+            };
+
             vm.$onInit = () => {
                 getProfile();
             };
@@ -364,7 +376,7 @@
 
             /* jshint ignore:start */
             vm.exportProfile = async (type) => {
-                const data = await ProfileService.exportProfile(AuthService.user, type);
+                const data = await ProfileService.exportProfile(AuthService.user, type, vm.exportOptions);
                 const a = document.createElement('a');
                 document.body.appendChild(a);
                 a.href = 'data:application/octet-stream;base64,' + data;

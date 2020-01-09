@@ -58,9 +58,10 @@
         }
 
         /* jshint ignore:start */
-        async function exportProfile(user, type) {
+        async function exportProfile(user, type, options = {}) {
             const data = {
-                type: type
+                type: type,
+                options: options
             };
             return Restangular.one('researchentities', user.researchEntity).one('profile').customPOST(data, 'export');
         }

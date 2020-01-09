@@ -794,17 +794,18 @@ module.exports = {
      *
      * @param {number}      researchEntityId
      * @param {string}      type
+     * @param {Object}      options
      *
      * @returns {Promise<Base64String \ Error message>}
      */
-    async exportProfile (researchEntityId, type) {
+    async exportProfile (researchEntityId, type, options = {}) {
         let result;
         switch(type) {
             case 'doc':
-                result = await Profile.toDoc(researchEntityId);
+                result = await Profile.toDoc(researchEntityId, options);
                 break;
             case 'pdf':
-                result = await Profile.toPDF(researchEntityId);
+                result = await Profile.toPDF(researchEntityId, options);
                 break;
             default:
                 result = 'Wrong request!';

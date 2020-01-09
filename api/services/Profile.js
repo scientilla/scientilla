@@ -40,12 +40,54 @@ function formatDate(date) {
     return dd + '/' + mm + '/' + yyyy;
 }
 
+function initializeOptions(options) {
+    if (!_.has(options, 'basic')) {
+        options.basic = true;
+    }
+
+    if (!_.has(options, 'socials')) {
+        options.socials = true;
+    }
+
+    if (!_.has(options, 'about')) {
+        options.about = true;
+    }
+
+    if (!_.has(options, 'experiences')) {
+        options.experiences = true;
+    }
+
+    if (!_.has(options, 'education')) {
+        options.education = true;
+    }
+
+    if (!_.has(options, 'certificates')) {
+        options.certificates = true;
+    }
+
+    if (!_.has(options, 'skills')) {
+        options.skills = true;
+    }
+
+    if (!_.has(options, 'documents')) {
+        options.documents = true;
+    }
+
+    if (!_.has(options, 'accomplishments')) {
+        options.accomplishments = true;
+    }
+
+    return options;
+}
+
 module.exports = {
     toPDF,
     toDoc
 };
 
-async function toPDF(researchEntityId) {
+async function toPDF(researchEntityId, options = {}) {
+
+    options = initializeOptions(options);
 
     let tmpText = '';
 
@@ -331,326 +373,340 @@ async function toPDF(researchEntityId) {
         const basicProfile = [];
 
         // Basic profile
-        tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
-        if (!_.isEmpty(tmpText)) {
-            basicProfile.push(
-                {
-                    text: tmpText,
-                    style: 'h1'
+        if (options.basic) {
+            tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
+            if (!_.isEmpty(tmpText)) {
+                basicProfile.push(
+                    {
+                        text: tmpText,
+                        style: 'h1'
+                    }
+                );
+            }
+
+            if (!_.isEmpty(profile.jobTitle)) {
+                basicProfile.push({
+                    text: profile.jobTitle
+                });
+            }
+
+            if (!_.isEmpty(profile.centers)) {
+                basicProfile.push({
+                    text: ' ',
+                    fontSize: 5
+                });
+
+                for (let i = 0; i < profile.centers.length; i++) {
+                    const center = profile.centers[i];
+                    basicProfile.push({
+                        text: center
+                    });
                 }
-            );
-        }
+            }
 
-        if (!_.isEmpty(profile.jobTitle)) {
-            basicProfile.push({
-                text: profile.jobTitle
-            });
-        }
+            if (!_.isEmpty(profile.researchLines)) {
+                basicProfile.push({
+                    text: ' ',
+                    fontSize: 5
+                });
 
-        if (!_.isEmpty(profile.centers)) {
+                for (let i = 0; i < profile.researchLines.length; i++) {
+                    const researchLine = profile.researchLines[i];
+                    basicProfile.push({
+                        text: researchLine
+                    });
+                }
+            }
+
+            if (!_.isEmpty(profile.administrativeOrganization)) {
+                basicProfile.push({
+                    text: profile.administrativeOrganization
+                });
+            }
+
+            if (!_.isEmpty(profile.office)) {
+                basicProfile.push({
+                    text: profile.office
+                });
+            }
+
+            if (!_.isEmpty(profile.position)) {
+                basicProfile.push({
+                    text: profile.position
+                });
+            }
+
+            if (!_.isEmpty(profile.role)) {
+                basicProfile.push({
+                    text: profile.role
+                });
+            }
+
+            if (!_.isEmpty(profile.facility)) {
+                basicProfile.push({
+                    text: profile.facility
+                });
+            }
+
+            if (!_.isEmpty(profile.titles)) {
+                basicProfile.push({
+                    text: ' ',
+                    fontSize: 5
+                });
+
+                for (let i = 0; i < profile.titles.length; i++) {
+                    const title = profile.titles[i];
+                    basicProfile.push({
+                        text: title,
+                        style: 'lighten'
+                    });
+                }
+            }
+
             basicProfile.push({
                 text: ' ',
                 fontSize: 5
             });
 
-            for (let i = 0; i < profile.centers.length; i++) {
-                const center = profile.centers[i];
+            // Contacts
+            if (!_.isEmpty(profile.username)) {
                 basicProfile.push({
-                    text: center
+                    text: [
+                        {
+                            text: '',
+                            style: 'fontAwesome'
+                        },
+                        ' ' + profile.username
+                    ]
                 });
             }
-        }
 
-        if (!_.isEmpty(profile.researchLines)) {
-            basicProfile.push({
-                text: ' ',
-                fontSize: 5
-            });
-
-            for (let i = 0; i < profile.researchLines.length; i++) {
-                const researchLine = profile.researchLines[i];
+            if (!_.isEmpty(profile.phone)) {
                 basicProfile.push({
-                    text: researchLine
+                    text: [
+                        {
+                            text: '',
+                            style: [
+                                'fontAwesome',
+                                'solid'
+                            ]
+                        },
+                        ' ' + profile.phone
+                    ]
                 });
             }
-        }
 
-        if (!_.isEmpty(profile.administrativeOrganization)) {
-            basicProfile.push({
-                text: profile.administrativeOrganization
-            });
-        }
-
-        if (!_.isEmpty(profile.office)) {
-            basicProfile.push({
-                text: profile.office
-            });
-        }
-
-        if (!_.isEmpty(profile.position)) {
-            basicProfile.push({
-                text: profile.position
-            });
-        }
-
-        if (!_.isEmpty(profile.role)) {
-            basicProfile.push({
-                text: profile.role
-            });
-        }
-
-        if (!_.isEmpty(profile.facility)) {
-            basicProfile.push({
-                text: profile.facility
-            });
-        }
-
-        if (!_.isEmpty(profile.titles)) {
-            basicProfile.push({
-                text: ' ',
-                fontSize: 5
-            });
-
-            for (let i = 0; i < profile.titles.length; i++) {
-                const title = profile.titles[i];
+            if (!_.isEmpty(profile.address)) {
                 basicProfile.push({
-                    text: title,
-                    style: 'lighten'
+                    text: [
+                        {
+                            text: '',
+                            style: [
+                                'fontAwesome',
+                                'solid'
+                            ]
+                        },
+                        ' ' + profile.address
+                    ]
                 });
             }
-        }
 
-        basicProfile.push({
-            text: ' ',
-            fontSize: 5
-        });
-
-        // Contacts
-        if (!_.isEmpty(profile.username)) {
-            basicProfile.push({
-                text: [
-                    {
-                        text: '',
-                        style: 'fontAwesome'
-                    },
-                    ' ' + profile.username
-                ]
-            });
-        }
-
-        if (!_.isEmpty(profile.phone)) {
-            basicProfile.push({
-                text: [
-                    {
-                        text: '',
-                        style: [
-                            'fontAwesome',
-                            'solid'
-                        ]
-                    },
-                    ' ' + profile.phone
-                ]
-            });
-        }
-
-        if (!_.isEmpty(profile.address)) {
-            basicProfile.push({
-                text: [
-                    {
-                        text: '',
-                        style: [
-                            'fontAwesome',
-                            'solid'
-                        ]
-                    },
-                    ' ' + profile.address
-                ]
-            });
-        }
-
-        if (!_.isEmpty(profile.website)) {
-            basicProfile.push({
-                text: [
-                    {
-                        text: '',
-                        style: [
-                            'fontAwesome',
-                            'solid'
-                        ]
-                    },
-                    ' ' + profile.website
-                ]
-            });
+            if (!_.isEmpty(profile.website)) {
+                basicProfile.push({
+                    text: [
+                        {
+                            text: '',
+                            style: [
+                                'fontAwesome',
+                                'solid'
+                            ]
+                        },
+                        ' ' + profile.website
+                    ]
+                });
+            }
         }
 
         // Socials
-        let socials = [];
-        if (!_.isEmpty(profile.socials && profile.socials.linkedin)) {
-            socials.push({
-                text: [
-                    {
-                        text: '',
-                        style: [
-                            'fontAwesome',
-                            'brands'
-                        ]
-                    },
-                    ' ' + profile.socials.linkedin
-                ]
-            });
+        if (options.socials) {
+            let socials = [];
+            if (!_.isEmpty(profile.socials && profile.socials.linkedin)) {
+                socials.push({
+                    text: [
+                        {
+                            text: '',
+                            style: [
+                                'fontAwesome',
+                                'brands'
+                            ]
+                        },
+                        ' ' + profile.socials.linkedin
+                    ]
+                });
+            }
+
+            if (!_.isEmpty(profile.socials && profile.socials.twitter)) {
+                socials.push({
+                    text: [
+                        {
+                            text: '',
+                            style: [
+                                'fontAwesome',
+                                'brands'
+                            ]
+                        },
+                        ' ' + profile.socials.twitter
+                    ]
+                });
+            }
+
+            if (!_.isEmpty(profile.socials && profile.socials.facebook)) {
+                socials.push({
+                    text: [
+                        {
+                            text: '',
+                            style: [
+                                'fontAwesome',
+                                'brands'
+                            ]
+                        },
+                        ' ' + profile.socials.facebook
+                    ]
+                });
+            }
+
+            if (!_.isEmpty(profile.socials && profile.socials.instagram)) {
+                socials.push({
+                    text: [
+                        {
+                            text: '',
+                            style: [
+                                'fontAwesome',
+                                'brands'
+                            ]
+                        },
+                        ' ' + profile.socials.instagram
+                    ]
+                });
+            }
+
+            if (!_.isEmpty(profile.socials && profile.socials.researchgate)) {
+                socials.push({
+                    text: [
+                        {
+                            text: '',
+                            style: [
+                                'fontAwesome',
+                                'brands'
+                            ]
+                        },
+                        ' ' + profile.socials.researchgate
+                    ]
+                });
+            }
+
+            if (!_.isEmpty(profile.socials && profile.socials.github)) {
+                socials.push({
+                    text: [
+                        {
+                            text: '',
+                            style: [
+                                'fontAwesome',
+                                'brands'
+                            ]
+                        },
+                        ' ' + profile.socials.github
+                    ]
+                });
+            }
+
+            if (!_.isEmpty(profile.socials && profile.socials.bitbucket)) {
+                socials.push({
+                    text: [
+                        {
+                            text: '',
+                            style: [
+                                'fontAwesome',
+                                'brands'
+                            ]
+                        },
+                        ' ' + profile.socials.bitbucket
+                    ]
+                });
+            }
+
+            if (!_.isEmpty(profile.socials && profile.socials.youtube)) {
+                socials.push({
+                    text: [
+                        {
+                            text: '',
+                            style: [
+                                'fontAwesome',
+                                'brands'
+                            ]
+                        },
+                        ' ' + profile.socials.youtube
+                    ]
+                });
+            }
+
+            if (!_.isEmpty(profile.socials && profile.socials.flickr)) {
+                socials.push({
+                    text: [
+                        {
+                            text: '',
+                            style: [
+                                'fontAwesome',
+                                'brands'
+                            ]
+                        },
+                        ' ' + profile.socials.flickr
+                    ]
+                });
+            }
+
+            if (!_.isEmpty(socials)) {
+                socials = _.chunk(socials, _.round(socials.length / 2));
+
+                basicProfile.push({
+                    text: ' ',
+                    fontSize: 5
+                });
+
+                basicProfile.push({
+                    columns: socials
+                });
+            }
         }
 
-        if (!_.isEmpty(profile.socials && profile.socials.twitter)) {
-            socials.push({
-                text: [
-                    {
-                        text: '',
-                        style: [
-                            'fontAwesome',
-                            'brands'
-                        ]
-                    },
-                    ' ' + profile.socials.twitter
-                ]
+        if (options.basic) {
+            content.push({
+                columns: [{
+                    width: '*',
+                    stack: basicProfile,
+                    margin: [0,0,20,0]
+                }, {
+                    image: 'assets/images/150.png',
+                    width: 100
+                }]
             });
+        } else {
+            if (!_.isEmpty(basicProfile)) {
+                content.push({
+                    stack: basicProfile
+                });
+            }
         }
 
-        if (!_.isEmpty(profile.socials && profile.socials.facebook)) {
-            socials.push({
-                text: [
-                    {
-                        text: '',
-                        style: [
-                            'fontAwesome',
-                            'brands'
-                        ]
-                    },
-                    ' ' + profile.socials.facebook
-                ]
-            });
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.instagram)) {
-            socials.push({
-                text: [
-                    {
-                        text: '',
-                        style: [
-                            'fontAwesome',
-                            'brands'
-                        ]
-                    },
-                    ' ' + profile.socials.instagram
-                ]
-            });
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.researchgate)) {
-            socials.push({
-                text: [
-                    {
-                        text: '',
-                        style: [
-                            'fontAwesome',
-                            'brands'
-                        ]
-                    },
-                    ' ' + profile.socials.researchgate
-                ]
-            });
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.github)) {
-            socials.push({
-                text: [
-                    {
-                        text: '',
-                        style: [
-                            'fontAwesome',
-                            'brands'
-                        ]
-                    },
-                    ' ' + profile.socials.github
-                ]
-            });
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.bitbucket)) {
-            socials.push({
-                text: [
-                    {
-                        text: '',
-                        style: [
-                            'fontAwesome',
-                            'brands'
-                        ]
-                    },
-                    ' ' + profile.socials.bitbucket
-                ]
-            });
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.youtube)) {
-            socials.push({
-                text: [
-                    {
-                        text: '',
-                        style: [
-                            'fontAwesome',
-                            'brands'
-                        ]
-                    },
-                    ' ' + profile.socials.youtube
-                ]
-            });
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.flickr)) {
-            socials.push({
-                text: [
-                    {
-                        text: '',
-                        style: [
-                            'fontAwesome',
-                            'brands'
-                        ]
-                    },
-                    ' ' + profile.socials.flickr
-                ]
-            });
-        }
-
-        if (!_.isEmpty(socials)) {
-            socials = _.chunk(socials, _.round(socials.length / 2));
-
-            basicProfile.push({
+        if (options.basic || options.socials) {
+            content.push({
                 text: ' ',
-                fontSize: 5
-            });
-
-            basicProfile.push({
-                columns: socials
+                fontSize: 20
             });
         }
-
-        content.push({
-            columns: [{
-                width: '*',
-                stack: basicProfile,
-                margin: [0,0,20,0]
-            }, {
-                image: 'assets/images/150.png',
-                width: 100
-            }]
-        });
-
-        content.push({
-            text: ' ',
-            fontSize: 20
-        });
 
         // About
-        if (!_.isEmpty(profile.description)) {
+        if (options.about && !_.isEmpty(profile.description)) {
             content.push({
                 unbreakable: true,
                 stack: [
@@ -665,7 +721,7 @@ async function toPDF(researchEntityId) {
         }
 
         // Interests
-        if (!_.isEmpty(profile.interests)) {
+        if (options.about && !_.isEmpty(profile.interests)) {
             content.push({
                 text: ' ',
                 fontSize: 10
@@ -688,7 +744,7 @@ async function toPDF(researchEntityId) {
         }
 
         // Experiences
-        if (!_.isEmpty(profile.experiences)) {
+        if (options.experiences && !_.isEmpty(profile.experiences)) {
             const experiences = _.groupBy(profile.experiences, 'company');
 
             content.push({
@@ -732,7 +788,7 @@ async function toPDF(researchEntityId) {
         }
 
         // Education
-        if (!_.isEmpty(profile.education)) {
+        if (options.education && !_.isEmpty(profile.education)) {
             const educationItems = profile.education;
 
             content.push({
@@ -763,7 +819,7 @@ async function toPDF(researchEntityId) {
         }
 
         // Certificates
-        if (!_.isEmpty(profile.certificates)) {
+        if (options.certificates && !_.isEmpty(profile.certificates)) {
             const certificates = profile.certificates;
 
             content.push({
@@ -794,7 +850,7 @@ async function toPDF(researchEntityId) {
         }
 
         // Skills
-        if (!_.isEmpty(profile.skillCategories)) {
+        if (options.skills && !_.isEmpty(profile.skillCategories)) {
 
             content.push({
                 unbreakable: true,
@@ -824,7 +880,7 @@ async function toPDF(researchEntityId) {
         }
 
         // Documents
-        if (!_.isEmpty(profile.documents)) {
+        if (options.documents && !_.isEmpty(profile.documents)) {
 
             const documents = _.groupBy(profile.documents, 'source.sourcetype');
 
@@ -860,7 +916,7 @@ async function toPDF(researchEntityId) {
         }
 
         // Accomplishments
-        if (!_.isEmpty(profile.accomplishments)) {
+        if (options.accomplishments && !_.isEmpty(profile.accomplishments)) {
 
             const accomplishments = _.groupBy(profile.accomplishments, 'type.label');
 
@@ -970,8 +1026,7 @@ async function toPDF(researchEntityId) {
             }
         };
 
-        const options = {};
-        const pdfDoc = printer.createPdfKitDocument(docDefinition, options);
+        const pdfDoc = printer.createPdfKitDocument(docDefinition, {});
         const stream = pdfDoc.pipe(new Base64Encode());
         pdfDoc.end();
 
@@ -985,9 +1040,11 @@ async function toPDF(researchEntityId) {
     });
 }
 
-async function toDoc(researchEntityId) {
+async function toDoc(researchEntityId, options = {}) {
     return new Promise(async (resolve) => {
         const doc = new Document();
+
+        options = initializeOptions(options);
 
         const image = await new Promise(async (resolve) => {
 
@@ -1582,80 +1639,84 @@ async function toDoc(researchEntityId) {
 
         let text = [];
 
-        tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
+        if (options.basic) {
+            tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
 
-        if (!_.isEmpty(tmpText)) {
-            text.push(
-                new Paragraph({
-                    text:  tmpText,
-                    heading: HeadingLevel.HEADING_1
-                })
-            );
-        }
+            if (!_.isEmpty(tmpText)) {
+                text.push(
+                    new Paragraph({
+                        text:  tmpText,
+                        heading: HeadingLevel.HEADING_1
+                    })
+                );
+            }
 
-        if (!_.isEmpty(baseProfile) && !_.isEmpty(profileImage)) {
-            text.push(
-                new Paragraph({
-                    children: _.concat(baseProfile, profileImage)
-                })
-            );
-        } else {
-            if (!_.isEmpty(baseProfile)) {
+            if (!_.isEmpty(baseProfile) && !_.isEmpty(profileImage)) {
+                text.push(
+                    new Paragraph({
+                        children: _.concat(baseProfile, profileImage)
+                    })
+                );
+            } else {
+                if (!_.isEmpty(baseProfile)) {
+                    text.push(
+                        new Paragraph({
+                            children: [
+                                baseProfile
+                            ]
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(profileImage)) {
+                    text.push(
+                        new Paragraph({
+                            children: [
+                                profileImage
+                            ]
+                        })
+                    );
+                }
+            }
+
+            if (!_.isEmpty(titles)) {
                 text.push(
                     new Paragraph({
                         children: [
-                            baseProfile
+                            new TextRun({
+                                text: 'Titles: ',
+                                bold: true
+                            }),
+                            new TextRun({
+                                text: titles.join(', ')
+                            }),
+
                         ]
                     })
                 );
             }
 
-            if (!_.isEmpty(profileImage)) {
+            if (!_.isEmpty(contacts)) {
                 text.push(
                     new Paragraph({
-                        children: [
-                            profileImage
-                        ]
+                        children: contacts
                     })
                 );
             }
         }
 
-        if (!_.isEmpty(titles)) {
-            text.push(
-                new Paragraph({
-                    children: [
-                        new TextRun({
-                            text: 'Titles: ',
-                            bold: true
-                        }),
-                        new TextRun({
-                            text: titles.join(', ')
-                        }),
-
-                    ]
-                })
-            );
-        }
-
-        if (!_.isEmpty(contacts)) {
-            text.push(
-                new Paragraph({
-                    children: contacts
-                })
-            );
-        }
-
-        if (!_.isEmpty(socials)) {
-            text.push(
-                new Paragraph({
-                    children: socials
-                })
-            );
+        if (options.socials) {
+            if (!_.isEmpty(socials)) {
+                text.push(
+                    new Paragraph({
+                        children: socials
+                    })
+                );
+            }
         }
 
         // About me
-        if (!_.isEmpty(profile.description)) {
+        if (options.about && !_.isEmpty(profile.description)) {
             text.push(
                 new Paragraph({
                     text: 'About me',
@@ -1672,7 +1733,7 @@ async function toDoc(researchEntityId) {
         }
 
         // Interests
-        if (!_.isEmpty(profile.interests)) {
+        if (options.about && !_.isEmpty(profile.interests)) {
             text.push(
                 new Paragraph({
                     text: 'Interests',
@@ -1684,7 +1745,7 @@ async function toDoc(researchEntityId) {
         }
 
         // Experiences
-        if (!_.isEmpty(experiences)) {
+        if (options.experiences && !_.isEmpty(experiences)) {
             text.push(
                 new Paragraph({
                     text: 'Experiences',
@@ -1700,7 +1761,7 @@ async function toDoc(researchEntityId) {
         }
 
         // Education
-        if (!_.isEmpty(education)) {
+        if (options.education && !_.isEmpty(education)) {
 
             text.push(
                 new Paragraph({
@@ -1717,7 +1778,7 @@ async function toDoc(researchEntityId) {
         }
 
         // Certificates
-        if (!_.isEmpty(certificates)) {
+        if (options.certificates && !_.isEmpty(certificates)) {
 
             text.push(
                 new Paragraph({
@@ -1734,7 +1795,7 @@ async function toDoc(researchEntityId) {
         }
 
         // Skills
-        if (!_.isEmpty(skills)) {
+        if (options.skills && !_.isEmpty(skills)) {
 
             text.push(
                 new Paragraph({
@@ -1747,7 +1808,7 @@ async function toDoc(researchEntityId) {
         }
 
         // Documents
-        if (!_.isEmpty(documents)) {
+        if (options.documents && !_.isEmpty(documents)) {
 
             text.push(
                 new Paragraph({
@@ -1760,7 +1821,7 @@ async function toDoc(researchEntityId) {
         }
 
         // Accomplishments
-        if (!_.isEmpty(accomplishments)) {
+        if (options.accomplishments && !_.isEmpty(accomplishments)) {
 
             text.push(
                 new Paragraph({
