@@ -133,6 +133,7 @@ module.exports.policies = {
         getHighImpactPublications: true,
         getFavoritePublications: true,
         getOralPresentations: true,
+        getProfile: true,
         getDisseminationTalks: true,
         getScientificTalks: true,
         getMBOOverallPerformance: true,

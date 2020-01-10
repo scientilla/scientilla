@@ -50,6 +50,16 @@ const schema = {
                 },
             }
         },
+        privacyPublic: {
+            type: 'object',
+            properties: {
+                privacy: {
+                    type: 'string',
+                    enum: ['public'],
+                    default: 'public'
+                },
+            }
+        },
         stringAndPrivacy: {
             type: 'object',
             properties: {
@@ -265,27 +275,27 @@ const schema = {
         }
     },
     properties: {
-        username: { $ref: '#/definitions/privacyLockedPublic' },
-        name: { $ref: '#/definitions/privacyLockedPublic' },
-        surname: { $ref: '#/definitions/privacyLockedPublic' },
-        jobTitle: { $ref: '#/definitions/privacyLockedPublic' },
-        phone: { $ref: '#/definitions/privacyLockedPublic' },
+        username: { $ref: '#/definitions/privacyPublic' },
+        name: { $ref: '#/definitions/privacyPublic' },
+        surname: { $ref: '#/definitions/privacyPublic' },
+        jobTitle: { $ref: '#/definitions/privacyPublic' },
+        phone: { $ref: '#/definitions/privacyPublic' },
         centers: {
             type: 'array',
-            items: { $ref: '#/definitions/privacyLockedPublic' },
+            items: { $ref: '#/definitions/privacyPublic' },
             default: []
         },
         researchLines: {
             type: 'array',
-            items: { $ref: '#/definitions/privacyLockedPublic' },
+            items: { $ref: '#/definitions/privacyPublic' },
             default: []
         },
-        administrativeOrganization: { $ref: '#/definitions/privacyLockedPublic' },
-        office: { $ref: '#/definitions/privacyLockedPublic' },
-        position: { $ref: '#/definitions/privacyLockedPublic' },
+        administrativeOrganization: { $ref: '#/definitions/privacyPublic' },
+        office: { $ref: '#/definitions/privacyPublic' },
+        position: { $ref: '#/definitions/privacyPublic' },
         facilities: {
             type: 'array',
-            items: { $ref: '#/definitions/privacyLockedPublic' },
+            items: { $ref: '#/definitions/privacyPublic' },
             default: []
         },
         socials: {
@@ -394,7 +404,7 @@ const schema = {
     }
 };
 
-function filterProperty(object) {
+function filterProperty(object, onlyPublic = false) {
     switch(true) {
         case _.isArray(object) :
 
@@ -403,7 +413,7 @@ function filterProperty(object) {
             if (len > 0) {
                 const array = [];
                 for (let i = 0; i < len; i++) {
-                    const filteredProperty = filterProperty(object[i]);
+                    const filteredProperty = filterProperty(object[i], onlyPublic);
                     if (filteredProperty) {
                         array.push(filteredProperty);
                     }
@@ -417,7 +427,10 @@ function filterProperty(object) {
             return false;
         case _.isObject(object) :
 
-            if (_.has(object, 'privacy') && object['privacy'] === 'invisible') {
+            if (_.has(object, 'privacy') && (
+                object['privacy'] === 'invisible' ||
+                onlyPublic && object['privacy'] !== 'public'
+            )) {
                 return false;
             }
 
@@ -431,7 +444,7 @@ function filterProperty(object) {
 
             const tmpObject = {};
             for (const property in object) {
-                const filteredProperty = filterProperty(object[property]);
+                const filteredProperty = filterProperty(object[property], onlyPublic);
                 if (filteredProperty) {
                     tmpObject[property] = filteredProperty;
                 }
@@ -449,12 +462,12 @@ function filterProperty(object) {
     }
 }
 
-function filterProfile(profile) {
+function filterProfile(profile, onlyPublic = false) {
 
     const object = {};
     // Loop over the properties of the object
     for (const property in profile) {
-        const filteredProperty = filterProperty(profile[property]);
+        const filteredProperty = filterProperty(profile[property], onlyPublic);
         if (filteredProperty) {
             object[property] = filteredProperty
         }
@@ -605,12 +618,14 @@ module.exports = {
      *
      * @returns {Object}
      */
-    async getProfile(researchEntityId) {
+    async getProfile(researchEntityId, onlyPublic = false) {
         const editProfile = await this.getEditProfile(researchEntityId);
 
         let profile = _.cloneDeep(editProfile);
 
-        profile = filterProfile(profile);
+        //sails.log.debug(util.inspect(profile, false, null, true));
+
+        profile = filterProfile(profile, onlyPublic);
 
         if (_.has(profile, 'displayNames')) {
             if (_.has(profile.displayNames, 'use') === true) {
@@ -626,62 +641,77 @@ module.exports = {
             delete profile.displayNames;
         }
 
+        let accomplishments = [];
+        let documents = [];
+
         const researchEntity = await ResearchEntity.findOne({id: researchEntityId});
         if (researchEntity && !researchEntity.isGroup()) {
 
-            const verifiedAccomplishments = await AccomplishmentVerify.find({researchEntity: researchEntityId});
-            const accomplishmentIds = verifiedAccomplishments.map(a => a.accomplishment);
-
-            // Check populates
-            const accomplishmentPopulates = [
-                'type',
-                'authors',
-                'affiliations',
-                'institutes',
-                'source',
-                'verified',
-                'verifiedUsers',
-                'verifiedGroups'
-            ];
-            const accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
-
-            if (!_.isEmpty(accomplishments) && editProfile.accomplishments.privacy !== 'invisible') {
-                profile.accomplishments = accomplishments;
-            } else {
-                delete profile.accomplishments;
-            }
-
-            const user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
-            if (!_.isEmpty(user.documents) && editProfile.documents.privacy !== 'invisible') {
-
-                const documentIds = user.documents.map(d => d.id);
+            if (
+                ( !onlyPublic && editProfile.accomplishments.privacy !== 'invisible' ) ||
+                ( onlyPublic && editProfile.accomplishments.privacy === 'public' )
+            ) {
+                const verifiedAccomplishments = await AccomplishmentVerify.find({researchEntity: researchEntityId});
+                const accomplishmentIds = verifiedAccomplishments.map(a => a.accomplishment);
 
                 // Check populates
-                const documentPopulates = [
-                    'source',
+                const accomplishmentPopulates = [
+                    'type',
                     'authors',
-                    'authorships',
-                    'groupAuthorships',
                     'affiliations',
-                    'sourceMetrics',
-                    'userTags',
-                    'tagLabels',
-                    'groupTags',
-                    'groupTagLabels',
                     'institutes',
-                    //'duplicates',
-                    'groups',
-                    'scopusDocumentMetadata',
-                    'openaireMetadata'
+                    'source',
+                    'verified',
+                    'verifiedUsers',
+                    'verifiedGroups'
                 ];
-                profile.documents = await Document.find({
-                    kind: DocumentKinds.VERIFIED, id: documentIds
-                }).populate(documentPopulates);
-            } else {
-                delete profile.documents;
+
+                accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
             }
+
+            if (
+                ( !onlyPublic && editProfile.documents.privacy !== 'invisible' ) ||
+                ( onlyPublic && editProfile.documents.privacy === 'public' )
+            ) {
+                const user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
+
+                if (!_.isEmpty(user.documents)) {
+                    const documentIds = user.documents.map(d => d.id);
+
+                    // Check populates
+                    const documentPopulates = [
+                        'source',
+                        'authors',
+                        'authorships',
+                        'groupAuthorships',
+                        'affiliations',
+                        'sourceMetrics',
+                        'userTags',
+                        'tagLabels',
+                        'groupTags',
+                        'groupTagLabels',
+                        'institutes',
+                        //'duplicates',
+                        'groups',
+                        'scopusDocumentMetadata',
+                        'openaireMetadata'
+                    ];
+                    documents = await Document.find({
+                        kind: DocumentKinds.VERIFIED, id: documentIds
+                    }).populate(documentPopulates);
+                }
+            }
+        }
+
+        if (!_.isEmpty(documents)) {
+            profile.documents = documents;
         } else {
             delete profile.documents;
+        }
+
+        if (!_.isEmpty(accomplishments)) {
+            profile.accomplishments = accomplishments;
+        } else {
             delete profile.accomplishments;
         }
 
