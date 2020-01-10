@@ -633,7 +633,16 @@ module.exports = {
             const accomplishmentIds = verifiedAccomplishments.map(a => a.accomplishment);
 
             // Check populates
-            const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'source', 'verifiedUsers', 'verifiedGroups'];
+            const accomplishmentPopulates = [
+                'type',
+                'authors',
+                'affiliations',
+                'institutes',
+                'source',
+                'verified',
+                'verifiedUsers',
+                'verifiedGroups'
+            ];
             const accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
 
             if (!_.isEmpty(accomplishments) && editProfile.accomplishments.privacy !== 'invisible') {
@@ -665,7 +674,9 @@ module.exports = {
                     'scopusDocumentMetadata',
                     'openaireMetadata'
                 ];
-                profile.documents = await Document.find({kind: DocumentKinds.VERIFIED, id: documentIds}).populate(documentPopulates);
+                profile.documents = await Document.find({
+                    kind: DocumentKinds.VERIFIED, id: documentIds
+                }).populate(documentPopulates);
             } else {
                 delete profile.documents;
             }

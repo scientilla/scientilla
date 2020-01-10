@@ -243,18 +243,16 @@
             <ul class="profile-blocks bottom items-2">
                 <li
                     class="block-documents"
-                    ng-if="vm.profile.documents && vm.profile.documents.length > 0"></profile-documents-block>
+                    ng-if="vm.profile.documents && vm.profile.documents.length > 0">
                     <profile-documents-block
                         profile="vm.profile"
                         documents-by-source-type="vm.documentsBySourceType"
-                        favorite-documents="vm.favoriteDocuments">
+                        favorite-documents="vm.favoriteDocuments"></profile-documents-block>
                 </li>
                 <li
                     class="block-accomplishments"
                     ng-if="vm.profile.accomplishments && vm.profile.accomplishments.length > 0">
-                    <profile-accomplishments-block
-                        profile="vm.profile"
-                        accomplishments-by-type="vm.accomplishmentsByType"></profile-accomplishments-block>
+                    <profile-accomplishments-block profile="vm.profile"></profile-accomplishments-block>
                 </li>
             </ul>
         </li>

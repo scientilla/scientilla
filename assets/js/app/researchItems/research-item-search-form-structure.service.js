@@ -144,7 +144,7 @@
                         {
                             favorites: {
                                 inputType: 'checkbox',
-                                label: 'Show only favorite documents',
+                                label: 'Show only favorite accomplishments',
                                 defaultValue: false,
                                 matchColumn: 'favorites',
                                 type: 'action'

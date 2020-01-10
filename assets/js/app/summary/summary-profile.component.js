@@ -27,10 +27,6 @@
             vm.experiencesByCompany = [];
             vm.favoriteSkills = [];
             vm.favoriteCertificates = [];
-            vm.documentsBySourceType = [];
-            vm.favoriteDocuments = [];
-            vm.accomplishmentsByType = [];
-            vm.favoriteAccomplishments = [];
             vm.numberOfItems = 0;
             vm.loading = true;
 
@@ -130,59 +126,13 @@
                 return [];
             }
 
-            function getDocumentsBySourceType(profile) {
-                if (!_.isEmpty(profile.documents)) {
-                    return _.groupBy(profile.documents, 'sourceTypeObj.label');
-                }
-
-                return [];
-            }
-
-            function getAccomplishmentsByType(profile) {
-                if (!_.isEmpty(profile.accomplishments)) {
-                    return _.groupBy(profile.accomplishments, 'type.label');
-                }
-
-                return [];
-            }
-
-            function getFavoriteDocuments(profile) {
-                const subResearchEntity = context.getSubResearchEntity();
-                if (!_.isEmpty(profile.documents)) {
-                    return profile.documents.filter(document => {
-                        let field;
-                        if (subResearchEntity.getType() === 'user') {
-                            field = 'authorships';
-                        } else {
-                            field = 'groupAuthorships';
-                        }
-                        const authorship = document[field].find(a => a.researchEntity === subResearchEntity.id);
-
-                        if (authorship && authorship.favorite) {
-                            return document;
-                        }
-                    });
-                }
-
-                return [];
-            }
-
             function getProfile() {
                 UsersService.getProfile(AuthService.user.researchEntity).then(response => {
                     vm.profile = response.plain();
                     vm.experiencesByCompany = getExperiencesByCompany(vm.profile);
                     vm.favoriteSkills = getFavoriteSkills(vm.profile);
                     vm.favoriteCertificates = getFavoriteCertificates(vm.profile);
-                    vm.documentsBySourceType = getDocumentsBySourceType(vm.profile);
-                    vm.favoriteDocuments = getFavoriteDocuments(vm.profile);
-                    vm.accomplishmentsByType = getAccomplishmentsByType(vm.profile);
-                    //vm.favoriteAccomplishments = [];
 
-                    // Todo remove, used for testing
-                    //vm.profile.accomplishments = [];
-                    //vm.profile.documents = [];
-                    //vm.profile.certificates = [];
-                    //vm.profile.experiences = [];
                     setNumberOfItems();
                     vm.loading = false;
                 });

@@ -255,7 +255,7 @@ module.exports = _.merge({}, BaseModel, {
 
         const authorship = await Authorship.findOne({document: documentId, researchEntity: userId});
         if (!authorship)
-            throw 'Athorship not found';
+            throw 'Authorship not found';
 
         authorship.favorite = !!favorite;
         return authorship.savePromise();

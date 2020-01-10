@@ -13,13 +13,17 @@
             }
         });
 
-    profileDocumentsBlock.$inject = ['$uibModal', '$scope'];
+    profileDocumentsBlock.$inject = ['$uibModal', '$scope', 'context'];
 
-    function profileDocumentsBlock($uibModal, $scope) {
+    function profileDocumentsBlock($uibModal, $scope, context) {
         const vm = this;
 
-        vm.$onInit = function () {
+        vm.documentsBySourceType = [];
+        vm.favoriteDocuments = [];
 
+        vm.$onInit = function () {
+            vm.documentsBySourceType = getDocumentsBySourceType(vm.profile);
+            vm.favoriteDocuments = getFavoriteDocuments(vm.profile);
         };
 
         vm.showDocumentsModal = () => {
@@ -64,6 +68,35 @@
                 size: 'lg'
             });
         };
+
+        function getDocumentsBySourceType(profile) {
+            if (!_.isEmpty(profile.documents)) {
+                return _.groupBy(profile.documents, 'sourceTypeObj.label');
+            }
+
+            return [];
+        }
+
+        function getFavoriteDocuments(profile) {
+            const subResearchEntity = context.getSubResearchEntity();
+            if (!_.isEmpty(profile.documents)) {
+                return profile.documents.filter(document => {
+                    let field;
+                    if (subResearchEntity.getType() === 'user') {
+                        field = 'authorships';
+                    } else {
+                        field = 'groupAuthorships';
+                    }
+                    const authorship = document[field].find(a => a.researchEntity === subResearchEntity.id);
+
+                    if (authorship && authorship.favorite) {
+                        return document;
+                    }
+                });
+            }
+
+            return [];
+        }
     }
 
 })();
