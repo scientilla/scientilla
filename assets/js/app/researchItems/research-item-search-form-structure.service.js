@@ -33,14 +33,14 @@
                 matchRule: 'contains',
                 type: 'field'
             },
-            maxYear: {
+            minYear: {
                 inputType: 'year',
                 label: 'Year from',
                 matchColumn: 'year',
                 matchRule: '>=',
                 type: 'field'
             },
-            minYear: {
+            maxYear: {
                 inputType: 'year',
                 label: 'Year to',
                 matchColumn: 'year',
@@ -166,12 +166,13 @@
                     structure = Object.assign({},
                         documentSearchForm,
                         {
-                            rejected: {
+                            discarded: {
                                 inputType: 'checkbox',
                                 label: 'Show discarded documents',
                                 defaultValue: false,
                                 matchColumn: 'discarded',
-                                type: 'action'
+                                type: 'action',
+                                valueType: 'boolean'
                             }
                         }
                     );

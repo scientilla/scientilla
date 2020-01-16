@@ -196,14 +196,14 @@
             matchRule: 'contains',
             type: 'field'
         },
-        maxYear: {
+        minYear: {
             inputType: 'year',
             label: 'Year from',
             matchColumn: 'year',
             matchRule: '>=',
             type: 'field'
         },
-        minYear: {
+        maxYear: {
             inputType: 'year',
             label: 'Year to',
             matchColumn: 'year',

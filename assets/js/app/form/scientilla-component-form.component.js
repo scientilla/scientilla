@@ -10,9 +10,11 @@
                 structure: '=',
                 cssClass: '@',
                 onSubmit: '&',
+                onReset: '&',
                 errors: '<',
                 onValidate: '&',
-                onChange: '&'
+                onChange: '&',
+                values: '='
             },
             transclude: true,
         });
@@ -27,7 +29,6 @@
         vm.submit = submit;
         vm.reset = reset;
 
-        vm.values = {};
         let onChangeWatchesDeregisters = [];
         let onStructureChangeDeregisterer;
 
@@ -49,8 +50,8 @@
         };
 
         function reset() {
-            setDefault();
-            submit();
+            if (_.isFunction(vm.onReset()))
+                vm.onReset()();
         }
 
         function clearNil() {
@@ -92,16 +93,22 @@
             vm.values = {};
 
             _.forEach(vm.structure, function (struct, key) {
-                if (!_.isUndefined(oldSearchValues[key]))
+                // Check if old search values has this key
+                if (_.has(oldSearchValues, key)) {
                     vm.values[key] = oldSearchValues[key];
-                else if (struct && !_.isUndefined(struct.defaultValue)) {
+                } else if (struct && !_.isUndefined(struct.defaultValue)) {
                     vm.values[key] = struct.defaultValue;
                 }
             });
 
             _.forEach(vm.structure, function (struct, key) {
                 if (struct && !_.isUndefined(struct.onChange)) {
-                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, execEvent(struct.onChange)));
+                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, (newValue, oldValue) => {
+                        // Execute function only if values have changed
+                        if (newValue !== oldValue) {
+                            execEvent(struct.onChange)();
+                        }
+                    }));
                 }
 
                 if (!_.isUndefined(vm.structure.onChange)) {
