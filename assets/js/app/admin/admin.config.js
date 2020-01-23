@@ -8,12 +8,33 @@
     function configure($routeProvider) {
         $routeProvider
             .when("/sources", {
-                template: params => '' +
-                    '<scientilla-admin-sources></scientilla-admin-sources>',
-                resolve: {}
+                redirectTo: '/sources/source'
+            })
+            .when("/sources/source", {
+                template: `<scientilla-admin-sources
+                    active-tab="source"></scientilla-admin-sources>`
+            })
+            .when("/sources/metrics-import", {
+                template: `<scientilla-admin-sources
+                    active-tab="metrics-import"></scientilla-admin-sources>`
             })
             .when("/tools", {
-                template: '<scientilla-admin-tools></scientilla-admin-tools>'
+                redirectTo: '/tools/log-viewer'
+            })
+            .when("/tools/log-viewer", {
+                template: `<scientilla-admin-tools
+                    active-tab="log-viewer"></scientilla-admin-tools>`
+            })
+            .when("/tools/status", {
+                template: `<scientilla-admin-tools
+                    active-tab="status"></scientilla-admin-tools>`
+            })
+            .when("/tools/backup", {
+                template: `<scientilla-admin-tools
+                    active-tab="backup"></scientilla-admin-tools>`
+            })
+            .when("/tools/institutes", {
+                template: `<scientilla-admin-tools></scientilla-admin-tools>`
             })
             .when("/connectors", {
                 template: '<scientilla-admin-external-connectors></scientilla-admin-external-connectors>'

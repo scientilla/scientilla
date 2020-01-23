@@ -24,7 +24,7 @@
         '$timeout',
         'ResearchItemSearchFormStructureService',
         '$location',
-        '$routeParams'
+        '$rootScope'
     ];
 
     function scientillaFilter(
@@ -34,7 +34,7 @@
         $timeout,
         ResearchItemSearchFormStructureService,
         $location,
-        $routeParams
+        $rootScope
     ) {
         const vm = this;
 
@@ -126,21 +126,34 @@
             onDataCountChangeDeregisterer();
         };
 
-        function onSubmit(searchValues) {
+        function onSubmit() {
             if (!vm.onStatus(vm.STATUS_LOADING)) {
                 // Get current search parameters from URL
-                const params = $routeParams;
+                const params = $location.search();
+
+                // Filter out
+                _.forEach(vm.filterSearchFormStructure, function (value, key) {
+                    if (_.has(params, key)) {
+                        delete params[key];
+                    }
+                });
 
                 // Loop over the filter values and
-                _.forEach(searchValues, function (value, key) {
+                _.forEach(vm.values, function (value, key) {
+
                     // Get the settings of the field
                     const struct = vm.filterSearchFormStructure[key];
 
                     // Skip if nothing is selected if the inputType is a select
-                    if (struct.inputType === 'select' && searchValues[key] === "?")
+                    if (struct && struct.inputType === 'select' && vm.values[key] === "?"){
                         return;
+                    }
 
                     // Skip if the value is null
+                    if (typeof value === 'string' &&_.isEmpty(value)) {
+                        return;
+                    }
+
                     if (value === null) {
                         return;
                     }
@@ -149,27 +162,29 @@
                     params[key] = value;
                 });
 
-                // Change search with new parameters, this will change URL
-                $location.search(params);
+                // Change search with new parameters, this will change URL but not reload
+                const path = $location.path();
+                const queryString = Object.keys(params).map((key) => {
+                    return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+                }).join('&');
+
+                let url = path;
+                if (queryString.length > 0) {
+                    url += '?' + queryString;
+                }
+
+                if (!_.isEmpty(params)) {
+                    $location.url(url, false);
+                }
+
+                // Search
+                search(vm.values);
             }
         }
 
         function onReset() {
-            const params = {};
-
-            // Get the current search parameters from URL
-            const originalParams = $routeParams;
-
-            // Loop over them
-            for (const paramKey of Object.keys(originalParams)) {
-                // If the parameter is not one of the current filter structure we keep it
-                if (!_.has(vm.filterSearchFormStructure, paramKey)) {
-                    params[paramKey] = originalParams[paramKey];
-                }
-            }
-
-            // Change search with new parameters, this will change URL
-            $location.search(params);
+            const path = $location.path();
+            $location.path(path);
         }
 
         function onSearch(searchWhere) {
@@ -188,22 +203,22 @@
             return vm.status === status;
         }
 
-        function search(searchValues) {
+        function search() {
             let where = {};
 
             // Set the itemsPerPage depending on prefix & selected value
-            if (searchValues) {
-                if (!_.isUndefined(vm.prefix) && searchValues[vm.prefix + '_itemsPerPage']) {
-                    vm.itemsPerPage = searchValues[vm.prefix + '_itemsPerPage'];
+            if (vm.values) {
+                if (!_.isUndefined(vm.prefix) && vm.values[vm.prefix + '_itemsPerPage']) {
+                    vm.itemsPerPage = vm.values[vm.prefix + '_itemsPerPage'];
                 } else {
-                    if (searchValues.itemsPerPage) {
-                        vm.itemsPerPage = searchValues.itemsPerPage;
+                    if (vm.values.itemsPerPage) {
+                        vm.itemsPerPage = vm.values.itemsPerPage;
                     }
                 }
             }
 
             // Loop over the search values
-            _.forEach(searchValues, function (value, key) {
+            _.forEach(vm.values, function (value, key) {
                 // We skip this item if the current item is itemsPerPage
                 if (
                     (!_.isUndefined(vm.prefix) && key === vm.prefix + '_itemsPerPage') ||
@@ -215,7 +230,7 @@
                 const struct = vm.filterSearchFormStructure[key];
 
                 // We skip this item if the struct doesn't exist or is it an select without any selected value
-                if (!struct || (struct.inputType === 'select' && searchValues[key] === "?")) {
+                if (!struct || (struct.inputType === 'select' && vm.values[key] === "?")) {
                     return;
                 }
 
@@ -305,8 +320,11 @@
         function handleRouteParams() {
             let executeSearch = true;
 
+            // Get current search parameters from URL
+            const originalParams = $location.search();
+
             // Loop over the route parameters
-            for (const param of Object.keys($routeParams)) {
+            for (const param of Object.keys(originalParams)) {
                 // Check if the parameter exists in the current form structure
                 if (_.has(vm.filterSearchFormStructure, param)) {
                     // Check if settings of the field has a valueType property
@@ -316,57 +334,68 @@
                             // If it's an integer
                             case 'integer':
                                 // Parse to integer
-                                vm.values[param] = parseInt($routeParams[param]);
+                                vm.values[param] = parseInt(originalParams[param]);
                                 break;
                             // If it's a boolean
                             case 'boolean':
                                 // If the type of the parameter is a string cast it to a boolean
-                                if (typeof $routeParams[param] === 'string') {
-                                    vm.values[param] = ($routeParams[param] === 'true');
+                                if (typeof originalParams[param] === 'string') {
+                                    vm.values[param] = (originalParams[param] === 'true');
                                 }
 
                                 // If the type of the parameter is a boolean
                                 // copy the value into the values object by the key
-                                if (typeof $routeParams[param] === 'boolean') {
-                                    vm.values[param] = $routeParams[param];
+                                if (typeof originalParams[param] === 'boolean') {
+                                    vm.values[param] = originalParams[param];
                                 }
                                 break;
                             default:
                                 // By default: copy the value into the values object by the key
-                                vm.values[param] = $routeParams[param];
+                                vm.values[param] = originalParams[param];
                                 break;
                         }
                     } else {
                         // Copy the value of the parameter into the values object by the key
-                        vm.values[param] = $routeParams[param];
+                        vm.values[param] = originalParams[param];
                     }
                 }
             }
 
-            // If the values object has a property with the name itemsPerPage
-            if (_.has(vm.values, 'itemsPerPage')) {
-                // Check if the value is one of the defaults
-                if (_.indexOf(vm.pageSizes, vm.values.itemsPerPage) < 0) {
-                    // Set the default
-                    vm.values.itemsPerPage = pageSize;
-                    // Prevent searching
-                    executeSearch = false;
-                }
+            // Check if the itemsPerPage is valid
+            if (!_.isUndefined(vm.prefix)) {
+                if (_.has(vm.values, vm.prefix + '_itemsPerPage')) {
+                    // Check if the value is one of the defaults
+                    if (_.indexOf(vm.pageSizes, vm.values[vm.prefix + '_itemsPerPage']) < 0) {
+                        // Set the default
+                        vm.values[vm.prefix + '_itemsPerPage'] = pageSize;
+                        // Prevent searching
+                        executeSearch = false;
+                    }
 
-                // Set variable
-                vm.itemsPerPage = vm.values.itemsPerPage;
+                    // Set variable
+                    vm.itemsPerPage = vm.values[vm.prefix + '_itemsPerPage'];
+                }
+            } else {
+                if (_.has(vm.values, 'itemsPerPage')) {
+                    // Check if the value is one of the defaults
+                    if (_.indexOf(vm.pageSizes, vm.values.itemsPerPage) < 0) {
+                        // Set the default
+                        vm.values.itemsPerPage = pageSize;
+                        // Prevent searching
+                        executeSearch = false;
+                    }
+
+                    // Set variable
+                    vm.itemsPerPage = vm.values.itemsPerPage;
+                }
             }
 
             // If we can proceed searching
             if (executeSearch) {
                 search(vm.values);
             } else {
-                // Execute the re-submit in the same tick or a later tick
-                // https://www.bennadel.com/blog/2605-scope-evalasync-vs-timeout-in-angularjs.htm
-                $scope.$evalAsync(() => {
-                    // Re-submit with modified values
-                    onSubmit(vm.values);
-                });
+                // Execute the re-submit
+                onSubmit(vm.values);
             }
         }
     }

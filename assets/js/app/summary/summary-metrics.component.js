@@ -22,6 +22,7 @@
         const vm = this;
 
         vm.name = 'metrics';
+        vm.shouldBeReloaded = true;
         vm.charts = {};
 
         vm.showInfo = showInfo;
@@ -37,6 +38,7 @@
         };
 
         vm.reload = (chartsData) => {
+            vm.chartsData = chartsData;
             vm.charts = {};
             vm.charts.documentTotals = ChartService.getDocumentTotals(chartsData);
             vm.charts.hindexPerYear = ChartService.getHindexPerYear(chartsData);
@@ -98,7 +100,6 @@
                     chartSettings: vm.charts.getJournalMetricsPerYearBarChart,
                     title: 'Bar chart'
                 }
-
             ];
 
             vm.indexes = [];

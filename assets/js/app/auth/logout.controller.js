@@ -17,7 +17,7 @@
             AuthService
                     .logout()
                     .then(function () {
-                        $location.path("/");
+                        $location.url('/');
                     })
                     .catch(function () {
                         Notification.warning('An error happened');

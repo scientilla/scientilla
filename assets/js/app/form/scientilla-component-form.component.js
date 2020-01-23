@@ -20,10 +20,11 @@
         });
 
     scientillaComponentForm.$inject = [
-        '$scope'
+        '$scope',
+        '$rootScope'
     ];
 
-    function scientillaComponentForm($scope) {
+    function scientillaComponentForm($scope, $rootScope) {
         const vm = this;
 
         vm.submit = submit;
@@ -38,7 +39,7 @@
         vm.getObjectSize = getObjectSize;
 
         vm.$onInit = function () {
-            setDefault();
+            setDefaultsForMissingValues();
             clearNil();
 
             onStructureChangeDeregisterer = $scope.$watch('vm.structure', onStructureChange, true);
@@ -50,8 +51,12 @@
         };
 
         function reset() {
-            if (_.isFunction(vm.onReset()))
-                vm.onReset()();
+            setDefault();
+            clearNil();
+
+            if (_.isFunction(vm.onSubmit())) {
+                vm.onSubmit()(vm.values);
+            }
         }
 
         function clearNil() {
@@ -60,6 +65,20 @@
                         delete vm.values[k];
                 }
             );
+        }
+
+        function setDefaultsForMissingValues() {
+            _.forEach(vm.structure, (struct, key) => {
+                if (_.isNil(vm.values[key])) {
+                    if (struct.inputType === 'select' && !struct.defaultValue) {
+                        vm.values[key] = '?';
+                    } else {
+                        if (struct.defaultValue) {
+                            vm.values[key] = struct.defaultValue;
+                        }
+                    }
+                }
+            });
         }
 
         function setDefault() {

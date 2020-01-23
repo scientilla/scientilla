@@ -23,7 +23,7 @@
         function submit() {
             AuthService.register(vm.user)
                 .then(function () {
-                    $location.path("/");
+                    $location.url('/');
                 }).catch(function(){
                     Notification.warning('Registration failed');
                 });

@@ -8,7 +8,7 @@
     function configure($routeProvider) {
         $routeProvider
             .when("/:group?/documents/suggested", {
-                controller: handleRequest,
+                controller: 'requestHandler',
                 template: params => '' +
                     '<scientilla-suggested-documents research-entity="$resolve.researchEntity">' +
                     '</scientilla-suggested-documents>',
@@ -19,7 +19,7 @@
                 }
             })
             .when("/:group?/documents/verified", {
-                controller: handleRequest,
+                controller: 'requestHandler',
                 template: params => '' +
                     '<scientilla-verified-list research-entity="$resolve.researchEntity">' +
                     '</scientilla-verified-list>',
@@ -29,7 +29,7 @@
                 }
             })
             .when("/:group?/documents/drafts", {
-                controller: handleRequest,
+                controller: 'requestHandler',
                 template: params => '' +
                     '<scientilla-drafts-list research-entity="$resolve.researchEntity">' +
                     '</scientilla-drafts-list>',
@@ -39,7 +39,7 @@
                 }
             })
             .when("/:group?/documents/external", {
-                controller: handleRequest,
+                controller: 'requestHandler',
                 template: params => '' +
                     '<scientilla-external-documents research-entity="$resolve.researchEntity">' +
                     '</scientilla-external-documents>',
@@ -65,34 +65,6 @@
 
         function getContext(context) {
             return context;
-        }
-
-
-        handleRequest.$inject = [
-            '$scope',
-            '$routeParams',
-            'path',
-            'authService',
-            'context'
-        ];
-
-        /*
-         * This function handles the request declared above.
-         * It validates the group slug (optional) and redirects if the group slug is not valid.
-         */
-        function handleRequest($scope, $routeParams, path, authService, context) {
-            let activeGroup;
-            const user = authService.user;
-
-            if (!$routeParams.group)
-                return context.setSubResearchEntity(user);
-
-            activeGroup = user.administratedGroups.find(g => g.slug === $routeParams.group);
-
-            if (activeGroup)
-                return context.setSubResearchEntity(activeGroup);
-
-            path.goTo('/');
         }
     }
 

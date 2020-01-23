@@ -65,19 +65,17 @@
         function changeContextToGroup(group) {
             return GroupsService.getGroup(group.id)
                 .then(group => context.setSubResearchEntity(group))
-                .then(() => redirectToHomepage());
+                .then(() => {
+                    path.goTo('/' + group.slug + '/dashboard');
+                });
         }
 
         function changeContextToUser(user) {
             return UsersService.getUser(user.id)
                 .then(user => context.setSubResearchEntity(user))
-                .then(() => redirectToHomepage());
-        }
-
-        function redirectToHomepage() {
-            //TODO: should become dynamic
-            const researchEntityHompeage = '/';
-            path.goTo(researchEntityHompeage);
+                .then(() => {
+                    path.goTo('/dashboard');
+                });
         }
 
         function editProfile() {

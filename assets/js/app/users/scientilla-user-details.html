@@ -1,12 +1,14 @@
 <scientilla-backend-layout>
     <div class="users user-detail">
         <h1 class="user-fullname">{{vm.user.getDisplayName()}}</h1>
-        <a href="mailto:{{vm.user.username}}"
-           class="user-email">{{vm.user.username}}</a>
+        <a
+            href="mailto:{{vm.user.username}}"
+            class="user-email">{{vm.user.username}}</a>
 
-        <uib-tabset active="active" class="user-information">
-            <uib-tab index="0"
-                     heading="Personal info">
+        <uib-tabset active="vm.activeTabIndex" class="user-information">
+            <uib-tab
+                index="0"
+                heading="Personal info">
                 <div class="table-responsive">
                     <table class="table table-striped table-condensed">
                         <tr>
@@ -46,10 +48,10 @@
                         </tr>
                     </table>
                 </div>
-
             </uib-tab>
-            <uib-tab index="1"
-                     heading="Groups">
+            <uib-tab
+                index="1"
+                heading="Groups">
                 <ul>
                     <li ng-repeat="g in vm.user.memberships">
                         <a ng-href="#{{g.getProfileUrl()}}">
@@ -59,31 +61,33 @@
                     <li ng-if="vm.user.memberships.length === 0">No groups</li>
                 </ul>
             </uib-tab>
-            <uib-tab index="2"
-                     heading="Documents">
-                <scientilla-documents-list ng-if="vm.user"
-                                           research-entity="vm.user"
-                                           section="vm.documentListSections.USER"></scientilla-documents-list>
+            <uib-tab
+                index="2"
+                heading="Documents">
+                <scientilla-documents-list
+                    ng-if="vm.user"
+                    research-entity="vm.user"
+                    section="vm.documentListSections.USER"></scientilla-documents-list>
             </uib-tab>
-            <uib-tab index="3"
-                     heading="Accomplishments">
-                <scientilla-accomplishments-list ng-if="vm.researchEntity"
-                                           research-entity="vm.researchEntity"
-                                           section="vm.accomplishmentListSections.USER"></scientilla-accomplishments-list>
+            <uib-tab
+                index="3"
+                heading="Accomplishments">
+                <scientilla-accomplishments-list
+                    ng-if="vm.researchEntity"
+                    research-entity="vm.researchEntity"
+                    section="vm.accomplishmentListSections.USER"></scientilla-accomplishments-list>
             </uib-tab>
-            <uib-tab index="4"
-                     heading="Documents Overview"
-                     ng-click="vm.changeTab('overview', vm.chartsData)"
-                     ng-if="vm.loggedUser.isSuperViewer()">
-                <summary-overview ng-if="vm.chartsData"
-                                  charts-data="vm.chartsData"></summary-overview>
+            <uib-tab
+                index="4"
+                heading="Documents Overview"
+                ng-if="vm.loggedUser.isSuperViewer()">
+                <summary-overview charts-data="vm.chartsData"></summary-overview>
             </uib-tab>
-            <uib-tab index="5"
-                     heading="Bibliometric Charts"
-                     ng-click="vm.changeTab('metrics', vm.chartsData)"
-                     ng-if="vm.loggedUser.isSuperViewer()">
-                <summary-metrics ng-if="vm.chartsData"
-                                 charts-data="vm.chartsData"></summary-metrics>
+            <uib-tab
+                index="5"
+                heading="Bibliometric Charts"
+                ng-if="vm.loggedUser.isSuperViewer()">
+                <summary-metrics charts-data="vm.chartsData"></summary-metrics>
             </uib-tab>
         </uib-tabset>
     </div>

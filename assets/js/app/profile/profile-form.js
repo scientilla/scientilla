@@ -73,7 +73,7 @@
                         vm.hasAboutMeErrors = true;
                     }
 
-                    $timeout(() => {
+                    $scope.$evalAsync(() => {
                         const errorTab = document.querySelector('.js-profile-tabs .nav-item.has-error');
                         const errorTabIndex = errorTab.getAttribute('index');
                         $scope.active = parseInt(errorTabIndex);

@@ -79,7 +79,7 @@
                     context.setSubResearchEntity(group);
                 })
                 .then(() => {
-                    path.goTo('/' + group.slug);
+                    path.goTo('/' + group.slug + '/dashboard');
                 });
         }
 
@@ -89,7 +89,7 @@
                     context.setSubResearchEntity(user);
                 })
                 .then(() => {
-                    path.goTo('/');
+                    path.goTo('/dashboard');
                 });
         }
 

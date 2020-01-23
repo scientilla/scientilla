@@ -1,10 +1,5 @@
 <div class="summary-profile-container profile">
-    <div
-        class="loading-container"
-        ng-if="vm.loading">
-        <span>Loading ...</span>
-        <i class="fas fa-spinner fa-spin"></i>
-    </div>
+    <scientilla-loading is-loading="vm.loading"></scientilla-loading>
     <ul
         class="profile-blocks top"
         ng-class="vm.profile.description || vm.profile.interests ? 'has-about-me' : 'has-not-about-me'"

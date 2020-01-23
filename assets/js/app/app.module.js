@@ -20,6 +20,7 @@
         'wizard',
         'admin',
         'summary',
-        'profile'
+        'profile',
+        'accomplishments'
     ]);
 })();

@@ -18,41 +18,68 @@
         function ProfileSummaryComponent(context, $scope, $controller) {
             const vm = this;
             angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
-            let subResearchEntity;
+            angular.extend(vm, $controller('TabsController', {$scope: $scope}));
 
             vm.lastRefresh = new Date();
-            vm.isLoading = false;
+            vm.recalculating = false;
 
             vm.isMainGroup = isMainGroup;
             vm.recalculate = recalculate;
 
             /* jshint ignore:start */
-            vm.$onInit = async () => {
-                subResearchEntity = context.getSubResearchEntity();
+            vm.$onInit = () => {
+                vm.subResearchEntity = context.getSubResearchEntity();
 
-                const refresh = !isMainGroup();
-                await request(refresh);
-                if (!$scope.$$phase)
-                    $scope.$apply();
+                const tabIdentifiers = [
+                    {
+                        index: 0,
+                        slug: 'profile'
+                    }, {
+                        index: 1,
+                        slug: 'profile-v2'
+                    }, {
+                        index: 2,
+                        slug: 'documents-overview',
+                        tabName: 'overview',
+                        getData: getData
+                    }, {
+                        index: 3,
+                        slug: 'bibliometric-charts',
+                        tabName: 'metrics',
+                        getData: getData
+                    }, {
+                        index: 4,
+                        slug: 'calculated-data'
+                    }
+                ];
+
+                vm.initializeTabs(tabIdentifiers);
             };
 
             async function recalculate() {
-                vm.isLoading = true;
-                await request(true);
+                vm.recalculating = true;
+                vm.chartsData = await getData(true);
                 vm.reloadTabs(vm.chartsData);
-                vm.isLoading = false;
+                vm.recalculating = false;
             }
 
-            async function request(refresh) {
-                vm.chartsData = await vm.getChartsData(subResearchEntity, refresh);
-                if (vm.chartsData.chartDataDate && vm.chartsData.chartDataDate[0].max)
-                    vm.lastRefresh = new Date(vm.chartsData.chartDataDate[0].max);
-            }
+            async function getData(refresh  = false) {
+                if (!isMainGroup()) {
+                    refresh = true;
+                }
 
+                const chartsData = await vm.getChartsData(vm.subResearchEntity, refresh);
+
+                if (chartsData.chartDataDate && chartsData.chartDataDate[0].max) {
+                    vm.lastRefresh = new Date(chartsData.chartDataDate[0].max);
+                }
+
+                return chartsData;
+            }
             /* jshint ignore:end */
 
             function isMainGroup() {
-                return subResearchEntity.id === 1;
+                return vm.subResearchEntity.id === 1;
             }
         }
     }

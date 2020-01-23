@@ -17,11 +17,26 @@
         'GroupsService',
         'AuthService',
         'ModalService',
-        'researchEntityService'
+        'researchEntityService',
+        '$element',
+        '$rootScope'
     ];
 
-    function controller(documentListSections, UsersService, GroupsService, AuthService, ModalService, researchEntityService) {
+    function controller(
+        documentListSections,
+        UsersService,
+        GroupsService,
+        AuthService,
+        ModalService,
+        researchEntityService,
+        $element,
+        $rootScope
+    ) {
         const vm = this;
+
+        vm.name = 'group-members';
+        vm.shouldBeReloaded = true;
+
         vm.documentListSections = documentListSections;
         vm.addCollaborator = addCollaborator;
         vm.removeCollaborator = removeCollaborator;
@@ -52,7 +67,17 @@
         vm.onFilter = onFilter;
         let query = {};
 
-        vm.$onInit = function () {
+        vm.$onInit = () => {
+            const registerTab = requireParentMethod($element, 'registerTab');
+            registerTab(vm);
+        };
+
+        vm.$onDestroy = () => {
+            const unregisterTab = requireParentMethod($element, 'unregisterTab');
+            unregisterTab(vm);
+        };
+
+        vm.reload = function () {
             vm.isCollaborationManagementFormOpen = false;
             vm.selectedUserActive = true;
         };

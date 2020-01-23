@@ -28,7 +28,6 @@
 @import 'ui/tooltip';
 @import 'ui/tabs';
 @import 'ui/nvd3';
-@import 'ui/sync-container';
 @import 'ui/mobile-menu-button';
 @import 'ui/mobile-toolbar';
 @import 'ui/top-toolbar';
@@ -60,6 +59,7 @@
 @import 'components/document-search-listing';
 @import 'components/summary-overview';
 @import 'components/summary-metrics';
+@import 'components/loading-container';
 
 @import 'views/login';
 @import 'views/users';

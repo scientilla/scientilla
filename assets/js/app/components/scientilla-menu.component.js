@@ -95,11 +95,12 @@
         }
 
         function getDashboardUrl() {
+            const dashboardSlug = 'dashboard';
             if (subResearchEntity.getType() === 'group') {
-                return prefix + subResearchEntity.slug;
+                return prefix + subResearchEntity.slug + '/' + dashboardSlug;
             }
 
-            return prefix;
+            return prefix + dashboardSlug;
         }
 
         function checkActiveConnectors() {
