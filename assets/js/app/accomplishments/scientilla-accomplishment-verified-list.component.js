@@ -71,10 +71,9 @@
                 const types = await ResearchItemTypesService.getTypes();
                 const type = types.find(type => type.key === query.where.type);
                 query.where.type = type.id;
-
             }
 
-            vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, query);
+            vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, query, favorites);
         }
         /* jshint ignore:end */
     }

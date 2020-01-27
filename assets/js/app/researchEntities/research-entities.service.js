@@ -238,10 +238,15 @@
             return await Restangular.one('accomplishments', id).get({populate: accomplishmentPopulates});
         }
 
-        async function getAccomplishments(researchEntity, query) {
+        async function getAccomplishments(researchEntity, query, favorites = false) {
             const populate = {populate: accomplishmentPopulates};
             const q = _.merge({}, query, populate);
-            return await researchEntity.getList('accomplishments', q);
+
+            if (favorites) {
+                return await researchEntity.getList('favoriteAccomplishments', q);
+            } else {
+                return await researchEntity.getList('accomplishments', q);
+            }
         }
 
         async function getAccomplishmentDrafts(researchEntity, query) {

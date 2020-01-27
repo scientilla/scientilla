@@ -89,6 +89,11 @@ module.exports = _.merge({}, BaseModel, {
             via: 'suggestedaccomplishments',
             through: 'accomplishmentsuggestion'
         },
+        favorites: {
+            collection: 'researchentity',
+            via: 'favoriteaccomplishments',
+            through: 'accomplishmentfavorite'
+        },
         async isValid() {
             const ResearchItemModel = Accomplishment.getResearchItemModel(this.type);
             const ri = await ResearchItemModel.findOne({researchItem: this.id});
