@@ -442,6 +442,16 @@
             margin-bottom: .5rem;
         }
     }
+
+    .button-container{
+        ul{
+            @include normalize-listing;
+            
+            & > li{
+                display: block;
+            }
+        }
+    }
 }
 
 @include media-breakpoint-up(lg) {
