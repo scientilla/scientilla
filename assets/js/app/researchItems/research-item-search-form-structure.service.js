@@ -132,7 +132,8 @@
                                 label: 'Show discarded accomplishments',
                                 defaultValue: false,
                                 matchColumn: 'discarded',
-                                type: 'action'
+                                type: 'action',
+                                valueType: 'boolean'
                             }
                         });
                     break;
@@ -147,7 +148,8 @@
                                 label: 'Show only favorite accomplishments',
                                 defaultValue: false,
                                 matchColumn: 'favorites',
-                                type: 'action'
+                                type: 'action',
+                                valueType: 'boolean'
                             }
                         });
                     break;
@@ -186,7 +188,8 @@
                                 label: 'Show only favorite documents',
                                 defaultValue: false,
                                 matchColumn: 'favorites',
-                                type: 'action'
+                                type: 'action',
+                                valueType: 'boolean'
                             }
                         }
                     );
