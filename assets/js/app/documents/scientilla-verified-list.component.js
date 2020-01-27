@@ -67,18 +67,11 @@
 
             query = q;
 
-            if (!favorites) {
-                return researchEntityService.getDocuments(vm.researchEntity, query)
-                    .then(function (documents) {
-                        vm.documents = documents;
-                    });
-            } else {
-                console.log('Todo');
-                return researchEntityService.getDocuments(vm.researchEntity, query)
-                    .then(function (documents) {
-                        vm.documents = documents;
-                    });
-            }
+            return researchEntityService.getDocuments(vm.researchEntity, query, favorites)
+                .then(function (documents) {
+                    vm.documents = documents;
+                });
+
         }
     }
 

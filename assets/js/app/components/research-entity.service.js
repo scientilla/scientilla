@@ -72,12 +72,16 @@
             'oral_presentation'
         ];
 
-        function getDocuments(researchEntity, query) {
+        function getDocuments(researchEntity, query, favorites = false) {
             var populate = {populate: documentPopulates};
 
             var q = _.merge({}, query, populate);
 
-            return researchEntity.getList('documents', q);
+            if (!favorites) {
+                return researchEntity.getList('documents', q);
+            } else {
+                return researchEntity.getList('favoriteDocuments', q);
+            }
         }
 
         function getDrafts(researchEntity, query) {

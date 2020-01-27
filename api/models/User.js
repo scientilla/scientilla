@@ -124,6 +124,11 @@ module.exports = _.merge({}, SubResearchEntity, {
             via: 'users',
             through: 'documentsuggestion'
         },
+        favoriteDocuments: {
+            collection: 'Document',
+            via: 'users',
+            through: 'favoritedocument'
+        },
         externalDocuments: {
             collection: 'document',
             via: 'researchEntity',

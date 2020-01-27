@@ -131,6 +131,7 @@
         Restangular.extendCollection('externalDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('suggestedDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('discardedDocuments', Prototyper.toDocumentsCollection);
+        Restangular.extendCollection('favoriteDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('drafts', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('authorships', Prototyper.toAuthorshipsCollection);
         Restangular.extendCollection('institutes', Prototyper.toInstitutesCollection);
