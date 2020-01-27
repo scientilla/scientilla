@@ -22,12 +22,13 @@
 
             vm.lastRefresh = new Date();
             vm.recalculating = false;
+            vm.chartsData = {};
 
             vm.isMainGroup = isMainGroup;
             vm.recalculate = recalculate;
 
             /* jshint ignore:start */
-            vm.$onInit = () => {
+            vm.$onInit = async () => {
                 vm.subResearchEntity = context.getSubResearchEntity();
 
                 const tabIdentifiers = [
@@ -41,12 +42,10 @@
                         index: 2,
                         slug: 'documents-overview',
                         tabName: 'overview',
-                        getData: getData
                     }, {
                         index: 3,
                         slug: 'bibliometric-charts',
                         tabName: 'metrics',
-                        getData: getData
                     }, {
                         index: 4,
                         slug: 'calculated-data'
@@ -54,6 +53,9 @@
                 ];
 
                 vm.initializeTabs(tabIdentifiers);
+
+                vm.chartsData = await getData();
+                vm.reloadTabs(vm.chartsData);
             };
 
             async function recalculate() {
@@ -63,7 +65,7 @@
                 vm.recalculating = false;
             }
 
-            async function getData(refresh  = false) {
+            async function getData(refresh = false) {
                 if (!isMainGroup()) {
                     refresh = true;
                 }

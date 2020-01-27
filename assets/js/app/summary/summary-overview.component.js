@@ -73,14 +73,20 @@
 
             vm.reload = (chartsData = {}) => {
                 if (!_.isEmpty(chartsData)) {
-                    vm.loading = true;
-                    vm.charts = [];
-                    vm.mainChart = undefined;
-                    vm.charts.push(ChartService.getDocumentsByYear(chartsData));
-                    vm.charts.push(ChartService.getInvitedTalksByYear(chartsData));
-                    vm.charts.push(ChartService.getDocumentsByType(chartsData));
-                    changeChart(vm.charts[0]);
-                    vm.loading = false;
+                    vm.chartsData = chartsData;
+                }
+
+                if (!_.isEmpty(vm.chartsData)) {
+                    $timeout(() => {
+                        vm.loading = true;
+                        vm.charts = [];
+                        vm.mainChart = undefined;
+                        vm.charts.push(ChartService.getDocumentsByYear(vm.chartsData));
+                        vm.charts.push(ChartService.getInvitedTalksByYear(vm.chartsData));
+                        vm.charts.push(ChartService.getDocumentsByType(vm.chartsData));
+                        changeChart(vm.charts[0]);
+                        vm.loading = false;
+                    });
                 }
             };
 
