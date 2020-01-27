@@ -7,10 +7,12 @@
     <div
         class="content-container last-item-container"
         ng-if="vm.favoriteDocuments.length > 0">
-        <span>My favorite documents:</span>
+        <span>My favorite document{{ vm.favoriteDocuments.length > 1 ? 's' : '' }}:</span>
         <ul class="favorite-listing">
             <li ng-repeat="document in vm.favoriteDocuments track by $index">
-                <h2 class="block-title">{{ document.title }}</h2>
+                <a href="/#/documents/verified?favorites=true&title={{ document.title }}">
+                    {{ document.title }}
+                </a>
             </li>
         </ul>
     </div>

@@ -183,19 +183,32 @@
     }
 
     .show-more{
+        position: relative;
         display: inline-block;
         margin-top: auto;
         margin-left: auto;
-        padding: 0px;
+        padding: 0px 15px 0px 0px;
         background: none;
         border: 0px;
 
         &:after{
-            margin-left: .5rem;
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            display: block;
             font-family: $font-awesome;
             content: '\f054';
             font-weight: 900;
             font-style: normal;
+            transition: .2s all;
+        }
+
+        &:hover,
+        &:focus,
+        &:active:focus{
+            &:after{
+                right: 5px;
+            }
         }
     }
 
@@ -435,11 +448,17 @@
     }
 
     .favorite-listing{
-        @include normalize-listing;
+        margin-top: 1rem;
         margin-bottom: 4rem;
+        padding-left: 15px;
+        list-style-type: disc;
 
-        .block-title{
-            margin-bottom: .5rem;
+        & > li{
+            margin-bottom: 1rem;
+        }
+
+        a{
+            font-size: 1.4rem;
         }
     }
 
