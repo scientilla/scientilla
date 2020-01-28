@@ -57,14 +57,8 @@ module.exports = require('waterlock').actions.user(_.merge({}, SubResearchEntity
         const year = req.query.year;
         res.halt(User.getMBOInvitedTalks(username, year));
     },
-    // todo add policies
-    getProfile: async function (req, res, next) {
-        const username = req.params.username;
-        const user = await User.findOne({username: username});
-        if (_.isUndefined(user) || !_.has(user, 'researchEntity')) {
-            res.notFound();
-        } else {
-            res.halt(ResearchEntityData.getProfile(user.researchEntity, true));
-        }
-    },
+    getPublicProfile: function (req, res) {
+        const userId = req.params.userId;
+        res.halt(User.getPublicProfile(userId));
+    }
 }));

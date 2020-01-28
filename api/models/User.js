@@ -197,7 +197,7 @@ module.exports = _.merge({}, SubResearchEntity, {
         },
         getDocumentNotDuplicateModel: function () {
             return DocumentNotDuplicate;
-        }
+        },
     }),
     getDocumentNotDuplicateModel: () => DocumentNotDuplicate,
     getAdministeredGroups: function (userId) {
@@ -613,4 +613,17 @@ module.exports = _.merge({}, SubResearchEntity, {
 
         return await PerformanceCalculator.getUsersMBOInvitedTalks(year);
     },
+    getPublicProfile: async function (userId) {
+        const user = await User.findOne({id: userId});
+
+        if (!user) {
+            throw 'User not found';
+        }
+
+        if (!_.has(user, 'researchEntity')) {
+            throw 'ResearchEnitity not found';
+        }
+
+        return await ResearchEntityData.getProfile(user.researchEntity, true);
+    }
 });
