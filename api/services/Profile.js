@@ -479,14 +479,14 @@ async function toPDF(researchEntityId, options = {}) {
                 });
             }
 
-            if (!_.isEmpty(profile.administrativeOrganization)) {
+            if (!_.isEmpty(profile.directorate)) {
                 basicProfile.push({
                     text: [
                         {
-                            text: 'Administrative organization: ',
+                            text: 'Directorate: ',
                             style: 'bold'
                         },
-                        profile.administrativeOrganization
+                        profile.directorate
                     ]
                 });
             }
@@ -1225,15 +1225,15 @@ async function toDoc(researchEntityId, options = {}) {
             );
         }
 
-        if (!_.isEmpty(profile.administrativeOrganization)) {
+        if (!_.isEmpty(profile.directorate)) {
             baseProfile.push(
                 new TextRun({
-                    text: 'Administrative organization: ',
+                    text: 'Directorate: ',
                     bold: true
                 }).break()
             );
 
-            baseProfile.push(new TextRun(profile.administrativeOrganization));
+            baseProfile.push(new TextRun(profile.directorate));
         }
 
         if (!_.isEmpty(profile.office)) {
