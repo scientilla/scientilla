@@ -134,7 +134,6 @@ module.exports.policies = {
         getFavoritePublications: true,
         getOralPresentations: true,
         getProfile: true,
-        getPublicProfile: true,
         getDisseminationTalks: true,
         getScientificTalks: true,
         getMBOOverallPerformance: true,
