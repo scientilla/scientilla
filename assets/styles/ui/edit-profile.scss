@@ -1,5 +1,4 @@
 .edit-profile{
-    //max-width: 1200px;
     padding-bottom: 4rem;
 
     .card-listing{
@@ -48,30 +47,6 @@
             min-height: 100%;
         }
     }
-
-    /*.toggle-privacy-listing{
-        @include normalize-listing;
-        @include clearfix;
-
-        & > li{
-            display: block;
-            float: left;
-
-            & + li{
-                &:before{
-                    content: '/';
-                    font-weight: bold;
-                }
-            }
-        }
-
-        button{
-            padding: 1rem 2.1rem;
-            font-size: 1.4rem;
-            border: 0px;
-            background: none;
-        }
-    }*/
 
     .enable-listing{
         @include normalize-listing;
@@ -162,12 +137,6 @@
     .item-listing{
         @include normalize-listing;
 
-        /*& > li{
-            & + li{
-                margin-top: 2rem;
-            }
-        }*/
-
         &.add-lines{
             & > li{
                 & + li{
@@ -215,19 +184,6 @@
         @include normalize-listing;
         padding-left: 5rem;
     }
-
-    /*.button-container{
-        @include clearfix;
-
-        .listing-title,
-        .label-title{
-            float: left;
-        }
-
-        .btn{
-            float: right;
-        }
-    }*/
 
     .enable-about-label{
         display: block;
@@ -279,6 +235,48 @@
         & > li {
             padding-right: .75rem;
             padding-left: .75rem;
+        }
+    }
+
+    .iit-website-options{
+        @include normalize-listing;
+
+        & > li{
+            margin-bottom: 1rem;
+        }
+    }
+
+    .profile-legend{
+        font-size: 1rem;
+        color: $gray-600;
+
+        ul{
+            @include normalize-listing;
+        }
+
+        .fas{
+            min-width: 1.5rem;
+        }
+    }
+
+    .image-container{
+        position: relative;
+        max-width: 150px;
+        width: 100%;
+        border-radius: 50%;
+        overflow: hidden;
+
+        .btn-remove-image{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: 100%;
+            width: 100%;
+            padding: 0px;
+            background: rgba(0,0,0,0.2);
+            border: none;
+            cursor: pointer;
+            color: $white;
         }
     }
 }
