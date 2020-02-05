@@ -7,11 +7,14 @@
         "Restangular",
         "$q",
         "Prototyper",
-        'userConstants'
+        'userConstants',
+        'EventsService'
     ];
 
-    function UsersService(Restangular, $q, Prototyper, userConstants) {
+    function UsersService(Restangular, $q, Prototyper, userConstants, EventsService) {
         var service = Restangular.service("users");
+
+        let _profile = false;
 
         const userFields = [
             'id',
@@ -115,16 +118,42 @@
                 });
         };
 
-        service.getProfile = (researchEntityId, edit = false) => {
+        /* jshint ignore:start */
+        service.saveProfile = async (researchEntityId, profile) => {
+            const formData = new FormData();
+            formData.append('profile', JSON.stringify(profile));
+
+            if (profile.image && profile.image.file) {
+                formData.append('profileImage', profile.image.file);
+            }
+
+            let response = await Restangular.one('researchentities', researchEntityId)
+                .one('save-profile')
+                .customPOST(formData, '', undefined, {'Content-Type': undefined});
+
+            response = response.plain();
+
+            if (_.isEmpty(response.errors)) {
+                _profile = false;
+                await service.getProfile(researchEntityId);
+            }
+
+            return response;
+        };
+
+        service.getProfile = async (researchEntityId, edit = false) => {
             if (edit) {
                 return Restangular.one('researchentities', researchEntityId).customGET('get-edit-profile');
             }
-            return Restangular.one('researchentities', researchEntityId).customGET('get-profile');
-        };
 
-        service.saveProfile = (researchEntityId, profile) => {
-            return Restangular.one('researchentities', researchEntityId).customPUT(profile, 'save-profile');
+            if (!_profile) {
+                _profile = await Restangular.one('researchentities', researchEntityId).customGET('get-profile');
+                EventsService.publish(EventsService.USER_PROFILE_CHANGED, _profile);
+            }
+
+            return _profile;
         };
+        /* jshint ignore:end */
 
         return service;
     }

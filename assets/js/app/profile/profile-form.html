@@ -23,17 +23,6 @@
 
         <uib-tab
             index="1"
-            heading="Socials"
-            ng-class="{'has-error' : vm.errors['socials']}">
-            <profile-privacy-legend></profile-privacy-legend>
-
-            <profile-socials-form
-                profile="vm.profile"
-                errors="vm.errors"></profile-socials-form>
-        </uib-tab>
-
-        <uib-tab
-            index="2"
             heading="About me"
             ng-class="{'has-error' : vm.hasAboutMeErrors}">
             <profile-privacy-legend></profile-privacy-legend>
@@ -41,6 +30,17 @@
             <profile-about-me-form
                 profile="vm.profile"
                 errors="vm.errors"></profile-about-me-form>
+        </uib-tab>
+
+        <uib-tab
+            index="2"
+            heading="Socials"
+            ng-class="{'has-error' : vm.errors['socials']}">
+            <profile-privacy-legend></profile-privacy-legend>
+
+            <profile-socials-form
+                profile="vm.profile"
+                errors="vm.errors"></profile-socials-form>
         </uib-tab>
 
         <uib-tab
@@ -161,40 +161,87 @@
 
         <uib-tab
             index="7"
-            heading="Documents"
-            ng-class="{'has-error' : vm.errors['documents']}">
+            heading="Documents & accomplishments"
+            ng-class="{'has-error' : vm.errors['documents'] || vm.errors['accomplishments']}">
             <profile-privacy-legend></profile-privacy-legend>
 
             <ul class="enable-listing no-labels">
-                <li class="center">
-                    <em>Documents are been automatically taken from Scientilla, you can choose to hide or show this in your profile here on the Scientilla website and on the IIT website.</em>
+                <li>
+                    <label>Documents</label>
                 </li>
                 <li>
                     <scientilla-privacy-selector
                         context-string="documents"
-                        model="vm.profile.documents.privacy"></scientilla-privacy-selector>
+                        model="vm.profile.documents.privacy"
+                        css-class="no-label"></scientilla-privacy-selector>
+                </li>
+            </ul>
+
+            <ul class="enable-listing no-labels">
+                <li>
+                    <label>Accomplishments</label>
+                </li>
+                <li>
+                    <scientilla-privacy-selector
+                        context-string="accomplishments"
+                        model="vm.profile.accomplishments.privacy"
+                        css-class="no-label"></scientilla-privacy-selector>
                 </li>
             </ul>
         </uib-tab>
 
         <uib-tab
             index="8"
-            heading="Accomplishments"
-            ng-class="{'has-error' : vm.errors['accomplishments']}">
-            <profile-privacy-legend></profile-privacy-legend>
-
-            <ul class="enable-listing no-labels">
-                <li class="center">
-                    <em>Accomplisments are been automatically taken from Scientilla, you can choose to hide or show this in your profile here on the Scientilla website and on the IIT website.</em>
+            heading="IIT website">
+            <ul class="iit-website-options">
+                <li><strong>Hide my profile</strong> on the IIT website:
+                <label class="form-checkbox inline-block">
+                    <input
+                        type="checkbox"
+                        ng-model="vm.profile.hidden">
+                    <span></span>
+                </label>
+                </li>
+                <li>Show <strong>"Favorite Publications"</strong> on the IIT website:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.favoritePublications">
+                        <span></span>
+                    </label>
                 </li>
                 <li>
-                    <scientilla-privacy-selector
-                        context-string="accomplishments"
-                        model="vm.profile.accomplishments.privacy"></scientilla-privacy-selector>
+                    Show <strong>"Dissemination Talks"</strong> on the IIT website:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.disseminationTalks">
+                        <span></span>
+                    </label>
+                </li>
+                <li>
+                    Show <strong>"Scientific Talks"</strong> on the IIT website:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.scientificTalks">
+                        <span></span>
+                    </label>
+                </li>
+                <li>
+                    Show <strong>"Oral Presentations"</strong> on the IIT website:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.oralPresentations">
+                        <span></span>
+                    </label>
                 </li>
             </ul>
         </uib-tab>
     </uib-tabset>
+
+    <profile-legend></profile-legend>
 
     <ul class="form-actions">
         <li>
@@ -205,7 +252,7 @@
         <li>
             <scientilla-button
                 type="cancel"
-                click="vm.cancel()">Cancel</scientilla-button>
+                click="vm.cancel()">Close</scientilla-button>
         </li>
     </ul>
 </div>

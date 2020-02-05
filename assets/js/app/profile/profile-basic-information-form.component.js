@@ -117,13 +117,13 @@
             }
 
             if (
-                _.has(vm.profile, 'administrativeOrganization.value') &&
-                _.has(vm.profile, 'administrativeOrganization.privacy')
+                _.has(vm.profile, 'directorate.value') &&
+                _.has(vm.profile, 'directorate.privacy')
             ) {
                 vm.basicInformation.push({
-                    label: 'Administrative Organization',
-                    value: vm.profile.administrativeOrganization.value,
-                    model: 'administrativeOrganization'
+                    label: 'Directorate',
+                    value: vm.profile.directorate.value,
+                    model: 'directorate'
                 });
             }
 

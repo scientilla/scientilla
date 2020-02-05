@@ -21,7 +21,7 @@
         'ProfileService',
         'Notification',
         '$timeout',
-        '$scope'
+        '$scope',
     ];
 
     function profileForm(UsersService, AuthService, ProfileService, Notification, $timeout, $scope) {
@@ -49,9 +49,7 @@
         };
 
         vm.save = () => {
-            const profile = JSON.stringify(vm.profile);
-            UsersService.saveProfile(AuthService.user.researchEntity, profile).then(response => {
-                response = response.plain();
+            UsersService.saveProfile(AuthService.user.researchEntity, vm.profile).then(response => {
 
                 if (response.profile) {
                     vm.profile = response.profile;
@@ -62,6 +60,7 @@
 
                     vm.hasAboutMeErrors = false;
                     if (
+                        _.has(vm.errors, 'image') ||
                         _.has(vm.errors, 'displayNames') ||
                         _.has(vm.errors, 'titles') ||
                         _.has(vm.errors, 'description') ||
@@ -73,10 +72,12 @@
                         vm.hasAboutMeErrors = true;
                     }
 
-                    $scope.$evalAsync(() => {
+                    $timeout(() => {
                         const errorTab = document.querySelector('.js-profile-tabs .nav-item.has-error');
-                        const errorTabIndex = errorTab.getAttribute('index');
-                        $scope.active = parseInt(errorTabIndex);
+                        if (errorTab) {
+                            const errorTabIndex = errorTab.getAttribute('index');
+                            $scope.active = parseInt(errorTabIndex);
+                        }
                     });
                 }
 
@@ -88,9 +89,7 @@
                         vm.count = 0;
                         Notification.success(response.message);
 
-                        if (_.isFunction(vm.onSubmit())) {
-                            vm.onSubmit()(1);
-                        }
+                        originalProfileJson = angular.toJson(vm.profile);
                     }
                 }
             });

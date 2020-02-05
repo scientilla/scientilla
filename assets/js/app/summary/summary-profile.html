@@ -8,15 +8,17 @@
             <ul class="card-container">
                 <li class="main-card">
                     <div class="profile-block">
-                        <img src="https://via.placeholder.com/150" alt="" class="img-fluid rounded-circle profile-image">
+                        <img
+                            ng-if="vm.profile.image"
+                            ng-src="/{{ vm.profile.image }}" alt="" class="img-fluid rounded-circle profile-image">
                         <h2 class="name" ng-if="vm.profile.name || vm.profile.surname">
                             {{ vm.profile.name }} {{ vm.profile.surname }}
                         </h2>
                         <p class="job-title" ng-if="vm.profile.jobTitle || vm.profile.role">
                             {{ vm.joinStrings([vm.profile.jobTitle, vm.profile.role], ' - ') }}
                         </p>
-                        <p class="position" ng-if="vm.profile.administrativeOrganization || vm.profile.office">
-                            {{ vm.joinStrings([vm.profile.administrativeOrganization, vm.profile.office], ' - ') }}
+                        <p class="position" ng-if="vm.profile.directorate || vm.profile.office">
+                            {{ vm.joinStrings([vm.profile.directorate, vm.profile.office], ' - ') }}
                         </p>
                         <ul class="research-lines" ng-if="vm.profile.researchLines.length > 0">
                             <li ng-repeat="researchLine in vm.profile.researchLines track by $index">{{ researchLine }}</li>

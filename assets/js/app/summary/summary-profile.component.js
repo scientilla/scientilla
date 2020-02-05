@@ -8,6 +8,7 @@
                 controller: SummaryProfileComponent,
                 controllerAs: 'vm',
                 bindings: {
+                    profile: '='
                 }
             });
 
@@ -18,10 +19,20 @@
             '$uibModal',
             '$scope',
             'context',
-            'ProfileService'
+            'ProfileService',
+            'EventsService'
         ];
 
-        function SummaryProfileComponent(UsersService, AuthService, $element, $uibModal, $scope, context, ProfileService) {
+        function SummaryProfileComponent(
+            UsersService,
+            AuthService,
+            $element,
+            $uibModal,
+            $scope,
+            context,
+            ProfileService,
+            EventsService
+        ) {
             const vm = this;
 
             vm.experiencesByCompany = [];
@@ -29,7 +40,7 @@
             vm.favoriteCertificates = [];
             vm.numberOfItems = 0;
             vm.loading = true;
-
+            vm.imageUrl = false;
             vm.exportOptions = {
                 basic: true,
                 socials: true,
@@ -42,13 +53,30 @@
                 accomplishments: true
             };
 
+            let deregister;
+
             vm.$onInit = () => {
-                getProfile();
+                deregister = $scope.$watch('profile', () => {
+                    loadProfile();
+                });
+
+                EventsService.subscribeAll(vm, [
+                    EventsService.USER_PROFILE_CHANGED,
+                ], (evt, profile) => {
+                    vm.profile = profile;
+                    loadProfile();
+                });
+
+                loadProfile();
             };
 
             vm.$onDestroy = () => {
                 const unregisterTab = requireParentMethod($element, 'unregisterTab');
                 unregisterTab(vm);
+
+                deregister();
+
+                EventsService.unsubscribeAll(vm);
             };
 
             vm.getSourceTypeIcon = type => {
@@ -66,14 +94,6 @@
                 }
             };
 
-            /*vm.getNumberOfItems = obj => {
-                let length = 0;
-                for (const item in obj) {
-                    length += obj[item].length;
-                }
-                return length;
-            };*/
-
             vm.joinStrings = (strings = [], seperator = ', ') => {
                 return _.filter(strings).join(seperator);
             };
@@ -85,9 +105,9 @@
                     profile.skillCategories.map(category => {
                         category.skills.map(skill => {
                             if (skill.favorite) {
-                                favoriteSkills.push(skill.value);
+                                favoriteSkills.push(skill);
                             }
-                            allSkills.push(skill.value);
+                            allSkills.push(skill);
                         });
                     });
                 }
@@ -126,16 +146,15 @@
                 return [];
             }
 
-            function getProfile() {
-                UsersService.getProfile(AuthService.user.researchEntity).then(response => {
-                    vm.profile = response.plain();
+            function loadProfile() {
+                if (!_.isEmpty(vm.profile)) {
                     vm.experiencesByCompany = getExperiencesByCompany(vm.profile);
                     vm.favoriteSkills = getFavoriteSkills(vm.profile);
                     vm.favoriteCertificates = getFavoriteCertificates(vm.profile);
 
                     setNumberOfItems();
                     vm.loading = false;
-                });
+                }
             }
 
             function setNumberOfItems() {
@@ -307,9 +326,9 @@
                         <div class="modal-body profile">
                             <ul class="skill-categories">
                                 <li ng-repeat="category in vm.profile.skillCategories">
-                                    <span class="skill-category">{{ category.value }}</span>
+                                    <span class="skill-category">{{ category.categoryName }}</span>
                                     <ul class="skill-listing">
-                                        <li ng-repeat="skill in category.skills">{{ skill.value }}</li>
+                                        <li ng-repeat="skill in category.skills">{{ skill }}</li>
                                     </ul>
                                 </li>
                             </ul>

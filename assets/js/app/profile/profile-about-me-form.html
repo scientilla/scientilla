@@ -1,3 +1,37 @@
+<ul class="enable-listing">
+    <li>
+        <div
+            class="form-group"
+            ng-class="{'has-error': vm.profile.image.errors.value}">
+            <label for="image">Image</label>
+            <input
+                type="file"
+                class="form-control"
+                id="image"
+                placeholder="Image"
+                file="vm.profile.image.file"
+                ng-if="!vm.profile.image.value"
+                ng-class="{
+                    'is-invalid': vm.profile.image.errors,
+                    'is-invisible' : vm.profile.image.privacy === 'invisible'
+                }">
+            <div
+                ng-if="vm.profile.image.value"
+                class="image-container">
+                <img ng-src="/{{ vm.profile.image.value }}" alt="" class="img-fluid rounded-circle profile-image">
+                <button class="btn-remove-image" ng-click="vm.profile.image.value = ''"><i class="fas fa-trash"></i></button>
+            </div>
+            <scientilla-field-errors
+                errors="vm.profile.image.errors.value"></scientilla-field-errors>
+        </div>
+    </li>
+    <li>
+        <scientilla-privacy-selector
+            context-string="image"
+            model="vm.profile.image.privacy"></scientilla-privacy-selector>
+    </li>
+</ul>
+
 <div class="form-group">
     <label for="use-display-name">Display names</label>
     <label class="form-checkbox">

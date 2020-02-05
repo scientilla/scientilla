@@ -4,14 +4,14 @@
             <uib-tab
                 index="0"
                 heading="Profile"
-                ng-if="vm.subResearchEntity.getType() === 'user'">
-                <summary-profile></summary-profile>
+                ng-if="vm.subResearchEntity.getType() === 'user' && vm.profile !== false">
+                <summary-profile profile="vm.profile"></summary-profile>
             </uib-tab>
 
             <uib-tab
                 index="1"
                 heading="Profile v2"
-                ng-if="vm.subResearchEntity.getType() === 'user'">
+                ng-if="vm.subResearchEntity.getType() === 'user' && vm.profile !== false">
                 <summary-profile-v2></summary-profile-v2>
             </uib-tab>
 
