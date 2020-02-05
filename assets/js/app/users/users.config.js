@@ -12,9 +12,6 @@
                 controller: "UserBrowsingController",
                 controllerAs: 'vm',
             })
-            .when("/users/edit", {
-                template: '<user-edit></user-edit>'
-            })
             .when("/users/:id", {
                 redirectTo: '/users/:id/info'
             })
