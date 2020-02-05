@@ -12,6 +12,7 @@ const dot = require('dot-object');
 // remove after debugging
 const util = require('util');
 
+const path = require('path');
 
 const requiredDatePattern = '^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z';
 const requiredMessage = 'This field is required.';
@@ -24,8 +25,6 @@ const urlPatternMessage = 'This should be a valid URL starting with http:// or h
 
 const emptyPattern = '([^\\s])';
 const emptyPatternMessage = requiredMessage;
-
-const defaultPrivacy = 'locked';
 
 const schema = {
     type: 'object',
@@ -97,7 +96,8 @@ const schema = {
             type: 'object',
             properties: {
                 value: {
-                    pattern: urlPattern
+                    pattern: urlPattern,
+                    default: ''
                 },
                 privacy: {
                     type: 'string',
@@ -229,7 +229,7 @@ const schema = {
         skillCategory: {
             type: 'object',
             properties: {
-                value: {
+                categoryName: {
                     pattern: emptyPattern
                 },
                 skills: {
@@ -245,10 +245,10 @@ const schema = {
             },
             errorMessage: {
                 properties:{
-                    value: emptyPatternMessage
+                    categoryName: emptyPatternMessage
                 }
             },
-            required: ['value', 'privacy']
+            required: ['categoryName', 'privacy']
         },
         skill: {
             type: 'object',
@@ -290,9 +290,8 @@ const schema = {
             items: { $ref: '#/definitions/privacyPublic' },
             default: []
         },
-        administrativeOrganization: { $ref: '#/definitions/privacyPublic' },
+        directorate: { $ref: '#/definitions/privacyPublic' },
         office: { $ref: '#/definitions/privacyPublic' },
-        position: { $ref: '#/definitions/privacyPublic' },
         facilities: {
             type: 'array',
             items: { $ref: '#/definitions/privacyPublic' },
@@ -312,6 +311,7 @@ const schema = {
                 flickr: { $ref: '#/definitions/urlAndPrivacy' },
             }
         },
+        image: { $ref: '#/definitions/stringAndPrivacy' },
         displayNames: {
             type: 'object',
             properties: {
@@ -401,32 +401,90 @@ const schema = {
         },
         documents: { $ref: '#/definitions/privacyLockedPublicInvisible' },
         accomplishments: { $ref: '#/definitions/privacyLockedPublicInvisible' },
+        hidden: {
+            type: 'boolean',
+            default: false
+        },
+        favoritePublications: {
+            type: 'boolean',
+            default: false
+        },
+        disseminationTalks: {
+            type: 'boolean',
+            default: false
+        },
+        scientificTalks: {
+            type: 'boolean',
+            default: false
+        },
+        oralPresentations: {
+            type: 'boolean',
+            default: false
+        }
     }
 };
 
+module.exports = {
+    attributes: {
+        researchEntity: {
+            columnName: 'research_entity',
+            model: 'researchentity'
+        },
+        imported_data: 'JSON',
+        profile: 'JSON',
+    },
+    tableName: 'research_entity_data',
+    saveProfile: saveProfile,
+    getEditProfile: getEditProfile,
+    getProfile: getProfile,
+    saveProfile: saveProfile,
+    exportProfile: exportProfile,
+    setupProfile: setupProfile,
+    filterProfile: filterProfile,
+    handleDisplayNames: handleDisplayNames
+};
+
+/**
+ * Returns an object of the filtered property.
+ *
+ * @param {Object} object
+ * @param {Boolean} onlyPublic
+ *
+ * @returns {Object | Array | Boolean}
+ */
+
 function filterProperty(object, onlyPublic = false) {
+
     switch(true) {
+        // If it is an array
         case _.isArray(object) :
 
             const len = object.length;
 
             if (len > 0) {
                 const array = [];
+                // Loop over the array
                 for (let i = 0; i < len; i++) {
+                    // Filter the current item
                     const filteredProperty = filterProperty(object[i], onlyPublic);
                     if (filteredProperty) {
+                        // Push the filtered item
                         array.push(filteredProperty);
                     }
                 }
 
+                // Return the array if it's not empty
                 if (array.length > 0) {
                     return array;
                 }
             }
 
             return false;
+
+        // If it is an object
         case _.isObject(object) :
 
+            // Return false if the privacy is invisible or isn't public if it needs to be
             if (_.has(object, 'privacy') && (
                 object['privacy'] === 'invisible' ||
                 onlyPublic && object['privacy'] !== 'public'
@@ -434,22 +492,37 @@ function filterProperty(object, onlyPublic = false) {
                 return false;
             }
 
-            if (Object.keys(object).length === 2 && _.has(object, 'privacy') && _.has(object, 'value')) {
+            // Returns the value of the property if the object has a privacy and value property or the object has a
+            // favorite, privacy and value property
+            if (
+                (Object.keys(object).length === 2 && _.has(object, 'privacy') && _.has(object, 'value')) ||
+                (
+                    Object.keys(object).length === 3 &&
+                    _.has(object, 'favorite') &&
+                    _.has(object, 'privacy') &&
+                    _.has(object, 'value')
+                )
+            ) {
                 return object['value'];
             }
 
+            // Delete the privacy property
             if (_.has(object, 'privacy')) {
                 delete object['privacy'];
             }
 
             const tmpObject = {};
+            // Loop over the object properties
             for (const property in object) {
+                // Filter the current property
                 const filteredProperty = filterProperty(object[property], onlyPublic);
                 if (filteredProperty) {
+                    // Save the filter property if it's not false
                     tmpObject[property] = filteredProperty;
                 }
             }
 
+            // Return the filtered object if it's not empty
             if (!_.isEmpty(tmpObject)) {
                 return tmpObject;
             }
@@ -462,397 +535,434 @@ function filterProperty(object, onlyPublic = false) {
     }
 }
 
+/**
+ * Returns an object with the filtered profile properties.
+ *
+ * @param {Object} profile
+ * @param {Boolean} onlyPublic
+ *
+ * @returns {Object} object
+ */
 function filterProfile(profile, onlyPublic = false) {
 
     const object = {};
     // Loop over the properties of the object
     for (const property in profile) {
-        const filteredProperty = filterProperty(profile[property], onlyPublic);
+        const filteredProperty = filterProperty(_.cloneDeep(profile[property]), onlyPublic);
         if (filteredProperty) {
             object[property] = filteredProperty
         }
     }
+
+    if (
+        (
+            !onlyPublic &&
+            _.has(profile, 'accomplishments.privacy') &&
+            profile.accomplishments.privacy !== 'invisible'
+        ) ||
+        (onlyPublic && _.has(profile, 'accomplishments.privacy') && profile.accomplishments.privacy === 'public')
+    ) {
+        object.accomplishments = true;
+    }
+
+    if (
+        (
+            !onlyPublic &&
+            _.has(profile, 'documents.privacy') &&
+            profile.documents.privacy !== 'invisible'
+        ) ||
+        (onlyPublic && _.has(profile, 'documents.privacy') && profile.documents.privacy === 'public')
+    ) {
+        object.documents = true;
+    }
+
     return object;
 }
 
-module.exports = {
-    attributes: {
-        researchEntity: {
-            columnName: 'research_entity',
-            model: 'researchentity'
-        },
-        imported_data: 'JSON',
-        profile: 'JSON',
-    },
-    tableName: 'research_entity_data',
+/**
+ * Returns the profile object with defaults
+ *
+ * @param {Object} userData
+ *
+ * @returns {Object} profile
+ */
+function setupProfile(userData) {
+    // We store the defaults of the research entity data schema.
+    const defaultProfile = defaults(schema);
 
-    /**
-     * This function return the profile of the research entity with the editable values.
-     *
-     * @param {number}      researchEntityId
-     *
-     * @returns {Object}
-     */
-    async getEditProfile(researchEntityId) {
+    let profile = {};
 
-        // We cache the groups, membership groups and default profile.
-        const allGroups = await Group.find({ active: true });
-        const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
-        const defaultProfile = defaults(schema);
+    // We merge the defaults with the user's profile
+    if (userData && !_.isEmpty(userData.profile)) {
+        profile = _.merge(defaultProfile, userData.profile);
+    } else {
+        // We create a new profile with the defaults
+        profile = _.cloneDeep(defaultProfile);
+    }
 
-        // We search if there is already a record for this research entity.
-        const researchEntityData = await ResearchEntityData.findOne({
-            researchEntity: researchEntityId
-        });
+    return profile;
+}
 
-        let profile = {};
+/**
+ * Returns the profile object with documents and accomplishments
+ *
+ * @param {Object} profile
+ * @param {Integer} researchEntityId
+ *
+ * @returns {Object} profile
+ */
+async function loadDocumentsAndAccomplishments(profile, researchEntityId) {
+    let accomplishments = [];
+    let documents = [];
 
-        // We use the existing profile or create a profile object with the defaults.
-        if (researchEntityData && !_.isEmpty(researchEntityData.profile)) {
-            profile = _.merge(defaultProfile, researchEntityData.profile);
-        } else {
-            profile = _.cloneDeep(defaultProfile);
+    const researchEntity = await ResearchEntity.findOne({id: researchEntityId});
+
+    if (researchEntity && !researchEntity.isGroup()) {
+        if (_.has(profile, 'accomplishments')) {
+            const verifiedAccomplishments = await AccomplishmentVerify.find({researchEntity: researchEntityId});
+            const accomplishmentIds = verifiedAccomplishments.map(a => a.accomplishment);
+
+            // Check populates
+            const accomplishmentPopulates = [
+                'type',
+                'authors',
+                'affiliations',
+                'institutes',
+                'source',
+                'verified',
+                'verifiedUsers',
+                'verifiedGroups'
+            ];
+
+            accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
         }
 
-        // We add the imported data fron Pentaho into the profile.
-        if (researchEntityData && researchEntityData.imported_data) {
-            const importedData = _.cloneDeep(researchEntityData.imported_data);
+        if (_.has(profile, 'documents')) {
+            const user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
 
-            profile.username.value = importedData.email;
-            profile.name.value = importedData.nome;
-            profile.surname.value = importedData.cognome;
-            profile.phone.value = importedData.telefono;
-            profile.jobTitle.value = importedData.Ruolo_AD;
-
-            const centers = [];
-            const facilities = [];
-            const researchLines = [];
-            const institutes = [];
-
-            function handleGroup (group) {
-                switch (group.type) {
-                    case 'Center':
-                        const center = centers.find(c => c.value === group.name);
-                        if (!center) {
-                            centers.push({
-                                value: group.name,
-                                privacy: defaultPrivacy
-                            });
-                        }
-                        break;
-                    case 'Facility':
-                        const facility = facilities.find(f => f.value === group.name);
-                        if (!facility) {
-                            facilities.push({
-                                value: group.name,
-                                privacy: defaultPrivacy
-                            });
-                        }
-                        break;
-                    case 'Institute':
-                        const institute = institutes.find(i => i.value === group.name);
-                        if (!institute) {
-                            institutes.push({
-                                value: group.name,
-                                privacy: defaultPrivacy
-                            });
-                        }
-                        break;
-                    case 'Research Line':
-                        const researchLine = researchLines.find(f => f.value === group.name);
-                        if (!researchLine) {
-                            researchLines.push({
-                                value: group.name,
-                                privacy: defaultPrivacy
-                            });
-                        }
-                        break;
-                    default:
-                        break;
-                }
-
-                const membershipGroup = allMembershipGroups.find(g => g.child_group === group.id && g.parent_group.active);
-
-                if (membershipGroup) {
-                    handleGroup(membershipGroup.parent_group);
-                }
-            }
-
-            for (let i = 1; i < 7; i++) {
-                if (!_.isEmpty(importedData['linea_' + i])) {
-                    const code = importedData['linea_' + i];
-                    const group = allGroups.find(group => group.code === code);
-
-                    if (group) {
-                        handleGroup(group);
-                    } else {
-                        sails.log.debug('Group not found! Code:' + code);
-                    }
-                }
-            }
-
-            if (centers.length > 0) {
-                profile.centers = _.merge(centers, profile.centers);
-            }
-
-            if (facilities.length > 0) {
-                profile.facilities = _.merge(facilities, profile.facilities);
-            }
-
-            if (researchLines.length > 0) {
-                profile.researchLines = _.merge(researchLines, profile.researchLines);
-            }
-
-            if (facilities.length === 0 && researchLines.length === 0) {
-                profile.office.value = importedData.UO_1;
-                profile.administrativeOrganization.value = importedData.nome_linea_1;
-            }
-        }
-
-        return profile;
-    },
-    /**
-     * This function return the profile of the research entity
-     *
-     * @param {number}      researchEntityId
-     *
-     * @returns {Object}
-     */
-    async getProfile(researchEntityId, onlyPublic = false) {
-        const editProfile = await this.getEditProfile(researchEntityId);
-
-        let profile = _.cloneDeep(editProfile);
-
-        //sails.log.debug(util.inspect(profile, false, null, true));
-
-        profile = filterProfile(profile, onlyPublic);
-
-        if (_.has(profile, 'displayNames')) {
-            if (_.has(profile.displayNames, 'use') === true) {
-                if (profile.displayNames.name && !_.isEmpty(profile.displayNames.name)) {
-                    profile.name = profile.displayNames.name;
-                }
-
-                if (profile.displayNames.surname && !_.isEmpty(profile.displayNames.surname)) {
-                    profile.surname = profile.displayNames.surname;
-                }
-            }
-
-            delete profile.displayNames;
-        }
-
-        let accomplishments = [];
-        let documents = [];
-
-        const researchEntity = await ResearchEntity.findOne({id: researchEntityId});
-        if (researchEntity && !researchEntity.isGroup()) {
-
-            if (
-                ( !onlyPublic && editProfile.accomplishments.privacy !== 'invisible' ) ||
-                ( onlyPublic && editProfile.accomplishments.privacy === 'public' )
-            ) {
-                const verifiedAccomplishments = await AccomplishmentVerify.find({researchEntity: researchEntityId});
-                const accomplishmentIds = verifiedAccomplishments.map(a => a.accomplishment);
+            if (!_.isEmpty(user.documents)) {
+                const documentIds = user.documents.map(d => d.id);
 
                 // Check populates
-                const accomplishmentPopulates = [
-                    'type',
-                    'authors',
-                    'affiliations',
-                    'institutes',
+                const documentPopulates = [
                     'source',
-                    'verified',
-                    'verifiedUsers',
-                    'verifiedGroups'
+                    'authors',
+                    'authorships',
+                    'groupAuthorships',
+                    'affiliations',
+                    'sourceMetrics',
+                    'userTags',
+                    'tagLabels',
+                    'groupTags',
+                    'groupTagLabels',
+                    'institutes',
+                    //'duplicates',
+                    'groups',
+                    'scopusDocumentMetadata',
+                    'openaireMetadata'
                 ];
-
-                accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
-            }
-
-            if (
-                ( !onlyPublic && editProfile.documents.privacy !== 'invisible' ) ||
-                ( onlyPublic && editProfile.documents.privacy === 'public' )
-            ) {
-                const user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
-
-                if (!_.isEmpty(user.documents)) {
-                    const documentIds = user.documents.map(d => d.id);
-
-                    // Check populates
-                    const documentPopulates = [
-                        'source',
-                        'authors',
-                        'authorships',
-                        'groupAuthorships',
-                        'affiliations',
-                        'sourceMetrics',
-                        'userTags',
-                        'tagLabels',
-                        'groupTags',
-                        'groupTagLabels',
-                        'institutes',
-                        //'duplicates',
-                        'groups',
-                        'scopusDocumentMetadata',
-                        'openaireMetadata'
-                    ];
-                    documents = await Document.find({
-                        kind: DocumentKinds.VERIFIED, id: documentIds
-                    }).populate(documentPopulates);
-                }
+                documents = await Document.find({
+                    kind: DocumentKinds.VERIFIED, id: documentIds
+                }).populate(documentPopulates);
             }
         }
-
-        if (!_.isEmpty(documents)) {
-            profile.documents = documents;
-        } else {
-            delete profile.documents;
-        }
-
-        if (!_.isEmpty(accomplishments)) {
-            profile.accomplishments = accomplishments;
-        } else {
-            delete profile.accomplishments;
-        }
-
-        return profile;
-    },
-
-    /**
-     * This function tries to save the profile into the database.
-     *
-     * First it checks if the passed profile is valid.
-     * If that's the case it will be saved in a new record or existing record.
-     *
-     * The function returns the profile with the errors (if that's is the case), number of errors and related message
-     *
-     * @param {number}      researchEntityId
-     * @param {string}      profile
-     *
-     * @returns {Object}
-     */
-    async saveProfile(researchEntityId, profile) {
-
-        // Some defaults
-        let message = 'Profile has been saved!';
-        let errors = [];
-        let validate = {};
-        let count = 0;
-
-        // We look for ResearchEntityData by the researchEntittyId
-        let researchEntityData = await ResearchEntityData.findOne({
-            researchEntity: researchEntityId
-        });
-
-        try {
-            // We compile our schema
-            validate = ajv.compile(schema);
-
-            // We validate the profile
-            validate(profile);
-
-            // If the profile has some errors
-            if (validate.errors) {
-
-                const row = {};
-
-                // We loop over the validation errors and group the error messages for each field
-                for (let i = 0; i < validate.errors.length; i++) {
-                    let error = validate.errors[i];
-
-                    // We ignore the if keyword.
-                    if (error.keyword === 'if') {
-                        continue;
-                    }
-
-                    let path = '';
-
-                    if (error.keyword === 'required') {
-                        path = error.dataPath.substring(1).replace(/\//g, '.');
-                        path += '.errors';
-                        path += '.' + error.params.missingProperty;
-                        error.message = requiredMessage;
-                    } else {
-                        let pathArray = error.dataPath.substring(1).split('/');
-                        let property = pathArray.pop();
-                        path = pathArray.join('.');
-                        path += '.errors';
-                        path += '.' + property;
-                    }
-
-                    if (typeof row[path] === 'undefined') {
-                        row[path] = [];
-                    }
-
-                    row[path].push({
-                        keyword: error.keyword,
-                        message: error.message
-                    });
-
-                    count++;
-                }
-
-                // We expand the row object from dotted strings to object
-                errors = dot.object(row);
-
-                message = 'Please correct the errors!';
-            } else {
-                // If the profile is valid without any errors
-                if (researchEntityData) {
-                    // We update the existing record with the new profile
-                    const response = await ResearchEntityData.update(
-                        { id: researchEntityData.id },
-                        { profile: profile }
-                    );
-                    researchEntityData = response[0];
-                } else {
-                    // If there isn't any record yet, we create one for this researchEntity and save the profile.
-                    researchEntityData = await ResearchEntityData.create({
-                        researchEntity: researchEntityId,
-                        profile: profile
-                    });
-                }
-            }
-        } catch (e) {
-            sails.log.debug(e);
-        }
-
-        // We merge the profile and errors object
-        const profileWithErrors = {};
-        _.merge(profileWithErrors, profile, errors);
-
-        // We return an object with the profile, the error count and the message.
-        return {
-            profile: profileWithErrors,
-            errors: errors,
-            count: count,
-            message: message
-        };
-    },
-
-    /**
-     * This function calls another function to export the profile depending on the type. This can be doc or PDF.
-     *
-     * @param {number}      researchEntityId
-     * @param {string}      type
-     * @param {Object}      options
-     *
-     * @returns {Promise<Base64String \ Error message>}
-     */
-    async exportProfile (researchEntityId, type, options = {}) {
-        let result;
-        switch(type) {
-            case 'doc':
-                result = await Profile.toDoc(researchEntityId, options);
-                break;
-            case 'pdf':
-                result = await Profile.toPDF(researchEntityId, options);
-                break;
-            default:
-                result = 'Wrong request!';
-                break;
-        }
-
-        return result;
     }
-};
+
+    if (!_.isEmpty(documents)) {
+        profile.documents = documents;
+    } else {
+        delete profile.documents;
+    }
+
+    if (!_.isEmpty(accomplishments)) {
+        profile.accomplishments = accomplishments;
+    } else {
+        delete profile.accomplishments;
+    }
+
+    return profile;
+}
+
+/**
+ * Returns the profile object
+ *
+ * @param {Object} profile
+ *
+ * @returns {Object} profile
+ */
+function handleDisplayNames(profile) {
+    // Overwrite the name and surname properties if the user wants to use display names
+    if (_.has(profile, 'displayNames')) {
+        if (_.has(profile.displayNames, 'use') === true) {
+            if (profile.displayNames.name && !_.isEmpty(profile.displayNames.name)) {
+                profile.name = profile.displayNames.name;
+            }
+
+            if (profile.displayNames.surname && !_.isEmpty(profile.displayNames.surname)) {
+                profile.surname = profile.displayNames.surname;
+            }
+        }
+
+        delete profile.displayNames;
+    }
+
+    return profile;
+}
+
+/**
+ * Returns the profile of the research entity with the editable values.
+ *
+ * @param {number} researchEntityId
+ *
+ * @returns {Object}
+ */
+async function getEditProfile(researchEntityId) {
+
+    // We search if there is already a record for this research entity.
+    const data = await UserData.findOne({
+        researchEntity: researchEntityId
+    });
+
+    // Return false of the data object doesn't have the profile property.
+    if (!_.has(data, 'profile') || _.isNil(data.profile)) {
+        return false;
+    }
+
+    return setupProfile(data);
+}
+
+/**
+ * Returns the complete filtered profile.
+ *
+ * @param {number} researchEntityId
+ *
+ * @returns {Object}
+ */
+async function getProfile(researchEntityId) {
+    let profile = await getEditProfile(researchEntityId);
+
+    // Return false of the profile doesn't exist
+    if (!profile) {
+        return false;
+    }
+
+    // Filter the profile properties
+    profile = filterProfile(profile);
+    // Load the documents and accomplishments if needed
+    profile = await loadDocumentsAndAccomplishments(profile, researchEntityId);
+    // Replace the name and surname if the user wants to use the display names
+    profile = handleDisplayNames(profile);
+
+    return profile;
+}
+
+/**
+ * This function tries to save the profile into the database.
+ *
+ * First it checks if the passed profile is valid.
+ * If that's the case it will be saved in a new record or existing record.
+ *
+ * The function returns the profile with the errors (if that's is the case), number of errors and related message
+ *
+ * @param {Object} request
+ *
+ * @returns {Object}
+ */
+async function saveProfile(req) {
+
+    const researchEntityId = req.params.researchEntityId;
+    const profile = JSON.parse(req.body.profile);
+
+    // Some defaults
+    let message = 'Profile has been saved!';
+    let errors = [];
+    let validate = {};
+    let count = 0;
+
+    // We look for ResearchEntityData by the researchEntityId
+    let researchEntityData = await ResearchEntityData.findOne({
+        researchEntity: researchEntityId
+    });
+
+    const hasFiles = (req._fileparser.upstreams.length > 0);
+    if (hasFiles) {
+        const imagePath = path.join('profile', 'images', '.' + researchEntityId);
+
+        await new Promise(function (resolve, reject) {
+
+            let filename = req.file('profileImage')._files[0].stream.filename;
+            const filePath = path.resolve(sails.config.appPath, imagePath);
+
+            req.file('profileImage').upload({
+                dirname: filePath,
+                saveAs: filename
+            }, function (err, files) {
+                if (err) {
+                    reject(err);
+                }
+
+                if (files.length > 0) {
+                    let src = files[0].fd.split('/');
+                    src = src[src.length - 1];
+
+                    profile.image.value = imagePath + '/' + src;
+                }
+
+                resolve();
+            });
+        });
+    }
+
+    try {
+        // We compile our schema
+        validate = ajv.compile(schema);
+
+        // We validate the profile
+        validate(profile);
+
+        // After validating restore original basic information
+        // If the profile is valid without any errors
+        if (researchEntityData) {
+            profile.username = researchEntityData.profile.username;
+            profile.name = researchEntityData.profile.name;
+            profile.surname = researchEntityData.profile.surname;
+            profile.jobTitle = researchEntityData.profile.jobTitle;
+            profile.phone = researchEntityData.profile.phone;
+            profile.centers = researchEntityData.profile.centers;
+            profile.researchLines = researchEntityData.profile.researchLines;
+            profile.directorate = researchEntityData.profile.directorate;
+            profile.office = researchEntityData.profile.office;
+            profile.facilities = researchEntityData.profile.facilities;
+        }
+
+        // If the profile has some errors
+        if (validate.errors) {
+
+            const row = {};
+
+            // We loop over the validation errors and group the error messages for each field
+            for (let i = 0; i < validate.errors.length; i++) {
+                let error = validate.errors[i];
+
+                // We ignore the if keyword.
+                if (error.keyword === 'if') {
+                    continue;
+                }
+
+                let path = '';
+
+                if (error.keyword === 'required') {
+                    path = error.dataPath.substring(1).replace(/\//g, '.');
+                    path += '.errors';
+                    path += '.' + error.params.missingProperty;
+                    error.message = requiredMessage;
+                } else {
+                    let pathArray = error.dataPath.substring(1).split('/');
+                    let property = pathArray.pop();
+                    path = pathArray.join('.');
+                    path += '.errors';
+                    path += '.' + property;
+                }
+
+                if (typeof row[path] === 'undefined') {
+                    row[path] = [];
+                }
+
+                row[path].push({
+                    keyword: error.keyword,
+                    message: error.message
+                });
+
+                count++;
+            }
+
+            // We expand the row object from dotted strings to object
+            errors = dot.object(row);
+
+            message = 'Please correct the errors!';
+        } else {
+            // If the profile is valid without any errors
+            if (researchEntityData) {
+                // We update the existing record with the new profile
+                await ResearchEntityData.update(
+                    { id: researchEntityData.id },
+                    { profile: profile }
+                );
+            } else {
+                // If there isn't any record yet, we create one for this researchEntity and save the profile.
+                await ResearchEntityData.create({
+                    researchEntity: researchEntityId,
+                    profile: profile
+                });
+            }
+        }
+    } catch (e) {
+        sails.log.debug(e);
+    }
+
+    // We merge the profile and errors object
+    const profileWithErrors = {};
+    _.merge(profileWithErrors, profile, errors);
+
+    if (hasFiles) {
+        const failedTasks = await runGruntTasks();
+
+        if (failedTasks.length > 0) {
+            message = 'Something went wrong while saving the image!';
+        }
+    }
+
+    // We return an object with the profile, the error count and the message.
+    return {
+        profile: profileWithErrors,
+        errors: errors,
+        count: count,
+        message: message
+    };
+}
+
+/**
+ * This function calls another function to export the profile depending on the type. This can be doc or PDF.
+ *
+ * @param {number}      researchEntityId
+ * @param {string}      type
+ * @param {Object}      options
+ *
+ * @returns {Promise<Base64String \ Error message>}
+ */
+async function exportProfile (researchEntityId, type, options = {}) {
+    let result;
+    switch(type) {
+        case 'doc':
+            result = await Profile.toDoc(researchEntityId, options);
+            break;
+        case 'pdf':
+            result = await Profile.toPDF(researchEntityId, options);
+            break;
+        default:
+            result = 'Wrong request!';
+            break;
+    }
+
+    return result;
+}
+
+/**
+ * Returns an array of failed tasks.
+ * The task in this case is the copying of the profile images
+ *
+ * @returns {Array} tasks
+ */
+async function runGruntTasks() {
+    const tasks = [];
+    switch (sails.config.environment) {
+        case 'development':
+            tasks.push(await GruntTaskRunner.run('copy:profileDev'));
+            break;
+        case 'production':
+            tasks.push(await GruntTaskRunner.run('copy:profileBuild'));
+            break;
+    }
+
+    return tasks.filter(task => task.type !== 'success');
+}
