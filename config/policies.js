@@ -151,7 +151,11 @@ module.exports.policies = {
         updateDraft: isResearchEntityOwner,
         deleteDraft: isResearchEntityOwner,
         verify: isResearchEntityOwner,
-        unverify: isResearchEntityOwner
+        unverify: isResearchEntityOwner,
+        getProfile: isResearchEntityOwner,
+        getEditProfile: isResearchEntityOwner,
+        saveProfile: isResearchEntityOwner,
+        exportProfile: isResearchEntityOwner
     }, defaultPolicy),
 
     ResearchItemTypeController: defaultPolicy,

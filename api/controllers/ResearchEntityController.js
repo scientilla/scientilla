@@ -74,12 +74,10 @@ module.exports = {
         const researchItemIds = req.param('itemIds');
         res.halt(ResearchItem.blukAction(ResearchItem.copyResearchItem, researchItemIds, [researchEntityId]));
     },
-    // todo add policies
     getProfile(req, res, next) {
         const researchEntityId = req.params.researchEntityId;
         res.halt(ResearchEntityData.getProfile(researchEntityId));
     },
-    // todo add policies
     getEditProfile(req, res, next) {
         const researchEntityId = req.params.researchEntityId;
         res.halt(ResearchEntityData.getEditProfile(researchEntityId));
@@ -87,7 +85,7 @@ module.exports = {
     saveProfile(req, res, next) {
         res.halt(ResearchEntityData.saveProfile(req));
     },
-   async exportProfile(req, res) {
+    async exportProfile(req, res) {
         const researchEntityId = parseInt(req.params.researchEntityId, 10);
         const type = req.body.type;
         const options = req.body.options;
