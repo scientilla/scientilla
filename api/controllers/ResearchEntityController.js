@@ -85,9 +85,7 @@ module.exports = {
         res.halt(ResearchEntityData.getEditProfile(researchEntityId));
     },
     saveProfile(req, res, next) {
-        const researchEntityId = req.params.researchEntityId;
-        const profile = req.body;
-        res.halt(ResearchEntityData.saveProfile(researchEntityId, profile));
+        res.halt(ResearchEntityData.saveProfile(req));
     },
    async exportProfile(req, res) {
         const researchEntityId = parseInt(req.params.researchEntityId, 10);
