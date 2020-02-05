@@ -5,6 +5,7 @@ module.exports = function (grunt) {
         'replace',
         'sass:dev',
         'copy:dev',
-        'copy:uploadsDev'
+        'copy:uploadsDev',
+        'copy:profileDev'
     ]);
 };

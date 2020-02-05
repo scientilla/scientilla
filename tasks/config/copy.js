@@ -134,6 +134,24 @@ module.exports = function (grunt) {
                 src: ['**/*'],
                 dest: 'www/uploads'
             }]
+        },
+        profileDev: {
+            files: [{
+                dot: true,
+                expand: true,
+                cwd: './profile',
+                src: ['**'],
+                dest: '.tmp/public/profile'
+            }]
+        },
+        profileBuild: {
+            files: [{
+                dot: true,
+                expand: true,
+                cwd: '.tmp/public/profile',
+                src: ['**/*'],
+                dest: 'www/profile'
+            }]
         }
     });
 
