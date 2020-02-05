@@ -1,4 +1,5 @@
-/* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator, MembershipGroup, GroupTypes*/
+/* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator */
+/* global MembershipGroup, GroupTypes, ResearchEntityData */
 // Importer.js - in api/services
 
 "use strict";
@@ -578,6 +579,102 @@ async function importUserContracts(email = defaultEmail) {
         return codes;
     };
 
+    const getProfileJSON = (researchEntityData, contract) => {
+        const profile = ResearchEntityData.setupProfile(researchEntityData);
+
+        profile.username.value = contract.email;
+        profile.name.value = contract.nome;
+        profile.surname.value = contract.cognome;
+        profile.phone.value = contract.telefono;
+        profile.jobTitle.value = contract.Ruolo_AD;
+
+        const centers = [];
+        const facilities = [];
+        const researchLines = [];
+        const institutes = [];
+
+        function handleGroup (group) {
+            switch (group.type) {
+                case 'Center':
+                    const center = centers.find(c => c.value === group.name);
+                    if (!center) {
+                        centers.push({
+                            value: group.name,
+                            privacy: 'public'
+                        });
+                    }
+                    break;
+                case 'Facility':
+                    const facility = facilities.find(f => f.value === group.name);
+                    if (!facility) {
+                        facilities.push({
+                            value: group.name,
+                            privacy: 'public'
+                        });
+                    }
+                    break;
+                case 'Institute':
+                    const institute = institutes.find(i => i.value === group.name);
+                    if (!institute) {
+                        institutes.push({
+                            value: group.name,
+                            privacy: 'public'
+                        });
+                    }
+                    break;
+                case 'Research Line':
+                    const researchLine = researchLines.find(f => f.value === group.name);
+                    if (!researchLine) {
+                        researchLines.push({
+                            value: group.name,
+                            privacy: 'public'
+                        });
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            const membershipGroup = allMembershipGroups.find(g => g.child_group === group.id && g.parent_group.active);
+
+            if (membershipGroup) {
+                handleGroup(membershipGroup.parent_group);
+            }
+        }
+
+        for (let i = 1; i < 7; i++) {
+            if (!_.isEmpty(contract['linea_' + i])) {
+                const code = contract['linea_' + i];
+                const group = allGroups.find(group => group.code === code);
+
+                if (group) {
+                    handleGroup(group);
+                } else {
+                    sails.log.debug('Group not found! Code:' + code);
+                }
+            }
+        }
+
+        if (centers.length > 0) {
+            profile.centers = _.merge(centers, profile.centers);
+        }
+
+        if (facilities.length > 0) {
+            profile.facilities = _.merge(facilities, profile.facilities);
+        }
+
+        if (researchLines.length > 0) {
+            profile.researchLines = _.merge(researchLines, profile.researchLines);
+        }
+
+        if (facilities.length === 0 && researchLines.length === 0) {
+            profile.office.value = contract.UO_1;
+            profile.directorate.value = contract.nome_linea_1;
+        }
+
+        return profile;
+    };
+
     const reqOptions = {
         uri: sails.config.scientilla.userImport.endpoint,
         qs: {
@@ -592,6 +689,10 @@ async function importUserContracts(email = defaultEmail) {
         },
         json: true
     };
+
+    // We cache the groups, membership groups and default profile.
+    const allGroups = await Group.find({ active: true });
+    const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
 
     const invalidEmails = [];
     const updatedResearchEntityDataItems = [];
@@ -712,17 +813,23 @@ async function importUserContracts(email = defaultEmail) {
             // Create or update researchEntityData record
             if (researchEntityData) {
                 if (!_.isEqual(researchEntityData.imported_data, contract)) {
+                    const profileJSON = getProfileJSON(researchEntityData, contract);
                     researchEntityData = await ResearchEntityData.update(
                         { id: researchEntityData.id },
-                        { imported_data: JSON.stringify(contract) }
+                        {
+                            profile: JSON.stringify(profileJSON),
+                            imported_data: JSON.stringify(contract)
+                        }
                     );
                     updatedResearchEntityDataItems.push(researchEntityData[0]);
                 } else {
                     upToDateResearchEntityDataItems.push(researchEntityData);
                 }
             } else {
+                const profileJSON = getProfileJSON({}, contract);
                 researchEntityData = await ResearchEntityData.create({
                     researchEntity: user.researchEntity,
+                    profile: JSON.stringify(profileJSON),
                     imported_data: JSON.stringify(contract)
                 });
                 newResearchEntityDataItems.push(researchEntityData);
@@ -847,7 +954,7 @@ async function importUserContracts(email = defaultEmail) {
         sails.log.info(upToDateResearchEntityDataItems.length + ' ResearchEntityData records are already up-to-date!');
         sails.log.info('....................................');
 
-        sails.log.info('Stopped at ' +  moment.utc().format());
+        sails.log.info('Stopped at ' + moment.utc().format());
     } catch (e) {
         sails.log.debug('importUserContracts');
         sails.log.debug(e);
