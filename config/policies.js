@@ -23,6 +23,7 @@ const isAdmin = ['isAdmin'];
 const isActivityOwner = ['isActivityOwner'];
 const isGroupOwner = ['isGroupOwner'];
 const isResearchEntityOwner = ['isResearchEntityOwner'];
+const hasValidAPIKey = ['hasValidAPIKey'];
 
 const defaultPolicy = {
     '*': isLogged,
@@ -133,13 +134,17 @@ module.exports.policies = {
         getHighImpactPublications: true,
         getFavoritePublications: true,
         getOralPresentations: true,
-        getProfile: true,
+        getProfile: hasValidAPIKey,
         getDisseminationTalks: true,
         getScientificTalks: true,
         getMBOOverallPerformance: true,
         getMBOInstitutePerformance: true,
         getMBOInvitedTalks: true,
     }, defaultPolicy),
+
+    UserDataController: {
+        '*': hasValidAPIKey
+    },
 
     ResearchEntityController: _.defaults({
         createDraft: isResearchEntityOwner,
