@@ -13,6 +13,7 @@ const dot = require('dot-object');
 const util = require('util');
 
 const path = require('path');
+const sharp = require('sharp');
 
 const requiredDatePattern = '^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2})\\:(\\d{2})\\:(\\d{2})\\.(\\d{3})Z';
 const requiredMessage = 'This field is required.';
@@ -434,7 +435,6 @@ module.exports = {
         profile: 'JSON',
     },
     tableName: 'research_entity_data',
-    saveProfile: saveProfile,
     getEditProfile: getEditProfile,
     getProfile: getProfile,
     saveProfile: saveProfile,
@@ -791,21 +791,28 @@ async function saveProfile(req) {
         await new Promise(function (resolve, reject) {
 
             let filename = req.file('profileImage')._files[0].stream.filename;
+            const prefix = '200x200_';
             const filePath = path.resolve(sails.config.appPath, imagePath);
+            const originalImage = path.join(filePath, filename);
+            const croppedImage = path.join(filePath, prefix + filename);
 
             req.file('profileImage').upload({
                 dirname: filePath,
                 saveAs: filename
-            }, function (err, files) {
+            }, async function (err, files) {
                 if (err) {
                     reject(err);
                 }
+
+                await sharp(originalImage)
+                    .resize(200, 200)
+                    .toFile(croppedImage);
 
                 if (files.length > 0) {
                     let src = files[0].fd.split('/');
                     src = src[src.length - 1];
 
-                    profile.image.value = imagePath + '/' + src;
+                    profile.image.value = imagePath + '/' + prefix + src;
                 }
 
                 resolve();

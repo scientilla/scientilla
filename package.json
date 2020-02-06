@@ -58,6 +58,7 @@
     "sails-disk": "~0.10.0",
     "sails-hook-autoreload": "^0.13.2",
     "sails-postgresql": "^0.11.3",
+    "sharp": "^0.24.0",
     "string-similarity": "^1.0.0",
     "ui-bootstrap4": "^3.0.4",
     "waterline-sql-builder": "github:scientilla/waterline-sql-builder",
