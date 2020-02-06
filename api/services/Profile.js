@@ -608,6 +608,27 @@ async function toPDF(researchEntityId, options = {}) {
             }
         }
 
+        if (options.basic) {
+            if (profile.image) {
+                content.push({
+                    columns: [{
+                        width: '*',
+                        stack: basicProfile,
+                        margin: [0, 0, 20, 0]
+                    }, {
+                        image: profile.image,
+                        width: 100
+                    }]
+                });
+            } else {
+                if (!_.isEmpty(basicProfile)) {
+                    content.push({
+                        stack: basicProfile
+                    });
+                }
+            }
+        }
+
         // Socials
         if (options.socials) {
             let socials = [];
@@ -749,32 +770,13 @@ async function toPDF(researchEntityId, options = {}) {
             if (!_.isEmpty(socials)) {
                 socials = _.chunk(socials, _.round(socials.length / 2));
 
-                basicProfile.push({
+                content.push({
                     text: ' ',
                     fontSize: 5
                 });
 
-                basicProfile.push({
-                    columns: socials
-                });
-            }
-        }
-
-        if (options.basic) {
-            content.push({
-                columns: [{
-                    width: '*',
-                    stack: basicProfile,
-                    margin: [0,0,20,0]
-                }, {
-                    image: 'assets/images/150.png',
-                    width: 100
-                }]
-            });
-        } else {
-            if (!_.isEmpty(basicProfile)) {
                 content.push({
-                    stack: basicProfile
+                    columns: socials
                 });
             }
         }
@@ -1130,40 +1132,48 @@ async function toDoc(researchEntityId, options = {}) {
 
         options = initializeOptions(options);
 
-        const image = await new Promise(async (resolve) => {
-
-            const readFile = util.promisify(fs.readFile);
-            const image = path.resolve(sails.config.appPath, 'assets/images/150.png')
-
-            await readFile(image).then(async (file) => {
-                resolve(file);
-            });
-        });
-
         const profile = await ResearchEntityData.getProfile(researchEntityId);
+        let profileImage;
+
+        try {
+            profileImage = await new Promise(async (resolve, reject) => {
+                if (profile.image) {
+                    const readFile = util.promisify(fs.readFile);
+                    const imagePath = path.resolve(sails.config.appPath, profile.image);
+
+                    await readFile(imagePath).then(async (file) => {
+                        const image = Media.addImage(doc, file, 150, 150, {
+                            floating: {
+                                horizontalPosition: {
+                                    relative: HorizontalPositionRelativeFrom.INSIDE_MARGIN,
+                                    align: HorizontalPositionAlign.RIGHT,
+                                },
+                                verticalPosition: {
+                                    relative: VerticalPositionRelativeFrom.INSIDE_MARGIN,
+                                    offset: 0
+                                },
+                                wrap: {
+                                    type: TextWrappingType.SQUARE,
+                                    side: TextWrappingSide.LEFT,
+                                },
+                                margins: {
+                                    left: 360,
+                                    bottom: 360
+                                }
+                            }
+                        });
+
+                        resolve(image);
+                    });
+                } else {
+                    reject();
+                }
+            });
+        } catch(e) {
+            profileImage = null;
+        }
 
         let tmpText = '';
-
-        const profileImage = Media.addImage(doc, image, 150, 150, {
-            floating: {
-                horizontalPosition: {
-                    relative: HorizontalPositionRelativeFrom.INSIDE_MARGIN,
-                    align: HorizontalPositionAlign.RIGHT,
-                },
-                verticalPosition: {
-                    relative: VerticalPositionRelativeFrom.INSIDE_MARGIN,
-                    offset: 0
-                },
-                wrap: {
-                    type: TextWrappingType.SQUARE,
-                    side: TextWrappingSide.LEFT,
-                },
-                margins: {
-                    left: 360,
-                    bottom: 360
-                }
-            }
-        });
 
         const baseProfile = [];
         if (!_.isEmpty(profile.jobTitle)) {
@@ -1793,7 +1803,7 @@ async function toDoc(researchEntityId, options = {}) {
                 );
             }
 
-            if (!_.isEmpty(baseProfile) && !_.isEmpty(profileImage)) {
+            if (!_.isEmpty(baseProfile) && !_.isNil(profileImage)) {
                 text.push(
                     new Paragraph({
                         children: _.concat(baseProfile, profileImage)
@@ -1803,19 +1813,15 @@ async function toDoc(researchEntityId, options = {}) {
                 if (!_.isEmpty(baseProfile)) {
                     text.push(
                         new Paragraph({
-                            children: [
-                                baseProfile
-                            ]
+                            children: baseProfile
                         })
                     );
                 }
 
-                if (!_.isEmpty(profileImage)) {
+                if (!_.isNil(profileImage)) {
                     text.push(
                         new Paragraph({
-                            children: [
-                                profileImage
-                            ]
+                            children: profileImage
                         })
                     );
                 }
