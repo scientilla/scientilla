@@ -13,6 +13,15 @@
         padding: 2rem;
         border: 1px solid $gray-300;
         border-radius: 0.25rem;
+
+        .block-links{
+            @include normalize-listing;
+            margin-top: auto;
+
+            & > li{
+                margin-top: 1rem;
+            }
+        }
     }
 
     .block-basic-info{
@@ -129,11 +138,6 @@
             display: flex;
             flex-direction: column;
         }
-
-        .button-container{
-            margin-top: auto;
-            margin-left: auto;
-        }
     }
 
     .contact-listing{
@@ -185,11 +189,11 @@
     .show-more{
         position: relative;
         display: inline-block;
-        margin-top: auto;
-        margin-left: auto;
+        margin: auto 0px 0px 0px;
         padding: 0px 15px 0px 0px;
         background: none;
         border: 0px;
+        align-self: flex-start;
 
         &:after{
             position: absolute;
@@ -270,18 +274,6 @@
         .title-icon{
             margin-right: .5rem;
             font-size: 2rem;
-        }
-    }
-
-    .favorite-certificates-listing{
-        @include normalize-listing;
-        margin-top: .5rem;
-        margin-bottom: 1rem;
-
-        & > li{
-            & + li{
-                margin-top: 1rem;
-            }
         }
     }
 
@@ -457,18 +449,9 @@
             margin-bottom: 1rem;
         }
 
+        &,
         a{
             font-size: 1.4rem;
-        }
-    }
-
-    .button-container{
-        ul{
-            @include normalize-listing;
-            
-            & > li{
-                display: block;
-            }
         }
     }
 }
@@ -495,6 +478,10 @@
         .block-accomplishments{
             .content-container{
                 align-self: center;
+
+                &.last-item-container{
+                    align-self: normal;
+                }
             }
         }
     }

@@ -168,9 +168,7 @@
                         {{ vm.joinStrings([experience.jobTitle, experience.company], ' at ') }}
                     </h2>
                 </div>
-                <div class="button-container">
-                    <button class="show-more has-action" ng-click="vm.showExperiencesModal()">Show all experiences</button>
-                </div>
+                <button class="show-more has-action" ng-click="vm.showExperiencesModal()">Show all experiences</button>
             </div>
         </li>
         <li
@@ -181,9 +179,7 @@
                     <i class="fas fa-graduation-cap title-icon"></i><span>My {{ education.to ? 'last' : 'current' }} education:</span>
                     <h2 class="block-title">{{ vm.joinStrings([education.title, education.institute]) }}</h2>
                 </div>
-                <div class="button-container">
-                    <button class="show-more has-action" ng-click="vm.showEducationsModal()">Show all educations</button>
-                </div>
+                <button class="show-more has-action" ng-click="vm.showEducationsModal()">Show all educations</button>
             </div>
         </li>
         <li
@@ -192,15 +188,13 @@
             <div class="profile-block">
                 <div class="content-container">
                     <i class="fas fa-certificate title-icon"></i><span>My certificates:</span>
-                    <ul class="favorite-certificates-listing">
+                    <ul class="favorite-listing">
                         <li ng-repeat="certificate in vm.favoriteCertificates track by $index">
                             {{ certificate }}
                         </li>
                     </ul>
                 </div>
-                <div class="button-container">
-                    <button class="show-more has-action" ng-click="vm.showCertificatesModal()">Show all certificates</button>
-                </div>
+                <button class="show-more has-action" ng-click="vm.showCertificatesModal()">Show all certificates</button>
             </div>
         </li>
         <li
@@ -213,9 +207,7 @@
                         <li ng-repeat="skill in vm.favoriteSkills track by $index">{{ skill }}</li>
                     </ul>
                 </div>
-                <div class="button-container">
-                    <button class="show-more has-action" ng-click="vm.showSkillsModal()">Show all skills</button>
-                </div>
+                <button class="show-more has-action" ng-click="vm.showSkillsModal()">Show all skills</button>
             </div>
         </li>
         <li
