@@ -1,13 +1,13 @@
-<legend class="profile-legend">
+<legend class="profile-legend" ng-show="vm.showLegend">
     <label>Legend</label>
     <ul>
-        <li>
+        <li ng-if="vm.showPublic">
             <i class="fas fa-globe-africa fa-left"></i>Public: visible on both Scientilla profile and IIT website.
         </li>
-        <li>
+        <li ng-if="vm.showLocked">
             <i class="fas fa-lock fa-left"></i>Locked: only visible on Scientilla profile, not the IIT website.
         </li>
-        <li>
+        <li ng-if="vm.showHidden">
             <i class="fas fa-eye-slash fa-left"></i>Hidden: <strong>not</strong> visible on both Scientilla profile and IIT website.
         </li>
     </ul>

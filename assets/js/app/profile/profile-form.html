@@ -10,7 +10,7 @@
 </div>
 
 <div class="modal-body edit-profile">
-    <uib-tabset active="active" class="profile-tabs js-profile-tabs">
+    <uib-tabset active="vm.active" class="profile-tabs js-profile-tabs">
         <uib-tab
             index="0"
             heading="Basic information">
@@ -19,6 +19,8 @@
             <profile-basic-information-form></profile-basic-information-form>
 
             <em>The above information has been obtained from HR. If something is incorrect please contact HR.</em>
+
+            <profile-legend public="true"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -30,6 +32,11 @@
             <profile-about-me-form
                 profile="vm.profile"
                 errors="vm.errors"></profile-about-me-form>
+
+            <profile-legend
+                public="true"
+                locked="true"
+                invisible="true"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -41,6 +48,11 @@
             <profile-socials-form
                 profile="vm.profile"
                 errors="vm.errors"></profile-socials-form>
+
+            <profile-legend
+                public="true"
+                locked="true"
+                invisible="true"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -67,6 +79,11 @@
                 })">
                 <i class="fas fa-plus fa-left"></i>Add experience
             </button>
+
+            <profile-legend
+                public="true"
+                locked="true"
+                invisible="true"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -93,6 +110,11 @@
                 })">
                 <i class="fas fa-plus fa-left"></i>Add education
             </button>
+
+            <profile-legend
+                public="true"
+                locked="true"
+                invisible="true"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -119,6 +141,11 @@
                 })">
                 <i class="fas fa-plus fa-left"></i>Add certificate
             </button>
+
+            <profile-legend
+                public="true"
+                locked="true"
+                invisible="true"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -157,6 +184,11 @@
                 })">
                 <i class="fas fa-plus fa-left"></i>Add category
             </button>
+
+            <profile-legend
+                public="true"
+                locked="true"
+                invisible="true"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -188,6 +220,11 @@
                         css-class="no-label"></scientilla-privacy-selector>
                 </li>
             </ul>
+
+            <profile-legend
+                public="true"
+                locked="true"
+                invisible="true"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -240,8 +277,6 @@
             </ul>
         </uib-tab>
     </uib-tabset>
-
-    <profile-legend></profile-legend>
 
     <ul class="form-actions">
         <li>

@@ -7,7 +7,9 @@
             controller: profileLegend,
             controllerAs: 'vm',
             bindings: {
-                profile: '<'
+                public: '<?',
+                locked: '<?',
+                invisible: '<?'
             }
         });
 
@@ -16,8 +18,26 @@
     function profileLegend() {
         const vm = this;
 
-        vm.$onInit = function () {
+        vm.showLegend = false;
+        vm.showPublic = false;
+        vm.showLocked = false;
+        vm.showHidden = false;
 
+        vm.$onInit = function () {
+            if (!_.isNil(vm.public) && vm.public) {
+                vm.showLegend = true;
+                vm.showPublic = true;
+            }
+
+            if (!_.isNil(vm.locked) && vm.locked) {
+                vm.showLegend = true;
+                vm.showLocked = true;
+            }
+
+            if (!_.isNil(vm.invisible) && vm.invisible) {
+                vm.showLegend = true;
+                vm.showHidden = true;
+            }
         };
     }
 
