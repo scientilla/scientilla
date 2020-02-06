@@ -27,6 +27,8 @@ const urlPatternMessage = 'This should be a valid URL starting with http:// or h
 const emptyPattern = '([^\\s])';
 const emptyPatternMessage = requiredMessage;
 
+const pathProfileImages = path.join('profile', 'images');
+
 const schema = {
     type: 'object',
     definitions: {
@@ -595,6 +597,10 @@ function setupProfile(userData) {
     // We merge the defaults with the user's profile
     if (userData && !_.isEmpty(userData.profile)) {
         profile = _.merge(defaultProfile, userData.profile);
+
+        if (_.has(profile, 'image') && !_.isEmpty(profile.image.value)) {
+            profile.image.value = path.join(pathProfileImages, userData.researchEntity.toString(), profile.image.value);
+        }
     } else {
         // We create a new profile with the defaults
         profile = _.cloneDeep(defaultProfile);
@@ -786,7 +792,7 @@ async function saveProfile(req) {
 
     const hasFiles = (req._fileparser.upstreams.length > 0);
     if (hasFiles) {
-        const imagePath = path.join('profile', 'images', '.' + researchEntityId);
+        const imagePath = path.join(pathProfileImages, researchEntityId);
 
         await new Promise(function (resolve, reject) {
 
@@ -812,7 +818,7 @@ async function saveProfile(req) {
                     let src = files[0].fd.split('/');
                     src = src[src.length - 1];
 
-                    profile.image.value = imagePath + '/' + prefix + src;
+                    profile.image.value = prefix + src;
                 }
 
                 resolve();
