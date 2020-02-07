@@ -10,7 +10,7 @@
                     <div class="profile-block">
                         <img
                             ng-if="vm.profile.image"
-                            ng-src="/{{ vm.profile.image }}" alt="" class="img-fluid rounded-circle profile-image">
+                            ng-src="{{ vm.pathProfileImages }}/{{ vm.profile.image }}" alt="" class="img-fluid rounded-circle profile-image">
                         <h2 class="name" ng-if="vm.profile.name || vm.profile.surname">
                             {{ vm.profile.name }} {{ vm.profile.surname }}
                         </h2>

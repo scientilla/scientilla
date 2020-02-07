@@ -20,7 +20,8 @@
             '$scope',
             'context',
             'ProfileService',
-            'EventsService'
+            'EventsService',
+            'pathProfileImages'
         ];
 
         function SummaryProfileComponent(
@@ -31,7 +32,8 @@
             $scope,
             context,
             ProfileService,
-            EventsService
+            EventsService,
+            pathProfileImages
         ) {
             const vm = this;
 
@@ -52,6 +54,8 @@
                 documents: true,
                 accomplishments: true
             };
+
+            vm.pathProfileImages = pathProfileImages + '/' + AuthService.user.researchEntity + '/';
 
             let deregister;
 

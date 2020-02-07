@@ -11,10 +11,12 @@
             }
         });
 
-    profileAboutMeForm.$inject = ['ProfileService'];
+    profileAboutMeForm.$inject = ['ProfileService', 'AuthService', 'pathProfileImages'];
 
-    function profileAboutMeForm(ProfileService) {
+    function profileAboutMeForm(ProfileService, AuthService, pathProfileImages) {
         const vm = this;
+
+        vm.pathProfileImages = pathProfileImages + '/' + AuthService.user.researchEntity + '/';
 
         vm.$onInit = function () {
 

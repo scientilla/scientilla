@@ -597,10 +597,6 @@ function setupProfile(userData) {
     // We merge the defaults with the user's profile
     if (userData && !_.isEmpty(userData.profile)) {
         profile = _.merge(defaultProfile, userData.profile);
-
-        if (_.has(profile, 'image') && !_.isEmpty(profile.image.value)) {
-            profile.image.value = path.join(pathProfileImages, userData.researchEntity.toString(), profile.image.value);
-        }
     } else {
         // We create a new profile with the defaults
         profile = _.cloneDeep(defaultProfile);
@@ -846,6 +842,10 @@ async function saveProfile(req) {
             profile.directorate = researchEntityData.profile.directorate;
             profile.office = researchEntityData.profile.office;
             profile.facilities = researchEntityData.profile.facilities;
+
+            if (!hasFiles && !_.isEmpty(profile.image.value)) {
+                profile.image.value = researchEntityData.profile.image.value;
+            }
         }
 
         // If the profile has some errors
@@ -907,6 +907,46 @@ async function saveProfile(req) {
                     researchEntity: researchEntityId,
                     profile: profile
                 });
+            }
+
+            let name = profile.name.value;
+            let surname = profile.surname.value;
+
+            // Check if use display names is true
+            if (profile.displayNames.use) {
+                // Check if the display name are public or locked
+                if (profile.displayNames.name.privacy === 'public' || profile.displayNames.name.privacy === 'locked') {
+                    name = profile.displayNames.name.value;
+                }
+
+                // Check if the display surname are public or locked
+                if (profile.displayNames.surname.privacy === 'public' || profile.displayNames.surname.privacy === 'locked') {
+                    surname = profile.displayNames.surname.value;
+                }
+            }
+
+            let user = await User.findOne({
+                researchEntity: researchEntityId
+            });
+
+            if (user) {
+                // Check if the user name and surname the same as the display names
+                if (user.name !== name || user.surname !== surname) {
+
+                    // Save into user's table
+                    user = _.first(await User.update({
+                        researchEntity: researchEntityId,
+                    }, {
+                        name,
+                        surname
+                    }));
+
+                    try {
+                        await User.createAliases(user);
+                    } catch(e) {
+
+                    }
+                }
             }
         }
     } catch (e) {
