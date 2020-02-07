@@ -40,9 +40,14 @@
         vm.openSuggestedWizard = openSuggestedWizard;
         vm.editUserProfile = editUserProfile;
         vm.getUrl = getUrl;
-        vm.originalUser = {};
 
         vm.$onInit = function () {
+
+            EventsService.subscribeAll(vm, [
+                EventsService.USER_PROFILE_CHANGED,
+            ], () => {
+                AuthService.setupUserAccount(vm.user.id);
+            });
 
             EventsService.subscribeAll(vm, [
                 EventsService.AUTH_LOGIN,
@@ -51,8 +56,6 @@
             ], refresh);
 
             refresh();
-
-            vm.originalUser = angular.copy(vm.user);
         };
 
         vm.$onDestroy = function () {

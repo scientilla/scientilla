@@ -32,12 +32,19 @@
         vm.isRegisterEnabled = false;
         vm.changeContextToGroup = changeContextToGroup;
         vm.changeContextToUser = changeContextToUser;
-        vm.editProfile = editProfile;
+        vm.editUserProfile = editUserProfile;
+        vm.editUserSettings = editUserSettings;
         vm.showWizardVisible = showWizardVisible;
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
 
         vm.$onInit = function () {
+
+            EventsService.subscribeAll(vm, [
+                EventsService.USER_PROFILE_CHANGED,
+            ], () => {
+                AuthService.setupUserAccount(vm.user.id);
+            });
 
             EventsService.subscribeAll(vm, [
                 EventsService.AUTH_LOGIN,
@@ -78,11 +85,11 @@
                 });
         }
 
-        function editProfile() {
+        function editUserSettings() {
             let openForm;
             let researchEntityService;
             if (vm.subResearchEntity.getType() === 'user') {
-                openForm = ModalService.openScientillaUserForm;
+                openForm = ModalService.openScientillaUserForm(vm.user, true);
                 researchEntityService = UsersService;
             }
             else {
@@ -103,6 +110,10 @@
                 });
 
             document.body.classList.remove('mobile-menu-is-open');
+        }
+
+        function editUserProfile() {
+            ModalService.openProfileForm();
         }
 
         function showWizardVisible() {
