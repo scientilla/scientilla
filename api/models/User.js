@@ -307,7 +307,17 @@ module.exports = _.merge({}, SubResearchEntity, {
                 str: alias2
             });
 
-        await Alias.create(aliases);
+        aliases.filter(alias => {
+            const foundAlias = Alias.find(alias);
+            if (foundAlias) {
+                return false;
+            }
+            return alias;
+        });
+
+        if (!_.isEmpty(aliases)) {
+            await Alias.create(aliases);
+        }
     },
     copyAuthData: function (user) {
         if (!user.auth)
