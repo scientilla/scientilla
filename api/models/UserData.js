@@ -2,6 +2,8 @@
 
 "use strict";
 
+const path = require('path');
+
 module.exports = {
     attributes: {
         profile: 'JSON',
@@ -13,7 +15,7 @@ module.exports = {
             columnName: 'research_entity',
             model: 'researchEntity'
         },
-        toJSON: function() {
+        toJSON: function(replaceImage = true) {
             const data = this.toObject();
 
             let profile = ResearchEntityData.setupProfile(data);
@@ -25,6 +27,19 @@ module.exports = {
             profile = ResearchEntityData.filterProfile(profile, true);
             profile = ResearchEntityData.handleDisplayNames(profile);
 
+            if (replaceImage && _.has(profile, 'image')) {
+                profile.image = path.join(
+                    'api',
+                    'v1',
+                    'users',
+                    'username',
+                    profile.username.toString(),
+                    'profile-image'
+                );
+            }
+
+            profile.id = data.researchEntity;
+
             return profile;
         }
     },
@@ -32,4 +47,15 @@ module.exports = {
     tableName: 'user_data',
     autoUpdatedAt: false,
     autoCreatedAt: false,
+    getProfileImage: async function(username) {
+        const user = await User.findOne({username});
+        const data = await UserData.findOne({researchEntity: user.researchEntity});
+        const profile = data.toJSON(false);
+
+        if (_.has(profile, 'image')) {
+            return '/profile/images/' + user.researchEntity.toString() + '/' + profile.image;
+        }
+
+        return false;
+    }
 };

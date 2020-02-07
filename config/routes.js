@@ -126,7 +126,8 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/users/username/:username/favorite-publications']: 'User.getFavoritePublications',
     ['get ' + apiPrfx + '/groups/slug/:slug/favorite-publications']: 'Group.getFavoritePublications',
     ['get ' + apiPrfx + '/users/username/:username/oral-presentations']: 'User.getOralPresentations',
-    ['get ' + apiPrfx + '/users/username/:username/profile']: 'User.getProfile',
+    ['get ' + apiPrfx + '/users/username/:username/profile']: 'User.getPublicProfile',
+    ['get ' + apiPrfx + '/users/username/:username/profile-image']: 'userData.getProfileImage',
 
     //Commands
     ['put ' + apiPrfx + '/status/enable']: 'Status.enable',

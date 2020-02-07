@@ -134,7 +134,7 @@ module.exports.policies = {
         getHighImpactPublications: true,
         getFavoritePublications: true,
         getOralPresentations: true,
-        getProfile: hasValidAPIKey,
+        getPublicProfile: hasValidAPIKey,
         getDisseminationTalks: true,
         getScientificTalks: true,
         getMBOOverallPerformance: true,
@@ -143,7 +143,8 @@ module.exports.policies = {
     }, defaultPolicy),
 
     UserDataController: {
-        '*': hasValidAPIKey
+        '*': hasValidAPIKey,
+        getProfileImage: true
     },
 
     ResearchEntityController: _.defaults({
