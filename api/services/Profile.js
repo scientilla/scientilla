@@ -119,8 +119,6 @@ async function toPDF(researchEntityId, options = {}) {
 
     const profile = await ResearchEntityData.getProfile(researchEntityId);
 
-    //sails.log.debug(util.inspect(profile, false, null, true));
-
     function getExperienceText(experience) {
         const stack = [];
 
@@ -249,9 +247,9 @@ async function toPDF(researchEntityId, options = {}) {
         const stack = [];
 
         if (!_.isEmpty(category)) {
-            if (!_.isEmpty(category.value)) {
+            if (!_.isEmpty(category.categoryName)) {
                 stack.push({
-                    text: category.value,
+                    text: category.categoryName,
                     style: 'bold'
                 });
             }
@@ -261,7 +259,7 @@ async function toPDF(researchEntityId, options = {}) {
                 const skills = [];
                 for (let i = 0; i < category.skills.length; i++) {
                     const skill = category.skills[i];
-                    skills.push(skill.value);
+                    skills.push(skill);
                 }
 
                 stack.push({
@@ -1575,7 +1573,7 @@ async function toDoc(researchEntityId, options = {}) {
                         new Paragraph({
                             children: [
                                 new TextRun({
-                                    text: category.value,
+                                    text: category.categoryName,
                                     bold: true
                                 })
                             ]
@@ -1586,7 +1584,7 @@ async function toDoc(researchEntityId, options = {}) {
                         new Paragraph({
                             children: [
                                 new TextRun({
-                                    text: category.value,
+                                    text: category.categoryName,
                                     bold: true
                                 }).break()
                             ]
@@ -1598,7 +1596,7 @@ async function toDoc(researchEntityId, options = {}) {
                     for (let i = 0; i < category.skills.length; i++) {
                         const skill = category.skills[i];
                         const paragraph = new Paragraph({
-                            text: skill.value,
+                            text: skill,
                             bullet: {
                                 level: 0
                             }
