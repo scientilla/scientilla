@@ -38,6 +38,35 @@ module.exports = {
                 );
             }
 
+            if (
+                _.has(profile, 'favoritePublications') ||
+                _.has(profile, 'disseminationTalks') ||
+                _.has(profile, 'scientificTalks') ||
+                _.has(profile, 'oralPresentations')
+            ) {
+                profile.publicWebsite = {};
+            }
+
+            if (_.has(profile, 'favoritePublications')) {
+                profile.publicWebsite.favoritePublications = profile.favoritePublications;
+                delete profile.favoritePublications;
+            }
+
+            if (_.has(profile, 'disseminationTalks')) {
+                profile.publicWebsite.disseminationTalks = profile.disseminationTalks;
+                delete profile.disseminationTalks;
+            }
+
+            if (_.has(profile, 'scientificTalks')) {
+                profile.publicWebsite.scientificTalks = profile.scientificTalks;
+                delete profile.scientificTalks;
+            }
+
+            if (_.has(profile, 'oralPresentations')) {
+                profile.publicWebsite.oralPresentations = profile.oralPresentations;
+                delete profile.oralPresentations;
+            }
+
             profile.id = data.researchEntity;
 
             return profile;
