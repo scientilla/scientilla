@@ -3,7 +3,19 @@
 "use strict";
 
 const docx = require("docx");
-const { Document, Paragraph, Packer, TextRun, HeadingLevel, Media, HorizontalPositionRelativeFrom, HorizontalPositionAlign, VerticalPositionRelativeFrom, VerticalPositionAlign, TextWrappingSide, TextWrappingType} = docx;
+const {
+    Document,
+    Paragraph,
+    Packer,
+    TextRun,
+    HeadingLevel,
+    Media,
+    HorizontalPositionRelativeFrom,
+    HorizontalPositionAlign,
+    VerticalPositionRelativeFrom,
+    TextWrappingSide,
+    TextWrappingType
+} = docx;
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
@@ -610,13 +622,14 @@ async function toPDF(researchEntityId, options = {}) {
 
         if (options.basic) {
             if (profile.image) {
+                const profileImagePath = path.join('profile', 'images', researchEntityId.toString(), profile.image);
                 content.push({
                     columns: [{
                         width: '*',
                         stack: basicProfile,
                         margin: [0, 0, 20, 0]
                     }, {
-                        image: profile.image,
+                        image: profileImagePath,
                         width: 100
                     }]
                 });
@@ -1139,7 +1152,8 @@ async function toDoc(researchEntityId, options = {}) {
             profileImage = await new Promise(async (resolve, reject) => {
                 if (profile.image) {
                     const readFile = util.promisify(fs.readFile);
-                    const imagePath = path.resolve(sails.config.appPath, profile.image);
+                    const profileImagePath = path.join('profile', 'images', researchEntityId.toString());
+                    const imagePath = path.resolve(sails.config.appPath, profileImagePath, profile.image);
 
                     await readFile(imagePath).then(async (file) => {
                         const image = Media.addImage(doc, file, 150, 150, {
