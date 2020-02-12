@@ -26,7 +26,7 @@
         <uib-tab
             index="1"
             heading="About me"
-            ng-class="{'has-error' : vm.hasAboutMeErrors}">
+            ng-class="{'has-error' : vm.hasAboutMeErrors, 'changed' : vm.changed['about-me']}">
             <profile-privacy-legend></profile-privacy-legend>
 
             <profile-about-me-form
@@ -42,7 +42,7 @@
         <uib-tab
             index="2"
             heading="Socials"
-            ng-class="{'has-error' : vm.errors['socials']}">
+            ng-class="{'has-error' : vm.errors['socials'], 'changed' : vm.changed['socials']}">
             <profile-privacy-legend></profile-privacy-legend>
 
             <profile-socials-form
@@ -58,7 +58,7 @@
         <uib-tab
             index="3"
             heading="Experiences"
-            ng-class="{'has-error' : vm.errors['experiences']}">
+            ng-class="{'has-error' : vm.errors['experiences'], 'changed' : vm.changed['experiences']}">
             <profile-privacy-legend
                 show="vm.profile.experiences.length > 0"></profile-privacy-legend>
 
@@ -89,7 +89,7 @@
         <uib-tab
             index="4"
             heading="Education"
-            ng-class="{'has-error' : vm.errors['education']}">
+            ng-class="{'has-error' : vm.errors['education'], 'changed' : vm.changed['education']}">
             <profile-privacy-legend
                 show="vm.profile.education.length > 0"></profile-privacy-legend>
 
@@ -120,7 +120,7 @@
         <uib-tab
             index="5"
             heading="Certificates"
-            ng-class="{'has-error' : vm.errors['certificates']}">
+            ng-class="{'has-error' : vm.errors['certificates'], 'changed' : vm.changed['certificates']}">
             <profile-privacy-legend
                 show="vm.profile.certificates.length > 0"></profile-privacy-legend>
 
@@ -151,7 +151,7 @@
         <uib-tab
             index="6"
             heading="Skills"
-            ng-class="{'has-error' : vm.errors['skillCategories']}">
+            ng-class="{'has-error' : vm.errors['skillCategories'], 'changed' : vm.changed['skills']}">
             <profile-privacy-legend
                 show="vm.profile.skillCategories.length > 0"></profile-privacy-legend>
 
@@ -194,7 +194,10 @@
         <uib-tab
             index="7"
             heading="Documents & accomplishments"
-            ng-class="{'has-error' : vm.errors['documents'] || vm.errors['accomplishments']}">
+            ng-class="{
+                'has-error' : vm.errors['documents'] || vm.errors['accomplishments'],
+                'changed' : vm.changed['documents-accomplishments']
+            }">
             <profile-privacy-legend></profile-privacy-legend>
 
             <ul class="enable-listing no-labels">
@@ -229,7 +232,10 @@
 
         <uib-tab
             index="8"
-            heading="IIT website">
+            heading="IIT website"
+            ng-class="{
+                'changed' : vm.changed['public-website']
+            }">
             <ul class="iit-website-options">
                 <li><strong>Hide my profile</strong> on the IIT website:
                 <label class="form-checkbox inline-block">
@@ -243,7 +249,7 @@
                     <label class="form-checkbox inline-block">
                         <input
                             type="checkbox"
-                            ng-model="vm.profile.favoritePublications">
+                            ng-model="vm.profile.publicWebsite.favoritePublications">
                         <span></span>
                     </label>
                 </li>
@@ -251,7 +257,7 @@
                     <label class="form-checkbox inline-block">
                         <input
                             type="checkbox"
-                            ng-model="vm.profile.allPublications">
+                            ng-model="vm.profile.publicWebsite.allPublications">
                         <span></span>
                     </label>
                 </li>
@@ -260,7 +266,7 @@
                     <label class="form-checkbox inline-block">
                         <input
                             type="checkbox"
-                            ng-model="vm.profile.disseminationTalks">
+                            ng-model="vm.profile.publicWebsite.disseminationTalks">
                         <span></span>
                     </label>
                 </li>
@@ -269,7 +275,7 @@
                     <label class="form-checkbox inline-block">
                         <input
                             type="checkbox"
-                            ng-model="vm.profile.scientificTalks">
+                            ng-model="vm.profile.publicWebsite.scientificTalks">
                         <span></span>
                     </label>
                 </li>
@@ -278,7 +284,7 @@
                     <label class="form-checkbox inline-block">
                         <input
                             type="checkbox"
-                            ng-model="vm.profile.oralPresentations">
+                            ng-model="vm.profile.publicWebsite.oralPresentations">
                         <span></span>
                     </label>
                 </li>

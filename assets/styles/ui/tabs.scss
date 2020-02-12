@@ -52,6 +52,7 @@
         }
 
         .nav-item{
+            position: relative;
             padding: 0.5rem 1rem;
 
             &.show{
@@ -71,6 +72,28 @@
                     &:after{
                         background-color: $error-color;
                     }
+                }
+
+                &.changed{
+                    &:before{
+                        background-color: $error-color;
+                    }
+                }
+            }
+
+            &.changed{
+                &:before{
+                    position: absolute;
+                    right: 0px;
+                    top: -10px;
+                    display: block;
+                    content: 'Edited';
+                    background: $gray-300;
+                    color: $white;
+                    font-size: 7px;
+                    text-transform: uppercase;
+                    padding: 1px 2px;
+                    border-radius: 2px;
                 }
             }
         }

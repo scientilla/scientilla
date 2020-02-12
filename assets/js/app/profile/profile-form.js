@@ -32,6 +32,7 @@
         vm.count = 0;
         vm.profile = {};
         vm.errors = {};
+        vm.changed = {};
         vm.hasAboutMeErrors = false;
         vm.unsavedData = false;
         let originalProfileJson = '';
@@ -82,6 +83,7 @@
                     });
                 } else {
                     vm.errors = {};
+                    vm.changed = {};
                 }
 
                 if (response.message) {
@@ -99,12 +101,88 @@
         };
 
         function getEditProfile() {
+            let profileWatcher;
             UsersService.getProfile(AuthService.user.researchEntity, true).then(response => {
                 vm.profile = response.plain();
                 originalProfileJson = angular.toJson(vm.profile);
 
+                if (profileWatcher) {
+                    profileWatcher();
+                }
+
+                profileWatcher = $scope.$watch('vm.profile', function(evt){
+                    vm.changed['about-me'] = isChanged('about-me');
+                    vm.changed.socials = isChanged('socials');
+                    vm.changed.experiences = isChanged('experiences');
+                    vm.changed.education = isChanged('education');
+                    vm.changed.certificates = isChanged('certificates');
+                    vm.changed.skills = isChanged('skills');
+                    vm.changed['documents-accomplishments'] = isChanged('documents-accomplishments');
+                    vm.changed['public-website'] = isChanged('public-website');
+                }, true);
+
                 $scope.$broadcast('setupBasicInformation', vm.profile);
             });
+        }
+
+        function isChanged(category) {
+            const originalProfile = JSON.parse(originalProfileJson);
+
+            switch (category) {
+                case 'about-me':
+                    if (
+                        angular.toJson(originalProfile.image) !== angular.toJson(vm.profile.image) ||
+                        angular.toJson(originalProfile.titles) !== angular.toJson(vm.profile.titles) ||
+                        angular.toJson(originalProfile.description) !== angular.toJson(vm.profile.description) ||
+                        angular.toJson(originalProfile.role) !== angular.toJson(vm.profile.role) ||
+                        angular.toJson(originalProfile.website) !== angular.toJson(vm.profile.website) ||
+                        angular.toJson(originalProfile.address) !== angular.toJson(vm.profile.address) ||
+                        angular.toJson(originalProfile.interests) !== angular.toJson(vm.profile.interests)
+                    ) {
+                        return true;
+                    }
+                    return false;
+                case 'socials':
+                    if (angular.toJson(originalProfile.socials) !== angular.toJson(vm.profile.socials)) {
+                        return true;
+                    }
+                    return false;
+                case 'experiences':
+                    if (angular.toJson(originalProfile.experiences) !== angular.toJson(vm.profile.experiences)) {
+                        return true;
+                    }
+                    return false;
+                case 'education':
+                    if (angular.toJson(originalProfile.education) !== angular.toJson(vm.profile.education)) {
+                        return true;
+                    }
+                    return false;
+                case 'certificates':
+                    if (angular.toJson(originalProfile.certificates) !== angular.toJson(vm.profile.certificates)) {
+                        return true;
+                    }
+                    return false;
+                case 'skills':
+                    if (angular.toJson(originalProfile.skillCategories) !== angular.toJson(vm.profile.skillCategories)) {
+                        return true;
+                    }
+                    return false;
+                case 'documents-accomplishments':
+                    if (
+                        angular.toJson(originalProfile.documents) !== angular.toJson(vm.profile.documents) ||
+                        angular.toJson(originalProfile.accomplishments) !== angular.toJson(vm.profile.accomplishments)
+                    ) {
+                        return true;
+                    }
+                    return false;
+                case 'public-website':
+                    if (angular.toJson(originalProfile.publicWebsite) !== angular.toJson(vm.profile.publicWebsite)) {
+                        return true;
+                    }
+                    return false;
+                default:
+                    return false;
+            }
         }
 
         function cancel() {

@@ -408,25 +408,37 @@ const schema = {
             type: 'boolean',
             default: false
         },
-        favoritePublications: {
-            type: 'boolean',
-            default: false
-        },
-        allPublications: {
-            type: 'boolean',
-            default: false
-        },
-        disseminationTalks: {
-            type: 'boolean',
-            default: false
-        },
-        scientificTalks: {
-            type: 'boolean',
-            default: false
-        },
-        oralPresentations: {
-            type: 'boolean',
-            default: false
+        publicWebsite: {
+            type: 'object',
+            properties: {
+                favoritePublications: {
+                    type: 'boolean',
+                    default: false
+                },
+                allPublications: {
+                    type: 'boolean',
+                    default: false
+                },
+                disseminationTalks: {
+                    type: 'boolean',
+                    default: false
+                },
+                scientificTalks: {
+                    type: 'boolean',
+                    default: false
+                },
+                oralPresentations: {
+                    type: 'boolean',
+                    default: false
+                }
+            },
+            required: [
+                'favoritePublications',
+                'allPublications',
+                'disseminationTalks',
+                'scientificTalks',
+                'oralPresentations'
+            ]
         }
     }
 };
