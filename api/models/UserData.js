@@ -39,12 +39,18 @@ module.exports = {
             }
 
             if (
+                _.has(profile, 'allPublications') ||
                 _.has(profile, 'favoritePublications') ||
                 _.has(profile, 'disseminationTalks') ||
                 _.has(profile, 'scientificTalks') ||
                 _.has(profile, 'oralPresentations')
             ) {
                 profile.publicWebsite = {};
+            }
+
+            if (_.has(profile, 'allPublications')) {
+                profile.publicWebsite.allPublications = profile.allPublications;
+                delete profile.allPublications;
             }
 
             if (_.has(profile, 'favoritePublications')) {

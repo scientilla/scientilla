@@ -412,6 +412,10 @@ const schema = {
             type: 'boolean',
             default: false
         },
+        allPublications: {
+            type: 'boolean',
+            default: false
+        },
         disseminationTalks: {
             type: 'boolean',
             default: false
