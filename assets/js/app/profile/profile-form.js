@@ -51,6 +51,8 @@
         vm.save = () => {
             UsersService.saveProfile(AuthService.user.researchEntity, vm.profile).then(response => {
 
+                vm.hasAboutMeErrors = false;
+
                 if (response.profile) {
                     vm.profile = response.profile;
                 }
@@ -58,7 +60,6 @@
                 if (response.errors && !_.isEmpty(response.errors)) {
                     vm.errors = response.errors;
 
-                    vm.hasAboutMeErrors = false;
                     if (
                         _.has(vm.errors, 'image') ||
                         _.has(vm.errors, 'displayNames') ||
@@ -79,6 +80,8 @@
                             $scope.active = parseInt(errorTabIndex);
                         }
                     });
+                } else {
+                    vm.errors = {};
                 }
 
                 if (response.message) {
