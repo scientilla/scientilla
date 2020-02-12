@@ -315,51 +315,6 @@ const schema = {
             }
         },
         image: { $ref: '#/definitions/stringAndPrivacy' },
-        displayNames: {
-            type: 'object',
-            properties: {
-                use: {
-                    type: 'boolean',
-                    default: false
-                },
-                name: {$ref: '#/definitions/stringAndPrivacy'},
-                surname: {$ref: '#/definitions/stringAndPrivacy'},
-            },
-            required: ['use'],
-            if: {
-                properties: {
-                    use: {
-                        type: 'boolean',
-                        const: true
-                    },
-                    name: {$ref: '#/definitions/stringAndPrivacy'},
-                    surname: {$ref: '#/definitions/stringAndPrivacy'},
-                },
-                required: ['use']
-            },
-            then: {
-                properties: {
-                    use: {
-                        type: 'boolean',
-                        default: false
-                    },
-                    name: { $ref: '#/definitions/notEmptyStringAndPrivacy' },
-                    surname: { $ref: '#/definitions/notEmptyStringAndPrivacy' },
-                },
-                required: ['use', 'name', 'surname']
-            },
-            else: {
-                properties: {
-                    use: {
-                        type: 'boolean',
-                        default: false
-                    },
-                    name: {$ref: '#/definitions/stringAndPrivacy'},
-                    surname: {$ref: '#/definitions/stringAndPrivacy'},
-                },
-                required: ['use', 'name', 'surname']
-            }
-        },
         titles: {
             type: 'array',
             items: {
@@ -458,8 +413,7 @@ module.exports = {
     saveProfile: saveProfile,
     exportProfile: exportProfile,
     setupProfile: setupProfile,
-    filterProfile: filterProfile,
-    handleDisplayNames: handleDisplayNames
+    filterProfile: filterProfile
 };
 
 /**
@@ -702,32 +656,6 @@ async function loadDocumentsAndAccomplishments(profile, researchEntityId) {
 }
 
 /**
- * Returns the profile object
- *
- * @param {Object} profile
- *
- * @returns {Object} profile
- */
-function handleDisplayNames(profile) {
-    // Overwrite the name and surname properties if the user wants to use display names
-    if (_.has(profile, 'displayNames')) {
-        if (_.has(profile.displayNames, 'use') === true) {
-            if (profile.displayNames.name && !_.isEmpty(profile.displayNames.name)) {
-                profile.name = profile.displayNames.name;
-            }
-
-            if (profile.displayNames.surname && !_.isEmpty(profile.displayNames.surname)) {
-                profile.surname = profile.displayNames.surname;
-            }
-        }
-
-        delete profile.displayNames;
-    }
-
-    return profile;
-}
-
-/**
  * Returns the profile of the research entity with the editable values.
  *
  * @param {number} researchEntityId
@@ -768,8 +696,6 @@ async function getProfile(researchEntityId) {
     profile = filterProfile(profile);
     // Load the documents and accomplishments if needed
     profile = await loadDocumentsAndAccomplishments(profile, researchEntityId);
-    // Replace the name and surname if the user wants to use the display names
-    profile = handleDisplayNames(profile);
 
     return profile;
 }
@@ -923,46 +849,6 @@ async function saveProfile(req) {
                     researchEntity: researchEntityId,
                     profile: profile
                 });
-            }
-
-            let name = profile.name.value;
-            let surname = profile.surname.value;
-
-            // Check if use display names is true
-            if (profile.displayNames.use) {
-                // Check if the display name are public or locked
-                if (profile.displayNames.name.privacy === 'public' || profile.displayNames.name.privacy === 'locked') {
-                    name = profile.displayNames.name.value;
-                }
-
-                // Check if the display surname are public or locked
-                if (profile.displayNames.surname.privacy === 'public' || profile.displayNames.surname.privacy === 'locked') {
-                    surname = profile.displayNames.surname.value;
-                }
-            }
-
-            let user = await User.findOne({
-                researchEntity: researchEntityId
-            });
-
-            if (user) {
-                // Check if the user name and surname the same as the display names
-                if (user.name !== name || user.surname !== surname) {
-
-                    // Save into user's table
-                    user = _.first(await User.update({
-                        researchEntity: researchEntityId,
-                    }, {
-                        name,
-                        surname
-                    }));
-
-                    try {
-                        await User.createAliases(user);
-                    } catch(e) {
-
-                    }
-                }
             }
         }
     } catch (e) {

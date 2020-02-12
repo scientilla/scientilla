@@ -28,7 +28,6 @@ module.exports = {
             }
 
             profile = ResearchEntityData.filterProfile(profile, true);
-            profile = ResearchEntityData.handleDisplayNames(profile);
 
             if (replaceImage && _.has(profile, 'image')) {
                 profile.image = path.join(

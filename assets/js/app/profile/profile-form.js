@@ -63,7 +63,6 @@
 
                     if (
                         _.has(vm.errors, 'image') ||
-                        _.has(vm.errors, 'displayNames') ||
                         _.has(vm.errors, 'titles') ||
                         _.has(vm.errors, 'description') ||
                         _.has(vm.errors, 'role') ||
