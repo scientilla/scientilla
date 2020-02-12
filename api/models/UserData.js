@@ -21,7 +21,10 @@ module.exports = {
             let profile = ResearchEntityData.setupProfile(data);
 
             if (profile.hidden) {
-                return { hidden: profile.hidden };
+                return {
+                    id: data.researchEntity,
+                    hidden: profile.hidden
+                };
             }
 
             profile = ResearchEntityData.filterProfile(profile, true);
