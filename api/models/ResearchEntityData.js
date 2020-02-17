@@ -283,6 +283,7 @@ const schema = {
         surname: { $ref: '#/definitions/privacyPublic' },
         jobTitle: { $ref: '#/definitions/privacyPublic' },
         phone: { $ref: '#/definitions/privacyPublic' },
+        hidden: { $ref: '#/definitions/privacyPublic' },
         centers: {
             type: 'array',
             items: { $ref: '#/definitions/privacyPublic' },
@@ -359,10 +360,6 @@ const schema = {
         },
         documents: { $ref: '#/definitions/privacyLockedPublicInvisible' },
         accomplishments: { $ref: '#/definitions/privacyLockedPublicInvisible' },
-        hidden: {
-            type: 'boolean',
-            default: false
-        },
         publicWebsite: {
             type: 'object',
             properties: {
@@ -784,6 +781,7 @@ async function saveProfile(req) {
             profile.directorate = researchEntityData.profile.directorate;
             profile.office = researchEntityData.profile.office;
             profile.facilities = researchEntityData.profile.facilities;
+            profile.hidden = researchEntityData.profile.hidden;
 
             if (!hasFiles && !_.isEmpty(profile.image.value)) {
                 profile.image.value = researchEntityData.profile.image.value;

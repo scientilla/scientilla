@@ -587,6 +587,7 @@ async function importUserContracts(email = defaultEmail) {
         profile.surname.value = contract.cognome;
         profile.phone.value = contract.telefono;
         profile.jobTitle.value = contract.Ruolo_AD;
+        profile.hidden.value = false;
 
         const centers = [];
         const facilities = [];

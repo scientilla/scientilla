@@ -20,14 +20,16 @@ module.exports = {
 
             let profile = ResearchEntityData.setupProfile(data);
 
-            if (profile.hidden) {
+            if (_.has(profile, 'hidden.value') && profile.hidden.value) {
                 return {
                     id: data.researchEntity,
-                    hidden: profile.hidden
+                    hidden: profile.hidden.value
                 };
             }
 
             profile = ResearchEntityData.filterProfile(profile, true);
+
+            delete profile.hidden;
 
             if (replaceImage && _.has(profile, 'image')) {
                 profile.image = path.join(
@@ -49,13 +51,10 @@ module.exports = {
     tableName: 'user_data',
     autoUpdatedAt: false,
     autoCreatedAt: false,
-    getProfileImage: async function(username) {
-        const user = await User.findOne({username});
-        const data = await UserData.findOne({researchEntity: user.researchEntity});
-        const profile = data.toJSON(false);
+    getProfileImage: async function(user, profile) {
 
-        if (_.has(profile, 'image')) {
-            return '/profile/images/' + user.researchEntity.toString() + '/' + profile.image;
+        if (_.has(profile, 'image.value') && profile.image.value) {
+            return '/profile/images/' + user.researchEntity.toString() + '/' + profile.image.value;
         }
 
         return false;
