@@ -24,15 +24,15 @@ module.exports = function (req, res, next) {
                 if (foundKey) {
                     next();
                 } else {
-                    return res.forbidden('Invalid API key!');
+                    return res.unauthorized('Invalid API key!');
                 }
             } else {
-                return res.forbidden('Invalid API key header format. Format is Authorization: Bearer [YourApiKey]');
+                return res.unauthorized('Invalid API key header format. Format is Authorization: Bearer [YourApiKey]');
             }
         } else {
-            return res.forbidden('API key missing, please provide Header Authorization: Bearer [YourApiKey]');
+            return res.unauthorized('API key missing, please provide Header Authorization: Bearer [YourApiKey]');
         }
     } else {
-        return res.forbidden('Please configure the API keys!');
+        return res.unauthorized('Please configure the API keys!');
     }
 };
