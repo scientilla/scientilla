@@ -32,6 +32,16 @@ const pathProfileImages = path.join('profile', 'images');
 const schema = {
     type: 'object',
     definitions: {
+        privacyLockedInvisible: {
+            type: 'object',
+            properties: {
+                privacy: {
+                    type: 'string',
+                    enum: ['locked', 'invisible'],
+                    default: 'locked'
+                },
+            }
+        },
         privacyLockedPublicInvisible: {
             type: 'object',
             properties: {
@@ -358,8 +368,8 @@ const schema = {
             items: { $ref: '#/definitions/skillCategory' },
             default: []
         },
-        documents: { $ref: '#/definitions/privacyLockedPublicInvisible' },
-        accomplishments: { $ref: '#/definitions/privacyLockedPublicInvisible' },
+        documents: { $ref: '#/definitions/privacyLockedInvisible' },
+        accomplishments: { $ref: '#/definitions/privacyLockedInvisible' },
         publicWebsite: {
             type: 'object',
             properties: {

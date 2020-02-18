@@ -12,6 +12,7 @@
                 contextString: '@?',
                 model: '=?',
                 disableInvisible: '<?',
+                disablePublic: '<?',
                 onlyPublic: '<?'
             }
         });
@@ -31,6 +32,14 @@
 
             if (typeof vm.disableInvisible !== 'undefined' || vm.disableInvisible === true) {
                 defaultOptions.splice(defaultOptions.indexOf('invisible'), 1);
+            }
+
+            if (typeof vm.disablePublic !== 'undefined' || vm.disablePublic === true) {
+                defaultOptions.splice(defaultOptions.indexOf('public'), 1);
+            }
+
+            if (_.indexOf(defaultOptions, vm.model) < 0) {
+                vm.model = _.first(defaultOptions);
             }
 
             switch(true) {

@@ -35,6 +35,7 @@
         vm.changed = {};
         vm.hasAboutMeErrors = false;
         vm.unsavedData = false;
+        vm.profileIsLoaded = false;
         let originalProfileJson = '';
 
         vm.$onInit = function () {
@@ -103,6 +104,7 @@
             let profileWatcher;
             UsersService.getProfile(AuthService.user.researchEntity, true).then(response => {
                 vm.profile = response.plain();
+                vm.profileIsLoaded = true;
                 originalProfileJson = angular.toJson(vm.profile);
 
                 if (profileWatcher) {

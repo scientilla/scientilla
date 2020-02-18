@@ -10,13 +10,14 @@
 </div>
 
 <div class="modal-body edit-profile">
-    <uib-tabset active="vm.active" class="profile-tabs js-profile-tabs">
+    <uib-tabset active="vm.active" class="profile-tabs js-profile-tabs" ng-if="vm.profileIsLoaded">
         <uib-tab
             index="0"
             heading="Basic information">
             <profile-privacy-legend></profile-privacy-legend>
 
-            <profile-basic-information-form></profile-basic-information-form>
+            <profile-basic-information-form
+                profile="vm.profile"></profile-basic-information-form>
 
             <em>The above information has been obtained from HR. If something is incorrect please contact HR.</em>
 
@@ -208,6 +209,7 @@
                     <scientilla-privacy-selector
                         context-string="documents"
                         model="vm.profile.documents.privacy"
+                        disable-public="true"
                         css-class="no-label"></scientilla-privacy-selector>
                 </li>
             </ul>
@@ -220,12 +222,13 @@
                     <scientilla-privacy-selector
                         context-string="accomplishments"
                         model="vm.profile.accomplishments.privacy"
+                        disable-public="true"
                         css-class="no-label"></scientilla-privacy-selector>
                 </li>
             </ul>
 
             <profile-legend
-                public="true"
+                public="false"
                 locked="true"
                 invisible="true"></profile-legend>
         </uib-tab>

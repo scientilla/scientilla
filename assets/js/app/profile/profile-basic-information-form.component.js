@@ -6,7 +6,9 @@
             templateUrl: 'partials/profile-basic-information-form.html',
             controller: profileBasicInformationForm,
             controllerAs: 'vm',
-            bindings: {}
+            bindings: {
+                profile: '='
+            }
         });
 
     profileBasicInformationForm.$inject = ['$scope'];
@@ -15,9 +17,10 @@
         const vm = this;
 
         vm.basicInformation = [];
-        vm.profile = {};
 
         vm.$onInit = function () {
+            setupBasicInformation();
+
             $scope.$on('setupBasicInformation', (evt, profile) => {
                 vm.profile = profile;
                 setupBasicInformation();
