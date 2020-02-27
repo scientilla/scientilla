@@ -28,7 +28,9 @@
     <li>
         <scientilla-privacy-selector
             context-string="image"
-            model="vm.profile.image.privacy"></scientilla-privacy-selector>
+            model="vm.profile.image.privacy"
+            errors="vm.profile.image.errors.privacy"
+            profile="vm.profile"></scientilla-privacy-selector>
     </li>
 </ul>
 
@@ -78,9 +80,10 @@
             </li>
             <li>
                 <scientilla-privacy-selector
-                    css-class="no-label"
                     context-string="titles[{{ key }}]"
-                    model="title.privacy"></scientilla-privacy-selector>
+                    model="vm.profile.titles[key].privacy"
+                    errors="vm.profile.titles[key].errors.privacy"
+                    profile="vm.profile"></scientilla-privacy-selector>
             </li>
         </ul>
     </li>
@@ -120,6 +123,8 @@
     <li>
         <scientilla-privacy-selector
             context-string="description"
+            profile="vm.profile"
+            errors="vm.profile.description.errors.privacy"
             model="vm.profile.description.privacy"></scientilla-privacy-selector>
     </li>
 </ul>
@@ -147,6 +152,8 @@
     <li>
         <scientilla-privacy-selector
             context-string="role"
+            profile="vm.profile"
+            errors="vm.profile.role.errors.privacy"
             model="vm.profile.role.privacy"></scientilla-privacy-selector>
     </li>
 </ul>
@@ -174,6 +181,8 @@
     <li>
         <scientilla-privacy-selector
             context-string="website"
+            profile="vm.profile"
+            errors="vm.profile.website.errors.privacy"
             model="vm.profile.website.privacy"></scientilla-privacy-selector>
     </li>
 </ul>
@@ -201,6 +210,8 @@
     <li>
         <scientilla-privacy-selector
             context-string="address"
+            profile="vm.profile"
+            errors="vm.profile.address.errors.privacy"
             model="vm.profile.address.privacy"></scientilla-privacy-selector>
     </li>
 </ul>

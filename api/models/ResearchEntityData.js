@@ -1,7 +1,7 @@
 const Ajv = require('ajv');
 const ajv = new Ajv({
     allErrors: true,
-    removeAdditional: 'all',
+    removeAdditional: true,
     useDefaults: true,
     jsonPointers: true
 });
@@ -29,379 +29,920 @@ const emptyPatternMessage = requiredMessage;
 
 const pathProfileImages = path.join('profile', 'images');
 
-const schema = {
-    type: 'object',
-    definitions: {
-        privacyLockedInvisible: {
-            type: 'object',
-            properties: {
-                privacy: {
-                    type: 'string',
-                    enum: ['locked', 'invisible'],
-                    default: 'locked'
-                },
+const definitions = {
+    privacy: {
+        type: 'object',
+        properties: {
+            privacy: {
+                type: 'string'
             }
         },
-        privacyLockedPublicInvisible: {
-            type: 'object',
-            properties: {
-                privacy: {
-                    type: 'string',
-                    enum: ['locked', 'public', 'invisible'],
-                    default: 'locked'
-                },
+        required: ['privacy']
+    },
+    privacyDefaultHidden: {
+        type: 'object',
+        properties: {
+            privacy: {
+                default: 'hidden'
             }
-        },
-        privacyLockedPublic: {
-            type: 'object',
-            properties: {
-                privacy: {
-                    type: 'string',
-                    enum: ['locked', 'public'],
-                    default: 'locked'
-                },
-            }
-        },
-        privacyPublic: {
-            type: 'object',
-            properties: {
-                privacy: {
-                    type: 'string',
-                    enum: ['public'],
-                    default: 'public'
-                },
-            }
-        },
-        stringAndPrivacy: {
-            type: 'object',
-            properties: {
-                value: {
-                    type: 'string'
-                },
-                privacy: {
-                    type: 'string',
-                    enum: ['locked', 'public', 'invisible'],
-                    default: 'locked'
-                }
-            },
-            required: ['privacy']
-        },
-        notEmptyStringAndPrivacy: {
-            type: 'object',
-            properties: {
-                value: {
-                    pattern: emptyPattern
-                },
-                privacy: {
-                    type: 'string',
-                    enum: ['locked', 'public', 'invisible'],
-                    default: 'locked'
-                }
-            },
-            errorMessage: {
-                properties:{
-                    value: emptyPatternMessage
-                }
-            },
-            required: ['value', 'privacy']
-        },
-        urlAndPrivacy: {
-            type: 'object',
-            properties: {
-                value: {
-                    pattern: urlPattern,
-                    default: ''
-                },
-                privacy: {
-                    type: 'string',
-                    enum: ['locked', 'public', 'invisible'],
-                    default: 'locked'
-                }
-            },
-            errorMessage: {
-                properties:{
-                    value: urlPatternMessage
-                }
-            },
-            required: ['privacy']
-        },
-        experience: {
-            type: 'object',
-            properties: {
-                company: {
-                    type: 'string',
-                    pattern: emptyPattern
-                },
-                jobTitle: {
-                    type: 'string',
-                    pattern: emptyPattern
-                },
-                from: {
-                    type: 'string',
-                    pattern: requiredDatePattern
-                },
-                to: {
-                    pattern: datePattern
-                },
-                location: {
-                    type: 'string'
-                },
-                country: {
-                    type: 'string'
-                },
-                jobDescription: {
-                    type: 'string'
-                },
-                privacy: {
-                    type: 'string',
-                    enum: ['locked', 'public', 'invisible'],
-                    default: 'locked'
-                }
-            },
-            errorMessage: {
-                properties:{
-                    company: requiredMessage,
-                    jobTitle: requiredMessage,
-                    from: datePatternMessage,
-                    to: datePatternMessage
-                }
-            },
-            required: ['company', 'jobTitle', 'from']
-        },
-        educationItem: {
-            type: 'object',
-            properties: {
-                institute: {
-                    type: 'string',
-                    pattern: emptyPattern
-                },
-                title: {
-                    type: 'string',
-                    pattern: emptyPattern
-                },
-                from: {
-                    type: 'string',
-                    pattern: requiredDatePattern
-                },
-                to: {
-                    pattern: datePattern
-                },
-                location: {
-                    type: 'string'
-                },
-                country: {
-                    type: 'string'
-                },
-                privacy: {
-                    type: 'string',
-                    enum: ['locked', 'public', 'invisible'],
-                    default: 'locked'
-                }
-            },
-            errorMessage: {
-                properties:{
-                    institute: requiredMessage,
-                    title: requiredMessage,
-                    from: datePatternMessage,
-                    to: datePatternMessage
-                }
-            },
-            required: ['institute', 'title', 'from']
-        },
-        certificate: {
-            type: 'object',
-            properties: {
-                title: {
-                    type: 'string',
-                    pattern: emptyPattern
-                },
-                description: {
-                    type: 'string'
-                },
-                date: {
-                    pattern: datePattern
-                },
-                favorite: {
-                    type: 'boolean',
-                    default: false
-                },
-                privacy: {
-                    type: 'string',
-                    enum: ['locked', 'public', 'invisible'],
-                    default: 'locked'
-                }
-            },
-            errorMessage: {
-                properties:{
-                    title: requiredMessage,
-                    date: datePatternMessage
-                }
-            },
-            required: ['title', 'favorite']
-        },
-        skillCategory: {
-            type: 'object',
-            properties: {
-                categoryName: {
-                    pattern: emptyPattern
-                },
-                skills: {
-                    type: 'array',
-                    items: { $ref: '#/definitions/skill' },
-                    default: []
-                },
-                privacy: {
-                    type: 'string',
-                    enum: ['locked', 'public', 'invisible'],
-                    default: 'locked'
-                }
-            },
-            errorMessage: {
-                properties:{
-                    categoryName: emptyPatternMessage
-                }
-            },
-            required: ['categoryName', 'privacy']
-        },
-        skill: {
-            type: 'object',
-            properties: {
-                value: {
-                    pattern: emptyPattern
-                },
-                favorite: {
-                    type: 'boolean',
-                    default: false
-                },
-                privacy: {
-                    type: 'string',
-                    enum: ['locked', 'public', 'invisible'],
-                    default: 'locked'
-                }
-            },
-            errorMessage: {
-                properties:{
-                    value: emptyPatternMessage
-                }
-            },
-            required: ['value', 'favorite', 'privacy']
         }
     },
-    properties: {
-        username: { $ref: '#/definitions/privacyPublic' },
-        name: { $ref: '#/definitions/privacyPublic' },
-        surname: { $ref: '#/definitions/privacyPublic' },
-        jobTitle: { $ref: '#/definitions/privacyPublic' },
-        phone: { $ref: '#/definitions/privacyPublic' },
-        hidden: { $ref: '#/definitions/privacyPublic' },
-        centers: {
-            type: 'array',
-            items: { $ref: '#/definitions/privacyPublic' },
-            default: []
-        },
-        researchLines: {
-            type: 'array',
-            items: { $ref: '#/definitions/privacyPublic' },
-            default: []
-        },
-        directorate: { $ref: '#/definitions/privacyPublic' },
-        office: { $ref: '#/definitions/privacyPublic' },
-        facilities: {
-            type: 'array',
-            items: { $ref: '#/definitions/privacyPublic' },
-            default: []
-        },
-        socials: {
-            type: 'object',
-            properties: {
-                linkedin: { $ref: '#/definitions/urlAndPrivacy' },
-                twitter: { $ref: '#/definitions/urlAndPrivacy' },
-                facebook: { $ref: '#/definitions/urlAndPrivacy' },
-                instagram: { $ref: '#/definitions/urlAndPrivacy' },
-                researchgate: { $ref: '#/definitions/urlAndPrivacy' },
-                github: { $ref: '#/definitions/urlAndPrivacy' },
-                bitbucket: { $ref: '#/definitions/urlAndPrivacy' },
-                youtube: { $ref: '#/definitions/urlAndPrivacy' },
-                flickr: { $ref: '#/definitions/urlAndPrivacy' },
+    privacyEnumHidden: {
+        type: 'object',
+        properties: {
+            privacy: {
+                enum: ['hidden']
+            }
+        }
+    },
+    privacyDefaultPublic: {
+        type: 'object',
+        properties: {
+            privacy: {
+                default: 'public'
+            }
+        }
+    },
+    privacyEnumPublic: {
+        type: 'object',
+        properties: {
+            privacy: {
+                enum: ['public']
+            }
+        }
+    },
+    privacyEnumInvisible: {
+        type: 'object',
+        properties: {
+            privacy: {
+                enum: ['invisible']
+            }
+        }
+    },
+    string: {
+        type: 'object',
+        properties: {
+            value: {
+                type: 'string'
+            }
+        }
+    },
+    url: {
+        type: 'object',
+        properties: {
+            value: {
+                pattern: urlPattern,
+                default: ''
             }
         },
-        image: { $ref: '#/definitions/stringAndPrivacy' },
-        titles: {
-            type: 'array',
-            items: {
-                allOf: [
-                    { $ref: '#/definitions/notEmptyStringAndPrivacy' }
-                ]
-            },
-            default: []
-        },
-        description: { $ref: '#/definitions/stringAndPrivacy' },
-        role: { $ref: '#/definitions/stringAndPrivacy' },
-        website: { $ref: '#/definitions/urlAndPrivacy' },
-        address: { $ref: '#/definitions/stringAndPrivacy' },
-        interests: {
-            type: 'array',
-            items: {
-                allOf: [
-                    { $ref: '#/definitions/notEmptyStringAndPrivacy' }
-                ]
-            },
-            default: []
-        },
-        experiences: {
-            type: 'array',
-            items: { $ref: '#/definitions/experience' },
-            default: []
-        },
-        education: {
-            type: 'array',
-            items: { $ref: '#/definitions/educationItem' },
-            default: []
-        },
-        certificates: {
-            type: 'array',
-            items: { $ref: '#/definitions/certificate' },
-            default: []
-        },
-        skillCategories: {
-            type: 'array',
-            items: { $ref: '#/definitions/skillCategory' },
-            default: []
-        },
-        documents: { $ref: '#/definitions/privacyLockedInvisible' },
-        accomplishments: { $ref: '#/definitions/privacyLockedInvisible' },
-        publicWebsite: {
-            type: 'object',
+        errorMessage: {
             properties: {
-                favoritePublications: {
-                    type: 'boolean',
-                    default: false
-                },
-                allPublications: {
-                    type: 'boolean',
-                    default: false
-                },
-                disseminationTalks: {
-                    type: 'boolean',
-                    default: false
-                },
-                scientificTalks: {
-                    type: 'boolean',
-                    default: false
-                },
-                oralPresentations: {
-                    type: 'boolean',
-                    default: false
+                value: urlPatternMessage
+            }
+        },
+        required: ['value']
+    },
+    notEmptyString: {
+        type: 'object',
+        properties: {
+            value: {
+                pattern: emptyPattern
+            }
+        },
+        errorMessage: {
+            properties: {
+                value: emptyPatternMessage
+            }
+        },
+        required: ['value']
+    },
+    experience: {
+        type: 'object',
+        properties: {
+            company: {
+                type: 'string',
+                pattern: emptyPattern
+            },
+            jobTitle: {
+                type: 'string',
+                pattern: emptyPattern
+            },
+            from: {
+                type: 'string',
+                pattern: requiredDatePattern
+            },
+            to: {
+                pattern: datePattern
+            },
+            location: {
+                type: 'string'
+            },
+            country: {
+                type: 'string'
+            },
+            jobDescription: {
+                type: 'string'
+            }
+        },
+        errorMessage: {
+            properties: {
+                company: requiredMessage,
+                jobTitle: requiredMessage,
+                from: datePatternMessage,
+                to: datePatternMessage
+            }
+        },
+        required: ['company', 'jobTitle', 'from']
+    },
+    educationItem: {
+        type: 'object',
+        properties: {
+            institute: {
+                type: 'string',
+                pattern: emptyPattern
+            },
+            title: {
+                type: 'string',
+                pattern: emptyPattern
+            },
+            from: {
+                type: 'string',
+                pattern: requiredDatePattern
+            },
+            to: {
+                pattern: datePattern
+            },
+            location: {
+                type: 'string'
+            },
+            country: {
+                type: 'string'
+            }
+        },
+        errorMessage: {
+            properties: {
+                institute: requiredMessage,
+                title: requiredMessage,
+                from: datePatternMessage,
+                to: datePatternMessage
+            }
+        },
+        required: ['institute', 'title', 'from']
+    },
+    certificate: {
+        type: 'object',
+        properties: {
+            title: {
+                type: 'string',
+                pattern: emptyPattern
+            },
+            description: {
+                type: 'string'
+            },
+            date: {
+                pattern: datePattern
+            },
+            favorite: {
+                type: 'boolean',
+                default: false
+            }
+        },
+        errorMessage: {
+            properties: {
+                title: requiredMessage,
+                date: datePatternMessage
+            }
+        },
+        required: ['title', 'favorite']
+    },
+    publicWebsite: {
+        type: 'object',
+        properties: {
+            favoritePublications: {
+                type: 'boolean',
+                default: false
+            },
+            allPublications: {
+                type: 'boolean',
+                default: false
+            },
+            disseminationTalks: {
+                type: 'boolean',
+                default: false
+            },
+            scientificTalks: {
+                type: 'boolean',
+                default: false
+            },
+            oralPresentations: {
+                type: 'boolean',
+                default: false
+            }
+        },
+        required: [
+            'favoritePublications',
+            'allPublications',
+            'disseminationTalks',
+            'scientificTalks',
+            'oralPresentations'
+        ]
+    }
+};
+
+definitions.skill = {
+    type: 'object',
+        properties: {
+        value: {
+            pattern: emptyPattern
+        },
+        favorite: {
+            type: 'boolean',
+        default: false
+        },
+    },
+    errorMessage: {
+        properties: {
+            value: emptyPatternMessage
+        }
+    },
+    required: ['value', 'favorite']
+};
+
+definitions.skillCategory = {
+    type: 'object',
+        properties: {
+        categoryName: {
+            type: 'string',
+                pattern: emptyPattern
+        },
+        skills: {
+            type: 'array',
+            default: [],
+            items: _.merge(
+                {},
+                definitions.skill,
+                definitions.string,
+                definitions.privacy,
+                definitions.privacyDefaultHidden
+            )
+        }
+    },
+    errorMessage: {
+        properties: {
+            categoryName: emptyPatternMessage
+        }
+    },
+    required: ['categoryName']
+};
+
+const defaultProperties = {
+    username: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    name: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    surname: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    jobTitle: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    phone: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    directorate: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    office: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    centers: {
+        type: 'array',
+        default: [],
+        items: _.merge(
+            {},
+            definitions.string,
+            definitions.privacy,
+            definitions.privacyDefaultHidden
+        )
+    },
+    researchLines: {
+        type: 'array',
+        default: [],
+        items: _.merge(
+            {},
+            definitions.string,
+            definitions.privacy,
+            definitions.privacyDefaultHidden
+        )
+    },
+    facilities: {
+        type: 'array',
+        default: [],
+        items: _.merge(
+            {},
+            definitions.string,
+            definitions.privacy,
+            definitions.privacyDefaultHidden
+        )
+    },
+    socials: {
+        type: 'object',
+        properties: {
+            linkedin: _.merge(
+                {},
+                definitions.url,
+                definitions.privacy,
+                definitions.privacyDefaultHidden
+            ),
+            twitter: _.merge(
+                {},
+                definitions.url,
+                definitions.privacy,
+                definitions.privacyDefaultHidden
+            ),
+            facebook: _.merge(
+                {},
+                definitions.url,
+                definitions.privacy,
+                definitions.privacyDefaultHidden
+            ),
+            instagram: _.merge(
+                {},
+                definitions.url,
+                definitions.privacy,
+                definitions.privacyDefaultHidden
+            ),
+            researchgate: _.merge(
+                {},
+                definitions.url,
+                definitions.privacy,
+                definitions.privacyDefaultHidden
+            ),
+            github: _.merge(
+                {},
+                definitions.url,
+                definitions.privacy,
+                definitions.privacyDefaultHidden
+            ),
+            bitbucket: _.merge(
+                {},
+                definitions.url,
+                definitions.privacy,
+                definitions.privacyDefaultHidden
+            ),
+            youtube: _.merge(
+                {},
+                definitions.url,
+                definitions.privacy,
+                definitions.privacyDefaultHidden
+            ),
+            flickr: _.merge(
+                {},
+                definitions.url,
+                definitions.privacy,
+                definitions.privacyDefaultHidden
+            ),
+        }
+    },
+    image: _.merge(
+        {},
+        definitions.string,
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    titles: {
+        type: 'array',
+        default: []
+    },
+    description: _.merge(
+        {},
+        definitions.string,
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    role: _.merge(
+        {},
+        definitions.string,
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    website: _.merge(
+        {},
+        definitions.url,
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    address: _.merge(
+        {},
+        definitions.string,
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    interests: {
+        type: 'array',
+        default: []
+    },
+    experiences: {
+        type: 'array',
+        default: [],
+        items: _.merge(
+            {},
+            definitions.privacy,
+            definitions.privacyDefaultHidden,
+            definitions.experience
+        ),
+    },
+    education: {
+        type: 'array',
+        default: [],
+        items: _.merge(
+            {},
+            definitions.privacy,
+            definitions.privacyDefaultHidden,
+            definitions.educationItem
+        )
+    },
+    certificates: {
+        type: 'array',
+        default: [],
+        items: _.merge(
+            {},
+            definitions.privacy,
+            definitions.privacyDefaultHidden,
+            definitions.certificate
+        )
+    },
+    skillCategories: {
+        type: 'array',
+        default: [],
+        items: _.merge(
+            {},
+            definitions.privacy,
+            definitions.privacyDefaultHidden,
+            definitions.skillCategory
+        )
+    },
+    hidden: {
+        type: 'boolean',
+        default: false
+    },
+    documents: {
+        type: 'object',
+        allOf: [
+            { $ref: '#/definitions/privacy' },
+            { $ref: '#/definitions/privacyDefaultHidden' },
+            {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            }
+        ]
+    },
+    accomplishments: {
+        type: 'object',
+        allOf: [
+            { $ref: '#/definitions/privacy' },
+            { $ref: '#/definitions/privacyDefaultHidden' },
+            {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            }
+        ]
+    },
+    publicWebsite: {$ref: '#/definitions/publicWebsite'},
+    ifValueCheckPublicPrivacy: {
+        if: {
+            properties: {
+                value: {
+                    minLength: 1
                 }
             },
-            required: [
-                'favoritePublications',
-                'allPublications',
-                'disseminationTalks',
-                'scientificTalks',
-                'oralPresentations'
+            required: ['value']
+        },
+        then: { $ref: '#/definitions/privacyEnumPublic' }
+    },
+    ifValueCheckHiddenPrivacy: {
+        if: {
+            properties: {
+                value: {
+                    minLength: 1
+                }
+            },
+            required: ['value']
+        },
+        then: { $ref: '#/definitions/privacyEnumHidden' }
+    }
+};
+
+const thenProperties = {
+    username: definitions.ifValueCheckHiddenPrivacy,
+    name: definitions.ifValueCheckHiddenPrivacy,
+    surname: definitions.ifValueCheckHiddenPrivacy,
+    jobTitle: definitions.ifValueCheckHiddenPrivacy,
+    phone: definitions.ifValueCheckHiddenPrivacy,
+    centers: {
+        items: definitions.ifValueCheckHiddenPrivacy
+    },
+    researchLines: {
+        items: definitions.ifValueCheckHiddenPrivacy
+    },
+    directorate: definitions.ifValueCheckHiddenPrivacy,
+    office: definitions.ifValueCheckHiddenPrivacy,
+    facilities: {
+        items: definitions.ifValueCheckHiddenPrivacy
+    },
+    image: {
+        oneOf: [
+            { $ref: '#/definitions/privacyEnumHidden' },
+            { $ref: '#/definitions/privacyEnumInvisible' }
+        ]
+    },
+    titles: {
+        items: {
+            oneOf: [
+                { $ref: '#/definitions/privacyEnumHidden' },
+                { $ref: '#/definitions/privacyEnumInvisible' }
             ]
         }
+    },
+    description: {
+        oneOf: [
+            { $ref: '#/definitions/privacyEnumHidden' },
+            { $ref: '#/definitions/privacyEnumInvisible' }
+        ]
+    },
+    role: {
+        oneOf: [
+            { $ref: '#/definitions/privacyEnumHidden' },
+            { $ref: '#/definitions/privacyEnumInvisible' }
+        ]
+    },
+    website: {
+        oneOf: [
+            { $ref: '#/definitions/privacyEnumHidden' },
+            { $ref: '#/definitions/privacyEnumInvisible' }
+        ]
+    },
+    address: {
+        oneOf: [
+            { $ref: '#/definitions/privacyEnumHidden' },
+            { $ref: '#/definitions/privacyEnumInvisible' }
+        ]
+    },
+    interests: {
+        items: {
+            oneOf: [
+                { $ref: '#/definitions/privacyEnumHidden' },
+                { $ref: '#/definitions/privacyEnumInvisible' }
+            ]
+        }
+    },
+    socials: {
+        properties: {
+            linkedin: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            twitter: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            facebook: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            instagram: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            researchgate: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            github: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            bitbucket: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            youtube: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            flickr: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            }
+        }
+    },
+    experiences: {
+        items: {
+            oneOf: [
+                { $ref: '#/definitions/privacyEnumHidden' },
+                { $ref: '#/definitions/privacyEnumInvisible' }
+            ]
+        }
+    },
+    education: {
+        items: {
+            oneOf: [
+                { $ref: '#/definitions/privacyEnumHidden' },
+                { $ref: '#/definitions/privacyEnumInvisible' }
+            ]
+        }
+    },
+    certificates: {
+        items: {
+            oneOf: [
+                { $ref: '#/definitions/privacyEnumHidden' },
+                { $ref: '#/definitions/privacyEnumInvisible' }
+            ]
+        }
+    },
+    skillCategories: {
+        items: {
+            allOf: [
+                {
+                    properties: {
+                        skills: {
+                            items: {
+                                allOf: [
+                                    {
+                                        oneOf: [
+                                            { $ref: '#/definitions/privacyEnumHidden' },
+                                            { $ref: '#/definitions/privacyEnumInvisible' }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    oneOf: [
+                        { $ref: '#/definitions/privacyEnumHidden' },
+                        { $ref: '#/definitions/privacyEnumInvisible' }
+                    ]
+                }
+            ]
+        }
+    },
+};
+
+const elseProperties = {
+    username: definitions.ifValueCheckPublicPrivacy,
+    name: definitions.ifValueCheckPublicPrivacy,
+    surname: definitions.ifValueCheckPublicPrivacy,
+    jobTitle: definitions.ifValueCheckPublicPrivacy,
+    phone: definitions.ifValueCheckPublicPrivacy,
+    directorate: definitions.ifValueCheckPublicPrivacy,
+    office: definitions.ifValueCheckPublicPrivacy,
+    centers: {
+        items: definitions.ifValueCheckPublicPrivacy
+    },
+    researchLines: {
+        items: definitions.ifValueCheckPublicPrivacy
+    },
+    facilities: {
+        items: definitions.ifValueCheckPublicPrivacy
+    },
+    image: {
+        oneOf: [
+            { $ref: '#/definitions/privacyEnumHidden' },
+            { $ref: '#/definitions/privacyEnumPublic' },
+            { $ref: '#/definitions/privacyEnumInvisible' }
+        ]
+    },
+    titles: {
+        items: {
+            oneOf: [
+                { $ref: '#/definitions/privacyEnumHidden' },
+                { $ref: '#/definitions/privacyEnumPublic' },
+                { $ref: '#/definitions/privacyEnumInvisible' }
+            ]
+        }
+    },
+    description: {
+        oneOf: [
+            { $ref: '#/definitions/privacyEnumHidden' },
+            { $ref: '#/definitions/privacyEnumPublic' },
+            { $ref: '#/definitions/privacyEnumInvisible' }
+        ]
+    },
+    role: {
+        oneOf: [
+            { $ref: '#/definitions/privacyEnumHidden' },
+            { $ref: '#/definitions/privacyEnumPublic' },
+            { $ref: '#/definitions/privacyEnumInvisible' }
+        ]
+    },
+    website: {
+        oneOf: [
+            { $ref: '#/definitions/privacyEnumHidden' },
+            { $ref: '#/definitions/privacyEnumPublic' },
+            { $ref: '#/definitions/privacyEnumInvisible' }
+        ]
+    },
+    address: {
+        oneOf: [
+            { $ref: '#/definitions/privacyEnumHidden' },
+            { $ref: '#/definitions/privacyEnumPublic' },
+            { $ref: '#/definitions/privacyEnumInvisible' }
+        ]
+    },
+    interests: {
+        items: {
+            oneOf: [
+                { $ref: '#/definitions/privacyEnumHidden' },
+                { $ref: '#/definitions/privacyEnumPublic' },
+                { $ref: '#/definitions/privacyEnumInvisible' }
+            ]
+        }
+    },
+    socials: {
+        properties: {
+            linkedin: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumPublic' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            twitter: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumPublic' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            facebook: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumPublic' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            instagram: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumPublic' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            researchgate: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumPublic' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            github: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumPublic' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            bitbucket: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumPublic' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            youtube: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumPublic' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            flickr: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumPublic' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            }
+        }
+    },
+    experiences: {
+        items: {
+            oneOf: [
+                { $ref: '#/definitions/privacyEnumHidden' },
+                { $ref: '#/definitions/privacyEnumPublic' },
+                { $ref: '#/definitions/privacyEnumInvisible' }
+            ]
+        }
+    },
+    education: {
+        items: {
+            oneOf: [
+                { $ref: '#/definitions/privacyEnumHidden' },
+                { $ref: '#/definitions/privacyEnumPublic' },
+                { $ref: '#/definitions/privacyEnumInvisible' }
+            ]
+        }
+    },
+    certificates: {
+        items: {
+            oneOf: [
+                { $ref: '#/definitions/privacyEnumHidden' },
+                { $ref: '#/definitions/privacyEnumPublic' },
+                { $ref: '#/definitions/privacyEnumInvisible' }
+            ]
+        }
+    },
+    skillCategories: {
+        items: {
+            allOf: [
+                {
+                    properties: {
+                        skills: {
+                            items: {
+                                oneOf: [
+                                    { $ref: '#/definitions/privacyEnumHidden' },
+                                    { $ref: '#/definitions/privacyEnumPublic' },
+                                    { $ref: '#/definitions/privacyEnumInvisible' }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    oneOf: [
+                        { $ref: '#/definitions/privacyEnumHidden' },
+                        { $ref: '#/definitions/privacyEnumPublic' },
+                        { $ref: '#/definitions/privacyEnumInvisible' }
+                    ]
+                }
+            ]
+        }
+    }
+};
+
+const defaultSchema = {
+    type: 'object',
+    definitions: definitions,
+    properties: defaultProperties,
+};
+
+
+const conditionSchema = {
+    type: 'object',
+    definitions: definitions,
+    if: {
+        properties: {
+            hidden: {
+                type: 'boolean',
+                const: true
+            }
+        }
+    },
+    then: {
+        properties: _.merge({}, defaultProperties, thenProperties)
+    },
+    else: {
+        properties: _.merge({}, defaultProperties, elseProperties)
     }
 };
 
@@ -567,19 +1108,15 @@ function filterProfile(profile, onlyPublic = false) {
  */
 function setupProfile(userData) {
     // We store the defaults of the research entity data schema.
-    const defaultProfile = defaults(schema);
-
-    let profile = {};
+    const defaultProfile = defaults(defaultSchema);
 
     // We merge the defaults with the user's profile
     if (userData && !_.isEmpty(userData.profile)) {
-        profile = _.merge(defaultProfile, userData.profile);
-    } else {
-        // We create a new profile with the defaults
-        profile = _.cloneDeep(defaultProfile);
+        return _.merge({}, defaultProfile, userData.profile);
     }
 
-    return profile;
+    // We create a new profile with the defaults
+    return _.cloneDeep(defaultProfile);
 }
 
 /**
@@ -727,7 +1264,6 @@ async function saveProfile(req) {
     // Some defaults
     let message = 'Profile has been saved!';
     let errors = [];
-    let validate = {};
     let count = 0;
 
     // We look for ResearchEntityData by the researchEntityId
@@ -772,11 +1308,15 @@ async function saveProfile(req) {
     }
 
     try {
-        // We compile our schema
-        validate = ajv.compile(schema);
+        // We compile our schema & validate profile
+        const validate = ajv.compile(conditionSchema);
+        const valid = validate(profile);
 
-        // We validate the profile
-        validate(profile);
+        // Change removeAdditional option to 'all'
+        ajv._opts.removeAdditional = 'all';
+
+        // Re-validate to remove the additional properties
+        ajv.validate(defaultSchema, profile);
 
         // After validating restore original basic information
         // If the profile is valid without any errors
@@ -793,13 +1333,13 @@ async function saveProfile(req) {
             profile.facilities = researchEntityData.profile.facilities;
             profile.hidden = researchEntityData.profile.hidden;
 
-            if (!hasFiles && !_.isEmpty(profile.image.value)) {
+            if (!hasFiles && _.has(profile, 'image.value') && !_.isEmpty(profile.image.value)) {
                 profile.image.value = researchEntityData.profile.image.value;
             }
         }
 
         // If the profile has some errors
-        if (validate.errors) {
+        if (!valid || validate.errors) {
 
             const row = {};
 
@@ -844,6 +1384,7 @@ async function saveProfile(req) {
 
             message = 'Please correct the errors!';
         } else {
+
             // If the profile is valid without any errors
             if (researchEntityData) {
                 // We update the existing record with the new profile
@@ -864,8 +1405,7 @@ async function saveProfile(req) {
     }
 
     // We merge the profile and errors object
-    const profileWithErrors = {};
-    _.merge(profileWithErrors, profile, errors);
+    const profileWithErrors = _.merge({}, profile, errors);
 
     if (hasFiles) {
         const failedTasks = await runGruntTasks();

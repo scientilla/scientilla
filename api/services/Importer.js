@@ -582,12 +582,33 @@ async function importUserContracts(email = defaultEmail) {
     const getProfileJSON = (researchEntityData, contract) => {
         const profile = ResearchEntityData.setupProfile(researchEntityData);
 
-        profile.username.value = contract.email;
-        profile.name.value = contract.nome;
-        profile.surname.value = contract.cognome;
-        profile.phone.value = contract.telefono;
-        profile.jobTitle.value = contract.Ruolo_AD;
-        profile.hidden.value = false;
+        profile.hidden = (contract.no_people === 'NO PEOPLE' ? true: false);
+
+        let defaultPrivacy = 'public';
+        if (profile.hidden) {
+            defaultPrivacy = 'hidden';
+        }
+
+        profile.username = {
+            privacy: defaultPrivacy,
+            value: contract.email
+        };
+        profile.name = {
+            privacy: defaultPrivacy,
+            value: contract.nome
+        };
+        profile.surname = {
+            privacy: defaultPrivacy,
+            value: contract.cognome
+        };
+        profile.phone = {
+            privacy: defaultPrivacy,
+            value: contract.telefono
+        };
+        profile.jobTitle = {
+            privacy: defaultPrivacy,
+            value: contract.Ruolo_AD
+        };
 
         const centers = [];
         const facilities = [];
@@ -601,7 +622,7 @@ async function importUserContracts(email = defaultEmail) {
                     if (!center) {
                         centers.push({
                             value: group.name,
-                            privacy: 'public'
+                            privacy: defaultPrivacy
                         });
                     }
                     break;
@@ -610,7 +631,7 @@ async function importUserContracts(email = defaultEmail) {
                     if (!facility) {
                         facilities.push({
                             value: group.name,
-                            privacy: 'public'
+                            privacy: defaultPrivacy
                         });
                     }
                     break;
@@ -619,7 +640,7 @@ async function importUserContracts(email = defaultEmail) {
                     if (!institute) {
                         institutes.push({
                             value: group.name,
-                            privacy: 'public'
+                            privacy: defaultPrivacy
                         });
                     }
                     break;
@@ -628,7 +649,7 @@ async function importUserContracts(email = defaultEmail) {
                     if (!researchLine) {
                         researchLines.push({
                             value: group.name,
-                            privacy: 'public'
+                            privacy: defaultPrivacy
                         });
                     }
                     break;
@@ -669,8 +690,15 @@ async function importUserContracts(email = defaultEmail) {
         }
 
         if (facilities.length === 0 && researchLines.length === 0) {
-            profile.office.value = contract.UO_1;
-            profile.directorate.value = contract.nome_linea_1;
+            profile.office = {
+                privacy: defaultPrivacy,
+                value: contract.UO_1
+            };
+
+            profile.directorate = {
+                privacy: defaultPrivacy,
+                value: contract.nome_linea_1
+            };
         }
 
         return profile;
@@ -815,10 +843,17 @@ async function importUserContracts(email = defaultEmail) {
             if (researchEntityData) {
                 if (!_.isEqual(researchEntityData.imported_data, contract)) {
                     const profileJSON = getProfileJSON(researchEntityData, contract);
+                    let profileJSONString = JSON.stringify(profileJSON);
+
+                    if (profileJSON.hidden) {
+                        // Replace all the current public privacy settings to hidden
+                        profileJSONString = profileJSONString.replace(/"privacy":"public"/gm, '"privacy":"hidden"');
+                    }
+
                     researchEntityData = await ResearchEntityData.update(
                         { id: researchEntityData.id },
                         {
-                            profile: JSON.stringify(profileJSON),
+                            profile: profileJSONString,
                             imported_data: JSON.stringify(contract)
                         }
                     );

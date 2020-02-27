@@ -20,10 +20,10 @@ module.exports = {
 
             let profile = ResearchEntityData.setupProfile(data);
 
-            if (_.has(profile, 'hidden.value') && profile.hidden.value) {
+            if (_.has(profile, 'hidden') && profile.hidden) {
                 return {
                     id: data.researchEntity,
-                    hidden: profile.hidden.value
+                    hidden: profile.hidden
                 };
             }
 

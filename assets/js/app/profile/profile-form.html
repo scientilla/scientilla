@@ -13,7 +13,8 @@
     <uib-tabset active="vm.active" class="profile-tabs js-profile-tabs" ng-if="vm.profileIsLoaded">
         <uib-tab
             index="0"
-            heading="Basic information">
+            heading="Basic information"
+            ng-class="{'has-error' : vm.basicInformationHasErrors, 'changed' : vm.changed['basic-info']}">
             <profile-privacy-legend></profile-privacy-legend>
 
             <profile-basic-information-form
@@ -21,13 +22,15 @@
 
             <em>The above information has been obtained from HR. If something is incorrect please contact HR.</em>
 
-            <profile-legend public="true"></profile-legend>
+            <profile-legend
+                profile="vm.profile"
+                type="basic-information"></profile-legend>
         </uib-tab>
 
         <uib-tab
             index="1"
             heading="About me"
-            ng-class="{'has-error' : vm.hasAboutMeErrors, 'changed' : vm.changed['about-me']}">
+            ng-class="{'has-error' : vm.aboutMeHasErrors, 'changed' : vm.changed['about-me']}">
             <profile-privacy-legend></profile-privacy-legend>
 
             <profile-about-me-form
@@ -35,9 +38,8 @@
                 errors="vm.errors"></profile-about-me-form>
 
             <profile-legend
-                public="true"
-                locked="true"
-                invisible="true"></profile-legend>
+                profile="vm.profile"
+                type="about-me"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -51,9 +53,8 @@
                 errors="vm.errors"></profile-socials-form>
 
             <profile-legend
-                public="true"
-                locked="true"
-                invisible="true"></profile-legend>
+                profile="vm.profile"
+                type="socials"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -82,9 +83,8 @@
             </button>
 
             <profile-legend
-                public="true"
-                locked="true"
-                invisible="true"></profile-legend>
+                profile="vm.profile"
+                type="experiences"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -113,9 +113,8 @@
             </button>
 
             <profile-legend
-                public="true"
-                locked="true"
-                invisible="true"></profile-legend>
+                profile="vm.profile"
+                type="education"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -144,9 +143,8 @@
             </button>
 
             <profile-legend
-                public="true"
-                locked="true"
-                invisible="true"></profile-legend>
+                profile="vm.profile"
+                type="certificates"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -187,9 +185,8 @@
             </button>
 
             <profile-legend
-                public="true"
-                locked="true"
-                invisible="true"></profile-legend>
+                profile="vm.profile"
+                type="skills"></profile-legend>
         </uib-tab>
 
         <uib-tab
@@ -208,9 +205,9 @@
                 <li>
                     <scientilla-privacy-selector
                         context-string="documents"
+                        profile="vm.profile"
                         model="vm.profile.documents.privacy"
-                        disable-public="true"
-                        css-class="no-label"></scientilla-privacy-selector>
+                        errors="vm.profile.documents.errors.privacy"></scientilla-privacy-selector>
                 </li>
             </ul>
 
@@ -221,16 +218,15 @@
                 <li>
                     <scientilla-privacy-selector
                         context-string="accomplishments"
+                        profile="vm.profile"
                         model="vm.profile.accomplishments.privacy"
-                        disable-public="true"
-                        css-class="no-label"></scientilla-privacy-selector>
+                        errors="vm.profile.accomplishments.errors.privacy"></scientilla-privacy-selector>
                 </li>
             </ul>
 
             <profile-legend
-                public="false"
-                locked="true"
-                invisible="true"></profile-legend>
+                profile="vm.profile"
+                type="profile-only"></profile-legend>
         </uib-tab>
 
         <uib-tab

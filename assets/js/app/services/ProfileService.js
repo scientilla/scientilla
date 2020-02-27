@@ -20,7 +20,7 @@
         function addItem (options = {}) {
             if (!options.item) {
                 options.item = {
-                    privacy: 'locked'
+                    privacy: 'hidden'
                 };
             }
 
@@ -35,16 +35,36 @@
             }
         }
 
-        function getPrivacyTooltipText(options = {}) {
-            if (typeof(options.disableInvisible) !== 'undefined' || options.disableInvisible === true) {
-                return 'Set the privacy of this field to public, only for Scientilla users';
-            }
+        function getPrivacyTooltipText(options) {
 
-            if (typeof(options.onlyPublic) !== 'undefined' || options.onlyPublic === true) {
-                return 'This field can only be public!';
+            switch (true) {
+                case
+                    _.includes(options, 'public') &&
+                    !_.includes(options, 'hidden') &&
+                    !_.includes(options, 'invisible')
+                :
+                    return 'This field can only be public!';
+                case
+                    !_.includes(options, 'public') &&
+                    _.includes(options, 'hidden') &&
+                    !_.includes(options, 'invisible')
+                :
+                    return 'This field can only be hidden!';
+                case
+                    !_.includes(options, 'public') &&
+                    _.includes(options, 'hidden') &&
+                    _.includes(options, 'invisible')
+                :
+                    return 'Set the privacy of this field to only for Scientilla users or hide it completely';
+                case
+                    _.includes(options, 'public') &&
+                    _.includes(options, 'hidden') &&
+                    _.includes(options, 'invisible')
+                :
+                    return 'Set the privacy of this field to public, only for Scientilla users or hide it completely';
+                default:
+                    return 'No correct option!';
             }
-
-            return 'Set the privacy of this field to public, only for Scientilla users or hidden';
         }
 
         function getFavoriteTooltipText() {

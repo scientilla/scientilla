@@ -53,7 +53,8 @@
         vm.save = () => {
             UsersService.saveProfile(AuthService.user.researchEntity, vm.profile).then(response => {
 
-                vm.hasAboutMeErrors = false;
+                vm.basicInformationHasErrors = false;
+                vm.aboutMeHasErrors = false;
 
                 if (response.profile) {
                     vm.profile = response.profile;
@@ -61,6 +62,21 @@
 
                 if (response.errors && !_.isEmpty(response.errors)) {
                     vm.errors = response.errors;
+
+                    if (
+                        _.has(vm.errors, 'username') ||
+                        _.has(vm.errors, 'name') ||
+                        _.has(vm.errors, 'surname') ||
+                        _.has(vm.errors, 'jobTitle') ||
+                        _.has(vm.errors, 'phone') ||
+                        _.has(vm.errors, 'centers') ||
+                        _.has(vm.errors, 'facilities') ||
+                        _.has(vm.errors, 'researchLines') ||
+                        _.has(vm.errors, 'directorate') ||
+                        _.has(vm.errors, 'office')
+                    ) {
+                        vm.basicInformationHasErrors = true;
+                    }
 
                     if (
                         _.has(vm.errors, 'image') ||
@@ -71,7 +87,7 @@
                         _.has(vm.errors, 'address') ||
                         _.has(vm.errors, 'interests')
                     ) {
-                        vm.hasAboutMeErrors = true;
+                        vm.aboutMeHasErrors = true;
                     }
 
                     $timeout(() => {
@@ -112,6 +128,7 @@
                 }
 
                 profileWatcher = $scope.$watch('vm.profile', function(evt){
+                    vm.changed['basic-info'] = isChanged('basic-info');
                     vm.changed['about-me'] = isChanged('about-me');
                     vm.changed.socials = isChanged('socials');
                     vm.changed.experiences = isChanged('experiences');
@@ -130,6 +147,22 @@
             const originalProfile = JSON.parse(originalProfileJson);
 
             switch (category) {
+                case 'basic-info':
+                    if (
+                        angular.toJson(originalProfile.username) !== angular.toJson(vm.profile.username) ||
+                        angular.toJson(originalProfile.name) !== angular.toJson(vm.profile.name) ||
+                        angular.toJson(originalProfile.surname) !== angular.toJson(vm.profile.surname) ||
+                        angular.toJson(originalProfile.jobTitle) !== angular.toJson(vm.profile.jobTitle) ||
+                        angular.toJson(originalProfile.phone) !== angular.toJson(vm.profile.phone) ||
+                        angular.toJson(originalProfile.directorate) !== angular.toJson(vm.profile.directorate) ||
+                        angular.toJson(originalProfile.office) !== angular.toJson(vm.profile.office) ||
+                        angular.toJson(originalProfile.centers) !== angular.toJson(vm.profile.centers) ||
+                        angular.toJson(originalProfile.researchLines) !== angular.toJson(vm.profile.researchLines) ||
+                        angular.toJson(originalProfile.facilities) !== angular.toJson(vm.profile.facilities)
+                    ) {
+                        return true;
+                    }
+                    return false;
                 case 'about-me':
                     if (
                         angular.toJson(originalProfile.image) !== angular.toJson(vm.profile.image) ||

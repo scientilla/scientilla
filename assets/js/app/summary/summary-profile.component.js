@@ -107,12 +107,14 @@
                 const favoriteSkills = [];
                 if (!_.isEmpty(profile.skillCategories)) {
                     profile.skillCategories.map(category => {
-                        category.skills.map(skill => {
-                            if (skill.favorite) {
-                                favoriteSkills.push(skill);
-                            }
-                            allSkills.push(skill);
-                        });
+                        if (!_.isEmpty(category.skills)) {
+                            category.skills.map(skill => {
+                                if (skill.favorite) {
+                                    favoriteSkills.push(skill);
+                                }
+                                allSkills.push(skill);
+                            });
+                        }
                     });
                 }
 

@@ -74,6 +74,8 @@
                     const center = vm.profile.centers[i];
                     items.push({
                         value: center.value,
+                        privacy: center.privacy,
+                        errors: center.errors,
                         context: 'centers[' + i + ']',
                         model: 'centers'
                     });
@@ -91,6 +93,8 @@
                     const facility = vm.profile.facilities[i];
                     items.push({
                         value: facility.value,
+                        privacy: facility.privacy,
+                        errors: facility.errors,
                         context: 'facilities[' + i + ']',
                         model: 'facilities'
                     });
@@ -108,6 +112,8 @@
                     const researchLine = vm.profile.researchLines[i];
                     items.push({
                         value: researchLine.value,
+                        privacy: researchLine.privacy,
+                        errors: researchLine.errors,
                         context: 'researchLines[' + i + ']',
                         model: 'researchLines'
                     });

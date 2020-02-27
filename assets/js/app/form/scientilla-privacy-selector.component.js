@@ -7,42 +7,44 @@
             controller: scientillaPrivacySelector,
             controllerAs: 'vm',
             bindings: {
-                cssClass: '@?',
                 contextObject: '<?',
                 contextString: '@?',
+                profile: '<',
                 model: '=?',
-                disableInvisible: '<?',
-                disablePublic: '<?',
-                onlyPublic: '<?'
+                errors: '<?'
             }
         });
 
-    scientillaPrivacySelector.$inject = ['ProfileService'];
+    scientillaPrivacySelector.$inject = ['ProfileService', '$scope'];
 
-    function scientillaPrivacySelector(ProfileService) {
+    function scientillaPrivacySelector(ProfileService, $scope) {
         const vm = this;
 
-        let defaultOptions = ['locked', 'public', 'invisible'];
-        const defaultOption = 'locked';
+        vm.cssClass = '';
+
+        let showPublicOption = false;
+        let showHiddenOption = false;
+        let showInvisibleOption = false;
+
+        const titlesRegex = RegExp(/^titles\[([0-9]*?)]/);
+        const interestsRegex = RegExp(/^interests\[([0-9]*?)]/);
+        const experiencesRegex = RegExp(/^experiences\[([0-9]*?)]/);
+        const educationRegex = RegExp(/^education\[([0-9]*?)]/);
+        const certificatesRegex = RegExp(/^certificates\[([0-9]*?)]/);
+        const skillCategoryRegex = RegExp(/^skill-category\[([0-9]*?)]/);
+        const skillRegex = RegExp(/^skill\[([0-9]*?)]\[([0-9]*?)]/);
+        const centersRegex = RegExp(/^centers\[([0-9]*?)]/);
+        const researchLinesRegex = RegExp(/^researchLines\[([0-9]*?)]/);
+        const facilitiesRegex = RegExp(/^facilities\[([0-9]*?)]/);
+
+        const defaultOption = 'hidden';
+
+        let watchers = [];
 
         vm.$onInit = function () {
-            if (typeof vm.model === 'undefined') {
-                vm.model = defaultOption;
-            }
+            const cssClasses = [];
 
-            if (typeof vm.disableInvisible !== 'undefined' || vm.disableInvisible === true) {
-                defaultOptions.splice(defaultOptions.indexOf('invisible'), 1);
-            }
-
-            if (typeof vm.disablePublic !== 'undefined' || vm.disablePublic === true) {
-                defaultOptions.splice(defaultOptions.indexOf('public'), 1);
-            }
-
-            if (_.indexOf(defaultOptions, vm.model) < 0) {
-                vm.model = _.first(defaultOptions);
-            }
-
-            switch(true) {
+            switch (true) {
                 case typeof vm.contextString !== 'undefined':
                     vm.context = vm.contextString;
                     break;
@@ -64,18 +66,134 @@
                     break;
             }
 
-            vm.options = defaultOptions;
 
-            if (typeof vm.onlyPublic !== 'undefined' || vm.onlyPublic === true) {
-                vm.options = ['public'];
-                vm.model = 'public';
-
-                if (typeof vm.cssClass !== 'undefined') {
-                    vm.cssClass += ' only-public';
-                } else {
-                    vm.cssClass = 'only-public';
-                }
+            if (_.isNil(vm.model)) {
+                vm.model = defaultOption;
             }
+
+            switch (true) {
+                case
+                    vm.context === 'username' ||
+                    vm.context === 'name' ||
+                    vm.context === 'surname' ||
+                    vm.context === 'jobTitle' ||
+                    vm.context === 'phone' ||
+                    vm.context === 'directorate' ||
+                    vm.context === 'office' ||
+                    centersRegex.test(vm.context) ||
+                    researchLinesRegex.test(vm.context) ||
+                    facilitiesRegex.test(vm.context)
+                :
+                    if (vm.profile.hidden) {
+                        showHiddenOption = true;
+                    } else{
+                        showPublicOption = true;
+                    }
+                    break;
+                case
+                    vm.context === 'image' ||
+                    vm.context === 'description' ||
+                    vm.context === 'role' ||
+                    vm.context === 'website' ||
+                    vm.context === 'address' ||
+                    vm.context === 'linkedin' ||
+                    vm.context === 'twitter' ||
+                    vm.context === 'facebook' ||
+                    vm.context === 'instagram' ||
+                    vm.context === 'researchgate' ||
+                    vm.context === 'github' ||
+                    vm.context === 'bitbucket' ||
+                    vm.context === 'youtube' ||
+                    vm.context === 'flickr' ||
+                    titlesRegex.test(vm.context) ||
+                    interestsRegex.test(vm.context) ||
+                    experiencesRegex.test(vm.context) ||
+                    educationRegex.test(vm.context) ||
+                    certificatesRegex.test(vm.context) ||
+                    skillCategoryRegex.test(vm.context) ||
+                    skillRegex.test(vm.context)
+                :
+                    if (!vm.profile.hidden) {
+                        showPublicOption = true;
+                    }
+                    showHiddenOption = true;
+                    showInvisibleOption = true;
+                    break;
+                case
+                    vm.context === 'documents' ||
+                    vm.context === 'accomplishments'
+                :
+                    showHiddenOption = true;
+                    showInvisibleOption = true;
+                    break;
+                default:
+                    break;
+            }
+
+            vm.options = [];
+            if (showPublicOption) {
+                vm.options.push('public');
+            }
+
+            if (showHiddenOption) {
+                vm.options.push('hidden');
+            }
+
+            if (showInvisibleOption) {
+                vm.options.push('invisible');
+            }
+
+            // Add css class to remove the margin
+            if (
+                titlesRegex.test(vm.context) ||
+                interestsRegex.test(vm.context) ||
+                vm.context === 'documents' ||
+                vm.context === 'accomplishments' ||
+                centersRegex.test(vm.context) ||
+                researchLinesRegex.test(vm.context) ||
+                facilitiesRegex.test(vm.context)
+            ) {
+                cssClasses.push('no-label');
+            }
+
+            if (vm.options.length === 1) {
+                cssClasses.push('one-option');
+            }
+
+            // Has errors? Add error class
+            if (!_.isNil(vm.errors)) {
+                cssClasses.push('is-invalid');
+            }
+
+            // Map array to class string
+            vm.cssClass = cssClasses.join(' ');
+
+
+            // Listen when errors are been changed
+            watchers.push($scope.$watch('vm.errors', (newValue, oldValue) => {
+                const className = 'is-invalid';
+
+                if (!_.isNil(newValue)) {
+                    cssClasses.push(className);
+                }
+
+                if (!_.isNil(oldValue) && _.isNil(newValue)) {
+                    const index = cssClasses.indexOf(className);
+
+                    if (index > -1) {
+                        cssClasses.splice(index, 1);
+                    }
+                }
+
+                vm.cssClass = cssClasses.join(' ');
+            }));
+        };
+
+        vm.$onDestroy = function () {
+            _.forEach(watchers, function (watcher) {
+                watcher();
+            });
+            watchers = [];
         };
 
         vm.changeOption = $event => {
@@ -103,7 +221,7 @@
         };
 
         vm.getTooltipText = () => {
-            return ProfileService.getPrivacyTooltipText({onlyPublic: vm.onlyPublic});
+            return ProfileService.getPrivacyTooltipText(vm.options);
         };
     }
 

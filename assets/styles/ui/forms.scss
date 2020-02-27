@@ -183,10 +183,20 @@ label{
         margin-top: 0px;
     }
 
-    &.only-public{
+    &.one-option{
         input[type='radio'] {
             & + span {
                 cursor: default;
+            }
+        }
+    }
+
+    &.is-invalid{
+        input[type='radio'] {
+            & + span {
+                &:before {
+                    color: $danger;
+                }
             }
         }
     }
@@ -229,7 +239,7 @@ label{
             }
         }
 
-        &[value='locked'] {
+        &[value='hidden'] {
             & + span {
                 &:before {
                     content: '\f023';

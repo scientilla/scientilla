@@ -13,9 +13,10 @@
             </li>
             <li>
                 <scientilla-privacy-selector
-                    css-class="no-label"
                     context-object="element.context"
-                    only-public="true"></scientilla-privacy-selector>
+                    profile="vm.profile"
+                    model="element.privacy"
+                    errors="element.errors.privacy"></scientilla-privacy-selector>
             </li>
         </ul>
     </ng-container>
@@ -33,7 +34,9 @@
             <li>
                 <scientilla-privacy-selector
                     context-object="item.model"
-                    only-public="true"></scientilla-privacy-selector>
+                    profile="vm.profile"
+                    model="vm.profile[item.model].privacy"
+                    errors="vm.profile[item.model].errors.privacy"></scientilla-privacy-selector>
             </li>
         </ul>
     </ng-container>
