@@ -539,32 +539,6 @@ const defaultProperties = {
         type: 'boolean',
         default: false
     },
-    documents: {
-        type: 'object',
-        allOf: [
-            { $ref: '#/definitions/privacy' },
-            { $ref: '#/definitions/privacyDefaultHidden' },
-            {
-                oneOf: [
-                    { $ref: '#/definitions/privacyEnumHidden' },
-                    { $ref: '#/definitions/privacyEnumInvisible' }
-                ]
-            }
-        ]
-    },
-    accomplishments: {
-        type: 'object',
-        allOf: [
-            { $ref: '#/definitions/privacy' },
-            { $ref: '#/definitions/privacyDefaultHidden' },
-            {
-                oneOf: [
-                    { $ref: '#/definitions/privacyEnumHidden' },
-                    { $ref: '#/definitions/privacyEnumInvisible' }
-                ]
-            }
-        ]
-    },
     publicWebsite: {$ref: '#/definitions/publicWebsite'},
 };
 
@@ -1089,28 +1063,6 @@ function filterProfile(profile, onlyPublic = false) {
         }
     }
 
-    if (
-        (
-            !onlyPublic &&
-            _.has(profile, 'accomplishments.privacy') &&
-            profile.accomplishments.privacy !== 'invisible'
-        ) ||
-        (onlyPublic && _.has(profile, 'accomplishments.privacy') && profile.accomplishments.privacy === 'public')
-    ) {
-        object.accomplishments = true;
-    }
-
-    if (
-        (
-            !onlyPublic &&
-            _.has(profile, 'documents.privacy') &&
-            profile.documents.privacy !== 'invisible'
-        ) ||
-        (onlyPublic && _.has(profile, 'documents.privacy') && profile.documents.privacy === 'public')
-    ) {
-        object.documents = true;
-    }
-
     return object;
 }
 
@@ -1149,66 +1101,58 @@ async function loadDocumentsAndAccomplishments(profile, researchEntityId) {
     const researchEntity = await ResearchEntity.findOne({id: researchEntityId});
 
     if (researchEntity && !researchEntity.isGroup()) {
-        if (_.has(profile, 'accomplishments')) {
-            const verifiedAccomplishments = await AccomplishmentVerify.find({researchEntity: researchEntityId});
-            const accomplishmentIds = verifiedAccomplishments.map(a => a.accomplishment);
+        const verifiedAccomplishments = await AccomplishmentVerify.find({researchEntity: researchEntityId});
+        const accomplishmentIds = verifiedAccomplishments.map(a => a.accomplishment);
+
+        // Check populates
+        const accomplishmentPopulates = [
+            'type',
+            'authors',
+            'affiliations',
+            'institutes',
+            'source',
+            'verified',
+            'verifiedUsers',
+            'verifiedGroups'
+        ];
+
+        accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
+
+        const user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
+
+        if (!_.isEmpty(user.documents)) {
+            const documentIds = user.documents.map(d => d.id);
 
             // Check populates
-            const accomplishmentPopulates = [
-                'type',
-                'authors',
-                'affiliations',
-                'institutes',
+            const documentPopulates = [
                 'source',
-                'verified',
-                'verifiedUsers',
-                'verifiedGroups'
+                'authors',
+                'authorships',
+                'groupAuthorships',
+                'affiliations',
+                'sourceMetrics',
+                'userTags',
+                'tagLabels',
+                'groupTags',
+                'groupTagLabels',
+                'institutes',
+                //'duplicates',
+                'groups',
+                'scopusDocumentMetadata',
+                'openaireMetadata'
             ];
-
-            accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
-        }
-
-        if (_.has(profile, 'documents')) {
-            const user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
-
-            if (!_.isEmpty(user.documents)) {
-                const documentIds = user.documents.map(d => d.id);
-
-                // Check populates
-                const documentPopulates = [
-                    'source',
-                    'authors',
-                    'authorships',
-                    'groupAuthorships',
-                    'affiliations',
-                    'sourceMetrics',
-                    'userTags',
-                    'tagLabels',
-                    'groupTags',
-                    'groupTagLabels',
-                    'institutes',
-                    //'duplicates',
-                    'groups',
-                    'scopusDocumentMetadata',
-                    'openaireMetadata'
-                ];
-                documents = await Document.find({
-                    kind: DocumentKinds.VERIFIED, id: documentIds
-                }).populate(documentPopulates);
-            }
+            documents = await Document.find({
+                kind: DocumentKinds.VERIFIED, id: documentIds
+            }).populate(documentPopulates);
         }
     }
 
     if (!_.isEmpty(documents)) {
         profile.documents = documents;
-    } else {
-        delete profile.documents;
     }
 
     if (!_.isEmpty(accomplishments)) {
         profile.accomplishments = accomplishments;
-    } else {
-        delete profile.accomplishments;
     }
 
     return profile;

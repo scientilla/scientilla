@@ -191,46 +191,6 @@
 
         <uib-tab
             index="7"
-            heading="Scientilla profile only"
-            ng-class="{
-                'has-error' : vm.errors['documents'] || vm.errors['accomplishments'],
-                'changed' : vm.changed['documents-accomplishments']
-            }">
-            <profile-privacy-legend></profile-privacy-legend>
-
-            <ul class="enable-listing no-labels">
-                <li>
-                    <label>Documents</label>
-                </li>
-                <li>
-                    <scientilla-privacy-selector
-                        context-string="documents"
-                        profile="vm.profile"
-                        model="vm.profile.documents.privacy"
-                        errors="vm.profile.documents.errors.privacy"></scientilla-privacy-selector>
-                </li>
-            </ul>
-
-            <ul class="enable-listing no-labels">
-                <li>
-                    <label>Accomplishments</label>
-                </li>
-                <li>
-                    <scientilla-privacy-selector
-                        context-string="accomplishments"
-                        profile="vm.profile"
-                        model="vm.profile.accomplishments.privacy"
-                        errors="vm.profile.accomplishments.errors.privacy"></scientilla-privacy-selector>
-                </li>
-            </ul>
-
-            <profile-legend
-                profile="vm.profile"
-                type="profile-only"></profile-legend>
-        </uib-tab>
-
-        <uib-tab
-            index="8"
             heading="Public website only"
             ng-class="{
                 'changed' : vm.changed['public-website']
