@@ -50,7 +50,7 @@
             ProfileService.addItem(options);
         };
 
-        vm.save = () => {
+        vm.save = (close = false) => {
             UsersService.saveProfile(AuthService.user.researchEntity, vm.profile).then(response => {
 
                 vm.basicInformationHasErrors = false;
@@ -111,6 +111,10 @@
                         Notification.success(response.message);
 
                         originalProfileJson = angular.toJson(vm.profile);
+
+                        if (close) {
+                            cancel();
+                        }
                     }
                 }
             });

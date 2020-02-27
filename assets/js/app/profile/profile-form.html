@@ -316,7 +316,12 @@
 
     <ul class="form-actions">
         <li>
-            <button class="btn btn-primary" ng-click="vm.save()">
+            <button class="btn btn-primary" ng-click="vm.save(true)">
+                <i class="fas fa-save fa-left"></i>Save & close
+            </button>
+        </li>
+        <li>
+            <button class="btn btn-outline-secondary" ng-click="vm.save()">
                 <i class="fas fa-save fa-left"></i>Save
             </button>
         </li>
