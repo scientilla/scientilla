@@ -235,8 +235,9 @@
             ng-class="{
                 'changed' : vm.changed['public-website']
             }">
+            <label>Publications</label>
             <ul class="iit-website-options">
-                <li>Show <strong>"Favorite Publications"</strong> section on the IIT website:
+                <li>Show <strong>"Favorite Publications"</strong> section:
                     <label class="form-checkbox inline-block">
                         <input
                             type="checkbox"
@@ -244,7 +245,7 @@
                         <span></span>
                     </label>
                 </li>
-                <li>Show all <strong>"Publications"</strong> section on the IIT website:
+                <li>Show <strong>"All Publications"</strong> section:
                     <label class="form-checkbox inline-block">
                         <input
                             type="checkbox"
@@ -253,7 +254,7 @@
                     </label>
                 </li>
                 <li>
-                    Show <strong>"Dissemination Talks"</strong> section on the IIT website:
+                    Show <strong>"Dissemination Talks"</strong> section:
                     <label class="form-checkbox inline-block">
                         <input
                             type="checkbox"
@@ -262,7 +263,7 @@
                     </label>
                 </li>
                 <li>
-                    Show <strong>"Scientific Talks"</strong> section on the IIT website:
+                    Show <strong>"Scientific Talks"</strong> section:
                     <label class="form-checkbox inline-block">
                         <input
                             type="checkbox"
@@ -271,11 +272,41 @@
                     </label>
                 </li>
                 <li>
-                    Show <strong>"Oral Presentations"</strong> section on the IIT website:
+                    Show <strong>"Oral Presentations"</strong> section:
                     <label class="form-checkbox inline-block">
                         <input
                             type="checkbox"
                             ng-model="vm.profile.publicWebsite.oralPresentations">
+                        <span></span>
+                    </label>
+                </li>
+            </ul>
+
+            <br>
+
+            <label>Accomplishments</label>
+            <ul class="iit-website-options">
+                <li>Show <strong>"Award/Achievement"</strong> section:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.publicWebsite.awardAchievement">
+                        <span></span>
+                    </label>
+                </li>
+                <li>Show <strong>"Organized Event"</strong> section:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.publicWebsite.organizedEvent">
+                        <span></span>
+                    </label>
+                </li>
+                <li>Show <strong>"Editorship"</strong> section:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.publicWebsite.editorship">
                         <span></span>
                     </label>
                 </li>

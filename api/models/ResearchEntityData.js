@@ -237,6 +237,18 @@ const definitions = {
             oralPresentations: {
                 type: 'boolean',
                 default: false
+            },
+            awardAchievement: {
+                type: 'boolean',
+                default: false
+            },
+            organizedEvent: {
+                type: 'boolean',
+                default: false
+            },
+            editorship: {
+                type: 'boolean',
+                default: false
             }
         },
         required: [
@@ -244,8 +256,33 @@ const definitions = {
             'allPublications',
             'disseminationTalks',
             'scientificTalks',
-            'oralPresentations'
+            'oralPresentations',
+            'awardAchievement',
+            'organizedEvent',
+            'editorship'
         ]
+    },
+    ifValueCheckPublicPrivacy: {
+        if: {
+            properties: {
+                value: {
+                    minLength: 1
+                }
+            },
+            required: ['value']
+        },
+        then: { $ref: '#/definitions/privacyEnumPublic' }
+    },
+    ifValueCheckHiddenPrivacy: {
+        if: {
+            properties: {
+                value: {
+                    minLength: 1
+                }
+            },
+            required: ['value']
+        },
+        then: { $ref: '#/definitions/privacyEnumHidden' }
     }
 };
 
@@ -529,28 +566,6 @@ const defaultProperties = {
         ]
     },
     publicWebsite: {$ref: '#/definitions/publicWebsite'},
-    ifValueCheckPublicPrivacy: {
-        if: {
-            properties: {
-                value: {
-                    minLength: 1
-                }
-            },
-            required: ['value']
-        },
-        then: { $ref: '#/definitions/privacyEnumPublic' }
-    },
-    ifValueCheckHiddenPrivacy: {
-        if: {
-            properties: {
-                value: {
-                    minLength: 1
-                }
-            },
-            required: ['value']
-        },
-        then: { $ref: '#/definitions/privacyEnumHidden' }
-    }
 };
 
 const thenProperties = {
