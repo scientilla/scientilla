@@ -156,7 +156,7 @@ function makePublicAPIrequest(req, res, attribute) {
     const searchCriteria = {
         [searchKey]: req.params[searchKey]
     };
-    const baseUrl = `${req.protocol}://${req.host}:${sails.config.port}`;
+    const baseUrl = `http://localhost:${sails.config.port}`;
     res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, baseUrl, req.query, attribute));
 }
 
