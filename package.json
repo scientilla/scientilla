@@ -10,6 +10,7 @@
     "angular-ui-sortable": "^0.19.0",
     "angularjs-color-picker": "^3.4.8",
     "ansi_up": "^4.0.4",
+    "ansi-to-html": "^0.6.13",
     "base64-stream": "^1.0.0",
     "bluebird": "^3.7.2",
     "bootstrap": "4.1.3",
@@ -58,7 +59,7 @@
     "sails-disk": "~0.10.0",
     "sails-hook-autoreload": "^0.13.2",
     "sails-postgresql": "^0.11.3",
-    "sharp": "^0.24.0",
+    "sharp": "0.23.4",
     "string-similarity": "^1.0.0",
     "ui-bootstrap4": "^3.0.4",
     "waterline-sql-builder": "github:scientilla/waterline-sql-builder",
@@ -68,7 +69,6 @@
     "xlsx": "^0.8.0"
   },
   "devDependencies": {
-    "ansi-to-html": "^0.6.13",
     "babel-preset-es2015": "^6.22.0",
     "grunt-babel": "^6.0.0",
     "grunt-contrib-jshint": "^1.1.0",
