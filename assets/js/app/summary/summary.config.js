@@ -21,10 +21,6 @@
                 template: `<profile-summary
                     active-tab="profile"></profile-summary>`
             })
-            .when("/dashboard/profile-v2", {
-                template: `<profile-summary
-                    active-tab="profile-v2"></profile-summary>`
-            })
             .when("/:group?/dashboard/documents-overview", {
                 controller: 'requestHandler',
                 template: `<profile-summary
