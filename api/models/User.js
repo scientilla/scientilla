@@ -57,6 +57,10 @@ module.exports = _.merge({}, SubResearchEntity, {
             type: "BOOLEAN",
             defaultsTo: false
         },
+        alreadyChangedProfile: {
+            type: "BOOLEAN",
+            defaultsTo: false
+        },
         role: {
             type: 'STRING',
             enum: [USER, ADMINISTRATOR],

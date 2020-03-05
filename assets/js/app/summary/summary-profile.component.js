@@ -21,7 +21,8 @@
             'context',
             'ProfileService',
             'EventsService',
-            'pathProfileImages'
+            'pathProfileImages',
+            'ModalService'
         ];
 
         function SummaryProfileComponent(
@@ -33,7 +34,8 @@
             context,
             ProfileService,
             EventsService,
-            pathProfileImages
+            pathProfileImages,
+            ModalService
         ) {
             const vm = this;
 
@@ -72,6 +74,8 @@
                 });
 
                 loadProfile();
+
+                vm.user = AuthService.user;
             };
 
             vm.$onDestroy = () => {
@@ -370,6 +374,10 @@
                 }
             };
             /* jshint ignore:end */
+
+            vm.editUserProfile = function() {
+                ModalService.openProfileForm();
+            };
         }
     }
 

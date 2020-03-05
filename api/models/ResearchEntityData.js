@@ -1358,6 +1358,12 @@ async function saveProfile(req) {
                     profile: profile
                 });
             }
+
+            // Find user and update hasChangedProfile boolean to true if not is already true
+            let user = await User.findOne({ researchEntity: researchEntityId });
+            if (user && !user.alreadyChangedProfile) {
+                await User.update({ id: user.id }, { alreadyChangedProfile: true });
+            }
         }
     } catch (e) {
         sails.log.debug(e);

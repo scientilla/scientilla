@@ -38,3 +38,13 @@
         }
     }
 }
+
+.btn-outline-primary{
+    background: $white;
+
+    &:hover,
+    &:focus,
+    &:focus:active{
+        border-color: $white;
+    }
+}

@@ -29,7 +29,8 @@
             'scopusId',
             'jobTitle',
             'attributes',
-            'alreadyOpenedSuggested'
+            'alreadyOpenedSuggested',
+            'alreadyChangedProfile'
         ];
 
         service.getNewUser = function () {

@@ -2,7 +2,15 @@
     <scientilla-loading is-loading="vm.loading"></scientilla-loading>
     <ul
         class="profile-blocks top"
-        ng-class="vm.profile.description || vm.profile.interests ? 'has-about-me' : 'has-not-about-me'"
+        ng-class="{
+            'has-two-blocks': (!vm.profile.description && !vm.profile.interests) && vm.user.alreadyChangedProfile,
+            'has-three-blocks': (
+                ((vm.profile.description || vm.profile.interests) && vm.user.alreadyChangedProfile) ||
+                ((!vm.profile.description && !vm.profile.interests) && !vm.user.alreadyChangedProfile)
+            ),
+            'has-four-blocks':
+                (vm.profile.description || vm.profile.interests) && !vm.user.alreadyChangedProfile
+        }"
         ng-if="!vm.loading">
         <li class="block-basic-info">
             <ul class="card-container">
@@ -53,6 +61,24 @@
                 </div>
 
                 <profile-contact-listing profile="vm.profile"></profile-contact-listing>
+            </div>
+        </li>
+        <li ng-if="!vm.user.alreadyChangedProfile">
+            <div class="profile-block edit-profile">
+                <div class="content-container">
+                    <h2>Complete your profile</h2>
+                    <p>It seems you didn't complete your profile yet. Did you know that:</p>
+                    <ul class="profile-features">
+                        <li>You can build up your profile and export it as <strong>PDF</strong> or <strong>DOCX</strong>?</li>
+                        <li>You can change your preferences for the <strong>public website</strong>?</li>
+                        <li>You can upload your <strong>profile picture</strong>?</li>
+                    </ul>
+                    <button
+                        class="btn btn-outline-primary"
+                        ng-click="vm.editUserProfile()">
+                        <i class="fas fa-pencil-alt fa-left"></i>Edit my profile
+                    </button>
+                </div>
             </div>
         </li>
         <li class="block-export">
