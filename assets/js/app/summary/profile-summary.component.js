@@ -38,17 +38,14 @@
                     slug: 'profile'
                 }, {
                     index: 1,
-                    slug: 'profile-v2'
-                }, {
-                    index: 2,
                     slug: 'documents-overview',
                     tabName: 'overview',
                 }, {
-                    index: 3,
+                    index: 2,
                     slug: 'bibliometric-charts',
                     tabName: 'metrics',
                 }, {
-                    index: 4,
+                    index: 3,
                     slug: 'calculated-data'
                 }
             ];
