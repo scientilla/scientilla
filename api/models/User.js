@@ -26,7 +26,6 @@ module.exports = _.merge({}, SubResearchEntity, {
     },
     USER: USER,
     ADMINISTRATOR: ADMINISTRATOR,
-    searchKey: 'username',
     attributes: require('waterlock').models.user.attributes({
         //Constants
         username: {
@@ -238,8 +237,7 @@ module.exports = _.merge({}, SubResearchEntity, {
     },
     registerUser: function (user) {
         if (User.isInternalUser(user)) {
-            const err = 'Cannot create domain users';
-            throw err;
+            throw 'Cannot create domain users';
         }
         return User.createCompleteUser(user);
     },

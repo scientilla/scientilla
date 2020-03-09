@@ -16,7 +16,6 @@ module.exports = _.merge({}, SubResearchEntity, {
         name: 'asc',
         updatedAt: 'desc'
     },
-    searchKey: 'slug',
     attributes: {
         name: {
             type: 'STRING'

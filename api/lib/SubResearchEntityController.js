@@ -1,20 +1,17 @@
 /* global Connector, sails */
 "use strict";
 
-
-var actionUtil = require('sails/lib/hooks/blueprints/actionUtil');
-
 module.exports = {
     createDraft: function (req, res) {
-        var researchEntityId = req.params.researchEntityId;
-        var draftData = req.body;
-        var Model = getModel(req);
+        const researchEntityId = req.params.researchEntityId;
+        const draftData = req.body;
+        const Model = getModel(req);
         return res.halt(Model.createDraft(Model, researchEntityId, draftData));
     },
     unverifyDocument: function (req, res) {
-        var researcEntityId = req.params.researchEntityId;
-        var documentId = req.params.documentId;
-        var Model = getModel(req);
+        const researcEntityId = req.params.researchEntityId;
+        const documentId = req.params.documentId;
+        const Model = getModel(req);
         res.halt(Model.unverifyDocument(Model, researcEntityId, documentId));
     },
     verifyDraft: function (req, res) {
@@ -26,9 +23,9 @@ module.exports = {
         res.halt(Model.verifyDraft(Model, researchEntityId, draftId, verificationData));
     },
     verifyDrafts: function (req, res) {
-        var researchEntityId = req.params.researchEntityId;
-        var draftIds = req.param('draftIds');
-        var Model = getModel(req);
+        const researchEntityId = req.params.researchEntityId;
+        const draftIds = req.param('draftIds');
+        const Model = getModel(req);
         res.halt(Model.verifyDrafts(Model, researchEntityId, draftIds));
     },
     verifyDocument: function (req, res) {
@@ -41,21 +38,21 @@ module.exports = {
         res.halt(Model.verifyDocument(Model, researchEntityId, documentId, verificationData));
     },
     verifyDocuments: function (req, res) {
-        var researchEntityId = req.params.researchEntityId;
-        var documentIds = req.param('documentIds');
-        var Model = getModel(req);
+        const researchEntityId = req.params.researchEntityId;
+        const documentIds = req.param('documentIds');
+        const Model = getModel(req);
         res.halt(Model.verifyDocuments(Model, researchEntityId, documentIds));
     },
     discardDocument: function (req, res) {
-        var researchEntityId = req.params.researchEntityId;
-        var documentId = req.param('documentId');
-        var Model = getModel(req);
+        const researchEntityId = req.params.researchEntityId;
+        const documentId = req.param('documentId');
+        const Model = getModel(req);
         res.halt(Model.discardDocument(Model, researchEntityId, documentId));
     },
     discardDocuments: function (req, res) {
-        var researchEntityId = req.params.researchEntityId;
-        var documentIds = req.param('documentIds');
-        var Model = getModel(req);
+        const researchEntityId = req.params.researchEntityId;
+        const documentIds = req.param('documentIds');
+        const Model = getModel(req);
         res.halt(Model.discardDocuments(Model, researchEntityId, documentIds));
     },
     copyDocument: function (req, res) {
@@ -71,9 +68,9 @@ module.exports = {
         res.halt(Model.copyDocuments(Model, researchEntityId, documentIds));
     },
     updateDraft: function (req, res) {
-        var draftId = req.params.id;
-        var draftData = req.body;
-        var Model = getModel(req);
+        const draftId = req.params.id;
+        const draftData = req.body;
+        const Model = getModel(req);
         res.halt(Model.updateDraft(Model, draftId, draftData));
     },
     getChartsData: function (req, res) {
@@ -101,7 +98,7 @@ module.exports = {
     },
     deleteDrafts: function (req, res) {
         const Model = getModel(req);
-        var draftIds = req.param('draftIds');
+        const draftIds = req.param('draftIds');
         res.halt(Model.deleteDrafts(Model, draftIds));
     },
     setAuthorshipPrivacy: function (req, res) {
@@ -152,7 +149,7 @@ module.exports = {
 
 function makePublicAPIrequest(req, res, attribute) {
     const researchEntityModel = getModel(req);
-    const searchKey = getSearchKey(researchEntityModel);
+    const searchKey = Object.keys(req.params)[0];
     const searchCriteria = {
         [searchKey]: req.params[searchKey]
     };
@@ -169,25 +166,3 @@ function getAuthorshipModel(req) {
     const Model = getModel(req);
     return Model.getAuthorshipModel();
 }
-
-function getSearchKey(Model) {
-    const searchKey = Model.searchKey;
-    return searchKey;
-}
-
-function getPopulateFields(req) {
-    var populate = req.query.populate;
-    if (_.isString(populate))
-        populate = [populate];
-    return populate;
-}
-
-function getQuery(req) {
-    var query = {
-        limit: actionUtil.parseLimit(req),
-        skip: actionUtil.parseSkip(req),
-        where: JSON.parse(req.query.where || '{}')
-    };
-    return query;
-}
-

@@ -110,18 +110,26 @@ module.exports.routes = {
 
     //Site API
     ['get ' + apiPrfx + '/users/username/:username/publications']: 'User.getPublications',
-    ['get ' + apiPrfx + '/groups/slug/:slug/publications']: 'Group.getPublications',
     ['get ' + apiPrfx + '/users/username/:username/high-impact-publications']: 'User.getHighImpactPublications',
-    ['get ' + apiPrfx + '/groups/slug/:slug/high-impact-publications']: 'Group.getHighImpactPublications',
     ['get ' + apiPrfx + '/users/username/:username/documents']: 'User.getPublicDocuments',
-    ['get ' + apiPrfx + '/groups/slug/:slug/documents']: 'Group.getPublicDocuments',
     ['get ' + apiPrfx + '/users/username/:username/dissemination-talks']: 'User.getDisseminationTalks',
-    ['get ' + apiPrfx + '/groups/slug/:slug/dissemination-talks']: 'Group.getDisseminationTalks',
     ['get ' + apiPrfx + '/users/username/:username/scientific-talks']: 'User.getScientificTalks',
-    ['get ' + apiPrfx + '/groups/slug/:slug/scientific-talks']: 'Group.getScientificTalks',
     ['get ' + apiPrfx + '/users/username/:username/favorite-publications']: 'User.getFavoritePublications',
-    ['get ' + apiPrfx + '/groups/slug/:slug/favorite-publications']: 'Group.getFavoritePublications',
     ['get ' + apiPrfx + '/users/username/:username/oral-presentations']: 'User.getOralPresentations',
+
+    ['get ' + apiPrfx + '/groups/slug/:slug/publications']: 'Group.getPublications',
+    ['get ' + apiPrfx + '/groups/slug/:slug/high-impact-publications']: 'Group.getHighImpactPublications',
+    ['get ' + apiPrfx + '/groups/slug/:slug/documents']: 'Group.getPublicDocuments',
+    ['get ' + apiPrfx + '/groups/slug/:slug/dissemination-talks']: 'Group.getDisseminationTalks',
+    ['get ' + apiPrfx + '/groups/slug/:slug/scientific-talks']: 'Group.getScientificTalks',
+    ['get ' + apiPrfx + '/groups/slug/:slug/favorite-publications']: 'Group.getFavoritePublications',
+
+    ['get ' + apiPrfx + '/groups/code/:code/publications']: 'Group.getPublications',
+    ['get ' + apiPrfx + '/groups/code/:code/high-impact-publications']: 'Group.getHighImpactPublications',
+    ['get ' + apiPrfx + '/groups/code/:code/documents']: 'Group.getPublicDocuments',
+    ['get ' + apiPrfx + '/groups/code/:code/dissemination-talks']: 'Group.getDisseminationTalks',
+    ['get ' + apiPrfx + '/groups/code/:code/scientific-talks']: 'Group.getScientificTalks',
+    ['get ' + apiPrfx + '/groups/code/:code/favorite-publications']: 'Group.getFavoritePublications',
 
     //Commands
     ['put ' + apiPrfx + '/status/enable']: 'Status.enable',
