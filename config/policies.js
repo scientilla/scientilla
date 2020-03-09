@@ -104,8 +104,6 @@ module.exports.policies = {
         create: isLogged,
     }, defaultPolicy),
 
-    SourceMetricController: defaultPolicy,
-
     SourceMetricSourceController: defaultPolicy,
 
     TaglabelController: defaultPolicy,
