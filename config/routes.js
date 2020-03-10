@@ -116,6 +116,7 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/users/username/:username/scientific-talks']: 'User.getScientificTalks',
     ['get ' + apiPrfx + '/users/username/:username/favorite-publications']: 'User.getFavoritePublications',
     ['get ' + apiPrfx + '/users/username/:username/oral-presentations']: 'User.getOralPresentations',
+    ['get ' + apiPrfx + '/users/username/:username/accomplishments']: 'User.getAccomplishments',
 
     ['get ' + apiPrfx + '/groups/slug/:slug/publications']: 'Group.getPublications',
     ['get ' + apiPrfx + '/groups/slug/:slug/high-impact-publications']: 'Group.getHighImpactPublications',
@@ -123,6 +124,7 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/groups/slug/:slug/dissemination-talks']: 'Group.getDisseminationTalks',
     ['get ' + apiPrfx + '/groups/slug/:slug/scientific-talks']: 'Group.getScientificTalks',
     ['get ' + apiPrfx + '/groups/slug/:slug/favorite-publications']: 'Group.getFavoritePublications',
+    ['get ' + apiPrfx + '/groups/slug/:slug/accomplishments']: 'Group.getAccomplishments',
 
     ['get ' + apiPrfx + '/groups/code/:code/publications']: 'Group.getPublications',
     ['get ' + apiPrfx + '/groups/code/:code/high-impact-publications']: 'Group.getHighImpactPublications',
@@ -130,6 +132,7 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/groups/code/:code/dissemination-talks']: 'Group.getDisseminationTalks',
     ['get ' + apiPrfx + '/groups/code/:code/scientific-talks']: 'Group.getScientificTalks',
     ['get ' + apiPrfx + '/groups/code/:code/favorite-publications']: 'Group.getFavoritePublications',
+    ['get ' + apiPrfx + '/groups/code/:code/accomplishments']: 'Group.getAccomplishments',
 
     //Commands
     ['put ' + apiPrfx + '/status/enable']: 'Status.enable',

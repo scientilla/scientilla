@@ -265,16 +265,28 @@ module.exports = _.merge({}, BaseModel, {
         }
         return await DocumentDuplicate.find(duplicateCondition);
     },
-    makeInternalRequest: async function (researchEntityModel, researchEntitySearchCriteria, baseUrl, qs, attribute) {
-        const researchEntity = await researchEntityModel.findOne(researchEntitySearchCriteria);
-        if (!researchEntity)
+    makeInternalRequest: async function (subResearchEntityModel, researchEntitySearchCriteria, baseUrl, qs, attribute) {
+        const subResearchEntity = await subResearchEntityModel.findOne(researchEntitySearchCriteria);
+        if (!subResearchEntity)
             return {
                 error: "404 not found",
                 item: researchEntitySearchCriteria
             };
-        const path = `/api/v1/${researchEntity.getUrlSection()}/${researchEntity.id}/${attribute}`;
+        const subResearchEntityAttributes=[
+            'publications',
+            'highImpactPublications',
+            'documents',
+            'disseminationTalks',
+            'scientificTalks',
+            'favoritePublications',
+            'oralPresentations'
+        ];
+        const path = (subResearchEntityAttributes.includes(attribute))?
+            `/api/v1/${subResearchEntity.getUrlSection()}/${subResearchEntity.id}/${attribute}`:
+            `/api/v1/researchentities/${subResearchEntity.researchEntity}/${attribute}`;
         if (!_.isArray(qs.populate)) qs.populate = [qs.populate];
         qs.populate = _.union(['source', 'affiliations', 'authorships', 'institutes', 'openaireMetadata'], qs.populate);
+        qs.populate = _.union(['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'], qs.populate);
         const reqOptions = {
             uri: baseUrl + path,
             json: true,
@@ -286,6 +298,10 @@ module.exports = _.merge({}, BaseModel, {
         } catch (e) {
             sails.log.debug('make internal request:');
             sails.log.debug(e);
+            return {
+                error: "500 internal server error",
+                item: e
+            };
         }
     },
     removeVerify: async function (ResearchEntityModel, researchEntityId, docToVerifyId, verificationData, docToRemoveId) {

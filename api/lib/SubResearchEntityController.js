@@ -144,7 +144,8 @@ module.exports = {
     getScientificTalks: async (req, res) => makePublicAPIrequest(req, res, 'scientificTalks'),
     getHighImpactPublications: async (req, res) => makePublicAPIrequest(req, res, 'highImpactPublications'),
     getFavoritePublications: async (req, res) => makePublicAPIrequest(req, res, 'favoritePublications'),
-    getOralPresentations: async (req, res) => makePublicAPIrequest(req, res, 'oralPresentations')
+    getOralPresentations: async (req, res) => makePublicAPIrequest(req, res, 'oralPresentations'),
+    getAccomplishments: async (req, res) => makePublicAPIrequest(req, res, 'accomplishments')
 };
 
 function makePublicAPIrequest(req, res, attribute) {
