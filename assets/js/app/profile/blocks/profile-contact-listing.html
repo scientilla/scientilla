@@ -3,10 +3,14 @@
         <i class="fas fa-home"></i> {{ vm.profile.address }}
     </li>
     <li ng-if="vm.profile.username">
-        <a href="#"><i class="fas fa-envelope"></i> {{ vm.profile.username }}</a>
+        <a href="mailto:{{ vm.profile.username }}">
+            <i class="fas fa-envelope"></i> {{ vm.profile.username }}
+        </a>
     </li>
     <li ng-if="vm.profile.telephone">
-        <a href="#"><i class="fas fa-phone"></i> {{ vm.profile.telephone }}</a>
+        <a href="tel:{{ vm.profile.telephone }}" target="_blank">
+            <i class="fas fa-phone"></i> {{ vm.profile.telephone }}
+        </a>
     </li>
     <li ng-if="vm.profile.socials" class="socials-list-item">
         <ul class="socials-listing">

@@ -65,15 +65,16 @@
 
         <profile-documents-block
             profile="vm.profile"
-            documents-by-source-type="vm.documentsBySourceType"
-            favorite-documents="vm.favoriteDocuments"
+            url-favorite-documents="vm.urlFavoriteDocuments"
+            url-all-documents="vm.urlAllDocuments"
             class="profile-block documents"
             ng-if="vm.profile.documents && vm.profile.documents.length > 0 && vm.numberOfItems < 6">
         </profile-documents-block>
 
         <profile-accomplishments-block
             profile="vm.profile"
-            accomplishments-by-type="vm.accomplishmentsByType"
+            url-favorite-accomplishments="vm.urlFavoriteAccomplishments"
+            url-all-accomplishments="vm.urlAllAccomplishments"
             class="profile-block accomplishments"
             ng-if="vm.profile.accomplishments && vm.profile.accomplishments.length > 0 && vm.numberOfItems < 6">
         </profile-accomplishments-block>
@@ -87,15 +88,16 @@
             <div class="profile-blocks bottom has-2-blocks">
                 <profile-documents-block
                     profile="vm.profile"
-                    documents-by-source-type="vm.documentsBySourceType"
-                    favorite-documents="vm.favoriteDocuments"
+                    url-favorite-documents="vm.urlFavoriteDocuments"
+                    url-all-documents="vm.urlAllDocuments"
                     class="profile-block documents"
                     ng-if="vm.profile.documents && vm.profile.documents.length > 0">
                 </profile-documents-block>
 
                 <profile-accomplishments-block
                     profile="vm.profile"
-                    accomplishments-by-type="vm.accomplishmentsByType"
+                    url-favorite-accomplishments="vm.urlFavoriteAccomplishments"
+                    url-all-accomplishments="vm.urlAllAccomplishments"
                     class="profile-block accomplishments"
                     ng-if="vm.profile.accomplishments && vm.profile.accomplishments.length > 0">
                 </profile-accomplishments-block>

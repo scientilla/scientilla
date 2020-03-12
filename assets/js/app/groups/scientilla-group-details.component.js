@@ -31,6 +31,8 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
 
+            await refreshGroup();
+
             const tabIdentifiers = [
                 {
                     index: 0,
@@ -63,7 +65,6 @@
         };
 
         async function getData() {
-            await refreshGroup();
             return await vm.getChartsData(vm.group);
         }
 

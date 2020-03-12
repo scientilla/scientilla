@@ -7,7 +7,9 @@
             controller: profileAccomplishmentsBlock,
             controllerAs: 'vm',
             bindings: {
-                profile: '<'
+                profile: '<',
+                urlFavoriteAccomplishments: '<',
+                urlAllAccomplishments: '<',
             }
         });
 

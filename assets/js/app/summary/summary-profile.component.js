@@ -30,6 +30,11 @@
             vm.numberOfItems = 0;
             vm.loading = true;
 
+            vm.urlAllDocuments = '/#/documents/verified';
+            vm.urlFavoriteDocuments = '/#/documents/verified?favorites';
+            vm.urlAllAccomplishments = '/#/accomplishments/verified';
+            vm.urlFavoriteAccomplishments = '/#/accomplishments/verified?favorites';
+
             let deregister;
 
             vm.$onInit = () => {

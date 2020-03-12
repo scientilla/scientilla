@@ -10,21 +10,24 @@
         <span>My favorite accomplishment{{ vm.favoriteAccomplishments.length > 1 ? 's' : '' }}:</span>
         <ul class="favorite-listing">
             <li ng-repeat="accomplishment in vm.favoriteAccomplishments track by $index">
-                <a href="/#/accomplishments/verified?favorites=true&title={{ accomplishment.title }}">
+                <a
+                    href="{{ vm.urlAllAccomplishments }}?title={{ accomplishment.title }}"
+                    ng-if="vm.urlAllAccomplishments">
                     {{ accomplishment.title }}
                 </a>
+                <span ng-if="!vm.urlAllAccomplishments">{{ accomplishment.title }}</span>
             </li>
         </ul>
     </div>
     <ul class="block-links">
-        <li>
+        <li ng-if="vm.urlFavoriteAccomplishments">
             <a
-                href="/#/accomplishments/verified?favorites"
+                href="{{ vm.urlFavoriteAccomplishments }}"
                 class="show-more has-action">Show only favorite accomplishments</a>
         </li>
-        <li>
+        <li ng-if="vm.urlAllAccomplishments">
             <a
-                href="/#/accomplishments/verified"
+                href="{{ vm.urlAllAccomplishments }}"
                 class="show-more has-action">Show all accomplishments</a>
         </li>
     </ul>

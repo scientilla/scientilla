@@ -8,8 +8,8 @@
             controllerAs: 'vm',
             bindings: {
                 profile: '<',
-                documentsBySourceType: '<',
-                favoriteDocuments: '<'
+                urlFavoriteDocuments: '<',
+                urlAllDocuments: '<',
             }
         });
 

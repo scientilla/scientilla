@@ -10,22 +10,25 @@
         <span>My favorite document{{ vm.favoriteDocuments.length > 1 ? 's' : '' }}:</span>
         <ul class="favorite-listing">
             <li ng-repeat="document in vm.favoriteDocuments track by $index">
-                <a href="/#/documents/verified?favorites=true&title={{ document.title }}">
+                <a
+                    href="{{ vm.urlAllDocuments }}?title={{ document.title }}"
+                    ng-if="vm.urlAllDocuments">
                     {{ document.title }}
                 </a>
+                <span ng-if="!vm.urlAllDocuments">{{ document.title }}</span>
             </li>
         </ul>
     </div>
 
     <ul class="block-links">
-        <li>
+        <li ng-if="vm.urlFavoriteDocuments">
             <a
-                href="/#/documents/verified?favorites"
+                href="{{ vm.urlFavoriteDocuments }}"
                 class="show-more has-action">Show only favorite documents</a>
         </li>
-        <li>
+        <li ng-if="vm.urlAllDocuments">
             <a
-                href="/#/documents/verified"
+                href=" {{ vm.urlAllDocuments }}"
                 class="show-more has-action">Show all documents</a>
         </li>
     </ul>

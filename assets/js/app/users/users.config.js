@@ -13,12 +13,12 @@
                 controllerAs: 'vm',
             })
             .when("/users/:id", {
-                redirectTo: '/users/:id/info'
+                redirectTo: '/users/:id/profile'
             })
-            .when("/users/:id/info", {
+            .when("/users/:id/profile", {
                 template: params => `<scientilla-user-details
                     user-id="${params.id}"
-                    active-tab="info"></scientilla-user-details>`
+                    active-tab="profile"></scientilla-user-details>`
             })
             .when("/users/:id/groups", {
                 template: params => `<scientilla-user-details

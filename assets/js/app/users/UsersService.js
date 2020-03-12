@@ -154,6 +154,11 @@
 
             return _profile;
         };
+
+        service.getUserProfile = async (researchEntityId) => {
+            return await Restangular.one('researchentities', researchEntityId).customGET('get-profile');
+        };
+
         /* jshint ignore:end */
 
         return service;
