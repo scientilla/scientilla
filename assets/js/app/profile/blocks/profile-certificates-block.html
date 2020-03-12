@@ -1,0 +1,11 @@
+<div class="profile-card">
+    <div class="content-container">
+        <i class="fas fa-certificate title-icon"></i><span>My certificates:</span>
+        <ul class="favorite-listing">
+            <li ng-repeat="certificate in vm.favoriteCertificates track by $index">
+                {{ certificate }}
+            </li>
+        </ul>
+    </div>
+    <button class="show-more has-action" ng-click="vm.showCertificatesModal()">Show all certificates</button>
+</div>

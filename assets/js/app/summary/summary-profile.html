@@ -1,275 +1,105 @@
-<div class="summary-profile-container profile">
+<div class="summary summary-profile">
     <scientilla-loading is-loading="vm.loading"></scientilla-loading>
-    <ul
+    <div
         class="profile-blocks top"
         ng-class="{
-            'has-two-blocks': (!vm.profile.description && !vm.profile.interests) && vm.user.alreadyChangedProfile,
-            'has-three-blocks': (
+            'has-2-blocks': (!vm.profile.description && !vm.profile.interests) && vm.user.alreadyChangedProfile,
+            'has-3-blocks': (
                 ((vm.profile.description || vm.profile.interests) && vm.user.alreadyChangedProfile) ||
                 ((!vm.profile.description && !vm.profile.interests) && !vm.user.alreadyChangedProfile)
             ),
-            'has-four-blocks':
+            'has-4-blocks':
                 (vm.profile.description || vm.profile.interests) && !vm.user.alreadyChangedProfile
         }"
         ng-if="!vm.loading">
-        <li class="block-basic-info">
-            <ul class="card-container">
-                <li class="main-card">
-                    <div class="profile-block">
-                        <img
-                            ng-if="vm.profile.image"
-                            ng-src="{{ vm.pathProfileImages }}/{{ vm.profile.image }}" alt="" class="img-fluid rounded-circle profile-image">
-                        <h2 class="name" ng-if="vm.profile.name || vm.profile.surname">
-                            {{ vm.profile.name }} {{ vm.profile.surname }}
-                        </h2>
-                        <p class="job-title" ng-if="vm.profile.jobTitle || vm.profile.role">
-                            {{ vm.joinStrings([vm.profile.jobTitle, vm.profile.role], ' - ') }}
-                        </p>
-                        <p class="position" ng-if="vm.profile.directorate || vm.profile.office">
-                            {{ vm.joinStrings([vm.profile.directorate, vm.profile.office], ' - ') }}
-                        </p>
-                        <ul class="research-lines" ng-if="vm.profile.researchLines.length > 0">
-                            <li ng-repeat="researchLine in vm.profile.researchLines track by $index">{{ researchLine }}</li>
-                        </ul>
-                        <ul class="centers" ng-if="vm.profile.centers.length > 0">
-                            <li ng-repeat="center in vm.profile.centers track by $index">{{ center }}</li>
-                        </ul>
-                        <ul class="titles" ng-if="vm.profile.titles.length > 0">
-                            <li ng-repeat="title in vm.profile.titles track by $index">{{ title }}</li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="contact-card">
-                    <div class="profile-block">
-                        <profile-contact-listing profile="vm.profile"></profile-contact-listing>
-                    </div>
-                </li>
-            </ul>
-        </li>
-        <li class="block-about" ng-if="vm.profile.description || vm.profile.interests">
-            <div class="profile-block">
-                <div class="profile-about" ng-if="vm.profile.description">
-                    <h2 class="block-title">About</h2>
-                    <p>{{ vm.profile.description }}</p>
-                </div>
 
-                <div class="profile-interests" ng-if="vm.profile.interests">
-                    <h2 class="block-title">Interests</h2>
-                    <ul class="interest-listing">
-                        <li ng-repeat="interest in vm.profile.interests track by $index">{{ interest }}</li>
-                    </ul>
-                </div>
+        <profile-basic-info-block profile="vm.profile" class="profile-block basic-info"></profile-basic-info-block>
 
-                <profile-contact-listing profile="vm.profile"></profile-contact-listing>
-            </div>
-        </li>
-        <li ng-if="!vm.user.alreadyChangedProfile">
-            <div class="profile-block edit-profile">
-                <div class="content-container">
-                    <h2>Complete your profile</h2>
-                    <p>It seems you didn't complete your profile yet. Did you know that:</p>
-                    <ul class="profile-features">
-                        <li>You can build up your profile and export it as <strong>PDF</strong> or <strong>DOCX</strong>?</li>
-                        <li>You can change your preferences for the <strong>public website</strong>?</li>
-                        <li>You can upload your <strong>profile picture</strong>?</li>
-                    </ul>
-                    <button
-                        class="btn btn-outline-primary"
-                        ng-click="vm.editUserProfile()">
-                        <i class="fas fa-pencil-alt fa-left"></i>Edit my profile
-                    </button>
-                </div>
-            </div>
-        </li>
-        <li class="block-export">
-            <div class="profile-block">
-                <h2 class="block-title">Export</h2>
+        <profile-about-block
+            profile="vm.profile"
+            class="profile-block about"
+            ng-if="vm.profile.description || vm.profile.interests"></profile-about-block>
 
-                <ul class="export-options">
-                    <li>
-                        <label class="form-checkbox">
-                            <input
-                                type="checkbox"
-                                ng-model="vm.exportOptions.basic">
-                            <span>Basic information</span>
-                        </label>
-                    </li>
-                    <li>
-                        <label class="form-checkbox">
-                            <input
-                                type="checkbox"
-                                ng-model="vm.exportOptions.socials">
-                            <span>Socials</span>
-                        </label>
-                    </li>
-                    <li>
-                        <label class="form-checkbox">
-                            <input
-                                type="checkbox"
-                                ng-model="vm.exportOptions.about">
-                            <span>About me</span>
-                        </label>
-                    </li>
-                    <li>
-                        <label class="form-checkbox">
-                            <input
-                                type="checkbox"
-                                ng-model="vm.exportOptions.experiences">
-                            <span>Experiences</span>
-                        </label>
-                    </li>
-                    <li>
-                        <label class="form-checkbox">
-                            <input
-                                type="checkbox"
-                                ng-model="vm.exportOptions.education">
-                            <span>Education</span>
-                        </label>
-                    </li>
-                    <li>
-                        <label class="form-checkbox">
-                            <input
-                                type="checkbox"
-                                ng-model="vm.exportOptions.certificates">
-                            <span>Certificates</span>
-                        </label>
-                    </li>
-                    <li>
-                        <label class="form-checkbox">
-                            <input
-                                type="checkbox"
-                                ng-model="vm.exportOptions.skills">
-                            <span>Skills</span>
-                        </label>
-                    </li>
-                    <li>
-                        <label class="form-checkbox">
-                            <input
-                                type="checkbox"
-                                ng-model="vm.exportOptions.documents">
-                            <span>Documents</span>
-                        </label>
-                    </li>
-                    <li>
-                        <label class="form-checkbox">
-                            <input
-                                type="checkbox"
-                                ng-model="vm.exportOptions.accomplishments">
-                            <span>Accomplishments</span>
-                        </label>
-                    </li>
-                </ul>
+        <profile-edit-block
+            user="vm.user"
+            class="profile-block edit"
+            ng-if="!vm.user.alreadyChangedProfile"></profile-edit-block>
 
-                <p>Export your profile to:</p>
-                <ul>
-                    <li>
-                        <button
-                            class="btn btn-outline-primary"
-                            ng-click="vm.exportProfile('doc')">
-                            <i class="far fa-file-word fa-left"></i>DOCX
-                        </button>
-                    </li>
-                    <li>
-                        <button
-                            class="btn btn-outline-primary"
-                            ng-click="vm.exportProfile('pdf')">
-                            <i class="far fa-file-pdf fa-left"></i>PDF
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </li>
-    </ul>
-    <ul
+        <profile-export-block class="profile-block export"></profile-export-block>
+    </div>
+    <div
         class="profile-blocks bottom"
-        ng-class="'items-' + vm.numberOfItems"
-        ng-if="!vm.loading">
-        <li
-            class="block-experiences"
+        ng-class="{
+            'has-1-block': vm.numberOfItems === 1,
+            'has-2-blocks': vm.numberOfItems === 2,
+            'has-3-blocks': vm.numberOfItems === 3,
+            'has-4-blocks': vm.numberOfItems === 4,
+            'has-5-blocks': vm.numberOfItems === 5,
+            'has-6-blocks': vm.numberOfItems === 6,
+        }"
+        ng-if="!vm.loading && vm.numberOfItems > 0">
+
+        <profile-experiences-block
+            profile="vm.profile"
+            class="profile-block experiences"
             ng-if="vm.profile.experiences && vm.profile.experiences.length > 0">
-            <div class="profile-block">
-                <div class="content-container" ng-repeat="experience in vm.profile.experiences | limitTo: 1">
-                    <i class="fas fa-briefcase title-icon"></i><span>My {{ experience.to ? 'last' : 'current' }} experience:</span>
-                    <h2 class="block-title">
-                        {{ vm.joinStrings([experience.jobTitle, experience.company], ' at ') }}
-                    </h2>
-                </div>
-                <button class="show-more has-action" ng-click="vm.showExperiencesModal()">Show all experiences</button>
-            </div>
-        </li>
-        <li
-            class="block-educations"
+        </profile-experiences-block>
+
+        <profile-education-block
+            profile="vm.profile"
+            class="profile-block education"
             ng-if="vm.profile.education && vm.profile.education.length > 0">
-            <div class="profile-block" ng-repeat="education in vm.profile.education | limitTo: 1">
-                <div class="content-container">
-                    <i class="fas fa-graduation-cap title-icon"></i><span>My {{ education.to ? 'last' : 'current' }} education:</span>
-                    <h2 class="block-title">{{ vm.joinStrings([education.title, education.institute]) }}</h2>
-                </div>
-                <button class="show-more has-action" ng-click="vm.showEducationsModal()">Show all educations</button>
-            </div>
-        </li>
-        <li
-            class="block-certificates"
+        </profile-education-block>
+
+        <profile-certificates-block
+            profile="vm.profile"
+            class="profile-block certificates"
             ng-if="vm.profile.certificates && vm.profile.certificates.length > 0">
-            <div class="profile-block">
-                <div class="content-container">
-                    <i class="fas fa-certificate title-icon"></i><span>My certificates:</span>
-                    <ul class="favorite-listing">
-                        <li ng-repeat="certificate in vm.favoriteCertificates track by $index">
-                            {{ certificate }}
-                        </li>
-                    </ul>
-                </div>
-                <button class="show-more has-action" ng-click="vm.showCertificatesModal()">Show all certificates</button>
-            </div>
-        </li>
-        <li
-            class="block-skills"
+        </profile-certificates-block>
+
+        <profile-skills-block
+            profile="vm.profile"
+            class="profile-block skills"
             ng-if="vm.profile.skillCategories && vm.profile.skillCategories.length > 0">
-            <div class="profile-block">
-                <div class="content-container">
-                    <h2 class="block-title"><i class="fas fa-bolt title-icon"></i>Skills</h2>
-                    <ul class="skill-listing">
-                        <li ng-repeat="skill in vm.favoriteSkills track by $index">{{ skill }}</li>
-                    </ul>
-                </div>
-                <button class="show-more has-action" ng-click="vm.showSkillsModal()">Show all skills</button>
-            </div>
-        </li>
-        <li
-            class="block-documents"
+        </profile-skills-block>
+
+        <profile-documents-block
+            profile="vm.profile"
+            documents-by-source-type="vm.documentsBySourceType"
+            favorite-documents="vm.favoriteDocuments"
+            class="profile-block documents"
             ng-if="vm.profile.documents && vm.profile.documents.length > 0 && vm.numberOfItems < 6">
-            <profile-documents-block
-                profile="vm.profile"
-                documents-by-source-type="vm.documentsBySourceType"
-                favorite-documents="vm.favoriteDocuments"></profile-documents-block>
-        </li>
-        <li
-            class="block-accomplishments"
+        </profile-documents-block>
+
+        <profile-accomplishments-block
+            profile="vm.profile"
+            accomplishments-by-type="vm.accomplishmentsByType"
+            class="profile-block accomplishments"
             ng-if="vm.profile.accomplishments && vm.profile.accomplishments.length > 0 && vm.numberOfItems < 6">
-            <profile-accomplishments-block
-                profile="vm.profile"
-                accomplishments-by-type="vm.accomplishmentsByType"></profile-accomplishments-block>
-        </li>
-        <li ng-if="vm.numberOfItems == 6 && (
-            (vm.profile.documents && vm.profile.documents.length > 0) ||
-            (vm.profile.accomplishments && vm.profile.accomplishments.length > 0)
-        )">
-            <ul class="profile-blocks bottom items-2">
-                <li
-                    class="block-documents"
+        </profile-accomplishments-block>
+
+        <div
+            class="profile-block"
+            ng-if="vm.numberOfItems == 6 && (
+                (vm.profile.documents && vm.profile.documents.length > 0) ||
+                (vm.profile.accomplishments && vm.profile.accomplishments.length > 0)
+            )">
+            <div class="profile-blocks bottom has-2-blocks">
+                <profile-documents-block
+                    profile="vm.profile"
+                    documents-by-source-type="vm.documentsBySourceType"
+                    favorite-documents="vm.favoriteDocuments"
+                    class="profile-block documents"
                     ng-if="vm.profile.documents && vm.profile.documents.length > 0">
-                    <profile-documents-block
-                        profile="vm.profile"
-                        documents-by-source-type="vm.documentsBySourceType"
-                        favorite-documents="vm.favoriteDocuments"></profile-documents-block>
-                </li>
-                <li
-                    class="block-accomplishments"
+                </profile-documents-block>
+
+                <profile-accomplishments-block
+                    profile="vm.profile"
+                    accomplishments-by-type="vm.accomplishmentsByType"
+                    class="profile-block accomplishments"
                     ng-if="vm.profile.accomplishments && vm.profile.accomplishments.length > 0">
-                    <profile-accomplishments-block profile="vm.profile"></profile-accomplishments-block>
-                </li>
-            </ul>
-        </li>
-    </ul>
+                </profile-accomplishments-block>
+            </div>
+        </div>
+    </div>
 </div>

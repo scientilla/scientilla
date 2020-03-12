@@ -1,39 +1,84 @@
-.profile{
-    .profile-blocks{
+.profile-block,
+.profile-modal{
+    .skill-listing,
+    .interest-listing{
         @include normalize-listing;
+        @include clearfix;
+        margin: 0px -.5rem;
 
-        & > li{
-            margin-bottom: 3rem;
+        li{
+            display: block;
+            margin: .5rem;
+            padding: .5rem 1rem;
+            float: left;
+            border: 1px solid $gray-300;
+            border-radius: 1.5rem;
         }
     }
+}
 
-    .profile-block{
-        display: block;
-        min-height: 100%;
-        padding: 2rem;
-        border: 1px solid $gray-300;
-        border-radius: 0.25rem;
+.profile-block{
+    display: block;
 
-        .block-links{
-            @include normalize-listing;
-            margin-top: auto;
+    .block-title{
+        font-size: 2rem;
+        line-height: 2.4rem;
+    }
 
-            & > li{
-                margin-top: 1rem;
+    .title-icon{
+        color: $primary-color;
+    }
+
+    .show-more{
+        position: relative;
+        display: inline-block;
+        margin: auto 0px 0px 0px;
+        padding: 0px 15px 0px 0px;
+        background: none;
+        border: 0px;
+        align-self: flex-start;
+
+        &:after{
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            display: block;
+            font-family: $font-awesome;
+            content: '\f054';
+            font-weight: 900;
+            font-style: normal;
+            transition: .2s all;
+        }
+
+        &:hover,
+        &:focus,
+        &:active:focus{
+            &:after{
+                right: 5px;
             }
         }
+    }
 
-        &.edit-profile{
-            background: $curious-blue;
-            border-color: $curious-blue;
-            color: $white;
+    .favorite-listing{
+        margin-top: 1rem;
+        margin-bottom: 4rem;
+        padding-left: 15px;
+        list-style-type: disc;
+
+        & > li{
+            margin-bottom: 1rem;
+        }
+
+        &,
+        a{
+            font-size: 1.4rem;
         }
     }
 
-    .block-basic-info{
+    &.basic-info{
         position: relative;
 
-        .profile-block{
+        .profile-card{
             text-align: center;
         }
 
@@ -84,7 +129,7 @@
         .card-container{
             @include normalize-listing;
 
-            .profile-block{
+            .profile-card{
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -109,9 +154,70 @@
             opacity: 0;
             transition: .2s all;
         }
+
+        .contact-listing{
+            @include normalize-listing;
+
+            & > li{
+                display: block;
+                margin-bottom: 1rem;
+            }
+
+            .fas,
+            .fab{
+                font-size: 1.5rem;
+            }
+
+            .fas{
+                margin-right: .5rem;
+            }
+        }
+
+        .socials-listing{
+            @include normalize-listing('true');
+            @include clearfix;
+
+            & > li{
+                display: block;
+                float: left;
+                padding: .5rem;
+            }
+
+            a{
+                display: block;
+                line-height: 1;
+            }
+        }
     }
 
-    .block-export{
+    &.about{
+        .profile-interests{
+            .block-title{
+                margin-bottom: 1rem;
+            }
+        }
+
+        .profile-about{
+            & + .profile-interests{
+                margin-top: 4rem;
+            }
+        }
+    }
+
+    &.edit{
+        .profile-features{
+            @include normalize-listing;
+            margin-bottom: 2rem;
+            padding-left: 1.5rem;
+            list-style-type: disc;
+
+            & > li{
+                margin-bottom: .5rem;
+            }
+        }
+    }
+
+    &.export{
         ul{
             @include normalize-listing;
 
@@ -134,132 +240,38 @@
         }
     }
 
-    .block-experiences,
-    .block-educations,
-    .block-certificates,
-    .block-skills,
-    .block-documents,
-    .block-accomplishments{
-        .profile-block {
+    &.experiences,
+    &.education,
+    &.certificates,
+    &.skills,
+    &.documents,
+    &.accomplishments{
+        .profile-card {
             display: flex;
             flex-direction: column;
         }
     }
 
-    .contact-listing{
-        @include normalize-listing;
-
-        & > li{
-            display: block;
-            margin-bottom: 1rem;
-        }
-
-        .fas,
-        .fab{
-            font-size: 1.5rem;
-        }
-
-        .fas{
-            margin-right: .5rem;
-        }
-    }
-
-    .socials-listing{
-        @include normalize-listing('true');
-        @include clearfix;
-
-        & > li{
-            display: block;
-            float: left;
-            padding: .5rem;
-        }
-
-        a{
-            display: block;
-            line-height: 1;
-        }
-    }
-
-    .profile-features{
-        @include normalize-listing;
-        margin-bottom: 2rem;
-        padding-left: 1.5rem;
-        list-style-type: disc;
-
-        & > li{
-            margin-bottom: .5rem;
-        }
-    }
-
-    .profile-about{
-        & + .profile-interests{
-            margin-bottom: 4rem;
-        }
-    }
-
-    .profile-interests{
+    &.experiences,
+    &.education,
+    &.certificates{
         .block-title{
-            margin-bottom: 1rem;
+            margin-top: .5rem;
         }
     }
 
-    .show-more{
-        position: relative;
-        display: inline-block;
-        margin: auto 0px 0px 0px;
-        padding: 0px 15px 0px 0px;
-        background: none;
-        border: 0px;
-        align-self: flex-start;
-
-        &:after{
-            position: absolute;
-            top: 0px;
-            right: 0px;
-            display: block;
-            font-family: $font-awesome;
-            content: '\f054';
-            font-weight: 900;
-            font-style: normal;
-            transition: .2s all;
-        }
-
-        &:hover,
-        &:focus,
-        &:active:focus{
-            &:after{
-                right: 5px;
-            }
+    &.experiences,
+    &.education,
+    &.certificates,
+    &.skills{
+        .title-icon{
+            margin-right: .5rem;
+            font-size: 2rem;
         }
     }
 
-    .skill-listing,
-    .interest-listing{
-        @include normalize-listing;
-        @include clearfix;
-        margin: 0px -.5rem;
-
-        li{
-            display: block;
-            margin: .5rem;
-            padding: .5rem 1rem;
-            float: left;
-            border: 1px solid $gray-300;
-            border-radius: 1.5rem;
-        }
-    }
-
-    .block-title{
-        font-size: 2rem;
-        line-height: 2.4rem;
-    }
-
-    .title-icon{
-        color: $primary-color;
-    }
-
-    .block-documents,
-    .block-accomplishments{
+    &.documents,
+    &.accomplishments{
         .amount{
             font-family: $roboto-slab;
             font-size: 6rem;
@@ -275,224 +287,200 @@
             margin-top: 2rem;
         }
     }
+}
 
-    .block-experiences,
-    .block-educations,
-    .block-certificates{
-        .block-title{
-            margin-top: .5rem;
-        }
-    }
+.profile-modal{
+    &.experiences {
+        .company-listing {
+            @include normalize-listing;
 
-    .block-experiences,
-    .block-educations,
-    .block-certificates,
-    .block-skills{
-        .title-icon{
-            margin-right: .5rem;
-            font-size: 2rem;
-        }
-    }
+            & > li {
+                @include clearfix;
+                margin-bottom: 3rem;
+            }
 
-    .company-listing{
-        @include normalize-listing;
+            .company {
+                @include h4;
+            }
 
-        & > li{
-            @include clearfix;
-            margin-bottom: 3rem;
+            .company-description {
+                display: block;
+                margin-bottom: 1rem;
+                color: $gray-300;
+            }
         }
 
-        .company{
-            @include h4;
-        }
+        .job-listing {
+            @include normalize-listing;
 
-        .company-description{
-            display: block;
-            margin-bottom: 1rem;
-            color: $gray-300;
-        }
-    }
+            & > li {
+                margin-bottom: 2rem;
+            }
 
-    .job-listing{
-        @include normalize-listing;
+            &.multiple {
+                & > li {
+                    position: relative;
+                    padding-left: 2rem;
 
-        & > li{
-            margin-bottom: 2rem;
-        }
+                    &:before {
+                        position: absolute;
+                        top: 1rem;
+                        left: 0px;
+                        display: block;
+                        width: 6px;
+                        height: 6px;
+                        border-radius: 50%;
+                        background: $gray-300;
+                        content: '';
+                    }
 
-        &.multiple{
-            & > li{
-                position: relative;
-                padding-left: 2rem;
+                    &:after {
+                        position: absolute;
+                        top: 3rem;
+                        left: .3rem;
+                        display: block;
+                        height: calc(100% - 2rem);
+                        content: '';
+                        border-left: 1px solid $gray-300;
+                    }
 
-                &:before{
-                    position: absolute;
-                    top: 1rem;
-                    left: 0px;
-                    display: block;
-                    width: 6px;
-                    height: 6px;
-                    border-radius: 50%;
-                    background: $gray-300;
-                    content: '';
-                }
-
-                &:after{
-                    position: absolute;
-                    top: 3rem;
-                    left: .3rem;
-                    display: block;
-                    height: calc(100% - 2rem);
-                    content: '';
-                    border-left: 1px solid $gray-300;
-                }
-
-                &:last-child{
-                    &:after{
-                        display: none;
+                    &:last-child {
+                        &:after {
+                            display: none;
+                        }
                     }
                 }
             }
-        }
 
-        .job-title,
-        .period,
-        .location,
-        .description {
-            display: block;
-        }
+            .job-title,
+            .period,
+            .location,
+            .description {
+                display: block;
+            }
 
-        .period,
-        .location{
-            color: $gray-300;
-        }
+            .period,
+            .location {
+                color: $gray-300;
+            }
 
-        .job-title{
-            @include h6;
-        }
-    }
-
-    .education-listing{
-        @include normalize-listing;
-
-        & > li{
-            @include clearfix;
-            margin-bottom: 3rem;
-        }
-
-        .institute,
-        .title,
-        .period,
-        .location{
-            display: block;
-        }
-
-        .institute{
-            //@include h5;
-        }
-
-        .title{
-            @include h6;
-        }
-
-        .period,
-        .location{
-            color: $gray-300;
-        }
-    }
-
-    .certificate-listing{
-        @include normalize-listing;
-
-        & > li{
-            margin-bottom: 3rem;
-        }
-
-        .title{
-            @include h6;
-        }
-
-        .description{
-            margin-bottom: 0px;
-        }
-
-        .date{
-            color: $gray-300;
-        }
-    }
-
-    .skill-categories,
-    .document-categories,
-    .document-listing,
-    .accomplishment-categories,
-    .accomplishment-listing{
-        @include normalize-listing;
-
-        & > li{
-            & + li{
-                margin-top: 3rem;
+            .job-title {
+                @include h6;
             }
         }
     }
 
-    .skill-category,
-    .document-category,
-    .accomplishment-category{
-        display: block;
-        margin-bottom: 1rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid $gray-100;
-        color: $gray-300;
+    &.education{
+        .education-listing{
+            @include normalize-listing;
+
+            & > li{
+                @include clearfix;
+                margin-bottom: 3rem;
+            }
+
+            .institute,
+            .title,
+            .period,
+            .location{
+                display: block;
+            }
+
+            .institute{
+                //@include h5;
+            }
+
+            .title{
+                @include h6;
+            }
+
+            .period,
+            .location{
+                color: $gray-300;
+            }
+        }
     }
 
-    .document-details,
-    .accomplishment-details{
-        @include normalize-listing;
-        margin-top: .5rem;
+    &.certificates{
+        .certificate-listing{
+            @include normalize-listing;
+
+            & > li{
+                margin-bottom: 3rem;
+            }
+
+            .title{
+                @include h6;
+            }
+
+            .description{
+                margin-bottom: 0px;
+            }
+
+            .date{
+                color: $gray-300;
+            }
+        }
     }
 
-    .document-title,
-    .accomplishment-title{
-        margin-bottom: 0px;
-    }
+    &.skills{
+        .skill-categories{
+            @include normalize-listing;
 
-    .favorite-listing{
-        margin-top: 1rem;
-        margin-bottom: 4rem;
-        padding-left: 15px;
-        list-style-type: disc;
-
-        & > li{
-            margin-bottom: 1rem;
+            & > li{
+                & + li{
+                    margin-top: 3rem;
+                }
+            }
         }
 
-        &,
-        a{
-            font-size: 1.4rem;
+        .skill-category{
+            display: block;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid $gray-100;
+            color: $gray-300;
+        }
+    }
+}
+
+.profile-card{
+    display: block;
+    min-height: 100%;
+    padding: 2rem;
+    border: 1px solid $gray-300;
+    border-radius: 0.25rem;
+
+    .block-links{
+        @include normalize-listing;
+        margin-top: auto;
+
+        & > li{
+            margin-top: 1rem;
+        }
+    }
+
+    &.edit-profile{
+        background: $curious-blue;
+        border-color: $curious-blue;
+        color: $white;
+    }
+}
+
+.profile{
+    .profile-blocks{
+        @include normalize-listing;
+
+        & > .profile-block{
+            margin-bottom: 3rem;
         }
     }
 }
 
 @include media-breakpoint-up(lg) {
-    .profile {
-        .profile-blocks {
-            display: grid;
-            margin: 0px -1.5rem;
-            grid-template-columns: repeat(12, [col] 1fr);
-            grid-template-rows: auto;
-
-            & > li {
-                margin-bottom: 3rem;
-                padding: 0px 1.5rem;
-            }
-        }
-
-        .profile-block{
-            padding: 4rem;
-        }
-
-        .block-documents,
-        .block-accomplishments{
+    .profile-block{
+        &.documents,
+        &.accomplishments{
             .content-container{
                 align-self: center;
 
@@ -502,395 +490,21 @@
             }
         }
     }
-}
 
-@include media-breakpoint-between(lg, xl) {
-    .profile {
-        .profile-blocks {
-            &.top {
-                &.has-two-blocks{
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 8);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 9, 1, 4);
-                        }
-                    }
-                }
-
-                &.has-three-blocks{
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 12);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(2, 1, 1, 8);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(2, 9, 1, 4);
-                        }
-                    }
-                }
-
-                &.has-four-blocks {
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 6);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 7, 1, 6);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(2, 1, 1, 6);
-                        }
-
-                        &:nth-child(4) {
-                            @include set-grid(2, 7, 1, 6);
-                        }
-                    }
-                }
-            }
-
-            &.bottom {
-                &.items-1 {
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 6);
-                        }
-                    }
-                }
-
-                &.items-2 {
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 6);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 7, 1, 6);
-                        }
-                    }
-                }
-
-                &.items-3 {
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 4);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 5, 1, 4);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(1, 9, 1, 4);
-                        }
-                    }
-                }
-
-                &.items-4 {
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 6);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 7, 1, 6);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(2, 1, 1, 6);
-                        }
-
-                        &:nth-child(4) {
-                            @include set-grid(2, 7, 1, 6);
-                        }
-                    }
-                }
-
-                &.items-5 {
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 6);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 7, 1, 6);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(2, 1, 1, 12);
-                        }
-
-                        &:nth-child(4) {
-                            @include set-grid(3, 1, 1, 6);
-                        }
-
-                        &:nth-child(5) {
-                            @include set-grid(3, 7, 1, 6);
-                        }
-                    }
-                }
-
-                &.items-6 {
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 6);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 7, 1, 6);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(2, 1, 1, 6);
-                        }
-
-                        &:nth-child(4) {
-                            @include set-grid(2, 7, 1, 6);
-                        }
-
-                        &:nth-child(5) {
-                            @include set-grid(3, 1, 1, 12);
-                            margin-bottom: 0px;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@include media-breakpoint-between(xl, xxl) {
-    .profile {
-        .profile-blocks {
-            &.top {
-                &.has-three-blocks{
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 4);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 5, 1, 4);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(1, 9, 1, 4);
-                        }
-                    }
-                }
-
-                &.has-four-blocks{
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 6);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 7, 1, 6);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(2, 1, 1, 6);
-                        }
-
-                        &:nth-child(4) {
-                            @include set-grid(2, 7, 1, 6);
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@include media-breakpoint-up(xl) {
-    .profile {
-        .profile-blocks {
-            &.top{
-                &.has-two-blocks{
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 8);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 9, 1, 4);
-                        }
-                    }
-                }
-            }
-
-            &.bottom{
-                &.items-1{
-                    & > li{
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 6);
-                        }
-                    }
-                }
-
-                &.items-2{
-                    & > li{
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 6);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 7, 1, 6);
-                        }
-                    }
-                }
-
-                &.items-3{
-                    & > li{
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 4);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 5, 1, 4);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(1, 9, 1, 4);
-                        }
-                    }
-                }
-
-                &.items-4{
-                    & > li{
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 6);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 7, 1, 6);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(2, 1, 1, 6);
-                        }
-
-                        &:nth-child(4) {
-                            @include set-grid(2, 7, 1, 6);
-                        }
-                    }
-                }
-
-                &.items-5{
-                    & > li{
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 4);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 5, 1, 4);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(1, 9, 1, 4);
-                        }
-
-                        &:nth-child(4) {
-                            @include set-grid(2, 1, 1, 6);
-                        }
-
-                        &:nth-child(5) {
-                            @include set-grid(2, 7, 1, 6);
-                        }
-                    }
-                }
-
-                &.items-6{
-                    & > li{
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 3);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 4, 1, 3);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(1, 7, 1, 3);
-                        }
-
-                        &:nth-child(4) {
-                            @include set-grid(1, 10, 2, 3);
-                        }
-
-                        &:nth-child(5) {
-                            @include set-grid(2, 1, 1, 9);
-                            margin-bottom: 0px;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@include media-breakpoint-up(xxl) {
-    .profile {
-        .profile-blocks {
-            &.top {
-                &.has-three-blocks{
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 5);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 6, 1, 4);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(1, 10, 1, 3);
-                        }
-                    }
-                }
-
-                &.has-four-blocks{
-                    & > li {
-                        &:nth-child(1) {
-                            @include set-grid(1, 1, 1, 3);
-                        }
-
-                        &:nth-child(2) {
-                            @include set-grid(1, 4, 1, 3);
-                        }
-
-                        &:nth-child(3) {
-                            @include set-grid(1, 7, 1, 3);
-                        }
-
-                        &:nth-child(4) {
-                            @include set-grid(1, 10, 1, 3);
-                        }
-                    }
-                }
-            }
-        }
+    .profile-card{
+        padding: 4rem;
     }
 }
 
 @media (pointer:coarse) {
-    .profile {
-        .block-basic-info {
+    .profile-block{
+        &.basic-info {
             .contact-card{
                 display: none;
             }
         }
 
-        .block-about{
+        &.about{
             .contact-listing{
                 display: block;
             }
@@ -899,8 +513,8 @@
 }
 
 @media (pointer:fine) {
-    .profile {
-        .block-basic-info {
+    .profile-block{
+        &.basic-info {
             .card-container {
                 position: relative;
 
@@ -926,13 +540,13 @@
                     }
                 }
             }
-            
+
             .contact-card{
                 display: block;
             }
         }
 
-        .block-about{
+        &.about{
             .contact-listing{
                 display: none;
             }

@@ -1,0 +1,34 @@
+<ul class="card-container">
+    <li class="main-card">
+        <div class="profile-card">
+            <img
+                ng-if="vm.profile.image"
+                ng-src="{{ vm.pathProfileImages }}/{{ vm.profile.image }}"
+                alt=""
+                class="img-fluid rounded-circle profile-image">
+            <h2 class="name" ng-if="vm.profile.name || vm.profile.surname">
+                {{ vm.profile.name }} {{ vm.profile.surname }}
+            </h2>
+            <p class="job-title" ng-if="vm.profile.jobTitle || vm.profile.role">
+                {{ vm.joinStrings([vm.profile.jobTitle, vm.profile.role], ' - ') }}
+            </p>
+            <p class="position" ng-if="vm.profile.directorate || vm.profile.office">
+                {{ vm.joinStrings([vm.profile.directorate, vm.profile.office], ' - ') }}
+            </p>
+            <ul class="research-lines" ng-if="vm.profile.researchLines.length > 0">
+                <li ng-repeat="researchLine in vm.profile.researchLines track by $index">{{ researchLine }}</li>
+            </ul>
+            <ul class="centers" ng-if="vm.profile.centers.length > 0">
+                <li ng-repeat="center in vm.profile.centers track by $index">{{ center }}</li>
+            </ul>
+            <ul class="titles" ng-if="vm.profile.titles.length > 0">
+                <li ng-repeat="title in vm.profile.titles track by $index">{{ title }}</li>
+            </ul>
+        </div>
+    </li>
+    <li class="contact-card">
+        <div class="profile-card">
+            <profile-contact-listing profile="vm.profile"></profile-contact-listing>
+        </div>
+    </li>
+</ul>
