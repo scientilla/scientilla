@@ -589,17 +589,27 @@ async function importUserContracts(email = defaultEmail) {
             defaultPrivacy = 'hidden';
         }
 
+        let name = contract.nome;
+        if (!_.isEmpty(contract.nome_AD)) {
+            name = contract.nome_AD;
+        }
+
+        let surname = contract.cognome;
+        if (!_.isEmpty(contract.cognome_AD)) {
+            surname = contract.cognome_AD;
+        }
+
         profile.username = {
             privacy: defaultPrivacy,
             value: contract.email
         };
         profile.name = {
             privacy: defaultPrivacy,
-            value: contract.nome
+            value: name
         };
         profile.surname = {
             privacy: defaultPrivacy,
-            value: contract.cognome
+            value: surname
         };
         profile.phone = {
             privacy: defaultPrivacy,
@@ -618,37 +628,41 @@ async function importUserContracts(email = defaultEmail) {
         function handleGroup (group) {
             switch (group.type) {
                 case 'Center':
-                    const center = centers.find(c => c.value === group.name);
+                    const center = centers.find(c => c.name === group.name);
                     if (!center) {
                         centers.push({
-                            value: group.name,
+                            name: group.name,
+                            code: group.code,
                             privacy: defaultPrivacy
                         });
                     }
                     break;
                 case 'Facility':
-                    const facility = facilities.find(f => f.value === group.name);
+                    const facility = facilities.find(f => f.name === group.name);
                     if (!facility) {
                         facilities.push({
-                            value: group.name,
+                            name: group.name,
+                            code: group.code,
                             privacy: defaultPrivacy
                         });
                     }
                     break;
                 case 'Institute':
-                    const institute = institutes.find(i => i.value === group.name);
+                    const institute = institutes.find(i => i.name === group.name);
                     if (!institute) {
                         institutes.push({
-                            value: group.name,
+                            name: group.name,
+                            code: group.code,
                             privacy: defaultPrivacy
                         });
                     }
                     break;
                 case 'Research Line':
-                    const researchLine = researchLines.find(f => f.value === group.name);
+                    const researchLine = researchLines.find(f => f.name === group.name);
                     if (!researchLine) {
                         researchLines.push({
-                            value: group.name,
+                            name: group.name,
+                            code: group.code,
                             privacy: defaultPrivacy
                         });
                     }
@@ -787,6 +801,8 @@ async function importUserContracts(email = defaultEmail) {
                 name: contract.nome,
                 surname: contract.cognome,
                 jobTitle: contract.Ruolo_AD,
+                displayName: contract.nome_AD,
+                displaySurname: contract.cognome_AD,
                 lastsynch: moment().utc().format(),
                 active: true,
                 synchronized: true,
