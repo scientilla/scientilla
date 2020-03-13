@@ -23,15 +23,7 @@
                     margin-bottom: 3rem;
                     padding: 0px 1.5rem;
                 }
-            }
-        }
-    }
-}
 
-@include media-breakpoint-between(lg, xl) {
-    .summary {
-        &.summary-profile {
-            .profile-blocks {
                 &.top {
                     &.has-2-blocks {
                         & > .profile-block {
@@ -41,42 +33,6 @@
 
                             &:nth-child(2) {
                                 @include set-grid(1, 9, 1, 4);
-                            }
-                        }
-                    }
-
-                    &.has-3-blocks {
-                        & > .profile-block {
-                            &:nth-child(1) {
-                                @include set-grid(1, 1, 1, 12);
-                            }
-
-                            &:nth-child(2) {
-                                @include set-grid(2, 1, 1, 8);
-                            }
-
-                            &:nth-child(3) {
-                                @include set-grid(2, 9, 1, 4);
-                            }
-                        }
-                    }
-
-                    &.has-4-blocks {
-                        & > .profile-block {
-                            &:nth-child(1) {
-                                @include set-grid(1, 1, 1, 6);
-                            }
-
-                            &:nth-child(2) {
-                                @include set-grid(1, 7, 1, 6);
-                            }
-
-                            &:nth-child(3) {
-                                @include set-grid(2, 1, 1, 6);
-                            }
-
-                            &:nth-child(4) {
-                                @include set-grid(2, 7, 1, 6);
                             }
                         }
                     }
@@ -138,7 +94,55 @@
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+}
 
+@include media-breakpoint-between(lg, xl) {
+    .summary {
+        &.summary-profile {
+            .profile-blocks {
+                &.top {
+                    &.has-3-blocks {
+                        & > .profile-block {
+                            &:nth-child(1) {
+                                @include set-grid(1, 1, 1, 12);
+                            }
+
+                            &:nth-child(2) {
+                                @include set-grid(2, 1, 1, 8);
+                            }
+
+                            &:nth-child(3) {
+                                @include set-grid(2, 9, 1, 4);
+                            }
+                        }
+                    }
+
+                    &.has-4-blocks {
+                        & > .profile-block {
+                            &:nth-child(1) {
+                                @include set-grid(1, 1, 1, 6);
+                            }
+
+                            &:nth-child(2) {
+                                @include set-grid(1, 7, 1, 6);
+                            }
+
+                            &:nth-child(3) {
+                                @include set-grid(2, 1, 1, 6);
+                            }
+
+                            &:nth-child(4) {
+                                @include set-grid(2, 7, 1, 6);
+                            }
+                        }
+                    }
+                }
+
+                &.bottom {
                     &.has-5-blocks {
                         & > .profile-block {
                             &:nth-child(1) {
@@ -258,62 +262,6 @@
                 }
 
                 &.bottom {
-                    &.has-1-block {
-                        & > .profile-block {
-                            &:nth-child(1) {
-                                @include set-grid(1, 1, 1, 6);
-                            }
-                        }
-                    }
-
-                    &.has-2-blocks {
-                        & > .profile-block {
-                            &:nth-child(1) {
-                                @include set-grid(1, 1, 1, 6);
-                            }
-
-                            &:nth-child(2) {
-                                @include set-grid(1, 7, 1, 6);
-                            }
-                        }
-                    }
-
-                    &.has-3-blocks {
-                        & > .profile-block {
-                            &:nth-child(1) {
-                                @include set-grid(1, 1, 1, 4);
-                            }
-
-                            &:nth-child(2) {
-                                @include set-grid(1, 5, 1, 4);
-                            }
-
-                            &:nth-child(3) {
-                                @include set-grid(1, 9, 1, 4);
-                            }
-                        }
-                    }
-
-                    &.has-4-blocks {
-                        & > .profile-block {
-                            &:nth-child(1) {
-                                @include set-grid(1, 1, 1, 6);
-                            }
-
-                            &:nth-child(2) {
-                                @include set-grid(1, 7, 1, 6);
-                            }
-
-                            &:nth-child(3) {
-                                @include set-grid(2, 1, 1, 6);
-                            }
-
-                            &:nth-child(4) {
-                                @include set-grid(2, 7, 1, 6);
-                            }
-                        }
-                    }
-
                     &.has-5-blocks {
                         & > .profile-block {
                             &:nth-child(1) {

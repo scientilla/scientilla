@@ -16,10 +16,13 @@
                 {{ vm.joinStrings([vm.profile.directorate, vm.profile.office], ' - ') }}
             </p>
             <ul class="research-lines" ng-if="vm.profile.researchLines.length > 0">
-                <li ng-repeat="researchLine in vm.profile.researchLines track by $index">{{ researchLine }}</li>
+                <li ng-repeat="researchLine in vm.profile.researchLines track by $index">{{ researchLine.name }}</li>
+            </ul>
+            <ul class="facilities" ng-if="vm.profile.facilities.length > 0">
+                <li ng-repeat="facility in vm.profile.facilities track by $index">{{ facility.name }}</li>
             </ul>
             <ul class="centers" ng-if="vm.profile.centers.length > 0">
-                <li ng-repeat="center in vm.profile.centers track by $index">{{ center }}</li>
+                <li ng-repeat="center in vm.profile.centers track by $index">{{ center.name }}</li>
             </ul>
             <ul class="titles" ng-if="vm.profile.titles.length > 0">
                 <li ng-repeat="title in vm.profile.titles track by $index">{{ title }}</li>

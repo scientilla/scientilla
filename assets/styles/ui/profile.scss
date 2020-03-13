@@ -504,11 +504,14 @@
     .profile-block{
         &.basic-info {
             .card-container{
+                border: 1px solid $gray-300;
+                border-radius: 0.25rem;
+
                 .main-card{
+                    height: auto;
+
                     .profile-card{
-                        border-bottom: 0px;
-                        border-bottom-right-radius: 0px;
-                        border-bottom-left-radius: 0px;
+                        border: 0px;
                     }
                 }
 
@@ -516,13 +519,12 @@
                     position: relative;
                     top: auto;
                     left: auto;
+                    height: auto;
                     opacity: 1;
                     background: $white;
 
                     .profile-card{
-                        border-top: 0px;
-                        border-top-right-radius: 0px;
-                        border-top-left-radius: 0px;
+                        border: 0px;
                     }
                 }
             }
