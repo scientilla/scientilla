@@ -405,3 +405,17 @@
         }
     }
 }
+
+@media (pointer:coarse) {
+    .edit-profile{
+        .ui-sortable{
+            & > li{
+                pointer-events: none;
+
+                *{
+                    pointer-events: auto;
+                }
+            }
+        }
+    }
+}
