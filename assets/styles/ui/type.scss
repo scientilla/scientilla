@@ -24,6 +24,7 @@ h6{
     font-family: $roboto-slab;
     font-size: 2.4rem;
     line-height: 3.4rem;
+    font-weight: 500;
 
     @include media-breakpoint-up(sm) {
         font-size: 3rem;
@@ -35,6 +36,7 @@ h6{
     font-family: $roboto-slab;
     font-size: 2.2rem;
     line-height: 3.2rem;
+    font-weight: 500;
 
     @include media-breakpoint-up(sm) {
         font-size: 2.6rem;
@@ -46,6 +48,7 @@ h6{
     font-family: $roboto-slab;
     font-size: 2rem;
     line-height: 3rem;
+    font-weight: 500;
 
     @include media-breakpoint-up(sm) {
         font-size: 2.2rem;
@@ -57,6 +60,7 @@ h6{
     font-family: $roboto-slab;
     font-size: 1.8rem;
     line-height: 2.8rem;
+    font-weight: 500;
 
     @include media-breakpoint-up(sm) {
         font-size: 2rem;
@@ -68,6 +72,7 @@ h6{
     font-family: $roboto-slab;
     font-size: 1.6rem;
     line-height: 2.6rem;
+    font-weight: 500;
 
     @include media-breakpoint-up(sm) {
         font-size: 1.8rem;
@@ -79,6 +84,7 @@ h6{
     font-family: $roboto-slab;
     font-size: 1.4rem;
     line-height: 2.4rem;
+    font-weight: 500;
 
     @include media-breakpoint-up(sm) {
         font-size: 1.6rem;

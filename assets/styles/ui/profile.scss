@@ -133,6 +133,12 @@
                     &:before{
                         content: ', ';
                     }
+
+                    &:last-child{
+                        &:before{
+                            content: ' & ';
+                        }
+                    }
                 }
             }
         }
