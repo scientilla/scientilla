@@ -8,6 +8,7 @@
             controllerAs: 'vm',
             bindings: {
                 profile: '<',
+                index: '<',
                 interest: '<',
                 key: '<',
                 removeItem: '<'
@@ -25,6 +26,20 @@
 
         vm.removeItem = (options) => {
             ProfileService.removeItem(options);
+        };
+
+        vm.moveUp = function(key, interest) {
+            if (key > 0) {
+                vm.profile.interests.splice(key, 1);
+                vm.profile.interests.splice(key - 1, 0, interest);
+            }
+        };
+
+        vm.moveDown = function(key, interest) {
+            if (key < vm.profile.interests.length) {
+                vm.profile.interests.splice(key, 1);
+                vm.profile.interests.splice(key + 1, 0, interest);
+            }
         };
     }
 

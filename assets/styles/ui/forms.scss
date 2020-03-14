@@ -215,19 +215,17 @@ label{
         & + span {
             position: relative;
             display: none;
-            padding: .8rem 2rem;
+            text-align:  center;
+            padding: .8rem 0px;
             vertical-align: top;
             line-height: 1;
             cursor: pointer;
 
             &:before {
                 display: block;
-                //width: 14px;
                 font-family: $font-awesome;
                 font-size: 1.4rem;
                 font-weight: 900;
-                //content: '\f023';
-                text-align: center;
             }
         }
 

@@ -97,6 +97,7 @@
         }
 
         .research-lines,
+        .facilities,
         .centers{
             @include normalize-listing;
             @include clearfix;
@@ -108,6 +109,12 @@
                 & + li{
                     &:before{
                         content: ', ';
+                    }
+
+                    &:last-child{
+                        &:before{
+                            content: ' & ';
+                        }
                     }
                 }
             }

@@ -87,6 +87,22 @@ const definitions = {
             }
         }
     },
+    name: {
+        type: 'object',
+        properties: {
+            name: {
+                type: 'string'
+            }
+        }
+    },
+    code: {
+        type: 'object',
+        properties: {
+            code: {
+                type: 'string'
+            }
+        }
+    },
     url: {
         type: 'object',
         properties: {
@@ -283,7 +299,35 @@ const definitions = {
             required: ['value']
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
-    }
+    },
+    ifNameCodeCheckPublicPrivacy: {
+        if: {
+            properties: {
+                name: {
+                    minLength: 1
+                },
+                code: {
+                    minLength: 1
+                }
+            },
+            required: ['name', 'code']
+        },
+        then: { $ref: '#/definitions/privacyEnumPublic' }
+    },
+    ifNameCodeCheckHiddenPrivacy: {
+        if: {
+            properties: {
+                name: {
+                    minLength: 1
+                },
+                code: {
+                    minLength: 1
+                }
+            },
+            required: ['name', 'code']
+        },
+        then: { $ref: '#/definitions/privacyEnumHidden' }
+    },
 };
 
 definitions.skill = {
@@ -294,7 +338,7 @@ definitions.skill = {
         },
         favorite: {
             type: 'boolean',
-        default: false
+            default: false
         },
     },
     errorMessage: {
@@ -310,17 +354,17 @@ definitions.skillCategory = {
         properties: {
         categoryName: {
             type: 'string',
-                pattern: emptyPattern
+            pattern: emptyPattern
         },
         skills: {
             type: 'array',
             default: [],
             items: _.merge(
                 {},
-                definitions.skill,
-                definitions.string,
                 definitions.privacy,
-                definitions.privacyDefaultHidden
+                definitions.privacyDefaultHidden,
+                definitions.notEmptyString,
+                definitions.skill
             )
         }
     },
@@ -373,7 +417,8 @@ const defaultProperties = {
         default: [],
         items: _.merge(
             {},
-            definitions.string,
+            definitions.name,
+            definitions.code,
             definitions.privacy,
             definitions.privacyDefaultHidden
         )
@@ -383,7 +428,8 @@ const defaultProperties = {
         default: [],
         items: _.merge(
             {},
-            definitions.string,
+            definitions.name,
+            definitions.code,
             definitions.privacy,
             definitions.privacyDefaultHidden
         )
@@ -393,7 +439,8 @@ const defaultProperties = {
         default: [],
         items: _.merge(
             {},
-            definitions.string,
+            definitions.name,
+            definitions.code,
             definitions.privacy,
             definitions.privacyDefaultHidden
         )
@@ -465,7 +512,13 @@ const defaultProperties = {
     ),
     titles: {
         type: 'array',
-        default: []
+        default: [],
+        items: _.merge(
+            {},
+            definitions.privacy,
+            definitions.privacyDefaultHidden,
+            definitions.notEmptyString
+        )
     },
     description: _.merge(
         {},
@@ -493,7 +546,13 @@ const defaultProperties = {
     ),
     interests: {
         type: 'array',
-        default: []
+        default: [],
+        items: _.merge(
+            {},
+            definitions.privacy,
+            definitions.privacyDefaultHidden,
+            definitions.notEmptyString
+        )
     },
     experiences: {
         type: 'array',
@@ -549,15 +608,15 @@ const thenProperties = {
     jobTitle: definitions.ifValueCheckHiddenPrivacy,
     phone: definitions.ifValueCheckHiddenPrivacy,
     centers: {
-        items: definitions.ifValueCheckHiddenPrivacy
+        items: definitions.ifNameCodeCheckHiddenPrivacy
     },
     researchLines: {
-        items: definitions.ifValueCheckHiddenPrivacy
+        items: definitions.ifNameCodeCheckHiddenPrivacy
     },
     directorate: definitions.ifValueCheckHiddenPrivacy,
     office: definitions.ifValueCheckHiddenPrivacy,
     facilities: {
-        items: definitions.ifValueCheckHiddenPrivacy
+        items: definitions.ifNameCodeCheckHiddenPrivacy
     },
     image: {
         oneOf: [
@@ -915,7 +974,6 @@ const defaultSchema = {
     properties: defaultProperties,
 };
 
-
 const conditionSchema = {
     type: 'object',
     definitions: definitions,
@@ -1267,6 +1325,12 @@ async function saveProfile(req) {
     }
 
     try {
+        if (researchEntityData) {
+            profile.hidden = researchEntityData.profile.hidden;
+        } else {
+            profile.hidden = false;
+        }
+
         // We compile our schema & validate profile
         const validate = ajv.compile(conditionSchema);
         const valid = validate(profile);
@@ -1290,7 +1354,6 @@ async function saveProfile(req) {
             profile.directorate = researchEntityData.profile.directorate;
             profile.office = researchEntityData.profile.office;
             profile.facilities = researchEntityData.profile.facilities;
-            profile.hidden = researchEntityData.profile.hidden;
 
             if (!hasFiles && _.has(profile, 'image.value') && !_.isEmpty(profile.image.value)) {
                 profile.image.value = researchEntityData.profile.image.value;

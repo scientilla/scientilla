@@ -29,6 +29,20 @@
         vm.addItem = (options) => {
             ProfileService.addItem(options);
         };
+
+        vm.moveUp = function(key, category) {
+            if (key > 0) {
+                vm.profile.skillCategories.splice(key, 1);
+                vm.profile.skillCategories.splice(key - 1, 0, category);
+            }
+        };
+
+        vm.moveDown = function(key, category) {
+            if (key < vm.profile.skillCategories.length) {
+                vm.profile.skillCategories.splice(key, 1);
+                vm.profile.skillCategories.splice(key + 1, 0, category);
+            }
+        };
     }
 
 })();

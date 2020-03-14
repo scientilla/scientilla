@@ -1,6 +1,42 @@
 .edit-profile{
     padding-bottom: 4rem;
 
+    .desktop-actions{
+        display: none;
+    }
+
+    .mobile-section-selector-container{
+        display: block;
+
+        .select-wrapper{
+            display: inline-block;
+        }
+    }
+    
+    .profile-tabs{
+        & > .nav-tabs{
+            display: none;
+        }
+    }
+
+    .mobile-actions{
+        margin-bottom: 2rem;
+        border-bottom: 2px solid $gray-100;
+
+        & > ul{
+            @include normalize-listing;
+        }
+
+        .btn{
+            display: block;
+            width: 100%;
+
+            &.btn-link{
+                text-align: right;
+            }
+        }
+    }
+
     .card-listing{
         @include normalize-listing;
         display: grid;
@@ -54,7 +90,7 @@
         display: grid;
         margin-left: -.75rem;
         margin-right: -.75rem;
-        grid-template-columns: 1fr 80px;
+        grid-template-columns: 1fr 40px;
         grid-template-rows: auto;
 
         & > li{
@@ -152,32 +188,13 @@
         margin-bottom: 2rem;
     }
 
-    .field-listing{
-        @include normalize-listing;
-        display: grid;
-        margin: 0px -.75rem;
-        grid-template-columns: 1fr auto auto;
-        grid-template-rows: auto;
-
-        & > li{
-            padding-right: .75rem;
-            padding-left: .75rem;
-        }
-    }
-
+    .field-listing,
     .certificate-field-listing,
     .skill-field-listing,
-    .skill-category-field-listing{
+    .skill-category-field-listing,
+    .experience-form,
+    .education-form{
         @include normalize-listing;
-        display: grid;
-        margin: 0px -.75rem;
-        grid-template-columns: 1fr auto auto auto;
-        grid-template-rows: auto;
-
-        & > li{
-            padding-right: .75rem;
-            padding-left: .75rem;
-        }
     }
 
     .category-skills{
@@ -189,10 +206,6 @@
         display: block;
         margin-top: 2rem;
         margin-bottom: 2rem;
-    }
-
-    .action-column{
-        padding-top: 2.3rem;
     }
 
     .form-actions{
@@ -208,35 +221,7 @@
         }
     }
 
-    .experience-form{
-        @include normalize-listing;
-        display: grid;
-        margin: 0px -.75rem;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto;
 
-        & > li{
-            padding-right: .75rem;
-            padding-left: .75rem;
-
-            &:nth-child(7) {
-                @include set-grid(4,1,1, 2);
-            }
-        }
-    }
-
-    .education-form{
-        @include normalize-listing;
-        display: grid;
-        margin: 0px -.75rem;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: auto;
-
-        & > li {
-            padding-right: .75rem;
-            padding-left: .75rem;
-        }
-    }
 
     .iit-website-options{
         @include normalize-listing;
@@ -278,6 +263,145 @@
             border: none;
             cursor: pointer;
             color: $white;
+        }
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .edit-profile{
+        .mobile-actions{
+            border-bottom: 0px;
+
+            & > ul{
+                display: grid;
+                margin-right: -1.5rem;
+                margin-left: -1.5rem;
+                grid-template-columns: 1fr 1fr 1fr;
+
+                & > li{
+                    padding-right: 1.5rem;
+                    padding-left: 1.5rem;
+
+                    &:nth-child(1) {
+                        @include set-grid(1,1,1,1);
+                    }
+
+                    &:nth-child(2) {
+                        @include set-grid(1,2,1,1);
+                    }
+
+                    &:nth-child(3) {
+                        @include set-grid(1,3,1,1);
+                    }
+                }
+            }
+
+            &.has-4-actions{
+                & > ul{
+                    grid-template-columns: 1fr 1fr 1fr 1fr;
+
+                    & > li{
+                        &:nth-child(1) {
+                            @include set-grid(1,1,1,1);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1,2,1,1);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(1,3,1,1);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(1,4,1,1);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(md) {
+    .edit-profile{
+
+        .desktop-actions{
+            display: block;
+        }
+
+        .mobile-actions,
+        .mobile-section-selector-container{
+            display: none;
+        }
+
+        .profile-tabs{
+            & > .nav-tabs{
+                display: flex;
+            }
+        }
+
+        .enable-listing {
+            grid-template-columns: 1fr 80px;
+        }
+
+        .field-listing{
+            @include normalize-listing;
+            display: grid;
+            margin: 0px -.75rem;
+            grid-template-columns: 1fr auto auto;
+            grid-template-rows: auto;
+
+            & > li{
+                padding-right: .75rem;
+                padding-left: .75rem;
+            }
+        }
+
+        .experience-form{
+            display: grid;
+            margin: 0px -.75rem;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto;
+
+            & > li{
+                padding-right: .75rem;
+                padding-left: .75rem;
+
+                &:nth-child(7) {
+                    @include set-grid(4,1,1, 2);
+                }
+            }
+        }
+
+        .education-form{
+            display: grid;
+            margin: 0px -.75rem;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto;
+
+            & > li {
+                padding-right: .75rem;
+                padding-left: .75rem;
+            }
+        }
+
+        .certificate-field-listing,
+        .skill-field-listing,
+        .skill-category-field-listing{
+            display: grid;
+            margin: 0px -.75rem;
+            grid-template-columns: 1fr auto auto auto;
+            grid-template-rows: auto;
+
+            & > li{
+                padding-right: .75rem;
+                padding-left: .75rem;
+            }
+        }
+
+        .action-column{
+            padding-top: 2.3rem;
         }
     }
 }

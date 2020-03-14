@@ -139,14 +139,14 @@
                     </li>
                 </ul>
             </li>
-            <li class="action-column">
+            <li class="action-column desktop-actions">
                 <div class="form-group">
                     <div class="btn btn-outline-secondary">
                         <i class="fas fa-arrows-alt"></i>
                     </div>
                 </div>
             </li>
-            <li class="action-column">
+            <li class="action-column desktop-actions">
                 <div class="form-group">
                     <button
                         class="btn btn-outline-secondary"
@@ -157,6 +157,44 @@
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
+            </li>
+            <li class="mobile-actions">
+                <ul>
+                    <li>
+                        <div class="form-group">
+                            <div
+                                class="btn btn-outline-secondary"
+                                ng-disabled="vm.index === 0"
+                                ng-class="{'disabled': vm.index === 0}"
+                                ng-click="vm.moveUp(vm.key, vm.education)" >
+                                <i class="fas fa-arrow-up fa-left"></i>Move up
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group">
+                            <div
+                                class="btn btn-outline-secondary"
+                                ng-class="{'disabled': vm.index === vm.profile.education.length -1}"
+                                ng-disabled="vm.index === vm.profile.education.length -1"
+                                ng-click="vm.moveDown(vm.key, vm.education)">
+                                <i class="fas fa-arrow-down fa-left"></i>Move down
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group">
+                            <button
+                                class="btn btn-outline-secondary"
+                                ng-click="vm.removeItem({
+                                    property: vm.profile.education,
+                                    index: vm.key
+                                })">
+                                <i class="fas fa-trash fa-left"></i>Delete
+                            </button>
+                        </div>
+                    </li>
+                </ul>
             </li>
         </ul>
     </li>

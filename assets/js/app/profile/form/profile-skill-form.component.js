@@ -30,6 +30,20 @@
         vm.getTooltipText = () => {
             return ProfileService.getFavoriteTooltipText();
         };
+
+        vm.moveUp = function(key, skill) {
+            if (key > 0) {
+                vm.profile.skillCategories[vm.categoryKey].skills.splice(key, 1);
+                vm.profile.skillCategories[vm.categoryKey].skills.splice(key - 1, 0, skill);
+            }
+        };
+
+        vm.moveDown = function(key, skill) {
+            if (key < vm.profile.skillCategories[vm.categoryKey].skills.length) {
+                vm.profile.skillCategories[vm.categoryKey].skills.splice(key, 1);
+                vm.profile.skillCategories[vm.categoryKey].skills.splice(key + 1, 0, skill);
+            }
+        };
     }
 
 })();

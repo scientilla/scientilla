@@ -73,7 +73,7 @@
                 for (let i = 0; i < vm.profile.centers.length; i++) {
                     const center = vm.profile.centers[i];
                     items.push({
-                        value: center.value,
+                        value: center.name,
                         privacy: center.privacy,
                         errors: center.errors,
                         context: 'centers[' + i + ']',
@@ -92,7 +92,7 @@
                 for (let i = 0; i < vm.profile.facilities.length; i++) {
                     const facility = vm.profile.facilities[i];
                     items.push({
-                        value: facility.value,
+                        value: facility.name,
                         privacy: facility.privacy,
                         errors: facility.errors,
                         context: 'facilities[' + i + ']',
@@ -111,7 +111,7 @@
                 for (let i = 0; i < vm.profile.researchLines.length; i++) {
                     const researchLine = vm.profile.researchLines[i];
                     items.push({
-                        value: researchLine.value,
+                        value: researchLine.name,
                         privacy: researchLine.privacy,
                         errors: researchLine.errors,
                         context: 'researchLines[' + i + ']',

@@ -10,6 +10,28 @@
 </div>
 
 <div class="modal-body edit-profile">
+
+    <div class="mobile-section-selector-container">
+        <label for="mobile-section-selector">Select section:</label>
+        <div class="select-wrapper">
+            <select
+                class="form-control"
+                id="mobile-section-selector"
+                name="mobile-section-selector"
+                ng-change="vm.selectChanged()"
+                ng-model="vm.selectedItem">
+                <option value="0">Basic information</option>
+                <option value="1">About me</option>
+                <option value="2">Socials</option>
+                <option value="3">Experiences</option>
+                <option value="4">Education</option>
+                <option value="5">Certificates</option>
+                <option value="6">Skills</option>
+                <option value="7">Public website only</option>
+            </select>
+        </div>
+    </div>
+    
     <uib-tabset active="vm.active" class="profile-tabs js-profile-tabs" ng-if="vm.profileIsLoaded">
         <uib-tab
             index="0"
@@ -65,10 +87,11 @@
                 show="vm.profile.experiences.length > 0"></profile-privacy-legend>
 
             <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.experiences">
-                <li ng-repeat="(key, experience) in vm.profile.experiences">
+                <li ng-repeat="(key, experience) in vm.profile.experiences track by $index">
                     <profile-experience-form
                         profile="vm.profile"
                         errors="vm.errors"
+                        index="$index"
                         experience="experience"
                         key="key"></profile-experience-form>
                 </li>
@@ -95,10 +118,11 @@
                 show="vm.profile.education.length > 0"></profile-privacy-legend>
 
             <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.education">
-                <li ng-repeat="(key, education) in vm.profile.education">
+                <li ng-repeat="(key, education) in vm.profile.education track by $index">
                     <profile-education-form
                         profile="vm.profile"
                         errors="vm.errors"
+                        index="$index"
                         education="education"
                         key="key"></profile-education-form>
                 </li>
@@ -125,10 +149,11 @@
                 show="vm.profile.certificates.length > 0"></profile-privacy-legend>
 
             <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.certificates">
-                <li ng-repeat="(key, certificate) in vm.profile.certificates">
+                <li ng-repeat="(key, certificate) in vm.profile.certificates track by $index">
                     <profile-certificate-form
                         profile="vm.profile"
                         errors="vm.errors"
+                        index="$index"
                         key="key"
                         certificate="certificate"></profile-certificate-form>
                 </li>
@@ -155,20 +180,24 @@
                 show="vm.profile.skillCategories.length > 0"></profile-privacy-legend>
 
             <ul class="item-listing" ui-sortable ng-model="vm.profile.skillCategories">
-                <li ng-repeat="(categoryKey, category) in vm.profile.skillCategories">
+                <li
+                    ng-repeat="category in vm.profile.skillCategories track by $index"
+                    ng-init="categoryIndex = $index">
                     <profile-skill-category-form
                         profile="vm.profile"
                         errors="vm.errors"
-                        key="categoryKey"
+                        key="$index"
                         category="category"></profile-skill-category-form>
 
                     <ul class="category-skills" ui-sortable ng-model="category.skills">
-                        <li ng-repeat="(skillKey, skill) in category.skills">
+                        <li
+                            ng-if="category.skills"
+                            ng-repeat="skill in category.skills track by $index">
                             <profile-skill-form
                                 profile="vm.profile"
                                 errors="vm.errors"
-                                category-key="categoryKey"
-                                key="skillKey"
+                                key="$index"
+                                category-key="categoryIndex"
                                 skill="skill"></profile-skill-form>
                         </li>
                     </ul>

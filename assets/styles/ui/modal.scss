@@ -32,6 +32,7 @@
         @include normalize-listing;
         @include clearfix;
         margin: 2rem -1rem -2rem -1rem;
+        overflow: hidden;
 
         & > li{
             display: block;

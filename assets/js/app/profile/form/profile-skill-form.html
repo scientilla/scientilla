@@ -20,14 +20,14 @@
                         errors="vm.profile.skillCategories[vm.categoryKey].skills[vm.key].errors.value"></scientilla-field-errors>
                 </div>
             </li>
-            <li class="action-column">
+            <li class="action-column desktop-actions">
                 <div class="form-group">
                     <div class="btn btn-outline-secondary">
                         <i class="fas fa-arrows-alt"></i>
                     </div>
                 </div>
             </li>
-            <li class="action-column">
+            <li class="action-column desktop-actions">
                 <div class="form-group">
                     <button
                         class="btn btn-outline-secondary"
@@ -39,7 +39,7 @@
                     </button>
                 </div>
             </li>
-            <li class="action-column">
+            <li class="action-column desktop-actions">
                 <div
                     class="checkbox-container"
                     uib-tooltip-html="vm.getTooltipText()"
@@ -55,6 +55,61 @@
                         <span></span>
                     </label>
                 </div>
+            </li>
+            <li class="mobile-actions has-4-actions">
+                <ul>
+                    <li>
+                        <div class="form-group">
+                            <div
+                                class="btn btn-outline-secondary"
+                                ng-disabled="vm.key === 0"
+                                ng-class="{'disabled': vm.key === 0}"
+                                ng-click="vm.moveUp(vm.key, vm.skill)" >
+                                <i class="fas fa-arrow-up fa-left"></i>Move up
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group">
+                            <div
+                                class="btn btn-outline-secondary"
+                                ng-class="{'disabled': vm.key === vm.profile.skillCategories[vm.categoryKey].skills.length -1}"
+                                ng-disabled="vm.key === vm.profile.skillCategories[vm.categoryKey].skills.length -1"
+                                ng-click="vm.moveDown(vm.key, vm.skill)">
+                                <i class="fas fa-arrow-down fa-left"></i>Move down
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group">
+                            <button
+                                class="btn btn-outline-secondary"
+                                ng-click="vm.removeItem({
+                                    property: vm.profile.skillCategories[vm.categoryKey].skills,
+                                    index: vm.key
+                                })">
+                                <i class="fas fa-trash fa-left"></i>Delete
+                            </button>
+                        </div>
+                    </li>
+                    <li>
+                        <div
+                            class="checkbox-container"
+                            uib-tooltip-html="vm.getTooltipText()"
+                            tooltip-placement="top-right"
+                            tooltip-class="tooltip-favorite">
+                            <label
+                                for="skill[{{ vm.categoryKey }}][{{ vm.key }}]-favorite-mobile"
+                                class="form-favorite">
+                                <input
+                                    type="checkbox"
+                                    id="skill[{{ vm.categoryKey }}][{{ vm.key }}]-favorite-mobile"
+                                    ng-model="vm.skill.favorite">
+                                <span class="fa-left"></span>Favorite
+                            </label>
+                        </div>
+                    </li>
+                </ul>
             </li>
         </ul>
     </li>

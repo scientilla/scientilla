@@ -36,6 +36,8 @@
         vm.hasAboutMeErrors = false;
         vm.unsavedData = false;
         vm.profileIsLoaded = false;
+        vm.selectedItem = '0';
+
         let originalProfileJson = '';
 
         vm.$onInit = function () {
@@ -118,6 +120,10 @@
                     }
                 }
             });
+        };
+
+        vm.selectChanged = () => {
+            vm.active = parseInt(vm.selectedItem);
         };
 
         function getEditProfile() {

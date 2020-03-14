@@ -7,6 +7,7 @@
             controller: profileEducationForm,
             controllerAs: 'vm',
             bindings: {
+                index: '<',
                 profile: '<',
                 education: '<',
                 key: '<',
@@ -29,6 +30,20 @@
 
         vm.removeItem = (options) => {
             ProfileService.removeItem(options);
+        };
+
+        vm.moveUp = function(key, education) {
+            if (key > 0) {
+                vm.profile.education.splice(key, 1);
+                vm.profile.education.splice(key - 1, 0, education);
+            }
+        };
+
+        vm.moveDown = function(key, education) {
+            if (key < vm.profile.education.length) {
+                vm.profile.education.splice(key, 1);
+                vm.profile.education.splice(key + 1, 0, education);
+            }
         };
     }
 

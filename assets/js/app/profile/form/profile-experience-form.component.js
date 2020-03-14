@@ -7,6 +7,7 @@
             controller: profileExperienceForm,
             controllerAs: 'vm',
             bindings: {
+                index: '<',
                 profile: '<',
                 experience: '<',
                 key: '<',
@@ -29,6 +30,20 @@
 
         vm.removeItem = (options) => {
             ProfileService.removeItem(options);
+        };
+
+        vm.moveUp = function(key, experience) {
+            if (key > 0) {
+                vm.profile.experiences.splice(key, 1);
+                vm.profile.experiences.splice(key - 1, 0, experience);
+            }
+        };
+
+        vm.moveDown = function(key, experience) {
+            if (key < vm.profile.experiences.length) {
+                vm.profile.experiences.splice(key, 1);
+                vm.profile.experiences.splice(key + 1, 0, experience);
+            }
         };
     }
 

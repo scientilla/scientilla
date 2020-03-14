@@ -29,6 +29,20 @@
         vm.addItem = (options) => {
             ProfileService.addItem(options);
         };
+
+        vm.moveUpTitle = function(key, title) {
+            if (key > 0) {
+                vm.profile.titles.splice(key, 1);
+                vm.profile.titles.splice(key - 1, 0, title);
+            }
+        };
+
+        vm.moveDownTitle = function(key, title) {
+            if (key < vm.profile.titles.length) {
+                vm.profile.titles.splice(key, 1);
+                vm.profile.titles.splice(key + 1, 0, title);
+            }
+        };
     }
 
 })();

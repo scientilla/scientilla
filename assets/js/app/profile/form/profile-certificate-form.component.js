@@ -7,6 +7,7 @@
             controller: profileCertificateForm,
             controllerAs: 'vm',
             bindings: {
+                index: '<',
                 profile: '<',
                 certificate: '<',
                 key: '<',
@@ -32,6 +33,20 @@
 
         vm.getTooltipText = () => {
             return ProfileService.getFavoriteTooltipText();
+        };
+
+        vm.moveUp = function(key, certificate) {
+            if (key > 0) {
+                vm.profile.certificates.splice(key, 1);
+                vm.profile.certificates.splice(key - 1, 0, certificate);
+            }
+        };
+
+        vm.moveDown = function(key, certificate) {
+            if (key < vm.profile.certificates.length) {
+                vm.profile.certificates.splice(key, 1);
+                vm.profile.certificates.splice(key + 1, 0, certificate);
+            }
         };
     }
 
