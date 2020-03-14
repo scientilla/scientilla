@@ -410,7 +410,7 @@ async function toPDF(researchEntityId, options = {}) {
         const printer = new PdfPrinter(fonts);
 
         const content = [];
-        const basicProfile = [];
+        let basicProfile = [];
 
         // Basic profile
         if (options.basic) {
@@ -619,6 +619,26 @@ async function toPDF(researchEntityId, options = {}) {
         }
 
         if (options.basic) {
+            if (_.has(profile, 'export.basicInformation') && !_.isEmpty(profile.export.basicInformation)) {
+                basicProfile = [];
+                tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
+
+                if (!_.isEmpty(tmpText)) {
+                    basicProfile.push(
+                        {
+                            text: tmpText,
+                            style: 'h1'
+                        }
+                    );
+                }
+
+                basicProfile.push({
+                    text: [
+                        profile.export.basicInformation
+                    ]
+                });
+            }
+
             if (profile.image) {
                 const profileImagePath = path.join('profile', 'images', researchEntityId.toString(), profile.image);
                 content.push({
@@ -1187,7 +1207,7 @@ async function toDoc(researchEntityId, options = {}) {
 
         let tmpText = '';
 
-        const baseProfile = [];
+        let baseProfile = [];
         if (!_.isEmpty(profile.jobTitle)) {
             baseProfile.push(
                 new TextRun({
@@ -1815,6 +1835,19 @@ async function toDoc(researchEntityId, options = {}) {
                 );
             }
 
+            if (_.has(profile, 'export.basicInformation') && !_.isEmpty(profile.export.basicInformation)) {
+                baseProfile = [];
+                const lines = profile.export.basicInformation.split('\n');
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i];
+                    if (i === 0) {
+                        baseProfile.push(new TextRun(line));
+                    } else {
+                        baseProfile.push(new TextRun(line).break());
+                    }
+                }
+            }
+
             if (!_.isEmpty(baseProfile) && !_.isNil(profileImage)) {
                 text.push(
                     new Paragraph({
@@ -1846,7 +1879,7 @@ async function toDoc(researchEntityId, options = {}) {
                             new TextRun({
                                 text: 'Titles: ',
                                 bold: true
-                            }),
+                            }).break(),
                             new TextRun({
                                 text: titles.join(', ')
                             }),

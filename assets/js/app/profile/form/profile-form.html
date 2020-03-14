@@ -28,6 +28,7 @@
                 <option value="5">Certificates</option>
                 <option value="6">Skills</option>
                 <option value="7">Public website only</option>
+                <option value="8">Export only</option>
             </select>
         </div>
     </div>
@@ -300,6 +301,17 @@
                     </label>
                 </li>
             </ul>
+        </uib-tab>
+
+        <uib-tab
+            index="8"
+            heading="Export only"
+            ng-class="{
+                    'changed' : vm.changed['export']
+                }">
+            <p>You can overwrite some sections that will be used only during exporting your profile to PDF or DOCX.</p>
+            <label>Basic information</label>
+            <textarea ng-model="vm.profile.export.basicInformation" class="form-control" cols="30" rows="5"></textarea>
         </uib-tab>
     </uib-tabset>
 

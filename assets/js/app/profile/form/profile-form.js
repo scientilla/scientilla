@@ -38,6 +38,29 @@
         vm.profileIsLoaded = false;
         vm.selectedItem = '0';
 
+        vm.toolbarOptions = [
+            [
+                'p',
+                'pre',
+                'quote',
+                'bold',
+                'italics',
+                'underline',
+                'strikeThrough',
+                'ul',
+                'ol',
+                'undo',
+                'redo',
+                'clear',
+                'justifyLeft',
+                'justifyCenter',
+                'justifyRight',
+                'justifyFull',
+                'indent',
+                'outdent'
+            ]
+        ];
+
         let originalProfileJson = '';
 
         vm.$onInit = function () {
@@ -147,6 +170,7 @@
                     vm.changed.skills = isChanged('skills');
                     vm.changed['documents-accomplishments'] = isChanged('documents-accomplishments');
                     vm.changed['public-website'] = isChanged('public-website');
+                    vm.changed['export'] = isChanged('export');
                 }, true);
 
                 $scope.$broadcast('setupBasicInformation', vm.profile);
@@ -221,6 +245,11 @@
                     return false;
                 case 'public-website':
                     if (angular.toJson(originalProfile.publicWebsite) !== angular.toJson(vm.profile.publicWebsite)) {
+                        return true;
+                    }
+                    return false;
+                case 'export':
+                    if (angular.toJson(originalProfile.export) !== angular.toJson(vm.profile.export)) {
                         return true;
                     }
                     return false;

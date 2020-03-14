@@ -278,6 +278,15 @@ const definitions = {
             'editorship'
         ]
     },
+    export: {
+        type: 'object',
+        properties: {
+            basicInformation: {
+                type: 'string',
+                default : ''
+            }
+        }
+    },
     ifValueCheckPublicPrivacy: {
         if: {
             properties: {
@@ -599,6 +608,7 @@ const defaultProperties = {
         default: false
     },
     publicWebsite: {$ref: '#/definitions/publicWebsite'},
+    export: {$ref: '#/definitions/export'},
 };
 
 const thenProperties = {

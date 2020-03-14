@@ -11,9 +11,9 @@
             }
         });
 
-    profileExportBlock.$inject = ['ProfileService', 'TextService'];
+    profileExportBlock.$inject = ['ProfileService', 'TextService', 'AuthService'];
 
-    function profileExportBlock(ProfileService, TextService) {
+    function profileExportBlock(ProfileService, TextService, AuthService) {
         const vm = this;
 
         vm.exportOptions = {
