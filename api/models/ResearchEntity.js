@@ -37,6 +37,10 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'accomplishment',
             through: 'accomplishmentsuggestion'
         },
+        favoriteAccomplishments: {
+            collection: 'accomplishment',
+            through: 'accomplishmentfavorite'
+        },
         discardedAccomplishments: {
             collection: 'accomplishment',
             through: 'discardedaccomplishment'

@@ -1,0 +1,7 @@
+<div class="profile-card" ng-repeat="education in vm.profile.education | limitTo: 1">
+    <div class="content-container">
+        <i class="fas fa-graduation-cap title-icon"></i><span>My {{ education.to ? 'last' : 'current' }} education:</span>
+        <h2 class="block-title">{{ vm.joinStrings([education.title, education.institute]) }}</h2>
+    </div>
+    <button class="show-more has-action" ng-click="vm.showEducationsModal()">Show all educations</button>
+</div>

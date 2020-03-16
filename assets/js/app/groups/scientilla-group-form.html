@@ -13,16 +13,16 @@
         structure="vm.formStructure"
         css-class="form-group-sm"
         on-submit="vm.submit"
+        on-reset="vm.cancel"
         errors="vm.errors"
         on-validate="vm.validate({name})"
         on-change="vm.fieldValueHasChanged({name})"
-    >
+        values="{}">
         <scientilla-multicomplete
             items="vm.group.administrators"
             query="vm.getUsersQuery"
             filter="vm.group.administrators"
-            title="Administrators"
-        >
+            title="Administrators">
         </scientilla-multicomplete>
 
         <ul class="modal-buttons">
@@ -40,7 +40,7 @@
     </scientilla-component-form>
 
     <div
-        nn-if="vm.errorText"
+        ng-if="vm.errorText"
         class="modal-error text-danger">
         {{ vm.errorText }}
     </div>

@@ -32,6 +32,7 @@ module.exports = function (grunt) {
                     'angular-ui-notification/dist/angular-ui-notification.min.js',
                     'bootstrap/dist/js/bootstrap.min.js',
                     'jquery/dist/jquery.min.js',
+                    'jquery-ui/jquery-ui.js',
                     'lodash/dist/lodash.min.js',
                     'restangular/dist/restangular.min.js',
                     'd3/d3.js',
@@ -66,7 +67,8 @@ module.exports = function (grunt) {
                     'ui-bootstrap4/dist/ui-bootstrap.js',
                     'ui-bootstrap4/dist/ui-bootstrap-tpls.js',
                     'tinycolor2/tinycolor.js',
-                    'angularjs-color-picker/dist/angularjs-color-picker.js'
+                    'angularjs-color-picker/dist/angularjs-color-picker.js',
+                    'angular-ui-sortable/dist/sortable.js'
                 ],
                 flatten: true,
                 dest: '.tmp/public/js/dependencies'
@@ -99,7 +101,7 @@ module.exports = function (grunt) {
             }, {
                 expand: true,
                 cwd: './assets',
-                src: ['js/app/*/*.html'],
+                src: ['js/app/**/*.html'],
                 flatten: true,
                 dest: '.tmp/public/partials'
             }, {
@@ -131,6 +133,24 @@ module.exports = function (grunt) {
                 cwd: '.tmp/public/uploads',
                 src: ['**/*'],
                 dest: 'www/uploads'
+            }]
+        },
+        profileDev: {
+            files: [{
+                dot: true,
+                expand: true,
+                cwd: './profile',
+                src: ['**'],
+                dest: '.tmp/public/profile'
+            }]
+        },
+        profileBuild: {
+            files: [{
+                dot: true,
+                expand: true,
+                cwd: '.tmp/public/profile',
+                src: ['**/*'],
+                dest: 'www/profile'
             }]
         }
     });

@@ -1,0 +1,87 @@
+<ul class="enable-listing no-labels">
+    <li>
+        <ul class="field-listing">
+            <li>
+                <div
+                    class="form-group"
+                    ng-class="{'has-error': vm.profile.interests[vm.key].errors.value}">
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Interest"
+                        ng-model="vm.interest.value"
+                        ng-class="{
+                            'is-invalid': vm.profile.interests[vm.key].errors.value,
+                            'is-invisible' : vm.profile.interests[vm.key].privacy === 'invisible'
+                        }">
+                    <scientilla-field-errors
+                        errors="vm.profile.interests[vm.key].errors.value"></scientilla-field-errors>
+                </div>
+            </li>
+            <li class="desktop-actions">
+                <div class="form-group">
+                    <div class="btn btn-outline-secondary">
+                        <i class="fas fa-arrows-alt"></i>
+                    </div>
+                </div>
+            </li>
+            <li class="desktop-actions">
+                <div class="form-group">
+                    <button
+                        class="btn btn-outline-secondary"
+                        ng-click="vm.removeItem({
+                            property: vm.profile.interests,
+                            index: vm.key
+                        })">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </li>
+            <li class="mobile-actions">
+                <ul>
+                    <li>
+                        <div class="form-group">
+                            <div
+                                class="btn btn-outline-secondary"
+                                ng-disabled="vm.index === 0"
+                                ng-class="{'disabled': vm.index === 0}"
+                                ng-click="vm.moveUp(vm.key, vm.interest)" >
+                                <i class="fas fa-arrow-up fa-left"></i>Move up
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group">
+                            <div
+                                class="btn btn-outline-secondary"
+                                ng-class="{'disabled': vm.index === vm.profile.interests.length -1}"
+                                ng-disabled="vm.index === vm.profile.interests.length -1"
+                                ng-click="vm.moveDown(vm.key, vm.interest)">
+                                <i class="fas fa-arrow-down fa-left"></i>Move down
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group">
+                            <button
+                                class="btn btn-outline-secondary"
+                                ng-click="vm.removeItem({
+                                    property: vm.profile.titles,
+                                    index: key
+                                })">
+                                <i class="fas fa-trash fa-left"></i>Delete
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <scientilla-privacy-selector
+            context-object="vm.context"
+            profile="vm.profile"
+            errors="vm.interest.errors.privacy"
+            model="vm.interest.privacy"></scientilla-privacy-selector>
+    </li>
+</ul>

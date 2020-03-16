@@ -32,13 +32,17 @@
         }
     }
 
-    &.user-detail{
+    &.users-detail{
         .user-fullname{
             margin-bottom: .5rem;
         }
 
         .user-information{
             margin-top: 2rem;
+        }
+
+        .profile-block{
+            margin-bottom: 3rem;
         }
     }
 }
@@ -51,6 +55,348 @@
                     display: grid;
                     grid-template-columns: 1fr auto;
                     grid-template-rows: auto;
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .users {
+        &.users-detail {
+            .profile-blocks {
+                display: grid;
+                margin: 0px -1.5rem;
+                grid-template-columns: repeat(12, [col] 1fr);
+                grid-template-rows: auto;
+
+                .profile-block {
+                    padding: 0px 1.5rem;
+                }
+
+                &.has-1-block {
+                    & > .profile-block {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+                    }
+                }
+
+                &.has-2-blocks {
+                    & > .profile-block {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+                    }
+                }
+
+                &.has-3-blocks {
+                    & > .profile-block {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 6);
+                        }
+                    }
+                }
+
+                &.has-4-blocks {
+                    & > .profile-block {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 6);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(2, 7, 1, 6);
+                        }
+                    }
+                }
+
+                &.has-5-blocks {
+                    & > .profile-block {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 6);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(2, 7, 1, 6);
+                        }
+
+                        &:nth-child(5) {
+                            @include set-grid(3, 1, 1, 6);
+                        }
+                    }
+                }
+
+                &.has-6-blocks {
+                    & > .profile-block {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 6);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(2, 7, 1, 6);
+                        }
+
+                        &:nth-child(5) {
+                            @include set-grid(3, 1, 1, 6);
+                        }
+
+                        &:nth-child(6) {
+                            @include set-grid(3, 7, 1, 6);
+                        }
+                    }
+                }
+
+                &.has-7-blocks {
+                    & > .profile-block {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 6);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(2, 7, 1, 6);
+                        }
+
+                        &:nth-child(5) {
+                            @include set-grid(3, 1, 1, 6);
+                        }
+
+                        &:nth-child(6) {
+                            @include set-grid(3, 7, 1, 6);
+                        }
+
+                        &:nth-child(7) {
+                            @include set-grid(4, 1, 1, 6);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(xl) {
+    .users {
+        &.users-detail {
+            .profile-blocks {
+                &.has-7-blocks {
+                    & > .profile-block {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 4);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(2, 5, 1, 4);
+                        }
+
+                        &:nth-child(5) {
+                            @include set-grid(2, 9, 1, 4);
+                        }
+
+                        &:nth-child(6) {
+                            @include set-grid(3, 1, 1, 6);
+                        }
+
+                        &:nth-child(7) {
+                            @include set-grid(3, 7, 1, 6);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-between(lg, xl) {
+    .users {
+        &.users-detail {
+            .profile-blocks {
+                &.has-8-blocks {
+                    & > .profile-block {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 6);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(2, 7, 1, 6);
+                        }
+
+                        &:nth-child(5) {
+                            @include set-grid(3, 1, 1, 6);
+                        }
+
+                        &:nth-child(6) {
+                            @include set-grid(3, 7, 1, 6);
+                        }
+
+                        &:nth-child(7) {
+                            @include set-grid(4, 1, 1, 12);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-between(xl, xxl) {
+    .users {
+        &.users-detail {
+            .profile-blocks {
+                &.has-8-blocks {
+                    & > .profile-block {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 6);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(2, 7, 1, 6);
+                        }
+
+                        &:nth-child(5) {
+                            @include set-grid(3, 1, 1, 6);
+                        }
+
+                        &:nth-child(6) {
+                            @include set-grid(3, 7, 1, 6);
+                        }
+
+                        &:nth-child(7) {
+                            @include set-grid(4, 1, 1, 12);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(xxl) {
+    .users {
+        &.users-detail {
+            .profile-blocks {
+                &.has-5-blocks {
+                    & > .profile-block {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 4);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(2, 5, 1, 4);
+                        }
+
+                        &:nth-child(5) {
+                            @include set-grid(2, 9, 1, 4);
+                        }
+                    }
+                }
+
+                &.has-8-blocks {
+                    & > .profile-block {
+                        &:nth-child(1) {
+                            @include set-grid(1, 1, 1, 6);
+                        }
+
+                        &:nth-child(2) {
+                            @include set-grid(1, 7, 1, 6);
+                        }
+
+                        &:nth-child(3) {
+                            @include set-grid(2, 1, 1, 3);
+                        }
+
+                        &:nth-child(4) {
+                            @include set-grid(2, 4, 1, 3);
+                        }
+
+                        &:nth-child(5) {
+                            @include set-grid(2, 7, 1, 3);
+                        }
+
+                        &:nth-child(6) {
+                            @include set-grid(2, 10, 2, 3);
+                        }
+
+                        &:nth-child(7) {
+                            @include set-grid(3, 1, 1, 9);
+                            margin-bottom: 0px;
+                        }
+                    }
                 }
             }
         }

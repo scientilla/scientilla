@@ -6,22 +6,35 @@
             templateUrl: 'partials/scientilla-admin-sources.html',
             controller: controller,
             controllerAs: 'vm',
-            bindings: {}
+            bindings: {
+                activeTab: '@?'
+            }
         });
 
     controller.$inject = [
-        '$rootScope'
+        '$rootScope',
+        '$controller',
+        '$scope'
     ];
 
-    function controller($rootScope) {
+    function controller($rootScope, $controller, $scope) {
         const vm = this;
 
-        vm.$onInit = function () {
-        };
+        angular.extend(vm, $controller('TabsController', {$scope: $scope}));
 
-        vm.selectTab = tab => {
-            $rootScope.$broadcast('tab-selected', {name: tab});
+        vm.$onInit = function () {
+            const tabs = [
+                {
+                    index: 0,
+                    slug: 'source',
+                }, {
+                    index: 1,
+                    slug: 'metrics-import',
+                    tabName: 'metricsImport'
+                }
+            ];
+
+            vm.initializeTabs(tabs);
         };
     }
-
 })();

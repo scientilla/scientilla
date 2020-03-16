@@ -42,12 +42,9 @@
 
         let researchEntity;
 
-
         vm.showPrivacy = [
             accomplishmentListSections.VERIFIED
         ].includes(vm.section);
-
-        vm.showFavorite = false;
 
         vm.collapsed = true;
 

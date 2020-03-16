@@ -1,0 +1,13 @@
+<div class="profile-card">
+    <div class="profile-about" ng-if="vm.profile.description">
+        <h2 class="block-title">About</h2>
+        <p>{{ vm.profile.description }}</p>
+    </div>
+
+    <div class="profile-interests" ng-if="vm.profile.interests">
+        <h2 class="block-title">Interests</h2>
+        <ul class="interest-listing">
+            <li ng-repeat="interest in vm.profile.interests track by $index">{{ interest }}</li>
+        </ul>
+    </div>
+</div>

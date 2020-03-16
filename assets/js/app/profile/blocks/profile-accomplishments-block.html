@@ -1,0 +1,34 @@
+<div class="profile-card">
+    <div class="content-container">
+        <span class="amount">{{ vm.profile.accomplishments.length }}</span>
+        <i class="fas fa-trophy title-icon"></i>
+        <h2 class="block-title">Accomplishments</h2>
+    </div>
+    <div
+        class="content-container last-item-container"
+        ng-if="vm.favoriteAccomplishments.length > 0">
+        <span>My favorite accomplishment{{ vm.favoriteAccomplishments.length > 1 ? 's' : '' }}:</span>
+        <ul class="favorite-listing">
+            <li ng-repeat="accomplishment in vm.favoriteAccomplishments track by $index">
+                <a
+                    href="{{ vm.urlAllAccomplishments }}?title={{ accomplishment.title }}"
+                    ng-if="vm.urlAllAccomplishments">
+                    {{ accomplishment.title }}
+                </a>
+                <span ng-if="!vm.urlAllAccomplishments">{{ accomplishment.title }}</span>
+            </li>
+        </ul>
+    </div>
+    <ul class="block-links">
+        <li ng-if="vm.urlFavoriteAccomplishments">
+            <a
+                href="{{ vm.urlFavoriteAccomplishments }}"
+                class="show-more has-action">Show only favorite accomplishments</a>
+        </li>
+        <li ng-if="vm.urlAllAccomplishments">
+            <a
+                href="{{ vm.urlAllAccomplishments }}"
+                class="show-more has-action">Show all accomplishments</a>
+        </li>
+    </ul>
+</div>

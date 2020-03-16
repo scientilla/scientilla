@@ -42,7 +42,7 @@
         }
 
         function viewUser(user) {
-            $location.path('/users/' + user.id);
+            $location.url('/users/' + user.id);
         }
 
         function editUser(user) {

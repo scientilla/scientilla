@@ -1,4 +1,4 @@
-/* global require, User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate, ResearchEntity */
+/* global require, User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate, ResearchEntity, Profile */
 'use strict';
 
 /**
@@ -53,6 +53,10 @@ module.exports = _.merge({}, SubResearchEntity, {
             defaultsTo: false
         },
         alreadyOpenedSuggested: {
+            type: "BOOLEAN",
+            defaultsTo: false
+        },
+        alreadyChangedProfile: {
             type: "BOOLEAN",
             defaultsTo: false
         },
@@ -123,6 +127,11 @@ module.exports = _.merge({}, SubResearchEntity, {
             via: 'users',
             through: 'documentsuggestion'
         },
+        favoriteDocuments: {
+            collection: 'Document',
+            via: 'users',
+            through: 'favoritedocument'
+        },
         externalDocuments: {
             collection: 'document',
             via: 'researchEntity',
@@ -168,6 +177,10 @@ module.exports = _.merge({}, SubResearchEntity, {
             collection: 'Attribute',
             through: 'userattribute'
         },
+        userData: {
+            collection: 'userData',
+            via: 'user',
+        },
         lastsynch: 'datetime',
         active: {
             type: "BOOLEAN",
@@ -191,7 +204,7 @@ module.exports = _.merge({}, SubResearchEntity, {
         },
         getDocumentNotDuplicateModel: function () {
             return DocumentNotDuplicate;
-        }
+        },
     }),
     getDocumentNotDuplicateModel: () => DocumentNotDuplicate,
     getAdministeredGroups: function (userId) {
@@ -214,6 +227,20 @@ module.exports = _.merge({}, SubResearchEntity, {
 
         user.slug = slug;
         return user;
+    },
+    // Search for this function
+    // Create incompleteUser function
+    // Change login
+    // 1) user and auth exists
+    // 2) user exists, auth doesn't exists => create auth
+    // 3) user and auth doesn't exsist,do both
+    createUserWithoutAuth: async (newUser) => {
+        // Lowercase email
+        newUser.username = _.toLower(newUser.username);
+        // Check if username is unique
+        await User.checkUsername(newUser);
+        // Return created user
+        return await User.create(newUser);
     },
     createCompleteUser: async function (params) {
         params.username = _.toLower(params.username);
@@ -282,7 +309,17 @@ module.exports = _.merge({}, SubResearchEntity, {
                 str: alias2
             });
 
-        await Alias.create(aliases);
+        aliases.filter(alias => {
+            const foundAlias = Alias.find(alias);
+            if (foundAlias) {
+                return false;
+            }
+            return alias;
+        });
+
+        if (!_.isEmpty(aliases)) {
+            await Alias.create(aliases);
+        }
     },
     copyAuthData: function (user) {
         if (!user.auth)

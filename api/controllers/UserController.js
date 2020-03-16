@@ -56,5 +56,5 @@ module.exports = require('waterlock').actions.user(_.merge({}, SubResearchEntity
         const username = req.query.email;
         const year = req.query.year;
         res.halt(User.getMBOInvitedTalks(username, year));
-    },
+    }
 }));

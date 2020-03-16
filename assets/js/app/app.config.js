@@ -5,47 +5,15 @@
         .config(configure)
         .run(run);
 
-    configure.$inject = ['RestangularProvider', '$routeProvider', 'localStorageServiceProvider', 'apiPrefix', 'NotificationProvider'];
+    configure.$inject = ['RestangularProvider', '$routeProvider', 'localStorageServiceProvider', 'NotificationProvider'];
 
-    function configure(RestangularProvider, $routeProvider, localStorageServiceProvider, apiPrefix, NotificationProvider) {
+    function configure(RestangularProvider, $routeProvider, localStorageServiceProvider, NotificationProvider) {
         $routeProvider
-            .when("/:group?", {
-                controller: handleRequest,
-                template: "<profile-summary></profile-summary>",
-                resolve: {
-                    authService: getAuthService,
-                    context: getContext
-                }
-            })
-            .when("/:group?/accomplishments/suggested", {
-                controller: handleRequest,
-                template: params => '' +
-                    '<scientilla-accomplishment-suggested-list research-entity="$resolve.researchEntity">' +
-                    '</scientilla-accomplishment-suggested-list>',
-                resolve: {
-                    authService: getAuthService
-                }
-            })
-            .when("/:group?/accomplishments/verified", {
-                controller: handleRequest,
-                template: params => '' +
-                    '<scientilla-accomplishment-verified-list research-entity="$resolve.researchEntity">' +
-                    '</scientilla-accomplishment-verified-list>',
-                resolve: {
-                    authService: getAuthService
-                }
-            })
-            .when("/:group?/accomplishments/drafts", {
-                controller: handleRequest,
-                template: params => '' +
-                    '<scientilla-accomplishment-drafts-list>' +
-                    '</scientilla-accomplishment-drafts-list>',
-                resolve: {
-                    authService: getAuthService
-                }
+            .when("/", {
+                redirectTo: '/dashboard'
             })
             .otherwise({
-                redirectTo: "/"
+                redirectTo: "/dashboard"
             });
 
         RestangularProvider.setBaseUrl('/api/v1');
@@ -72,11 +40,25 @@
         'Prototyper',
         'path',
         'Notification',
-        'ModalService'
+        'ModalService',
+        '$location',
+        '$route'
     ];
     run.$inject = _.union(services, servicesToInit);
 
-    function run($rootScope, AuthService, Restangular, Prototyper, path, Notification, ModalService) {
+    function run($rootScope, AuthService, Restangular, Prototyper, path, Notification, ModalService, $location, $route) {
+
+        var originalUrl = $location.url;
+        $location.url = function (url, reload = true) {
+            if (reload === false) {
+                var lastRoute = $route.current;
+                var un = $rootScope.$on('$locationChangeSuccess', function () {
+                    $route.current = lastRoute;
+                    un();
+                });
+            }
+            return originalUrl.apply($location, [url]);
+        };
 
         $rootScope.$on("$routeChangeStart", (event, next, current) => {
             const noRedirectUrls = ['/unavailable', '/login'];
@@ -149,6 +131,7 @@
         Restangular.extendCollection('externalDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('suggestedDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('discardedDocuments', Prototyper.toDocumentsCollection);
+        Restangular.extendCollection('favoriteDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('drafts', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('authorships', Prototyper.toAuthorshipsCollection);
         Restangular.extendCollection('institutes', Prototyper.toInstitutesCollection);
@@ -156,44 +139,5 @@
         Restangular.extendCollection('allMembers', Prototyper.toUsersCollection);
         Restangular.extendCollection('groups', Prototyper.toGroupsCollection);
         Restangular.extendCollection('taglabels', Prototyper.toTagLabelsCollection);
-    }
-
-    getAuthService.$inject = ['AuthService'];
-
-    function getAuthService(AuthService) {
-        return AuthService;
-    }
-
-    getContext.$inject = ['context'];
-
-    function getContext(context) {
-        return context;
-    }
-
-    handleRequest.$inject = [
-        '$scope',
-        '$routeParams',
-        'path',
-        'authService',
-        'context'
-    ];
-
-    /*
-     * This function handles the request declared above.
-     * It validates the group slug (optional) and redirects if the group slug is not valid.
-     */
-    function handleRequest($scope, $routeParams, path, authService, context) {
-        let activeGroup;
-        const user = authService.user;
-
-        if (!$routeParams.group)
-            return context.setSubResearchEntity(user);
-
-        activeGroup = user.administratedGroups.find(g => g.slug === $routeParams.group);
-
-        if (activeGroup)
-            return context.setSubResearchEntity(activeGroup);
-
-        path.goTo('/');
     }
 })();

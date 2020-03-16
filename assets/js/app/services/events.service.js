@@ -46,7 +46,9 @@
             RESEARCH_ITEM_DRAFT_VERIFIED: 'researchItem.draft.verified',
 
             CUSTOMIZATIONS_CHANGED: 'customizations.changed',
-            CONNECTORS_CHANGED: 'external.connectors.changed'
+            CONNECTORS_CHANGED: 'external.connectors.changed',
+
+            USER_PROFILE_CHANGED: 'userProfile.changed'
         };
 
         service.publish = function (event, args) {

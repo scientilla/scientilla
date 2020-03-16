@@ -9,9 +9,17 @@ label{
 
 .form-control{
     height: auto;
+    min-height: 3rem;
 
-    &:disabled{
+    &:disabled,
+    &.disabled{
         cursor: not-allowed;
+        color: $base-gray;
+        background: $gray-100;
+    }
+
+    &.is-invisible{
+        background: $gray-50;
     }
 }
 
@@ -60,6 +68,7 @@ label{
     label{
         margin-bottom: 0px;
         font-weight: normal;
+        line-height: 1;
     }
 
     input{
@@ -69,15 +78,275 @@ label{
             position: relative;
             display: inline-block;
             vertical-align: top;
+            line-height: 1;
 
             &:before{
                 display: inline-block;
                 width: 12px;
                 height: 12px;
-                margin: 3px 5px 3px 0px;
+                margin-right: 5px;
                 vertical-align: top;
                 border-radius: 0.25rem;
                 border: 1px solid $gray-300;
+                background: $white;
+                content: '';
+            }
+        }
+
+        &:checked{
+            & + span{
+                &:after{
+                    position: absolute;
+                    top: 2px;
+                    left: 2px;
+                    font-family: $font-awesome;
+                    font-size: .8rem;
+                    font-weight: 900;
+                    content: '\f00c';
+                }
+            }
+        }
+
+        &:disabled{
+            & + span{
+                cursor: not-allowed;
+                color: $base-gray;
+
+                &:before{
+                    background: $gray-100;
+                }
+            }
+        }
+    }
+
+    + .form-checkbox-description{
+        display: block;
+        margin-top: .5rem;
+    }
+}
+
+.form-privacy {
+    &,
+    label {
+        margin-bottom: 0px;
+        font-weight: normal;
+        line-height: 1;
+    }
+
+    input {
+        display: none;
+
+        & + span {
+            position: relative;
+            display: inline-block;
+            padding: 2rem;
+            vertical-align: top;
+            line-height: 1;
+            cursor: pointer;
+
+            &:before {
+                display: block;
+                width: 14px;
+                font-family: $font-awesome;
+                font-size: 1.4rem;
+                font-weight: 900;
+                content: '\f023';
+                text-align: center;
+            }
+        }
+
+        &:checked {
+            & + span {
+                &:before {
+                    content: '\f57c';
+                }
+            }
+        }
+
+        &:disabled{
+            & + span{
+                cursor: not-allowed;
+
+                &:before{
+                    color: $gray;
+                }
+            }
+        }
+    }
+}
+
+.privacy-selector{
+    @include normalize-listing;
+    margin-top: 2.3rem;
+
+    &.no-label{
+        margin-top: 0px;
+    }
+
+    &.one-option{
+        input[type='radio'] {
+            & + span {
+                cursor: default;
+            }
+        }
+    }
+
+    &.is-invalid{
+        input[type='radio'] {
+            & + span {
+                &:before {
+                    color: $danger;
+                }
+            }
+        }
+    }
+
+    & > li {
+        display: block;
+    }
+
+    label{
+        margin: 0px;
+    }
+
+    input[type='radio'] {
+        display: none;
+
+        & + span {
+            position: relative;
+            display: none;
+            text-align:  center;
+            padding: .8rem 0px;
+            vertical-align: top;
+            line-height: 1;
+            cursor: pointer;
+
+            &:before {
+                display: block;
+                font-family: $font-awesome;
+                font-size: 1.4rem;
+                font-weight: 900;
+            }
+        }
+
+        &[value='public'] {
+            & + span {
+                &:before {
+                    content: '\f57c';
+                }
+            }
+        }
+
+        &[value='hidden'] {
+            & + span {
+                &:before {
+                    content: '\f023';
+                }
+            }
+        }
+
+        &[value='invisible'] {
+            & + span {
+                &:before {
+                    content: '\f070';
+                }
+            }
+        }
+
+        &:checked {
+            & + span {
+                display: block;
+            }
+        }
+    }
+}
+
+.form-favorite {
+    &,
+    label {
+        margin-bottom: 0px;
+        font-weight: normal;
+        line-height: 1;
+    }
+
+    input {
+        display: none;
+
+        & + span {
+            position: relative;
+            display: inline-block;
+            padding: 0.8rem 0px;
+            vertical-align: middle;
+            line-height: 1;
+            cursor: pointer;
+
+            &:before {
+                display: block;
+                width: 14px;
+                font-family: $font-awesome;
+                font-size: 1.4rem;
+                font-weight: normal;
+                content: '\f005';
+                text-align: center;
+            }
+        }
+
+        &:checked {
+            & + span {
+                &:before {
+                    font-weight: 900;
+                }
+            }
+        }
+
+        &:disabled{
+            & + span{
+                cursor: not-allowed;
+
+                &:before{
+                    color: $gray;
+                }
+            }
+        }
+    }
+}
+
+.radio-options{
+    @include normalize-listing;
+
+    & > li {
+        & + li {
+            margin-top: 1rem;
+        }
+    }
+}
+
+.form-radiobutton{
+    &,
+    label{
+        margin-bottom: 0px;
+        font-weight: normal;
+        line-height: 1;
+    }
+
+    input{
+        display: none;
+
+        & + span{
+            position: relative;
+            display: inline-block;
+            vertical-align: top;
+            line-height: 1;
+
+            &:before{
+                display: inline-block;
+                width: 12px;
+                height: 12px;
+                margin-right: 5px;
+                vertical-align: top;
+                border-radius: 50%;
+                border: 1px solid $gray-300;
+                background: $white;
                 content: '';
             }
         }
@@ -87,11 +356,13 @@ label{
                 &:after{
                     position: absolute;
                     top: 3px;
-                    left: 2px;
-                    font-family: $font-awesome;
-                    font-size: .8rem;
-                    font-weight: 900;
-                    content: '\f00c';
+                    left: 3px;
+                    display: block;
+                    height: 6px;
+                    width: 6px;
+                    border-radius: 50%;
+                    content: '';
+                    background: $mine-shaft;
                 }
             }
         }
@@ -192,10 +463,19 @@ label{
 }
 
 .invalid-feedback{
+    display: block;
     margin-top: .5rem;
     font-size: 100%;
     line-height: 1;
     color: $error-color;
+
+    ul{
+        @include normalize-listing;
+
+        & > li {
+            margin-bottom: .5rem;
+        }
+    }
 }
 
 .filter-form-container{

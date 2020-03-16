@@ -12,49 +12,111 @@
         ProfileSummaryComponent.$inject = [
             'context',
             '$scope',
-            '$controller'
+            '$controller',
+            'UsersService',
+            'AuthService',
+            'EventsService'
         ];
 
-        function ProfileSummaryComponent(context, $scope, $controller) {
+        function ProfileSummaryComponent(context, $scope, $controller, UsersService, AuthService, EventsService) {
             const vm = this;
             angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
-            let subResearchEntity;
+            angular.extend(vm, $controller('TabsController', {$scope: $scope}));
 
             vm.lastRefresh = new Date();
-            vm.isLoading = false;
+            vm.recalculating = false;
+            vm.chartsData = {};
 
             vm.isMainGroup = isMainGroup;
             vm.recalculate = recalculate;
 
+            vm.profile = false;
+
+            let tabIdentifiers = [
+                {
+                    index: 0,
+                    slug: 'profile'
+                }, {
+                    index: 1,
+                    slug: 'documents-overview',
+                    tabName: 'overview',
+                }, {
+                    index: 2,
+                    slug: 'bibliometric-charts',
+                    tabName: 'metrics',
+                }, {
+                    index: 3,
+                    slug: 'calculated-data'
+                }
+            ];
+
+            vm.activeTabIndex = 0;
+
             /* jshint ignore:start */
             vm.$onInit = async () => {
-                subResearchEntity = context.getSubResearchEntity();
+                getProfile().then(profile => {
+                    vm.profile = profile;
+                }, () => {
+                    tabIdentifiers = tabIdentifiers.filter(identifier => {
+                        return identifier.index !== 0 && identifier.index !== 1;
+                    });
+                    vm.activeTabIndex = 2;
+                }).finally(async () => {
+                    vm.initializeTabs(tabIdentifiers);
+                    vm.chartsData = await getData();
+                    vm.reloadTabs(vm.chartsData);
+                });
 
-                const refresh = !isMainGroup();
-                await request(refresh);
-                if (!$scope.$$phase)
-                    $scope.$apply();
+                vm.subResearchEntity = context.getSubResearchEntity();
+
+                EventsService.subscribeAll(vm, [
+                    EventsService.USER_PROFILE_CHANGED,
+                ], (evt, profile) => {
+                    vm.profile = profile;
+                });
+            };
+
+            vm.$onDestroy = () => {
+                EventsService.unsubscribeAll(vm);
             };
 
             async function recalculate() {
-                vm.isLoading = true;
-                await request(true);
+                vm.recalculating = true;
+                vm.chartsData = await getData(true);
                 vm.reloadTabs(vm.chartsData);
-                vm.isLoading = false;
+                vm.recalculating = false;
             }
 
-            async function request(refresh) {
-                vm.chartsData = await vm.getChartsData(subResearchEntity, refresh);
-                if (vm.chartsData.chartDataDate && vm.chartsData.chartDataDate[0].max)
-                    vm.lastRefresh = new Date(vm.chartsData.chartDataDate[0].max);
-            }
+            async function getData(refresh = false) {
+                if (!isMainGroup()) {
+                    refresh = true;
+                }
 
+                const chartsData = await vm.getChartsData(vm.subResearchEntity, refresh);
+
+                if (chartsData.chartDataDate && chartsData.chartDataDate[0].max) {
+                    vm.lastRefresh = new Date(chartsData.chartDataDate[0].max);
+                }
+
+                return chartsData;
+            }
             /* jshint ignore:end */
 
             function isMainGroup() {
-                return subResearchEntity.id === 1;
+                return vm.subResearchEntity.id === 1;
             }
 
+            function getProfile() {
+                return new Promise((resolve, reject) => {
+                    UsersService.getProfile(AuthService.user.researchEntity).then(profile => {
+                        if (profile !== false) {
+                            resolve(profile);
+                        } else {
+                            reject();
+                        }
+                    });
+                });
+            }
         }
     }
 

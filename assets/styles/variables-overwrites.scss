@@ -13,6 +13,7 @@ $abbey:                       rgb(77,79,83);    // #4D4F53
 $pale-sky:                    rgb(108,117,125); // #6c757d
 $gray:                        rgb(132,132,132); // #848484
 $silver:                      rgb(193,193,193); // #c1c1c1
+$dusty-gray:                  rgb(153,153,153); // #999999
 
 $white:                       rgb(255,255,255); // #ffffff
 $black:                       rgb(0,0,0);       // #000000
@@ -27,6 +28,7 @@ $font-awesome:                'Font Awesome 5 Free';
 
 $base-gray:                   #333333; // $mine-shaft;
 
+$gray-50:                     lighten($base-gray, 73%);
 $gray-100:                    lighten($base-gray, 70%);
 $gray-200:                    lighten($base-gray, 60%);
 $gray-300:                    lighten($base-gray, 50%);
@@ -36,7 +38,6 @@ $gray-600:                    lighten($base-gray, 20%);
 $gray-700:                    lighten($base-gray, 10%);
 $gray-800:                    $base-gray;
 $gray-900:                    darken($base-gray, 10%);
-
 
 $primary-color:               #2C91C2; // $curious-blue;
 $secondary-color:             #696161; // $gray-200;

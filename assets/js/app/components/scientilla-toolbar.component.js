@@ -34,13 +34,20 @@
         vm.isRegisterEnabled = false;
         vm.changeContextToGroup = changeContextToGroup;
         vm.changeContextToUser = changeContextToUser;
-        vm.editProfile = editProfile;
+        vm.editUserSettings = editUserSettings;
         vm.showWizardVisible = showWizardVisible;
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
-        vm.originalUser = {};
+        vm.editUserProfile = editUserProfile;
+        vm.getUrl = getUrl;
 
         vm.$onInit = function () {
+
+            EventsService.subscribeAll(vm, [
+                EventsService.USER_PROFILE_CHANGED,
+            ], () => {
+                AuthService.setupUserAccount(vm.user.id);
+            });
 
             EventsService.subscribeAll(vm, [
                 EventsService.AUTH_LOGIN,
@@ -49,13 +56,14 @@
             ], refresh);
 
             refresh();
-
-            vm.originalUser = angular.copy(vm.user);
         };
 
         vm.$onDestroy = function () {
             EventsService.unsubscribeAll(vm);
         };
+
+        const prefix = '#/';
+        let subResearchEntity = context.getSubResearchEntity();
 
         function refresh() {
             vm.isLogged = AuthService.isLogged;
@@ -74,25 +82,25 @@
                     context.setSubResearchEntity(group);
                 })
                 .then(() => {
-                    path.goTo('/' + group.slug);
+                    path.goTo('/' + group.slug + '/dashboard');
                 });
         }
 
         function changeContextToUser(user) {
-            return UsersService.getProfile(user.id)
+            return UsersService.getUser(user.id)
                 .then(user => {
                     context.setSubResearchEntity(user);
                 })
                 .then(() => {
-                    path.goTo('/');
+                    path.goTo('/dashboard');
                 });
         }
 
-        function editProfile() {
+        function editUserSettings() {
             let openForm;
             let researchEntityService;
             if (vm.subResearchEntity.getType() === 'user') {
-                openForm = ModalService.openScientillaUserForm;
+                openForm = ModalService.openScientillaUserForm(vm.user, true);
                 researchEntityService = UsersService;
             }
             else {
@@ -101,16 +109,20 @@
             }
 
             researchEntityService
-                .getProfile(vm.subResearchEntity.id)
+                .getUserSettings(vm.subResearchEntity.id)
                 .then(openForm)
                 .then(function (status) {
                     if (status !== 1)
                         return vm.subResearchEntity;
-                    return researchEntityService.getProfile(vm.subResearchEntity.id);
+                    return researchEntityService.getUserSettings(vm.subResearchEntity.id);
                 })
                 .then(function (subResearchEntity) {
                     vm.subResearchEntity = subResearchEntity;
                 });
+        }
+
+        function editUserProfile() {
+            ModalService.openProfileForm();
         }
 
         function showWizardVisible() {
@@ -134,6 +146,14 @@
                 isClosable: true,
                 size: 'lg'
             });
+        }
+
+        function getUrl(url) {
+            if (subResearchEntity.getType() === 'group') {
+                return prefix + subResearchEntity.slug + '/' + url;
+            }
+
+            return prefix + url;
         }
     }
 })();

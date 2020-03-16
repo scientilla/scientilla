@@ -1,0 +1,335 @@
+<div class="modal-header">
+    <h3>Edit profile</h3>
+
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body edit-profile">
+
+    <div class="mobile-section-selector-container">
+        <label for="mobile-section-selector">Select section:</label>
+        <div class="select-wrapper">
+            <select
+                class="form-control"
+                id="mobile-section-selector"
+                name="mobile-section-selector"
+                ng-change="vm.selectChanged()"
+                ng-model="vm.selectedItem">
+                <option value="0">Basic information</option>
+                <option value="1">About me</option>
+                <option value="2">Socials</option>
+                <option value="3">Experiences</option>
+                <option value="4">Education</option>
+                <option value="5">Certificates</option>
+                <option value="6">Skills</option>
+                <option value="7">Public website only</option>
+                <option value="8">Export only</option>
+            </select>
+        </div>
+    </div>
+    
+    <uib-tabset active="vm.active" class="profile-tabs js-profile-tabs" ng-if="vm.profileIsLoaded">
+        <uib-tab
+            index="0"
+            heading="Basic information"
+            ng-class="{'has-error' : vm.basicInformationHasErrors, 'changed' : vm.changed['basic-info']}">
+            <profile-privacy-legend></profile-privacy-legend>
+
+            <profile-basic-information-form
+                profile="vm.profile"></profile-basic-information-form>
+
+            <em>The above information has been obtained from HR. If something is incorrect please contact HR.</em>
+
+            <profile-legend
+                profile="vm.profile"
+                type="basic-information"></profile-legend>
+        </uib-tab>
+
+        <uib-tab
+            index="1"
+            heading="About me"
+            ng-class="{'has-error' : vm.aboutMeHasErrors, 'changed' : vm.changed['about-me']}">
+            <profile-privacy-legend></profile-privacy-legend>
+
+            <profile-about-me-form
+                profile="vm.profile"
+                errors="vm.errors"></profile-about-me-form>
+
+            <profile-legend
+                profile="vm.profile"
+                type="about-me"></profile-legend>
+        </uib-tab>
+
+        <uib-tab
+            index="2"
+            heading="Socials"
+            ng-class="{'has-error' : vm.errors['socials'], 'changed' : vm.changed['socials']}">
+            <profile-privacy-legend></profile-privacy-legend>
+
+            <profile-socials-form
+                profile="vm.profile"
+                errors="vm.errors"></profile-socials-form>
+
+            <profile-legend
+                profile="vm.profile"
+                type="socials"></profile-legend>
+        </uib-tab>
+
+        <uib-tab
+            index="3"
+            heading="Experiences"
+            ng-class="{'has-error' : vm.errors['experiences'], 'changed' : vm.changed['experiences']}">
+            <profile-privacy-legend
+                show="vm.profile.experiences.length > 0"></profile-privacy-legend>
+
+            <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.experiences">
+                <li ng-repeat="(key, experience) in vm.profile.experiences track by $index">
+                    <profile-experience-form
+                        profile="vm.profile"
+                        errors="vm.errors"
+                        index="$index"
+                        experience="experience"
+                        key="key"></profile-experience-form>
+                </li>
+            </ul>
+
+            <button
+                class="btn btn-link btn-inline"
+                ng-click="vm.addItem({
+                    property: vm.profile.experiences
+                })">
+                <i class="fas fa-plus fa-left"></i>Add experience
+            </button>
+
+            <profile-legend
+                profile="vm.profile"
+                type="experiences"></profile-legend>
+        </uib-tab>
+
+        <uib-tab
+            index="4"
+            heading="Education"
+            ng-class="{'has-error' : vm.errors['education'], 'changed' : vm.changed['education']}">
+            <profile-privacy-legend
+                show="vm.profile.education.length > 0"></profile-privacy-legend>
+
+            <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.education">
+                <li ng-repeat="(key, education) in vm.profile.education track by $index">
+                    <profile-education-form
+                        profile="vm.profile"
+                        errors="vm.errors"
+                        index="$index"
+                        education="education"
+                        key="key"></profile-education-form>
+                </li>
+            </ul>
+
+            <button
+                class="btn btn-link btn-inline"
+                ng-click="vm.addItem({
+                    property: vm.profile.education
+                })">
+                <i class="fas fa-plus fa-left"></i>Add education
+            </button>
+
+            <profile-legend
+                profile="vm.profile"
+                type="education"></profile-legend>
+        </uib-tab>
+
+        <uib-tab
+            index="5"
+            heading="Certificates"
+            ng-class="{'has-error' : vm.errors['certificates'], 'changed' : vm.changed['certificates']}">
+            <profile-privacy-legend
+                show="vm.profile.certificates.length > 0"></profile-privacy-legend>
+
+            <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.certificates">
+                <li ng-repeat="(key, certificate) in vm.profile.certificates track by $index">
+                    <profile-certificate-form
+                        profile="vm.profile"
+                        errors="vm.errors"
+                        index="$index"
+                        key="key"
+                        certificate="certificate"></profile-certificate-form>
+                </li>
+            </ul>
+
+            <button
+                class="btn btn-link btn-inline"
+                ng-click="vm.addItem({
+                    property: vm.profile.certificates
+                })">
+                <i class="fas fa-plus fa-left"></i>Add certificate
+            </button>
+
+            <profile-legend
+                profile="vm.profile"
+                type="certificates"></profile-legend>
+        </uib-tab>
+
+        <uib-tab
+            index="6"
+            heading="Skills"
+            ng-class="{'has-error' : vm.errors['skillCategories'], 'changed' : vm.changed['skills']}">
+            <profile-privacy-legend
+                show="vm.profile.skillCategories.length > 0"></profile-privacy-legend>
+
+            <ul class="item-listing" ui-sortable ng-model="vm.profile.skillCategories">
+                <li
+                    ng-repeat="category in vm.profile.skillCategories track by $index"
+                    ng-init="categoryIndex = $index">
+                    <profile-skill-category-form
+                        profile="vm.profile"
+                        errors="vm.errors"
+                        key="$index"
+                        category="category"></profile-skill-category-form>
+
+                    <ul class="category-skills" ui-sortable ng-model="category.skills">
+                        <li
+                            ng-if="category.skills"
+                            ng-repeat="skill in category.skills track by $index">
+                            <profile-skill-form
+                                profile="vm.profile"
+                                errors="vm.errors"
+                                key="$index"
+                                category-key="categoryIndex"
+                                skill="skill"></profile-skill-form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <button
+                class="btn btn-link btn-inline"
+                ng-click="vm.addItem({
+                    property: vm.profile.skillCategories,
+                    item: {skills: []}
+                })">
+                <i class="fas fa-plus fa-left"></i>Add category
+            </button>
+
+            <profile-legend
+                profile="vm.profile"
+                type="skills"></profile-legend>
+        </uib-tab>
+
+        <uib-tab
+            index="7"
+            heading="Public website only"
+            ng-class="{
+                'changed' : vm.changed['public-website']
+            }">
+            <label>Publications</label>
+            <ul class="iit-website-options">
+                <li>Show <strong>"Favorite Publications"</strong> section:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.publicWebsite.favoritePublications">
+                        <span></span>
+                    </label>
+                </li>
+                <li>Show <strong>"All Publications"</strong> section:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.publicWebsite.allPublications">
+                        <span></span>
+                    </label>
+                </li>
+                <li>
+                    Show <strong>"Dissemination Talks"</strong> section:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.publicWebsite.disseminationTalks">
+                        <span></span>
+                    </label>
+                </li>
+                <li>
+                    Show <strong>"Scientific Talks"</strong> section:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.publicWebsite.scientificTalks">
+                        <span></span>
+                    </label>
+                </li>
+                <li>
+                    Show <strong>"Oral Presentations"</strong> section:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.publicWebsite.oralPresentations">
+                        <span></span>
+                    </label>
+                </li>
+            </ul>
+
+            <br>
+
+            <label>Accomplishments</label>
+            <ul class="iit-website-options">
+                <li>Show <strong>"Award/Achievement"</strong> section:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.publicWebsite.awardAchievement">
+                        <span></span>
+                    </label>
+                </li>
+                <li>Show <strong>"Organized Event"</strong> section:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.publicWebsite.organizedEvent">
+                        <span></span>
+                    </label>
+                </li>
+                <li>Show <strong>"Editorship"</strong> section:
+                    <label class="form-checkbox inline-block">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.profile.publicWebsite.editorship">
+                        <span></span>
+                    </label>
+                </li>
+            </ul>
+        </uib-tab>
+
+        <uib-tab
+            index="8"
+            heading="Export only"
+            ng-class="{
+                    'changed' : vm.changed['export']
+                }">
+            <p>You can overwrite some sections that will be used only during exporting your profile to PDF or DOCX.</p>
+            <label>Basic information</label>
+            <textarea ng-model="vm.profile.export.basicInformation" class="form-control" cols="30" rows="5"></textarea>
+        </uib-tab>
+    </uib-tabset>
+
+    <ul class="form-actions">
+        <li>
+            <button class="btn btn-primary" ng-click="vm.save(true)">
+                <i class="fas fa-save fa-left"></i>Save & close
+            </button>
+        </li>
+        <li>
+            <button class="btn btn-outline-secondary" ng-click="vm.save()">
+                <i class="fas fa-save fa-left"></i>Save
+            </button>
+        </li>
+        <li>
+            <scientilla-button
+                type="cancel"
+                click="vm.cancel()">Close</scientilla-button>
+        </li>
+    </ul>
+</div>

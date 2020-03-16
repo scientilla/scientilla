@@ -1,0 +1,43 @@
+<ng-container ng-repeat="item in vm.basicInformation track by $index">
+    <ng-container ng-if="item.type === 'array' && item.items && item.items.length > 0">
+        <label>{{ item.title }}</label>
+        <ul
+            class="enable-listing"
+            ng-repeat="(key, element) in item.items track by $index">
+            <li>
+                <div class="form-group">
+                    <div class="form-control disabled">
+                        {{ element.value }}
+                    </div>
+                </div>
+            </li>
+            <li>
+                <scientilla-privacy-selector
+                    context-object="element.context"
+                    profile="vm.profile"
+                    model="element.privacy"
+                    errors="element.errors.privacy"></scientilla-privacy-selector>
+            </li>
+        </ul>
+    </ng-container>
+
+    <ng-container ng-if="item.type === undefined">
+        <ul class="enable-listing">
+            <li>
+                <div class="form-group">
+                    <label>{{ item.label }}</label>
+                    <div class="form-control disabled">
+                        {{ item.value }}
+                    </div>
+                </div>
+            </li>
+            <li>
+                <scientilla-privacy-selector
+                    context-object="item.model"
+                    profile="vm.profile"
+                    model="vm.profile[item.model].privacy"
+                    errors="vm.profile[item.model].errors.privacy"></scientilla-privacy-selector>
+            </li>
+        </ul>
+    </ng-container>
+</ng-container>

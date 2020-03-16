@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <ul class="top-toolbar-listing">
                 <li>
-                     <a href="#/" class="logo-link">
+                     <a href="#/dashboard" class="logo-link">
                         <img class="logo" src="/images/scientilla-logo-white-40.png">
                     </a>
 
@@ -74,8 +74,8 @@
                                 Login
                             </a>
                         </li>
-                        <li>
-                            <div uib-dropdown ng-if="vm.isLogged" class="dropdown">
+                        <li ng-if="vm.isLogged">
+                            <div uib-dropdown class="dropdown">
                                 <button
                                     ng-if="vm.showWizardVisible() && !vm.user.isViewOnly()"
                                     class="btn btn-link"
@@ -103,13 +103,32 @@
                             </div>
                         </li>
 
-                        <li ng-if="vm.isLogged">
-                            <button
-                                class="btn btn-link"
-                                ng-click="vm.editProfile()"
-                                ng-if="!vm.user.isViewOnly()">
-                                <i class="fas fa-cogs"></i>
-                            </button>
+                        <li ng-if="vm.isLogged && !vm.user.isViewOnly()">
+                            <div uib-dropdown class="dropdown">
+                                <button
+                                    class="btn btn-link"
+                                    uib-dropdown-toggle>
+                                    <i class="fas fa-user-edit" aria-hidden="true"></i>
+                                </button>
+                                <ul
+                                    uib-dropdown-menu
+                                    class="dropdown-menu dropdown-menu-right">
+                                    <li>
+                                        <button
+                                            class="dropdown-item"
+                                            ng-click="vm.editUserProfile()">
+                                            My profile
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button
+                                            class="dropdown-item"
+                                            ng-click="vm.editUserSettings()">
+                                            Settings
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
                         </li>
 
                         <li ng-if="vm.isLogged">

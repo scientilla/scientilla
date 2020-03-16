@@ -4,6 +4,5 @@
             .controller('AppController', appController);
 
     function appController() {
-        
     }
 })();

@@ -1,7 +1,59 @@
 <scientilla-backend-layout>
     <h1>Verified documents</h1>
-    <scientilla-documents-list
-        category="vm.documentCategories.VERIFIED"
-        research-entity="vm.researchEntity"
-        section="vm.documentListSections.VERIFIED"></scientilla-documents-list>
+
+    <scientilla-filter
+        category="verified-document"
+        on-filter="vm.onFilter"
+        elements="vm.documents"
+        empty-list-message="No documents found">
+
+        <scientilla-multicheck>
+            <buttons>
+                <scientilla-multicheck-button
+                    subject="Export as CSV"
+                    on-click="vm.exportCsvDocuments">
+                    <i class="fas fa-download fa-left"></i>Export as CSV
+                </scientilla-multicheck-button>
+                <scientilla-multicheck-button
+                    subject="Export as BibTeX"
+                    on-click="vm.exportBibtexDocuments">
+                    <i class="fas fa-download fa-left"></i>Export as BibTeX
+                </scientilla-multicheck-button>
+            </buttons>
+            <item-list>
+                <scientilla-checkable ng-repeat="d in vm.documents" item="d" class="scientilla-checkable">
+                    <scientilla-document
+                        document="d"
+                        section="vm.documentListSections.VERIFIED"
+                        class="document-container"></scientilla-document>
+                    <div class="document-row-actions" ng-if="vm.editable">
+                        <button
+                            class="btn btn-primary"
+                            ng-click="vm.unverifyDocument(d)"
+                            ng-disabled="d.isUnverifying()"
+                            type="button"
+                            uib-tooltip="Unlink the document from your profile"
+                            tooltip-placement="top"
+                            tooltip-class="text-left"
+                            ng-if="!d.isComparable">
+                            <i class="fas fa-times fa-left"></i>
+                            Unverify
+                        </button>
+                        <button
+                            class="btn btn-warning"
+                            ng-click="vm.compareDocuments(d, d.getComparisonDuplicates(), vm.category)"
+                            ng-disabled="!d.isValid()"
+                            type="button"
+                            uib-tooltip="Open the comparison form"
+                            tooltip-placement="top"
+                            tooltip-class="text-left"
+                            ng-if="d.isComparable">
+                            <i class="fas fa-exchange-alt fa-left"></i>Compare
+                        </button>
+                    </div>
+                </scientilla-checkable>
+            </item-list>
+        </scientilla-multicheck>
+
+    </scientilla-filter>
 </scientilla-backend-layout>

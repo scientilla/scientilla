@@ -22,13 +22,26 @@
         'researchEntityService',
         'EventsService',
         'documentListSections',
-        'AuthService'
+        'AuthService',
+        '$element',
+        '$rootScope'
     ];
 
-    function scientillaDocumentsList(context, researchEntityService, EventsService, documentListSections, AuthService) {
+    function scientillaDocumentsList(
+        context,
+        researchEntityService,
+        EventsService,
+        documentListSections,
+        AuthService,
+        $element,
+        $rootScope
+    ) {
         const vm = this;
 
         const DocumentsService = context.getDocumentService();
+
+        vm.name = 'documents-list';
+        vm.shouldBeReloaded = true;
 
         vm.documents = [];
 
@@ -41,7 +54,22 @@
 
         let query = {};
 
-        vm.$onInit = function () {
+        vm.$onInit = () => {
+            const registerTab = requireParentMethod($element, 'registerTab');
+            registerTab(vm);
+        };
+
+        vm.$onDestroy = () => {
+            const unregisterTab = requireParentMethod($element, 'unregisterTab');
+            unregisterTab(vm);
+
+            EventsService.unsubscribeAll(vm);
+        };
+
+        vm.reload = function () {
+
+            EventsService.unsubscribeAll(vm);
+
             vm.editable = vm.section === documentListSections.VERIFIED && !AuthService.user.isViewOnly();
 
             EventsService.subscribeAll(vm, [
@@ -53,10 +81,6 @@
                 EventsService.DOCUMENT_AUTORSHIP_FAVORITE_UPDATED,
                 EventsService.DOCUMENT_COMPARE
             ], updateList);
-        };
-
-        vm.$onDestroy = function () {
-            EventsService.unsubscribeAll(vm);
         };
 
         function updateList() {

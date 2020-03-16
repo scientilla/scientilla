@@ -38,7 +38,7 @@
         function setupUserAccount(userId) {
             if (!service.isAvailable && !service.isAdmin)
                 return;
-            return UsersService.getProfile(userId)
+            return UsersService.getUserSettings(userId)
                 .then(function (user) {
                     service.user = user;
                     service.userId = user.id;

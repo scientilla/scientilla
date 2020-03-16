@@ -32,12 +32,19 @@
         vm.isRegisterEnabled = false;
         vm.changeContextToGroup = changeContextToGroup;
         vm.changeContextToUser = changeContextToUser;
-        vm.editProfile = editProfile;
+        vm.editUserProfile = editUserProfile;
+        vm.editUserSettings = editUserSettings;
         vm.showWizardVisible = showWizardVisible;
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
 
         vm.$onInit = function () {
+
+            EventsService.subscribeAll(vm, [
+                EventsService.USER_PROFILE_CHANGED,
+            ], () => {
+                AuthService.setupUserAccount(vm.user.id);
+            });
 
             EventsService.subscribeAll(vm, [
                 EventsService.AUTH_LOGIN,
@@ -65,26 +72,24 @@
         function changeContextToGroup(group) {
             return GroupsService.getGroup(group.id)
                 .then(group => context.setSubResearchEntity(group))
-                .then(() => redirectToHomepage());
+                .then(() => {
+                    path.goTo('/' + group.slug + '/dashboard');
+                });
         }
 
         function changeContextToUser(user) {
-            return UsersService.getProfile(user.id)
+            return UsersService.getUser(user.id)
                 .then(user => context.setSubResearchEntity(user))
-                .then(() => redirectToHomepage());
+                .then(() => {
+                    path.goTo('/dashboard');
+                });
         }
 
-        function redirectToHomepage() {
-            //TODO: should become dynamic
-            const researchEntityHompeage = '/';
-            path.goTo(researchEntityHompeage);
-        }
-
-        function editProfile() {
+        function editUserSettings() {
             let openForm;
             let researchEntityService;
             if (vm.subResearchEntity.getType() === 'user') {
-                openForm = ModalService.openScientillaUserForm;
+                openForm = ModalService.openScientillaUserForm(vm.user, true);
                 researchEntityService = UsersService;
             }
             else {
@@ -93,18 +98,22 @@
             }
 
             researchEntityService
-                .getProfile(vm.subResearchEntity.id)
+                .getUserSettings(vm.subResearchEntity.id)
                 .then(openForm)
                 .then(function (status) {
                     if (status !== 1)
                         return vm.subResearchEntity;
-                    return researchEntityService.getProfile(vm.subResearchEntity.id);
+                    return researchEntityService.getUserSettings(vm.subResearchEntity.id);
                 })
                 .then(function (subResearchEntity) {
                     vm.subResearchEntity = subResearchEntity;
                 });
 
             document.body.classList.remove('mobile-menu-is-open');
+        }
+
+        function editUserProfile() {
+            ModalService.openProfileForm();
         }
 
         function showWizardVisible() {

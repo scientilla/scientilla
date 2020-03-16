@@ -12,11 +12,15 @@
     controller.$inject = [
         'Restangular',
         '$scope',
-        '$timeout'
+        '$timeout',
+        '$element'
     ];
 
-    function controller(Restangular, $scope, $timeout) {
+    function controller(Restangular, $scope, $timeout, $element) {
         const vm = this;
+
+        vm.name = 'logViewer';
+        vm.shouldBeReloaded = true;
 
         vm.refreshingTasks = false;
         vm.refreshingLogs = false;
@@ -26,22 +30,19 @@
         vm.refreshLogs = refreshLogs;
 
         vm.$onInit = function () {
-            getTasks();
+            const registerTab = requireParentMethod($element, 'registerTab');
+            registerTab(vm);
 
             deregisterers.push($scope.$watch('vm.task', taskHasChanged));
+            deregisterers.push($scope.$watch('vm.date', getLogs));
         };
 
         vm.$onDestroy = function () {
+            const unregisterTab = requireParentMethod($element, 'unregisterTab');
+            unregisterTab(vm);
+
             deregisterers.forEach(d => d());
         };
-
-        $scope.$watch('vm.task', () => {
-            getLogs();
-        });
-
-        $scope.$watch('vm.date', () => {
-            getLogs();
-        });
 
         $scope.parseDate = (date) => {
             const year = date.substring(0, 4);
@@ -50,15 +51,10 @@
             return day + '/' + month + '/' + year;
         };
 
-        $scope.$on('tab-selected', (evt, args) => {
-            const name = args.name;
-            if (name === 'admin-log-viewer') {
-                getLogs();
-            }
-        });
-
         function taskHasChanged() {
             vm.date = !_.isEmpty(vm.task) ? vm.task.dates[0] : '';
+
+            getLogs();
         }
 
         /* jshint ignore:start */
@@ -97,6 +93,11 @@
             vm.refreshingLogs = true;
             getLogs();
         }
+
+        vm.reload = async () => {
+            await getTasks();
+            await getLogs();
+        };
 
         /* jshint ignore:end */
     }

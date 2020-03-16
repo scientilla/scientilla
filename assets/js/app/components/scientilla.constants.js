@@ -196,14 +196,14 @@
             matchRule: 'contains',
             type: 'field'
         },
-        maxYear: {
+        minYear: {
             inputType: 'year',
             label: 'Year from',
             matchColumn: 'year',
             matchRule: '>=',
             type: 'field'
         },
-        minYear: {
+        maxYear: {
             inputType: 'year',
             label: 'Year to',
             matchColumn: 'year',
@@ -343,6 +343,8 @@
         DOCUMENT: 'document'
     };
 
+    const pathProfileImages = '/profile/images';
+
     angular.module('app')
         .constant('pageSize', 50)
         .constant('userConstants', userConstants)
@@ -359,5 +361,6 @@
         .constant('documentListSections', documentListSections)
         .constant('documentCategories', documentCategories)
         .constant('documentActions', documentActions)
-        .constant('researchItemTypes', researchItemTypes);
+        .constant('researchItemTypes', researchItemTypes)
+        .constant('pathProfileImages', pathProfileImages);
 })();

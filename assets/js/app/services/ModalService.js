@@ -140,21 +140,43 @@
                 {size: 'lg'});
         };
 
-        service.openScientillaUserForm = function (user) {
+        service.openScientillaUserForm = function (user, settings = false) {
 
             const scopeVars = {
-                user: user
+                user: user,
+                settings: settings
             };
 
             return openModal(
                 `<scientilla-user-form
                     user="vm.user"
+                    settings="vm.settings"
                     on-failure="vm.onFailure"
                     on-submit="vm.onSubmit"
                     check-and-close="vm.checkAndClose"
                 ></scientilla-user-form>`,
                 scopeVars,
                 {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+        };
+
+        service.openProfileForm = function () {
+
+            const scopeVars = {
+                profile: {}
+            };
+
+            return openModal(
+                `<profile-form
+                    profile="vm.profile"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"></profile-form>`,
+                scopeVars,
+                {
+                    size: 'md',
                     backdrop: 'static',
                     keyboard: false
                 });

@@ -13,7 +13,37 @@
                 controllerAs: 'vm',
             })
             .when("/users/:id", {
-                template: params => `<scientilla-user-details user-id="${params.id}"></scientilla-user-details>`
+                redirectTo: '/users/:id/profile'
+            })
+            .when("/users/:id/profile", {
+                template: params => `<scientilla-user-details
+                    user-id="${params.id}"
+                    active-tab="profile"></scientilla-user-details>`
+            })
+            .when("/users/:id/groups", {
+                template: params => `<scientilla-user-details
+                    user-id="${params.id}"
+                    active-tab="groups"></scientilla-user-details>`
+            })
+            .when("/users/:id/documents", {
+                template: params => `<scientilla-user-details
+                    user-id="${params.id}"
+                    active-tab="documents"></scientilla-user-details>`
+            })
+            .when("/users/:id/accomplishments", {
+                template: params => `<scientilla-user-details
+                    user-id="${params.id}"
+                    active-tab="accomplishments"></scientilla-user-details>`
+            })
+            .when("/users/:id/documents-overview", {
+                template: params => `<scientilla-user-details
+                    user-id="${params.id}"
+                    active-tab="documents-overview"></scientilla-user-details>`
+            })
+            .when("/users/:id/bibliometric-charts", {
+                template: params => `<scientilla-user-details
+                    user-id="${params.id}"
+                    active-tab="bibliometric-charts"></scientilla-user-details>`
             });
     }
 

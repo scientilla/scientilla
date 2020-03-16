@@ -33,14 +33,14 @@
                 matchRule: 'contains',
                 type: 'field'
             },
-            maxYear: {
+            minYear: {
                 inputType: 'year',
                 label: 'Year from',
                 matchColumn: 'year',
                 matchRule: '>=',
                 type: 'field'
             },
-            minYear: {
+            maxYear: {
                 inputType: 'year',
                 label: 'Year to',
                 matchColumn: 'year',
@@ -59,6 +59,7 @@
         const formStructures = {
             accomplishment: accomplishmentFormStructure,
             'accomplishment-suggested': accomplishmentFormStructure,
+            'verified-accomplishment': accomplishmentFormStructure,
             group: {
                 name: {
                     inputType: 'text',
@@ -131,7 +132,24 @@
                                 label: 'Show discarded accomplishments',
                                 defaultValue: false,
                                 matchColumn: 'discarded',
-                                type: 'action'
+                                type: 'action',
+                                valueType: 'boolean'
+                            }
+                        });
+                    break;
+                case 'verified-accomplishment':
+                    formStructures[constant].accomplishmentType.values = await getAccomplishmentTypeSelect();
+
+                    structure = Object.assign({},
+                        formStructures[constant],
+                        {
+                            favorites: {
+                                inputType: 'checkbox',
+                                label: 'Show only favorite accomplishments',
+                                defaultValue: false,
+                                matchColumn: 'favorites',
+                                type: 'action',
+                                valueType: 'boolean'
                             }
                         });
                     break;
@@ -150,12 +168,28 @@
                     structure = Object.assign({},
                         documentSearchForm,
                         {
-                            rejected: {
+                            discarded: {
                                 inputType: 'checkbox',
                                 label: 'Show discarded documents',
                                 defaultValue: false,
                                 matchColumn: 'discarded',
-                                type: 'action'
+                                type: 'action',
+                                valueType: 'boolean'
+                            }
+                        }
+                    );
+                    break;
+                case 'verified-document':
+                    structure = Object.assign({},
+                        documentSearchForm,
+                        {
+                            favorites: {
+                                inputType: 'checkbox',
+                                label: 'Show only favorite documents',
+                                defaultValue: false,
+                                matchColumn: 'favorites',
+                                type: 'action',
+                                valueType: 'boolean'
                             }
                         }
                     );

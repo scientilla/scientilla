@@ -33,6 +33,11 @@
         let dateObjDeregisterer, modelDeregisterer;
 
         vm.$onInit = function () {
+            // Set the dateObj when we specified it inside vm.model
+            if (typeof vm.model !== 'undefined') {
+                vm.dateObj = new Date(parseInt(vm.model), 1, 1);
+            }
+
             dateObjDeregisterer = $scope.$watch('vm.dateObj', dateChanged);
             modelDeregisterer = $scope.$watch('vm.model', modelChanged);
         };

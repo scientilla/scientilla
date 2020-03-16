@@ -1,0 +1,169 @@
+<ul class="enable-listing">
+    <li>
+        <ul class="certificate-field-listing">
+            <li>
+                <div
+                    class="form-group"
+                    ng-class="{'has-error': vm.profile.certificates[vm.key].errors.title}">
+                    <label for="certificates[{{ vm.key }}]-title">Title</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="certificates[{{ vm.key }}]-title"
+                        placeholder="Title"
+                        ng-model="vm.certificate.title"
+                        ng-class="{
+                            'is-invalid': vm.profile.certificates[vm.key].errors.title,
+                            'is-invisible' : vm.profile.certificates[vm.key].privacy === 'invisible'
+                        }">
+                    <scientilla-field-errors
+                        errors="vm.profile.certificates[vm.key].errors.title"></scientilla-field-errors>
+                </div>
+                <div
+                    class="form-group"
+                    ng-class="{'has-error': vm.profile.certificates[vm.key].errors.description}">
+                    <label for="certificates[{{ vm.key }}]-description">
+                        Description
+                    </label>
+                    <textarea
+                        name="certificates[{{ vm.key }}]-description"
+                        id="certificates[{{ vm.key }}]-description"
+                        cols="30"
+                        rows="10"
+                        class="form-control"
+                        ng-model="vm.certificate.description"
+                        ng-class="{
+                            'is-invalid': vm.profile.certificates[vm.key].errors.description,
+                            'is-invisible' : vm.profile.certificates[vm.key].privacy === 'invisible'
+                        }"></textarea>
+                    <scientilla-field-errors
+                        errors="vm.profile.certificates[vm.key].errors.description"></scientilla-field-errors>
+                </div>
+                <div
+                    class="form-group"
+                    ng-class="{'has-error': vm.profile.certificates[vm.key].errors.date}">
+                    <label for="certificates[{{ vm.key }}]-date">Date</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="certificates[{{ vm.key }}]-date"
+                        placeholder="Date"
+                        transform-date
+                        ng-model="vm.certificate.date"
+                        ng-model-options="{allowInvalid: true}"
+                        uib-datepicker-popup="dd/MM/yyyy"
+                        show-button-bar="false"
+                        datepicker-options="vm.datePickerOptions"
+                        is-open="vm.dateCertificateDatePopups[vm.key]"
+                        ng-click="vm.dateCertificateDatePopups[vm.key] = true"
+                        close-text="Close"
+                        ng-model="vm.certificate.date"
+                        ng-class="{
+                            'is-invalid': vm.profile.certificates[vm.key].errors.date,
+                            'is-invisible' : vm.profile.certificates[vm.key].privacy === 'invisible'
+                        }">
+                    <scientilla-field-errors
+                        errors="vm.profile.certificates[vm.key].errors.date"></scientilla-field-errors>
+                </div>
+            </li>
+            <li class="action-column desktop-actions">
+                <div class="form-group">
+                    <div class="btn btn-outline-secondary">
+                        <i class="fas fa-arrows-alt"></i>
+                    </div>
+                </div>
+            </li>
+            <li class="action-column desktop-actions">
+                <div class="form-group">
+                    <button
+                        class="btn btn-outline-secondary"
+                        ng-click="vm.removeItem({
+                            property: vm.profile.certificates,
+                            index: vm.key
+                        })">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </li>
+            <li class="action-column desktop-actions">
+                <div
+                    class="checkbox-container"
+                    uib-tooltip-html="vm.getTooltipText()"
+                    tooltip-placement="top-right"
+                    tooltip-class="tooltip-favorite">
+                    <label
+                        for="certificates[{{ vm.key }}]-favorite-desktop"
+                        class="form-favorite">
+                        <input
+                            type="checkbox"
+                            id="certificates[{{ vm.key }}]-favorite-desktop"
+                            ng-model="vm.certificate.favorite">
+                        <span></span>
+                    </label>
+                </div>
+            </li>
+            <li class="mobile-actions has-4-actions">
+                <ul>
+                    <li>
+                        <div class="form-group">
+                            <div
+                                class="btn btn-outline-secondary"
+                                ng-disabled="vm.index === 0"
+                                ng-class="{'disabled': vm.index === 0}"
+                                ng-click="vm.moveUp(vm.key, vm.certificate)" >
+                                <i class="fas fa-arrow-up fa-left"></i>Move up
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group">
+                            <div
+                                class="btn btn-outline-secondary"
+                                ng-class="{'disabled': vm.index === vm.profile.certificates.length -1}"
+                                ng-disabled="vm.index === vm.profile.certificates.length -1"
+                                ng-click="vm.moveDown(vm.key, vm.certificate)">
+                                <i class="fas fa-arrow-down fa-left"></i>Move down
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group">
+                            <button
+                                class="btn btn-outline-secondary"
+                                ng-click="vm.removeItem({
+                                    property: vm.profile.certificates,
+                                    index: vm.key
+                                })">
+                                <i class="fas fa-trash fa-left"></i>Delete
+                            </button>
+                        </div>
+                    </li>
+                    <li>
+                        <div
+                            class="checkbox-container"
+                            uib-tooltip-html="vm.getTooltipText()"
+                            tooltip-placement="top-right"
+                            tooltip-class="tooltip-favorite">
+                            <label
+                                for="certificates[{{ vm.key }}]-favorite-mobile"
+                                class="form-favorite">
+                                <input
+                                    type="checkbox"
+                                    id="certificates[{{ vm.key }}]-favorite-mobile"
+                                    ng-model="vm.certificate.favorite">
+                                <span class="fa-left"></span>Favorite
+                            </label>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <scientilla-privacy-selector
+            context-object="vm.context"
+            profile="vm.profile"
+            errors="vm.certificate.errors.privacy"
+            model="vm.certificate.privacy"></scientilla-privacy-selector>
+    </li>
+</ul>

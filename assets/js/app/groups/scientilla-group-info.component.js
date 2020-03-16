@@ -10,13 +10,26 @@
             }
         });
 
-    controller.$inject = [];
+    controller.$inject = ['$element'];
 
-    function controller() {
+    function controller($element) {
         const vm = this;
 
+        vm.name = 'group-info';
+        vm.shouldBeReloaded = true;
+
+        vm.$onInit = () => {
+            const registerTab = requireParentMethod($element, 'registerTab');
+            registerTab(vm);
+        };
+
+        vm.$onDestroy = () => {
+            const unregisterTab = requireParentMethod($element, 'unregisterTab');
+            unregisterTab(vm);
+        };
+
         /* jshint ignore:start */
-        vm.$onInit = async function () {
+        vm.reload = async function () {
             vm.researchDomain = vm.group.getResearchDomain();
             vm.interactions = vm.group.getInteractions();
             await initChart();

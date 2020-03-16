@@ -1,4 +1,6 @@
-<div class="summary-metrics-container">
+<scientilla-loading is-loading="vm.loading"></scientilla-loading>
+
+<div class="summary-metrics-container" ng-if="vm.chartsData">
     <div class="info-button-container">
         <a href="" title="" ng-click="vm.showInfo()" class="btn btn-primary info-button">
             <i class="fas fa-info-circle fa-left"></i>Info

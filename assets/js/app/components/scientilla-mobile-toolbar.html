@@ -77,13 +77,32 @@
         </div>
     </li>
 
-    <li ng-if="vm.isLogged">
-        <button
-            class="btn btn-outline-secondary"
-            ng-click="vm.editProfile()"
-            ng-if="!vm.user.isViewOnly()">
-            <i class="fas fa-cogs"></i>
-        </button>
+    <li ng-if="vm.isLogged && !vm.user.isViewOnly()">
+        <div uib-dropdown class="dropdown">
+            <button
+                class="btn btn-outline-secondary"
+                uib-dropdown-toggle>
+                <i class="fas fa-cogs"></i>
+            </button>
+            <ul
+                uib-dropdown-menu
+                class="dropdown-menu dropdown-menu-right">
+                <li>
+                    <button
+                        class="dropdown-item"
+                        ng-click="vm.editUserProfile()">
+                        My profile
+                    </button>
+                </li>
+                <li>
+                    <button
+                        class="dropdown-item"
+                        ng-click="vm.editUserSettings()">
+                        Settings
+                    </button>
+                </li>
+            </ul>
+        </div>
     </li>
 
     <li ng-if="vm.isLogged">

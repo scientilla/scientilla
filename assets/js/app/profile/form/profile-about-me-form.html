@@ -1,0 +1,276 @@
+<ul class="enable-listing">
+    <li>
+        <div
+            class="form-group"
+            ng-class="{'has-error': vm.profile.image.errors.value}">
+            <label for="image">Image</label>
+            <input
+                type="file"
+                class="form-control"
+                id="image"
+                placeholder="Image"
+                file="vm.profile.image.file"
+                ng-if="!vm.profile.image.value"
+                ng-class="{
+                    'is-invalid': vm.profile.image.errors,
+                    'is-invisible' : vm.profile.image.privacy === 'invisible'
+                }">
+            <div
+                ng-if="vm.profile.image.value"
+                class="image-container">
+                <img ng-src="{{ vm.pathProfileImages }}/{{ vm.profile.image.value }}" alt="" class="img-fluid rounded-circle profile-image">
+                <button class="btn-remove-image" ng-click="vm.profile.image.value = ''"><i class="fas fa-trash"></i></button>
+            </div>
+            <scientilla-field-errors
+                errors="vm.profile.image.errors.value"></scientilla-field-errors>
+        </div>
+    </li>
+    <li>
+        <scientilla-privacy-selector
+            context-string="image"
+            model="vm.profile.image.privacy"
+            errors="vm.profile.image.errors.privacy"
+            profile="vm.profile"></scientilla-privacy-selector>
+    </li>
+</ul>
+
+<label class="label-title">Titles</label>
+<ul class="item-listing title-listing" ui-sortable="vm.options" ng-model="vm.profile.titles">
+    <li ng-repeat="(key, title) in vm.profile.titles track by $index">
+        <ul class="enable-listing no-labels">
+            <li>
+                <ul class="field-listing">
+                    <li>
+                        <div
+                            class="form-group"
+                            ng-class="{'has-error': vm.profile.titles[key].errors.value}">
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Title"
+                                ng-model="title.value"
+                                ng-class="{
+                                    'is-invalid': vm.profile.titles[key].errors.value,
+                                    'is-invisible' : vm.profile.titles[key].privacy === 'invisible'
+                                }">
+                            <scientilla-field-errors
+                                errors="vm.profile.titles[key].errors.value"></scientilla-field-errors>
+                        </div>
+                    </li>
+                    <li class="desktop-actions">
+                        <div class="form-group">
+                            <div class="btn btn-outline-secondary">
+                                <i class="fas fa-arrows-alt"></i>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="desktop-actions">
+                        <div class="form-group">
+                            <button
+                                class="btn btn-outline-secondary"
+                                ng-click="vm.removeItem({
+                                    property: vm.profile.titles,
+                                    index: key
+                                })">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </li>
+                    <li class="mobile-actions">
+                        <ul>
+                            <li>
+                                <div class="form-group">
+                                    <div
+                                        class="btn btn-outline-secondary"
+                                        ng-class="{'disabled': $index === 0}"
+                                        ng-disabled="$index === 0"
+                                        ng-click="vm.moveUpTitle(key, title)" >
+                                        <i class="fas fa-arrow-up fa-left"></i>Move up
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="form-group">
+                                    <div
+                                        class="btn btn-outline-secondary"
+                                        ng-class="{'disabled': $index === vm.profile.titles.length -1}"
+                                        ng-disabled="$index === vm.profile.titles.length -1"
+                                        ng-click="vm.moveDownTitle(key, title)">
+                                        <i class="fas fa-arrow-down fa-left"></i>Move down
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="form-group">
+                                    <button
+                                        class="btn btn-outline-secondary"
+                                        ng-click="vm.removeItem({
+                                            property: vm.profile.titles,
+                                            index: key
+                                        })">
+                                        <i class="fas fa-trash fa-left"></i>Delete
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <scientilla-privacy-selector
+                    context-string="titles[{{ key }}]"
+                    model="vm.profile.titles[key].privacy"
+                    errors="vm.profile.titles[key].errors.privacy"
+                    profile="vm.profile"></scientilla-privacy-selector>
+            </li>
+        </ul>
+    </li>
+
+    <li>
+        <button
+            class="btn btn-link btn-inline"
+            ng-click="vm.addItem({
+                property: vm.profile.titles
+            })">
+            <i class="fas fa-plus fa-left"></i>Add title
+        </button>
+    </li>
+</ul>
+
+<ul class="enable-listing">
+    <li>
+        <div
+            class="form-group"
+            ng-class="{'has-error': vm.profile.description.errors.value}">
+            <label for="description">Description</label>
+            <textarea
+                name="description"
+                id="description"
+                cols="30"
+                rows="10"
+                class="form-control"
+                ng-model="vm.profile.description.value"
+                ng-class="{
+                    'is-invalid': vm.profile.description.errors.value,
+                    'is-invisible' : vm.profile.description.privacy === 'invisible'
+                }"></textarea>
+            <scientilla-field-errors
+                errors="vm.profile.description.errors.value"></scientilla-field-errors>
+        </div>
+    </li>
+    <li>
+        <scientilla-privacy-selector
+            context-string="description"
+            profile="vm.profile"
+            errors="vm.profile.description.errors.privacy"
+            model="vm.profile.description.privacy"></scientilla-privacy-selector>
+    </li>
+</ul>
+
+<ul class="enable-listing">
+    <li>
+        <div
+            class="form-group"
+            ng-class="{'has-error': vm.profile.role.errors.value}">
+            <label for="role">Role</label>
+            <input
+                type="text"
+                class="form-control"
+                id="role"
+                placeholder="Role"
+                ng-model="vm.profile.role.value"
+                ng-class="{
+                    'is-invalid': vm.profile.role.errors.value,
+                    'is-invisible' : vm.profile.role.privacy === 'invisible'
+                }">
+            <scientilla-field-errors
+                errors="vm.profile.role.errors.value"></scientilla-field-errors>
+        </div>
+    </li>
+    <li>
+        <scientilla-privacy-selector
+            context-string="role"
+            profile="vm.profile"
+            errors="vm.profile.role.errors.privacy"
+            model="vm.profile.role.privacy"></scientilla-privacy-selector>
+    </li>
+</ul>
+
+<ul class="enable-listing">
+    <li>
+        <div
+            class="form-group"
+            ng-class="{'has-error': vm.profile.website.errors.value}">
+            <label for="website">Website</label>
+            <input
+                type="text"
+                class="form-control"
+                id="website"
+                placeholder="Website"
+                ng-model="vm.profile.website.value"
+                ng-class="{
+                    'is-invalid': vm.profile.website.errors.value,
+                    'is-invisible' : vm.profile.website.privacy === 'invisible'
+                }">
+            <scientilla-field-errors
+                errors="vm.profile.website.errors.value"></scientilla-field-errors>
+        </div>
+    </li>
+    <li>
+        <scientilla-privacy-selector
+            context-string="website"
+            profile="vm.profile"
+            errors="vm.profile.website.errors.privacy"
+            model="vm.profile.website.privacy"></scientilla-privacy-selector>
+    </li>
+</ul>
+
+<ul class="enable-listing">
+    <li>
+        <div
+            class="form-group"
+            ng-class="{'has-error': vm.profile.address.errors.value}">
+            <label for="address">Address</label>
+            <input
+                type="text"
+                class="form-control"
+                id="address"
+                placeholder="Address"
+                ng-model="vm.profile.address.value"
+                ng-class="{
+                    'is-invalid': vm.profile.address.errors.value,
+                    'is-invisible' : vm.profile.address.privacy === 'invisible'
+                }">
+            <scientilla-field-errors
+                errors="vm.profile.address.errors.value"></scientilla-field-errors>
+        </div>
+    </li>
+    <li>
+        <scientilla-privacy-selector
+            context-string="address"
+            profile="vm.profile"
+            errors="vm.profile.address.errors.privacy"
+            model="vm.profile.address.privacy"></scientilla-privacy-selector>
+    </li>
+</ul>
+
+<label class="label-title">Interests</label>
+<ul class="item-listing title-listing" ui-sortable ng-model="vm.profile.interests">
+    <li ng-repeat="(key, interest) in vm.profile.interests track by $index">
+        <profile-interest-form
+            profile="vm.profile"
+            index="$index"
+            interest="interest"
+            key="key"></profile-interest-form>
+    </li>
+
+    <li>
+        <button
+            class="btn btn-link btn-inline"
+            ng-click="vm.addItem({
+                property: vm.profile.interests
+            })">
+            <i class="fas fa-plus fa-left"></i>Add interest
+        </button>
+    </li>
+</ul>

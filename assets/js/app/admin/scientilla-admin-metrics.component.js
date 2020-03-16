@@ -13,11 +13,14 @@
         'Restangular',
         'Notification',
         '$timeout',
-        '$scope'
+        '$element'
     ];
 
-    function scientillaAdminMetrics(Restangular, Notification, $timeout, $scope) {
+    function scientillaAdminMetrics(Restangular, Notification, $timeout, $element) {
         const vm = this;
+
+        vm.name = 'metricsImport';
+        vm.shouldBeReloaded = true;
 
         vm.importMetrics = importMetrics;
         vm.assignMetrics = assignMetrics;
@@ -44,20 +47,25 @@
         };
 
         vm.$onInit = function () {
+            const registerTab = requireParentMethod($element, 'registerTab');
+            registerTab(vm);
+        };
+
+        vm.$onDestroy = function () {
+            const unregisterTab = requireParentMethod($element, 'unregisterTab');
+            unregisterTab(vm);
+        };
+
+        vm.reload = () => {
             vm.years = getYears();
             vm.years.unshift('All');
             vm.year = vm.years[0];
-        };
 
-        $scope.$on('tab-selected', (evt, args) => {
-            const name = args.name;
-            if (name === 'admin-metrics') {
-                for (const type in vm.types) {
-                    getLogs(type);
-                    getMetrics(type);
-                }
+            for (const type in vm.types) {
+                getLogs(type);
+                getMetrics(type);
             }
-        });
+        };
 
         function getYears() {
             const years = [];

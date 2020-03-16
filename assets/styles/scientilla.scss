@@ -28,7 +28,6 @@
 @import 'ui/tooltip';
 @import 'ui/tabs';
 @import 'ui/nvd3';
-@import 'ui/sync-container';
 @import 'ui/mobile-menu-button';
 @import 'ui/mobile-toolbar';
 @import 'ui/top-toolbar';
@@ -36,6 +35,8 @@
 @import 'ui/error-messages';
 @import 'ui/colorpicker';
 @import 'ui/ui-notification';
+@import 'ui/profile';
+@import 'ui/edit-profile';
 @import 'ui/log-output';
 
 @import 'components/header';
@@ -57,6 +58,7 @@
 @import 'components/document-search-listing';
 @import 'components/summary-overview';
 @import 'components/summary-metrics';
+@import 'components/loading-container';
 
 @import 'views/login';
 @import 'views/users';
@@ -64,5 +66,6 @@
 @import 'views/admin';
 @import 'views/register';
 @import 'views/installer';
+@import 'views/summary';
 
 @import 'responsive';

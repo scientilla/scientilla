@@ -38,9 +38,9 @@
 
         async function refreshSubResearchEntity() {
             if (subResearchEntity.getType() === 'user')
-                subResearchEntity = await UsersService.getProfile(subResearchEntity.id);
+                subResearchEntity = await UsersService.getUser(subResearchEntity.id);
             else
-                subResearchEntity = await GroupsService.getProfile(subResearchEntity.id);
+                subResearchEntity = await GroupsService.getUser(subResearchEntity.id);
         }
 
         /* jshint ignore:end */

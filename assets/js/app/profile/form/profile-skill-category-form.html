@@ -1,0 +1,107 @@
+<ul class="enable-listing">
+    <li>
+        <ul class="skill-category-field-listing">
+            <li>
+                <div
+                    class="form-group"
+                    ng-class="{'has-error': vm.profile.skillCategories[vm.key].errors.categoryName}">
+                    <label for="skill-category">Category</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="skill-category"
+                        placeholder="Category"
+                        ng-model="vm.category.categoryName"
+                        ng-class="{
+                            'is-invalid': vm.profile.skillCategories[vm.key].errors.categoryName,
+                            'is-invisible' : vm.profile.skillCategories[vm.key].privacy === 'invisible'
+                        }">
+                    <scientilla-field-errors
+                        errors="vm.profile.skillCategories[vm.key].errors.categoryName"></scientilla-field-errors>
+                </div>
+            </li>
+            <li class="action-column desktop-actions">
+                <div class="form-group">
+                    <div class="btn btn-outline-secondary">
+                        <i class="fas fa-arrows-alt"></i>
+                    </div>
+                </div>
+            </li>
+            <li class="action-column desktop-actions">
+                <div class="form-group">
+                    <button
+                        class="btn btn-outline-secondary"
+                        ng-click="vm.removeItem({
+                            property: vm.profile.skillCategories,
+                            index: vm.key
+                        })">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </li>
+            <li class="action-column desktop-actions">
+                <button
+                    class="btn btn-link"
+                    ng-click="vm.addItem({
+                        property: vm.profile.skillCategories[vm.key].skills
+                    })">
+                    <i class="fas fa-plus fa-left"></i>Add skill
+                </button>
+            </li>
+            <li class="mobile-actions has-4-actions">
+                <ul>
+                    <li>
+                        <div class="form-group">
+                            <div
+                                class="btn btn-outline-secondary"
+                                ng-disabled="vm.key === 0"
+                                ng-class="{'disabled': vm.key === 0}"
+                                ng-click="vm.moveUp(vm.key, vm.category)" >
+                                <i class="fas fa-arrow-up fa-left"></i>Move up
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group">
+                            <div
+                                class="btn btn-outline-secondary"
+                                ng-class="{'disabled': vm.key === vm.profile.skillCategories.length -1}"
+                                ng-disabled="vm.key === vm.profile.skillCategories.length -1"
+                                ng-click="vm.moveDown(vm.key, vm.category)">
+                                <i class="fas fa-arrow-down fa-left"></i>Move down
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="form-group">
+                            <button
+                                class="btn btn-outline-secondary"
+                                ng-click="vm.removeItem({
+                                    property: vm.profile.skillCategories,
+                                    index: vm.key
+                                })">
+                                <i class="fas fa-trash fa-left"></i>Delete
+                            </button>
+                        </div>
+                    </li>
+                    <li>
+                        <button
+                            class="btn btn-link"
+                            ng-click="vm.addItem({
+                                property: vm.profile.skillCategories[vm.key].skills
+                            })">
+                            <i class="fas fa-plus fa-left"></i>Add skill
+                        </button>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>
+        <scientilla-privacy-selector
+            context-object="vm.context"
+            profile="vm.profile"
+            errors="vm.category.errors.privacy"
+            model="vm.category.privacy"></scientilla-privacy-selector>
+    </li>
+</ul>

@@ -1,0 +1,9 @@
+<div class="profile-card">
+    <div class="content-container">
+        <h2 class="block-title"><i class="fas fa-bolt title-icon"></i>Skills</h2>
+        <ul class="skill-listing">
+            <li ng-repeat="skill in vm.favoriteSkills track by $index">{{ skill }}</li>
+        </ul>
+    </div>
+    <button class="show-more has-action" ng-click="vm.showSkillsModal()">Show all skills</button>
+</div>

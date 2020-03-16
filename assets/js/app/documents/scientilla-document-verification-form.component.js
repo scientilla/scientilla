@@ -132,7 +132,7 @@
 
                 try {
                     const res = await verify(user, vm.document.id, data, vm.document2id);
-                    const newUser = await UsersService.getProfile(user.id);
+                    const newUser = await UsersService.getUser(user.id);
                     context.setSubResearchEntity(newUser);
                     executeOnSubmit({buttonIndex: 1, data: res});
                 } catch (e) {

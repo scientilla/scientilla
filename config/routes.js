@@ -106,6 +106,10 @@ module.exports.routes = {
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/discarded']: 'ResearchEntity.discard',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/discarded']: 'ResearchEntity.multipleDiscard',
     ['post ' + apiPrfx + '/accomplishments/export']: 'Accomplishment.export',
+    ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-profile']: 'ResearchEntity.getProfile',
+    ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-edit-profile']: 'ResearchEntity.getEditProfile',
+    ['post ' + apiPrfx + '/researchentities/:researchEntityId/save-profile']: 'ResearchEntity.saveProfile',
+    ['post ' + apiPrfx + '/researchentities/:researchEntityId/profile/export']: 'ResearchEntity.exportProfile',
 
 
     //Site API
@@ -117,6 +121,8 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/users/username/:username/favorite-publications']: 'User.getFavoritePublications',
     ['get ' + apiPrfx + '/users/username/:username/oral-presentations']: 'User.getOralPresentations',
     ['get ' + apiPrfx + '/users/username/:username/accomplishments']: 'User.getAccomplishments',
+    ['get ' + apiPrfx + '/users/username/:username/profile']: 'User.getPublicProfile',
+    ['get ' + apiPrfx + '/users/username/:username/profile-image']: 'userData.getProfileImage',
 
     ['get ' + apiPrfx + '/groups/slug/:slug/publications']: 'Group.getPublications',
     ['get ' + apiPrfx + '/groups/slug/:slug/high-impact-publications']: 'Group.getHighImpactPublications',

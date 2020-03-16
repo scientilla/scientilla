@@ -1,0 +1,598 @@
+.profile-block,
+.profile-modal{
+    .skill-listing,
+    .interest-listing{
+        @include normalize-listing;
+        @include clearfix;
+        margin: 0px -.5rem;
+
+        li{
+            display: block;
+            margin: .5rem;
+            padding: .5rem 1rem;
+            float: left;
+            border: 1px solid $gray-300;
+            border-radius: 1.5rem;
+        }
+    }
+
+    .skill-listing{
+        margin-bottom: 2rem;
+    }
+}
+
+.profile-block{
+    display: block;
+
+    .block-title{
+        font-size: 2rem;
+        line-height: 2.4rem;
+    }
+
+    .title-icon{
+        color: $primary-color;
+    }
+
+    .show-more{
+        position: relative;
+        display: inline-block;
+        margin: auto 0px 0px 0px;
+        padding: 0px 15px 0px 0px;
+        background: none;
+        border: 0px;
+        align-self: flex-start;
+
+        &:after{
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            display: block;
+            font-family: $font-awesome;
+            content: '\f054';
+            font-weight: 900;
+            font-style: normal;
+            transition: .2s all;
+        }
+
+        &:hover,
+        &:focus,
+        &:active:focus{
+            &:after{
+                right: 5px;
+            }
+        }
+    }
+
+    .favorite-listing{
+        margin-top: 1rem;
+        margin-bottom: 4rem;
+        padding-left: 15px;
+        list-style-type: disc;
+
+        & > li{
+            margin-bottom: 1rem;
+        }
+
+        &,
+        a{
+            font-size: 1.4rem;
+        }
+    }
+
+    &.basic-info{
+        position: relative;
+
+        .profile-card{
+            text-align: center;
+        }
+
+        .profile-image{
+            margin-bottom: .5rem;
+        }
+
+        .name,
+        .job-title,
+        .position{
+            margin-bottom: .5rem;
+        }
+
+        .research-lines,
+        .facilities,
+        .centers{
+            @include normalize-listing;
+            @include clearfix;
+            margin-bottom: .5rem;
+
+            & > li {
+                display: inline;
+
+                & + li{
+                    &:before{
+                        content: ', ';
+                    }
+
+                    &:last-child{
+                        &:before{
+                            content: ' & ';
+                        }
+                    }
+                }
+            }
+        }
+
+        .titles{
+            @include normalize-listing;
+            @include clearfix;
+            color: $gray-500;
+
+            & > li {
+                display: block;
+                float: left;
+
+                & + li{
+                    &:before{
+                        content: ', ';
+                    }
+
+                    &:last-child{
+                        &:before{
+                            content: ' & ';
+                        }
+                    }
+                }
+            }
+        }
+
+        .card-container{
+            @include normalize-listing;
+
+            .profile-card{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+            }
+
+            &,
+            .main-card,
+            .contact-card{
+                display: block;
+                height: 100%;
+            }
+        }
+
+        .contact-card{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            height: 100%;
+            width: 100%;
+            background: $gray-100;
+            opacity: 0;
+            transition: .2s all;
+        }
+
+        .contact-listing{
+            @include normalize-listing;
+
+            & > li{
+                display: block;
+                margin-bottom: 1rem;
+            }
+
+            .fas,
+            .fab{
+                font-size: 1.5rem;
+            }
+
+            .fas{
+                margin-right: .5rem;
+            }
+        }
+
+        .socials-listing{
+            @include normalize-listing('true');
+            @include clearfix;
+
+            & > li{
+                display: block;
+                float: left;
+                padding: .5rem;
+            }
+
+            a{
+                display: block;
+                line-height: 1;
+            }
+        }
+    }
+
+    &.about{
+        .profile-interests{
+            .block-title{
+                margin-bottom: 1rem;
+            }
+        }
+
+        .profile-about{
+            & + .profile-interests{
+                margin-top: 4rem;
+            }
+        }
+    }
+
+    &.edit{
+        .profile-features{
+            @include normalize-listing;
+            margin-bottom: 2rem;
+            padding-left: 1.5rem;
+            list-style-type: disc;
+
+            & > li{
+                margin-bottom: .5rem;
+            }
+        }
+    }
+
+    &.export{
+        ul{
+            @include normalize-listing;
+
+            & > li{
+                display: block;
+                margin-bottom: 1rem;
+            }
+        }
+
+        .btn{
+            width: 100%;
+        }
+
+        .export-options{
+            margin-bottom: 2rem;
+
+            & > li{
+                margin-bottom: .5rem;
+            }
+        }
+    }
+
+    &.experiences,
+    &.education,
+    &.certificates,
+    &.skills,
+    &.documents,
+    &.accomplishments{
+        .profile-card {
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    &.experiences,
+    &.education,
+    &.certificates{
+        .block-title{
+            margin-top: .5rem;
+        }
+    }
+
+    &.experiences,
+    &.education,
+    &.certificates,
+    &.skills{
+        .title-icon{
+            margin-right: .5rem;
+            font-size: 2rem;
+        }
+    }
+
+    &.documents,
+    &.accomplishments{
+        .amount{
+            font-family: $roboto-slab;
+            font-size: 6rem;
+            line-height: 6rem;
+        }
+
+        .title-icon{
+            margin-left: .5rem;
+            font-size: 2rem;
+        }
+
+        .last-item-container{
+            margin-top: 2rem;
+        }
+    }
+}
+
+.profile-modal{
+    &.experiences {
+        .company-listing {
+            @include normalize-listing;
+
+            & > li {
+                @include clearfix;
+                margin-bottom: 3rem;
+            }
+
+            .company {
+                @include h4;
+            }
+
+            .company-description {
+                display: block;
+                margin-bottom: 1rem;
+                color: $gray-300;
+            }
+        }
+
+        .job-listing {
+            @include normalize-listing;
+
+            & > li {
+                margin-bottom: 2rem;
+            }
+
+            &.multiple {
+                & > li {
+                    position: relative;
+                    padding-left: 2rem;
+
+                    &:before {
+                        position: absolute;
+                        top: 1rem;
+                        left: 0px;
+                        display: block;
+                        width: 6px;
+                        height: 6px;
+                        border-radius: 50%;
+                        background: $gray-300;
+                        content: '';
+                    }
+
+                    &:after {
+                        position: absolute;
+                        top: 3rem;
+                        left: .3rem;
+                        display: block;
+                        height: calc(100% - 2rem);
+                        content: '';
+                        border-left: 1px solid $gray-300;
+                    }
+
+                    &:last-child {
+                        &:after {
+                            display: none;
+                        }
+                    }
+                }
+            }
+
+            .job-title,
+            .period,
+            .location,
+            .description {
+                display: block;
+            }
+
+            .period,
+            .location {
+                color: $gray-300;
+            }
+
+            .job-title {
+                @include h6;
+            }
+        }
+    }
+
+    &.education{
+        .education-listing{
+            @include normalize-listing;
+
+            & > li{
+                @include clearfix;
+                margin-bottom: 3rem;
+            }
+
+            .institute,
+            .title,
+            .period,
+            .location{
+                display: block;
+            }
+
+            .institute{
+                //@include h5;
+            }
+
+            .title{
+                @include h6;
+            }
+
+            .period,
+            .location{
+                color: $gray-300;
+            }
+        }
+    }
+
+    &.certificates{
+        .certificate-listing{
+            @include normalize-listing;
+
+            & > li{
+                margin-bottom: 3rem;
+            }
+
+            .title{
+                @include h6;
+            }
+
+            .description{
+                margin-bottom: 0px;
+            }
+
+            .date{
+                color: $gray-300;
+            }
+        }
+    }
+
+    &.skills{
+        .skill-categories{
+            @include normalize-listing;
+
+            & > li{
+                & + li{
+                    margin-top: 3rem;
+                }
+            }
+        }
+
+        .skill-category{
+            display: block;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid $gray-100;
+            color: $gray-300;
+        }
+    }
+}
+
+.profile-card{
+    display: block;
+    min-height: 100%;
+    padding: 2rem;
+    border: 1px solid $gray-300;
+    border-radius: 0.25rem;
+
+    .block-links{
+        @include normalize-listing;
+        margin-top: auto;
+
+        & > li{
+            margin-top: 1rem;
+        }
+    }
+
+    &.edit-profile{
+        background: $curious-blue;
+        border-color: $curious-blue;
+        color: $white;
+    }
+}
+
+.profile{
+    .profile-blocks{
+        @include normalize-listing;
+
+        & > .profile-block{
+            margin-bottom: 3rem;
+        }
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .profile-block{
+        &.documents,
+        &.accomplishments{
+            .content-container{
+                align-self: center;
+
+                &.last-item-container{
+                    align-self: normal;
+                }
+            }
+        }
+    }
+
+    .profile-card{
+        padding: 4rem;
+    }
+}
+
+@media (pointer:coarse) {
+    .profile-block{
+        &.basic-info {
+            .card-container{
+                border: 1px solid $gray-300;
+                border-radius: 0.25rem;
+
+                .main-card{
+                    height: auto;
+
+                    .profile-card{
+                        border: 0px;
+                    }
+                }
+
+                .contact-card{
+                    position: relative;
+                    top: auto;
+                    left: auto;
+                    height: auto;
+                    opacity: 1;
+                    background: $white;
+
+                    .profile-card{
+                        border: 0px;
+                    }
+                }
+            }
+        }
+
+        &.about{
+            .card-container{
+                .contact-listing{
+                    display: block;
+                }
+            }
+        }
+    }
+}
+
+@media (pointer:fine) {
+    .profile-block{
+        &.basic-info {
+            .card-container {
+                position: relative;
+
+                &:after {
+                    position: absolute;
+                    bottom: 6px;
+                    right: 10px;
+                    font-family: $font-awesome;
+                    font-style: normal;
+                    font-weight: 900;
+                    content: '\f25a';
+                    color: $gray-200;
+                }
+
+                &:hover,
+                &:focus {
+                    .contact-card {
+                        opacity: 1;
+                    }
+
+                    &:after {
+                        color: $white;
+                    }
+                }
+            }
+
+            .contact-card{
+                display: block;
+            }
+        }
+
+        &.about{
+            .card-container {
+                .contact-listing {
+                    display: none;
+                }
+            }
+        }
+    }
+}

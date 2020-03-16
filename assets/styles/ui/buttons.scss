@@ -1,6 +1,22 @@
+@each $color, $value in $theme-colors {
+    .btn-#{$color} {
+        &:focus{
+            color: color-yiq(darken($value, 7.5%));
+        }
+    }
+}
+
 .btn{
-    &:disabled{
+    &:disabled,
+    &.disabled,
+    &[disabled="disabled"]{
         cursor: not-allowed;
+    }
+
+    &.btn-inline{
+        margin: 0px;
+        padding: 0px;
+        border: none;
     }
 }
 
@@ -25,10 +41,12 @@
     margin-top: 2.3rem;
 }
 
-@each $color, $value in $theme-colors {
-    .btn-#{$color} {
-        &:focus{
-            color: color-yiq(darken($value, 7.5%));
-        }
+.btn-outline-primary{
+    background: $white;
+
+    &:hover,
+    &:focus,
+    &:focus:active{
+        border-color: $white;
     }
 }

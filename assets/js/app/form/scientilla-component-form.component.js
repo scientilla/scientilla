@@ -10,24 +10,26 @@
                 structure: '=',
                 cssClass: '@',
                 onSubmit: '&',
+                onReset: '&',
                 errors: '<',
                 onValidate: '&',
-                onChange: '&'
+                onChange: '&',
+                values: '='
             },
             transclude: true,
         });
 
     scientillaComponentForm.$inject = [
-        '$scope'
+        '$scope',
+        '$rootScope'
     ];
 
-    function scientillaComponentForm($scope) {
+    function scientillaComponentForm($scope, $rootScope) {
         const vm = this;
 
         vm.submit = submit;
         vm.reset = reset;
 
-        vm.values = {};
         let onChangeWatchesDeregisters = [];
         let onStructureChangeDeregisterer;
 
@@ -37,7 +39,7 @@
         vm.getObjectSize = getObjectSize;
 
         vm.$onInit = function () {
-            setDefault();
+            setDefaultsForMissingValues();
             clearNil();
 
             onStructureChangeDeregisterer = $scope.$watch('vm.structure', onStructureChange, true);
@@ -50,7 +52,11 @@
 
         function reset() {
             setDefault();
-            submit();
+            clearNil();
+
+            if (_.isFunction(vm.onSubmit())) {
+                vm.onSubmit()(vm.values);
+            }
         }
 
         function clearNil() {
@@ -59,6 +65,20 @@
                         delete vm.values[k];
                 }
             );
+        }
+
+        function setDefaultsForMissingValues() {
+            _.forEach(vm.structure, (struct, key) => {
+                if (_.isNil(vm.values[key])) {
+                    if (struct.inputType === 'select' && !struct.defaultValue) {
+                        vm.values[key] = '?';
+                    } else {
+                        if (struct.defaultValue) {
+                            vm.values[key] = struct.defaultValue;
+                        }
+                    }
+                }
+            });
         }
 
         function setDefault() {
@@ -92,16 +112,22 @@
             vm.values = {};
 
             _.forEach(vm.structure, function (struct, key) {
-                if (!_.isUndefined(oldSearchValues[key]))
+                // Check if old search values has this key
+                if (_.has(oldSearchValues, key)) {
                     vm.values[key] = oldSearchValues[key];
-                else if (struct && !_.isUndefined(struct.defaultValue)) {
+                } else if (struct && !_.isUndefined(struct.defaultValue)) {
                     vm.values[key] = struct.defaultValue;
                 }
             });
 
             _.forEach(vm.structure, function (struct, key) {
                 if (struct && !_.isUndefined(struct.onChange)) {
-                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, execEvent(struct.onChange)));
+                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, (newValue, oldValue) => {
+                        // Execute function only if values have changed
+                        if (newValue !== oldValue) {
+                            execEvent(struct.onChange)();
+                        }
+                    }));
                 }
 
                 if (!_.isUndefined(vm.structure.onChange)) {

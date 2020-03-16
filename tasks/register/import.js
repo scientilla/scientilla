@@ -16,7 +16,8 @@ module.exports = function (grunt) {
                     'group': ExternalImporter.updateGroupExternal,
                     'all': ExternalImporter.updateAllExternal,
                     'metadata': ExternalImporter.updateMetadata
-                }
+                },
+                'users': Importer.importUserContracts,
             };
 
             try {

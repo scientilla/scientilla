@@ -4,6 +4,7 @@ module.exports = function (grunt) {
 		'linkAssetsBuild',
 		'clean:build',
 		'copy:build',
-		'copy:uploadsBuild'
+		'copy:uploads',
+		'copy:profile'
 	]);
 };

@@ -1,4 +1,5 @@
-/* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator, MembershipGroup, GroupTypes*/
+/* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator */
+/* global MembershipGroup, GroupTypes, ResearchEntityData */
 // Importer.js - in api/services
 
 "use strict";
@@ -7,15 +8,19 @@ const xlsx = require('xlsx');
 const _ = require('lodash');
 const fs = require('fs');
 const request = require('request-promise');
+const util = require('util');
 
 const moment = require('moment');
 moment.locale('en');
+
+const defaultEmail = 'all';
 
 module.exports = {
     importSources,
     importPeople,
     importGroups,
-    importSourceMetrics
+    importSourceMetrics,
+    importUserContracts
 };
 
 async function importSources() {
@@ -140,15 +145,21 @@ async function importPeople() {
 
     let people;
     try {
+        // Get all people
         people = await request(reqOptions);
         sails.log.info(people.length + ' entries found');
+        // Save start time
         const importTime = moment.utc().format();
         //groups are loaded in memory because waterline doesn't allow case-insensitive queries with postegres
         let allGroups = await Group.find();
         let numUsersInserted = 0, numUsersUpdated = 0, numGroupsInserted = 0;
+        // Loop over people
         for (let [i, p] of people.entries()) {
+            //Lowercase username
             p.username = _.toLower(p.username);
+            // Get a new array of all the group names of the person
             const groupsToSearch = allGroups.filter(g => p.groups.some(g2 => _.toLower(g2) == _.toLower(g.name))).map(g => g.name);
+            // can be removed
             if (groupInsertionEnabled) {
                 const groupsToBeInserted = p.groups.filter(g => !allGroups.some(g2 => _.toLower(g2.name) == _.toLower(g)));
                 if (groupsToBeInserted.length) {
@@ -162,40 +173,57 @@ async function importPeople() {
                 }
             }
             const groupSearchCriteria = {or: groupsToSearch.map(g => ({name: g}))};
+            // Find all groups with members and administrators
             const groups = await Group.find(groupSearchCriteria).populate('members').populate('administrators');
             const criteria = {username: p.username};
+            // Find user by username
             let user = await User.findOne(criteria);
+            // If the user is empty get the user by distingiushed name from the Auth table
             if (!user) {
                 const auth = await Auth.findOne({dn: p.dn}).populate('user');
                 if (auth) user = auth.user;
             }
+            // Set some parameters
             p.lastsynch = moment().utc().format();
             p.synchronized = true;
+            // Store current state of active
             const activeMembership = p.active;
             p.active = true;
+            // If user is not empty
             if (user) {
+                // Update user with data
                 const u = await User.update({id: user.id}, p);
+                // Check if some specific fields changed
                 if (userShouldBeUpdated(user, p)) {
                     sails.log.info(`Updating user ${p.username}`);
                     numUsersUpdated++;
                 }
             }
+            // If user is empty
             else {
+                // If userCreationCondition is false or the user usersCreationCondition attribute is the same as the the config
                 if (!usersCreationCondition || p[usersCreationCondition.attribute] === usersCreationCondition.value) {
                     sails.log.info(`Inserting user ${p.username}`);
+                    // Create new user
                     user = await User.createCompleteUser(p);
                     numUsersInserted++;
                 }
             }
+
+            // If the user is still empty, go to the next person
             if (!user)
                 continue;
 
+            // Loop over the groups of the specific person
             for (let g of groups) {
                 const membershipCriteria = {user: user.id, group: g.id};
+                // Search for a membership where the user and group have the specified id
                 let membership = await Membership.findOne(membershipCriteria);
+                // if the membership doesn't exsist add the user as member
                 if (!membership) {
                     membership = await Group.addMember(g, user);
                 }
+                // Else update the membership
                 if (membership) {
                     membership.lastsynch = moment.utc().format();
                     membership.synchronized = true;
@@ -210,12 +238,18 @@ async function importPeople() {
                     await Membership.update({id: m.id}, {active: true});
             }
         }
+        // Update membership, which membership?
         const membershipUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
         const membershipDisabled = await Membership.update(membershipUpdateCriteria, {active: false});
+
+        // Update user, which user?
         const userUpdateCriteria = {lastsynch: {'<': importTime}, synchronized: true, active: true};
         const usersDisabled = await User.update(userUpdateCriteria, {active: false});
+
+        // Set the membership active to false for the disabled users
         const collaborationUpdateCriteria = {synchronized: false, user: usersDisabled.map(u => u.id), active: true};
         const collaborationDisabled = await Membership.update(collaborationUpdateCriteria, {active: false});
+
         const numUsersDisabled = usersDisabled.length;
         const numMembershipDisabled = membershipDisabled.length + collaborationDisabled.length;
         await Membership.update({user: usersDisabled.map(u => u.id), active: true, group: 1}, {active: false});
@@ -373,7 +407,6 @@ async function importGroups() {
     sails.log.info('Group import finished');
 }
 
-
 async function importSourceMetrics(filename) {
     const sourceIdentifiers = SourceMetric.sourceIdentifiers;
 
@@ -490,4 +523,492 @@ async function importSourceMetrics(filename) {
     }
 
     sails.log.info('imported ' + recordsCount + ' records');
+}
+
+async function waitForSuccesfulRequest(options) {
+    let attempts = 0;
+    let maxAttempts = 5;
+
+    function sleep(ms){
+        return new Promise(resolve=>{
+            setTimeout(resolve,ms)
+        })
+    }
+
+    async function tryRequest(options) {
+        attempts++;
+
+        return await request(options).catch(async () => {
+            if (attempts < maxAttempts) {
+                await sleep(1000);
+                return await tryRequest(options);
+            } else {
+                return false;
+            }
+        });
+    }
+
+    let response = await tryRequest(options);
+
+    if (response) {
+        sails.log.info('Reached the API after ' + attempts + ' attempt(s)!');
+        return response._.scheda;
+    }
+
+    sails.log.error('Tried ' + attempts + ' time(s), but failed to reach the API!');
+    return [];
+}
+
+async function importUserContracts(email = defaultEmail) {
+    const userIsBeenChanged = (user, values) => {
+        const fields = [
+            'jobTitle',
+            'name',
+            'surname'
+        ];
+        return fields.some(f => values[f] !== user[f]);
+    };
+
+    const collectGroupCodes = (contract) => {
+        const codes = [];
+        for (let i = 1; i <= 6; i++) {
+            if (!_.isEmpty(contract['linea_' + i])) {
+                codes.push(contract['linea_' + i]);
+            }
+        }
+        return codes;
+    };
+
+    const getProfileJSON = (researchEntityData, contract) => {
+        const profile = ResearchEntityData.setupProfile(researchEntityData);
+
+        profile.hidden = (contract.no_people === 'NO PEOPLE' ? true: false);
+
+        let defaultPrivacy = 'public';
+        if (profile.hidden) {
+            defaultPrivacy = 'hidden';
+        }
+
+        let name = contract.nome;
+        if (!_.isEmpty(contract.nome_AD)) {
+            name = contract.nome_AD;
+        }
+
+        let surname = contract.cognome;
+        if (!_.isEmpty(contract.cognome_AD)) {
+            surname = contract.cognome_AD;
+        }
+
+        profile.username = {
+            privacy: defaultPrivacy,
+            value: contract.email
+        };
+        profile.name = {
+            privacy: defaultPrivacy,
+            value: name
+        };
+        profile.surname = {
+            privacy: defaultPrivacy,
+            value: surname
+        };
+        profile.phone = {
+            privacy: defaultPrivacy,
+            value: contract.telefono
+        };
+        profile.jobTitle = {
+            privacy: defaultPrivacy,
+            value: contract.Ruolo_AD
+        };
+
+        const centers = [];
+        const facilities = [];
+        const researchLines = [];
+        const institutes = [];
+
+        function handleGroup (group) {
+            switch (group.type) {
+                case 'Center':
+                    const center = centers.find(c => c.name === group.name);
+                    if (!center) {
+                        centers.push({
+                            name: group.name,
+                            code: group.code,
+                            privacy: defaultPrivacy
+                        });
+                    }
+                    break;
+                case 'Facility':
+                    const facility = facilities.find(f => f.name === group.name);
+                    if (!facility) {
+                        facilities.push({
+                            name: group.name,
+                            code: group.code,
+                            privacy: defaultPrivacy
+                        });
+                    }
+                    break;
+                case 'Institute':
+                    const institute = institutes.find(i => i.name === group.name);
+                    if (!institute) {
+                        institutes.push({
+                            name: group.name,
+                            code: group.code,
+                            privacy: defaultPrivacy
+                        });
+                    }
+                    break;
+                case 'Research Line':
+                    const researchLine = researchLines.find(f => f.name === group.name);
+                    if (!researchLine) {
+                        researchLines.push({
+                            name: group.name,
+                            code: group.code,
+                            privacy: defaultPrivacy
+                        });
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            const membershipGroup = allMembershipGroups.find(g => g.child_group === group.id && g.parent_group.active);
+
+            if (membershipGroup) {
+                handleGroup(membershipGroup.parent_group);
+            }
+        }
+
+        for (let i = 1; i < 7; i++) {
+            if (!_.isEmpty(contract['linea_' + i])) {
+                const code = contract['linea_' + i];
+                const group = allGroups.find(group => group.code === code);
+
+                if (group) {
+                    handleGroup(group);
+                } else {
+                    sails.log.debug('Group not found! Code:' + code);
+                }
+            }
+        }
+
+        if (centers.length > 0) {
+            profile.centers = _.merge(centers, profile.centers);
+        }
+
+        if (facilities.length > 0) {
+            profile.facilities = _.merge(facilities, profile.facilities);
+        }
+
+        if (researchLines.length > 0) {
+            profile.researchLines = _.merge(researchLines, profile.researchLines);
+        }
+
+        if (facilities.length === 0 && researchLines.length === 0) {
+            profile.office = {
+                privacy: defaultPrivacy,
+                value: contract.UO_1
+            };
+
+            profile.directorate = {
+                privacy: defaultPrivacy,
+                value: contract.nome_linea_1
+            };
+        }
+
+        return profile;
+    };
+
+    const reqOptions = {
+        uri: sails.config.scientilla.userImport.endpoint,
+        qs: {
+            rep: 'PROD',
+            trans: '/public/scheda_persona_flat',
+            output: 'json',
+            email: email
+        },
+        headers: {
+            username: sails.config.scientilla.userImport.username,
+            password: sails.config.scientilla.userImport.password
+        },
+        json: true
+    };
+
+    // We cache the groups, membership groups and default profile.
+    const allGroups = await Group.find({ active: true });
+    const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
+
+    const invalidEmails = [];
+    const updatedResearchEntityDataItems = [];
+    const newResearchEntityDataItems = [];
+    const upToDateResearchEntityDataItems = [];
+    const updatedUsers = [];
+    const insertedUsers = [];
+
+    const importTime = moment.utc().format();
+
+    sails.log.info('Started at ' + importTime);
+
+    try {
+        const groups = await Group.find();
+        if (groups.length <= 0) {
+            sails.log.debug('No groups found...');
+        }
+
+        const responseData = await waitForSuccesfulRequest(reqOptions);
+
+        if (_.isEmpty(responseData)) {
+            return;
+        }
+
+        let contracts = [];
+
+        if (email !== defaultEmail) {
+            contracts.push(responseData);
+        } else {
+            contracts = responseData;
+        }
+
+        // Get primary contracts of people with a valid email address
+        const primaryContractsWithValidEmail = contracts.filter(contract => {
+            if (contract.contratto_secondario !== 'X' && /\S+@\S+\.\S+/.test(contract.email)) {
+                return true;
+            }
+
+            if (contract.contratto_secondario !== 'X' && !/\S+@\S+\.\S+/.test(contract.email)) {
+                invalidEmails.push(contract.email);
+                return false;
+            }
+
+            return false;
+        });
+
+        for (const contract of primaryContractsWithValidEmail) {
+
+            const groupCodesOfContract = collectGroupCodes(contract);
+
+            const groupNamesOfContract = groups.filter(group => groupCodesOfContract.some(groupCode => {
+                return _.toLower(groupCode) === _.toLower(group.code)
+            })).map(group => group.name);
+
+            const filteredGroups = await Group.find({
+                or: groupNamesOfContract.map(name => ({ name: name }))
+            }).populate('members').populate('administrators');
+
+            let user = await User.findOne({ username: contract.email });
+
+            const userObject = {
+                username: contract.email,
+                name: contract.nome,
+                surname: contract.cognome,
+                jobTitle: contract.Ruolo_AD,
+                displayName: contract.nome_AD,
+                displaySurname: contract.cognome_AD,
+                lastsynch: moment().utc().format(),
+                active: true,
+                synchronized: true,
+            };
+
+            if (!user) {
+                await User.createUserWithoutAuth(userObject);
+                // Search user again to populate ResearchEntity after creation
+                user = await User.findOne({ username: contract.email });
+                insertedUsers.push(user);
+            } else {
+                await User.update({ id: user.id }, userObject);
+
+                if (userIsBeenChanged(user, userObject)) {
+                    updatedUsers.push(user);
+                }
+            }
+
+            if (!user) {
+                throw new Error('No user!');
+            }
+
+            for (let group of filteredGroups) {
+                const condition = {
+                    user: user.id,
+                    group: group.id
+                };
+                let membership = await Membership.findOne(condition);
+
+                if (!membership) {
+                    membership = await Group.addMember(group, user);
+                }
+
+                membership.lastsynch = moment.utc().format();
+                membership.synchronized = true;
+                membership.active = true;
+
+                await Membership.update(condition, membership);
+            }
+
+            // Activate the membership if the user is an internal user and the membership is not active
+            if (User.isInternalUser(user)) {
+                const membership = await Membership.findOne({ group: 1, user: user.id });
+                if (membership && !membership.active) {
+                    await Membership.update({ id: membership.id }, { active: true });
+                }
+            }
+
+            let researchEntityData = await ResearchEntityData.findOne({
+                researchEntity: user.researchEntity
+            });
+
+            // Create or update researchEntityData record
+            if (researchEntityData) {
+                if (!_.isEqual(researchEntityData.imported_data, contract)) {
+                    const profileJSON = getProfileJSON(researchEntityData, contract);
+                    let profileJSONString = JSON.stringify(profileJSON);
+
+                    if (profileJSON.hidden) {
+                        // Replace all the current public privacy settings to hidden
+                        profileJSONString = profileJSONString.replace(/"privacy":"public"/gm, '"privacy":"hidden"');
+                    }
+
+                    researchEntityData = await ResearchEntityData.update(
+                        { id: researchEntityData.id },
+                        {
+                            profile: profileJSONString,
+                            imported_data: JSON.stringify(contract)
+                        }
+                    );
+                    updatedResearchEntityDataItems.push(researchEntityData[0]);
+                } else {
+                    upToDateResearchEntityDataItems.push(researchEntityData);
+                }
+            } else {
+                const profileJSON = getProfileJSON({}, contract);
+                researchEntityData = await ResearchEntityData.create({
+                    researchEntity: user.researchEntity,
+                    profile: JSON.stringify(profileJSON),
+                    imported_data: JSON.stringify(contract)
+                });
+                newResearchEntityDataItems.push(researchEntityData);
+            }
+        }
+
+        // Select all items where lastsync is before importTime and synchronized and active is true
+        const condition = {
+            lastsynch: { '<' : importTime },
+            synchronized: true,
+            active: true
+        };
+
+        let disabledSynchronizedMemberships,
+            disabledUsers;
+
+        // If a specific email is used
+        if (email !== defaultEmail) {
+            const user = await User.findOne({ username: email });
+
+            // Deactivate all memberships of the selected user that aren't in sync
+            disabledSynchronizedMemberships = await Membership.update(_.merge({ user: user.id }, condition), { active: false });
+
+            // Deactivate the selected user if it's not in sync
+            disabledUsers = await User.update(_.merge({ id: user.id }, condition), { active: false });
+        } else {
+            // Deactivate all memberships of users that aren't in sync
+            disabledSynchronizedMemberships = await Membership.update(condition, { active: false });
+
+            // Deactivate all users that aren't in sync
+            disabledUsers = await User.update(condition, { active: false });
+        }
+
+        // Set the membership active to false for the disabled users or user
+        const disabledCollaborations = await Membership.update({
+            synchronized: false,
+            user: disabledUsers.map(user => user.id),
+            active: true
+        }, { active: false });
+
+        const disabledMemberships = disabledSynchronizedMemberships.length + disabledCollaborations.length;
+
+        sails.log.info(invalidEmails.length + ' invalid email addresses found in the Pentaho response for these user(s)!');
+        sails.log.info(primaryContractsWithValidEmail.length + ' primary contracts found with a valid email address!');
+        sails.log.info('....................................');
+
+        sails.log.info(insertedUsers.length + ' Users created!');
+        if (insertedUsers.length > 0) {
+            sails.log.info('Username(s): ' + insertedUsers.map(user => user.username).join(', '));
+        }
+        sails.log.info('....................................');
+
+        sails.log.info(updatedUsers.length + ' Users updated!');
+        if (updatedUsers.length > 0) {
+            sails.log.info('Username(s): ' + updatedUsers.map(user => user.username).join(', '));
+        }
+        sails.log.info('....................................');
+
+        sails.log.info(disabledUsers.length + ' Users disabled!');
+        if (disabledUsers.length > 0) {
+            sails.log.info('Username(s): ' + disabledUsers.map(user => user.username).join(', '));
+        }
+        sails.log.info('....................................');
+
+        sails.log.info(disabledMemberships + ' Memberships disabled!');
+        if (disabledSynchronizedMemberships.length > 0) {
+            await Promise.all(disabledSynchronizedMemberships.map(async membership => {
+                let user = await User.findOne({ id: membership.user });
+                if (user) {
+                    return user.username;
+                } else {
+                    return 'User not found!';
+                }
+            })).then(usernames => {
+                sails.log.info('Email address(es): ' + usernames.join(', '));
+            });
+        }
+        if (disabledCollaborations.length > 0) {
+            await Promise.all(disabledCollaborations.map(async membership => {
+                let user = await User.findOne({ id: membership.user });
+                if (user) {
+                    return user.username;
+                } else {
+                    return 'User not found!';
+                }
+            })).then(usernames => {
+                sails.log.info('Email address(es): ' + usernames.join(', '));
+            });
+        }
+        sails.log.info('....................................');
+
+        sails.log.info(updatedResearchEntityDataItems.length + ' ResearchEntityData records updated!');
+        if (updatedResearchEntityDataItems.length > 0) {
+            await Promise.all(updatedResearchEntityDataItems.map(async item => {
+                let user = await User.findOne({ researchEntity: item.researchEntity });
+                if (user) {
+                    return user.username;
+                } else {
+                    return 'User not found!';
+                }
+            })).then(usernames => {
+                sails.log.info('Email address(es): ' + usernames.join(', '));
+            });
+        }
+        sails.log.info('....................................');
+
+        sails.log.info(newResearchEntityDataItems.length + ' ResearchEntityData records created!');
+        if (newResearchEntityDataItems.length > 0) {
+            await Promise.all(newResearchEntityDataItems.map(async item => {
+                let user = await User.findOne({ researchEntity: item.researchEntity });
+                if (user) {
+                    return user.username;
+                } else {
+                    return 'User not found!';
+                }
+            })).then(usernames => {
+                sails.log.info('Email address(es): ' + usernames.join(', '));
+            });
+        }
+        sails.log.info('....................................');
+
+        sails.log.info(upToDateResearchEntityDataItems.length + ' ResearchEntityData records are already up-to-date!');
+        sails.log.info('....................................');
+
+        sails.log.info('Stopped at ' + moment.utc().format());
+    } catch (e) {
+        sails.log.debug('importUserContracts');
+        sails.log.debug(e);
+    }
 }
