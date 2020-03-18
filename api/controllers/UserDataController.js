@@ -13,6 +13,13 @@ module.exports = {
         const username = req.params.username;
         const user = await User.findOne({username});
         const data = await UserData.findOne({researchEntity: user.researchEntity});
+
+        if (!_.has(data, 'profile')) {
+            return res.notFound({
+                message: 'Profile not found!'
+            });
+        }
+
         const profile = data.profile;
 
         if (_.has(profile, 'hidden.value') && profile.hidden.value) {

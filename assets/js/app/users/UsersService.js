@@ -108,7 +108,7 @@
             return service.getList(q);
         };
 
-        service.getUserSettings = function (userId) {
+        service.getSettings = function (userId) {
             return this
                 .one(userId)
                 .get({populate: ['administratedGroups', 'attributes', 'aliases']})
@@ -148,8 +148,11 @@
             }
 
             if (!_profile) {
-                _profile = await Restangular.one('researchentities', researchEntityId).customGET('get-profile');
-                EventsService.publish(EventsService.USER_PROFILE_CHANGED, _profile);
+                const profile = await Restangular.one('researchentities', researchEntityId).customGET('get-profile');
+                if (profile) {
+                    _profile = profile;
+                    EventsService.publish(EventsService.USER_PROFILE_CHANGED, _profile);
+                }
             }
 
             return _profile;

@@ -34,12 +34,13 @@
         vm.changeContextToUser = changeContextToUser;
         vm.editUserProfile = editUserProfile;
         vm.editUserSettings = editUserSettings;
-        vm.showWizardVisible = showWizardVisible;
+        vm.researchEntityIsUser = researchEntityIsUser;
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
+        vm.profile = false;
 
-        vm.$onInit = function () {
-
+        /* jshint ignore:start */
+        vm.$onInit = async function () {
             EventsService.subscribeAll(vm, [
                 EventsService.USER_PROFILE_CHANGED,
             ], () => {
@@ -53,7 +54,10 @@
             ], refresh);
 
             refresh();
+
+            vm.profile = await UsersService.getProfile(AuthService.user.researchEntity);
         };
+        /* jshint ignore:end */
 
         vm.$onDestroy = function () {
             EventsService.unsubscribeAll(vm);
@@ -98,12 +102,12 @@
             }
 
             researchEntityService
-                .getUserSettings(vm.subResearchEntity.id)
+                .getSettings(vm.subResearchEntity.id)
                 .then(openForm)
                 .then(function (status) {
                     if (status !== 1)
                         return vm.subResearchEntity;
-                    return researchEntityService.getUserSettings(vm.subResearchEntity.id);
+                    return researchEntityService.getSettings(vm.subResearchEntity.id);
                 })
                 .then(function (subResearchEntity) {
                     vm.subResearchEntity = subResearchEntity;
@@ -116,7 +120,7 @@
             ModalService.openProfileForm();
         }
 
-        function showWizardVisible() {
+        function researchEntityIsUser() {
             return vm.subResearchEntity.getType() === 'user';
         }
 
