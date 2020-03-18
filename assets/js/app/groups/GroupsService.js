@@ -24,6 +24,7 @@
         service.removeCollaborator = removeCollaborator;
         service.addRelative = addRelative;
         service.removeChild = removeChild;
+        service.getSettings = getSettings;
 
         return service;
 
@@ -132,6 +133,10 @@
                         .one('membershipgroups', res.items[0].id)
                         .remove();
                 });
+        }
+
+        function getSettings(groupId) {
+            return getGroup(groupId);
         }
 
         return service;

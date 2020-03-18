@@ -53,7 +53,7 @@
         </a>
     </li>
     
-    <li ng-if="vm.isLogged && vm.showWizardVisible() && !vm.user.isViewOnly()">
+    <li ng-if="vm.isLogged && vm.researchEntityIsUser() && !vm.user.isViewOnly()">
         <div uib-dropdown class="dropdown">
             <button
                 class="btn btn-outline-secondary"
@@ -90,7 +90,8 @@
                 <li>
                     <button
                         class="dropdown-item"
-                        ng-click="vm.editUserProfile()">
+                        ng-click="vm.editUserProfile()"
+                        ng-if="vm.profile && vm.researchEntityIsUser()">
                         My profile
                     </button>
                 </li>

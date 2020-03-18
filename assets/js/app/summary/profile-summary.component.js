@@ -15,10 +15,11 @@
             '$controller',
             'UsersService',
             'AuthService',
-            'EventsService'
+            'EventsService',
+            '$location'
         ];
 
-        function ProfileSummaryComponent(context, $scope, $controller, UsersService, AuthService, EventsService) {
+        function ProfileSummaryComponent(context, $scope, $controller, UsersService, AuthService, EventsService, $location) {
             const vm = this;
             angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
             angular.extend(vm, $controller('TabsController', {$scope: $scope}));
@@ -54,26 +55,41 @@
 
             /* jshint ignore:start */
             vm.$onInit = async () => {
-                getProfile().then(profile => {
-                    vm.profile = profile;
-                }, () => {
-                    tabIdentifiers = tabIdentifiers.filter(identifier => {
-                        return identifier.index !== 0 && identifier.index !== 1;
+                vm.subResearchEntity = context.getSubResearchEntity();
+
+                if (vm.subResearchEntity.getType() === 'user') {
+                    EventsService.subscribeAll(vm, [
+                        EventsService.USER_PROFILE_CHANGED,
+                    ], (evt, profile) => {
+                        vm.profile = profile;
                     });
-                    vm.activeTabIndex = 2;
-                }).finally(async () => {
+
+                    getProfile().then(profile => {
+                        vm.profile = profile;
+                    }, () => {
+                        $location.url('/dashboard/documents-overview');
+                    }).finally(async () => {
+                        if (!vm.profile) {
+                            tabIdentifiers = tabIdentifiers.filter(identifier => {
+                                return identifier.index !== 0;
+                            });
+                        }
+
+                        vm.initializeTabs(tabIdentifiers);
+                        vm.chartsData = await getData();
+                        vm.reloadTabs(vm.chartsData);
+                    });
+                } else {
+                    if (!vm.isMainGroup()) {
+                        tabIdentifiers = tabIdentifiers.filter(identifier => {
+                            return identifier.index !== 3;
+                        });
+                    }
+
                     vm.initializeTabs(tabIdentifiers);
                     vm.chartsData = await getData();
                     vm.reloadTabs(vm.chartsData);
-                });
-
-                vm.subResearchEntity = context.getSubResearchEntity();
-
-                EventsService.subscribeAll(vm, [
-                    EventsService.USER_PROFILE_CHANGED,
-                ], (evt, profile) => {
-                    vm.profile = profile;
-                });
+                }
             };
 
             vm.$onDestroy = () => {
@@ -109,7 +125,7 @@
             function getProfile() {
                 return new Promise((resolve, reject) => {
                     UsersService.getProfile(AuthService.user.researchEntity).then(profile => {
-                        if (profile !== false) {
+                        if (profile) {
                             resolve(profile);
                         } else {
                             reject();
