@@ -544,7 +544,7 @@ async function waitForSuccesfulRequest(options) {
 
     if (_.has(sails.config.scientilla.userImport, 'key')) {
         await readFile(sails.config.scientilla.userImport.key).then(async (file) => {
-            options.cert = file;
+            options.key = file;
         });
     }
 
