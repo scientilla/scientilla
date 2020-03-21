@@ -528,11 +528,28 @@ async function importSourceMetrics(filename) {
 async function waitForSuccesfulRequest(options) {
     let attempts = 0;
     let maxAttempts = 5;
+    const readFile = util.promisify(fs.readFile);
 
     function sleep(ms){
         return new Promise(resolve=>{
             setTimeout(resolve,ms)
         })
+    }
+
+    if (_.has(sails.config.scientilla.userImport, 'cert')) {
+        await readFile(sails.config.scientilla.userImport.cert).then(async (file) => {
+            options.cert = file;
+        });
+    }
+
+    if (_.has(sails.config.scientilla.userImport, 'key')) {
+        await readFile(sails.config.scientilla.userImport.key).then(async (file) => {
+            options.cert = file;
+        });
+    }
+
+    if (_.has(sails.config.scientilla.userImport, 'logPerson') && _.has(options, 'headers')) {
+        options.headers.log_person = sails.config.scientilla.userImport.logPerson
     }
 
     async function tryRequest(options) {
