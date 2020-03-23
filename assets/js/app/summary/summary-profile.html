@@ -3,17 +3,25 @@
     <div
         class="profile-blocks top"
         ng-class="{
-            'has-2-blocks': (!vm.profile.description && !vm.profile.interests) && vm.user.alreadyChangedProfile,
-            'has-3-blocks': (
+            'has-1-block': vm.missingProfile,
+            'has-2-blocks': !vm.missingProfile && (!vm.profile.description && !vm.profile.interests) && vm.user.alreadyChangedProfile,
+            'has-3-blocks': !vm.missingProfile && (
                 ((vm.profile.description || vm.profile.interests) && vm.user.alreadyChangedProfile) ||
                 ((!vm.profile.description && !vm.profile.interests) && !vm.user.alreadyChangedProfile)
             ),
             'has-4-blocks':
-                (vm.profile.description || vm.profile.interests) && !vm.user.alreadyChangedProfile
+                !vm.missingProfile && (vm.profile.description || vm.profile.interests) && !vm.user.alreadyChangedProfile
         }"
         ng-if="!vm.loading">
 
-        <profile-basic-info-block profile="vm.profile" class="profile-block basic-info"></profile-basic-info-block>
+        <profile-basic-info-block
+            profile="vm.profile"
+            class="profile-block basic-info"
+            ng-if="!vm.missingProfile"></profile-basic-info-block>
+
+        <profile-missing-profile-block
+            class="profile-block missing-profile"
+            ng-if="vm.missingProfile"></profile-missing-profile-block>
 
         <profile-about-block
             profile="vm.profile"
@@ -23,9 +31,11 @@
         <profile-edit-block
             user="vm.user"
             class="profile-block edit"
-            ng-if="!vm.user.alreadyChangedProfile"></profile-edit-block>
+            ng-if="!vm.user.alreadyChangedProfile && !vm.missingProfile"></profile-edit-block>
 
-        <profile-export-block class="profile-block export"></profile-export-block>
+        <profile-export-block
+            class="profile-block export"
+            ng-if="!vm.missingProfile"></profile-export-block>
     </div>
     <div
         class="profile-blocks bottom"

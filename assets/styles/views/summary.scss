@@ -25,6 +25,14 @@
                 }
 
                 &.top {
+                    &.has-1-block {
+                        & > .profile-block {
+                            &:nth-child(1) {
+                                @include set-grid(1, 1, 1, 12);
+                            }
+                        }
+                    }
+
                     &.has-2-blocks {
                         & > .profile-block {
                             &:nth-child(1) {

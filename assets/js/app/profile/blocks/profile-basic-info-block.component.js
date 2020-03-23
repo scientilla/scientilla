@@ -11,12 +11,16 @@
             }
         });
 
-    profileBasicInfoBlock.$inject = ['AuthService', 'pathProfileImages'];
+    profileBasicInfoBlock.$inject = ['AuthService', 'pathProfileImages', 'TextService'];
 
-    function profileBasicInfoBlock(AuthService, pathProfileImages) {
+    function profileBasicInfoBlock(AuthService, pathProfileImages, TextService) {
         const vm = this;
 
         vm.pathProfileImages = pathProfileImages + '/' + AuthService.user.researchEntity + '/';
+
+        vm.joinStrings = function (strings, seperator) {
+            return TextService.joinStrings(strings, seperator);
+        };
 
         vm.$onInit = function () {
 
