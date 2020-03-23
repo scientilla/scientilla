@@ -117,7 +117,7 @@
                                         <button
                                             class="dropdown-item"
                                             ng-click="vm.editUserProfile()"
-                                            ng-if="vm.profile && vm.researchEntityIsUser()">
+                                            ng-if="vm.profile && vm.profile.name && vm.profile.surname && vm.researchEntityIsUser()">
                                             My profile
                                         </button>
                                     </li>

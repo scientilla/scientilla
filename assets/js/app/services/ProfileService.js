@@ -43,25 +43,25 @@
                     !_.includes(options, 'hidden') &&
                     !_.includes(options, 'invisible')
                 :
-                    return 'This field can only be public!';
+                    return 'This field can only be set to "public"!';
                 case
                     !_.includes(options, 'public') &&
                     _.includes(options, 'hidden') &&
                     !_.includes(options, 'invisible')
                 :
-                    return 'This field can only be hidden!';
+                    return 'This field can only be set to "only visible for Scientilla users"!';
                 case
                     !_.includes(options, 'public') &&
                     _.includes(options, 'hidden') &&
                     _.includes(options, 'invisible')
                 :
-                    return 'Set the privacy of this field to only for Scientilla users or hide it completely';
+                    return 'Set the privacy of this field to "only for Scientilla users" or "visible for myself during editing"!';
                 case
                     _.includes(options, 'public') &&
                     _.includes(options, 'hidden') &&
                     _.includes(options, 'invisible')
                 :
-                    return 'Set the privacy of this field to public, only for Scientilla users or hide it completely';
+                    return 'Set the privacy of this field to "public", "only for Scientilla users" or "visible for myself during editing"!';
                 default:
                     return 'No correct option!';
             }

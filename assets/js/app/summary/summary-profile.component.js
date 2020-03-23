@@ -29,6 +29,7 @@
 
             vm.numberOfItems = 0;
             vm.loading = true;
+            vm.missingProfile = false;
 
             vm.urlAllDocuments = '/#/documents/verified';
             vm.urlFavoriteDocuments = '/#/documents/verified?favorites';
@@ -65,6 +66,7 @@
 
             function loadProfile() {
                 if (!_.isEmpty(vm.profile)) {
+                    vm.missingProfile = !vm.profile.name && !vm.profile.surname;
                     setNumberOfItems();
                     vm.loading = false;
                 }
