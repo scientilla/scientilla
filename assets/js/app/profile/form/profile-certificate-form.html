@@ -53,9 +53,11 @@
                         ng-model-options="{allowInvalid: true}"
                         uib-datepicker-popup="dd/MM/yyyy"
                         show-button-bar="false"
+                        on-open-focus="false"
                         datepicker-options="vm.datePickerOptions"
                         is-open="vm.dateCertificateDatePopups[vm.key]"
-                        ng-click="vm.dateCertificateDatePopups[vm.key] = true"
+                        ng-focus="vm.dateCertificateDatePopups[vm.key] = true"
+                        ng-blur="vm.dateCertificateDatePopups[vm.key] = false"
                         close-text="Close"
                         ng-model="vm.certificate.date"
                         ng-class="{

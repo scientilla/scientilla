@@ -30,7 +30,6 @@
             vm.datePickerOptions = ProfileService.getDatepickerOptions();
 
             educationWatcher = $scope.$watch('vm.education', function() {
-                console.log(vm.education);
                 if (typeof vm.education.from === 'string') {
                     vm.education.from = new Date(vm.education.from);
                 }
