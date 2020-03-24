@@ -16,9 +16,9 @@
     function controller(UsersService) {
         const vm = this;
 
-        vm.urlAllDocuments = '/#/users/' + vm.userId + '/documents';
+        vm.urlAllDocuments = '/#/users/' + vm.user.id + '/documents';
         vm.urlFavoriteDocuments = '';
-        vm.urlAllAccomplishments = '/#/users/' + vm.userId + '/accomplishments';
+        vm.urlAllAccomplishments = '/#/users/' + vm.user.id + '/accomplishments';
         vm.urlFavoriteAccomplishments = '';
 
         vm.numberOfItems = 0;
