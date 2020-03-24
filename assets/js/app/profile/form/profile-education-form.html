@@ -58,9 +58,11 @@
                                 ng-model-options="{allowInvalid: true}"
                                 uib-datepicker-popup="dd/MM/yyyy"
                                 show-button-bar="false"
+                                on-open-focus="false"
                                 datepicker-options="vm.datePickerOptions"
                                 is-open="vm.dateEducationFromPopups[vm.key]"
-                                ng-click="vm.dateEducationFromPopups[vm.key] = true"
+                                ng-focus="vm.dateEducationFromPopups[vm.key] = true"
+                                ng-blur="vm.dateEducationFromPopups[vm.key] = false"
                                 ng-class="{
                                     'is-invalid': vm.profile.education[vm.key].errors.from,
                                     'is-invisible' : vm.profile.education[vm.key].privacy === 'invisible'
@@ -84,9 +86,11 @@
                                 ng-model-options="{allowInvalid: true}"
                                 uib-datepicker-popup="dd/MM/yyyy"
                                 show-button-bar="false"
+                                on-open-focus="false"
                                 datepicker-options="vm.datePickerOptions"
                                 is-open="vm.dateEducationToPopups[vm.key]"
-                                ng-click="vm.dateEducationToPopups[vm.key] = true"
+                                ng-focus="vm.dateEducationToPopups[vm.key] = true"
+                                ng-blur="vm.dateEducationToPopups[vm.key] = false"
                                 ng-class="{
                                     'is-invalid': vm.profile.education[vm.key].errors.to,
                                     'is-invisible' : vm.profile.education[vm.key].privacy === 'invisible'
