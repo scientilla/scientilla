@@ -14,17 +14,31 @@
             }
         });
 
-    profileCertificateForm.$inject = ['ProfileService'];
+    profileCertificateForm.$inject = ['ProfileService', '$scope'];
 
-    function profileCertificateForm(ProfileService) {
+    function profileCertificateForm(ProfileService, $scope) {
         const vm = this;
 
         vm.dateCertificateDatePopups = [];
         vm.datePickerOptions = [];
 
-            vm.$onInit = function () {
+        let certificateWatcher;
+
+        vm.$onInit = function () {
             vm.context = 'certificates[' + vm.key + ']';
             vm.datePickerOptions = ProfileService.getDatepickerOptions();
+
+            certificateWatcher = $scope.$watch('vm.certificate', function() {
+                if (typeof vm.certificate.date === 'string') {
+                    vm.certificate.date = new Date(vm.certificate.date);
+                }
+            });
+        };
+
+        vm.$onDestroy = function () {
+            if (_.isFunction(certificateWatcher)) {
+                certificateWatcher();
+            }
         };
 
         vm.removeItem = options => {
