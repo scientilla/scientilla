@@ -48,23 +48,25 @@
                             class="form-group"
                             ng-class="{'has-error': vm.profile.education[vm.key].errors.from}">
                             <label for="education[{{ vm.key }}]-from">From</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="education[{{ vm.key }}]-from"
-                                placeholder="From"
-                                transform-date
-                                datepicker-options="vm.datePickerOptions"
-                                ng-model="vm.education.from"
-                                ng-model-options="{allowInvalid: true}"
-                                uib-datepicker-popup="dd/MM/yyyy"
-                                show-button-bar="false"
-                                is-open="vm.openFrom"
-                                ng-click="vm.openFrom = true"
-                                ng-class="{
+                            <div class="date-picker-wrapper">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="education[{{ vm.key }}]-from"
+                                    placeholder="dd/mm/yyyy"
+                                    transform-date
+                                    datepicker-options="vm.datePickerOptions"
+                                    ng-model="vm.education.from"
+                                    ng-model-options="{allowInvalid: true}"
+                                    uib-datepicker-popup="dd/MM/yyyy"
+                                    show-button-bar="false"
+                                    is-open="vm.openFrom"
+                                    ng-click="vm.openFrom = true"
+                                    ng-class="{
                                     'is-invalid': vm.profile.education[vm.key].errors.from,
                                     'is-invisible' : vm.profile.education[vm.key].privacy === 'invisible'
                                 }">
+                            </div>
                             <scientilla-field-errors
                                 errors="vm.profile.education[vm.key].errors.from"></scientilla-field-errors>
                         </div>
@@ -74,23 +76,25 @@
                             class="form-group"
                             ng-class="{'has-error': vm.profile.education[vm.key].errors.to}">
                             <label for="education[{{ vm.key }}]-to">To</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="education[{{ vm.key }}]-to"
-                                placeholder="dd/mm/yyyy"
-                                transform-date
-                                datepicker-options="vm.datePickerOptions"
-                                ng-model="vm.education.to"
-                                ng-model-options="{allowInvalid: true}"
-                                uib-datepicker-popup="dd/MM/yyyy"
-                                show-button-bar="false"
-                                is-open="vm.openTo"
-                                ng-click="vm.openTo = true"
-                                ng-class="{
-                                    'is-invalid': vm.profile.education[vm.key].errors.to,
-                                    'is-invisible' : vm.profile.education[vm.key].privacy === 'invisible'
-                                }">
+                            <div class="date-picker-wrapper">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="education[{{ vm.key }}]-to"
+                                    placeholder="dd/mm/yyyy"
+                                    transform-date
+                                    datepicker-options="vm.datePickerOptions"
+                                    ng-model="vm.education.to"
+                                    ng-model-options="{allowInvalid: true}"
+                                    uib-datepicker-popup="dd/MM/yyyy"
+                                    show-button-bar="false"
+                                    is-open="vm.openTo"
+                                    ng-click="vm.openTo = true"
+                                    ng-class="{
+                                        'is-invalid': vm.profile.education[vm.key].errors.to,
+                                        'is-invisible' : vm.profile.education[vm.key].privacy === 'invisible'
+                                    }">
+                            </div>
                             <scientilla-field-errors
                                 errors="vm.profile.education[vm.key].errors.to"></scientilla-field-errors>
                         </div>

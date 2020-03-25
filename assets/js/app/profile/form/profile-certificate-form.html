@@ -43,23 +43,25 @@
                     class="form-group"
                     ng-class="{'has-error': vm.profile.certificates[vm.key].errors.date}">
                     <label for="certificates[{{ vm.key }}]-date">Date</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="certificates[{{ vm.key }}]-date"
-                        placeholder="dd/mm/yyyy"
-                        transform-date
-                        datepicker-options="vm.datePickerOptions"
-                        ng-model="vm.certificate.date"
-                        ng-model-options="{allowInvalid: true}"
-                        uib-datepicker-popup="dd/MM/yyyy"
-                        show-button-bar="false"
-                        is-open="vm.open"
-                        ng-click="vm.open = true"
-                        ng-class="{
-                            'is-invalid': vm.profile.certificates[vm.key].errors.date,
-                            'is-invisible' : vm.profile.certificates[vm.key].privacy === 'invisible'
-                        }">
+                    <div class="date-picker-wrapper">
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="certificates[{{ vm.key }}]-date"
+                            placeholder="dd/mm/yyyy"
+                            transform-date
+                            datepicker-options="vm.datePickerOptions"
+                            ng-model="vm.certificate.date"
+                            ng-model-options="{allowInvalid: true}"
+                            uib-datepicker-popup="dd/MM/yyyy"
+                            show-button-bar="false"
+                            is-open="vm.open"
+                            ng-click="vm.open = true"
+                            ng-class="{
+                                'is-invalid': vm.profile.certificates[vm.key].errors.date,
+                                'is-invisible' : vm.profile.certificates[vm.key].privacy === 'invisible'
+                            }">
+                    </div>
                     <scientilla-field-errors
                         errors="vm.profile.certificates[vm.key].errors.date"></scientilla-field-errors>
                 </div>
