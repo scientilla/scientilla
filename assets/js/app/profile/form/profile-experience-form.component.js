@@ -19,8 +19,8 @@
     function profileExperienceForm(ProfileService, $scope) {
         const vm = this;
 
-        vm.dateExperienceFromPopups = [];
-        vm.dateExperienceToPopups = [];
+        vm.openFrom = false;
+        vm.openTo = false;
         vm.datePickerOptions = [];
 
         let experienceWatcher;

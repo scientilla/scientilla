@@ -54,15 +54,13 @@
                                 id="education[{{ vm.key }}]-from"
                                 placeholder="From"
                                 transform-date
+                                datepicker-options="vm.datePickerOptions"
                                 ng-model="vm.education.from"
                                 ng-model-options="{allowInvalid: true}"
                                 uib-datepicker-popup="dd/MM/yyyy"
                                 show-button-bar="false"
-                                on-open-focus="false"
-                                datepicker-options="vm.datePickerOptions"
-                                is-open="vm.dateEducationFromPopups[vm.key]"
-                                ng-focus="vm.dateEducationFromPopups[vm.key] = true"
-                                ng-blur="vm.dateEducationFromPopups[vm.key] = false"
+                                is-open="vm.openFrom"
+                                ng-click="vm.openFrom = true"
                                 ng-class="{
                                     'is-invalid': vm.profile.education[vm.key].errors.from,
                                     'is-invisible' : vm.profile.education[vm.key].privacy === 'invisible'
@@ -80,17 +78,15 @@
                                 type="text"
                                 class="form-control"
                                 id="education[{{ vm.key }}]-to"
-                                placeholder="To"
+                                placeholder="dd/mm/yyyy"
                                 transform-date
+                                datepicker-options="vm.datePickerOptions"
                                 ng-model="vm.education.to"
                                 ng-model-options="{allowInvalid: true}"
                                 uib-datepicker-popup="dd/MM/yyyy"
                                 show-button-bar="false"
-                                on-open-focus="false"
-                                datepicker-options="vm.datePickerOptions"
-                                is-open="vm.dateEducationToPopups[vm.key]"
-                                ng-focus="vm.dateEducationToPopups[vm.key] = true"
-                                ng-blur="vm.dateEducationToPopups[vm.key] = false"
+                                is-open="vm.openTo"
+                                ng-click="vm.openTo = true"
                                 ng-class="{
                                     'is-invalid': vm.profile.education[vm.key].errors.to,
                                     'is-invisible' : vm.profile.education[vm.key].privacy === 'invisible'
