@@ -54,17 +54,15 @@
                                 type="text"
                                 class="form-control"
                                 id="experience[{{ vm.key }}]-from"
-                                placeholder="From"
+                                placeholder="dd/mm/yyyy"
                                 transform-date
+                                datepicker-options="vm.datePickerOptions"
                                 ng-model="vm.experience.from"
                                 ng-model-options="{allowInvalid: true}"
                                 uib-datepicker-popup="dd/MM/yyyy"
                                 show-button-bar="false"
-                                on-open-focus="false"
-                                datepicker-options="vm.datePickerOptions"
-                                is-open="vm.dateExperienceFromPopups[vm.key]"
-                                ng-focus="vm.dateExperienceFromPopups[vm.key] = true"
-                                ng-blur="vm.dateExperienceFromPopups[vm.key] = false"
+                                is-open="vm.openFrom"
+                                ng-click="vm.openFrom = true"
                                 ng-class="{
                                     'is-invalid': vm.profile.experiences[vm.key].errors.from,
                                     'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
@@ -84,15 +82,13 @@
                                 id="experience[{{ vm.key }}]-to"
                                 placeholder="To"
                                 transform-date
+                                datepicker-options="vm.datePickerOptions"
                                 ng-model="vm.experience.to"
                                 ng-model-options="{allowInvalid: true}"
                                 uib-datepicker-popup="dd/MM/yyyy"
                                 show-button-bar="false"
-                                on-open-focus="false"
-                                datepicker-options="vm.datePickerOptions"
-                                is-open="vm.dateExperienceToPopups[vm.key]"
-                                ng-focus="vm.dateExperienceToPopups[vm.key] = true"
-                                ng-blur="vm.dateExperienceToPopups[vm.key] = false"
+                                is-open="vm.openTo"
+                                ng-click="vm.openTo = true"
                                 ng-class="{
                                     'is-invalid': vm.profile.experiences[vm.key].errors.to,
                                     'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'

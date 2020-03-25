@@ -19,8 +19,8 @@
     function profileEducationForm(ProfileService, $scope) {
         const vm = this;
 
-        vm.dateEducationFromPopups = [];
-        vm.dateEducationToPopups = [];
+        vm.openFrom = false;
+        vm.openTo = false;
         vm.datePickerOptions = [];
 
         let educationWatcher;
