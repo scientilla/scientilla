@@ -50,23 +50,25 @@
                             class="form-group"
                             ng-class="{'has-error': vm.profile.experiences[vm.key].errors.from}">
                             <label for="experience[{{ vm.key }}]-from">From</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="experience[{{ vm.key }}]-from"
-                                placeholder="dd/mm/yyyy"
-                                transform-date
-                                datepicker-options="vm.datePickerOptions"
-                                ng-model="vm.experience.from"
-                                ng-model-options="{allowInvalid: true}"
-                                uib-datepicker-popup="dd/MM/yyyy"
-                                show-button-bar="false"
-                                is-open="vm.openFrom"
-                                ng-click="vm.openFrom = true"
-                                ng-class="{
-                                    'is-invalid': vm.profile.experiences[vm.key].errors.from,
-                                    'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
-                                }">
+                            <div class="date-picker-wrapper">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="experience[{{ vm.key }}]-from"
+                                    placeholder="dd/mm/yyyy"
+                                    transform-date
+                                    datepicker-options="vm.datePickerOptions"
+                                    ng-model="vm.experience.from"
+                                    ng-model-options="{allowInvalid: true}"
+                                    uib-datepicker-popup="dd/MM/yyyy"
+                                    show-button-bar="false"
+                                    is-open="vm.openFrom"
+                                    ng-click="vm.openFrom = true"
+                                    ng-class="{
+                                        'is-invalid': vm.profile.experiences[vm.key].errors.from,
+                                        'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
+                                    }">
+                            </div>
                             <scientilla-field-errors
                                 errors=" vm.profile.experiences[vm.key].errors.from"></scientilla-field-errors>
                         </div>
@@ -76,23 +78,25 @@
                             class="form-group"
                             ng-class="{'has-error': vm.profile.experiences[vm.key].errors.to}">
                             <label for="experience[{{ vm.key }}]-to">To</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                id="experience[{{ vm.key }}]-to"
-                                placeholder="To"
-                                transform-date
-                                datepicker-options="vm.datePickerOptions"
-                                ng-model="vm.experience.to"
-                                ng-model-options="{allowInvalid: true}"
-                                uib-datepicker-popup="dd/MM/yyyy"
-                                show-button-bar="false"
-                                is-open="vm.openTo"
-                                ng-click="vm.openTo = true"
-                                ng-class="{
-                                    'is-invalid': vm.profile.experiences[vm.key].errors.to,
-                                    'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
-                                }">
+                            <div class="date-picker-wrapper">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="experience[{{ vm.key }}]-to"
+                                    placeholder="dd/mm/yyyy"
+                                    transform-date
+                                    datepicker-options="vm.datePickerOptions"
+                                    ng-model="vm.experience.to"
+                                    ng-model-options="{allowInvalid: true}"
+                                    uib-datepicker-popup="dd/MM/yyyy"
+                                    show-button-bar="false"
+                                    is-open="vm.openTo"
+                                    ng-click="vm.openTo = true"
+                                    ng-class="{
+                                        'is-invalid': vm.profile.experiences[vm.key].errors.to,
+                                        'is-invisible' : vm.profile.experiences[vm.key].privacy === 'invisible'
+                                    }">
+                            </div>
                             <scientilla-field-errors
                                 errors="vm.profile.experiences[vm.key].errors.to"></scientilla-field-errors>
                         </div>

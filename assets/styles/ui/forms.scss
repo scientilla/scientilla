@@ -531,6 +531,28 @@ label{
     }
 }
 
+.date-picker-wrapper{
+    position: relative;
+
+    &:before{
+        position: absolute;
+        top: 50%;
+        right: 1rem;
+        z-index: 1;
+        display: block;
+        margin-top: -.9rem;
+        font-family: $font-awesome;
+        font-weight: normal;
+        content: '\f073';
+        pointer-events: none;
+    }
+
+    .forn-control{
+        position: relative;
+        z-index: 2;
+    }
+}
+
 @include media-breakpoint-down(sm) {
     .filter-form-container{
 
