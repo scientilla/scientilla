@@ -64,7 +64,7 @@
                                         </ng-container>
                                         <ng-container ng-if="!experience.groupCode">
                                             <span class="job-title">{{ experience.jobTitle }}</span>
-                                            <span class="period">{{ experience.from | date: 'dd/MM/yyyy' }} - {{ experience.to ? (experience.to | date: 'dd/MM/yyyy') : 'present' }}</span>
+                                            <span class="period">{{ experience.from | date: 'MM/yyyy' }} - {{ experience.to ? (experience.to | date: 'MM/yyyy') : 'present' }}</span>
                                             <span
                                                 class="location"
                                                 ng-if="experience.location || experience.country">
