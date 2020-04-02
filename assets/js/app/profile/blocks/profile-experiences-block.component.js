@@ -11,22 +11,20 @@
             }
         });
 
-    profileExperiencesBlock.$inject = ['$uibModal', '$scope', 'TextService'];
+    profileExperiencesBlock.$inject = ['$uibModal', '$scope', 'TextService', 'DateService'];
 
-    function profileExperiencesBlock($uibModal, $scope, TextService) {
+    function profileExperiencesBlock($uibModal, $scope, TextService, DateService) {
         const vm = this;
 
         vm.experiencesByCompany = [];
 
         vm.$onInit = function () {
-            if (!_.isEmpty(vm.profile)) {
-                vm.experiencesByCompany = getExperiencesByCompany(vm.profile);
-            }
+
         };
 
         function getExperiencesByCompany(profile) {
-            if (!_.isEmpty(profile.experiences)) {
-                return _.groupBy(profile.experiences, 'company');
+            if (!_.isEmpty(profile.experiencesWithMemberships)) {
+                return _.groupBy(profile.experiencesWithMemberships, 'company');
             }
 
             return [];
@@ -37,6 +35,10 @@
         };
 
         vm.showExperiencesModal = () => {
+            if (!_.isEmpty(vm.profile)) {
+                vm.experiencesByCompany = getExperiencesByCompany(vm.profile);
+            }
+
             $uibModal.open({
                 animation: true,
                 template:
@@ -56,18 +58,24 @@
                                 <span class="company">{{ company }}</span>
                                 <ul class="job-listing" ng-class="experiences.length > 1 ? 'multiple' : ''">
                                     <li ng-repeat="experience in experiences">
-                                        <span class="job-title">{{ experience.jobTitle }}</span>
-                                        <span class="period">{{ experience.from | date: 'dd/MM/yyyy' }} - {{ experience.to ? (experience.to | date: 'dd/MM/yyyy') : 'present' }}</span>
-                                        <span
-                                            class="location"
-                                            ng-if="experience.location || experience.country">
-                                            {{ vm.joinStrings([experience.location, experience.country], ', ') }}
-                                        </span>
-                                        <div
-                                            class="description"
-                                            ng-if="experience.jobDescription">
-                                            {{ experience.jobDescription }}
-                                        </div>
+                                        <ng-container ng-if="experience.groupCode">
+                                            <span class="job-title">{{ experience.role }}</span>
+                                            <span class="period">{{ vm.formatDate(experience.from) | date: 'dd/MM/yyyy' }} - {{ experience.to ? (vm.formatDate(experience.to) | date: 'dd/MM/yyyy') : 'present' }}</span>
+                                        </ng-container>
+                                        <ng-container ng-if="!experience.groupCode">
+                                            <span class="job-title">{{ experience.jobTitle }}</span>
+                                            <span class="period">{{ experience.from | date: 'dd/MM/yyyy' }} - {{ experience.to ? (experience.to | date: 'dd/MM/yyyy') : 'present' }}</span>
+                                            <span
+                                                class="location"
+                                                ng-if="experience.location || experience.country">
+                                                {{ vm.joinStrings([experience.location, experience.country], ', ') }}
+                                            </span>
+                                            <div
+                                                class="description"
+                                                ng-if="experience.jobDescription">
+                                                {{ experience.jobDescription }}
+                                            </div>
+                                        </ng-container>
                                     </li>
                                 </ul>
                             </li>
@@ -82,6 +90,8 @@
                 size: 'lg'
             });
         };
+
+        vm.formatDate = DateService.format;
     }
 
 })();

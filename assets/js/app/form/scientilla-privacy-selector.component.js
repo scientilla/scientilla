@@ -36,6 +36,7 @@
         const centersRegex = RegExp(/^centers\[([0-9]*?)]/);
         const researchLinesRegex = RegExp(/^researchLines\[([0-9]*?)]/);
         const facilitiesRegex = RegExp(/^facilities\[([0-9]*?)]/);
+        const membershipsRegex = RegExp(/^memberships\[([0-9]*?)]/);
 
         const defaultOption = 'hidden';
 
@@ -82,7 +83,8 @@
                     vm.context === 'office' ||
                     centersRegex.test(vm.context) ||
                     researchLinesRegex.test(vm.context) ||
-                    facilitiesRegex.test(vm.context)
+                    facilitiesRegex.test(vm.context) ||
+                    membershipsRegex.test(vm.context)
                 :
                     if (vm.profile.hidden) {
                         showHiddenOption = true;
@@ -111,18 +113,12 @@
                     educationRegex.test(vm.context) ||
                     certificatesRegex.test(vm.context) ||
                     skillCategoryRegex.test(vm.context) ||
-                    skillRegex.test(vm.context)
+                    skillRegex.test(vm.context) ||
+                    membershipsRegex.test(vm.context)
                 :
                     if (!vm.profile.hidden) {
                         showPublicOption = true;
                     }
-                    showHiddenOption = true;
-                    showInvisibleOption = true;
-                    break;
-                case
-                    vm.context === 'documents' ||
-                    vm.context === 'accomplishments'
-                :
                     showHiddenOption = true;
                     showInvisibleOption = true;
                     break;

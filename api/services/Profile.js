@@ -41,6 +41,7 @@ function formatDate(date) {
     let mm = date.getMonth() + 1;
 
     const yyyy = date.getFullYear();
+
     if (dd < 10) {
         dd = '0' + dd;
     }
@@ -50,6 +51,27 @@ function formatDate(date) {
     }
 
     return dd + '/' + mm + '/' + yyyy;
+}
+
+function formatDateExperience(date) {
+    date = new Date(date);
+    let mm = date.getMonth() + 1;
+
+    const yyyy = date.getFullYear();
+
+    if (mm < 10) {
+        mm = '0' + mm;
+    }
+
+    return mm + '/' + yyyy;
+}
+
+function formatDateEducation(date) {
+    date = new Date(date);
+
+    const yyyy = date.getFullYear();
+
+    return yyyy;
 }
 
 function initializeOptions(options) {
@@ -137,12 +159,12 @@ async function toPDF(researchEntityId, options = {}) {
                 });
             }
 
-            experience.from = formatDate(experience.from);
+            experience.from = formatDateExperience(experience.from);
 
             if (!_.has(experience, 'to') || _.isEmpty(experience.to)) {
                 experience.to = 'Present';
             } else {
-                experience.to = formatDate(experience.to);
+                experience.to = formatDateExperience(experience.to);
             }
 
             tmpText = concatStrings([experience.from, experience.to], {seperator: ' - '});
@@ -187,12 +209,12 @@ async function toPDF(researchEntityId, options = {}) {
                 });
             }
 
-            educationItem.from = formatDate(educationItem.from);
+            educationItem.from = formatDateEducation(educationItem.from);
 
             if (!_.has(educationItem, 'to') || _.isEmpty(educationItem.to)) {
                 educationItem.to = 'Present';
             } else {
-                educationItem.to = formatDate(educationItem.to);
+                educationItem.to = formatDateEducation(educationItem.to);
             }
 
             tmpText = concatStrings([educationItem.from, educationItem.to], {seperator: ' - '});
@@ -1427,12 +1449,12 @@ async function toDoc(researchEntityId, options = {}) {
                         );
                     }
 
-                    experience.from = formatDate(experience.from);
+                    experience.from = formatDateExperience(experience.from);
 
                     if (!_.has(experience, 'to') || _.isEmpty(experience.to)) {
                         experience.to = 'Present';
                     } else {
-                        experience.to = formatDate(experience.to);
+                        experience.to = formatDateExperience(experience.to);
                     }
 
                     tmpText = concatStrings([experience.from, experience.to], {seperator: ' - '});
@@ -1504,12 +1526,12 @@ async function toDoc(researchEntityId, options = {}) {
                     );
                 }
 
-                educationItem.from = formatDate(educationItem.from);
+                educationItem.from = formatDateEducation(educationItem.from);
 
                 if (!_.has(educationItem, 'to') || _.isEmpty(educationItem.to)) {
                     educationItem.to = 'Present';
                 } else {
-                    educationItem.to = formatDate(educationItem.to);
+                    educationItem.to = formatDateEducation(educationItem.to);
                 }
 
                 tmpText = concatStrings([educationItem.from, educationItem.to], {seperator: ' - '});

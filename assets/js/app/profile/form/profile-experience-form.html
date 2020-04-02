@@ -55,12 +55,13 @@
                                     type="text"
                                     class="form-control"
                                     id="experience[{{ vm.key }}]-from"
-                                    placeholder="dd/mm/yyyy"
+                                    datepickerMode="month"
+                                    placeholder="mm/yyyy"
                                     transform-date
                                     datepicker-options="vm.datePickerOptions"
                                     ng-model="vm.experience.from"
                                     ng-model-options="{allowInvalid: true}"
-                                    uib-datepicker-popup="dd/MM/yyyy"
+                                    uib-datepicker-popup="MM/yyyy"
                                     show-button-bar="false"
                                     is-open="vm.openFrom"
                                     ng-click="vm.openFrom = true"
@@ -83,12 +84,12 @@
                                     type="text"
                                     class="form-control"
                                     id="experience[{{ vm.key }}]-to"
-                                    placeholder="dd/mm/yyyy"
+                                    placeholder="mm/yyyy"
                                     transform-date
                                     datepicker-options="vm.datePickerOptions"
                                     ng-model="vm.experience.to"
                                     ng-model-options="{allowInvalid: true}"
-                                    uib-datepicker-popup="dd/MM/yyyy"
+                                    uib-datepicker-popup="MM/yyyy"
                                     show-button-bar="false"
                                     is-open="vm.openTo"
                                     ng-click="vm.openTo = true"
@@ -169,13 +170,6 @@
             </li>
             <li class="action-column desktop-actions">
                 <div class="form-group">
-                    <div class="btn btn-outline-secondary">
-                        <i class="fas fa-arrows-alt"></i>
-                    </div>
-                </div>
-            </li>
-            <li class="action-column desktop-actions">
-                <div class="form-group">
                     <button
                         class="btn btn-outline-secondary"
                         ng-click="vm.removeItem({
@@ -188,28 +182,6 @@
             </li>
             <li class="mobile-actions">
                 <ul>
-                    <li>
-                        <div class="form-group">
-                            <div
-                                class="btn btn-outline-secondary"
-                                ng-disabled="vm.index === 0"
-                                ng-class="{'disabled': vm.index === 0}"
-                                ng-click="vm.moveUp(vm.key, vm.experience)" >
-                                <i class="fas fa-arrow-up fa-left"></i>Move up
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <div class="form-group">
-                            <div
-                                class="btn btn-outline-secondary"
-                                ng-class="{'disabled': vm.index === vm.profile.experiences.length -1}"
-                                ng-disabled="vm.index === vm.profile.experiences.length -1"
-                                ng-click="vm.moveDown(vm.key, vm.experience)">
-                                <i class="fas fa-arrow-down fa-left"></i>Move down
-                            </div>
-                        </div>
-                    </li>
                     <li>
                         <div class="form-group">
                             <button

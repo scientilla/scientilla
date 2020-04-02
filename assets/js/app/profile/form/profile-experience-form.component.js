@@ -28,6 +28,8 @@
         vm.$onInit = function () {
             vm.context = 'experiences[' + vm.key + ']';
             vm.datePickerOptions = ProfileService.getDatepickerOptions();
+            vm.datePickerOptions.minMode = 'month';
+            vm.datePickerOptions.datepickerMode = 'month';
 
             experienceWatcher = $scope.$watch('vm.experience', function() {
                 if (typeof vm.experience.from === 'string') {

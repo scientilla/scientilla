@@ -22,9 +22,10 @@
         'Notification',
         '$timeout',
         '$scope',
+        'DateService'
     ];
 
-    function profileForm(UsersService, AuthService, ProfileService, Notification, $timeout, $scope) {
+    function profileForm(UsersService, AuthService, ProfileService, Notification, $timeout, $scope, DateService) {
         const vm = this;
 
         vm.index = 0;
@@ -148,6 +149,8 @@
         vm.selectChanged = () => {
             vm.active = parseInt(vm.selectedItem);
         };
+
+        vm.formatDate = DateService.format;
 
         function getEditProfile() {
             let profileWatcher;
