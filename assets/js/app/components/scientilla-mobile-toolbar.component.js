@@ -43,8 +43,10 @@
         vm.$onInit = async function () {
             EventsService.subscribeAll(vm, [
                 EventsService.USER_PROFILE_CHANGED,
-            ], () => {
-                AuthService.setupUserAccount(vm.user.id);
+            ], (evt, profile) => {
+                vm.profile = profile;
+
+                refresh();
             });
 
             EventsService.subscribeAll(vm, [
@@ -53,9 +55,9 @@
                 EventsService.CONTEXT_CHANGE
             ], refresh);
 
-            refresh();
-
             vm.profile = await UsersService.getProfile(AuthService.user.researchEntity);
+
+            refresh();
         };
         /* jshint ignore:end */
 

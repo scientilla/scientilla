@@ -54,18 +54,21 @@
 
                     setLocaleStorage();
 
-                    EventsService.publish(EventsService.AUTH_LOGIN, service.user);
-                    if (!service.user.alreadyAccess) {
-                        ModalService.openWizard([
-                            'welcome',
-                            'scopus-edit',
-                            'tutorial',
-                            'admin-tutorial',
-                        ], {
-                            isClosable: false,
-                            size: 'lg'
-                        });
-                    }
+                    return UsersService.getProfile(service.user.researchEntity, false, true).then(() => {
+                        EventsService.publish(EventsService.AUTH_LOGIN, service.user);
+
+                        if (!service.user.alreadyAccess) {
+                            ModalService.openWizard([
+                                'welcome',
+                                'scopus-edit',
+                                'tutorial',
+                                'admin-tutorial',
+                            ], {
+                                isClosable: false,
+                                size: 'lg'
+                            });
+                        }
+                    });
                 });
         }
 

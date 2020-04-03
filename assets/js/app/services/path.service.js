@@ -22,13 +22,12 @@
         };
 
         EventsService.subscribe(service, EventsService.AUTH_LOGIN, () => {
-                let rootPath = '/';
-                if (AuthService.user.role === userConstants.role.EVALUATOR)
-                    rootPath = '/groups/1';
+            let rootPath = '/';
+            if (AuthService.user.role === userConstants.role.EVALUATOR)
+                rootPath = '/groups/1';
 
-                return ['/login', ''].includes(current) ? goTo(rootPath) : goTo(next);
-            }
-        );
+            return ['/login', ''].includes(current) ? goTo(rootPath) : goTo(next);
+        });
 
         function goTo(path) {
             $location.path(path);

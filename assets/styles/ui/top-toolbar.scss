@@ -7,12 +7,14 @@
 }
 
 .top-toolbar{
+    min-height: 7rem;
     padding: 1.5rem 0px;
     background: $header-background-color;
     color: color-yiq($header-background-color);
 
     .top-toolbar-listing{
         @include normalize-listing;
+        width: 100%;
 
         & > li{
             position: relative;
