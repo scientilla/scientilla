@@ -55,41 +55,36 @@
 
             /* jshint ignore:start */
             vm.$onInit = async () => {
+                EventsService.subscribeAll(vm, [
+                    EventsService.USER_PROFILE_CHANGED,
+                ], (evt, profile) => {
+                    vm.profile = profile;
+                });
+
                 vm.subResearchEntity = context.getSubResearchEntity();
-
                 if (vm.subResearchEntity.getType() === 'user') {
-                    EventsService.subscribeAll(vm, [
-                        EventsService.USER_PROFILE_CHANGED,
-                    ], (evt, profile) => {
-                        vm.profile = profile;
-                    });
+                    vm.profile = await getProfile();
 
-                    getProfile().then(profile => {
-                        vm.profile = profile;
-                    }, () => {
+                    if (!vm.profile) {
+                        tabIdentifiers = tabIdentifiers.filter(identifier => {
+                            return identifier.index !== 0;
+                        });
                         $location.url('/dashboard/documents-overview');
-                    }).finally(async () => {
-                        if (!vm.profile) {
-                            tabIdentifiers = tabIdentifiers.filter(identifier => {
-                                return identifier.index !== 0;
-                            });
-                        }
+                    } else {
+                        $location.url('/dashboard/profile');
 
-                        vm.initializeTabs(tabIdentifiers);
-                        vm.chartsData = await getData();
-                        vm.reloadTabs(vm.chartsData);
-                    });
+                    }
                 } else {
                     if (!vm.isMainGroup()) {
                         tabIdentifiers = tabIdentifiers.filter(identifier => {
                             return identifier.index !== 3;
                         });
                     }
-
-                    vm.initializeTabs(tabIdentifiers);
-                    vm.chartsData = await getData();
-                    vm.reloadTabs(vm.chartsData);
                 }
+
+                vm.initializeTabs(tabIdentifiers);
+                vm.chartsData = await getData();
+                vm.reloadTabs(vm.chartsData);
             };
 
             vm.$onDestroy = () => {
@@ -122,17 +117,11 @@
                 return vm.subResearchEntity.id === 1;
             }
 
-            function getProfile() {
-                return new Promise((resolve, reject) => {
-                    UsersService.getProfile(AuthService.user.researchEntity).then(profile => {
-                        if (profile) {
-                            resolve(profile);
-                        } else {
-                            reject();
-                        }
-                    });
-                });
+            /* jshint ignore:start */
+            async function getProfile() {
+                return UsersService.getProfile(AuthService.user.researchEntity);
             }
+            /* jshint ignore:end */
         }
     }
 

@@ -43,7 +43,7 @@
                             <li ng-repeat="education in vm.profile.education">
                                 <span class="institute">{{ education.institution }}</span>
                                 <span class="title">{{ education.title }}</span>
-                                <span class="period">{{ education.from | date: 'dd/MM/yyyy' }} - {{ education.to ? (education.to | date: 'dd/MM/yyyy') : 'present' }}</span>
+                                <span class="period">{{ education.from | date: 'yyyy' }} - {{ education.to ? (education.to | date: 'yyyy') : 'present' }}</span>
                                 <span
                                     class="location"
                                     ng-if="education.location || education.country">

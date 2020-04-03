@@ -193,7 +193,8 @@
     .skill-field-listing,
     .skill-category-field-listing,
     .experience-form,
-    .education-form{
+    .education-form,
+    .internal-experiences{
         @include normalize-listing;
     }
 
@@ -264,6 +265,15 @@
             cursor: pointer;
             color: $white;
         }
+    }
+
+    .experience-description{
+        max-width: 750px;
+    }
+
+    .internal-experiences-title,
+    .external-experiences-title{
+        margin-top: 4rem;
     }
 }
 
@@ -358,7 +368,8 @@
             }
         }
 
-        .experience-form{
+        .experience-form,
+        .internal-experiences{
             display: grid;
             margin: 0px -.75rem;
             grid-template-columns: 1fr 1fr;
@@ -402,6 +413,14 @@
 
         .action-column{
             padding-top: 2.3rem;
+        }
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .edit-profile{
+        .internal-experiences{
+            grid-template-columns: 2fr 2fr 1fr 1fr;
         }
     }
 }

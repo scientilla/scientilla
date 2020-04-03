@@ -136,7 +136,8 @@
 
                     &:last-child{
                         &:before{
-                            content: ' & ';
+                            margin-left: .4rem;
+                            content: '& ';
                         }
                     }
                 }

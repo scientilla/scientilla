@@ -84,10 +84,79 @@
             index="3"
             heading="Experiences"
             ng-class="{'has-error' : vm.errors['experiences'], 'changed' : vm.changed['experiences']}">
+
+            <p class="experience-description">The overview of your experiences will be the combination of experiences outside of and within IIT
+                sorted by date, showing the latest/most recent experience on top.</p>
+
+            <div class="h5 internal-experiences-title">Experiences within IIT</div>
+
             <profile-privacy-legend
                 show="vm.profile.experiences.length > 0"></profile-privacy-legend>
 
-            <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.experiences">
+            <ul class="item-listing add-lines">
+                <li ng-repeat="(key, membership) in vm.profile.memberships track by $index">
+                    <ul class="enable-listing">
+                        <li>
+                            <ul class="field-listing">
+                                <li>
+                                    <ul class="internal-experiences">
+                                        <li>
+                                            <div class="form-group ">
+                                                <label>Group</label>
+                                                <div class="form-control disabled">
+                                                    {{ membership.groupCode }}
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-group">
+                                                <label>Role</label>
+                                                <div class="form-control disabled">
+                                                    {{ membership.role }}
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-group">
+                                                <label>From</label>
+                                                <div class="date-picker-wrapper">
+                                                    <div class="form-control disabled">
+                                                        {{ vm.formatDate(membership.from) | date: 'dd/MM/yyyy' }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="form-group">
+                                                <label>To</label>
+                                                <div class="date-picker-wrapper">
+                                                    <div class="form-control disabled">
+                                                        {{ membership.to ? (vm.formatDate(membership.to) | date: 'dd/MM/yyyy') : 'Present' }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li>
+                            <scientilla-privacy-selector
+                                context-string="memberships[{{ key }}]"
+                                profile="vm.profile"
+                                model="vm.profile.memberships[key].privacy"
+                                errors="vm.profile.memberships[key].errors.privacy"></scientilla-privacy-selector>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <div class="h5 external-experiences-title">Experiences outside of IIT</div>
+
+            <profile-privacy-legend
+                show="vm.profile.experiences.length > 0"></profile-privacy-legend>
+
+            <ul class="item-listing add-lines">
                 <li ng-repeat="(key, experience) in vm.profile.experiences track by $index">
                     <profile-experience-form
                         profile="vm.profile"

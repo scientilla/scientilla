@@ -12,6 +12,9 @@ const dot = require('dot-object');
 // remove after debugging
 const util = require('util');
 
+const moment = require('moment');
+moment.locale('en');
+
 const path = require('path');
 const sharp = require('sharp');
 
@@ -287,6 +290,27 @@ const definitions = {
             }
         }
     },
+    membership: {
+        type: 'object',
+        properties: {
+            groupCode: {
+                type: 'string'
+            },
+            role: {
+                type: 'string'
+            },
+            company: {
+                type: 'string'
+            },
+            from: {
+                type: 'string'
+            },
+            to: {
+                type: 'string'
+            }
+        },
+        required: ['groupCode', 'role', 'company', 'from']
+    },
     ifValueCheckPublicPrivacy: {
         if: {
             properties: {
@@ -334,6 +358,34 @@ const definitions = {
                 }
             },
             required: ['name', 'code']
+        },
+        then: { $ref: '#/definitions/privacyEnumHidden' }
+    },
+    ifGroupCodeRoleCheckPublicPrivacy: {
+        if: {
+            properties: {
+                groupCode: {
+                    minLength: 1
+                },
+                role: {
+                    minLength: 1
+                }
+            },
+            required: ['groupCode', 'role']
+        },
+        then: { $ref: '#/definitions/privacyEnumPublic' }
+    },
+    ifGroupCodeRoleCheckHiddenPrivacy: {
+        if: {
+            properties: {
+                groupCode: {
+                    minLength: 1
+                },
+                role: {
+                    minLength: 1
+                }
+            },
+            required: ['groupCode', 'role']
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
     },
@@ -609,6 +661,16 @@ const defaultProperties = {
     },
     publicWebsite: {$ref: '#/definitions/publicWebsite'},
     export: {$ref: '#/definitions/export'},
+    memberships:{
+        type: 'array',
+        default: [],
+        items: _.merge(
+            {},
+            definitions.privacy,
+            definitions.privacyDefaultHidden,
+            definitions.membership
+        ),
+    }
 };
 
 const thenProperties = {
@@ -783,6 +845,9 @@ const thenProperties = {
                 }
             ]
         }
+    },
+    memberships: {
+        items: definitions.ifGroupCodeRoleCheckHiddenPrivacy
     },
 };
 
@@ -975,7 +1040,10 @@ const elseProperties = {
                 }
             ]
         }
-    }
+    },
+    memberships: {
+        items: definitions.ifGroupCodeRoleCheckPublicPrivacy
+    },
 };
 
 const defaultSchema = {
@@ -1147,6 +1215,65 @@ function setupProfile(userData) {
 
     // We merge the defaults with the user's profile
     if (userData && !_.isEmpty(userData.profile)) {
+
+        if (_.has(userData.profile, 'experiences') || _.has(userData.profile, 'memberships')) {
+
+            switch (true) {
+                case _.has(userData.profile, 'experiences') && _.has(userData.profile, 'memberships') :
+                    userData.profile.experiencesWithMemberships = userData.profile.experiences.concat(userData.profile.memberships);
+                    break;
+                case !_.has(userData.profile, 'experiences') && _.has(userData.profile, 'memberships') :
+                    userData.profile.experiencesWithMemberships = userData.profile.experiences;
+                    break;
+                case _.has(userData.profile, 'experiences') && !_.has(userData.profile, 'memberships') :
+                    userData.profile.experiencesWithMemberships = userData.profile.memberships;
+                    break;
+                default:
+                    userData.profile.experiencesWithMemberships = [];
+                    break;
+            }
+
+            if (_.has(userData.profile, 'experiences')) {
+                userData.profile.experiences = _.orderBy(
+                    userData.profile.experiences,
+                    [
+                        experience => new moment(experience.from, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'),
+                        experience => new moment(experience.tp, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ')
+                    ],
+                    [
+                        'desc',
+                        'desc'
+                    ]
+                );
+            }
+
+            if (_.has(userData.profile, 'experiences')) {
+                userData.profile.memberships = _.orderBy(
+                    userData.profile.memberships,
+                    [
+                        membership => new moment(membership.from, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'),
+                        membership => new moment(membership.to, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'),
+                    ],
+                    [
+                        'desc',
+                        'desc'
+                    ]
+                );
+            }
+
+            userData.profile.experiencesWithMemberships = _.orderBy(
+                userData.profile.experiencesWithMemberships,
+                [
+                    experience => new moment(experience.from, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'),
+                    experience => new moment(experience.to, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ')
+                ],
+                [
+                    'desc',
+                    'desc'
+                ]
+            );
+        }
+
         return _.merge({}, defaultProfile, userData.profile);
     }
 

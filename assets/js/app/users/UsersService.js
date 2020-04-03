@@ -142,12 +142,12 @@
             return response;
         };
 
-        service.getProfile = async (researchEntityId, edit = false) => {
+        service.getProfile = async (researchEntityId, edit = false, forceReload = false) => {
             if (edit) {
                 return Restangular.one('researchentities', researchEntityId).customGET('get-edit-profile');
             }
 
-            if (!_profile) {
+            if (!_profile || forceReload) {
                 const profile = await Restangular.one('researchentities', researchEntityId).customGET('get-profile');
                 if (profile) {
                     _profile = profile;

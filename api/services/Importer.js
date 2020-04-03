@@ -14,13 +14,16 @@ const moment = require('moment');
 moment.locale('en');
 
 const defaultEmail = 'all';
+const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const yearRegex = /^(19|20)\d{2}$/;
 
 module.exports = {
     importSources,
     importPeople,
     importGroups,
     importSourceMetrics,
-    importUserContracts
+    importUserContracts,
+    importUserHistoryContracts
 };
 
 async function importSources() {
@@ -443,7 +446,6 @@ async function importSourceMetrics(filename) {
         }
 
         year = workSheet[yearCellCoord].v;
-        const yearRegex = /^(19|20)\d{2}$/;
         if (!yearRegex.test(year)) {
             sails.log.info('The year on cell ' + yearCellCoord + ' is not valid!');
         }
@@ -569,7 +571,7 @@ async function waitForSuccesfulRequest(options) {
 
     if (response) {
         sails.log.info('Reached the API after ' + attempts + ' attempt(s)!');
-        return response._.scheda;
+        return response._;
     }
 
     sails.log.error('Tried ' + attempts + ' time(s), but failed to reach the API!');
@@ -771,7 +773,10 @@ async function importUserContracts(email = defaultEmail) {
             sails.log.debug('No groups found...');
         }
 
-        const responseData = await waitForSuccesfulRequest(reqOptions);
+        let responseData = await waitForSuccesfulRequest(reqOptions);
+        if (_.has(responseData, 'scheda')) {
+            responseData = responseData.scheda;
+        }
 
         if (_.isEmpty(responseData)) {
             return;
@@ -787,11 +792,11 @@ async function importUserContracts(email = defaultEmail) {
 
         // Get primary contracts of people with a valid email address
         const primaryContractsWithValidEmail = contracts.filter(contract => {
-            if (contract.contratto_secondario !== 'X' && /\S+@\S+\.\S+/.test(contract.email)) {
+            if (contract.contratto_secondario !== 'X' && emailRegex.test(contract.email)) {
                 return true;
             }
 
-            if (contract.contratto_secondario !== 'X' && !/\S+@\S+\.\S+/.test(contract.email)) {
+            if (contract.contratto_secondario !== 'X' && emailRegex.test(contract.email)) {
                 invalidEmails.push(contract.email);
                 return false;
             }
@@ -1028,4 +1033,327 @@ async function importUserContracts(email = defaultEmail) {
         sails.log.debug('importUserContracts');
         sails.log.debug(e);
     }
+}
+
+async function importUserHistoryContracts(email = defaultEmail) {
+
+    // Endpoint options to get all users
+    const reqOptionsAllEmployees = {
+        uri: sails.config.scientilla.userImport.endpoint,
+        qs: {
+            rep: 'PROD',
+            trans: '/public/scheda_persona_flat',
+            output: 'json',
+            email: email,
+            statodip: 'tutti'
+        },
+        headers: {
+            username: sails.config.scientilla.userImport.username,
+            password: sails.config.scientilla.userImport.password
+        },
+        json: true
+    };
+
+    // Endpoint options to get contract history
+    const reqOptionsContractHistory = {
+        uri: sails.config.scientilla.userImport.endpoint,
+        qs: {
+            rep: 'PROD',
+            trans: '/public/storico_contrattuale_UO_node',
+            output: 'json',
+            email: email
+        },
+        headers: {
+            username: sails.config.scientilla.userImport.username,
+            password: sails.config.scientilla.userImport.password
+        },
+        json: true
+    };
+
+    // This function returns an array of user objects with an unique and valid email addresses
+    // and the CID code we receive from pentaho.
+    async function getUsers() {
+        try {
+            let response = await waitForSuccesfulRequest(reqOptionsAllEmployees);
+
+            if (!_.has(response, 'scheda')) {
+                return false;
+            }
+
+            response = response.scheda;
+
+            if (_.isEmpty(response)) {
+                return false;
+            }
+
+            let cards = [];
+
+            // We store the response into a variable to re-use the data when creating a new user.
+            if (email !== defaultEmail) {
+                personalCards.push(response);
+            } else {
+                personalCards = response;
+            }
+
+            // We loop over the items and store only the ones with a valid and unique email address.
+            for (const card of personalCards) {
+                if (
+                    _.has(card, 'email') &&
+                    emailRegex.test(card.email) &&
+                    _.isUndefined(cards.find(c => c.email === card.email))
+                ) {
+                    cards.push({
+                        cid: card.cid,
+                        email: card.email
+                    });
+                }
+            }
+
+            return cards;
+        } catch (e) {
+            sails.log.debug('importUserHistoryContracts:getUsers');
+            sails.log.debug(e);
+        }
+    }
+
+    // This function returns false or an object with the contractual history.
+    async function getContractualHistoryOfUsers(users) {
+        try {
+            const chunkLength = 250;
+            const cidCodes = users.map(user => user.cid);
+            const cidCodeGroups = _.chunk(cidCodes, chunkLength);
+
+            sails.log.info('Splitting the CID codes into groups of ' + chunkLength);
+
+            let responseData = [];
+
+            // We have to split the codes into chunks because the API does not accept that much parameters for one call.
+            for (const group of cidCodeGroups) {
+                reqOptionsContractHistory.qs.cid = group.join(',');
+
+                const response = await waitForSuccesfulRequest(reqOptionsContractHistory);
+
+                if (_.has(response, 'CID') && _.isEmpty(responseData.CID)) {
+                    responseData = responseData.concat(response.CID);
+                }
+            }
+
+            return responseData;
+
+        } catch (e) {
+            sails.log.debug('importUserHistoryContracts:getContractHistoryOfUsers');
+            sails.log.debug(e);
+        }
+    }
+
+    // This function will return false or an object with the groupCode, from (start date), to (end date), role of the
+    // membership
+    function handleStep(step) {
+        if (_.has(step, '_.linea._') && _.has(step, '_.stato') && step._.stato === 'in forza') {
+            const stepGroup = step._.linea._;
+
+            if (!_.has(stepGroup, 'codice')) {
+                return false;
+            }
+
+            const membership = {
+                groupCode: stepGroup.codice
+            };
+
+            if (_.has(step, '_.data_inizio')) {
+                const from = moment(step._.data_inizio, 'DD/MM/YYYY');
+                membership.from = from.format('YYYY-MM-DD HH:mm:ss.SSSSSS ZZ');
+            }
+
+            if (_.has(step, '_.data_fine')) {
+                const to = moment(step._.data_fine, 'DD/MM/YYYY');
+                if (!moment('31/12/9999', 'DD/MM/YYYY').isSame(to)) {
+                    membership.to = to.format('YYYY-MM-DD HH:mm:ss.SSSSSS ZZ');
+                }
+            }
+
+            if (_.has(step, '_.ruolo')) {
+                membership.role = step._.ruolo;
+            }
+
+            return membership;
+        }
+
+        return false;
+    }
+
+    // This function will handle a contract
+    // It will loop over each step or step if it's just one and setup the membership
+    // Creates the user if the user doesn't exists yet and has a membership of an available group in Scientilla.
+    // It also updates the user's profile.
+    async function handleHistoryContract(contract) {
+        if (_.has(contract, '_.step') && _.has(contract, '_.cid')) {
+            const steps = contract._.step;
+            const cid = contract._.cid;
+            const memberships = [];
+            const card = personalCards.find(card => card.cid === cid);
+
+            let user = await User.findOne({ username: card.email });
+
+            if (_.isArray(steps)) {
+                for(const step of steps) {
+                    const membership = handleStep(step);
+
+                    if (membership) {
+                        const membershipIndex = memberships.findIndex(m => m.groupCode === membership.groupCode && m.role === membership.role);
+
+                        if (membershipIndex !== -1) {
+                            const membershipOfIndex = memberships[membershipIndex];
+
+                            switch (true) {
+                                case moment(membership.from, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ').diff(
+                                    moment(membershipOfIndex.to, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'), 'days'
+                                ) === 1:
+                                    membershipOfIndex.to = membership.to;
+                                    memberships[membershipIndex] = membershipOfIndex;
+                                    break;
+                                case moment(membershipOfIndex.from, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ').diff(
+                                    moment(membership.to, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'), 'days'
+                                ) === 1:
+                                    membershipOfIndex.fom = membership.from;
+                                    memberships[membershipIndex] = membershipOfIndex;
+                                    break;
+                                default:
+                                    memberships.push(membership);
+                                    break;
+                            }
+                        } else {
+                            memberships.push(membership);
+                        }
+                    }
+                }
+            } else {
+                const membership = handleStep(steps);
+
+                if (membership) {
+                    memberships.push(membership);
+                }
+            }
+
+            // Loop over received memberships and change the active value (former) of the membership
+            for (const membership of memberships) {
+
+                const group = allGroups.find(g => g.code === membership.groupCode);
+
+                // Check if the group code exists in the group table, otherwise it is an very old group
+                if (group) {
+
+                    let active = false;
+                    if (moment(membership.to, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ').diff(moment().startOf('day')) >= 0) {
+                        active = true;
+                    }
+
+                    if (!user) {
+                        const userObject = {
+                            username: card.email,
+                            name: card.nome,
+                            surname: card.cognome,
+                            jobTitle: card.Ruolo_AD,
+                            displayName: card.nome_AD,
+                            displaySurname: card.cognome_AD,
+                            lastsynch: moment().utc().format(),
+                            active: false,
+                            synchronized: true,
+                        };
+
+                        user = await User.createUserWithoutAuth(userObject);
+
+                        createdUsers.push(user);
+                    }
+
+                    const membershipOfGroup = await Membership.findOne({user: user.id, group: group.id});
+
+                    if (membershipOfGroup) {
+                        const updatedMembership = await Membership.update(
+                            {id: membershipOfGroup.id},
+                            {
+                                lastsynch: moment().format('YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'),
+                                active: active,
+                                synchronized: true
+                            });
+
+                        updatedMemberships.push(updatedMembership);
+                    } else {
+                        const newMembership = await Membership.create({
+                            user: user.id,
+                            group: group.id,
+                            lastsynch: moment().format('YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'),
+                            active: active,
+                            synchronized: true
+                        });
+                        createdMemberships.push(newMembership);
+                    }
+
+                }
+            }
+
+            if (user) {
+                let researchEntityData = await ResearchEntityData.findOne({
+                    researchEntity: user.researchEntity
+                });
+
+                if (researchEntityData && _.has(researchEntityData, 'profile') &&!_.isEmpty(researchEntityData.profile)) {
+
+                    for (const [key, membership] of Object.entries(memberships)) {
+                        membership.privacy = researchEntityData.profile.username.privacy;
+                        membership.company = 'Istituto Italiano di Tecnologia';
+                        memberships[key] = membership;
+                    }
+
+                    researchEntityData.profile.memberships = memberships;
+
+                    let profileJSONString = JSON.stringify(researchEntityData.profile);
+
+                    researchEntityData = await ResearchEntityData.update(
+                        { id: researchEntityData.id },
+                        { profile: profileJSONString }
+                    );
+
+                    updatedResearchEntityDataItems.push(researchEntityData);
+                }
+            }
+        }
+
+        return;
+    }
+
+    const importTime = moment.utc().format();
+
+    sails.log.info('Started at ' + importTime);
+
+    const allGroups = await Group.find();
+    const updatedMemberships = [];
+    const createdMemberships = [];
+    const createdUsers = [];
+    const updatedResearchEntityDataItems = [];
+
+    // Variable that will contain all the users we receive from the scheda_personale endpoint
+    let personalCards = [];
+
+    // Array of objects with email and cid
+    const users = await getUsers();
+    sails.log.info('Received ' + users.length + ' contracts with an unique and valid email address.');
+
+    // Variable that will contain all the contractual history we receive from the storico_contrattuale endpoint
+    const contractualHistory = await getContractualHistoryOfUsers(users);
+
+    if (_.isArray(contractualHistory)) {
+        for (const contract of contractualHistory) {
+            await handleHistoryContract(contract);
+        }
+    } else {
+        await handleHistoryContract(contract);
+    }
+
+    sails.log.info('Created users: ' + createdUsers.length);
+    sails.log.info('Created memberships: ' + createdMemberships.length);
+    sails.log.info('Updated memberships: ' + updatedMemberships.length);
+    sails.log.info('Updated researchEntityData items: ' + updatedResearchEntityDataItems.length);
+
+    sails.log.info('Stopped at ' + moment.utc().format());
 }

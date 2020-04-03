@@ -28,6 +28,8 @@
         vm.$onInit = function () {
             vm.context = 'education[' + vm.key + ']';
             vm.datePickerOptions = ProfileService.getDatepickerOptions();
+            vm.datePickerOptions.minMode = 'year';
+            vm.datePickerOptions.datepickerMode = 'year';
 
             educationWatcher = $scope.$watch('vm.education', function() {
                 if (typeof vm.education.from === 'string') {
