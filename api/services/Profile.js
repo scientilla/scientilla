@@ -465,13 +465,15 @@ async function toPDF(researchEntityId, options = {}) {
                     title = 'Centers: ';
                 }
 
+                const centers = profile.centers.map(center => center.name);
+
                 basicProfile.push({
                     text: [
                         {
                             text: title,
                             style: 'bold'
                         },
-                        concatStrings(profile.centers)
+                        concatStrings(centers)
                     ]
                 });
             }
@@ -483,13 +485,15 @@ async function toPDF(researchEntityId, options = {}) {
                     title = 'Lines: ';
                 }
 
+                const researchLines = profile.researchLines.map(researchLine => researchLine.name);
+
                 basicProfile.push({
                     text: [
                         {
                             text: title,
                             style: 'bold'
                         },
-                        concatStrings(profile.researchLines)
+                        concatStrings(researchLines)
                     ]
                 });
             }
@@ -500,13 +504,15 @@ async function toPDF(researchEntityId, options = {}) {
                     title = 'Facilities: ';
                 }
 
+                const facilities = profile.facilities.map(facility => facility.name);
+
                 basicProfile.push({
                     text: [
                         {
                             text: title,
                             style: 'bold'
                         },
-                        concatStrings(profile.facilities)
+                        concatStrings(facilities)
                     ]
                 });
             }
@@ -1246,14 +1252,17 @@ async function toDoc(researchEntityId, options = {}) {
             if (profile.centers.length > 1) {
                 title = 'Centers: ';
             }
+            const centers = profile.centers.map(center => center.name);
+
             baseProfile.push(
                 new TextRun({
                     text: title,
                     bold: true
                 }).break()
             );
+
             baseProfile.push(
-                new TextRun(concatStrings(profile.centers))
+                new TextRun(concatStrings(centers))
             );
         }
 
@@ -1262,14 +1271,18 @@ async function toDoc(researchEntityId, options = {}) {
             if (profile.researchLines.length > 1) {
                 title = 'Lines: ';
             }
+
+            const researchLines = profile.researchLines.map(researchLine => researchLine.name);
+
             baseProfile.push(
                 new TextRun({
                     text: title,
                     bold: true
                 }).break()
             );
+
             baseProfile.push(
-                new TextRun(concatStrings(profile.researchLines))
+                new TextRun(concatStrings(researchLines))
             );
         }
 
@@ -1278,14 +1291,18 @@ async function toDoc(researchEntityId, options = {}) {
             if (profile.facilities.length > 1) {
                 title = 'Facilities: ';
             }
+
+            const facilities = profile.facilities.map(facility => facility.name);
+
             baseProfile.push(
                 new TextRun({
                     text: title,
                     bold: true
                 }).break()
             );
+
             baseProfile.push(
-                new TextRun(concatStrings(profile.facilities))
+                new TextRun(concatStrings(facilities))
             );
         }
 
