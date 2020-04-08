@@ -362,31 +362,31 @@ const definitions = {
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
     },
-    ifGroupCodeRoleCheckPublicPrivacy: {
+    ifGroupCodeJobTitleCheckPublicPrivacy: {
         if: {
             properties: {
                 groupCode: {
                     minLength: 1
                 },
-                role: {
+                jobTitle: {
                     minLength: 1
                 }
             },
-            required: ['groupCode', 'role']
+            required: ['groupCode', 'jobTitle']
         },
         then: { $ref: '#/definitions/privacyEnumPublic' }
     },
-    ifGroupCodeRoleCheckHiddenPrivacy: {
+    ifGroupCodeJobTitleCheckHiddenPrivacy: {
         if: {
             properties: {
                 groupCode: {
                     minLength: 1
                 },
-                role: {
+                jobTitle: {
                     minLength: 1
                 }
             },
-            required: ['groupCode', 'role']
+            required: ['groupCode', 'jobTitle']
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
     },
@@ -848,7 +848,7 @@ const thenProperties = {
         }
     },
     internalExperiences: {
-        items: definitions.ifGroupCodeRoleCheckHiddenPrivacy
+        items: definitions.ifGroupCodeJobTitleCheckHiddenPrivacy
     },
 };
 
@@ -1043,7 +1043,7 @@ const elseProperties = {
         }
     },
     internalExperiences: {
-        items: definitions.ifGroupCodeRoleCheckPublicPrivacy
+        items: definitions.ifGroupCodeJobTitleCheckPublicPrivacy
     },
 };
 

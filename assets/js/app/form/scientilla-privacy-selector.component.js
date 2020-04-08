@@ -28,7 +28,6 @@
 
         const titlesRegex = RegExp(/^titles\[([0-9]*?)]/);
         const interestsRegex = RegExp(/^interests\[([0-9]*?)]/);
-        const experiencesRegex = RegExp(/^experiences\[([0-9]*?)]/);
         const educationRegex = RegExp(/^education\[([0-9]*?)]/);
         const certificatesRegex = RegExp(/^certificates\[([0-9]*?)]/);
         const skillCategoryRegex = RegExp(/^skill-category\[([0-9]*?)]/);
@@ -36,7 +35,8 @@
         const centersRegex = RegExp(/^centers\[([0-9]*?)]/);
         const researchLinesRegex = RegExp(/^researchLines\[([0-9]*?)]/);
         const facilitiesRegex = RegExp(/^facilities\[([0-9]*?)]/);
-        const membershipsRegex = RegExp(/^memberships\[([0-9]*?)]/);
+        const externalExperiencesRegex = RegExp(/^experiencesExternal\[([0-9]*?)]/);
+        const internalExperiencesRegex = RegExp(/^experiencesInternal\[([0-9]*?)]/);
 
         const defaultOption = 'hidden';
 
@@ -84,7 +84,7 @@
                     centersRegex.test(vm.context) ||
                     researchLinesRegex.test(vm.context) ||
                     facilitiesRegex.test(vm.context) ||
-                    membershipsRegex.test(vm.context)
+                    internalExperiencesRegex.test(vm.context)
                 :
                     if (vm.profile.hidden) {
                         showHiddenOption = true;
@@ -109,12 +109,12 @@
                     vm.context === 'flickr' ||
                     titlesRegex.test(vm.context) ||
                     interestsRegex.test(vm.context) ||
-                    experiencesRegex.test(vm.context) ||
                     educationRegex.test(vm.context) ||
                     certificatesRegex.test(vm.context) ||
                     skillCategoryRegex.test(vm.context) ||
                     skillRegex.test(vm.context) ||
-                    membershipsRegex.test(vm.context)
+                    externalExperiencesRegex.test(vm.context) ||
+                    internalExperiencesRegex.test(vm.context)
                 :
                     if (!vm.profile.hidden) {
                         showPublicOption = true;
