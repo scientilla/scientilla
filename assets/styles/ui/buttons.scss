@@ -50,3 +50,11 @@
         border-color: $white;
     }
 }
+
+.btn-info{
+    &.active{
+        .text-info{
+            color: $white !important;
+        }
+    }
+}

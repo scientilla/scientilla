@@ -57,6 +57,7 @@
                                     id="experience[{{ vm.key }}]-from"
                                     datepickerMode="month"
                                     placeholder="mm/yyyy"
+                                    transform-date
                                     datepicker-options="vm.datePickerOptions"
                                     ng-model="vm.experience.from"
                                     ng-model-options="{allowInvalid: true}"
@@ -72,6 +73,16 @@
                             <scientilla-field-errors
                                 errors=" vm.profile.experiencesExternal[vm.key].errors.from"></scientilla-field-errors>
                         </div>
+                        <div class="form-group">
+                            <label class="form-checkbox inline-block">
+                                <input
+                                    type="checkbox"
+                                    ng-model="vm.currentExperience"
+                                    ng-click="vm.checkboxClick()"
+                                    ng-checked="vm.experience.to ? false : true">
+                                <span></span>Current experience
+                            </label>
+                        </div>
                     </li>
                     <li>
                         <div
@@ -84,6 +95,7 @@
                                     class="form-control"
                                     id="experience[{{ vm.key }}]-to"
                                     placeholder="mm/yyyy"
+                                    transform-date
                                     datepicker-options="vm.datePickerOptions"
                                     ng-model="vm.experience.to"
                                     ng-model-options="{allowInvalid: true}"

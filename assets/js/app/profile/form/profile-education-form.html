@@ -54,6 +54,7 @@
                                     class="form-control"
                                     id="education[{{ vm.key }}]-from"
                                     placeholder="yyyy"
+                                    transform-date
                                     datepicker-options="vm.datePickerOptions"
                                     ng-model="vm.education.from"
                                     ng-model-options="{allowInvalid: true}"
@@ -69,6 +70,16 @@
                             <scientilla-field-errors
                                 errors="vm.profile.education[vm.key].errors.from"></scientilla-field-errors>
                         </div>
+                        <div class="form-group">
+                            <label class="form-checkbox inline-block">
+                                <input
+                                    type="checkbox"
+                                    ng-model="vm.currentEducation"
+                                    ng-click="vm.checkboxClick()"
+                                    ng-checked="vm.education.to ? false : true">
+                                <span></span>Current education
+                            </label>
+                        </div>
                     </li>
                     <li>
                         <div
@@ -81,6 +92,7 @@
                                     class="form-control"
                                     id="education[{{ vm.key }}]-to"
                                     placeholder="yyyy"
+                                    transform-date
                                     datepicker-options="vm.datePickerOptions"
                                     ng-model="vm.education.to"
                                     ng-model-options="{allowInvalid: true}"

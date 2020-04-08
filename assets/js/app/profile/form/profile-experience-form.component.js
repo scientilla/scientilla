@@ -22,6 +22,7 @@
         vm.openFrom = false;
         vm.openTo = false;
         vm.datePickerOptions = [];
+        vm.currentExperience = vm.experience.to ? false : true;
 
         let experienceWatcher;
 
@@ -32,13 +33,15 @@
             vm.datePickerOptions.datepickerMode = 'month';
 
             experienceWatcher = $scope.$watch('vm.experience', function() {
-                if (typeof vm.experience.from === 'string') {
+                if (typeof vm.experience.from === 'string' && !_.isEmpty(vm.experience.from)) {
                     vm.experience.from = new Date(vm.experience.from);
                 }
 
-                if (typeof vm.experience.to === 'string') {
+                if (typeof vm.experience.to === 'string' && !_.isEmpty(vm.experience.to)) {
                     vm.experience.to = new Date(vm.experience.to);
                 }
+
+                vm.currentExperience = vm.experience.to ? false : true;
             });
         };
 
@@ -63,6 +66,14 @@
             if (key < vm.profile.experiencesExternal.length) {
                 vm.profile.experiencesExternal.splice(key, 1);
                 vm.profile.experiencesExternal.splice(key + 1, 0, experience);
+            }
+        };
+
+        vm.checkboxClick = function() {
+            if (vm.currentExperience) {
+                vm.experience.to = '';
+            } else {
+                vm.experience.to = new Date();
             }
         };
     }
