@@ -22,6 +22,7 @@
         vm.openFrom = false;
         vm.openTo = false;
         vm.datePickerOptions = [];
+        vm.currentEducation = vm.education.to ? false : true;
 
         let educationWatcher;
 
@@ -32,13 +33,15 @@
             vm.datePickerOptions.datepickerMode = 'year';
 
             educationWatcher = $scope.$watch('vm.education', function() {
-                if (typeof vm.education.from === 'string') {
+                if (typeof vm.education.from === 'string' && !_.isEmpty(vm.education.from)) {
                     vm.education.from = new Date(vm.education.from);
                 }
 
-                if (typeof vm.education.to === 'string') {
+                if (typeof vm.education.to === 'string' && !_.isEmpty(vm.education.to)) {
                     vm.education.to = new Date(vm.education.to);
                 }
+
+                vm.currentEducation = vm.education.to ? false : true;
             });
         };
 
@@ -63,6 +66,14 @@
             if (key < vm.profile.education.length) {
                 vm.profile.education.splice(key, 1);
                 vm.profile.education.splice(key + 1, 0, education);
+            }
+        };
+
+        vm.checkboxClick = function() {
+            if (vm.currentEducation) {
+                vm.education.to = '';
+            } else {
+                vm.education.to = new Date();
             }
         };
     }

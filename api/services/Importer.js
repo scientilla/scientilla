@@ -16,6 +16,8 @@ moment.locale('en');
 const defaultEmail = 'all';
 const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 const yearRegex = /^(19|20)\d{2}$/;
+const ISO8601Format = 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]';
+const zone = moment.tz.guess();
 
 module.exports = {
     importSources,
@@ -1161,19 +1163,18 @@ async function importUserHistoryContracts(email = defaultEmail) {
             };
 
             if (_.has(step, '_.data_inizio')) {
-                const from = moment(step._.data_inizio, 'DD/MM/YYYY');
-                membership.from = from.format('YYYY-MM-DD HH:mm:ss.SSSSSS ZZ');
+                membership.from = moment.tz(step._.data_inizio, 'DD/MM/YYYY', zone).utc().format(ISO8601Format);
             }
 
             if (_.has(step, '_.data_fine')) {
                 const to = moment(step._.data_fine, 'DD/MM/YYYY');
                 if (!moment('31/12/9999', 'DD/MM/YYYY').isSame(to)) {
-                    membership.to = to.format('YYYY-MM-DD HH:mm:ss.SSSSSS ZZ');
+                    membership.to = moment.tz(step._.data_fine, 'DD/MM/YYYY', zone).utc().format(ISO8601Format);
                 }
             }
 
             if (_.has(step, '_.ruolo')) {
-                membership.role = step._.ruolo;
+                membership.jobTitle = step._.ruolo;
             }
 
             return membership;
@@ -1206,14 +1207,14 @@ async function importUserHistoryContracts(email = defaultEmail) {
                             const membershipOfIndex = memberships[membershipIndex];
 
                             switch (true) {
-                                case moment(membership.from, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ').diff(
-                                    moment(membershipOfIndex.to, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'), 'days'
+                                case moment(membership.from, ISO8601Format).diff(
+                                    moment(membershipOfIndex.to, ISO8601Format), 'days'
                                 ) === 1:
                                     membershipOfIndex.to = membership.to;
                                     memberships[membershipIndex] = membershipOfIndex;
                                     break;
-                                case moment(membershipOfIndex.from, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ').diff(
-                                    moment(membership.to, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'), 'days'
+                                case moment(membershipOfIndex.from, ISO8601Format).diff(
+                                    moment(membership.to, ISO8601Format), 'days'
                                 ) === 1:
                                     membershipOfIndex.fom = membership.from;
                                     memberships[membershipIndex] = membershipOfIndex;
@@ -1244,7 +1245,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
                 if (group) {
 
                     let active = false;
-                    if (moment(membership.to, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ').diff(moment().startOf('day')) >= 0) {
+                    if (moment(membership.to, ISO8601Format).diff(moment().startOf('day')) >= 0) {
                         active = true;
                     }
 
@@ -1272,7 +1273,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
                         const updatedMembership = await Membership.update(
                             {id: membershipOfGroup.id},
                             {
-                                lastsynch: moment().format('YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'),
+                                lastsynch: moment().utc().format(),
                                 active: active,
                                 synchronized: true
                             });
@@ -1282,7 +1283,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
                         const newMembership = await Membership.create({
                             user: user.id,
                             group: group.id,
-                            lastsynch: moment().format('YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'),
+                            lastsynch: moment().utc().format(),
                             active: active,
                             synchronized: true
                         });
@@ -1305,7 +1306,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
                         memberships[key] = membership;
                     }
 
-                    researchEntityData.profile.memberships = memberships;
+                    researchEntityData.profile.experiencesInternal = memberships;
 
                     let profileJSONString = JSON.stringify(researchEntityData.profile);
 

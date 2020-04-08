@@ -219,7 +219,7 @@
                     }
                     return false;
                 case 'experiences':
-                    if (angular.toJson(originalProfile.experiences) !== angular.toJson(vm.profile.experiences)) {
+                    if (angular.toJson(originalProfile.experiencesExternal) !== angular.toJson(vm.profile.experiencesExternal)) {
                         return true;
                     }
                     return false;

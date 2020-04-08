@@ -70,6 +70,16 @@
                             <scientilla-field-errors
                                 errors="vm.profile.education[vm.key].errors.from"></scientilla-field-errors>
                         </div>
+                        <div class="form-group">
+                            <label class="form-checkbox inline-block">
+                                <input
+                                    type="checkbox"
+                                    ng-model="vm.currentEducation"
+                                    ng-click="vm.checkboxClick()"
+                                    ng-checked="vm.education.to ? false : true">
+                                <span></span>Current education
+                            </label>
+                        </div>
                     </li>
                     <li>
                         <div

@@ -46,7 +46,7 @@
                 count++;
             }
 
-            if (_.has(vm.profile, 'experiencesWithMemberships') && vm.profile.experiencesWithMemberships.length > 0) {
+            if (_.has(vm.profile, 'experiences') && vm.profile.experiences.length > 0) {
                 count++;
             }
 

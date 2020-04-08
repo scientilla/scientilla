@@ -14,6 +14,7 @@ const util = require('util');
 
 const moment = require('moment');
 moment.locale('en');
+const ISO8601Format = 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]';
 
 const path = require('path');
 const sharp = require('sharp');
@@ -135,7 +136,7 @@ const definitions = {
         },
         required: ['value']
     },
-    experience: {
+    externalExperience: {
         type: 'object',
         properties: {
             company: {
@@ -290,13 +291,13 @@ const definitions = {
             }
         }
     },
-    membership: {
+    internalExperience: {
         type: 'object',
         properties: {
             groupCode: {
                 type: 'string'
             },
-            role: {
+            jobTitle: {
                 type: 'string'
             },
             company: {
@@ -309,7 +310,7 @@ const definitions = {
                 type: 'string'
             }
         },
-        required: ['groupCode', 'role', 'company', 'from']
+        required: ['groupCode', 'jobTitle', 'company', 'from']
     },
     ifValueCheckPublicPrivacy: {
         if: {
@@ -615,14 +616,14 @@ const defaultProperties = {
             definitions.notEmptyString
         )
     },
-    experiences: {
+    experiencesExternal: {
         type: 'array',
         default: [],
         items: _.merge(
             {},
             definitions.privacy,
             definitions.privacyDefaultHidden,
-            definitions.experience
+            definitions.externalExperience
         ),
     },
     education: {
@@ -661,14 +662,14 @@ const defaultProperties = {
     },
     publicWebsite: {$ref: '#/definitions/publicWebsite'},
     export: {$ref: '#/definitions/export'},
-    memberships:{
+    experiencesInternal:{
         type: 'array',
         default: [],
         items: _.merge(
             {},
             definitions.privacy,
             definitions.privacyDefaultHidden,
-            definitions.membership
+            definitions.internalExperience
         ),
     }
 };
@@ -794,7 +795,7 @@ const thenProperties = {
             }
         }
     },
-    experiences: {
+    experiencesExternal: {
         items: {
             oneOf: [
                 { $ref: '#/definitions/privacyEnumHidden' },
@@ -846,7 +847,7 @@ const thenProperties = {
             ]
         }
     },
-    memberships: {
+    internalExperiences: {
         items: definitions.ifGroupCodeRoleCheckHiddenPrivacy
     },
 };
@@ -988,7 +989,7 @@ const elseProperties = {
             }
         }
     },
-    experiences: {
+    experiencesExternal: {
         items: {
             oneOf: [
                 { $ref: '#/definitions/privacyEnumHidden' },
@@ -1041,7 +1042,7 @@ const elseProperties = {
             ]
         }
     },
-    memberships: {
+    internalExperiences: {
         items: definitions.ifGroupCodeRoleCheckPublicPrivacy
     },
 };
@@ -1216,56 +1217,28 @@ function setupProfile(userData) {
     // We merge the defaults with the user's profile
     if (userData && !_.isEmpty(userData.profile)) {
 
-        if (_.has(userData.profile, 'experiences') || _.has(userData.profile, 'memberships')) {
+        if (_.has(userData.profile, 'experiencesExternal') || _.has(userData.profile, 'experiencesInternal')) {
 
             switch (true) {
-                case _.has(userData.profile, 'experiences') && _.has(userData.profile, 'memberships') :
-                    userData.profile.experiencesWithMemberships = userData.profile.experiences.concat(userData.profile.memberships);
+                case _.has(userData.profile, 'experiencesExternal') && _.has(userData.profile, 'experiencesInternal') :
+                    userData.profile.experiences = userData.profile.experiencesExternal.concat(userData.profile.experiencesInternal);
                     break;
-                case !_.has(userData.profile, 'experiences') && _.has(userData.profile, 'memberships') :
-                    userData.profile.experiencesWithMemberships = userData.profile.experiences;
+                case !_.has(userData.profile, 'experiencesExternal') && _.has(userData.profile, 'experiencesInternal') :
+                    userData.profile.experiences = userData.profile.experiencesInternal;
                     break;
-                case _.has(userData.profile, 'experiences') && !_.has(userData.profile, 'memberships') :
-                    userData.profile.experiencesWithMemberships = userData.profile.memberships;
+                case _.has(userData.profile, 'experiencesExternal') && !_.has(userData.profile, 'experiencesInternal') :
+                    userData.profile.experiences = userData.profile.experiencesExternal;
                     break;
                 default:
-                    userData.profile.experiencesWithMemberships = [];
+                    userData.profile.experiences = [];
                     break;
             }
 
-            if (_.has(userData.profile, 'experiences')) {
-                userData.profile.experiences = _.orderBy(
-                    userData.profile.experiences,
-                    [
-                        experience => new moment(experience.from, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'),
-                        experience => new moment(experience.tp, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ')
-                    ],
-                    [
-                        'desc',
-                        'desc'
-                    ]
-                );
-            }
-
-            if (_.has(userData.profile, 'experiences')) {
-                userData.profile.memberships = _.orderBy(
-                    userData.profile.memberships,
-                    [
-                        membership => new moment(membership.from, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'),
-                        membership => new moment(membership.to, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'),
-                    ],
-                    [
-                        'desc',
-                        'desc'
-                    ]
-                );
-            }
-
-            userData.profile.experiencesWithMemberships = _.orderBy(
-                userData.profile.experiencesWithMemberships,
+            userData.profile.experiences = _.orderBy(
+                userData.profile.experiences,
                 [
-                    experience => new moment(experience.from, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ'),
-                    experience => new moment(experience.to, 'YYYY-MM-DD HH:mm:ss.SSSSSS ZZ')
+                    experience => new moment(experience.from, ISO8601Format),
+                    experience => new moment(experience.to, ISO8601Format)
                 ],
                 [
                     'desc',
