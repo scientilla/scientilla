@@ -27,7 +27,7 @@
         let experienceWatcher;
 
         vm.$onInit = function () {
-            vm.context = 'experiences[' + vm.key + ']';
+            vm.context = 'experiencesExternal[' + vm.key + ']';
             vm.datePickerOptions = ProfileService.getDatepickerOptions();
             vm.datePickerOptions.minMode = 'month';
             vm.datePickerOptions.datepickerMode = 'month';

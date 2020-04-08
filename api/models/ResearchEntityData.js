@@ -362,31 +362,31 @@ const definitions = {
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
     },
-    ifGroupCodeRoleCheckPublicPrivacy: {
+    ifGroupCodeJobTitleCheckPublicPrivacy: {
         if: {
             properties: {
                 groupCode: {
                     minLength: 1
                 },
-                role: {
+                jobTitle: {
                     minLength: 1
                 }
             },
-            required: ['groupCode', 'role']
+            required: ['groupCode', 'jobTitle']
         },
         then: { $ref: '#/definitions/privacyEnumPublic' }
     },
-    ifGroupCodeRoleCheckHiddenPrivacy: {
+    ifGroupCodeJobTitleCheckHiddenPrivacy: {
         if: {
             properties: {
                 groupCode: {
                     minLength: 1
                 },
-                role: {
+                jobTitle: {
                     minLength: 1
                 }
             },
-            required: ['groupCode', 'role']
+            required: ['groupCode', 'jobTitle']
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
     },
@@ -848,7 +848,7 @@ const thenProperties = {
         }
     },
     internalExperiences: {
-        items: definitions.ifGroupCodeRoleCheckHiddenPrivacy
+        items: definitions.ifGroupCodeJobTitleCheckHiddenPrivacy
     },
 };
 
@@ -1043,7 +1043,7 @@ const elseProperties = {
         }
     },
     internalExperiences: {
-        items: definitions.ifGroupCodeRoleCheckPublicPrivacy
+        items: definitions.ifGroupCodeJobTitleCheckPublicPrivacy
     },
 };
 
@@ -1233,6 +1233,30 @@ function setupProfile(userData) {
                     userData.profile.experiences = [];
                     break;
             }
+
+            userData.profile.experiencesExternal = _.orderBy(
+                userData.profile.experiencesExternal,
+                [
+                    experience => new moment(experience.from, ISO8601Format),
+                    experience => new moment(experience.to, ISO8601Format)
+                ],
+                [
+                    'desc',
+                    'desc'
+                ]
+            );
+
+            userData.profile.experiencesInternal = _.orderBy(
+                userData.profile.experiencesInternal,
+                [
+                    experience => new moment(experience.from, ISO8601Format),
+                    experience => new moment(experience.to, ISO8601Format)
+                ],
+                [
+                    'desc',
+                    'desc'
+                ]
+            );
 
             userData.profile.experiences = _.orderBy(
                 userData.profile.experiences,
@@ -1469,6 +1493,43 @@ async function saveProfile(req) {
                 profile.image.value = researchEntityData.profile.image.value;
             }
         }
+
+        // Sorting experiences
+        profile.experiencesExternal = _.orderBy(
+            profile.experiencesExternal,
+            [
+                experience => new moment(experience.from, ISO8601Format),
+                experience => new moment(experience.to, ISO8601Format)
+            ],
+            [
+                'desc',
+                'desc'
+            ]
+        );
+
+        profile.experiencesInternal = _.orderBy(
+            profile.experiencesInternal,
+            [
+                experience => new moment(experience.from, ISO8601Format),
+                experience => new moment(experience.to, ISO8601Format)
+            ],
+            [
+                'desc',
+                'desc'
+            ]
+        );
+
+        profile.experiences = _.orderBy(
+            profile.experiences,
+            [
+                experience => new moment(experience.from, ISO8601Format),
+                experience => new moment(experience.to, ISO8601Format)
+            ],
+            [
+                'desc',
+                'desc'
+            ]
+        );
 
         // If the profile has some errors
         if (!valid || validate.errors) {

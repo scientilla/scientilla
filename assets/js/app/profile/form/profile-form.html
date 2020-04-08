@@ -86,7 +86,7 @@
             ng-class="{'has-error' : vm.errors['experiences'], 'changed' : vm.changed['experiences']}">
 
             <p class="experience-description">The overview of your experiences will be the combination of experiences outside of and within IIT
-                sorted by date, showing the latest/most recent experience on top.</p>
+                sorted by date, showing the latest/most recent experience on top. The order of this list will also updated when saving.</>
 
             <div class="h5 internal-experiences-title">Experiences within IIT</div>
 
@@ -110,9 +110,9 @@
                                         </li>
                                         <li>
                                             <div class="form-group">
-                                                <label>Role</label>
+                                                <label>Job title</label>
                                                 <div class="form-control disabled">
-                                                    {{ experience.role }}
+                                                    {{ experience.jobTitle }}
                                                 </div>
                                             </div>
                                         </li>

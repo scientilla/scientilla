@@ -41,7 +41,7 @@
                     <div class="modal-body profile-modal education">
                         <ul class="education-listing">
                             <li ng-repeat="education in vm.profile.education">
-                                <span class="institute">{{ education.institution }}</span>
+                                <span class="institute">{{ education.institute }}</span>
                                 <span class="title">{{ education.title }}</span>
                                 <span class="period">{{ education.from | date: 'yyyy' }} - {{ education.to ? (education.to | date: 'yyyy') : 'present' }}</span>
                                 <span
