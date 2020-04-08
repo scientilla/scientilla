@@ -1,13 +1,8 @@
 <div class="profile-card">
-    <div class="content-container" ng-repeat="experience in vm.profile.experiencesWithMemberships | limitTo: 1">
+    <div class="content-container" ng-repeat="experience in vm.profile.experiences | limitTo: 1">
         <i class="fas fa-briefcase title-icon"></i><span>My {{ experience.to ? 'last' : 'current' }} experience:</span>
         <h2 class="block-title">
-            <ng-container ng-if="experience.groupCode">
-                {{ vm.joinStrings([experience.role, experience.company], ' at ') }}
-            </ng-container>
-            <ng-container ng-if="!experience.groupCode">
-                {{ vm.joinStrings([experience.jobTitle, experience.company], ' at ') }}
-            </ng-container>
+            {{ vm.joinStrings([experience.jobTitle, experience.company], ' at ') }}
         </h2>
     </div>
     <button class="show-more has-action" ng-click="vm.showExperiencesModal()">Show all experiences</button>

@@ -91,10 +91,10 @@
             <div class="h5 internal-experiences-title">Experiences within IIT</div>
 
             <profile-privacy-legend
-                show="vm.profile.experiences.length > 0"></profile-privacy-legend>
+                show="vm.profile.experiencesInternal.length > 0"></profile-privacy-legend>
 
             <ul class="item-listing add-lines">
-                <li ng-repeat="(key, membership) in vm.profile.memberships track by $index">
+                <li ng-repeat="(key, experience) in vm.profile.experiencesInternal track by $index">
                     <ul class="enable-listing">
                         <li>
                             <ul class="field-listing">
@@ -104,7 +104,7 @@
                                             <div class="form-group ">
                                                 <label>Group</label>
                                                 <div class="form-control disabled">
-                                                    {{ membership.groupCode }}
+                                                    {{ experience.groupCode }}
                                                 </div>
                                             </div>
                                         </li>
@@ -112,7 +112,7 @@
                                             <div class="form-group">
                                                 <label>Role</label>
                                                 <div class="form-control disabled">
-                                                    {{ membership.role }}
+                                                    {{ experience.role }}
                                                 </div>
                                             </div>
                                         </li>
@@ -121,7 +121,7 @@
                                                 <label>From</label>
                                                 <div class="date-picker-wrapper">
                                                     <div class="form-control disabled">
-                                                        {{ vm.formatDate(membership.from) | date: 'dd/MM/yyyy' }}
+                                                        {{ vm.formatDate(experience.from) | date: 'dd/MM/yyyy' }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -131,7 +131,7 @@
                                                 <label>To</label>
                                                 <div class="date-picker-wrapper">
                                                     <div class="form-control disabled">
-                                                        {{ membership.to ? (vm.formatDate(membership.to) | date: 'dd/MM/yyyy') : 'Present' }}
+                                                        {{ experience.to ? (vm.formatDate(experience.to) | date: 'dd/MM/yyyy') : 'Present' }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -142,10 +142,10 @@
                         </li>
                         <li>
                             <scientilla-privacy-selector
-                                context-string="memberships[{{ key }}]"
+                                context-string="experiencesInternal[{{ key }}]"
                                 profile="vm.profile"
-                                model="vm.profile.memberships[key].privacy"
-                                errors="vm.profile.memberships[key].errors.privacy"></scientilla-privacy-selector>
+                                model="vm.profile.experiencesInternal[key].privacy"
+                                errors="vm.profile.experiencesInternal[key].errors.privacy"></scientilla-privacy-selector>
                         </li>
                     </ul>
                 </li>
@@ -154,10 +154,10 @@
             <div class="h5 external-experiences-title">Experiences outside of IIT</div>
 
             <profile-privacy-legend
-                show="vm.profile.experiences.length > 0"></profile-privacy-legend>
+                show="vm.profile.experiencesExternal.length > 0"></profile-privacy-legend>
 
             <ul class="item-listing add-lines">
-                <li ng-repeat="(key, experience) in vm.profile.experiences track by $index">
+                <li ng-repeat="(key, experience) in vm.profile.experiencesExternal track by $index">
                     <profile-experience-form
                         profile="vm.profile"
                         errors="vm.errors"
@@ -170,7 +170,7 @@
             <button
                 class="btn btn-link btn-inline"
                 ng-click="vm.addItem({
-                    property: vm.profile.experiences
+                    property: vm.profile.experiencesExternal
                 })">
                 <i class="fas fa-plus fa-left"></i>Add experience
             </button>
