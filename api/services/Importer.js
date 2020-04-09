@@ -1039,6 +1039,8 @@ async function importUserContracts(email = defaultEmail) {
 
 async function importUserHistoryContracts(email = defaultEmail) {
 
+    await importUserContracts(email);
+
     // Endpoint options to get all users
     const reqOptionsAllEmployees = {
         uri: sails.config.scientilla.userImport.endpoint,
