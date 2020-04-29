@@ -59,7 +59,7 @@
                                 <ul class="job-listing" ng-class="experiences.length > 1 ? 'multiple' : ''">
                                     <li ng-repeat="experience in experiences">
                                         <span class="job-title">{{ experience.jobTitle }}</span>
-                                        <ng-container ng-if="experience.line.groupCode">
+                                        <ng-container ng-if="experience.line.code">
                                             <span class="period">
                                                 {{ vm.formatDate(experience.from) | date: 'dd/MM/yyyy' }} - 
                                                 {{ experience.to && !vm.isFuture(experience.to) ? (vm.formatDate(experience.to) | date: 'dd/MM/yyyy') : 'present' }}
@@ -70,7 +70,7 @@
                                                 {{ vm.joinStrings([experience.line.name, experience.line.office], ' - ') }}
                                             </span>
                                         </ng-container>
-                                        <ng-container ng-if="!experience.line.groupCode">                                            
+                                        <ng-container ng-if="!experience.line.code">                                            
                                             <span class="period">
                                                 {{ experience.from | date: 'MM/yyyy' }} - 
                                                 {{ experience.to ? (experience.to | date: 'MM/yyyy') : 'present' }}

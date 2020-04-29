@@ -1618,7 +1618,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
                         profile: JSON.stringify(profile),
                         imported_data: JSON.stringify(userCard)
                     });
-                    sails.log.info('The user didn\'t  have a profile yet, so it\'s been created.');
+                    sails.log.info('The user didn\'t have a profile yet, so it\'s been created.');
                     createdResearchEntityDataItems.push(researchEntityData);
                 }
             }
