@@ -1473,16 +1473,16 @@ async function importUserHistoryContracts(email = defaultEmail) {
                 sails.log.info('This user seems to have a permanent contract!');
             }
 
+            // Set the active state of the user account:
+            // It's active when the user has a permanent contract or
+            // when the current date if before the expire date of the contract.
+            let active = false;
+            if (hasPermanentContract || (expiresAt && moment().isBefore(expiresAt))) {
+                active = true;
+            }
+
             // When the user does not exist
             if (!user) {
-
-                // Set the active state of the user account:
-                // It's active when the user has a permanent contract or
-                // when the current date if before the expire date of the contract.
-                let active = false;
-                if (hasPermanentContract || (expiresAt && moment().isBefore(expiresAt))) {
-                    active = true;
-                }
 
                 // We should create a user when the expire date is null
                 // or when the expire date is less than five years ago.
@@ -1542,6 +1542,16 @@ async function importUserHistoryContracts(email = defaultEmail) {
                         sails.log.info('The expiresAt date is been updated to ' + expiresAt.format());
                         updatedExpiredUsers.push(user);
                     }
+                }
+
+                if (active !== user.active) {
+                    await User.update(
+                        { id: user.id },
+                        { active: active }
+                    );
+                    user = await User.findOne({ id: user.id });
+                    sails.log.info('The active state is been updated to: ' + active);
+                    updatedActiveUsers.push(user);
                 }
             }
 
@@ -1640,6 +1650,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
     const createdMemberships = [];
     const createdUsers = [];
     const updatedExpiredUsers = [];
+    const updatedActiveUsers = [];
     const createdResearchEntityDataItems = [];
     const updatedResearchEntityDataItems = [];
 
@@ -1708,6 +1719,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
         sails.log.info('Number of created users: ' + createdUsers.length);
         sails.log.info('Number of users that are not been created because of the expireAt date: ' + skippedUsers);
         sails.log.info('Updated the expiredAt date for ' + updatedExpiredUsers.length + ' users');
+        sails.log.info('Updated the active state for ' + updatedActiveUsers.length + ' users');
         sails.log.info('Number of created memberships: ' + createdMemberships.length);
         sails.log.info('Number of updated memberships: ' + updatedMemberships.length);
         sails.log.info('Number of created researchEntityData items: ' + createdResearchEntityDataItems.length);
