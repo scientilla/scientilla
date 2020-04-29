@@ -12,6 +12,13 @@ module.exports = {
     getProfileImage: async function (req, res, next) {
         const username = req.params.username;
         const user = await User.findOne({username});
+
+        if (!user || (user && !_.has(user, 'researchEntity'))) {
+            return res.notFound({
+                message: 'User not found!'
+            });
+        }
+
         const data = await UserData.findOne({researchEntity: user.researchEntity});
 
         if (!_.has(data, 'profile')) {
