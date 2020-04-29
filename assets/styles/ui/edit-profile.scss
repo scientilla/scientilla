@@ -176,8 +176,8 @@
         &.add-lines{
             & > li{
                 & + li{
-                    margin-top: 2rem;
-                    padding-top: 2rem;
+                    margin-top: 1rem;
+                    padding-top: 1rem;
                     border-top: 2px solid $gray-100;
                 }
             }
