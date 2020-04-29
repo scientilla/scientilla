@@ -11,6 +11,7 @@
     "angularjs-color-picker": "^3.4.8",
     "ansi-to-html": "^0.6.13",
     "ansi_up": "^4.0.4",
+    "axios": "^0.19.2",
     "base64-stream": "^1.0.0",
     "bluebird": "^3.7.2",
     "bootstrap": "4.1.3",
