@@ -16,20 +16,29 @@
             'AuthService',
             '$element',
             '$scope',
-            'EventsService'
+            'EventsService',
+            'context',
+            'researchEntityService',
+            'AccomplishmentService'
         ];
 
         function SummaryProfileComponent(
             AuthService,
             $element,
             $scope,
-            EventsService
+            EventsService,
+            context,
+            researchEntityService,
+            AccomplishmentService
         ) {
             const vm = this;
 
             vm.numberOfItems = 0;
             vm.loading = true;
             vm.missingProfile = false;
+
+            vm.documents = [];
+            vm.accomplishments = [];
 
             vm.urlAllDocuments = '/#/documents/verified';
             vm.urlFavoriteDocuments = '/#/documents/verified?favorites';
@@ -38,7 +47,7 @@
 
             let deregister;
 
-            vm.$onInit = () => {
+            vm.$onInit = async () => {
                 deregister = $scope.$watch('profile', () => {
                     loadProfile();
                 });
@@ -63,6 +72,16 @@
                 loadProfile();
 
                 vm.user = AuthService.user;
+
+                vm.subResearchEntity = context.getSubResearchEntity();
+                researchEntityService.getDocuments(vm.subResearchEntity, {}).then(function (documents) {
+                    vm.documents = documents;
+                    setNumberOfItems();
+                });
+
+                vm.researchEntity = await context.getResearchEntity();
+                vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {});
+                setNumberOfItems();
             };
 
             vm.$onDestroy = () => {
@@ -101,11 +120,11 @@
                     count++;
                 }
 
-                if (_.has(vm.profile, 'accomplishments') && vm.profile.accomplishments.length > 0) {
+                if (vm.accomplishments.length > 0) {
                     count++;
                 }
 
-                if (_.has(vm.profile, 'documents') && vm.profile.documents.length > 0) {
+                if (vm.documents.length > 0) {
                     count++;
                 }
 

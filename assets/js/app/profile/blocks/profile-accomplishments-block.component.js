@@ -8,36 +8,47 @@
             controllerAs: 'vm',
             bindings: {
                 profile: '<',
+                accomplishments: '<',
                 urlFavoriteAccomplishments: '<',
                 urlAllAccomplishments: '<',
             }
         });
 
-    profileAccomplishmentsBlock.$inject = ['context'];
+    profileAccomplishmentsBlock.$inject = ['context', '$scope'];
 
-    function profileAccomplishmentsBlock(context) {
+    function profileAccomplishmentsBlock(context, $scope) {
         const vm = this;
 
         vm.accomplishmentsByType = [];
         vm.favoriteAccomplishments = [];
 
+        let accomplishmentsWatcher = null;
+
         vm.$onInit = function () {
-            vm.accomplishmentsByType = getAccomplishmentsByType(vm.profile);
-            vm.favoriteAccomplishments = getFavoriteAccomplishments(vm.profile);
+            accomplishmentsWatcher = $scope.$watch('vm.accomplishments', function(evt){
+                vm.accomplishmentsByType = getAccomplishmentsByType(vm.accomplishments);
+                vm.favoriteAccomplishments = getFavoriteAccomplishments(vm.accomplishments);
+            }, true);
         };
 
-        function getAccomplishmentsByType(profile) {
-            if (!_.isEmpty(profile.accomplishments)) {
-                return _.groupBy(profile.accomplishments, 'type.label');
+        vm.$onDestroy = function () {
+            if (accomplishmentsWatcher) {
+                accomplishmentsWatcher();
+            }
+        };
+
+        function getAccomplishmentsByType(accomplishments) {
+            if (!_.isEmpty(accomplishments)) {
+                return _.groupBy(accomplishments, 'type.label');
             }
 
             return [];
         }
 
-        function getFavoriteAccomplishments(profile) {
+        function getFavoriteAccomplishments(accomplishments) {
             const subResearchEntity = context.getSubResearchEntity();
-            if (!_.isEmpty(profile.accomplishments)) {
-                return profile.accomplishments.filter(accomplishment => {
+            if (!_.isEmpty(accomplishments)) {
+                return accomplishments.filter(accomplishment => {
                     if (_.has(accomplishment, 'verified')) {
                         const verifiedAccomplishment = accomplishment.verified.find(
                             a => a.researchEntity === subResearchEntity.researchEntity

@@ -8,36 +8,47 @@
             controllerAs: 'vm',
             bindings: {
                 profile: '<',
+                documents: '<',
                 urlFavoriteDocuments: '<',
                 urlAllDocuments: '<',
             }
         });
 
-    profileDocumentsBlock.$inject = ['context'];
+    profileDocumentsBlock.$inject = ['context', '$scope'];
 
-    function profileDocumentsBlock(context) {
+    function profileDocumentsBlock(context, $scope) {
         const vm = this;
 
         vm.documentsBySourceType = [];
         vm.favoriteDocuments = [];
 
+        let documentsWatcher = null;
+
         vm.$onInit = function () {
-            vm.documentsBySourceType = getDocumentsBySourceType(vm.profile);
-            vm.favoriteDocuments = getFavoriteDocuments(vm.profile);
+            documentsWatcher = $scope.$watch('vm.documents', function(evt){
+                vm.documentsBySourceType = getDocumentsBySourceType(vm.documents);
+                vm.favoriteDocuments = getFavoriteDocuments(vm.documents);
+            }, true);
         };
 
-        function getDocumentsBySourceType(profile) {
-            if (!_.isEmpty(profile.documents)) {
-                return _.groupBy(profile.documents, 'sourceTypeObj.label');
+        vm.$onDestroy = function () {
+            if (documentsWatcher) {
+                documentsWatcher();
+            }
+        };
+
+        function getDocumentsBySourceType(documents) {
+            if (!_.isEmpty(documents)) {
+                return _.groupBy(documents, 'sourceTypeObj.label');
             }
 
             return [];
         }
 
-        function getFavoriteDocuments(profile) {
+        function getFavoriteDocuments(documents) {
             const subResearchEntity = context.getSubResearchEntity();
-            if (!_.isEmpty(profile.documents)) {
-                return profile.documents.filter(document => {
+            if (!_.isEmpty(documents)) {
+                return documents.filter(document => {
                     let field;
                     if (subResearchEntity.getType() === 'user') {
                         field = 'authorships';
