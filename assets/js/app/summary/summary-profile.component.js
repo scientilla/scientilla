@@ -47,6 +47,7 @@
 
             let deregister;
 
+            /* jshint ignore:start */
             vm.$onInit = async () => {
                 deregister = $scope.$watch('profile', () => {
                     loadProfile();
@@ -83,6 +84,7 @@
                 vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {});
                 setNumberOfItems();
             };
+            /* jshint ignore:end */
 
             vm.$onDestroy = () => {
                 const unregisterTab = requireParentMethod($element, 'unregisterTab');
