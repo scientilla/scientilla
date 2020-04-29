@@ -11,6 +11,17 @@
             return new Date(value);
         };
 
+        service.isFuture = (value) => {
+            const now = new Date();
+            value = new Date(value);
+
+            if (value < now) {
+                return false;
+            }
+
+            return true;
+        };
+
         return service;
     }
 })();

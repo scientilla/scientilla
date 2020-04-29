@@ -39,29 +39,6 @@
         vm.profileIsLoaded = false;
         vm.selectedItem = '0';
 
-        vm.toolbarOptions = [
-            [
-                'p',
-                'pre',
-                'quote',
-                'bold',
-                'italics',
-                'underline',
-                'strikeThrough',
-                'ul',
-                'ol',
-                'undo',
-                'redo',
-                'clear',
-                'justifyLeft',
-                'justifyCenter',
-                'justifyRight',
-                'justifyFull',
-                'indent',
-                'outdent'
-            ]
-        ];
-
         let originalProfileJson = '';
 
         vm.$onInit = function () {

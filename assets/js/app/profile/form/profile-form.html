@@ -43,7 +43,7 @@
             <profile-basic-information-form
                 profile="vm.profile"></profile-basic-information-form>
 
-            <em>The information above is been obtained from HR. If something is incorrect please contact HR.</em>
+            <em>If you notice that the information above is not correct, please contact the HR Office.</em>
 
             <profile-legend
                 profile="vm.profile"
@@ -104,7 +104,7 @@
                                             <div class="form-group ">
                                                 <label>Group</label>
                                                 <div class="form-control disabled">
-                                                    {{ experience.groupCode }}
+                                                    {{ experience.line.name }}
                                                 </div>
                                             </div>
                                         </li>
@@ -143,13 +143,15 @@
                         <li>
                             <scientilla-privacy-selector
                                 context-string="experiencesInternal[{{ key }}]"
-                                profile="vm.profile"
                                 model="vm.profile.experiencesInternal[key].privacy"
-                                errors="vm.profile.experiencesInternal[key].errors.privacy"></scientilla-privacy-selector>
+                                errors="vm.profile.experiencesInternal[key].errors.privacy"
+                                profile="vm.profile"></scientilla-privacy-selector>
                         </li>
                     </ul>
                 </li>
             </ul>
+
+            <em>If you notice that the information about your IIT contract(s) is not correct, please contact the HR Office.</em>
 
             <div class="h5 external-experiences-title">Experiences outside of IIT</div>
 

@@ -30,14 +30,19 @@
             login: login,
             register: register,
             logout: logout,
-            setupUserAccount: setupUserAccount
+            setupUserAccount: setupUserAccount,
+            savedProfile: savedProfile
         };
 
         return service;
 
         function setupUserAccount(userId) {
-            if (!service.isAvailable && !service.isAdmin)
+            if (!service.isAvailable && !service.isAdmin) {
                 return;
+            }
+
+            UsersService.emptyProfile();
+
             return UsersService.getSettings(userId)
                 .then(function (user) {
                     service.user = user;
@@ -95,7 +100,8 @@
             }
 
             const url = 'auths/login';
-            return Restangular.all(url).post(credentials)
+            return Restangular.all(url)
+                .post(credentials)
                 .then(function (data) {
                     return setupUserAccount(data.id);
                 }, function(res) {
@@ -139,6 +145,12 @@
                 jwtToken: service.jwtToken,
                 expiration: service.expiration
             });
+        }
+
+        function savedProfile() {
+            if (_.has(service, 'user.alreadyChangedProfile') && !service.user.alreadyChangedProfile) {
+                service.user.alreadyChangedProfile = true;
+            }
         }
     }
 

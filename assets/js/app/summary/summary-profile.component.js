@@ -50,6 +50,16 @@
                     loadProfile();
                 });
 
+                EventsService.subscribe(vm, EventsService.AUTH_USER_CHANGED, (evt, user) => {
+                    vm.user = user;
+                });
+
+                EventsService.subscribe(vm, EventsService.USER_PROFILE_SAVED, () => {
+                    AuthService.savedProfile();
+
+                    vm.user = AuthService.user;
+                });
+
                 loadProfile();
 
                 vm.user = AuthService.user;

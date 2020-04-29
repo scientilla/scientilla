@@ -73,6 +73,9 @@
             }
 
             switch (true) {
+                case internalExperiencesRegex.test(vm.context) :
+                    showHiddenOption = true;
+                    break;
                 case
                     vm.context === 'username' ||
                     vm.context === 'name' ||
@@ -83,8 +86,7 @@
                     vm.context === 'office' ||
                     centersRegex.test(vm.context) ||
                     researchLinesRegex.test(vm.context) ||
-                    facilitiesRegex.test(vm.context) ||
-                    internalExperiencesRegex.test(vm.context)
+                    facilitiesRegex.test(vm.context)
                 :
                     if (vm.profile.hidden) {
                         showHiddenOption = true;
@@ -113,8 +115,7 @@
                     certificatesRegex.test(vm.context) ||
                     skillCategoryRegex.test(vm.context) ||
                     skillRegex.test(vm.context) ||
-                    externalExperiencesRegex.test(vm.context) ||
-                    internalExperiencesRegex.test(vm.context)
+                    externalExperiencesRegex.test(vm.context)
                 :
                     if (!vm.profile.hidden) {
                         showPublicOption = true;

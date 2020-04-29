@@ -11,6 +11,7 @@
         var service = {
             AUTH_LOGIN: 'auth.login',
             AUTH_LOGOUT: 'auth.logout',
+            AUTH_USER_CHANGED: 'auth.userChanged',
 
             DRAFT_DELETED: 'draft.deleted',
             DRAFT_UPDATED: 'draft.updated',
@@ -48,7 +49,8 @@
             CUSTOMIZATIONS_CHANGED: 'customizations.changed',
             CONNECTORS_CHANGED: 'external.connectors.changed',
 
-            USER_PROFILE_CHANGED: 'userProfile.changed'
+            USER_PROFILE_CHANGED: 'userProfile.changed',
+            USER_PROFILE_SAVED: 'userProfile.saved',
         };
 
         service.publish = function (event, args) {
