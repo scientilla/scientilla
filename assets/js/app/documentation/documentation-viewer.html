@@ -7,13 +7,14 @@
             </div>
 
             <h2>Profile</h2>
-            <p>This is a collection of information about the API endpoints regarding to the user profile.</p>
+            <div class="sub-description">
+                <p>This is a collection of information about the API endpoints regarding to the user profile.</p>
+            </div>
+
             <ul class="documentation-listing">
                 <li id="get-profile-of-all-users">
                     <h3>Get the profile of all users</h3>
-                    <div class="description">
-                        <p>You can get the profile of all users by using this API endpoint. You will receive an object with the number of items and an array of profiles.</p>
-                    </div>
+                    <p>You can get the profile of all users by using this API endpoint. You will receive an object with the number of items and an array of profile objects.</p>
                     <pre data-type="get">
                         <code>/api/v1/userData?limit=0</code>
                     </pre>
@@ -25,9 +26,7 @@
                 </li>
                 <li id="get-profile-of-specific-user">
                     <h3>Get the profile of a specific user</h3>
-                    <div class="description">
-                        <p>If you want a profile of a specific user you can do that by using the email address of the user. This will have in fact the same result as getting the profile of all users except you will only have one item in the array.</p>
-                    </div>
+                    <p>You can get a profile of a specific user by using the email address of the user.</p>
                     <pre data-type="get">
                         <code>/api/v1/users/username/:email/profile</code>
                     </pre>
@@ -51,7 +50,7 @@
                     <p><strong>Success response</strong></p>
                     <documentation-user-object-table></documentation-user-object-table>
 
-                    <p><strong>Error response</strong><br>If you are trying to get a not existing profile or something else is not working you will receive the following result:</p>
+                    <p><strong>Error response</strong><br>If you are trying to get a not existing profile you will receive the following result:</p>
                     <pre>
                         <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"error": "404 not found",<br>&nbsp;&nbsp;&nbsp;&nbsp;"item": {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"username": "john.doe@iit.it"<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}</code>
                     </pre>

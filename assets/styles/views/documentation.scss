@@ -7,8 +7,18 @@
         margin-bottom: 4rem;
     }
 
-    .page-description{
+    .page-description,
+    .sub-description{
         margin-bottom: 4rem;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6{
+        margin-bottom: 1rem;
     }
 
     pre,
@@ -35,7 +45,7 @@
             position: absolute;
             top: -3.5rem;
             left: 0px;
-            padding: .5rem 1rem;
+            padding: .7rem .5rem .5rem .5rem;
             line-height: 1;
             border-radius: .4rem;
             text-transform: uppercase;
