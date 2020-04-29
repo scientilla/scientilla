@@ -35,6 +35,17 @@ function concatStrings(strings = [], options = {}) {
     return strings.join(options.seperator)
 }
 
+function isFuture(date) {
+    const now = new Date();
+    date = new Date(date);
+
+    if (date < now) {
+        return false;
+    }
+
+    return true;
+}
+
 function formatDate(date) {
     date = new Date(date);
     let dd = date.getDate();
@@ -161,7 +172,7 @@ async function toPDF(researchEntityId, options = {}) {
 
             experience.from = formatDateExperience(experience.from);
 
-            if (!_.has(experience, 'to') || _.isEmpty(experience.to)) {
+            if (!_.has(experience, 'to') || _.isEmpty(experience.to) || isFuture(experience.to)) {
                 experience.to = 'Present';
             } else {
                 experience.to = formatDateExperience(experience.to);
@@ -211,7 +222,7 @@ async function toPDF(researchEntityId, options = {}) {
 
             educationItem.from = formatDateEducation(educationItem.from);
 
-            if (!_.has(educationItem, 'to') || _.isEmpty(educationItem.to)) {
+            if (!_.has(educationItem, 'to') || _.isEmpty(educationItem.to) || isFuture(educationItem.to)) {
                 educationItem.to = 'Present';
             } else {
                 educationItem.to = formatDateEducation(educationItem.to);
@@ -1468,7 +1479,7 @@ async function toDoc(researchEntityId, options = {}) {
 
                     experience.from = formatDateExperience(experience.from);
 
-                    if (!_.has(experience, 'to') || _.isEmpty(experience.to)) {
+                    if (!_.has(experience, 'to') || _.isEmpty(experience.to) || isFuture(experience.to)) {
                         experience.to = 'Present';
                     } else {
                         experience.to = formatDateExperience(experience.to);
@@ -1545,7 +1556,7 @@ async function toDoc(researchEntityId, options = {}) {
 
                 educationItem.from = formatDateEducation(educationItem.from);
 
-                if (!_.has(educationItem, 'to') || _.isEmpty(educationItem.to)) {
+                if (!_.has(educationItem, 'to') || _.isEmpty(educationItem.to) || isFuture(educationItem.to)) {
                     educationItem.to = 'Present';
                 } else {
                     educationItem.to = formatDateEducation(educationItem.to);
