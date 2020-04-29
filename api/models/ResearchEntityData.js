@@ -294,14 +294,27 @@ const definitions = {
     internalExperience: {
         type: 'object',
         properties: {
-            groupCode: {
-                type: 'string'
-            },
+
             jobTitle: {
                 type: 'string'
             },
             company: {
                 type: 'string'
+            },
+            line: {
+                type: 'object',
+                properties: {
+                    code: {
+                        type: 'string'
+                    },
+                    name: {
+                        type: 'string'
+                    },
+                    office: {
+                        type: 'string'
+                    }
+                },
+                required: ['code', 'name']
             },
             from: {
                 type: 'string'
@@ -310,7 +323,7 @@ const definitions = {
                 type: 'string'
             }
         },
-        required: ['groupCode', 'jobTitle', 'company', 'from']
+        required: ['line', 'jobTitle', 'company', 'from']
     },
     ifValueCheckPublicPrivacy: {
         if: {
@@ -334,20 +347,6 @@ const definitions = {
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
     },
-    ifNameCodeCheckPublicPrivacy: {
-        if: {
-            properties: {
-                name: {
-                    minLength: 1
-                },
-                code: {
-                    minLength: 1
-                }
-            },
-            required: ['name', 'code']
-        },
-        then: { $ref: '#/definitions/privacyEnumPublic' }
-    },
     ifNameCodeCheckHiddenPrivacy: {
         if: {
             properties: {
@@ -362,31 +361,14 @@ const definitions = {
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
     },
-    ifGroupCodeJobTitleCheckPublicPrivacy: {
+    ifJobTitleCheckHiddenPrivacy: {
         if: {
             properties: {
-                groupCode: {
-                    minLength: 1
-                },
                 jobTitle: {
                     minLength: 1
                 }
             },
-            required: ['groupCode', 'jobTitle']
-        },
-        then: { $ref: '#/definitions/privacyEnumPublic' }
-    },
-    ifGroupCodeJobTitleCheckHiddenPrivacy: {
-        if: {
-            properties: {
-                groupCode: {
-                    minLength: 1
-                },
-                jobTitle: {
-                    minLength: 1
-                }
-            },
-            required: ['groupCode', 'jobTitle']
+            required: ['jobTitle']
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
     },
@@ -848,7 +830,7 @@ const thenProperties = {
         }
     },
     internalExperiences: {
-        items: definitions.ifGroupCodeJobTitleCheckHiddenPrivacy
+        items: definitions.ifJobTitleCheckHiddenPrivacy
     },
 };
 
@@ -1043,7 +1025,7 @@ const elseProperties = {
         }
     },
     internalExperiences: {
-        items: definitions.ifGroupCodeJobTitleCheckPublicPrivacy
+        items: definitions.ifJobTitleCheckHiddenPrivacy
     },
 };
 
@@ -1384,13 +1366,11 @@ async function getProfile(researchEntityId) {
 
     // Return false of the profile doesn't exist
     if (!profile) {
-        return false;
+        return 'Has no profile!';
     }
 
     // Filter the profile properties
     profile = filterProfile(profile);
-    // Load the documents and accomplishments if needed
-    profile = await loadDocumentsAndAccomplishments(profile, researchEntityId);
 
     return profile;
 }
