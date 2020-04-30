@@ -100,11 +100,19 @@
                             <ul class="field-listing">
                                 <li>
                                     <ul class="internal-experiences">
-                                        <li>
+                                        <li ng-if="!experience.line.office">
                                             <div class="form-group ">
                                                 <label>Group</label>
                                                 <div class="form-control disabled">
                                                     {{ experience.line.name }}
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li ng-if="experience.line.office">
+                                            <div class="form-group ">
+                                                <label>Office</label>
+                                                <div class="form-control disabled">
+                                                    {{ experience.line.office }}
                                                 </div>
                                             </div>
                                         </li>
