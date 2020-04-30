@@ -99,9 +99,9 @@
                         <li>
                             <ul class="field-listing">
                                 <li>
-                                    <ul class="internal-experiences">
-                                        <li ng-if="!experience.line.office">
-                                            <div class="form-group ">
+                                    <ul class="internal-experiences" ng-class="{'has-office' : experience.line.office}">
+                                        <li>
+                                            <div class="form-group">
                                                 <label>Group</label>
                                                 <div class="form-control disabled">
                                                     {{ experience.line.name }}
