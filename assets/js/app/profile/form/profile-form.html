@@ -99,7 +99,7 @@
                         <li>
                             <ul class="field-listing">
                                 <li>
-                                    <ul class="internal-experiences" ng-class="{'has-office' : experience.line.office}">
+                                    <ul class="internal-experiences">
                                         <li>
                                             <div class="form-group">
                                                 <label>Group</label>
@@ -108,7 +108,7 @@
                                                 </div>
                                             </div>
                                         </li>
-                                        <li ng-if="experience.line.office">
+                                        <li ng-class="{'has-no-office' : !experience.line.office}">
                                             <div class="form-group ">
                                                 <label>Office</label>
                                                 <div class="form-control disabled">
