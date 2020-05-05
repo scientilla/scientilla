@@ -639,75 +639,6 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
         value: contract.Ruolo_AD
     };
 
-    /*const centers = [];
-    const facilities = [];
-    const researchLines = [];
-    const institutes = [];
-
-    function handleGroup (group) {
-        switch (group.type) {
-            case 'Center':
-                const center = centers.find(c => c.name === group.name);
-                if (!center) {
-                    centers.push({
-                        name: group.name,
-                        code: group.code,
-                        privacy: defaultPrivacy
-                    });
-                }
-                break;
-            case 'Facility':
-                const facility = facilities.find(f => f.name === group.name);
-                if (!facility) {
-                    facilities.push({
-                        name: group.name,
-                        code: group.code,
-                        privacy: defaultPrivacy
-                    });
-                }
-                break;
-            case 'Institute':
-                const institute = institutes.find(i => i.name === group.name);
-                if (!institute) {
-                    institutes.push({
-                        name: group.name,
-                        code: group.code,
-                        privacy: defaultPrivacy
-                    });
-                }
-                break;
-            case 'Research Line':
-                const researchLine = researchLines.find(f => f.name === group.name);
-                if (!researchLine) {
-                    researchLines.push({
-                        name: group.name,
-                        code: group.code,
-                        privacy: defaultPrivacy
-                    });
-                }
-                break;
-            default:
-                break;
-        }
-
-        const membershipGroup = allMembershipGroups.find(g => g.child_group === group.id && g.parent_group.active);
-
-        if (membershipGroup) {
-            handleGroup(membershipGroup.parent_group);
-        }
-    }*/
-
-    /*for (let i = 1; i < 7; i++) {
-        if (!_.isEmpty(contract['linea_' + i])) {
-            const code = contract['linea_' + i];
-            const group = allGroups.find(group => group.code === code);
-
-            if (group) {
-                handleGroup(group);
-            }
-        }
-    }*/
-
     const groups = [];
     const lines = [];
 
@@ -771,30 +702,6 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
     }
 
     profile.groups = groups;
-
-    /*if (centers.length > 0) {
-        profile.centers = _.merge(centers, profile.centers);
-    }
-
-    if (facilities.length > 0) {
-        profile.facilities = _.merge(facilities, profile.facilities);
-    }
-
-    if (researchLines.length > 0) {
-        profile.researchLines = _.merge(researchLines, profile.researchLines);
-    }
-
-    if (facilities.length === 0 && researchLines.length === 0) {
-        profile.office = {
-            privacy: defaultPrivacy,
-            value: contract.UO_1
-        };
-
-        profile.directorate = {
-            privacy: defaultPrivacy,
-            value: contract.nome_linea_1
-        };
-    }*/
 
     return profile;
 }
