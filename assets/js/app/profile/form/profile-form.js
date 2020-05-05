@@ -72,11 +72,7 @@
                         _.has(vm.errors, 'surname') ||
                         _.has(vm.errors, 'jobTitle') ||
                         _.has(vm.errors, 'phone') ||
-                        _.has(vm.errors, 'centers') ||
-                        _.has(vm.errors, 'facilities') ||
-                        _.has(vm.errors, 'researchLines') ||
-                        _.has(vm.errors, 'directorate') ||
-                        _.has(vm.errors, 'office')
+                        _.has(vm.errors, 'groups')
                     ) {
                         vm.basicInformationHasErrors = true;
                     }
@@ -128,6 +124,15 @@
         };
 
         vm.formatDate = DateService.format;
+        vm.isBefore2015 = DateService.isBefore2015;
+
+        vm.getInternalExperiencesWithoutOffice = (experience) => {
+            return experience.lines.filter(line => !line.office);
+        };
+
+        vm.getInternalExperiencesWithOffice = (experience) => {
+            return experience.lines.filter(line => line.office);
+        };
 
         function getEditProfile() {
             let profileWatcher;
@@ -153,6 +158,9 @@
                     vm.changed['export'] = isChanged('export');
                 }, true);
 
+                //vm.researchInternalExperiences = vm.profile.experiencesInternal.map(e => e.lines.filter(l => !l.office));
+                //console.log(vm.researchInternalExperiences);
+
                 $scope.$broadcast('setupBasicInformation', vm.profile);
             });
         }
@@ -168,11 +176,7 @@
                         angular.toJson(originalProfile.surname) !== angular.toJson(vm.profile.surname) ||
                         angular.toJson(originalProfile.jobTitle) !== angular.toJson(vm.profile.jobTitle) ||
                         angular.toJson(originalProfile.phone) !== angular.toJson(vm.profile.phone) ||
-                        angular.toJson(originalProfile.directorate) !== angular.toJson(vm.profile.directorate) ||
-                        angular.toJson(originalProfile.office) !== angular.toJson(vm.profile.office) ||
-                        angular.toJson(originalProfile.centers) !== angular.toJson(vm.profile.centers) ||
-                        angular.toJson(originalProfile.researchLines) !== angular.toJson(vm.profile.researchLines) ||
-                        angular.toJson(originalProfile.facilities) !== angular.toJson(vm.profile.facilities)
+                        angular.toJson(originalProfile.groups) !== angular.toJson(vm.profile.groups)
                     ) {
                         return true;
                     }

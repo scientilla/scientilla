@@ -301,20 +301,24 @@ const definitions = {
             company: {
                 type: 'string'
             },
-            line: {
-                type: 'object',
-                properties: {
-                    code: {
-                        type: 'string'
+            lines: {
+                type: 'array',
+                default: [],
+                items: {
+                    type: 'object',
+                    properties: {
+                        code: {
+                            type: 'string'
+                        },
+                        name: {
+                            type: 'string'
+                        },
+                        office: {
+                            type: 'string'
+                        }
                     },
-                    name: {
-                        type: 'string'
-                    },
-                    office: {
-                        type: 'string'
-                    }
-                },
-                required: ['code', 'name']
+                    required: ['code', 'name']
+                }
             },
             from: {
                 type: 'string'
@@ -323,7 +327,7 @@ const definitions = {
                 type: 'string'
             }
         },
-        required: ['line', 'jobTitle', 'company', 'from']
+        required: ['lines', 'jobTitle', 'company', 'from']
     },
     ifValueCheckPublicPrivacy: {
         if: {
@@ -347,17 +351,14 @@ const definitions = {
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
     },
-    ifNameCodeCheckHiddenPrivacy: {
+    ifNameCheckHiddenPrivacy: {
         if: {
             properties: {
                 name: {
                     minLength: 1
                 },
-                code: {
-                    minLength: 1
-                }
             },
-            required: ['name', 'code']
+            required: ['name']
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
     },
@@ -446,45 +447,33 @@ const defaultProperties = {
         definitions.privacy,
         definitions.privacyDefaultHidden
     ),
-    directorate: _.merge(
-        {},
-        definitions.privacy,
-        definitions.privacyDefaultHidden
-    ),
-    office: _.merge(
-        {},
-        definitions.privacy,
-        definitions.privacyDefaultHidden
-    ),
-    centers: {
+    groups: {
         type: 'array',
         default: [],
         items: _.merge(
             {},
             definitions.name,
             definitions.code,
-            definitions.privacy,
-            definitions.privacyDefaultHidden
-        )
-    },
-    researchLines: {
-        type: 'array',
-        default: [],
-        items: _.merge(
-            {},
-            definitions.name,
-            definitions.code,
-            definitions.privacy,
-            definitions.privacyDefaultHidden
-        )
-    },
-    facilities: {
-        type: 'array',
-        default: [],
-        items: _.merge(
-            {},
-            definitions.name,
-            definitions.code,
+            {
+                type: 'object',
+                properties: {
+                    type: {
+                        enum: ['Research Line', 'Facility', 'Directorate']
+                    },
+                    center: _.merge(
+                        {},
+                        definitions.name,
+                        definitions.code
+                    ),
+                    offices: {
+                        type: 'array',
+                        default: [],
+                        items: {
+                            type: 'string'
+                        }
+                    }
+                }
+            },
             definitions.privacy,
             definitions.privacyDefaultHidden
         )
@@ -662,16 +651,8 @@ const thenProperties = {
     surname: definitions.ifValueCheckHiddenPrivacy,
     jobTitle: definitions.ifValueCheckHiddenPrivacy,
     phone: definitions.ifValueCheckHiddenPrivacy,
-    centers: {
-        items: definitions.ifNameCodeCheckHiddenPrivacy
-    },
-    researchLines: {
-        items: definitions.ifNameCodeCheckHiddenPrivacy
-    },
-    directorate: definitions.ifValueCheckHiddenPrivacy,
-    office: definitions.ifValueCheckHiddenPrivacy,
-    facilities: {
-        items: definitions.ifNameCodeCheckHiddenPrivacy
+    groups: {
+        items: definitions.ifNameCheckHiddenPrivacy
     },
     image: {
         oneOf: [
@@ -840,15 +821,7 @@ const elseProperties = {
     surname: definitions.ifValueCheckPublicPrivacy,
     jobTitle: definitions.ifValueCheckPublicPrivacy,
     phone: definitions.ifValueCheckPublicPrivacy,
-    directorate: definitions.ifValueCheckPublicPrivacy,
-    office: definitions.ifValueCheckPublicPrivacy,
-    centers: {
-        items: definitions.ifValueCheckPublicPrivacy
-    },
-    researchLines: {
-        items: definitions.ifValueCheckPublicPrivacy
-    },
-    facilities: {
+    groups: {
         items: definitions.ifValueCheckPublicPrivacy
     },
     image: {
@@ -1463,11 +1436,7 @@ async function saveProfile(req) {
             profile.surname = researchEntityData.profile.surname;
             profile.jobTitle = researchEntityData.profile.jobTitle;
             profile.phone = researchEntityData.profile.phone;
-            profile.centers = researchEntityData.profile.centers;
-            profile.researchLines = researchEntityData.profile.researchLines;
-            profile.directorate = researchEntityData.profile.directorate;
-            profile.office = researchEntityData.profile.office;
-            profile.facilities = researchEntityData.profile.facilities;
+            profile.groups = researchEntityData.profile.groups;
 
             if (!hasFiles && _.has(profile, 'image.value') && !_.isEmpty(profile.image.value)) {
                 profile.image.value = researchEntityData.profile.image.value;

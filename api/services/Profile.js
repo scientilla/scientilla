@@ -447,219 +447,7 @@ async function toPDF(researchEntityId, options = {}) {
 
         // Basic profile
         if (options.basic) {
-            tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
-            if (!_.isEmpty(tmpText)) {
-                basicProfile.push(
-                    {
-                        text: tmpText,
-                        style: 'h1'
-                    }
-                );
-            }
-
-            if (!_.isEmpty(profile.jobTitle)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: 'Job title: ',
-                            style: 'bold'
-                        },
-                        profile.jobTitle
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.centers)) {
-
-                let title = 'Center: ';
-                if (profile.centers.length > 1) {
-                    title = 'Centers: ';
-                }
-
-                const centers = profile.centers.map(center => center.name);
-
-                basicProfile.push({
-                    text: [
-                        {
-                            text: title,
-                            style: 'bold'
-                        },
-                        concatStrings(centers)
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.researchLines)) {
-
-                let title = 'Line: ';
-                if (profile.researchLines.length > 1) {
-                    title = 'Lines: ';
-                }
-
-                const researchLines = profile.researchLines.map(researchLine => researchLine.name);
-
-                basicProfile.push({
-                    text: [
-                        {
-                            text: title,
-                            style: 'bold'
-                        },
-                        concatStrings(researchLines)
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.facilities)) {
-                let title = 'Facility: ';
-                if (profile.facilities.length > 1) {
-                    title = 'Facilities: ';
-                }
-
-                const facilities = profile.facilities.map(facility => facility.name);
-
-                basicProfile.push({
-                    text: [
-                        {
-                            text: title,
-                            style: 'bold'
-                        },
-                        concatStrings(facilities)
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.directorate)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: 'Directorate: ',
-                            style: 'bold'
-                        },
-                        profile.directorate
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.office)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: 'Office: ',
-                            style: 'bold'
-                        },
-                        profile.office
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.position)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: 'Position: ',
-                            style: 'bold'
-                        },
-                        profile.position
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.role)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: 'Role: ',
-                            style: 'bold'
-                        },
-                        profile.role
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.titles)) {
-                let title = 'Title: ';
-                if (profile.titles.length > 1) {
-                    title = 'Titles: ';
-                }
-
-                basicProfile.push({
-                    text: [
-                        {
-                            text: title,
-                            style: 'bold'
-                        },
-                        concatStrings(profile.titles)
-                    ]
-                });
-            }
-
-            basicProfile.push({
-                text: ' ',
-                fontSize: 5
-            });
-
-            // Contacts
-            if (!_.isEmpty(profile.username)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: '',
-                            style: 'fontAwesome'
-                        },
-                        ' ' + profile.username
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.phone)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: '',
-                            style: [
-                                'fontAwesome',
-                                'solid'
-                            ]
-                        },
-                        ' ' + profile.phone
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.address)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: '',
-                            style: [
-                                'fontAwesome',
-                                'solid'
-                            ]
-                        },
-                        ' ' + profile.address
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.website)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: '',
-                            style: [
-                                'fontAwesome',
-                                'solid'
-                            ]
-                        },
-                        ' ' + profile.website
-                    ]
-                });
-            }
-        }
-
-        if (options.basic) {
             if (_.has(profile, 'export.basicInformation') && !_.isEmpty(profile.export.basicInformation)) {
-                basicProfile = [];
                 tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
 
                 if (!_.isEmpty(tmpText)) {
@@ -676,6 +464,237 @@ async function toPDF(researchEntityId, options = {}) {
                         profile.export.basicInformation
                     ]
                 });
+            } else {
+                tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
+                if (!_.isEmpty(tmpText)) {
+                    basicProfile.push(
+                        {
+                            text: tmpText,
+                            style: 'h1'
+                        }
+                    );
+                }
+
+                const jobDescription = [];
+
+                if (!_.isEmpty(profile.jobTitle)) {
+                    jobDescription.push(profile.jobTitle);
+                }
+
+                if (!_.isEmpty(profile.role)) {
+                    jobDescription.push(profile.role);
+                }
+
+                if (!_.isEmpty(jobDescription)) {
+                    basicProfile.push({
+                        text: concatStrings(jobDescription, ' - ')
+                    });
+                }
+
+                basicProfile.push({
+                    text: ' ',
+                    fontSize: 5
+                });
+
+                const directorates = profile.groups.filter(group => group.type === 'Directorate');
+                const researchLines = profile.groups.filter(group => group.type === 'Research Line');
+                const facilities = profile.groups.filter(group => group.type === 'Facility');
+
+                if (!_.isEmpty(directorates)) {
+                    const directorateNames = directorates.map(directorate => {
+                        if (_.has(directorate, 'offices') && directorate.offices.length > 0) {
+                            return directorate.name + ' - ' + concatStrings(directorate.offices);
+                        }
+                        return directorate.name;
+                    });
+
+                    if (directorateNames.length > 1) {
+
+                        for (const name of directorateNames) {
+                            basicProfile.push({
+                                text: name
+                            });
+                        }
+
+                        basicProfile.push({
+                            text: ' ',
+                            fontSize: 5
+                        });
+
+                    } else {
+                        basicProfile.push({
+                            text: [concatStrings(directorateNames)]
+                        });
+                    }
+                }
+
+                if (!_.isEmpty(researchLines)) {
+
+                    const researchLineNames = researchLines.map(researchLine => {
+                        if (_.has(researchLine, 'center.name')) {
+                            return researchLine.name + ' - ' + researchLine.center.name;
+                        }
+                        return researchLine.name;
+                    });
+
+                    if (researchLineNames.length > 1) {
+                        const title = 'Research lines: ';
+
+                        basicProfile.push({
+                            text: [
+                                {
+                                    text: title,
+                                    style: 'bold'
+                                }
+                            ]
+                        });
+
+                        for (const name of researchLineNames) {
+                            basicProfile.push({
+                                text: name
+                            });
+                        }
+
+                        basicProfile.push({
+                            text: ' ',
+                            fontSize: 5
+                        });
+                    } else {
+                        const title = 'Research line: ';
+
+                        basicProfile.push({
+                            text: _.concat([
+                                {
+                                    text: title,
+                                    style: 'bold'
+                                }
+                            ], researchLineNames)
+                        });
+                    }
+                }
+
+                if (!_.isEmpty(facilities)) {
+
+                    const facilityNames = facilities.map(facility => {
+                        return facility.name;
+                    });
+
+                    if (facilityNames.length > 1) {
+                        const title = 'Facilities: ';
+
+                        basicProfile.push({
+                            text: [
+                                {
+                                    text: title,
+                                    style: 'bold'
+                                }
+                            ]
+                        });
+
+                        for (const name of facilityNames) {
+                            basicProfile.push({
+                                text: name
+                            });
+                        }
+
+                        basicProfile.push({
+                            text: ' ',
+                            fontSize: 5
+                        });
+
+                    } else {
+                        const title = 'Facility: ';
+
+                        basicProfile.push({
+                            text: _.concat([
+                                {
+                                    text: title,
+                                    style: 'bold'
+                                }
+                            ], facilityNames)
+                        });
+                    }
+                }
+
+                if (!_.isEmpty(profile.titles)) {
+                    let title = 'Title: ';
+                    if (profile.titles.length > 1) {
+                        title = 'Titles: ';
+                    }
+
+                    basicProfile.push({
+                        text: [
+                            {
+                                text: title,
+                                style: 'bold'
+                            },
+                            concatStrings(profile.titles)
+                        ]
+                    });
+                }
+
+                basicProfile.push({
+                    text: ' ',
+                    fontSize: 5
+                });
+
+                // Contacts
+                if (!_.isEmpty(profile.username)) {
+                    basicProfile.push({
+                        text: [
+                            {
+                                text: '',
+                                style: 'fontAwesome'
+                            },
+                            ' ' + profile.username
+                        ]
+                    });
+                }
+
+                if (!_.isEmpty(profile.phone)) {
+                    basicProfile.push({
+                        text: [
+                            {
+                                text: '',
+                                style: [
+                                    'fontAwesome',
+                                    'solid'
+                                ]
+                            },
+                            ' ' + profile.phone
+                        ]
+                    });
+                }
+
+                if (!_.isEmpty(profile.address)) {
+                    basicProfile.push({
+                        text: [
+                            {
+                                text: '',
+                                style: [
+                                    'fontAwesome',
+                                    'solid'
+                                ]
+                            },
+                            ' ' + profile.address
+                        ]
+                    });
+                }
+
+                if (!_.isEmpty(profile.website)) {
+                    basicProfile.push({
+                        text: [
+                            {
+                                text: '',
+                                style: [
+                                    'fontAwesome',
+                                    'solid'
+                                ]
+                            },
+                            ' ' + profile.website
+                        ]
+                    });
+                }
             }
 
             if (profile.image) {
@@ -1248,106 +1267,113 @@ async function toDoc(researchEntityId, options = {}) {
 
         let baseProfile = [];
         if (!_.isEmpty(profile.jobTitle)) {
-            baseProfile.push(
-                new TextRun({
-                    text: 'Job title: ',
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(new TextRun(profile.jobTitle));
+            baseProfile.push(new TextRun(profile.jobTitle).break());
         }
 
-        if (!_.isEmpty(profile.centers)) {
-            let title = 'Center: ';
-            if (profile.centers.length > 1) {
-                title = 'Centers: ';
+        baseProfile.push(new TextRun('').break());
+
+        const directorates = profile.groups.filter(group => group.type === 'Directorate');
+        const researchLines = profile.groups.filter(group => group.type === 'Research Line');
+        const facilities = profile.groups.filter(group => group.type === 'Facility');
+
+        if (!_.isEmpty(directorates)) {
+            const directorateNames = directorates.map(directorate => {
+                if (_.has(directorate, 'offices') && directorate.offices.length > 0) {
+                    return directorate.name + ' - ' + concatStrings(directorate.offices);
+                }
+                return directorate.name;
+            });
+
+            if (directorateNames.length > 1) {
+
+                for (const name of directorateNames) {
+                    baseProfile.push(new TextRun(name).break());
+                }
+
+                baseProfile.push(new TextRun('').break());
+
+            } else {
+                baseProfile.push(
+                    new TextRun(concatStrings(directorateNames))
+                );
             }
-            const centers = profile.centers.map(center => center.name);
-
-            baseProfile.push(
-                new TextRun({
-                    text: title,
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(
-                new TextRun(concatStrings(centers))
-            );
         }
 
-        if (!_.isEmpty(profile.researchLines)) {
-            let title = 'Line: ';
-            if (profile.researchLines.length > 1) {
-                title = 'Lines: ';
+        if (!_.isEmpty(researchLines)) {
+
+            const researchLineNames = researchLines.map(researchLine => {
+                if (_.has(researchLine, 'center.name')) {
+                    return researchLine.name + ' - ' + researchLine.center.name;
+                }
+                return researchLine.name;
+            });
+
+            if (researchLineNames.length > 1) {
+                const title = 'Research lines: ';
+
+                baseProfile.push(
+                    new TextRun({
+                        text: title,
+                        bold: true
+                    }).break()
+                );
+
+                for (const name of researchLineNames) {
+                    baseProfile.push(new TextRun(name).break());
+                }
+
+                baseProfile.push(new TextRun('').break());
+            } else {
+                const title = 'Research line: ';
+
+                baseProfile.push(
+                    new TextRun({
+                        text: title,
+                        bold: true
+                    }).break()
+                );
+
+                baseProfile.push(
+                    new TextRun(concatStrings(researchLineNames))
+                );
             }
-
-            const researchLines = profile.researchLines.map(researchLine => researchLine.name);
-
-            baseProfile.push(
-                new TextRun({
-                    text: title,
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(
-                new TextRun(concatStrings(researchLines))
-            );
         }
 
-        if (!_.isEmpty(profile.facilities)) {
-            let title = 'Facility: ';
-            if (profile.facilities.length > 1) {
-                title = 'Facilities: ';
+        if (!_.isEmpty(facilities)) {
+
+            const facilityNames = facilities.map(facility => {
+                return facility.name;
+            });
+
+            if (facilityNames.length > 1) {
+                const title = 'Facilities: ';
+
+                baseProfile.push(
+                    new TextRun({
+                        text: title,
+                        bold: true
+                    }).break()
+                );
+
+                for (const name of facilityNames) {
+                    baseProfile.push(new TextRun(name).break());
+                }
+
+                baseProfile.push(new TextRun('').break());
+            } else {
+                const title = 'Facility: ';
+
+                baseProfile.push(
+                    new TextRun({
+                        text: title,
+                        bold: true
+                    }).break()
+                );
+
+                baseProfile.push(
+                    new TextRun(concatStrings(facilityNames))
+                );
             }
-
-            const facilities = profile.facilities.map(facility => facility.name);
-
-            baseProfile.push(
-                new TextRun({
-                    text: title,
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(
-                new TextRun(concatStrings(facilities))
-            );
-        }
-
-        if (!_.isEmpty(profile.directorate)) {
-            baseProfile.push(
-                new TextRun({
-                    text: 'Directorate: ',
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(new TextRun(profile.directorate));
-        }
-
-        if (!_.isEmpty(profile.office)) {
-            baseProfile.push(
-                new TextRun({
-                    text: 'Office: ',
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(new TextRun(profile.office));
-        }
-
-        if (!_.isEmpty(profile.position)) {
-            baseProfile.push(
-                new TextRun({
-                    text: 'Position: ',
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(new TextRun(profile.position));
         }
 
         if (!_.isEmpty(profile.role)) {
@@ -1382,7 +1408,7 @@ async function toDoc(researchEntityId, options = {}) {
             contacts.unshift(new TextRun({
                 text: 'Contact: ',
                 bold: true
-            }).break())
+            }));
         }
 
         const socials = [];

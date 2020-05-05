@@ -91,17 +91,31 @@
         }
 
         .name,
-        .job-title,
-        .position{
-            margin-bottom: .5rem;
+        .job-title{
+            margin-bottom: 0px;
         }
 
+        .name,
+        .job-title,
+        .directorates,
+        .research-lines{
+
+            & + strong {
+                margin-top: 1rem;
+            }
+        }
+
+        .directorates,
         .research-lines,
         .facilities,
-        .centers{
+        .offices{
             @include normalize-listing;
             @include clearfix;
-            margin-bottom: .5rem;
+        }
+
+        .offices{
+            display: inline-block;
+            vertical-align: top;
 
             & > li {
                 display: inline;
@@ -110,11 +124,32 @@
                     &:before{
                         content: ', ';
                     }
+                }
+            }
+        }
 
-                    &:last-child{
-                        &:before{
-                            content: ' & ';
-                        }
+        .directorates{
+            .group-name{
+                & + .offices{
+                    &:before{
+                        display: inline-block;
+                        vertical-align: top;
+                        margin: 0px .4rem;
+                        content: '-';
+                    }
+                }
+            }
+        }
+
+        .research-lines,
+        .facilities{
+            .group-name{
+                & + .center-name{
+                    &:before{
+                        display: inline-block;
+                        vertical-align: top;
+                        margin: 0px .4rem;
+                        content: '-';
                     }
                 }
             }
@@ -133,18 +168,12 @@
                     &:before{
                         content: ', ';
                     }
-
-                    &:last-child{
-                        &:before{
-                            margin-left: .4rem;
-                            content: '& ';
-                        }
-                    }
                 }
             }
         }
 
         .card-container{
+            position: relative;
             @include normalize-listing;
 
             .profile-card{
@@ -159,6 +188,31 @@
             .contact-card{
                 display: block;
                 height: 100%;
+            }
+
+            .former-employee{
+                position: absolute;
+                top: -5px;
+                right: 20px;
+                z-index: 200;
+
+                .ribbon{
+                    position: relative;
+                    padding: .5rem 1rem;
+                    background: $primary-color;
+                    color: $white;
+
+                    &:before{
+                        position: absolute;
+                        height: 0;
+                        width: 0;
+                        right: -5.5px;
+                        top: 0.1px;
+                        content: '';
+                        border-bottom: 6px solid darken($primary-color, 20%);
+                        border-right: 6px solid transparent;
+                    }
+                }
             }
         }
 

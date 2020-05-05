@@ -49,59 +49,44 @@
         <td>Phone number of the user</td>
     </tr>
     <tr>
-        <td class="sub">directorate</td>
-        <td>String</td>
-        <td>Directorate name of the user</td>
-    </tr>
-    <tr>
-        <td class="sub">office</td>
-        <td>String</td>
-        <td>Office name of the user</td>
-    </tr>
-    <tr>
-        <td class="sub">centers</td>
+        <td class="sub">groups</td>
         <td>Object[]</td>
-        <td>List of the centers of the user (Array of Objects)</td>
+        <td>List of the groups of the user (Array of Objects)</td>
     </tr>
     <tr>
         <td class="sub-sub">name</td>
+        <td>String</td>
+        <td>Name of the group (related to the type)</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">code</td>
+        <td>String</td>
+        <td>Code of the group (related to the type)</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">type</td>
+        <td>String</td>
+        <td>Type of the group, can be "Research Line", "Facility", "Directorate".</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">center</td>
+        <td>Object</td>
+        <td>Object with center information</td>
+    </tr>
+    <tr>
+        <td class="sub-sub-sub">name</td>
         <td>String</td>
         <td>Name of the center</td>
     </tr>
     <tr>
-        <td class="sub-sub">code</td>
+        <td class="sub-sub-sub">code</td>
         <td>String</td>
         <td>CDR code of the center</td>
     </tr>
     <tr>
-        <td class="sub">researchLines</td>
-        <td>Object[]</td>
-        <td>List of the research lines of the user (Array of Objects)</td>
-    </tr>
-    <tr>
-        <td class="sub-sub">name</td>
-        <td>String</td>
-        <td>Name of the research line</td>
-    </tr>
-    <tr>
-        <td class="sub-sub">code</td>
-        <td>String</td>
-        <td>CDR code of the research line</td>
-    </tr>
-    <tr>
-        <td class="sub">facilities</td>
-        <td>Object[]</td>
-        <td>List of the facilities of the user (Array of Objects)</td>
-    </tr>
-    <tr>
-        <td class="sub-sub">name</td>
-        <td>String</td>
-        <td>Name of the facility</td>
-    </tr>
-    <tr>
-        <td class="sub-sub">code</td>
-        <td>String</td>
-        <td>CDR code of the facility</td>
+        <td class="sub-sub">offices</td>
+        <td>String[]</td>
+        <td>List of office names (Array of Strings)</td>
     </tr>
     <tr>
         <td class="sub">socials</td>

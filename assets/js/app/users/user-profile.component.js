@@ -33,6 +33,7 @@
 
             setNumberOfItems();
 
+            console.log(vm.user);
         };
         /* jshint ignore:end */
 

@@ -101,20 +101,60 @@
                                 <li>
                                     <ul class="internal-experiences">
                                         <li>
-                                            <div class="form-group">
-                                                <label>Group</label>
-                                                <div class="form-control disabled">
-                                                    {{ experience.line.name }}
-                                                </div>
-                                            </div>
-                                        </li>
-                                        <li ng-class="{'has-no-office' : !experience.line.office}">
-                                            <div class="form-group ">
-                                                <label>Office</label>
-                                                <div class="form-control disabled">
-                                                    {{ experience.line.office }}
-                                                </div>
-                                            </div>
+                                            <ul
+                                                class="internal-experience-without-office-listing"
+                                                ng-if="vm.getInternalExperiencesWithoutOffice(experience).length > 0">
+                                                <li>
+                                                    <div class="form-group">
+                                                        <label>
+                                                            {{ vm.getInternalExperiencesWithoutOffice(experience).length > 1 ? 'Research lines' : 'Research line' }}
+                                                        </label>
+                                                        <div class="form-control disabled">
+                                                            <ul class="lines-of-experience">
+                                                                <li ng-repeat="line in vm.getInternalExperiencesWithoutOffice(experience) track by $index">
+                                                                    "{{ line.name }}"
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                            <ul
+                                                class="internal-experience-with-office-listing"
+                                                ng-repeat="line in vm.getInternalExperiencesWithOffice(experience) track by $index">
+                                                <li
+                                                    ng-if="vm.isBefore2015(experience.to)"
+                                                    class="department">
+                                                    <div class="form-group">
+                                                        <label>Department</label>
+                                                        <div class="form-control disabled">
+                                                            <ng-container >
+                                                                {{ line.name }}
+                                                            </ng-container>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li ng-if="!vm.isBefore2015(experience.to)">
+                                                    <div class="form-group">
+                                                        <label>Directorate</label>
+                                                        <div class="form-control disabled">
+                                                            <ng-container >
+                                                                {{ line.name }}
+                                                            </ng-container>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                                <li
+                                                    ng-if="!vm.isBefore2015(experience.to)"
+                                                    ng-class="{'has-no-office' : !line.office}">
+                                                    <div class="form-group ">
+                                                        <label>Office</label>
+                                                        <div class="form-control disabled">
+                                                            {{ line.office }}
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
                                         </li>
                                         <li>
                                             <div class="form-group">

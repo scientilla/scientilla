@@ -293,6 +293,28 @@
             }
         }
     }
+
+    .internal-experience-without-office-listing,
+    .internal-experience-with-office-listing{
+        @include normalize-listing;
+        @include clearfix;
+    }
+
+    .lines-of-experience{
+        @include normalize-listing;
+        @include clearfix;
+
+        & > li {
+            display: block;
+            float: left;
+
+            & + li{
+                &:before{
+                    content: ', ';
+                }
+            }
+        }
+    }
 }
 
 @include media-breakpoint-up(sm) {
@@ -403,6 +425,30 @@
             }
         }
 
+        .internal-experience-with-office-listing{
+            display: grid;
+            margin: 0px -.75rem;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto;
+
+            & > li{
+                padding-right: .75rem;
+                padding-left: .75rem;
+
+                &:nth-child(1){
+                    @include set-grid(1,1,1,1);
+                }
+
+                &:nth-child(2){
+                    @include set-grid(1,2,1,1);
+                }
+
+                &.department{
+                    @include set-grid(1,1,1,2);
+                }
+            }
+        }
+
         .education-form{
             display: grid;
             margin: 0px -.75rem;
@@ -442,22 +488,18 @@
 
             & > li{
                 &:nth-child(1){
-                    @include set-grid(1,1,1,2);
+                    @include set-grid(1,1,1,4);
                 }
 
                 &:nth-child(2){
-                    @include set-grid(1,3,1,2);
-                }
-
-                &:nth-child(3){
                     @include set-grid(2,1,1,2);
                 }
 
-                &:nth-child(4){
+                &:nth-child(3){
                     @include set-grid(2,3,1,1);
                 }
 
-                &:nth-child(5){
+                &:nth-child(4){
                     @include set-grid(2,4,1,1);
                 }
             }

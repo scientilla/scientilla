@@ -639,7 +639,7 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
         value: contract.Ruolo_AD
     };
 
-    const centers = [];
+    /*const centers = [];
     const facilities = [];
     const researchLines = [];
     const institutes = [];
@@ -695,9 +695,9 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
         if (membershipGroup) {
             handleGroup(membershipGroup.parent_group);
         }
-    }
+    }*/
 
-    for (let i = 1; i < 7; i++) {
+    /*for (let i = 1; i < 7; i++) {
         if (!_.isEmpty(contract['linea_' + i])) {
             const code = contract['linea_' + i];
             const group = allGroups.find(group => group.code === code);
@@ -706,9 +706,73 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
                 handleGroup(group);
             }
         }
+    }*/
+
+    const groups = [];
+    const lines = [];
+
+    for (let i = 1; i < 7; i++) {
+        if (!_.isEmpty(contract['linea_' + i])) {
+            const code = contract['linea_' + i];
+            const name = contract['nome_linea_' + i];
+            const office = contract['UO_' + i];
+
+            lines.push({
+                code,
+                name,
+                office
+            });
+        }
     }
 
-    if (centers.length > 0) {
+    const codes = lines.map(line => line.code).filter((value, index, self) => self.indexOf(value) === index);
+
+    for (const code of codes) {
+        const group = {
+            offices: []
+        };
+        const codeGroup = allGroups.find(group => group.code === code);
+
+        if (codeGroup) {
+            if (codeGroup.type === 'Facility' || 'Research Line') {
+                group.type = codeGroup.type;
+                group.name = codeGroup.name,
+                group.code = codeGroup.code;
+                group.privacy = defaultPrivacy;
+            }
+
+            // This will return the first parent group.
+            const membershipGroup = allMembershipGroups.find(g => g.child_group === codeGroup.id && g.parent_group.active);
+
+            if (_.has(membershipGroup, 'parent_group')) {
+                const parentGroup = membershipGroup.parent_group;
+                if (parentGroup && parentGroup.type === 'Center') {
+                    group.center = {
+                        name: parentGroup.name,
+                        code: parentGroup.code,
+                        privacy: defaultPrivacy
+                    };
+                } else {
+                    sails.log.info('We are only expecting a center as parent group!');
+                }
+            }
+        } else {
+            // If it is not an group, we think it's an administrative contract
+            const line = lines.find(line => line.code === code);
+
+            group.type = 'Directorate';
+            group.name = line.name,
+            group.code = line.code;
+            group.privacy = defaultPrivacy;
+            group.offices = lines.filter(line => line.code === code).map(line => line.office);
+        }
+
+        groups.push(group);
+    }
+
+    profile.groups = groups;
+
+    /*if (centers.length > 0) {
         profile.centers = _.merge(centers, profile.centers);
     }
 
@@ -730,7 +794,7 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
             privacy: defaultPrivacy,
             value: contract.nome_linea_1
         };
-    }
+    }*/
 
     return profile;
 }
@@ -1232,7 +1296,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
             const handledStep = {
                 from: null,
                 jobTitle: null,
-                line: null
+                lines: []
             };
 
             if (_.has(step, '_.data_inizio')) {
@@ -1266,31 +1330,28 @@ async function importUserHistoryContracts(email = defaultEmail) {
                         tmpLine.office = line.ufficio;
                     }
 
-                    if (_.has(line, 'percentuale')) {
-                        tmpLine.percentage = parseInt(line.percentuale);
-                    }
-
                     return tmpLine;
                 });
                 tmpLines = _.orderBy(tmpLines, 'percentage', 'desc');
                 tmpLines.forEach(line => delete line.percentage);
 
-                handledStep.line = tmpLines;
+                handledStep.lines = tmpLines;
             } else {
                 const line = lines._;
-                handledStep.line = {};
+                const newLine = {};
                 if (_.has(line, 'codice')) {
-                    handledStep.line.code = line.codice;
+                    newLine.code = line.codice;
                 }
 
                 if (_.has(line, 'nome')) {
-                    handledStep.line.name = line.nome;
+                    newLine.name = line.nome;
                 }
 
                 if (_.has(line, 'ufficio')) {
-                    handledStep.line.office = line.ufficio;
+                    newLine.office = line.ufficio;
                 }
 
+                handledStep.lines.push(newLine);
             }
 
             return handledStep;
@@ -1383,7 +1444,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
                     if (
                         !_.has(handledStep, 'from') ||
                         !_.has(handledStep, 'jobTitle') ||
-                        !_.has(handledStep, 'line')
+                        !_.has(handledStep, 'lines')
                     ) {
                         continue;
                     }
@@ -1391,16 +1452,10 @@ async function importUserHistoryContracts(email = defaultEmail) {
                     let sameHandledStepIndex;
 
                     // We look if the user has already step with the same group and role
-                    if (_.isArray(handledStep.line)) {
+                    if (_.isArray(handledStep.lines)) {
                         sameHandledStepIndex = handledSteps.findIndex(
                             s => s.jobTitle === handledStep.jobTitle &&
-                                JSON.stringify(s.line) === JSON.stringify(handledStep.line)
-                        );
-                    } else {
-                        sameHandledStepIndex = handledSteps.findIndex(
-                            s => s.jobTitle === handledStep.jobTitle &&
-                                (s.line.name === handledStep.line.name || s.line.code === handledStep.line.code) &&
-                                s.line.office === handledStep.line.office
+                                JSON.stringify(s.lines) === JSON.stringify(handledStep.lines)
                         );
                     }
 
@@ -1561,16 +1616,16 @@ async function importUserHistoryContracts(email = defaultEmail) {
                 // Loop over contract steps and change the active value (former or active member) of the membership
                 for (const handledStep of handledSteps) {
 
-                    if (_.isArray(handledStep.line)) {
-                        sails.log.info('The step is been splitted into ' + handledStep.line.length + ' lines.');
-                        // We loop over the lines
-                        for (const line of handledStep.line) {
-                            // We check the current step
-                            await checkMembership(line.code, handledStep.to, user)
-                        }
-                    } else {
-                        // We check the step
-                        await checkMembership(handledStep.line.code, handledStep.to, user)
+                    sails.log.debug(handledStep);
+
+                    if (handledStep.lines.length > 1) {
+                        sails.log.info('The step is been splitted into ' + handledStep.lines.length + ' lines.');
+                    }
+
+                    // We loop over the lines
+                    for (const line of handledStep.lines) {
+                        // We check the current step
+                        await checkMembership(line.code, handledStep.to, user)
                     }
                 }
 
@@ -1585,6 +1640,8 @@ async function importUserHistoryContracts(email = defaultEmail) {
                     handledStep.company = defaultCompany;
                     handledSteps[key] = handledStep;
                 }
+
+                const profile = getProfileObject({}, userCard, allMembershipGroups, allGroups);
 
                 // If we have a researchEntityData record of the user
                 if (researchEntityData) {
