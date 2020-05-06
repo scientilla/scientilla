@@ -59,18 +59,24 @@
                                 <ul class="job-listing" ng-class="experiences.length > 1 ? 'multiple' : ''">
                                     <li ng-repeat="experience in experiences">
                                         <span class="job-title">{{ experience.jobTitle }}</span>
-                                        <ng-container ng-if="experience.line.code">
+                                        <ng-container ng-if="experience.lines">
                                             <span class="period">
                                                 {{ vm.formatDate(experience.from) | date: 'dd/MM/yyyy' }} - 
                                                 {{ experience.to && !vm.isFuture(experience.to) ? (vm.formatDate(experience.to) | date: 'dd/MM/yyyy') : 'present' }}
                                             </span>
-                                            <span
-                                                class="location"
-                                                ng-if="experience.line.office || experience.line.name">
-                                                {{ vm.joinStrings([experience.line.name, experience.line.office], ' - ') }}
-                                            </span>
+                                            <ul class="experience-lines">
+                                                <li ng-repeat="line in experience.lines">
+                                                    <ng-container ng-if="line.code">        
+                                                        <span
+                                                            class="location"
+                                                            ng-if="line.office || line.name">
+                                                            {{ vm.joinStrings([line.name, line.office], ' - ') }}
+                                                        </span>
+                                                    </ng-container>
+                                                </li>
+                                            </ul>
                                         </ng-container>
-                                        <ng-container ng-if="!experience.line.code">                                            
+                                        <ng-container ng-if="!experience.lines">                                            
                                             <span class="period">
                                                 {{ experience.from | date: 'MM/yyyy' }} - 
                                                 {{ experience.to ? (experience.to | date: 'MM/yyyy') : 'present' }}

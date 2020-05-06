@@ -380,6 +380,11 @@
                 margin-bottom: 1rem;
                 color: $gray-300;
             }
+
+            .experience-lines{
+                @include normalize-listing;
+                @include clearfix;
+            }
         }
 
         .job-listing {
