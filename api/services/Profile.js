@@ -1348,11 +1348,11 @@ async function toDoc(researchEntityId, options = {}) {
                     const image = Media.addImage(doc, file, 150, 150, {
                         floating: {
                             horizontalPosition: {
-                                relative: HorizontalPositionRelativeFrom.INSIDE_MARGIN,
+                                relative: HorizontalPositionRelativeFrom.MARGIN,
                                 align: HorizontalPositionAlign.RIGHT,
                             },
                             verticalPosition: {
-                                relative: VerticalPositionRelativeFrom.INSIDE_MARGIN,
+                                relative: VerticalPositionRelativeFrom.MARGIN,
                                 offset: 0
                             },
                             wrap: {
@@ -1360,8 +1360,8 @@ async function toDoc(researchEntityId, options = {}) {
                                 side: TextWrappingSide.LEFT,
                             },
                             margins: {
-                                left: 360,
-                                bottom: 360
+                                left: 30,
+                                bottom: 30
                             }
                         }
                     });
