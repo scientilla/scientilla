@@ -1301,7 +1301,27 @@ async function toDoc(researchEntityId, options = {}) {
         TextWrappingSide,
         TextWrappingType
     } = docx;
-    const doc = new Document();
+    const doc = new Document({
+        creator: 'Scientilla',
+        title: 'My profile',
+        styles: {
+            paragraphStyles: [
+                {
+                    id: 'default',
+                    name: 'default',
+                    basedOn: 'Normal',
+                    next: 'Normal',
+                    quickFormat: true,
+                    run: {},
+                    paragraph: {
+                        spacing: {
+                            after: 240
+                        }
+                    }
+                }
+            ]
+        }
+    });
 
     options = initializeOptions(options);
 
@@ -1383,8 +1403,6 @@ async function toDoc(researchEntityId, options = {}) {
     const researchLines = profile.groups.filter(group => group.type === 'Research Line');
     const facilities = profile.groups.filter(group => group.type === 'Facility');
 
-    let openNewLine = false;
-
     if (!_.isEmpty(directorates)) {
         const directorateNames = directorates.map(directorate => {
             if (_.has(directorate, 'offices') && directorate.offices.length > 0) {
@@ -1400,8 +1418,6 @@ async function toDoc(researchEntityId, options = {}) {
             }
 
             baseProfile.push(new TextRun('').break());
-            openNewLine = true;
-
         } else {
             baseProfile.push(
                 new TextRun(concatStrings(directorateNames))
@@ -1433,7 +1449,6 @@ async function toDoc(researchEntityId, options = {}) {
             }
 
             baseProfile.push(new TextRun('').break());
-            openNewLine = true;
         } else {
             const title = 'Research line: ';
 
@@ -1447,7 +1462,6 @@ async function toDoc(researchEntityId, options = {}) {
             baseProfile.push(
                 new TextRun(concatStrings(researchLineNames))
             );
-            openNewLine = false;
         }
     }
 
@@ -1472,7 +1486,6 @@ async function toDoc(researchEntityId, options = {}) {
             }
 
             baseProfile.push(new TextRun('').break());
-            openNewLine = true;
         } else {
             const title = 'Facility: ';
 
@@ -1486,7 +1499,6 @@ async function toDoc(researchEntityId, options = {}) {
             baseProfile.push(
                 new TextRun(concatStrings(facilityNames))
             );
-            openNewLine = false;
         }
     }
 
@@ -1512,10 +1524,6 @@ async function toDoc(researchEntityId, options = {}) {
             text: 'Contact: ',
             bold: true
         }));
-
-        if (!openNewLine) {
-            contacts.unshift(new TextRun('').break());
-        }
     }
 
     const socials = [];
@@ -1559,7 +1567,7 @@ async function toDoc(researchEntityId, options = {}) {
         socials.unshift(new TextRun({
             text: 'Socials: ',
             bold: true
-        }).break())
+        }))
     }
 
     const titles = [];
@@ -1578,12 +1586,22 @@ async function toDoc(researchEntityId, options = {}) {
         for (let i = 0; i < profile.interests.length; i++) {
             const interest = profile.interests[i];
 
-            const paragraph = new Paragraph({
+            let paragraph = new Paragraph({
                 text: interest,
                 bullet: {
                     level: 0
                 }
             });
+
+            if (i === profile.interests.length-1) {
+                paragraph = new Paragraph({
+                    text: interest,
+                    bullet: {
+                        level: 0
+                    },
+                    style: 'default'
+                });
+            }
 
             interests.push(paragraph);
         }
@@ -1811,12 +1829,22 @@ async function toDoc(researchEntityId, options = {}) {
             if (!_.isEmpty(category.skills)) {
                 for (let i = 0; i < category.skills.length; i++) {
                     const skill = category.skills[i];
-                    const paragraph = new Paragraph({
+                    let paragraph = new Paragraph({
                         text: skill,
                         bullet: {
                             level: 0
                         }
                     });
+
+                    if (i === category.skills.length-1) {
+                        paragraph = new Paragraph({
+                            text: skill,
+                            bullet: {
+                                level: 0
+                            },
+                            style: 'default'
+                        });
+                    }
 
                     skills.push(paragraph);
                 }
@@ -1927,12 +1955,22 @@ async function toDoc(researchEntityId, options = {}) {
                         );
                     }
 
-                    const paragraph = new Paragraph({
+                    let paragraph = new Paragraph({
                         children: _.concat(documentText, subText),
                         indent: {
                             left: 360,
                         }
                     });
+
+                    if (i === documentsBySourceType[sourceTypeId].length-1) {
+                        paragraph = new Paragraph({
+                            children: _.concat(documentText, subText),
+                            indent: {
+                                left: 360,
+                            },
+                            style: 'default'
+                        });
+                    }
 
                     documents.push(paragraph);
                 }
@@ -2004,12 +2042,22 @@ async function toDoc(researchEntityId, options = {}) {
                         );
                     }
 
-                    const paragraph = new Paragraph({
+                    let paragraph = new Paragraph({
                         children: children,
                         indent: {
                             left: 360,
                         }
                     });
+
+                    if (i === accomplishmentsByType[type].length-1) {
+                        paragraph = new Paragraph({
+                            children: children,
+                            indent: {
+                                left: 360,
+                            },
+                            style: 'default'
+                        });
+                    }
 
                     accomplishments.push(paragraph);
                 }
@@ -2088,7 +2136,8 @@ async function toDoc(researchEntityId, options = {}) {
         if (!_.isEmpty(contacts)) {
             text.push(
                 new Paragraph({
-                    children: contacts
+                    children: contacts,
+                    style: 'default'
                 })
             );
         }
@@ -2098,7 +2147,8 @@ async function toDoc(researchEntityId, options = {}) {
         if (!_.isEmpty(socials)) {
             text.push(
                 new Paragraph({
-                    children: socials
+                    children: socials,
+                    style: 'default'
                 })
             );
         }
@@ -2116,7 +2166,8 @@ async function toDoc(researchEntityId, options = {}) {
             new Paragraph({
                 children: [
                     new TextRun(profile.description)
-                ]
+                ],
+                style: 'default'
             })
         );
     }
@@ -2144,7 +2195,8 @@ async function toDoc(researchEntityId, options = {}) {
 
         text.push(
             new Paragraph({
-                children: experiences
+                children: experiences,
+                style: 'default'
             })
         );
     }
@@ -2161,7 +2213,8 @@ async function toDoc(researchEntityId, options = {}) {
 
         text.push(
             new Paragraph({
-                children: education
+                children: education,
+                style: 'default'
             })
         );
     }
@@ -2178,7 +2231,8 @@ async function toDoc(researchEntityId, options = {}) {
 
         text.push(
             new Paragraph({
-                children: certificates
+                children: certificates,
+                style: 'default'
             })
         );
     }
