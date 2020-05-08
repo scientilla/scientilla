@@ -259,14 +259,19 @@
         <td>Title of the certificate</td>
     </tr>
     <tr>
+        <td class="sub-sub">description</td>
+        <td>String</td>
+        <td>Description of the certificate</td>
+    </tr>
+    <tr>
         <td class="sub-sub">date</td>
         <td>Timestamp</td>
         <td>Date of the certificate (ISO 8601), user input format is 'dd/mm/yyyy', will be deleted if no date is been provided.</td>
     </tr>
     <tr>
-        <td class="sub-sub">description</td>
-        <td>String</td>
-        <td>Description of the certificate</td>
+        <td class="sub-sub-sub">favorite</td>
+        <td>Boolean</td>
+        <td>The certificate is favorite one of the user.</td>
     </tr>
     <tr>
         <td class="sub">skillCategories</td>
@@ -275,8 +280,18 @@
     </tr>
     <tr>
         <td class="sub-sub">skills</td>
-        <td>String[]</td>
+        <td>Object[]</td>
         <td>List of skills of the category</td>
+    </tr>
+    <tr>
+        <td class="sub-sub-sub">value</td>
+        <td>String</td>
+        <td>Name of the skill</td>
+    </tr>
+    <tr>
+        <td class="sub-sub-sub">favorite</td>
+        <td>Boolean</td>
+        <td>The skill is a favorite one of the user.</td>
     </tr>
     <tr>
         <td class="sub-sub">categoryName</td>

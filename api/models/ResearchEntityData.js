@@ -1093,17 +1093,8 @@ function filterProperty(object, onlyPublic = false) {
                 return false;
             }
 
-            // Returns the value of the property if the object has a privacy and value property or the object has a
-            // favorite, privacy and value property
-            if (
-                (Object.keys(object).length === 2 && _.has(object, 'privacy') && _.has(object, 'value')) ||
-                (
-                    Object.keys(object).length === 3 &&
-                    _.has(object, 'favorite') &&
-                    _.has(object, 'privacy') &&
-                    _.has(object, 'value')
-                )
-            ) {
+            // Returns the value of the property if the object has a privacy and value property
+            if (Object.keys(object).length === 2 && _.has(object, 'privacy') && _.has(object, 'value')) {
                 return object['value'];
             }
 
@@ -1269,6 +1260,8 @@ async function getProfile(researchEntityId) {
     if (!profile) {
         return 'Has no profile!';
     }
+
+    sails.log.debug(util.inspect(profile, false, null, true));
 
     // Filter the profile properties
     profile = filterProfile(profile);
