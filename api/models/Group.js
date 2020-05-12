@@ -1,4 +1,4 @@
-/* global require, ResearchEntity, AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group, PerformanceCalculator, DocumentKinds, DocumentNotDuplicateGroup */
+/* global require, ResearchEntity, AuthorshipGroup, Document, DocumentOrigins, GruntTaskRunner, SqlService, Promise, Group, PerformanceCalculator, DocumentKinds, DocumentNotDuplicateGroup, ChartData */
 'use strict';
 
 /**
@@ -160,6 +160,22 @@ module.exports = _.merge({}, SubResearchEntity, {
         await ResearchEntity.createResearchEntity(Group, group, 'group');
 
         cb();
+    },
+    afterDestroy: async function (destroyedGroups, proceed) {
+        // Loop over destroyed groups
+        for (const group of destroyedGroups) {
+
+            // Delete ResearchEntity record of user
+            await ResearchEntity.destroy({ id: group.researchEntity });
+
+            // Delete ChartData record of user
+            await ChartData.destroy({
+                researchEntityType: 'group',
+                researchEntity: group.researchEntity
+            });
+        }
+
+        proceed();
     },
     getAuthorshipsData: async function (document, groupId, newAffiliationData = {}) {
         return {

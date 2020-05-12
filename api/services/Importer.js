@@ -32,6 +32,7 @@ module.exports = {
     importSourceMetrics,
     importUserContracts,
     importUserHistoryContracts,
+    removeExpiredUsers
 };
 
 async function importSources() {
@@ -1553,4 +1554,22 @@ async function importUserHistoryContracts(email = defaultEmail) {
     const stoppedTime = moment.utc();
     sails.log.info('The import stopped at ' + stoppedTime.format());
     sails.log.info('The duration of the import was done ' + moment.duration(stoppedTime.diff(startedTime)).humanize(true));
+}
+
+async function removeExpiredUsers() {
+    const fiveYearsAgo = moment().subtract('5', 'years').startOf('day');
+    const deletedUsers = await User.destroy({
+        expiresAt: {'<=': fiveYearsAgo.format()}
+    });
+    var deletedUserEmails = deletedUsers.map(function (user) {
+        return user.username;
+    });
+    sails.log.info('Deleted ' + deletedUsers.length + ' users that were expired 5 years ago: ' + fiveYearsAgo.format());
+    if (deletedUserEmails.length > 0) {
+        if (deletedUserEmails.length === 1) {
+            sails.log.info('Deleted the user with email address: ' + deletedUserEmails.join(', '));
+        } else {
+            sails.log.info('Deleted the users with email address: ' + deletedUserEmails.join(', '));
+        }
+    }
 }
