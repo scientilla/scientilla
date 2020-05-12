@@ -617,17 +617,19 @@
     .profile-block{
         &.basic-info {
             .card-container {
-                position: relative;
+                .main-card{
+                    position: relative;
 
-                &:after {
-                    position: absolute;
-                    bottom: 6px;
-                    right: 10px;
-                    font-family: $font-awesome;
-                    font-style: normal;
-                    font-weight: 900;
-                    content: '\f25a';
-                    color: $gray-200;
+                    &:after {
+                        position: absolute;
+                        bottom: 6px;
+                        right: 10px;
+                        font-family: $font-awesome;
+                        font-style: normal;
+                        font-weight: 900;
+                        content: '\f25a';
+                        color: $gray-200;
+                    }
                 }
 
                 &:hover,
@@ -636,8 +638,10 @@
                         opacity: 1;
                     }
 
-                    &:after {
-                        color: $white;
+                    .main-card{
+                        &:after {
+                            color: $white;
+                        }
                     }
                 }
             }

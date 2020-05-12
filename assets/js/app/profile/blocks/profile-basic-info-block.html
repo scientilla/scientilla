@@ -4,7 +4,7 @@
             Former colleague
         </div>
     </li>
-    <li class="main-card">
+    <li ng-class="vm.former ? '' : 'main-card'">
         <div class="profile-card">
             <img
                 ng-if="vm.profile.image"
@@ -54,7 +54,7 @@
             </ul>
         </div>
     </li>
-    <li class="contact-card">
+    <li class="contact-card" ng-if="!vm.former">
         <div class="profile-card">
             <profile-contact-listing profile="vm.profile"></profile-contact-listing>
         </div>
