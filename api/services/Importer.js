@@ -620,8 +620,10 @@ async function importUserContracts(email = defaultEmail) {
         }
 
         let responseData = await waitForSuccesfulRequest(reqOptions);
-        if (_.has(responseData, 'scheda')) {
-            responseData = responseData.scheda;
+        if (_.has(responseData, '_.scheda')) {
+            responseData = responseData._.scheda;
+        } else {
+            return;
         }
 
         if (_.isEmpty(responseData)) {
