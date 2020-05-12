@@ -28,10 +28,6 @@ module.exports = _.merge({}, SubResearchEntity, {
         type: 'STRING',
         code: 'STRING',
         active: 'BOOLEAN',
-        collaborations: {
-            collection: 'collaboration',
-            via: 'group'
-        },
         starting_date: 'DATE',
         researchEntity: {
             columnName: 'research_entity',

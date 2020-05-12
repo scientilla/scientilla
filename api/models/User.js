@@ -150,10 +150,6 @@ module.exports = _.merge({}, SubResearchEntity, {
             collection: 'jwt',
             via: 'owner'
         },
-        collaborations: {
-            collection: 'collaboration',
-            via: 'user'
-        },
         aliases: {
             collection: 'alias',
             via: 'user'

@@ -57,12 +57,6 @@ SELECT EXISTS(
     FROM information_schema.tables
     WHERE
         table_schema = 'public' AND
-        table_name = 'collaboration'
-) as collaboration, EXISTS(
-    SELECT *
-    FROM information_schema.tables
-    WHERE
-        table_schema = 'public' AND
         table_name = 'discarded_document'
 ) as discarded_document, EXISTS(
     SELECT *

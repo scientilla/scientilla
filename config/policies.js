@@ -62,8 +62,6 @@ module.exports.policies = {
 
     AuthorshipGroupController: defaultPolicy,
 
-    CollaborationGroupController: defaultPolicy,
-
     GroupController: _.defaults({
         getExternalDocuments: true,
         getChartsData: true,
