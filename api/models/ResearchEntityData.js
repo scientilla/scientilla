@@ -1261,8 +1261,6 @@ async function getProfile(researchEntityId) {
         return 'Has no profile!';
     }
 
-    sails.log.debug(util.inspect(profile, false, null, true));
-
     // Filter the profile properties
     profile = filterProfile(profile);
 
