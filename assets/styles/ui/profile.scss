@@ -176,11 +176,16 @@
             position: relative;
             @include normalize-listing;
 
+            & > li{
+                height: 100%;
+            }
+
             .profile-card{
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 flex-direction: column;
+                height: 100%;
             }
 
             &,
@@ -195,6 +200,7 @@
                 top: -5px;
                 right: 20px;
                 z-index: 200;
+                height: auto;
 
                 .ribbon{
                     position: relative;
@@ -542,6 +548,48 @@
         border-color: $curious-blue;
         color: $white;
     }
+
+    &.loading{
+        position: relative;
+        overflow: hidden;
+
+        &:after{
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            display: block;
+            width: 100%;
+            height: 100%;
+            content: '';
+            animation: load 1s linear infinite;
+            animation-fill-mode: forwards;
+            $list: transparent 0%, transparent 20%, $white 40%, transparent 60%, transparent 100%;
+            @include gradient-background-image(right, $list);
+            background-repeat: no-repeat;
+            background-size: cover;
+            transform: rotate(-10deg);
+        }
+
+        .dummy-link{
+            height: 2rem;
+            background: $gray-200;
+        }
+
+        .block-title,
+        .title-icon,
+        .favorite-listing{
+            color: $gray-200;
+        }
+
+        .amount{
+            .dummy-link{
+                display: inline-block;
+                height: 6rem;
+                width: 3rem;
+                vertical-align: top;
+            }
+        }
+    }
 }
 
 .profile{
@@ -658,5 +706,14 @@
                 }
             }
         }
+    }
+}
+
+@keyframes load{
+    0%{
+        background-position: -1000px 0;
+    }
+    100%{
+        background-position: 1000px 0;
     }
 }

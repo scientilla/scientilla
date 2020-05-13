@@ -9,6 +9,7 @@
             bindings: {
                 profile: '<',
                 documents: '<',
+                loadingDocuments: '<',
                 urlFavoriteDocuments: '<',
                 urlAllDocuments: '<',
             }

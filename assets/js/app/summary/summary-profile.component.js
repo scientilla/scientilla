@@ -40,6 +40,9 @@
             vm.documents = [];
             vm.accomplishments = [];
 
+            vm.loadingDocuments = false;
+            vm.loadingAccomplishments = false;
+
             vm.urlAllDocuments = '/#/documents/verified';
             vm.urlFavoriteDocuments = '/#/documents/verified?favorites';
             vm.urlAllAccomplishments = '/#/accomplishments/verified';
@@ -74,14 +77,20 @@
 
                 vm.user = AuthService.user;
 
+                vm.loadingDocuments = true;
+                vm.loadingAccomplishments = true;
+                setNumberOfItems();
+
                 vm.subResearchEntity = context.getSubResearchEntity();
                 researchEntityService.getDocuments(vm.subResearchEntity, {}).then(function (documents) {
                     vm.documents = documents;
+                    vm.loadingDocuments = false;
                     setNumberOfItems();
                 });
 
                 vm.researchEntity = await context.getResearchEntity();
                 vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {});
+                vm.loadingAccomplishments = false;
                 setNumberOfItems();
             };
             /* jshint ignore:end */
@@ -122,11 +131,11 @@
                     count++;
                 }
 
-                if (vm.accomplishments.length > 0) {
+                if (vm.documents.length > 0 || vm.loadingDocuments) {
                     count++;
                 }
 
-                if (vm.documents.length > 0) {
+                if (vm.accomplishments.length > 0 || vm.loadingAccomplishments) {
                     count++;
                 }
 

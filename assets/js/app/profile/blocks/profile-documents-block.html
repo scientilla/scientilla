@@ -1,6 +1,6 @@
-<div class="profile-card">
+<div class="profile-card" ng-if="!vm.loadingDocuments">
     <div class="content-container">
-        <span class="amount">{{ vm.documents.length }}</span>
+        <span class="amount">{{ vm.documents.count }}</span>
         <i class="fas fa-file title-icon"></i>
         <h2 class="block-title">Documents</h2>
     </div>
@@ -30,6 +30,35 @@
             <a
                 href=" {{ vm.urlAllDocuments }}"
                 class="show-more has-action">Show all documents</a>
+        </li>
+    </ul>
+</div>
+
+<div class="profile-card loading" ng-if="vm.loadingDocuments">
+    <div class="content-container">
+        <span class="amount">
+            <div class="dummy-link"></div>
+        </span>
+        <i class="fas fa-file title-icon"></i>
+        <h2 class="block-title">Documents</h2>
+    </div>
+    <div class="content-container last-item-container">
+        <div class="dummy-link"></div>
+        <ul class="favorite-listing">
+            <li>
+                <div class="dummy-link"></div>
+            </li>
+            <li>
+                <div class="dummy-link"></div>
+            </li>
+        </ul>
+    </div>
+    <ul class="block-links">
+        <li>
+            <div class="dummy-link"></div>
+        </li>
+        <li>
+            <div class="dummy-link"></div>
         </li>
     </ul>
 </div>
