@@ -7,7 +7,8 @@
             controller: profileBasicInfoBlock,
             controllerAs: 'vm',
             bindings: {
-                profile: '<'
+                profile: '<',
+                former: '<?'
             }
         });
 
@@ -18,12 +19,18 @@
 
         vm.pathProfileImages = pathProfileImages + '/' + AuthService.user.researchEntity + '/';
 
+        vm.researchLines = [];
+        vm.facilities = [];
+        vm.directorates = [];
+
         vm.joinStrings = function (strings, seperator) {
             return TextService.joinStrings(strings, seperator);
         };
 
         vm.$onInit = function () {
-
+            vm.researchLines = vm.profile.groups.filter(group => group.type === 'Research Line');
+            vm.facilities = vm.profile.groups.filter(group => group.type === 'Facility');
+            vm.directorates = vm.profile.groups.filter(group => group.type === 'Directorate');
         };
     }
 

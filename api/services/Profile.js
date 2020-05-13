@@ -3,19 +3,6 @@
 "use strict";
 
 const docx = require("docx");
-const {
-    Document,
-    Paragraph,
-    Packer,
-    TextRun,
-    HeadingLevel,
-    Media,
-    HorizontalPositionRelativeFrom,
-    HorizontalPositionAlign,
-    VerticalPositionRelativeFrom,
-    TextWrappingSide,
-    TextWrappingType
-} = docx;
 const fs = require('fs');
 const path = require('path');
 const util = require('util');
@@ -33,6 +20,17 @@ function concatStrings(strings = [], options = {}) {
     }
 
     return strings.join(options.seperator)
+}
+
+function isFuture(date) {
+    const now = new Date();
+    date = new Date(date);
+
+    if (date < now) {
+        return false;
+    }
+
+    return true;
 }
 
 function formatDate(date) {
@@ -133,13 +131,63 @@ module.exports = {
     toDoc
 };
 
+async function getProfile(researchEntityId) {
+    const profile = await ResearchEntityData.getProfile(researchEntityId);
+
+    // Getting the documents
+    const user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
+    const documentIds = user.documents.map(d => d.id);
+    const documentPopulates = [
+        'source',
+        'authors',
+        'authorships',
+        'groupAuthorships',
+        'affiliations',
+        'sourceMetrics',
+        'userTags',
+        'tagLabels',
+        'groupTags',
+        'groupTagLabels',
+        'institutes',
+        'groups',
+        'scopusDocumentMetadata',
+        'openaireMetadata'
+    ];
+    const documents = await Document.find({
+        kind: DocumentKinds.VERIFIED,
+        id: documentIds
+    }).populate(documentPopulates);
+
+    profile.documents = documents;
+
+    // Getting the accomplishments
+    const researchEntity = await ResearchEntity.findOne({id: researchEntityId}).populate('accomplishments');
+    const accomplishmentIds = researchEntity.accomplishments.map(a => a.id);
+    const accomplishmentPopulates = [
+        'type',
+        'authors',
+        'affiliations',
+        'institutes',
+        'source',
+        'verified',
+        'verifiedUsers',
+        'verifiedGroups'
+    ];
+
+    const accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
+
+    profile.accomplishments = accomplishments;
+
+    return profile;
+}
+
 async function toPDF(researchEntityId, options = {}) {
 
     options = initializeOptions(options);
 
     let tmpText = '';
 
-    const profile = await ResearchEntityData.getProfile(researchEntityId);
+    const profile = await getProfile(researchEntityId);
 
     function getExperienceText(experience) {
         const stack = [];
@@ -161,7 +209,7 @@ async function toPDF(researchEntityId, options = {}) {
 
             experience.from = formatDateExperience(experience.from);
 
-            if (!_.has(experience, 'to') || _.isEmpty(experience.to)) {
+            if (!_.has(experience, 'to') || _.isEmpty(experience.to) || isFuture(experience.to)) {
                 experience.to = 'Present';
             } else {
                 experience.to = formatDateExperience(experience.to);
@@ -181,6 +229,17 @@ async function toPDF(researchEntityId, options = {}) {
                     text: tmpText,
                     style: 'lighten'
                 });
+            }
+
+            if (!_.isEmpty(experience.lines)) {
+                for (const line of experience.lines) {
+                    if (!_.isEmpty(line.name) || !_.isEmpty(line.office)) {
+                        stack.push({
+                            text: concatStrings([line.name, line.office], {seperator: ' - '}),
+                            style: 'lighten'
+                        });
+                    }
+                }
             }
 
             if (!_.isEmpty(experience.jobDescription)) {
@@ -211,7 +270,7 @@ async function toPDF(researchEntityId, options = {}) {
 
             educationItem.from = formatDateEducation(educationItem.from);
 
-            if (!_.has(educationItem, 'to') || _.isEmpty(educationItem.to)) {
+            if (!_.has(educationItem, 'to') || _.isEmpty(educationItem.to) || isFuture(educationItem.to)) {
                 educationItem.to = 'Present';
             } else {
                 educationItem.to = formatDateEducation(educationItem.to);
@@ -409,7 +468,7 @@ async function toPDF(researchEntityId, options = {}) {
         return text;
     }
 
-    return new Promise(resolve => {
+    return await new Promise(async resolve => {
         /// Define font files
         const fonts = {
             RobotoSlab: {
@@ -436,219 +495,7 @@ async function toPDF(researchEntityId, options = {}) {
 
         // Basic profile
         if (options.basic) {
-            tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
-            if (!_.isEmpty(tmpText)) {
-                basicProfile.push(
-                    {
-                        text: tmpText,
-                        style: 'h1'
-                    }
-                );
-            }
-
-            if (!_.isEmpty(profile.jobTitle)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: 'Job title: ',
-                            style: 'bold'
-                        },
-                        profile.jobTitle
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.centers)) {
-
-                let title = 'Center: ';
-                if (profile.centers.length > 1) {
-                    title = 'Centers: ';
-                }
-
-                const centers = profile.centers.map(center => center.name);
-
-                basicProfile.push({
-                    text: [
-                        {
-                            text: title,
-                            style: 'bold'
-                        },
-                        concatStrings(centers)
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.researchLines)) {
-
-                let title = 'Line: ';
-                if (profile.researchLines.length > 1) {
-                    title = 'Lines: ';
-                }
-
-                const researchLines = profile.researchLines.map(researchLine => researchLine.name);
-
-                basicProfile.push({
-                    text: [
-                        {
-                            text: title,
-                            style: 'bold'
-                        },
-                        concatStrings(researchLines)
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.facilities)) {
-                let title = 'Facility: ';
-                if (profile.facilities.length > 1) {
-                    title = 'Facilities: ';
-                }
-
-                const facilities = profile.facilities.map(facility => facility.name);
-
-                basicProfile.push({
-                    text: [
-                        {
-                            text: title,
-                            style: 'bold'
-                        },
-                        concatStrings(facilities)
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.directorate)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: 'Directorate: ',
-                            style: 'bold'
-                        },
-                        profile.directorate
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.office)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: 'Office: ',
-                            style: 'bold'
-                        },
-                        profile.office
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.position)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: 'Position: ',
-                            style: 'bold'
-                        },
-                        profile.position
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.role)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: 'Role: ',
-                            style: 'bold'
-                        },
-                        profile.role
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.titles)) {
-                let title = 'Title: ';
-                if (profile.titles.length > 1) {
-                    title = 'Titles: ';
-                }
-
-                basicProfile.push({
-                    text: [
-                        {
-                            text: title,
-                            style: 'bold'
-                        },
-                        concatStrings(profile.titles)
-                    ]
-                });
-            }
-
-            basicProfile.push({
-                text: ' ',
-                fontSize: 5
-            });
-
-            // Contacts
-            if (!_.isEmpty(profile.username)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: '',
-                            style: 'fontAwesome'
-                        },
-                        ' ' + profile.username
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.phone)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: '',
-                            style: [
-                                'fontAwesome',
-                                'solid'
-                            ]
-                        },
-                        ' ' + profile.phone
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.address)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: '',
-                            style: [
-                                'fontAwesome',
-                                'solid'
-                            ]
-                        },
-                        ' ' + profile.address
-                    ]
-                });
-            }
-
-            if (!_.isEmpty(profile.website)) {
-                basicProfile.push({
-                    text: [
-                        {
-                            text: '',
-                            style: [
-                                'fontAwesome',
-                                'solid'
-                            ]
-                        },
-                        ' ' + profile.website
-                    ]
-                });
-            }
-        }
-
-        if (options.basic) {
             if (_.has(profile, 'export.basicInformation') && !_.isEmpty(profile.export.basicInformation)) {
-                basicProfile = [];
                 tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
 
                 if (!_.isEmpty(tmpText)) {
@@ -665,17 +512,266 @@ async function toPDF(researchEntityId, options = {}) {
                         profile.export.basicInformation
                     ]
                 });
+            } else {
+                tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
+                if (!_.isEmpty(tmpText)) {
+                    basicProfile.push(
+                        {
+                            text: tmpText,
+                            style: 'h1'
+                        }
+                    );
+                }
+
+                const jobDescription = [];
+
+                if (!_.isEmpty(profile.jobTitle)) {
+                    jobDescription.push(profile.jobTitle);
+                }
+
+                if (!_.isEmpty(profile.role)) {
+                    jobDescription.push(profile.role);
+                }
+
+                if (!_.isEmpty(jobDescription)) {
+                    basicProfile.push({
+                        text: concatStrings(jobDescription, {seperator: ' - '})
+                    });
+                }
+
+
+                const directorates = profile.groups.filter(group => group.type === 'Directorate');
+                const researchLines = profile.groups.filter(group => group.type === 'Research Line');
+                const facilities = profile.groups.filter(group => group.type === 'Facility');
+
+                if (!_.isEmpty(directorates)) {
+                    const directorateNames = directorates.map(directorate => {
+                        if (_.has(directorate, 'offices') && directorate.offices.length > 0) {
+                            return directorate.name + ' - ' + concatStrings(directorate.offices);
+                        }
+                        return directorate.name;
+                    });
+
+                    if (directorateNames.length > 1) {
+
+                        for (const name of directorateNames) {
+                            basicProfile.push({
+                                text: name
+                            });
+                        }
+
+                        basicProfile.push({
+                            text: ' ',
+                            fontSize: 5
+                        });
+
+                    } else {
+                        basicProfile.push({
+                            text: [concatStrings(directorateNames)]
+                        });
+                    }
+                }
+
+                if (!_.isEmpty(researchLines)) {
+
+                    const researchLineNames = researchLines.map(researchLine => {
+                        if (_.has(researchLine, 'center.name')) {
+                            return researchLine.name + ' - ' + researchLine.center.name;
+                        }
+                        return researchLine.name;
+                    });
+
+                    if (researchLineNames.length > 1) {
+                        const title = 'Research lines: ';
+
+                        basicProfile.push({
+                            text: [
+                                {
+                                    text: title,
+                                    style: 'bold'
+                                }
+                            ]
+                        });
+
+                        for (const name of researchLineNames) {
+                            basicProfile.push({
+                                text: name
+                            });
+                        }
+
+                        basicProfile.push({
+                            text: ' ',
+                            fontSize: 5
+                        });
+                    } else {
+                        const title = 'Research line: ';
+
+                        basicProfile.push({
+                            text: _.concat([
+                                {
+                                    text: title,
+                                    style: 'bold'
+                                }
+                            ], researchLineNames)
+                        });
+                    }
+                }
+
+                if (!_.isEmpty(facilities)) {
+
+                    const facilityNames = facilities.map(facility => {
+                        return facility.name;
+                    });
+
+                    if (facilityNames.length > 1) {
+                        const title = 'Facilities: ';
+
+                        basicProfile.push({
+                            text: [
+                                {
+                                    text: title,
+                                    style: 'bold'
+                                }
+                            ]
+                        });
+
+                        for (const name of facilityNames) {
+                            basicProfile.push({
+                                text: name
+                            });
+                        }
+
+                        basicProfile.push({
+                            text: ' ',
+                            fontSize: 5
+                        });
+
+                    } else {
+                        const title = 'Facility: ';
+
+                        basicProfile.push({
+                            text: _.concat([
+                                {
+                                    text: title,
+                                    style: 'bold'
+                                }
+                            ], facilityNames)
+                        });
+                    }
+                }
+
+                if (!_.isEmpty(profile.titles)) {
+                    let title = 'Title: ';
+                    if (profile.titles.length > 1) {
+                        title = 'Titles: ';
+                    }
+
+                    basicProfile.push({
+                        text: ' ',
+                        fontSize: 5
+                    });
+
+                    basicProfile.push({
+                        text: [
+                            {
+                                text: title,
+                                style: 'bold'
+                            },
+                            concatStrings(profile.titles)
+                        ]
+                    });
+                }
+
+                basicProfile.push({
+                    text: ' ',
+                    fontSize: 5
+                });
+
+                // Contacts
+                if (!_.isEmpty(profile.username)) {
+                    basicProfile.push({
+                        text: [
+                            {
+                                text: '',
+                                style: 'fontAwesome'
+                            },
+                            ' ' + profile.username
+                        ]
+                    });
+                }
+
+                if (!_.isEmpty(profile.phone)) {
+                    basicProfile.push({
+                        text: [
+                            {
+                                text: '',
+                                style: [
+                                    'fontAwesome',
+                                    'solid'
+                                ]
+                            },
+                            ' ' + profile.phone
+                        ]
+                    });
+                }
+
+                if (!_.isEmpty(profile.address)) {
+                    basicProfile.push({
+                        text: [
+                            {
+                                text: '',
+                                style: [
+                                    'fontAwesome',
+                                    'solid'
+                                ]
+                            },
+                            ' ' + profile.address
+                        ]
+                    });
+                }
+
+                if (!_.isEmpty(profile.website)) {
+                    basicProfile.push({
+                        text: [
+                            {
+                                text: '',
+                                style: [
+                                    'fontAwesome',
+                                    'solid'
+                                ]
+                            },
+                            ' ' + profile.website
+                        ]
+                    });
+                }
             }
 
+            let profileImage = null;
             if (profile.image) {
-                const profileImagePath = path.join('profile', 'images', researchEntityId.toString(), profile.image);
+                try {
+                    const stat = util.promisify(fs.stat);
+                    const imagePath = path.resolve(
+                        sails.config.appPath,
+                        'profile',
+                        'images',
+                        researchEntityId.toString(),
+                        profile.image
+                    );
+                    await stat(imagePath);
+                    profileImage = imagePath;
+                } catch (error) {
+                    profileImage = null;
+                }
+            }
+
+            if (profileImage) {
                 content.push({
                     columns: [{
                         width: '*',
                         stack: basicProfile,
                         margin: [0, 0, 20, 0]
                     }, {
-                        image: profileImagePath,
+                        image: profileImage,
                         width: 100
                     }]
                 });
@@ -878,7 +974,13 @@ async function toPDF(researchEntityId, options = {}) {
                 ul: profile.interests,
                 style: 'lighten'
             });
+        }
 
+        // Add some whitespace
+        if (
+            options.about && !_.isEmpty(profile.description) ||
+            options.about && !_.isEmpty(profile.interests)
+        ) {
             content.push({
                 text: ' ',
                 fontSize: 20
@@ -1186,374 +1288,357 @@ async function toPDF(researchEntityId, options = {}) {
 }
 
 async function toDoc(researchEntityId, options = {}) {
-    return new Promise(async (resolve) => {
-        const doc = new Document();
+    const {
+        Document,
+        Paragraph,
+        Packer,
+        TextRun,
+        HeadingLevel,
+        Media,
+        HorizontalPositionRelativeFrom,
+        HorizontalPositionAlign,
+        VerticalPositionRelativeFrom,
+        TextWrappingSide,
+        TextWrappingType
+    } = docx;
+    const doc = new Document({
+        creator: 'Scientilla',
+        title: 'My profile',
+        styles: {
+            paragraphStyles: [
+                {
+                    id: 'default',
+                    name: 'default',
+                    basedOn: 'Normal',
+                    next: 'Normal',
+                    quickFormat: true,
+                    run: {},
+                    paragraph: {
+                        spacing: {
+                            after: 240
+                        }
+                    }
+                }
+            ]
+        }
+    });
 
-        options = initializeOptions(options);
+    options = initializeOptions(options);
 
-        const profile = await ResearchEntityData.getProfile(researchEntityId);
-        let profileImage;
+    const profile = await getProfile(researchEntityId);
 
-        try {
-            profileImage = await new Promise(async (resolve, reject) => {
-                if (profile.image) {
-                    const readFile = util.promisify(fs.readFile);
-                    const profileImagePath = path.join('profile', 'images', researchEntityId.toString());
-                    const imagePath = path.resolve(sails.config.appPath, profileImagePath, profile.image);
+    let profileImage = null;
 
-                    await readFile(imagePath).then(async (file) => {
-                        const image = Media.addImage(doc, file, 150, 150, {
-                            floating: {
-                                horizontalPosition: {
-                                    relative: HorizontalPositionRelativeFrom.INSIDE_MARGIN,
-                                    align: HorizontalPositionAlign.RIGHT,
-                                },
-                                verticalPosition: {
-                                    relative: VerticalPositionRelativeFrom.INSIDE_MARGIN,
-                                    offset: 0
-                                },
-                                wrap: {
-                                    type: TextWrappingType.SQUARE,
-                                    side: TextWrappingSide.LEFT,
-                                },
-                                margins: {
-                                    left: 360,
-                                    bottom: 360
-                                }
+    await new Promise(async (resolve, reject) => {
+        try{
+            if (profile.image) {
+                const readFile = util.promisify(fs.readFile);
+                const imagePath = path.resolve(
+                    sails.config.appPath,
+                    'profile',
+                    'images',
+                    researchEntityId.toString(),
+                    profile.image
+                );
+                const stat = util.promisify(fs.stat);
+
+                await stat(imagePath);
+
+                await readFile(imagePath).then(async (file) => {
+                    const image = Media.addImage(doc, file, 150, 150, {
+                        floating: {
+                            horizontalPosition: {
+                                relative: HorizontalPositionRelativeFrom.MARGIN,
+                                align: HorizontalPositionAlign.RIGHT,
+                            },
+                            verticalPosition: {
+                                relative: VerticalPositionRelativeFrom.MARGIN,
+                                offset: 0
+                            },
+                            wrap: {
+                                type: TextWrappingType.SQUARE,
+                                side: TextWrappingSide.LEFT,
+                            },
+                            margins: {
+                                left: 30,
+                                bottom: 30
                             }
-                        });
-
-                        resolve(image);
+                        }
                     });
-                } else {
-                    reject();
+
+                    resolve(image);
+                });
+            } else {
+                reject('No profile image!');
+            }
+        } catch(error) {
+            reject(error);
+        }
+    }).then(image => {
+        profileImage = image;
+    }).catch(error => {
+        profileImage = null;
+    });
+
+    let tmpText = '';
+
+    let baseProfile = [];
+    const jobDescription = [];
+
+    if (!_.isEmpty(profile.jobTitle)) {
+        jobDescription.push(profile.jobTitle);
+    }
+
+    if (!_.isEmpty(profile.role)) {
+        jobDescription.push(profile.role);
+    }
+
+    if (!_.isEmpty(profile.role)) {
+        baseProfile.push(new TextRun(concatStrings(jobDescription, {seperator: ' - '})));
+    }
+
+    baseProfile.push(new TextRun('').break());
+
+    const directorates = profile.groups.filter(group => group.type === 'Directorate');
+    const researchLines = profile.groups.filter(group => group.type === 'Research Line');
+    const facilities = profile.groups.filter(group => group.type === 'Facility');
+
+    if (!_.isEmpty(directorates)) {
+        const directorateNames = directorates.map(directorate => {
+            if (_.has(directorate, 'offices') && directorate.offices.length > 0) {
+                return directorate.name + ' - ' + concatStrings(directorate.offices);
+            }
+            return directorate.name;
+        });
+
+        if (directorateNames.length > 1) {
+
+            for (const name of directorateNames) {
+                baseProfile.push(new TextRun(name).break());
+            }
+
+            baseProfile.push(new TextRun('').break());
+        } else {
+            baseProfile.push(
+                new TextRun(concatStrings(directorateNames))
+            );
+        }
+    }
+
+    if (!_.isEmpty(researchLines)) {
+
+        const researchLineNames = researchLines.map(researchLine => {
+            if (_.has(researchLine, 'center.name')) {
+                return researchLine.name + ' - ' + researchLine.center.name;
+            }
+            return researchLine.name;
+        });
+
+        if (researchLineNames.length > 1) {
+            const title = 'Research lines: ';
+
+            baseProfile.push(
+                new TextRun({
+                    text: title,
+                    bold: true
+                }).break()
+            );
+
+            for (const name of researchLineNames) {
+                baseProfile.push(new TextRun(name).break());
+            }
+
+            baseProfile.push(new TextRun('').break());
+        } else {
+            const title = 'Research line: ';
+
+            baseProfile.push(
+                new TextRun({
+                    text: title,
+                    bold: true
+                }).break()
+            );
+
+            baseProfile.push(
+                new TextRun(concatStrings(researchLineNames))
+            );
+        }
+    }
+
+    if (!_.isEmpty(facilities)) {
+
+        const facilityNames = facilities.map(facility => {
+            return facility.name;
+        });
+
+        if (facilityNames.length > 1) {
+            const title = 'Facilities: ';
+
+            baseProfile.push(
+                new TextRun({
+                    text: title,
+                    bold: true
+                }).break()
+            );
+
+            for (const name of facilityNames) {
+                baseProfile.push(new TextRun(name).break());
+            }
+
+            baseProfile.push(new TextRun('').break());
+        } else {
+            const title = 'Facility: ';
+
+            baseProfile.push(
+                new TextRun({
+                    text: title,
+                    bold: true
+                }).break()
+            );
+
+            baseProfile.push(
+                new TextRun(concatStrings(facilityNames))
+            );
+        }
+    }
+
+    const contacts = [];
+    if (!_.isEmpty(profile.username)) {
+        contacts.push(new TextRun(profile.username).break());
+    }
+
+    if (!_.isEmpty(profile.phone)) {
+        contacts.push(new TextRun(profile.phone).break());
+    }
+
+    if (!_.isEmpty(profile.address)) {
+        contacts.push(new TextRun(profile.address).break());
+    }
+
+    if (!_.isEmpty(profile.website)) {
+        contacts.push(new TextRun(profile.website).break());
+    }
+
+    if (!_.isEmpty(contacts)) {
+        contacts.unshift(new TextRun({
+            text: 'Contact: ',
+            bold: true
+        }));
+    }
+
+    const socials = [];
+    if (!_.isEmpty(profile.socials && profile.socials.linkedin)) {
+        socials.push(new TextRun(profile.socials.linkedin).break());
+    }
+
+    if (!_.isEmpty(profile.socials && profile.socials.twitter)) {
+        socials.push(new TextRun(profile.socials.twitter).break());
+    }
+
+    if (!_.isEmpty(profile.socials && profile.socials.facebook)) {
+        socials.push(new TextRun(profile.socials.facebook).break());
+    }
+
+    if (!_.isEmpty(profile.socials && profile.socials.instagram)) {
+        socials.push(new TextRun(profile.socials.instagram).break());
+    }
+
+    if (!_.isEmpty(profile.socials && profile.socials.researchgate)) {
+        socials.push(new TextRun(profile.socials.researchgate).break());
+    }
+
+    if (!_.isEmpty(profile.socials && profile.socials.github)) {
+        socials.push(new TextRun(profile.socials.github).break());
+    }
+
+    if (!_.isEmpty(profile.socials && profile.socials.bitbucket)) {
+        socials.push(new TextRun(profile.socials.bitbucket).break());
+    }
+
+    if (!_.isEmpty(profile.socials && profile.socials.youtube)) {
+        socials.push(new TextRun(profile.socials.youtube).break());
+    }
+
+    if (!_.isEmpty(profile.socials && profile.socials.flickr)) {
+        socials.push(new TextRun(profile.socials.flickr).break());
+    }
+
+    if (!_.isEmpty(socials)) {
+        socials.unshift(new TextRun({
+            text: 'Socials: ',
+            bold: true
+        }))
+    }
+
+    const titles = [];
+    if (!_.isEmpty(profile.titles)) {
+        for (let i = 0; i < profile.titles.length; i++) {
+            const title = profile.titles[i];
+
+            if (!_.isEmpty(title)) {
+                titles.push(title);
+            }
+        }
+    }
+
+    const interests = [];
+    if (!_.isEmpty(profile.interests)) {
+        for (let i = 0; i < profile.interests.length; i++) {
+            const interest = profile.interests[i];
+
+            let paragraph = new Paragraph({
+                text: interest,
+                bullet: {
+                    level: 0
                 }
             });
-        } catch(e) {
-            profileImage = null;
-        }
 
-        let tmpText = '';
-
-        let baseProfile = [];
-        if (!_.isEmpty(profile.jobTitle)) {
-            baseProfile.push(
-                new TextRun({
-                    text: 'Job title: ',
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(new TextRun(profile.jobTitle));
-        }
-
-        if (!_.isEmpty(profile.centers)) {
-            let title = 'Center: ';
-            if (profile.centers.length > 1) {
-                title = 'Centers: ';
-            }
-            const centers = profile.centers.map(center => center.name);
-
-            baseProfile.push(
-                new TextRun({
-                    text: title,
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(
-                new TextRun(concatStrings(centers))
-            );
-        }
-
-        if (!_.isEmpty(profile.researchLines)) {
-            let title = 'Line: ';
-            if (profile.researchLines.length > 1) {
-                title = 'Lines: ';
-            }
-
-            const researchLines = profile.researchLines.map(researchLine => researchLine.name);
-
-            baseProfile.push(
-                new TextRun({
-                    text: title,
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(
-                new TextRun(concatStrings(researchLines))
-            );
-        }
-
-        if (!_.isEmpty(profile.facilities)) {
-            let title = 'Facility: ';
-            if (profile.facilities.length > 1) {
-                title = 'Facilities: ';
-            }
-
-            const facilities = profile.facilities.map(facility => facility.name);
-
-            baseProfile.push(
-                new TextRun({
-                    text: title,
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(
-                new TextRun(concatStrings(facilities))
-            );
-        }
-
-        if (!_.isEmpty(profile.directorate)) {
-            baseProfile.push(
-                new TextRun({
-                    text: 'Directorate: ',
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(new TextRun(profile.directorate));
-        }
-
-        if (!_.isEmpty(profile.office)) {
-            baseProfile.push(
-                new TextRun({
-                    text: 'Office: ',
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(new TextRun(profile.office));
-        }
-
-        if (!_.isEmpty(profile.position)) {
-            baseProfile.push(
-                new TextRun({
-                    text: 'Position: ',
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(new TextRun(profile.position));
-        }
-
-        if (!_.isEmpty(profile.role)) {
-            baseProfile.push(
-                new TextRun({
-                    text: 'Role: ',
-                    bold: true
-                }).break()
-            );
-
-            baseProfile.push(new TextRun(profile.role));
-        }
-
-        const contacts = [];
-        if (!_.isEmpty(profile.username)) {
-            contacts.push(new TextRun(profile.username).break());
-        }
-
-        if (!_.isEmpty(profile.phone)) {
-            contacts.push(new TextRun(profile.phone).break());
-        }
-
-        if (!_.isEmpty(profile.address)) {
-            contacts.push(new TextRun(profile.address).break());
-        }
-
-        if (!_.isEmpty(profile.website)) {
-            contacts.push(new TextRun(profile.website).break());
-        }
-
-        if (!_.isEmpty(contacts)) {
-            contacts.unshift(new TextRun({
-                text: 'Contact: ',
-                bold: true
-            }).break())
-        }
-
-        const socials = [];
-        if (!_.isEmpty(profile.socials && profile.socials.linkedin)) {
-            socials.push(new TextRun(profile.socials.linkedin).break());
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.twitter)) {
-            socials.push(new TextRun(profile.socials.twitter).break());
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.facebook)) {
-            socials.push(new TextRun(profile.socials.facebook).break());
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.instagram)) {
-            socials.push(new TextRun(profile.socials.instagram).break());
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.researchgate)) {
-            socials.push(new TextRun(profile.socials.researchgate).break());
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.github)) {
-            socials.push(new TextRun(profile.socials.github).break());
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.bitbucket)) {
-            socials.push(new TextRun(profile.socials.bitbucket).break());
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.youtube)) {
-            socials.push(new TextRun(profile.socials.youtube).break());
-        }
-
-        if (!_.isEmpty(profile.socials && profile.socials.flickr)) {
-            socials.push(new TextRun(profile.socials.flickr).break());
-        }
-
-        if (!_.isEmpty(socials)) {
-            socials.unshift(new TextRun({
-                text: 'Socials: ',
-                bold: true
-            }).break())
-        }
-
-        const titles = [];
-        if (!_.isEmpty(profile.titles)) {
-            for (let i = 0; i < profile.titles.length; i++) {
-                const title = profile.titles[i];
-
-                if (!_.isEmpty(title)) {
-                    titles.push(title);
-                }
-            }
-        }
-
-        const interests = [];
-        if (!_.isEmpty(profile.interests)) {
-            for (let i = 0; i < profile.interests.length; i++) {
-                const interest = profile.interests[i];
-
-                const paragraph = new Paragraph({
+            if (i === profile.interests.length-1) {
+                paragraph = new Paragraph({
                     text: interest,
                     bullet: {
                         level: 0
-                    }
+                    },
+                    style: 'default'
                 });
-
-                interests.push(paragraph);
-            }
-        }
-
-        const experiences = [];
-        const experiencesByCompany = _.groupBy(profile.experiences, 'company');
-        let companyCount = 0;
-        for (const company in experiencesByCompany) {
-            if (!_.isEmpty(experiencesByCompany[company])) {
-                for (let i = 0; i < experiencesByCompany[company].length; i++) {
-                    const experience = experiencesByCompany[company][i];
-
-                    experiences.push(
-                        new TextRun({
-                            text: company,
-                            bold: true
-                        })
-                    );
-
-                    if (!_.isEmpty(experience.jobTitle)) {
-                        experiences.push(
-                            new TextRun(experience.jobTitle).break()
-                        );
-                    }
-
-                    experience.from = formatDateExperience(experience.from);
-
-                    if (!_.has(experience, 'to') || _.isEmpty(experience.to)) {
-                        experience.to = 'Present';
-                    } else {
-                        experience.to = formatDateExperience(experience.to);
-                    }
-
-                    tmpText = concatStrings([experience.from, experience.to], {seperator: ' - '});
-                    if (!_.isEmpty(tmpText)) {
-                        experiences.push(
-                            new TextRun({
-                                text: tmpText,
-                                color: '999999'
-                            }).break()
-                        );
-                    }
-
-                    tmpText = concatStrings([experience.location, experience.country]);
-                    if (!_.isEmpty(tmpText)) {
-                        experiences.push(
-                            new TextRun({
-                                text: tmpText,
-                                color: '999999'
-                            }).break()
-                        );
-                    }
-
-                    if (!_.isEmpty(experience.description)) {
-                        experiences.push(
-                            new TextRun(experience.description).break()
-                        );
-                    }
-
-                    if (i < experiencesByCompany[company].length - 1) {
-                        experiences.push(
-                            new TextRun('').break()
-                        );
-                        experiences.push(
-                            new TextRun('').break()
-                        );
-                    }
-                }
-
-                if (companyCount < Object.keys(experiencesByCompany).length - 1) {
-                    experiences.push(
-                        new TextRun('').break()
-                    );
-                    experiences.push(
-                        new TextRun('').break()
-                    );
-                }
             }
 
-            companyCount++;
+            interests.push(paragraph);
         }
+    }
 
-        const education = [];
-        if (!_.isEmpty(profile.education)) {
-            for (let i = 0; i < profile.education.length; i++) {
-                const educationItem = profile.education[i];
+    const experiences = [];
+    const experiencesByCompany = _.groupBy(profile.experiences, 'company');
+    let companyCount = 0;
+    for (const company in experiencesByCompany) {
+        if (!_.isEmpty(experiencesByCompany[company])) {
+            for (let i = 0; i < experiencesByCompany[company].length; i++) {
+                const experience = experiencesByCompany[company][i];
 
-                if (!_.isEmpty(educationItem.institute)) {
-                    education.push(
-                        new TextRun(educationItem.institute)
+                experiences.push(
+                    new TextRun({
+                        text: company,
+                        bold: true
+                    })
+                );
+
+                if (!_.isEmpty(experience.jobTitle)) {
+                    experiences.push(
+                        new TextRun(experience.jobTitle).break()
                     );
                 }
 
-                if (!_.isEmpty(educationItem.title)) {
-                    education.push(
-                        new TextRun({
-                            text: educationItem.title,
-                            bold: true
-                        }).break()
-                    );
-                }
+                experience.from = formatDateExperience(experience.from);
 
-                educationItem.from = formatDateEducation(educationItem.from);
-
-                if (!_.has(educationItem, 'to') || _.isEmpty(educationItem.to)) {
-                    educationItem.to = 'Present';
+                if (!_.has(experience, 'to') || _.isEmpty(experience.to) || isFuture(experience.to)) {
+                    experience.to = 'Present';
                 } else {
-                    educationItem.to = formatDateEducation(educationItem.to);
+                    experience.to = formatDateExperience(experience.to);
                 }
 
-                tmpText = concatStrings([educationItem.from, educationItem.to], {seperator: ' - '});
+                tmpText = concatStrings([experience.from, experience.to], {seperator: ' - '});
                 if (!_.isEmpty(tmpText)) {
-                    education.push(
+                    experiences.push(
                         new TextRun({
                             text: tmpText,
                             color: '999999'
@@ -1561,516 +1646,641 @@ async function toDoc(researchEntityId, options = {}) {
                     );
                 }
 
-                tmpText = concatStrings([educationItem.location, educationItem.country]);
-                if (!_.isEmpty(tmpText)) {
-                    education.push(
-                        new TextRun({
-                            text: tmpText,
-                            color: '999999'
-                        }).break()
-                    );
-                }
-
-                if (i < profile.education.length - 1) {
-                    education.push(
-                        new TextRun('').break()
-                    );
-                    education.push(
-                        new TextRun('').break()
-                    );
-                }
-            }
-        }
-
-        const certificates = [];
-        if (!_.isEmpty(profile.certificates)) {
-            for (let i = 0; i < profile.certificates.length; i++) {
-                const certificate = profile.certificates[i];
-
-                if (!_.isEmpty(certificate.title)) {
-                    certificates.push(
-                        new TextRun({
-                            text: certificate.title,
-                            bold: true
-                        })
-                    );
-                }
-
-                if (!_.isEmpty(certificate.text)) {
-                    certificates.push(
-                        new TextRun(certificate.text).break()
-                    );
-                }
-
-                if (!_.isEmpty(certificate.date)) {
-                    certificates.push(
-                        new TextRun({
-                            text: formatDate(certificate.date),
-                            color: '999999'
-                        }).break()
-                    );
-                }
-
-                if (i < profile.certificates.length - 1) {
-                    certificates.push(
-                        new TextRun('').break()
-                    );
-                    certificates.push(
-                        new TextRun('').break()
-                    );
-                }
-            }
-        }
-
-        const skills = [];
-        if (!_.isEmpty(profile.skillCategories)) {
-            for (let i = 0; i < profile.skillCategories.length; i++) {
-                const category = profile.skillCategories[i];
-
-                if (i === 0) {
-                    skills.push(
-                        new Paragraph({
-                            children: [
+                if (!_.isEmpty(experience.lines)) {
+                    for (const line of experience.lines) {
+                        if (!_.isEmpty(line.name) || !_.isEmpty(line.office)) {
+                            experiences.push(
                                 new TextRun({
-                                    text: category.categoryName,
-                                    bold: true
-                                })
-                            ]
-                        })
-                    );
-                } else {
-                    skills.push(
-                        new Paragraph({
-                            children: [
-                                new TextRun({
-                                    text: category.categoryName,
-                                    bold: true
+                                    text: concatStrings([line.name, line.office], {seperator: ' - '}),
+                                    color: '999999'
                                 }).break()
-                            ]
-                        })
+                            );
+                        }
+                    }
+                }
+
+                tmpText = concatStrings([experience.location, experience.country]);
+                if (!_.isEmpty(tmpText)) {
+                    experiences.push(
+                        new TextRun({
+                            text: tmpText,
+                            color: '999999'
+                        }).break()
                     );
                 }
 
-                if (!_.isEmpty(category.skills)) {
-                    for (let i = 0; i < category.skills.length; i++) {
-                        const skill = category.skills[i];
-                        const paragraph = new Paragraph({
-                            text: skill,
-                            bullet: {
-                                level: 0
-                            }
-                        });
-
-                        skills.push(paragraph);
-                    }
+                if (!_.isEmpty(experience.jobDescription)) {
+                    experiences.push(
+                        new TextRun(experience.jobDescription).break()
+                    );
                 }
+
+                if (i < experiencesByCompany[company].length - 1) {
+                    experiences.push(
+                        new TextRun('').break()
+                    );
+                    experiences.push(
+                        new TextRun('').break()
+                    );
+                }
+            }
+
+            if (companyCount < Object.keys(experiencesByCompany).length - 1) {
+                experiences.push(
+                    new TextRun('').break()
+                );
+                experiences.push(
+                    new TextRun('').break()
+                );
             }
         }
 
-        const documents = [];
-        const documentsBySourceType = _.groupBy(profile.documents, 'source.sourcetype');
+        companyCount++;
+    }
 
-        for (const sourceTypeId in documentsBySourceType) {
+    const education = [];
+    if (!_.isEmpty(profile.education)) {
+        for (let i = 0; i < profile.education.length; i++) {
+            const educationItem = profile.education[i];
 
-            const sourceType = SourceTypes.get().find(st => st.id === parseInt(sourceTypeId));
-
-            if (!_.isEmpty(sourceType)) {
-                documents.push(
-                    new Paragraph({
-                        text: sourceType.label,
-                        heading: HeadingLevel.HEADING_3
-                    })
+            if (!_.isEmpty(educationItem.institute)) {
+                education.push(
+                    new TextRun(educationItem.institute)
                 );
             }
 
-            if (!_.isEmpty(documentsBySourceType[sourceTypeId])) {
-                for (let i = 0; i < documentsBySourceType[sourceTypeId].length; i++) {
-                    const document = documentsBySourceType[sourceTypeId][i];
-
-                    if (!_.isEmpty(document) &&
-                        (
-                            !_.isEmpty(document.authorsStr) ||
-                            !_.isEmpty(document.year) ||
-                            !_.isEmpty(document.title) ||
-                            !_.isEmpty(document.source) ||
-                            !_.isEmpty(document.volume) ||
-                            !_.isEmpty(document.pages)
-                        )
-                    ) {
-                        const documentText = [];
-                        let subText = [];
-
-                        if (i > 0) {
-                            documentText.push(
-                                new TextRun({}).break()
-                            );
-                        }
-
-                        if (!_.isEmpty(document.authorsStr)) {
-                            documentText.push(
-                                new TextRun({
-                                    text: document.authorsStr
-                                })
-                            );
-                        }
-
-                        if (!_.isEmpty(document.year)) {
-                            documentText.push(
-                                new TextRun({
-                                    text: ' (' + document.year + '). '
-                                })
-                            );
-                        }
-
-                        if (!_.isEmpty(document.title)) {
-                            subText.push(
-                                new TextRun({
-                                    text: document.title
-                                })
-                            );
-                        }
-
-                        if (!_.isEmpty(document.source)) {
-                            subText.push(
-                                new TextRun({
-                                    text: document.source.title,
-                                    italics: true
-                                })
-                            );
-                        }
-
-                        if (!_.isEmpty(document.volume)) {
-                            subText.push(
-                                new TextRun({
-                                    text: document.volume
-                                })
-                            );
-                        }
-
-                        if (!_.isEmpty(document.pages)) {
-                            subText.push(
-                                new TextRun({
-                                    text: document.pages
-                                })
-                            );
-                        }
-
-                        if (subText.length > 0) {
-                            subText = insertIntoArray(
-                                subText,
-                                new TextRun({
-                                    text: ', '
-                                })
-                            );
-
-                            subText.push(
-                                new TextRun({
-                                    text: '.'
-                                })
-                            );
-                        }
-
-                        const paragraph = new Paragraph({
-                            children: _.concat(documentText, subText),
-                            indent: {
-                                left: 360,
-                            }
-                        });
-
-                        documents.push(paragraph);
-                    }
-                }
-            }
-        }
-
-        const accomplishments = [];
-        const accomplishmentsByType = _.groupBy(profile.accomplishments, 'type.label');
-        for (const type in accomplishmentsByType) {
-
-            if (!_.isEmpty(type)) {
-                accomplishments.push(
-                    new Paragraph({
-                        text: type,
-                        heading: HeadingLevel.HEADING_3
-                    })
+            if (!_.isEmpty(educationItem.title)) {
+                education.push(
+                    new TextRun({
+                        text: educationItem.title,
+                        bold: true
+                    }).break()
                 );
             }
 
-            if (!_.isEmpty(accomplishmentsByType[type])) {
-                for (let i = 0; i < accomplishmentsByType[type].length; i++) {
-                    const accomplishment = accomplishmentsByType[type][i];
+            educationItem.from = formatDateEducation(educationItem.from);
 
-                    if (
-                        !_.isEmpty(accomplishment) &&
-                        (
-                            !_.isEmpty(accomplishment.title) ||
-                            !_.isEmpty(accomplishment.issuer) ||
-                            !_.isEmpty(accomplishment.year)
-                        )
-                    ) {
-                        const children = [];
-
-                        if (!_.isEmpty(accomplishment.title)) {
-                            children.push(
-                                new TextRun({
-                                    text: accomplishment.title,
-                                    bold: true
-                                })
-                            );
-
-                            children.push(
-                                new TextRun({}).break()
-                            );
-                        }
-
-                        if (!_.isEmpty(accomplishment.issuer)) {
-                            children.push(
-                                new TextRun({
-                                    text: 'Issuer: ' + accomplishment.issuer
-                                })
-                            );
-
-                            children.push(
-                                new TextRun({}).break()
-                            );
-                        }
-
-                        if (!_.isEmpty(accomplishment.year)) {
-                            children.push(
-                                new TextRun({
-                                    text: 'Year: ' + accomplishment.year
-                                })
-                            );
-
-                            children.push(
-                                new TextRun({}).break()
-                            );
-                        }
-
-                        const paragraph = new Paragraph({
-                            children: children,
-                            indent: {
-                                left: 360,
-                            }
-                        });
-
-                        accomplishments.push(paragraph);
-                    }
-                }
-            }
-        }
-
-        let text = [];
-
-        if (options.basic) {
-            tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
-
-            if (!_.isEmpty(tmpText)) {
-                text.push(
-                    new Paragraph({
-                        text:  tmpText,
-                        heading: HeadingLevel.HEADING_1
-                    })
-                );
-            }
-
-            if (_.has(profile, 'export.basicInformation') && !_.isEmpty(profile.export.basicInformation)) {
-                baseProfile = [];
-                const lines = profile.export.basicInformation.split('\n');
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i];
-                    if (i === 0) {
-                        baseProfile.push(new TextRun(line));
-                    } else {
-                        baseProfile.push(new TextRun(line).break());
-                    }
-                }
-            }
-
-            if (!_.isEmpty(baseProfile) && !_.isNil(profileImage)) {
-                text.push(
-                    new Paragraph({
-                        children: _.concat(baseProfile, profileImage)
-                    })
-                );
+            if (!_.has(educationItem, 'to') || _.isEmpty(educationItem.to) || isFuture(educationItem.to)) {
+                educationItem.to = 'Present';
             } else {
-                if (!_.isEmpty(baseProfile)) {
-                    text.push(
-                        new Paragraph({
-                            children: baseProfile
-                        })
-                    );
-                }
-
-                if (!_.isNil(profileImage)) {
-                    text.push(
-                        new Paragraph({
-                            children: profileImage
-                        })
-                    );
-                }
+                educationItem.to = formatDateEducation(educationItem.to);
             }
 
-            if (!_.isEmpty(titles)) {
-                text.push(
+            tmpText = concatStrings([educationItem.from, educationItem.to], {seperator: ' - '});
+            if (!_.isEmpty(tmpText)) {
+                education.push(
+                    new TextRun({
+                        text: tmpText,
+                        color: '999999'
+                    }).break()
+                );
+            }
+
+            tmpText = concatStrings([educationItem.location, educationItem.country]);
+            if (!_.isEmpty(tmpText)) {
+                education.push(
+                    new TextRun({
+                        text: tmpText,
+                        color: '999999'
+                    }).break()
+                );
+            }
+
+            if (i < profile.education.length - 1) {
+                education.push(
+                    new TextRun('').break()
+                );
+                education.push(
+                    new TextRun('').break()
+                );
+            }
+        }
+    }
+
+    const certificates = [];
+    if (!_.isEmpty(profile.certificates)) {
+        for (let i = 0; i < profile.certificates.length; i++) {
+            const certificate = profile.certificates[i];
+
+            if (!_.isEmpty(certificate.title)) {
+                certificates.push(
+                    new TextRun({
+                        text: certificate.title,
+                        bold: true
+                    })
+                );
+            }
+
+            if (!_.isEmpty(certificate.description)) {
+                certificates.push(
+                    new TextRun(certificate.description).break()
+                );
+            }
+
+            if (!_.isEmpty(certificate.date)) {
+                certificates.push(
+                    new TextRun({
+                        text: formatDate(certificate.date),
+                        color: '999999'
+                    }).break()
+                );
+            }
+
+            if (i < profile.certificates.length - 1) {
+                certificates.push(
+                    new TextRun('').break()
+                );
+                certificates.push(
+                    new TextRun('').break()
+                );
+            }
+        }
+    }
+
+    const skills = [];
+    if (!_.isEmpty(profile.skillCategories)) {
+        for (let i = 0; i < profile.skillCategories.length; i++) {
+            const category = profile.skillCategories[i];
+
+            if (i === 0) {
+                skills.push(
                     new Paragraph({
                         children: [
                             new TextRun({
-                                text: 'Titles: ',
+                                text: category.categoryName,
                                 bold: true
-                            }).break(),
+                            })
+                        ]
+                    })
+                );
+            } else {
+                skills.push(
+                    new Paragraph({
+                        children: [
                             new TextRun({
-                                text: titles.join(', ')
-                            }),
-
+                                text: category.categoryName,
+                                bold: true
+                            }).break()
                         ]
                     })
                 );
             }
 
-            if (!_.isEmpty(contacts)) {
-                text.push(
-                    new Paragraph({
-                        children: contacts
-                    })
-                );
+            if (!_.isEmpty(category.skills)) {
+                for (let i = 0; i < category.skills.length; i++) {
+                    const skill = category.skills[i];
+                    let paragraph = new Paragraph({
+                        text: skill,
+                        bullet: {
+                            level: 0
+                        }
+                    });
+
+                    if (i === category.skills.length-1) {
+                        paragraph = new Paragraph({
+                            text: skill,
+                            bullet: {
+                                level: 0
+                            },
+                            style: 'default'
+                        });
+                    }
+
+                    skills.push(paragraph);
+                }
             }
         }
+    }
 
-        if (options.socials) {
-            if (!_.isEmpty(socials)) {
-                text.push(
-                    new Paragraph({
-                        children: socials
-                    })
-                );
-            }
-        }
+    const documents = [];
+    const documentsBySourceType = _.groupBy(profile.documents, 'source.sourcetype');
 
-        // About me
-        if (options.about && !_.isEmpty(profile.description)) {
-            text.push(
+    for (const sourceTypeId in documentsBySourceType) {
+
+        const sourceType = SourceTypes.get().find(st => st.id === parseInt(sourceTypeId));
+
+        if (!_.isEmpty(sourceType)) {
+            documents.push(
                 new Paragraph({
-                    text: 'About me',
-                    heading: HeadingLevel.HEADING_2
+                    text: sourceType.label,
+                    heading: HeadingLevel.HEADING_3
                 })
             );
+        }
+
+        if (!_.isEmpty(documentsBySourceType[sourceTypeId])) {
+            for (let i = 0; i < documentsBySourceType[sourceTypeId].length; i++) {
+                const document = documentsBySourceType[sourceTypeId][i];
+
+                if (!_.isEmpty(document) &&
+                    (
+                        !_.isEmpty(document.authorsStr) ||
+                        !_.isEmpty(document.year) ||
+                        !_.isEmpty(document.title) ||
+                        !_.isEmpty(document.source) ||
+                        !_.isEmpty(document.volume) ||
+                        !_.isEmpty(document.pages)
+                    )
+                ) {
+                    const documentText = [];
+                    let subText = [];
+
+                    if (i > 0) {
+                        documentText.push(
+                            new TextRun({}).break()
+                        );
+                    }
+
+                    if (!_.isEmpty(document.authorsStr)) {
+                        documentText.push(
+                            new TextRun({
+                                text: document.authorsStr
+                            })
+                        );
+                    }
+
+                    if (!_.isEmpty(document.year)) {
+                        documentText.push(
+                            new TextRun({
+                                text: ' (' + document.year + '). '
+                            })
+                        );
+                    }
+
+                    if (!_.isEmpty(document.title)) {
+                        subText.push(
+                            new TextRun({
+                                text: document.title
+                            })
+                        );
+                    }
+
+                    if (!_.isEmpty(document.source)) {
+                        subText.push(
+                            new TextRun({
+                                text: document.source.title,
+                                italics: true
+                            })
+                        );
+                    }
+
+                    if (!_.isEmpty(document.volume)) {
+                        subText.push(
+                            new TextRun({
+                                text: document.volume
+                            })
+                        );
+                    }
+
+                    if (!_.isEmpty(document.pages)) {
+                        subText.push(
+                            new TextRun({
+                                text: document.pages
+                            })
+                        );
+                    }
+
+                    if (subText.length > 0) {
+                        subText = insertIntoArray(
+                            subText,
+                            new TextRun({
+                                text: ', '
+                            })
+                        );
+
+                        subText.push(
+                            new TextRun({
+                                text: '.'
+                            })
+                        );
+                    }
+
+                    let paragraph = new Paragraph({
+                        children: _.concat(documentText, subText),
+                        indent: {
+                            left: 360,
+                        }
+                    });
+
+                    if (i === documentsBySourceType[sourceTypeId].length-1) {
+                        paragraph = new Paragraph({
+                            children: _.concat(documentText, subText),
+                            indent: {
+                                left: 360,
+                            },
+                            style: 'default'
+                        });
+                    }
+
+                    documents.push(paragraph);
+                }
+            }
+        }
+    }
+
+    const accomplishments = [];
+    const accomplishmentsByType = _.groupBy(profile.accomplishments, 'type.label');
+    for (const type in accomplishmentsByType) {
+
+        if (!_.isEmpty(type)) {
+            accomplishments.push(
+                new Paragraph({
+                    text: type,
+                    heading: HeadingLevel.HEADING_3
+                })
+            );
+        }
+
+        if (!_.isEmpty(accomplishmentsByType[type])) {
+            for (let i = 0; i < accomplishmentsByType[type].length; i++) {
+                const accomplishment = accomplishmentsByType[type][i];
+
+                if (
+                    !_.isEmpty(accomplishment) &&
+                    (
+                        !_.isEmpty(accomplishment.title) ||
+                        !_.isEmpty(accomplishment.issuer) ||
+                        !_.isEmpty(accomplishment.year)
+                    )
+                ) {
+                    const children = [];
+
+                    if (!_.isEmpty(accomplishment.title)) {
+                        children.push(
+                            new TextRun({
+                                text: accomplishment.title,
+                                bold: true
+                            })
+                        );
+
+                        children.push(
+                            new TextRun({}).break()
+                        );
+                    }
+
+                    if (!_.isEmpty(accomplishment.issuer)) {
+                        children.push(
+                            new TextRun({
+                                text: 'Issuer: ' + accomplishment.issuer
+                            })
+                        );
+
+                        children.push(
+                            new TextRun({}).break()
+                        );
+                    }
+
+                    if (!_.isEmpty(accomplishment.year)) {
+                        children.push(
+                            new TextRun({
+                                text: 'Year: ' + accomplishment.year
+                            })
+                        );
+
+                        children.push(
+                            new TextRun({}).break()
+                        );
+                    }
+
+                    let paragraph = new Paragraph({
+                        children: children,
+                        indent: {
+                            left: 360,
+                        }
+                    });
+
+                    if (i === accomplishmentsByType[type].length-1) {
+                        paragraph = new Paragraph({
+                            children: children,
+                            indent: {
+                                left: 360,
+                            },
+                            style: 'default'
+                        });
+                    }
+
+                    accomplishments.push(paragraph);
+                }
+            }
+        }
+    }
+
+    let text = [];
+
+    if (options.basic) {
+        tmpText = concatStrings([profile.name, profile.surname], {seperator: ' '});
+
+        if (!_.isEmpty(tmpText)) {
+            text.push(
+                new Paragraph({
+                    text:  tmpText,
+                    heading: HeadingLevel.HEADING_1
+                })
+            );
+        }
+
+        if (_.has(profile, 'export.basicInformation') && !_.isEmpty(profile.export.basicInformation)) {
+            baseProfile = [];
+            const lines = profile.export.basicInformation.split('\n');
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                if (i === 0) {
+                    baseProfile.push(new TextRun(line));
+                } else {
+                    baseProfile.push(new TextRun(line).break());
+                }
+            }
+        }
+
+        if (!_.isEmpty(baseProfile) && !_.isNil(profileImage)) {
+            text.push(
+                new Paragraph({
+                    children: _.concat(baseProfile, profileImage)
+                })
+            );
+        } else {
+            if (!_.isEmpty(baseProfile)) {
+                text.push(
+                    new Paragraph({
+                        children: baseProfile
+                    })
+                );
+            }
+
+            if (!_.isNil(profileImage)) {
+                text.push(
+                    new Paragraph({
+                        children: profileImage
+                    })
+                );
+            }
+        }
+
+        if (!_.isEmpty(titles)) {
             text.push(
                 new Paragraph({
                     children: [
-                        new TextRun(profile.description)
+                        new TextRun({
+                            text: 'Titles: ',
+                            bold: true
+                        }).break(),
+                        new TextRun({
+                            text: titles.join(', ')
+                        }),
+
                     ]
                 })
             );
         }
 
-        // Interests
-        if (options.about && !_.isEmpty(profile.interests)) {
+        if (!_.isEmpty(contacts)) {
             text.push(
                 new Paragraph({
-                    text: 'Interests',
-                    heading: HeadingLevel.HEADING_3
-                })
-            );
-
-            text = _.concat(text, interests);
-        }
-
-        // Experiences
-        if (options.experiences && !_.isEmpty(experiences)) {
-            text.push(
-                new Paragraph({
-                    text: 'Experiences',
-                    heading: HeadingLevel.HEADING_2
-                })
-            );
-
-            text.push(
-                new Paragraph({
-                    children: experiences
+                    children: contacts,
+                    style: 'default'
                 })
             );
         }
+    }
 
-        // Education
-        if (options.education && !_.isEmpty(education)) {
-
+    if (options.socials) {
+        if (!_.isEmpty(socials)) {
             text.push(
                 new Paragraph({
-                    text: 'Education',
-                    heading: HeadingLevel.HEADING_2
-                })
-            );
-
-            text.push(
-                new Paragraph({
-                    children: education
+                    children: socials,
+                    style: 'default'
                 })
             );
         }
+    }
 
-        // Certificates
-        if (options.certificates && !_.isEmpty(certificates)) {
+    // About me
+    if (options.about && !_.isEmpty(profile.description)) {
+        text.push(
+            new Paragraph({
+                text: 'About me',
+                heading: HeadingLevel.HEADING_2
+            })
+        );
+        text.push(
+            new Paragraph({
+                children: [
+                    new TextRun(profile.description)
+                ],
+                style: 'default'
+            })
+        );
+    }
 
-            text.push(
-                new Paragraph({
-                    text: 'Certificates',
-                    heading: HeadingLevel.HEADING_2
-                })
-            );
+    // Interests
+    if (options.about && !_.isEmpty(profile.interests)) {
+        text.push(
+            new Paragraph({
+                text: 'Interests',
+                heading: HeadingLevel.HEADING_3
+            })
+        );
 
-            text.push(
-                new Paragraph({
-                    children: certificates
-                })
-            );
-        }
+        text = _.concat(text, interests);
+    }
 
-        // Skills
-        if (options.skills && !_.isEmpty(skills)) {
+    // Experiences
+    if (options.experiences && !_.isEmpty(experiences)) {
+        text.push(
+            new Paragraph({
+                text: 'Experiences',
+                heading: HeadingLevel.HEADING_2
+            })
+        );
 
-            text.push(
-                new Paragraph({
-                    text: 'Skills',
-                    heading: HeadingLevel.HEADING_2
-                })
-            );
+        text.push(
+            new Paragraph({
+                children: experiences,
+                style: 'default'
+            })
+        );
+    }
 
-            text = _.concat(text, skills);
-        }
+    // Education
+    if (options.education && !_.isEmpty(education)) {
 
-        // Documents
-        if (options.documents && !_.isEmpty(documents)) {
+        text.push(
+            new Paragraph({
+                text: 'Education',
+                heading: HeadingLevel.HEADING_2
+            })
+        );
 
-            text.push(
-                new Paragraph({
-                    text: 'Documents',
-                    heading: HeadingLevel.HEADING_2
-                })
-            );
+        text.push(
+            new Paragraph({
+                children: education,
+                style: 'default'
+            })
+        );
+    }
 
-            text = _.concat(text, documents);
-        }
+    // Certificates
+    if (options.certificates && !_.isEmpty(certificates)) {
 
-        // Accomplishments
-        if (options.accomplishments && !_.isEmpty(accomplishments)) {
+        text.push(
+            new Paragraph({
+                text: 'Certificates',
+                heading: HeadingLevel.HEADING_2
+            })
+        );
 
-            text.push(
-                new Paragraph({
-                    text: 'Accomplishments',
-                    heading: HeadingLevel.HEADING_2
-                })
-            );
-            text = _.concat(text, accomplishments);
-        }
+        text.push(
+            new Paragraph({
+                children: certificates,
+                style: 'default'
+            })
+        );
+    }
 
-        doc.addSection({
-            properties: {},
-            children: text
-        });
+    // Skills
+    if (options.skills && !_.isEmpty(skills)) {
 
-        Packer.toBase64String(doc).then(b64string => {
-            resolve(b64string);
-        });
+        text.push(
+            new Paragraph({
+                text: 'Skills',
+                heading: HeadingLevel.HEADING_2
+            })
+        );
+
+        text = _.concat(text, skills);
+    }
+
+    // Documents
+    if (options.documents && !_.isEmpty(documents)) {
+
+        text.push(
+            new Paragraph({
+                text: 'Documents',
+                heading: HeadingLevel.HEADING_2
+            })
+        );
+
+        text = _.concat(text, documents);
+    }
+
+    // Accomplishments
+    if (options.accomplishments && !_.isEmpty(accomplishments)) {
+
+        text.push(
+            new Paragraph({
+                text: 'Accomplishments',
+                heading: HeadingLevel.HEADING_2
+            })
+        );
+        text = _.concat(text, accomplishments);
+    }
+
+    doc.addSection({
+        properties: {},
+        children: text
+    });
+
+    return await Packer.toBase64String(doc).then(b64string => {
+        return b64string;
     });
 };

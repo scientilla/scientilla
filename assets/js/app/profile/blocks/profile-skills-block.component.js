@@ -32,9 +32,9 @@
                     if (!_.isEmpty(category.skills)) {
                         category.skills.map(skill => {
                             if (skill.favorite) {
-                                favoriteSkills.push(skill);
+                                favoriteSkills.push(skill.value);
                             }
-                            allSkills.push(skill);
+                            allSkills.push(skill.value);
                         });
                     }
                 });
@@ -66,7 +66,7 @@
                             <li ng-repeat="category in vm.profile.skillCategories">
                                 <span class="skill-category">{{ category.categoryName }}</span>
                                 <ul class="skill-listing">
-                                    <li ng-repeat="skill in category.skills">{{ skill }}</li>
+                                    <li ng-repeat="skill in category.skills">{{ skill.value }}</li>
                                 </ul>
                             </li>
                         </ul>

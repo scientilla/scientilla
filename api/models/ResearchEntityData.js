@@ -294,14 +294,31 @@ const definitions = {
     internalExperience: {
         type: 'object',
         properties: {
-            groupCode: {
-                type: 'string'
-            },
+
             jobTitle: {
                 type: 'string'
             },
             company: {
                 type: 'string'
+            },
+            lines: {
+                type: 'array',
+                default: [],
+                items: {
+                    type: 'object',
+                    properties: {
+                        code: {
+                            type: 'string'
+                        },
+                        name: {
+                            type: 'string'
+                        },
+                        office: {
+                            type: 'string'
+                        }
+                    },
+                    required: ['code', 'name']
+                }
             },
             from: {
                 type: 'string'
@@ -310,7 +327,7 @@ const definitions = {
                 type: 'string'
             }
         },
-        required: ['groupCode', 'jobTitle', 'company', 'from']
+        required: ['lines', 'jobTitle', 'company', 'from']
     },
     ifValueCheckPublicPrivacy: {
         if: {
@@ -334,59 +351,25 @@ const definitions = {
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
     },
-    ifNameCodeCheckPublicPrivacy: {
+    ifNameCheckHiddenPrivacy: {
         if: {
             properties: {
                 name: {
                     minLength: 1
                 },
-                code: {
-                    minLength: 1
-                }
             },
-            required: ['name', 'code']
-        },
-        then: { $ref: '#/definitions/privacyEnumPublic' }
-    },
-    ifNameCodeCheckHiddenPrivacy: {
-        if: {
-            properties: {
-                name: {
-                    minLength: 1
-                },
-                code: {
-                    minLength: 1
-                }
-            },
-            required: ['name', 'code']
+            required: ['name']
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
     },
-    ifGroupCodeJobTitleCheckPublicPrivacy: {
+    ifJobTitleCheckHiddenPrivacy: {
         if: {
             properties: {
-                groupCode: {
-                    minLength: 1
-                },
                 jobTitle: {
                     minLength: 1
                 }
             },
-            required: ['groupCode', 'jobTitle']
-        },
-        then: { $ref: '#/definitions/privacyEnumPublic' }
-    },
-    ifGroupCodeJobTitleCheckHiddenPrivacy: {
-        if: {
-            properties: {
-                groupCode: {
-                    minLength: 1
-                },
-                jobTitle: {
-                    minLength: 1
-                }
-            },
-            required: ['groupCode', 'jobTitle']
+            required: ['jobTitle']
         },
         then: { $ref: '#/definitions/privacyEnumHidden' }
     },
@@ -464,45 +447,33 @@ const defaultProperties = {
         definitions.privacy,
         definitions.privacyDefaultHidden
     ),
-    directorate: _.merge(
-        {},
-        definitions.privacy,
-        definitions.privacyDefaultHidden
-    ),
-    office: _.merge(
-        {},
-        definitions.privacy,
-        definitions.privacyDefaultHidden
-    ),
-    centers: {
+    groups: {
         type: 'array',
         default: [],
         items: _.merge(
             {},
             definitions.name,
             definitions.code,
-            definitions.privacy,
-            definitions.privacyDefaultHidden
-        )
-    },
-    researchLines: {
-        type: 'array',
-        default: [],
-        items: _.merge(
-            {},
-            definitions.name,
-            definitions.code,
-            definitions.privacy,
-            definitions.privacyDefaultHidden
-        )
-    },
-    facilities: {
-        type: 'array',
-        default: [],
-        items: _.merge(
-            {},
-            definitions.name,
-            definitions.code,
+            {
+                type: 'object',
+                properties: {
+                    type: {
+                        enum: ['Research Line', 'Facility', 'Directorate']
+                    },
+                    center: _.merge(
+                        {},
+                        definitions.name,
+                        definitions.code
+                    ),
+                    offices: {
+                        type: 'array',
+                        default: [],
+                        items: {
+                            type: 'string'
+                        }
+                    }
+                }
+            },
             definitions.privacy,
             definitions.privacyDefaultHidden
         )
@@ -680,16 +651,8 @@ const thenProperties = {
     surname: definitions.ifValueCheckHiddenPrivacy,
     jobTitle: definitions.ifValueCheckHiddenPrivacy,
     phone: definitions.ifValueCheckHiddenPrivacy,
-    centers: {
-        items: definitions.ifNameCodeCheckHiddenPrivacy
-    },
-    researchLines: {
-        items: definitions.ifNameCodeCheckHiddenPrivacy
-    },
-    directorate: definitions.ifValueCheckHiddenPrivacy,
-    office: definitions.ifValueCheckHiddenPrivacy,
-    facilities: {
-        items: definitions.ifNameCodeCheckHiddenPrivacy
+    groups: {
+        items: definitions.ifNameCheckHiddenPrivacy
     },
     image: {
         oneOf: [
@@ -848,7 +811,7 @@ const thenProperties = {
         }
     },
     internalExperiences: {
-        items: definitions.ifGroupCodeJobTitleCheckHiddenPrivacy
+        items: definitions.ifJobTitleCheckHiddenPrivacy
     },
 };
 
@@ -858,15 +821,7 @@ const elseProperties = {
     surname: definitions.ifValueCheckPublicPrivacy,
     jobTitle: definitions.ifValueCheckPublicPrivacy,
     phone: definitions.ifValueCheckPublicPrivacy,
-    directorate: definitions.ifValueCheckPublicPrivacy,
-    office: definitions.ifValueCheckPublicPrivacy,
-    centers: {
-        items: definitions.ifValueCheckPublicPrivacy
-    },
-    researchLines: {
-        items: definitions.ifValueCheckPublicPrivacy
-    },
-    facilities: {
+    groups: {
         items: definitions.ifValueCheckPublicPrivacy
     },
     image: {
@@ -1043,7 +998,7 @@ const elseProperties = {
         }
     },
     internalExperiences: {
-        items: definitions.ifGroupCodeJobTitleCheckPublicPrivacy
+        items: definitions.ifJobTitleCheckHiddenPrivacy
     },
 };
 
@@ -1138,17 +1093,8 @@ function filterProperty(object, onlyPublic = false) {
                 return false;
             }
 
-            // Returns the value of the property if the object has a privacy and value property or the object has a
-            // favorite, privacy and value property
-            if (
-                (Object.keys(object).length === 2 && _.has(object, 'privacy') && _.has(object, 'value')) ||
-                (
-                    Object.keys(object).length === 3 &&
-                    _.has(object, 'favorite') &&
-                    _.has(object, 'privacy') &&
-                    _.has(object, 'value')
-                )
-            ) {
+            // Returns the value of the property if the object has a privacy and value property
+            if (Object.keys(object).length === 2 && _.has(object, 'privacy') && _.has(object, 'value')) {
                 return object['value'];
             }
 
@@ -1279,78 +1225,6 @@ function setupProfile(userData) {
 }
 
 /**
- * Returns the profile object with documents and accomplishments
- *
- * @param {Object} profile
- * @param {Integer} researchEntityId
- *
- * @returns {Object} profile
- */
-async function loadDocumentsAndAccomplishments(profile, researchEntityId) {
-    let accomplishments = [];
-    let documents = [];
-
-    const researchEntity = await ResearchEntity.findOne({id: researchEntityId});
-
-    if (researchEntity && !researchEntity.isGroup()) {
-        const verifiedAccomplishments = await AccomplishmentVerify.find({researchEntity: researchEntityId});
-        const accomplishmentIds = verifiedAccomplishments.map(a => a.accomplishment);
-
-        // Check populates
-        const accomplishmentPopulates = [
-            'type',
-            'authors',
-            'affiliations',
-            'institutes',
-            'source',
-            'verified',
-            'verifiedUsers',
-            'verifiedGroups'
-        ];
-
-        accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
-
-        const user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
-
-        if (!_.isEmpty(user.documents)) {
-            const documentIds = user.documents.map(d => d.id);
-
-            // Check populates
-            const documentPopulates = [
-                'source',
-                'authors',
-                'authorships',
-                'groupAuthorships',
-                'affiliations',
-                'sourceMetrics',
-                'userTags',
-                'tagLabels',
-                'groupTags',
-                'groupTagLabels',
-                'institutes',
-                //'duplicates',
-                'groups',
-                'scopusDocumentMetadata',
-                'openaireMetadata'
-            ];
-            documents = await Document.find({
-                kind: DocumentKinds.VERIFIED, id: documentIds
-            }).populate(documentPopulates);
-        }
-    }
-
-    if (!_.isEmpty(documents)) {
-        profile.documents = documents;
-    }
-
-    if (!_.isEmpty(accomplishments)) {
-        profile.accomplishments = accomplishments;
-    }
-
-    return profile;
-}
-
-/**
  * Returns the profile of the research entity with the editable values.
  *
  * @param {number} researchEntityId
@@ -1384,13 +1258,13 @@ async function getProfile(researchEntityId) {
 
     // Return false of the profile doesn't exist
     if (!profile) {
-        return false;
+        return 'Has no profile!';
     }
+
+    sails.log.debug(util.inspect(profile, false, null, true));
 
     // Filter the profile properties
     profile = filterProfile(profile);
-    // Load the documents and accomplishments if needed
-    profile = await loadDocumentsAndAccomplishments(profile, researchEntityId);
 
     return profile;
 }
@@ -1483,11 +1357,7 @@ async function saveProfile(req) {
             profile.surname = researchEntityData.profile.surname;
             profile.jobTitle = researchEntityData.profile.jobTitle;
             profile.phone = researchEntityData.profile.phone;
-            profile.centers = researchEntityData.profile.centers;
-            profile.researchLines = researchEntityData.profile.researchLines;
-            profile.directorate = researchEntityData.profile.directorate;
-            profile.office = researchEntityData.profile.office;
-            profile.facilities = researchEntityData.profile.facilities;
+            profile.groups = researchEntityData.profile.groups;
 
             if (!hasFiles && _.has(profile, 'image.value') && !_.isEmpty(profile.image.value)) {
                 profile.image.value = researchEntityData.profile.image.value;

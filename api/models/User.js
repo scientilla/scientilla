@@ -190,6 +190,7 @@ module.exports = _.merge({}, SubResearchEntity, {
             type: "BOOLEAN",
             defaultsTo: false
         },
+        expiresAt: 'datetime',
         getAliases: async function () {
             const aliases = await Alias.find({user: this.id});
             if (!aliases)
@@ -228,12 +229,6 @@ module.exports = _.merge({}, SubResearchEntity, {
         user.slug = slug;
         return user;
     },
-    // Search for this function
-    // Create incompleteUser function
-    // Change login
-    // 1) user and auth exists
-    // 2) user exists, auth doesn't exists => create auth
-    // 3) user and auth doesn't exsist,do both
     createUserWithoutAuth: async (newUser) => {
         // Lowercase email
         newUser.username = _.toLower(newUser.username);

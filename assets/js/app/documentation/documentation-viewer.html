@@ -1,0 +1,117 @@
+<documentation-layout>
+    <div class="documentation">
+        <div class="container">
+            <h1>Documentation</h1>
+            <div class="page-description">
+                <p>On this page you can find information about the <strong>Scientilla</strong> API endpoints that you can use.</p>
+            </div>
+
+            <h2>Profile</h2>
+            <div class="sub-description">
+                <p>This is a collection of information about the API endpoints regarding the user profile.</p>
+            </div>
+
+            <ul class="documentation-listing">
+                <li id="get-profile-of-all-users">
+                    <h3>Get the profile of all users</h3>
+                    <p>You can get the profile of all users by using this API endpoint. You will receive an object with the number of items and an array of profile objects.</p>
+                    <pre data-type="get">
+                        <code>/api/v1/userData?limit=0</code>
+                    </pre>
+
+                    <bearer-token></bearer-token>
+
+                    <p><strong>Success response</strong></p>
+                    <documentation-user-object-table></documentation-user-object-table>
+                </li>
+                <li id="get-profile-of-specific-user">
+                    <h3>Get the profile of a specific user</h3>
+                    <p>You can get a profile of a specific user by using the email address of the user.</p>
+                    <pre data-type="get">
+                        <code>/api/v1/users/username/:email/profile</code>
+                    </pre>
+
+                    <p><strong>Parameter</strong></p>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>email</td>
+                            <td>String</td>
+                            <td>The users email address.</td>
+                        </tr>
+                    </table>
+
+                    <bearer-token></bearer-token>
+
+                    <p><strong>Success response</strong></p>
+                    <documentation-user-object-table></documentation-user-object-table>
+
+                    <p><strong>Error response</strong><br>If you are trying to get a not existing profile you will receive the following result:</p>
+                    <pre>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"error": "404 not found",<br>&nbsp;&nbsp;&nbsp;&nbsp;"item": {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"username": "john.doe@iit.it"<br>&nbsp;&nbsp;&nbsp;&nbsp;}<br>}</code>
+                    </pre>
+                </li>
+                <li id="get-profile-image-of-specific-user">
+                    <h3>Get the profile image of a specific user</h3>
+                    <p></p>
+                    <pre data-type="get">
+                        <code>/api/v1/users/username/:email/profile-image</code>
+                    </pre>
+
+                    <p><strong>Parameter</strong></p>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                        <tr>
+                            <td>email</td>
+                            <td>String</td>
+                            <td>The users email address.</td>
+                        </tr>
+                    </table>
+
+                    <p>
+                        <strong>Success response</strong><br>
+                        This will return the URL of the image, this can be used directly into the image source attribute.
+                    </p>
+                    <pre>
+                        <code>/api/v1/users/username/john.doe@iit.it/profile-image</code>
+                    </pre>
+
+                    <p><strong>Error responses</strong></p>
+
+                    <p>When a user doesn't exist you will receive a <strong>404 Not Found</strong> response with following message:</p>
+                    <pre>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"message": "User not found!"<br>}</code>
+                    </pre>
+
+                    <p>When a user doesn't have a profile you will receive a <strong>404 Not Found</strong> response with following message:</p>
+                    <pre>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"message": "Profile not found!"<br>}</code>
+                    </pre>
+
+                    <p>When a user doesn't have a public profile you will receive a <strong>403 Forbidden</strong> response with following message:</p>
+                    <pre>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"message": "This profile is not public!"<br>}</code>
+                    </pre>
+
+                    <p>When a user doesn't have a public image you will receive a <strong>403 Forbidden</strong> response with following message:</p>
+                    <pre>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"message": "This image is not public!"<br>}</code>
+                    </pre>
+
+                    <p>When a user has a public image but it cannot be found you will receive a <strong>404 Not found</strong> response with following message:</p>
+                    <pre>
+                        <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"message": "Image is not public!"<br>}</code>
+                    </pre>
+                </li>
+            </ul>
+        </div>
+    </div>
+</documentation-layout>

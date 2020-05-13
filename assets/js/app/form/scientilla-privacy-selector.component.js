@@ -32,9 +32,7 @@
         const certificatesRegex = RegExp(/^certificates\[([0-9]*?)]/);
         const skillCategoryRegex = RegExp(/^skill-category\[([0-9]*?)]/);
         const skillRegex = RegExp(/^skill\[([0-9]*?)]\[([0-9]*?)]/);
-        const centersRegex = RegExp(/^centers\[([0-9]*?)]/);
-        const researchLinesRegex = RegExp(/^researchLines\[([0-9]*?)]/);
-        const facilitiesRegex = RegExp(/^facilities\[([0-9]*?)]/);
+        const groupsRegex = RegExp(/^groups\[([0-9]*?)]/);
         const externalExperiencesRegex = RegExp(/^experiencesExternal\[([0-9]*?)]/);
         const internalExperiencesRegex = RegExp(/^experiencesInternal\[([0-9]*?)]/);
 
@@ -73,18 +71,16 @@
             }
 
             switch (true) {
+                case internalExperiencesRegex.test(vm.context) :
+                    showHiddenOption = true;
+                    break;
                 case
                     vm.context === 'username' ||
                     vm.context === 'name' ||
                     vm.context === 'surname' ||
                     vm.context === 'jobTitle' ||
                     vm.context === 'phone' ||
-                    vm.context === 'directorate' ||
-                    vm.context === 'office' ||
-                    centersRegex.test(vm.context) ||
-                    researchLinesRegex.test(vm.context) ||
-                    facilitiesRegex.test(vm.context) ||
-                    internalExperiencesRegex.test(vm.context)
+                    groupsRegex.test(vm.context)
                 :
                     if (vm.profile.hidden) {
                         showHiddenOption = true;
@@ -113,8 +109,7 @@
                     certificatesRegex.test(vm.context) ||
                     skillCategoryRegex.test(vm.context) ||
                     skillRegex.test(vm.context) ||
-                    externalExperiencesRegex.test(vm.context) ||
-                    internalExperiencesRegex.test(vm.context)
+                    externalExperiencesRegex.test(vm.context)
                 :
                     if (!vm.profile.hidden) {
                         showPublicOption = true;
@@ -145,9 +140,7 @@
                 interestsRegex.test(vm.context) ||
                 vm.context === 'documents' ||
                 vm.context === 'accomplishments' ||
-                centersRegex.test(vm.context) ||
-                researchLinesRegex.test(vm.context) ||
-                facilitiesRegex.test(vm.context)
+                groupsRegex.test(vm.context)
             ) {
                 cssClasses.push('no-label');
             }

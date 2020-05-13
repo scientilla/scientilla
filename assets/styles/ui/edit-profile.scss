@@ -176,8 +176,8 @@
         &.add-lines{
             & > li{
                 & + li{
-                    margin-top: 2rem;
-                    padding-top: 2rem;
+                    margin-top: 1rem;
+                    padding-top: 1rem;
                     border-top: 2px solid $gray-100;
                 }
             }
@@ -274,6 +274,46 @@
     .internal-experiences-title,
     .external-experiences-title{
         margin-top: 4rem;
+    }
+
+    .internal-experiences{
+        .has-no-office{
+            opacity: .5;
+
+            label{
+                color: $dusty-gray;
+            }
+
+            .form-control{
+                &:disabled,
+                &.disabled {
+                    border-color: $dusty-gray;
+                    background: lighten($dusty-gray, 25%);
+                }
+            }
+        }
+    }
+
+    .internal-experience-without-office-listing,
+    .internal-experience-with-office-listing{
+        @include normalize-listing;
+        @include clearfix;
+    }
+
+    .lines-of-experience{
+        @include normalize-listing;
+        @include clearfix;
+
+        & > li {
+            display: block;
+            float: left;
+
+            & + li{
+                &:before{
+                    content: ', ';
+                }
+            }
+        }
     }
 }
 
@@ -385,6 +425,30 @@
             }
         }
 
+        .internal-experience-with-office-listing{
+            display: grid;
+            margin: 0px -.75rem;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto;
+
+            & > li{
+                padding-right: .75rem;
+                padding-left: .75rem;
+
+                &:nth-child(1){
+                    @include set-grid(1,1,1,1);
+                }
+
+                &:nth-child(2){
+                    @include set-grid(1,2,1,1);
+                }
+
+                &.department{
+                    @include set-grid(1,1,1,2);
+                }
+            }
+        }
+
         .education-form{
             display: grid;
             margin: 0px -.75rem;
@@ -420,7 +484,25 @@
 @include media-breakpoint-up(lg) {
     .edit-profile{
         .internal-experiences{
-            grid-template-columns: 2fr 2fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+
+            & > li{
+                &:nth-child(1){
+                    @include set-grid(1,1,1,4);
+                }
+
+                &:nth-child(2){
+                    @include set-grid(2,1,1,2);
+                }
+
+                &:nth-child(3){
+                    @include set-grid(2,3,1,1);
+                }
+
+                &:nth-child(4){
+                    @include set-grid(2,4,1,1);
+                }
+            }
         }
     }
 }
