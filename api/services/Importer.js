@@ -496,6 +496,10 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
         privacy: defaultPrivacy,
         value: contract.Ruolo_AD
     };
+    profile.roleCategory = {
+        privacy: defaultPrivacy,
+        value: contract.Ruolo_1
+    };
 
     const groups = [];
     const lines = [];
@@ -567,6 +571,7 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
 async function importUserContracts(email = defaultEmail) {
     const userIsBeenChanged = (user, values) => {
         const fields = [
+            'roleCategory',
             'jobTitle',
             'name',
             'surname'

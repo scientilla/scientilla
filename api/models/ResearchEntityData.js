@@ -442,6 +442,11 @@ const defaultProperties = {
         definitions.privacy,
         definitions.privacyDefaultHidden
     ),
+    roleCategory: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
     phone: _.merge(
         {},
         definitions.privacy,
@@ -650,6 +655,7 @@ const thenProperties = {
     name: definitions.ifValueCheckHiddenPrivacy,
     surname: definitions.ifValueCheckHiddenPrivacy,
     jobTitle: definitions.ifValueCheckHiddenPrivacy,
+    roleCategory: definitions.ifValueCheckHiddenPrivacy,
     phone: definitions.ifValueCheckHiddenPrivacy,
     groups: {
         items: definitions.ifNameCheckHiddenPrivacy
@@ -820,6 +826,7 @@ const elseProperties = {
     name: definitions.ifValueCheckPublicPrivacy,
     surname: definitions.ifValueCheckPublicPrivacy,
     jobTitle: definitions.ifValueCheckPublicPrivacy,
+    roleCategory: definitions.ifValueCheckPublicPrivacy,
     phone: definitions.ifValueCheckPublicPrivacy,
     groups: {
         items: definitions.ifValueCheckPublicPrivacy
@@ -1163,6 +1170,41 @@ function setupProfile(userData) {
     // We merge the defaults with the user's profile
     if (userData && !_.isEmpty(userData.profile)) {
 
+        const associations = {
+            'Affiliated Researcher': 'Affiliated Researcher',
+            'Amm. della Ricerca': 'Administrative Staff',
+            'Amm. Gestione e Ricerca': 'Research Support',
+            'Coordinator': 'Administrative Staff',
+            'Director General': 'Director General',
+            'Ex - Tecnici di Infrastruttura': 'Infrastructure Technician',
+            'Ex - Tecnici di Laboratorio': 'Lab Technician',
+            'External Collaborator - PhD Stud.Fellow': 'PhD Student',
+            'External Collaborator - Post Doc': 'Post Doc',
+            'External Collaborator - Researcher': 'Researcher',
+            'Facility Coordinator': 'Facility Coordinator',
+            'Lab Manager': 'Facility Coordinator',
+            'PhD Student': 'PhD Student',
+            'PhD Student Fellow': 'PhD Student',
+            'Post Doc': 'Post Doc',
+            'Post Doc - Fellow': 'Post Doc',
+            'Principal Investigator': 'Principal Investigator',
+            'Researcher': 'Researcher',
+            'Scientific Director': 'Scientific Director',
+            'Senior Researcher': 'Researcher',
+            'Technologist': 'Technologist',
+            'Tecnici di infrastrutture': 'Infrastructure Technician',
+            'Tecnici di Laboratorio': 'Lab Technician',
+            'Visiting Professor - Researcher': 'Researcher'
+        };
+
+        if (!_.has(userData.profile, 'roleCategory.value') || _.isEmpty(userData.profile.roleCategory.value)) {
+            userData.profile.roleCategory = {};
+            userData.profile.roleCategory.privacy = 'public';
+            userData.profile.roleCategory.value = userData.imported_data.Ruolo_1;
+        }
+
+        userData.profile.roleCategory.value = associations[userData.profile.roleCategory.value];
+
         if (_.has(userData.profile, 'experiencesExternal') || _.has(userData.profile, 'experiencesInternal')) {
 
             switch (true) {
@@ -1354,6 +1396,7 @@ async function saveProfile(req) {
             profile.name = researchEntityData.profile.name;
             profile.surname = researchEntityData.profile.surname;
             profile.jobTitle = researchEntityData.profile.jobTitle;
+            profile.roleCategory = researchEntityData.profile.roleCategory;
             profile.phone = researchEntityData.profile.phone;
             profile.groups = researchEntityData.profile.groups;
 

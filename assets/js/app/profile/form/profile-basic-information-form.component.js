@@ -64,6 +64,14 @@
                 });
             }
 
+            if (_.has(vm.profile, 'roleCategory.value') && _.has(vm.profile, 'roleCategory.privacy')) {
+                vm.basicInformation.push({
+                    label: 'Role category',
+                    value: vm.profile.roleCategory.value,
+                    model: 'roleCategory'
+                });
+            }
+
             if (_.has(vm.profile, 'phone.value') && _.has(vm.profile, 'phone.privacy')) {
                 vm.basicInformation.push({
                     label: 'Phone',
