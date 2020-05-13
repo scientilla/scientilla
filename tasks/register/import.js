@@ -18,7 +18,8 @@ module.exports = function (grunt) {
                 },
                 'users': Importer.importUserContracts,
                 'history': Importer.importUserHistoryContracts,
-                'projects': Importer.importProjects
+                'projects': Importer.importProjects,
+                'expired': Importer.removeExpiredUsers
             };
 
             try {

@@ -33,7 +33,8 @@ module.exports = {
     importSourceMetrics,
     importUserContracts,
     importUserHistoryContracts,
-    importProjects
+    importProjects,
+    removeExpiredUsers
 };
 
 async function importSources() {
@@ -493,6 +494,10 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
         privacy: defaultPrivacy,
         value: contract.Ruolo_AD
     };
+    profile.roleCategory = {
+        privacy: defaultPrivacy,
+        value: contract.Ruolo_1
+    };
 
     const groups = [];
     const lines = [];
@@ -564,6 +569,7 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
 async function importUserContracts(email = defaultEmail) {
     const userIsBeenChanged = (user, values) => {
         const fields = [
+            'roleCategory',
             'jobTitle',
             'name',
             'surname'
@@ -617,8 +623,10 @@ async function importUserContracts(email = defaultEmail) {
         }
 
         let responseData = await waitForSuccesfulRequest(reqOptions);
-        if (_.has(responseData, 'scheda')) {
-            responseData = responseData.scheda;
+        if (_.has(responseData, '_.scheda')) {
+            responseData = responseData._.scheda;
+        } else {
+            return;
         }
 
         if (_.isEmpty(responseData)) {
@@ -1553,6 +1561,24 @@ async function importUserHistoryContracts(email = defaultEmail) {
     sails.log.info('The duration of the import was done ' + moment.duration(stoppedTime.diff(startedTime)).humanize(true));
 }
 
+// Remove expired users
+async function removeExpiredUsers() {
+    const fiveYearsAgo = moment().subtract('5', 'years').startOf('day');
+    const deletedUsers = await User.destroy({
+        expiresAt: {'<=': fiveYearsAgo.format()}
+    });
+    var deletedUserEmails = deletedUsers.map(function (user) {
+        return user.username;
+    });
+    sails.log.info('Deleted ' + deletedUsers.length + ' users that were expired 5 years ago: ' + fiveYearsAgo.format());
+    if (deletedUserEmails.length > 0) {
+        if (deletedUserEmails.length === 1) {
+            sails.log.info('Deleted the user with email address: ' + deletedUserEmails.join(', '));
+        } else {
+            sails.log.info('Deleted the users with email address: ' + deletedUserEmails.join(', '));
+        }
+    }
+}
 
 // import Projects
 
@@ -1796,5 +1822,4 @@ async function importProjects() {
             sails.log.debug(JSON.stringify(errors));
         }
     }
-
 }

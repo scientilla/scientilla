@@ -45,3 +45,10 @@
     -ms-grid-row: $row;
     -ms-grid-column: $column;
 }
+
+@mixin gradient-background-image($direction, $list) {
+    background-image: -webkit-linear-gradient($direction, $list);
+    background-image: -moz-linear-gradient($direction, $list);
+    background-image: -o-linear-gradient($direction, $list);
+    background-image: linear-gradient($direction, $list);
+}

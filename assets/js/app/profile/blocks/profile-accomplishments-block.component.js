@@ -9,6 +9,7 @@
             bindings: {
                 profile: '<',
                 accomplishments: '<',
+                loadingAccomplishments: '<',
                 urlFavoriteAccomplishments: '<',
                 urlAllAccomplishments: '<',
             }
@@ -25,7 +26,7 @@
         let accomplishmentsWatcher = null;
 
         vm.$onInit = function () {
-            accomplishmentsWatcher = $scope.$watch('vm.accomplishments', function(evt){
+            accomplishmentsWatcher = $scope.$watch('vm.accomplishments', function(evt) {
                 vm.accomplishmentsByType = getAccomplishmentsByType(vm.accomplishments);
                 vm.favoriteAccomplishments = getFavoriteAccomplishments(vm.accomplishments);
             }, true);

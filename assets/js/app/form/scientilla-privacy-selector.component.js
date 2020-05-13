@@ -79,6 +79,7 @@
                     vm.context === 'name' ||
                     vm.context === 'surname' ||
                     vm.context === 'jobTitle' ||
+                    vm.context === 'roleCategory' ||
                     vm.context === 'phone' ||
                     groupsRegex.test(vm.context)
                 :

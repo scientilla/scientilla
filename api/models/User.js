@@ -1,4 +1,4 @@
-/* global require, User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate, ResearchEntity, Profile */
+/* global require, User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate, ResearchEntity, Profile, ChartData */
 'use strict';
 
 /**
@@ -149,10 +149,6 @@ module.exports = _.merge({}, SubResearchEntity, {
         jsonWebTokens: {
             collection: 'jwt',
             via: 'owner'
-        },
-        collaborations: {
-            collection: 'collaboration',
-            via: 'user'
         },
         aliases: {
             collection: 'alias',
@@ -568,6 +564,22 @@ module.exports = _.merge({}, SubResearchEntity, {
             await Group.addUserToDefaultGroup(user);
 
         cb();
+    },
+    afterDestroy: async function (destroyedUsers, proceed) {
+        // Loop over destroyed users
+        for (const user of destroyedUsers) {
+
+            // Delete ResearchEntity record of user
+            await ResearchEntity.destroy({ id: user.researchEntity });
+
+            // Delete ChartData record of user
+            await ChartData.destroy({
+                researchEntityType: 'user',
+                researchEntity: user.researchEntity
+            });
+        }
+
+        proceed();
     },
     isInternalUser: function (user) {
         return _.endsWith(user.username, '@' + sails.config.scientilla.ldap.domain);
