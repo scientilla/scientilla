@@ -1203,7 +1203,11 @@ function setupProfile(userData) {
             userData.profile.roleCategory.value = userData.imported_data.Ruolo_1;
         }
 
-        userData.profile.roleCategory.value = associations[userData.profile.roleCategory.value];
+        if (_.has(associations, userData.profile.roleCategory.value)) {
+            userData.profile.roleCategory.value = associations[userData.profile.roleCategory.value];
+        } else {
+            userData.profile.roleCategory.value = '';
+        }
 
         if (_.has(userData.profile, 'experiencesExternal') || _.has(userData.profile, 'experiencesInternal')) {
 
