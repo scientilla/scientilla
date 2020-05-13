@@ -1,4 +1,4 @@
-/* global require, ResearchItem, ResearchItemKinds, ResearchItemType, ResearchItemTypes, Verify, Author */
+/* global require, ResearchItem, ResearchItemKinds, ResearchItemTypes, Verify, Author */
 'use strict';
 
 const _ = require("lodash");
@@ -8,6 +8,21 @@ const fields = [
     {name: 'kind'},
     {name: 'type'}
 ];
+
+const needsAuthorsTypes = {
+    [ResearchItemTypes.AWARD_ACHIEVEMENT]: true,
+    [ResearchItemTypes.EDITORSHIP]: true,
+    [ResearchItemTypes.ORGANIZED_EVENT]: true,
+    [ResearchItemTypes.PROJECT_COMPETITIVE]: false,
+    [ResearchItemTypes.PROJECT_INDUSTRIAL]: false
+};
+const needsAffiliationTypes = {
+    [ResearchItemTypes.AWARD_ACHIEVEMENT]: true,
+    [ResearchItemTypes.EDITORSHIP]: true,
+    [ResearchItemTypes.ORGANIZED_EVENT]: true,
+    [ResearchItemTypes.PROJECT_COMPETITIVE]: false,
+    [ResearchItemTypes.PROJECT_INDUSTRIAL]: false
+};
 
 module.exports = _.merge({}, BaseModel, {
     tableName: 'research_item',
@@ -23,6 +38,11 @@ module.exports = _.merge({}, BaseModel, {
         draftCreator: {
             columnName: 'draft_creator',
             model: 'researchentity'
+        },
+        origin: 'STRING',
+        originId: {
+            columnName: 'origin_id',
+            type: 'STRING'
         },
         toVerified: function () {
             this.kind = ResearchItemKinds.VERIFIED;
@@ -41,24 +61,14 @@ module.exports = _.merge({}, BaseModel, {
             return _.every(requiredFields, v => this[v]);
         },
         async isVerificable() {
-            const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(this.type);
+            const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(this.type);
             const childResearchItem = await ResearchItemChildModel.findOne({id: this.id});
             return childResearchItem.isValid();
         },
         needsAuthors() {
-            const needsAuthorsTypes = {
-                'award_achievement': true,
-                'editorship': true,
-                'organized_event': true
-            };
             return needsAuthorsTypes[this.getType().key];
         },
         needsAffiliations() {
-            const needsAffiliationTypes = {
-                'award_achievement': true,
-                'editorship': true,
-                'organized_event': true
-            };
             return needsAffiliationTypes[this.getType().key];
         },
         getType: function () {
@@ -71,31 +81,46 @@ module.exports = _.merge({}, BaseModel, {
             return ResearchItemTypes.getType(this.type);
         }
     },
+    async createExternal(origin, originId, itemData, newAuthorsData = []) {
+        const researchItemData = {
+            kind: ResearchItemKinds.EXTERNAL,
+            origin,
+            originId
+        };
+
+        return await this.createResearchItem(researchItemData, itemData, newAuthorsData);
+    },
     async createDraft(researchEntityId, itemData, newAuthorsData = []) {
+        const researchItemData = {
+            kind: ResearchItemKinds.DRAFT,
+            draftCreator: researchEntityId,
+            origin: 'scientilla'
+        };
+
+        return await this.createResearchItem(researchItemData, itemData, newAuthorsData);
+    },
+    async createResearchItem(researchItemData, itemData, newAuthorsData = []) {
         const researchItemType = ResearchItemTypes.getType(itemData.type);
         if (!researchItemType)
             throw {success: false, researchItem: itemData, message: 'Invalid item type'};
 
-        const researchItem = await ResearchItem.create({
-            type: researchItemType.id,
-            kind: ResearchItemKinds.DRAFT,
-            draftCreator: researchEntityId
-        });
+        researchItemData.type = researchItemType.id;
+        const researchItem = await ResearchItem.create(researchItemData);
 
-        const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(researchItemType.key);
+        const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(researchItemType.key);
         try {
             itemData.researchItem = researchItem.id;
-            await ResearchItemChildModel.createDraft(itemData);
+            await ResearchItemChildModel.createResearchItem(itemData);
         } catch (e) {
             await ResearchItem.destroy({id: researchItem.id});
-            throw {success: false, researchItem: itemData, message: 'Item not created'};
+            throw {success: false, researchItem: itemData, message: 'Item not created', msg: e};
         }
 
         if (researchItem.needsAuthors())
             await Author.updateAuthors(researchItem, itemData.authorsStr, newAuthorsData);
 
-        const newDraft = await ResearchItemChildModel.findOne({id: researchItem.id});
-        return {success: true, researchItem: newDraft, message: 'Item draft created'};
+        const newResearchItem = await ResearchItemChildModel.findOne({id: researchItem.id});
+        return {success: true, researchItem: newResearchItem, message: 'Item created'};
     },
     async updateDraft(researchEntityId, draftId, itemData) {
         const researchItem = await ResearchItem.findOne({id: draftId});
@@ -105,12 +130,22 @@ module.exports = _.merge({}, BaseModel, {
             throw {success: false, researchItem: itemData, message: 'Item not found'};
         if (researchItem.kind !== ResearchItemKinds.DRAFT)
             throw {success: false, researchItem: itemData, message: 'The item is not a draft'};
-
-        const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(itemData.type);
+        return this.doUpdate(researchItem, itemData);
+    },
+    async updateExternal(researchItemId, itemData) {
+        const researchItem = await ResearchItem.findOne({id: researchItemId});
+        if (!researchItem)
+            throw {success: false, researchItem: itemData, message: 'Item not found'};
+        if (researchItem.kind !== ResearchItemKinds.EXTERNAL)
+            throw {success: false, researchItem: itemData, message: 'The item is not an external'};
+        return this.doUpdate(researchItem, itemData);
+    },
+    async doUpdate(researchItem, itemData) {
+        const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(itemData.type);
         if (!ResearchItemChildModel)
             throw {success: false, researchItem: itemData, message: 'Invalid item type'};
 
-        await ResearchItemChildModel.updateDraft(researchItem.id, itemData);
+        await ResearchItemChildModel.updateResearchItem(researchItem.id, itemData);
         if (researchItem.needsAuthors()) {
             const authorsStr = itemData.authorsStr ?
                 itemData.authorsStr :
@@ -121,7 +156,7 @@ module.exports = _.merge({}, BaseModel, {
         }
 
         const newDraft = await ResearchItemChildModel.findOne({id: researchItem.id});
-        return {success: true, researchItem: newDraft, message: 'Item draft updated'};
+        return {success: true, researchItem: newDraft, message: 'Item updated'};
     },
     async deleteDraft(draftId) {
         const researchItem = await ResearchItem.findOne({id: draftId});
@@ -133,7 +168,7 @@ module.exports = _.merge({}, BaseModel, {
         await ResearchItem.destroy({id: draftId});
         return {success: true, researchItem: researchItem, message: 'Item draft deleted'};
     },
-    async copyResearchItem(researchItemId, researchEntityId) {
+    async copyToDraft(researchItemId, researchEntityId) {
         const itemToCopy = await ResearchItem.findOne({id: researchItemId}).populate(['type', 'authors']);
         if (!itemToCopy)
             throw {success: false, researchItem: researchItemId, message: 'Item not found'};
@@ -142,7 +177,7 @@ module.exports = _.merge({}, BaseModel, {
         if (itemToCopy.needsAuthors())
             authors = await Author.find({researchItem: researchItemId}).populate('affiliations');
 
-        const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(itemToCopy.type.key);
+        const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(itemToCopy.type.key);
         const researchItem = await ResearchItemChildModel.findOne({id: researchItemId});
         if (!researchItem)
             throw {success: false, researchItem: researchItem, message: 'Item not found'};
@@ -156,13 +191,13 @@ module.exports = _.merge({}, BaseModel, {
         const researchItem = await ResearchItem.findOne({id: researchItemId}).populate(['type', 'authors']);
         if (!researchItem) throw 'Research item not found';
 
-        const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(researchItem.type.key);
+        const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(researchItem.type.key);
         const researchItemChild = await ResearchItemChildModel.findOne({id: researchItemId});
         const authData = await Author.getMatchingAuthorsData(researchItemChild.authorsStr, authorsData);
         await Author.updateAuthors(researchItem, researchItemChild.authorsStr, authData);
     },
     async getVerifiedCopy(researchItem) {
-        const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(researchItem.type);
+        const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(researchItem.type);
         const copy = await ResearchItemChildModel.getVerifiedCopy(researchItem);
         return copy ? await ResearchItem.findOne({id: copy.id}) : false;
     },

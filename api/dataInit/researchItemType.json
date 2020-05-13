@@ -17,6 +17,18 @@
       "shortLabel": "ED",
       "label": "Editorship",
       "type": "accomplishment"
+    },
+    {
+      "key": "project_competitive",
+      "shortLabel": "CP",
+      "label": "Competitive Project",
+      "type": "project"
+    },
+    {
+      "key": "project_industrial",
+      "shortLabel": "IP",
+      "label": "Industrial Project",
+      "type": "project"
     }
   ]
 }

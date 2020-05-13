@@ -2,5 +2,6 @@
 
 module.exports = {
     DRAFT: 'd',
-    VERIFIED: 'v'
+    VERIFIED: 'v',
+    EXTERNAL: 'e'
 };

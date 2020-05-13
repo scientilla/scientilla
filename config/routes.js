@@ -101,8 +101,8 @@ module.exports.routes = {
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/unverified']: 'ResearchEntity.unverify',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/public']: 'ResearchEntity.setPublic',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/favorite']: 'ResearchEntity.setFavorite',
-    ['post ' + apiPrfx + '/researchentities/:researchEntityId/copy-research-item']: 'ResearchEntity.copyResearchItem',
-    ['post ' + apiPrfx + '/researchentities/:researchEntityId/copy-research-items']: 'ResearchEntity.copyResearchItems',
+    ['post ' + apiPrfx + '/researchentities/:researchEntityId/copy-research-item']: 'ResearchEntity.copyToDraft',
+    ['post ' + apiPrfx + '/researchentities/:researchEntityId/copy-research-items']: 'ResearchEntity.copyAllToDraft',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/:itemId/discarded']: 'ResearchEntity.discard',
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/discarded']: 'ResearchEntity.multipleDiscard',
     ['post ' + apiPrfx + '/accomplishments/export']: 'Accomplishment.export',
@@ -121,6 +121,7 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/users/username/:username/favorite-publications']: 'User.getFavoritePublications',
     ['get ' + apiPrfx + '/users/username/:username/oral-presentations']: 'User.getOralPresentations',
     ['get ' + apiPrfx + '/users/username/:username/accomplishments']: 'User.getAccomplishments',
+    ['get ' + apiPrfx + '/users/username/:username/projects']: 'User.getProjects',
     ['get ' + apiPrfx + '/users/username/:username/profile']: 'User.getPublicProfile',
     ['get ' + apiPrfx + '/users/username/:username/profile-image']: 'userData.getProfileImage',
 
@@ -131,6 +132,7 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/groups/slug/:slug/scientific-talks']: 'Group.getScientificTalks',
     ['get ' + apiPrfx + '/groups/slug/:slug/favorite-publications']: 'Group.getFavoritePublications',
     ['get ' + apiPrfx + '/groups/slug/:slug/accomplishments']: 'Group.getAccomplishments',
+    ['get ' + apiPrfx + '/groups/slug/:slug/projects']: 'Group.getProjects',
 
     ['get ' + apiPrfx + '/groups/code/:code/publications']: 'Group.getPublications',
     ['get ' + apiPrfx + '/groups/code/:code/high-impact-publications']: 'Group.getHighImpactPublications',
@@ -139,6 +141,7 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/groups/code/:code/scientific-talks']: 'Group.getScientificTalks',
     ['get ' + apiPrfx + '/groups/code/:code/favorite-publications']: 'Group.getFavoritePublications',
     ['get ' + apiPrfx + '/groups/code/:code/accomplishments']: 'Group.getAccomplishments',
+    ['get ' + apiPrfx + '/groups/code/:code/projects']: 'Group.getProjects',
 
     //Commands
     ['put ' + apiPrfx + '/status/enable']: 'Status.enable',

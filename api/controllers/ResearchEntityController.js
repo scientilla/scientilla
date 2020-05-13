@@ -64,15 +64,15 @@ module.exports = {
         const favorite = req.body.favorite;
         res.halt(Verify.setFavorite(researchEntityId, researchItemId, favorite));
     },
-    copyResearchItem(req, res, next) {
+    copyToDraft(req, res, next) {
         const researchEntityId = req.params.researchEntityId;
         const researchItemId = req.param('researchItemId');
-        res.halt(ResearchItem.copyResearchItem(researchItemId, researchEntityId));
+        res.halt(ResearchItem.copyToDraft(researchItemId, researchEntityId));
     },
-    copyResearchItems(req, res, next) {
+    copyAllToDraft(req, res, next) {
         const researchEntityId = req.params.researchEntityId;
         const researchItemIds = req.param('itemIds');
-        res.halt(ResearchItem.blukAction(ResearchItem.copyResearchItem, researchItemIds, [researchEntityId]));
+        res.halt(ResearchItem.blukAction(ResearchItem.copyToDraft, researchItemIds, [researchEntityId]));
     },
     getProfile(req, res, next) {
         const researchEntityId = req.params.researchEntityId;

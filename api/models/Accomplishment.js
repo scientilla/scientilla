@@ -113,12 +113,12 @@ module.exports = _.merge({}, BaseModel, {
         const researchItemType = ResearchItemTypes.getType(type);
         return researchItemModels[researchItemType.key];
     },
-    async createDraft(itemData) {
+    async createResearchItem(itemData) {
         const ResearchItemModel = Accomplishment.getResearchItemModel(itemData.type);
         const selectedData = await ResearchItemModel.selectData(itemData);
         return ResearchItemModel.create(selectedData);
     },
-    async updateDraft(researchItemId, itemData) {
+    async updateResearchItem(researchItemId, itemData) {
         const ResearchItemModel = Accomplishment.getResearchItemModel(itemData.type);
         const current = await ResearchItemModel.findOne({researchItem: researchItemId});
         const selectedData = await ResearchItemModel.selectData(itemData);

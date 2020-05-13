@@ -1,4 +1,4 @@
-/* global Author, ResearchItem, ResearchItemType, Affiliation, Institute, ResearchEntity, AuthorAffiliation*/
+/* global Author, ResearchItem, ResearchItemTypes, Affiliation, Institute, ResearchEntity, AuthorAffiliation*/
 "use strict";
 
 const _ = require('lodash');
@@ -183,7 +183,7 @@ module.exports = _.merge({}, BaseModel, {
             return;
 
         if (researchEntity.isGroup()) {
-            const ResearchItemChildModel = ResearchItemType.getResearchItemChildModel(researchItem.type);
+            const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(researchItem.type);
             const childResearchItem = await ResearchItemChildModel.findOne({id: researchItem.id}).populate('institutes');
             if (!childResearchItem.institutes.find(i => i.id === 1)) // TODO remove magic number
                 throw  {

@@ -45,6 +45,10 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'accomplishment',
             through: 'discardedaccomplishment'
         },
+        projects: {
+            collection: 'project',
+            through: 'projectverify'
+        },
         isGroup() {
             return this.type === 'group';
         }

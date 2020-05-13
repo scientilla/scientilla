@@ -1,5 +1,6 @@
 /* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator */
-/* global MembershipGroup, GroupTypes, ResearchEntityData */
+/* global MembershipGroup, GroupTypes, ResearchEntityData, ResearchItemTypes, ResearchItem, ResearchItemKinds, Project */
+/* global Verify */
 // Importer.js - in api/services
 
 "use strict";
@@ -25,7 +26,8 @@ module.exports = {
     importGroups,
     importSourceMetrics,
     importUserContracts,
-    importUserHistoryContracts
+    importUserHistoryContracts,
+    importProjects
 };
 
 async function importSources() {
@@ -336,11 +338,9 @@ async function importGroups() {
                         group: group.id
                     });
                 }
-            }
-            else
+            } else
                 await PrincipalInvestigator.destroy({group: group.id});
-        }
-        else
+        } else
             await PrincipalInvestigator.destroy({group: group.id});
 
         //center
@@ -363,16 +363,14 @@ async function importGroups() {
                     parent_group: center.id,
                     child_group: group.id
                 });
-        }
-        else
+        } else
             await MembershipGroup.destroy({child_group: oldCentersMG.map(mg => mg.id)});
 
         //research domains and interactions
         if (rsData.main_research_domain) {
             await clearResearchDomains([rsData.main_research_domain.code], group, 'main');
             await addResearchDomain(rsData.main_research_domain.code, group, 'main');
-        }
-        else
+        } else
             await clearResearchDomains([], group, 'main');
 
         await clearResearchDomains(rsData.interactions.map(i => i.code), group, 'interaction');
@@ -431,7 +429,7 @@ async function importSourceMetrics(filename) {
     if (fs.existsSync(filePath)) {
         try {
             workbook = xlsx.readFile(filePath);
-        } catch(err) {
+        } catch (err) {
             sails.log.info('Source metrics import stopped: Unsupported file!');
         }
         const sheetNameList = workbook.SheetNames;
@@ -534,9 +532,9 @@ async function waitForSuccesfulRequest(options) {
     let maxAttempts = 5;
     const readFile = util.promisify(fs.readFile);
 
-    function sleep(ms){
-        return new Promise(resolve=>{
-            setTimeout(resolve,ms)
+    function sleep(ms) {
+        return new Promise(resolve => {
+            setTimeout(resolve, ms)
         })
     }
 
@@ -603,7 +601,7 @@ async function importUserContracts(email = defaultEmail) {
     const getProfileJSON = (researchEntityData, contract) => {
         const profile = ResearchEntityData.setupProfile(researchEntityData);
 
-        profile.hidden = (contract.no_people === 'NO PEOPLE' ? true: false);
+        profile.hidden = (contract.no_people === 'NO PEOPLE' ? true : false);
 
         let defaultPrivacy = 'public';
         if (profile.hidden) {
@@ -646,7 +644,7 @@ async function importUserContracts(email = defaultEmail) {
         const researchLines = [];
         const institutes = [];
 
-        function handleGroup (group) {
+        function handleGroup(group) {
             switch (group.type) {
                 case 'Center':
                     const center = centers.find(c => c.name === group.name);
@@ -755,7 +753,7 @@ async function importUserContracts(email = defaultEmail) {
     };
 
     // We cache the groups, membership groups and default profile.
-    const allGroups = await Group.find({ active: true });
+    const allGroups = await Group.find({active: true});
     const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
 
     const invalidEmails = [];
@@ -815,10 +813,10 @@ async function importUserContracts(email = defaultEmail) {
             })).map(group => group.name);
 
             const filteredGroups = await Group.find({
-                or: groupNamesOfContract.map(name => ({ name: name }))
+                or: groupNamesOfContract.map(name => ({name: name}))
             }).populate('members').populate('administrators');
 
-            let user = await User.findOne({ username: contract.email });
+            let user = await User.findOne({username: contract.email});
 
             const userObject = {
                 username: contract.email,
@@ -835,10 +833,10 @@ async function importUserContracts(email = defaultEmail) {
             if (!user) {
                 await User.createUserWithoutAuth(userObject);
                 // Search user again to populate ResearchEntity after creation
-                user = await User.findOne({ username: contract.email });
+                user = await User.findOne({username: contract.email});
                 insertedUsers.push(user);
             } else {
-                await User.update({ id: user.id }, userObject);
+                await User.update({id: user.id}, userObject);
 
                 if (userIsBeenChanged(user, userObject)) {
                     updatedUsers.push(user);
@@ -869,9 +867,9 @@ async function importUserContracts(email = defaultEmail) {
 
             // Activate the membership if the user is an internal user and the membership is not active
             if (User.isInternalUser(user)) {
-                const membership = await Membership.findOne({ group: 1, user: user.id });
+                const membership = await Membership.findOne({group: 1, user: user.id});
                 if (membership && !membership.active) {
-                    await Membership.update({ id: membership.id }, { active: true });
+                    await Membership.update({id: membership.id}, {active: true});
                 }
             }
 
@@ -891,7 +889,7 @@ async function importUserContracts(email = defaultEmail) {
                     }
 
                     researchEntityData = await ResearchEntityData.update(
-                        { id: researchEntityData.id },
+                        {id: researchEntityData.id},
                         {
                             profile: profileJSONString,
                             imported_data: JSON.stringify(contract)
@@ -914,7 +912,7 @@ async function importUserContracts(email = defaultEmail) {
 
         // Select all items where lastsync is before importTime and synchronized and active is true
         const condition = {
-            lastsynch: { '<' : importTime },
+            lastsynch: {'<': importTime},
             synchronized: true,
             active: true
         };
@@ -924,19 +922,19 @@ async function importUserContracts(email = defaultEmail) {
 
         // If a specific email is used
         if (email !== defaultEmail) {
-            const user = await User.findOne({ username: email });
+            const user = await User.findOne({username: email});
 
             // Deactivate all memberships of the selected user that aren't in sync
-            disabledSynchronizedMemberships = await Membership.update(_.merge({ user: user.id }, condition), { active: false });
+            disabledSynchronizedMemberships = await Membership.update(_.merge({user: user.id}, condition), {active: false});
 
             // Deactivate the selected user if it's not in sync
-            disabledUsers = await User.update(_.merge({ id: user.id }, condition), { active: false });
+            disabledUsers = await User.update(_.merge({id: user.id}, condition), {active: false});
         } else {
             // Deactivate all memberships of users that aren't in sync
-            disabledSynchronizedMemberships = await Membership.update(condition, { active: false });
+            disabledSynchronizedMemberships = await Membership.update(condition, {active: false});
 
             // Deactivate all users that aren't in sync
-            disabledUsers = await User.update(condition, { active: false });
+            disabledUsers = await User.update(condition, {active: false});
         }
 
         // Set the membership active to false for the disabled users or user
@@ -944,7 +942,7 @@ async function importUserContracts(email = defaultEmail) {
             synchronized: false,
             user: disabledUsers.map(user => user.id),
             active: true
-        }, { active: false });
+        }, {active: false});
 
         const disabledMemberships = disabledSynchronizedMemberships.length + disabledCollaborations.length;
 
@@ -973,7 +971,7 @@ async function importUserContracts(email = defaultEmail) {
         sails.log.info(disabledMemberships + ' Memberships disabled!');
         if (disabledSynchronizedMemberships.length > 0) {
             await Promise.all(disabledSynchronizedMemberships.map(async membership => {
-                let user = await User.findOne({ id: membership.user });
+                let user = await User.findOne({id: membership.user});
                 if (user) {
                     return user.username;
                 } else {
@@ -985,7 +983,7 @@ async function importUserContracts(email = defaultEmail) {
         }
         if (disabledCollaborations.length > 0) {
             await Promise.all(disabledCollaborations.map(async membership => {
-                let user = await User.findOne({ id: membership.user });
+                let user = await User.findOne({id: membership.user});
                 if (user) {
                     return user.username;
                 } else {
@@ -1000,7 +998,7 @@ async function importUserContracts(email = defaultEmail) {
         sails.log.info(updatedResearchEntityDataItems.length + ' ResearchEntityData records updated!');
         if (updatedResearchEntityDataItems.length > 0) {
             await Promise.all(updatedResearchEntityDataItems.map(async item => {
-                let user = await User.findOne({ researchEntity: item.researchEntity });
+                let user = await User.findOne({researchEntity: item.researchEntity});
                 if (user) {
                     return user.username;
                 } else {
@@ -1015,7 +1013,7 @@ async function importUserContracts(email = defaultEmail) {
         sails.log.info(newResearchEntityDataItems.length + ' ResearchEntityData records created!');
         if (newResearchEntityDataItems.length > 0) {
             await Promise.all(newResearchEntityDataItems.map(async item => {
-                let user = await User.findOne({ researchEntity: item.researchEntity });
+                let user = await User.findOne({researchEntity: item.researchEntity});
                 if (user) {
                     return user.username;
                 } else {
@@ -1194,10 +1192,10 @@ async function importUserHistoryContracts(email = defaultEmail) {
             const memberships = [];
             const card = personalCards.find(card => card.cid === cid);
 
-            let user = await User.findOne({ username: card.email });
+            let user = await User.findOne({username: card.email});
 
             if (_.isArray(steps)) {
-                for(const step of steps) {
+                for (const step of steps) {
                     const membership = handleStep(step);
 
                     if (membership) {
@@ -1298,7 +1296,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
                     researchEntity: user.researchEntity
                 });
 
-                if (researchEntityData && _.has(researchEntityData, 'profile') &&!_.isEmpty(researchEntityData.profile)) {
+                if (researchEntityData && _.has(researchEntityData, 'profile') && !_.isEmpty(researchEntityData.profile)) {
 
                     for (const [key, membership] of Object.entries(memberships)) {
                         membership.privacy = researchEntityData.profile.username.privacy;
@@ -1311,8 +1309,8 @@ async function importUserHistoryContracts(email = defaultEmail) {
                     let profileJSONString = JSON.stringify(researchEntityData.profile);
 
                     researchEntityData = await ResearchEntityData.update(
-                        { id: researchEntityData.id },
-                        { profile: profileJSONString }
+                        {id: researchEntityData.id},
+                        {profile: profileJSONString}
                     );
 
                     updatedResearchEntityDataItems.push(researchEntityData);
@@ -1357,4 +1355,245 @@ async function importUserHistoryContracts(email = defaultEmail) {
     sails.log.info('Updated researchEntityData items: ' + updatedResearchEntityDataItems.length);
 
     sails.log.info('Stopped at ' + moment.utc().format());
+}
+
+
+// import Projects
+
+async function importProjects() {
+    const annualContributionSchema = {
+        year: 'year',
+        contribution: 'annual_contribution'
+    };
+
+    const membersSchema = {
+        email: 'email',
+        role: (obj) => obj.flag_pi ? 'pi' : obj.flag_copi ? 'co_pi' : 'member',
+        contributionPercentage: 'contribution_percentage',
+        contributionObtained: 'contribution_obtained',
+        "annualContribution": (obj) => mapObectsArray(
+            obj.annual_contribution,
+            annualContributionSchema
+        )
+    };
+    const researchLinesSchema = {
+        code: 'cdr',
+        startDate: 'start_date',
+        endDate: 'end_date',
+        role: (obj) => obj.flag_pi ? 'pi' : obj.flag_copi ? 'co_pi' : 'member',
+        contribution: 'contribution',
+        contributionObtained: 'contribution_obtained',
+        "annualContribution": (obj) => mapObectsArray(
+            obj.annual_contribution,
+            annualContributionSchema
+        )
+    };
+    const partnersSchema = {
+        description: 'description',
+        budget: 'budget',
+        contribution: 'contribution',
+        "annualContribution": (obj) => mapObectsArray(
+            obj.annual_contribution,
+            annualContributionSchema
+        )
+    };
+
+    const schemas = {
+        [ResearchItemTypes.PROJECT_COMPETITIVE]: {
+            code: 'sap_code',
+            acronym: 'acronym',
+            title: 'title',
+            abstract: 'abstract',
+            type: 'project_type',
+            status: 'project_state',
+            startDate: 'start_date',
+            endDate: 'end_date',
+            instituteStartDate: 'iit_start_date',
+            instituteEndDate: 'iit_end_date',
+            budget: 'total budget',
+            contribution: 'contribution',
+            instituteBudget: 'iit_total_budget',
+            instituteContribution: 'iit_total_contribution',
+            instituteRole: 'project_role',
+            partnersNumber: 'partners_count',
+            url: 'moniit_url',
+            partners: (obj) => mapObectsArray(obj.partners, partnersSchema),
+            members: (obj) => mapObectsArray(obj.members, membersSchema),
+            researchLines: (obj) => mapObectsArray(obj.lines, researchLinesSchema),
+            logos: (obj) => mapObectsArray(obj.logos,
+                {
+                    name: 'name',
+                    description: 'description',
+                    image: 'logo'
+                })
+        },
+        [ResearchItemTypes.PROJECT_INDUSTRIAL]: {
+            code: 'code',
+            acronym: 'acronym',
+            title: 'title',
+            type: 'project_type',
+            payment: 'project_payment',
+            category: 'project_category',
+            startDate: 'start_date',
+            endDate: 'end_date',
+            contribution: 'contribution',
+            url: 'moniit_url',
+            members: (obj) => mapObectsArray(obj.members, membersSchema),
+            researchLines: (obj) => mapObectsArray(obj.lines, researchLinesSchema)
+        }
+    }
+
+    await doImport(ResearchItemTypes.PROJECT_COMPETITIVE);
+    await doImport(ResearchItemTypes.PROJECT_INDUSTRIAL);
+
+    await autoVerify();
+
+    async function doImport(type) {
+        let projects
+        const config = sails.config.scientilla.researchItems.external[type];
+        const reqOptions = {
+            uri: config.url,
+            json: true,
+            headers: config.headers
+        };
+
+        try {
+            projects = await request(reqOptions);
+        } catch (e) {
+            sails.log.debug(e);
+        }
+
+        const errors = [];
+        let created = 0, updated = 0;
+
+        for (const project of projects) {
+            try {
+                const data = {
+                    type: type,
+                    projectData: mapObject(project, schemas[type])
+                };
+
+                const code = data.projectData.code;
+                if (!code) {
+                    errors.push({
+                        success: false,
+                        researchItem: data,
+                        message: 'Missing required field "code"'
+                    });
+                    continue;
+                }
+
+                const prj = await Project.findOne({code: code, kind: ResearchItemKinds.EXTERNAL});
+                if (prj) {
+                    await ResearchItem.updateExternal(prj.id, data);
+                    updated++;
+                } else {
+                    await ResearchItem.createExternal(config.origin, code, data);
+                    created++;
+                }
+            } catch (e) {
+                errors.push(e);
+            }
+
+        }
+
+        sails.log.info(`import ${type} completed`);
+        sails.log.info(`created: ${created}`);
+        sails.log.info(`updated: ${updated}`);
+        sails.log.info(`errors: ${errors.length}`);
+        errors.forEach(error => sails.log.debug(JSON.stringify(error) + '\n --------------------- \n'));
+    }
+
+    function mapObject(obj, schema) {
+        return Object.keys(schema)
+            .reduce((res, key) => {
+                const mapKey = schema[key];
+
+                if (_.isFunction(mapKey)) {
+                    res[key] = mapKey(obj);
+                    return res;
+                }
+
+                if (_.isNil(obj[mapKey]))
+                    return res;
+
+                res[key] = obj[mapKey];
+                return res;
+            }, {});
+    }
+
+    function mapObectsArray(arr, schema) {
+        if (!Array.isArray(arr))
+            return [];
+        return arr.map(e => mapObject(e, schema));
+    }
+
+
+    async function autoVerify() {
+        const errors = [];
+        let newVerify = 0, unverify = 0;
+        const externalProjects = await Project.find({kind: ResearchItemKinds.EXTERNAL});
+
+        const institute = await Group.findOne({type: 'Institute'});
+        for (const eProject of externalProjects) {
+            const verifiedProject = await Project.findOne({kind: ResearchItemKinds.VERIFIED, code: eProject.code})
+                .populate('verified');
+            let verified = [];
+            if (verifiedProject)
+                verified = verifiedProject.verified.map(v => v.researchEntity);
+
+            const lines = eProject.researchLines || [];
+            const members = (eProject.members || []).filter(m => ['pi', 'co_pi'].includes(m.role));
+
+            //for some reason find({code:array}) doesn't work so i have to do this
+            const groups = [];
+            for (const code of lines.map(l => l.code)) {
+                const foundGroup = await Group.findOne({code: code});
+                if (!_.isEmpty(foundGroup))
+                    groups.push(foundGroup);
+            }
+            const users = await User.find({username: members.map(m => m.email)});
+
+            // only getting 1 level of parentGroups
+            const parentGroups = await MembershipGroup.find({child_group: groups.map(g => g.id)})
+                .populate('parent_group');
+
+            const researchEntitiesId = [
+                institute.id,
+                ...users.map(u => u.researchEntity),
+                ...groups.map(g => g.researchEntity),
+                ...parentGroups.map(pg => pg.parent_group.researchEntity)
+            ];
+
+            const toVerify = _.difference(researchEntitiesId, verified);
+            const toUnverify = _.difference(verified, researchEntitiesId);
+
+            for (const researchEntityId of _.uniq(toVerify))
+                try {
+                    await Verify.verify(eProject.id, researchEntityId);
+                    newVerify++;
+                } catch (e) {
+                    errors.push(e);
+                }
+
+            for (const researchEntityId of _.uniq(toUnverify))
+                try {
+                    await Verify.unverify(researchEntityId, verifiedProject.id);
+                    unverify++;
+                } catch (e) {
+                    errors.push(e);
+                }
+
+
+        }
+
+        sails.log.info('Autoverify completed');
+        sails.log.info(`newly verified ${newVerify} times`);
+        sails.log.info(`unverified ${unverify} times`);
+        if (errors.length) {
+            sails.log.debug(`but there were ${errors.length} errors:`);
+            sails.log.debug(JSON.stringify(errors));
+        }
+    }
+
 }

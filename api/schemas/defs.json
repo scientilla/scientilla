@@ -1,0 +1,26 @@
+{
+  "$id": "defs",
+  "definitions": {
+    "notEmptyString": {
+      "type": "string",
+      "pattern": "([^\\s])",
+      "errorMessage": "This field is required."
+    },
+    "year": {
+      "type": "string",
+      "pattern": "^\\d{4}$",
+      "errorMessage": "Insert a valid year."
+    },
+    "link": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

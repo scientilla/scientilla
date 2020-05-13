@@ -1,4 +1,4 @@
-/* global ResearchItemTypes, Accomplishment  */
+/* global ResearchItemTypes, Accomplishment, Project  */
 
 module.exports = {
     tableName: 'research_item_type',
@@ -10,16 +10,6 @@ module.exports = {
             columnName: 'short_label'
         },
         type: 'STRING',
-    },
-    getResearchItemChildModel(type) {
-        const researchItemModels = {
-            'award_achievement': Accomplishment,
-            'editorship': Accomplishment,
-            'organized_event': Accomplishment,
-        };
-
-        const researchItemType = ResearchItemTypes.getType(type);
-        return researchItemModels[researchItemType.key];
     }
 };
 

@@ -1,0 +1,105 @@
+{
+  "$id": "projectDefs",
+  "definitions": {
+    "annualContribution": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "number"
+          },
+          "contribution": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "year",
+          "contribution"
+        ]
+      }
+    },
+    "partners": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "budget": {
+            "type": "number"
+          },
+          "contribution": {
+            "type": "number"
+          },
+          "annualContribution": {
+            "$ref": "projectDefs#/definitions/annualContribution"
+          }
+        },
+        "required": [
+          "description"
+        ]
+      }
+    },
+    "members": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "role": {
+            "enum": [
+              "pi",
+              "co_pi",
+              "member"
+            ]
+          },
+          "contributionPercentage": {
+            "type": "string"
+          },
+          "contributionObtained": {
+            "type": "number"
+          },
+          "annualContribution": {
+            "$ref": "projectDefs#/definitions/annualContribution"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      }
+    },
+    "reasearchLines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "contribution": {
+            "type": "number"
+          },
+          "annualContribution": {
+            "$ref": "projectDefs#/definitions/annualContribution"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      }
+    }
+  }
+}

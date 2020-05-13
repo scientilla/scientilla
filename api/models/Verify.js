@@ -34,7 +34,7 @@ module.exports = _.merge({}, BaseModel, {
         };
     },
     async verify(researchItemId, researchEntityId, verificationData) {
-        let researchItem, oldResearchItem;
+        let researchItem, externalDraftId;
 
         const researchEntity = await ResearchEntity.findOne({id: researchEntityId});
         if (!researchEntity)
@@ -47,17 +47,33 @@ module.exports = _.merge({}, BaseModel, {
         if (!(await researchItem.isVerificable()))
             throw {researchItem: researchItem, success: false, message: 'Item not valid'};
 
-        if (researchItem.kind === ResearchItemKinds.DRAFT) {
+        if (researchItem.kind === ResearchItemKinds.EXTERNAL) {
+            const res = await ResearchItem.copyToDraft(researchItemId, researchEntityId);
+            externalDraftId = res.researchItem.id;
+            researchItem = await ResearchItem.findOne({id: externalDraftId});
+        }
+
+        if (researchItem.kind === ResearchItemKinds.DRAFT || researchItem.kind === ResearchItemKinds.EXTERNAL) {
             const copy = await ResearchItem.getVerifiedCopy(researchItem);
             if (copy) {
-                oldResearchItem = researchItem;
+                await ResearchItem.destroy({id: researchItem.id});
                 researchItem = copy;
             }
         }
 
-        const verifyData = Object.assign({}, Verify.getDefaults(researchItem.id, researchEntityId), verificationData);
+        try {
+            return await this.doVerify(researchItem, researchEntity, verificationData);
+        } catch (e) {
+            if (externalDraftId)
+                await ResearchItem.destroy({id: externalDraftId});
+            throw e;
+        }
+    },
+    async doVerify(researchItem, researchEntity, verificationData) {
+        const verifyData = Object.assign({}, Verify.getDefaults(researchItem.id, researchEntity.id), verificationData);
 
-        if (await Verify.findOne({researchEntity: researchEntityId, researchItem: researchItem.id}))
+        if (researchItem.kind === ResearchItemKinds.VERIFIED
+            && await Verify.findOne({researchEntity: researchEntity.id, researchItem: researchItem.id}))
             throw {researchItem: researchItem, success: false, message: 'Already verified'};
 
         const verify = await Verify.create(verifyData);
@@ -74,12 +90,7 @@ module.exports = _.merge({}, BaseModel, {
         if (researchItem.kind === ResearchItemKinds.DRAFT)
             await researchItem.toVerified();
 
-        if (oldResearchItem) {
-            sails.log.debug(`Draft ${oldResearchItem.id} has been sobstituted with ${researchItem.id} `);
-            await ResearchItem.destroy({id: oldResearchItem.id});
-        }
-
-        await Discarded.destroy({researchEntity: researchEntityId, researchItem: researchItemId});
+        await Discarded.destroy({researchEntity: researchEntity.id, researchItem: researchItem.id});
         return {researchItem: researchItem, success: true, message: 'Verification completed'};
 
     },

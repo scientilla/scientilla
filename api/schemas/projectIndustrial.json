@@ -1,0 +1,47 @@
+{
+  "$id": "projectIndustrial",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string"
+    },
+    "acronym": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "payment": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "startDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "endDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "contribution": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "members": {
+      "$ref": "projectDefs#/definitions/members"
+    },
+    "reasearchLines": {
+      "$ref": "projectDefs#/definitions/reasearchLines"
+    }
+  },
+  "required": [
+    "code"
+  ]
+}

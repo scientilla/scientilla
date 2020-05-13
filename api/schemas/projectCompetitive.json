@@ -1,0 +1,98 @@
+{
+  "$id": "projectCompetitive",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "string"
+    },
+    "acronym": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "abstract": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "startDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "endDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "instituteStartDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "instituteEndDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "budget": {
+      "type": "number"
+    },
+    "contribution": {
+      "type": "number"
+    },
+    "instituteBudget": {
+      "type": "number"
+    },
+    "instituteContribution": {
+      "type": "number"
+    },
+    "instituteRole": {
+      "enum": [
+        "partner",
+        "coordinator",
+        "third party"
+      ]
+    },
+    "partnersNumber": {
+      "type": "integer"
+    },
+    "url": {
+      "type": "string"
+    },
+    "partners": {
+      "$ref": "projectDefs#/definitions/partners"
+    },
+    "members": {
+      "$ref": "projectDefs#/definitions/members"
+    },
+    "reasearchLines": {
+      "$ref": "projectDefs#/definitions/reasearchLines"
+    },
+    "logos": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "image": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "image"
+        ]
+      }
+    }
+  },
+  "required": [
+    "code"
+  ]
+}

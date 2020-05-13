@@ -26,6 +26,22 @@ module.exports.scientilla = {
             "url": "http://api.openaire.eu/search/publications"
         }
     },
+    "researchItems": {
+        "external": {
+            "project_competitive": {
+                "origin": "",
+                "url": "",
+                "headers": {
+                    "username" : "",
+                    "password" : ""
+                }
+            },
+            "project_industrial": {
+                "origin": "",
+                "url": ''
+            }
+        }
+    },
     "institute": {
         "name": "Istituto Italiano di Tecnologia",
         "slug": "istituto-italiano-di-tecnologia",
