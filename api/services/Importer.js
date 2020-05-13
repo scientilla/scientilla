@@ -1660,9 +1660,10 @@ async function importProjects() {
         }
 
         const errors = [];
-        let created = 0, updated = 0;
+        let totalItems = 0, created = 0, updated = 0;
 
         for (const project of projects) {
+            totalItems++;
             try {
                 const data = {
                     type: type,
@@ -1680,12 +1681,12 @@ async function importProjects() {
                 }
 
                 const prj = await Project.findOne({code: code, kind: ResearchItemKinds.EXTERNAL});
-                if (prj) {
-                    await ResearchItem.updateExternal(prj.id, data);
-                    updated++;
-                } else {
+                if (!prj) {
                     await ResearchItem.createExternal(config.origin, code, data);
                     created++;
+                } else if (JSON.stringify(prj.projectData) !== JSON.stringify(data.projectData)) {
+                    await ResearchItem.updateExternal(prj.id, data);
+                    updated++;
                 }
             } catch (e) {
                 errors.push(e);
@@ -1694,8 +1695,9 @@ async function importProjects() {
         }
 
         sails.log.info(`import ${type} completed`);
-        sails.log.info(`created: ${created}`);
-        sails.log.info(`updated: ${updated}`);
+        sails.log.info(`${totalItems} found`);
+        sails.log.info(`external created: ${created}`);
+        sails.log.info(`external updated: ${updated}`);
         sails.log.info(`errors: ${errors.length}`);
         errors.forEach(error => sails.log.debug(JSON.stringify(error) + '\n --------------------- \n'));
     }
@@ -1787,8 +1789,8 @@ async function importProjects() {
         }
 
         sails.log.info('Autoverify completed');
-        sails.log.info(`newly verified ${newVerify} times`);
-        sails.log.info(`unverified ${unverify} times`);
+        sails.log.info(`added ${newVerify} new verifications`);
+        sails.log.info(`removed ${unverify} old verifications`);
         if (errors.length) {
             sails.log.debug(`but there were ${errors.length} errors:`);
             sails.log.debug(JSON.stringify(errors));

@@ -138,7 +138,14 @@ module.exports = _.merge({}, BaseModel, {
             throw {success: false, researchItem: itemData, message: 'Item not found'};
         if (researchItem.kind !== ResearchItemKinds.EXTERNAL)
             throw {success: false, researchItem: itemData, message: 'The item is not an external'};
-        return this.doUpdate(researchItem, itemData);
+        const res = await this.doUpdate(researchItem, itemData);
+        await this.synchronizeExternal(res.researchItem, itemData);
+        return res;
+    },
+    async synchronizeExternal(external, itemData) {
+        const verified = await this.getVerifiedExternal(external);
+        if(verified)
+            await this.doUpdate(verified, itemData);
     },
     async doUpdate(researchItem, itemData) {
         const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(itemData.type);
@@ -155,8 +162,8 @@ module.exports = _.merge({}, BaseModel, {
             await Author.updateAuthors(researchItem, authorsStr, authorsData);
         }
 
-        const newDraft = await ResearchItemChildModel.findOne({id: researchItem.id});
-        return {success: true, researchItem: newDraft, message: 'Item updated'};
+        const updatedResearchItem = await ResearchItemChildModel.findOne({id: researchItem.id});
+        return {success: true, researchItem: updatedResearchItem, message: 'Item updated'};
     },
     async deleteDraft(draftId) {
         const researchItem = await ResearchItem.findOne({id: draftId});
@@ -199,6 +206,11 @@ module.exports = _.merge({}, BaseModel, {
     async getVerifiedCopy(researchItem) {
         const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(researchItem.type);
         const copy = await ResearchItemChildModel.getVerifiedCopy(researchItem);
+        return copy ? await ResearchItem.findOne({id: copy.id}) : false;
+    },
+    async getVerifiedExternal(external) {
+        const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(external.type);
+        const copy = await ResearchItemChildModel.getVerifiedExternal(external);
         return copy ? await ResearchItem.findOne({id: copy.id}) : false;
     },
     async getItem(subItem) {
