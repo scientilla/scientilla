@@ -49,7 +49,16 @@
         "properties": {
           "email": {
             "type": "string",
-            "format": "email"
+            "oneOf": [
+              {
+                "enum": [
+                  ""
+                ]
+              },
+              {
+                "format": "email"
+              }
+            ]
           },
           "role": {
             "enum": [
@@ -69,6 +78,7 @@
           }
         },
         "required": [
+          "email"
         ]
       }
     },
