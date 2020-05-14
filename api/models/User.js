@@ -575,7 +575,7 @@ module.exports = _.merge({}, SubResearchEntity, {
             // Delete ChartData record of user
             await ChartData.destroy({
                 researchEntityType: 'user',
-                researchEntity: user.researchEntity
+                researchEntity: user.id
             });
         }
 
