@@ -186,7 +186,7 @@ module.exports = _.merge({}, SubResearchEntity, {
             type: "BOOLEAN",
             defaultsTo: false
         },
-        expiresAt: 'datetime',
+        contractEndDate: 'datetime',
         getAliases: async function () {
             const aliases = await Alias.find({user: this.id});
             if (!aliases)

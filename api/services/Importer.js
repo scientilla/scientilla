@@ -1286,16 +1286,16 @@ async function importUserHistoryContracts(email = defaultEmail) {
 
             // Get the expire date of a user from its memberships
             // The expire date will be null for a permanent contract or the youngest end date of a contract.
-            let expiresAt = null;
+            let contractEndDate = null;
             const hasPermanentContract = !_.isEmpty(handledSteps.filter(handledStep => !_.has(handledStep, 'to')));
 
             if (!hasPermanentContract) {
                 const toDates = handledSteps.filter(handledStep => _.has(handledStep, 'to') && moment(handledStep.to).isValid())
                     .map(handledStep => moment(handledStep.to));
 
-                expiresAt = moment.max(toDates).startOf('day');
+                contractEndDate = moment.max(toDates).startOf('day');
 
-                sails.log.info('This user has a contract that will expire or is expired on ' + expiresAt.format());
+                sails.log.info('This user has a contract that will end on ' + contractEndDate.format());
             } else {
                 sails.log.info('This user seems to have a permanent contract!');
             }
@@ -1304,7 +1304,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
             // It's active when the user has a permanent contract or
             // when the current date if before the expire date of the contract.
             let active = false;
-            if (hasPermanentContract || (expiresAt && moment().isBefore(expiresAt))) {
+            if (hasPermanentContract || (contractEndDate && moment().isBefore(contractEndDate))) {
                 active = true;
             }
 
@@ -1314,8 +1314,8 @@ async function importUserHistoryContracts(email = defaultEmail) {
                 // We should create a user when the expire date is null
                 // or when the expire date is less than five years ago.
                 if (
-                    expiresAt === null ||
-                    (expiresAt !== null && expiresAt.isSameOrAfter(moment().subtract('5', 'years').startOf('day')))
+                    contractEndDate === null ||
+                    (contractEndDate !== null && contractEndDate.isSameOrAfter(moment().subtract('5', 'years').startOf('day')))
                 ) {
                     const userObject = {
                         username: userCard.email,
@@ -1329,8 +1329,8 @@ async function importUserHistoryContracts(email = defaultEmail) {
                         synchronized: true
                     };
 
-                    if (expiresAt !== null) {
-                        userObject.expiresAt = expiresAt.format();
+                    if (contractEndDate !== null) {
+                        userObject.contractEndDate = contractEndDate.format();
                     }
 
                     user = await User.createUserWithoutAuth(userObject);
@@ -1346,28 +1346,28 @@ async function importUserHistoryContracts(email = defaultEmail) {
             } else {
                 // If the user already exist
                 // And the user has a permanent contract
-                if (_.isNull(expiresAt)) {
+                if (_.isNull(contractEndDate)) {
                     // But is not been set into the database, we update the user.
-                    if (!_.isNull(user.expiresAt)) {
+                    if (!_.isNull(user.contractEndDate)) {
                         await User.update(
                             { id: user.id },
-                            { expiresAt: null }
+                            { contractEndDate: null }
                         );
                         user = await User.findOne({ id: user.id });
-                        sails.log.info('The expiresAt date of the is been removed.');
-                        updatedExpiredUsers.push(user);
+                        sails.log.info('The contract end date of the user is been removed.');
+                        updatedContractEndDate.push(user);
                     }
                 } else {
                     // When the user doesn't have a permanent contract
                     // And the user doesn't have the same expiresAre value we update it.
-                    if (_.isNull(user.expiresAt) || !moment(user.expiresAt).isSame(expiresAt)) {
+                    if (_.isNull(user.contractEndDate) || !moment(user.contractEndDate).isSame(contractEndDate)) {
                         await User.update(
                             { id: user.id },
-                            { expiresAt: expiresAt.format() }
+                            { contractEndDate: contractEndDate.format() }
                         );
                         user = await User.findOne({ id: user.id });
-                        sails.log.info('The expiresAt date is been updated to ' + expiresAt.format());
-                        updatedExpiredUsers.push(user);
+                        sails.log.info('The contract end date is been updated to ' + contractEndDate.format());
+                        updatedContractEndDate.push(user);
                     }
                 }
 
@@ -1478,7 +1478,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
     const updatedMemberships = [];
     const createdMemberships = [];
     const createdUsers = [];
-    const updatedExpiredUsers = [];
+    const updatedContractEndDate = [];
     const updatedActiveUsers = [];
     const createdResearchEntityDataItems = [];
     const updatedResearchEntityDataItems = [];
@@ -1547,7 +1547,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
 
         sails.log.info('Number of created users: ' + createdUsers.length);
         sails.log.info('Number of users that are not been created because of the expireAt date: ' + skippedUsers);
-        sails.log.info('Updated the expiredAt date for ' + updatedExpiredUsers.length + ' users');
+        sails.log.info('Updated the contract end date for ' + updatedContractEndDate.length + ' users');
         sails.log.info('Updated the active state for ' + updatedActiveUsers.length + ' users');
         sails.log.info('Number of created memberships: ' + createdMemberships.length);
         sails.log.info('Number of updated memberships: ' + updatedMemberships.length);
@@ -1566,17 +1566,20 @@ async function importUserHistoryContracts(email = defaultEmail) {
 async function removeExpiredUsers() {
     const fiveYearsAgo = moment().subtract('5', 'years').startOf('day');
     const deletedUsers = await User.destroy({
-        expiresAt: {'<=': fiveYearsAgo.format()}
+        contractEndDate: {'<=': fiveYearsAgo.format()}
     });
     var deletedUserEmails = deletedUsers.map(function (user) {
         return user.username;
     });
-    sails.log.info('Deleted ' + deletedUsers.length + ' users that were expired 5 years ago: ' + fiveYearsAgo.format());
     if (deletedUserEmails.length > 0) {
         if (deletedUserEmails.length === 1) {
+            sails.log.info('Deleted 1 user with a contract that ended 5 years ago: ' + fiveYearsAgo.format());
             sails.log.info('Deleted the user with email address: ' + deletedUserEmails.join(', '));
         } else {
+            sails.log.info('Deleted ' + deletedUsers.length + ' users with a contract that ended 5 years ago: ' + fiveYearsAgo.format());
             sails.log.info('Deleted the users with email address: ' + deletedUserEmails.join(', '));
         }
+    } else {
+        sails.log.info('Deleted ' + deletedUsers.length + ' users with a contract that ended 5 years ago: ' + fiveYearsAgo.format());
     }
 }
