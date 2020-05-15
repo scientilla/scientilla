@@ -186,7 +186,7 @@ module.exports = _.merge({}, SubResearchEntity, {
             type: "BOOLEAN",
             defaultsTo: false
         },
-        expiresAt: 'datetime',
+        contractEndDate: 'datetime',
         getAliases: async function () {
             const aliases = await Alias.find({user: this.id});
             if (!aliases)
@@ -575,7 +575,7 @@ module.exports = _.merge({}, SubResearchEntity, {
             // Delete ChartData record of user
             await ChartData.destroy({
                 researchEntityType: 'user',
-                researchEntity: user.researchEntity
+                researchEntity: user.id
             });
         }
 

@@ -171,7 +171,7 @@ module.exports = _.merge({}, SubResearchEntity, {
             // Delete ChartData record of user
             await ChartData.destroy({
                 researchEntityType: 'group',
-                researchEntity: group.researchEntity
+                researchEntity: group.id
             });
         }
 
