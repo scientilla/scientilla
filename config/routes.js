@@ -153,6 +153,9 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/logs/tasks']: 'Log.getTasks',
     ['get ' + apiPrfx + '/logs/:taskName/:date?']: 'Log.read',
 
+    ['get ' + apiPrfx + '/general-setting/:name']: 'GeneralSetting.getByName',
+    ['post ' + apiPrfx + '/general-setting/:name']: 'GeneralSetting.saveByName',
+
     ['get ' + apiPrfx + '/source-metrics/:type']: 'SourceMetric.getMetrics',
     ['post ' + apiPrfx + '/source-metrics/import']: 'SourceMetric.importMetrics',
     ['post ' + apiPrfx + '/source-metrics/assign']: 'SourceMetric.assignMetrics',

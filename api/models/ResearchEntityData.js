@@ -1,3 +1,5 @@
+/* global RoleAssociations */
+
 const Ajv = require('ajv');
 const ajv = new Ajv({
     allErrors: true,
@@ -1170,41 +1172,16 @@ function setupProfile(userData) {
     // We merge the defaults with the user's profile
     if (userData && !_.isEmpty(userData.profile)) {
 
-        const associations = {
-            'Affiliated Researcher': 'Affiliated Researcher',
-            'Amm. della Ricerca': 'Administrative Staff',
-            'Amm. Gestione e Ricerca': 'Research Support',
-            'Coordinator': 'Administrative Staff',
-            'Director General': 'Director General',
-            'Ex - Tecnici di Infrastruttura': 'Infrastructure Technician',
-            'Ex - Tecnici di Laboratorio': 'Lab Technician',
-            'External Collaborator - PhD Stud.Fellow': 'PhD Student',
-            'External Collaborator - Post Doc': 'Post Doc',
-            'External Collaborator - Researcher': 'Researcher',
-            'Facility Coordinator': 'Facility Coordinator',
-            'Lab Manager': 'Facility Coordinator',
-            'PhD Student': 'PhD Student',
-            'PhD Student Fellow': 'PhD Student',
-            'Post Doc': 'Post Doc',
-            'Post Doc - Fellow': 'Post Doc',
-            'Principal Investigator': 'Principal Investigator',
-            'Researcher': 'Researcher',
-            'Scientific Director': 'Scientific Director',
-            'Senior Researcher': 'Researcher',
-            'Technologist': 'Technologist',
-            'Tecnici di infrastrutture': 'Infrastructure Technician',
-            'Tecnici di Laboratorio': 'Lab Technician',
-            'Visiting Professor - Researcher': 'Researcher'
-        };
-
+        const associations = RoleAssociations.get();
         if (!_.has(userData.profile, 'roleCategory.value') || _.isEmpty(userData.profile.roleCategory.value)) {
             userData.profile.roleCategory = {};
             userData.profile.roleCategory.privacy = 'public';
             userData.profile.roleCategory.value = userData.imported_data.Ruolo_1;
         }
 
-        if (_.has(associations, userData.profile.roleCategory.value)) {
-            userData.profile.roleCategory.value = associations[userData.profile.roleCategory.value];
+        const association = associations.find(a => a.originalRole === userData.profile.roleCategory.value);
+        if (association) {
+            userData.profile.roleCategory.value = association.roleCategory;
         } else {
             userData.profile.roleCategory.value = '';
         }
