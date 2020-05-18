@@ -18,6 +18,7 @@ const moment = require('moment');
 moment.locale('en');
 const ISO8601Format = 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]';
 
+const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
@@ -1320,14 +1321,16 @@ async function saveProfile(req) {
     const hasFiles = (req._fileparser.upstreams.length > 0);
     if (hasFiles) {
         const imagePath = path.join(pathProfileImages, researchEntityId);
+        const filePath = path.resolve(sails.config.appPath, imagePath);
+        let newProfileImage;
 
         await new Promise(function (resolve, reject) {
 
             let filename = req.file('profileImage')._files[0].stream.filename;
             const prefix = '200x200_';
-            const filePath = path.resolve(sails.config.appPath, imagePath);
             const originalImage = path.join(filePath, filename);
             const croppedImage = path.join(filePath, prefix + filename);
+            newProfileImage = prefix + filename;
 
             req.file('profileImage').upload({
                 dirname: filePath,
@@ -1351,6 +1354,17 @@ async function saveProfile(req) {
                 resolve();
             });
         });
+
+        const readdir = util.promisify(fs.readdir);
+        const files = await readdir(filePath);
+        const unlink = util.promisify(fs.unlink);
+
+        // Remove all other profile images
+        for (const file of files) {
+            if (newProfileImage && newProfileImage !== file) {
+                await unlink(path.join(filePath, file));
+            }
+        }
     }
 
     try {
