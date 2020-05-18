@@ -1,4 +1,4 @@
-/* global sails,DocumentTypes,SourceTypes, ResearchItemTypes */
+/* global sails,DocumentTypes,SourceTypes, ResearchItemTypes, RoleAssociations */
 "use strict";
 
 module.exports = sails => {
@@ -8,6 +8,7 @@ module.exports = sails => {
                 await DocumentTypes.init();
                 await SourceTypes.init();
                 await ResearchItemTypes.init();
+                await RoleAssociations.init();
                 next();
             });
         }

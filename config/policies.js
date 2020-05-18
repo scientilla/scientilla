@@ -184,5 +184,10 @@ module.exports.policies = {
     LogController: {
         getTasks: isAdmin,
         read: isAdmin
+    },
+
+    GeneralSettingController: {
+        getByName: isAdmin,
+        saveByName: isAdmin,
     }
 };

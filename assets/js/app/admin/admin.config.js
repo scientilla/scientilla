@@ -34,7 +34,12 @@
                     active-tab="backup"></scientilla-admin-tools>`
             })
             .when("/tools/institutes", {
-                template: `<scientilla-admin-tools></scientilla-admin-tools>`
+                template: `<scientilla-admin-tools
+                    active-tab="institutes"></scientilla-admin-tools>`
+            })
+            .when("/tools/role-association", {
+                template: `<scientilla-admin-tools
+                    active-tab="role-association"></scientilla-admin-tools>`
             })
             .when("/connectors", {
                 template: '<scientilla-admin-external-connectors></scientilla-admin-external-connectors>'

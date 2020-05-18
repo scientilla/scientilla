@@ -37,6 +37,10 @@
                 }, {
                     index: 3,
                     slug: 'institutes',
+                }, {
+                    index: 4,
+                    slug: 'role-association',
+                    tabName: 'roleAssociation'
                 }
             ];
 
