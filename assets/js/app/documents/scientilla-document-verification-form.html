@@ -60,15 +60,13 @@
             </div>
 
             <div class="form-group">
-                <div ng-hide="vm.verificationData.position<0">
-                    <div class="form-checkbox">
-                        <label title="Are you the corresponding author?">
-                            <input
-                                type="checkbox"
-                                ng-model="vm.verificationData.corresponding"/>
-                            <span>* Corresponding author</span>
-                        </label>
-                    </div>
+                <div class="form-checkbox" ng-hide="vm.verificationData.position<0">
+                    <label title="Are you the corresponding author?">
+                        <input
+                            type="checkbox"
+                            ng-model="vm.verificationData.corresponding"/>
+                        <span>* Corresponding author</span>
+                    </label>
                 </div>
 
                 <div

@@ -129,7 +129,7 @@
 
         function getVerifiedNames(document) {
             return document.groups.map(g => '- <b>' + g.name + '</b>')
-                .concat(document.authors.map(a => '- ' + a.name + ' ' + a.surname));
+                .concat(document.authors.map(a => '- ' + a.getDisplayName()));
         }
 
         function compare(duplicate) {

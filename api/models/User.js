@@ -74,6 +74,14 @@ module.exports = _.merge({}, SubResearchEntity, {
         jobTitle: {
             type: 'STRING'
         },
+        displayName: {
+            type: 'STRING',
+            defaultsTo: ""
+        },
+        displaySurname: {
+            type: 'STRING',
+            defaultsTo: ""
+        },
         researchEntity: {
             columnName: 'research_entity',
             model: 'researchentity'
@@ -294,22 +302,49 @@ module.exports = _.merge({}, SubResearchEntity, {
             user: user.id,
             str: alias1
         });
-        if (alias1 !== alias2)
+
+        if (alias1 !== alias2) {
             aliases.push({
                 user: user.id,
                 str: alias2
             });
+        }
 
-        aliases.filter(alias => {
-            const foundAlias = Alias.find(alias);
-            if (foundAlias) {
-                return false;
+        if (
+            _.has(user, 'displayName') &&
+            _.has(user, 'displaySurname') &&
+            !_.isEmpty(user.displayName) &&
+            !_.isEmpty(user.displaySurname)
+        ) {
+            const displayNameInitials = user.displayName.split(' ').map(n => n[0]).join('.') + '.';
+            const alias3 = capitalizeAll(user.displaySurname + ' ' + displayNameInitials, separators);
+            const alias4 = capitalizeAll(user.displaySurname.replace(' ', '-') + ' ' + displayNameInitials, separators);
+
+            if (alias3 !== alias1 && alias3 !== alias2) {
+                aliases.push({
+                    user: user.id,
+                    str: alias3
+                });
             }
-            return alias;
-        });
 
-        if (!_.isEmpty(aliases)) {
-            await Alias.create(aliases);
+            if (alias4 !== alias1 && alias4 !== alias2 && alias4 !== alias3) {
+                aliases.push({
+                    user: user.id,
+                    str: alias4
+                });
+            }
+        }
+
+        const newAliases = [];
+        for (const alias of aliases) {
+            const foundAlias = await Alias.findOne(alias);
+            if (!foundAlias) {
+                newAliases.push(alias);
+            }
+        }
+
+        if (!_.isEmpty(newAliases)) {
+            await Alias.create(newAliases);
         }
     },
     copyAuthData: function (user) {

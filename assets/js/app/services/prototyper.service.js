@@ -40,16 +40,42 @@
             toInstitutesCollection: applyToAll(toInstituteModel),
             toTagLabelModel: toTagLabelModel,
             toTagLabelsCollection: applyToAll(toTagLabelModel),
+            toAccomplishmentModel: toAccomplishmentModel,
+            toAccomplishmentsCollection: applyToAll(toAccomplishmentModel)
         };
         const userPrototype = {
             getAliases: function () {
                 return this.aliases.map(a => a.str);
             },
             getDisplayName: function () {
-                var name = this.name ? this.name : "";
-                var surname = this.surname ? this.surname : "";
-                var fullName = _.trim(name + " " + surname);
-                return fullName;
+                let name = '',
+                    surname = '';
+
+                switch (true) {
+                    case !_.isEmpty(this.displayName):
+                        name = this.displayName;
+                        break;
+                    case !_.isEmpty(this.name):
+                        name = this.name;
+                        break;
+                    default:
+                        name = '';
+                        break;
+                }
+
+                switch (true) {
+                    case !_.isEmpty(this.displaySurname):
+                        surname = this.displaySurname;
+                        break;
+                    case !_.isEmpty(this.surname):
+                        surname = this.surname;
+                        break;
+                    default:
+                        surname = '';
+                        break;
+                }
+
+                return _.trim(name + ' ' + surname);
             },
             getType: function () {
                 return 'user';
@@ -466,6 +492,12 @@
             service.toTagLabelsCollection(document.groupTagLabels);
             service.toAuthorshipsCollection(document.authorships);
             return document;
+        }
+
+        function toAccomplishmentModel(accomplishment) {
+            service.toUsersCollection(accomplishment.verifiedUsers);
+            service.toGroupsCollection(accomplishment.verifiedGroups);
+            return accomplishment;
         }
 
         function checkDuplicates(document) {

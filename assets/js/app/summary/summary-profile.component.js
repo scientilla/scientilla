@@ -106,7 +106,7 @@
 
             function loadProfile() {
                 if (!_.isEmpty(vm.profile)) {
-                    vm.missingProfile = !vm.profile.name && !vm.profile.surname;
+                    vm.missingProfile = _.isEmpty(vm.profile.plain());
                     setNumberOfItems();
                     vm.loading = false;
                 }
