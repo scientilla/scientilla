@@ -119,8 +119,12 @@ label{
         }
     }
 
-    + .form-checkbox-description{
+    & + .form-checkbox-description{
         display: block;
+        margin-top: .5rem;
+    }
+
+    & + .form-checkbox{
         margin-top: .5rem;
     }
 }

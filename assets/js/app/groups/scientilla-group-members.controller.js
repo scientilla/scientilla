@@ -83,7 +83,12 @@
         };
 
         function getUsers(searchText) {
-            const qs = {where: {or: [{name: {contains: searchText}}, {surname: {contains: searchText}}]}};
+            const qs = {where: {or: [
+                {name: {contains: searchText}},
+                {surname: {contains: searchText}},
+                {displayName: {contains: searchText}},
+                {displaySurname: {contains: searchText}}
+            ]}};
             return UsersService.getUsers(qs);
         }
 

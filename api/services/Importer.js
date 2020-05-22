@@ -572,7 +572,9 @@ async function importUserContracts(email = defaultEmail) {
             'roleCategory',
             'jobTitle',
             'name',
-            'surname'
+            'surname',
+            'displayName',
+            'displaySurname'
         ];
         return fields.some(f => values[f] !== user[f]);
     };
@@ -610,6 +612,7 @@ async function importUserContracts(email = defaultEmail) {
     const newResearchEntityDataItems = [];
     const upToDateResearchEntityDataItems = [];
     const updatedUsers = [];
+    const updatedDisplayNames = [];
     const insertedUsers = [];
 
     const importTime = moment.utc().format();
@@ -687,9 +690,21 @@ async function importUserContracts(email = defaultEmail) {
                 user = await User.findOne({username: contract.email});
                 insertedUsers.push(user);
             } else {
-                await User.update({id: user.id}, userObject);
+                let displayNamesAreChanged = false;
+                if (user.displayName !== contract.nome_AD || user.displaySurname !== contract.cognome_AD) {
+                    displayNamesAreChanged = true;
+                }
 
                 if (userIsBeenChanged(user, userObject)) {
+                    await User.update({ id: user.id }, userObject);
+                    user = await User.findOne({ id: user.id });
+
+                    if (displayNamesAreChanged) {
+                        await User.createAliases(user);
+                        sails.log.info('The display names are been updated to: ' + user.displayName + ' ' + user.displaySurname);
+                        updatedDisplayNames.push(user);
+                    }
+
                     updatedUsers.push(user);
                 }
             }
@@ -810,6 +825,12 @@ async function importUserContracts(email = defaultEmail) {
         sails.log.info(updatedUsers.length + ' Users updated!');
         if (updatedUsers.length > 0) {
             sails.log.info('Username(s): ' + updatedUsers.map(user => user.username).join(', '));
+        }
+        sails.log.info('....................................')
+
+        sails.log.info('Updated the display names for ' + updatedDisplayNames.length + ' Users!');
+        if (updatedDisplayNames.length > 0) {
+            sails.log.info('Username(s): ' + updatedDisplayNames.map(user => user.username).join(', '));
         }
         sails.log.info('....................................');
 
@@ -1307,6 +1328,18 @@ async function importUserHistoryContracts(email = defaultEmail) {
                 active = true;
             }
 
+            const userObject = {
+                username: userCard.email,
+                name: userCard.nome,
+                surname: userCard.cognome,
+                jobTitle: userCard.Ruolo_AD,
+                displayName: userCard.nome_AD,
+                displaySurname: userCard.cognome_AD,
+                lastsynch: moment().utc().format(),
+                active: active,
+                synchronized: true
+            };
+
             // When the user does not exist
             if (!user) {
 
@@ -1316,18 +1349,6 @@ async function importUserHistoryContracts(email = defaultEmail) {
                     contractEndDate === null ||
                     (contractEndDate !== null && contractEndDate.isSameOrAfter(moment().subtract('5', 'years').startOf('day')))
                 ) {
-                    const userObject = {
-                        username: userCard.email,
-                        name: userCard.nome,
-                        surname: userCard.cognome,
-                        jobTitle: userCard.Ruolo_AD,
-                        displayName: userCard.nome_AD,
-                        displaySurname: userCard.cognome_AD,
-                        lastsynch: moment().utc().format(),
-                        active: active,
-                        synchronized: true
-                    };
-
                     if (contractEndDate !== null) {
                         userObject.contractEndDate = contractEndDate.format();
                     }
@@ -1348,9 +1369,10 @@ async function importUserHistoryContracts(email = defaultEmail) {
                 if (_.isNull(contractEndDate)) {
                     // But is not been set into the database, we update the user.
                     if (!_.isNull(user.contractEndDate)) {
+                        userObject.contractEndDate = null;
                         await User.update(
                             { id: user.id },
-                            { contractEndDate: null }
+                            userObject
                         );
                         user = await User.findOne({ id: user.id });
                         sails.log.info('The contract end date of the user is been removed.');
@@ -1360,9 +1382,10 @@ async function importUserHistoryContracts(email = defaultEmail) {
                     // When the user doesn't have a permanent contract
                     // And the user doesn't have the same expiresAre value we update it.
                     if (_.isNull(user.contractEndDate) || !moment(user.contractEndDate).isSame(contractEndDate)) {
+                        userObject.contractEndDate = contractEndDate.format();
                         await User.update(
                             { id: user.id },
-                            { contractEndDate: contractEndDate.format() }
+                            userObject
                         );
                         user = await User.findOne({ id: user.id });
                         sails.log.info('The contract end date is been updated to ' + contractEndDate.format());
@@ -1372,12 +1395,24 @@ async function importUserHistoryContracts(email = defaultEmail) {
 
                 if (active !== user.active) {
                     await User.update(
-                        {id: user.id},
-                        {active: active}
+                        { id: user.id },
+                        userObject
                     );
                     user = await User.findOne({id: user.id});
                     sails.log.info('The active state is been updated to: ' + active);
                     updatedActiveUsers.push(user);
+                }
+
+                if (user.displayName !== userCard.nome_AD || user.displaySurname !== userCard.cognome_AD) {
+                    await User.update(
+                        { id: user.id },
+                        userObject
+                    );
+                    user = await User.findOne({ id: user.id });
+                    await User.createAliases(user);
+
+                    sails.log.info('The display names are been updated to: ' + user.displayName + ' ' + user.displaySurname);
+                    updatedDisplayNames.push(user);
                 }
             }
 
@@ -1386,8 +1421,6 @@ async function importUserHistoryContracts(email = defaultEmail) {
 
                 // Loop over contract steps and change the active value (former or active member) of the membership
                 for (const handledStep of handledSteps) {
-
-                    sails.log.debug(handledStep);
 
                     if (handledStep.lines.length > 1) {
                         sails.log.info('The step is been splitted into ' + handledStep.lines.length + ' lines.');
@@ -1479,6 +1512,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
     const createdUsers = [];
     const updatedContractEndDate = [];
     const updatedActiveUsers = [];
+    const updatedDisplayNames = [];
     const createdResearchEntityDataItems = [];
     const updatedResearchEntityDataItems = [];
 
@@ -1548,6 +1582,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
         sails.log.info('Number of users that are not been created because of the expireAt date: ' + skippedUsers);
         sails.log.info('Updated the contract end date for ' + updatedContractEndDate.length + ' users');
         sails.log.info('Updated the active state for ' + updatedActiveUsers.length + ' users');
+        sails.log.info('Updated the display names for ' + updatedDisplayNames.length + ' users');
         sails.log.info('Number of created memberships: ' + createdMemberships.length);
         sails.log.info('Number of updated memberships: ' + updatedMemberships.length);
         sails.log.info('Number of created researchEntityData items: ' + createdResearchEntityDataItems.length);

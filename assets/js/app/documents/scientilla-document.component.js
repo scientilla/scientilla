@@ -211,7 +211,7 @@
 
         function getVerfiedNames() {
             return vm.document.groups.map(g => '- <b>' + g.name + '</b>')
-                .concat(vm.document.authors.map(a => '- ' + a.name + ' ' + a.surname));
+                .concat(vm.document.authors.map(a => '- ' + a.getDisplayName()));
         }
 
 

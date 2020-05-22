@@ -95,15 +95,29 @@
                 name: {
                     inputType: 'text',
                     label: 'Name',
-                    matchColumn: 'name',
-                    matchRule: 'contains',
+                    match: [
+                        {
+                            column: 'name',
+                            rule: 'contains',
+                        }, {
+                            column: 'displayName',
+                            rule: 'contains',
+                        }
+                    ],
                     type: 'field'
                 },
                 surname: {
                     inputType: 'text',
                     label: 'Surname',
-                    matchColumn: 'surname',
-                    matchRule: 'contains',
+                    match: [
+                        {
+                            column: 'surname',
+                            rule: 'contains',
+                        }, {
+                            column: 'displaySurname',
+                            rule: 'contains',
+                        }
+                    ],
                     type: 'field'
                 }
             }
