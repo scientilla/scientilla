@@ -138,6 +138,9 @@ module.exports = _.merge({}, BaseModel, {
 
         return copies.length > 0 ? copies[0] : false;
     },
+    async getVerifiedExternal() {
+        return false;
+    },
     async export(accomplishmentIds, format) {
         const accomplishments = await Accomplishment.find({id: accomplishmentIds})
             .populate([

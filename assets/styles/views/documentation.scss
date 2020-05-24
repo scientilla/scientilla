@@ -1,0 +1,98 @@
+.documentation-sidebar{
+    margin-top: 3rem;
+}
+
+.documentation{
+    .main-view{
+        margin-bottom: 4rem;
+    }
+
+    .page-description,
+    .sub-description{
+        margin-bottom: 4rem;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6{
+        margin-bottom: 1rem;
+    }
+
+    pre,
+    code{
+        white-space: pre;
+    }
+
+    pre{
+        position: relative;
+        display: inline-grid;
+        width: 100%;
+
+        padding: 1rem;
+        font-size: 1.2rem;
+        line-height: 2rem;
+        word-break: break-all;
+        word-wrap: break-word;
+        background: $mine-shaft;
+        color: $white;
+        border-radius: .4rem;
+        overflow: visible;
+
+        &:before{
+            position: absolute;
+            top: -3.5rem;
+            left: 0px;
+            padding: .7rem .5rem .5rem .5rem;
+            line-height: 1;
+            border-radius: .4rem;
+            text-transform: uppercase;
+            content: attr(data-type);
+        }
+
+        &[data-type]{
+            margin-top: 3.5rem;
+        }
+
+        &[data-type='get']{
+            &:before{
+                background: $forrest-green;
+            }
+        }
+
+        code{
+            display: block;
+            margin: 0px;
+            padding: 0px;
+            font-size: 1.4rem;
+            word-wrap: normal;
+        }
+    }
+
+    .documentation-listing{
+        @include normalize-listing;
+        margin-top: -7rem;
+
+        & > li{
+            padding-top: 7rem;
+        }
+    }
+
+    .sub{
+        padding-left: 2rem;
+    }
+
+    .sub-sub{
+        padding-left: 4rem;
+    }
+
+    .sub-sub-sub{
+        padding-left: 6rem;
+    }
+
+    p{
+        max-width: 750px;
+    }
+}

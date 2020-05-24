@@ -11,9 +11,9 @@
             }
         });
 
-    controller.$inject = ['UsersService'];
+    controller.$inject = ['UsersService', 'researchEntityService', 'ResearchEntitiesService', 'AccomplishmentService'];
 
-    function controller(UsersService) {
+    function controller(UsersService, researchEntityService, ResearchEntitiesService, AccomplishmentService) {
         const vm = this;
 
         vm.urlAllDocuments = '/#/users/' + vm.user.id + '/documents';
@@ -25,14 +25,32 @@
         vm.loading = true;
         vm.profile = false;
 
+        vm.documents = [];
+        vm.accomplishments = [];
+
+        vm.loadingDocuments = false;
+        vm.loadingAccomplishments = false;
+
         /* jshint ignore:start */
         vm.$onInit = async () => {
             vm.profile = await UsersService.getUserProfile(vm.user.researchEntity);
 
             vm.loading = false;
 
+            vm.loadingDocuments = true;
+            vm.loadingAccomplishments = true;
             setNumberOfItems();
 
+            researchEntityService.getDocuments(vm.user).then(function (documents) {
+                vm.documents = documents;
+                vm.loadingDocuments = false;
+                setNumberOfItems();
+            });
+
+            vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
+            vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {});
+            vm.loadingAccomplishments = false;
+            setNumberOfItems();
         };
         /* jshint ignore:end */
 
@@ -62,11 +80,11 @@
                 count++;
             }
 
-            if (_.has(vm.profile, 'documents') && vm.profile.documents.length > 0) {
+            if (vm.documents.length > 0 || vm.loadingDocuments) {
                 count++;
             }
 
-            if (_.has(vm.profile, 'accomplishments') && vm.profile.accomplishments.length > 0) {
+            if (vm.accomplishments.length > 0 || vm.loadingAccomplishments) {
                 count++;
             }
 

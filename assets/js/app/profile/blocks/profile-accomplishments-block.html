@@ -1,6 +1,6 @@
-<div class="profile-card">
+<div class="profile-card" ng-if="!vm.loadingAccomplishments">
     <div class="content-container">
-        <span class="amount">{{ vm.profile.accomplishments.length }}</span>
+        <span class="amount">{{ vm.accomplishments.count }}</span>
         <i class="fas fa-trophy title-icon"></i>
         <h2 class="block-title">Accomplishments</h2>
     </div>
@@ -29,6 +29,35 @@
             <a
                 href="{{ vm.urlAllAccomplishments }}"
                 class="show-more has-action">Show all accomplishments</a>
+        </li>
+    </ul>
+</div>
+
+<div class="profile-card loading" ng-if="vm.loadingAccomplishments">
+    <div class="content-container">
+        <span class="amount">
+            <div class="dummy-link"></div>
+        </span>
+        <i class="fas fa-trophy title-icon"></i>
+        <h2 class="block-title">Accomplishments</h2>
+    </div>
+    <div class="content-container last-item-container">
+        <div class="dummy-link"></div>
+        <ul class="favorite-listing">
+            <li>
+                <div class="dummy-link"></div>
+            </li>
+            <li>
+                <div class="dummy-link"></div>
+            </li>
+        </ul>
+    </div>
+    <ul class="block-links">
+        <li>
+            <div class="dummy-link"></div>
+        </li>
+        <li>
+            <div class="dummy-link"></div>
         </li>
     </ul>
 </div>

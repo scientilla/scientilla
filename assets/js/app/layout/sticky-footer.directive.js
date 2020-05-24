@@ -43,7 +43,11 @@
                         }
                     }
 
-                    loadImages().then(stickyFooter);
+                    loadImages().then(() => {
+                        $timeout(function () {
+                            stickyFooter();
+                        }, 500);
+                    });
 
                     angular.element($window).bind('resize', function(){
                         $timeout.cancel(timer);

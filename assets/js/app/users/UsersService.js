@@ -8,13 +8,14 @@
         "$q",
         "Prototyper",
         'userConstants',
-        'EventsService'
+        'EventsService',
     ];
 
     function UsersService(Restangular, $q, Prototyper, userConstants, EventsService) {
         var service = Restangular.service("users");
 
         let _profile = false;
+        let _hasNoProfile = false;
 
         const userFields = [
             'id',
@@ -81,23 +82,8 @@
             });
         };
 
-        service.getCollaborations = function (user) {
-            if (!user || !user.id) {
-                user.collaborations = [];
-                return $q(function (resolve) {
-                    resolve(user);
-                });
-            }
-            return user.all('collaborations').getList({populate: ['group']})
-                .then(function (collaborations) {
-                    user.collaborations = collaborations;
-                    Prototyper.toCollaborationsCollection(user.collaborations);
-                    return user;
-                });
-        };
-
         service.getUser = function (userId) {
-            const populate = {populate: ['collaborations', 'attributes', 'aliases', 'memberships']};
+            const populate = {populate: ['attributes', 'aliases', 'memberships']};
             return service.one(userId).get(populate);
         };
 
@@ -136,6 +122,7 @@
 
             if (_.isEmpty(response.errors)) {
                 _profile = false;
+                EventsService.publish(EventsService.USER_PROFILE_SAVED);
                 await service.getProfile(researchEntityId);
             }
 
@@ -147,11 +134,14 @@
                 return Restangular.one('researchentities', researchEntityId).customGET('get-edit-profile');
             }
 
-            if (!_profile || forceReload) {
+            if ((!_profile || forceReload) && !_hasNoProfile) {
                 const profile = await Restangular.one('researchentities', researchEntityId).customGET('get-profile');
-                if (profile) {
+                if (profile !== 'Has no profile!') {
                     _profile = profile;
+                    _hasNoProfile = false;
                     EventsService.publish(EventsService.USER_PROFILE_CHANGED, _profile);
+                } else {
+                    _hasNoProfile = true;
                 }
             }
 
@@ -160,6 +150,11 @@
 
         service.getUserProfile = async (researchEntityId) => {
             return await Restangular.one('researchentities', researchEntityId).customGET('get-profile');
+        };
+
+        service.emptyProfile = () => {
+            _profile = false;
+            _hasNoProfile = false;
         };
 
         /* jshint ignore:end */

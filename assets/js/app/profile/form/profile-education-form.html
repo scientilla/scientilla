@@ -63,9 +63,9 @@
                                     is-open="vm.openFrom"
                                     ng-click="vm.openFrom = true"
                                     ng-class="{
-                                    'is-invalid': vm.profile.education[vm.key].errors.from,
-                                    'is-invisible' : vm.profile.education[vm.key].privacy === 'invisible'
-                                }">
+                                        'is-invalid': vm.profile.education[vm.key].errors.from,
+                                        'is-invisible' : vm.profile.education[vm.key].privacy === 'invisible'
+                                    }">
                             </div>
                             <scientilla-field-errors
                                 errors="vm.profile.education[vm.key].errors.from"></scientilla-field-errors>

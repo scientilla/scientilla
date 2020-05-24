@@ -51,6 +51,6 @@
 
     function getCurrentUser(UsersService, $route) {
         var userId = $route.current.params.id;
-        return UsersService.one(userId).get({populate: ['collaborations', 'aliases', 'memberships']});
+        return UsersService.one(userId).get({populate: ['aliases', 'memberships']});
     }
 })();

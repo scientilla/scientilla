@@ -16,6 +16,7 @@
 
         <profile-basic-info-block
             profile="vm.profile"
+            former="!vm.user.active"
             class="profile-block basic-info"
             ng-if="!vm.missingProfile"></profile-basic-info-block>
 
@@ -75,41 +76,56 @@
 
         <profile-documents-block
             profile="vm.profile"
+            documents="vm.documents"
+            loading-documents="vm.loadingDocuments"
             url-favorite-documents="vm.urlFavoriteDocuments"
             url-all-documents="vm.urlAllDocuments"
             class="profile-block documents"
-            ng-if="vm.profile.documents && vm.profile.documents.length > 0 && vm.numberOfItems < 6">
+            ng-if="((vm.documents && vm.documents.length > 0) || vm.loadingDocuments) && vm.numberOfItems < 6">
         </profile-documents-block>
 
         <profile-accomplishments-block
             profile="vm.profile"
+            accomplishments="vm.accomplishments"
+            loading-accomplishments="vm.loadingAccomplishments"
             url-favorite-accomplishments="vm.urlFavoriteAccomplishments"
             url-all-accomplishments="vm.urlAllAccomplishments"
             class="profile-block accomplishments"
-            ng-if="vm.profile.accomplishments && vm.profile.accomplishments.length > 0 && vm.numberOfItems < 6">
+            ng-if="(
+                (vm.accomplishments && vm.accomplishments.length > 0) || vm.loadingsAccomplishments
+            ) && vm.numberOfItems < 6">
         </profile-accomplishments-block>
 
         <div
             class="profile-block"
-            ng-if="vm.numberOfItems == 6 && (
-                (vm.profile.documents && vm.profile.documents.length > 0) ||
-                (vm.profile.accomplishments && vm.profile.accomplishments.length > 0)
+            ng-if="vm.numberOfItems === 6 && (
+                (
+                    (vm.documents && vm.documents.length > 0) ||
+                    vm.loadingDocuments
+                ) || (
+                    (vm.accomplishments && vm.accomplishments.length > 0) ||
+                    vm.loadingAccomplishments
+                )
             )">
             <div class="profile-blocks bottom has-2-blocks">
                 <profile-documents-block
                     profile="vm.profile"
+                    documents="vm.documents"
+                    loading-documents="vm.loadingDocuments"
                     url-favorite-documents="vm.urlFavoriteDocuments"
                     url-all-documents="vm.urlAllDocuments"
                     class="profile-block documents"
-                    ng-if="vm.profile.documents && vm.profile.documents.length > 0">
+                    ng-if="(vm.documents && vm.documents.length > 0) || vm.loadingDocuments">
                 </profile-documents-block>
 
                 <profile-accomplishments-block
                     profile="vm.profile"
+                    accomplishments="vm.accomplishments"
+                    loading-accomplishments="vm.loadingAccomplishments"
                     url-favorite-accomplishments="vm.urlFavoriteAccomplishments"
                     url-all-accomplishments="vm.urlAllAccomplishments"
                     class="profile-block accomplishments"
-                    ng-if="vm.profile.accomplishments && vm.profile.accomplishments.length > 0">
+                    ng-if="(vm.accomplishments && vm.accomplishments.length > 0) || vm.loadingAccomplishments">
                 </profile-accomplishments-block>
             </div>
         </div>

@@ -16,20 +16,32 @@
             'AuthService',
             '$element',
             '$scope',
-            'EventsService'
+            'EventsService',
+            'context',
+            'researchEntityService',
+            'AccomplishmentService'
         ];
 
         function SummaryProfileComponent(
             AuthService,
             $element,
             $scope,
-            EventsService
+            EventsService,
+            context,
+            researchEntityService,
+            AccomplishmentService
         ) {
             const vm = this;
 
             vm.numberOfItems = 0;
             vm.loading = true;
             vm.missingProfile = false;
+
+            vm.documents = [];
+            vm.accomplishments = [];
+
+            vm.loadingDocuments = false;
+            vm.loadingAccomplishments = false;
 
             vm.urlAllDocuments = '/#/documents/verified';
             vm.urlFavoriteDocuments = '/#/documents/verified?favorites';
@@ -38,7 +50,8 @@
 
             let deregister;
 
-            vm.$onInit = () => {
+            /* jshint ignore:start */
+            vm.$onInit = async () => {
                 deregister = $scope.$watch('profile', () => {
                     loadProfile();
                 });
@@ -50,10 +63,37 @@
                     loadProfile();
                 });
 
+                EventsService.subscribe(vm, EventsService.AUTH_USER_CHANGED, (evt, user) => {
+                    vm.user = user;
+                });
+
+                EventsService.subscribe(vm, EventsService.USER_PROFILE_SAVED, () => {
+                    AuthService.savedProfile();
+
+                    vm.user = AuthService.user;
+                });
+
                 loadProfile();
 
                 vm.user = AuthService.user;
+
+                vm.loadingDocuments = true;
+                vm.loadingAccomplishments = true;
+                setNumberOfItems();
+
+                vm.subResearchEntity = context.getSubResearchEntity();
+                researchEntityService.getDocuments(vm.subResearchEntity, {}).then(function (documents) {
+                    vm.documents = documents;
+                    vm.loadingDocuments = false;
+                    setNumberOfItems();
+                });
+
+                vm.researchEntity = await context.getResearchEntity();
+                vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {});
+                vm.loadingAccomplishments = false;
+                setNumberOfItems();
             };
+            /* jshint ignore:end */
 
             vm.$onDestroy = () => {
                 const unregisterTab = requireParentMethod($element, 'unregisterTab');
@@ -66,7 +106,7 @@
 
             function loadProfile() {
                 if (!_.isEmpty(vm.profile)) {
-                    vm.missingProfile = !vm.profile.name && !vm.profile.surname;
+                    vm.missingProfile = _.isEmpty(vm.profile.plain());
                     setNumberOfItems();
                     vm.loading = false;
                 }
@@ -91,11 +131,11 @@
                     count++;
                 }
 
-                if (_.has(vm.profile, 'accomplishments') && vm.profile.accomplishments.length > 0) {
+                if (vm.documents.length > 0 || vm.loadingDocuments) {
                     count++;
                 }
 
-                if (_.has(vm.profile, 'documents') && vm.profile.documents.length > 0) {
+                if (vm.accomplishments.length > 0 || vm.loadingAccomplishments) {
                     count++;
                 }
 

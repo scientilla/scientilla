@@ -25,18 +25,8 @@ RUN git checkout ${GIT_COMMIT}
 
 RUN cp views/layout.ejs.dist views/layout.ejs
 
-RUN npm install -g yarn
-
-RUN chmod +x /usr/local/bin/yarn
-
-RUN yarn install
-
-RUN yarn global add bower
-
-RUN bower install --allow-root
-
-RUN yarn global add grunt
-
-RUN yarn global add grunt-cli
+RUN npm install -g bower
+RUN npm install -g grunt
+RUN npm install -g grunt-cli
 
 EXPOSE 1337

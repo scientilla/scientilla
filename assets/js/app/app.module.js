@@ -21,6 +21,7 @@
         'admin',
         'summary',
         'profile',
-        'accomplishments'
+        'accomplishments',
+        'documentation'
     ]);
 })();

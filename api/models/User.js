@@ -1,4 +1,4 @@
-/* global require, User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate, ResearchEntity, Profile */
+/* global require, User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate, ResearchEntity, Profile, ChartData */
 'use strict';
 
 /**
@@ -73,6 +73,14 @@ module.exports = _.merge({}, SubResearchEntity, {
         },
         jobTitle: {
             type: 'STRING'
+        },
+        displayName: {
+            type: 'STRING',
+            defaultsTo: ""
+        },
+        displaySurname: {
+            type: 'STRING',
+            defaultsTo: ""
         },
         researchEntity: {
             columnName: 'research_entity',
@@ -150,10 +158,6 @@ module.exports = _.merge({}, SubResearchEntity, {
             collection: 'jwt',
             via: 'owner'
         },
-        collaborations: {
-            collection: 'collaboration',
-            via: 'user'
-        },
         aliases: {
             collection: 'alias',
             via: 'user'
@@ -190,6 +194,7 @@ module.exports = _.merge({}, SubResearchEntity, {
             type: "BOOLEAN",
             defaultsTo: false
         },
+        contractEndDate: 'datetime',
         getAliases: async function () {
             const aliases = await Alias.find({user: this.id});
             if (!aliases)
@@ -228,12 +233,6 @@ module.exports = _.merge({}, SubResearchEntity, {
         user.slug = slug;
         return user;
     },
-    // Search for this function
-    // Create incompleteUser function
-    // Change login
-    // 1) user and auth exists
-    // 2) user exists, auth doesn't exists => create auth
-    // 3) user and auth doesn't exsist,do both
     createUserWithoutAuth: async (newUser) => {
         // Lowercase email
         newUser.username = _.toLower(newUser.username);
@@ -303,22 +302,49 @@ module.exports = _.merge({}, SubResearchEntity, {
             user: user.id,
             str: alias1
         });
-        if (alias1 !== alias2)
+
+        if (alias1 !== alias2) {
             aliases.push({
                 user: user.id,
                 str: alias2
             });
+        }
 
-        aliases.filter(alias => {
-            const foundAlias = Alias.find(alias);
-            if (foundAlias) {
-                return false;
+        if (
+            _.has(user, 'displayName') &&
+            _.has(user, 'displaySurname') &&
+            !_.isEmpty(user.displayName) &&
+            !_.isEmpty(user.displaySurname)
+        ) {
+            const displayNameInitials = user.displayName.split(' ').map(n => n[0]).join('.') + '.';
+            const alias3 = capitalizeAll(user.displaySurname + ' ' + displayNameInitials, separators);
+            const alias4 = capitalizeAll(user.displaySurname.replace(' ', '-') + ' ' + displayNameInitials, separators);
+
+            if (alias3 !== alias1 && alias3 !== alias2) {
+                aliases.push({
+                    user: user.id,
+                    str: alias3
+                });
             }
-            return alias;
-        });
 
-        if (!_.isEmpty(aliases)) {
-            await Alias.create(aliases);
+            if (alias4 !== alias1 && alias4 !== alias2 && alias4 !== alias3) {
+                aliases.push({
+                    user: user.id,
+                    str: alias4
+                });
+            }
+        }
+
+        const newAliases = [];
+        for (const alias of aliases) {
+            const foundAlias = await Alias.findOne(alias);
+            if (!foundAlias) {
+                newAliases.push(alias);
+            }
+        }
+
+        if (!_.isEmpty(newAliases)) {
+            await Alias.create(newAliases);
         }
     },
     copyAuthData: function (user) {
@@ -573,6 +599,22 @@ module.exports = _.merge({}, SubResearchEntity, {
             await Group.addUserToDefaultGroup(user);
 
         cb();
+    },
+    afterDestroy: async function (destroyedUsers, proceed) {
+        // Loop over destroyed users
+        for (const user of destroyedUsers) {
+
+            // Delete ResearchEntity record of user
+            await ResearchEntity.destroy({ id: user.researchEntity });
+
+            // Delete ChartData record of user
+            await ChartData.destroy({
+                researchEntityType: 'user',
+                researchEntity: user.id
+            });
+        }
+
+        proceed();
     },
     isInternalUser: function (user) {
         return _.endsWith(user.username, '@' + sails.config.scientilla.ldap.domain);

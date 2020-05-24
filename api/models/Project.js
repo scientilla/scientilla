@@ -156,6 +156,12 @@ module.exports = _.merge({}, BaseModel, {
             sails.log.debug(`WARNING Project.getVerifiedCopy found ${copies.length} copies`);
 
         return copies.length > 0 ? copies[0] : false;
+    },
+    async getVerifiedExternal(external) {
+        return await Project.findOne({
+            code:external.code,
+            kind:ResearchItemKinds.VERIFIED
+        });
     }
 });
 

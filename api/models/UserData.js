@@ -1,4 +1,4 @@
-/* global ResearchEntityData */
+/* global ResearchEntityData, User */
 
 "use strict";
 
@@ -10,6 +10,10 @@ module.exports = {
         imported_data: 'JSON',
         user: {
             model: 'user'
+        },
+        active: {
+            type: 'BOOLEAN',
+            defaultsTo: true
         },
         researchEntity: {
             columnName: 'research_entity',
@@ -44,6 +48,7 @@ module.exports = {
             }
 
             profile.id = data.researchEntity;
+            profile.active = data.active;
 
             return profile;
         }

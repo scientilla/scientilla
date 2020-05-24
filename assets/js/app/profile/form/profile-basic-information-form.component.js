@@ -11,9 +11,9 @@
             }
         });
 
-    profileBasicInformationForm.$inject = ['$scope'];
+    profileBasicInformationForm.$inject = ['$scope', 'TextService'];
 
-    function profileBasicInformationForm($scope) {
+    function profileBasicInformationForm($scope, TextService) {
         const vm = this;
 
         vm.basicInformation = [];
@@ -25,6 +25,10 @@
                 vm.profile = profile;
                 setupBasicInformation();
             });
+        };
+
+        vm.joinStrings = function (strings, seperator) {
+            return TextService.joinStrings(strings, seperator);
         };
 
         function setupBasicInformation () {
@@ -60,6 +64,14 @@
                 });
             }
 
+            if (_.has(vm.profile, 'roleCategory.value') && _.has(vm.profile, 'roleCategory.privacy')) {
+                vm.basicInformation.push({
+                    label: 'Role category',
+                    value: vm.profile.roleCategory.value,
+                    model: 'roleCategory'
+                });
+            }
+
             if (_.has(vm.profile, 'phone.value') && _.has(vm.profile, 'phone.privacy')) {
                 vm.basicInformation.push({
                     label: 'Phone',
@@ -68,54 +80,53 @@
                 });
             }
 
-            if (_.has(vm.profile, 'centers') && vm.profile.centers.length > 0) {
+            const directorates = vm.profile.groups.filter(group => group.type === 'Directorate');
+            const researchLines = vm.profile.groups.filter(group => group.type === 'Research Line');
+            const facilities = vm.profile.groups.filter(group => group.type === 'Facility');
+
+            if (directorates.length > 0) {
                 const items = [];
-                for (let i = 0; i < vm.profile.centers.length; i++) {
-                    const center = vm.profile.centers[i];
+                for (const directorate of directorates) {
+                    const groupIndex = vm.profile.groups.findIndex(
+                        group => group.type === 'Directorate' && group.name === directorate.name
+                    );
+
+                    let value = directorate.name;
+                    if (directorate.offices.length > 0) {
+                        value = directorate.name + ' - ' + vm.joinStrings(directorate.offices, ', ');
+                    }
                     items.push({
-                        value: center.name,
-                        privacy: center.privacy,
-                        errors: center.errors,
-                        context: 'centers[' + i + ']',
-                        model: 'centers'
+                        value: value,
+                        privacy: directorate.privacy,
+                        errors: directorate.errors,
+                        context: 'groups[' + groupIndex + ']',
+                        model: 'groups'
                     });
                 }
                 vm.basicInformation.push({
                     type: 'array',
-                    title: 'Centers',
+                    title: 'Directorates & offices',
                     items: items
                 });
             }
 
-            if (_.has(vm.profile, 'facilities') && vm.profile.facilities.length > 0) {
+            if (researchLines.length > 0) {
                 const items = [];
-                for (let i = 0; i < vm.profile.facilities.length; i++) {
-                    const facility = vm.profile.facilities[i];
-                    items.push({
-                        value: facility.name,
-                        privacy: facility.privacy,
-                        errors: facility.errors,
-                        context: 'facilities[' + i + ']',
-                        model: 'facilities'
-                    });
-                }
-                vm.basicInformation.push({
-                    type: 'array',
-                    title: 'Facilities',
-                    items: items
-                });
-            }
+                for (const researchLine of researchLines) {
+                    const groupIndex = vm.profile.groups.findIndex(
+                        group => group.type === 'Research Line' && group.name === researchLine.name
+                    );
 
-            if (_.has(vm.profile, 'researchLines') && vm.profile.researchLines.length > 0) {
-                const items = [];
-                for (let i = 0; i < vm.profile.researchLines.length; i++) {
-                    const researchLine = vm.profile.researchLines[i];
+                    let value = researchLine.name;
+                    if (_.has(researchLine, 'center.name')) {
+                        value = researchLine.name + ' - ' + researchLine.center.name;
+                    }
                     items.push({
-                        value: researchLine.name,
+                        value: value,
                         privacy: researchLine.privacy,
                         errors: researchLine.errors,
-                        context: 'researchLines[' + i + ']',
-                        model: 'researchLines'
+                        context: 'groups[' + groupIndex + ']',
+                        model: 'groups'
                     });
                 }
                 vm.basicInformation.push({
@@ -125,23 +136,31 @@
                 });
             }
 
-            if (
-                _.has(vm.profile, 'directorate.value') &&
-                _.has(vm.profile, 'directorate.privacy')
-            ) {
+            if (facilities.length > 0) {
+                const items = [];
+                for (const facility of facilities) {
+                    const groupIndex = vm.profile.groups.findIndex(
+                        group => group.type === 'Facility' && group.name === facility.name
+                    );
+                    let value = facility.name;
+                    if (_.has(facility, 'center.name')) {
+                        value = facility.name + ' - ' + facility.center.name;
+                    }
+                    items.push({
+                        value: value,
+                        privacy: facility.privacy,
+                        errors: facility.errors,
+                        context: 'groups[' + groupIndex + ']',
+                        model: 'groups'
+                    });
+                }
                 vm.basicInformation.push({
-                    label: 'Directorate',
-                    value: vm.profile.directorate.value,
-                    model: 'directorate'
+                    type: 'array',
+                    title: 'Facilities',
+                    items: items
                 });
-            }
 
-            if (_.has(vm.profile, 'office.value') && _.has(vm.profile, 'office.privacy')) {
-                vm.basicInformation.push({
-                    label: 'Office',
-                    value: vm.profile.office.value,
-                    model: 'office'
-                });
+                console.log(items);
             }
         }
     }

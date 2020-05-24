@@ -1,0 +1,68 @@
+<div class="admin-role-association">
+    <h2>Role association</h2>
+
+    <p><em>This is an overview of associations between the "ruolo_1" that we receive from Pentaho and the
+        "roleCategory" of a user profile. You can add, edit or delete an association.</em></p>
+
+    <table class="table">
+        <tr>
+            <th>Ruolo_1</th>
+            <th>Role category</th>
+            <th>Actions</th>
+        </tr>
+        <tr ng-repeat="association in vm.associations track by $index">
+            <td data-title="Ruolo_1">
+                <div class="form-control disabled" ng-if="!association.editable">
+                    {{ association.originalRole }}
+                </div>
+                <input
+                    type="text"
+                    class="form-control"
+                    ng-model="association.originalRole"
+                    ng-if="association.editable">
+            </td>
+            <td data-title="Role category">
+                <div class="form-control disabled" ng-if="!association.editable">
+                    {{ association.roleCategory }}
+                </div>
+                <input
+                    type="text"
+                    class="form-control"
+                    ng-model="association.roleCategory"
+                    ng-if="association.editable">
+            </td>
+            <td data-title="Actions">
+                <ul class="table-actions">
+                    <li ng-if="!association.editable">
+                        <button class="btn btn-outline-secondary" ng-click="vm.editAssociation($index)">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </li>
+                    <li ng-if="association.editable">
+                        <button class="btn btn-outline-secondary" ng-click="vm.lockAssociation($index)">
+                            <i class="fas fa-lock"></i>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="btn btn-danger" ng-click="vm.deleteAssociation($index)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+    <ul class="associations-actions">
+        <li>
+            <button class="btn btn-primary" ng-click="vm.saveAssociations()">
+                <i class="fa fa-save fa-left"></i>Save associations
+            </button>
+        </li>
+        <li>
+            <button class="btn btn-outline-secondary" ng-click="vm.addAssociation()">
+                <i class="fa fa-plus fa-left"></i>Add association
+            </button>
+        </li>
+    </ul>
+</div>

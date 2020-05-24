@@ -1,0 +1,422 @@
+<p>The response you will receive for getting the profile for all users or for one specific user has the same
+    structure except that the array with profile objects in the response for one specific user will only contain one
+     object for that specific user.</p>
+
+<p>
+    <strong>Response structure</strong><br>
+    This is an overview of all fields that can be inside an user profile object. When a field is empty or not public it will not be visible in the response.
+</p>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Field</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>count</td>
+        <td>Number</td>
+        <td>The number of items.</td>
+    </tr>
+    <tr>
+        <td>items</td>
+        <td>Object[]</td>
+        <td>A list of user profiles (Array of Objects)</td>
+    </tr>
+    <tr>
+        <td class="sub">username</td>
+        <td>String</td>
+        <td>Email address of the user</td>
+    </tr>
+    <tr>
+        <td class="sub">name</td>
+        <td>String</td>
+        <td>First name of the user</td>
+    </tr>
+    <tr>
+        <td class="sub">surname</td>
+        <td>String</td>
+        <td>Last name of the user</td>
+    </tr>
+    <tr>
+        <td class="sub">jobTitle</td>
+        <td>String</td>
+        <td>Job title of the user</td>
+    </tr><tr>
+        <td class="sub">roleCategory</td>
+        <td>String</td>
+        <td>Role category of the user</td>
+    </tr>
+    <tr>
+        <td class="sub">phone</td>
+        <td>String</td>
+        <td>Phone number of the user</td>
+    </tr>
+    <tr>
+        <td class="sub">groups</td>
+        <td>Object[]</td>
+        <td>List of the groups of the user (Array of Objects)</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">name</td>
+        <td>String</td>
+        <td>Name of the group (related to the type)</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">code</td>
+        <td>String</td>
+        <td>Code of the group (related to the type)</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">type</td>
+        <td>String</td>
+        <td>Type of the group, can be "Research Line", "Facility", "Directorate".</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">center</td>
+        <td>Object</td>
+        <td>Object with center information</td>
+    </tr>
+    <tr>
+        <td class="sub-sub-sub">name</td>
+        <td>String</td>
+        <td>Name of the center</td>
+    </tr>
+    <tr>
+        <td class="sub-sub-sub">code</td>
+        <td>String</td>
+        <td>CDR code of the center</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">offices</td>
+        <td>String[]</td>
+        <td>List of office names (Array of Strings)</td>
+    </tr>
+    <tr>
+        <td class="sub">socials</td>
+        <td>Object</td>
+        <td>Object with social media links of the user</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">linkedin</td>
+        <td>String</td>
+        <td>URL of the linkedin page of the user</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">twitter</td>
+        <td>String</td>
+        <td>URL of the twitter page of the user</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">facebook</td>
+        <td>String</td>
+        <td>URL of the facebook page of the user</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">instagram</td>
+        <td>String</td>
+        <td>URL of the instagram page of the user</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">researchgate</td>
+        <td>String</td>
+        <td>URL of the research gate page of the user</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">github</td>
+        <td>String</td>
+        <td>URL of the github page of the user</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">bitbucket</td>
+        <td>String</td>
+        <td>URL of the bitbucket page of the user</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">youtube</td>
+        <td>String</td>
+        <td>URL of the youtube page of the user</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">flickr</td>
+        <td>String</td>
+        <td>URL of the flickr page of the user</td>
+    </tr>
+    <tr>
+        <td class="sub">image</td>
+        <td>String</td>
+        <td>URL of the user profile image</td>
+    </tr>
+    <tr>
+        <td class="sub">titles</td>
+        <td>String[]</td>
+        <td>List of titles (Array of Strings). The order has been set by the user.</td>
+    </tr>
+    <tr>
+        <td class="sub">description</td>
+        <td>String</td>
+        <td>Description of the user</td>
+    </tr>
+    <tr>
+        <td class="sub">role</td>
+        <td>String</td>
+        <td>Name of the role of the user</td>
+    </tr>
+    <tr>
+        <td class="sub">website</td>
+        <td>String</td>
+        <td>URL of the website of the user</td>
+    </tr>
+    <tr>
+        <td class="sub">address</td>
+        <td>String</td>
+        <td>Address location of the user</td>
+    </tr>
+    <tr>
+        <td class="sub">interests</td>
+        <td>String[]</td>
+        <td>List of interests (Array of Strings). The order has been set by the user.</td>
+    </tr>
+    <tr>
+        <td class="sub">experiencesExternal</td>
+        <td>Object[]</td>
+        <td>List of experiences outside of IIT (Array of Objects). This array is been sorted with from and to date newest on top.</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">jobTitle</td>
+        <td>String</td>
+        <td>Job title of the experience</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">company</td>
+        <td>String</td>
+        <td>Company name of the experience</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">from</td>
+        <td>Timestamp</td>
+        <td>Start date of the experience (ISO 8601), user input format is 'mm/yyyy'</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">to</td>
+        <td>Timestamp</td>
+        <td>End date of the experience (ISO 8601), user input format is 'mm/yyyy', will be deleted if it is the current experience.</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">location</td>
+        <td>String</td>
+        <td>Location of the experience</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">country</td>
+        <td>String</td>
+        <td>Country of the experience</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">jobDescription</td>
+        <td>String</td>
+        <td>Description of the experience</td>
+    </tr>
+    <tr>
+        <td class="sub">education</td>
+        <td>Object[]</td>
+        <td>List of education items (Array of Objects). The order has been set by the user.</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">institute</td>
+        <td>String</td>
+        <td>Institute name of the education item</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">title</td>
+        <td>String</td>
+        <td>Title of the education item</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">from</td>
+        <td>Timestamp</td>
+        <td>Start date of education item (ISO 8601), user input format is 'yyyy'</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">to</td>
+        <td>Timestamp</td>
+        <td>End date of education item (ISO 8601), user input format is 'yyyy', will be deleted if it is the current education.</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">location</td>
+        <td>String</td>
+        <td>Location of education item</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">country</td>
+        <td>String</td>
+        <td>Country of education</td>
+    </tr>
+    <tr>
+        <td class="sub">certificates</td>
+        <td>Object[]</td>
+        <td>List of certificates (Array of Objects). The order has been set by the user.</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">title</td>
+        <td>String</td>
+        <td>Title of the certificate</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">description</td>
+        <td>String</td>
+        <td>Description of the certificate</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">date</td>
+        <td>Timestamp</td>
+        <td>Date of the certificate (ISO 8601), user input format is 'dd/mm/yyyy', will be deleted if no date is been provided.</td>
+    </tr>
+    <tr>
+        <td class="sub-sub-sub">favorite</td>
+        <td>Boolean</td>
+        <td>The certificate is favorite one of the user.</td>
+    </tr>
+    <tr>
+        <td class="sub">skillCategories</td>
+        <td>Object[]</td>
+        <td>List of skill categories of the user (Array of Objects). The order has been set by the user.</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">skills</td>
+        <td>Object[]</td>
+        <td>List of skills of the category</td>
+    </tr>
+    <tr>
+        <td class="sub-sub-sub">value</td>
+        <td>String</td>
+        <td>Name of the skill</td>
+    </tr>
+    <tr>
+        <td class="sub-sub-sub">favorite</td>
+        <td>Boolean</td>
+        <td>The skill is a favorite one of the user.</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">categoryName</td>
+        <td>String</td>
+        <td>Name of the skill category</td>
+    </tr>
+    <tr>
+        <td class="sub">hidden</td>
+        <td>Boolean</td>
+        <td>The profile is hidden (true) or visible (false).</td>
+    </tr>
+    <tr>
+        <td class="sub">publicWebsite</td>
+        <td>Object</td>
+        <td>Personal settings of the user regarding the public website</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">favoritePublications</td>
+        <td>Boolean</td>
+        <td>Value to show a section with favorite publications on the public website</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">allPublications</td>
+        <td>Boolean</td>
+        <td>Value to show a section with publications on the public website</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">disseminationTalks</td>
+        <td>Boolean</td>
+        <td>Value to show a section with dissemination talks on the public website</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">scientificTalks</td>
+        <td>Boolean</td>
+        <td>Value to show a section with scientific talks on the public website</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">oralPresentations</td>
+        <td>Boolean</td>
+        <td>Value to show a section with oral presentations on the public website</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">awardAchievement</td>
+        <td>Boolean</td>
+        <td>Value to show a section with achievements of type award on the public website</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">organizedEvent</td>
+        <td>Boolean</td>
+        <td>Value to show a section with organized events on the public website</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">editorship</td>
+        <td>Boolean</td>
+        <td>Value to show a section of editorship on the public website</td>
+    </tr>
+    <tr>
+        <td class="sub">experiences</td>
+        <td>Object[]</td>
+        <td>List of experiences within and outside of IIT (Array of Objects). Although for the moment it will only be the experiences outside of IIT due privacy settings. This array is been sorted with from and to date newest on top.</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">jobTitle</td>
+        <td>String</td>
+        <td>Job title of the experience</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">company</td>
+        <td>String</td>
+        <td>Company name of the experience</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">from</td>
+        <td>Timestamp</td>
+        <td>Start date of the experience (ISO 8601), user input format is 'mm/yyyy'</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">to</td>
+        <td>Timestamp</td>
+        <td>End date of the experience (ISO 8601), user input format is 'mm/yyyy', will be deleted if it is the current experience.</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">location</td>
+        <td>String</td>
+        <td>Location of the experience</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">country</td>
+        <td>String</td>
+        <td>Country of the experience</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">jobDescription</td>
+        <td>String</td>
+        <td>Description of the experience</td>
+    </tr>
+    <tr>
+        <td class="sub">id</td>
+        <td>Number</td>
+        <td>The users research entity ID</td>
+    </tr>
+    <tr>
+        <td class="sub">active</td>
+        <td>Boolean</td>
+        <td>The user is a current employee (true) or a former employee (false).</td>
+    </tr>
+</table>
+
+<p>
+    <strong>Not public profile</strong><br>
+    When a profile is not public you will receive an object with just two properties:
+</p>
+
+<pre>
+    <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"id": 3244<br>&nbsp;&nbsp;&nbsp;&nbsp;"hidden": true<br>}</code>
+</pre>
+
+<p>
+    <strong>Example</strong><br>
+    An example of a public profile can be like:
+</p>
+<pre>
+    <code>{<br>&nbsp;&nbsp;&nbsp;&nbsp;"count": 1,<br>&nbsp;&nbsp;&nbsp;&nbsp;"items": [<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"username": "john.doe@iit.it",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"name": "John",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"surname": "Doe",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"jobTitle": "Research Support Administrative Senior",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"directorate": "Research Organization Directorate",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"office": "Data Analysis Office",<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"publicWebsite": {<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"favoritePublications": true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"allPublications": true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"disseminationTalks": true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"scientificTalks": true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"oralPresentations": true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"awardAchievement": true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"organizedEvent": true,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"editorship": true<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;},<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": 2295,<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"active": false<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>&nbsp;&nbsp;&nbsp;&nbsp;]<br>}</code>
+</pre>

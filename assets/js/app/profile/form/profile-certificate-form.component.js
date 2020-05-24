@@ -19,7 +19,7 @@
     function profileCertificateForm(ProfileService, $scope) {
         const vm = this;
 
-        vm.open = [];
+        vm.open = false;
         vm.datePickerOptions = [];
 
         let certificateWatcher;

@@ -78,7 +78,7 @@
 
         function getVerfiedNames() {
             return vm.accomplishment.verifiedGroups.map(g => '- <b>' + g.name + '</b>')
-                .concat(vm.accomplishment.verifiedUsers.map(a => '- ' + a.name + ' ' + a.surname));
+                .concat(vm.accomplishment.verifiedUsers.map(a =>  '- ' + a.getDisplayName()));
         }
 
         function changePrivacy() {
