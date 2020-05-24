@@ -265,14 +265,14 @@ module.exports = _.merge({}, BaseModel, {
         }
         return await DocumentDuplicate.find(duplicateCondition);
     },
-    makeInternalRequest: async function (subResearchEntityModel, researchEntitySearchCriteria, baseUrl, qs, attribute) {
+    makeInternalRequest: async function (subResearchEntityModel, researchEntitySearchCriteria, baseUrl, qs, attribute, skipPopulate) {
         const subResearchEntity = await subResearchEntityModel.findOne(researchEntitySearchCriteria);
         if (!subResearchEntity)
             return {
                 error: "404 not found",
                 item: researchEntitySearchCriteria
             };
-        const subResearchEntityAttributes=[
+        const subResearchEntityAttributes = [
             'publications',
             'highImpactPublications',
             'documents',
@@ -282,12 +282,14 @@ module.exports = _.merge({}, BaseModel, {
             'oralPresentations',
             'userData'
         ];
-        const path = (subResearchEntityAttributes.includes(attribute))?
-            `/api/v1/${subResearchEntity.getUrlSection()}/${subResearchEntity.id}/${attribute}`:
+        const path = (subResearchEntityAttributes.includes(attribute)) ?
+            `/api/v1/${subResearchEntity.getUrlSection()}/${subResearchEntity.id}/${attribute}` :
             `/api/v1/researchentities/${subResearchEntity.researchEntity}/${attribute}`;
-        if (!_.isArray(qs.populate)) qs.populate = [qs.populate];
-        qs.populate = _.union(['source', 'affiliations', 'authorships', 'institutes', 'openaireMetadata'], qs.populate);
-        qs.populate = _.union(['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'], qs.populate);
+        if (!skipPopulate) {
+            if (!_.isArray(qs.populate)) qs.populate = [qs.populate];
+            qs.populate = _.union(['source', 'affiliations', 'authorships', 'institutes', 'openaireMetadata'], qs.populate);
+            qs.populate = _.union(['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'], qs.populate);
+        }
         const reqOptions = {
             uri: baseUrl + path,
             json: true,
