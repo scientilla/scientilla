@@ -696,8 +696,8 @@ async function importUserContracts(email = defaultEmail) {
                 }
 
                 if (userIsBeenChanged(user, userObject)) {
-                    await User.update({ id: user.id }, userObject);
-                    user = await User.findOne({ id: user.id });
+                    await User.update({id: user.id}, userObject);
+                    user = await User.findOne({id: user.id});
 
                     if (displayNamesAreChanged) {
                         await User.createAliases(user);
@@ -1371,10 +1371,10 @@ async function importUserHistoryContracts(email = defaultEmail) {
                     if (!_.isNull(user.contractEndDate)) {
                         userObject.contractEndDate = null;
                         await User.update(
-                            { id: user.id },
+                            {id: user.id},
                             userObject
                         );
-                        user = await User.findOne({ id: user.id });
+                        user = await User.findOne({id: user.id});
                         sails.log.info('The contract end date of the user is been removed.');
                         updatedContractEndDate.push(user);
                     }
@@ -1384,10 +1384,10 @@ async function importUserHistoryContracts(email = defaultEmail) {
                     if (_.isNull(user.contractEndDate) || !moment(user.contractEndDate).isSame(contractEndDate)) {
                         userObject.contractEndDate = contractEndDate.format();
                         await User.update(
-                            { id: user.id },
+                            {id: user.id},
                             userObject
                         );
-                        user = await User.findOne({ id: user.id });
+                        user = await User.findOne({id: user.id});
                         sails.log.info('The contract end date is been updated to ' + contractEndDate.format());
                         updatedContractEndDate.push(user);
                     }
@@ -1395,7 +1395,7 @@ async function importUserHistoryContracts(email = defaultEmail) {
 
                 if (active !== user.active) {
                     await User.update(
-                        { id: user.id },
+                        {id: user.id},
                         userObject
                     );
                     user = await User.findOne({id: user.id});
@@ -1405,10 +1405,10 @@ async function importUserHistoryContracts(email = defaultEmail) {
 
                 if (user.displayName !== userCard.nome_AD || user.displaySurname !== userCard.cognome_AD) {
                     await User.update(
-                        { id: user.id },
+                        {id: user.id},
                         userObject
                     );
-                    user = await User.findOne({ id: user.id });
+                    user = await User.findOne({id: user.id});
                     await User.createAliases(user);
 
                     sails.log.info('The display names are been updated to: ' + user.displayName + ' ' + user.displaySurname);
@@ -1628,10 +1628,10 @@ async function importProjects() {
 
     const membersSchema = {
         email: 'email',
-        role: (obj) => obj.flag_pi ? 'pi' : obj.flag_copi ? 'co_pi' : 'member',
+        role: obj => obj.flag_pi ? 'pi' : obj.flag_copi ? 'co_pi' : 'member',
         contributionPercentage: 'contribution_percentage',
         contributionObtained: 'contribution_obtained',
-        "annualContribution": (obj) => mapObectsArray(
+        "annualContribution": obj => mapObectsArray(
             obj.annual_contribution,
             annualContributionSchema
         )
@@ -1640,10 +1640,10 @@ async function importProjects() {
         code: 'cdr',
         startDate: 'start_date',
         endDate: 'end_date',
-        role: (obj) => obj.flag_pi ? 'pi' : obj.flag_copi ? 'co_pi' : 'member',
+        role: obj => obj.flag_pi ? 'pi' : obj.flag_copi ? 'co_pi' : 'member',
         contribution: 'contribution',
         contributionObtained: 'contribution_obtained',
-        "annualContribution": (obj) => mapObectsArray(
+        "annualContribution": obj => mapObectsArray(
             obj.annual_contribution,
             annualContributionSchema
         )
@@ -1652,7 +1652,7 @@ async function importProjects() {
         description: 'description',
         budget: 'budget',
         contribution: 'contribution',
-        "annualContribution": (obj) => mapObectsArray(
+        "annualContribution": obj => mapObectsArray(
             obj.annual_contribution,
             annualContributionSchema
         )
@@ -1677,10 +1677,10 @@ async function importProjects() {
             instituteRole: 'project_role',
             partnersNumber: 'partners_count',
             url: 'moniit_url',
-            partners: (obj) => mapObectsArray(obj.partners, partnersSchema),
-            members: (obj) => mapObectsArray(obj.members, membersSchema),
-            researchLines: (obj) => mapObectsArray(obj.lines, researchLinesSchema),
-            logos: (obj) => mapObectsArray(obj.logos,
+            partners: obj => mapObectsArray(obj.partners, partnersSchema),
+            members: obj => mapObectsArray(obj.members, membersSchema),
+            researchLines: obj => mapObectsArray(obj.lines, researchLinesSchema),
+            logos: obj => mapObectsArray(obj.logos,
                 {
                     name: 'name',
                     description: 'description',
@@ -1698,8 +1698,8 @@ async function importProjects() {
             endDate: 'end_date',
             contribution: 'contribution',
             url: 'moniit_url',
-            members: (obj) => mapObectsArray(obj.members, membersSchema),
-            researchLines: (obj) => mapObectsArray(obj.lines, researchLinesSchema)
+            members: obj => mapObectsArray(obj.members, membersSchema),
+            researchLines: obj => mapObectsArray(obj.lines, researchLinesSchema)
         }
     }
 
@@ -1857,7 +1857,7 @@ async function importProjects() {
         sails.log.info(`removed ${unverify} old verifications`);
         if (errors.length) {
             sails.log.debug(`but there were ${errors.length} errors:`);
-            sails.log.debug(JSON.stringify(errors));
+            sails.log.debug(JSON.stringify(errors[0]));
         }
     }
 }

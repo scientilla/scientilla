@@ -89,10 +89,15 @@ module.exports = _.merge({}, BaseModel, {
             project.pi = project.members
                 .filter(m => ['pi', 'co_pi'].includes(m.role))
                 .map(m => ({
-                    email: m.email
+                    email: m.email,
+                    name: m.name,
+                    surname: m.surname
                 }));
-            project.lines = project.researchLines.map(rl => rl.code)
-            project.searchPi = project.pi.map(p => p.email).join(',');
+            project.lines = project.researchLines.map(rl => ({
+                code: rl.code,
+                description: rl.description
+            }));
+            project.searchPi = project.pi.map(p => `${p.email}-${p.name} ${p.surname}`).join(',');
             delete project.projectData;
             delete project.members;
             delete project.researchLines;

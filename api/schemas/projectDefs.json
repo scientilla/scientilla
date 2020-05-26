@@ -60,6 +60,12 @@
               }
             ]
           },
+          "name": {
+            "type": "string"
+          },
+          "surname": {
+            "type": "string"
+          },
           "role": {
             "enum": [
               "pi",
@@ -88,6 +94,9 @@
         "type": "object",
         "properties": {
           "code": {
+            "type": "string"
+          },
+          "description": {
             "type": "string"
           },
           "startDate": {
