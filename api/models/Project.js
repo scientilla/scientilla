@@ -1,6 +1,8 @@
 /* global require, Project,ResearchItemTypes, ResearchItemProjectCompetitive, ResearchItemProjectIndustrial, ResearchItemKinds  */
 'use strict';
 
+const _ = require('lodash');
+
 const BaseModel = require("../lib/BaseModel.js");
 
 const fields = [
@@ -11,8 +13,8 @@ const fields = [
     'acronym',
     'title',
     'abstract',
-    'instituteStartDate',
-    'instituteEndDate',
+    'startDate',
+    'endDate',
     'projectType',
     'role',
     'status',
@@ -98,9 +100,6 @@ module.exports = _.merge({}, BaseModel, {
                 description: rl.description
             }));
             project.searchPi = project.pi.map(p => `${p.email}-${p.name} ${p.surname}`).join(',');
-            delete project.projectData;
-            delete project.members;
-            delete project.researchLines;
             return project
         }
     },
@@ -153,6 +152,9 @@ module.exports = _.merge({}, BaseModel, {
         fields.forEach(f => projectData[f] = project[f]);
         delete projectData.draftCreator;
         delete projectData.projectData;
+        delete projectData.members;
+        delete projectData.researchLines;
+        delete projectData.logos;
         projectData.kind = ResearchItemKinds.VERIFIED;
 
         const copies = await Project.find(projectData);
