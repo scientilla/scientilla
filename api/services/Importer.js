@@ -1628,6 +1628,8 @@ async function importProjects() {
 
     const membersSchema = {
         email: 'email',
+        name: 'firstname',
+        surname: 'lastname',
         role: obj => obj.flag_pi ? 'pi' : obj.flag_copi ? 'co_pi' : 'member',
         contributionPercentage: 'contribution_percentage',
         contributionObtained: 'contribution_obtained',
@@ -1638,6 +1640,7 @@ async function importProjects() {
     };
     const researchLinesSchema = {
         code: 'cdr',
+        description:'cdr_description',
         startDate: 'start_date',
         endDate: 'end_date',
         role: obj => obj.flag_pi ? 'pi' : obj.flag_copi ? 'co_pi' : 'member',
@@ -1664,7 +1667,7 @@ async function importProjects() {
             acronym: 'acronym',
             title: 'title',
             abstract: 'abstract',
-            type: 'project_type',
+            type: 'project_type_2',
             status: 'project_state',
             startDate: 'start_date',
             endDate: 'end_date',
