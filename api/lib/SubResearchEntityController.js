@@ -146,7 +146,7 @@ module.exports = {
     getFavoritePublications: async (req, res) => makePublicAPIrequest(req, res, 'favoritePublications'),
     getOralPresentations: async (req, res) => makePublicAPIrequest(req, res, 'oralPresentations'),
     getAccomplishments: async (req, res) => makePublicAPIrequest(req, res, 'accomplishments'),
-    getProjects: async (req, res) => makePublicAPIrequest(req, res, 'projects', true),
+    getProjects: async (req, res) => makePublicAPIrequest(req, res, 'publicprojects', true),
     getPublicProfile: async (req, res) => makePublicAPIrequest(req, res, 'userData')
 };
 

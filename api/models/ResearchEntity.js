@@ -1,13 +1,8 @@
 /* global require, ResearchEntity, User, Alias, Discarded */
 'use strict';
 
-
 const _ = require("lodash");
 const BaseModel = require("../lib/BaseModel.js");
-
-const fields = [
-    {name: 'type'}
-];
 
 module.exports = _.merge({}, BaseModel, {
     tableName: 'research_entity',
@@ -48,6 +43,10 @@ module.exports = _.merge({}, BaseModel, {
         projects: {
             collection: 'project',
             through: 'projectverify'
+        },
+        publicProjects: {
+            collection: 'publicproject',
+            through: 'publicprojectverify'
         },
         isGroup() {
             return this.type === 'group';
