@@ -58,7 +58,6 @@ module.exports = _.merge({}, BaseModel, {
                 description: rl.description
             }));
             project.searchPi = project.pi.map(p => `${p.email}-${p.name} ${p.surname}`).join(',');
-            project.type = ResearchItemTypes.getType(project.type);
             delete project.projectData;
             delete project.members;
             delete project.researchLines;
