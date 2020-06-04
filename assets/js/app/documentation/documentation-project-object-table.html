@@ -1,0 +1,180 @@
+<p>The response you will receive for getting the profile for all users or for one specific user has the same
+    structure except that the array with profile objects in the response for one specific user will only contain one
+     object for that specific user.</p>
+
+<p>
+    <strong>Response structure</strong><br>
+    This is an overview of all fields that can be inside an user profile object. When a field is empty or not public it will not be visible in the response.
+</p>
+
+<table class="table table-bordered">
+    <tr>
+        <th>Field</th>
+        <th>Type</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>count</td>
+        <td>Number</td>
+        <td>The number of items.</td>
+    </tr>
+    <tr>
+        <td>items</td>
+        <td>Object[]</td>
+        <td>A list of projects (Array of Objects)</td>
+    </tr>
+    <tr>
+        <td class="sub">type</td>
+        <td>Object</td>
+        <td>Type of the research item, 4:competitive, 5:industrial</td>
+    </tr>
+    <tr>
+        <td class="sub">code</td>
+        <td>String</td>
+        <td>The code of the project</td>
+    </tr>
+    <tr>
+        <td class="sub">acronym</td>
+        <td>String</td>
+        <td>The acronym of the project</td>
+    </tr>
+    <tr>
+        <td class="sub">title</td>
+        <td>String</td>
+        <td>The title of the project</td>
+    </tr>
+    <tr>
+        <td class="sub">abstract</td>
+        <td>String</td>
+        <td>The abstract of the project</td>
+    </tr>
+    <tr>
+        <td class="sub">role</td>
+        <td>String</td>
+        <td>The role of the institute in this project</td>
+    </tr>
+    <tr>
+        <td class="sub">status</td>
+        <td>String</td>
+        <td>The status of the project</td>
+    </tr>
+    <tr>
+        <td class="sub">url</td>
+        <td>String</td>
+        <td>The url of the project in the administrative software</td>
+    </tr>
+    <tr>
+        <td class="sub">logos</td>
+        <td>Object[]</td>
+        <td>The array of logos</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">name</td>
+        <td>String</td>
+        <td>Name of the logo</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">description</td>
+        <td>String</td>
+        <td>Description of the logo</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">image</td>
+        <td>String</td>
+        <td>Base64 encoded image of the logo</td>
+    </tr>
+    <tr>
+        <td class="sub">startDate</td>
+        <td>Date</td>
+        <td>The start date of the project</td>
+    </tr>
+    <tr>
+        <td class="sub">endDate</td>
+        <td>Date</td>
+        <td>The end date of the project</td>
+    </tr>
+    <tr>
+        <td class="sub">projectType</td>
+        <td>String</td>
+        <td>The official type of the project</td>
+    </tr>
+    <tr>
+        <td class="sub">pi</td>
+        <td>Object[]</td>
+        <td>The list of pi of the project</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">email</td>
+        <td>String</td>
+        <td>The email of the pi</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">name</td>
+        <td>String</td>
+        <td>The name of the pi</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">surname</td>
+        <td>String</td>
+        <td>the surname of the pi</td>
+    </tr>
+    <tr>
+        <td class="sub">lines</td>
+        <td>Object[]</td>
+        <td>The list of the research lines involved</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">code</td>
+        <td>String</td>
+        <td>The code/CDR of the research line</td>
+    </tr>
+    <tr>
+        <td class="sub-sub">description</td>
+        <td>String</td>
+        <td>The name of the research line</td>
+    </tr>
+</table>
+
+<p>
+    <strong>Example</strong><br>
+    An example of a public profile can be like:
+</p>
+<pre>
+    <code>{
+  "count": 641,
+  "items": [
+    {
+      "type": {
+        "key": "project_competitive",
+        "label": "Competitive Project",
+        "type": "project",
+        "id": 4,
+        "createdAt": "2020-05-13T02:27:44.000Z",
+        "updatedAt": "2020-05-13T02:27:44.000Z",
+        "shortLabel": "CP"
+      },
+      "code": "EPNZ0003",
+      "acronym": "MIN SALUTE 2009 MEDINI",
+      "title": "Canali ionici neuronali ed epilessia: meccanismi patogenetici e nuove strategie terapeutiche mediante \"RNA inteference\" (RNAi)",
+      "abstract": "",
+      "role": "partner",
+      "status": "ended",
+      "url": "http://....",
+      "logos": [],
+      "id": 14143,
+      "startDate": "2009-05-01",
+      "endDate": "2013-07-01",
+      "projectType": "Min. Salute",
+      "pi": [
+        {
+          "email": "Paolo.Medini@iit.it",
+          "name": "Paolo",
+          "surname": "Medini"
+        }
+      ],
+      "lines": [],
+      "searchPi": "Paolo.Medini@iit.it-Paolo Medini"
+    },
+        ...
+    </code>
+</pre>
