@@ -1,11 +1,12 @@
 .sidebar-container{
     width: 250px;
     padding-right: 3rem;
+    position: fixed;
+    display: block;
 }
 
 @include media-breakpoint-down(sm){
     .sidebar-container{
-        position: fixed;
         top: 0px;
         left: -300px;
         z-index: 10;
