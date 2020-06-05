@@ -17,6 +17,9 @@
     "type": {
       "type": "string"
     },
+    "type2": {
+      "type": "string"
+    },
     "status": {
       "type": "string"
     },
