@@ -141,11 +141,20 @@
                         projects of the research entity.
                     </p>
                     <p>
-                        To get IIT projects use the group endopoint and use <i>istituto-italiano-di-tecnologia</i> as slug or <i>IIT1.01DS</i> as code
+                        To get IIT projects use the group endopoint and use <i>istituto-italiano-di-tecnologia</i> as
+                        slug or <i>IIT1.01DS</i> as code
                     </p>
-                    <p><strong>Query options</strong></p>
-                    <p>
-                        To query
+                    <p><strong>Query</strong></p>
+                    <p>Here some examples to query the API (the where json should be URL encoded)</p>
+                    <p>To get the elements where projectType equals <code>?projectType=fd</code></p>
+                    <p>To get the elements where projectType contains fd
+                        <code>?where={projectType:{contains:'fd'}}</code></p>
+                    <p>To search a word in the title and abstract <code>?where={or:[title:{contains:'a'},abstract:{contains:'a'}]}</code>
+                    </p>
+                    <p>To search for a pi and co-pi <code>?where={piStr:{contains:'name'}}</code></p>
+                    <p>To search for a specific status <code>?status=working</code> or <code>?status=ended</code></p>
+                    <p>To filter by year range <code>?where={yearFrom:{'>=':'2010'},yearTo:{'<=':2020}}</code></p>
+                    <p>To filter by role <code>?role=coordinator</code></p>
                     </p>
 
                     <bearer-token></bearer-token>
@@ -154,10 +163,10 @@
                 <li id="get-projects-of-specific-group">
                     <h3>Get the projects of a specific group</h3>
                     <pre data-type="get">
-                        <code>/api/v1/groups/slug/{slug}/projects</code>
+                        <code>/api/v1/groups/slug/{slug}/competitive-projects</code>
                     </pre>
                     <pre data-type="get">
-                        <code>/api/v1/groups/code/{code/cdr}/projects</code>
+                        <code>/api/v1/groups/code/{code/cdr}/competitive-projects</code>
                     </pre>
 
                     <p><strong>Success response</strong></p>
@@ -167,7 +176,7 @@
                 <li id="get-projects-of-specific-user">
                     <h3>Get the projects of a specific user</h3>
                     <pre data-type="get">
-                        <code>/api/v1/users/username/{email}/projects</code>
+                        <code>/api/v1/users/username/{email}/competitive-projects</code>
                     </pre>
 
                     <p><strong>Success response</strong></p>
