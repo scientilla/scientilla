@@ -121,7 +121,8 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/users/username/:username/favorite-publications']: 'User.getFavoritePublications',
     ['get ' + apiPrfx + '/users/username/:username/oral-presentations']: 'User.getOralPresentations',
     ['get ' + apiPrfx + '/users/username/:username/accomplishments']: 'User.getAccomplishments',
-    ['get ' + apiPrfx + '/users/username/:username/projects']: 'User.getProjects',
+    ['get ' + apiPrfx + '/users/username/:username/competitive-projects']: 'User.getCompetitiveProjects',
+    ['get ' + apiPrfx + '/users/username/:username/industrial-projects']: 'User.getIndustrialProjects',
     ['get ' + apiPrfx + '/users/username/:username/profile']: 'User.getPublicProfile',
     ['get ' + apiPrfx + '/users/username/:username/profile-image']: 'userData.getProfileImage',
 
@@ -132,7 +133,8 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/groups/slug/:slug/scientific-talks']: 'Group.getScientificTalks',
     ['get ' + apiPrfx + '/groups/slug/:slug/favorite-publications']: 'Group.getFavoritePublications',
     ['get ' + apiPrfx + '/groups/slug/:slug/accomplishments']: 'Group.getAccomplishments',
-    ['get ' + apiPrfx + '/groups/slug/:slug/projects']: 'Group.getProjects',
+    ['get ' + apiPrfx + '/groups/slug/:slug/competitive-projects']: 'Group.getCompetitiveProjects',
+    ['get ' + apiPrfx + '/groups/slug/:slug/industrial-projects']: 'Group.getIndustrialProjects',
 
     ['get ' + apiPrfx + '/groups/code/:code/publications']: 'Group.getPublications',
     ['get ' + apiPrfx + '/groups/code/:code/high-impact-publications']: 'Group.getHighImpactPublications',
@@ -141,7 +143,8 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/groups/code/:code/scientific-talks']: 'Group.getScientificTalks',
     ['get ' + apiPrfx + '/groups/code/:code/favorite-publications']: 'Group.getFavoritePublications',
     ['get ' + apiPrfx + '/groups/code/:code/accomplishments']: 'Group.getAccomplishments',
-    ['get ' + apiPrfx + '/groups/code/:code/projects']: 'Group.getProjects',
+    ['get ' + apiPrfx + '/groups/code/:code/competitive-projects']: 'Group.getCompetitiveProjects',
+    ['get ' + apiPrfx + '/groups/code/:code/industrial-projects']: 'Group.getIndustrialProjects',
 
     //Commands
     ['put ' + apiPrfx + '/status/enable']: 'Status.enable',

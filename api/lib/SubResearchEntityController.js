@@ -146,18 +146,20 @@ module.exports = {
     getFavoritePublications: async (req, res) => makePublicAPIrequest(req, res, 'favoritePublications'),
     getOralPresentations: async (req, res) => makePublicAPIrequest(req, res, 'oralPresentations'),
     getAccomplishments: async (req, res) => makePublicAPIrequest(req, res, 'accomplishments'),
-    getProjects: async (req, res) => makePublicAPIrequest(req, res, 'publicprojects', true),
+    getCompetitiveProjects: async (req, res) => makePublicAPIrequest(req, res, 'publicprojects', {type: 4}, true),
+    getIndustrialProjects: async (req, res) => makePublicAPIrequest(req, res, 'publicprojects', {type: 5}, true),
     getPublicProfile: async (req, res) => makePublicAPIrequest(req, res, 'userData')
 };
 
-function makePublicAPIrequest(req, res, attribute, skipPopulate = false) {
+function makePublicAPIrequest(req, res, attribute, query = {}, skipPopulate = false) {
     const researchEntityModel = getModel(req);
     const searchKey = Object.keys(req.params)[0];
     const searchCriteria = {
         [searchKey]: req.params[searchKey]
     };
     const baseUrl = `http://localhost:${sails.config.port}`;
-    res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, baseUrl, req.query, attribute, skipPopulate));
+    const q = Object.assign({}, req.query, query);
+    res.halt(researchEntityModel.makeInternalRequest(researchEntityModel, searchCriteria, baseUrl, q, attribute, skipPopulate));
 }
 
 function getModel(req) {
