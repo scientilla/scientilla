@@ -609,9 +609,6 @@ module.exports = _.merge({}, SubResearchEntity, {
     afterDestroy: async function (destroyedUsers, proceed) {
         // Loop over destroyed users
         for (const user of destroyedUsers) {
-
-            sails.log.debug(user);
-
             // Delete ResearchEntity record of user
             await ResearchEntity.destroy({ id: user.researchEntity });
 

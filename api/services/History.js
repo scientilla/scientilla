@@ -20,10 +20,10 @@ const valueHiddenPrivacy = 'hidden';
 async function removeData() {
     // Delete all users without any documents and accomplishments
     const userIdsWithoutDocumentsAndAccomplishments = await Analyser.searchForUsersWithoutDocumentsAndAccomplishments();
-    await User.destroy({ id: userIdsWithoutDocumentsAndAccomplishments });
+    await User.destroy({id: userIdsWithoutDocumentsAndAccomplishments});
 
     // Delete all memberships where synchromized = true
-    await Membership.destroy({ synchronized: true });
+    await Membership.destroy({synchronized: true});
 }
 
 async function importContracts(email = defaultEmail) {
@@ -105,7 +105,7 @@ async function importContracts(email = defaultEmail) {
             // We update the current membership
             if (membershipOfGroup) {
                 const updatedMembership = await Membership.update(
-                    { id: membershipOfGroup.id },
+                    {id: membershipOfGroup.id},
                     {
                         lastsynch: moment().utc().format(),
                         active: active,
@@ -287,11 +287,11 @@ async function importContracts(email = defaultEmail) {
             const steps = contract.step;
 
             // First try to get the user by the CID code
-            let user = await User.findOne({ cid: contract.cid });
+            let user = await User.findOne({cid: contract.cid});
 
             // If the user is not found with the CID code, try with the email
             if (!user && !_.isEmpty(employee.email)) {
-                user = await User.findOne({ username: employee.email });
+                user = await User.findOne({username: employee.email});
             }
 
             // If the user is not found with the email, try with name and surname
@@ -441,7 +441,7 @@ async function importContracts(email = defaultEmail) {
                     }
 
                     user = await User.createUserWithoutAuth(userObject);
-                    user = await User.findOne({ id: user.id });
+                    user = await User.findOne({id: user.id});
                     sails.log.info('New user created with data: ' + JSON.stringify(userObject));
 
                     createdUsers.push(user);
@@ -483,10 +483,10 @@ async function importContracts(email = defaultEmail) {
                 }
 
                 await User.update(
-                    { id: user.id },
+                    {id: user.id},
                     userObject
                 );
-                user = await User.findOne({ id: user.id });
+                user = await User.findOne({id: user.id});
 
                 if (createAliases) {
                     await User.createAliases(user);
@@ -533,8 +533,8 @@ async function importContracts(email = defaultEmail) {
                         profile.experiencesInternal = handledSteps;
 
                         researchEntityData = await ResearchEntityData.update(
-                            { id: researchEntityData.id },
-                            { profile: JSON.stringify(profile) }
+                            {id: researchEntityData.id},
+                            {profile: JSON.stringify(profile)}
                         );
                         sails.log.info('We created a profile for the user with the internal experiences.');
                         updatedResearchEntityDataItems.push(researchEntityData);
@@ -544,8 +544,8 @@ async function importContracts(email = defaultEmail) {
                             researchEntityData.profile.experiencesInternal = handledSteps;
 
                             researchEntityData = await ResearchEntityData.update(
-                                { id: researchEntityData.id },
-                                { profile: JSON.stringify(researchEntityData.profile) }
+                                {id: researchEntityData.id},
+                                {profile: JSON.stringify(researchEntityData.profile)}
                             );
                             sails.log.info('The internal experiences are been updated!');
                             updatedResearchEntityDataItems.push(researchEntityData);
@@ -578,7 +578,7 @@ async function importContracts(email = defaultEmail) {
     sails.log.info('-----------------------------------------------------------------');
 
     // We cache the groups, membership groups and default profile.
-    const allGroups = await Group.find({ active: true });
+    const allGroups = await Group.find({active: true});
     const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
     const ldapUsers = await Utils.getActiveDirectoryUsers();
 
@@ -659,7 +659,7 @@ async function importContracts(email = defaultEmail) {
     }
 
     for (const user of toBeDeletedUsers) {
-        await User.destroy({ id: user.id });
+        await User.destroy({id: user.id});
     }
 
     sails.log.info('-----------------------------------------------------------------');
