@@ -630,7 +630,7 @@ async function importUserContracts(email = defaultEmail) {
     const reqOptionsEmployees = getEmployeesRequestOptions();
 
     // We cache the groups, membership groups and default profile.
-    const activeGroups = await Group.find({ active: true });
+    const activeGroups = await Group.find({active: true});
     const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
     const ldapUsers = await Utils.getActiveDirectoryUsers();
     const groups = await Group.find();
@@ -666,19 +666,19 @@ async function importUserContracts(email = defaultEmail) {
             })).map(group => group.name);
 
             const filteredGroups = await Group.find({
-                or: groupNamesOfContract.map(name => ({ name: name }))
+                or: groupNamesOfContract.map(name => ({name: name}))
             }).populate('members').populate('administrators');
 
-            let user = await User.findOne({ cid: employee.cid });
+            let user = await User.findOne({cid: employee.cid});
             if (!user) {
-                user = await User.findOne({ username: employee.email });
+                user = await User.findOne({username: employee.email});
             }
             const userObject = createUserObject(ldapUsers, user, employee);
 
             if (!user) {
                 await User.createUserWithoutAuth(userObject);
                 // Search user again to populate ResearchEntity after creation
-                user = await User.findOne({ cid: employee.cid });
+                user = await User.findOne({cid: employee.cid});
                 insertedUsers.push(user);
             } else {
                 let displayNamesAreChanged = false;
@@ -686,8 +686,8 @@ async function importUserContracts(email = defaultEmail) {
                     displayNamesAreChanged = true;
                 }
 
-                await User.update({ id: user.id }, userObject);
-                user = await User.findOne({ id: user.id });
+                await User.update({id: user.id}, userObject);
+                user = await User.findOne({id: user.id});
 
                 if (displayNamesAreChanged) {
                     await User.createAliases(user);
@@ -722,9 +722,9 @@ async function importUserContracts(email = defaultEmail) {
 
             // Activate the membership if the user is an internal user and the membership is not active
             if (User.isInternalUser(user)) {
-                const membership = await Membership.findOne({ group: 1, user: user.id });
+                const membership = await Membership.findOne({group: 1, user: user.id});
                 if (membership && !membership.active) {
-                    await Membership.update({ id: membership.id }, { active: true });
+                    await Membership.update({id: membership.id}, {active: true});
                 }
             }
 
@@ -744,7 +744,7 @@ async function importUserContracts(email = defaultEmail) {
                     }
 
                     researchEntityData = await ResearchEntityData.update(
-                        { id: researchEntityData.id },
+                        {id: researchEntityData.id},
                         {
                             profile: profileJSONString,
                             imported_data: JSON.stringify(employee)
@@ -767,7 +767,7 @@ async function importUserContracts(email = defaultEmail) {
 
         // Select all items where lastsync is before started time and synchronized and active is true
         const condition = {
-            lastsynch: { '<' : startedTime.format() },
+            lastsynch: {'<' : startedTime.format()},
             synchronized: true,
             active: true
         };
@@ -779,20 +779,22 @@ async function importUserContracts(email = defaultEmail) {
 
         // If a specific email is used
         if (email !== defaultEmail) {
-            const user = await User.findOne({ username: email });
-            sails.log.info(_.merge({ user: user.id }, condition));
+            const user = await User.findOne({username: email});
+            sails.log.info(_.merge({user: user.id}, condition));
 
             // Deactivate all memberships of the selected user that aren't in sync
-            disabledSynchronizedMemberships = await Membership.update(_.merge({ user: user.id }, condition), { active: false });
+            disabledSynchronizedMemberships = await Membership.update(_.merge({user: user.id}, condition), {active: false});
 
             // Deactivate the selected user if it's not in sync
-            disabledUsers = await User.update(_.merge({ id: user.id }, condition), { active: false, contractEndDate:  contractEndDate });
+            disabledUsers = await User.update(
+                _.merge({id: user.id}, condition), {active: false, contractEndDate: contractEndDate}
+            );
         } else {
             // Deactivate all memberships of users that aren't in sync
-            disabledSynchronizedMemberships = await Membership.update(condition, { active: false });
+            disabledSynchronizedMemberships = await Membership.update(condition, {active: false});
 
             // Deactivate all users that aren't in sync
-            disabledUsers = await User.update(condition, { active: false, contractEndDate: contractEndDate });
+            disabledUsers = await User.update(condition, {active: false, contractEndDate: contractEndDate});
         }
 
         // Set the membership active to false for the disabled users or user
@@ -800,7 +802,7 @@ async function importUserContracts(email = defaultEmail) {
             synchronized: false,
             user: disabledUsers.map(user => user.id),
             active: true
-        }, { active: false });
+        }, {active: false});
 
         const disabledMemberships = disabledSynchronizedMemberships.length + disabledCollaborations.length;
 
@@ -834,7 +836,7 @@ async function importUserContracts(email = defaultEmail) {
         sails.log.info(disabledMemberships + ' Memberships disabled!');
         if (disabledSynchronizedMemberships.length > 0) {
             await Promise.all(disabledSynchronizedMemberships.map(async membership => {
-                let user = await User.findOne({ id: membership.user });
+                let user = await User.findOne({id: membership.user});
                 if (user) {
                     return user.username;
                 } else {
@@ -846,7 +848,7 @@ async function importUserContracts(email = defaultEmail) {
         }
         if (disabledCollaborations.length > 0) {
             await Promise.all(disabledCollaborations.map(async membership => {
-                let user = await User.findOne({ id: membership.user });
+                let user = await User.findOne({id: membership.user});
                 if (user) {
                     return user.username;
                 } else {
@@ -861,7 +863,7 @@ async function importUserContracts(email = defaultEmail) {
         sails.log.info(updatedResearchEntityDataItems.length + ' ResearchEntityData records updated!');
         if (updatedResearchEntityDataItems.length > 0) {
             await Promise.all(updatedResearchEntityDataItems.map(async item => {
-                let user = await User.findOne({ researchEntity: item.researchEntity });
+                let user = await User.findOne({researchEntity: item.researchEntity});
                 if (user) {
                     return user.username;
                 } else {
@@ -876,7 +878,7 @@ async function importUserContracts(email = defaultEmail) {
         sails.log.info(newResearchEntityDataItems.length + ' ResearchEntityData records created!');
         if (newResearchEntityDataItems.length > 0) {
             await Promise.all(newResearchEntityDataItems.map(async item => {
-                let user = await User.findOne({ researchEntity: item.researchEntity });
+                let user = await User.findOne({researchEntity: item.researchEntity});
                 if (user) {
                     return user.username;
                 } else {
