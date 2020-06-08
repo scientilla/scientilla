@@ -83,7 +83,8 @@ async function getActiveDirectoryUsers() {
     return await new Promise((resolve, reject) => {
         const ldap = require('ldapjs');
         const client = ldap.createClient({
-            url: sails.config.scientilla.ldap.connection.url
+            url: sails.config.scientilla.ldap.connection.url,
+            tlsOptions: sails.config.scientilla.ldap.connection.tlsOptions
         });
         const result = [];
 
