@@ -155,7 +155,7 @@ module.exports.policies = {
         deleteDraft: isResearchEntityOwner,
         verify: isResearchEntityOwner,
         unverify: isResearchEntityOwner,
-        getProfile: isResearchEntityOwner,
+        getProfile: true,
         getEditProfile: isResearchEntityOwner,
         saveProfile: isResearchEntityOwner,
         exportProfile: isResearchEntityOwner
