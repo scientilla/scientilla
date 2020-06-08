@@ -1,25 +1,15 @@
-/* global Importer, ExternalImporter */
+/* global Analyser */
 const Sails = require('sails');
 const _ = require('lodash');
 
 module.exports = function (grunt) {
-    grunt.registerTask('import', function (...args) {
+    grunt.registerTask('analyse', function (...args) {
         const done = this.async();
         Sails.load({hooks: {grunt: false}}, async () => {
             const methods = {
-                'groups': Importer.importGroups,
-                'sources': Importer.importSources,
-                'sourcesMetrics': Importer.importSourceMetrics,
-                'external': {
-                    'user': ExternalImporter.updateUserExternal,
-                    'group': ExternalImporter.updateGroupExternal,
-                    'all': ExternalImporter.updateAllExternal,
-                    'metadata': ExternalImporter.updateMetadata
-                },
-                'users': Importer.importUserContracts,
-                'history-init': History.removeData,
-                'history': History.importContracts,
-                'projects': Importer.importProjects,
+                'ldap': Analyser.searchScientillaUsersInActiveDirectory,
+                'gov': Analyser.searchForGovAndControlUsers,
+                'documents': Analyser.searchForUsersWithoutDocumentsAndAccomplishments
             };
 
             try {

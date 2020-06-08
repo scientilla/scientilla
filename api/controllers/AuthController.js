@@ -25,16 +25,92 @@ module.exports = require('waterlock').waterlocked({
             });
 
     },
-    login: function (req, res) {
-        const login = require('waterlock').actions.waterlocked().login;
+    login: async function (req, res) {
         const username = _.toLower(req.body.username);
-        return Auth
-            .findOneByUsername(username)
-            .then(function (auth) {
-                req.query.type = (!auth || !auth.password) ? 'ldap' : 'local';
-                login(req, res);
-            })
-            .catch(err => res.serverError());
+        const password = req.body.password;
+        const params = {
+            username: username,
+            password: password
+        };
+
+        try {
+            // Find a auth record by username
+            let auth = await Auth.findOneByUsername(username);
+
+            // If there is no record
+            if (!auth) {
+                // Find the current user
+                let user = await User.findOne({ username: username });
+
+                // If there is no user
+                if (!user) {
+                    // Throw a 'User not found!' error and show message to the user.
+                    const errorMessage = 'User not found! Please contact the Data Analysis Office!';
+                    waterlock.cycle.loginFailure(req, res, null, { error: errorMessage });
+                    throw 'User not found!';
+                }
+
+                // If we have a user, we try to attach a auth record to the user
+                await new Promise(function (resolve, reject) {
+                    waterlock.engine.attachAuthToUser(params, user, function (err) {
+                        if (err) {
+                            sails.log.debug('An error happened while creating a auth for the user!');
+                            reject();
+                        } else {
+                            resolve();
+                        }
+                    });
+                });
+
+                // Try to find the auth again
+                auth = await Auth.findOneByUsername(username);
+
+                // If there is still no auth record, we throw an error.
+                if (!auth) {
+                    throw 'Failed to attach auth to user!';
+                }
+            }
+
+            const method = require('waterlock-ldap-auth');
+            const ldap = method.ldap;
+            const connection = method.connection;
+
+            // We check if the credentials are filled in
+            if (typeof params.username === 'undefined' || typeof params.password === 'undefined') {
+                waterlock.cycle.loginFailure(req, res, null, {error: 'Invalid username or password'});
+            } else {
+                // We try to authenticate with the credentials
+                new ldap(connection).authenticate(params.username, params.password, function(err, user) {
+                    // If there is an error we send a message back to the user
+                    if (err) {
+                        waterlock.cycle.loginFailure(req, res, user, {error: 'Invalid username or password'});
+                    } else {
+                        var attr = {
+                            username: params.username,
+                            entryUUID: user.entryUUID,
+                            dn: user.dn
+                        };
+                        _.forOwn(method.attributes, function(fields, oid) {
+                            _.forOwn(fields, function(definition, name) {
+                                if (user.hasOwnProperty(oid)) {
+                                    attr[name] = user[oid];
+                                }
+                            });
+                        });
+                        // We try to match the auth and user
+                        waterlock.engine.findAuth(auth, function(err, user) {
+                            if (err) {
+                                waterlock.cycle.loginFailure(req, res, null, {error: 'User not found!'});
+                            } else {
+                                waterlock.cycle.loginSuccess(req, res, user);
+                            }
+                        });
+                    }
+                });
+            }
+        } catch (e) {
+            return res.serverError();
+        }
     },
     postLogin: function(req, res) {
         res.set('scientilla-logged', req.session.authenticated);
