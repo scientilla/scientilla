@@ -1,3 +1,4 @@
+
 /* global ResearchEntityData, User */
 
 "use strict";
