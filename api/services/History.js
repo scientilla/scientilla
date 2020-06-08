@@ -422,6 +422,8 @@ async function importContracts(email = defaultEmail) {
 
             const userObject = Importer.createUserObject(ldapUsers, user, employee);
 
+            userObject.active = active;
+
             let createAliases = false;
 
             // When the user does not exist
@@ -528,7 +530,7 @@ async function importContracts(email = defaultEmail) {
                     // But the user has no profile
                     if (_.has(researchEntityData, 'profile') && _.isEmpty(researchEntityData.profile)) {
                         // Setup the new profile
-                        const profile = Importer.getProfileObject({}, contract, allMembershipGroups, allGroups);
+                        const profile = Importer.getProfileObject({}, employee, allMembershipGroups, allGroups);
 
                         profile.experiencesInternal = handledSteps;
 
@@ -555,8 +557,8 @@ async function importContracts(email = defaultEmail) {
                     }
                 } else {
                     // Setup the new profile
-                    const profile = Importer.getProfileObject({}, contract, allMembershipGroups, allGroups);
-                    const importedData = _.cloneDeep(contract);
+                    const profile = Importer.getProfileObject({}, employee, allMembershipGroups, allGroups);
+                    const importedData = _.cloneDeep(employee);
                     delete importedData.contract;
 
                     profile.experiencesInternal = handledSteps;
