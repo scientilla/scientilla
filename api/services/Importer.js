@@ -775,10 +775,11 @@ async function importUserContracts(email = defaultEmail) {
         let disabledSynchronizedMemberships,
             disabledUsers;
 
+        const contractEndDate = moment().subtract(1, 'days').endOf('day').format();
+
         // If a specific email is used
         if (email !== defaultEmail) {
             const user = await User.findOne({ username: email });
-            const contractEndDate = moment().subtract(1, 'days').endOf('day').format();
             sails.log.info(_.merge({ user: user.id }, condition));
 
             // Deactivate all memberships of the selected user that aren't in sync
