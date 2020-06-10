@@ -117,11 +117,11 @@ function createUserObject(ldapUsers = [],  user = {}, employee = {}) {
     }
 
     if (_.has(employee, 'nome_AD') && !_.isEmpty(employee.nome_AD)) {
-        userObject.displayName = employee.nome_AD;
+        userObject.display_name = employee.nome_AD;
     }
 
     if (_.has(employee, 'cognome_AD') && !_.isEmpty(employee.cognome_AD)) {
-        userObject.displaySurname = employee.cognome_AD;
+        userObject.display_surname = employee.cognome_AD;
     }
 
     return userObject;
@@ -682,7 +682,7 @@ async function importUserContracts(email = defaultEmail) {
                 insertedUsers.push(user);
             } else {
                 let displayNamesAreChanged = false;
-                if (user.displayName !== employee.nome_AD || user.displaySurname !== employee.cognome_AD) {
+                if (user.display_name !== employee.nome_AD || user.display_surname !== employee.cognome_AD) {
                     displayNamesAreChanged = true;
                 }
 
@@ -691,7 +691,7 @@ async function importUserContracts(email = defaultEmail) {
 
                 if (displayNamesAreChanged) {
                     await User.createAliases(user);
-                    sails.log.info('The display names are been updated to: ' + user.displayName + ' ' + user.displaySurname);
+                    sails.log.info('The display names are been updated to: ' + user.display_name + ' ' + user.display_surname);
                     updatedDisplayNames.push(user);
                 }
 

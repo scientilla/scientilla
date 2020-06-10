@@ -52,8 +52,8 @@
                     surname = '';
 
                 switch (true) {
-                    case !_.isEmpty(this.displayName):
-                        name = this.displayName;
+                    case !_.isEmpty(this.display_name):
+                        name = this.display_name;
                         break;
                     case !_.isEmpty(this.name):
                         name = this.name;

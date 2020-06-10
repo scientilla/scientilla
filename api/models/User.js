@@ -74,11 +74,11 @@ module.exports = _.merge({}, SubResearchEntity, {
         jobTitle: {
             type: 'STRING'
         },
-        displayName: {
+        display_name: {
             type: 'STRING',
             defaultsTo: ""
         },
-        displaySurname: {
+        display_surname: {
             type: 'STRING',
             defaultsTo: ""
         },
@@ -317,14 +317,14 @@ module.exports = _.merge({}, SubResearchEntity, {
         }
 
         if (
-            _.has(user, 'displayName') &&
-            _.has(user, 'displaySurname') &&
-            !_.isEmpty(user.displayName) &&
-            !_.isEmpty(user.displaySurname)
+            _.has(user, 'display_name') &&
+            _.has(user, 'display_surname') &&
+            !_.isEmpty(user.display_name) &&
+            !_.isEmpty(user.display_surname)
         ) {
-            const displayNameInitials = user.displayName.split(' ').map(n => n[0]).join('.') + '.';
-            const alias3 = capitalizeAll(user.displaySurname + ' ' + displayNameInitials, separators);
-            const alias4 = capitalizeAll(user.displaySurname.replace(' ', '-') + ' ' + displayNameInitials, separators);
+            const displayNameInitials = user.display_name.split(' ').map(n => n[0]).join('.') + '.';
+            const alias3 = capitalizeAll(user.display_surname + ' ' + displayNameInitials, separators);
+            const alias4 = capitalizeAll(user.display_surname.replace(' ', '-') + ' ' + displayNameInitials, separators);
 
             if (alias3 !== alias1 && alias3 !== alias2) {
                 aliases.push({

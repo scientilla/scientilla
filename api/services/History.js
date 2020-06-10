@@ -477,7 +477,7 @@ async function importContracts(email = defaultEmail) {
                     updatedActiveUsers.push(user);
                 }
 
-                if (user.displayName !== employee.nome_AD || user.displaySurname !== employee.cognome_AD) {
+                if (user.display_name !== employee.nome_AD || user.display_surname !== employee.cognome_AD) {
                     createAliases = true;
 
                     sails.log.info('The display names are been updated to: ' + employee.nome_AD + ' ' + employee.cognome_AD);
