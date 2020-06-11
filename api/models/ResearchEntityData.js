@@ -1501,8 +1501,8 @@ async function saveProfile(req) {
 
             // Find user and update hasChangedProfile boolean to true if not is already true
             let user = await User.findOne({ researchEntity: researchEntityId });
-            if (user && !user.alreadyChangedProfile) {
-                await User.update({ id: user.id }, { alreadyChangedProfile: true });
+            if (user && !user.already_changed_profile) {
+                await User.update({ id: user.id }, { already_changed_profile: true });
             }
         }
     } catch (e) {

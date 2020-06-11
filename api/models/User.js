@@ -56,7 +56,7 @@ module.exports = _.merge({}, SubResearchEntity, {
             type: "BOOLEAN",
             defaultsTo: false
         },
-        alreadyChangedProfile: {
+        already_changed_profile: {
             type: "BOOLEAN",
             defaultsTo: false
         },

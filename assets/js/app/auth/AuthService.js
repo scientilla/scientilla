@@ -148,8 +148,8 @@
         }
 
         function savedProfile() {
-            if (_.has(service, 'user.alreadyChangedProfile') && !service.user.alreadyChangedProfile) {
-                service.user.alreadyChangedProfile = true;
+            if (_.has(service, 'user.already_changed_profile') && !service.user.already_changed_profile) {
+                service.user.already_changed_profile = true;
             }
         }
     }
