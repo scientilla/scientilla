@@ -89,7 +89,7 @@ function createUserObject(ldapUsers = [],  user = {}, employee = {}) {
         lastsynch: moment().utc().format(),
         active: true,
         synchronized: true,
-        contractEndDate: contractEndDate
+        contract_end_date: contractEndDate
     };
 
     const foundEmployeeEmail = ldapUsers.find(
@@ -787,14 +787,14 @@ async function importUserContracts(email = defaultEmail) {
 
             // Deactivate the selected user if it's not in sync
             disabledUsers = await User.update(
-                _.merge({id: user.id}, condition), {active: false, contractEndDate: contractEndDate}
+                _.merge({id: user.id}, condition), {active: false, contract_end_date: contractEndDate}
             );
         } else {
             // Deactivate all memberships of users that aren't in sync
             disabledSynchronizedMemberships = await Membership.update(condition, {active: false});
 
             // Deactivate all users that aren't in sync
-            disabledUsers = await User.update(condition, {active: false, contractEndDate: contractEndDate});
+            disabledUsers = await User.update(condition, {active: false, contract_end_date: contractEndDate});
         }
 
         // Set the membership active to false for the disabled users or user

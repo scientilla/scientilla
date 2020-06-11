@@ -194,7 +194,7 @@ module.exports = _.merge({}, SubResearchEntity, {
             type: "BOOLEAN",
             defaultsTo: false
         },
-        contractEndDate: 'datetime',
+        contract_end_date: 'datetime',
         cid: {
             type: 'STRING'
         },

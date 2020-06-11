@@ -439,7 +439,7 @@ async function importContracts(email = defaultEmail) {
                     )
                 ) {
                     if (contractEndDate !== null) {
-                        userObject.contractEndDate = contractEndDate.format();
+                        userObject.contract_end_date = contractEndDate.format();
                     }
 
                     user = await User.createUserWithoutAuth(userObject);
@@ -457,16 +457,16 @@ async function importContracts(email = defaultEmail) {
                 // And the user has a permanent contract
                 if (_.isNull(contractEndDate)) {
                     // But is not been set into the database, we update the user.
-                    if (!_.isNull(user.contractEndDate)) {
-                        userObject.contractEndDate = null;
+                    if (!_.isNull(user.contract_end_date)) {
+                        userObject.contract_end_date = null;
                         sails.log.info('The contract end date of the user is been removed.');
                         updatedContractEndDate.push(user);
                     }
                 } else {
                     // When the user doesn't have a permanent contract
                     // And the user doesn't have the same expiresAre value we update it.
-                    if (_.isNull(user.contractEndDate) || !moment(user.contractEndDate).isSame(contractEndDate)) {
-                        userObject.contractEndDate = contractEndDate.format();
+                    if (_.isNull(user.contract_end_date) || !moment(user.contract_end_date).isSame(contractEndDate)) {
+                        userObject.contract_end_date = contractEndDate.format();
                         sails.log.info('The contract end date is been updated to ' + contractEndDate.format());
                         updatedContractEndDate.push(user);
                     }
