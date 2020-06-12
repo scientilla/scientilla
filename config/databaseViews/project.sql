@@ -25,7 +25,7 @@ SELECT ri.id,
        ripc."updatedAt"
 FROM research_item ri
          JOIN research_item_project_competitive ripc ON ri.id = ripc.research_item
-         JOIN (SELECT research_item AS id,
+         LEFT JOIN (SELECT research_item AS id,
                       string_agg(
                               concat(lat.memebers_arr ->> 'email', ' ',
                                      lat.memebers_arr ->> 'name', ' ',
@@ -62,7 +62,7 @@ SELECT ri.id,
        ripi."updatedAt"
 FROM research_item ri
          JOIN research_item_project_industrial ripi on ri.id = ripi.research_item
-         JOIN (SELECT research_item AS id,
+         LEFT JOIN (SELECT research_item AS id,
                       string_agg(
                               concat(lat.memebers_arr ->> 'email', ' ',
                                      lat.memebers_arr ->> 'name', ' ',
