@@ -56,7 +56,7 @@ module.exports = _.merge({}, SubResearchEntity, {
             type: "BOOLEAN",
             defaultsTo: false
         },
-        alreadyChangedProfile: {
+        already_changed_profile: {
             type: "BOOLEAN",
             defaultsTo: false
         },
@@ -74,11 +74,11 @@ module.exports = _.merge({}, SubResearchEntity, {
         jobTitle: {
             type: 'STRING'
         },
-        displayName: {
+        display_name: {
             type: 'STRING',
             defaultsTo: ""
         },
-        displaySurname: {
+        display_surname: {
             type: 'STRING',
             defaultsTo: ""
         },
@@ -194,7 +194,10 @@ module.exports = _.merge({}, SubResearchEntity, {
             type: "BOOLEAN",
             defaultsTo: false
         },
-        contractEndDate: 'datetime',
+        contract_end_date: 'datetime',
+        cid: {
+            type: 'STRING'
+        },
         getAliases: async function () {
             const aliases = await Alias.find({user: this.id});
             if (!aliases)
@@ -276,9 +279,12 @@ module.exports = _.merge({}, SubResearchEntity, {
             });
     },
     checkUsername: async function (user) {
-        const sameUsernameUsers = await User.findByUsername(user.username);
-        if (sameUsernameUsers.length > 0)
-            throw new Error('Username already used');
+        if (!_.isEmpty(user.username)) {
+            const sameUsernameUsers = await User.findByUsername(user.username);
+            if (sameUsernameUsers.length > 0) {
+                throw new Error('Username already used');
+            }
+        }
     },
     createAliases: async function (user) {
         function capitalizeAll(str, wordSeparators) {
@@ -311,14 +317,14 @@ module.exports = _.merge({}, SubResearchEntity, {
         }
 
         if (
-            _.has(user, 'displayName') &&
-            _.has(user, 'displaySurname') &&
-            !_.isEmpty(user.displayName) &&
-            !_.isEmpty(user.displaySurname)
+            _.has(user, 'display_name') &&
+            _.has(user, 'display_surname') &&
+            !_.isEmpty(user.display_name) &&
+            !_.isEmpty(user.display_surname)
         ) {
-            const displayNameInitials = user.displayName.split(' ').map(n => n[0]).join('.') + '.';
-            const alias3 = capitalizeAll(user.displaySurname + ' ' + displayNameInitials, separators);
-            const alias4 = capitalizeAll(user.displaySurname.replace(' ', '-') + ' ' + displayNameInitials, separators);
+            const displayNameInitials = user.display_name.split(' ').map(n => n[0]).join('.') + '.';
+            const alias3 = capitalizeAll(user.display_surname + ' ' + displayNameInitials, separators);
+            const alias4 = capitalizeAll(user.display_surname.replace(' ', '-') + ' ' + displayNameInitials, separators);
 
             if (alias3 !== alias1 && alias3 !== alias2) {
                 aliases.push({
@@ -603,7 +609,6 @@ module.exports = _.merge({}, SubResearchEntity, {
     afterDestroy: async function (destroyedUsers, proceed) {
         // Loop over destroyed users
         for (const user of destroyedUsers) {
-
             // Delete ResearchEntity record of user
             await ResearchEntity.destroy({ id: user.researchEntity });
 

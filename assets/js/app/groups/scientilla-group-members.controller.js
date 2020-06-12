@@ -86,8 +86,8 @@
             const qs = {where: {or: [
                 {name: {contains: searchText}},
                 {surname: {contains: searchText}},
-                {displayName: {contains: searchText}},
-                {displaySurname: {contains: searchText}}
+                {display_name: {contains: searchText}},
+                {display_surname: {contains: searchText}}
             ]}};
             return UsersService.getUsers(qs);
         }

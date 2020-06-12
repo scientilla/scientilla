@@ -1,3 +1,4 @@
+
 /* global ResearchEntityData, User */
 
 "use strict";
@@ -32,6 +33,38 @@ module.exports = {
             }
 
             profile = ResearchEntityData.filterProfile(profile, true);
+            profile.id = data.researchEntity;
+            profile.active = data.active;
+
+            if (!profile.active) {
+                const tmpProfile = {};
+
+                if (_.has(profile, 'username')) {
+                    tmpProfile.username = profile.username;
+                }
+
+                if (_.has(profile, 'name')) {
+                    tmpProfile.name = profile.name;
+                }
+
+                if (_.has(profile, 'surname')) {
+                    tmpProfile.surname = profile.surname;
+                }
+
+                if (_.has(profile, 'groups')) {
+                    tmpProfile.groups = profile.groups;
+                }
+
+                if (_.has(profile, 'id')) {
+                    tmpProfile.id = profile.id;
+                }
+
+                if (_.has(profile, 'active')) {
+                    tmpProfile.active = profile.active;
+                }
+
+                return tmpProfile;
+            }
 
             delete profile.hidden;
             delete profile.export;
@@ -46,9 +79,6 @@ module.exports = {
                     'profile-image'
                 );
             }
-
-            profile.id = data.researchEntity;
-            profile.active = data.active;
 
             return profile;
         }

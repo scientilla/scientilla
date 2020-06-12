@@ -4,13 +4,13 @@
         class="profile-blocks top"
         ng-class="{
             'has-1-block': vm.missingProfile,
-            'has-2-blocks': !vm.missingProfile && (!vm.profile.description && !vm.profile.interests) && vm.user.alreadyChangedProfile,
+            'has-2-blocks': !vm.missingProfile && (!vm.profile.description && !vm.profile.interests) && vm.user.already_changed_profile,
             'has-3-blocks': !vm.missingProfile && (
-                ((vm.profile.description || vm.profile.interests) && vm.user.alreadyChangedProfile) ||
-                ((!vm.profile.description && !vm.profile.interests) && !vm.user.alreadyChangedProfile)
+                ((vm.profile.description || vm.profile.interests) && vm.user.already_changed_profile) ||
+                ((!vm.profile.description && !vm.profile.interests) && !vm.user.already_changed_profile)
             ),
             'has-4-blocks':
-                !vm.missingProfile && (vm.profile.description || vm.profile.interests) && !vm.user.alreadyChangedProfile
+                !vm.missingProfile && (vm.profile.description || vm.profile.interests) && !vm.user.already_changed_profile
         }"
         ng-if="!vm.loading">
 
@@ -32,7 +32,7 @@
         <profile-edit-block
             user="vm.user"
             class="profile-block edit"
-            ng-if="!vm.user.alreadyChangedProfile && !vm.missingProfile"></profile-edit-block>
+            ng-if="!vm.user.already_changed_profile && !vm.missingProfile"></profile-edit-block>
 
         <profile-export-block
             class="profile-block export"

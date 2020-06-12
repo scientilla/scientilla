@@ -31,7 +31,7 @@
             'jobTitle',
             'attributes',
             'alreadyOpenedSuggested',
-            'alreadyChangedProfile'
+            'already_changed_profile'
         ];
 
         service.getNewUser = function () {
