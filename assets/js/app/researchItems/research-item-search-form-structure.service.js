@@ -100,7 +100,7 @@
                             column: 'name',
                             rule: 'contains',
                         }, {
-                            column: 'displayName',
+                            column: 'display_name',
                             rule: 'contains',
                         }
                     ],
@@ -114,7 +114,7 @@
                             column: 'surname',
                             rule: 'contains',
                         }, {
-                            column: 'displaySurname',
+                            column: 'display_surname',
                             rule: 'contains',
                         }
                     ],
