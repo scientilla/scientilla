@@ -91,7 +91,7 @@ function createUserObject(ldapUsers = [],  user = {}, employee = {}) {
         lastsynch: moment().utc().format(),
         active: true,
         synchronized: true,
-        contractEndDate: contractEndDate
+        contract_end_date: contractEndDate
     };
 
     const foundEmployeeEmail = ldapUsers.find(
@@ -119,11 +119,11 @@ function createUserObject(ldapUsers = [],  user = {}, employee = {}) {
     }
 
     if (_.has(employee, 'nome_AD') && !_.isEmpty(employee.nome_AD)) {
-        userObject.displayName = employee.nome_AD;
+        userObject.display_name = employee.nome_AD;
     }
 
     if (_.has(employee, 'cognome_AD') && !_.isEmpty(employee.cognome_AD)) {
-        userObject.displaySurname = employee.cognome_AD;
+        userObject.display_surname = employee.cognome_AD;
     }
 
     return userObject;
@@ -681,7 +681,7 @@ async function importUserContracts(email = defaultEmail) {
                 insertedUsers.push(user);
             } else {
                 let displayNamesAreChanged = false;
-                if (user.displayName !== employee.nome_AD || user.displaySurname !== employee.cognome_AD) {
+                if (user.display_name !== employee.nome_AD || user.display_surname !== employee.cognome_AD) {
                     displayNamesAreChanged = true;
                 }
 
@@ -690,7 +690,7 @@ async function importUserContracts(email = defaultEmail) {
 
                 if (displayNamesAreChanged) {
                     await User.createAliases(user);
-                    sails.log.info('The display names are been updated to: ' + user.displayName + ' ' + user.displaySurname);
+                    sails.log.info('The display names are been updated to: ' + user.display_name + ' ' + user.display_surname);
                     updatedDisplayNames.push(user);
                 }
 
@@ -786,14 +786,14 @@ async function importUserContracts(email = defaultEmail) {
 
             // Deactivate the selected user if it's not in sync
             disabledUsers = await User.update(
-                _.merge({id: user.id}, condition), {active: false, contractEndDate: contractEndDate}
+                _.merge({id: user.id}, condition), {active: false, contract_end_date: contractEndDate}
             );
         } else {
             // Deactivate all memberships of users that aren't in sync
             disabledSynchronizedMemberships = await Membership.update(condition, {active: false});
 
             // Deactivate all users that aren't in sync
-            disabledUsers = await User.update(condition, {active: false, contractEndDate: contractEndDate});
+            disabledUsers = await User.update(condition, {active: false, contract_end_date: contractEndDate});
         }
 
         // Set the membership active to false for the disabled users or user
