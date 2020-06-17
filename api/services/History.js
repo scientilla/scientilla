@@ -115,8 +115,8 @@ async function importContracts(email = ImportHelper.getDefaultEmail()) {
 
             if (handledStepsOfLastFiveYears.length === 0) {
                 sails.log.info('This user doesn\'t have a current contract or a contract with a valid role in the last 5 years!');
-                if (user) {
-                    toBeDeletedUsers.push(user);
+                if (employee) {
+                    toBeDeletedEmployees.push(employee);
                 }
 
                 // We go to the next user
@@ -307,7 +307,7 @@ async function importContracts(email = ImportHelper.getDefaultEmail()) {
     const reqOptionsEmployees = ImportHelper.getEmployeesRequestOptions();
 
     const createdUsers = [];
-    let toBeDeletedUsers = [];
+    let toBeDeletedEmployees = [];
     const updatedContractEndDate = [];
     const updatedActiveUsers = [];
     const updatedDisplayNames = [];
@@ -328,7 +328,7 @@ async function importContracts(email = ImportHelper.getDefaultEmail()) {
         employees = employees.filter(e => _.has(e, 'desc_sottoarea') && e.desc_sottoarea !== 'Gov. & Control');
 
         // Store the other user to delete them later
-        toBeDeletedUsers = employees.filter(e => _.has(e, 'desc_sottoarea') && e.desc_sottoarea === 'Gov. & Control');
+        toBeDeletedEmployees = employees.filter(e => _.has(e, 'desc_sottoarea') && e.desc_sottoarea === 'Gov. & Control');
 
         // Get all CID codes in one Array
         const cidCodes = employees.map(employee => employee.cid);
@@ -349,7 +349,10 @@ async function importContracts(email = ImportHelper.getDefaultEmail()) {
                 }
             } else {
                 if (contracts.length === 1) {
-                    toBeDeletedUsers.push(contract);
+                    const employee = employees.find(e => e.cid === contract.cid);
+                    if (employee) {
+                        toBeDeletedEmployees.push(employee);
+                    }
                 }
             }
         }
@@ -366,8 +369,15 @@ async function importContracts(email = ImportHelper.getDefaultEmail()) {
         }
     }
 
-    for (const user of toBeDeletedUsers) {
-        await User.destroy({id: user.id});
+    let i = toBeDeletedEmployees.length;
+    while (i--) {
+        const employee = toBeDeletedEmployees[i];
+        const user = await User.findOne({cid: employee.cid});
+        if (user) {
+            await User.destroy({cid: employee.cid});
+        } else {
+            toBeDeletedEmployees.splice(i, 1);
+        }
     }
 
     sails.log.info('-----------------------------------------------------------------');
@@ -381,7 +391,7 @@ async function importContracts(email = ImportHelper.getDefaultEmail()) {
     sails.log.info('Number of updated memberships: ' + updatedMemberships.length);
     sails.log.info('Number of created researchEntityData items: ' + createdResearchEntityDataItems.length);
     sails.log.info('Number of updated researchEntityData items: ' + updatedResearchEntityDataItems.length);
-    sails.log.info('Number of deleted users: ' + toBeDeletedUsers.length);
+    sails.log.info('Number of deleted users: ' + toBeDeletedEmployees.length);
 
     sails.log.info('-----------------------------------------------------------------');
     const stoppedTime = moment.utc();
