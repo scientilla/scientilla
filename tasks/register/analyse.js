@@ -9,7 +9,9 @@ module.exports = function (grunt) {
             const methods = {
                 'ldap': Analyser.searchScientillaUsersInActiveDirectory,
                 'gov': Analyser.searchForGovAndControlUsers,
-                'documents': Analyser.searchForUsersWithoutDocumentsAndAccomplishments
+                'documents': Analyser.searchForUsersWithoutDocumentsAndAccomplishments,
+                'contracts': Analyser.checkContractEndDates,
+                'special': Analyser.specialCase
             };
 
             try {
