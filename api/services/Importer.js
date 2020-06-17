@@ -1,10 +1,18 @@
 /* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator */
 /* global MembershipGroup, GroupTypes, ResearchEntityData, ResearchItemTypes, ResearchItem, ResearchItemKinds, Project */
-/* global Verify, Membership, MembershipGroup, GroupTypes, ResearchEntityData, Utils */
+/* global Verify, Membership, MembershipGroup, GroupTypes, ResearchEntityData, Utils, ImportHelper */
 
 // Importer.js - in api/services
 
 "use strict";
+
+module.exports = {
+    importSources,
+    importGroups,
+    importSourceMetrics,
+    importUserContracts,
+    importProjects
+};
 
 const xlsx = require('xlsx');
 const _ = require('lodash');
@@ -13,246 +21,6 @@ const request = require('request-promise');
 
 const moment = require('moment');
 moment.locale('en');
-
-const ISO8601Format = 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]';
-const zone = moment.tz.guess();
-
-const defaultEmail = 'all';
-const yearRegex = /^(19|20)\d{2}$/;
-
-const valuePublicPrivacy = 'public';
-const valueHiddenPrivacy = 'hidden';
-
-async function getEmployees(options) {
-    try {
-        let response = await Utils.waitForSuccesfulRequest(options);
-
-        if (!_.has(response, '_.scheda') || _.isEmpty(response._.scheda)) {
-            return false;
-        }
-
-        response = response._.scheda;
-
-        if (_.isArray(response)) {
-            return response;
-        } else {
-            return [response];
-        }
-    } catch (e) {
-        sails.log.debug('Importer:getEmployees');
-        sails.log.debug(e);
-    }
-}
-
-function getEmployeesRequestOptions() {
-    return {
-        url: sails.config.scientilla.userImport.endpoint,
-        params: {
-            rep: 'PROD',
-            trans: '/public/scheda_persona_flat',
-            output: 'json',
-            email: defaultEmail
-        },
-        headers: {
-            username: sails.config.scientilla.userImport.username,
-            password: sails.config.scientilla.userImport.password
-        }
-    };
-}
-
-function getIgnoredRoles() {
-    return [
-        'Altro',
-        'Collaboratore',
-        'Consultant',
-        'Distacco',
-        'Fellow',
-        'gestione manuale',
-        'Guest',
-        'Guest Student',
-        'Tirocinio Formativo',
-        'Work Experience'
-    ];
-}
-
-function createUserObject(ldapUsers = [],  user = {}, employee = {}) {
-
-    let contractEndDate = null;
-    const to = moment(employee.data_fine_rapporto, 'YYYY-MM-DD');
-    if (!moment('31/12/9999', 'DD/MM/YYYY').isSame(to)) {
-        contractEndDate = moment.tz(employee.data_fine_rapporto, 'YYYY-MM-DD', zone).utc().format(ISO8601Format);
-    }
-
-    const userObject = {
-        cid: employee.cid,
-        name: employee.nome,
-        surname: employee.cognome,
-        jobTitle: employee.Ruolo_AD,
-        lastsynch: moment().utc().format(),
-        active: true,
-        synchronized: true,
-        contract_end_date: contractEndDate
-    };
-
-    const foundEmployeeEmail = ldapUsers.find(
-        ldapUser => _.toLower(ldapUser.userPrincipalName) === _.toLower(employee.email)
-    );
-    if (_.isEmpty(foundEmployeeEmail)) {
-
-        let keepCurrentUsername = false;
-
-        if (user && _.has(user, 'username')) {
-            const foundEmployeeEmail = ldapUsers.find(
-                ldapUser => _.toLower(ldapUser.userPrincipalName) === _.toLower(user.username)
-            );
-            if (!_.isEmpty(foundEmployeeEmail)) {
-                keepCurrentUsername = true;
-                sails.log.info('The email address we received from Pentaho is not available in the Active Directory, but the old one does.');
-            }
-        }
-
-        if (!keepCurrentUsername) {
-            userObject.username = null;
-        }
-    } else {
-        userObject.username = _.toLower(employee.email)
-    }
-
-    if (_.has(employee, 'nome_AD') && !_.isEmpty(employee.nome_AD)) {
-        userObject.display_name = employee.nome_AD;
-    }
-
-    if (_.has(employee, 'cognome_AD') && !_.isEmpty(employee.cognome_AD)) {
-        userObject.display_surname = employee.cognome_AD;
-    }
-
-    return userObject;
-}
-
-function getProfileObject(researchEntityData, contract, allMembershipGroups, allGroups) {
-    const profile = ResearchEntityData.setupProfile(researchEntityData);
-
-    profile.hidden = (contract.no_people === 'NO PEOPLE' ? true: false);
-
-    let defaultPrivacy = valuePublicPrivacy;
-    if (profile.hidden) {
-        defaultPrivacy = valueHiddenPrivacy;
-    }
-
-    let name = contract.nome;
-    if (!_.isEmpty(contract.nome_AD)) {
-        name = contract.nome_AD;
-    }
-
-    let surname = contract.cognome;
-    if (!_.isEmpty(contract.cognome_AD)) {
-        surname = contract.cognome_AD;
-    }
-
-    profile.username = {
-        privacy: defaultPrivacy,
-        value: contract.email
-    };
-    profile.name = {
-        privacy: defaultPrivacy,
-        value: name
-    };
-    profile.surname = {
-        privacy: defaultPrivacy,
-        value: surname
-    };
-    profile.phone = {
-        privacy: defaultPrivacy,
-        value: contract.telefono
-    };
-    profile.jobTitle = {
-        privacy: defaultPrivacy,
-        value: contract.Ruolo_AD
-    };
-    profile.roleCategory = {
-        privacy: defaultPrivacy,
-        value: contract.Ruolo_1
-    };
-
-    const groups = [];
-    const lines = [];
-
-    for (let i = 1; i < 7; i++) {
-        if (!_.isEmpty(contract['linea_' + i])) {
-            const code = contract['linea_' + i];
-            const name = contract['nome_linea_' + i];
-            const office = contract['UO_' + i];
-
-            lines.push({
-                code,
-                name,
-                office
-            });
-        }
-    }
-
-    const codes = lines.map(line => line.code).filter((value, index, self) => self.indexOf(value) === index);
-
-    for (const code of codes) {
-        const group = {
-            offices: []
-        };
-        const codeGroup = allGroups.find(group => group.code === code);
-
-        if (codeGroup) {
-            if (codeGroup.type === 'Facility' || 'Research Line') {
-                group.type = codeGroup.type;
-                group.name = codeGroup.name,
-                    group.code = codeGroup.code;
-                group.privacy = defaultPrivacy;
-            }
-
-            // This will return the first parent group.
-            const membershipGroup = allMembershipGroups.find(g => g.child_group === codeGroup.id && g.parent_group.active);
-
-            if (_.has(membershipGroup, 'parent_group')) {
-                const parentGroup = membershipGroup.parent_group;
-                if (parentGroup && parentGroup.type === 'Center') {
-                    group.center = {
-                        name: parentGroup.name,
-                        code: parentGroup.code,
-                        privacy: defaultPrivacy
-                    };
-                } else {
-                    sails.log.info('We are only expecting a center as parent group!');
-                }
-            }
-        } else {
-            // If it is not an group, we think it's an administrative contract
-            const line = lines.find(line => line.code === code);
-
-            group.type = 'Directorate';
-            group.name = line.name,
-                group.code = line.code;
-            group.privacy = defaultPrivacy;
-            group.offices = lines.filter(line => line.code === code).map(line => line.office);
-        }
-
-        groups.push(group);
-    }
-
-    profile.groups = groups;
-
-    return profile;
-}
-
-module.exports = {
-    importSources,
-    importGroups,
-    importSourceMetrics,
-    importUserContracts,
-    importProjects,
-    getEmployees,
-    getEmployeesRequestOptions,
-    createUserObject,
-    getProfileObject,
-    getIgnoredRoles
-};
 
 async function importSources() {
 
@@ -495,6 +263,8 @@ async function importGroups() {
 async function importSourceMetrics(filename) {
     const sourceIdentifiers = SourceMetric.sourceIdentifiers;
 
+    const yearRegex = /^(19|20)\d{2}$/;
+
     const originCellCoord = 'B1';
     const yearCellCoord = 'D1';
 
@@ -609,7 +379,7 @@ async function importSourceMetrics(filename) {
     sails.log.info('imported ' + recordsCount + ' records');
 }
 
-async function importUserContracts(email = defaultEmail) {
+async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
 
     const collectGroupCodes = (contract) => {
         const codes = [];
@@ -625,8 +395,10 @@ async function importUserContracts(email = defaultEmail) {
     sails.log.info('The import started at ' + startedTime.format());
     sails.log.info('-----------------------------------------------------------------');
 
+    const valueHiddenPrivacy = ImportHelper.getValueHiddenPrivacy();
+
     // Endpoint options to get all users
-    const reqOptionsEmployees = getEmployeesRequestOptions();
+    const reqOptionsEmployees = ImportHelper.getEmployeesRequestOptions();
 
     // We cache the groups, membership groups and default profile.
     const activeGroups = await Group.find({active: true});
@@ -637,7 +409,7 @@ async function importUserContracts(email = defaultEmail) {
         sails.log.info('No groups found...');
     }
 
-    const ignoredRoles = getIgnoredRoles();
+    const ignoredRoles = ImportHelper.getIgnoredRoles();
 
     const updatedResearchEntityDataItems = [];
     const newResearchEntityDataItems = [];
@@ -650,12 +422,43 @@ async function importUserContracts(email = defaultEmail) {
         reqOptionsEmployees.params.email = email;
 
         // Get all the employees from Pentaho, including the former employees.
-        let employees = await getEmployees(reqOptionsEmployees);
+        let employees = await ImportHelper.getEmployees(reqOptionsEmployees);
+
+        if (!employees) {
+            return;
+        }
+
         employees = employees.filter(e => _.has(e, 'desc_sottoarea') &&
             e.desc_sottoarea !== 'Gov. & Control' &&
             e.contratto_secondario !== 'X' &&
             !ignoredRoles.includes(e.Ruolo_AD)
         );
+
+        // Get all CID codes in one Array
+        const cidCodes = employees.map(employee => employee.cid);
+        sails.log.info('Found ' + cidCodes.length + ' CID codes!');
+
+        // Get the contractual history of the CID codes
+        const contracts = await ImportHelper.getContractualHistoryOfCidCodes(cidCodes);
+
+        for (const contract of contracts) {
+            if (contract.contratto_secondario !== 'X') {
+                const employee = employees.find(e => e.cid === contract.cid);
+                if (_.has(contract, 'step')) {
+                    if (!_.has(employee, 'contract')) {
+                        employee.contract = [contract];
+                    } else {
+                        employee.contract.push(contract);
+                    }
+                }
+            }
+        }
+
+        // Only keep the employees with a contract
+        employees = employees.filter(e => _.has(e, 'contract'));
+
+        // Merge the duplicate employees
+        employees = ImportHelper.mergeDuplicateEmployees(employees);
 
         for (const employee of employees) {
             const groupCodesOfContract = collectGroupCodes(employee);
@@ -672,7 +475,31 @@ async function importUserContracts(email = defaultEmail) {
             if (!user) {
                 user = await User.findOne({username: employee.email});
             }
-            const userObject = createUserObject(ldapUsers, user, employee);
+
+            let contractEndDate = null;
+
+            // Get the contract end date via the contract history
+            const contract = _.head(employee.contract);
+            if (
+                _.has(contract, 'step') &&
+                _.has(contract, 'cid')
+            ) {
+                const handledSteps = ImportHelper.mergeStepsOfContract(contract);
+
+                const handledStepsOfLastFiveYears = ImportHelper.getValidSteps(handledSteps);
+
+                if (handledStepsOfLastFiveYears.length === 0) {
+                    return;
+                }
+
+                const hasPermanentContract = !_.isEmpty(handledSteps.filter(handledStep => !_.has(handledStep, 'to')));
+
+                contractEndDate = ImportHelper.getContractEndDate(hasPermanentContract, handledStepsOfLastFiveYears);
+            } else {
+                return;
+            }
+
+            const userObject = ImportHelper.createUserObject(ldapUsers, user, employee, contractEndDate);
 
             if (!user) {
                 await User.createUserWithoutAuth(userObject);
@@ -734,7 +561,7 @@ async function importUserContracts(email = defaultEmail) {
             // Create or update researchEntityData record
             if (researchEntityData) {
                 if (!_.isEqual(researchEntityData.imported_data, employee)) {
-                    const profile = getProfileObject(researchEntityData, employee, allMembershipGroups, activeGroups);
+                    const profile = ImportHelper.getProfileObject(researchEntityData, employee, allMembershipGroups, activeGroups);
                     let profileJSONString = JSON.stringify(profile);
 
                     if (profile.hidden) {
@@ -754,7 +581,7 @@ async function importUserContracts(email = defaultEmail) {
                     upToDateResearchEntityDataItems.push(researchEntityData);
                 }
             } else {
-                const profile = getProfileObject({}, employee, allMembershipGroups, activeGroups);
+                const profile = ImportHelper.getProfileObject({}, employee, allMembershipGroups, activeGroups);
                 researchEntityData = await ResearchEntityData.create({
                     researchEntity: user.researchEntity,
                     profile: JSON.stringify(profile),
@@ -771,23 +598,24 @@ async function importUserContracts(email = defaultEmail) {
             active: true
         };
 
-        let disabledSynchronizedMemberships,
-            disabledUsers;
+        let disabledSynchronizedMemberships = [],
+            disabledUsers = [];
 
-        const contractEndDate = moment().subtract(1, 'days').endOf('day').format();
+        const contractEndDate = moment().subtract(1, 'days').startOf('day').format();
 
         // If a specific email is used
-        if (email !== defaultEmail) {
+        if (email !== ImportHelper.getDefaultEmail()) {
             const user = await User.findOne({username: email});
-            sails.log.info(_.merge({user: user.id}, condition));
 
-            // Deactivate all memberships of the selected user that aren't in sync
-            disabledSynchronizedMemberships = await Membership.update(_.merge({user: user.id}, condition), {active: false});
+            if (user) {
+                // Deactivate all memberships of the selected user that aren't in sync
+                disabledSynchronizedMemberships = await Membership.update(_.merge({user: user.id}, condition), {active: false});
 
-            // Deactivate the selected user if it's not in sync
-            disabledUsers = await User.update(
-                _.merge({id: user.id}, condition), {active: false, contract_end_date: contractEndDate}
-            );
+                // Deactivate the selected user if it's not in sync
+                disabledUsers = await User.update(
+                    _.merge({id: user.id}, condition), {active: false, contract_end_date: contractEndDate}
+                );
+            }
         } else {
             // Deactivate all memberships of users that aren't in sync
             disabledSynchronizedMemberships = await Membership.update(condition, {active: false});
@@ -796,12 +624,16 @@ async function importUserContracts(email = defaultEmail) {
             disabledUsers = await User.update(condition, {active: false, contract_end_date: contractEndDate});
         }
 
-        // Set the membership active to false for the disabled users or user
-        const disabledCollaborations = await Membership.update({
-            synchronized: false,
-            user: disabledUsers.map(user => user.id),
-            active: true
-        }, {active: false});
+        let disabledCollaborations = [];
+
+        if (disabledUsers.length > 0) {
+            // Set the membership active to false for the disabled users or user
+            disabledCollaborations = await Membership.update({
+                synchronized: false,
+                user: disabledUsers.map(user => user.id),
+                active: true
+            }, {active: false});
+        }
 
         const disabledMemberships = disabledSynchronizedMemberships.length + disabledCollaborations.length;
 
