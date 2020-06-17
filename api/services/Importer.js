@@ -521,7 +521,6 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
                     sails.log.info('The display names are been updated to: ' + user.display_name + ' ' + user.display_surname);
                     updatedDisplayNames.push(user);
                 }
-
                 updatedUsers.push(user);
             }
 
@@ -659,7 +658,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
         }
         sails.log.info('....................................');
 
-        sails.log.info(disabledUsers.length + ' Users disabled!');
+        sails.log.info(disabledUsers.length + ' Users disabled + changed contract end date!');
         if (disabledUsers.length > 0) {
             sails.log.info('Username(s): ' + disabledUsers.map(user => user.username).join(', '));
         }
