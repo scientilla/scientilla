@@ -13,8 +13,9 @@ moment.locale('en');
 // Get the contract history of the users
 async function removeData() {
     // Delete all users without any documents and accomplishments
-    const userIdsWithoutDocumentsAndAccomplishments = await Analyser.searchForUsersWithoutDocumentsAndAccomplishments();
-    await User.destroy({id: userIdsWithoutDocumentsAndAccomplishments});
+    const userIds = await Analyser.searchForUsersWithoutDocumentsAndAccomplishments();
+    await User.destroy({id: userIds});
+    sails.log.info(`Deleted ${userIds.length} (with role='user') users without documents and accomplishments`);
 
     // Delete all memberships where synchromized = true
     await Membership.destroy({synchronized: true});
