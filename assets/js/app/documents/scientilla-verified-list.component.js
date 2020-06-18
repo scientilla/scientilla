@@ -40,7 +40,7 @@
         vm.documentCategories = documentCategories;
 
         vm.$onInit = function () {
-            vm.editable = vm.section === documentListSections.VERIFIED && !AuthService.user.isViewOnly();
+            vm.editable = !AuthService.user.isViewOnly();
 
             EventsService.subscribeAll(vm, [
                 EventsService.DRAFT_VERIFIED,
