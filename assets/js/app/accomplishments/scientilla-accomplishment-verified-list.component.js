@@ -41,7 +41,7 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
             vm.researchEntity = await context.getResearchEntity();
-            vm.editable = vm.section === accomplishmentListSections.VERIFIED && !AuthService.user.isViewOnly();
+            vm.editable = !AuthService.user.isViewOnly();
 
             EventsService.subscribeAll(vm, [
                 EventsService.RESEARCH_ITEM_DRAFT_VERIFIED,
