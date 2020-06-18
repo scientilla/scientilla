@@ -551,7 +551,7 @@ function createUserObject(ldapUsers = [],  user = {}, employee = {}, contractEnd
             if (!_.isEmpty(foundEmployeeEmail)) {
                 keepCurrentUsername = true;
                 sails.log.info(`The email address we received from Pentaho is not available in the Active Directory, 
-                    but the old one does.`);
+                    but the old one does: ${user.username}`);
             }
         }
 

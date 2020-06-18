@@ -589,6 +589,8 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
                 });
                 newResearchEntityDataItems.push(researchEntityData);
             }
+
+            sails.log.info('-----------------------------------------------------------------');
         }
 
         // Select all items where lastsync is before started time and synchronized and active is true
