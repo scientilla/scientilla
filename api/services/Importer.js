@@ -9,6 +9,7 @@ module.exports = {
     importGroups,
     importSourceMetrics,
     importUserContracts,
+    removeExpiredUsers
 };
 
 const xlsx = require('xlsx');
@@ -730,5 +731,26 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
     } catch (e) {
         sails.log.info('importUserContracts');
         sails.log.info(e);
+    }
+}
+
+async function removeExpiredUsers() {
+    const fiveYearsAgo = moment().subtract('5', 'years').startOf('day');
+    let deletedUsers = await User.destroy({
+        contract_end_date: {'<=': fiveYearsAgo.format()}
+    });
+    deletedUsers = deletedUsers.map(function(user) {
+        return JSON.stringify(user);
+    });
+    if (deletedUsers.length > 0) {
+        if (deletedUsers.length === 1) {
+            sails.log.info(`Deleted 1 user with a contract that ended 5 years ago: ${fiveYearsAgo.format()}`);
+            sails.log.info(`Deleted the user with data: ${deletedUsers.join(', ')}`);
+        } else {
+            sails.log.info(`Deleted ${deletedUsers.length} users with a contract that ended 5 years ago: ${fiveYearsAgo.format()}`);
+            sails.log.info(`Deleted the users with data: ${deletedUsers.join(', ')}`);
+        }
+    } else {
+        sails.log.info(`Deleted 0 users with a contract that ended 5 years ago: ${fiveYearsAgo.format()}`);
     }
 }
