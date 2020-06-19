@@ -66,7 +66,10 @@ module.exports = {
                 return tmpProfile;
             }
 
-            delete profile.hidden;
+            if (!_.has(profile, 'hidden')) {
+                profile.hidden = false;
+            }
+
             delete profile.export;
 
             if (replaceImage && _.has(profile, 'image')) {
