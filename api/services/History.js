@@ -37,8 +37,8 @@ async function importContracts(email = ImportHelper.getDefaultEmail()) {
             const membershipOfGroup = await Membership.findOne({user: user.id, group: group.id});
             let active = false;
 
-            // Set the active state to true if the to date is in the future
-            if (moment(to, ISO8601Format).diff(moment().startOf('day')) >= 0) {
+            // Set the active state to true if the to date is in the future or if permanent contract
+            if (_.isNil(to) || moment(to, ISO8601Format).diff(moment().startOf('day')) >= 0) {
                 active = true;
             }
 
@@ -375,7 +375,8 @@ async function importContracts(email = ImportHelper.getDefaultEmail()) {
         const employee = toBeDeletedEmployees[i];
         const user = await User.findOne({cid: employee.cid});
         if (user) {
-            await User.destroy({cid: employee.cid});
+            sails.log.info('Deleted user:' + JSON.stringify(user));
+            await User.destroy({id: user.id});
         } else {
             toBeDeletedEmployees.splice(i, 1);
         }
