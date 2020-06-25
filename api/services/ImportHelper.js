@@ -684,7 +684,7 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
             group.name = line.name;
             group.code = line.code;
             group.privacy = defaultPrivacy;
-            group.offices = lines.filter(line => line.code === code).map(line => line.office);
+            group.offices = lines.filter(line => line.code === code).map(line => line.office).filter(o => o);
         }
 
         groups.push(group);
