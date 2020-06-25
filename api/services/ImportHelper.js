@@ -167,7 +167,7 @@ function mergeStepsOfContract(contract) {
 
     // Check if there are more steps
     if (_.isArray(contract.step)) {
-        const steps = _.orderBy(contract.step, function(step) {
+        const steps = _.orderBy(contract.step, function (step) {
             return new moment(step.from, ISO8601Format).format(ISO8601Format);
         }, ['desc']);
 
@@ -377,7 +377,7 @@ function handleStep(step) {
  *
  * @returns {Object|null}
  */
-function getContractEndDate (hasPermanentContract, handledStepsOfLastFiveYears) {
+function getContractEndDate(hasPermanentContract, handledStepsOfLastFiveYears) {
     let contractEndDate = null;
 
     if (!hasPermanentContract) {
@@ -508,7 +508,7 @@ function getIgnoredRoles() {
  *
  * @returns {Object}
  */
-function createUserObject(ldapUsers = [],  user = {}, employee = {}, contractEndDate = null) {
+function createUserObject(ldapUsers = [], user = {}, employee = {}, contractEndDate = null) {
 
     const userObject = {
         cid: employee.cid,
@@ -572,6 +572,7 @@ function createUserObject(ldapUsers = [],  user = {}, employee = {}, contractEnd
 
     return userObject;
 }
+
 /**
  * This function return an user profile object created with the passed data.
  *
@@ -585,7 +586,7 @@ function createUserObject(ldapUsers = [],  user = {}, employee = {}, contractEnd
 function getProfileObject(researchEntityData, contract, allMembershipGroups, allGroups) {
     const profile = ResearchEntityData.setupProfile(researchEntityData);
 
-    profile.hidden = (contract.no_people === 'NO PEOPLE' ? true: false);
+    profile.hidden = (contract.no_people === 'NO PEOPLE' ? true : false);
 
     let defaultPrivacy = valuePublicPrivacy;
     if (profile.hidden) {
@@ -634,7 +635,7 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
         if (!_.isEmpty(contract['linea_' + i])) {
             const code = contract['linea_' + i];
             const name = contract['nome_linea_' + i];
-            const office = contract['UO_' + i];
+            const office = contract['UO_' + i] !== name ? contract['UO_' + i] : null;
 
             lines.push({
                 code,
