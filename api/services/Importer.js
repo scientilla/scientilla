@@ -430,7 +430,9 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
         }
 
         employees = employees.filter(e => _.has(e, 'desc_sottoarea') &&
-            e.desc_sottoarea !== 'Gov. & Control' &&
+            (e.desc_sottoarea !== 'Gov. & Control' ||
+                (e.desc_sottoarea === 'Gov. & Control' &&
+                    e.linea_1 === 'PRS001')) &&
             e.contratto_secondario !== 'X' &&
             !ignoredRoles.includes(e.Ruolo_AD)
         );
@@ -595,7 +597,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
 
         // Select all items where lastsync is before started time and synchronized and active is true
         const condition = {
-            lastsynch: {'<' : startedTime.format()},
+            lastsynch: {'<': startedTime.format()},
             synchronized: true,
             active: true
         };
@@ -738,7 +740,7 @@ async function removeExpiredUsers() {
     let deletedUsers = await User.destroy({
         contract_end_date: {'<=': fiveYearsAgo.format()}
     });
-    deletedUsers = deletedUsers.map(function(user) {
+    deletedUsers = deletedUsers.map(function (user) {
         return JSON.stringify(user);
     });
     if (deletedUsers.length > 0) {
@@ -776,7 +778,7 @@ async function importProjects() {
     };
     const researchLinesSchema = {
         code: 'cdr',
-        description:'cdr_description',
+        description: 'cdr_description',
         startDate: 'start_date',
         endDate: 'end_date',
         role: obj => obj.flag_pi ? 'pi' : obj.flag_copi ? 'co_pi' : 'member',
