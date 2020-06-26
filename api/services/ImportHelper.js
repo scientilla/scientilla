@@ -95,8 +95,6 @@ async function getContractualHistoryOfCidCodes(codes) {
         if (codes.length > chunkLength) {
             const groups = _.chunk(codes, chunkLength);
 
-            sails.log.info('Splitting the CID codes into groups of ' + chunkLength);
-
             for (const group of groups) {
                 reqOptionsContractHistory.params.cid = group.join(',');
 
@@ -170,8 +168,6 @@ function mergeStepsOfContract(contract) {
         const steps = _.orderBy(contract.step, function (step) {
             return new moment(step.from, ISO8601Format).format(ISO8601Format);
         }, ['desc']);
-
-        sails.log.info('Contract has ' + steps.length + ' steps');
 
         // Loop over the steps
         for (const step of steps) {
@@ -264,10 +260,7 @@ function mergeStepsOfContract(contract) {
             }
         }
 
-        sails.log.info('Trying to merge the steps, contract has ' + handledSteps.length + ' unmergeable steps');
     } else {
-        sails.log.info('Contract has only one step.');
-
         // If only one step, handle it
         const handledStep = handleStep(contract.step);
 
@@ -386,10 +379,6 @@ function getContractEndDate(hasPermanentContract, handledStepsOfLastFiveYears) {
         ).map(handledStep => moment(handledStep.to));
 
         contractEndDate = moment.max(toDates).startOf('day');
-
-        sails.log.info('This user has a contract that will end on ' + contractEndDate.format());
-    } else {
-        sails.log.info('This user seems to have a permanent contract!');
     }
 
     return contractEndDate;
@@ -550,7 +539,7 @@ function createUserObject(ldapUsers = [], user = {}, employee = {}, contractEndD
             );
             if (!_.isEmpty(foundEmployeeEmail)) {
                 keepCurrentUsername = true;
-                sails.log.info(`The email address we received from Pentaho is not available in the Active Directory, 
+                sails.log.debug(`The email address we received from Pentaho is not available in the Active Directory, 
                     but the old one does: ${user.username}`);
             }
         }
@@ -673,7 +662,7 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
                         privacy: defaultPrivacy
                     };
                 } else {
-                    sails.log.info('We are only expecting a center as parent group!');
+                    sails.log.debug('We are only expecting a center as parent group!');
                 }
             }
         } else {

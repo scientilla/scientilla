@@ -520,7 +520,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
 
                 if (displayNamesAreChanged) {
                     await User.createAliases(user);
-                    sails.log.info('The display names are been updated to: ' + user.display_name + ' ' + user.display_surname);
+                    //sails.log.info('The display names are been updated to: ' + user.display_name + ' ' + user.display_surname);
                     updatedDisplayNames.push(user);
                 }
                 updatedUsers.push(user);
@@ -592,7 +592,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
                 newResearchEntityDataItems.push(researchEntityData);
             }
 
-            sails.log.info('-----------------------------------------------------------------');
+            //sails.log.info('-----------------------------------------------------------------');
         }
 
         // Select all items where lastsync is before started time and synchronized and active is true
@@ -645,84 +645,24 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
         sails.log.info('....................................');
 
         sails.log.info(insertedUsers.length + ' Users created!');
-        if (insertedUsers.length > 0) {
-            sails.log.info('Username(s): ' + insertedUsers.map(user => user.username).join(', '));
-        }
         sails.log.info('....................................');
 
         sails.log.info(updatedUsers.length + ' Users updated!');
-        if (updatedUsers.length > 0) {
-            sails.log.info('Username(s): ' + updatedUsers.map(user => user.username).join(', '));
-        }
         sails.log.info('....................................')
 
         sails.log.info('Updated the display names for ' + updatedDisplayNames.length + ' Users!');
-        if (updatedDisplayNames.length > 0) {
-            sails.log.info('Username(s): ' + updatedDisplayNames.map(user => user.username).join(', '));
-        }
         sails.log.info('....................................');
 
         sails.log.info(disabledUsers.length + ' Users disabled + changed contract end date!');
-        if (disabledUsers.length > 0) {
-            sails.log.info('Username(s): ' + disabledUsers.map(user => user.username).join(', '));
-        }
         sails.log.info('....................................');
 
         sails.log.info(disabledMemberships + ' Memberships disabled!');
-        if (disabledSynchronizedMemberships.length > 0) {
-            await Promise.all(disabledSynchronizedMemberships.map(async membership => {
-                let user = await User.findOne({id: membership.user});
-                if (user) {
-                    return user.username;
-                } else {
-                    return 'User not found!';
-                }
-            })).then(usernames => {
-                sails.log.info('Email address(es): ' + usernames.join(', '));
-            });
-        }
-        if (disabledCollaborations.length > 0) {
-            await Promise.all(disabledCollaborations.map(async membership => {
-                let user = await User.findOne({id: membership.user});
-                if (user) {
-                    return user.username;
-                } else {
-                    return 'User not found!';
-                }
-            })).then(usernames => {
-                sails.log.info('Email address(es): ' + usernames.join(', '));
-            });
-        }
         sails.log.info('....................................');
 
         sails.log.info(updatedResearchEntityDataItems.length + ' ResearchEntityData records updated!');
-        if (updatedResearchEntityDataItems.length > 0) {
-            await Promise.all(updatedResearchEntityDataItems.map(async item => {
-                let user = await User.findOne({researchEntity: item.researchEntity});
-                if (user) {
-                    return user.username;
-                } else {
-                    return 'User not found!';
-                }
-            })).then(usernames => {
-                sails.log.info('Email address(es): ' + usernames.join(', '));
-            });
-        }
         sails.log.info('....................................');
 
         sails.log.info(newResearchEntityDataItems.length + ' ResearchEntityData records created!');
-        if (newResearchEntityDataItems.length > 0) {
-            await Promise.all(newResearchEntityDataItems.map(async item => {
-                let user = await User.findOne({researchEntity: item.researchEntity});
-                if (user) {
-                    return user.username;
-                } else {
-                    return 'User not found!';
-                }
-            })).then(usernames => {
-                sails.log.info('Email address(es): ' + usernames.join(', '));
-            });
-        }
         sails.log.info('....................................');
 
         sails.log.info(upToDateResearchEntityDataItems.length + ' ResearchEntityData records are already up-to-date!');
