@@ -188,7 +188,7 @@ module.exports.policies = {
         read: isAdmin
     },
 
-    GeneralSettingController: {
+    GeneralSettingsController: {
         getByName: isAdmin,
         saveByName: isAdmin,
     }
