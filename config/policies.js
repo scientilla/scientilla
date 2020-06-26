@@ -35,6 +35,16 @@ const defaultPolicy = {
     update: isAdmin
 };
 
+const defaultAdminPolicy = {
+    '*': isAdmin,
+    findOne: isAdmin,
+    find: isAdmin,
+    populate: isAdmin,
+    destroy: isAdmin,
+    create: isAdmin,
+    update: isAdmin
+};
+
 module.exports.policies = {
 
     /***************************************************************************
@@ -144,10 +154,10 @@ module.exports.policies = {
         getMBOInvitedTalks: true,
     }, defaultPolicy),
 
-    UserDataController: {
+    UserDataController: _.defaults({
         '*': hasValidAPIKey,
         getProfileImage: true
-    },
+    }, defaultPolicy),
 
     ResearchEntityController: _.defaults({
         createDraft: isResearchEntityOwner,
@@ -163,33 +173,33 @@ module.exports.policies = {
 
     ResearchItemTypeController: defaultPolicy,
 
-    BackupController: {
+    BackupController: _.defaults({
         getDumps: isAdmin,
         make: isAdmin,
         restore: isAdmin,
         upload: isAdmin,
         remove: isAdmin
-    },
+    }, defaultAdminPolicy),
 
-    CustomizeController: {
+    CustomizeController: _.defaults({
         getCustomizations: true,
         setCustomizations: isAdmin,
         resetCustomizations: isAdmin
-    },
+    }, defaultAdminPolicy),
 
-    SourceMetricController: {
+    SourceMetricController: _.defaults({
         getMetrics: isAdmin,
         importMetrics: isAdmin,
         assignMetrics: isAdmin
-    },
+    }, defaultAdminPolicy),
 
-    LogController: {
+    LogController: _.defaults({
         getTasks: isAdmin,
         read: isAdmin
-    },
+    }, defaultAdminPolicy),
 
-    GeneralSettingsController: {
+    GeneralSettingsController: _.defaults({
         getByName: isAdmin,
         saveByName: isAdmin,
-    }
+    }, defaultAdminPolicy),
 };
