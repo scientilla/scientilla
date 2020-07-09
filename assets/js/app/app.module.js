@@ -22,6 +22,7 @@
         'summary',
         'profile',
         'accomplishments',
-        'documentation'
+        'documentation',
+        'projects'
     ]);
 })();

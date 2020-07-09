@@ -23,8 +23,7 @@
                 <a ng-href="{{ vm.getUrl('documents/drafts') }}"
                    ng-class="{active: vm.isActive('/documents/drafts', true)}"
                    class="list-group-item list-group-item-action">Drafts</a>
-                <a
-                    ng-href="{{ vm.getUrl('documents/external') }}"
+                <a ng-href="{{ vm.getUrl('documents/external') }}"
                     ng-class="{active: vm.isActive('/documents/external', true)}"
                     ng-if="vm.hasActiveExternalConnectors"
                     class="list-group-item list-group-item-action">External</a>
@@ -47,6 +46,17 @@
                 <a ng-href="{{ vm.getUrl('accomplishments/drafts') }}"
                    ng-class="{active: vm.isActive('/accomplishments/drafts', true)}"
                    class="list-group-item list-group-item-action">Drafts</a>
+            </div>
+        </li>
+        <li ng-if="!vm.user.isViewOnly()">
+            <label>Institutional output</label>
+            <div class="list-group">
+                <a ng-href="{{ vm.getUrl('projects/verified') }}"
+                   ng-class="{active: vm.isActive('/projects/verified', true)}"
+                   class="list-group-item list-group-item-action">Projects</a>
+                <a ng-href="{{ vm.getUrl('patents/verified') }}"
+                   ng-class="{active: vm.isActive('/patents/verified', true)}"
+                   class="list-group-item list-group-item-action">Patents</a>
             </div>
         </li>
         <li>
