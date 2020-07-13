@@ -335,7 +335,11 @@ function handleStep(step) {
                 }
 
                 if (_.has(line, 'ufficio')) {
-                    tmpLine.office = line.ufficio;
+                    if (_.lowerCase(line.ufficio) === 'iit') {
+                        tmpLine.institute = line.ufficio;
+                    } else {
+                        tmpLine.office = line.ufficio;
+                    }
                 }
 
                 return tmpLine;
@@ -356,7 +360,11 @@ function handleStep(step) {
             }
 
             if (_.has(line, 'ufficio')) {
-                newLine.office = line.ufficio;
+                if (_.lowerCase(line.ufficio) === 'iit') {
+                    newLine.institute = line.ufficio;
+                } else {
+                    newLine.office = line.ufficio;
+                }
             }
 
             handledStep.lines.push(newLine);
@@ -678,12 +686,18 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
         } else {
             // If it is not an group, we think it's an administrative contract
             const line = lines.find(line => line.code === code);
+            const offices = lines.filter(line => line.code === code).map(line => line.office);
 
-            group.type = 'Directorate';
+            if (offices.length === 1 && offices[0] === 'IIT') {
+                group.type = 'Institute';
+            } else {
+                group.type = 'Directorate';
+                group.offices = offices
+            }
+
             group.name = line.name;
             group.code = line.code;
             group.privacy = defaultPrivacy;
-            group.offices = lines.filter(line => line.code === code).map(line => line.office);
         }
 
         groups.push(group);

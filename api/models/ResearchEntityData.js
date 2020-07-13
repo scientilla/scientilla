@@ -466,7 +466,7 @@ const defaultProperties = {
                 type: 'object',
                 properties: {
                     type: {
-                        enum: ['Research Line', 'Facility', 'Directorate']
+                        enum: ['Research Line', 'Facility', 'Directorate', 'Institute']
                     },
                     center: _.merge(
                         {},
