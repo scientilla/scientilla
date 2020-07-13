@@ -380,7 +380,7 @@ async function importSourceMetrics(filename) {
     sails.log.info('imported ' + recordsCount + ' records');
 }
 
-async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
+async function importUserContracts(email = ImportHelper.getDefaultEmail(), override = false) {
 
     const collectGroupCodes = (contract) => {
         const codes = [];
@@ -562,7 +562,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
 
             // Create or update researchEntityData record
             if (researchEntityData) {
-                if (!_.isEqual(researchEntityData.imported_data, employee)) {
+                if (!_.isEqual(researchEntityData.imported_data, employee) || override) {
                     const profile = ImportHelper.getProfileObject(researchEntityData, employee, allMembershipGroups, activeGroups);
                     let profileJSONString = JSON.stringify(profile);
 

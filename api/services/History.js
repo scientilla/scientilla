@@ -21,7 +21,7 @@ async function removeData() {
     await Membership.destroy({synchronized: true});
 }
 
-async function importContracts(email = ImportHelper.getDefaultEmail()) {
+async function importContracts(email = ImportHelper.getDefaultEmail(), override = false) {
 
     // Private helper functions
 
@@ -257,18 +257,25 @@ async function importContracts(email = ImportHelper.getDefaultEmail()) {
                         sails.log.info('We created a profile for the user with the internal experiences.');
                         updatedResearchEntityDataItems.push(researchEntityData);
                     } else {
+
                         // If the user has a profile, we check if the experiences are equal. If not we update them.
-                        if (JSON.stringify(researchEntityData.profile.experiencesInternal) !== JSON.stringify(handledSteps)) {
-                            researchEntityData.profile.experiencesInternal = handledSteps;
+                        if (
+                            JSON.stringify(researchEntityData.profile.experiencesInternal) !== JSON.stringify(handledSteps) ||
+                            override
+                        ) {
+
+                            const profile = ImportHelper.getProfileObject(researchEntityData, employee, allMembershipGroups, allGroups);
+
+                            profile.experiencesInternal = handledSteps;
 
                             researchEntityData = await ResearchEntityData.update(
                                 {id: researchEntityData.id},
-                                {profile: JSON.stringify(researchEntityData.profile)}
+                                {profile: JSON.stringify(profile)}
                             );
-                            sails.log.info('The internal experiences are been updated!');
+                            sails.log.info('The profile is been updated!');
                             updatedResearchEntityDataItems.push(researchEntityData);
                         } else {
-                            sails.log.info('The internal experiences are already up-to-date!');
+                            sails.log.info('The profile is already up-to-date!');
                         }
                     }
                 } else {

@@ -51,6 +51,12 @@
             });
 
             vm.socials.push({
+                label: '<i class="fas fa-graduation-cap fa-left"></i>Google Scholar',
+                placeholder: 'Google Scholar URL',
+                model: 'googleScholar'
+            });
+
+            vm.socials.push({
                 label: '<i class="fab fa-github fa-left"></i>Github',
                 placeholder: 'Github URL',
                 model: 'github'

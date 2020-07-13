@@ -100,6 +100,7 @@
                     vm.context === 'facebook' ||
                     vm.context === 'instagram' ||
                     vm.context === 'researchgate' ||
+                    vm.context === 'googleScholar' ||
                     vm.context === 'github' ||
                     vm.context === 'bitbucket' ||
                     vm.context === 'youtube' ||
