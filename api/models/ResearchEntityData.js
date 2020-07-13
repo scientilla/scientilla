@@ -519,6 +519,12 @@ const defaultProperties = {
                 definitions.privacy,
                 definitions.privacyDefaultHidden
             ),
+            googleScholar: _.merge(
+                {},
+                definitions.url,
+                definitions.privacy,
+                definitions.privacyDefaultHidden
+            ),
             github: _.merge(
                 {},
                 definitions.url,
@@ -764,6 +770,12 @@ const thenProperties = {
                     { $ref: '#/definitions/privacyEnumHidden' },
                     { $ref: '#/definitions/privacyEnumInvisible' }
                 ]
+            },
+            googleScholar: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
             }
         }
     },
@@ -946,6 +958,13 @@ const elseProperties = {
                 ]
             },
             flickr: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumPublic' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            googleScholar: {
                 oneOf: [
                     { $ref: '#/definitions/privacyEnumHidden' },
                     { $ref: '#/definitions/privacyEnumPublic' },

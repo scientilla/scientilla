@@ -862,6 +862,21 @@ async function toPDF(researchEntityId, options = {}) {
                 });
             }
 
+            if (!_.isEmpty(profile.socials && profile.socials.googleScholar)) {
+                socials.push({
+                    text: [
+                        {
+                            text: '',
+                            style: [
+                                'fontAwesome',
+                                'solid'
+                            ]
+                        },
+                        ' ' + profile.socials.googleScholar
+                    ]
+                });
+            }
+
             if (!_.isEmpty(profile.socials && profile.socials.github)) {
                 socials.push({
                     text: [
@@ -1545,6 +1560,9 @@ async function toDoc(researchEntityId, options = {}) {
 
     if (!_.isEmpty(profile.socials && profile.socials.researchgate)) {
         socials.push(new TextRun(profile.socials.researchgate).break());
+    }
+    if (!_.isEmpty(profile.socials && profile.socials.googleScholar)) {
+        socials.push(new TextRun(profile.socials.googleScholar).break());
     }
 
     if (!_.isEmpty(profile.socials && profile.socials.github)) {
