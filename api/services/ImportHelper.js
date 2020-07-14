@@ -690,13 +690,15 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
 
             if (offices.length === 1 && offices[0] === 'IIT') {
                 group.type = 'Institute';
+                group.name = 'Istituto Italiano di Tecnologia';
+                group.code = 'IIT';
             } else {
                 group.type = 'Directorate';
-                group.offices = offices
+                group.offices = offices;
+                group.name = line.name;
+                group.code = line.code;
             }
 
-            group.name = line.name;
-            group.code = line.code;
             group.privacy = defaultPrivacy;
         }
 
