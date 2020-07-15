@@ -33,7 +33,6 @@
             vm.facilities = vm.profile.groups.filter(group => group.type === 'Facility');
             vm.directorates = vm.profile.groups.filter(group => group.type === 'Directorate');
             vm.institutes = vm.profile.groups.filter(group => group.type === 'Institute');
-            console.log(vm.institutes);
         };
     }
 
