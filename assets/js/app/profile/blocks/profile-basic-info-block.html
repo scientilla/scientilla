@@ -18,6 +18,12 @@
                 {{ vm.joinStrings([vm.profile.jobTitle, vm.profile.role], ' - ') }}
             </p>
 
+            <ul class="institutes" ng-if="vm.institutes.length > 0">
+                <li class="institute" ng-repeat="institute in vm.institutes track by $index">
+                    <span class="group-name">{{ institute.name }}</span>
+                </li>
+            </ul>
+
             <ul class="directorates" ng-if="vm.directorates.length > 0">
                 <li class="directorate" ng-repeat="directorate in vm.directorates track by $index">
                     <span class="group-name">{{ directorate.name }}</span>

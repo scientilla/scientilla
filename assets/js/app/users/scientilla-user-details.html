@@ -20,6 +20,7 @@
                     <li ng-repeat="g in vm.user.memberships">
                         <a ng-href="#{{g.getProfileUrl()}}">
                             {{g.getDisplayName()}}
+                            <span ng-if="!g.active">(Former member)</span>
                         </a>
                     </li>
                     <li ng-if="vm.user.memberships.length === 0">No groups</li>
