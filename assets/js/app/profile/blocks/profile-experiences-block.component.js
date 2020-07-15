@@ -66,7 +66,7 @@
                                             </span>
                                             <ul class="experience-lines">
                                                 <li ng-repeat="line in experience.lines">
-                                                    <ng-container ng-if="line.code">        
+                                                    <ng-container ng-if="line.code && line.institute !== 'IIT'">        
                                                         <span
                                                             class="location"
                                                             ng-if="line.office || line.name">
