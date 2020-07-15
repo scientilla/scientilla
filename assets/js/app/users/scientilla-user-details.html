@@ -16,13 +16,19 @@
             <uib-tab
                 index="1"
                 heading="Groups">
-                <ul>
-                    <li ng-repeat="g in vm.user.memberships">
-                        <a ng-href="#{{g.getProfileUrl()}}">
-                            {{g.getDisplayName()}}
-                        </a>
+                <ul class="group-types">
+                    <li ng-repeat="(type, groups) in vm.groupsByType">
+                        <strong>{{ vm.getTypeTitle(type, groups) }}:</strong>
+                        <ul class="groups">
+                            <li ng-repeat="group in groups">
+                                <a ng-href="#{{ group.getProfileUrl() }}">
+                                    {{ group.getDisplayName() }}
+                                </a>
+                                <span ng-if="!vm.isActiveMember(vm.user, group)">(Former member)</span>
+                            </li>
+                        </ul>
                     </li>
-                    <li ng-if="vm.user.memberships.length === 0">No groups</li>
+                    <li ng-if="vm.groupsByType.length === 0">No groups</li>
                 </ul>
             </uib-tab>
             <uib-tab
