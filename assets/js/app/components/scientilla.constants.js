@@ -267,14 +267,16 @@
         INSTITUTE: 'Institute',
         CENTER: 'Center',
         RESEARCH_LINE: 'Research Line',
-        FACILITY: 'Facility'
+        FACILITY: 'Facility',
+        DIRECTORATE: 'Directorate'
     };
 
     const groupTypeLabels = {
         INSTITUTE: 'Institute',
         CENTER: 'Center',
         RESEARCH_LINE: 'Research line',
-        FACILITY: 'Facility'
+        FACILITY: 'Facility',
+        DIRECTORATE: 'Directorate'
     };
 
     const apiPrefix = '/api/v1';
