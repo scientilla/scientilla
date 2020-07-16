@@ -6,35 +6,40 @@ const _ = require('lodash');
 const BaseModel = require("../lib/BaseModel.js");
 
 const publicFields = [
-        'code',
-        'acronyn',
-        'title',
-        'abstract',
-        'startDate',
-        'startYear',
-        'endDate',
-        'endYear',
-        'projectType',
-        'projectType2',
-        'role',
-        'status',
-        'url',
-        'logos',
-        'piStr',
-    ];
+    'code',
+    'acronyn',
+    'title',
+    'abstract',
+    'startDate',
+    'startYear',
+    'endDate',
+    'endYear',
+    'projectType',
+    'projectType2',
+    'role',
+    'status',
+    'url',
+    'logos',
+    'piStr',
+];
 
 
 module.exports = _.merge({}, BaseModel, {
     DEFAULT_SORTING: {},
     migrate: 'safe',
     tableName: 'project_competitive',
+    autoPk: false,
     autoUpdatedAt: false,
     autoCreatedAt: false,
     attributes: {
         type: {
             model: 'researchitemtype'
         },
-        code: 'STRING',
+        code: {
+            type: 'STRING',
+            primaryKey: true,
+            require: true
+        },
         acronym: 'STRING',
         title: 'STRING',
         abstract: 'STRING',

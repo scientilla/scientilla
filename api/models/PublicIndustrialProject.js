@@ -25,13 +25,18 @@ module.exports = _.merge({}, BaseModel, {
     DEFAULT_SORTING: {},
     migrate: 'safe',
     tableName: 'project_industrial',
+    autoPk: false,
     autoUpdatedAt: false,
     autoCreatedAt: false,
     attributes: {
         type: {
             model: 'researchitemtype'
         },
-        code: 'STRING',
+        code: {
+            type: 'STRING',
+            primaryKey: true,
+            require: true
+        },
         acronym: 'STRING',
         title: 'STRING',
         abstract: 'STRING',
