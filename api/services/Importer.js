@@ -402,10 +402,10 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
     const reqOptionsEmployees = ImportHelper.getEmployeesRequestOptions();
 
     // We cache the groups, membership groups and default profile.
-    const activeGroups = await Group.find({active: true});
+    let activeGroups;
     const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
     const ldapUsers = await Utils.getActiveDirectoryUsers();
-    const groups = await Group.find();
+    let groups = await Group.find();
     if (groups.length <= 0) {
         sails.log.info('No groups found...');
     }
@@ -422,7 +422,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
     try {
         reqOptionsEmployees.params.email = email;
 
-        // Get all the employees from Pentaho, including the former employees.
+        // Get all the employees from Pentaho.
         let employees = await ImportHelper.getEmployees(reqOptionsEmployees);
 
         if (!employees) {
@@ -436,6 +436,12 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
             e.contratto_secondario !== 'X' &&
             !ignoredRoles.includes(e.Ruolo_AD)
         );
+
+        await ImportHelper.importDirectorates(employees, groups);
+
+        // Get the groups again, after importing
+        groups = await Group.find();
+        activeGroups = groups.filter(g => g.active === true);
 
         // Get all CID codes in one Array
         const cidCodes = employees.map(employee => employee.cid);

@@ -1,4 +1,4 @@
-/* global ResearchEntityData */
+/* global ResearchEntityData, Group */
 // ImportHelper.js - in api/services
 
 "use strict";
@@ -17,7 +17,8 @@ module.exports = {
     getEmployeesRequestOptions,
     getIgnoredRoles,
     createUserObject,
-    getProfileObject
+    getProfileObject,
+    importDirectorates
 };
 
 const moment = require('moment');
@@ -576,11 +577,11 @@ function createUserObject(ldapUsers = [], user = {}, employee = {}, contractEndD
  * @param {Object}          researchEntityData
  * @param {Object}          contract
  * @param {Object[]}        allMembershipGroups     Array of Objects.
- * @param {Object[]}        allGroups               Array of Objects.
+ * @param {Object[]}        activeGroups               Array of Objects.
  *
  * @returns {Object}
  */
-function getProfileObject(researchEntityData, contract, allMembershipGroups, allGroups) {
+function getProfileObject(researchEntityData, contract, allMembershipGroups, activeGroups) {
     const profile = ResearchEntityData.setupProfile(researchEntityData);
 
     profile.hidden = (contract.no_people === 'NO PEOPLE' ? true : false);
@@ -648,7 +649,7 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
         const group = {
             offices: []
         };
-        const codeGroup = allGroups.find(group => group.code === code);
+        const codeGroup = activeGroups.find(group => group.code === code);
 
         if (codeGroup) {
             if (codeGroup.type === 'Facility' || 'Research Line') {
@@ -698,4 +699,58 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, all
     profile.groups = groups;
 
     return profile;
+}
+
+/**
+ * This function return an user profile object created with the passed data.
+ *
+ * @param {Object[]}        employees            Array of Objects.
+ * @param {Object[]}        groups               Array of Objects.
+ */
+async function importDirectorates(employees, groups) {
+    let directorates = [];
+
+    for (const employee of employees) {
+        for (let i = 1; i < 7; i++) {
+            if (!_.isEmpty(employee['linea_' + i])) {
+                const code = employee['linea_' + i];
+                const name = employee['nome_linea_' + i];
+                const office = employee['UO_' + i];
+
+                const directorate = directorates.find(d => d.code === code);
+                const group = groups.find(g => g.code === code && g.type !== 'Directorate');
+
+                if (!directorate && !group) {
+                    directorates.push({
+                        code: code,
+                        name: name,
+                        office: office
+                    });
+                }
+            }
+        }
+    }
+
+    for (const directorate of directorates) {
+        const group = await Group.findOne({
+            code: directorate.code,
+            type: 'Directorate'
+        });
+
+        const groupData = {
+            code: directorate.code,
+            name: directorate.name,
+            type: 'Directorate',
+            active: true,
+            description: null,
+            //description: directorate.office, // Cannot because some codes have more offices like ROO001
+            slug: directorate.name.toLowerCase().trim().replace(/\./gi, '-').split('@')[0]
+        };
+
+        if (group) {
+            await Group.update({id: group.id}, groupData);
+        } else {
+            await Group.create(groupData);
+        }
+    }
 }
