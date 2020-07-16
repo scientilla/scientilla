@@ -7,7 +7,7 @@ module.exports = {
         favorite: 'BOOLEAN',
         project: {
             columnName: 'research_item',
-            model: 'publicproject'
+            model: 'publicindustrialproject'
         },
         researchEntity: {
             columnName: 'research_entity',

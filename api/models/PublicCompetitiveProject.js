@@ -1,12 +1,11 @@
-/* global require, ResearchItemTypes */
+/* global require, Project */
 'use strict';
 
 const _ = require('lodash');
 
 const BaseModel = require("../lib/BaseModel.js");
 
-const projectFields = {
-    4: [
+const publicFields = [
         'code',
         'acronyn',
         'title',
@@ -22,28 +21,13 @@ const projectFields = {
         'url',
         'logos',
         'piStr',
-    ],
-    5: [
-        'code',
-        'acronyn',
-        'title',
-        'abstract',
-        'startDate',
-        'startYear',
-        'endDate',
-        'endYear',
-        'projectType',
-        'status',
-        'url',
-        'piStr',
-    ]
-}
+    ];
 
 
 module.exports = _.merge({}, BaseModel, {
     DEFAULT_SORTING: {},
     migrate: 'safe',
-    tableName: 'project',
+    tableName: 'project_competitive',
     autoUpdatedAt: false,
     autoCreatedAt: false,
     attributes: {
@@ -98,21 +82,15 @@ module.exports = _.merge({}, BaseModel, {
         toJSON() {
             const project = this.toObject();
             const json = {};
-            projectFields[project.type].forEach(f => json[f] = project[f]);
+            publicFields.forEach(f => json[f] = project[f]);
 
-            json.pi = project.members
-                .filter(m => ['pi', 'co_pi'].includes(m.role))
-                .map(m => ({
-                    email: m.email,
-                    name: m.name,
-                    surname: m.surname
-                }));
+            json.pi = Project.getPis(project.members);
             json.lines = project.researchLines.map(rl => ({
                 code: rl.code,
                 description: rl.description
             }));
 
-            return json
+            return json;
         }
     }
 });

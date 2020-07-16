@@ -2,6 +2,7 @@ CREATE OR REPLACE VIEW project AS
 SELECT ri.id,
        ri.kind,
        ri.type,
+       rit.key,
        ri.draft_creator,
        ripc.project_data ->> 'code'                          AS code,
        ripc.project_data ->> 'acronym'                       AS acronym,
@@ -25,20 +26,22 @@ SELECT ri.id,
        ripc."updatedAt"
 FROM research_item ri
          JOIN research_item_project_competitive ripc ON ri.id = ripc.research_item
+         JOIN research_item_type rit ON ri.type = rit.id
          LEFT JOIN (SELECT research_item AS id,
-                      string_agg(
-                              concat(lat.memebers_arr ->> 'email', ' ',
-                                     lat.memebers_arr ->> 'name', ' ',
-                                     lat.memebers_arr ->> 'surname'),
-                              ', ') AS str
-               FROM research_item_project_competitive ripc2,
-                    LATERAL (SELECT json_array_elements(ripc2.project_data -> 'members') memebers_arr) lat
-               WHERE lat.memebers_arr ->> 'role' IN ('pi', 'co_pi')
-               GROUP BY research_item) AS members_str ON ri.id = members_str.id
+                           string_agg(
+                                   concat(lat.memebers_arr ->> 'email', ' ',
+                                          lat.memebers_arr ->> 'name', ' ',
+                                          lat.memebers_arr ->> 'surname'),
+                                   ', ') AS str
+                    FROM research_item_project_competitive ripc2,
+                         LATERAL (SELECT json_array_elements(ripc2.project_data -> 'members') memebers_arr) lat
+                    WHERE lat.memebers_arr ->> 'role' IN ('pi', 'co_pi')
+                    GROUP BY research_item) AS members_str ON ri.id = members_str.id
 UNION ALL
 SELECT ri.id,
        ri.kind,
        ri.type,
+       rit.key,
        ri.draft_creator,
        ripi.project_data ->> 'code'                          AS code,
        ripi.project_data ->> 'acronym'                       AS acronym,
@@ -62,13 +65,14 @@ SELECT ri.id,
        ripi."updatedAt"
 FROM research_item ri
          JOIN research_item_project_industrial ripi on ri.id = ripi.research_item
+         JOIN research_item_type rit ON ri.type = rit.id
          LEFT JOIN (SELECT research_item AS id,
-                      string_agg(
-                              concat(lat.memebers_arr ->> 'email', ' ',
-                                     lat.memebers_arr ->> 'name', ' ',
-                                     lat.memebers_arr ->> 'surname'),
-                              ', ') AS str
-               FROM research_item_project_industrial ripi2,
-                    LATERAL (SELECT json_array_elements(ripi2.project_data -> 'members') memebers_arr) lat
-               WHERE lat.memebers_arr ->> 'role' IN ('pi', 'co_pi')
-               GROUP BY research_item) AS members_str ON ri.id = members_str.id;
+                           string_agg(
+                                   concat(lat.memebers_arr ->> 'email', ' ',
+                                          lat.memebers_arr ->> 'name', ' ',
+                                          lat.memebers_arr ->> 'surname'),
+                                   ', ') AS str
+                    FROM research_item_project_industrial ripi2,
+                         LATERAL (SELECT json_array_elements(ripi2.project_data -> 'members') memebers_arr) lat
+                    WHERE lat.memebers_arr ->> 'role' IN ('pi', 'co_pi')
+                    GROUP BY research_item) AS members_str ON ri.id = members_str.id;

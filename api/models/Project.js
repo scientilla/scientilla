@@ -166,9 +166,18 @@ module.exports = _.merge({}, BaseModel, {
     },
     async getVerifiedExternal(external) {
         return await Project.findOne({
-            code:external.code,
-            kind:ResearchItemKinds.VERIFIED
+            code: external.code,
+            kind: ResearchItemKinds.VERIFIED
         });
+    },
+    getPis(members) {
+        return members
+            .filter(m => ['pi', 'co_pi'].includes(m.role))
+            .map(m => ({
+                email: m.email,
+                name: m.name,
+                surname: m.surname
+            }));
     }
 });
 
