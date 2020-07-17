@@ -160,6 +160,20 @@
                     <bearer-token></bearer-token>
                 </li>
 
+                <li id="get-specific-projects">
+                    <h3>Search for one or more projects in the system with a specific code</h3>
+                    <pre data-type="get">
+                        <code>/api/v1/publicCompetitiveProjects?code={code}</code>
+                    </pre>
+                    <p>note: by specifying the id will be returned only the project object</p>
+
+                    <h3>Gets a single project with the specified id</h3>
+                    <pre data-type="get">
+                        <code>/api/v1/publicCompetitiveProjects/{projectId}</code>
+                    </pre>
+
+                </li>
+
                 <li id="get-projects-of-specific-group">
                     <h3>Get the projects of a specific group</h3>
                     <pre data-type="get">
