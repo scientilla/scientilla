@@ -173,7 +173,6 @@ module.exports.policies = {
 
     ResearchItemTypeController: defaultPolicy,
 
-    DocumentController: defaultPolicy,
     PublicCompetitiveProjectsController: defaultPolicy,
 
     BackupController: _.defaults({
