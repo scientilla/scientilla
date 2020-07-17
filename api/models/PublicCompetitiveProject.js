@@ -6,6 +6,7 @@ const _ = require('lodash');
 const BaseModel = require("../lib/BaseModel.js");
 
 const publicFields = [
+    'id',
     'code',
     'acronyn',
     'title',
