@@ -15,7 +15,7 @@ module.exports = {
         },
     },
     migrate: 'safe',
-    tableName: 'verify',
+    tableName: 'public_project_verify',
     autoUpdatedAt: false,
     autoCreatedAt: false
 };

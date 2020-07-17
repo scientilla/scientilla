@@ -1,4 +1,5 @@
 CREATE OR REPLACE VIEW project_industrial AS
 SELECT *
 FROM project
-where key = 'project_industrial';
+WHERE key = 'project_industrial'
+  AND kind = 'v';
