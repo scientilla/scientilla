@@ -380,7 +380,7 @@ async function importSourceMetrics(filename) {
     sails.log.info('imported ' + recordsCount + ' records');
 }
 
-async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
+async function importUserContracts(email = ImportHelper.getDefaultEmail(), override = false) {
 
     const collectGroupCodes = (contract) => {
         const codes = [];
@@ -402,10 +402,10 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
     const reqOptionsEmployees = ImportHelper.getEmployeesRequestOptions();
 
     // We cache the groups, membership groups and default profile.
-    const activeGroups = await Group.find({active: true});
+    let activeGroups;
     const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
     const ldapUsers = await Utils.getActiveDirectoryUsers();
-    const groups = await Group.find();
+    let groups = await Group.find();
     if (groups.length <= 0) {
         sails.log.info('No groups found...');
     }
@@ -422,7 +422,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
     try {
         reqOptionsEmployees.params.email = email;
 
-        // Get all the employees from Pentaho, including the former employees.
+        // Get all the employees from Pentaho.
         let employees = await ImportHelper.getEmployees(reqOptionsEmployees);
 
         if (!employees) {
@@ -436,6 +436,12 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
             e.contratto_secondario !== 'X' &&
             !ignoredRoles.includes(e.Ruolo_AD)
         );
+
+        await ImportHelper.importDirectorates(employees, groups);
+
+        // Get the groups again, after importing
+        groups = await Group.find();
+        activeGroups = groups.filter(g => g.active === true);
 
         // Get all CID codes in one Array
         const cidCodes = employees.map(employee => employee.cid);
@@ -562,7 +568,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail()) {
 
             // Create or update researchEntityData record
             if (researchEntityData) {
-                if (!_.isEqual(researchEntityData.imported_data, employee)) {
+                if (!_.isEqual(researchEntityData.imported_data, employee) || override) {
                     const profile = ImportHelper.getProfileObject(researchEntityData, employee, allMembershipGroups, activeGroups);
                     let profileJSONString = JSON.stringify(profile);
 

@@ -94,24 +94,45 @@
                 show="vm.profile.experiencesInternal.length > 0"></profile-privacy-legend>
 
             <ul class="item-listing add-lines">
-                <li ng-repeat="(key, experience) in vm.profile.experiencesInternal track by $index">
+                <li
+                    ng-repeat="(key, experience) in vm.profile.experiencesInternal track by $index"
+                    ng-init="type = vm.getType(experience)">
                     <ul class="enable-listing">
                         <li>
                             <ul class="field-listing">
                                 <li>
                                     <ul class="internal-experiences">
                                         <li>
+                                            <!-- Institute  -->
                                             <ul
                                                 class="internal-experience-without-office-listing"
-                                                ng-if="vm.getInternalExperiencesWithoutOffice(experience).length > 0">
+                                                ng-if="type === 'institute'">
+                                                <li>
+                                                    <div class="form-group">
+                                                        <label>Institute</label>
+                                                        <div class="form-control disabled">
+                                                            <ul class="lines-of-experience">
+                                                                <li ng-repeat="line in experience.lines track by $index">
+                                                                    {{ experience.company }}
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+
+                                            <!-- Research line-->
+                                            <ul
+                                                class="internal-experience-without-office-listing"
+                                                ng-if="type === 'research line'">
                                                 <li>
                                                     <div class="form-group">
                                                         <label>
-                                                            {{ vm.getInternalExperiencesWithoutOffice(experience).length > 1 ? 'Research lines' : 'Research line' }}
+                                                            {{ experience.lines.length > 1 ? 'Research lines' : 'Research line' }}
                                                         </label>
                                                         <div class="form-control disabled">
                                                             <ul class="lines-of-experience">
-                                                                <li ng-repeat="line in vm.getInternalExperiencesWithoutOffice(experience) track by $index">
+                                                                <li ng-repeat="line in experience.lines track by $index">
                                                                     "{{ line.name }}"
                                                                 </li>
                                                             </ul>
@@ -119,9 +140,12 @@
                                                     </div>
                                                 </li>
                                             </ul>
+
+                                            <!-- Department -->
                                             <ul
                                                 class="internal-experience-with-office-listing"
-                                                ng-repeat="line in vm.getInternalExperiencesWithOffice(experience) track by $index">
+                                                ng-if="type === 'department'"
+                                                ng-repeat="line in experience.lines track by $index">
                                                 <li
                                                     ng-if="vm.isBefore2015(experience.to)"
                                                     class="department">

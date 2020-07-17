@@ -466,7 +466,7 @@ const defaultProperties = {
                 type: 'object',
                 properties: {
                     type: {
-                        enum: ['Research Line', 'Facility', 'Directorate']
+                        enum: ['Research Line', 'Facility', 'Directorate', 'Institute']
                     },
                     center: _.merge(
                         {},
@@ -514,6 +514,12 @@ const defaultProperties = {
                 definitions.privacyDefaultHidden
             ),
             researchgate: _.merge(
+                {},
+                definitions.url,
+                definitions.privacy,
+                definitions.privacyDefaultHidden
+            ),
+            googleScholar: _.merge(
                 {},
                 definitions.url,
                 definitions.privacy,
@@ -764,6 +770,12 @@ const thenProperties = {
                     { $ref: '#/definitions/privacyEnumHidden' },
                     { $ref: '#/definitions/privacyEnumInvisible' }
                 ]
+            },
+            googleScholar: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
             }
         }
     },
@@ -946,6 +958,13 @@ const elseProperties = {
                 ]
             },
             flickr: {
+                oneOf: [
+                    { $ref: '#/definitions/privacyEnumHidden' },
+                    { $ref: '#/definitions/privacyEnumPublic' },
+                    { $ref: '#/definitions/privacyEnumInvisible' }
+                ]
+            },
+            googleScholar: {
                 oneOf: [
                     { $ref: '#/definitions/privacyEnumHidden' },
                     { $ref: '#/definitions/privacyEnumPublic' },

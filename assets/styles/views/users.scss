@@ -44,6 +44,12 @@
         .profile-block{
             margin-bottom: 3rem;
         }
+
+        .groups,
+        .group-types{
+            @include normalize-listing;
+            margin-bottom: 1rem;
+        }
     }
 }
 

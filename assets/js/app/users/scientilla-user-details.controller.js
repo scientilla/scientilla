@@ -58,10 +58,45 @@
             }
         ];
 
+        vm.isActiveMember = (user, group) => {
+            const groupMembership = user.groupMemberships
+                .find(groupMembership => groupMembership.group === group.id);
+
+            return groupMembership.active;
+        };
+
+        vm.getTypeTitle = (type, groups) => {
+            switch (true) {
+                case type === 'Research Line' && groups.length === 1:
+                    return 'Research line';
+                case type === 'Research Line' && groups.length > 1:
+                    return 'Research lines';
+                case type === 'Institute' && groups.length === 1:
+                    return 'Institute';
+                case type === 'Institute' && groups.length > 1:
+                    return 'Institutes';
+                case type === 'Center' && groups.length === 1:
+                    return 'Center';
+                case type === 'Center' && groups.length > 1:
+                    return 'Centers';
+                case type === 'Facility' && groups.length === 1:
+                    return 'Facility';
+                case type === 'Facility' && groups.length > 1:
+                    return 'Facilities';
+                case type === 'Directorate' && groups.length === 1:
+                    return 'Directorate';
+                case type === 'Directorate' && groups.length > 1:
+                    return 'Directorates';
+                default:
+                    return '';
+            }
+        };
+
         /* jshint ignore:start */
         vm.$onInit = async () => {
 
             vm.user = await UsersService.getUser(vm.userId);
+            vm.groupsByType = _.groupBy(vm.user.memberships, 'type');
 
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
 

@@ -22,6 +22,7 @@
         vm.researchLines = [];
         vm.facilities = [];
         vm.directorates = [];
+        vm.institutes = [];
 
         vm.joinStrings = function (strings, seperator) {
             return TextService.joinStrings(strings, seperator);
@@ -31,6 +32,7 @@
             vm.researchLines = vm.profile.groups.filter(group => group.type === 'Research Line');
             vm.facilities = vm.profile.groups.filter(group => group.type === 'Facility');
             vm.directorates = vm.profile.groups.filter(group => group.type === 'Directorate');
+            vm.institutes = vm.profile.groups.filter(group => group.type === 'Institute');
         };
     }
 

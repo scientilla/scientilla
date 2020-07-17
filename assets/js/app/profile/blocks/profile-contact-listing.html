@@ -39,6 +39,11 @@
                     <i class="fab fa-researchgate"></i>
                 </a>
             </li>
+            <li ng-if="vm.profile.socials.googleScholar">
+                <a ng-href="{{ vm.profile.socials.googleScholar }}" target="_blank">
+                    <i class="fas fa-graduation-cap"></i>
+                </a>
+            </li>
             <li ng-if="vm.profile.socials.github">
                 <a ng-href="{{ vm.profile.socials.github }}" target="_blank">
                     <i class="fab fa-github-square"></i>
