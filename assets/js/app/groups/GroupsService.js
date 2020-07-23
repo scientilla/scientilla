@@ -6,10 +6,11 @@
         .factory("GroupsService", GroupService);
 
     GroupService.$inject = [
-        'Restangular'
+        'Restangular',
+        'Prototyper'
     ];
 
-    function GroupService(Restangular) {
+    function GroupService(Restangular, Prototyper) {
         var service = Restangular.service("groups");
 
         service.getNewGroup = getNewGroup;
@@ -25,6 +26,9 @@
         service.addRelative = addRelative;
         service.removeChild = removeChild;
         service.getSettings = getSettings;
+        service.getConnectedGroups = getConnectedGroups;
+        service.getMembershipGroups = getMembershipGroups;
+        service.getTypeTitle = getTypeTitle;
 
         return service;
 
@@ -94,6 +98,44 @@
             return service.getList(q);
         }
 
+        function getMembershipGroups() {
+            return Restangular.all('membershipgroups').customGET('', {
+                //where: {active: true},
+                populate: ['parent_group', 'child_group']
+            }).then(res => {
+                return res.items;
+            });
+        }
+
+        function getConnectedGroups(groupId) {
+            return Restangular.all('membershipgroups').customGET('', {
+                where: {
+                   child_group: groupId
+                },
+                populate: ['parent_group', 'child_group']
+            }).then(res => {
+                const groups = [];
+                for (const group of res.items) {
+                    if (_.has(group, 'child_group') && !_.isEmpty(group.child_group)) {
+                        const childGroup = Prototyper.toGroupModel(group.child_group);
+
+                        if (!_.find(groups, childGroup)) {
+                            groups.push(childGroup);
+                        }
+                    }
+
+                    if (_.has(group, 'parent_group') && !_.isEmpty(group.parent_group)) {
+                        const parentGroup = Prototyper.toGroupModel(group.parent_group);
+
+                        if (!_.find(groups, parentGroup)) {
+                            groups.push(parentGroup);
+                        }
+                    }
+                }
+                return groups;
+            });
+        }
+
         function addCollaborator(group, user, active) {
             const newMembership = {
                 group: group.id,
@@ -137,6 +179,33 @@
 
         function getSettings(groupId) {
             return getGroup(groupId);
+        }
+
+        function getTypeTitle(type, groups) {
+            switch (true) {
+                case type === 'Research Line' && groups.length === 1:
+                    return 'Research line';
+                case type === 'Research Line' && groups.length > 1:
+                    return 'Research lines';
+                case type === 'Institute' && groups.length === 1:
+                    return 'Institute';
+                case type === 'Institute' && groups.length > 1:
+                    return 'Institutes';
+                case type === 'Center' && groups.length === 1:
+                    return 'Center';
+                case type === 'Center' && groups.length > 1:
+                    return 'Centers';
+                case type === 'Facility' && groups.length === 1:
+                    return 'Facility';
+                case type === 'Facility' && groups.length > 1:
+                    return 'Facilities';
+                case type === 'Directorate' && groups.length === 1:
+                    return 'Directorate';
+                case type === 'Directorate' && groups.length > 1:
+                    return 'Directorates';
+                default:
+                    return '';
+            }
         }
 
         return service;
