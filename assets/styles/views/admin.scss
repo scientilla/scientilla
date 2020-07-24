@@ -254,65 +254,7 @@
         }
 
         .admin-group-overview{
-            .group-listing{
-                @include normalize-listing;
 
-                strong{
-                    display: block;
-                }
-
-                ul{
-                    @include normalize-listing;
-
-                    li{
-                        position: relative;
-                        padding-left: 2rem;
-
-                        &:before{
-                            position: absolute;
-                            top: 0px;
-                            left: .5rem;
-                            display: block;
-                            height: 100%;
-                            content: '';
-                            border-left: 1px dotted $gray-400;
-                        }
-
-                        &:after{
-                            position: absolute;
-                            top: 1rem;
-                            left: .5rem;
-                            width: 1rem;
-                            content: '';
-                            border-bottom: 1px dotted $gray-400;
-                        }
-
-                        &:last-child {
-                            &:before{
-                                height: 1rem;
-                            }
-
-                            &.main-group{
-                                &:before{
-                                    height: 2rem;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                .subgroup-listing{
-                    padding-bottom: 1rem;
-                }
-
-                .main-group{
-                    padding-top: 1rem;
-
-                    &:after{
-                        top: 2rem;
-                    }
-                }
-            }
         }
     }
 

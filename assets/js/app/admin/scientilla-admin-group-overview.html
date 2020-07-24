@@ -3,10 +3,12 @@
 
     <ul
         ng-if="vm.institute"
-        class="group-listing">
+        class="group-detail-listing">
         <li>
             <strong>Institute:</strong>
-            {{ vm.institute.name }}
+            <a ng-href="#{{ vm.institute.getProfileUrl() }}">
+                {{ vm.institute.name }}
+            </a>
             <ul>
                 <li
                     ng-repeat="(type, groups) in vm.types"
@@ -16,13 +18,17 @@
                         <li
                             ng-repeat="group in groups"
                             ng-init="subtypes = vm.getGroupTypes(group)">
-                            {{ group.name }}
+                            <a ng-href="#{{ group.getProfileUrl() }}">
+                                {{ group.name }}
+                            </a>
                             <ul>
                                 <li ng-repeat="(subtype, subgroups) in subtypes">
                                     <strong>{{ vm.getTypeTitle(subtype, subgroups) }} ({{ subgroups.length }})</strong>
                                     <ul class="subgroup-listing">
                                         <li ng-repeat="subgroup in subgroups">
-                                            {{ subgroup.name }}
+                                            <a ng-href="#{{ subgroup.getProfileUrl() }}">
+                                                {{ subgroup.name }}
+                                            </a>
                                         </li>
                                     </ul>
                                 </li>

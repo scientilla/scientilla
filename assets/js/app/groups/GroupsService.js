@@ -29,6 +29,7 @@
         service.getConnectedGroups = getConnectedGroups;
         service.getMembershipGroups = getMembershipGroups;
         service.getTypeTitle = getTypeTitle;
+        service.createInstituteStructure = createInstituteStructure;
 
         return service;
 
@@ -107,34 +108,80 @@
             });
         }
 
-        function getConnectedGroups(groupId) {
+        function createInstituteStructure(institute, membershipGroups) {
+
+            // Map the index of membershipGroups with child group => index = value, child group id = key
+            const indexMapping = membershipGroups.reduce((acc, el, i) => {
+                acc[el.child_group.id] = i;
+                return acc;
+            }, {});
+
+            // Loop over membership groups
+            membershipGroups.forEach(el => {
+
+                let parentEl;
+
+                // Handle the main institute
+                if (el.parent_group.id === 1) {
+                    // Store the parent group as institute if it's empty
+                    if (_.isEmpty(institute)) {
+                        institute = Prototyper.toGroupModel(el.parent_group);
+                    }
+                    // Set the parent element to the institute
+                    parentEl = institute;
+                } else {
+                    // Use our mapping to locate the parent element in our data array
+                    parentEl = membershipGroups[indexMapping[el.parent_group.id]];
+                }
+
+                // Skip if the parent element is empty
+                if (!parentEl) {
+                    return;
+                }
+
+                // Add our current element to its parent's `childGroups` array
+                const group = Prototyper.toGroupModel(el.child_group);
+                group.childGroups = el.childGroups || [];
+                if (!_.has(parentEl, 'childGroups')) {
+                    parentEl.childGroups = [];
+                }
+                parentEl.childGroups.push(group);
+            });
+
+            return institute;
+        }
+
+        /* jshint ignore:start */
+        function getConnectedGroups(groupIds) {
             return Restangular.all('membershipgroups').customGET('', {
-                where: {
+                /*where: {
                    child_group: groupId
-                },
+                },*/
                 populate: ['parent_group', 'child_group']
             }).then(res => {
-                const groups = [];
-                for (const group of res.items) {
-                    if (_.has(group, 'child_group') && !_.isEmpty(group.child_group)) {
-                        const childGroup = Prototyper.toGroupModel(group.child_group);
+                const allMembershipGroups = res.items;
+                let institute = false;
 
-                        if (!_.find(groups, childGroup)) {
-                            groups.push(childGroup);
-                        }
-                    }
+                for (const id of groupIds) {
+                    const group = allMembershipGroups.find(membershipGroup => membershipGroup.child_group.id === id);
 
-                    if (_.has(group, 'parent_group') && !_.isEmpty(group.parent_group)) {
-                        const parentGroup = Prototyper.toGroupModel(group.parent_group);
-
-                        if (!_.find(groups, parentGroup)) {
-                            groups.push(parentGroup);
+                    if (group && group.parent_group) {
+                        if (!groupIds.includes(group.parent_group.id)) {
+                            groupIds.push(group.parent_group.id);
                         }
                     }
                 }
-                return groups;
+
+                const membershipGroups = _.orderBy(
+                    allMembershipGroups.filter(membershipGroup => groupIds.includes(membershipGroup.child_group.id)),
+                    'parent_group.id',
+                    'desc'
+                );
+
+                return service.createInstituteStructure(institute, membershipGroups);
             });
         }
+        /* jshint ignore:end */
 
         function addCollaborator(group, user, active) {
             const newMembership = {
