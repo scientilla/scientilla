@@ -74,6 +74,7 @@
             }
 
             vm.projects = await ProjectService.get(vm.researchEntity, query, favorites);
+            console.log(vm.projects);
         }
         /* jshint ignore:end */
     }

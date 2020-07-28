@@ -49,7 +49,7 @@
             editAffiliations: ResearchEntitiesService.editAffiliations,
             multipleDelete: ResearchEntitiesService.deleteDrafts,
             getDrafts: ResearchEntitiesService.getAccomplishmentDrafts,
-            get: ResearchEntitiesService.getAccomplishments,
+            get: ResearchEntitiesService.getProjects,
             getDiscarded: ResearchEntitiesService.getDiscardedAccomplishments,
             copy: ResearchEntitiesService.copy,
             multipleCopy: ResearchEntitiesService.multipleCopy,

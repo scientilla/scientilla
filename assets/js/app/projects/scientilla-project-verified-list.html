@@ -15,10 +15,9 @@
                 </scientilla-multicheck-button>
             </buttons>
             <item-list>
-                <scientilla-checkable ng-repeat="a in vm.projects" item="a" class="scientilla-checkable">
+                <scientilla-checkable ng-repeat="project in vm.projects" item="project" class="scientilla-checkable">
                     <scientilla-project
-                        project="a"
-                        section="vm.section"
+                        project="project"
                         class="project-container"></scientilla-project>
                     <div class="project-row-actions" ng-if="vm.editable">
                         <button
