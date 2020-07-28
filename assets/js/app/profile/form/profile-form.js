@@ -126,6 +126,18 @@
         vm.formatDate = DateService.format;
         vm.isBefore2015 = DateService.isBefore2015;
 
+        vm.getType = (experience) => {
+            if (experience.lines.filter(line => line.institute).length > 0) {
+                return 'institute';
+            }
+
+            if (experience.lines.filter(line => line.office).length > 0) {
+                return 'department';
+            }
+
+            return 'research line';
+        };
+
         vm.getInternalExperiencesWithoutOffice = (experience) => {
             return experience.lines.filter(line => !line.office);
         };
@@ -157,9 +169,6 @@
                     vm.changed['public-website'] = isChanged('public-website');
                     vm.changed['export'] = isChanged('export');
                 }, true);
-
-                //vm.researchInternalExperiences = vm.profile.experiencesInternal.map(e => e.lines.filter(l => !l.office));
-                //console.log(vm.researchInternalExperiences);
 
                 $scope.$broadcast('setupBasicInformation', vm.profile);
             });

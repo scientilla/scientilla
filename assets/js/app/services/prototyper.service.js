@@ -480,6 +480,7 @@
             service.toUsersCollection(group.allMembers);
             service.toDocumentsCollection(group.documents);
             service.toGroupsCollection(group.childGroups);
+            service.toGroupsCollection(group.parentGroups);
             return group;
         }
 

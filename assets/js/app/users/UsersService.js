@@ -83,7 +83,7 @@
         };
 
         service.getUser = function (userId) {
-            const populate = {populate: ['attributes', 'aliases', 'memberships']};
+            const populate = {populate: ['attributes', 'aliases', 'memberships', 'groupMemberships']};
             return service.one(userId).get(populate);
         };
 

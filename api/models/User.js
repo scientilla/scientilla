@@ -177,6 +177,10 @@ module.exports = _.merge({}, SubResearchEntity, {
             via: 'members',
             through: 'membership'
         },
+        groupMemberships: {
+            collection: 'Membership',
+            via: 'user',
+        },
         attributes: {
             collection: 'Attribute',
             through: 'userattribute'
