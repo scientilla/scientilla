@@ -26,9 +26,7 @@
                             {{ vm.institute.name }}
                         </a>
                         <ul>
-                            <li
-                                ng-repeat="(type, groups) in vm.types"
-                                class="main-group">
+                            <li ng-repeat="(type, groups) in vm.types">
                                 <strong>{{ vm.getTypeTitle(type, groups) }}:</strong>
                                 <ul>
                                     <li

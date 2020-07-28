@@ -79,6 +79,7 @@
 
             vm.user = await UsersService.getUser(vm.userId);
             const groupIds = vm.user.memberships.map(g => g.id);
+            console.log(groupIds);
             vm.institute = await GroupsService.getConnectedGroups(groupIds);
             vm.types = _.groupBy(vm.institute.childGroups, 'type');
 
