@@ -34,6 +34,9 @@
         vm.loggedUser = AuthService.user;
 
         vm.activeTabIndex = 0;
+        vm.types = [];
+
+        let allMemberships = [];
 
         const tabIdentifiers = [
             {
@@ -61,27 +64,26 @@
             }
         ];
 
-        vm.isActiveMember = (user, group) => {
-            const groupMembership = user.groupMemberships
-                .find(groupMembership => groupMembership.group === group.id);
-
-            if (groupMembership) {
-                return groupMembership.active;
-            }
-
-            return true;
-        };
-
         vm.getTypeTitle = GroupsService.getTypeTitle;
 
         /* jshint ignore:start */
-        vm.$onInit = async () => {
+        vm.isActiveMember = (user, group) => {
+            const membership = allMemberships.find(m => m.user === user.id && m.group === group.id);
+            if (membership) {
+                return membership.active;
+            }
+            return false;
+        };
 
+        vm.$onInit = async () => {
+            allMemberships = await researchEntityService.getAllMemberships();
             vm.user = await UsersService.getUser(vm.userId);
             const groupIds = vm.user.memberships.map(g => g.id);
-            console.log(groupIds);
             vm.institute = await GroupsService.getConnectedGroups(groupIds);
-            vm.types = _.groupBy(vm.institute.childGroups, 'type');
+
+            if (groupIds.length > 1) {
+                vm.types = _.groupBy(vm.institute.childGroups, 'type');
+            }
 
             vm.initializeTabs(tabIdentifiers);
         };
