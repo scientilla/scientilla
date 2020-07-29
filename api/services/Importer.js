@@ -764,7 +764,8 @@ async function importProjects() {
             instituteContribution: 'iit_total_contribution',
             instituteRole: 'project_role',
             partnersNumber: 'partners_count',
-            url: 'moniit_url',
+            url: 'project_url',
+            internalUrl: 'moniit_url',
             partners: obj => mapObectsArray(obj.partners, partnersSchema),
             members: obj => mapObectsArray(obj.members, membersSchema),
             researchLines: obj => mapObectsArray(obj.lines, researchLinesSchema),
@@ -785,7 +786,7 @@ async function importProjects() {
             startDate: 'start_date',
             endDate: 'end_date',
             contribution: 'contribution',
-            url: 'moniit_url',
+            url: 'project_url',
             members: obj => mapObectsArray(obj.members, membersSchema),
             researchLines: obj => mapObectsArray(obj.lines, researchLinesSchema)
         }

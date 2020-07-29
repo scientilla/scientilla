@@ -64,6 +64,9 @@
     "url": {
       "type": "string"
     },
+    "internalUrl": {
+      "type": "string"
+    },
     "partners": {
       "$ref": "projectDefs#/definitions/partners"
     },
