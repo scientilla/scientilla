@@ -23,8 +23,7 @@
         '$scope',
         '$timeout',
         'ResearchItemSearchFormStructureService',
-        '$location',
-        '$rootScope'
+        '$location'
     ];
 
     function scientillaFilter(
@@ -33,8 +32,7 @@
         $scope,
         $timeout,
         ResearchItemSearchFormStructureService,
-        $location,
-        $rootScope
+        $location
     ) {
         const vm = this;
 
@@ -178,7 +176,7 @@
                 }
 
                 // Search
-                search(vm.values);
+                search();
             }
         }
 
@@ -231,6 +229,10 @@
 
                 // We skip this item if the struct doesn't exist or is it an select without any selected value
                 if (!struct || (struct.inputType === 'select' && vm.values[key] === "?")) {
+                    return;
+                }
+
+                if (_.has(struct, 'skip') && struct.skip) {
                     return;
                 }
 

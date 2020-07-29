@@ -19,7 +19,8 @@
         'ModalService',
         'researchEntityService',
         '$element',
-        '$rootScope'
+        '$rootScope',
+        '$location'
     ];
 
     function controller(
@@ -30,7 +31,8 @@
         ModalService,
         researchEntityService,
         $element,
-        $rootScope
+        $rootScope,
+        $location
     ) {
         const vm = this;
 
@@ -118,19 +120,45 @@
         }
 
         async function onFilter(q) {
+            let inherit = true;
+            let members = [];
+            let memberships = [];
+            const where = {
+                group: vm.group.id
+            };
+
+            const queryParams = $location.search();
+            if (_.has(queryParams, 'inherit') && queryParams.inherit === 'false') {
+                inherit = false;
+            }
+
             query = q;
 
-            const members = await researchEntityService.getAllMembers(vm.group, query);
-            let memberships;
-
-            if (members.length > 0) {
-                memberships = await researchEntityService.getAllMemberships(vm.group, {
-                    where: {
-                        group: vm.group.id,
-                        user: members.map(m => m.id)
-                    }
+            if (inherit) {
+                members = await researchEntityService.getAllMembers(vm.group, query);
+                if (members.length > 0) {
+                    where.user = members.map(m => m.id);
+                    memberships = await researchEntityService.getAllMembershipsOfGroup(vm.group, {
+                        where: where
+                    });
+                }
+            } else {
+                where.level = 0;
+                memberships = await researchEntityService.getAllMembershipsOfGroup(vm.group, {
+                    where: where
                 });
 
+                if (memberships.length > 0) {
+                    query = _.merge(q, {
+                        where: {
+                            id: memberships.map(m => m.user)
+                        }
+                    });
+                    members = await researchEntityService.getAllMembers(vm.group, query);
+                }
+            }
+
+            if (members.length > 0 && memberships.length > 0) {
                 members.forEach(member => {
                     member.membership = memberships.find(m => m.user === member.id);
                     member.membership.type = member.membership.synchronized && member.membership.active ? vm.membershipTypes.MEMBER :

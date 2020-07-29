@@ -32,6 +32,7 @@
         service.getExternalDocuments = getExternalDocuments;
         service.getAllMembers = getAllMembers;
         service.getAllMemberships = getAllMemberships;
+        service.getAllMembershipsOfGroup = getAllMembershipsOfGroup;
         service.deleteDraft = deleteDraft;
         service.deleteDrafts = deleteDrafts;
         service.setPrivateTags = setPrivateTags;
@@ -107,10 +108,14 @@
             return researchEntity.getList('allMembers', query);
         }
 
-        function getAllMemberships(researchEntity, query) {
+        function getAllMembershipsOfGroup(researchEntity, query) {
             query.where = Object.assign({}, query.where, {
                 group: researchEntity.id
             });
+            return Restangular.all('allMemberships').getList(query);
+        }
+
+        function getAllMemberships(query = {}) {
             return Restangular.all('allMemberships').getList(query);
         }
 

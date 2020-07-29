@@ -120,6 +120,43 @@
                     ],
                     type: 'field'
                 }
+            },
+            'group-member': {
+                name: {
+                    inputType: 'text',
+                    label: 'Name',
+                    match: [
+                        {
+                            column: 'name',
+                            rule: 'contains',
+                        }, {
+                            column: 'display_name',
+                            rule: 'contains',
+                        }
+                    ],
+                    type: 'field'
+                },
+                surname: {
+                    inputType: 'text',
+                    label: 'Surname',
+                    match: [
+                        {
+                            column: 'surname',
+                            rule: 'contains',
+                        }, {
+                            column: 'display_surname',
+                            rule: 'contains',
+                        }
+                    ],
+                    type: 'field'
+                },
+                inherit: {
+                    inputType: 'checkbox',
+                    label: 'Include members of subgroups',
+                    defaultValue: true,
+                    type: 'action',
+                    skip: true
+                }
             }
         };
 
@@ -223,6 +260,9 @@
                     structure = formStructures[constant];
                     break;
                 case 'user':
+                    structure = formStructures[constant];
+                    break;
+                case 'group-member':
                     structure = formStructures[constant];
                     break;
                 default:

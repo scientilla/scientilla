@@ -158,16 +158,21 @@
                    child_group: groupId
                 },*/
                 populate: ['parent_group', 'child_group']
-            }).then(res => {
+            }).then(async (res) => {
                 const allMembershipGroups = res.items;
+
                 let institute = false;
 
-                for (const id of groupIds) {
-                    const group = allMembershipGroups.find(membershipGroup => membershipGroup.child_group.id === id);
+                if (groupIds.length === 1 && groupIds[0] === 1) {
+                    institute = await service.getGroup(1);
+                } else {
+                    for (const id of groupIds) {
+                        const group = allMembershipGroups.find(membershipGroup => membershipGroup.child_group.id === id);
 
-                    if (group && group.parent_group) {
-                        if (!groupIds.includes(group.parent_group.id)) {
-                            groupIds.push(group.parent_group.id);
+                        if (group && group.parent_group) {
+                            if (!groupIds.includes(group.parent_group.id)) {
+                                groupIds.push(group.parent_group.id);
+                            }
                         }
                     }
                 }
