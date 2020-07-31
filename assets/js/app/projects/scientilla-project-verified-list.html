@@ -19,19 +19,6 @@
                     <scientilla-project
                         project="project"
                         class="project-container"></scientilla-project>
-                    <div class="project-row-actions" ng-if="vm.editable">
-                        <button
-                            class="btn btn-primary"
-                            ng-click="vm.unverify(vm.researchEntity, a)"
-                            ng-disabled="vm.isUnverifying(a)"
-                            type="button"
-                            uib-tooltip="Unlink the project from your profile"
-                            tooltip-placement="top"
-                            tooltip-class="text-left">
-                            <i class="fas fa-times fa-left"></i>
-                            Unverify
-                        </button>
-                    </div>
                 </scientilla-checkable>
             </item-list>
         </scientilla-multicheck>

@@ -140,6 +140,30 @@
                 {size: 'lg'});
         };
 
+        service.openProjectDetails = function (project) {
+            const scopeVars = {
+                project: project
+            };
+
+            return openModal(`<div class="modal-header">
+                                <h3>Project details</h3>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    ng-click="vm.onClose()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <scientilla-project-details
+                                    project="vm.project"
+                                    class="project-details"></scientilla-project-details>
+                            </div>`,
+                scopeVars,
+                {size: 'lg'});
+        };
+
         service.openScientillaUserForm = function (user, settings = false) {
 
             const scopeVars = {

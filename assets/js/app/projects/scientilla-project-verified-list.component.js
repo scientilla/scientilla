@@ -36,28 +36,20 @@
         vm.onFilter = onFilter;
         vm.exportDownload = projects => ProjectService.exportDownload(projects, 'csv');
 
-        let query = {};
+        let query = {
+            where: {}
+        };
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
             vm.researchEntity = await context.getResearchEntity();
-            vm.editable = vm.section === projectListSections.VERIFIED && !AuthService.user.isViewOnly();
-
-            EventsService.subscribeAll(vm, [
-                EventsService.RESEARCH_ITEM_DRAFT_VERIFIED,
-                EventsService.RESEARCH_ITEM_VERIFIED,
-                EventsService.RESEARCH_ITEM_UNVERIFIED
-            ], updateList);
+            onFilter(query);
         };
         /* jshint ignore:end */
 
         vm.$onDestroy = function () {
             EventsService.unsubscribeAll(vm);
         };
-
-        function updateList() {
-            return onFilter(query);
-        }
 
         /* jshint ignore:start */
         async function onFilter(q) {
@@ -73,8 +65,9 @@
                 query.where.type = type.id;
             }
 
-            vm.projects = await ProjectService.get(vm.researchEntity, query, favorites);
-            console.log(vm.projects);
+            const projects = await ProjectService.get(vm.researchEntity, query, favorites);
+
+            vm.projects = projects;
         }
         /* jshint ignore:end */
     }

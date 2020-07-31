@@ -3,14 +3,14 @@
         <span class="project-year">{{ vm.project.start_year + ' - ' + vm.project.end_year }}</span>
     </li>
     <li class="project-metadata">
-        <h2 class="project-title">{{ vm.project.title }}</h2>
+        <div>
+            <scientilla-project-type-badge type="vm.project.type"></scientilla-project-type-badge>
+            <scientilla-project-members project="vm.project"></scientilla-project-members>
+        </div>
 
-        <ul
-            ng-if="vm.project.type.label || vm.project.status"
-            class="project-tags">
-            <li ng-if="vm.project.type.label"><span class="project-tag">{{ vm.project.type.label }}</span></li>
-            <li ng-if="vm.project.status"><span class="project-tag">{{ vm.project.status }}</span></li>
-        </ul>
+        <h2 class="project-title has-action"
+            ng-click="vm.openDetails()"
+            ng-bind-html='vm.project | title'></h2>
 
         <ng-container ng-if="vm.project.startDate">
             <strong>Start date:</strong>
@@ -27,43 +27,42 @@
             {{ vm.project.role }}<br>
         </ng-container>
 
-        <ng-container ng-if="vm.project.pi">
-            <ng-container ng-if="vm.project.pi.length > 1">
-                <strong>Principal investigators:</strong>
-                <ul>
-                    <li ng-repeat="pi in vm.project.pi">
-                        {{ pi.surname + ' ' + pi.name }}
-                    </li>
-                </ul>
-            </ng-container>
-            <ng-container ng-if="vm.project.pi.length === 1">
-                <strong>Principal investigator:</strong>
-                <ng-container ng-repeat="pi in vm.project.pi">
-                    {{ pi.surname + ' ' + pi.name }}<br>
-                </ng-container>
-            </ng-container>
+        <ng-container ng-if="vm.project.status">
+            <strong>Status:</strong>
+            {{ vm.project.status }}<br>
         </ng-container>
 
-        <ng-container ng-if="vm.lines">
-            <ng-container ng-if="vm.lines.length > 1">
-                <strong>Research lines:</strong>
-                <ul>
-                    <li ng-repeat="line in vm.lines">
-                        {{ line }}
-                    </li>
-                </ul>
-            </ng-container>
-            <ng-container ng-if="vm.lines.length === 1">
-                <strong>Research line:</strong>
-                <ng-container ng-repeat="line in vm.lines">
-                    {{ line }}<br>
-                </ng-container>
-            </ng-container>
-        </ng-container>
-
-        <ul ng-if="vm.project.logos">
-            <li ng-repeat="logo in vm.project.logos">
-                {{ logo }}
+        <ul class="project-actions">
+            <li
+                ng-if="vm.project.verified.length"
+                class="project-verified"
+                uib-tooltip-html="vm.getVerifiedNamesHTML()"
+                tooltip-class="text-left">
+                <i class="fas fa-check"></i> {{ vm.project.verified.length }}
+            </li>
+            <li
+                ng-if="vm.isPrivacyToShow()"
+                class="project-privacy-actions">
+                <i ng-click="vm.changePrivacy()"
+                   ng-if="vm.isPublic()"
+                   class="fas fa-globe-africa has-action"
+                   uib-tooltip-html="'The project is visible to everyone, click to change it'"></i>
+                <i ng-click="vm.changePrivacy()"
+                   ng-if="!vm.isPublic()"
+                   class="fas fa-lock has-action"
+                   uib-tooltip-html="'The project is visible only to scientilla users, click to change it'"></i>
+            </li>
+            <li
+                ng-if="vm.isFavoriteToShow()"
+                class="project-favorite-actions">
+                <i ng-click="vm.changeFavorite()"
+                   ng-if="vm.isFavorite()"
+                   class="fas fa-star has-action"
+                   uib-tooltip-html="'This project is one of your favorite'"></i>
+                <i ng-click="vm.changeFavorite()"
+                   ng-if="!vm.isFavorite()"
+                   class="far fa-star has-action"
+                   uib-tooltip-html="'Click here to make it favorite'"></i>
             </li>
         </ul>
     </li>

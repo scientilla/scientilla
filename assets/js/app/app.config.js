@@ -128,6 +128,7 @@
         Restangular.extendModel('drafts', Prototyper.toDocumentModel);
         Restangular.extendModel('externals', Prototyper.toDocumentModel);
         Restangular.extendModel('accomplishments', Prototyper.toAccomplishmentModel);
+        Restangular.extendModel('projects', Prototyper.toProjectModel);
         Restangular.extendCollection('documents', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('externalDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('suggestedDocuments', Prototyper.toDocumentsCollection);

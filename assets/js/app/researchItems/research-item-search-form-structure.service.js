@@ -9,10 +9,19 @@
         'groupTypes',
         'groupTypeLabels',
         'AuthService',
-        'ExternalConnectorService'
+        'ExternalConnectorService',
+        'Restangular'
     ];
 
-    function ResearchItemSearchFormStructureService(ResearchItemTypesService, documentSearchForm, groupTypes, groupTypeLabels, AuthService, ExternalConnectorService) {
+    function ResearchItemSearchFormStructureService(
+        ResearchItemTypesService,
+        documentSearchForm,
+        groupTypes,
+        groupTypeLabels,
+        AuthService,
+        ExternalConnectorService,
+        Restangular
+    ) {
 
         const service = {
             getStructure
@@ -69,6 +78,20 @@
                 label: 'Author',
                 matchColumn: 'authorsStr',
                 matchRule: 'contains',
+                type: 'field'
+            },
+            acronym: {
+                inputType: 'text',
+                label: 'Acronym',
+                matchColumn: 'acronym',
+                matchRule: 'contains',
+                type: 'field'
+            },
+            status: {
+                inputType: 'select',
+                label: 'Status',
+                matchColumn: 'status',
+                values: [],
                 type: 'field'
             },
             minYear: {
@@ -208,6 +231,7 @@
                     break;
                 case 'project':
                     formStructures[constant].projectType.values = await getResearchItemTypeSelect('project');
+                    formStructures[constant].status.values = await getProjectStatuses();
                     structure = formStructures[constant];
                     break;
                 case 'document':
@@ -309,6 +333,14 @@
             return _.concat(
                 [{value: "?", label: 'Select'}],
                 researchItemTypes.map(s => ({value: s.id, label: s.label}))
+            );
+        }
+
+        async function getProjectStatuses() {
+            let statuses = await Restangular.all('projectstatuses').getList();
+            return _.concat(
+                [{value: "?", label: 'Select'}],
+                statuses.map(s => ({value: s.status, label: s.status}))
             );
         }
 
