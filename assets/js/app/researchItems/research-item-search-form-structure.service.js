@@ -372,7 +372,7 @@
             const researchItemTypes = await ResearchItemTypesService.getTypes(filterType);
             return _.concat(
                 [{value: "?", label: 'Select'}],
-                researchItemTypes.map(s => ({value: s.id, label: s.label}))
+                researchItemTypes.map(s => ({value: s.key, label: s.label}))
             );
         }
 
