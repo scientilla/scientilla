@@ -115,7 +115,7 @@
             return Restangular.all('allMemberships').getList(query);
         }
 
-        function getAllMemberships(query = {}) {
+        function getAllMemberships(query = {limit:0}) {
             return Restangular.all('allMemberships').getList(query);
         }
 
