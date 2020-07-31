@@ -173,6 +173,8 @@ module.exports.policies = {
 
     ResearchItemTypeController: defaultPolicy,
 
+    ProjectStatusController: defaultPolicy,
+
     BackupController: _.defaults({
         getDumps: isAdmin,
         make: isAdmin,
