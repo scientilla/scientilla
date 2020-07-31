@@ -1,0 +1,87 @@
+<scientilla-project-members project="vm.project"></scientilla-project-members>
+
+<h3 class="project-title" ng-bind-html='vm.project | title'></h3>
+
+<ng-container ng-if="vm.project.code">
+    <strong>Code:</strong> {{ vm.project.code }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.acronym">
+    <strong>Acronym:</strong> {{ vm.project.acronym }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.abstract">
+    <strong>Abstract:</strong><br>{{ vm.project.abstract }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.startDate">
+    <strong>Start date:</strong>
+    {{ vm.project.startDate }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.endDate">
+    <strong>End date:</strong>
+    {{ vm.project.endDate }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.project_type">
+    <strong>Type:</strong> {{ vm.project.project_type }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.project_type_2">
+    <strong>Type 2:</strong> {{ vm.project.project_type_2 }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.role">
+    <strong>Role:</strong>
+    {{ vm.project.role }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.status">
+    <strong>Status:</strong> {{ vm.project.status }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.url">
+    <strong>Url:</strong>
+    {{ vm.project.url }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.pi">
+    <ng-container ng-if="vm.project.pi.length > 1">
+        <strong>Principal investigators:</strong>
+        <ul>
+            <li ng-repeat="pi in vm.project.pi">
+                {{ pi.surname + ' ' + pi.name }}
+            </li>
+        </ul>
+    </ng-container>
+    <ng-container ng-if="vm.project.pi.length === 1">
+        <strong>Principal investigator:</strong>
+        <ng-container ng-repeat="pi in vm.project.pi">
+            {{ pi | fullname }}<br>
+        </ng-container>
+    </ng-container>
+</ng-container>
+
+<ng-container ng-if="vm.lines">
+    <ng-container ng-if="vm.lines.length > 1">
+        <strong>Research lines:</strong>
+        <ul>
+            <li ng-repeat="line in vm.lines">
+                {{ line }}
+            </li>
+        </ul>
+    </ng-container>
+    <ng-container ng-if="vm.lines.length === 1">
+        <strong>Research line:</strong>
+        <ng-container ng-repeat="line in vm.lines">
+            {{ line }}<br>
+        </ng-container>
+    </ng-container>
+</ng-container>
+
+<ul ng-if="vm.project.logos">
+    <li ng-repeat="logo in vm.project.logos">
+        {{ logo }}
+    </li>
+</ul>

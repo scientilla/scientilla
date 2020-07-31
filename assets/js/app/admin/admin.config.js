@@ -41,6 +41,10 @@
                 template: `<scientilla-admin-tools
                     active-tab="role-association"></scientilla-admin-tools>`
             })
+            .when("/tools/group-overview", {
+                template: `<scientilla-admin-tools
+                    active-tab="group-overview"></scientilla-admin-tools>`
+            })
             .when("/connectors", {
                 template: '<scientilla-admin-external-connectors></scientilla-admin-external-connectors>'
             })

@@ -12,8 +12,11 @@
         });
 
     controller.$inject = [
+        'Restangular',
+        'researchEntityService',
         'ResearchEntitiesService',
         'UsersService',
+        'GroupsService',
         'documentListSections',
         'accomplishmentListSections',
         'AuthService',
@@ -21,7 +24,7 @@
         '$controller'
     ];
 
-    function controller(ResearchEntitiesService, UsersService, documentListSections, accomplishmentListSections, AuthService, $scope, $controller) {
+    function controller(Restangular, researchEntityService, ResearchEntitiesService, UsersService, GroupsService, documentListSections, accomplishmentListSections, AuthService, $scope, $controller) {
         const vm = this;
         angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
@@ -62,45 +65,29 @@
             const groupMembership = user.groupMemberships
                 .find(groupMembership => groupMembership.group === group.id);
 
-            return groupMembership.active;
+            if (groupMembership) {
+                return groupMembership.active;
+            }
+
+            return true;
         };
 
-        vm.getTypeTitle = (type, groups) => {
-            switch (true) {
-                case type === 'Research Line' && groups.length === 1:
-                    return 'Research line';
-                case type === 'Research Line' && groups.length > 1:
-                    return 'Research lines';
-                case type === 'Institute' && groups.length === 1:
-                    return 'Institute';
-                case type === 'Institute' && groups.length > 1:
-                    return 'Institutes';
-                case type === 'Center' && groups.length === 1:
-                    return 'Center';
-                case type === 'Center' && groups.length > 1:
-                    return 'Centers';
-                case type === 'Facility' && groups.length === 1:
-                    return 'Facility';
-                case type === 'Facility' && groups.length > 1:
-                    return 'Facilities';
-                case type === 'Directorate' && groups.length === 1:
-                    return 'Directorate';
-                case type === 'Directorate' && groups.length > 1:
-                    return 'Directorates';
-                default:
-                    return '';
-            }
-        };
+        vm.getTypeTitle = GroupsService.getTypeTitle;
 
         /* jshint ignore:start */
         vm.$onInit = async () => {
 
             vm.user = await UsersService.getUser(vm.userId);
-            vm.groupsByType = _.groupBy(vm.user.memberships, 'type');
-
-            vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
+            const groupIds = vm.user.memberships.map(g => g.id);
+            console.log(groupIds);
+            vm.institute = await GroupsService.getConnectedGroups(groupIds);
+            vm.types = _.groupBy(vm.institute.childGroups, 'type');
 
             vm.initializeTabs(tabIdentifiers);
+        };
+
+        vm.getGroupTypes = (group) => {
+            return _.groupBy(group.childGroups, 'type');
         };
 
         async function getData() {

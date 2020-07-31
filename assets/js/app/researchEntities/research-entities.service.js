@@ -43,10 +43,9 @@
         service.getAccomplishments = getAccomplishments;
         service.setVerifyPrivacy = setVerifyPrivacy;
         service.setVerifyFavorite = setVerifyFavorite;
-
+        service.getProjects = getProjects;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
-
 
         /* jshint ignore:start */
 
@@ -362,6 +361,17 @@
             } catch (e) {
                 console.error(e);
                 Notification.warning('Failed to update affiliations');
+            }
+        }
+
+        async function getProjects(researchEntity, query, favorites = false) {
+            const populate = {populate: accomplishmentPopulates};
+            const q = _.merge({}, query, populate);
+
+            if (favorites) {
+                return await researchEntity.getList('favoriteProjects', q);
+            } else {
+                return await researchEntity.getList('projects', q);
             }
         }
 

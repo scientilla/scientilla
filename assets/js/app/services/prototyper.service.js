@@ -10,8 +10,7 @@
         'DocumentKinds',
         'documentFieldsRules',
         'documentOrigins',
-        'ValidateService',
-        'ExternalConnectorService'
+        'ValidateService'
     ];
 
     function Prototyper(
@@ -20,8 +19,7 @@
         DocumentKinds,
         documentFieldsRules,
         documentOrigins,
-        ValidateService,
-        ExternalConnectorService
+        ValidateService
     ) {
         const service = {
             toUserModel: toUserModel,
@@ -41,7 +39,9 @@
             toTagLabelModel: toTagLabelModel,
             toTagLabelsCollection: applyToAll(toTagLabelModel),
             toAccomplishmentModel: toAccomplishmentModel,
-            toAccomplishmentsCollection: applyToAll(toAccomplishmentModel)
+            toAccomplishmentsCollection: applyToAll(toAccomplishmentModel),
+            toProjectModel: toProjectModel,
+            toProjectsCollection: applyToAll(toProjectModel),
         };
         const userPrototype = {
             getAliases: function () {
@@ -446,6 +446,12 @@
             }
         };
 
+        const projectPrototype = {
+            getMemberLimit: function () {
+                return 10;
+            },
+        };
+
         function initializeAffiliations(document) {
             _.forEach(document.authorships, a => {
                 if (a.affiliations)
@@ -480,6 +486,7 @@
             service.toUsersCollection(group.allMembers);
             service.toDocumentsCollection(group.documents);
             service.toGroupsCollection(group.childGroups);
+            service.toGroupsCollection(group.parentGroups);
             return group;
         }
 
@@ -498,6 +505,13 @@
             service.toUsersCollection(accomplishment.verifiedUsers);
             service.toGroupsCollection(accomplishment.verifiedGroups);
             return accomplishment;
+        }
+
+        function toProjectModel(project) {
+            _.defaultsDeep(project, projectPrototype);
+            service.toUsersCollection(project.verifiedUsers);
+            service.toUsersCollection(project.pi);
+            return project;
         }
 
         function checkDuplicates(document) {

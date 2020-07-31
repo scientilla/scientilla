@@ -9,10 +9,19 @@
         'groupTypes',
         'groupTypeLabels',
         'AuthService',
-        'ExternalConnectorService'
+        'ExternalConnectorService',
+        'Restangular'
     ];
 
-    function ResearchItemSearchFormStructureService(ResearchItemTypesService, documentSearchForm, groupTypes, groupTypeLabels, AuthService, ExternalConnectorService) {
+    function ResearchItemSearchFormStructureService(
+        ResearchItemTypesService,
+        documentSearchForm,
+        groupTypes,
+        groupTypeLabels,
+        AuthService,
+        ExternalConnectorService,
+        Restangular
+    ) {
 
         const service = {
             getStructure
@@ -56,10 +65,63 @@
             }
         };
 
+        const projectFormStructure = {
+            title: {
+                inputType: 'text',
+                label: 'Title',
+                matchColumn: 'title',
+                matchRule: 'contains',
+                type: 'field'
+            },
+            author: {
+                inputType: 'text',
+                label: 'Author',
+                matchColumn: 'authorsStr',
+                matchRule: 'contains',
+                type: 'field'
+            },
+            acronym: {
+                inputType: 'text',
+                label: 'Acronym',
+                matchColumn: 'acronym',
+                matchRule: 'contains',
+                type: 'field'
+            },
+            status: {
+                inputType: 'select',
+                label: 'Status',
+                matchColumn: 'status',
+                values: [],
+                type: 'field'
+            },
+            minYear: {
+                inputType: 'year',
+                label: 'Year from',
+                matchColumn: 'year',
+                matchRule: '>=',
+                type: 'field'
+            },
+            maxYear: {
+                inputType: 'year',
+                label: 'Year to',
+                matchColumn: 'year',
+                matchRule: '<=',
+                type: 'field'
+            },
+            projectType: {
+                inputType: 'select',
+                label: 'Project Type',
+                values: [],
+                matchColumn: 'type',
+                type: 'field'
+            }
+        };
+
         const formStructures = {
             accomplishment: accomplishmentFormStructure,
             'accomplishment-suggested': accomplishmentFormStructure,
             'verified-accomplishment': accomplishmentFormStructure,
+            project: projectFormStructure,
             group: {
                 name: {
                     inputType: 'text',
@@ -132,11 +194,11 @@
 
             switch (constant) {
                 case 'accomplishment':
-                    formStructures[constant].accomplishmentType.values = await getAccomplishmentTypeSelect();
+                    formStructures[constant].accomplishmentType.values = await getResearchItemTypeSelect('accomplishment');
                     structure = formStructures[constant];
                     break;
                 case 'accomplishment-suggested':
-                    formStructures[constant].accomplishmentType.values = await getAccomplishmentTypeSelect();
+                    formStructures[constant].accomplishmentType.values = await getResearchItemTypeSelect('accomplishment');
 
                     structure = Object.assign({},
                         formStructures[constant],
@@ -152,7 +214,7 @@
                         });
                     break;
                 case 'verified-accomplishment':
-                    formStructures[constant].accomplishmentType.values = await getAccomplishmentTypeSelect();
+                    formStructures[constant].accomplishmentType.values = await getResearchItemTypeSelect('accomplishment');
 
                     structure = Object.assign({},
                         formStructures[constant],
@@ -166,6 +228,11 @@
                                 valueType: 'boolean'
                             }
                         });
+                    break;
+                case 'project':
+                    formStructures[constant].projectType.values = await getResearchItemTypeSelect('project');
+                    formStructures[constant].status.values = await getProjectStatuses();
+                    structure = formStructures[constant];
                     break;
                 case 'document':
                     structure = documentSearchForm;
@@ -261,11 +328,19 @@
             };
         }
 
-        async function getAccomplishmentTypeSelect() {
-            const accomplishmentTypes = await ResearchItemTypesService.getTypes('accomplishment');
+        async function getResearchItemTypeSelect(filterType) {
+            const researchItemTypes = await ResearchItemTypesService.getTypes(filterType);
             return _.concat(
                 [{value: "?", label: 'Select'}],
-                accomplishmentTypes.map(s => ({value: s.id, label: s.label}))
+                researchItemTypes.map(s => ({value: s.id, label: s.label}))
+            );
+        }
+
+        async function getProjectStatuses() {
+            let statuses = await Restangular.all('projectstatuses').getList();
+            return _.concat(
+                [{value: "?", label: 'Select'}],
+                statuses.map(s => ({value: s.status, label: s.status}))
             );
         }
 

@@ -73,7 +73,8 @@
             &.fields-2,
             &.fields-3,
             &.fields-5,
-            &.fields-6{
+            &.fields-6,
+            &.fields-7{
                 grid-template-columns: 1fr 1fr;
             }
         }
@@ -101,6 +102,10 @@
 
             &.fields-6{
                 grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
+            }
+
+            &.fields-7{
+                grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr 2fr;
             }
         }
 

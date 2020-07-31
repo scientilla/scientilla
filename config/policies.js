@@ -175,6 +175,8 @@ module.exports.policies = {
 
     PublicCompetitiveProjectsController: defaultPolicy,
 
+    ProjectStatusController: defaultPolicy,
+
     BackupController: _.defaults({
         getDumps: isAdmin,
         make: isAdmin,

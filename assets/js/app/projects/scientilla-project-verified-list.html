@@ -1,0 +1,27 @@
+<scientilla-backend-layout>
+    <h1>Verified projects</h1>
+    <scientilla-filter
+        category="project"
+        on-filter="vm.onFilter"
+        elements="vm.projects"
+        empty-list-message="No projects found">
+        <scientilla-multicheck>
+            <buttons>
+                <scientilla-multicheck-button
+                    ng-disabled="true"
+                    subject="Export as CSV"
+                    on-click="vm.exportDownload">
+                    <i class="fas fa-download fa-left"></i>Export as CSV
+                </scientilla-multicheck-button>
+            </buttons>
+            <item-list>
+                <scientilla-checkable ng-repeat="project in vm.projects" item="project" class="scientilla-checkable">
+                    <scientilla-project
+                        project="project"
+                        class="project-container"></scientilla-project>
+                </scientilla-checkable>
+            </item-list>
+        </scientilla-multicheck>
+
+    </scientilla-filter>
+</scientilla-backend-layout>
