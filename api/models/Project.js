@@ -52,6 +52,14 @@ module.exports = _.merge({}, BaseModel, {
             type: 'STRING',
             columnName: 'end_date'
         },
+        startYear: {
+            type: 'STRING',
+            columnName: 'start_year'
+        },
+        endYear: {
+            type: 'STRING',
+            columnName: 'end_year'
+        },
         projectType: {
             type: 'STRING',
             columnName: 'project_type'
