@@ -661,47 +661,50 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
             offices: []
         };
         const codeGroup = activeGroups.find(group => group.code === code);
+        let skipCenter = false;
 
         if (codeGroup) {
-            if (codeGroup.type === 'Facility' || 'Research Line') {
-                group.type = codeGroup.type;
-                group.name = codeGroup.name;
-                group.code = codeGroup.code;
-                group.privacy = defaultPrivacy;
-            }
 
-            // This will return the first parent group.
-            const membershipGroup = allMembershipGroups.find(g => g.child_group === codeGroup.id && g.parent_group.active);
+            group.type = codeGroup.type;
+            group.name = codeGroup.name;
+            group.code = codeGroup.code;
+            group.privacy = defaultPrivacy;
 
-            if (_.has(membershipGroup, 'parent_group')) {
-                const parentGroup = membershipGroup.parent_group;
-                if (parentGroup && parentGroup.type === 'Center') {
-                    group.center = {
-                        name: parentGroup.name,
-                        code: parentGroup.code,
-                        privacy: defaultPrivacy
-                    };
+            if (codeGroup.type === 'Directorate') {
+                const line = lines.find(line => line.code === code);
+                const offices = lines.filter(line => line.code === code).map(line => line.office);
+                sails.log.debug(offices);
+
+                if (offices.length === 1 && offices[0] === 'IIT') {
+                    group.type = 'Institute';
+                    group.name = 'Istituto Italiano di Tecnologia';
+                    group.code = 'IIT';
+                    skipCenter = true;
                 } else {
-                    sails.log.info('We are only expecting a center as parent group!');
+                    group.type = 'Directorate';
+                    group.offices = offices;
+                    group.name = line.name;
+                    group.code = line.code;
                 }
             }
-        } else {
-            // If it is not an group, we think it's an administrative contract
-            const line = lines.find(line => line.code === code);
-            const offices = lines.filter(line => line.code === code).map(line => line.office);
 
-            if (offices.length === 1 && offices[0] === 'IIT') {
-                group.type = 'Institute';
-                group.name = 'Istituto Italiano di Tecnologia';
-                group.code = 'IIT';
-            } else {
-                group.type = 'Directorate';
-                group.offices = offices;
-                group.name = line.name;
-                group.code = line.code;
+            if (!skipCenter) {
+                // This will return the first parent group.
+                const membershipGroup = allMembershipGroups.find(g => g.child_group === codeGroup.id && g.parent_group.active);
+
+                if (_.has(membershipGroup, 'parent_group')) {
+                    const parentGroup = membershipGroup.parent_group;
+                    if (parentGroup && parentGroup.type === 'Center') {
+                        group.center = {
+                            name: parentGroup.name,
+                            code: parentGroup.code,
+                            privacy: defaultPrivacy
+                        };
+                    } else {
+                        sails.log.info('We are only expecting a center as parent group!');
+                    }
+                }
             }
-
-            group.privacy = defaultPrivacy;
         }
 
         groups.push(group);
