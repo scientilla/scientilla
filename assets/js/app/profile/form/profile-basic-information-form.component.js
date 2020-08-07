@@ -31,6 +31,17 @@
             return TextService.joinStrings(strings, seperator);
         };
 
+        function getGender(gender) {
+            switch(gender) {
+                case 'M':
+                    return 'Male';
+                case 'F':
+                    return 'Female';
+                default:
+                    return '';
+            }
+        }
+
         function setupBasicInformation () {
             if (_.has(vm.profile, 'username.value') && _.has(vm.profile, 'username.privacy')) {
                 vm.basicInformation.push({
@@ -77,6 +88,14 @@
                     label: 'Phone',
                     value: vm.profile.phone.value,
                     model: 'phone'
+                });
+            }
+
+            if (_.has(vm.profile, 'gender.value') && _.has(vm.profile, 'gender.privacy')) {
+                vm.basicInformation.push({
+                    label: 'Gender',
+                    value: getGender(vm.profile.gender.value),
+                    model: 'gender'
                 });
             }
 

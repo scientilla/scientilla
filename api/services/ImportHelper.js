@@ -18,7 +18,8 @@ module.exports = {
     getIgnoredRoles,
     createUserObject,
     getProfileObject,
-    importDirectorates
+    importDirectorates,
+    filterEmployees
 };
 
 const moment = require('moment');
@@ -330,6 +331,7 @@ function handleStep(step) {
 
                 if (_.has(line, 'ufficio')) {
                     if (_.lowerCase(line.ufficio) === 'iit') {
+                        tmpLine.code = 'IIT1.01DS';
                         tmpLine.institute = line.ufficio;
                     } else {
                         tmpLine.office = line.ufficio;
@@ -355,6 +357,7 @@ function handleStep(step) {
 
             if (_.has(line, 'ufficio')) {
                 if (_.lowerCase(line.ufficio) === 'iit') {
+                    newLine.code = 'IIT1.01DS';
                     newLine.institute = line.ufficio;
                 } else {
                     newLine.office = line.ufficio;
@@ -584,6 +587,10 @@ function createUserObject(ldapUsers = [], user = {}, employee = {}, contractEndD
 function getProfileObject(researchEntityData, contract, allMembershipGroups, activeGroups) {
     const profile = ResearchEntityData.setupProfile(researchEntityData);
 
+    if (!profile) {
+        return;
+    }
+
     profile.hidden = (contract.no_people === 'NO PEOPLE' ? true : false);
 
     let defaultPrivacy = valuePublicPrivacy;
@@ -624,6 +631,10 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
     profile.roleCategory = {
         privacy: defaultPrivacy,
         value: contract.Ruolo_1
+    };
+    profile.gender = {
+        privacy: defaultPrivacy,
+        value: contract.genere
     };
 
     const groups = [];
@@ -710,7 +721,9 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
  * @param {Object[]}        groups               Array of Objects.
  */
 async function importDirectorates(employees, groups) {
-    let directorates = [];
+    const directorates = [];
+    const updatedDirectorates = [];
+    const createdDirectorates = [];
 
     for (const employee of employees) {
         for (let i = 1; i < 7; i++) {
@@ -743,7 +756,6 @@ async function importDirectorates(employees, groups) {
             code: directorate.code,
             name: directorate.name,
             type: 'Directorate',
-            active: true,
             description: null,
             //description: directorate.office, // Cannot because some codes have more offices like ROO001
             slug: directorate.name.toLowerCase().trim().replace(/\./gi, '-').split('@')[0]
@@ -751,8 +763,28 @@ async function importDirectorates(employees, groups) {
 
         if (group) {
             await Group.update({id: group.id}, groupData);
+            updatedDirectorates.push(group);
         } else {
+            groupData.active = false;
             await Group.create(groupData);
+            createdDirectorates.push(groupData);
         }
     }
+
+    sails.log.info(`Created ${createdDirectorates.length} & updated ${updatedDirectorates.length} directorates. 
+        Please add them to their parent group and check their active state!`);
+}
+
+function filterEmployees(employees) {
+    const ignoredRoles = getIgnoredRoles();
+
+    return employees.filter(e => _.has(e, 'desc_sottoarea') &&
+        _.has(e, 'nome_linea_1') &&
+        (
+            e.desc_sottoarea !== 'Gov. & Control' ||
+            e.desc_sottoarea === 'Gov. & Control' && e.linea_1 === 'PRS001'
+        ) &&
+        e.contratto_secondario !== 'X' &&
+        !ignoredRoles.includes(e.Ruolo_AD)
+    );
 }

@@ -10,6 +10,7 @@ module.exports = {
     importSources,
     importGroups,
     importSourceMetrics,
+    importDirectorates,
     importUserContracts,
     removeExpiredUsers,
     importProjects
@@ -452,13 +453,40 @@ async function importSourceMetrics(filename) {
     sails.log.info('imported ' + recordsCount + ' records');
 }
 
+async function importDirectorates() {
+
+    // Endpoint options to get all users
+    const reqOptionsEmployees = ImportHelper.getEmployeesRequestOptions();
+
+    const groups = await Group.find();
+    if (groups.length <= 0) {
+        sails.log.info('No groups found...');
+    }
+
+    // Get all the employees from Pentaho.
+    let employees = await ImportHelper.getEmployees(reqOptionsEmployees);
+
+    if (!employees) {
+        return;
+    }
+
+    employees = ImportHelper.filterEmployees(employees);
+
+    await ImportHelper.importDirectorates(employees, groups);
+}
+
 async function importUserContracts(email = ImportHelper.getDefaultEmail(), override = false) {
 
     const collectGroupCodes = (contract) => {
         const codes = [];
         for (let i = 1; i <= 6; i++) {
-            if (!_.isEmpty(contract['linea_' + i])) {
-                codes.push(contract['linea_' + i]);
+            if (!_.isEmpty(contract['linea_' + i]) && !_.isEmpty(contract['UO_' + i])) {
+                if (contract['UO_' + i] === 'IIT') {
+                    codes.push('IIT1.01DS');
+                } else {
+                    codes.push(contract['linea_' + i]);
+                }
+
             }
         }
         return codes;
@@ -474,13 +502,14 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
     const reqOptionsEmployees = ImportHelper.getEmployeesRequestOptions();
 
     // We cache the groups, membership groups and default profile.
-    let activeGroups;
     const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
     const ldapUsers = await Utils.getActiveDirectoryUsers();
-    let groups = await Group.find();
+    const groups = await Group.find();
     if (groups.length <= 0) {
         sails.log.info('No groups found...');
     }
+
+    const activeGroups = groups.filter(g => g.active === true);
 
     const ignoredRoles = ImportHelper.getIgnoredRoles();
 
@@ -501,19 +530,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
             return;
         }
 
-        employees = employees.filter(e => _.has(e, 'desc_sottoarea') &&
-            (e.desc_sottoarea !== 'Gov. & Control' ||
-                (e.desc_sottoarea === 'Gov. & Control' &&
-                    e.linea_1 === 'PRS001')) &&
-            e.contratto_secondario !== 'X' &&
-            !ignoredRoles.includes(e.Ruolo_AD)
-        );
-
-        await ImportHelper.importDirectorates(employees, groups);
-
-        // Get the groups again, after importing
-        groups = await Group.find();
-        activeGroups = groups.filter(g => g.active === true);
+        employees = ImportHelper.filterEmployees(employees);
 
         // Get all CID codes in one Array
         const cidCodes = employees.map(employee => employee.cid);

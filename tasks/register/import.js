@@ -21,6 +21,7 @@ module.exports = function (grunt) {
                 'history': History.importContracts,
                 'expired': Importer.removeExpiredUsers,
                 'projects': Importer.importProjects,
+                'directorates': Importer.importDirectorates,
             };
 
             try {
