@@ -636,6 +636,10 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
         privacy: defaultPrivacy,
         value: contract.Ruolo_1
     };
+    profile.gender = {
+        privacy: defaultPrivacy,
+        value: contract.genere
+    };
 
     const groups = [];
     const lines = [];

@@ -455,6 +455,11 @@ const defaultProperties = {
         definitions.privacy,
         definitions.privacyDefaultHidden
     ),
+    gender: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
     groups: {
         type: 'array',
         default: [],
@@ -666,6 +671,7 @@ const thenProperties = {
     jobTitle: definitions.ifValueCheckHiddenPrivacy,
     roleCategory: definitions.ifValueCheckHiddenPrivacy,
     phone: definitions.ifValueCheckHiddenPrivacy,
+    gender: definitions.ifValueCheckHiddenPrivacy,
     groups: {
         items: definitions.ifNameCheckHiddenPrivacy
     },
@@ -843,6 +849,7 @@ const elseProperties = {
     jobTitle: definitions.ifValueCheckPublicPrivacy,
     roleCategory: definitions.ifValueCheckPublicPrivacy,
     phone: definitions.ifValueCheckPublicPrivacy,
+    gender: definitions.ifValueCheckPublicPrivacy,
     groups: {
         items: definitions.ifValueCheckPublicPrivacy
     },
@@ -1189,6 +1196,12 @@ function setupProfile(userData) {
     // We store the defaults of the research entity data schema.
     const defaultProfile = defaults(defaultSchema);
 
+    const privacyDefaultPublic = 'public';
+
+    if (!_.has(userData, 'imported_data') || _.isNil(userData.imported_data)) {
+        return;
+    }
+
     // We merge the defaults with the user's profile
     if (userData && !_.isEmpty(userData.profile)) {
 
@@ -1258,6 +1271,16 @@ function setupProfile(userData) {
                     'desc'
                 ]
             );
+        }
+
+        if (_.has(userData, 'profile.gender.value')) {
+            userData.profile.gender.value = userData.imported_data.genere;
+            userData.profile.gender.privacy = privacyDefaultPublic;
+        } else {
+            userData.profile.gender = {
+                value: userData.imported_data.genere,
+                privacy: privacyDefaultPublic
+            }
         }
 
         return _.merge({}, defaultProfile, userData.profile);
