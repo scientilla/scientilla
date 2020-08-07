@@ -44,7 +44,7 @@ async function importContracts(email = ImportHelper.getDefaultEmail(), override 
 
             // We update the current membership
             if (membershipOfGroup) {
-                const updatedMembership = await Membership.update(
+                await Membership.update(
                     {id: membershipOfGroup.id},
                     {
                         lastsynch: moment().utc().format(),
@@ -52,9 +52,18 @@ async function importContracts(email = ImportHelper.getDefaultEmail(), override 
                         synchronized: true
                     }
                 );
+                const updatedMembership = await Membership.findOne({user: user.id, group: group.id});
+
                 sails.log.info('We update the membership with the following parameters: email address: ' +
                     user.username + ', group ' + group.code + ' & active state: ' + active);
-                updatedMemberships.push(updatedMembership);
+
+                const tmpMembershipIndex = updatedMemberships
+                    .findIndex(m => m.user === updatedMembership.user && m.group === updatedMembership.group);
+                if (tmpMembershipIndex >= 0) {
+                    updatedMemberships[tmpMembershipIndex] = updatedMembership;
+                } else {
+                    updatedMemberships.push(updatedMembership);
+                }
             } else {
                 // Or we create a new one
                 const newMembership = await Membership.create({
@@ -248,6 +257,10 @@ async function importContracts(email = ImportHelper.getDefaultEmail(), override 
                         // Setup the new profile
                         const profile = ImportHelper.getProfileObject({}, employee, allMembershipGroups, allGroups);
 
+                        if (!profile) {
+                            return;
+                        }
+
                         profile.experiencesInternal = handledSteps;
 
                         researchEntityData = await ResearchEntityData.update(
@@ -266,6 +279,10 @@ async function importContracts(email = ImportHelper.getDefaultEmail(), override 
 
                             const profile = ImportHelper.getProfileObject(researchEntityData, employee, allMembershipGroups, allGroups);
 
+                            if (!profile) {
+                                return;
+                            }
+
                             profile.experiencesInternal = handledSteps;
 
                             researchEntityData = await ResearchEntityData.update(
@@ -281,6 +298,11 @@ async function importContracts(email = ImportHelper.getDefaultEmail(), override 
                 } else {
                     // Setup the new profile
                     const profile = ImportHelper.getProfileObject({}, employee, allMembershipGroups, allGroups);
+
+                    if (!profile) {
+                        return;
+                    }
+
                     const importedData = _.cloneDeep(employee);
                     delete importedData.contract;
 
@@ -333,10 +355,20 @@ async function importContracts(email = ImportHelper.getDefaultEmail(), override 
     let employees = await ImportHelper.getEmployees(reqOptionsEmployees);
 
     if (employees) {
-        employees = employees.filter(e => _.has(e, 'desc_sottoarea') && e.desc_sottoarea !== 'Gov. & Control');
+        employees = employees.filter(e => _.has(e, 'desc_sottoarea') &&
+            _.has(e, 'nome_linea_1') &&
+            (
+                e.desc_sottoarea !== 'Gov. & Control' ||
+                e.desc_sottoarea === 'Gov. & Control' && e.nome_linea_1 === 'Internal Control and Risk Management Directorate'
+            )
+        );
 
         // Store the other user to delete them later
-        toBeDeletedEmployees = employees.filter(e => _.has(e, 'desc_sottoarea') && e.desc_sottoarea === 'Gov. & Control');
+        toBeDeletedEmployees = employees.filter(e => _.has(e, 'desc_sottoarea') &&
+            _.has(e, 'nome_linea_1') &&
+            e.desc_sottoarea === 'Gov. & Control' &&
+            e.nome_linea_1 !== 'Internal Control and Risk Management Directorate'
+        );
 
         // Get all CID codes in one Array
         const cidCodes = employees.map(employee => employee.cid);

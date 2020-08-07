@@ -19,7 +19,8 @@ module.exports = function (grunt) {
                 'users': Importer.importUserContracts,
                 'history-init': History.removeData,
                 'history': History.importContracts,
-                'expired': Importer.removeExpiredUsers
+                'expired': Importer.removeExpiredUsers,
+                'directorates': Importer.importDirectorates,
             };
 
             try {
