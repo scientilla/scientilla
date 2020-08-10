@@ -786,14 +786,24 @@ async function importDirectorates(employees, groups) {
         Please add them to their parent group and check their active state!`);
 }
 
+/**
+ * This function returns an  array of filtered employees. It filters out:
+ * - the secondary contracts
+ * - the contracts with an ignored role
+ * - the contracts with the property desc_sottoarea !== 'Gov. & Control' except if the property e.linea_1 === 'PRS001'
+ *
+ * @param {Object[]}        employees               Array of Objects.
+ *
+ * @returns {Object[]}
+ */
 function filterEmployees(employees) {
     const ignoredRoles = getIgnoredRoles();
 
     return employees.filter(e => _.has(e, 'desc_sottoarea') &&
-        _.has(e, 'nome_linea_1') &&
+        _.has(e, 'linea_1') &&
         (
             e.desc_sottoarea !== 'Gov. & Control' ||
-            e.desc_sottoarea === 'Gov. & Control' && e.nome_linea_1 === 'Internal Control and Risk Management Directorate'
+            e.desc_sottoarea === 'Gov. & Control' && e.linea_1 === 'PRS001'
         ) &&
         e.contratto_secondario !== 'X' &&
         !ignoredRoles.includes(e.Ruolo_AD)
