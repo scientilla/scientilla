@@ -1,17 +1,17 @@
 (function () {
     'use strict';
 
-    angular.module('documents')
-            .component('scientillaDocumentLabel', {
-                templateUrl: 'partials/scientilla-document-label.html',
-                controller: scientillaDocumentLabel,
+    angular.module('accomplishments')
+            .component('scientillaAccomplishmentLabel', {
+                templateUrl: 'partials/scientilla-accomplishment-label.html',
+                controller: scientillaAccomplishmentLabel,
                 controllerAs: 'vm',
                 bindings: {
                     label: "<"
                 }
             });
 
-    function scientillaDocumentLabel() {
+    function scientillaAccomplishmentLabel() {
         var vm = this;
 
         vm.badges = [];

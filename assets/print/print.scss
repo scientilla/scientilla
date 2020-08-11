@@ -393,6 +393,36 @@ button,
     }
 }
 
+/* Accomplishments */
+.accomplishment {
+    @include normalize-listing;
+    margin-bottom: 2rem;
+
+    .accomplishment-title {
+        @include h5;
+        margin-bottom: 0.5rem;
+    }
+
+    .accomplishment-labels,
+    .accomplishment-actions {
+        display: none;
+    }
+
+    .accomplishment-icons {
+        ul {
+            @include normalize-listing;
+            @include clearfix;
+            margin: 0px -1.5rem;
+
+            & > li {
+                display: block;
+                float: left;
+                padding: 0px 1.5rem;
+            }
+        }
+    }
+}
+
 /* Profile */
 .profile{
     .profile-blocks,
