@@ -17,10 +17,11 @@
         'context',
         'AuthService',
         '$scope',
-        '$controller'
+        '$controller',
+        'ResearchEntitiesService'
     ];
 
-    function GroupDetailsController(GroupsService, context, AuthService, $scope, $controller) {
+    function GroupDetailsController(GroupsService, context, AuthService, $scope, $controller, ResearchEntitiesService) {
         const vm = this;
         angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
@@ -50,11 +51,14 @@
                     slug: 'documents'
                 }, {
                     index: 4,
+                    slug: 'accomplishments'
+                }, {
+                    index: 5,
                     slug: 'documents-overview',
                     tabName: 'overview',
                     getData: getData
                 }, {
-                    index: 5,
+                    index: 6,
                     slug: 'bibliometric-charts',
                     tabName: 'metrics',
                     getData: getData
@@ -68,11 +72,13 @@
             return await vm.getChartsData(vm.group);
         }
 
-        /* jshint ignore:end */
-
         function refreshGroup() {
             return GroupsService.getGroup(vm.groupId)
-                .then(group => vm.group = group);
+                .then(async(group) => {
+                    vm.group = group;
+                    vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
+                });
         }
+        /* jshint ignore:end */
     }
 })();
