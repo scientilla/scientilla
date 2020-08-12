@@ -1,16 +1,25 @@
 <ul class="project">
     <li class="project-info">
         <span class="project-year">{{ vm.project.startYear + ' - ' + vm.project.endYear }}</span>
+        <img
+            ng-src="{{ vm.customizations.logos.institute.src }}"
+            ng-if="vm.hasIITAsPartner()"
+            class="icon-iit"/>
     </li>
     <li class="project-metadata">
         <div>
             <scientilla-project-type-badge type="vm.project.type"></scientilla-project-type-badge>
-            <scientilla-project-members project="vm.project"></scientilla-project-members>
+            <scientilla-project-pis project="vm.project"></scientilla-project-pis>
         </div>
 
         <h2 class="project-title has-action"
             ng-click="vm.openDetails()"
             ng-bind-html='vm.project | title'></h2>
+
+        <ng-container ng-if="vm.project.acronym">
+            <strong>Acronym:</strong> {{ vm.project.acronym }}<br>
+        </ng-container>
+
 
         <ng-container ng-if="vm.project.startDate">
             <strong>Start date:</strong>
