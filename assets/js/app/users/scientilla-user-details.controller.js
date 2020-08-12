@@ -24,7 +24,18 @@
         '$controller'
     ];
 
-    function controller(Restangular, researchEntityService, ResearchEntitiesService, UsersService, GroupsService, documentListSections, accomplishmentListSections, AuthService, $scope, $controller) {
+    function controller(
+        Restangular,
+        researchEntityService,
+        ResearchEntitiesService,
+        UsersService,
+        GroupsService,
+        documentListSections,
+        accomplishmentListSections,
+        AuthService,
+        $scope,
+        $controller
+    ) {
         const vm = this;
         angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
@@ -78,6 +89,7 @@
         vm.$onInit = async () => {
             allMemberships = await researchEntityService.getAllMemberships();
             vm.user = await UsersService.getUser(vm.userId);
+            vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
             const groupIds = vm.user.memberships.map(g => g.id);
             vm.institute = await GroupsService.getConnectedGroups(groupIds);
 

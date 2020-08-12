@@ -23,8 +23,7 @@
         'EventsService',
         'documentListSections',
         'AuthService',
-        '$element',
-        '$rootScope'
+        '$element'
     ];
 
     function scientillaDocumentsList(
@@ -33,8 +32,7 @@
         EventsService,
         documentListSections,
         AuthService,
-        $element,
-        $rootScope
+        $element
     ) {
         const vm = this;
 

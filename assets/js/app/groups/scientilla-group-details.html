@@ -37,12 +37,20 @@
             </uib-tab>
             <uib-tab
                 index="4"
+                heading="Accomplishments">
+                <scientilla-accomplishments-list
+                    ng-if="vm.researchEntity"
+                    research-entity="vm.researchEntity"
+                    section="vm.accomplishmentListSections.GROUP"></scientilla-accomplishments-list>
+            </uib-tab>
+            <uib-tab
+                index="5"
                 heading="Documents Overview"
                 ng-if="vm.loggedUser.isSuperViewer()">
                 <summary-overview charts-data="vm.chartsData"></summary-overview>
             </uib-tab>
             <uib-tab
-                index="5"
+                index="6"
                 heading="Bibliometric Charts"
                 ng-if="vm.loggedUser.isSuperViewer()">
                 <summary-metrics charts-data="vm.chartsData"></summary-metrics>

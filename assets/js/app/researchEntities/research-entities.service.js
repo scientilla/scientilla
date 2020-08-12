@@ -242,9 +242,9 @@
             const q = _.merge({}, query, populate);
 
             if (favorites) {
-                return await researchEntity.getList('favoriteAccomplishments', q);
+                return researchEntity.getList('favoriteAccomplishments', q);
             } else {
-                return await researchEntity.getList('accomplishments', q);
+                return researchEntity.getList('accomplishments', q);
             }
         }
 
