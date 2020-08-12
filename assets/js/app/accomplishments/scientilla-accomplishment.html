@@ -1,6 +1,6 @@
-<ul class="document" ng-class="{invalid: !vm.isValid(vm.accomplishment)}">
-    <li class="document-info" ng-class="{ 'add-year-postfix': vm.accomplishment.type.key==='editorship'}">
-        <span class="document-year">
+<ul class="accomplishment" ng-class="{invalid: !vm.isValid(vm.accomplishment)}">
+    <li class="accomplishment-info" ng-class="{ 'add-year-postfix': vm.accomplishment.type.key==='editorship'}">
+        <span class="accomplishment-year">
             {{ vm.accomplishment.year }}<span ng-if="vm.accomplishment.type.key==='editorship'">&nbsp;-&nbsp;<span
                 ng-if="vm.accomplishment.yearTo">{{vm.accomplishment.yearTo}}</span><span
                 ng-if="!vm.accomplishment.yearTo">Present</span></span>
@@ -11,7 +11,7 @@
         <span class="icon-iit" ng-if="vm.hasMainGroupAffiliation()"></span>
     </li>
 
-    <li class="document-metadata">
+    <li>
         <div>
             <scientilla-research-item-type research-item-type="vm.accomplishment.type"></scientilla-research-item-type>
             <scientilla-research-item-authors research-item="vm.accomplishment"
@@ -19,14 +19,14 @@
                                               type="preview"></scientilla-research-item-authors>
         </div>
 
-        <div class="document-title-container">
+        <div class="accomplishment-title-container">
             <ul ng-if="vm.accomplishment.labels"
-                class="document-labels">
+                class="accomplishment-labels">
                 <li ng-repeat="l in vm.accomplishment.labels">
-                    <scientilla-document-label label="l" class="document-label"></scientilla-document-label>
+                    <scientilla-accomplishment-label label="l"></scientilla-accomplishment-label>
                 </li>
             </ul>
-            <h2 class="document-title has-action"
+            <h2 class="accomplishment-title has-action"
                 ng-click="vm.openDetails()"
                 ng-bind-html='vm.accomplishment | accomplishmentTitle'></h2>
         </div>
@@ -44,30 +44,29 @@
             <label class="inline-block">Role:</label> {{vm.accomplishment.editorshipRole}}
         </div>
 
-        <ul class="document-actions">
+        <ul class="accomplishment-actions">
             <li ng-if="vm.accomplishment.verified.length"
-                class="document-verified"
+                class="accomplishment-verified"
                 uib-tooltip-html="vm.getVerifiedNamesHTML()"
                 tooltip-class="text-left">
                 <i class="fas fa-check"></i> {{vm.accomplishment.verified.length}}
             </li>
 
-            <li ng-if="vm.showPrivacy"
-                class="document-privacy-actions">
+            <li ng-if="vm.showPrivacy">
                 <i ng-click="vm.changePrivacy()"
                    ng-if="vm.isPublic()"
                    class="fas fa-globe-africa has-action"
-                   uib-tooltip-html="'The document is visible to everyone, click to change it'"></i>
+                   uib-tooltip-html="'The accomplishment is visible to everyone, click to change it'"></i>
                 <i ng-click="vm.changePrivacy()"
                    ng-if="!vm.isPublic()"
                    class="fas fa-lock has-action"
-                   uib-tooltip-html="'The document is visible only to scientilla users, click to change it'"></i>
+                   uib-tooltip-html="'The accomplishment is visible only to scientilla users, click to change it'"></i>
             </li>
-            <li class="document-favorite-actions">
+            <li ng-if="vm.showFavorite">
                 <i ng-click="vm.changeFavorite()"
                    ng-if="vm.isFavorite()"
                    class="fas fa-star has-action"
-                   uib-tooltip-html="'This document is one of your favorite'"></i>
+                   uib-tooltip-html="'This accomplishment is one of your favorite'"></i>
                 <i ng-click="vm.changeFavorite()"
                    ng-if="!vm.isFavorite()"
                    class="far fa-star has-action"
@@ -76,5 +75,5 @@
         </ul>
     </li>
 
-    <li class="document-icons"></li>
+    <li class="accomplishment-icons"></li>
 </ul>

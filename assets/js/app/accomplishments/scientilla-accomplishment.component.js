@@ -46,8 +46,9 @@
             accomplishmentListSections.VERIFIED
         ].includes(vm.section);
 
-        vm.collapsed = true;
+        vm.showFavorite = false;
 
+        vm.collapsed = true;
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
