@@ -1,4 +1,4 @@
-<scientilla-project-members project="vm.project"></scientilla-project-members>
+<scientilla-project-pis project="vm.project"></scientilla-project-pis>
 
 <h3 class="project-title" ng-bind-html='vm.project | title'></h3>
 
@@ -44,23 +44,6 @@
 <ng-container ng-if="vm.project.url">
     <strong>Url:</strong>
     {{ vm.project.url }}<br>
-</ng-container>
-
-<ng-container ng-if="vm.project.pi">
-    <ng-container ng-if="vm.project.pi.length > 1">
-        <strong>Principal investigators:</strong>
-        <ul>
-            <li ng-repeat="pi in vm.project.pi">
-                {{ pi.surname + ' ' + pi.name }}
-            </li>
-        </ul>
-    </ng-container>
-    <ng-container ng-if="vm.project.pi.length === 1">
-        <strong>Principal investigator:</strong>
-        <ng-container ng-repeat="pi in vm.project.pi">
-            {{ pi | fullname }}<br>
-        </ng-container>
-    </ng-container>
 </ng-container>
 
 <ng-container ng-if="vm.lines">

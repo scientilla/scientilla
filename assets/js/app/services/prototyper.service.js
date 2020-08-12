@@ -447,7 +447,7 @@
         };
 
         const projectPrototype = {
-            getMemberLimit: function () {
+            getPILimit: function () {
                 return 10;
             },
         };

@@ -3,8 +3,8 @@
 
     angular
         .module('projects')
-        .component('scientillaProjectMembers', {
-            templateUrl: 'partials/scientilla-project-members.html',
+        .component('scientillaProjectPis', {
+            templateUrl: 'partials/scientilla-project-pis.html',
             controller: controller,
             controllerAs: 'vm',
             bindings: {
@@ -19,14 +19,14 @@
     function controller(UserService) {
         const vm = this;
 
-        vm.members = [];
+        vm.pis = [];
 
         vm.$onInit = () => {
             if (!vm.collapsed) {
                 vm.collapsed = true;
             }
 
-            getMembers();
+            getPIs();
         };
 
         vm.toggleCollapse = toggleCollapse;
@@ -36,23 +36,23 @@
         function toggleCollapse() {
             vm.collapsed = !vm.collapsed;
 
-            getMembers();
+            getPIs();
         }
 
-        function getMembers() {
+        function getPIs() {
             let count = 1;
             vm.members = [];
 
-            for (const member of vm.project.members) {
-                const user = vm.project.verifiedUsers.find(u => u.username === member.email.toLowerCase());
+            for (const pi of vm.project.pi) {
+                const user = vm.project.verifiedUsers.find(u => u.username === pi.email.toLowerCase());
 
                 if (user) {
-                    vm.members.push(user);
+                    vm.pis.push(user);
                 } else {
-                    vm.members.push(member);
+                    vm.pis.push(pi);
                 }
 
-                if (vm.collapsed && count === vm.project.getMemberLimit()) {
+                if (vm.collapsed && count === vm.project.getPILimit()) {
                     break;
                 }
 
