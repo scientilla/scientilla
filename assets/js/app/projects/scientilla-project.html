@@ -16,6 +16,11 @@
             ng-click="vm.openDetails()"
             ng-bind-html='vm.project | title'></h2>
 
+        <ng-container ng-if="vm.project.acronym">
+            <strong>Acronym:</strong> {{ vm.project.acronym }}<br>
+        </ng-container>
+
+
         <ng-container ng-if="vm.project.startDate">
             <strong>Start date:</strong>
             {{ vm.project.startDate }}<br>
