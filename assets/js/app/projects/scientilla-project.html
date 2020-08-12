@@ -1,6 +1,10 @@
 <ul class="project">
     <li class="project-info">
         <span class="project-year">{{ vm.project.startYear + ' - ' + vm.project.endYear }}</span>
+        <img
+            ng-src="{{ vm.customizations.logos.institute.src }}"
+            ng-if="vm.hasIITAsPartner()"
+            class="icon-iit"/>
     </li>
     <li class="project-metadata">
         <div>

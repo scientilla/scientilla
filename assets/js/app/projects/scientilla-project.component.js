@@ -12,9 +12,9 @@
             }
         });
 
-    controller.$inject = ['GroupsService', 'ModalService', 'ProjectService', 'context'];
+    controller.$inject = ['GroupsService', 'ModalService', 'ProjectService', 'context', 'EventsService', 'CustomizeService'];
 
-    function controller(GroupsService, ModalService, ProjectService, context) {
+    function controller(GroupsService, ModalService, ProjectService, context, EventsService, CustomizeService) {
 
         const vm = this;
         vm.openDetails = openDetails;
@@ -25,10 +25,19 @@
         vm.isFavoriteToShow = isFavoriteToShow;
         vm.changePrivacy = changePrivacy;
         vm.changeFavorite = changeFavorite;
+        vm.hasIITAsPartner = hasIITAsPartner;
 
         const subResearchEntity = context.getSubResearchEntity();
 
-        vm.$onInit = function () {};
+        vm.$onInit = function () {
+            EventsService.subscribe(vm, EventsService.CUSTOMIZATIONS_CHANGED, function (event, customizations) {
+                vm.customizations = customizations;
+            });
+
+            CustomizeService.getCustomizations().then(customizations => {
+                vm.customizations = customizations;
+            });
+        };
 
         vm.getTypeTitle = GroupsService.getTypeTitle;
 
@@ -97,6 +106,15 @@
             }
 
             return vm.project[field].find(a => a.researchEntity === subResearchEntity.researchEntity);
+        }
+
+        function hasIITAsPartner() {
+            if (_.has(vm, 'project.projectData.partners')) {
+                const partners = vm.project.projectData.partners;
+                return !_.isEmpty(partners.filter(p => p.description === 'Fondazione Istituto Italiano di Tecnologia'));
+            }
+
+            return false;
         }
     }
 })();
