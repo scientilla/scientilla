@@ -205,7 +205,7 @@
             const qs = {where: {group: group.id, user: user.id}};
             return Restangular.all('memberships').customGET('', qs)
                 .then(res => {
-                    if (res.items.length != 1) {
+                    if (res.items.length !== 1) {
                         throw 'Membership not found!';
                     }
 
@@ -214,7 +214,7 @@
                         .remove()
                         .then(() => {
                             Notification.success('Membership removed!');
-                        })
+                        });
                 })
                 .catch(function (error) {
                     Notification.warning(error);
