@@ -28,7 +28,12 @@
 
 <ng-container ng-if="vm.project.projectData.instituteBudget">
     <strong>Institute budget:</strong>
-    {{ vm.project.projectData.instituteBudget }}<br>
+    €{{ vm.project.projectData.instituteBudget }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.projectData.instituteContribution">
+    <strong>Institute funding:</strong>
+    €{{ vm.project.projectData.instituteContribution }}<br>
 </ng-container>
 
 <ng-container ng-if="vm.project.project_type">
