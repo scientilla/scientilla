@@ -73,13 +73,6 @@
                 matchRule: 'contains',
                 type: 'field'
             },
-            author: {
-                inputType: 'text',
-                label: 'Author',
-                matchColumn: 'authorsStr',
-                matchRule: 'contains',
-                type: 'field'
-            },
             acronym: {
                 inputType: 'text',
                 label: 'Acronym',
@@ -97,14 +90,14 @@
             minYear: {
                 inputType: 'year',
                 label: 'Year from',
-                matchColumn: 'year',
+                matchColumn: 'startYear',
                 matchRule: '>=',
                 type: 'field'
             },
             maxYear: {
                 inputType: 'year',
                 label: 'Year to',
-                matchColumn: 'year',
+                matchColumn: 'endYear',
                 matchRule: '<=',
                 type: 'field'
             },
