@@ -26,6 +26,11 @@
     {{ vm.project.endDate }}<br>
 </ng-container>
 
+<ng-container ng-if="vm.project.projectData.instituteBudget">
+    <strong>Institute budget:</strong>
+    {{ vm.project.projectData.instituteBudget }}<br>
+</ng-container>
+
 <ng-container ng-if="vm.project.project_type">
     <strong>Type:</strong> {{ vm.project.project_type }}<br>
 </ng-container>
