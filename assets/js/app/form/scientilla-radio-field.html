@@ -1,0 +1,11 @@
+<strong>{{ vm.structure.label }}</strong>
+<label class="form-radio" ng-repeat="value in vm.structure.values">
+    <input
+        type="radio"
+        class="{{ vm.cssClass }}"
+        placeholder="{{ value.label }}"
+        ng-model="vm.model"
+        ng-value="value.value"
+        ng-disabled="vm.structure.disabled">
+    <span ng-bind-html="value.label"></span>
+</label>

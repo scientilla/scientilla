@@ -43,7 +43,6 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
             vm.researchEntity = await context.getResearchEntity();
-            onFilter(query);
         };
         /* jshint ignore:end */
 
@@ -63,11 +62,11 @@
                 const types = await ResearchItemTypesService.getTypes();
                 const type = types.find(type => type.key === query.where.type);
                 query.where.type = type.id;
+
+                const projects = await ProjectService.get(vm.researchEntity, query, favorites);
+
+                vm.projects = projects;
             }
-
-            const projects = await ProjectService.get(vm.researchEntity, query, favorites);
-
-            vm.projects = projects;
         }
         /* jshint ignore:end */
     }

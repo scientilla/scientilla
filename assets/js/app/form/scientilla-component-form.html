@@ -13,6 +13,20 @@
     </ul>
 
     <ul
+        class="filter-option-listing"
+        ng-if="vm.getObjectSize(vm.options) > 0">
+        <li ng-repeat="(name, struct) in vm.options">
+            <scientilla-field
+                structure="struct"
+                name="name"
+                reset="vm.reset"
+                values="vm.values"
+                errors="vm.errors[name]"
+                on-change="vm.onChange({name})"></scientilla-field>
+        </li>
+    </ul>
+
+    <ul
         class="filter-field-listing fields-{{ vm.getObjectSize(vm.fields) }}"
         ng-if="vm.getObjectSize(vm.fields) > 0">
         <li ng-repeat="(name, struct) in vm.fields">

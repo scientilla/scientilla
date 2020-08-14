@@ -33,6 +33,13 @@
         structure="vm.fieldStructure"
         errors="vm.errors">
     </scientilla-checkbox-field>
+    <scientilla-radio-field
+        ng-if="vm.structure.inputType==='radio'"
+        model="vm.values[vm.name]"
+        field-id="vm.id"
+        structure="vm.fieldStructure"
+        errors="vm.errors">
+    </scientilla-radio-field>
     <scientilla-attribute-field
         ng-if="vm.structure.inputType==='attribute'"
         model="vm.values[vm.name]"
