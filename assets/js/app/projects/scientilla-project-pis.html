@@ -1,4 +1,4 @@
-<span class="project-pi" ng-repeat="pi in vm.pis">
+<span class="project-pi" ng-repeat="pi in vm.pis track by $index">
     <a
         ng-if="pi.username"
         ng-href="#{{ pi.getProfileUrl() }}">{{ vm.getAlias(pi) }}</a>

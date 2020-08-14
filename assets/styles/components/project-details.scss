@@ -1,0 +1,9 @@
+.project-details{
+    .annual-funding{
+
+        &,
+        ul {
+            @include normalize-listing;
+        }
+    }
+}
