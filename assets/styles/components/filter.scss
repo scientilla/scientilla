@@ -1,4 +1,5 @@
 .filter-form-container{
+    .filter-option-listing,
     .filter-connector-listing,
     .filter-field-listing,
     .filter-action-listing{
@@ -8,6 +9,14 @@
         & > li{
             display: block;
             padding: 0px 1rem;
+        }
+    }
+
+    .filter-option-listing{
+        strong{
+            display: inline-block;
+            margin-bottom: .5rem;
+            vertical-align: top;
         }
     }
 
@@ -72,6 +81,7 @@
         .filter-field-listing{
             &.fields-2,
             &.fields-3,
+            &.fields-4,
             &.fields-5,
             &.fields-6,
             &.fields-7{
@@ -94,6 +104,10 @@
 
             &.fields-3{
                 grid-template-columns: 1fr 200px 1fr;
+            }
+
+            &.fields-4{
+                grid-template-columns: 1fr 1fr 100px 100px;
             }
 
             &.fields-5{

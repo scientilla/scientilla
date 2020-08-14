@@ -129,6 +129,69 @@ label{
     }
 }
 
+.form-radio{
+    &,
+    label{
+        margin-bottom: 0px;
+        font-weight: normal;
+        line-height: 1;
+    }
+
+    input{
+        display: none;
+
+        & + span{
+            position: relative;
+            display: inline-block;
+            vertical-align: top;
+            line-height: 1;
+
+            &:before{
+                display: inline-block;
+                width: 12px;
+                height: 12px;
+                margin-right: 5px;
+                vertical-align: top;
+                border-radius: 6px;
+                border: 1px solid $gray-300;
+                background: $white;
+                content: '';
+            }
+        }
+
+        &:checked{
+            & + span{
+                &:after{
+                    position: absolute;
+                    top: 3px;
+                    left: 3px;
+                    display: block;
+                    height: 6px;
+                    width: 6px;
+                    border-radius: 3px;
+                    content: '';
+                    background: $base-gray;
+                }
+            }
+        }
+
+        &:disabled{
+            & + span{
+                cursor: not-allowed;
+                color: $base-gray;
+
+                &:before{
+                    background: $gray-100;
+                }
+            }
+        }
+    }
+
+    & + .form-radio{
+        margin-top: .5rem;
+    }
+}
+
 .form-privacy {
     &,
     label {

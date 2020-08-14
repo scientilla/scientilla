@@ -1,0 +1,13 @@
+.project-details{
+    .annual-funding{
+
+        &,
+        ul {
+            @include normalize-listing;
+        }
+    }
+
+    .name-column{
+        width: 200px;
+    }
+}

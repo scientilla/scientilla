@@ -124,7 +124,8 @@
             onDataCountChangeDeregisterer();
         };
 
-        function onSubmit() {
+        function onSubmit(values) {
+            vm.values = values;
             if (!vm.onStatus(vm.STATUS_LOADING)) {
                 // Get current search parameters from URL
                 const params = $location.search();

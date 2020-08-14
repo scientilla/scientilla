@@ -71,42 +71,48 @@
                 label: 'Title',
                 matchColumn: 'title',
                 matchRule: 'contains',
-                type: 'field'
+                type: 'field',
+                visibleFor: [projectTypeCompetitive, projectTypeIndustrial]
             },
             acronym: {
                 inputType: 'text',
                 label: 'Acronym',
                 matchColumn: 'acronym',
                 matchRule: 'contains',
-                type: 'field'
-            },
-            status: {
-                inputType: 'select',
-                label: 'Status',
-                matchColumn: 'status',
-                values: [],
-                type: 'field'
+                type: 'field',
+                visibleFor: [projectTypeCompetitive, projectTypeIndustrial]
             },
             minYear: {
                 inputType: 'year',
                 label: 'Year from',
                 matchColumn: 'startYear',
                 matchRule: '>=',
-                type: 'field'
+                type: 'field',
+                visibleFor: [projectTypeCompetitive, projectTypeIndustrial]
             },
             maxYear: {
                 inputType: 'year',
                 label: 'Year to',
                 matchColumn: 'endYear',
                 matchRule: '<=',
-                type: 'field'
+                type: 'field',
+                visibleFor: [projectTypeCompetitive, projectTypeIndustrial]
+            },
+            status: {
+                inputType: 'select',
+                label: 'Status',
+                matchColumn: 'status',
+                values: [],
+                type: 'field',
+                visibleFor: [projectTypeCompetitive]
             },
             projectType: {
-                inputType: 'select',
+                inputType: 'radio',
                 label: 'Project Type',
                 values: [],
                 matchColumn: 'type',
-                type: 'field'
+                type: 'option',
+                defaultValue: projectTypeCompetitive
             }
         };
 
@@ -224,11 +230,11 @@
 
             switch (constant) {
                 case 'accomplishment':
-                    formStructures[constant].accomplishmentType.values = await getResearchItemTypeSelect('accomplishment');
+                    formStructures[constant].accomplishmentType.values = await getResearchItemTypes('accomplishment');
                     structure = formStructures[constant];
                     break;
                 case 'accomplishment-suggested':
-                    formStructures[constant].accomplishmentType.values = await getResearchItemTypeSelect('accomplishment');
+                    formStructures[constant].accomplishmentType.values = await getResearchItemTypes('accomplishment');
 
                     structure = Object.assign({},
                         formStructures[constant],
@@ -244,7 +250,7 @@
                         });
                     break;
                 case 'verified-accomplishment':
-                    formStructures[constant].accomplishmentType.values = await getResearchItemTypeSelect('accomplishment');
+                    formStructures[constant].accomplishmentType.values = await getResearchItemTypes('accomplishment');
 
                     structure = Object.assign({},
                         formStructures[constant],
@@ -260,7 +266,7 @@
                         });
                     break;
                 case 'project':
-                    formStructures[constant].projectType.values = await getResearchItemTypeSelect('project');
+                    formStructures[constant].projectType.values = await getResearchItemTypes('project', true);
                     formStructures[constant].status.values = await getProjectStatuses();
                     structure = formStructures[constant];
                     break;
@@ -361,8 +367,13 @@
             };
         }
 
-        async function getResearchItemTypeSelect(filterType) {
+        async function getResearchItemTypes(filterType, skipSelect = false) {
             const researchItemTypes = await ResearchItemTypesService.getTypes(filterType);
+
+            if (skipSelect) {
+                return researchItemTypes.map(s => ({value: s.key, label: s.label}));
+            }
+
             return _.concat(
                 [{value: "?", label: 'Select'}],
                 researchItemTypes.map(s => ({value: s.key, label: s.label}))

@@ -20,11 +20,10 @@
         });
 
     scientillaComponentForm.$inject = [
-        '$scope',
-        '$rootScope'
+        '$scope'
     ];
 
-    function scientillaComponentForm($scope, $rootScope) {
+    function scientillaComponentForm($scope) {
         const vm = this;
 
         vm.submit = submit;
@@ -33,6 +32,7 @@
         let onChangeWatchesDeregisters = [];
         let onStructureChangeDeregisterer;
 
+        vm.options = filterStructure('option');
         vm.fields = filterStructure('field');
         vm.actions = filterStructure('action');
         vm.connectors = filterStructure('connector');
@@ -97,14 +97,16 @@
 
         function submit() {
             clearNil();
-            if (_.isFunction(vm.onSubmit()))
+            if (_.isFunction(vm.onSubmit())) {
                 vm.onSubmit()(vm.values);
+            }
         }
 
         function onStructureChange() {
             deregisterOnChanges();
 
             vm.fields = filterStructure('field');
+            vm.options = filterStructure('option');
             vm.actions = filterStructure('action');
             vm.connectors = filterStructure('connector');
 
@@ -135,7 +137,18 @@
                         vm.structure.onChange(vm.values);
                     }));
                 }
+
+                if (struct && struct.type === 'option') {
+                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, function(evt) {
+                        vm.option = evt;
+                        vm.fields = filterStructure('field');
+                    }));
+                }
             });
+
+            if (!_.isEmpty(vm.options)) {
+                submit();
+            }
         }
 
         function execEvent(fn) {
@@ -161,7 +174,14 @@
                 let struct = vm.structure[name];
 
                 if (struct && struct.type === type) {
-                    structs[name] = struct;
+
+                    if (_.has(struct, 'visibleFor')) {
+                        if (struct.visibleFor.indexOf(vm.option) >= 0) {
+                            structs[name] = struct;
+                        }
+                    } else {
+                        structs[name] = struct;
+                    }
                 }
             });
 
