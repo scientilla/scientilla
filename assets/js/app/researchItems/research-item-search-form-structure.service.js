@@ -72,7 +72,7 @@
                 matchColumn: 'title',
                 matchRule: 'contains',
                 type: 'field',
-                visibleFor: [projectTypeCompetitive, projectTypeIndustrial]
+                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
             acronym: {
                 inputType: 'text',
@@ -80,7 +80,7 @@
                 matchColumn: 'acronym',
                 matchRule: 'contains',
                 type: 'field',
-                visibleFor: [projectTypeCompetitive, projectTypeIndustrial]
+                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
             minYear: {
                 inputType: 'year',
@@ -88,7 +88,7 @@
                 matchColumn: 'startYear',
                 matchRule: '>=',
                 type: 'field',
-                visibleFor: [projectTypeCompetitive, projectTypeIndustrial]
+                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
             maxYear: {
                 inputType: 'year',
@@ -96,7 +96,7 @@
                 matchColumn: 'endYear',
                 matchRule: '<=',
                 type: 'field',
-                visibleFor: [projectTypeCompetitive, projectTypeIndustrial]
+                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
             status: {
                 inputType: 'select',
@@ -112,7 +112,7 @@
                 values: [],
                 matchColumn: 'type',
                 type: 'option',
-                defaultValue: projectTypeCompetitive
+                defaultValue: allProjectTypes.value
             }
         };
 
@@ -266,7 +266,11 @@
                         });
                     break;
                 case 'project':
-                    formStructures[constant].projectType.values = await getResearchItemTypes('project', true);
+                    const projectTypes = _.concat(
+                        [{value: allProjectTypes.value, label: allProjectTypes.label}],
+                        await getResearchItemTypes('project', true)
+                    );
+                    formStructures[constant].projectType.values = projectTypes;
                     formStructures[constant].status.values = await getProjectStatuses();
                     structure = formStructures[constant];
                     break;
@@ -384,7 +388,7 @@
             let statuses = await Restangular.all('projectstatuses').getList();
             return _.concat(
                 [{value: "?", label: 'Select'}],
-                statuses.map(s => ({value: s.status, label: s.status}))
+                statuses.map(s => ({value: s.status, label: projectStatuses[s.status]}))
             );
         }
 

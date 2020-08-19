@@ -8,7 +8,8 @@
         'Notification',
         'ResearchItemService',
         'researchItemKinds',
-        'researchItemLabels'
+        'researchItemLabels',
+        'ResearchItemTypesService'
     ];
 
     function controller(Restangular,
@@ -17,8 +18,9 @@
                         Notification,
                         ResearchItemService,
                         researchItemKinds,
-                        researchItemLabels) {
-        const service = Restangular.service("researchentities");
+                        researchItemLabels,
+                        ResearchItemTypesService) {
+        const service = Restangular.service('researchentities');
 
         service.getResearchEntity = getResearchEntity;
         service.getNewItemDraft = getNewItemDraft;
@@ -367,6 +369,16 @@
         async function getProjects(researchEntity, query, favorites = false) {
             const populate = {populate: accomplishmentPopulates};
             const q = _.merge({}, query, populate);
+            const types = await ResearchItemTypesService.getTypes();
+
+            if (q.where && q.where.type) {
+                if (q.where.type === allProjectTypes.value) {
+                    delete q.where.type;
+                } else {
+                    const type = types.find(type => type.key === q.where.type);
+                    q.where.type = type.id;
+                }
+            }
 
             if (favorites) {
                 return await researchEntity.getList('favoriteProjects', q);

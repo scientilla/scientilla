@@ -142,13 +142,20 @@
                     onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, function(evt) {
                         vm.option = evt;
                         vm.fields = filterStructure('field');
+
+                        // Remove the values that are not a field of this option and no action
+                        _.forEach(vm.values, function(value, valueKey) {
+                            if (
+                                valueKey !== key &&
+                                !_.has(vm.fields, valueKey) &&
+                                !_.has(vm.actions, valueKey)
+                            ) {
+                                delete vm.values[valueKey];
+                            }
+                        });
                     }));
                 }
             });
-
-            if (!_.isEmpty(vm.options)) {
-                submit();
-            }
         }
 
         function execEvent(fn) {
