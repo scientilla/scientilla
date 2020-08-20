@@ -949,7 +949,7 @@ async function importPatents() {
 
         for (const [position, inventor] of inventors.entries()) {
             const affiliations = [];
-            if (inventor.assignee.sign === 'IIT')
+            if (inventor.email.includes('@iit.it'))
                 affiliations.push(1);
 
             const authorStrs = User.generateAliasesStr(inventor.name, inventor.surname);
