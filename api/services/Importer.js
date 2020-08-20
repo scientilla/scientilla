@@ -1056,6 +1056,9 @@ async function importPatents() {
         }
 
         for (const patent of item.patent_family.patents) {
+            if (_.isEmpty(patent.statuses))
+                continue;
+
             totalItems++;
 
             try {
