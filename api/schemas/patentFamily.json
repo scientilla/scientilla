@@ -1,0 +1,29 @@
+{
+  "$id": "patentFamily",
+  "type": "object",
+  "properties": {
+    "docket": {
+      "type": "string"
+    },
+    "bithDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "deathDate": {
+      "type": ["string","null"],
+      "format": "date"
+    },
+    "knowledgeshareUrl": {
+      "type": "string"
+    },
+    "countries": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "docket"
+  ]
+}

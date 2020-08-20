@@ -1,0 +1,223 @@
+{
+  "$id": "patent",
+  "type": "object",
+  "properties": {
+    "application": {
+      "type": "string"
+    },
+    "filingDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "publication": {
+      "type": "string"
+    },
+    "publicationDate": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "patent": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "note": {
+      "type": "string"
+    },
+    "issueDate": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "abandonedExpiredAssignedDate": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "priorityPctExpirationDate": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "attorney": {
+      "type": "string"
+    },
+    "priority": {
+      "type": "boolean"
+    },
+    "italian": {
+      "type": "boolean"
+    },
+    "statuses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "attachedAt": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "code",
+          "description",
+          "attachedAt"
+        ]
+      }
+    },
+    "inventors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "surname": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "assignee": {
+            "type": "object",
+            "properties": {
+              "sign": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": [
+          "name",
+          "surname",
+          "email"
+        ]
+      }
+    },
+    "researchLines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name"
+        ]
+      }
+    },
+    "researchPrograms": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name"
+        ]
+      }
+    },
+    "researchDomain": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name"
+        ]
+      }
+    },
+    "examiners": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "surname": {
+            "type": "string"
+          },
+          "office": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "surname"
+        ]
+      }
+    },
+    "assignees": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sign": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "sign",
+          "name"
+        ]
+      }
+    },
+    "espacenetUrl": {
+      "type": "string"
+    },
+    "patsnapUrl": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

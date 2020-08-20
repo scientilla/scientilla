@@ -1,6 +1,6 @@
 /* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator */
 /* global MembershipGroup, GroupTypes, ResearchEntityData, ResearchItemTypes, ResearchItem, ResearchItemKinds, Project */
-/* global Verify, Membership, MembershipGroup, GroupTypes, ResearchEntityData, Utils, ImportHelper */
+/* global Verify, Membership, MembershipGroup, GroupTypes, ResearchEntityData, Utils, ImportHelper, Patent */
 
 // Importer.js - in api/services
 
@@ -12,7 +12,8 @@ module.exports = {
     importSourceMetrics,
     importUserContracts,
     removeExpiredUsers,
-    importProjects
+    importProjects,
+    importPatents
 };
 
 const xlsx = require('xlsx');
@@ -855,34 +856,9 @@ async function importProjects() {
         errors.forEach(error => sails.log.debug(JSON.stringify(error) + '\n --------------------- \n'));
     }
 
-    function mapObject(obj, schema) {
-        return Object.keys(schema)
-            .reduce((res, key) => {
-                const mapKey = schema[key];
-
-                if (_.isFunction(mapKey)) {
-                    res[key] = mapKey(obj);
-                    return res;
-                }
-
-                if (_.isNil(obj[mapKey]))
-                    return res;
-
-                res[key] = obj[mapKey];
-                return res;
-            }, {});
-    }
-
-    function mapObectsArray(arr, schema) {
-        if (!Array.isArray(arr))
-            return [];
-        return arr.map(e => mapObject(e, schema));
-    }
-
-
     async function autoVerify() {
-        const errors = [];
-        let newVerify = 0, unverify = 0;
+        let errors = [];
+        let newVerify = 0, unverified = 0;
         const externalProjects = await Project.find({kind: ResearchItemKinds.EXTERNAL});
 
         const institute = await Group.findOne({type: 'Institute'});
@@ -933,20 +909,309 @@ async function importProjects() {
             for (const researchEntityId of _.uniq(toUnverify))
                 try {
                     await Verify.unverify(researchEntityId, verifiedProject.id);
-                    unverify++;
+                    unverified++;
                 } catch (e) {
                     errors.push(e);
                 }
 
+            const res = await autoVerify(eProject, verifiedProject, toVerify, toUnverify);
+
+            errors = errors.concat(res.errors);
+            unverified += res.unverified;
+            newVerify += newVerify;
 
         }
 
         sails.log.info('Autoverify completed');
         sails.log.info(`added ${newVerify} new verifications`);
-        sails.log.info(`removed ${unverify} old verifications`);
+        sails.log.info(`removed ${unverified} old verifications`);
         if (errors.length) {
             sails.log.debug(`but there were ${errors.length} errors:`);
             sails.log.debug(JSON.stringify(errors[0]));
         }
     }
+}
+
+// import Patents
+
+async function importPatents() {
+
+    function patentDateFormat(date) {
+        if (_.isEmpty(date) || date === 'null')
+            return null;
+
+        const arr = date.split('-');
+        return [arr[2], arr[0], arr[1]].join('-');
+    }
+
+    function getAuthorsData(inventors) {
+        const authorsData = [];
+
+        for (const [position, inventor] of inventors.entries()) {
+            const affiliations = [];
+            if (inventor.assignee.sign === 'IIT')
+                affiliations.push(1);
+
+            const authorStrs = User.generateAliasesStr(inventor.name, inventor.surname);
+            authorsData.push({
+                position,
+                affiliations,
+                authorStr: authorStrs.length > 0 ? authorStrs[0] : ''
+            });
+        }
+
+        return authorsData;
+    }
+
+    const patentSchema = {
+        application: 'application',
+        filingDate: obj => patentDateFormat(obj.filing_date),
+        publicationDate: obj => patentDateFormat(obj.publication_date),
+        patent: 'patent',
+        title: 'title',
+        note: 'note',
+        issueDate: obj => patentDateFormat(obj.issue_date),
+        abandonedExpiredAssignedDate: obj => patentDateFormat(obj.abandoned_expired_assigned_date),
+        priorityPctExpirationDate: obj => patentDateFormat(obj.priority_pct_expiration_date),
+        attorney: 'attorney',
+        priority: 'priority',
+        italian: 'italian',
+        statuses: obj => mapObectsArray(obj.statuses, {
+            code: 'code',
+            description: 'description',
+            attachedAt: obj => patentDateFormat(obj.attached_at)
+        }),
+        inventors: obj => mapObectsArray(obj.inventors, {
+            name: 'name',
+            surname: 'surname',
+            email: 'email',
+            alias: 'alias',
+            assignee: obj => mapObject(obj.assignee, {
+                sign: 'sign',
+                name: 'name'
+            })
+        }),
+        researchLines: obj => mapObectsArray(obj.research_lines, {
+            code: 'code',
+            name: 'name'
+        }),
+        researchPrograms: obj => mapObectsArray(obj.research_program, {
+            code: 'code',
+            name: 'name'
+        }),
+        researchDomain: obj => mapObectsArray(obj.research_domain, {
+            code: 'code',
+            name: 'name'
+        }),
+        examiners: obj => mapObectsArray(obj.examiners, {
+            name: 'name',
+            surname: 'surname',
+            office: 'office'
+        }),
+        assignees: obj => mapObectsArray(obj.assignees, {
+            sign: 'sign',
+            name: 'name'
+        }),
+        espacenetUrl: 'espacenet_url',
+        patsnapUrl: 'patsnap_url'
+
+    }
+    const patentFamilySchema = {
+        docket: 'docket',
+        bithDate: obj => patentDateFormat(obj.birth_date),
+        deathDate: obj => patentDateFormat(obj.death_date),
+        knowledgeshareUrl: 'knowledgeshare_url',
+        countries: 'countries'
+    }
+
+    let res
+    const config = sails.config.scientilla.researchItems.external[ResearchItemTypes.PATENT];
+    const reqOptions = {
+        uri: config.url,
+        json: true,
+        headers: config.headers
+    };
+
+    try {
+        res = (await request(reqOptions));
+    } catch (e) {
+        sails.log.debug(e);
+        throw (e);
+    }
+
+    if (res.error)
+        throw res.error;
+
+    const importErrors = [];
+    let totalItems = 0, created = 0, updated = 0;
+
+    for (const item of res.result) {
+        if (!item.patent_family.docket) {
+            importErrors.push({
+                success: false,
+                researchItem: item,
+                message: 'Missing required field "docket"'
+            });
+            continue;
+        }
+
+        for (const patent of item.patent_family.patents) {
+            totalItems++;
+
+            try {
+                const authorsData = getAuthorsData(patent.inventors);
+                const authorsStr = authorsData.map(ad => ad.authorStr).join(', ');
+
+                const patentFamilyData = mapObject(item.patent_family, patentFamilySchema);
+                const patentData = mapObject(patent, patentSchema);
+
+                if (!patentData.application) {
+                    importErrors.push({
+                        success: false,
+                        researchItem: patent,
+                        message: 'Missing required field "application"'
+                    });
+                    continue;
+                }
+
+                const code = patentFamilyData.docket + '|' + patentData.application;
+
+                const data = {
+                    type: ResearchItemTypes.PATENT,
+                    authorsStr,
+                    code,
+                    patentFamilyData,
+                    patentData,
+                };
+
+                const pat = await Patent.findOne({code: code, kind: ResearchItemKinds.EXTERNAL});
+                if (!pat) {
+                    await ResearchItem.createExternal(config.origin, code, data, authorsData);
+                    created++;
+                } else if (
+                    JSON.stringify(pat.patentFamilyData) !== JSON.stringify(data.patentFamilyData)
+                    || JSON.stringify(pat.patentData) !== JSON.stringify(data.patentData)
+                ) {
+                    await ResearchItem.updateExternal(pat.id, data, authorsData);
+                    updated++;
+                }
+
+            } catch (e) {
+                importErrors.push(e);
+            }
+
+        }
+    }
+
+    sails.log.info(`import ${ResearchItemTypes.PATENT} completed`);
+    sails.log.info(`${totalItems} found`);
+    sails.log.info(`external created: ${created}`);
+    sails.log.info(`external updated: ${updated}`);
+    sails.log.info(`errors: ${importErrors.length}`);
+    importErrors.forEach(error => sails.log.debug(JSON.stringify(error) + '\n --------------------- \n'));
+
+
+    let verifyErrors = [];
+    let newVerify = 0, unverified = 0;
+    const externalPatents = await Patent.find({kind: ResearchItemKinds.EXTERNAL});
+
+    const institute = await Group.findOne({type: 'Institute'});
+    for (const ePatent of externalPatents) {
+        const verifiedPatent = await Patent.findOne({
+            kind: ResearchItemKinds.VERIFIED,
+            code: ePatent.code
+        }).populate('verified');
+        let verified = [];
+        if (verifiedPatent)
+            verified = verifiedPatent.verified.map(v => v.researchEntity);
+
+        const lines = ePatent.patentData.researchLines || [];
+
+        //for some reason find({code:array}) doesn't work so i have to do this
+        const groups = [];
+        for (const code of lines.map(l => l.code)) {
+            const foundGroup = await Group.findOne({code: code});
+            if (!_.isEmpty(foundGroup))
+                groups.push(foundGroup);
+        }
+
+        // only getting 1 level of parentGroups
+        const parentGroups = await MembershipGroup.find({child_group: groups.map(g => g.id)})
+            .populate('parent_group');
+
+        const researchEntitiesId = [
+            institute.id,
+            ...groups.map(g => g.researchEntity),
+            ...parentGroups.map(pg => pg.parent_group.researchEntity)
+        ];
+
+        const toVerify = _.difference(researchEntitiesId, verified);
+        const toUnverify = _.difference(verified, researchEntitiesId);
+
+        const autoverifyRes = await autoVerify(ePatent, verifiedPatent, toVerify, toUnverify);
+
+        verifyErrors = verifyErrors.concat(autoverifyRes.errors);
+        unverified += autoverifyRes.unverified;
+        newVerify += autoverifyRes.newVerify;
+    }
+
+    sails.log.info('Autoverify completed');
+    sails.log.info(`added ${newVerify} new verifications`);
+    sails.log.info(`removed ${unverified} old verifications`);
+    if (verifyErrors.length) {
+        sails.log.debug(`but there were ${verifyErrors.length} errors:`);
+        sails.log.debug(JSON.stringify(verifyErrors[0]));
+    }
+
+}
+
+async function autoVerify(external, verified, toVerify, toUnverify) {
+    const errors = [];
+    let newVerify = 0, unverified = 0;
+    for (const researchEntityId of _.uniq(toVerify))
+        try {
+            await Verify.verify(external.id, researchEntityId);
+            newVerify++;
+        } catch (e) {
+            errors.push(e);
+        }
+
+    for (const researchEntityId of _.uniq(toUnverify))
+        try {
+            await Verify.unverify(researchEntityId, verified.id);
+            unverified++;
+        } catch (e) {
+            errors.push(e);
+        }
+
+    return {
+        errors,
+        newVerify,
+        unverified
+    }
+}
+
+
+function mapObject(obj, schema) {
+    return Object.keys(schema)
+        .reduce((res, key) => {
+            const mapKey = schema[key];
+
+            if (_.isFunction(mapKey)) {
+                res[key] = mapKey(obj);
+                return res;
+            }
+
+            if (_.isNil(obj[mapKey]))
+                return res;
+
+            res[key] = obj[mapKey];
+            return res;
+        }, {});
+}
+
+function mapObectsArray(arr, schema) {
+    if (!Array.isArray(arr))
+        return [];
+    return arr.map(e => mapObject(e, schema));
 }

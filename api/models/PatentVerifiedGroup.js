@@ -1,15 +1,15 @@
 module.exports = {
     attributes: {
-        accomplishment: {
+        patent: {
             columnName: 'research_item',
-            model: 'Accomplishment'
+            model: 'patent'
         },
-        user: {
-            model: 'User'
+        group: {
+            model: 'Group'
         }
     },
     migrate: 'safe',
-    tableName: 'verified_user',
+    tableName: 'verified_group',
     autoUpdatedAt: false,
     autoCreatedAt: false
 };
