@@ -21,6 +21,8 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
+            vm.project.category = industrialProjectCategories[vm.project.category];
+            vm.project.payment = industrialProjectPayments[vm.project.payment];
 
             vm.groups = await GroupsService.getGroups();
 

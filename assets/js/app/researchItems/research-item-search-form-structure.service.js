@@ -72,7 +72,7 @@
                 matchColumn: 'title',
                 matchRule: 'contains',
                 type: 'field',
-                visibleFor: [projectTypeCompetitive, projectTypeIndustrial]
+                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
             acronym: {
                 inputType: 'text',
@@ -80,7 +80,7 @@
                 matchColumn: 'acronym',
                 matchRule: 'contains',
                 type: 'field',
-                visibleFor: [projectTypeCompetitive, projectTypeIndustrial]
+                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
             minYear: {
                 inputType: 'year',
@@ -88,7 +88,7 @@
                 matchColumn: 'startYear',
                 matchRule: '>=',
                 type: 'field',
-                visibleFor: [projectTypeCompetitive, projectTypeIndustrial]
+                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
             maxYear: {
                 inputType: 'year',
@@ -96,7 +96,7 @@
                 matchColumn: 'endYear',
                 matchRule: '<=',
                 type: 'field',
-                visibleFor: [projectTypeCompetitive, projectTypeIndustrial]
+                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
             status: {
                 inputType: 'select',
@@ -106,13 +106,29 @@
                 type: 'field',
                 visibleFor: [projectTypeCompetitive]
             },
+            category: {
+                inputType: 'select',
+                label: 'Category',
+                matchColumn: 'category',
+                values: [],
+                type: 'field',
+                visibleFor: [projectTypeIndustrial]
+            },
+            payment: {
+                inputType: 'select',
+                label: 'Payment',
+                matchColumn: 'payment',
+                values: [],
+                type: 'field',
+                visibleFor: [projectTypeIndustrial]
+            },
             projectType: {
                 inputType: 'radio',
                 label: 'Project Type',
                 values: [],
                 matchColumn: 'type',
                 type: 'option',
-                defaultValue: projectTypeCompetitive
+                defaultValue: allProjectTypes.value
             }
         };
 
@@ -266,8 +282,14 @@
                         });
                     break;
                 case 'project':
-                    formStructures[constant].projectType.values = await getResearchItemTypes('project', true);
+                    const projectTypes = _.concat(
+                        [{value: allProjectTypes.value, label: allProjectTypes.label}],
+                        await getResearchItemTypes('project', true)
+                    );
+                    formStructures[constant].projectType.values = projectTypes;
                     formStructures[constant].status.values = await getProjectStatuses();
+                    formStructures[constant].payment.values = await getProjectPayments();
+                    formStructures[constant].category.values = await getProjectCategories();
                     structure = formStructures[constant];
                     break;
                 case 'document':
@@ -384,8 +406,30 @@
             let statuses = await Restangular.all('projectstatuses').getList();
             return _.concat(
                 [{value: "?", label: 'Select'}],
-                statuses.map(s => ({value: s.status, label: s.status}))
+                statuses.map(s => ({value: s.status, label: projectStatuses[s.status]}))
             );
+        }
+
+        function getProjectPayments() {
+            const payments = [];
+            payments.push({value: '?', label: 'Select'});
+
+            for (const property in industrialProjectPayments) {
+                payments.push({value: property, label: industrialProjectPayments[property]});
+            }
+
+            return payments;
+        }
+
+        function getProjectCategories() {
+            const categories = [];
+            categories.push({value: '?', label: 'Select'});
+
+            for (const property in industrialProjectCategories) {
+                categories.push({value: property, label: industrialProjectCategories[property]});
+            }
+
+            return categories;
         }
 
         /* jshint ignore:end */

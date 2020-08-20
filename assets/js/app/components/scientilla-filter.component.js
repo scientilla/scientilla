@@ -144,7 +144,13 @@
                     const struct = vm.filterSearchFormStructure[key];
 
                     // Skip if nothing is selected if the inputType is a select
-                    if (struct && struct.inputType === 'select' && vm.values[key] === "?"){
+                    if (
+                        struct &&
+                        (
+                            (struct.inputType === 'select' && vm.values[key] === '?') ||
+                            (struct.inputType === 'radio' && vm.values[key] === 'all')
+                        )
+                    ){
                         return;
                     }
 

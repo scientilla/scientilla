@@ -34,6 +34,16 @@
     <strong>Type 2:</strong> {{ vm.project.project_type_2 }}<br>
 </ng-container>
 
+<ng-container ng-if="vm.project.category">
+    <strong>Category:</strong>
+    {{ vm.project.category }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.payment">
+    <strong>Payment:</strong>
+    {{ vm.project.payment }}<br>
+</ng-container>
+
 <ng-container ng-if="vm.project.role">
     <strong>Role:</strong>
     {{ vm.project.role }}<br>

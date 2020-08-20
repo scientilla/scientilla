@@ -16,8 +16,7 @@
         'EventsService',
         'accomplishmentListSections',
         'AuthService',
-        'ResearchItemService',
-        'ResearchItemTypesService'
+        'ResearchItemService'
     ];
 
     function controller(context,
@@ -25,8 +24,7 @@
                         EventsService,
                         projectListSections,
                         AuthService,
-                        ResearchItemService,
-                        ResearchItemTypesService) {
+                        ResearchItemService) {
         const vm = this;
 
         vm.projectListSections = projectListSections;
@@ -58,15 +56,7 @@
 
             query = q;
 
-            if (query && query.where && query.where.type) {
-                const types = await ResearchItemTypesService.getTypes();
-                const type = types.find(type => type.key === query.where.type);
-                query.where.type = type.id;
-
-                const projects = await ProjectService.get(vm.researchEntity, query, favorites);
-
-                vm.projects = projects;
-            }
+            vm.projects = await ProjectService.get(vm.researchEntity, query, favorites);
         }
         /* jshint ignore:end */
     }

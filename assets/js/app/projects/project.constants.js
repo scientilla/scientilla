@@ -1,4 +1,9 @@
 /* global angular */
+const allProjectTypes = {
+    value: 'all',
+    label: 'All'
+};
+
 const projectTypeCompetitive = 'project_competitive';
 
 const projectTypeIndustrial = 'project_industrial';
@@ -16,8 +21,15 @@ const industrialProjectPayments = {
     'InCash': 'In cash'
 };
 
+const projectStatuses = {
+    'ended': 'Ended',
+    'working': 'Working'
+};
+
 angular.module('app')
+    .constant('allProjectTypes', allProjectTypes)
     .constant('projectTypeCompetitive', projectTypeCompetitive)
     .constant('projectTypeIndustrial', projectTypeIndustrial)
     .constant('industrialProjectCategories', industrialProjectCategories)
-    .constant('industrialProjectPayments', industrialProjectPayments);
+    .constant('industrialProjectPayments', industrialProjectPayments)
+    .constant('projectStatuses', projectStatuses);
