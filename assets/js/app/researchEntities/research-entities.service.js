@@ -48,6 +48,7 @@
         service.getProjects = getProjects;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
+        const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
 
         /* jshint ignore:start */
 
@@ -367,7 +368,7 @@
         }
 
         async function getProjects(researchEntity, query, favorites = false) {
-            const populate = {populate: accomplishmentPopulates};
+            const populate = {populate: projectPopulates};
             const q = _.merge({}, query, populate);
             const types = await ResearchItemTypesService.getTypes();
 

@@ -18,6 +18,7 @@
 
         vm.getAlias = UserService.getAlias;
         vm.groups = [];
+        vm.projectTypeCompetitive = projectTypeCompetitive;
 
         /* jshint ignore:start */
         vm.$onInit = async function () {

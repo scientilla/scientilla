@@ -26,12 +26,12 @@
     {{ vm.project.endDate }}<br>
 </ng-container>
 
-<ng-container ng-if="vm.project.project_type">
-    <strong>Type:</strong> {{ vm.project.project_type }}<br>
+<ng-container ng-if="vm.project.projectType && vm.project.type.key === vm.projectTypeCompetitive">
+    <strong>Funding type:</strong> {{ vm.project.projectType }}<br>
 </ng-container>
 
-<ng-container ng-if="vm.project.project_type_2">
-    <strong>Type 2:</strong> {{ vm.project.project_type_2 }}<br>
+<ng-container ng-if="vm.project.projectType2 && vm.project.type.key === vm.projectTypeCompetitive">
+    <strong>Action type:</strong> {{ vm.project.projectType2 }}<br>
 </ng-container>
 
 <ng-container ng-if="vm.project.category">
