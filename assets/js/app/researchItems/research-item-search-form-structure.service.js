@@ -106,6 +106,22 @@
                 type: 'field',
                 visibleFor: [projectTypeCompetitive]
             },
+            category: {
+                inputType: 'select',
+                label: 'Category',
+                matchColumn: 'category',
+                values: [],
+                type: 'field',
+                visibleFor: [projectTypeIndustrial]
+            },
+            payment: {
+                inputType: 'select',
+                label: 'Payment',
+                matchColumn: 'payment',
+                values: [],
+                type: 'field',
+                visibleFor: [projectTypeIndustrial]
+            },
             projectType: {
                 inputType: 'radio',
                 label: 'Project Type',
@@ -272,6 +288,8 @@
                     );
                     formStructures[constant].projectType.values = projectTypes;
                     formStructures[constant].status.values = await getProjectStatuses();
+                    formStructures[constant].payment.values = await getProjectPayments();
+                    formStructures[constant].category.values = await getProjectCategories();
                     structure = formStructures[constant];
                     break;
                 case 'document':
@@ -390,6 +408,28 @@
                 [{value: "?", label: 'Select'}],
                 statuses.map(s => ({value: s.status, label: projectStatuses[s.status]}))
             );
+        }
+
+        function getProjectPayments() {
+            const payments = [];
+            payments.push({value: '?', label: 'Select'});
+
+            for (const property in industrialProjectPayments) {
+                payments.push({value: property, label: industrialProjectPayments[property]});
+            }
+
+            return payments;
+        }
+
+        function getProjectCategories() {
+            const categories = [];
+            categories.push({value: '?', label: 'Select'});
+
+            for (const property in industrialProjectCategories) {
+                categories.push({value: property, label: industrialProjectCategories[property]});
+            }
+
+            return categories;
         }
 
         /* jshint ignore:end */

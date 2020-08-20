@@ -16,6 +16,8 @@ const fields = [
     'startDate',
     'endDate',
     'projectType',
+    'category',
+    'payment',
     'role',
     'status',
     'url',
@@ -63,6 +65,14 @@ module.exports = _.merge({}, BaseModel, {
         projectType: {
             type: 'STRING',
             columnName: 'project_type'
+        },
+        category: {
+            type: 'STRING',
+            columnName: 'category'
+        },
+        payment: {
+            type: 'STRING',
+            columnName: 'payment'
         },
         role: 'STRING',
         status: 'STRING',
