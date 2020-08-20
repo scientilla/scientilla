@@ -14,14 +14,16 @@ const needsAuthorsTypes = {
     [ResearchItemTypes.EDITORSHIP]: true,
     [ResearchItemTypes.ORGANIZED_EVENT]: true,
     [ResearchItemTypes.PROJECT_COMPETITIVE]: false,
-    [ResearchItemTypes.PROJECT_INDUSTRIAL]: false
+    [ResearchItemTypes.PROJECT_INDUSTRIAL]: false,
+    [ResearchItemTypes.PATENT]: true
 };
 const needsAffiliationTypes = {
     [ResearchItemTypes.AWARD_ACHIEVEMENT]: true,
     [ResearchItemTypes.EDITORSHIP]: true,
     [ResearchItemTypes.ORGANIZED_EVENT]: true,
     [ResearchItemTypes.PROJECT_COMPETITIVE]: false,
-    [ResearchItemTypes.PROJECT_INDUSTRIAL]: false
+    [ResearchItemTypes.PROJECT_INDUSTRIAL]: false,
+    [ResearchItemTypes.PATENT]: true
 };
 
 module.exports = _.merge({}, BaseModel, {
@@ -132,22 +134,22 @@ module.exports = _.merge({}, BaseModel, {
             throw {success: false, researchItem: itemData, message: 'The item is not a draft'};
         return this.doUpdate(researchItem, itemData);
     },
-    async updateExternal(researchItemId, itemData) {
+    async updateExternal(researchItemId, itemData, newAuthorsData = []) {
         const researchItem = await ResearchItem.findOne({id: researchItemId});
         if (!researchItem)
             throw {success: false, researchItem: itemData, message: 'Item not found'};
         if (researchItem.kind !== ResearchItemKinds.EXTERNAL)
             throw {success: false, researchItem: itemData, message: 'The item is not an external'};
-        const res = await this.doUpdate(researchItem, itemData);
-        await this.synchronizeExternal(res.researchItem, itemData);
+        const res = await this.doUpdate(researchItem, itemData, newAuthorsData);
+        await this.synchronizeExternal(res.researchItem, itemData, newAuthorsData);
         return res;
     },
     async synchronizeExternal(external, itemData) {
         const verified = await this.getVerifiedExternal(external);
-        if(verified)
+        if (verified)
             await this.doUpdate(verified, itemData);
     },
-    async doUpdate(researchItem, itemData) {
+    async doUpdate(researchItem, itemData, newAuthorsData = []) {
         const ResearchItemChildModel = ResearchItemTypes.getResearchItemChildModel(itemData.type);
         if (!ResearchItemChildModel)
             throw {success: false, researchItem: itemData, message: 'Invalid item type'};
@@ -157,8 +159,9 @@ module.exports = _.merge({}, BaseModel, {
             const authorsStr = itemData.authorsStr ?
                 itemData.authorsStr :
                 (await ResearchItemChildModel.findOne({id: researchItem.id})).authorsStr;
-            const authors = await Author.find({researchItem: researchItem.id}).populate('affiliations');
-            const authorsData = Author.getMatchingAuthorsData(authorsStr, authors);
+            const currentAuthors = await Author.find({researchItem: researchItem.id}).populate('affiliations');
+            const matchedAuthorsData = Author.getMatchingAuthorsData(authorsStr, currentAuthors);
+            const authorsData = Author.mergeAffiliations(matchedAuthorsData, newAuthorsData);
             await Author.updateAuthors(researchItem, authorsStr, authorsData);
         }
 

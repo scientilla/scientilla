@@ -39,6 +39,10 @@ module.exports.scientilla = {
             "project_industrial": {
                 "origin": "",
                 "url": ''
+            },
+            "patent": {
+                "origin": "",
+                "url": ''
             }
         }
     },

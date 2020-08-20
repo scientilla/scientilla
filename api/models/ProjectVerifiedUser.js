@@ -1,6 +1,7 @@
 module.exports = {
     attributes: {
         project: {
+            columnName: 'research_item',
             model: 'project'
         },
         user: {
@@ -8,7 +9,7 @@ module.exports = {
         }
     },
     migrate: 'safe',
-    tableName: 'project_verified_user',
+    tableName: 'verified_user',
     autoUpdatedAt: false,
     autoCreatedAt: false
 };

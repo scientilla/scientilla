@@ -82,7 +82,7 @@ module.exports = _.merge({}, BaseModel, {
         return !Object.keys(authData1).find(key => !_.isEqual(authData1[key], authData2[key]));
     },
     splitAuthorStr(authorsStr) {
-        if(!authorsStr) return [];
+        if (!authorsStr) return [];
         return authorsStr.replace(/\s+et all\s*/i, '').split(',').map(_.trim);
     },
     getMatchingAuthorsData(authorsStr, authorsData) {
@@ -109,7 +109,18 @@ module.exports = _.merge({}, BaseModel, {
             }
 
         }).filter(a => a);
+    },
+    mergeAffiliations(oldAuthorsData, newAuthorsData) {
+        return oldAuthorsData.map(oad => {
+            if (_.isNull(oad.verify)) {
+                const newAuthorData = newAuthorsData.find(nad => nad.position === oad.position);
+                if (newAuthorData && newAuthorData.affiliations)
+                    oad.affiliations = newAuthorData.affiliations;
+            }
 
+            return oad;
+
+        })
     },
     async updateAuthors(researchItem, authorsStr, newAuthorsData = []) {
         if (!researchItem || !researchItem.id)

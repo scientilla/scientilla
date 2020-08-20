@@ -29,6 +29,12 @@
       "shortLabel": "IP",
       "label": "Industrial Project",
       "type": "project"
+    },
+    {
+      "key": "patent",
+      "shortLabel": "PA",
+      "label": "Patent",
+      "type": "patent"
     }
   ]
 }

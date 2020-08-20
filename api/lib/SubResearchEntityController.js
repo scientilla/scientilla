@@ -148,6 +148,8 @@ module.exports = {
     getAccomplishments: async (req, res) => makePublicAPIrequest(req, res, 'accomplishments'),
     getCompetitiveProjects: async (req, res) => makePublicAPIrequest(req, res, 'publicCompetitiveProjects', true),
     getIndustrialProjects: async (req, res) => makePublicAPIrequest(req, res, 'publicIndustrialProjects', true),
+    getPatentFamilies: async (req, res) => makePublicAPIrequest(req, res, 'patentFamilies', true),
+    getPatents: async (req, res) => makePublicAPIrequest(req, res, 'patents', true),
     getPublicProfile: async (req, res) => makePublicAPIrequest(req, res, 'userData')
 };
 

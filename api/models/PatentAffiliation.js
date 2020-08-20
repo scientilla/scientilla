@@ -4,14 +4,14 @@
 module.exports = {
     attributes: {
         author: {
-            model: 'AccomplishmentAuthor'
+            model: 'PatentAuthor'
         },
         institute: {
             model: 'Institute'
         },
-        accomplishment:{
+        patent:{
             columnName: 'research_item',
-            model: 'Accomplishment'
+            model: 'Patent'
         }
     },
     migrate: 'safe',

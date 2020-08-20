@@ -1,8 +1,8 @@
 module.exports = {
     attributes: {
-        accomplishment: {
+        patent: {
             columnName: 'research_item',
-            model: 'Accomplishment'
+            model: 'patent'
         },
         user: {
             model: 'User'
