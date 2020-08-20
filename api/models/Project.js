@@ -66,6 +66,10 @@ module.exports = _.merge({}, BaseModel, {
             type: 'STRING',
             columnName: 'project_type'
         },
+        projectType2: {
+            type: 'STRING',
+            columnName: 'project_type_2'
+        },
         category: {
             type: 'STRING',
             columnName: 'category'

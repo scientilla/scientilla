@@ -106,6 +106,22 @@
                 type: 'field',
                 visibleFor: [projectTypeCompetitive]
             },
+            funding: {
+                inputType: 'select',
+                label: 'Funding type',
+                matchColumn: 'project_type',
+                values: [],
+                type: 'field',
+                visibleFor: [projectTypeCompetitive]
+            },
+            action: {
+                inputType: 'select',
+                label: 'Action type',
+                matchColumn: 'project_type_2',
+                values: [],
+                type: 'field',
+                visibleFor: [projectTypeCompetitive]
+            },
             category: {
                 inputType: 'select',
                 label: 'Category',
@@ -288,8 +304,10 @@
                     );
                     formStructures[constant].projectType.values = projectTypes;
                     formStructures[constant].status.values = await getProjectStatuses();
-                    formStructures[constant].payment.values = await getProjectPayments();
-                    formStructures[constant].category.values = await getProjectCategories();
+                    formStructures[constant].payment.values = getProjectPayments();
+                    formStructures[constant].category.values = getProjectCategories();
+                    formStructures[constant].funding.values = getProjectFundings();
+                    formStructures[constant].action.values = getProjectActions();
                     structure = formStructures[constant];
                     break;
                 case 'document':
@@ -409,6 +427,7 @@
                 statuses.map(s => ({value: s.status, label: projectStatuses[s.status]}))
             );
         }
+        /* jshint ignore:end */
 
         function getProjectPayments() {
             const payments = [];
@@ -432,6 +451,26 @@
             return categories;
         }
 
-        /* jshint ignore:end */
+        function getProjectFundings() {
+            const fundings = [];
+            fundings.push({value: '?', label: 'Select'});
+
+            for (const property in competitiveProjectFundings) {
+                fundings.push({value: property, label: competitiveProjectFundings[property]});
+            }
+
+            return fundings;
+        }
+
+        function getProjectActions() {
+            const fundings = [];
+            fundings.push({value: '?', label: 'Select'});
+
+            for (const property in competitiveProjectActions) {
+                fundings.push({value: property, label: competitiveProjectActions[property]});
+            }
+
+            return fundings;
+        }
     }
 })();
