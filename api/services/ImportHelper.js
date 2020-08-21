@@ -320,8 +320,8 @@ function handleStep(step) {
             }
         }
 
-        if (_.has(step, '_.ruolo')) {
-            handledStep.jobTitle = step._.ruolo;
+        if (_.has(step, '_.Ruolo_AD')) {
+            handledStep.jobTitle = step._.Ruolo_AD;
         }
 
         const lines = step._.linea;
