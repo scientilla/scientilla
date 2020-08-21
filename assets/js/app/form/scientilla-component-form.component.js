@@ -7,6 +7,7 @@
             controller: scientillaComponentForm,
             controllerAs: 'vm',
             bindings: {
+                category: '<?',
                 structure: '=',
                 cssClass: '@',
                 onSubmit: '&',

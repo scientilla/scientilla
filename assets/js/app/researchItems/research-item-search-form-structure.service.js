@@ -82,6 +82,14 @@
                 type: 'field',
                 visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
+            pi: {
+                inputType: 'text',
+                label: 'PI',
+                matchColumn: 'piStr',
+                matchRule: 'contains',
+                type: 'field',
+                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
+            },
             minYear: {
                 inputType: 'year',
                 label: 'Year from',

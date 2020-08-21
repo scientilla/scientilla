@@ -82,6 +82,10 @@ module.exports = _.merge({}, BaseModel, {
         status: 'STRING',
         url: 'STRING',
         members: 'JSON',
+        piStr: {
+            type: 'STRING',
+            columnName: 'pi_str'
+        },
         researchLines: {
             type: 'JSON',
             columnName: 'research_lines'
