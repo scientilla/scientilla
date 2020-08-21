@@ -199,7 +199,11 @@ function mergeStepsOfContract(contract) {
             let mergedStep = false;
             let skipStep = false;
 
-            for (const [index, sameHandledStep] of sameHandledSteps.entries()) {
+            for (const sameHandledStep of sameHandledSteps) {
+
+                const index = handledSteps.findIndex(s => s.jobTitle === sameHandledStep.jobTitle &&
+                    JSON.stringify(s.lines) === JSON.stringify(sameHandledStep.lines));
+
                 if (moment(handledStep.from, ISO8601Format).diff(
                     moment(sameHandledStep.to, ISO8601Format), 'days'
                 ) === 1) {
