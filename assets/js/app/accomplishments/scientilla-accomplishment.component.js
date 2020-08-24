@@ -39,6 +39,8 @@
         vm.isFavorite = isFavorite;
         vm.changePrivacy = changePrivacy;
         vm.changeFavorite = changeFavorite;
+        vm.isPrivacyToShow = isPrivacyToShow;
+        vm.isFavoriteToShow = isFavoriteToShow;
 
         let researchEntity;
 
@@ -46,7 +48,9 @@
             accomplishmentListSections.VERIFIED
         ].includes(vm.section);
 
-        vm.showFavorite = false;
+        vm.showFavorite = [
+            accomplishmentListSections.VERIFIED
+        ].includes(vm.section);
 
         vm.collapsed = true;
 
@@ -98,6 +102,14 @@
 
             verify.favorite = !verify.favorite;
             return ResearchEntitiesService.setVerifyFavorite(researchEntity, vm.accomplishment, verify);
+        }
+
+        function isPrivacyToShow() {
+            return vm.showPrivacy && getVerify();
+        }
+
+        function isFavoriteToShow() {
+            return vm.showFavorite && getVerify();
         }
 
         function isPublic() {

@@ -82,7 +82,7 @@
     .accomplishment{
         display: grid;
         grid-template-rows: auto;
-        grid-template-columns: auto 1fr auto;
+        grid-template-columns: auto 1fr;
         border-left: 0px;
 
         .accomplishment-info{
