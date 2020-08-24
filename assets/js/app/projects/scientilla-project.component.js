@@ -111,7 +111,6 @@
         }
 
         function isPrivacyToShow() {
-            console.log(vm.showPrivacy, getVerify());
             return vm.showPrivacy && getVerify();
         }
 
