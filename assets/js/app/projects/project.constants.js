@@ -1,4 +1,11 @@
 /* global angular */
+
+const projectListSections = {
+    VERIFIED: 'verified-projects',
+    GROUP: 'group-verified-projects',
+    USER: 'user-verified-projects'
+};
+
 const allProjectTypes = {
     value: 'all',
     label: 'All'
@@ -117,6 +124,7 @@ const competitiveProjectActions = {
 };
 
 angular.module('app')
+    .constant('projectListSections', projectListSections)
     .constant('allProjectTypes', allProjectTypes)
     .constant('projectTypeCompetitive', projectTypeCompetitive)
     .constant('projectTypeIndustrial', projectTypeIndustrial)

@@ -8,13 +8,32 @@
             controller,
             controllerAs: 'vm',
             bindings: {
-                project: '<'
+                project: '<',
+                section: '<'
             }
         });
 
-    controller.$inject = ['GroupsService', 'ModalService', 'ProjectService', 'context', 'EventsService', 'CustomizeService'];
+    controller.$inject = [
+        'GroupsService',
+        'ModalService',
+        'ProjectService',
+        'context',
+        'EventsService',
+        'CustomizeService',
+        'ResearchEntitiesService',
+        'projectListSections'
+    ];
 
-    function controller(GroupsService, ModalService, ProjectService, context, EventsService, CustomizeService) {
+    function controller(
+        GroupsService,
+        ModalService,
+        ProjectService,
+        context,
+        EventsService,
+        CustomizeService,
+        ResearchEntitiesService,
+        projectListSections
+    ) {
 
         const vm = this;
         vm.openDetails = openDetails;
@@ -27,9 +46,20 @@
         vm.changeFavorite = changeFavorite;
         vm.hasIITAsPartner = hasIITAsPartner;
 
-        const subResearchEntity = context.getSubResearchEntity();
+        let researchEntity;
 
-        vm.$onInit = function () {
+        vm.showPrivacy = [
+            projectListSections.VERIFIED
+        ].includes(vm.section);
+
+        vm.showFavorite = [
+            projectListSections.VERIFIED
+        ].includes(vm.section);
+
+        /* jshint ignore:start */
+        vm.$onInit = async function () {
+            researchEntity = await context.getResearchEntity();
+
             EventsService.subscribe(vm, EventsService.CUSTOMIZATIONS_CHANGED, function (event, customizations) {
                 vm.customizations = customizations;
             });
@@ -38,6 +68,7 @@
                 vm.customizations = customizations;
             });
         };
+        /* jshint ignore:end */
 
         vm.getTypeTitle = GroupsService.getTypeTitle;
 
@@ -62,50 +93,48 @@
         }
 
         function changePrivacy() {
-            const authorship = getAuthorship();
-            if (authorship.favorite)
+            const verify = getVerify();
+            if (verify.favorite)
                 return ModalService.alert('Project visibility error', 'A favorite project cannot be set to private.');
 
-            authorship.public = !authorship.public;
-            ProjectService.setAuthorshipPrivacy(authorship);
+            verify.public = !verify.public;
+            return ResearchEntitiesService.setVerifyPrivacy(researchEntity, vm.project, verify);
         }
 
         function changeFavorite() {
-            const authorship = getAuthorship();
-            if (!authorship.public)
+            const verify = getVerify();
+            if (!verify.public)
                 return ModalService.alert('Favorite error', 'A favorite project should be first set to public.');
 
-            authorship.favorite = !authorship.favorite;
-            ProjectService.setAuthorshipFavorite(authorship);
-        }
-
-        function isPublic() {
-            const authorship = getAuthorship();
-            if (!authorship) return false;
-            return !!authorship.public;
-        }
-
-        function isFavorite() {
-            const authorship = getAuthorship();
-            if (!authorship) return false;
-            return !!authorship.favorite;
+            verify.favorite = !verify.favorite;
+            return ResearchEntitiesService.setVerifyFavorite(researchEntity, vm.project, verify);
         }
 
         function isPrivacyToShow() {
-            return getAuthorship();
+            console.log(vm.showPrivacy, getVerify());
+            return vm.showPrivacy && getVerify();
         }
 
         function isFavoriteToShow() {
-            return getAuthorship();
+            return vm.showFavorite && getVerify();
         }
 
-        function getAuthorship() {
-            let field = 'verifiedGroups';
-            if (subResearchEntity.getType() === 'user') {
-                field = 'verifiedUsers';
-            }
+        function isPublic() {
+            const verify = getVerify();
+            if (!verify) return false;
+            return verify.public;
+        }
 
-            return vm.project[field].find(a => a.researchEntity === subResearchEntity.researchEntity);
+        function isFavorite() {
+            const verify = getVerify();
+            if (!verify) return false;
+            return verify.favorite;
+        }
+
+        function getVerify() {
+            if (!researchEntity)
+                return;
+            return vm.project.verified.find(v => v.researchEntity === researchEntity.id);
         }
 
         function hasIITAsPartner() {
