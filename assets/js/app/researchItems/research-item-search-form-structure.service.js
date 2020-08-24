@@ -316,7 +316,20 @@
                     formStructures[constant].category.values = getProjectCategories();
                     formStructures[constant].funding.values = getProjectFundings();
                     formStructures[constant].action.values = getProjectActions();
-                    structure = formStructures[constant];
+                    structure = Object.assign(
+                        {},
+                        formStructures[constant],
+                        {
+                            favorites: {
+                                inputType: 'checkbox',
+                                label: 'Show only favorite projects',
+                                defaultValue: false,
+                                matchColumn: 'favorites',
+                                type: 'action',
+                                valueType: 'boolean'
+                            }
+                        }
+                    );
                     break;
                 case 'document':
                     structure = documentSearchForm;

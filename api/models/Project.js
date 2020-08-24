@@ -107,6 +107,11 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'group',
             through: 'projectverifiedgroup'
         },
+        favorites: {
+            collection: 'researchentity',
+            via: 'favoriteprojects',
+            through: 'projectfavorite'
+        },
         async isValid() {
             const ResearchItemModel = Project.getResearchItemModel(this.type);
             const ri = await ResearchItemModel.findOne({researchItem: this.id});

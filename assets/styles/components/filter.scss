@@ -12,6 +12,12 @@
         }
     }
 
+    .filter-field-listing{
+        &.project{
+            border-left: 0px;
+        }
+    }
+
     .filter-option-listing{
         strong{
             display: inline-block;
