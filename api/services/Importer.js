@@ -1018,7 +1018,7 @@ async function importPatents() {
     }
     const patentFamilySchema = {
         docket: 'docket',
-        bithDate: obj => patentDateFormat(obj.birth_date),
+        birthDate: obj => patentDateFormat(obj.birth_date),
         deathDate: obj => patentDateFormat(obj.death_date),
         knowledgeshareUrl: 'knowledgeshare_url',
         countries: 'countries'

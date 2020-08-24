@@ -5,7 +5,7 @@
     "docket": {
       "type": "string"
     },
-    "bithDate": {
+    "birthDate": {
       "type": "string",
       "format": "date"
     },
