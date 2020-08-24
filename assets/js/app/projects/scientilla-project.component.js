@@ -8,7 +8,8 @@
             controller,
             controllerAs: 'vm',
             bindings: {
-                project: '<'
+                project: '<',
+                section: '<'
             }
         });
 
@@ -19,7 +20,8 @@
         'context',
         'EventsService',
         'CustomizeService',
-        'ResearchEntitiesService'
+        'ResearchEntitiesService',
+        'projectListSections'
     ];
 
     function controller(
@@ -29,7 +31,8 @@
         context,
         EventsService,
         CustomizeService,
-        ResearchEntitiesService
+        ResearchEntitiesService,
+        projectListSections
     ) {
 
         const vm = this;
@@ -44,6 +47,14 @@
         vm.hasIITAsPartner = hasIITAsPartner;
 
         let researchEntity;
+
+        vm.showPrivacy = [
+            projectListSections.VERIFIED
+        ].includes(vm.section);
+
+        vm.showFavorite = [
+            projectListSections.VERIFIED
+        ].includes(vm.section);
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
@@ -100,11 +111,12 @@
         }
 
         function isPrivacyToShow() {
-            return getVerify();
+            console.log(vm.showPrivacy, getVerify());
+            return vm.showPrivacy && getVerify();
         }
 
         function isFavoriteToShow() {
-            return getVerify();
+            return vm.showFavorite && getVerify();
         }
 
         function isPublic() {

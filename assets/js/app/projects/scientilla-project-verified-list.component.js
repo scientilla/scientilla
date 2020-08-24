@@ -14,7 +14,7 @@
         'context',
         'ProjectService',
         'EventsService',
-        'accomplishmentListSections',
+        'projectListSections',
         'AuthService',
         'ResearchItemService'
     ];
