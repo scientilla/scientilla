@@ -209,7 +209,21 @@ module.exports = _.merge({}, BaseModel, {
                 name: m.name,
                 surname: m.surname
             }));
-    }
+    },
+    async export(projectIds, format) {
+        const projects = await Project.find({id: projectIds})
+            .populate([
+                'type',
+            ]);
+
+        if (format === 'csv')
+            return Exporter.projectsToCsv(projects);
+
+        throw {
+            success: false,
+            message: 'Format not supported'
+        };
+    },
 });
 
 
