@@ -90,19 +90,21 @@
                 type: 'field',
                 visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
-            minYear: {
-                inputType: 'year',
-                label: 'Year from',
+            year: {
+                inputType: 'range',
+                values: {},
+                label: 'Start year',
+                subLabel: '(range between)',
                 matchColumn: 'startYear',
-                matchRule: '>=',
-                type: 'field',
-                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
-            },
-            maxYear: {
-                inputType: 'year',
-                label: 'Year to',
-                matchColumn: 'endYear',
-                matchRule: '<=',
+                rules: [
+                    {
+                        value: 'min',
+                        rule: '>='
+                    }, {
+                        value: 'max',
+                        rule: '<'
+                    }
+                ],
                 type: 'field',
                 visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
@@ -316,6 +318,10 @@
                     formStructures[constant].category.values = getProjectCategories();
                     formStructures[constant].funding.values = getProjectFundings();
                     formStructures[constant].action.values = getProjectActions();
+                    formStructures[constant].year.values = {
+                        min: 2000,
+                        max: 2025
+                    };
                     structure = Object.assign(
                         {},
                         formStructures[constant],

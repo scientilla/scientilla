@@ -1,0 +1,23 @@
+.rzslider{
+    margin-top: 13px;
+
+    .rz-pointer{
+        top: -9px;
+        height: 22px;
+        width: 22px;
+        background: $primary;
+
+        &:after{
+            top: 7px;
+            left: 7px;
+        }
+    }
+
+    .rz-selection{
+        background: $primary;
+    }
+
+    .rz-bubble{
+        bottom: -30px;
+    }
+}

@@ -259,23 +259,33 @@
 
                     whereAdd.or = or;
                 } else {
-                    if (!struct.matchRule) {
-                        // Check if the type is an checkbox and cast the value to a boolean
-                        if (struct.type === 'checkbox') {
-                            whereAdd[struct.matchColumn] = (value === 'true');
-                        } else {
-                            whereAdd[struct.matchColumn] = value;
-                        }
-                    } else if (struct.matchRule === 'is null') {
-                        // If field option has matchRule equal to 'is null'
-                        if (!value) {
-                            // And the value is not true we add it to the query
-                            whereAdd[struct.matchColumn] = null;
-                        }
-                    } else {
-                        // If option matchRule is not 'is null' create object with the rule & value
+                    if (struct.inputType === 'range' && _.has(struct, 'rules') && _.isArray(struct.rules)) {
                         whereAdd[struct.matchColumn] = {};
-                        whereAdd[struct.matchColumn][struct.matchRule] = value;
+
+                        _.forEach(struct.rules, rule => {
+                            if (_.has(rule, 'rule') && _.has(rule, 'value')) {
+                                whereAdd[struct.matchColumn][rule.rule] = value[rule.value];
+                            }
+                        });
+                    } else {
+                        if (!struct.matchRule) {
+                            // Check if the type is an checkbox and cast the value to a boolean
+                            if (struct.type === 'checkbox') {
+                                whereAdd[struct.matchColumn] = (value === 'true');
+                            } else {
+                                whereAdd[struct.matchColumn] = value;
+                            }
+                        } else if (struct.matchRule === 'is null') {
+                            // If field option has matchRule equal to 'is null'
+                            if (!value) {
+                                // And the value is not true we add it to the query
+                                whereAdd[struct.matchColumn] = null;
+                            }
+                        } else {
+                            // If option matchRule is not 'is null' create object with the rule & value
+                            whereAdd[struct.matchColumn] = {};
+                            whereAdd[struct.matchColumn][struct.matchRule] = value;
+                        }
                     }
                 }
 
