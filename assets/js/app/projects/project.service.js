@@ -2,22 +2,20 @@
 (function () {
     angular.module("app").factory("ProjectService", controller);
 
-    controller.$inject = ['ResearchEntitiesService'];
+    controller.$inject = ['ResearchEntitiesService', '$http'];
 
-    function controller(ResearchEntitiesService) {
+    function controller(ResearchEntitiesService, $http) {
 
         return {
             get: ResearchEntitiesService.getProjects,
-            exportDownload,
-            setVerifyPrivacy,
-            setVerifyFavorite
+            exportDownload
         };
 
-        function exportDownload(accomplishments, format) {
-            const filename = format === 'csv' ? 'Accomplishments_Export.csv' : 'Accomplishments_Export.bib';
-            $http.post('/api/v1/accomplishments/export', {
+        function exportDownload(projects, format = 'csv') {
+            const filename = 'Projects_Export.csv';
+            $http.post('/api/v1/projects/export', {
                 format: format,
-                accomplishmentIds: accomplishments.map(d => d.id)
+                projectIds: projects.map(d => d.id)
             }).then((res) => {
                 const element = document.createElement('a');
                 element.setAttribute('href', encodeURI(res.data));
@@ -30,32 +28,6 @@
 
                 document.body.removeChild(element);
             });
-        }
-
-        function setVerifyPrivacy(verify) {
-            researchEntityService
-                .setVerifyPrivacy(researchEntity, verify)
-                .then(() => {
-                    Notification.success('Privacy updated');
-                    EventsService.publish(EventsService.PROJECT_VERIFY_PRIVACY_UPDATED, document);
-                })
-                .catch(() => {
-                    verify.public = !verify.public;
-                    Notification.warning('Failed to update privacy');
-                });
-        }
-
-        function setVerifyFavorite(verify) {
-            researchEntityService
-                .setVerifyFavorite(researchEntity, verify)
-                .then(() => {
-                    Notification.success('Favorite updated');
-                    EventsService.publish(EventsService.PROJECT_VERIFY_FAVORITE_UPDATED, document);
-                })
-                .catch(() => {
-                    verify.favorite = !verify.favorite;
-                    Notification.warning('Failed to update favorite');
-                });
         }
     }
 })();

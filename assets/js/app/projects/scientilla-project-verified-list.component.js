@@ -52,7 +52,6 @@
         async function onFilter(q) {
             const favorites = q.where.favorites;
             delete q.where.favorites;
-            // Todo favorites
 
             query = q;
 

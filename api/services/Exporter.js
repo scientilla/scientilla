@@ -1,4 +1,4 @@
-/* global DocumentTypes, SourceTypes */
+/* global DocumentTypes, SourceTypes, ResearchItemTypes */
 // Exporter.js - in api/services
 
 const lescape = require('escape-latex');
@@ -9,7 +9,8 @@ const _ = require('lodash');
 module.exports = {
     documentsToCsv,
     documentsToBibtex,
-    accomplishmentsToCsv
+    accomplishmentsToCsv,
+    projectsToCsv
 };
 
 
@@ -52,6 +53,61 @@ function accomplishmentsToCsv(researchItems) {
     return csv;
 }
 
+function projectsToCsv(researchItems) {
+    const rows = [[
+        'Title',
+        'Abstract',
+        'Type',
+        'Code',
+        'Acronym',
+        'Start date',
+        'End date',
+        'Funding type',
+        'Action type',
+        'Role',
+        'Status',
+        'Institute budget',
+        'Institute funding',
+    ]].concat(researchItems.map(ri => {
+        const researchItem = ri.toJSON();
+        const row = [];
+        row.push(researchItem.title);
+        row.push(researchItem.abstract);
+        row.push(researchItem.type.label);
+        row.push(researchItem.code);
+        row.push(researchItem.acronym);
+        row.push(researchItem.startDate);
+        row.push(researchItem.endDate);
+
+        if (researchItem.type.key === ResearchItemTypes.PROJECT_COMPETITIVE) {
+            row.push(researchItem.projectType);
+        } else {
+            row.push('/');
+        }
+
+        if (researchItem.type.key === ResearchItemTypes.PROJECT_COMPETITIVE) {
+            row.push(researchItem.projectType2);
+        } else {
+            row.push('/');
+        }
+
+        row.push(researchItem.role);
+        row.push(researchItem.status);
+        row.push(researchItem.projectData.instituteBudget);
+        row.push(researchItem.projectData.instituteContribution);
+
+        return row;
+    }));
+
+    let csv = 'data:text/csv;charset=utf-8,';
+
+    rows.forEach(function (rowArray) {
+        csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
+            .join(',') + '\r\n';
+    });
+
+    return csv;
+}
 
 function documentsToCsv(documents) {
     const rows = [[
