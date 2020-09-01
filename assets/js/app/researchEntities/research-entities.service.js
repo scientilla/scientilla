@@ -371,8 +371,16 @@
         async function getProjectYears(researchEntity) {
             const projects = await researchEntity.getList('projects', {});
             const startYears = projects.map(function(p) { return p.startYear; });
-            const max = Math.max.apply(Math, startYears);
-            const min = Math.min.apply(Math, startYears);
+
+            let max = Math.max.apply(Math, startYears);
+            if (!isFinite(max)) {
+                max = new Date().getFullYear() + 1;
+            }
+
+            let min = Math.min.apply(Math, startYears);
+            if (!isFinite(min)) {
+                min = new Date().getFullYear();
+            }
 
             return {
                 min: min,
