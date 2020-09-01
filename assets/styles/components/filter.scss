@@ -36,6 +36,10 @@
     label{
         display: inline-block;
         vertical-align: top;
+
+        &.form-radio{
+            display: block;
+        }
     }
 
     .sub-label{
@@ -143,19 +147,15 @@
 
             &.project{
                 &.fields-4{
-                    grid-template-columns: 1fr 1fr 100px 200px;
+                    grid-template-columns: 3fr 3fr 3fr 160px;
                 }
 
-                &.fields-5{
-                    grid-template-columns: 1fr 1fr 1fr 100px 200px;
+                &.fields-6{
+                    grid-template-columns: 3fr 3fr 3fr 160px 2fr 2fr;
                 }
 
                 &.fields-7{
-                    grid-template-columns: 3fr 3fr 3fr 100px 200px 2fr 2fr;
-                }
-
-                &.fields-8{
-                    grid-template-columns: 3fr 3fr 3fr 100px 100px 200px 2fr 2fr;
+                    grid-template-columns: 3fr 3fr 3fr 160px 2fr 2fr 2fr;
                 }
             }
         }

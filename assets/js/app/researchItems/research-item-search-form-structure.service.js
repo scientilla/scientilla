@@ -10,7 +10,9 @@
         'groupTypeLabels',
         'AuthService',
         'ExternalConnectorService',
-        'Restangular'
+        'Restangular',
+        'context',
+        'ResearchEntitiesService'
     ];
 
     function ResearchItemSearchFormStructureService(
@@ -20,7 +22,9 @@
         groupTypeLabels,
         AuthService,
         ExternalConnectorService,
-        Restangular
+        Restangular,
+        context,
+        ResearchEntitiesService
     ) {
 
         const service = {
@@ -318,10 +322,7 @@
                     formStructures[constant].category.values = getProjectCategories();
                     formStructures[constant].funding.values = getProjectFundings();
                     formStructures[constant].action.values = getProjectActions();
-                    formStructures[constant].year.values = {
-                        min: 2000,
-                        max: 2025
-                    };
+                    formStructures[constant].year.values = await getProjectYears();
                     structure = Object.assign(
                         {},
                         formStructures[constant],
@@ -432,6 +433,11 @@
                 defaultValue: defaultValue,
                 type: 'connector'
             };
+        }
+
+        async function getProjectYears() {
+            const researchEntity = await context.getResearchEntity();
+            return await ResearchEntitiesService.getProjectYears(researchEntity);
         }
 
         async function getResearchItemTypes(filterType, skipSelect = false) {

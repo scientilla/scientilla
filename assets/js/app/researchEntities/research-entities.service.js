@@ -46,6 +46,7 @@
         service.setVerifyPrivacy = setVerifyPrivacy;
         service.setVerifyFavorite = setVerifyFavorite;
         service.getProjects = getProjects;
+        service.getProjectYears = getProjectYears;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
         const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
@@ -365,6 +366,18 @@
                 console.error(e);
                 Notification.warning('Failed to update affiliations');
             }
+        }
+
+        async function getProjectYears(researchEntity) {
+            const projects = await researchEntity.getList('projects', {});
+            const startYears = projects.map(function(p) { return p.startYear; });
+            const max = Math.max.apply(Math, startYears);
+            const min = Math.min.apply(Math, startYears);
+
+            return {
+                min: min,
+                max: max
+            };
         }
 
         async function getProjects(researchEntity, query, favorites = false) {

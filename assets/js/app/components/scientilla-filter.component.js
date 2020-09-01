@@ -65,6 +65,14 @@
 
         vm.values = {};
 
+        vm.changeCollapse = function() {
+            vm.filterIsCollapsed = !vm.filterIsCollapsed;
+
+            $timeout(function() {
+                $scope.$broadcast('rzSliderForceRender');
+            });
+        };
+
         /* jshint ignore:start */
         vm.$onInit = async function () {
             vm.itemsPerPage = pageSize;
