@@ -10,7 +10,9 @@
         'groupTypeLabels',
         'AuthService',
         'ExternalConnectorService',
-        'Restangular'
+        'Restangular',
+        'context',
+        'ResearchEntitiesService'
     ];
 
     function ResearchItemSearchFormStructureService(
@@ -20,7 +22,9 @@
         groupTypeLabels,
         AuthService,
         ExternalConnectorService,
-        Restangular
+        Restangular,
+        context,
+        ResearchEntitiesService
     ) {
 
         const service = {
@@ -90,19 +94,21 @@
                 type: 'field',
                 visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
-            minYear: {
-                inputType: 'year',
-                label: 'Year from',
+            year: {
+                inputType: 'range',
+                values: {},
+                label: 'Start year',
+                subLabel: '(range between)',
                 matchColumn: 'startYear',
-                matchRule: '>=',
-                type: 'field',
-                visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
-            },
-            maxYear: {
-                inputType: 'year',
-                label: 'Year to',
-                matchColumn: 'endYear',
-                matchRule: '<=',
+                rules: [
+                    {
+                        value: 'min',
+                        rule: '>='
+                    }, {
+                        value: 'max',
+                        rule: '<'
+                    }
+                ],
                 type: 'field',
                 visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
@@ -316,6 +322,7 @@
                     formStructures[constant].category.values = getProjectCategories();
                     formStructures[constant].funding.values = getProjectFundings();
                     formStructures[constant].action.values = getProjectActions();
+                    formStructures[constant].year.values = await getProjectYears();
                     structure = Object.assign(
                         {},
                         formStructures[constant],
@@ -426,6 +433,11 @@
                 defaultValue: defaultValue,
                 type: 'connector'
             };
+        }
+
+        async function getProjectYears() {
+            const researchEntity = await context.getResearchEntity();
+            return await ResearchEntitiesService.getProjectYears(researchEntity);
         }
 
         async function getResearchItemTypes(filterType, skipSelect = false) {

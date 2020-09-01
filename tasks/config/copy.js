@@ -56,7 +56,8 @@ module.exports = function (grunt) {
                 cwd: './node_modules',
                 src: [
                     'angularjs-color-picker/dist/angularjs-color-picker.css',
-                    'angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.css'
+                    'angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.css',
+                    'angularjs-slider/dist/rzslider.css'
                 ],
                 flatten: true,
                 dest: '.tmp/public/styles/dependencies'
@@ -68,7 +69,8 @@ module.exports = function (grunt) {
                     'ui-bootstrap4/dist/ui-bootstrap-tpls.js',
                     'tinycolor2/tinycolor.js',
                     'angularjs-color-picker/dist/angularjs-color-picker.js',
-                    'angular-ui-sortable/dist/sortable.js'
+                    'angular-ui-sortable/dist/sortable.js',
+                    'angularjs-slider/dist/rzslider.min.js'
                 ],
                 flatten: true,
                 dest: '.tmp/public/js/dependencies'

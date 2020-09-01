@@ -11,6 +11,7 @@
         'LocalStorageModule',
         'scientilla-form',
         'color.picker',
+        'rzSlider',
 
         /* Feature areas */
         'users',

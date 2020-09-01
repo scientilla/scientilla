@@ -21,10 +21,11 @@
         });
 
     scientillaComponentForm.$inject = [
-        '$scope'
+        '$scope',
+        '$timeout'
     ];
 
-    function scientillaComponentForm($scope) {
+    function scientillaComponentForm($scope, $timeout) {
         const vm = this;
 
         vm.submit = submit;
@@ -141,6 +142,8 @@
 
                 if (struct && struct.type === 'option') {
                     onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, function(evt) {
+                        let refresh = false;
+
                         vm.option = evt;
                         vm.fields = filterStructure('field');
 
@@ -154,6 +157,20 @@
                                 delete vm.values[valueKey];
                             }
                         });
+
+                        for (const fieldName in vm.fields) {
+                            const field = vm.fields[fieldName];
+                            if (_.has(field, 'inputType') && field.inputType === "range") {
+                                refresh = true;
+                                break;
+                            }
+                        }
+
+                        if (refresh) {
+                            $timeout(function() {
+                                $scope.$broadcast('rzSliderForceRender');
+                            });
+                        }
                     }));
                 }
             });

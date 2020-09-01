@@ -12,6 +12,18 @@
         on-validate="vm.onValidate({name})"
         on-change="vm.onChange({name})">
     </scientilla-text-field>
+    <scientilla-range-field
+        ng-if="vm.structure.inputType==='range'"
+        name="vm.name"
+        min="vm.structure.values.min"
+        max="vm.structure.values.max"
+        model="vm.values[vm.name]"
+        field-id="vm.id"
+        structure="vm.fieldStructure"
+        errors="vm.errors"
+        on-validate="vm.onValidate({name})"
+        on-change="vm.onChange({name})">
+    </scientilla-range-field>
     <scientilla-select-field
         ng-if="vm.structure.inputType==='select'"
         model="vm.values[vm.name]"
