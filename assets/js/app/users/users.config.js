@@ -35,6 +35,11 @@
                     user-id="${params.id}"
                     active-tab="accomplishments"></scientilla-user-details>`
             })
+            .when("/users/:id/projects", {
+                template: params => `<scientilla-user-details
+                    user-id="${params.id}"
+                    active-tab="projects"></scientilla-user-details>`
+            })
             .when("/users/:id/documents-overview", {
                 template: params => `<scientilla-user-details
                     user-id="${params.id}"
