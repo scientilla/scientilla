@@ -38,7 +38,6 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
-            vm.researchEntity = await context.getResearchEntity();
             const subResearchEntity = await context.getSubResearchEntity();
 
             EventsService.subscribeAll(vm, [
@@ -46,7 +45,6 @@
                 EventsService.RESEARCH_ITEM_UNVERIFIED,
                 EventsService.RESEARCH_ITEM_DISCARDED,
             ], updateList);
-
 
             if (subResearchEntity.getType() === 'user' && !subResearchEntity.alreadyOpenedSuggested) {
                 ModalService.openWizard(['alias-edit'], {

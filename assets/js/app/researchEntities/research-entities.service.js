@@ -369,7 +369,11 @@
         }
 
         async function getProjectYears(researchEntity) {
-            const projects = await researchEntity.getList('projects', {});
+            let projects = [];
+
+            if (researchEntity) {
+                projects = await researchEntity.getList('projects', {});
+            }
             const startYears = projects.map(function(p) { return p.startYear; });
 
             let max = Math.max.apply(Math, startYears);

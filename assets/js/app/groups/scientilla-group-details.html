@@ -45,12 +45,20 @@
             </uib-tab>
             <uib-tab
                 index="5"
+                heading="Projects">
+                <scientilla-projects-list
+                    ng-if="vm.researchEntity"
+                    research-entity="vm.researchEntity"
+                    section="vm.projectListSections.GROUP"></scientilla-projects-list>
+            </uib-tab>
+            <uib-tab
+                index="6"
                 heading="Documents Overview"
                 ng-if="vm.loggedUser.isSuperViewer()">
                 <summary-overview charts-data="vm.chartsData"></summary-overview>
             </uib-tab>
             <uib-tab
-                index="6"
+                index="7"
                 heading="Bibliometric Charts"
                 ng-if="vm.loggedUser.isSuperViewer()">
                 <summary-metrics charts-data="vm.chartsData"></summary-metrics>

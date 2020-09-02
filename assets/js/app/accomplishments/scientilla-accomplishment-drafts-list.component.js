@@ -6,7 +6,10 @@
         .component('scientillaAccomplishmentDraftsList', {
             templateUrl: 'partials/scientilla-accomplishment-drafts-list.html',
             controller,
-            controllerAs: 'vm'
+            controllerAs: 'vm',
+            bindings: {
+                researchEntity: '<'
+            }
         });
 
     controller.$inject = [
@@ -39,8 +42,6 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
-            vm.researchEntity = await context.getResearchEntity();
-
             EventsService.subscribeAll(vm, [
                 EventsService.RESEARCH_ITEM_DRAFT_DELETED,
                 EventsService.RESEARCH_ITEM_DRAFT_UPDATED,
@@ -61,8 +62,6 @@
 
         async function onFilter(q) {
             query = q;
-            if (!vm.researchEntity)
-                vm.researchEntity = await context.getResearchEntity();
 
             vm.drafts = await AccomplishmentService.getDrafts(vm.researchEntity, q);
         }

@@ -7,7 +7,9 @@
             templateUrl: 'partials/scientilla-accomplishment-verified-list.html',
             controller,
             controllerAs: 'vm',
-            bindings: {}
+            bindings: {
+                researchEntity: '<'
+            }
         });
 
     controller.$inject = [

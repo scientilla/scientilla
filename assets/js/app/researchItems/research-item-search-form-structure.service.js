@@ -11,7 +11,6 @@
         'AuthService',
         'ExternalConnectorService',
         'Restangular',
-        'context',
         'ResearchEntitiesService'
     ];
 
@@ -23,7 +22,6 @@
         AuthService,
         ExternalConnectorService,
         Restangular,
-        context,
         ResearchEntitiesService
     ) {
 
@@ -167,6 +165,7 @@
             'accomplishment-suggested': accomplishmentFormStructure,
             'verified-accomplishment': accomplishmentFormStructure,
             project: projectFormStructure,
+            'verified-project': projectFormStructure,
             group: {
                 name: {
                     inputType: 'text',
@@ -270,7 +269,22 @@
         return service;
 
         /* jshint ignore:start */
-        async function getStructure(constant) {
+
+        async function setupProjectStructure(constant, researchEntity) {
+            const projectTypes = _.concat(
+                [{value: allProjectTypes.value, label: allProjectTypes.label}],
+                await getResearchItemTypes('project', true)
+            );
+            formStructures[constant].projectType.values = projectTypes;
+            formStructures[constant].status.values = await getProjectStatuses();
+            formStructures[constant].payment.values = getProjectPayments();
+            formStructures[constant].category.values = getProjectCategories();
+            formStructures[constant].funding.values = getProjectFundings();
+            formStructures[constant].action.values = getProjectActions();
+            formStructures[constant].year.values = await getProjectYears(researchEntity);
+        }
+
+        async function getStructure(constant, researchEntity = false) {
 
             let structure;
 
@@ -311,18 +325,11 @@
                             }
                         });
                     break;
-                case 'project':
-                    const projectTypes = _.concat(
-                        [{value: allProjectTypes.value, label: allProjectTypes.label}],
-                        await getResearchItemTypes('project', true)
-                    );
-                    formStructures[constant].projectType.values = projectTypes;
-                    formStructures[constant].status.values = await getProjectStatuses();
-                    formStructures[constant].payment.values = getProjectPayments();
-                    formStructures[constant].category.values = getProjectCategories();
-                    formStructures[constant].funding.values = getProjectFundings();
-                    formStructures[constant].action.values = getProjectActions();
-                    formStructures[constant].year.values = await getProjectYears();
+                case 'verified-project':
+                    if (researchEntity) {
+                        await setupProjectStructure(constant, researchEntity);
+                    }
+
                     structure = Object.assign(
                         {},
                         formStructures[constant],
@@ -337,6 +344,12 @@
                             }
                         }
                     );
+                    break;
+                case 'project':
+                    if (researchEntity) {
+                        await setupProjectStructure(constant, researchEntity);
+                    }
+                    structure = formStructures[constant];
                     break;
                 case 'document':
                     structure = documentSearchForm;
@@ -435,8 +448,7 @@
             };
         }
 
-        async function getProjectYears() {
-            const researchEntity = await context.getResearchEntity();
+        async function getProjectYears(researchEntity) {
             return await ResearchEntitiesService.getProjectYears(researchEntity);
         }
 
