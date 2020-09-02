@@ -18,16 +18,27 @@
         'AuthService',
         '$scope',
         '$controller',
-        'ResearchEntitiesService'
+        'ResearchEntitiesService',
+        '$timeout'
     ];
 
-    function GroupDetailsController(GroupsService, context, AuthService, $scope, $controller, ResearchEntitiesService) {
+    function GroupDetailsController(
+        GroupsService,
+        context,
+        AuthService,
+        $scope,
+        $controller,
+        ResearchEntitiesService,
+        $timeout
+    ) {
         const vm = this;
         angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
         vm.subResearchEntity = context.getSubResearchEntity();
         vm.loggedUser = AuthService.user;
         vm.refreshGroup = refreshGroup;
+
+        let activeTabWatcher = null;
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
@@ -69,6 +80,18 @@
             ];
 
             vm.initializeTabs(tabIdentifiers);
+
+            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
+                if (vm.activeTabIndex === 5) {
+                    $timeout(function() {
+                        $scope.$broadcast('rzSliderForceRender');
+                    });
+                }
+            });
+        };
+
+        vm.$onDestroy = function () {
+            activeTabWatcher();
         };
 
         async function getData() {

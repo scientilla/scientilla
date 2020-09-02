@@ -16,13 +16,15 @@
     scientillaProjectsList.$inject = [
         'ProjectService',
         'projectListSections',
-        '$element'
+        '$element',
+        '$timeout'
     ];
 
     function scientillaProjectsList(
         ProjectService,
         projectListSections,
-        $element
+        $element,
+        $timeout
     ) {
         const vm = this;
 

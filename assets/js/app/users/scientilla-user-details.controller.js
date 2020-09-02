@@ -21,7 +21,8 @@
         'accomplishmentListSections',
         'AuthService',
         '$scope',
-        '$controller'
+        '$controller',
+        '$timeout'
     ];
 
     function controller(
@@ -34,7 +35,8 @@
         accomplishmentListSections,
         AuthService,
         $scope,
-        $controller
+        $controller,
+        $timeout
     ) {
         const vm = this;
         angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
@@ -48,6 +50,8 @@
         vm.types = [];
 
         let allMemberships = [];
+
+        let activeTabWatcher = null;
 
         const tabIdentifiers = [
             {
@@ -101,6 +105,18 @@
             }
 
             vm.initializeTabs(tabIdentifiers);
+
+            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
+                if (vm.activeTabIndex === 4) {
+                    $timeout(function() {
+                        $scope.$broadcast('rzSliderForceRender');
+                    });
+                }
+            });
+        };
+
+        vm.$onDestroy = function () {
+            activeTabWatcher();
         };
 
         vm.getGroupTypes = (group) => {
