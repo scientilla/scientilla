@@ -7,30 +7,24 @@
             templateUrl: 'partials/scientilla-project-verified-list.html',
             controller,
             controllerAs: 'vm',
-            bindings: {}
+            bindings: {
+                researchEntity: '<'
+            }
         });
 
     controller.$inject = [
-        'context',
         'ProjectService',
-        'EventsService',
-        'projectListSections',
-        'AuthService',
-        'ResearchItemService'
+        'projectListSections'
     ];
 
-    function controller(context,
-                        ProjectService,
-                        EventsService,
-                        projectListSections,
-                        AuthService,
-                        ResearchItemService) {
+    function controller(
+        ProjectService,
+        projectListSections
+    ) {
         const vm = this;
 
         vm.projectListSections = projectListSections;
         vm.projects = [];
-        vm.unverify = ProjectService.unverify;
-        vm.isUnverifying = ResearchItemService.isUnverifying;
         vm.onFilter = onFilter;
         vm.exportDownload = projects => ProjectService.exportDownload(projects, 'csv');
 
@@ -40,24 +34,25 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
-            vm.researchEntity = await context.getResearchEntity();
+
         };
         /* jshint ignore:end */
 
         vm.$onDestroy = function () {
-            EventsService.unsubscribeAll(vm);
+
         };
 
-        /* jshint ignore:start */
-        async function onFilter(q) {
+        function onFilter(q) {
             const favorites = q.where.favorites;
             delete q.where.favorites;
 
             query = q;
 
-            vm.projects = await ProjectService.get(vm.researchEntity, query, favorites);
+            return ProjectService.get(vm.researchEntity, query, favorites)
+                .then(function (projects) {
+                    vm.projects = projects;
+                });
         }
-        /* jshint ignore:end */
     }
 
 })();

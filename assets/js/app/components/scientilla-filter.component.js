@@ -12,7 +12,8 @@
                 onFilter: '&',
                 category: '@',
                 filterLabel: '@?',
-                elements: '<?'
+                elements: '<?',
+                researchEntity: '<?'
             }
         });
 
@@ -84,9 +85,9 @@
             if (_.isUndefined(vm.elements))
                 vm.elements = [];
 
-            onDataCountChangeDeregisterer = $scope.$watch('vm.elements.count', onDataCountChange, true);
+            onDataCountChangeDeregisterer = $scope.$watch('vm.elements', onDataCountChange, true);
 
-            vm.searchFormStructure = await ResearchItemSearchFormStructureService.getStructure(vm.category);
+            vm.searchFormStructure = await ResearchItemSearchFormStructureService.getStructure(vm.category, vm.researchEntity);
 
             vm.searchFormStructure = _.assign({}, vm.searchFormStructure, {
                 buttonSearch: {
