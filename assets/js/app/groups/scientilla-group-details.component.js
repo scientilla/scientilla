@@ -54,11 +54,14 @@
                     slug: 'accomplishments'
                 }, {
                     index: 5,
+                    slug: 'projects'
+                }, {
+                    index: 6,
                     slug: 'documents-overview',
                     tabName: 'overview',
                     getData: getData
                 }, {
-                    index: 6,
+                    index: 7,
                     slug: 'bibliometric-charts',
                     tabName: 'metrics',
                     getData: getData
