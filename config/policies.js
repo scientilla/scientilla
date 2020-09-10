@@ -66,6 +66,7 @@ module.exports.policies = {
     AuthController: {
         '*': true
     },
+
     AliasController: defaultPolicy,
 
     AuthorshipController: defaultPolicy,
@@ -180,6 +181,18 @@ module.exports.policies = {
     PublicCompetitiveProjectsController: defaultPolicy,
 
     ProjectStatusController: defaultPolicy,
+
+    DocumentController: _.defaults({
+        export: isLogged,
+    }, defaultPolicy),
+
+    AccomplishmentController: _.defaults({
+        export: isLogged,
+    }, defaultPolicy),
+
+    ProjectController: _.defaults({
+        export: isLogged,
+    }, defaultPolicy),
 
     BackupController: _.defaults({
         getDumps: isAdmin,
