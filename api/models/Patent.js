@@ -142,7 +142,20 @@ module.exports = _.merge({}, BaseModel, {
             application: external.application,
             kind: ResearchItemKinds.VERIFIED
         });
-    }
+    },
+    async export(patentIds, format) {
+        const patents = await Patent.find({id: patentIds})
+            .populate([
+            ]);
+
+        if (format === 'csv')
+            return Exporter.patentsToCsv(patents);
+
+        throw {
+            success: false,
+            message: 'Format not supported'
+        };
+    },
 });
 
 

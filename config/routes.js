@@ -110,6 +110,7 @@ module.exports.routes = {
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/discarded']: 'ResearchEntity.multipleDiscard',
     ['post ' + apiPrfx + '/accomplishments/export']: 'Accomplishment.export',
     ['post ' + apiPrfx + '/projects/export']: 'Project.export',
+    ['post ' + apiPrfx + '/patents/export']: 'Patent.export',
     ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-profile']: 'ResearchEntity.getProfile',
     ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-edit-profile']: 'ResearchEntity.getEditProfile',
     ['post ' + apiPrfx + '/researchentities/:researchEntityId/save-profile']: 'ResearchEntity.saveProfile',

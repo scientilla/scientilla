@@ -194,6 +194,10 @@ module.exports.policies = {
         export: isLogged,
     }, defaultPolicy),
 
+    PatentController: _.defaults({
+        export: isLogged,
+    }, defaultPolicy),
+
     BackupController: _.defaults({
         getDumps: isAdmin,
         make: isAdmin,
