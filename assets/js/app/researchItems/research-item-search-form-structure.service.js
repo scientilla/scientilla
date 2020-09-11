@@ -170,7 +170,7 @@
             },
             author: {
                 inputType: 'text',
-                label: 'Author',
+                label: 'Inventor',
                 matchColumn: 'authorsStr',
                 matchRule: 'contains',
                 type: 'field'
