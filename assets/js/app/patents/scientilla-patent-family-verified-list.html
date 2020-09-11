@@ -1,0 +1,30 @@
+<scientilla-backend-layout>
+    <h1>Verified patent families</h1>
+    <scientilla-filter
+        category="verified-patent-family"
+        research-entity="vm.researchEntity"
+        on-filter="vm.onFilter"
+        elements="vm.patents"
+        empty-list-message="No patent families found">
+        <scientilla-multicheck>
+            <buttons>
+                <scientilla-multicheck-button
+                    ng-disabled="true"
+                    subject="Export as CSV"
+                    on-click="vm.exportDownload">
+                    <i class="fas fa-download fa-left"></i>Export as CSV
+                </scientilla-multicheck-button>
+            </buttons>
+            <item-list>
+                <scientilla-checkable ng-repeat="family in vm.patentFamilies" item="family" class="scientilla-checkable">
+                    <scientilla-patent-family
+                        research-entity="vm.researchEntity"
+                        patent-family="family"
+                        section="vm.patentFamilyListSections.VERIFIED"
+                        class="project-container"></scientilla-patent-family>
+                </scientilla-checkable>
+            </item-list>
+        </scientilla-multicheck>
+
+    </scientilla-filter>
+</scientilla-backend-layout>

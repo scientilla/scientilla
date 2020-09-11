@@ -160,12 +160,50 @@
             }
         };
 
+        const patentFormStructure = {
+            title: {
+                inputType: 'text',
+                label: 'Title',
+                matchColumn: 'title',
+                matchRule: 'contains',
+                type: 'field'
+            },
+            author: {
+                inputType: 'text',
+                label: 'Author',
+                matchColumn: 'authorsStr',
+                matchRule: 'contains',
+                type: 'field'
+            },
+            docket: {
+                inputType: 'text',
+                label: 'Docket',
+                matchColumn: 'familyDocket',
+                matchRule: 'contains',
+                type: 'field'
+            },
+        };
+
+        const patentFamilyFormStructure = {
+            title: {
+                inputType: 'text',
+                label: 'Dock',
+                matchColumn: 'dock',
+                matchRule: 'contains',
+                type: 'field'
+            }
+        };
+
         const formStructures = {
             accomplishment: accomplishmentFormStructure,
             'accomplishment-suggested': accomplishmentFormStructure,
             'verified-accomplishment': accomplishmentFormStructure,
             project: projectFormStructure,
             'verified-project': projectFormStructure,
+            patent: patentFormStructure,
+            'verified-patent': patentFormStructure,
+            'patent-family': patentFamilyFormStructure,
+            'verified-patent-family': patentFamilyFormStructure,
             group: {
                 name: {
                     inputType: 'text',
@@ -349,6 +387,31 @@
                     if (researchEntity) {
                         await setupProjectStructure(constant, researchEntity);
                     }
+                    structure = formStructures[constant];
+                    break;
+                case 'verified-patent':
+                    structure = Object.assign(
+                        {},
+                        formStructures[constant],
+                        {
+                            favorites: {
+                                inputType: 'checkbox',
+                                label: 'Show only favorite projects',
+                                defaultValue: false,
+                                matchColumn: 'favorites',
+                                type: 'action',
+                                valueType: 'boolean'
+                            }
+                        }
+                    );
+                    break;
+                case 'patent':
+                    structure = formStructures[constant];
+                    break;
+                case 'verified-patent-family':
+                    structure = formStructures[constant];
+                    break;
+                case 'patent-family':
                     structure = formStructures[constant];
                     break;
                 case 'document':

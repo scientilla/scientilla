@@ -1,0 +1,13 @@
+<span
+    class="patent-authors"
+    ng-class="{'highlight-text': vm.highlighted}"
+    ng-bind-html='vm.patent.authorsStr | authorsLength: vm.collapsed ? vm.patent.getAuthorLimit() : 0 | patentAuthors:vm.patent'>
+</span>
+
+<span
+    class="badge badge-light badge-click"
+    ng-click="vm.toggleCollapse()"
+    ng-if="vm.patent.authorsStr && vm.patent.authorsStr !== (vm.patent.authorsStr | authorsLength: vm.patent.getAuthorLimit())">
+    <span ng-if="vm.collapsed">Show all authors</span>
+    <span ng-if="!vm.collapsed">Show less authors</span>
+</span>

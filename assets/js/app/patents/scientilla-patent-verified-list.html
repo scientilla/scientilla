@@ -1,0 +1,30 @@
+<scientilla-backend-layout>
+    <h1>Verified patents</h1>
+    <scientilla-filter
+        category="verified-patent"
+        research-entity="vm.researchEntity"
+        on-filter="vm.onFilter"
+        elements="vm.patents"
+        empty-list-message="No patents found">
+        <scientilla-multicheck>
+            <buttons>
+                <scientilla-multicheck-button
+                    ng-disabled="true"
+                    subject="Export as CSV"
+                    on-click="vm.exportDownload">
+                    <i class="fas fa-download fa-left"></i>Export as CSV
+                </scientilla-multicheck-button>
+            </buttons>
+            <item-list>
+                <scientilla-checkable ng-repeat="patent in vm.patents" item="patent" class="scientilla-checkable">
+                    <scientilla-patent
+                        research-entity="vm.researchEntity"
+                        patent="patent"
+                        section="vm.patentListSections.VERIFIED"
+                        class="project-container"></scientilla-patent>
+                </scientilla-checkable>
+            </item-list>
+        </scientilla-multicheck>
+
+    </scientilla-filter>
+</scientilla-backend-layout>

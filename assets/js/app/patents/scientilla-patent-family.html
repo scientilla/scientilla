@@ -1,0 +1,25 @@
+<ul class="patent-family">
+    <li class="patent-family-info">
+
+    </li>
+    <li class="patent-family-metadata">
+
+        <h2 class="patent-family-dock has-action"
+            ng-click="vm.openDetails()"
+            ng-bind-html='vm.patentFamily.dock'></h2>
+
+        <ng-container ng-ig="vm.patentFamily.patents">
+            <strong>Number of patents:</strong> {{ vm.patentFamily.patents.length }}
+        </ng-container>
+
+        <ul class="patent-family-actions">
+            <li
+                ng-if="vm.patent.verified.length"
+                class="patent-verified"
+                uib-tooltip-html="vm.getVerifiedNamesHTML()"
+                tooltip-class="text-left">
+                <i class="fas fa-check"></i> {{ vm.patentFamily.verified.length }}
+            </li>
+        </ul>
+    </li>
+</ul>

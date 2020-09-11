@@ -42,6 +42,8 @@
             toAccomplishmentsCollection: applyToAll(toAccomplishmentModel),
             toProjectModel: toProjectModel,
             toProjectsCollection: applyToAll(toProjectModel),
+            toPatentModel: toProjectModel,
+            toPatentsCollection: applyToAll(toPatentModel),
         };
         const userPrototype = {
             getAliases: function () {
@@ -452,6 +454,12 @@
             },
         };
 
+        const patentPrototype = {
+            getAuthorLimit: function () {
+                return 10;
+            },
+        };
+
         function initializeAffiliations(document) {
             _.forEach(document.authorships, a => {
                 if (a.affiliations)
@@ -512,6 +520,14 @@
             service.toUsersCollection(project.verifiedUsers);
             service.toUsersCollection(project.pi);
             return project;
+        }
+
+        function toPatentModel(patent) {
+            _.defaultsDeep(patent, patentPrototype);
+            service.toUsersCollection(patent.verifiedUsers);
+            service.toGroupsCollection(patent.verifiedGroups);
+            service.toUsersCollection(patent.authors);
+            return patent;
         }
 
         function checkDuplicates(document) {

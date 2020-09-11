@@ -47,9 +47,12 @@
         service.setVerifyFavorite = setVerifyFavorite;
         service.getProjects = getProjects;
         service.getProjectYears = getProjectYears;
+        service.getPatents = getPatents;
+        service.getPatentFamilies = getPatentFamilies;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
         const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
+        const patentPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
 
         /* jshint ignore:start */
 
@@ -413,6 +416,27 @@
             }
         }
 
+        async function getPatents(researchEntity, query, favorites = false) {
+            const populate = {populate: patentPopulates};
+            const q = _.merge({}, query, populate);
+
+            if (favorites) {
+                return await researchEntity.getList('favoritePatents', q);
+            } else {
+                return await researchEntity.getList('patents', q);
+            }
+        }
+
+        async function getPatentFamilies(researchEntity, query, favorites = false) {
+            const populate = {populate: patentPopulates};
+            const q = _.merge({}, query, populate);
+
+            if (favorites) {
+                //return await researchEntity.getList('favoritePatentFamilies', q);
+            } else {
+                return await researchEntity.getList('patentFamilies', q);
+            }
+        }
         /* jshint ignore:end */
 
         return service;

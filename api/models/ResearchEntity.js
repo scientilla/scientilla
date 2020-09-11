@@ -64,6 +64,10 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'patentfamily',
             through: 'patentfamilyverify'
         },
+        favoritePatents: {
+            collection: 'patent',
+            through: 'patentfavorite'
+        },
         isGroup() {
             return this.type === 'group';
         }
