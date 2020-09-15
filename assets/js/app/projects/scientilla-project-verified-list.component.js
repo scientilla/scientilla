@@ -7,19 +7,19 @@
             templateUrl: 'partials/scientilla-project-verified-list.html',
             controller,
             controllerAs: 'vm',
-            bindings: {
-                researchEntity: '<'
-            }
+            bindings: {}
         });
 
     controller.$inject = [
         'ProjectService',
-        'projectListSections'
+        'projectListSections',
+        'context'
     ];
 
     function controller(
         ProjectService,
-        projectListSections
+        projectListSections,
+        context
     ) {
         const vm = this;
 
@@ -34,7 +34,7 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
-
+            vm.researchEntity = await context.getResearchEntity();
         };
         /* jshint ignore:end */
 
@@ -42,17 +42,16 @@
 
         };
 
-        function onFilter(q) {
+        /* jshint ignore:start */
+        async function onFilter(q) {
             const favorites = q.where.favorites;
             delete q.where.favorites;
 
             query = q;
 
-            return ProjectService.get(vm.researchEntity, query, favorites)
-                .then(function (projects) {
-                    vm.projects = projects;
-                });
+            vm.projects = await ProjectService.get(vm.researchEntity, query, favorites);
         }
+        /* jshint ignore:end */
     }
 
 })();
