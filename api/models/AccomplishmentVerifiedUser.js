@@ -1,6 +1,7 @@
 module.exports = {
     attributes: {
         accomplishment: {
+            columnName: 'research_item',
             model: 'Accomplishment'
         },
         user: {
@@ -8,7 +9,7 @@ module.exports = {
         }
     },
     migrate: 'safe',
-    tableName: 'accomplishment_verified_user',
+    tableName: 'verified_user',
     autoUpdatedAt: false,
     autoCreatedAt: false
 };

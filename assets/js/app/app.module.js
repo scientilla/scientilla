@@ -24,6 +24,7 @@
         'profile',
         'accomplishments',
         'documentation',
-        'projects'
+        'projects',
+        'patents'
     ]);
 })();

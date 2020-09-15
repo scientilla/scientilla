@@ -22,12 +22,6 @@
         vm.badges['already verified'] = 'warning';
         vm.badges['already in drafts'] = 'warning';
         vm.badges.unverifying = 'secondary';
-
-        activate();
-
-        function activate() {
-
-        }
     }
 
 })();

@@ -8,14 +8,16 @@
         "UsersService",
         "ModalService",
         "localStorageService",
-        "EventsService"
+        "EventsService",
+        "$http"
     ];
 
     function AuthService(Restangular,
                          UsersService,
                          ModalService,
                          localStorageService,
-                         EventsService) {
+                         EventsService,
+                         $http) {
 
         const service = {
             isLogged: false,
@@ -56,6 +58,7 @@
                     service.jwtToken = jwt.token;
                     service.expiration = jwt.expires;
                     Restangular.setDefaultHeaders({access_token: service.jwtToken});
+                    $http.defaults.headers.common.access_token = service.jwtToken;
 
                     setLocaleStorage();
 

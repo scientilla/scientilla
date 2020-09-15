@@ -7,10 +7,11 @@
 
     GroupService.$inject = [
         'Restangular',
-        'Prototyper'
+        'Prototyper',
+        'Notification'
     ];
 
-    function GroupService(Restangular, Prototyper) {
+    function GroupService(Restangular, Prototyper, Notification) {
         var service = Restangular.service("groups");
 
         service.getNewGroup = getNewGroup;
@@ -201,10 +202,23 @@
         }
 
         function removeCollaborator(group, user) {
-            const membership = group.memberships.find(m => m.user === user.id);
-            return Restangular
-                .one('memberships', membership.id)
-                .remove();
+            const qs = {where: {group: group.id, user: user.id}};
+            return Restangular.all('memberships').customGET('', qs)
+                .then(res => {
+                    if (res.items.length !== 1) {
+                        throw 'Membership not found!';
+                    }
+
+                    return Restangular
+                        .one('memberships', res.items[0].id)
+                        .remove()
+                        .then(() => {
+                            Notification.success('Membership removed!');
+                        });
+                })
+                .catch(function (error) {
+                    Notification.warning(error);
+                });
         }
 
         function addRelative(parent, child) {

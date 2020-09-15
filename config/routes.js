@@ -21,6 +21,9 @@
  */
 
 const apiPrfx = '/api/v1';
+const userUsernamePath =  apiPrfx + '/users/username/:username';
+const groupCodePath = apiPrfx + '/groups/slug/:slug';
+const groupSlugPath = apiPrfx + '/groups/code/:code';
 
 module.exports.routes = {
     /***************************************************************************
@@ -107,6 +110,7 @@ module.exports.routes = {
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitems/discarded']: 'ResearchEntity.multipleDiscard',
     ['post ' + apiPrfx + '/accomplishments/export']: 'Accomplishment.export',
     ['post ' + apiPrfx + '/projects/export']: 'Project.export',
+    ['post ' + apiPrfx + '/patents/export']: 'Patent.export',
     ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-profile']: 'ResearchEntity.getProfile',
     ['get ' + apiPrfx + '/researchentities/:researchEntityId/get-edit-profile']: 'ResearchEntity.getEditProfile',
     ['post ' + apiPrfx + '/researchentities/:researchEntityId/save-profile']: 'ResearchEntity.saveProfile',
@@ -114,38 +118,44 @@ module.exports.routes = {
 
 
     //Site API
-    ['get ' + apiPrfx + '/users/username/:username/publications']: 'User.getPublications',
-    ['get ' + apiPrfx + '/users/username/:username/high-impact-publications']: 'User.getHighImpactPublications',
-    ['get ' + apiPrfx + '/users/username/:username/documents']: 'User.getPublicDocuments',
-    ['get ' + apiPrfx + '/users/username/:username/dissemination-talks']: 'User.getDisseminationTalks',
-    ['get ' + apiPrfx + '/users/username/:username/scientific-talks']: 'User.getScientificTalks',
-    ['get ' + apiPrfx + '/users/username/:username/favorite-publications']: 'User.getFavoritePublications',
-    ['get ' + apiPrfx + '/users/username/:username/oral-presentations']: 'User.getOralPresentations',
-    ['get ' + apiPrfx + '/users/username/:username/accomplishments']: 'User.getAccomplishments',
-    ['get ' + apiPrfx + '/users/username/:username/competitive-projects']: 'User.getCompetitiveProjects',
-    ['get ' + apiPrfx + '/users/username/:username/industrial-projects']: 'User.getIndustrialProjects',
-    ['get ' + apiPrfx + '/users/username/:username/profile']: 'User.getPublicProfile',
-    ['get ' + apiPrfx + '/users/username/:username/profile-image']: 'userData.getProfileImage',
+    ['get ' + userUsernamePath + '/publications']: 'User.getPublications',
+    ['get ' + userUsernamePath + '/high-impact-publications']: 'User.getHighImpactPublications',
+    ['get ' + userUsernamePath + '/documents']: 'User.getPublicDocuments',
+    ['get ' + userUsernamePath + '/dissemination-talks']: 'User.getDisseminationTalks',
+    ['get ' + userUsernamePath + '/scientific-talks']: 'User.getScientificTalks',
+    ['get ' + userUsernamePath + '/favorite-publications']: 'User.getFavoritePublications',
+    ['get ' + userUsernamePath + '/oral-presentations']: 'User.getOralPresentations',
+    ['get ' + userUsernamePath + '/accomplishments']: 'User.getAccomplishments',
+    ['get ' + userUsernamePath + '/competitive-projects']: 'User.getCompetitiveProjects',
+    ['get ' + userUsernamePath + '/industrial-projects']: 'User.getIndustrialProjects',
+    ['get ' + userUsernamePath + '/patent-families']: 'User.getPatentFamilies',
+    ['get ' + userUsernamePath + '/patents']: 'Group.getPatents',
+    ['get ' + userUsernamePath + '/profile']: 'User.getPublicProfile',
+    ['get ' + userUsernamePath + '/profile-image']: 'userData.getProfileImage',
 
-    ['get ' + apiPrfx + '/groups/slug/:slug/publications']: 'Group.getPublications',
-    ['get ' + apiPrfx + '/groups/slug/:slug/high-impact-publications']: 'Group.getHighImpactPublications',
-    ['get ' + apiPrfx + '/groups/slug/:slug/documents']: 'Group.getPublicDocuments',
-    ['get ' + apiPrfx + '/groups/slug/:slug/dissemination-talks']: 'Group.getDisseminationTalks',
-    ['get ' + apiPrfx + '/groups/slug/:slug/scientific-talks']: 'Group.getScientificTalks',
-    ['get ' + apiPrfx + '/groups/slug/:slug/favorite-publications']: 'Group.getFavoritePublications',
-    ['get ' + apiPrfx + '/groups/slug/:slug/accomplishments']: 'Group.getAccomplishments',
-    ['get ' + apiPrfx + '/groups/slug/:slug/competitive-projects']: 'Group.getCompetitiveProjects',
-    ['get ' + apiPrfx + '/groups/slug/:slug/industrial-projects']: 'Group.getIndustrialProjects',
+    ['get ' + groupCodePath + '/publications']: 'Group.getPublications',
+    ['get ' + groupCodePath + '/high-impact-publications']: 'Group.getHighImpactPublications',
+    ['get ' + groupCodePath + '/documents']: 'Group.getPublicDocuments',
+    ['get ' + groupCodePath + '/dissemination-talks']: 'Group.getDisseminationTalks',
+    ['get ' + groupCodePath + '/scientific-talks']: 'Group.getScientificTalks',
+    ['get ' + groupCodePath + '/favorite-publications']: 'Group.getFavoritePublications',
+    ['get ' + groupCodePath + '/accomplishments']: 'Group.getAccomplishments',
+    ['get ' + groupCodePath + '/competitive-projects']: 'Group.getCompetitiveProjects',
+    ['get ' + groupCodePath + '/industrial-projects']: 'Group.getIndustrialProjects',
+    ['get ' + groupCodePath + '/patent-families']: 'Group.getPatentFamilies',
+    ['get ' + groupCodePath + '/patents']: 'Group.getPatents',
 
-    ['get ' + apiPrfx + '/groups/code/:code/publications']: 'Group.getPublications',
-    ['get ' + apiPrfx + '/groups/code/:code/high-impact-publications']: 'Group.getHighImpactPublications',
-    ['get ' + apiPrfx + '/groups/code/:code/documents']: 'Group.getPublicDocuments',
-    ['get ' + apiPrfx + '/groups/code/:code/dissemination-talks']: 'Group.getDisseminationTalks',
-    ['get ' + apiPrfx + '/groups/code/:code/scientific-talks']: 'Group.getScientificTalks',
-    ['get ' + apiPrfx + '/groups/code/:code/favorite-publications']: 'Group.getFavoritePublications',
-    ['get ' + apiPrfx + '/groups/code/:code/accomplishments']: 'Group.getAccomplishments',
-    ['get ' + apiPrfx + '/groups/code/:code/competitive-projects']: 'Group.getCompetitiveProjects',
-    ['get ' + apiPrfx + '/groups/code/:code/industrial-projects']: 'Group.getIndustrialProjects',
+    ['get ' + groupSlugPath + '/publications']: 'Group.getPublications',
+    ['get ' + groupSlugPath + '/high-impact-publications']: 'Group.getHighImpactPublications',
+    ['get ' + groupSlugPath + '/documents']: 'Group.getPublicDocuments',
+    ['get ' + groupSlugPath + '/dissemination-talks']: 'Group.getDisseminationTalks',
+    ['get ' + groupSlugPath + '/scientific-talks']: 'Group.getScientificTalks',
+    ['get ' + groupSlugPath + '/favorite-publications']: 'Group.getFavoritePublications',
+    ['get ' + groupSlugPath + '/accomplishments']: 'Group.getAccomplishments',
+    ['get ' + groupSlugPath + '/competitive-projects']: 'Group.getCompetitiveProjects',
+    ['get ' + groupSlugPath + '/industrial-projects']: 'Group.getIndustrialProjects',
+    ['get ' + groupSlugPath + '/patent-families']: 'Group.getPatentFamilies',
+    ['get ' + groupSlugPath + '/patents']: 'Group.getPatents',
 
     //Commands
     ['put ' + apiPrfx + '/status/enable']: 'Status.enable',

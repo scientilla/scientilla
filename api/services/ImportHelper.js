@@ -18,7 +18,8 @@ module.exports = {
     getIgnoredRoles,
     createUserObject,
     getProfileObject,
-    importDirectorates
+    importDirectorates,
+    filterEmployees
 };
 
 const moment = require('moment');
@@ -198,7 +199,11 @@ function mergeStepsOfContract(contract) {
             let mergedStep = false;
             let skipStep = false;
 
-            for (const [index, sameHandledStep] of sameHandledSteps.entries()) {
+            for (const sameHandledStep of sameHandledSteps) {
+
+                const index = handledSteps.findIndex(s => s.jobTitle === sameHandledStep.jobTitle &&
+                    JSON.stringify(s.lines) === JSON.stringify(sameHandledStep.lines));
+
                 if (moment(handledStep.from, ISO8601Format).diff(
                     moment(sameHandledStep.to, ISO8601Format), 'days'
                 ) === 1) {
@@ -312,8 +317,8 @@ function handleStep(step) {
             }
         }
 
-        if (_.has(step, '_.ruolo')) {
-            handledStep.jobTitle = step._.ruolo;
+        if (_.has(step, '_.Ruolo_AD')) {
+            handledStep.jobTitle = step._.Ruolo_AD;
         }
 
         const lines = step._.linea;
@@ -330,6 +335,7 @@ function handleStep(step) {
 
                 if (_.has(line, 'ufficio')) {
                     if (_.lowerCase(line.ufficio) === 'iit') {
+                        tmpLine.code = 'IIT1.01DS';
                         tmpLine.institute = line.ufficio;
                     } else {
                         tmpLine.office = line.ufficio;
@@ -355,6 +361,7 @@ function handleStep(step) {
 
             if (_.has(line, 'ufficio')) {
                 if (_.lowerCase(line.ufficio) === 'iit') {
+                    newLine.code = 'IIT1.01DS';
                     newLine.institute = line.ufficio;
                 } else {
                     newLine.office = line.ufficio;
@@ -584,6 +591,10 @@ function createUserObject(ldapUsers = [], user = {}, employee = {}, contractEndD
 function getProfileObject(researchEntityData, contract, allMembershipGroups, activeGroups) {
     const profile = ResearchEntityData.setupProfile(researchEntityData);
 
+    if (!profile) {
+        return;
+    }
+
     profile.hidden = (contract.no_people === 'NO PEOPLE' ? true : false);
 
     let defaultPrivacy = valuePublicPrivacy;
@@ -625,6 +636,10 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
         privacy: defaultPrivacy,
         value: contract.Ruolo_1
     };
+    profile.gender = {
+        privacy: defaultPrivacy,
+        value: contract.genere
+    };
 
     const groups = [];
     const lines = [];
@@ -650,47 +665,49 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
             offices: []
         };
         const codeGroup = activeGroups.find(group => group.code === code);
+        let skipCenter = false;
 
         if (codeGroup) {
-            if (codeGroup.type === 'Facility' || 'Research Line') {
-                group.type = codeGroup.type;
-                group.name = codeGroup.name;
-                group.code = codeGroup.code;
-                group.privacy = defaultPrivacy;
-            }
 
-            // This will return the first parent group.
-            const membershipGroup = allMembershipGroups.find(g => g.child_group === codeGroup.id && g.parent_group.active);
+            group.type = codeGroup.type;
+            group.name = codeGroup.name;
+            group.code = codeGroup.code;
+            group.privacy = defaultPrivacy;
 
-            if (_.has(membershipGroup, 'parent_group')) {
-                const parentGroup = membershipGroup.parent_group;
-                if (parentGroup && parentGroup.type === 'Center') {
-                    group.center = {
-                        name: parentGroup.name,
-                        code: parentGroup.code,
-                        privacy: defaultPrivacy
-                    };
+            if (codeGroup.type === 'Directorate') {
+                const line = lines.find(line => line.code === code);
+                const offices = lines.filter(line => line.code === code).map(line => line.office).filter(o => o);
+
+                if (offices.length === 1 && offices[0] === 'IIT') {
+                    group.type = 'Institute';
+                    group.name = 'Istituto Italiano di Tecnologia';
+                    group.code = 'IIT';
+                    skipCenter = true;
                 } else {
-                    sails.log.debug('We are only expecting a center as parent group!');
+                    group.type = 'Directorate';
+                    group.offices = offices;
+                    group.name = line.name;
+                    group.code = line.code;
                 }
             }
-        } else {
-            // If it is not an group, we think it's an administrative contract
-            const line = lines.find(line => line.code === code);
-            const offices = lines.filter(line => line.code === code).map(line => line.office).filter(o => o);
 
-            if (offices.length === 1 && offices[0] === 'IIT') {
-                group.type = 'Institute';
-                group.name = 'Istituto Italiano di Tecnologia';
-                group.code = 'IIT';
-            } else {
-                group.type = 'Directorate';
-                group.offices = offices;
-                group.name = line.name;
-                group.code = line.code;
+            if (!skipCenter) {
+                // This will return the first parent group.
+                const membershipGroup = allMembershipGroups.find(g => g.child_group === codeGroup.id && g.parent_group.active);
+
+                if (_.has(membershipGroup, 'parent_group')) {
+                    const parentGroup = membershipGroup.parent_group;
+                    if (parentGroup && parentGroup.type === 'Center') {
+                        group.center = {
+                            name: parentGroup.name,
+                            code: parentGroup.code,
+                            privacy: defaultPrivacy
+                        };
+                    } else {
+                        sails.log.info('We are only expecting a center as parent group!');
+                    }
+                }
             }
-
-            group.privacy = defaultPrivacy;
         }
 
         groups.push(group);
@@ -708,7 +725,9 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
  * @param {Object[]}        groups               Array of Objects.
  */
 async function importDirectorates(employees, groups) {
-    let directorates = [];
+    const directorates = [];
+    const updatedDirectorates = [];
+    const createdDirectorates = [];
 
     for (const employee of employees) {
         for (let i = 1; i < 7; i++) {
@@ -741,7 +760,6 @@ async function importDirectorates(employees, groups) {
             code: directorate.code,
             name: directorate.name,
             type: 'Directorate',
-            active: true,
             description: null,
             //description: directorate.office, // Cannot because some codes have more offices like ROO001
             slug: directorate.name.toLowerCase().trim().replace(/\./gi, '-').split('@')[0]
@@ -749,8 +767,38 @@ async function importDirectorates(employees, groups) {
 
         if (group) {
             await Group.update({id: group.id}, groupData);
+            updatedDirectorates.push(group);
         } else {
+            groupData.active = false;
             await Group.create(groupData);
+            createdDirectorates.push(groupData);
         }
     }
+
+    sails.log.info(`Created ${createdDirectorates.length} & updated ${updatedDirectorates.length} directorates. 
+        Please add them to their parent group and check their active state!`);
+}
+
+/**
+ * This function returns an  array of filtered employees. It filters out:
+ * - the secondary contracts
+ * - the contracts with an ignored role
+ * - the contracts with the property desc_sottoarea !== 'Gov. & Control' except if the property e.linea_1 === 'PRS001'
+ *
+ * @param {Object[]}        employees               Array of Objects.
+ *
+ * @returns {Object[]}
+ */
+function filterEmployees(employees) {
+    const ignoredRoles = getIgnoredRoles();
+
+    return employees.filter(e => _.has(e, 'desc_sottoarea') &&
+        _.has(e, 'linea_1') &&
+        (
+            e.desc_sottoarea !== 'Gov. & Control' ||
+            e.desc_sottoarea === 'Gov. & Control' && e.linea_1 === 'PRS001'
+        ) &&
+        e.contratto_secondario !== 'X' &&
+        !ignoredRoles.includes(e.Ruolo_AD)
+    );
 }

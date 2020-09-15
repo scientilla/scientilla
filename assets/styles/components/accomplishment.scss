@@ -1,0 +1,116 @@
+.accomplishment{
+    @include normalize-listing;
+    font-size: 1.2rem;
+    border-left: 2px solid $primary-color;
+
+    & > li{
+        padding: 0px 1rem;
+    }
+
+    &.invalid{
+        border-left: 2px solid $error-color;
+    }
+
+    .accomplishment-info{
+        position: relative;
+
+        &.add-year-postfix{
+            min-height: 120px;
+        }
+    }
+
+    .accomplishment-title-container{
+        @include clearfix;
+        margin: 1rem 0px;
+    }
+
+    .accomplishment-labels{
+        @include normalize-listing;
+        float: left;
+        margin: 0px 0px 0px -.5rem;
+
+        & > li{
+            display: block;
+            padding: 0px .5rem;
+            float: left;
+        }
+    }
+
+    .accomplishment-title{
+        display: block;
+        margin: 0px;
+        font-size: 2rem;
+        line-height: 2.2rem;
+        vertical-align: top;
+    }
+
+    .accomplishment-actions{
+        @include normalize-listing;
+        @include clearfix;
+        margin: 1rem -.5rem 0px -.5rem;
+
+        & > li{
+            display: block;
+            padding: 0px .5rem;
+            float: left;
+            font-size: 1.4rem;
+        }
+    }
+
+    .accomplishment-verified{
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    .accomplishment-icons{
+        @include clearfix;
+        margin: 0px -.5rem 1rem -.5rem;
+
+        ul{
+            @include normalize-listing;
+
+            & > li{
+                display: block;
+                padding: 0px .5rem;
+                float: left;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .accomplishment{
+        display: grid;
+        grid-template-rows: auto;
+        grid-template-columns: auto 1fr;
+        border-left: 0px;
+
+        .accomplishment-info{
+            border-right: 2px solid $primary-color;
+
+            .accomplishment-year{
+                position: absolute;
+                top: -16px;
+                right: 2px;
+                display: block;
+                font-weight: bold;
+                transform-origin: bottom right;
+                transform: rotate(-90deg);
+            }
+
+            .icon-iit{
+                position: absolute;
+                bottom: 0px;
+                right: 1rem;
+            }
+        }
+
+        &.invalid{
+            border-left: 0px;
+
+            .accomplishment-info{
+                border-right: 2px solid $error-color;
+            }
+        }
+    }
+}

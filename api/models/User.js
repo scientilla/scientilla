@@ -290,7 +290,10 @@ module.exports = _.merge({}, SubResearchEntity, {
             }
         }
     },
-    createAliases: async function (user) {
+    generateAliasesStr(name, surname) {
+        if (_.isEmpty(name) || _.isEmpty(surname))
+            return [];
+
         function capitalizeAll(str, wordSeparators) {
             function capitalize(str) {
                 return str.charAt(0).toLocaleUpperCase() + str.slice(1);
@@ -303,47 +306,26 @@ module.exports = _.merge({}, SubResearchEntity, {
         }
 
         const separators = [' ', '-', '.'];
-        const nameInitials = user.name.split(' ').map(n => n[0]).join('.') + '.';
-        const alias1 = capitalizeAll(user.surname + ' ' + nameInitials, separators);
-        const alias2 = capitalizeAll(user.surname.replace(' ', '-') + ' ' + nameInitials, separators);
+        const nameInitials = name.split(' ').map(n => n[0]).join('.') + '.';
 
-        const aliases = [];
-        aliases.push({
+        const ret = [
+            capitalizeAll(surname + ' ' + nameInitials, separators),
+            capitalizeAll(surname.replace(' ', '-') + ' ' + nameInitials, separators),
+        ]
+
+        return _.uniq(ret);
+    },
+    createAliases: async function (user) {
+        let generatedAliasesStr = User.generateAliasesStr(user.name, user.surname)
+
+        if (_.has(user, 'display_name') && _.has(user, 'display_surname')) {
+            generatedAliasesStr = generatedAliasesStr.concat(User.generateAliasesStr(user.display_name, user.display_surname));
+        }
+
+        const aliases = _.uniq(generatedAliasesStr).map(str => ({
             user: user.id,
-            str: alias1
-        });
-
-        if (alias1 !== alias2) {
-            aliases.push({
-                user: user.id,
-                str: alias2
-            });
-        }
-
-        if (
-            _.has(user, 'display_name') &&
-            _.has(user, 'display_surname') &&
-            !_.isEmpty(user.display_name) &&
-            !_.isEmpty(user.display_surname)
-        ) {
-            const displayNameInitials = user.display_name.split(' ').map(n => n[0]).join('.') + '.';
-            const alias3 = capitalizeAll(user.display_surname + ' ' + displayNameInitials, separators);
-            const alias4 = capitalizeAll(user.display_surname.replace(' ', '-') + ' ' + displayNameInitials, separators);
-
-            if (alias3 !== alias1 && alias3 !== alias2) {
-                aliases.push({
-                    user: user.id,
-                    str: alias3
-                });
-            }
-
-            if (alias4 !== alias1 && alias4 !== alias2 && alias4 !== alias3) {
-                aliases.push({
-                    user: user.id,
-                    str: alias4
-                });
-            }
-        }
+            str: str
+        }));
 
         const newAliases = [];
         for (const alias of aliases) {
@@ -614,7 +596,7 @@ module.exports = _.merge({}, SubResearchEntity, {
         // Loop over destroyed users
         for (const user of destroyedUsers) {
             // Delete ResearchEntity record of user
-            await ResearchEntity.destroy({ id: user.researchEntity });
+            await ResearchEntity.destroy({id: user.researchEntity});
 
             // Delete ChartData record of user
             await ChartData.destroy({

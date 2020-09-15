@@ -29,7 +29,7 @@
             registerTab(vm);
 
             const res = await Restangular.one('general-setting', 'role-associations').get();
-            console.log(res);
+
             if (_.has(res, 'data') && !_.isEmpty(res.data)) {
                 for (const association of res.data) {
                     vm.associations.push({

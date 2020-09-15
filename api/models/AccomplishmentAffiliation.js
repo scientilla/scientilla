@@ -10,11 +10,12 @@ module.exports = {
             model: 'Institute'
         },
         accomplishment:{
+            columnName: 'research_item',
             model: 'Accomplishment'
         }
     },
     migrate: 'safe',
-    tableName: 'accomplishment_affiliation',
+    tableName: 'item_autor_affiliation',
     autoUpdatedAt: false,
     autoCreatedAt: false
 };

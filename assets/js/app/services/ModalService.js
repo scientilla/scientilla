@@ -164,6 +164,54 @@
                 {size: 'lg'});
         };
 
+        service.openPatentDetails = function (patent) {
+            const scopeVars = {
+                patent: patent
+            };
+
+            return openModal(`<div class="modal-header">
+                                <h3>Patent details</h3>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    ng-click="vm.onClose()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <scientilla-patent-details
+                                    patent="vm.patent"
+                                    class="patent-details"></scientilla-patent-details>
+                            </div>`,
+                scopeVars,
+                {size: 'lg'});
+        };
+
+        service.openPatentFamilyDetails = function (patentFamily) {
+            const scopeVars = {
+                patentFamily: patentFamily
+            };
+
+            return openModal(`<div class="modal-header">
+                                <h3>Patent family details</h3>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    ng-click="vm.onClose()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <scientilla-patent-family-details
+                                    patent-family="vm.patentFamily"
+                                    class="patent-family-details"></scientilla-patent-family-details>
+                            </div>`,
+                scopeVars,
+                {size: 'lg'});
+        };
+
         service.openScientillaUserForm = function (user, settings = false) {
 
             const scopeVars = {
