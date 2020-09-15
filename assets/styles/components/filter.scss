@@ -145,7 +145,8 @@
                 grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr 2fr;
             }
 
-            &.project{
+            &.project,
+            &.verified-project{
                 &.fields-4{
                     grid-template-columns: 3fr 3fr 3fr 160px;
                 }
