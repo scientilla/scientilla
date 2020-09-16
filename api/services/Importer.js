@@ -908,9 +908,16 @@ async function importProjects() {
         for (const project of projects) {
             totalItems++;
             try {
+                const projectData = mapObject(project, schemas[type]);
+
                 const data = {
                     type: type,
-                    projectData: mapObject(project, schemas[type])
+                    startYear:  projectData.startDate.slice(0,  projectData.startDate.indexOf('-')),
+                    endYear:  projectData.endDate.slice(0,  projectData.endDate.indexOf('-')),
+                    piStr: projectData.members.filter(member => ['pi', 'co_pi'].includes(member.role))
+                        .map(pi => pi.email + ' ' + pi.name + ' ' + pi.surname)
+                        .join(', '),
+                    projectData: projectData
                 };
 
                 const code = data.projectData.code;
@@ -934,7 +941,6 @@ async function importProjects() {
             } catch (e) {
                 errors.push(e);
             }
-
         }
 
         sails.log.info(`import ${type} completed`);
