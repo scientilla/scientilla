@@ -7,8 +7,6 @@
             controller: scientillaRangeField,
             controllerAs: 'vm',
             bindings: {
-                min: '=',
-                max: '=',
                 model: '=',
                 structure: '<',
                 id: '<',
@@ -19,9 +17,11 @@
             }
         });
 
-    scientillaRangeField.$inject = [];
+    scientillaRangeField.$inject = [
+        '$scope'
+    ];
 
-    function scientillaRangeField() {
+    function scientillaRangeField($scope) {
         const vm = this;
         vm.cssClass = 'form-control';
 
@@ -31,21 +31,24 @@
         vm.valueChanged = valueChanged;
 
         vm.options = {
-            floor: vm.min,
-            ceil: vm.max,
+            floor: vm.structure.values.min,
+            ceil: vm.structure.values.max,
             onChange: () => {
                 vm.model = {min: vm.min, max: vm.max};
             }
         };
 
-        vm.$onInit = function () {
-            if(!_.isNil(vm.model)) {
-                /*vm.options.floor = vm.model.min;
-                vm.options.ceil = vm.model.max;
+        vm.min = vm.structure.values.min;
+        vm.max = vm.structure.values.max;
 
-                vm.min = vm.model.min;
-                vm.max = vm.model.max;*/
-            }
+        let onValueChangeDeregisterer;
+
+        vm.$onInit = function () {
+            onValueChangeDeregisterer = $scope.$watch('vm.structure.values', onModelChange);
+        };
+
+        vm.$onDestroy = function () {
+            onValueChangeDeregisterer();
         };
 
         function validate(name = false) {
@@ -58,6 +61,14 @@
             if (_.isFunction(vm.onChange)) {
                 vm.onChange({name});
             }
+        }
+
+        function onModelChange() {
+            vm.min = vm.structure.values.min;
+            vm.max = vm.structure.values.max;
+
+            vm.options.floor = vm.min;
+            vm.options.ceil = vm.max;
         }
     }
 

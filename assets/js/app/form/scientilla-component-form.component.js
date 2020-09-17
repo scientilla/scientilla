@@ -107,8 +107,8 @@
         function onStructureChange() {
             deregisterOnChanges();
 
-            vm.fields = filterStructure('field');
             vm.options = filterStructure('option');
+            vm.fields = filterStructure('field');
             vm.actions = filterStructure('action');
             vm.connectors = filterStructure('connector');
 
@@ -125,27 +125,16 @@
             });
 
             _.forEach(vm.structure, function (struct, key) {
-                if (struct && !_.isUndefined(struct.onChange)) {
-                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, (newValue, oldValue) => {
-                        // Execute function only if values have changed
-                        if (newValue !== oldValue) {
-                            execEvent(struct.onChange)();
-                        }
-                    }));
-                }
 
-                if (!_.isUndefined(vm.structure.onChange)) {
-                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, function(evt) {
-                        vm.structure.onChange(vm.values);
-                    }));
-                }
+                onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, (newOption, oldOption) => {
+                    const changedStruct = vm.structure[key];
 
-                if (struct && struct.type === 'option') {
-                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, function(evt) {
+                    if (changedStruct && changedStruct.type === 'option' && newOption !== vm.option) {
                         let refresh = false;
 
-                        vm.option = evt;
+                        vm.option = newOption;
                         vm.fields = filterStructure('field');
+                        setFilterValue(newOption, key);
 
                         // Remove the values that are not a field of this option and no action
                         _.forEach(vm.values, function(value, valueKey) {
@@ -171,8 +160,25 @@
                                 $scope.$broadcast('rzSliderForceRender');
                             });
                         }
+                    }
+                }));
+
+                if (struct && !_.isUndefined(struct.onChange)) {
+                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, (newValue, oldValue) => {
+                        // Execute function only if values have changed
+                        if (newValue !== oldValue) {
+                            execEvent(struct.onChange)();
+                        }
                     }));
                 }
+
+                if (!_.isUndefined(vm.structure.onChange)) {
+                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, () => {
+                        vm.structure.onChange(vm.values);
+                    }));
+                }
+
+
             });
         }
 
@@ -211,6 +217,31 @@
             });
 
             return structs;
+        }
+
+        function setFilterValue(value, name) {
+            const structs = [];
+            Object.keys(vm.structure).forEach(function(structName) {
+                let struct = vm.structure[structName];
+
+                if (struct.dependingOn === name) {
+                    structs.push(struct);
+                }
+            });
+
+            _.forEach(structs, function (struct) {
+                let yearValue = struct.defaultValues.find(v => v.item_key === value);
+                if (_.isNil(yearValue)) {
+                    yearValue = {
+                        min: 2000,
+                        max: new Date().getFullYear()
+                    };
+                }
+                struct.values = {
+                    min: parseInt(yearValue.min),
+                    max: parseInt(yearValue.max)
+                };
+            });
         }
 
         function getObjectSize(object) {

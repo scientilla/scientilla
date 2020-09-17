@@ -46,7 +46,7 @@
         service.setVerifyPrivacy = setVerifyPrivacy;
         service.setVerifyFavorite = setVerifyFavorite;
         service.getProjects = getProjects;
-        service.getProjectYears = getProjectYears;
+        service.getMinMaxYears = getMinMaxYears;
         service.getPatents = getPatents;
         service.getPatentFamilies = getPatentFamilies;
 
@@ -371,28 +371,10 @@
             }
         }
 
-        async function getProjectYears(researchEntity) {
-            let projects = [];
+        async function getMinMaxYears(researchEntity, type, key = null) {
 
-            if (researchEntity) {
-                projects = await researchEntity.getList('projects', {});
-            }
-            const startYears = projects.map(function(p) { return p.startYear; });
-
-            let max = Math.max.apply(Math, startYears);
-            if (!isFinite(max)) {
-                max = new Date().getFullYear() + 1;
-            }
-
-            let min = Math.min.apply(Math, startYears);
-            if (!isFinite(min)) {
-                min = new Date().getFullYear();
-            }
-
-            return {
-                min: min,
-                max: max
-            };
+            return await Restangular.all('min-max-years')
+                .customGETLIST(null, {research_entity: researchEntity.id, item_type: type, item_key: key});
         }
 
         async function getProjects(researchEntity, query, favorites = false) {

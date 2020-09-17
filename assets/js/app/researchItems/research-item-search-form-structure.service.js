@@ -108,6 +108,7 @@
                     }
                 ],
                 type: 'field',
+                dependingOn: 'projectType',
                 visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
             },
             status: {
@@ -156,7 +157,8 @@
                 values: [],
                 matchColumn: 'type',
                 type: 'option',
-                defaultValue: allProjectTypes.value
+                defaultValue: allProjectTypes.value,
+                defaultValues: []
             }
         };
 
@@ -319,7 +321,19 @@
             formStructures[constant].category.values = getProjectCategories();
             formStructures[constant].funding.values = getProjectFundings();
             formStructures[constant].action.values = getProjectActions();
-            formStructures[constant].year.values = await getProjectYears(researchEntity);
+            const defaultValues = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'project');
+            formStructures[constant].year.defaultValues = defaultValues;
+            let yearValue = formStructures[constant].year.defaultValues.find(v => v.item_key === allProjectTypes.value);
+            if (_.isNil(yearValue)) {
+                yearValue = {
+                    min: 2000,
+                    max: new Date().getFullYear()
+                };
+            }
+            formStructures[constant].year.values = {
+                min: parseInt(yearValue.min),
+                max: parseInt(yearValue.max)
+            };
         }
 
         async function getStructure(constant, researchEntity = false) {
@@ -364,10 +378,7 @@
                         });
                     break;
                 case 'verified-project':
-                    if (researchEntity) {
-                        await setupProjectStructure(constant, researchEntity);
-                    }
-
+                    await setupProjectStructure(constant, researchEntity);
                     structure = Object.assign(
                         {},
                         formStructures[constant],
@@ -384,9 +395,7 @@
                     );
                     break;
                 case 'project':
-                    if (researchEntity) {
-                        await setupProjectStructure(constant, researchEntity);
-                    }
+                    await setupProjectStructure(constant, researchEntity);
                     structure = formStructures[constant];
                     break;
                 case 'verified-patent':
@@ -509,10 +518,6 @@
                 defaultValue: defaultValue,
                 type: 'connector'
             };
-        }
-
-        async function getProjectYears(researchEntity) {
-            return await ResearchEntitiesService.getProjectYears(researchEntity);
         }
 
         async function getResearchItemTypes(filterType, skipSelect = false) {
