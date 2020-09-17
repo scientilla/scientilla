@@ -12,8 +12,7 @@
                 onFilter: '&',
                 category: '@',
                 filterLabel: '@?',
-                elements: '<?',
-                researchEntity: '<?'
+                elements: '<?'
             }
         });
 
@@ -24,7 +23,8 @@
         '$scope',
         '$timeout',
         'ResearchItemSearchFormStructureService',
-        '$location'
+        '$location',
+        'context'
     ];
 
     function scientillaFilter(
@@ -33,7 +33,8 @@
         $scope,
         $timeout,
         ResearchItemSearchFormStructureService,
-        $location
+        $location,
+        context
     ) {
         const vm = this;
 
@@ -76,6 +77,7 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
+            vm.researchEntity = await context.getResearchEntity();
             vm.itemsPerPage = pageSize;
             vm.status = vm.STATUS_INITIAL_LOADING;
 
