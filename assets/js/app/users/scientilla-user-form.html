@@ -146,6 +146,18 @@
             </div>
         </div>
 
+        <div class="form-group">
+            <label for="type">Scientific Production</label>
+            <div class="select-wrapper">
+                <select
+                    class="form-control"
+                    id="type"
+                    ng-model="vm.user.config.scientific"
+                    ng-options="option.value as option.label for option in vm.scientificSelectOptions">
+                </select>
+            </div>
+        </div>
+
         <ul class="modal-buttons center">
             <li>
                 <scientilla-button

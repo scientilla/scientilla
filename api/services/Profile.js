@@ -134,48 +134,55 @@ module.exports = {
 async function getProfile(researchEntityId) {
     const profile = await ResearchEntityData.getProfile(researchEntityId);
 
-    // Getting the documents
-    const user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
-    const documentIds = user.documents.map(d => d.id);
-    const documentPopulates = [
-        'source',
-        'authors',
-        'authorships',
-        'groupAuthorships',
-        'affiliations',
-        'sourceMetrics',
-        'userTags',
-        'tagLabels',
-        'groupTags',
-        'groupTagLabels',
-        'institutes',
-        'groups',
-        'scopusDocumentMetadata',
-        'openaireMetadata'
-    ];
-    const documents = await Document.find({
-        kind: DocumentKinds.VERIFIED,
-        id: documentIds
-    }).populate(documentPopulates);
+    let user = await User.findOne({researchEntity: researchEntityId});
+    let documents = [];
+    let accomplishments = [];
+
+    if (user.config.scientific) {
+        // Getting the documents
+        user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
+
+        const documentIds = user.documents.map(d => d.id);
+        const documentPopulates = [
+            'source',
+            'authors',
+            'authorships',
+            'groupAuthorships',
+            'affiliations',
+            'sourceMetrics',
+            'userTags',
+            'tagLabels',
+            'groupTags',
+            'groupTagLabels',
+            'institutes',
+            'groups',
+            'scopusDocumentMetadata',
+            'openaireMetadata'
+        ];
+
+        documents = await Document.find({
+            kind: DocumentKinds.VERIFIED,
+            id: documentIds
+        }).populate(documentPopulates);
+
+        // Getting the accomplishments
+        const researchEntity = await ResearchEntity.findOne({id: researchEntityId}).populate('accomplishments');
+        const accomplishmentIds = researchEntity.accomplishments.map(a => a.id);
+        const accomplishmentPopulates = [
+            'type',
+            'authors',
+            'affiliations',
+            'institutes',
+            'source',
+            'verified',
+            'verifiedUsers',
+            'verifiedGroups'
+        ];
+
+        accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
+    }
 
     profile.documents = documents;
-
-    // Getting the accomplishments
-    const researchEntity = await ResearchEntity.findOne({id: researchEntityId}).populate('accomplishments');
-    const accomplishmentIds = researchEntity.accomplishments.map(a => a.id);
-    const accomplishmentPopulates = [
-        'type',
-        'authors',
-        'affiliations',
-        'institutes',
-        'source',
-        'verified',
-        'verifiedUsers',
-        'verifiedGroups'
-    ];
-
-    const accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
-
     profile.accomplishments = accomplishments;
 
     return profile;

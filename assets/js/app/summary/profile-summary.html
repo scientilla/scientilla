@@ -1,6 +1,8 @@
 <scientilla-backend-layout>
     <div class="summary summary-profile">
-        <uib-tabset active="vm.activeTabIndex">
+        <uib-tabset
+            active="vm.activeTabIndex"
+            ng-if="vm.subResearchEntity.isScientific()">
             <uib-tab
                 index="0"
                 heading="Profile"
@@ -30,5 +32,9 @@
                     text="Recalculating ..."></scientilla-loading>
             </uib-tab>
         </uib-tabset>
+
+        <summary-profile
+            profile="vm.profile"
+            ng-if="!vm.subResearchEntity.isScientific()"></summary-profile>
     </div>
 </scientilla-backend-layout>

@@ -30,10 +30,12 @@
         /* jshint ignore:start */
         service.checkAndClose = async function (isCloseable, reason) {
             if (!isCloseable()) {
-                const buttonKey = await service.multipleChoiceConfirm('Unsaved data!',
+                const buttonKey = await service.multipleChoiceConfirm(
+                    'Unsaved data!',
                     '',
                     {'continue': 'Continue editing', 'discard': 'Discard changes'},
-                    false);
+                    false
+                );
 
                 if (buttonKey === 'continue') return;
             }
@@ -221,7 +223,7 @@
 
             return openModal(
                 `<scientilla-user-form
-                    user="vm.user"
+                    original-user="vm.user"
                     settings="vm.settings"
                     on-failure="vm.onFailure"
                     on-submit="vm.onSubmit"

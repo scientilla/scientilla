@@ -11,9 +11,19 @@
             }
         });
 
-    controller.$inject = ['UsersService', 'researchEntityService', 'ResearchEntitiesService', 'AccomplishmentService'];
+    controller.$inject = [
+        'UsersService',
+        'researchEntityService',
+        'ResearchEntitiesService',
+        'AccomplishmentService'
+    ];
 
-    function controller(UsersService, researchEntityService, ResearchEntitiesService, AccomplishmentService) {
+    function controller(
+        UsersService,
+        researchEntityService,
+        ResearchEntitiesService,
+        AccomplishmentService
+    ) {
         const vm = this;
 
         vm.urlAllDocuments = '/#/users/' + vm.user.id + '/documents';
@@ -80,11 +90,19 @@
                 count++;
             }
 
-            if (vm.documents.length > 0 || vm.loadingDocuments) {
+            if (
+                vm.documents.length > 0 ||
+                vm.loadingDocuments &&
+                vm.user.isScientific()
+            ) {
                 count++;
             }
 
-            if (vm.accomplishments.length > 0 || vm.loadingAccomplishments) {
+            if (
+                vm.accomplishments.length > 0 ||
+                vm.loadingAccomplishments &&
+                vm.user.isScientific()
+            ) {
                 count++;
             }
 

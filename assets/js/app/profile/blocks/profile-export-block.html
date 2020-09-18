@@ -58,7 +58,7 @@
                 <span>Skills</span>
             </label>
         </li>
-        <li>
+        <li ng-if="vm.user.isScientific()">
             <label class="form-checkbox">
                 <input
                     type="checkbox"
@@ -66,7 +66,7 @@
                 <span>Documents</span>
             </label>
         </li>
-        <li>
+        <li ng-if="vm.user.isScientific()">
             <label class="form-checkbox">
                 <input
                     type="checkbox"

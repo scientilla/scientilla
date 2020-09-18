@@ -127,6 +127,12 @@
             },
             isSuperViewer: function () {
                 return [userConstants.role.ADMINISTRATOR, userConstants.role.EVALUATOR].includes(this.role);
+            },
+            isScientific: function () {
+                if (_.has(this.config, 'scientific') && this.config.scientific) {
+                    return true;
+                }
+                return false;
             }
         };
         const groupPrototype = {
@@ -205,6 +211,9 @@
                     }, []);
 
                 return interactions.map(i => i.value);
+            },
+            isScientific: function () {
+                return true;
             }
         };
 

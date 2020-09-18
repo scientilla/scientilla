@@ -81,7 +81,9 @@
             url-favorite-documents="vm.urlFavoriteDocuments"
             url-all-documents="vm.urlAllDocuments"
             class="profile-block documents"
-            ng-if="((vm.documents && vm.documents.length > 0) || vm.loadingDocuments) && vm.numberOfItems < 6">
+            ng-if="(
+                (vm.documents && vm.documents.length > 0) || vm.loadingDocuments
+            ) && vm.numberOfItems < 6 && vm.subResearchEntity.isScientific()">
         </profile-documents-block>
 
         <profile-accomplishments-block
@@ -93,7 +95,7 @@
             class="profile-block accomplishments"
             ng-if="(
                 (vm.accomplishments && vm.accomplishments.length > 0) || vm.loadingsAccomplishments
-            ) && vm.numberOfItems < 6">
+            ) && vm.numberOfItems < 6 && vm.subResearchEntity.isScientific()">
         </profile-accomplishments-block>
 
         <div
@@ -106,7 +108,7 @@
                     (vm.accomplishments && vm.accomplishments.length > 0) ||
                     vm.loadingAccomplishments
                 )
-            )">
+            ) && vm.subResearchEntity.isScientific()">
             <div class="profile-blocks bottom has-2-blocks">
                 <profile-documents-block
                     profile="vm.profile"

@@ -82,6 +82,9 @@ module.exports = _.merge({}, SubResearchEntity, {
             type: 'STRING',
             defaultsTo: ""
         },
+        config: {
+            type: 'JSON'
+        },
         researchEntity: {
             columnName: 'research_entity',
             model: 'researchentity'

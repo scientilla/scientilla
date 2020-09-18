@@ -57,7 +57,7 @@
             class="profile-block documents"
             ng-if="(
                 (vm.documents && vm.documents.length > 0) || vm.loadingDocuments
-            ) && vm.numberOfItems < 8">
+            ) && vm.numberOfItems < 8 && vm.user.isScientific()">
         </profile-documents-block>
 
         <profile-accomplishments-block
@@ -69,7 +69,7 @@
             class="profile-block accomplishments"
             ng-if="(
                 (vm.accomplishments && vm.accomplishments.length > 0) || vm.loadingAccomplishments
-            ) && vm.numberOfItems < 8">
+            ) && vm.numberOfItems < 8 && vm.user.isScientific()">
         </profile-accomplishments-block>
 
         <div
@@ -80,7 +80,7 @@
                 ) || (
                     (vm.accomplishments && vm.accomplishments.length > 0) || vm.loadingAccomplishments
                 )
-            )">
+            ) && vm.user.isScientific()">
             <div class="profile-blocks bottom has-2-blocks">
                 <profile-documents-block
                     profile="vm.profile"

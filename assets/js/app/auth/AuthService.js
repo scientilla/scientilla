@@ -68,6 +68,7 @@
                         if (!service.user.alreadyAccess) {
                             ModalService.openWizard([
                                 'welcome',
+                                'scientific',
                                 'scopus-edit',
                                 'tutorial',
                                 'admin-tutorial',

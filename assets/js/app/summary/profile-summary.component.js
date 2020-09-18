@@ -19,7 +19,15 @@
             '$location'
         ];
 
-        function ProfileSummaryComponent(context, $scope, $controller, UsersService, AuthService, EventsService, $location) {
+        function ProfileSummaryComponent(
+            context,
+            $scope,
+            $controller,
+            UsersService,
+            AuthService,
+            EventsService,
+            $location
+        ) {
             const vm = this;
             angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
             angular.extend(vm, $controller('TabsController', {$scope: $scope}));
@@ -53,6 +61,8 @@
 
             vm.activeTabIndex = 0;
 
+            let deregister;
+
             /* jshint ignore:start */
             vm.$onInit = async () => {
                 EventsService.subscribeAll(vm, [
@@ -62,6 +72,7 @@
                 });
 
                 vm.subResearchEntity = context.getSubResearchEntity();
+
                 if (vm.subResearchEntity.getType() === 'user') {
                     vm.profile = await getProfile();
 
@@ -82,13 +93,23 @@
                     }
                 }
 
-                vm.initializeTabs(tabIdentifiers);
-                vm.chartsData = await getData();
-                vm.reloadTabs(vm.chartsData);
+                if (vm.subResearchEntity.isScientific()) {
+                    vm.initializeTabs(tabIdentifiers);
+                    vm.chartsData = await getData();
+                    vm.reloadTabs(vm.chartsData);
+                }
+
+                deregister = $scope.$watch('vm.subResearchEntity.config.scientific', async () => {
+                    vm.initializeTabs(tabIdentifiers);
+                    vm.chartsData = await getData();
+                    vm.reloadTabs(vm.chartsData);
+                });
             };
 
             vm.$onDestroy = () => {
                 EventsService.unsubscribeAll(vm);
+
+                deregister();
             };
 
             async function recalculate() {

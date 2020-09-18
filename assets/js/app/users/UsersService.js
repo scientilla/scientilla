@@ -31,7 +31,8 @@
             'jobTitle',
             'attributes',
             'alreadyOpenedSuggested',
-            'already_changed_profile'
+            'already_changed_profile',
+            'config'
         ];
 
         service.getNewUser = function () {
@@ -41,6 +42,7 @@
                 slug: "",
                 username: "",
                 role: userConstants.role.USER,
+                config: {scientific: false},
                 active: true,
                 synchronized: false
             };

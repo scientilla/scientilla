@@ -129,6 +129,7 @@
         function openWizard() {
             ModalService.openWizard([
                 'welcome',
+                'scientific',
                 'scopus-edit',
                 'tutorial',
                 'admin-tutorial',

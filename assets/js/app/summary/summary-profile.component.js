@@ -52,7 +52,7 @@
 
             /* jshint ignore:start */
             vm.$onInit = async () => {
-                deregister = $scope.$watch('profile', () => {
+                deregister = $scope.$watch('vm.profile', () => {
                     loadProfile();
                 });
 
@@ -79,9 +79,10 @@
 
                 vm.loadingDocuments = true;
                 vm.loadingAccomplishments = true;
-                setNumberOfItems();
 
                 vm.subResearchEntity = context.getSubResearchEntity();
+                setNumberOfItems();
+
                 researchEntityService.getDocuments(vm.subResearchEntity, {}).then(function (documents) {
                     vm.documents = documents;
                     vm.loadingDocuments = false;
@@ -131,11 +132,17 @@
                     count++;
                 }
 
-                if (vm.documents.length > 0 || vm.loadingDocuments) {
+                if (
+                    (vm.documents.length > 0 || vm.loadingDocuments) &&
+                    vm.subResearchEntity.isScientific()
+                ) {
                     count++;
                 }
 
-                if (vm.accomplishments.length > 0 || vm.loadingAccomplishments) {
+                if (
+                    (vm.accomplishments.length > 0 || vm.loadingAccomplishments) &&
+                    vm.subResearchEntity.isScientific()
+                ) {
                     count++;
                 }
 

@@ -5,7 +5,9 @@
             href="mailto:{{vm.user.username}}"
             class="user-email">{{vm.user.username}}</a>
 
-        <uib-tabset active="vm.activeTabIndex" class="user-information">
+        <uib-tabset
+            active="vm.activeTabIndex"
+            class="user-information">
             <uib-tab
                 index="0"
                 heading="Profile">
@@ -72,7 +74,8 @@
             </uib-tab>
             <uib-tab
                 index="2"
-                heading="Documents">
+                heading="Documents"
+                ng-if="vm.user.isScientific()">
                 <scientilla-documents-list
                     ng-if="vm.user"
                     research-entity="vm.user"
@@ -80,7 +83,8 @@
             </uib-tab>
             <uib-tab
                 index="3"
-                heading="Accomplishments">
+                heading="Accomplishments"
+                ng-if="vm.user.isScientific()">
                 <scientilla-accomplishments-list
                     ng-if="vm.researchEntity"
                     research-entity="vm.researchEntity"
@@ -88,7 +92,8 @@
             </uib-tab>
             <uib-tab
                 index="4"
-                heading="Projects">
+                heading="Projects"
+                ng-if="vm.user.isScientific()">
                 <scientilla-projects-list
                     ng-if="vm.researchEntity"
                     research-entity="vm.researchEntity"
@@ -97,13 +102,13 @@
             <uib-tab
                 index="5"
                 heading="Documents Overview"
-                ng-if="vm.loggedUser.isSuperViewer()">
+                ng-if="vm.loggedUser.isSuperViewer() && vm.user.isScientific()">
                 <summary-overview charts-data="vm.chartsData"></summary-overview>
             </uib-tab>
             <uib-tab
                 index="6"
                 heading="Bibliometric Charts"
-                ng-if="vm.loggedUser.isSuperViewer()">
+                ng-if="vm.loggedUser.isSuperViewer() && vm.user.isScientific()">
                 <summary-metrics charts-data="vm.chartsData"></summary-metrics>
             </uib-tab>
         </uib-tabset>

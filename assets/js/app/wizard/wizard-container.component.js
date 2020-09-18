@@ -23,8 +23,9 @@
         const vm = this;
 
         vm.currentStep = 0;
-        vm.subResearchEntity = context.getSubResearchEntity();
-        vm.originalSubResearchEntity = angular.copy(vm.subResearchEntity);
+
+        vm.originalSubResearchEntity = context.getSubResearchEntity();
+        vm.subResearchEntity = angular.copy(vm.originalSubResearchEntity);
 
         vm.isStep = isStep;
         vm.closeModal = closeModal;
@@ -34,16 +35,29 @@
         vm.isNotPrev = isNotPrev;
         vm.isEnd = isEnd;
         vm.getStepsNumber = getStepsNumber;
+        vm.chooseType = chooseType;
 
         const accessLevels = {
             GROUP_ADMIN: 'groupAdmin',
             STANDARD: 'standard'
         };
 
+        const fields = [
+            'orcidId',
+            'scopusId',
+            'config'
+        ];
+
         const allSteps = [
             {
                 name: 'welcome',
                 component: 'wizard-welcome',
+                accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
+                subResearchEntityToSave: false
+            },
+            {
+                name: 'scientific',
+                component: 'wizard-scientific',
                 accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
                 subResearchEntityToSave: false
             },
@@ -122,7 +136,8 @@
             if (vm.resolve.data.steps.includes('alias-edit'))
                 vm.subResearchEntity.alreadyOpenedSuggested = true;
 
-            return vm.subResearchEntity.save()
+            updateUserData();
+            return vm.originalSubResearchEntity.save()
                 .then(() => vm.resolve.callbacks.onClose())
                 .catch(() => Notification.warning("Failed to save user"));
         }
@@ -219,6 +234,29 @@
                         vm.resolve.callbacks.onClose();
                     }
                 }
+            }
+        }
+
+        function updateUserData() {
+            for (const key of fields) {
+                vm.originalSubResearchEntity[key] = vm.subResearchEntity[key];
+            }
+        }
+
+        function chooseType(type) {
+            vm.subResearchEntity.config.scientific = type;
+            updateUserData();
+            if (type) {
+                vm.originalSubResearchEntity.save()
+                    .then(() => {
+                        vm.subResearchEntity = angular.copy(vm.originalSubResearchEntity);
+                        setStep('next');
+                    });
+            } else {
+                vm.originalSubResearchEntity.save()
+                    .then(() => {
+                        vm.resolve.callbacks.onClose();
+                    });
             }
         }
     }

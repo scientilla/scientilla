@@ -60,25 +60,6 @@
             }, {
                 index: 1,
                 slug: 'groups'
-            }, {
-                index: 2,
-                slug: 'documents'
-            }, {
-                index: 3,
-                slug: 'accomplishments'
-            }, {
-                index: 4,
-                slug: 'projects'
-            }, {
-                index: 5,
-                slug: 'documents-overview',
-                tabName: 'overview',
-                getData: getData
-            }, {
-                index: 6,
-                slug: 'bibliometric-charts',
-                tabName: 'metrics',
-                getData: getData
             }
         ];
 
@@ -94,14 +75,38 @@
         };
 
         vm.$onInit = async () => {
-            allMemberships = await researchEntityService.getAllMemberships();
             vm.user = await UsersService.getUser(vm.userId);
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
+            allMemberships = await researchEntityService.getAllMemberships();
+
             const groupIds = vm.user.memberships.map(g => g.id);
             vm.institute = await GroupsService.getConnectedGroups(groupIds);
 
             if (groupIds.length > 1) {
                 vm.types = _.groupBy(vm.institute.childGroups, 'type');
+            }
+
+            if (vm.user.isScientific()) {
+                tabIdentifiers.push({
+                    index: 2,
+                    slug: 'documents'
+                }, {
+                    index: 3,
+                    slug: 'accomplishments'
+                }, {
+                    index: 4,
+                    slug: 'projects'
+                }, {
+                    index: 5,
+                    slug: 'documents-overview',
+                    tabName: 'overview',
+                    getData: getData
+                }, {
+                    index: 6,
+                    slug: 'bibliometric-charts',
+                    tabName: 'metrics',
+                    getData: getData
+                });
             }
 
             vm.initializeTabs(tabIdentifiers);

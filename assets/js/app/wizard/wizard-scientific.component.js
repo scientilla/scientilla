@@ -2,19 +2,17 @@
     'use strict';
 
     angular.module('wizard')
-        .component('wizardWelcome', {
-            templateUrl: 'partials/wizard-welcome.html',
-            controller: wizard,
+        .component('wizardScientific', {
+            templateUrl: 'partials/wizard-scientific.html',
+            controller: scientific,
             controllerAs: 'vm',
             bindings: {
-                user: '=',
-                chooseType: '&'
             }
         });
 
-    wizard.$inject = [];
+    scientific.$inject = [];
 
-    function wizard() {
+    function scientific() {
         const vm = this;
 
         vm.$onInit = function () {

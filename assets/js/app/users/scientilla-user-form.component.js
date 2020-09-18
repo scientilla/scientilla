@@ -9,7 +9,7 @@
             controllerAs: 'vm',
             bindings: {
                 settings: '<?',
-                user: "<",
+                originalUser: "<",
                 onFailure: "&",
                 onSubmit: "&",
                 checkAndClose: "&"
@@ -38,17 +38,34 @@
         vm.checkValidation = checkValidation;
         vm.fieldValueHasChanged = fieldValueHasChanged;
 
+        const fields = [
+            'username',
+            'name',
+            'surname',
+            'slug',
+            'jobTitle',
+            'orcidId',
+            'scopusId',
+            'password',
+            'role',
+            'config'
+        ];
+
         vm.userIsAdmin = AuthService.user.role === userConstants.role.ADMINISTRATOR;
         vm.roleSelectOptions = [
             {label: 'User', value: userConstants.role.USER},
             {label: 'Administrator', value: userConstants.role.ADMINISTRATOR}
+        ];
+        vm.scientificSelectOptions = [
+            {label: 'Yes', value: true},
+            {label: 'No', value: false}
         ];
         vm.invalidAttributes = {};
         const deregisteres = [];
 
         vm.errors = [];
         vm.errorText = '';
-
+        vm.user = angular.copy(vm.originalUser);
         let originalUserJson = '';
         let timeout;
 
@@ -60,10 +77,9 @@
             deregisteres.push($scope.$watch('vm.user.name', nameChanged));
             deregisteres.push($scope.$watch('vm.user.surname', nameChanged));
 
-            const originalUser = angular.copy(vm.user);
-            if (!Array.isArray(originalUser.aliases))
-                originalUser.aliases = [];
-            originalUserJson = angular.toJson(originalUser);
+            if (!Array.isArray(vm.user.aliases))
+                vm.user.aliases = [];
+            originalUserJson = angular.toJson(vm.user);
 
             if (typeof vm.settings === 'undefined' || vm.settings === false) {
                 if (vm.user.id) {
@@ -141,6 +157,7 @@
                     } else {
                         Notification.success("User data saved");
                         aliasesChanged();
+                        updateUserData();
                         if (_.isFunction(vm.onSubmit()))
                             vm.onSubmit()(1);
                     }
@@ -172,7 +189,9 @@
         }
 
         function cancel() {
-            vm.checkAndClose()(() => angular.toJson(vm.user) === originalUserJson);
+            if (_.isFunction(vm.checkAndClose())) {
+                vm.checkAndClose()(() => originalUserJson === angular.toJson(vm.user));
+            }
         }
 
         function executeOnFailure() {
@@ -180,5 +199,10 @@
                 vm.onFailure()();
         }
 
+        function updateUserData() {
+            for (const key of fields) {
+                vm.originalUser[key] = vm.user[key];
+            }
+        }
     }
 })();

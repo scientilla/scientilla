@@ -29,7 +29,7 @@
         };
 
         vm.$onInit = function () {
-
+            vm.user = AuthService.user;
         };
 
         vm.joinstrings = (strings, seperator) => {
