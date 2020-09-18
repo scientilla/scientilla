@@ -885,7 +885,7 @@ async function importProjects() {
     await doImport(ResearchItemTypes.PROJECT_COMPETITIVE);
     await doImport(ResearchItemTypes.PROJECT_INDUSTRIAL);
 
-    await autoVerify();
+    await projectAutoVerify();
 
     async function doImport(type) {
         let projects
@@ -951,7 +951,7 @@ async function importProjects() {
         errors.forEach(error => sails.log.debug(JSON.stringify(error) + '\n --------------------- \n'));
     }
 
-    async function autoVerify() {
+    async function projectAutoVerify() {
         let errors = [];
         let newVerify = 0, unverified = 0;
         const externalProjects = await Project.find({kind: ResearchItemKinds.EXTERNAL});
