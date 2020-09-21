@@ -75,6 +75,14 @@
         };
 
         vm.$onInit = async () => {
+            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
+                if (vm.activeTabIndex === 4) {
+                    $timeout(function() {
+                        $scope.$broadcast('rzSliderForceRender');
+                    });
+                }
+            });
+
             vm.user = await UsersService.getUser(vm.userId);
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
             allMemberships = await researchEntityService.getAllMemberships();
@@ -110,14 +118,6 @@
             }
 
             vm.initializeTabs(tabIdentifiers);
-
-            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
-                if (vm.activeTabIndex === 4) {
-                    $timeout(function() {
-                        $scope.$broadcast('rzSliderForceRender');
-                    });
-                }
-            });
         };
 
         vm.$onDestroy = function () {

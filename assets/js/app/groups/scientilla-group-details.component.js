@@ -43,6 +43,14 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
 
+            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
+                if (vm.activeTabIndex === 5) {
+                    $timeout(function() {
+                        $scope.$broadcast('rzSliderForceRender');
+                    });
+                }
+            });
+
             await refreshGroup();
 
             const tabIdentifiers = [
@@ -80,14 +88,6 @@
             ];
 
             vm.initializeTabs(tabIdentifiers);
-
-            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
-                if (vm.activeTabIndex === 5) {
-                    $timeout(function() {
-                        $scope.$broadcast('rzSliderForceRender');
-                    });
-                }
-            });
         };
 
         vm.$onDestroy = function () {

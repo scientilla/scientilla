@@ -18,7 +18,6 @@
             <uib-tab
                 index="1"
                 heading="Groups">
-
                 <ul
                     ng-if="vm.institute"
                     class="group-detail-listing">
@@ -27,7 +26,7 @@
                         <a ng-href="#{{ vm.institute.getProfileUrl() }}">
                             {{ vm.institute.name }}
                         </a>
-                        <ul>
+                        <ul ng-if="vm.types.length > 0">
                             <li ng-repeat="(type, groups) in vm.types">
                                 <strong>{{ vm.getTypeTitle(type, groups) }}:</strong>
                                 <ul>
