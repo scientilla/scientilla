@@ -3,8 +3,8 @@
         <span
             ng-if="vm.patent.patentData.publicationDate"
             class="patent-year"
-            title="Publication date: {{ vm.patent.patentData.publicationDate }}">
-            {{ vm.format(vm.patent.patentData.publicationDate) | date: 'yyyy' }}
+            title="Publication date: {{ vm.patent.patentData.filingDate }}">
+            {{ vm.format(vm.patent.patentData.filingDate) | date: 'yyyy' }}
         </span>
         <img ng-src="{{ vm.customizations.logos.institute.src }}"
              ng-if="vm.customizations.logos.institute.src && vm.hasMainGroupAffiliation()"
