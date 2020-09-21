@@ -367,7 +367,8 @@
             heading="Public website only"
             ng-class="{
                 'changed' : vm.changed['public-website']
-            }">
+            }"
+            ng-if="vm.user.isScientific()">
             <label>Publications</label>
             <ul class="iit-website-options">
                 <li>Show <strong>"Favorite Publications"</strong> section:

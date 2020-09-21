@@ -42,6 +42,7 @@
         let originalProfileJson = '';
 
         vm.$onInit = function () {
+            vm.user = AuthService.user;
             getEditProfile();
         };
 
