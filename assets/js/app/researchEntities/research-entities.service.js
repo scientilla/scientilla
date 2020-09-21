@@ -336,7 +336,6 @@
             return researchEntity.customPOST({researchItemId}, 'copy-research-item');
         }
 
-
         async function setVerifyPrivacy(researchEntity, researchItem, verify) {
             try {
                 await researchEntity.one('researchitems', researchItem.id)
@@ -371,10 +370,8 @@
             }
         }
 
-        async function getMinMaxYears(researchEntity, type, key = null) {
-
-            return await Restangular.all('min-max-years')
-                .customGETLIST(null, {research_entity: researchEntity.id, item_type: type, item_key: key});
+        async function getMinMaxYears(researchEntity, type) {
+            return await researchEntity.one('min-max-years', type).get();
         }
 
         async function getProjects(researchEntity, query, favorites = false) {

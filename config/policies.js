@@ -173,7 +173,8 @@ module.exports.policies = {
         getProfile: true,
         getEditProfile: isResearchEntityOwner,
         saveProfile: isResearchEntityOwner,
-        exportProfile: isResearchEntityOwner
+        exportProfile: isResearchEntityOwner,
+        minMaxYears: isLogged,
     }, defaultPolicy),
 
     ResearchItemTypeController: defaultPolicy,
