@@ -6,8 +6,13 @@
             <uib-tab
                 index="0"
                 heading="Profile"
-                ng-if="vm.subResearchEntity.getType() === 'user' && vm.profile !== false">
-                <summary-profile profile="vm.profile"></summary-profile>
+                ng-if="vm.subResearchEntity.getType() === 'user'">
+                <summary-profile
+                    profile="vm.profile"
+                    ng-if="vm.profile"></summary-profile>
+                <user-profile-table
+                    user="vm.subResearchEntity"
+                    ng-if="!vm.profile"></user-profile-table>
             </uib-tab>
 
             <uib-tab
@@ -35,6 +40,16 @@
 
         <summary-profile
             profile="vm.profile"
-            ng-if="!vm.subResearchEntity.isScientific()"></summary-profile>
+            ng-if="vm.subResearchEntity.getType() === 'user' && !vm.subResearchEntity.isScientific() && vm.profile">
+        </summary-profile>
+
+        <div ng-if="vm.subResearchEntity.getType() === 'user' && !vm.subResearchEntity.isScientific() && !vm.profile">
+            <h1 class="user-fullname">{{vm.subResearchEntity.getDisplayName()}}</h1>
+            <a
+                href="mailto:{{vm.subResearchEntity.username}}"
+                class="user-email">{{vm.subResearchEntity.username}}</a>
+            <br><br>
+            <user-profile-table user="vm.subResearchEntity"></user-profile-table>
+        </div>
     </div>
 </scientilla-backend-layout>

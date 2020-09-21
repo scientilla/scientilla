@@ -1,0 +1,39 @@
+<div class="table-responsive">
+    <table class="table table-striped table-condensed">
+        <tr>
+            <td><strong>Name:</strong></td>
+            <td>{{ vm.user.name }}</td>
+        </tr>
+        <tr>
+            <td><strong>Surname:</strong></td>
+            <td>{{ vm.user.surname }}</td>
+        </tr>
+        <tr>
+            <td><strong>E&#8209;mail:</strong></td>
+            <td><a href="mailto:{{ vm.user.username }}" title="Contact {{ vm.user.name }}">{{ vm.user.username }}</a>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Job Title:</strong></td>
+            <td>{{vm.user.jobTitle}}</td>
+        </tr>
+        <tr ng-if="vm.user.scopusId">
+            <td><strong>Scopus:</strong></td>
+            <td>
+                <a ng-href="https://www.scopus.com/authid/detail.uri?origin=resultslist&authorId={{ vm.user.scopusId }}&zone="
+                   target="_blank">
+                    View profile
+                </a>
+            </td>
+        </tr>
+        <tr ng-if="vm.user.orcidId">
+            <td><strong>ORCID:</strong></td>
+            <td>
+                <a ng-href="http://orcid.org/{{ vm.user.orcidId }}"
+                   target="_blank">
+                    View profile
+                </a>
+            </td>
+        </tr>
+    </table>
+</div>

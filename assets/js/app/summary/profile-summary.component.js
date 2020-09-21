@@ -61,7 +61,7 @@
 
             vm.activeTabIndex = 0;
 
-            let deregister;
+            let deregister = null;
 
             /* jshint ignore:start */
             vm.$onInit = async () => {
@@ -71,20 +71,18 @@
                     vm.profile = profile;
                 });
 
+                deregister = $scope.$watch('vm.subResearchEntity.config.scientific', async () => {
+                    vm.initializeTabs(tabIdentifiers);
+                    vm.chartsData = await getData();
+                    vm.reloadTabs(vm.chartsData);
+                });
+
                 vm.subResearchEntity = context.getSubResearchEntity();
 
                 if (vm.subResearchEntity.getType() === 'user') {
                     vm.profile = await getProfile();
 
-                    if (!vm.profile) {
-                        tabIdentifiers = tabIdentifiers.filter(identifier => {
-                            return identifier.index !== 0;
-                        });
-                        $location.url('/dashboard/documents-overview');
-                    } else {
-                        $location.url('/dashboard/profile');
-
-                    }
+                    $location.url('/dashboard/profile');
                 } else {
                     if (!vm.isMainGroup()) {
                         tabIdentifiers = tabIdentifiers.filter(identifier => {
@@ -98,12 +96,6 @@
                     vm.chartsData = await getData();
                     vm.reloadTabs(vm.chartsData);
                 }
-
-                deregister = $scope.$watch('vm.subResearchEntity.config.scientific', async () => {
-                    vm.initializeTabs(tabIdentifiers);
-                    vm.chartsData = await getData();
-                    vm.reloadTabs(vm.chartsData);
-                });
             };
 
             vm.$onDestroy = () => {
