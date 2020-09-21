@@ -26,7 +26,7 @@
                         <a ng-href="#{{ vm.institute.getProfileUrl() }}">
                             {{ vm.institute.name }}
                         </a>
-                        <ul ng-if="vm.types.length > 0">
+                        <ul ng-if="vm.hasTypes">
                             <li ng-repeat="(type, groups) in vm.types">
                                 <strong>{{ vm.getTypeTitle(type, groups) }}:</strong>
                                 <ul>
@@ -55,21 +55,9 @@
                         </ul>
                     </li>
                 </ul>
-
-                <ul class="group-types">
-                    <li ng-repeat="(type, groups) in vm.groupsByType">
-                        <strong>{{ vm.getTypeTitle(type, groups) }}:</strong>
-                        <ul class="groups">
-                            <li ng-repeat="group in groups">
-                                <a ng-href="#{{ group.getProfileUrl() }}">
-                                    {{ group.name }}
-                                </a>
-                                <span ng-if="!vm.isActiveMember(vm.user, group)">(Former member)</span>
-                            </li>
-                        </ul>
-                    </li>
-                    <li ng-if="vm.groupsByType.length === 0">No groups</li>
-                </ul>
+                <div ng-if="!vm.hasTypes">
+                    <p>No related groups found.</p>
+                </div>
             </uib-tab>
             <uib-tab
                 index="2"

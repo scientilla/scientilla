@@ -178,10 +178,6 @@
                     }
                 }
 
-                if (!institute) {
-                    institute = await service.getGroup(1);
-                }
-
                 const membershipGroups = _.orderBy(
                     allMembershipGroups.filter(membershipGroup => groupIds.includes(membershipGroup.child_group.id)),
                     'parent_group.id',

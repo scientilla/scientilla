@@ -48,6 +48,7 @@
 
         vm.activeTabIndex = 0;
         vm.types = [];
+        vm.hasTypes = false;
 
         let allMemberships = [];
 
@@ -60,6 +61,25 @@
             }, {
                 index: 1,
                 slug: 'groups'
+            }, {
+                index: 2,
+                slug: 'documents'
+            }, {
+                index: 3,
+                slug: 'accomplishments'
+            }, {
+                index: 4,
+                slug: 'projects'
+            }, {
+                index: 5,
+                slug: 'documents-overview',
+                tabName: 'overview',
+                getData: getData
+            }, {
+                index: 6,
+                slug: 'bibliometric-charts',
+                tabName: 'metrics',
+                getData: getData
             }
         ];
 
@@ -94,27 +114,8 @@
                 vm.types = _.groupBy(vm.institute.childGroups, 'type');
             }
 
-            if (vm.user.isScientific()) {
-                tabIdentifiers.push({
-                    index: 2,
-                    slug: 'documents'
-                }, {
-                    index: 3,
-                    slug: 'accomplishments'
-                }, {
-                    index: 4,
-                    slug: 'projects'
-                }, {
-                    index: 5,
-                    slug: 'documents-overview',
-                    tabName: 'overview',
-                    getData: getData
-                }, {
-                    index: 6,
-                    slug: 'bibliometric-charts',
-                    tabName: 'metrics',
-                    getData: getData
-                });
+            if (!_.isEmpty(vm.types)) {
+                vm.hasTypes = true;
             }
 
             vm.initializeTabs(tabIdentifiers);
