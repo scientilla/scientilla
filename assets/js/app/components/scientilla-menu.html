@@ -48,7 +48,7 @@
                    class="list-group-item list-group-item-action">Drafts</a>
             </div>
         </li>
-        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific()">
+        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && vm.isAdmin()">
             <label>Projects</label>
             <div class="list-group">
                 <a ng-href="{{ vm.getUrl('projects/verified') }}"
@@ -56,7 +56,7 @@
                    class="list-group-item list-group-item-action">Verified</a>
             </div>
         </li>
-        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific()">
+        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && vm.isAdmin()">
             <label>Patents</label>
             <div class="list-group">
                 <a ng-href="{{ vm.getUrl('patents/verified') }}"

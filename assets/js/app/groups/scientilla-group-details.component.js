@@ -106,5 +106,9 @@
                 });
         }
         /* jshint ignore:end */
+
+        vm.isAdmin = function () {
+            return vm.loggedUser && vm.loggedUser.isAdmin();
+        };
     }
 })();

@@ -93,7 +93,7 @@
             <uib-tab
                 index="4"
                 heading="Projects"
-                ng-if="vm.user.isScientific()">
+                ng-if="vm.user.isScientific() && vm.isAdmin()">
                 <scientilla-projects-list
                     ng-if="vm.researchEntity"
                     research-entity="vm.researchEntity"

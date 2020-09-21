@@ -45,7 +45,8 @@
             </uib-tab>
             <uib-tab
                 index="5"
-                heading="Projects">
+                heading="Projects"
+                ng-if="vm.isAdmin()">
                 <scientilla-projects-list
                     ng-if="vm.researchEntity"
                     research-entity="vm.researchEntity"

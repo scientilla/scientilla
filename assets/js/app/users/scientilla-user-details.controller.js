@@ -132,6 +132,10 @@
             return await vm.getChartsData(vm.user);
         }
         /* jshint ignore:end */
+
+        vm.isAdmin = function () {
+            return vm.loggedUser && vm.loggedUser.isAdmin();
+        };
     }
 
 })();
