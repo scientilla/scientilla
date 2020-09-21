@@ -105,7 +105,7 @@
 
             vm.user = await UsersService.getUser(vm.userId);
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
-            allMemberships = await researchEntityService.getAllMemberships();
+            allMemberships = await researchEntityService.getAllMemberships({ user: vm.user.id });
 
             const groupIds = vm.user.memberships.map(g => g.id);
             vm.institute = await GroupsService.getConnectedGroups(groupIds);
