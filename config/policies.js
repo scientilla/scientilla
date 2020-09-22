@@ -228,6 +228,4 @@ module.exports.policies = {
         getByName: isAdmin,
         saveByName: isAdmin,
     }, defaultAdminPolicy),
-
-    ResearchItemMinMaxYearController: defaultPolicy,
 };

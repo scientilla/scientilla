@@ -80,7 +80,6 @@ module.exports.routes = {
     ['put ' + apiPrfx + '/users/:researchEntityId/documents/:documentId/favorite']: 'User.setAuthorshipFavorite',
     ['put ' + apiPrfx + '/groups/:researchEntityId/documents/:documentId/favorite']: 'Group.setAuthorshipFavorite',
     ['get ' + apiPrfx + '/settings']: 'Settings.getSettings',
-    ['get ' + apiPrfx + '/min-max-years']: 'ResearchItemMinMaxYear.find',
     ['get ' + apiPrfx + '/users/:researchEntityId/charts']: 'User.getChartsData',
     ['get ' + apiPrfx + '/groups/:researchEntityId/charts']: 'Group.getChartsData',
     ['put ' + apiPrfx + '/groups/:researchEntityId/drafts/:documentId/authorships']: 'Group.setAuthorhips',
