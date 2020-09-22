@@ -2,7 +2,6 @@ SELECT
        v.research_entity as research_entity,
        rit.type as item_type,
        rit.key as item_key,
-       count(a) as count,
        MIN(a.year) AS min,
        MAX(a.year) AS max
 FROM verify v
@@ -17,7 +16,6 @@ SELECT
        v.research_entity as research_entity,
        rit.type as item_type,
        'all' as item_key,
-       count(a) as count,
        MIN(a.year) AS min,
        MAX(a.year) AS max
 FROM verify v
