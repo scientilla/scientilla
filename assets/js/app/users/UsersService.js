@@ -85,8 +85,12 @@
         };
 
         service.getUser = function (userId) {
-            const populate = {populate: ['attributes', 'aliases', 'memberships', 'groupMemberships']};
-            return service.one(userId).get(populate);
+            const populate = {populate: ['administratedGroups', 'attributes', 'aliases', 'memberships', 'groupMemberships']};
+            return service.one(userId).get(populate).then(function (user) {
+                Prototyper.toUserModel(user);
+                user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
+                return user;
+            });
         };
 
         service.getUsers = function (query) {
@@ -97,14 +101,7 @@
         };
 
         service.getSettings = function (userId) {
-            return this
-                .one(userId)
-                .get({populate: ['administratedGroups', 'attributes', 'aliases']})
-                .then(function (user) {
-                    Prototyper.toUserModel(user);
-                    user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
-                    return user;
-                });
+            return service.getUser(userId);
         };
 
         /* jshint ignore:start */

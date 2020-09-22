@@ -1,10 +1,10 @@
 <div class="modal-header">
-    <h3 ng-if="vm.isStep('welcome')">Welcome to Scientilla!</h3>
-    <h3 ng-if="vm.isStep('scientific')">Scientific features</h3>
-    <h3 ng-if="vm.isStep('scopus-edit')">Automatically find your publications</h3>
+    <h3 ng-if="vm.isStep('new-features')">New feature: manage profile and career!</h3>
+    <h3 ng-if="vm.isStep('select-scientific-production')">Do you have Scientific Production?</h3>
+    <h3 ng-if="vm.isStep('scientific-production')">Scientific Production</h3>
+    <h3 ng-if="vm.isStep('scopus-edit')">Finding your publications automatically</h3>
     <h3 ng-if="vm.isStep('alias-edit')">Suggested and aliases</h3>
-    <h3 ng-if="vm.isStep('tutorial')">Start using Scientilla!</h3>
-    <h3 ng-if="vm.isStep('admin-tutorial')">Administration of your research line</h3>
+    <h3 ng-if="vm.isStep('admin-tutorial')">Administration of your research groups</h3>
     <h3 ng-if="vm.isStep('summary-overview')">Details about the “Overview” tab</h3>
     <h3 ng-if="vm.isStep('summary-metrics')">Details about the “Metrics” tab</h3>
     <button
@@ -17,12 +17,15 @@
 </div>
 
 <div class="modal-body">
-    <wizard-welcome
-        ng-if="vm.isStep('welcome')"
-        user="vm.subResearchEntity"
-        choose-type="vm.chooseType"></wizard-welcome>
+    <wizard-new-features
+        ng-if="vm.isStep('new-features')"></wizard-new-features>
 
-    <wizard-scientific ng-if="vm.isStep('scientific')"></wizard-scientific>
+    <wizard-select-scientific-production
+        ng-if="vm.isStep('select-scientific-production')"
+        user="vm.subResearchEntity"
+        choose-type="vm.chooseType"></wizard-select-scientific-production>
+
+    <wizard-scientific-production ng-if="vm.isStep('scientific-production')"></wizard-scientific-production>
 
     <wizard-scopus-edit
         ng-if="vm.isStep('scopus-edit')"
@@ -34,23 +37,25 @@
         user="vm.subResearchEntity"
         original-user="vm.originalSubResearchEntity"></wizard-alias-edit>
 
-    <wizard-tutorial ng-if="vm.isStep('tutorial')"></wizard-tutorial>
-
     <wizard-admin-tutorial ng-if="vm.isStep('admin-tutorial')"></wizard-admin-tutorial>
 
     <wizard-summary-overview ng-if="vm.isStep('summary-overview')"></wizard-summary-overview>
+
     <wizard-summary-metrics ng-if="vm.isStep('summary-metrics')"></wizard-summary-metrics>
 
-    <ul class="modal-buttons fluid">
-        <li ng-if="vm.getStepsNumber() > 1 && vm.currentStep !== 0">
+    <ul class="modal-buttons fluid bottom">
+        <li>
             <scientilla-button
                 ng-disabled="vm.isNotPrev()"
+                ng-if="vm.getStepsNumber() > 1 && vm.currentStep !== 0"
                 click="vm.checkStep('previous')">
                 Previous
             </scientilla-button>
         </li>
-        <li ng-if="vm.currentStep !== 0 && !vm.isEnd()">
-            <scientilla-button click="vm.checkStep('next')">
+        <li ng-if="!vm.isEnd()">
+            <scientilla-button
+                ng-disabled="vm.isStep('select-scientific-production')"
+                click="vm.checkStep('next')">
                 Next
             </scientilla-button>
         </li>

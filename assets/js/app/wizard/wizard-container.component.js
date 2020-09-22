@@ -50,14 +50,20 @@
 
         const allSteps = [
             {
-                name: 'welcome',
-                component: 'wizard-welcome',
+                name: 'new-features',
+                component: 'wizard-new-features',
                 accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
                 subResearchEntityToSave: false
             },
             {
-                name: 'scientific',
-                component: 'wizard-scientific',
+                name: 'select-scientific-production',
+                component: 'wizard-select-scientific-production',
+                accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
+                subResearchEntityToSave: false
+            },
+            {
+                name: 'scientific-production',
+                component: 'wizard-scientific-production',
                 accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
                 subResearchEntityToSave: false
             },
@@ -238,8 +244,9 @@
         }
 
         function updateUserData() {
+            const subResearchEntity = context.getSubResearchEntity();
             for (const key of fields) {
-                vm.originalSubResearchEntity[key] = vm.subResearchEntity[key];
+                subResearchEntity[key] = vm.subResearchEntity[key];
             }
         }
 

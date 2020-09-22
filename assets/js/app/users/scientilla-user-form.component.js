@@ -200,8 +200,9 @@
         }
 
         function updateUserData() {
+            const subResearchEntity = context.getSubResearchEntity();
             for (const key of fields) {
-                vm.originalUser[key] = vm.user[key];
+                subResearchEntity[key] = vm.user[key];
             }
         }
     }

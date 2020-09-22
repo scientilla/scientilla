@@ -2,16 +2,17 @@
     'use strict';
 
     angular.module('wizard')
-        .component('wizardTutorial', {
-            templateUrl: 'partials/wizard-tutorial.html',
-            controller: wizardTutorial,
+        .component('wizardScientificProduction', {
+            templateUrl: 'partials/wizard-scientific-production.html',
+            controller: wizard,
             controllerAs: 'vm',
-            bindings: {}
+            bindings: {
+            }
         });
 
-    wizardTutorial.$inject = [];
+    wizard.$inject = [];
 
-    function wizardTutorial() {
+    function wizard() {
         const vm = this;
 
         vm.$onInit = function () {

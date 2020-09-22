@@ -67,10 +67,10 @@
 
                         if (!service.user.alreadyAccess) {
                             ModalService.openWizard([
-                                'welcome',
-                                'scientific',
+                                'new-features',
+                                'select-scientific-production',
+                                'scientific-production',
                                 'scopus-edit',
-                                'tutorial',
                                 'admin-tutorial',
                             ], {
                                 isClosable: false,

@@ -2,14 +2,11 @@
     'use strict';
 
     angular.module('wizard')
-        .component('wizardWelcome', {
-            templateUrl: 'partials/wizard-welcome.html',
+        .component('wizardNewFeatures', {
+            templateUrl: 'partials/wizard-new-features.html',
             controller: wizard,
             controllerAs: 'vm',
-            bindings: {
-                user: '=',
-                chooseType: '&'
-            }
+            bindings: {}
         });
 
     wizard.$inject = [];
