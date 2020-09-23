@@ -17,9 +17,10 @@
         'Notification',
         'ModalService',
         '$scope',
+        'UsersService'
     ];
 
-    function wizardContainer(context, Notification, ModalService, $scope) {
+    function wizardContainer(context, Notification, ModalService, $scope, UsersService) {
         const vm = this;
 
         vm.currentStep = 0;
@@ -143,7 +144,7 @@
                 vm.subResearchEntity.alreadyOpenedSuggested = true;
 
             updateUserData();
-            return vm.originalSubResearchEntity.save()
+            return UsersService.save(vm.subResearchEntity)
                 .then(() => vm.resolve.callbacks.onClose())
                 .catch(() => Notification.warning("Failed to save user"));
         }
@@ -252,15 +253,18 @@
 
         function chooseType(type) {
             vm.subResearchEntity.config.scientific = type;
-            updateUserData();
+
             if (type) {
-                vm.originalSubResearchEntity.save()
+                updateUserData();
+                UsersService.save(vm.subResearchEntity)
                     .then(() => {
                         vm.subResearchEntity = angular.copy(vm.originalSubResearchEntity);
                         setStep('next');
                     });
             } else {
-                vm.originalSubResearchEntity.save()
+                vm.subResearchEntity.alreadyAccess = true;
+                updateUserData();
+                UsersService.save(vm.subResearchEntity)
                     .then(() => {
                         vm.resolve.callbacks.onClose();
                     });

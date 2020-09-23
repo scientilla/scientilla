@@ -35,6 +35,8 @@
             'config'
         ];
 
+        const userPopulates = ['administratedGroups', 'attributes', 'aliases', 'memberships', 'groupMemberships'];
+
         service.getNewUser = function () {
             var user = {
                 name: "",
@@ -60,10 +62,19 @@
         };
 
         service.save = function (user) {
-            if (user.id)
-                return Restangular.one('users', user.id).customPUT(user);
+
+            const userCopy = angular.copy(user);
+
+            Object.keys(userCopy).forEach(function(key) {
+                if (userPopulates.includes(key)) {
+                    delete userCopy[key];
+                }
+            });
+
+            if (userCopy.id)
+                return Restangular.one('users', userCopy.id).customPUT(userCopy);
             else
-                return this.post(user);
+                return this.post(userCopy);
         };
 
         service.doSave = function (user) {
@@ -85,7 +96,7 @@
         };
 
         service.getUser = function (userId) {
-            const populate = {populate: ['administratedGroups', 'attributes', 'aliases', 'memberships', 'groupMemberships']};
+            const populate = {populate: userPopulates};
             return service.one(userId).get(populate).then(function (user) {
                 Prototyper.toUserModel(user);
                 user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
@@ -94,7 +105,7 @@
         };
 
         service.getUsers = function (query) {
-            var populate = {populate: ['memberships', 'attributes', 'aliases']};
+            var populate = {populate: userPopulates};
             var q = _.merge({}, query, populate);
 
             return service.getList(q);
