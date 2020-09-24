@@ -14,11 +14,10 @@ const _ = require('lodash');
 
 module.exports.bootstrap = async function (cb) {
     const env = sails.config.environment;
-    const isTest = env == 'test';
+    const isTest = env === 'test';
     // It's very important to trigger this callback method when you are finished
     // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
 
-    Status.enable();
     await initializeInstitutes();
     await initializeGroups();
 
