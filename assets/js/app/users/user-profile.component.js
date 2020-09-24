@@ -52,19 +52,21 @@
                 vm.loadingAccomplishments = true;
                 setNumberOfItems();
 
-                researchEntityService.getDocuments(vm.user).then(function (documents) {
-                    vm.documents = documents;
-                    vm.loadingDocuments = false;
-                    setNumberOfItems();
-                });
+
+                vm.documents = await researchEntityService.getDocuments(vm.user, {limit: 1});
+                vm.favoriteDocuments = await researchEntityService.getDocuments(vm.user, {}, true);
+                vm.loadingDocuments = false;
+                setNumberOfItems();
 
                 vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
                 vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {});
+                vm.favoriteAccomplishments = await AccomplishmentService.get(vm.researchEntity, {}, true);
                 vm.loadingAccomplishments = false;
             }
 
             setNumberOfItems();
         };
+
         /* jshint ignore:end */
 
         function setNumberOfItems() {

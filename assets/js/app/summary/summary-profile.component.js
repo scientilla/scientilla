@@ -38,6 +38,7 @@
             vm.missingProfile = false;
 
             vm.documents = [];
+            vm.favoriteDocuments = [];
             vm.accomplishments = [];
 
             vm.loadingDocuments = false;
@@ -84,14 +85,14 @@
                     vm.subResearchEntity = context.getSubResearchEntity();
                     setNumberOfItems();
 
-                    researchEntityService.getDocuments(vm.subResearchEntity, {}).then(function (documents) {
-                        vm.documents = documents;
-                        vm.loadingDocuments = false;
-                        setNumberOfItems();
-                    });
+                    vm.documents = await researchEntityService.getDocuments(vm.subResearchEntity, {limit: 1});
+                    vm.favoriteDocuments = await researchEntityService.getDocuments(vm.subResearchEntity, {}, true);
+                    vm.loadingDocuments = false;
+                    setNumberOfItems();
 
                     vm.researchEntity = await context.getResearchEntity();
-                    vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {});
+                    vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {limit: 1});
+                    vm.favoriteAccomplishments = await AccomplishmentService.get(vm.researchEntity, {}, true);
                     vm.loadingAccomplishments = false;
                 }
 
