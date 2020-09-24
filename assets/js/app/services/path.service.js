@@ -13,7 +13,7 @@
 
     function path($location, EventsService, $route, AuthService, userConstants) {
         const current = $location.url();
-        const next = current === '/unavailable' ? '/' : current;
+        let next = current === '/unavailable' ? '/' : current;
         const service = {
             current: current,
             goTo: goTo,
@@ -29,6 +29,10 @@
             return ['/login', ''].includes(current) ? goTo(rootPath) : goTo(next);
         });
 
+        EventsService.subscribe(service, EventsService.AUTH_LOGOUT, () => {
+            next = '/';
+        });
+
         function goTo(path) {
             $location.path(path);
             $route.reload();
@@ -38,7 +42,7 @@
             return url.replace(/https?:\/\/[^\/]+\//, "");
         }
 
-        function locationPath(){
+        function locationPath() {
             return $location.$$path;
         }
 
