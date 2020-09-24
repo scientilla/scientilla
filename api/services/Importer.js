@@ -497,6 +497,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
     sails.log.info('The import started at ' + startedTime.format());
     sails.log.info('-----------------------------------------------------------------');
 
+    const defaultCompany = ImportHelper.getDefaultCompany();
     const valueHiddenPrivacy = ImportHelper.getValueHiddenPrivacy();
 
     // Endpoint options to get all users
@@ -576,6 +577,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
             }
 
             let contractEndDate = null;
+            let handledSteps = [];
 
             // Get the contract end date via the contract history
             const contract = _.head(employee.contract);
@@ -583,7 +585,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
                 _.has(contract, 'step') &&
                 _.has(contract, 'cid')
             ) {
-                const handledSteps = ImportHelper.mergeStepsOfContract(contract);
+                handledSteps = ImportHelper.mergeStepsOfContract(contract);
 
                 const handledStepsOfLastFiveYears = ImportHelper.getValidSteps(handledSteps);
 
@@ -656,10 +658,24 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
                 researchEntity: user.researchEntity
             });
 
+            // We add some default values for the profile.
+            for (const [key, handledStep] of Object.entries(handledSteps)) {
+                handledStep.privacy = valueHiddenPrivacy;
+                handledStep.company = defaultCompany;
+                handledSteps[key] = handledStep;
+            }
+
             // Create or update researchEntityData record
             if (researchEntityData) {
                 if (!_.isEqual(researchEntityData.imported_data, employee) || override) {
                     const profile = ImportHelper.getProfileObject(researchEntityData, employee, allMembershipGroups, activeGroups);
+
+                    if (!profile) {
+                        return;
+                    }
+
+                    profile.experiencesInternal = handledSteps;
+
                     let profileJSONString = JSON.stringify(profile);
 
                     if (profile.hidden) {
@@ -679,7 +695,17 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
                     upToDateResearchEntityDataItems.push(researchEntityData);
                 }
             } else {
-                const profile = ImportHelper.getProfileObject({}, employee, allMembershipGroups, activeGroups);
+                const importedData = _.cloneDeep(employee);
+                delete importedData.contract;
+
+                const profile = ImportHelper.getProfileObject({imported_data: importedData}, employee, allMembershipGroups, activeGroups);
+
+                if (!profile) {
+                    return;
+                }
+
+                profile.experiencesInternal = handledSteps;
+
                 researchEntityData = await ResearchEntityData.create({
                     researchEntity: user.researchEntity,
                     profile: JSON.stringify(profile),

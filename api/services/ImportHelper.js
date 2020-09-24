@@ -7,6 +7,7 @@ module.exports = {
     getDefaultEmail,
     getValueHiddenPrivacy,
     getISO8601Format,
+    getDefaultCompany,
     getContractualHistoryOfCidCodes,
     getValidSteps,
     mergeStepsOfContract,
@@ -31,7 +32,7 @@ const valuePublicPrivacy = 'public';
 
 const defaultEmail = 'all';
 const valueHiddenPrivacy = 'hidden';
-
+const defaultCompany = 'Istituto Italiano di Tecnologia';
 
 function getDefaultEmail() {
     return defaultEmail;
@@ -43,6 +44,10 @@ function getValueHiddenPrivacy() {
 
 function getISO8601Format() {
     return ISO8601Format;
+}
+
+function getDefaultCompany() {
+    return defaultCompany;
 }
 
 /**
@@ -573,6 +578,20 @@ function createUserObject(ldapUsers = [], user = {}, employee = {}, contractEndD
 
     if (_.has(employee, 'cognome_AD') && !_.isEmpty(employee.cognome_AD)) {
         userObject.display_surname = employee.cognome_AD;
+    }
+
+    if (!_.has(user, 'config')) {
+        userObject.config = {
+            scientific: false
+        };
+    } else {
+        userObject.config = user.config;
+    }
+
+    if (!_.has(user, 'config.scientific')) {
+        userObject.config.scientific = false;
+    } else {
+        userObject.config.scientific = user.config.scientific;
     }
 
     return userObject;

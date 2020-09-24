@@ -17,7 +17,7 @@ async function removeData() {
     await User.destroy({id: userIds});
     sails.log.info(`Deleted ${userIds.length} (with role='user') users without documents and accomplishments`);
 
-    // Delete all memberships where synchromized = true
+    // Delete all memberships where synchronized = true
     await Membership.destroy({synchronized: true});
 }
 
@@ -297,14 +297,14 @@ async function importContracts(email = ImportHelper.getDefaultEmail(), override 
                     }
                 } else {
                     // Setup the new profile
-                    const profile = ImportHelper.getProfileObject({}, employee, allMembershipGroups, allGroups);
+                    const importedData = _.cloneDeep(employee);
+                    delete importedData.contract;
+
+                    const profile = ImportHelper.getProfileObject({imported_data: importedData}, employee, allMembershipGroups, allGroups);
 
                     if (!profile) {
                         return;
                     }
-
-                    const importedData = _.cloneDeep(employee);
-                    delete importedData.contract;
 
                     profile.experiencesInternal = handledSteps;
 
@@ -325,7 +325,7 @@ async function importContracts(email = ImportHelper.getDefaultEmail(), override 
     sails.log.info('-----------------------------------------------------------------');
 
     const ISO8601Format = ImportHelper.getISO8601Format();
-    const defaultCompany = 'Istituto Italiano di Tecnologia';
+    const defaultCompany = ImportHelper.getDefaultCompany();
     const valueHiddenPrivacy = ImportHelper.getValueHiddenPrivacy();
 
     // We cache the groups, membership groups and default profile.
