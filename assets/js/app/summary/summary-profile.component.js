@@ -77,21 +77,24 @@
 
                 vm.user = AuthService.user;
 
-                vm.loadingDocuments = true;
-                vm.loadingAccomplishments = true;
+                if (vm.user.isScientific()) {
+                    vm.loadingDocuments = true;
+                    vm.loadingAccomplishments = true;
 
-                vm.subResearchEntity = context.getSubResearchEntity();
-                setNumberOfItems();
-
-                researchEntityService.getDocuments(vm.subResearchEntity, {}).then(function (documents) {
-                    vm.documents = documents;
-                    vm.loadingDocuments = false;
+                    vm.subResearchEntity = context.getSubResearchEntity();
                     setNumberOfItems();
-                });
 
-                vm.researchEntity = await context.getResearchEntity();
-                vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {});
-                vm.loadingAccomplishments = false;
+                    researchEntityService.getDocuments(vm.subResearchEntity, {}).then(function (documents) {
+                        vm.documents = documents;
+                        vm.loadingDocuments = false;
+                        setNumberOfItems();
+                    });
+
+                    vm.researchEntity = await context.getResearchEntity();
+                    vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {});
+                    vm.loadingAccomplishments = false;
+                }
+
                 setNumberOfItems();
             };
             /* jshint ignore:end */

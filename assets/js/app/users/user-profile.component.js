@@ -47,19 +47,22 @@
 
             vm.loading = false;
 
-            vm.loadingDocuments = true;
-            vm.loadingAccomplishments = true;
-            setNumberOfItems();
-
-            researchEntityService.getDocuments(vm.user).then(function (documents) {
-                vm.documents = documents;
-                vm.loadingDocuments = false;
+            if (vm.user.isScientific()) {
+                vm.loadingDocuments = true;
+                vm.loadingAccomplishments = true;
                 setNumberOfItems();
-            });
 
-            vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
-            vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {});
-            vm.loadingAccomplishments = false;
+                researchEntityService.getDocuments(vm.user).then(function (documents) {
+                    vm.documents = documents;
+                    vm.loadingDocuments = false;
+                    setNumberOfItems();
+                });
+
+                vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
+                vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {});
+                vm.loadingAccomplishments = false;
+            }
+
             setNumberOfItems();
         };
         /* jshint ignore:end */
