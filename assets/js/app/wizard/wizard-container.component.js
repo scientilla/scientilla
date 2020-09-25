@@ -72,12 +72,6 @@
                 name: 'scopus-edit',
                 component: 'wizard-scopus-edit',
                 accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
-                subResearchEntityToSave: false
-            },
-            {
-                name: 'tutorial',
-                component: 'wizard-tutorial',
-                accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
                 subResearchEntityToSave: true
             },
             {
@@ -133,7 +127,6 @@
 
         // You can close the modal once completed the wizard
         function closeModal() {
-
             if (!steps[vm.currentStep].subResearchEntityToSave) {
                 vm.resolve.callbacks.onClose();
                 return;
@@ -145,6 +138,9 @@
 
             updateUserData();
             return UsersService.save(vm.subResearchEntity)
+                .then(() => {
+                    vm.originalSubResearchEntity = angular.copy(vm.subResearchEntity);
+                })
                 .then(() => vm.resolve.callbacks.onClose())
                 .catch(() => Notification.warning("Failed to save user"));
         }
@@ -258,7 +254,7 @@
                 updateUserData();
                 UsersService.save(vm.subResearchEntity)
                     .then(() => {
-                        vm.subResearchEntity = angular.copy(vm.originalSubResearchEntity);
+                        vm.originalSubResearchEntity = angular.copy(vm.subResearchEntity);
                         setStep('next');
                     });
             } else {

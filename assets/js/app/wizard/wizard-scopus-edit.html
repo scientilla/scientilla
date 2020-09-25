@@ -40,12 +40,14 @@
             </div>
 
             <scientilla-button
+                ng-if="vm.showSaveButton"
                 type="submit"
                 ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData">
                 {{ vm.saveStatus.message }}
             </scientilla-button>
 
             <scientilla-button
+                ng-if="vm.showSaveButton"
                 type="secondary"
                 ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData"
                 ng-click="vm.cancelSave()">Cancel</scientilla-button>
