@@ -116,12 +116,12 @@
         };
 
         /* jshint ignore:start */
-        service.saveProfile = async (researchEntityId, profile) => {
+        service.saveProfile = async (researchEntityId, profile, profileImage = false) => {
             const formData = new FormData();
             formData.append('profile', JSON.stringify(profile));
 
-            if (profile.image && profile.image.file) {
-                formData.append('profileImage', profile.image.file);
+            if (profileImage) {
+                formData.append('profileImage', profileImage);
             }
 
             let response = await Restangular.one('researchentities', researchEntityId)

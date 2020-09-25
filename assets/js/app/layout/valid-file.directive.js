@@ -5,7 +5,6 @@
         .directive('validFile', function() {
             return {
                 restrict: 'A',
-                require: 'ngModel',
                 link: function(scope, el) {
                     var maxSize = 500000;
                     el.bind('change', function() {

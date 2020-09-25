@@ -7,7 +7,8 @@
             controller: profileAboutMeForm,
             controllerAs: 'vm',
             bindings: {
-                profile: '<'
+                profile: '<',
+                profileImage: '='
             }
         });
 
@@ -29,7 +30,8 @@
                         vm.profile.image.errors.value = [];
                         vm.profile.image.errors.value.push({ message: $scope.image.maxSizeError});
                     } else {
-                        vm.profile.image.file = $scope.image.file;
+                        vm.profile.image.file = $scope.image.file.name;
+                        vm.profileImage = $scope.image.file;
                         vm.profile.image.errors = null;
                     }
                 }
