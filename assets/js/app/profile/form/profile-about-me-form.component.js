@@ -11,15 +11,29 @@
             }
         });
 
-    profileAboutMeForm.$inject = ['ProfileService', 'AuthService', 'pathProfileImages'];
+    profileAboutMeForm.$inject = ['ProfileService', 'AuthService', 'pathProfileImages', '$scope'];
 
-    function profileAboutMeForm(ProfileService, AuthService, pathProfileImages) {
+    function profileAboutMeForm(ProfileService, AuthService, pathProfileImages, $scope) {
         const vm = this;
+
+        $scope.image = {};
 
         vm.pathProfileImages = pathProfileImages + '/' + AuthService.user.researchEntity + '/';
 
         vm.$onInit = function () {
-
+            $scope.$watch('image.maxSizeError', () => {
+                if (typeof $scope.image.maxSizeError !== "undefined") {
+                    if ($scope.image.maxSizeError) {
+                        vm.profile.image.file = null;
+                        vm.profile.image.errors = {};
+                        vm.profile.image.errors.value = [];
+                        vm.profile.image.errors.value.push({ message: $scope.image.maxSizeError});
+                    } else {
+                        vm.profile.image.file = $scope.image.file;
+                        vm.profile.image.errors = null;
+                    }
+                }
+            });
         };
 
         vm.removeItem = (options) => {
