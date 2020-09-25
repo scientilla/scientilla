@@ -9,17 +9,18 @@
                 class="form-control"
                 id="image"
                 placeholder="Image"
-                file="vm.profile.image.file"
                 accept="image/*"
+                ng-model="file"
                 ng-if="!vm.profile.image.value"
                 ng-class="{
                     'is-invalid': vm.profile.image.errors,
                     'is-invisible' : vm.profile.image.privacy === 'invisible'
-                }">
+                }"
+                valid-file>
             <div
                 ng-if="vm.profile.image.value"
                 class="image-container">
-                <img ng-src="{{ vm.pathProfileImages }}/{{ vm.profile.image.value }}" alt="" class="img-fluid rounded-circle profile-image">
+                <img ng-src="{{ vm.pathProfileImages + vm.profile.image.value }}" alt="" class="img-fluid rounded-circle profile-image">
                 <button class="btn-remove-image" ng-click="vm.profile.image.value = ''"><i class="fas fa-trash"></i></button>
             </div>
             <scientilla-field-errors

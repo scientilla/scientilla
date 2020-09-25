@@ -8,7 +8,8 @@
             controllerAs: 'vm',
             bindings: {
                 user: '=',
-                originalUser: '='
+                originalUser: '=',
+                showSaveButton: '<'
             }
         });
 
