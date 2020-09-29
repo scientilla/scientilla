@@ -73,8 +73,7 @@
 
                 deregister = $scope.$watch('vm.subResearchEntity.config.scientific', async () => {
                     vm.initializeTabs(tabIdentifiers);
-                    vm.chartsData = await getData();
-                    vm.reloadTabs(vm.chartsData);
+                    await vm.recalculate();
                 });
 
                 vm.subResearchEntity = context.getSubResearchEntity();
@@ -93,8 +92,7 @@
 
                 if (vm.subResearchEntity.isScientific()) {
                     vm.initializeTabs(tabIdentifiers);
-                    vm.chartsData = await getData();
-                    vm.reloadTabs(vm.chartsData);
+                    await vm.recalculate();
                 }
             };
 
@@ -105,25 +103,20 @@
             };
 
             async function recalculate() {
+                if (vm.recalculating)
+                    return;
+
                 vm.recalculating = true;
-                vm.chartsData = await getData(true);
+                const refresh = !isMainGroup();
+                vm.chartsData = await vm.getChartsData(vm.subResearchEntity, refresh);
+
+                if (vm.chartsData.chartDataDate && vm.chartsData.chartDataDate[0].max) {
+                    vm.lastRefresh = new Date(vm.chartsData.chartDataDate[0].max);
+                }
                 vm.reloadTabs(vm.chartsData);
                 vm.recalculating = false;
             }
 
-            async function getData(refresh = false) {
-                if (!isMainGroup()) {
-                    refresh = true;
-                }
-
-                const chartsData = await vm.getChartsData(vm.subResearchEntity, refresh);
-
-                if (chartsData.chartDataDate && chartsData.chartDataDate[0].max) {
-                    vm.lastRefresh = new Date(chartsData.chartDataDate[0].max);
-                }
-
-                return chartsData;
-            }
             /* jshint ignore:end */
 
             function isMainGroup() {
@@ -134,6 +127,7 @@
             async function getProfile() {
                 return UsersService.getProfile(AuthService.user.researchEntity);
             }
+
             /* jshint ignore:end */
         }
     }
