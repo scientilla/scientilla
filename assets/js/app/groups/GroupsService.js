@@ -111,6 +111,8 @@
 
         function createInstituteStructure(institute, membershipGroups) {
 
+            membershipGroups = _.orderBy(membershipGroups, 'parent_group.id', 'desc');
+
             // Map the index of membershipGroups with child group => index = value, child group id = key
             const indexMapping = membershipGroups.reduce((acc, el, i) => {
                 acc[el.child_group.id] = i;

@@ -132,7 +132,9 @@
         /* jshint ignore:end */
 
         vm.$onDestroy = function () {
-            onDataCountChangeDeregisterer();
+            if (typeof onDataCountChangeDeregisterer === "function") {
+                onDataCountChangeDeregisterer();
+            }
         };
 
         function onSubmit(values) {

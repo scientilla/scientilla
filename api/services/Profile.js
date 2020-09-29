@@ -347,7 +347,7 @@ async function toPDF(researchEntityId, options = {}) {
                 const skills = [];
                 for (let i = 0; i < category.skills.length; i++) {
                     const skill = category.skills[i];
-                    skills.push(skill);
+                    skills.push(skill.value);
                 }
 
                 stack.push({
@@ -1855,7 +1855,7 @@ async function toDoc(researchEntityId, options = {}) {
                 for (let i = 0; i < category.skills.length; i++) {
                     const skill = category.skills[i];
                     let paragraph = new Paragraph({
-                        text: skill,
+                        text: skill.value,
                         bullet: {
                             level: 0
                         }
@@ -1863,7 +1863,7 @@ async function toDoc(researchEntityId, options = {}) {
 
                     if (i === category.skills.length-1) {
                         paragraph = new Paragraph({
-                            text: skill,
+                            text: skill.value,
                             bullet: {
                                 level: 0
                             },
