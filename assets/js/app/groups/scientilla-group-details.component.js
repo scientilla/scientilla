@@ -116,6 +116,6 @@
             if (!vm.group)
                 return true;
             return ['Institute', 'Center', 'Research Line', 'Facility'].includes(vm.group.type);
-        }
+        };
     }
 })();
