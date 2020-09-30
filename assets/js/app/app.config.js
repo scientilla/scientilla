@@ -10,10 +10,7 @@
     function configure(RestangularProvider, $routeProvider, localStorageServiceProvider, NotificationProvider) {
         $routeProvider
             .when("/", {
-                redirectTo: '/dashboard'
-            })
-            .otherwise({
-                redirectTo: "/dashboard"
+                redirectTo: '/profile'
             });
 
         RestangularProvider.setBaseUrl('/api/v1');

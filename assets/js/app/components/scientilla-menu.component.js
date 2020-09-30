@@ -22,7 +22,7 @@
         vm.isActive = isActive;
         vm.isAdmin = isAdmin;
         vm.getUrl = getUrl;
-        vm.getDashboardUrl = getDashboardUrl;
+        vm.isUser = isUser;
         vm.hasActiveExternalConnectors = false;
 
         const prefix = '#/';
@@ -86,6 +86,10 @@
             return vm.user && vm.user.isAdmin();
         }
 
+        function isUser() {
+            return vm.subResearchEntity.getType() === 'user';
+        }
+
         function getUrl(url) {
             if (vm.subResearchEntity.getType() === 'group') {
                 return prefix + vm.subResearchEntity.slug + '/' + url;
@@ -94,20 +98,11 @@
             return prefix + url;
         }
 
-        function getDashboardUrl() {
-            const dashboardSlug = 'dashboard';
-            if (vm.subResearchEntity.getType() === 'group') {
-                return prefix + vm.subResearchEntity.slug + '/' + dashboardSlug;
-            }
-
-            return prefix + dashboardSlug;
-        }
-
         function checkActiveConnectors() {
 
             vm.hasActiveExternalConnectors = false;
 
-            Object.keys(vm.connectors).forEach(function(connector) {
+            Object.keys(vm.connectors).forEach(function (connector) {
                 if (vm.connectors[connector].active) {
                     vm.hasActiveExternalConnectors = true;
                 }

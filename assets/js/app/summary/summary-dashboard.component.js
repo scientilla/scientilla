@@ -3,13 +3,13 @@
         "use strict";
 
         angular.module('summary')
-            .component('profileSummary', {
-                templateUrl: 'partials/profile-summary.html',
-                controller: ProfileSummaryComponent,
+            .component('summaryDashboard', {
+                templateUrl: 'partials/summary-dashboard.html',
+                controller,
                 controllerAs: 'vm'
             });
 
-        ProfileSummaryComponent.$inject = [
+        controller.$inject = [
             'context',
             '$scope',
             '$controller',
@@ -19,7 +19,7 @@
             '$location'
         ];
 
-        function ProfileSummaryComponent(
+        function controller(
             context,
             $scope,
             $controller,
@@ -44,17 +44,14 @@
             let tabIdentifiers = [
                 {
                     index: 0,
-                    slug: 'profile'
-                }, {
-                    index: 1,
                     slug: 'documents-overview',
                     tabName: 'overview',
                 }, {
-                    index: 2,
+                    index: 1,
                     slug: 'bibliometric-charts',
                     tabName: 'metrics',
                 }, {
-                    index: 3,
+                    index: 2,
                     slug: 'calculated-data'
                 }
             ];
@@ -81,7 +78,6 @@
                 if (vm.subResearchEntity.getType() === 'user') {
                     vm.profile = await getProfile();
 
-                    $location.url('/dashboard/profile');
                 } else {
                     if (!vm.isMainGroup()) {
                         tabIdentifiers = tabIdentifiers.filter(identifier => {
