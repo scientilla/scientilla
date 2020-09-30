@@ -53,14 +53,14 @@
                 setNumberOfItems();
 
 
-                vm.documents = await researchEntityService.getDocuments(vm.user, {limit: 1});
-                vm.favoriteDocuments = await researchEntityService.getDocuments(vm.user, {}, true);
+                vm.documents = await researchEntityService.getDocuments(vm.user, {limit: 1}, false, []);
+                vm.favoriteDocuments = await researchEntityService.getDocuments(vm.user, {}, true, []);
                 vm.loadingDocuments = false;
                 setNumberOfItems();
 
                 vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
-                vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {});
-                vm.favoriteAccomplishments = await AccomplishmentService.get(vm.researchEntity, {}, true);
+                vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {}, false, []);
+                vm.favoriteAccomplishments = await AccomplishmentService.get(vm.researchEntity, {}, true, []);
                 vm.loadingAccomplishments = false;
             }
 

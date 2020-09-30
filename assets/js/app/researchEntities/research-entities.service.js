@@ -240,12 +240,12 @@
             }
         }
 
-        async function getAccomplishment(id) {
-            return await Restangular.one('accomplishments', id).get({populate: accomplishmentPopulates});
+        async function getAccomplishment(id, populates = accomplishmentPopulates) {
+            return await Restangular.one('accomplishments', id).get({populate: populates});
         }
 
-        async function getAccomplishments(researchEntity, query, favorites = false) {
-            const populate = {populate: accomplishmentPopulates};
+        async function getAccomplishments(researchEntity, query, favorites = false, populates = accomplishmentPopulates) {
+            const populate = {populate: populates};
             const q = _.merge({}, query, populate);
 
             if (favorites) {
@@ -255,8 +255,8 @@
             }
         }
 
-        async function getAccomplishmentDrafts(researchEntity, query) {
-            const populate = {populate: accomplishmentPopulates};
+        async function getAccomplishmentDrafts(researchEntity, query, populates = accomplishmentPopulates) {
+            const populate = {populate: populates};
             const q = _.defaultsDeep({}, query, populate);
             const draftList = await researchEntity.getList('accomplishmentDrafts', q);
 
@@ -374,8 +374,8 @@
             return await researchEntity.one('min-max-years', type).get();
         }
 
-        async function getProjects(researchEntity, query, favorites = false) {
-            const populate = {populate: projectPopulates};
+        async function getProjects(researchEntity, query, favorites = false, populates = projectPopulates) {
+            const populate = {populate: populates};
             const q = _.merge({}, query, populate);
             const types = await ResearchItemTypesService.getTypes();
 
@@ -395,8 +395,8 @@
             }
         }
 
-        async function getPatents(researchEntity, query, favorites = false) {
-            const populate = {populate: patentPopulates};
+        async function getPatents(researchEntity, query, favorites = false, populates = patentPopulates) {
+            const populate = {populate: populates};
             const q = _.merge({}, query, populate);
 
             if (favorites) {
@@ -406,16 +406,10 @@
             }
         }
 
-        async function getPatentFamilies(researchEntity, query, favorites = false) {
-            const populate = {populate: patentPopulates};
-            const q = _.merge({}, query, populate);
-
-            if (favorites) {
-                //return await researchEntity.getList('favoritePatentFamilies', q);
-            } else {
-                return await researchEntity.getList('patentFamilies', q);
-            }
+        async function getPatentFamilies(researchEntity, query) {
+                return await researchEntity.getList('patentFamilies', query);
         }
+
         /* jshint ignore:end */
 
         return service;
