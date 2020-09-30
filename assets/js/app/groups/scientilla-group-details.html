@@ -3,67 +3,59 @@
         <h1>{{ vm.group.getDisplayName() }}</h1>
 
         <uib-tabset active="vm.activeTabIndex">
-            <uib-tab
-                index="0"
-                heading="Info">
+            <uib-tab index="0"
+                     heading="Info">
                 <scientilla-group-info
-                    ng-if="vm.group"
-                    group="vm.group"></scientilla-group-info>
+                        ng-if="vm.group"
+                        group="vm.group"></scientilla-group-info>
             </uib-tab>
-            <uib-tab
-                index="1"
-                heading="Members">
+            <uib-tab index="1"
+                     heading="Members">
                 <scientilla-group-members
-                    ng-if="vm.group"
-                    group="vm.group"
-                    refresh-group="vm.refreshGroup"></scientilla-group-members>
+                        ng-if="vm.group"
+                        group="vm.group"
+                        refresh-group="vm.refreshGroup"></scientilla-group-members>
             </uib-tab>
-            <uib-tab
-                index="2"
-                ng-show="vm.group.childGroups.length || vm.subResearchEntity.isAdmin()"
-                heading="Groups">
+            <uib-tab index="2"
+                     ng-show="vm.group.childGroups.length || vm.subResearchEntity.isAdmin()"
+                     heading="Groups">
                 <scientilla-group-groups
-                    ng-if="vm.group"
-                    group="vm.group"
-                    refresh-group="vm.refreshGroup"></scientilla-group-groups>
+                        ng-if="vm.group"
+                        group="vm.group"
+                        refresh-group="vm.refreshGroup"></scientilla-group-groups>
             </uib-tab>
-            <uib-tab
-                index="3"
-                ng-if="['Institute','Center','Research line','Facility'].includes(vm.group.type)"
-                heading="Documents">
+            <uib-tab index="3"
+                     ng-if="vm.isScientific()"
+                     heading="Documents">
                 <scientilla-documents-list
-                    ng-if="vm.group"
-                    research-entity="vm.group"
-                    section="vm.documentListSections.GROUP"></scientilla-documents-list>
+                        ng-if="vm.group"
+                        research-entity="vm.group"
+                        section="vm.documentListSections.GROUP"></scientilla-documents-list>
             </uib-tab>
-            <uib-tab
-                index="4"
-                ng-if="['Institute','Center','Research line','Facility'].includes(vm.group.type)"
-                heading="Accomplishments">
+            <uib-tab index="4"
+                     ng-if="vm.isScientific()"
+                     heading="Accomplishments">
                 <scientilla-accomplishments-list
-                    ng-if="vm.researchEntity"
-                    research-entity="vm.researchEntity"
-                    section="vm.accomplishmentListSections.GROUP"></scientilla-accomplishments-list>
+                        ng-if="vm.researchEntity"
+                        research-entity="vm.researchEntity"
+                        section="vm.accomplishmentListSections.GROUP"></scientilla-accomplishments-list>
             </uib-tab>
-            <uib-tab
-                index="5"
-                heading="Projects"
-                ng-if="vm.isAdmin() && ['Institute','Center','Research line','Facility'].includes(vm.group.type)">
+            <uib-tab index="5"
+                     ng-if="vm.isAdmin() && vm.isScientific()"
+                     heading="Projects">
                 <scientilla-projects-list
-                    ng-if="vm.researchEntity"
-                    research-entity="vm.researchEntity"
-                    section="vm.projectListSections.GROUP"></scientilla-projects-list>
+                        ng-if="vm.researchEntity"
+                        research-entity="vm.researchEntity"
+                        section="vm.projectListSections.GROUP"></scientilla-projects-list>
             </uib-tab>
-            <uib-tab
-                index="6"
-                heading="Documents Overview"
-                ng-if="vm.loggedUser.isSuperViewer() && ['Institute','Center','Research line','Facility'].includes(vm.group.type)">
+            <uib-tab index="6"
+                     ng-if="vm.loggedUser.isSuperViewer() && vm.isScientific()"
+                     heading="Documents Overview">
                 <summary-overview charts-data="vm.chartsData"></summary-overview>
             </uib-tab>
-            <uib-tab
-                index="7"
-                heading="Bibliometric Charts"
-                ng-if="vm.loggedUser.isSuperViewer() && ['Institute','Center','Research line','Facility'].includes(vm.group.type)">
+            <uib-tab index="7"
+                     heading="Bibliometric Charts"
+                     ng-if="vm.loggedUser.isSuperViewer() && vm.isScientific()">
                 <summary-metrics charts-data="vm.chartsData"></summary-metrics>
             </uib-tab>
         </uib-tabset>
