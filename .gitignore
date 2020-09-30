@@ -168,6 +168,8 @@ installer/.env
 installer/uploads/*
 !installer/uploads/.gitkeep
 
+profile
+
 ################################################
 # Assets
 #
