@@ -64,7 +64,7 @@
             const noRedirectUrls = ['/unavailable', '/login'];
             const goingToNoRedirectUrl = next.$$route && noRedirectUrls.includes(next.$$route.originalPath);
             if (!goingToNoRedirectUrl && !AuthService.isAvailable && !AuthService.isAdmin) {
-                Notification.warning('Sorry but scientilla is temporarly unavailable. Try again later.');
+                Notification.warning('Sorry but scientilla is temporarily unavailable. Try again later.');
                 ModalService.dismiss(null);
                 path.goTo('/unavailable');
                 return;
@@ -106,7 +106,7 @@
             if (status === 'DISABLED') {
                 AuthService.isAvailable = false;
                 if (!isAdmin) {
-                    Notification.warning('Sorry but scientilla is temporarly unavailable. Try again later.');
+                    Notification.warning('Sorry but scientilla is temporarily unavailable. Try again later.');
                     ModalService.dismiss(null);
                     path.goTo('/unavailable');
                 }
