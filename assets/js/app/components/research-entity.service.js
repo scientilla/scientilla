@@ -9,7 +9,7 @@
     ];
 
     function ResearchEntityServiceFactory(Restangular, DocumentLabels, DocumentKinds) {
-        var service = {};
+        const service = {};
 
         service.getDocument = getDocument;
         service.getDocuments = getDocuments;
@@ -73,10 +73,10 @@
             'oral_presentation'
         ];
 
-        function getDocuments(researchEntity, query, favorites = false) {
-            var populate = {populate: documentPopulates};
+        function getDocuments(researchEntity, query, favorites = false, populates = documentPopulates) {
+            const populate = {populate: populates};
 
-            var q = _.merge({}, query, populate);
+            const q = _.merge({}, query, populate);
 
             if (!favorites) {
                 return researchEntity.getList('documents', q);
@@ -85,16 +85,16 @@
             }
         }
 
-        function getDrafts(researchEntity, query) {
-            var populate = {populate: documentPopulates};
+        function getDrafts(researchEntity, query, populates = documentPopulates) {
+            const populate = {populate: populates};
 
-            var q = _.defaultsDeep({}, query, populate);
+            const q = _.defaultsDeep({}, query, populate);
 
             return researchEntity.getList('drafts', q);
         }
 
-        function getExternalDocuments(researchEntity, query) {
-            const populate = {populate: documentPopulates};
+        function getExternalDocuments(researchEntity, query, populates = documentPopulates) {
+            const populate = {populate: populates};
             const q = _.merge({
                 limit: query.limit,
                 skip: query.skip,
@@ -115,22 +115,22 @@
             return Restangular.all('allMemberships').getList(query);
         }
 
-        function getAllMemberships(query = {limit:0}) {
+        function getAllMemberships(query = {limit: 0}) {
             return Restangular.all('allMemberships').getList(query);
         }
 
-        function getSuggestedDocuments(researchEntity, query) {
-            var populate = {populate: documentPopulates};
+        function getSuggestedDocuments(researchEntity, query, populates = documentPopulates) {
+            const populate = {populate: populates};
 
-            var q = _.defaultsDeep({}, query, populate);
+            const q = _.defaultsDeep({}, query, populate);
 
             return researchEntity.getList('suggestedDocuments', q);
         }
 
-        function getDiscardedDocuments(researchEntity, query) {
-            var populate = {populate: documentPopulates};
+        function getDiscardedDocuments(researchEntity, query, populates = documentPopulates) {
+            const populate = {populate: populates};
 
-            var q = _.merge({}, query, populate);
+            const q = _.merge({}, query, populate);
 
             return researchEntity
                 .getList('discardedDocuments', q)
@@ -245,8 +245,8 @@
                 return service.getDocument(researchEntity, docId);
         }
 
-        async function getDocument(researchEntity, documentId) {
-            const populate = {populate: documentPopulates};
+        async function getDocument(researchEntity, documentId, populates = documentPopulates) {
+            const populate = {populate: populates};
 
             const res = await researchEntity.one('documents', documentId).get(populate);
             const document = res[0];
@@ -256,8 +256,8 @@
             // return Restangular.one('documents', documentId).get(populate);
         }
 
-        async function getDraft(researchEntity, draftId) {
-            var populate = {populate: documentPopulates};
+        async function getDraft(researchEntity, draftId, populates = documentPopulates) {
+            const populate = {populate: populates};
 
             const res = await researchEntity.one('drafts', draftId).get(populate);
             const draft = res[0];

@@ -1,6 +1,6 @@
-<scientilla-loading is-loading="vm.loading"></scientilla-loading>
+<scientilla-loading is-loading="!vm.charts"></scientilla-loading>
 
-<div class="summary-metrics-container" ng-if="vm.chartsData">
+<div class="summary-metrics-container" ng-if="vm.charts">
     <div class="info-button-container">
         <a href="" title="" ng-click="vm.showInfo()" class="btn btn-primary info-button">
             <i class="fas fa-info-circle fa-left"></i>Info
@@ -33,10 +33,9 @@
             <div class="document-totals-chart-container">
                 <h3>{{ vm.charts.documentTotals.title }}</h3>
                 <div class="chart-container">
-                    <nvd3
-                        options="vm.charts.documentTotals.options"
-                        data="vm.charts.documentTotals.data"
-                        class="chart"></nvd3>
+                    <nvd3 options="vm.charts.documentTotals.options"
+                          data="vm.charts.documentTotals.data"
+                          class="chart"></nvd3>
                 </div>
             </div>
         </div>
@@ -45,10 +44,9 @@
             <div class="h-index-chart-container">
                 <h3>{{ vm.charts.hindexPerYear.title }}</h3>
                 <div class="chart-container">
-                    <nvd3
-                        options="vm.charts.hindexPerYear.options"
-                        data="vm.charts.hindexPerYear.data"
-                        class="chart"></nvd3>
+                    <nvd3 options="vm.charts.hindexPerYear.options"
+                          data="vm.charts.hindexPerYear.data"
+                          class="chart"></nvd3>
                 </div>
             </div>
         </div>
@@ -56,23 +54,20 @@
 
     <div class="row">
         <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4">
-            <scientilla-chart-selector
-                charts="vm.documentsCharts"
-                class="metric-chart-container">
+            <scientilla-chart-selector charts="vm.documentsCharts"
+                                       class="metric-chart-container">
             </scientilla-chart-selector>
         </div>
 
         <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4">
-            <scientilla-chart-selector
-                charts="vm.citationsCharts"
-                class="metric-chart-container">
+            <scientilla-chart-selector charts="vm.citationsCharts"
+                                       class="metric-chart-container">
             </scientilla-chart-selector>
         </div>
 
         <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-4">
-            <scientilla-chart-selector
-                charts="vm.metricsCharts"
-                class="metric-chart-container">
+            <scientilla-chart-selector charts="vm.metricsCharts"
+                                       class="metric-chart-container">
             </scientilla-chart-selector>
         </div>
     </div>

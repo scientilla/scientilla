@@ -45,7 +45,7 @@
 
             activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
                 if (vm.activeTabIndex === 5) {
-                    $timeout(function() {
+                    $timeout(function () {
                         $scope.$broadcast('rzSliderForceRender');
                     });
                 }
@@ -100,15 +100,22 @@
 
         function refreshGroup() {
             return GroupsService.getGroup(vm.groupId)
-                .then(async(group) => {
+                .then(async (group) => {
                     vm.group = group;
                     vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
                 });
         }
+
         /* jshint ignore:end */
 
         vm.isAdmin = function () {
             return vm.loggedUser && vm.loggedUser.isAdmin();
+        };
+
+        vm.isScientific = function () {
+            if (!vm.group)
+                return true;
+            return ['Institute', 'Center', 'Research Line', 'Facility'].includes(vm.group.type);
         };
     }
 })();

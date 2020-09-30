@@ -13,7 +13,7 @@
                     if (_.has(params, 'group')) {
                         return '/' + params.group + '/dashboard/documents-overview';
                     } else {
-                        return '/dashboard/profile';
+                        return '/profile';
                     }
                 }
             })
