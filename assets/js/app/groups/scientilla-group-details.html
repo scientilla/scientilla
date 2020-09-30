@@ -29,6 +29,7 @@
             </uib-tab>
             <uib-tab
                 index="3"
+                ng-if="['Institute','Center','Research line','Facility'].includes(vm.group.type)"
                 heading="Documents">
                 <scientilla-documents-list
                     ng-if="vm.group"
@@ -37,6 +38,7 @@
             </uib-tab>
             <uib-tab
                 index="4"
+                ng-if="['Institute','Center','Research line','Facility'].includes(vm.group.type)"
                 heading="Accomplishments">
                 <scientilla-accomplishments-list
                     ng-if="vm.researchEntity"
@@ -46,7 +48,7 @@
             <uib-tab
                 index="5"
                 heading="Projects"
-                ng-if="vm.isAdmin()">
+                ng-if="vm.isAdmin() && ['Institute','Center','Research line','Facility'].includes(vm.group.type)">
                 <scientilla-projects-list
                     ng-if="vm.researchEntity"
                     research-entity="vm.researchEntity"
@@ -55,13 +57,13 @@
             <uib-tab
                 index="6"
                 heading="Documents Overview"
-                ng-if="vm.loggedUser.isSuperViewer()">
+                ng-if="vm.loggedUser.isSuperViewer() && ['Institute','Center','Research line','Facility'].includes(vm.group.type)">
                 <summary-overview charts-data="vm.chartsData"></summary-overview>
             </uib-tab>
             <uib-tab
                 index="7"
                 heading="Bibliometric Charts"
-                ng-if="vm.loggedUser.isSuperViewer()">
+                ng-if="vm.loggedUser.isSuperViewer() && ['Institute','Center','Research line','Facility'].includes(vm.group.type)">
                 <summary-metrics charts-data="vm.chartsData"></summary-metrics>
             </uib-tab>
         </uib-tabset>
