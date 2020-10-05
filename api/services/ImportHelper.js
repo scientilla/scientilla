@@ -347,7 +347,9 @@ function handleStep(step) {
                     }
                 }
 
-                return tmpLine;
+                if (!_.isEmpty(tmpLine)) {
+                    return tmpLine;
+                }
             });
             tmpLines = _.orderBy(tmpLines, 'percentage', 'desc');
             tmpLines.forEach(line => delete line.percentage);
@@ -373,7 +375,9 @@ function handleStep(step) {
                 }
             }
 
-            handledStep.lines.push(newLine);
+            if (!_.isEmpty(newLine)) {
+                handledStep.lines.push(newLine);
+            }
         }
 
         return handledStep;
