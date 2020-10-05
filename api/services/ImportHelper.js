@@ -350,7 +350,7 @@ function handleStep(step) {
                 if (!_.isEmpty(tmpLine)) {
                     return tmpLine;
                 }
-            });
+            }).filter(line => line !== undefined);
             tmpLines = _.orderBy(tmpLines, 'percentage', 'desc');
             tmpLines.forEach(line => delete line.percentage);
 
