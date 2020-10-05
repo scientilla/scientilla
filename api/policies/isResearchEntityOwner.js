@@ -18,7 +18,7 @@ module.exports = function (req, res, next) {
                 return next();
 
         if (researchEntity && researchEntity.type === 'group') {
-            const u = User.findOne({id: user.id}).populate('administratedGroups');
+            const u = await User.findOne({id: user.id}).populate('administratedGroups');
             const administratedGroupIds = u.administratedGroups.map(g => g.id);
             if (administratedGroupIds.includes(researchEntity.group[0].id))
                 return next();
