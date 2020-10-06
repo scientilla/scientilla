@@ -1435,40 +1435,20 @@ async function saveProfile(req) {
             profile.jobTitle = researchEntityData.profile.jobTitle;
             profile.roleCategory = researchEntityData.profile.roleCategory;
             profile.phone = researchEntityData.profile.phone;
+            profile.gender = researchEntityData.profile.gender;
             profile.groups = researchEntityData.profile.groups;
 
             if (!hasFiles && _.has(profile, 'image.value') && !_.isEmpty(profile.image.value)) {
                 profile.image.value = researchEntityData.profile.image.value;
             }
+
+            profile.experiencesInternal = researchEntityData.profile.experiencesInternal;
+            profile.hidden = researchEntityData.profile.hidden;
         }
 
         // Sorting experiences
         profile.experiencesExternal = _.orderBy(
             profile.experiencesExternal,
-            [
-                experience => new moment(experience.from, ISO8601Format),
-                experience => new moment(experience.to, ISO8601Format)
-            ],
-            [
-                'desc',
-                'desc'
-            ]
-        );
-
-        profile.experiencesInternal = _.orderBy(
-            profile.experiencesInternal,
-            [
-                experience => new moment(experience.from, ISO8601Format),
-                experience => new moment(experience.to, ISO8601Format)
-            ],
-            [
-                'desc',
-                'desc'
-            ]
-        );
-
-        profile.experiences = _.orderBy(
-            profile.experiences,
             [
                 experience => new moment(experience.from, ISO8601Format),
                 experience => new moment(experience.to, ISO8601Format)
