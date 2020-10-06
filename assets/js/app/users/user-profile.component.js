@@ -43,7 +43,8 @@
 
         /* jshint ignore:start */
         vm.$onInit = async () => {
-            vm.profile = await UsersService.getUserProfile(vm.user.researchEntity);
+            vm.researchEntity = vm.user.researchEntity;
+            vm.profile = await UsersService.getUserProfile(vm.researchEntity);
 
             vm.loading = false;
 

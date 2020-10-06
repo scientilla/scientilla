@@ -14,6 +14,7 @@
         }"
         ng-if="!vm.loading && (vm.profile.name || vm.profile.surname) && vm.numberOfItems > 0">
         <profile-basic-info-block
+            research-entity="vm.researchEntity"
             profile="vm.profile"
             ng-if="vm.profile"
             former="!vm.user.active"

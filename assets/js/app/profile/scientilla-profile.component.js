@@ -50,7 +50,8 @@
             /* jshint ignore:start */
             vm.$onInit = async () => {
 
-                vm.profile = await UsersService.getProfile(AuthService.user.researchEntity);
+                vm.researchEntity = AuthService.user.researchEntity;
+                vm.profile = await UsersService.getProfile(vm.researchEntity);
 
                 EventsService.subscribeAll(vm, [
                     EventsService.USER_PROFILE_CHANGED,
