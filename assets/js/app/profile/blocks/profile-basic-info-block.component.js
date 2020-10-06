@@ -7,6 +7,7 @@
             controller: profileBasicInfoBlock,
             controllerAs: 'vm',
             bindings: {
+                researchEntity: '<',
                 profile: '<',
                 former: '<?'
             }
@@ -17,7 +18,7 @@
     function profileBasicInfoBlock(AuthService, pathProfileImages, TextService) {
         const vm = this;
 
-        vm.pathProfileImages = pathProfileImages + '/' + AuthService.user.researchEntity + '/';
+        vm.pathProfileImages = pathProfileImages + '/' + vm.researchEntity;
 
         vm.researchLines = [];
         vm.facilities = [];
