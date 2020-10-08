@@ -9,6 +9,7 @@
 
     let styles = {};
     let colors = [];
+    let data = [];
 
     function ChartService(DocumentTypesService) {
         const service = {
@@ -49,8 +50,41 @@
             }
         };
 
-        service.getData = (researchEntity, charts, refresh = false) =>
-            researchEntity.all('charts').getList({refresh: !!refresh, charts});
+        /* jshint ignore:start */
+        service.getData = async (researchEntity, refresh = false) => {
+            const charts = [
+                'journalsByYear',
+                'conferencesByYear',
+                'booksByYear',
+                'bookSeriesByYear',
+                'disseminationTalksByYear',
+                'scientificTalksByYear',
+                'documentsByType',
+                'filteredAffiliatedJournalsByYear',
+                'filteredAffiliatedConferencesByYear',
+                'filteredAffiliatedBooksByYear',
+                'filteredAffiliatedBookSeriesByYear',
+                'filteredNotAffiliatedJournalsByYear',
+                'filteredNotAffiliatedConferencesByYear',
+                'filteredNotAffiliatedBooksByYear',
+                'filteredNotAffiliatedBookSeriesByYear',
+                'hindexPerYear',
+                'citationsPerYear',
+                'citationsPerDocumentYear',
+                'totalIfPerYear',
+                'totalSjrPerYear',
+                'totalSnipPerYear',
+                'chartDataDate'
+            ];
+
+            if (!data[researchEntity.researchEntity] || refresh) {
+                const res = await researchEntity.all('charts').getList({refresh: !!refresh, charts});
+                data[researchEntity.researchEntity] = res[0];
+            }
+
+            return data[researchEntity.researchEntity];
+        };
+        /* jshint ignore:end */
 
         service.setStyles = (customizations) => {
             const darkenColors = [],

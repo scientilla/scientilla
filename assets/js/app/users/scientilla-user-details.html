@@ -90,13 +90,13 @@
                 index="5"
                 heading="Documents Overview"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.user.isScientific()">
-                <summary-overview charts-data="vm.chartsData"></summary-overview>
+                <overview-tab research-entity="vm.user"></overview-tab>
             </uib-tab>
             <uib-tab
                 index="6"
                 heading="Bibliometric Charts"
                 ng-if="vm.loggedUser.isSuperViewer() && vm.user.isScientific()">
-                <summary-metrics charts-data="vm.chartsData"></summary-metrics>
+                <metrics-tab research-entity="vm.user"></metrics-tab>
             </uib-tab>
         </uib-tabset>
     </div>

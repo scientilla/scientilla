@@ -28,14 +28,12 @@
             vm.showInfo = showInfo;
             vm.getMainChartOptions = getMainChartOptions;
 
-            vm.name = 'overview';
-            vm.shouldBeReloaded = true;
             vm.charts = false;
 
             let deregister;
 
             vm.$onInit = () => {
-                deregister = $scope.$watch('vm.chartsData',vm.reload);
+                deregister = $scope.$watch('vm.chartsData', vm.reload);
 
                 CustomizeService.getCustomizations().then(customizations => {
                     let timer = null;
