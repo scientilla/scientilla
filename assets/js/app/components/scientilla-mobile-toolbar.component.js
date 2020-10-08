@@ -79,7 +79,7 @@
             return GroupsService.getGroup(group.id)
                 .then(group => context.setSubResearchEntity(group))
                 .then(() => {
-                    path.goTo('/' + group.slug + '/dashboard');
+                    path.goTo('/' + group.slug + '/charts');
                 });
         }
 
@@ -87,7 +87,7 @@
             return UsersService.getUser(user.id)
                 .then(user => context.setSubResearchEntity(user))
                 .then(() => {
-                    path.goTo('/dashboard');
+                    path.goTo('/profile');
                 });
         }
 

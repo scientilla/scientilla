@@ -2,9 +2,10 @@
 
 <div class="summary-metrics-container" ng-if="vm.charts">
     <div class="info-button-container">
-        <a href="" title="" ng-click="vm.showInfo()" class="btn btn-primary info-button">
+        <button ng-click="vm.showInfo()" class="btn btn-primary info-button">
             <i class="fas fa-info-circle fa-left"></i>Info
-        </a>
+        </button>
+        <h2 ng-if="vm.title" class="title">{{ vm.title }}</h2>
     </div>
 
     <div class="row">

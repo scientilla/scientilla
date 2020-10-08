@@ -25,6 +25,7 @@
         'accomplishments',
         'documentation',
         'projects',
-        'patents'
+        'patents',
+        'charts'
     ]);
 })();

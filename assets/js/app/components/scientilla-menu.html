@@ -1,19 +1,5 @@
 <div ng-show="vm.isLogged" class="sidebar-menu">
     <ul class="sidebar-listing">
-        <li ng-if="!vm.user.isViewOnly()">
-            <a class="btn btn-dashboard"
-               ng-if="vm.isUser()"
-               ng-href="{{ vm.getUrl('profile') }}"
-               ng-class="{ 'btn-primary' : vm.isActive('/', true),  'btn-light' : !vm.isActive('/', true) }">
-                <i class="fas fa-user fa-left"></i>
-                Profile</a>
-            <a class="btn btn-dashboard"
-               ng-if="vm.subResearchEntity.isScientific()"
-               ng-href="{{ vm.getUrl('dashboard/documents-overview') }}"
-               ng-class="{ 'btn-primary' : vm.isActive('/', true),  'btn-light' : !vm.isActive('/', true) }">
-                <i class="fas fa-tachometer-alt fa-left"></i>
-                Dashboard</a>
-        </li>
         <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific()">
             <label class="label-add-document">
                 Documents

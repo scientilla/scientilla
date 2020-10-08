@@ -1,0 +1,16 @@
+<scientilla-backend-layout>
+    <div class="summary summary-profile">
+        <summary-metrics
+            charts-data="vm.chartsData"
+            is-loading="vm.recalculating"
+            title="Bibliometrics"></summary-metrics>
+
+        <div ng-if="vm.isMainGroup()">
+            Data calculated on {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}
+            <scientilla-button click="vm.recalculate">Recalculate data</scientilla-button>
+            <scientilla-loading
+                is-loading="vm.recalculating"
+                text="Recalculating ..."></scientilla-loading>
+        </div>
+    </div>
+</scientilla-backend-layout>

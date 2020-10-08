@@ -88,7 +88,7 @@
                     context.setSubResearchEntity(group);
                 })
                 .then(() => {
-                    path.goTo('/' + group.slug + '/dashboard');
+                    path.goTo('/' + group.slug + '/charts');
                 });
         }
 
@@ -98,7 +98,7 @@
                     context.setSubResearchEntity(user);
                 })
                 .then(() => {
-                    path.goTo('/dashboard');
+                    path.goTo('/profile');
                 });
         }
 

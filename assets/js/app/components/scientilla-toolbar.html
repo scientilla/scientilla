@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <ul class="top-toolbar-listing">
                 <li>
-                     <a href="#/dashboard" class="logo-link">
+                     <a href="#/profile" class="logo-link">
                         <img class="logo" src="/images/scientilla-logo-white-40.png">
                     </a>
 
@@ -55,7 +55,6 @@
                     </div>
                 </li>
                 <li>
-                    <!-- TODO -->
                     <ul class="toolbar-right-menu">
                         <li ng-if="!vm.isLogged">
                             <a
@@ -66,6 +65,7 @@
                                 Register
                             </a>
                         </li>
+
                         <li ng-if="!vm.isLogged">
                             <a
                                 class="btn btn-link"
@@ -74,13 +74,14 @@
                                 Login
                             </a>
                         </li>
+
                         <li ng-if="vm.isLogged">
                             <div uib-dropdown class="dropdown">
                                 <button
                                     ng-if="vm.researchEntityIsUser() && !vm.user.isViewOnly()"
                                     class="btn btn-link"
                                     uib-dropdown-toggle>
-                                    <i class="fas fa-question-circle" aria-hidden="true"></i>
+                                    <i class="fas fa-question-circle fa-left" aria-hidden="true"></i>Info
                                 </button>
                                 <ul
                                     uib-dropdown-menu
@@ -108,28 +109,65 @@
                                 <button
                                     class="btn btn-link"
                                     uib-dropdown-toggle>
-                                    <i class="fas fa-user-edit" aria-hidden="true"></i>
+                                    <i class="fas fa-chart-line fa-left" aria-hidden="true"></i>My charts
                                 </button>
                                 <ul
                                     uib-dropdown-menu
                                     class="dropdown-menu dropdown-menu-right">
                                     <li>
-                                        <button
+                                        <a
                                             class="dropdown-item"
-                                            ng-click="vm.editUserProfile()"
-                                            ng-if="vm.profile && vm.profile.name && vm.profile.surname && vm.researchEntityIsUser()">
-                                            My profile
-                                        </button>
+                                            ng-href="{{ vm.getUrl('charts/documents-overview') }}">
+                                            Documents overview
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a
+                                            class="dropdown-item"
+                                            ng-href="{{ vm.getUrl('charts/bibliometric-charts') }}">
+                                            Bibliometrics charts
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li ng-if="vm.isLogged && !vm.user.isViewOnly() && vm.researchEntityIsUser()">
+                            <div uib-dropdown class="dropdown">
+                                <button
+                                    class="btn btn-link"
+                                    uib-dropdown-toggle>
+                                    <i class="fas fa-user fa-left" aria-hidden="true"></i>My profile
+                                </button>
+                                <ul
+                                    uib-dropdown-menu
+                                    class="dropdown-menu dropdown-menu-right">
+                                    <li>
+                                        <a
+                                            class="dropdown-item"
+                                            ng-href="{{ vm.getUrl('profile') }}"
+                                            ng-if="vm.profile && vm.profile.name && vm.profile.surname">
+                                            View profile
+                                        </a>
                                     </li>
                                     <li>
                                         <button
                                             class="dropdown-item"
-                                            ng-click="vm.editUserSettings()">
-                                            Settings
+                                            ng-click="vm.editUserProfile()"
+                                            ng-if="vm.profile && vm.profile.name && vm.profile.surname">
+                                            Edit profile
                                         </button>
                                     </li>
                                 </ul>
                             </div>
+                        </li>
+
+                        <li ng-if="vm.isLogged && !vm.user.isViewOnly()">
+                            <button
+                                class="btn btn-link"
+                                ng-click="vm.editUserSettings()">
+                                <i class="fas fa-cogs fa-left"></i>Settings
+                            </button>
                         </li>
 
                         <li ng-if="vm.isLogged">

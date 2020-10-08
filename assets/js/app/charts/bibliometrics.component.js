@@ -2,9 +2,9 @@
 (function () {
         "use strict";
 
-        angular.module('summary')
-            .component('summaryDashboard', {
-                templateUrl: 'partials/summary-dashboard.html',
+        angular.module('charts')
+            .component('bibliometrics', {
+                templateUrl: 'partials/bibliometrics.html',
                 controller,
                 controllerAs: 'vm'
             });
