@@ -51,12 +51,12 @@
             <uib-tab index="6"
                      ng-if="vm.loggedUser.isSuperViewer() && vm.isScientific()"
                      heading="Documents Overview">
-                <summary-overview charts-data="vm.chartsData"></summary-overview>
+                <overview-tab research-entity="vm.group"></overview-tab>
             </uib-tab>
             <uib-tab index="7"
                      heading="Bibliometric Charts"
                      ng-if="vm.loggedUser.isSuperViewer() && vm.isScientific()">
-                <summary-metrics charts-data="vm.chartsData"></summary-metrics>
+                <metrics-tab research-entity="vm.group"></metrics-tab>
             </uib-tab>
         </uib-tabset>
     </div>

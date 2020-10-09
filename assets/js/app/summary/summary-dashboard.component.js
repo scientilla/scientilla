@@ -11,17 +11,14 @@
 
         controller.$inject = [
             'context',
-            '$scope',
-            '$controller'
+            'ChartService'
         ];
 
         function controller(
             context,
-            $scope,
-            $controller
+            ChartService
         ) {
             const vm = this;
-            angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
 
             vm.lastRefresh = new Date();
             vm.recalculating = false;
@@ -35,7 +32,7 @@
             /* jshint ignore:start */
             vm.$onInit = async () => {
                 vm.subResearchEntity = context.getSubResearchEntity();
-                await recalculate();
+                vm.chartsData = await ChartService.getData(vm.subResearchEntity);
             };
 
             async function recalculate() {
@@ -43,15 +40,13 @@
                     return;
 
                 vm.recalculating = true;
-                const refresh = !isMainGroup();
-                vm.chartsData = await vm.getChartsData(vm.subResearchEntity, refresh);
+                vm.chartsData = await ChartService.getData(vm.subResearchEntity, true);
 
                 if (vm.chartsData.chartDataDate && vm.chartsData.chartDataDate[0].max) {
                     vm.lastRefresh = new Date(vm.chartsData.chartDataDate[0].max);
                 }
                 vm.recalculating = false;
             }
-
             /* jshint ignore:end */
 
             function isMainGroup() {

@@ -31,7 +31,7 @@
         vm.showInfo = showInfo;
 
         vm.$onInit = () => {
-            deregister = $scope.$watch('vm.chartsData',vm.reload);
+            deregister = $scope.$watch('vm.chartsData', vm.reload);
         };
 
         vm.$onDestroy = () => {

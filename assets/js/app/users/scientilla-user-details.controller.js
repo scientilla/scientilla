@@ -39,7 +39,6 @@
         $timeout
     ) {
         const vm = this;
-        angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
 
         vm.documentListSections = documentListSections;
@@ -73,19 +72,16 @@
             }, {
                 index: 5,
                 slug: 'documents-overview',
-                tabName: 'overview',
-                getData: getData
+                tabName: 'overview-tab'
             }, {
                 index: 6,
                 slug: 'bibliometric-charts',
-                tabName: 'metrics',
-                getData: getData
+                tabName: 'metrics-tab'
             }
         ];
 
         vm.getTypeTitle = GroupsService.getTypeTitle;
 
-        /* jshint ignore:start */
         vm.isActiveMember = (user, group) => {
             const membership = allMemberships.find(m => m.user === user.id && m.group === group.id);
             if (membership) {
@@ -94,6 +90,7 @@
             return false;
         };
 
+        /* jshint ignore:start */
         vm.$onInit = async () => {
             activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
                 if (vm.activeTabIndex === 4) {
@@ -120,6 +117,7 @@
 
             vm.initializeTabs(tabIdentifiers);
         };
+        /* jshint ignore:end */
 
         vm.$onDestroy = function () {
             activeTabWatcher();
@@ -128,11 +126,6 @@
         vm.getGroupTypes = (group) => {
             return _.groupBy(group.childGroups, 'type');
         };
-
-        async function getData() {
-            return await vm.getChartsData(vm.user);
-        }
-        /* jshint ignore:end */
 
         vm.isAdmin = function () {
             return vm.loggedUser && vm.loggedUser.isAdmin();
