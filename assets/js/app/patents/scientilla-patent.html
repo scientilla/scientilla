@@ -1,9 +1,9 @@
 <ul class="patent">
     <li class="patent-info">
         <span
-            ng-if="vm.patent.patentData.publicationDate"
+            ng-if="vm.patent.patentData.filingDate"
             class="patent-year"
-            title="Publication date: {{ vm.patent.patentData.filingDate }}">
+            title="Filing date: {{ vm.patent.patentData.filingDate }}">
             {{ vm.format(vm.patent.patentData.filingDate) | date: 'yyyy' }}
         </span>
         <img ng-src="{{ vm.customizations.logos.institute.src }}"
