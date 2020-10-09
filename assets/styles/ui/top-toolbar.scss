@@ -50,6 +50,30 @@
         }
     }
 
+    .btn-expand{
+        position: relative;
+        text-overflow: clip;
+
+        &.dropdown-toggle{
+            //padding-right: 2rem;
+        }
+
+        .expand-content{
+            //display: none;
+        }
+
+        &:hover{
+            &.dropdown-toggle{
+                padding-right: 3rem;
+            }
+
+            .expand-content{
+                display: inline-block;
+                vertical-align: top;
+            }
+        }
+    }
+
     .toolbar-right-menu{
         @include normalize-listing;
 

@@ -10,10 +10,19 @@
 }
 
 .dropdown-toggle{
+    position: relative;
+    padding-right: 3rem;
+
     &.only-icon{
         &:after{
             margin-left: 0px;
         }
+    }
+
+    &::after{
+        position: absolute;
+        top: 50%;
+        right: 1rem;
     }
 }
 
