@@ -31,57 +31,55 @@ async function importContracts(email = ImportHelper.getDefaultEmail(), override 
         const group = allGroups.find(g => g.code === code);
 
         // Check if the group code exists in the group table, otherwise it is an very old group
-        if (group) {
+        if (!group) {
+            sails.log.info('The group with code: ' + code + ' is not active or doesn\'t exist');
+            return;
+        }
 
-            // Check if the user already has a membership of the group
-            const membershipOfGroup = await Membership.findOne({user: user.id, group: group.id});
-            let active = false;
+        // Check if the user already has a membership of the group
+        const membershipOfGroup = await Membership.findOne({user: user.id, group: group.id});
+        let active = false;
 
-            // Set the active state to true if the to date is in the future or if permanent contract
-            if (_.isNil(to) || moment(to, ISO8601Format).diff(moment().startOf('day')) >= 0) {
-                active = true;
-            }
+        // Set the active state to true if the to date is in the future or if permanent contract
+        if (_.isNil(to) || moment(to, ISO8601Format).diff(moment().startOf('day')) >= 0) {
+            active = true;
+        }
 
-            // We update the current membership
-            if (membershipOfGroup) {
-                await Membership.update(
-                    {id: membershipOfGroup.id},
-                    {
-                        lastsynch: moment().utc().format(),
-                        active: active,
-                        synchronized: true
-                    }
-                );
-                const updatedMembership = await Membership.findOne({user: user.id, group: group.id});
-
-                sails.log.info('We update the membership with the following parameters: email address: ' +
-                    user.username + ', group ' + group.code + ' & active state: ' + active);
-
-                const tmpMembershipIndex = updatedMemberships
-                    .findIndex(m => m.user === updatedMembership.user && m.group === updatedMembership.group);
-                if (tmpMembershipIndex >= 0) {
-                    updatedMemberships[tmpMembershipIndex] = updatedMembership;
-                } else {
-                    updatedMemberships.push(updatedMembership);
-                }
-            } else {
-                // Or we create a new one
-                const newMembership = await Membership.create({
-                    user: user.id,
-                    group: group.id,
+        // We update the current membership
+        if (membershipOfGroup) {
+            await Membership.update(
+                {id: membershipOfGroup.id},
+                {
                     lastsynch: moment().utc().format(),
                     active: active,
                     synchronized: true
-                });
-                sails.log.info('We create a membership with the following parameters: email address: ' +
-                    user.username + ', group: ' + group.code + ' & active state: ' + active);
-                createdMemberships.push(newMembership);
+                }
+            );
+            const updatedMembership = await Membership.findOne({user: user.id, group: group.id});
+
+            sails.log.info('We update the membership with the following parameters: email address: ' +
+                user.username + ', group ' + group.code + ' & active state: ' + active);
+
+            const tmpMembershipIndex = updatedMemberships
+                .findIndex(m => m.user === updatedMembership.user && m.group === updatedMembership.group);
+            if (tmpMembershipIndex >= 0) {
+                updatedMemberships[tmpMembershipIndex] = updatedMembership;
+            } else {
+                updatedMemberships.push(updatedMembership);
             }
         } else {
-            sails.log.info('The group with code: ' + code + ' is not active or doesn\'t exist');
+            // Or we create a new one
+            const newMembership = await Membership.create({
+                user: user.id,
+                group: group.id,
+                lastsynch: moment().utc().format(),
+                active: active,
+                synchronized: true
+            });
+            sails.log.info('We create a membership with the following parameters: email address: ' +
+                user.username + ', group: ' + group.code + ' & active state: ' + active);
+            createdMemberships.push(newMembership);
         }
-
-        return;
     }
 
     async function handleEmployeeHistory(employee) {
