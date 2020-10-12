@@ -32,7 +32,8 @@
             /* jshint ignore:start */
             vm.$onInit = async () => {
                 vm.subResearchEntity = context.getSubResearchEntity();
-                vm.chartsData = await ChartService.getData(vm.subResearchEntity);
+                vm.documentOverviewChartData = await ChartService.getDocumentsOveriewChartData(vm.subResearchEntity);
+                vm.bibliometricChartData = await ChartService.getBibliometricChartData(vm.subResearchEntity);
             };
 
             async function recalculate() {
