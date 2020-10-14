@@ -1,3 +1,5 @@
+/* global ResearchEntityData, User, ResearchEntity, Accomplishment */
+
 // Profile.js - in api/services
 
 "use strict";
@@ -131,58 +133,52 @@ module.exports = {
     toDoc
 };
 
-async function getProfile(researchEntityId) {
+async function getProfile(researchEntityId, options) {
     const profile = await ResearchEntityData.getProfile(researchEntityId);
 
     let user = await User.findOne({researchEntity: researchEntityId});
     let documents = [];
     let accomplishments = [];
+    let invitedTalks = [];
 
     if (user.config.scientific) {
         // Getting the documents
-        user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
+        if (options.documents || options.invitedTalks) {
+            user = await User.findOne({researchEntity: researchEntityId}).populate('documents');
 
-        const documentIds = user.documents.map(d => d.id);
-        const documentPopulates = [
-            'source',
-            'authors',
-            'authorships',
-            'groupAuthorships',
-            'affiliations',
-            'sourceMetrics',
-            'userTags',
-            'tagLabels',
-            'groupTags',
-            'groupTagLabels',
-            'institutes',
-            'groups',
-            'scopusDocumentMetadata',
-            'openaireMetadata'
-        ];
+            const documentIds = user.documents.map(d => d.id);
+            const documentPopulates = [
+                'source',
+            ];
 
-        documents = await Document.find({
-            kind: DocumentKinds.VERIFIED,
-            id: documentIds
-        }).populate(documentPopulates);
+            const allDocuments = await Document.find({
+                kind: DocumentKinds.VERIFIED,
+                id: documentIds
+            }).populate(documentPopulates);
 
-        // Getting the accomplishments
-        const researchEntity = await ResearchEntity.findOne({id: researchEntityId}).populate('accomplishments');
-        const accomplishmentIds = researchEntity.accomplishments.map(a => a.id);
-        const accomplishmentPopulates = [
-            'type',
-            'authors',
-            'affiliations',
-            'institutes',
-            'source',
-            'verified',
-            'verifiedUsers',
-            'verifiedGroups'
-        ];
+            documents = allDocuments.filter(document => document.type !== 'invited_talk');
+            invitedTalks = allDocuments.filter(document => document.type === 'invited_talk');
 
-        accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
+            for (const invitedTalk in invitedTalks) {
+                const sourceType = SourceTypes.get().find(st => st.key === invitedTalks[invitedTalk].sourceType);
+                invitedTalks[invitedTalk].sourceType = sourceType;
+            }
+        }
+
+        if (options.accomplishments) {
+            // Getting the accomplishments
+            const researchEntity = await ResearchEntity.findOne({id: researchEntityId}).populate('accomplishments');
+            const accomplishmentIds = researchEntity.accomplishments.map(a => a.id);
+            const accomplishmentPopulates = [
+                'type',
+            ];
+
+            accomplishments = await Accomplishment.find(accomplishmentIds).populate(accomplishmentPopulates);
+        }
     }
 
     profile.documents = documents;
+    profile.invitedTalks = invitedTalks;
     profile.accomplishments = accomplishments;
 
     return profile;
@@ -194,7 +190,7 @@ async function toPDF(researchEntityId, options = {}) {
 
     let tmpText = '';
 
-    const profile = await getProfile(researchEntityId);
+    const profile = await getProfile(researchEntityId, options);
 
     function getExperienceText(experience) {
         const stack = [];
@@ -359,61 +355,95 @@ async function toPDF(researchEntityId, options = {}) {
         return stack;
     }
 
-    function getDocumentCategoryText(category, documents) {
+    function getDocumentCategoryText(category, documents, firstCategory) {
         const text = [];
 
-        if (!_.isEmpty(category)) {
-            text.push({
-                text: category,
-                style: 'h3'
-            });
-        }
+        documents = _.sortBy(documents, document => {
+            return parseInt(document.year);
+        }).reverse();
 
         for (let i = 0; i < documents.length; i++) {
             const document = documents[i];
 
-            if (!_.isEmpty(document)) {
-                if (i > 0) {
-                    text.push({
-                        text: ' '
-                    });
+            if (_.isEmpty(document)) {
+                continue;
+            }
+
+            if (i > 0) {
+                text.push({
+                    text: ' '
+                });
+            }
+
+            const documentText = [];
+            let subText = [];
+
+            if (!_.isEmpty(document.authorsStr)) {
+                documentText.push(document.authorsStr);
+            }
+
+            if (!_.isEmpty(document.year)) {
+                documentText.push(' (' + document.year + '). ');
+            }
+
+            if (!_.isEmpty(document.title)) {
+                subText.push(document.title);
+            }
+
+            if (!_.isEmpty(document.source)) {
+                subText.push({
+                    text: document.source.title,
+                    style: [
+                        'italics',
+                        'bold'
+                    ]
+                });
+            }
+
+            if (!_.isEmpty(document.volume)) {
+                subText.push(document.volume);
+            }
+
+            if (!_.isEmpty(document.pages)) {
+                subText.push(document.pages);
+            }
+
+            if (subText.length > 0) {
+                subText = insertIntoArray(subText, ', ');
+                subText.push('.');
+            }
+
+            if (i === 0) {
+                let title = '';
+                if (firstCategory) {
+                    title = {
+                        text: 'Documents',
+                        style: 'h2'
+
+                    };
+                } else {
+                    title = {
+                        text: ' ',
+                        fontSize: 20
+                    };
                 }
 
-                const documentText = [];
-                let subText = [];
-
-                if (!_.isEmpty(document.authorsStr)) {
-                    documentText.push(document.authorsStr);
+                let categoryTitle = '';
+                if (!_.isEmpty(category)) {
+                    categoryTitle = {
+                        text: category,
+                        style: 'h3'
+                    };
                 }
 
-                if (!_.isEmpty(document.year)) {
-                    documentText.push(' (' + document.year + '). ');
-                }
-
-                if (!_.isEmpty(document.title)) {
-                    subText.push(document.title);
-                }
-
-                if (!_.isEmpty(document.source)) {
-                    subText.push({
-                        text: document.source.title,
-                        style: 'italics'
-                    });
-                }
-
-                if (!_.isEmpty(document.volume)) {
-                    subText.push(document.volume);
-                }
-
-                if (!_.isEmpty(document.pages)) {
-                    subText.push(document.pages);
-                }
-
-                if (subText.length > 0) {
-                    subText = insertIntoArray(subText, ', ');
-                    subText.push('.');
-                }
-
+                text.push({
+                    unbreakable: true,
+                    stack: [title, categoryTitle, {
+                        text: _.concat(documentText, subText),
+                        margin: [20,0,0,0]
+                    }]
+                });
+            } else {
                 text.push({
                     unbreakable: true,
                     text: _.concat(documentText, subText),
@@ -425,48 +455,189 @@ async function toPDF(researchEntityId, options = {}) {
         return text;
     }
 
-    function getAccomplishmentCategoryText(category, accomplishments) {
+    function getAccomplishmentCategoryText(category, accomplishments, firstCategory) {
         const text = [];
 
-        if (!_.isEmpty(category)) {
-            text.push({
-                text: category,
-                style: 'h3'
-            });
-        }
+        accomplishments = _.sortBy(accomplishments, accomplishment => {
+            return parseInt(accomplishment.year);
+        }).reverse();
 
         for (let i = 0; i < accomplishments.length; i++) {
             const accomplishment = accomplishments[i];
-            const stack = [];
 
-            if (!_.isEmpty(accomplishment)) {
-                if (i > 0) {
-                    text.push({
-                        text: ' '
-                    });
+            if (_.isEmpty(accomplishment)) {
+                continue;
+            }
+
+            if (i > 0) {
+                text.push({
+                    text: ' '
+                });
+            }
+
+            let accomplishmentText = [];
+            const subText = [];
+
+            if (!_.isEmpty(accomplishment.title)) {
+                accomplishmentText.push({
+                    text: accomplishment.title,
+                    style: 'bold',
+                });
+            }
+
+            if (!_.isEmpty(accomplishment.year)) {
+                accomplishmentText.push({
+                    text: '(' + accomplishment.year + ').'
+                });
+            }
+
+            if (!_.isEmpty(accomplishment.issuer)) {
+                accomplishmentText.push({
+                    text: accomplishment.issuer + '.'
+                });
+            }
+
+            if (accomplishmentText.length > 0) {
+                accomplishmentText = insertIntoArray(accomplishmentText, ' ');
+            }
+
+            if (i === 0) {
+                let title = '';
+                if (firstCategory) {
+                    title = {
+                        text: 'Accomplishments',
+                        style: 'h2'
+                    };
+                } else {
+                    title = {
+                        text: ' ',
+                        fontSize: 20
+                    };
                 }
 
-                if (!_.isEmpty(accomplishment.title)) {
-                    stack.push({
-                        text: accomplishment.title,
-                        style: 'bold',
-                    });
-                }
-
-                if (!_.isEmpty(accomplishment.issuer)) {
-                    stack.push({
-                        text: 'Issuer: ' + accomplishment.issuer
-                    });
-                }
-
-                if (!_.isEmpty(accomplishment.year)) {
-                    stack.push({
-                        text: 'Year: ' + accomplishment.year
-                    });
+                let categoryTitle = '';
+                if (!_.isEmpty(category)) {
+                    categoryTitle = {
+                        text: category,
+                        style: 'h3'
+                    };
                 }
 
                 text.push({
-                    stack: stack,
+                    unbreakable: true,
+                    stack: [title, categoryTitle, {
+                        text: accomplishmentText,
+                        margin: [20,0,0,0]
+                    }, {
+                        stack: subText,
+                        margin: [20,0,0,0]
+                    }]
+                });
+            } else {
+                text.push({
+                    unbreakable: true,
+                    stack:[{
+                        text: accomplishmentText,
+                        margin: [20,0,0,0]
+                    }, {
+                        stack: subText,
+                        margin: [20,0,0,0]
+                    }],
+                });
+            }
+        }
+
+        return text;
+    }
+
+    function getInvitedTalkCategoryText(category, invitedTalks, firstCategory) {
+        const text = [];
+
+        invitedTalks = _.sortBy(invitedTalks, invitedTalk => {
+            return parseInt(invitedTalk.year);
+        }).reverse();
+
+        for (let i = 0; i < invitedTalks.length; i++) {
+            const invitedTalk = invitedTalks[i];
+
+            if (_.isEmpty(invitedTalk)) {
+                continue;
+            }
+
+            if (i > 0) {
+                text.push({
+                    text: ' '
+                });
+            }
+
+            const invitedTalkText = [];
+            let subText = [];
+
+            if (!_.isEmpty(invitedTalk.authorsStr)) {
+                invitedTalkText.push(invitedTalk.authorsStr);
+            }
+
+            if (!_.isEmpty(invitedTalk.year)) {
+                invitedTalkText.push(' (' + invitedTalk.year + '). ');
+            }
+
+            if (!_.isEmpty(invitedTalk.title)) {
+                subText.push(invitedTalk.title);
+            }
+
+            if (!_.isEmpty(invitedTalk.itSource)) {
+                subText.push({
+                    text: invitedTalk.itSource,
+                    style: [
+                        'italics',
+                        'bold'
+                    ]
+                });
+            }
+
+            if (!_.isEmpty(invitedTalk.sourceType.label)) {
+                subText.push('[' + invitedTalk.sourceType.label + ']');
+            }
+
+            if (subText.length > 0) {
+                subText = insertIntoArray(subText, ', ');
+                subText.push('.');
+            }
+
+            if (i === 0) {
+                let title = '';
+                if (firstCategory) {
+                    title = {
+                        text: 'Invited talks',
+                        style: 'h2'
+
+                    };
+                } else {
+                    title = {
+                        text: ' ',
+                        fontSize: 20
+                    };
+                }
+
+                let categoryTitle = '';
+                if (!_.isEmpty(category)) {
+                    categoryTitle = {
+                        text: category,
+                        style: 'h3'
+                    };
+                }
+
+                text.push({
+                    unbreakable: true,
+                    stack: [title, categoryTitle, {
+                        text: _.concat(invitedTalkText, subText),
+                        margin: [20,0,0,0]
+                    }]
+                });
+            } else {
+                text.push({
+                    unbreakable: true,
+                    text: _.concat(invitedTalkText, subText),
                     margin: [20,0,0,0]
                 });
             }
@@ -485,6 +656,7 @@ async function toPDF(researchEntityId, options = {}) {
             OpenSans: {
                 normal: 'assets/fonts/OpenSans-Regular.ttf',
                 bold: 'assets/fonts/OpenSans-Bold.ttf',
+                bolditalics: 'assets/fonts/OpenSans-BoldItalic.ttf',
                 italics: 'assets/fonts/OpenSans-RegularItalic.ttf'
             },
             FontAwesome: {
@@ -545,7 +717,6 @@ async function toPDF(researchEntityId, options = {}) {
                         text: concatStrings(jobDescription, {seperator: ' - '})
                     });
                 }
-
 
                 const directorates = profile.groups.filter(group => group.type === 'Directorate');
                 const researchLines = profile.groups.filter(group => group.type === 'Research Line');
@@ -958,15 +1129,13 @@ async function toPDF(researchEntityId, options = {}) {
             }
         }
 
-        if (options.basic || options.socials) {
+        // About
+        if (options.about && !_.isEmpty(profile.description)) {
             content.push({
                 text: ' ',
                 fontSize: 20
             });
-        }
 
-        // About
-        if (options.about && !_.isEmpty(profile.description)) {
             content.push({
                 unbreakable: true,
                 stack: [
@@ -998,20 +1167,15 @@ async function toPDF(researchEntityId, options = {}) {
             });
         }
 
-        // Add some whitespace
-        if (
-            options.about && !_.isEmpty(profile.description) ||
-            options.about && !_.isEmpty(profile.interests)
-        ) {
+        // Experiences
+        if (options.experiences && !_.isEmpty(profile.experiences)) {
+
+            const experiences = _.groupBy(profile.experiences, 'company');
+
             content.push({
                 text: ' ',
                 fontSize: 20
             });
-        }
-
-        // Experiences
-        if (options.experiences && !_.isEmpty(profile.experiences)) {
-            const experiences = _.groupBy(profile.experiences, 'company');
 
             content.push({
                 unbreakable: true,
@@ -1046,16 +1210,17 @@ async function toPDF(researchEntityId, options = {}) {
 
                 count++;
             }
+        }
+
+        // Education
+        if (options.education && !_.isEmpty(profile.education)) {
+
+            const educationItems = profile.education;
 
             content.push({
                 text: ' ',
                 fontSize: 20
             });
-        }
-
-        // Education
-        if (options.education && !_.isEmpty(profile.education)) {
-            const educationItems = profile.education;
 
             content.push({
                 unbreakable: true,
@@ -1077,16 +1242,17 @@ async function toPDF(researchEntityId, options = {}) {
                     stack: getEducationText(educationItem)
                 });
             }
+        }
+
+        // Certificates
+        if (options.certificates && !_.isEmpty(profile.certificates)) {
+
+            const certificates = profile.certificates;
 
             content.push({
                 text: ' ',
                 fontSize: 20
             });
-        }
-
-        // Certificates
-        if (options.certificates && !_.isEmpty(profile.certificates)) {
-            const certificates = profile.certificates;
 
             content.push({
                 unbreakable: true,
@@ -1108,15 +1274,15 @@ async function toPDF(researchEntityId, options = {}) {
                     stack: getCertificateText(certificate)
                 });
             }
+        }
+
+        // Skills
+        if (options.skills && !_.isEmpty(profile.skillCategories)) {
 
             content.push({
                 text: ' ',
                 fontSize: 20
             });
-        }
-
-        // Skills
-        if (options.skills && !_.isEmpty(profile.skillCategories)) {
 
             content.push({
                 unbreakable: true,
@@ -1138,81 +1304,72 @@ async function toPDF(researchEntityId, options = {}) {
                     stack: getSkillCategoryText(category)
                 });
             }
-
-            content.push({
-                text: ' ',
-                fontSize: 20
-            });
         }
 
         // Documents
         if (options.documents && !_.isEmpty(profile.documents)) {
 
-            const documents = _.groupBy(profile.documents, 'source.sourcetype');
-
-            content.push({
-                unbreakable: true,
-                text: 'Documents',
-                style: 'h2'
-
-            });
-
-            let i = 0;
-            for (const sourceTypeId in documents) {
-                const sourceType = SourceTypes.get().find(st => st.id === parseInt(sourceTypeId));
-
-                if (i > 0) {
-                    content.push({
-                        text: ' '
-                    });
-                }
-
-                content.push({
-                    unbreakable: true,
-                    stack: getDocumentCategoryText(sourceType.label, documents[sourceTypeId])
-                });
-
-                i++;
-            }
+            const documentsBySourceType = _.groupBy(profile.documents, 'source.sourcetype');
+            let first = true;
 
             content.push({
                 text: ' ',
                 fontSize: 20
             });
+
+            for (const sourceTypeId in documentsBySourceType) {
+                const sourceType = SourceTypes.get().find(st => st.id === parseInt(sourceTypeId));
+
+                if (!sourceType) {
+                    continue;
+                }
+
+                content.push({
+                    stack: getDocumentCategoryText(sourceType.label, documentsBySourceType[sourceTypeId], first)
+                });
+
+                first = false;
+            }
         }
 
         // Accomplishments
         if (options.accomplishments && !_.isEmpty(profile.accomplishments)) {
 
             const accomplishments = _.groupBy(profile.accomplishments, 'type.label');
-
-            content.push({
-                unbreakable: true,
-                text: 'Accomplishments',
-                style: 'h2'
-            });
-
-            let i = 0;
-            for (const category in accomplishments) {
-
-                if (i > 0) {
-                    content.push({
-                        text: ' '
-                    });
-                }
-
-                content.push({
-                    unbreakable: true,
-                    stack: getAccomplishmentCategoryText(category, accomplishments[category])
-                });
-
-                i++;
-            }
+            let first = true;
 
             content.push({
                 text: ' ',
                 fontSize: 20
             });
+
+            for (const category in accomplishments) {
+                content.push({
+                    stack: getAccomplishmentCategoryText(category, accomplishments[category], first)
+                });
+
+                first = false;
+            }
+        }
+
+        // Invited talks
+        if (options.invitedTalks && !_.isEmpty(profile.invitedTalks)) {
+
+            const invitedTalks = _.groupBy(profile.invitedTalks, 'sourceType.section');
+            let first = true;
+
+            content.push({
+                text: ' ',
+                fontSize: 20
+            });
+
+            for (const category in invitedTalks) {
+                content.push({
+                    stack: getInvitedTalkCategoryText(category, invitedTalks[category], first)
+                });
+
+                first = false;
+            }
         }
 
         // Styles
@@ -1264,7 +1421,7 @@ async function toPDF(researchEntityId, options = {}) {
         const docDefinition = {
             pageSize: 'A4',
             pageOrientation: 'portrait',
-            pageMargins: [ 40, 40, 40, 70],
+            pageMargins: [ 40, 40, 40, 60],
             content: content,
             styles: styles,
             defaultStyle: defaultStyle,
@@ -1347,7 +1504,7 @@ async function toDoc(researchEntityId, options = {}) {
 
     options = initializeOptions(options);
 
-    const profile = await getProfile(researchEntityId);
+    const profile = await getProfile(researchEntityId, options);
 
     let profileImage = null;
 
@@ -1415,7 +1572,7 @@ async function toDoc(researchEntityId, options = {}) {
         jobDescription.push(profile.role);
     }
 
-    if (!_.isEmpty(profile.role)) {
+    if (!_.isEmpty(jobDescription)) {
         baseProfile.push(new TextRun(concatStrings(jobDescription, {seperator: ' - '})));
     }
 
@@ -1463,7 +1620,7 @@ async function toDoc(researchEntityId, options = {}) {
                 new TextRun({
                     text: title,
                     bold: true
-                }).break()
+                })
             );
 
             for (const name of researchLineNames) {
@@ -1478,7 +1635,7 @@ async function toDoc(researchEntityId, options = {}) {
                 new TextRun({
                     text: title,
                     bold: true
-                }).break()
+                })
             );
 
             baseProfile.push(
@@ -1500,7 +1657,7 @@ async function toDoc(researchEntityId, options = {}) {
                 new TextRun({
                     text: title,
                     bold: true
-                }).break()
+                })
             );
 
             for (const name of facilityNames) {
@@ -1515,7 +1672,7 @@ async function toDoc(researchEntityId, options = {}) {
                 new TextRun({
                     text: title,
                     bold: true
-                }).break()
+                })
             );
 
             baseProfile.push(
@@ -1884,121 +2041,130 @@ async function toDoc(researchEntityId, options = {}) {
 
         const sourceType = SourceTypes.get().find(st => st.id === parseInt(sourceTypeId));
 
-        if (!_.isEmpty(sourceType)) {
-            documents.push(
-                new Paragraph({
-                    text: sourceType.label,
-                    heading: HeadingLevel.HEADING_3
-                })
-            );
+        if (_.isEmpty(sourceType)) {
+            continue;
         }
 
-        if (!_.isEmpty(documentsBySourceType[sourceTypeId])) {
-            for (let i = 0; i < documentsBySourceType[sourceTypeId].length; i++) {
-                const document = documentsBySourceType[sourceTypeId][i];
+        documents.push(
+            new Paragraph({
+                text: sourceType.label,
+                heading: HeadingLevel.HEADING_3
+            })
+        );
 
-                if (!_.isEmpty(document) &&
-                    (
-                        !_.isEmpty(document.authorsStr) ||
-                        !_.isEmpty(document.year) ||
-                        !_.isEmpty(document.title) ||
-                        !_.isEmpty(document.source) ||
-                        !_.isEmpty(document.volume) ||
-                        !_.isEmpty(document.pages)
-                    )
-                ) {
-                    const documentText = [];
-                    let subText = [];
+        const sourceTypeDocuments = _.sortBy(documentsBySourceType[sourceTypeId], document => {
+            return parseInt(document.year);
+        }).reverse();
 
-                    if (i > 0) {
-                        documentText.push(
-                            new TextRun({}).break()
-                        );
+        if (_.isEmpty(sourceTypeDocuments)) {
+            continue;
+        }
+
+        for (let i = 0; i < sourceTypeDocuments.length; i++) {
+            const document = sourceTypeDocuments[i];
+
+            if (!_.isEmpty(document) &&
+                (
+                    !_.isEmpty(document.authorsStr) ||
+                    !_.isEmpty(document.year) ||
+                    !_.isEmpty(document.title) ||
+                    !_.isEmpty(document.source) ||
+                    !_.isEmpty(document.volume) ||
+                    !_.isEmpty(document.pages)
+                )
+            ) {
+                const documentText = [];
+                let subText = [];
+
+                if (i > 0) {
+                    documentText.push(
+                        new TextRun({}).break()
+                    );
+                }
+
+                if (!_.isEmpty(document.authorsStr)) {
+                    documentText.push(
+                        new TextRun({
+                            text: document.authorsStr
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(document.year)) {
+                    documentText.push(
+                        new TextRun({
+                            text: ' (' + document.year + '). '
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(document.title)) {
+                    subText.push(
+                        new TextRun({
+                            text: document.title
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(document.source)) {
+                    subText.push(
+                        new TextRun({
+                            text: document.source.title,
+                            italics: true,
+                            bold: true
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(document.volume)) {
+                    subText.push(
+                        new TextRun({
+                            text: document.volume
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(document.pages)) {
+                    subText.push(
+                        new TextRun({
+                            text: document.pages
+                        })
+                    );
+                }
+
+                if (subText.length > 0) {
+                    subText = insertIntoArray(
+                        subText,
+                        new TextRun({
+                            text: ', '
+                        })
+                    );
+
+                    subText.push(
+                        new TextRun({
+                            text: '.'
+                        })
+                    );
+                }
+
+                let paragraph = new Paragraph({
+                    children: _.concat(documentText, subText),
+                    indent: {
+                        left: 360,
                     }
+                });
 
-                    if (!_.isEmpty(document.authorsStr)) {
-                        documentText.push(
-                            new TextRun({
-                                text: document.authorsStr
-                            })
-                        );
-                    }
-
-                    if (!_.isEmpty(document.year)) {
-                        documentText.push(
-                            new TextRun({
-                                text: ' (' + document.year + '). '
-                            })
-                        );
-                    }
-
-                    if (!_.isEmpty(document.title)) {
-                        subText.push(
-                            new TextRun({
-                                text: document.title
-                            })
-                        );
-                    }
-
-                    if (!_.isEmpty(document.source)) {
-                        subText.push(
-                            new TextRun({
-                                text: document.source.title,
-                                italics: true
-                            })
-                        );
-                    }
-
-                    if (!_.isEmpty(document.volume)) {
-                        subText.push(
-                            new TextRun({
-                                text: document.volume
-                            })
-                        );
-                    }
-
-                    if (!_.isEmpty(document.pages)) {
-                        subText.push(
-                            new TextRun({
-                                text: document.pages
-                            })
-                        );
-                    }
-
-                    if (subText.length > 0) {
-                        subText = insertIntoArray(
-                            subText,
-                            new TextRun({
-                                text: ', '
-                            })
-                        );
-
-                        subText.push(
-                            new TextRun({
-                                text: '.'
-                            })
-                        );
-                    }
-
-                    let paragraph = new Paragraph({
+                if (i === sourceTypeDocuments.length-1) {
+                    paragraph = new Paragraph({
                         children: _.concat(documentText, subText),
                         indent: {
                             left: 360,
-                        }
+                        },
+                        style: 'default'
                     });
-
-                    if (i === documentsBySourceType[sourceTypeId].length-1) {
-                        paragraph = new Paragraph({
-                            children: _.concat(documentText, subText),
-                            indent: {
-                                left: 360,
-                            },
-                            style: 'default'
-                        });
-                    }
-
-                    documents.push(paragraph);
                 }
+
+                documents.push(paragraph);
             }
         }
     }
@@ -2007,85 +2173,212 @@ async function toDoc(researchEntityId, options = {}) {
     const accomplishmentsByType = _.groupBy(profile.accomplishments, 'type.label');
     for (const type in accomplishmentsByType) {
 
-        if (!_.isEmpty(type)) {
-            accomplishments.push(
-                new Paragraph({
-                    text: type,
-                    heading: HeadingLevel.HEADING_3
-                })
-            );
+        if (_.isEmpty(type)) {
+            continue;
         }
 
-        if (!_.isEmpty(accomplishmentsByType[type])) {
-            for (let i = 0; i < accomplishmentsByType[type].length; i++) {
-                const accomplishment = accomplishmentsByType[type][i];
+        accomplishments.push(
+            new Paragraph({
+                text: type,
+                heading: HeadingLevel.HEADING_3
+            })
+        );
 
-                if (
-                    !_.isEmpty(accomplishment) &&
-                    (
-                        !_.isEmpty(accomplishment.title) ||
-                        !_.isEmpty(accomplishment.issuer) ||
-                        !_.isEmpty(accomplishment.year)
-                    )
-                ) {
-                    const children = [];
+        const typeAccomplishments = _.sortBy(accomplishmentsByType[type], accomplishment => {
+            return parseInt(accomplishment.year);
+        }).reverse();
 
-                    if (!_.isEmpty(accomplishment.title)) {
-                        children.push(
-                            new TextRun({
-                                text: accomplishment.title,
-                                bold: true
-                            })
-                        );
+        if (_.isEmpty(typeAccomplishments)) {
+            continue;
+        }
 
-                        children.push(
-                            new TextRun({}).break()
-                        );
+        for (let i = 0; i < typeAccomplishments.length; i++) {
+            const accomplishment = typeAccomplishments[i];
+
+            if (
+                !_.isEmpty(accomplishment) &&
+                (
+                    !_.isEmpty(accomplishment.title) ||
+                    !_.isEmpty(accomplishment.issuer) ||
+                    !_.isEmpty(accomplishment.year)
+                )
+            ) {
+                const children = [];
+
+                if (i > 0) {
+                    children.push(
+                        new TextRun({}).break()
+                    );
+                }
+
+                if (!_.isEmpty(accomplishment.title)) {
+                    children.push(
+                        new TextRun({
+                            text: accomplishment.title,
+                            bold: true
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(accomplishment.year)) {
+                    children.push(
+                        new TextRun({
+                            text: ' (' + accomplishment.year + '). '
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(accomplishment.issuer)) {
+                    children.push(
+                        new TextRun({
+                            text: accomplishment.issuer
+                        })
+                    );
+
+                    children.push(
+                        new TextRun({
+                            text: '.'
+                        })
+                    );
+                }
+
+                let paragraph = new Paragraph({
+                    children: children,
+                    indent: {
+                        left: 360,
                     }
+                });
 
-                    if (!_.isEmpty(accomplishment.issuer)) {
-                        children.push(
-                            new TextRun({
-                                text: 'Issuer: ' + accomplishment.issuer
-                            })
-                        );
-
-                        children.push(
-                            new TextRun({}).break()
-                        );
-                    }
-
-                    if (!_.isEmpty(accomplishment.year)) {
-                        children.push(
-                            new TextRun({
-                                text: 'Year: ' + accomplishment.year
-                            })
-                        );
-
-                        children.push(
-                            new TextRun({}).break()
-                        );
-                    }
-
-                    let paragraph = new Paragraph({
+                if (i === typeAccomplishments.length-1) {
+                    paragraph = new Paragraph({
                         children: children,
                         indent: {
                             left: 360,
-                        }
+                        },
+                        style: 'default'
                     });
-
-                    if (i === accomplishmentsByType[type].length-1) {
-                        paragraph = new Paragraph({
-                            children: children,
-                            indent: {
-                                left: 360,
-                            },
-                            style: 'default'
-                        });
-                    }
-
-                    accomplishments.push(paragraph);
                 }
+
+                accomplishments.push(paragraph);
+            }
+        }
+    }
+
+    const invitedTalks = [];
+    const invitedTalksBySection = _.groupBy(profile.invitedTalks, 'sourceType.section');
+
+    for (const category in invitedTalksBySection) {
+
+        invitedTalks.push(
+            new Paragraph({
+                text: category,
+                heading: HeadingLevel.HEADING_3
+            })
+        );
+
+        const categoryInvitedTalks = _.sortBy(invitedTalksBySection[category], invitedTalk => {
+            return parseInt(invitedTalk.year);
+        }).reverse();
+
+        if (_.isEmpty(categoryInvitedTalks)) {
+            continue;
+        }
+
+        for (let i = 0; i < categoryInvitedTalks.length; i++) {
+            const invitedTalk = categoryInvitedTalks[i];
+
+            if (!_.isEmpty(invitedTalk) &&
+                (
+                    !_.isEmpty(invitedTalk.authorsStr) ||
+                    !_.isEmpty(invitedTalk.year) ||
+                    !_.isEmpty(invitedTalk.title) ||
+                    !_.isEmpty(invitedTalk.itSource)
+                )
+            ) {
+                const invitedTalkText = [];
+                let subText = [];
+
+                if (i > 0) {
+                    invitedTalkText.push(
+                        new TextRun({}).break()
+                    );
+                }
+
+                if (!_.isEmpty(invitedTalk.authorsStr)) {
+                    invitedTalkText.push(
+                        new TextRun({
+                            text: invitedTalk.authorsStr
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(invitedTalk.year)) {
+                    invitedTalkText.push(
+                        new TextRun({
+                            text: ' (' + invitedTalk.year + '). '
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(invitedTalk.title)) {
+                    subText.push(
+                        new TextRun({
+                            text: invitedTalk.title
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(invitedTalk.itSource)) {
+                    subText.push(
+                        new TextRun({
+                            text: invitedTalk.itSource,
+                            italics: true,
+                            bold: true
+                        })
+                    );
+                }
+
+                if (!_.isEmpty(invitedTalk.sourceType.label)) {
+                    subText.push(
+                        new TextRun({
+                            text: '[' + invitedTalk.sourceType.label + ']'
+                        })
+                    );
+                }
+
+                if (subText.length > 0) {
+                    subText = insertIntoArray(
+                        subText,
+                        new TextRun({
+                            text: ', '
+                        })
+                    );
+
+                    subText.push(
+                        new TextRun({
+                            text: '.'
+                        })
+                    );
+                }
+
+                let paragraph = new Paragraph({
+                    children: _.concat(invitedTalkText, subText),
+                    indent: {
+                        left: 360,
+                    }
+                });
+
+                if (i === categoryInvitedTalks.length-1) {
+                    paragraph = new Paragraph({
+                        children: _.concat(invitedTalkText, subText),
+                        indent: {
+                            left: 360,
+                        },
+                        style: 'default'
+                    });
+                }
+
+                invitedTalks.push(paragraph);
             }
         }
     }
@@ -2298,6 +2591,18 @@ async function toDoc(researchEntityId, options = {}) {
             })
         );
         text = _.concat(text, accomplishments);
+    }
+
+    // Invited talks
+    if (options.invitedTalks && !_.isEmpty(invitedTalks)) {
+
+        text.push(
+            new Paragraph({
+                text: 'Invited talks',
+                heading: HeadingLevel.HEADING_2
+            })
+        );
+        text = _.concat(text, invitedTalks);
     }
 
     doc.addSection({
