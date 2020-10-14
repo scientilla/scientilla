@@ -142,11 +142,13 @@ module.exports = _.merge({}, BaseModel, {
         return false;
     },
     async export(accomplishmentIds, format) {
-        const accomplishments = await Accomplishment.find({id: accomplishmentIds})
+        let accomplishments = await Accomplishment.find({id: accomplishmentIds})
             .populate([
                 'source',
                 'type'
             ]);
+
+        accomplishments = _.orderBy(accomplishments, ['year', 'title'], ['desc', 'asc']);
 
         if (format === 'csv')
             return Exporter.accomplishmentsToCsv(accomplishments);
