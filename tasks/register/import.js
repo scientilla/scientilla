@@ -17,8 +17,6 @@ module.exports = function (grunt) {
                     'metadata': ExternalImporter.updateMetadata
                 },
                 'users': Importer.importUserContracts,
-                'history-init': History.removeData,
-                'history': History.importContracts,
                 'expired': Importer.removeExpiredUsers,
                 'projects': Importer.importProjects,
                 'patents': Importer.importPatents,
