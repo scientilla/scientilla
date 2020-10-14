@@ -8,6 +8,17 @@
             }
         }
     }
+
+    &.summary-dashboard{
+        .summary-overview-container{
+            margin-bottom: 10rem;
+        }
+
+        .calculate-text{
+            display: inline-block;
+            margin-right: 1rem;
+        }
+    }
 }
 
 @include media-breakpoint-up(lg) {

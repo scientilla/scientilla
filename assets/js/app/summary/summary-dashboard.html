@@ -1,25 +1,21 @@
 <scientilla-backend-layout>
-    <div class="summary summary-profile">
-        <div>
-            <h2>Overview</h2>
-            <summary-overview charts-data="vm.chartsData" is-loading="vm.recalculating"></summary-overview>
-        </div>
-        <br/>
-        <br/>
-        <hr>
-        <br/>
-        <div>
-            <h2>Metrics</h2>
-            <summary-metrics charts-data="vm.chartsData" is-loading="vm.recalculating"></summary-metrics>
-        </div>
+    <div class="summary summary-dashboard">
+        <summary-overview
+            charts-data="vm.documentOverviewChartData"
+            is-loading="vm.recalculating"
+            title="Overview"></summary-overview>
+
+        <summary-metrics
+            charts-data="vm.bibliometricChartData"
+            is-loading="vm.recalculating"
+            title="Metrics"></summary-metrics>
 
         <div ng-if="vm.isMainGroup()">
-            Data calculated on {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}
+            <div class="calculate-text">Data calculated on {{vm.lastRefresh | date:'yyyy-MM-dd HH:mm'}}</div>
             <scientilla-button click="vm.recalculate">Recalculate data</scientilla-button>
             <scientilla-loading
-                    is-loading="vm.recalculating"
-                    text="Recalculating ..."></scientilla-loading>
+                is-loading="vm.recalculating"
+                text="Recalculating ..."></scientilla-loading>
         </div>
-
     </div>
 </scientilla-backend-layout>

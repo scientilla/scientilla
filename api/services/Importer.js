@@ -563,13 +563,10 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
         for (const employee of employees) {
             const groupCodesOfContract = collectGroupCodes(employee);
 
-            const groupNamesOfContract = groups.filter(group => groupCodesOfContract.some(groupCode => {
+            // Get the groups of the contract
+            const groupsOfContract = groups.filter(group => groupCodesOfContract.some(groupCode => {
                 return _.toLower(groupCode) === _.toLower(group.code)
-            })).map(group => group.name);
-
-            const filteredGroups = await Group.find({
-                or: groupNamesOfContract.map(name => ({name: name}))
-            }).populate('members').populate('administrators');
+            }));
 
             let user = await User.findOne({cid: employee.cid});
             if (!user) {
@@ -578,27 +575,25 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
 
             let contractEndDate = null;
             let handledSteps = [];
-
-            // Get the contract end date via the contract history
             const contract = _.head(employee.contract);
-            if (
-                _.has(contract, 'step') &&
-                _.has(contract, 'cid')
-            ) {
-                handledSteps = ImportHelper.mergeStepsOfContract(contract);
 
-                const handledStepsOfLastFiveYears = ImportHelper.getValidSteps(handledSteps);
-
-                if (handledStepsOfLastFiveYears.length === 0) {
-                    return;
-                }
-
-                const hasPermanentContract = !_.isEmpty(handledSteps.filter(handledStep => !_.has(handledStep, 'to')));
-
-                contractEndDate = ImportHelper.getContractEndDate(hasPermanentContract, handledStepsOfLastFiveYears);
-            } else {
-                return;
+            // Skip employee if the contract has no step or cid
+            if (!_.has(contract, 'step') || !_.has(contract, 'cid')) {
+                continue;
             }
+
+            handledSteps = ImportHelper.mergeStepsOfContract(contract);
+
+            const handledStepsOfLastFiveYears = ImportHelper.getValidSteps(handledSteps);
+
+            if (handledStepsOfLastFiveYears.length === 0) {
+                // Skip employee: does not have a contract last 5 years
+                continue;
+            }
+
+            const hasPermanentContract = !_.isEmpty(handledSteps.filter(handledStep => !_.has(handledStep, 'to')));
+
+            contractEndDate = ImportHelper.getContractEndDate(hasPermanentContract, handledStepsOfLastFiveYears);
 
             const userObject = ImportHelper.createUserObject(ldapUsers, user, employee, contractEndDate);
 
@@ -625,10 +620,11 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
             }
 
             if (!user) {
-                throw new Error('No user!');
+                sails.log.error('No user!');
+                continue;
             }
 
-            for (let group of filteredGroups) {
+            for (let group of groupsOfContract) {
                 const condition = {
                     user: user.id,
                     group: group.id
@@ -671,7 +667,8 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
                     const profile = ImportHelper.getProfileObject(researchEntityData, employee, allMembershipGroups, activeGroups);
 
                     if (!profile) {
-                        return;
+                        sails.log.error('No profile!');
+                        continue;
                     }
 
                     profile.experiencesInternal = handledSteps;
@@ -701,7 +698,8 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
                 const profile = ImportHelper.getProfileObject({imported_data: importedData}, employee, allMembershipGroups, activeGroups);
 
                 if (!profile) {
-                    return;
+                    sails.log.error('No profile!');
+                    continue;
                 }
 
                 profile.experiencesInternal = handledSteps;

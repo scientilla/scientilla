@@ -32,7 +32,6 @@
         $timeout
     ) {
         const vm = this;
-        angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
         vm.subResearchEntity = context.getSubResearchEntity();
         vm.loggedUser = AuthService.user;
@@ -77,13 +76,11 @@
                 }, {
                     index: 6,
                     slug: 'documents-overview',
-                    tabName: 'overview',
-                    getData: getData
+                    tabName: 'overview-tab'
                 }, {
                     index: 7,
                     slug: 'bibliometric-charts',
-                    tabName: 'metrics',
-                    getData: getData
+                    tabName: 'metrics-tab'
                 }
             ];
 
@@ -93,10 +90,6 @@
         vm.$onDestroy = function () {
             activeTabWatcher();
         };
-
-        async function getData() {
-            return await vm.getChartsData(vm.group);
-        }
 
         function refreshGroup() {
             return GroupsService.getGroup(vm.groupId)
