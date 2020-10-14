@@ -358,9 +358,7 @@ async function toPDF(researchEntityId, options = {}) {
     function getDocumentCategoryText(category, documents, firstCategory) {
         const text = [];
 
-        documents = _.sortBy(documents, document => {
-            return parseInt(document.year);
-        }).reverse();
+        documents = _.orderBy(documents, ['year', 'title'], ['desc', 'asc']);
 
         for (let i = 0; i < documents.length; i++) {
             const document = documents[i];
@@ -458,9 +456,7 @@ async function toPDF(researchEntityId, options = {}) {
     function getAccomplishmentCategoryText(category, accomplishments, firstCategory) {
         const text = [];
 
-        accomplishments = _.sortBy(accomplishments, accomplishment => {
-            return parseInt(accomplishment.year);
-        }).reverse();
+        accomplishments = _.orderBy(accomplishments, ['year', 'title'], ['desc', 'asc']);
 
         for (let i = 0; i < accomplishments.length; i++) {
             const accomplishment = accomplishments[i];
@@ -553,9 +549,7 @@ async function toPDF(researchEntityId, options = {}) {
     function getInvitedTalkCategoryText(category, invitedTalks, firstCategory) {
         const text = [];
 
-        invitedTalks = _.sortBy(invitedTalks, invitedTalk => {
-            return parseInt(invitedTalk.year);
-        }).reverse();
+        invitedTalks = _.orderBy(invitedTalks, ['year', 'title'], ['desc', 'asc']);
 
         for (let i = 0; i < invitedTalks.length; i++) {
             const invitedTalk = invitedTalks[i];
@@ -2052,9 +2046,7 @@ async function toDoc(researchEntityId, options = {}) {
             })
         );
 
-        const sourceTypeDocuments = _.sortBy(documentsBySourceType[sourceTypeId], document => {
-            return parseInt(document.year);
-        }).reverse();
+        const sourceTypeDocuments = _.orderBy(documentsBySourceType[sourceTypeId], ['year', 'title'], ['desc', 'asc']);
 
         if (_.isEmpty(sourceTypeDocuments)) {
             continue;
@@ -2184,9 +2176,7 @@ async function toDoc(researchEntityId, options = {}) {
             })
         );
 
-        const typeAccomplishments = _.sortBy(accomplishmentsByType[type], accomplishment => {
-            return parseInt(accomplishment.year);
-        }).reverse();
+        const typeAccomplishments = _.orderBy(accomplishmentsByType[type], ['year', 'title'], ['desc', 'asc']);
 
         if (_.isEmpty(typeAccomplishments)) {
             continue;
@@ -2276,9 +2266,7 @@ async function toDoc(researchEntityId, options = {}) {
             })
         );
 
-        const categoryInvitedTalks = _.sortBy(invitedTalksBySection[category], invitedTalk => {
-            return parseInt(invitedTalk.year);
-        }).reverse();
+        const categoryInvitedTalks = _.orderBy(invitedTalksBySection[category], ['year', 'title'], ['desc', 'asc']);
 
         if (_.isEmpty(categoryInvitedTalks)) {
             continue;
