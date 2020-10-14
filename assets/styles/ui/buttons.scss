@@ -50,6 +50,16 @@
     &:focus:active{
         border-color: $white;
     }
+
+    &.disabled,
+    &:disabled{
+        color: $white;
+        background-color: $primary-color;
+
+        &:hover{
+            border-color: $primary-color;
+        }
+    }
 }
 
 .btn-info{

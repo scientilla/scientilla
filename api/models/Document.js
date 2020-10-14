@@ -580,13 +580,15 @@ module.exports = _.merge({}, BaseModel, {
             document.documenttype = documentType.id;
     },
     async export(documentIds, format) {
-        const documents = await Document.find({id: documentIds})
+        let documents = await Document.find({id: documentIds})
             .populate([
                 'source',
                 'sourceMetrics',
                 'scopusDocumentMetadata',
                 'documenttype',
             ]);
+
+        documents = _.orderBy(documents, ['year', 'title'], ['desc', 'asc']);
 
         if (format === 'csv')
             return Exporter.documentsToCsv(documents);

@@ -25,7 +25,8 @@
             certificates: true,
             skills: true,
             documents: true,
-            accomplishments: true
+            accomplishments: true,
+            invitedTalks: true
         };
 
         vm.$onInit = function () {
@@ -36,8 +37,14 @@
             return TextService.joinStrings(strings, seperator);
         };
 
+        vm.isExporting = {
+            doc: false,
+            pdf: false
+        };
+
         /* jshint ignore:start */
         vm.exportProfile = async (type) => {
+            vm.isExporting[type] = true;
             const data = await ProfileService.exportProfile(AuthService.user, type, vm.exportOptions);
             const a = document.createElement('a');
             document.body.appendChild(a);
@@ -55,6 +62,8 @@
                 default:
                     break;
             }
+
+            vm.isExporting[type] = false;
         };
         /* jshint ignore:end */
     }
