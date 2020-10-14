@@ -63,6 +63,10 @@ module.exports = {
                     tmpProfile.active = profile.active;
                 }
 
+                if (_.has(profile, 'gender')) {
+                    tmpProfile.gender = profile.gender;
+                }
+
                 return tmpProfile;
             }
 
