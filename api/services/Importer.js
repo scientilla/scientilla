@@ -14,7 +14,8 @@ module.exports = {
     importUserContracts,
     removeExpiredUsers,
     importProjects,
-    importPatents
+    importPatents,
+    updateUserProfileGroups
 };
 
 const xlsx = require('xlsx');
@@ -1059,6 +1060,94 @@ async function importProjects() {
             sails.log.debug(`but there were ${errors.length} errors:`);
             sails.log.debug(JSON.stringify(errors[0]));
         }
+    }
+}
+
+async function updateUserProfileGroups() {
+    const groups = await Group.find();
+    //sails.log.debug(groups);
+
+    const chunk = 500;
+    let i = 0;
+    let researchEntityDataRecords = [];
+
+    const changedGroups = [];
+    const changedCenters = [];
+    const changedResearchEntityDataRecords = [];
+
+    do {
+        researchEntityDataRecords = await ResearchEntityData.find().limit(chunk).skip(i * chunk);
+
+        for (const researchEntityDataRecord of researchEntityDataRecords) {
+
+            const originalProfile = _.cloneDeep(researchEntityDataRecord.profile);
+
+            for (const profileGroup of researchEntityDataRecord.profile.groups) {
+
+                const group = groups.find(group => group.code === profileGroup.code);
+
+                if (group) {
+                    if (profileGroup.name !== group.name) {
+                        profileGroup.name = group.name;
+                        changedGroups.push(group);
+                    }
+
+                    if (_.has(profileGroup, 'center.code') && _.has(profileGroup, 'center.name')) {
+
+                        const center = groups.find(group => group.code === profileGroup.center.code);
+
+                        if (profileGroup.center.name !== center.name) {
+                            profileGroup.center.name = center.name;
+                            changedCenters.push(center);
+                        }
+                    }
+
+                    if (JSON.stringify(originalProfile) !== JSON.stringify(researchEntityDataRecord.profile)) {
+                        await ResearchEntityData.update(
+                            { id: researchEntityDataRecord.id },
+                            { profile: JSON.stringify(researchEntityDataRecord.profile) }
+                        );
+
+                        changedResearchEntityDataRecords.push(researchEntityDataRecord);
+                    }
+                }
+            }
+        }
+        i++;
+    } while (!_.isEmpty(researchEntityDataRecords))
+
+    sails.log.info('-------------------------------------');
+    sails.log.info('Updated profiles: ' + changedResearchEntityDataRecords.length);
+    if (!_.isEmpty(changedResearchEntityDataRecords)) {
+        sails.log.info('Research entity: ' + changedResearchEntityDataRecords.map(r => r.researchEntity).join(', '));
+    }
+
+    const uniqueChangedGroups = changedGroups.reduce((acc, current) => {
+        const x = acc.find(item => item.code === current.code);
+        if (!x) {
+            return acc.concat([current]);
+        } else {
+            return acc;
+        }
+    }, []);
+
+    sails.log.info('Unique changed groups: ' + uniqueChangedGroups.length);
+    if (!_.isEmpty(uniqueChangedGroups)) {
+        sails.log.info('Codes: ' + uniqueChangedGroups.map(group => group.code).join(', '));
+    }
+
+    const uniqueChangedCenters = changedCenters.reduce((acc, current) => {
+        const x = acc.find(item => item.code === current.code);
+        if (!x) {
+            return acc.concat([current]);
+        } else {
+            return acc;
+        }
+    }, []);
+
+    sails.log.info('Unique changed centers: ' + uniqueChangedCenters.length);
+    if (!_.isEmpty(uniqueChangedCenters)) {
+        sails.log.info('Codes: ' + uniqueChangedCenters.map(group => group.code).join(', '));
     }
 }
 
