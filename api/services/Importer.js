@@ -1076,7 +1076,7 @@ async function updateUserProfileGroups() {
     const changedResearchEntityDataRecords = [];
 
     do {
-        researchEntityDataRecords = await ResearchEntityData.find().limit(chunk).skip(i * chunk);
+        researchEntityDataRecords = await ResearchEntityData.find().sort('id ASC').limit(chunk).skip(i * chunk);
 
         for (const researchEntityDataRecord of researchEntityDataRecords) {
 
@@ -1101,25 +1101,41 @@ async function updateUserProfileGroups() {
                             changedCenters.push(center);
                         }
                     }
+                }
+            }
 
-                    if (JSON.stringify(originalProfile) !== JSON.stringify(researchEntityDataRecord.profile)) {
-                        await ResearchEntityData.update(
-                            { id: researchEntityDataRecord.id },
-                            { profile: JSON.stringify(researchEntityDataRecord.profile) }
-                        );
+            for (const experience of researchEntityDataRecord.profile.experiencesInternal) {
+                if (_.has(experience, 'lines')) {
+                    for (const line of experience.lines) {
+                        const group = groups.find(group => group.code === line.code);
 
-                        changedResearchEntityDataRecords.push(researchEntityDataRecord);
+                        if (group) {
+                            if (line.name !== group.name) {
+                                line.name = group.name;
+                                changedGroups.push(group);
+                            }
+                        }
                     }
                 }
             }
+
+            if (JSON.stringify(originalProfile) !== JSON.stringify(researchEntityDataRecord.profile)) {
+                await ResearchEntityData.update(
+                    { id: researchEntityDataRecord.id },
+                    { profile: JSON.stringify(researchEntityDataRecord.profile) }
+                );
+
+                changedResearchEntityDataRecords.push(researchEntityDataRecord);
+            }
         }
         i++;
-    } while (!_.isEmpty(researchEntityDataRecords))
+    } while (!_.isEmpty(researchEntityDataRecords));
 
-    sails.log.info('-------------------------------------');
     sails.log.info('Updated profiles: ' + changedResearchEntityDataRecords.length);
     if (!_.isEmpty(changedResearchEntityDataRecords)) {
-        sails.log.info('Research entity: ' + changedResearchEntityDataRecords.map(r => r.researchEntity).join(', '));
+        const researchEntityIds = changedResearchEntityDataRecords.map(r => r.researchEntity);
+        const users = await User.find({ researchEntity: researchEntityIds});
+        sails.log.info('User(s): ' + users.map(user => user.username).join(', '));
     }
 
     const uniqueChangedGroups = changedGroups.reduce((acc, current) => {
