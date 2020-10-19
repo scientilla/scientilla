@@ -911,7 +911,7 @@ async function importProjects() {
         const reqOptions = config.request;
 
         try {
-            projects = await Utils.waitForSuccesfulRequest(reqOptions);;
+            projects = await Utils.waitForSuccesfulRequest(reqOptions);
         } catch (e) {
             sails.log.debug(e);
         }
