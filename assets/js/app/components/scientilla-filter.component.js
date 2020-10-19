@@ -437,6 +437,12 @@
                 }
             }
 
+            _.forEach(vm.filterSearchFormStructure, function (value, key) {
+                if (!_.has(vm.values, key) && _.has(value, 'defaultValue')) {
+                    vm.values[key] = value.defaultValue;
+                }
+            });
+
             // If we can proceed searching
             if (executeSearch) {
                 search(vm.values);
