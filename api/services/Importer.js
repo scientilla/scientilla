@@ -909,14 +909,10 @@ async function importProjects() {
     async function doImport(type) {
         let projects
         const config = sails.config.scientilla.researchItems.external[type];
-        const reqOptions = {
-            uri: config.url,
-            json: true,
-            headers: config.headers
-        };
+        const reqOptions = config.request;
 
         try {
-            projects = await request(reqOptions);
+            projects = await Utils.waitForSuccesfulRequest(reqOptions);;
         } catch (e) {
             sails.log.debug(e);
         }
@@ -1151,21 +1147,14 @@ async function importPatents() {
 
     let res
     const config = sails.config.scientilla.researchItems.external[ResearchItemTypes.PATENT];
-    const reqOptions = {
-        uri: config.url,
-        json: true,
-        headers: config.headers
-    };
+    const reqOptions = config.request;
 
     try {
-        res = (await request(reqOptions));
+        res = await Utils.waitForSuccesfulRequest(reqOptions);
     } catch (e) {
         sails.log.debug(e);
         throw (e);
     }
-
-    if (res.error)
-        throw res.error;
 
     const importErrors = [];
     let totalItems = 0, created = 0, updated = 0;
