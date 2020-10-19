@@ -33,7 +33,7 @@
 
         /* jshint ignore:start */
         vm.reload = async function () {
-            vm.chartsData = await ChartService.getData(vm.researchEntity);
+            vm.chartsData = await ChartService.getDocumentsOveriewChartData(vm.researchEntity);
         };
         /* jshint ignore:end */
     }

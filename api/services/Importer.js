@@ -14,7 +14,8 @@ module.exports = {
     importUserContracts,
     removeExpiredUsers,
     importProjects,
-    importPatents
+    importPatents,
+    updateUserProfileGroups
 };
 
 const xlsx = require('xlsx');
@@ -556,13 +557,10 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
         for (const employee of employees) {
             const groupCodesOfContract = collectGroupCodes(employee);
 
-            const groupNamesOfContract = groups.filter(group => groupCodesOfContract.some(groupCode => {
+            // Get the groups of the contract
+            const groupsOfContract = groups.filter(group => groupCodesOfContract.some(groupCode => {
                 return _.toLower(groupCode) === _.toLower(group.code)
-            })).map(group => group.name);
-
-            const filteredGroups = await Group.find({
-                or: groupNamesOfContract.map(name => ({name: name}))
-            }).populate('members').populate('administrators');
+            }));
 
             let user = await User.findOne({cid: employee.cid});
             if (!user) {
@@ -571,27 +569,25 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
 
             let contractEndDate = null;
             let handledSteps = [];
-
-            // Get the contract end date via the contract history
             const contract = _.head(employee.contract);
-            if (
-                _.has(contract, 'step') &&
-                _.has(contract, 'cid')
-            ) {
-                handledSteps = ImportHelper.mergeStepsOfContract(contract);
 
-                const handledStepsOfLastFiveYears = ImportHelper.getValidSteps(handledSteps);
-
-                if (handledStepsOfLastFiveYears.length === 0) {
-                    return;
-                }
-
-                const hasPermanentContract = !_.isEmpty(handledSteps.filter(handledStep => !_.has(handledStep, 'to')));
-
-                contractEndDate = ImportHelper.getContractEndDate(hasPermanentContract, handledStepsOfLastFiveYears);
-            } else {
-                return;
+            // Skip employee if the contract has no step or cid
+            if (!_.has(contract, 'step') || !_.has(contract, 'cid')) {
+                continue;
             }
+
+            handledSteps = ImportHelper.mergeStepsOfContract(contract);
+
+            const handledStepsOfLastFiveYears = ImportHelper.getValidSteps(handledSteps);
+
+            if (handledStepsOfLastFiveYears.length === 0) {
+                // Skip employee: does not have a contract last 5 years
+                continue;
+            }
+
+            const hasPermanentContract = !_.isEmpty(handledSteps.filter(handledStep => !_.has(handledStep, 'to')));
+
+            contractEndDate = ImportHelper.getContractEndDate(hasPermanentContract, handledStepsOfLastFiveYears);
 
             const userObject = ImportHelper.createUserObject(ldapUsers, user, employee, contractEndDate);
 
@@ -618,10 +614,11 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
             }
 
             if (!user) {
-                throw new Error('No user!');
+                sails.log.error('No user!');
+                continue;
             }
 
-            for (let group of filteredGroups) {
+            for (let group of groupsOfContract) {
                 const condition = {
                     user: user.id,
                     group: group.id
@@ -664,7 +661,8 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
                     const profile = ImportHelper.getProfileObject(researchEntityData, employee, allMembershipGroups, activeGroups);
 
                     if (!profile) {
-                        return;
+                        sails.log.error('No profile!');
+                        continue;
                     }
 
                     profile.experiencesInternal = handledSteps;
@@ -694,7 +692,8 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
                 const profile = ImportHelper.getProfileObject({imported_data: importedData}, employee, allMembershipGroups, activeGroups);
 
                 if (!profile) {
-                    return;
+                    sails.log.error('No profile!');
+                    continue;
                 }
 
                 profile.experiencesInternal = handledSteps;
@@ -1050,6 +1049,110 @@ async function importProjects() {
             sails.log.debug(`but there were ${errors.length} errors:`);
             sails.log.debug(JSON.stringify(errors[0]));
         }
+    }
+}
+
+async function updateUserProfileGroups() {
+    const groups = await Group.find();
+    //sails.log.debug(groups);
+
+    const chunk = 500;
+    let i = 0;
+    let researchEntityDataRecords = [];
+
+    const changedGroups = [];
+    const changedCenters = [];
+    const changedResearchEntityDataRecords = [];
+
+    do {
+        researchEntityDataRecords = await ResearchEntityData.find().sort('id ASC').limit(chunk).skip(i * chunk);
+
+        for (const researchEntityDataRecord of researchEntityDataRecords) {
+
+            const originalProfile = _.cloneDeep(researchEntityDataRecord.profile);
+
+            for (const profileGroup of researchEntityDataRecord.profile.groups) {
+
+                const group = groups.find(group => group.code === profileGroup.code);
+
+                if (group) {
+                    if (profileGroup.name !== group.name) {
+                        profileGroup.name = group.name;
+                        changedGroups.push(group);
+                    }
+
+                    if (_.has(profileGroup, 'center.code') && _.has(profileGroup, 'center.name')) {
+
+                        const center = groups.find(group => group.code === profileGroup.center.code);
+
+                        if (profileGroup.center.name !== center.name) {
+                            profileGroup.center.name = center.name;
+                            changedCenters.push(center);
+                        }
+                    }
+                }
+            }
+
+            for (const experience of researchEntityDataRecord.profile.experiencesInternal) {
+                if (_.has(experience, 'lines')) {
+                    for (const line of experience.lines) {
+                        const group = groups.find(group => group.code === line.code);
+
+                        if (group) {
+                            if (line.name !== group.name) {
+                                line.name = group.name;
+                                changedGroups.push(group);
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (JSON.stringify(originalProfile) !== JSON.stringify(researchEntityDataRecord.profile)) {
+                await ResearchEntityData.update(
+                    { id: researchEntityDataRecord.id },
+                    { profile: JSON.stringify(researchEntityDataRecord.profile) }
+                );
+
+                changedResearchEntityDataRecords.push(researchEntityDataRecord);
+            }
+        }
+        i++;
+    } while (!_.isEmpty(researchEntityDataRecords));
+
+    sails.log.info('Updated profiles: ' + changedResearchEntityDataRecords.length);
+    if (!_.isEmpty(changedResearchEntityDataRecords)) {
+        const researchEntityIds = changedResearchEntityDataRecords.map(r => r.researchEntity);
+        const users = await User.find({ researchEntity: researchEntityIds});
+        sails.log.info('User(s): ' + users.map(user => user.username).join(', '));
+    }
+
+    const uniqueChangedGroups = changedGroups.reduce((acc, current) => {
+        const x = acc.find(item => item.code === current.code);
+        if (!x) {
+            return acc.concat([current]);
+        } else {
+            return acc;
+        }
+    }, []);
+
+    sails.log.info('Unique changed groups: ' + uniqueChangedGroups.length);
+    if (!_.isEmpty(uniqueChangedGroups)) {
+        sails.log.info('Codes: ' + uniqueChangedGroups.map(group => group.code).join(', '));
+    }
+
+    const uniqueChangedCenters = changedCenters.reduce((acc, current) => {
+        const x = acc.find(item => item.code === current.code);
+        if (!x) {
+            return acc.concat([current]);
+        } else {
+            return acc;
+        }
+    }, []);
+
+    sails.log.info('Unique changed centers: ' + uniqueChangedCenters.length);
+    if (!_.isEmpty(uniqueChangedCenters)) {
+        sails.log.info('Codes: ' + uniqueChangedCenters.map(group => group.code).join(', '));
     }
 }
 

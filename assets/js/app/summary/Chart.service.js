@@ -4,14 +4,46 @@
     angular.module("services").factory("ChartService", ChartService);
 
     ChartService.$inject = [
-        'DocumentTypesService'
+        'DocumentTypesService',
+        'EventsService',
+        '$timeout'
     ];
 
     let styles = {};
     let colors = [];
-    let data = [];
+    const data = [];
+    const documentsOverviewCharts = [
+        'journalsByYear',
+        'conferencesByYear',
+        'booksByYear',
+        'bookSeriesByYear',
+        'documentsByType',
+        'disseminationTalksByYear',
+        'scientificTalksByYear'
+    ];
+    const bibliometricCharts = [
+        'journalsByYear',
+        'conferencesByYear',
+        'booksByYear',
+        'bookSeriesByYear',
+        'filteredAffiliatedJournalsByYear',
+        'filteredAffiliatedConferencesByYear',
+        'filteredAffiliatedBooksByYear',
+        'filteredAffiliatedBookSeriesByYear',
+        'filteredNotAffiliatedJournalsByYear',
+        'filteredNotAffiliatedConferencesByYear',
+        'filteredNotAffiliatedBooksByYear',
+        'filteredNotAffiliatedBookSeriesByYear',
+        'hindexPerYear',
+        'citationsPerYear',
+        'citationsPerDocumentYear',
+        'totalIfPerYear',
+        'totalSjrPerYear',
+        'totalSnipPerYear',
+        'chartDataDate'
+    ];
 
-    function ChartService(DocumentTypesService) {
+    function ChartService(DocumentTypesService, EventsService, $timeout) {
         const service = {
             previewDefaultOptions: {
                 chart: {
@@ -51,38 +83,12 @@
         };
 
         /* jshint ignore:start */
-        service.getData = async (researchEntity, refresh = false) => {
-            const charts = [
-                'journalsByYear',
-                'conferencesByYear',
-                'booksByYear',
-                'bookSeriesByYear',
-                'disseminationTalksByYear',
-                'scientificTalksByYear',
-                'documentsByType',
-                'filteredAffiliatedJournalsByYear',
-                'filteredAffiliatedConferencesByYear',
-                'filteredAffiliatedBooksByYear',
-                'filteredAffiliatedBookSeriesByYear',
-                'filteredNotAffiliatedJournalsByYear',
-                'filteredNotAffiliatedConferencesByYear',
-                'filteredNotAffiliatedBooksByYear',
-                'filteredNotAffiliatedBookSeriesByYear',
-                'hindexPerYear',
-                'citationsPerYear',
-                'citationsPerDocumentYear',
-                'totalIfPerYear',
-                'totalSjrPerYear',
-                'totalSnipPerYear',
-                'chartDataDate'
-            ];
+        service.getDocumentsOveriewChartData = async (researchEntity, refresh = false) => {
+            return await getData(researchEntity, refresh, documentsOverviewCharts, 'documentsOverviewCharts');
+        };
 
-            if (!data[researchEntity.researchEntity] || refresh) {
-                const res = await researchEntity.all('charts').getList({refresh: !!refresh, charts});
-                data[researchEntity.researchEntity] = res[0];
-            }
-
-            return data[researchEntity.researchEntity];
+        service.getBibliometricChartData = async (researchEntity, refresh = false) => {
+            return await getData(researchEntity, refresh, bibliometricCharts, 'bibliometricCharts');
         };
         /* jshint ignore:end */
 
@@ -903,6 +909,54 @@
 
         function getDatamax(data) {
             return data.map(d => Math.max.apply(null, d.values.map(o => o.value)));
+        }
+
+        /* jshint ignore:start */
+        async function getData (researchEntity, refresh = false, charts = [], name) {
+            if (!data[researchEntity.researchEntity] || !_.has(data[researchEntity.researchEntity], name) || refresh) {
+                const res = await researchEntity.all('charts').getList({refresh: !!refresh, charts});
+
+                if (data[researchEntity.researchEntity]) {
+                    data[researchEntity.researchEntity][name] = res[0];
+                } else {
+                    data[researchEntity.researchEntity] = {
+                        [name]: res[0]
+                    };
+                }
+
+                // Delete data from array after one hour
+                const hour = 60 * 60 * 1000;
+                $timeout(() => {
+                    deleteData(researchEntity, name);
+                }, hour);
+
+                EventsService.subscribeAll(researchEntity, [
+                    EventsService.DRAFT_VERIFIED,
+                    EventsService.DOCUMENT_VERIFIED,
+                    EventsService.DOCUMENT_UNVERIFIED,
+                    EventsService.RESEARCH_ITEM_VERIFIED,
+                    EventsService.RESEARCH_ITEM_UNVERIFIED,
+                    EventsService.RESEARCH_ITEM_DRAFT_VERIFIED,
+                    EventsService.AUTH_LOGOUT
+                ], () => {
+                    deleteData(researchEntity, name);
+                });
+            }
+
+            return data[researchEntity.researchEntity][name];
+        }
+        /* jshint ignore:end */
+
+        function deleteData(researchEntity, name) {
+            if (_.has(data[researchEntity.researchEntity], name)) {
+                delete data[researchEntity.researchEntity][name];
+            }
+
+            if (_.isEmpty(data[researchEntity.researchEntity])) {
+                delete data[researchEntity.researchEntity];
+
+                EventsService.unsubscribeAll(researchEntity);
+            }
         }
     }
 }());

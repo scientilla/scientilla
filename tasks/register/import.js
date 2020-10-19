@@ -21,6 +21,7 @@ module.exports = function (grunt) {
                 'projects': Importer.importProjects,
                 'patents': Importer.importPatents,
                 'directorates': Importer.importDirectorates,
+                'update-profile-groups': Importer.updateUserProfileGroups
             };
 
             try {

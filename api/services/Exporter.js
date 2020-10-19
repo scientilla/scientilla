@@ -345,7 +345,8 @@ function getBibtex(document) {
         'MISC': {
             required: [
                 'author',
-                'title'
+                'title',
+                'year'
             ],
             optional: []
         },

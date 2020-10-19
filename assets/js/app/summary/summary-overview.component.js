@@ -8,7 +8,8 @@
                 controller,
                 controllerAs: 'vm',
                 bindings: {
-                    chartsData: '<'
+                    chartsData: '<',
+                    title: '@?'
                 }
             });
 
