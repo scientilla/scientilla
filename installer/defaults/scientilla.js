@@ -30,19 +30,25 @@ module.exports.scientilla = {
         "external": {
             "project_competitive": {
                 "origin": "",
-                "url": "",
-                "headers": {
-                    "username" : "",
-                    "password" : ""
+                "request": {
+                    "url": "",
+                    "headers": {
+                        "username": "",
+                        "password": ""
+                    }
                 }
             },
             "project_industrial": {
                 "origin": "",
-                "url": ''
+                "request": {
+                    "url": ""
+                }
             },
             "patent": {
                 "origin": "",
-                "url": ''
+                "request": {
+                    "url": ""
+                }
             }
         }
     },

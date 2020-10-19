@@ -1,4 +1,4 @@
-/* global ResearchEntityData, Group */
+/* global ResearchEntityData, Group, Utils */
 // ImportHelper.js - in api/services
 
 "use strict";
@@ -6,16 +6,14 @@
 module.exports = {
     getDefaultEmail,
     getValueHiddenPrivacy,
-    getISO8601Format,
     getDefaultCompany,
     getContractualHistoryOfCidCodes,
     getValidSteps,
     mergeStepsOfContract,
-    handleStep,
     getContractEndDate,
     mergeDuplicateEmployees,
     getEmployees,
-    getEmployeesRequestOptions,
+    getUserImportRequestOptions,
     getIgnoredRoles,
     createUserObject,
     getProfileObject,
@@ -26,28 +24,46 @@ module.exports = {
 const moment = require('moment');
 moment.locale('en');
 
-const ISO8601Format = 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]';
 const zone = moment.tz.guess();
 const valuePublicPrivacy = 'public';
 
-const defaultEmail = 'all';
-const valueHiddenPrivacy = 'hidden';
-const defaultCompany = 'Istituto Italiano di Tecnologia';
-
 function getDefaultEmail() {
-    return defaultEmail;
+    return 'all';
 }
 
 function getValueHiddenPrivacy() {
-    return valueHiddenPrivacy;
+    return 'hidden';
 }
 
 function getISO8601Format() {
-    return ISO8601Format;
+    return 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]';
 }
 
 function getDefaultCompany() {
-    return defaultCompany;
+    return 'Istituto Italiano di Tecnologia';
+}
+
+/**
+ * This function returns an object with the API endpoint parameters
+ *
+ * @returns {Object}
+ */
+function getUserImportRequestOptions(type, extraParams = {}) {
+    const options = _.cloneDeep(sails.config.scientilla.userImport);
+
+    const trans = (type === 'history') ? '/public/storico_contrattuale_UO_node' : '/public/scheda_persona_flat';
+    options.params = Object.assign({
+            rep: 'PROD',
+            trans,
+            output: 'json'
+        },
+        options.params,
+        extraParams);
+
+    if (type === 'employees' && !options.params.email)
+        options.params.email = getDefaultEmail();
+
+    return options;
 }
 
 /**
@@ -63,34 +79,19 @@ async function getContractualHistoryOfCidCodes(codes) {
     let contracts = [];
     const chunkLength = 250;
 
-    // Endpoint options to get contract history
-    const reqOptionsContractHistory = {
-        url: sails.config.scientilla.userImport.endpoint,
-        params: {
-            rep: 'PROD',
-            trans: '/public/storico_contrattuale_UO_node',
-            output: 'json'
-        },
-        headers: {
-            username: sails.config.scientilla.userImport.username,
-            password: sails.config.scientilla.userImport.password
-        }
-    };
-
     function handleResponse(response) {
-
         if (_.has(response, '_.CID') && !_.isEmpty(response._.CID)) {
-            response = response._.CID;
+            const cids = response._.CID;
 
-            if (_.isArray(response)) {
-                for (const contract of response) {
+            if (_.isArray(cids)) {
+                for (const contract of cids) {
                     if (_.has(contract, '_')) {
                         contracts.push(contract._);
                     }
                 }
             } else {
-                if (_.has(response, '_')) {
-                    contracts.push(response._);
+                if (_.has(cids, '_')) {
+                    contracts.push(cids._);
                 }
             }
         }
@@ -99,30 +100,17 @@ async function getContractualHistoryOfCidCodes(codes) {
     // We need to split the CID codes into chunks because
     // the Pentaho API endpoint cannot handle a large group of CID codes.
     try {
-        if (codes.length > chunkLength) {
-            const groups = _.chunk(codes, chunkLength);
-
-            for (const group of groups) {
-                reqOptionsContractHistory.params.cid = group.join(',');
-
-                const response = await Utils.waitForSuccesfulRequest(reqOptionsContractHistory);
-
-                handleResponse(response);
-            }
-        } else {
-            reqOptionsContractHistory.params.cid = codes.join(',');
-
-            const response = await Utils.waitForSuccesfulRequest(reqOptionsContractHistory);
-
+        const groups = _.chunk(codes, chunkLength);
+        for (const group of groups) {
+            const options = getUserImportRequestOptions('history', {cid: group.join(',')});
+            const response = await Utils.waitForSuccesfulRequest(options);
             handleResponse(response);
         }
-
-        return contracts;
-
     } catch (e) {
         sails.log.debug('importUserHistoryContracts:getContractualHistoryOfCIDCodes');
         sails.log.debug(e);
     }
+    return contracts;
 }
 
 /**
@@ -149,7 +137,7 @@ function getValidSteps(steps) {
         if (
             (
                 !_.has(step, 'to') ||
-                _.has(step, 'to') && moment(step.to, ISO8601Format).diff(fiveYearsAgo) > 0
+                _.has(step, 'to') && moment(step.to, getISO8601Format()).diff(fiveYearsAgo) > 0
             ) &&
             !ignoredRoles.includes(step.jobTitle)
         ) {
@@ -173,7 +161,7 @@ function mergeStepsOfContract(contract) {
     // Check if there are more steps
     if (_.isArray(contract.step)) {
         const steps = _.orderBy(contract.step, function (step) {
-            return new moment(step.from, ISO8601Format).format(ISO8601Format);
+            return new moment(step.from, getISO8601Format()).format(getISO8601Format());
         }, ['desc']);
 
         // Loop over the steps
@@ -209,8 +197,8 @@ function mergeStepsOfContract(contract) {
                 const index = handledSteps.findIndex(s => s.jobTitle === sameHandledStep.jobTitle &&
                     JSON.stringify(s.lines) === JSON.stringify(sameHandledStep.lines));
 
-                if (moment(handledStep.from, ISO8601Format).diff(
-                    moment(sameHandledStep.to, ISO8601Format), 'days'
+                if (moment(handledStep.from, getISO8601Format()).diff(
+                    moment(sameHandledStep.to, getISO8601Format()), 'days'
                 ) === 1) {
                     // When the start date of the new step is one day after the end date of the found step
                     // We check if the found step has an end date.
@@ -229,8 +217,8 @@ function mergeStepsOfContract(contract) {
                     continue;
                 }
 
-                if (moment(sameHandledStep.from, ISO8601Format).diff(
-                    moment(handledStep.to, ISO8601Format), 'days'
+                if (moment(sameHandledStep.from, getISO8601Format()).diff(
+                    moment(handledStep.to, getISO8601Format()), 'days'
                 ) === 1) {
                     // When the end date of the new step is one day before the begin date of the found step
                     // We set the start date of the found step to the start date of the new step.
@@ -244,8 +232,8 @@ function mergeStepsOfContract(contract) {
                 }
 
                 if (
-                    moment(sameHandledStep.from, ISO8601Format).diff(
-                        moment(handledStep.from, ISO8601Format), 'days'
+                    moment(sameHandledStep.from, getISO8601Format()).diff(
+                        moment(handledStep.from, getISO8601Format()), 'days'
                     ) <= 0 && !_.has(sameHandledStep, 'to')
                 ) {
                     skipStep = true;
@@ -254,12 +242,12 @@ function mergeStepsOfContract(contract) {
                 }
 
                 if (
-                    moment(sameHandledStep.from, ISO8601Format).diff(
-                        moment(handledStep.from, ISO8601Format), 'days'
+                    moment(sameHandledStep.from, getISO8601Format()).diff(
+                        moment(handledStep.from, getISO8601Format()), 'days'
                     ) <= 0 &&
                     _.has(sameHandledStep, 'to') &&
-                    moment(sameHandledStep.to, ISO8601Format).diff(
-                        moment(handledStep.to, ISO8601Format), 'days'
+                    moment(sameHandledStep.to, getISO8601Format()).diff(
+                        moment(handledStep.to, getISO8601Format()), 'days'
                     ) >= 0
                 ) {
                     skipStep = true;
@@ -312,13 +300,13 @@ function handleStep(step) {
                 return;
             }
 
-            handledStep.from = moment.tz(step._.data_inizio, 'DD/MM/YYYY', zone).utc().format(ISO8601Format);
+            handledStep.from = moment.tz(step._.data_inizio, 'DD/MM/YYYY', zone).utc().format(getISO8601Format());
         }
 
         if (_.has(step, '_.data_fine')) {
             const to = moment(step._.data_fine, 'DD/MM/YYYY');
             if (!moment('31/12/9999', 'DD/MM/YYYY').isSame(to)) {
-                handledStep.to = moment.tz(step._.data_fine, 'DD/MM/YYYY', zone).utc().format(ISO8601Format);
+                handledStep.to = moment.tz(step._.data_fine, 'DD/MM/YYYY', zone).utc().format(getISO8601Format());
             }
         }
 
@@ -472,27 +460,6 @@ async function getEmployees(options) {
 }
 
 /**
- * This function returns an object with the API endpoint parameters
- *
- * @returns {Object}
- */
-function getEmployeesRequestOptions() {
-    return {
-        url: sails.config.scientilla.userImport.endpoint,
-        params: {
-            rep: 'PROD',
-            trans: '/public/scheda_persona_flat',
-            output: 'json',
-            email: defaultEmail
-        },
-        headers: {
-            username: sails.config.scientilla.userImport.username,
-            password: sails.config.scientilla.userImport.password
-        }
-    };
-}
-
-/**
  * This function returns an array with roles that have to be ignored.
  *
  * @returns {String[]}
@@ -622,7 +589,7 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
 
     let defaultPrivacy = valuePublicPrivacy;
     if (profile.hidden) {
-        defaultPrivacy = valueHiddenPrivacy;
+        defaultPrivacy = getValueHiddenPrivacy();
     }
 
     let name = contract.nome;

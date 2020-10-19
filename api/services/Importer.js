@@ -213,12 +213,10 @@ async function importGroups() {
                         group: group.id
                     });
                 }
-            }
-            else
+            } else
                 // No users found with a matching email address => delete PI record in the database table
                 await PrincipalInvestigator.destroy({group: group.id});
-        }
-        else
+        } else
             // No PIs? => delete them in the database table
             await PrincipalInvestigator.destroy({group: group.id});
 
@@ -267,8 +265,7 @@ async function importGroups() {
             await MembershipGroup.update({id: membershipGroup.id}, {
                 active: true
             });
-        }
-        else
+        } else
             // If the structure has no center: delete
             await MembershipGroup.destroy({child_group: oldCentersMG.map(mg => mg.id)});
 
@@ -279,8 +276,7 @@ async function importGroups() {
             await clearResearchDomains([rsData.main_research_domain.code], group, 'main');
             // Add research domain
             await addResearchDomain(rsData.main_research_domain.code, group, 'main');
-        }
-        else
+        } else
             // Clear the research domains
             await clearResearchDomains([], group, 'main');
 
@@ -457,16 +453,14 @@ async function importSourceMetrics(filename) {
 
 async function importDirectorates() {
 
-    // Endpoint options to get all users
-    const reqOptionsEmployees = ImportHelper.getEmployeesRequestOptions();
-
     const groups = await Group.find();
     if (groups.length <= 0) {
         sails.log.info('No groups found...');
     }
 
     // Get all the employees from Pentaho.
-    let employees = await ImportHelper.getEmployees(reqOptionsEmployees);
+    const options = ImportHelper.getUserImportRequestOptions('employees');
+    let employees = await ImportHelper.getEmployees(options);
 
     if (!employees) {
         return;
@@ -501,8 +495,6 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
     const defaultCompany = ImportHelper.getDefaultCompany();
     const valueHiddenPrivacy = ImportHelper.getValueHiddenPrivacy();
 
-    // Endpoint options to get all users
-    const reqOptionsEmployees = ImportHelper.getEmployeesRequestOptions();
 
     // We cache the groups, membership groups and default profile.
     const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
@@ -524,10 +516,11 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
     const insertedUsers = [];
 
     try {
-        reqOptionsEmployees.params.email = email;
+        // Endpoint options to get all users
+        const options = ImportHelper.getUserImportRequestOptions('employees', {email});
 
         // Get all the employees from Pentaho.
-        let employees = await ImportHelper.getEmployees(reqOptionsEmployees);
+        let employees = await ImportHelper.getEmployees(options);
 
         if (!employees) {
             return;
@@ -915,14 +908,10 @@ async function importProjects() {
     async function doImport(type) {
         let projects
         const config = sails.config.scientilla.researchItems.external[type];
-        const reqOptions = {
-            uri: config.url,
-            json: true,
-            headers: config.headers
-        };
+        const reqOptions = config.request;
 
         try {
-            projects = await request(reqOptions);
+            projects = await Utils.waitForSuccesfulRequest(reqOptions);;
         } catch (e) {
             sails.log.debug(e);
         }
@@ -1261,21 +1250,14 @@ async function importPatents() {
 
     let res
     const config = sails.config.scientilla.researchItems.external[ResearchItemTypes.PATENT];
-    const reqOptions = {
-        uri: config.url,
-        json: true,
-        headers: config.headers
-    };
+    const reqOptions = config.request;
 
     try {
-        res = (await request(reqOptions));
+        res = await Utils.waitForSuccesfulRequest(reqOptions);
     } catch (e) {
         sails.log.debug(e);
         throw (e);
     }
-
-    if (res.error)
-        throw res.error;
 
     const importErrors = [];
     let totalItems = 0, created = 0, updated = 0;
