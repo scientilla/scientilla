@@ -126,7 +126,11 @@
                 return [userConstants.role.GUEST, userConstants.role.EVALUATOR].includes(this.role);
             },
             isSuperViewer: function () {
-                return [userConstants.role.ADMINISTRATOR, userConstants.role.EVALUATOR].includes(this.role);
+                return [
+                    userConstants.role.SUPERUSER,
+                    userConstants.role.ADMINISTRATOR,
+                    userConstants.role.EVALUATOR
+                ].includes(this.role);
             },
             isScientific: function () {
                 if (_.has(this.config, 'scientific') && this.config.scientific) {

@@ -1,4 +1,4 @@
-/* global require, User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate, ResearchEntity, Profile, ChartData */
+/*global require, User, Group, Document, sails, Alias, Auth, Authorship, SqlService, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate, ResearchEntity, Profile, ChartData */
 'use strict';
 
 /**
@@ -16,7 +16,10 @@ const Promise = require("bluebird");
 const SubResearchEntity = require('../lib/SubResearchEntity');
 
 const USER = 'user';
+const SUPERUSER = 'superuser';
 const ADMINISTRATOR = 'administrator';
+const EVALUATOR = 'evaluator';
+const GUEST = 'guest';
 
 module.exports = _.merge({}, SubResearchEntity, {
     DEFAULT_SORTING: {
@@ -25,7 +28,10 @@ module.exports = _.merge({}, SubResearchEntity, {
         updatedAt: 'desc'
     },
     USER: USER,
+    SUPERUSER: SUPERUSER,
     ADMINISTRATOR: ADMINISTRATOR,
+    EVALUATOR: EVALUATOR,
+    GUEST: GUEST,
     attributes: require('waterlock').models.user.attributes({
         //Constants
         username: {
@@ -62,7 +68,13 @@ module.exports = _.merge({}, SubResearchEntity, {
         },
         role: {
             type: 'STRING',
-            enum: [USER, ADMINISTRATOR],
+            enum: [
+                USER,
+                SUPERUSER,
+                ADMINISTRATOR,
+                EVALUATOR,
+                GUEST
+            ],
             defaultsTo: USER
         },
         orcidId: {
@@ -249,7 +261,7 @@ module.exports = _.merge({}, SubResearchEntity, {
         // Check if username is unique
         await User.checkUsername(newUser);
         // Return created user
-        return await User.create(newUser);
+        return User.create(newUser);
     },
     createCompleteUser: async function (params) {
         params.username = _.toLower(params.username);

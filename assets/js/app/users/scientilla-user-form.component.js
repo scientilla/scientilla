@@ -54,6 +54,7 @@
         vm.userIsAdmin = AuthService.user.role === userConstants.role.ADMINISTRATOR;
         vm.roleSelectOptions = [
             {label: 'User', value: userConstants.role.USER},
+            {label: 'Super user', value: userConstants.role.SUPERUSER},
             {label: 'Administrator', value: userConstants.role.ADMINISTRATOR}
         ];
         vm.scientificSelectOptions = [

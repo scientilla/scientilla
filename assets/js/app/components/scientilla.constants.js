@@ -4,6 +4,7 @@
     const userConstants = {
         role: {
             USER: 'user',
+            SUPERUSER: 'superuser',
             ADMINISTRATOR: 'administrator',
             GUEST: 'guest',
             EVALUATOR: 'evaluator',

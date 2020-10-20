@@ -28,7 +28,7 @@
         function onFilter(q) {
             query = q;
 
-            query.where.role = [userConstants.role.ADMINISTRATOR, userConstants.role.USER];
+            query.where.role = [userConstants.role.ADMINISTRATOR, userConstants.role.SUPERUSER, userConstants.role.USER];
 
             return UsersService.getUsers(query)
                 .then(function (users) {
