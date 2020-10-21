@@ -31,7 +31,19 @@
         '$timeout'
     ];
 
-    function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants, context, ModalService, ValidateService, $timeout) {
+    function UserFormController(
+        UsersService,
+        Notification,
+        $scope,
+        AuthService,
+        GroupsService,
+        Prototyper,
+        userConstants,
+        context,
+        ModalService,
+        ValidateService,
+        $timeout
+    ) {
         const vm = this;
         vm.submit = submit;
         vm.cancel = cancel;
@@ -66,7 +78,6 @@
 
         vm.errors = [];
         vm.errorText = '';
-        vm.user = angular.copy(vm.originalUser);
         let originalUserJson = '';
         let timeout;
 
@@ -75,6 +86,13 @@
         vm.title = 'Create a new user';
 
         vm.$onInit = function () {
+            const subResearchEntity = context.getSubResearchEntity();
+            if (subResearchEntity.id === vm.originalUser.id) {
+                vm.user = angular.copy(subResearchEntity);
+            } else {
+                vm.user = angular.copy(vm.originalUser);
+            }
+
             deregisteres.push($scope.$watch('vm.user.name', nameChanged));
             deregisteres.push($scope.$watch('vm.user.surname', nameChanged));
 
@@ -178,7 +196,7 @@
 
         function aliasesChanged() {
             const subResearchEntity = context.getSubResearchEntity();
-            if (subResearchEntity.getType() === 'user')
+            if (subResearchEntity.id === vm.user.id && subResearchEntity.getType() === 'user')
                 subResearchEntity.aliases = vm.user.aliases;
         }
 
@@ -202,8 +220,10 @@
 
         function updateUserData() {
             const subResearchEntity = context.getSubResearchEntity();
-            for (const key of fields) {
-                subResearchEntity[key] = vm.user[key];
+            if (subResearchEntity.id === vm.user.id) {
+                for (const key of fields) {
+                    subResearchEntity[key] = vm.user[key];
+                }
             }
         }
     }
