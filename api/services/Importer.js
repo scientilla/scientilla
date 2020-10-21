@@ -911,7 +911,7 @@ async function importProjects() {
         const reqOptions = config.request;
 
         try {
-            projects = await Utils.waitForSuccesfulRequest(reqOptions);;
+            projects = await Utils.waitForSuccesfulRequest(reqOptions);
         } catch (e) {
             sails.log.debug(e);
         }
@@ -1110,8 +1110,8 @@ async function updateUserProfileGroups() {
 
             if (JSON.stringify(originalProfile) !== JSON.stringify(researchEntityDataRecord.profile)) {
                 await ResearchEntityData.update(
-                    { id: researchEntityDataRecord.id },
-                    { profile: JSON.stringify(researchEntityDataRecord.profile) }
+                    {id: researchEntityDataRecord.id},
+                    {profile: JSON.stringify(researchEntityDataRecord.profile)}
                 );
 
                 changedResearchEntityDataRecords.push(researchEntityDataRecord);
@@ -1123,7 +1123,7 @@ async function updateUserProfileGroups() {
     sails.log.info('Updated profiles: ' + changedResearchEntityDataRecords.length);
     if (!_.isEmpty(changedResearchEntityDataRecords)) {
         const researchEntityIds = changedResearchEntityDataRecords.map(r => r.researchEntity);
-        const users = await User.find({ researchEntity: researchEntityIds});
+        const users = await User.find({researchEntity: researchEntityIds});
         sails.log.info('User(s): ' + users.map(user => user.username).join(', '));
     }
 
@@ -1173,7 +1173,7 @@ async function importPatents() {
 
         for (const [position, inventor] of inventors.entries()) {
             const affiliations = [];
-            if (inventor.assignee.sign === 'IIT')
+            if (inventor.email.includes('@iit'))
                 affiliations.push(1);
 
             const authorStrs = User.generateAliasesStr(inventor.name, inventor.surname);
