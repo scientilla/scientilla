@@ -49,6 +49,8 @@
         vm.types = [];
         vm.hasTypes = false;
 
+        vm.loading = false;
+
         let allMemberships = [];
 
         let activeTabWatcher = null;
@@ -92,6 +94,8 @@
 
         /* jshint ignore:start */
         vm.$onInit = async () => {
+            vm.loading = true;
+
             activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
                 if (vm.activeTabIndex === 4) {
                     $timeout(function() {
@@ -115,6 +119,8 @@
                 vm.hasTypes = true;
             }
 
+            vm.loading = false;
+
             vm.initializeTabs(tabIdentifiers);
         };
         /* jshint ignore:end */
@@ -125,6 +131,10 @@
 
         vm.getGroupTypes = (group) => {
             return _.groupBy(group.childGroups, 'type');
+        };
+
+        vm.getLength = (subtypes) => {
+            return Object.keys(subtypes).length;
         };
 
         vm.isAdmin = function () {

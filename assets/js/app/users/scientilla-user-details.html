@@ -18,6 +18,9 @@
             <uib-tab
                 index="1"
                 heading="Groups">
+
+                <scientilla-loading is-loading="vm.loading"></scientilla-loading>
+
                 <ul
                     ng-if="vm.institute"
                     class="group-detail-listing">
@@ -36,7 +39,7 @@
                                         <a ng-href="#{{ group.getProfileUrl() }}">
                                             {{ group.name }}
                                         </a>
-                                        <ul>
+                                        <ul ng-class="{ 'hidden': vm.getLength(subtypes) <= 0 }">
                                             <li ng-repeat="(subtype, subgroups) in subtypes">
                                                 <strong>{{ vm.getTypeTitle(subtype, subgroups) }}:</strong>
                                                 <ul class="subgroup-listing">
@@ -55,7 +58,7 @@
                         </ul>
                     </li>
                 </ul>
-                <div ng-if="!vm.hasTypes">
+                <div ng-if="!vm.hasTypes && !vm.loading">
                     <p>No related groups found.</p>
                 </div>
             </uib-tab>

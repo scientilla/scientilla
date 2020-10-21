@@ -39,6 +39,10 @@
                 }
             }
         }
+        
+        &.hidden{
+            display: none;
+        }
     }
 
     strong + ul{
