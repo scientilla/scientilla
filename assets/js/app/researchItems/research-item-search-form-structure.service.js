@@ -296,12 +296,21 @@
                     ],
                     type: 'field'
                 },
-                inherit: {
+                subgroups: {
+                    matchColumn: 'subgroups',
                     inputType: 'checkbox',
                     label: 'Include members of subgroups',
                     defaultValue: true,
                     type: 'action',
-                    skip: true
+                    valueType: 'boolean'
+                },
+                former: {
+                    matchColumn: 'former',
+                    inputType: 'checkbox',
+                    label: 'Include former members',
+                    defaultValue: false,
+                    type: 'action',
+                    valueType: 'boolean'
                 }
             }
         };

@@ -82,6 +82,28 @@
             &.actions-4{
                 grid-template-columns: auto 1fr auto auto;
             }
+
+            &.actions-5{
+                grid-template-columns: auto auto 1fr auto;
+
+                & > li{
+                    &:nth-child(1){
+                        @include set-grid(1, 1, 1, 1);
+                    }
+                    &:nth-child(2){
+                        @include set-grid(1, 2, 1, 1);
+                    }
+                    &:nth-child(3){
+                        @include set-grid(1, 3, 1, 1);
+                    }
+                    &:nth-child(4){
+                        @include set-grid(1, 4, 1, 1);
+                    }
+                    &:nth-child(5){
+                        @include set-grid(2, 1, 1, 4);
+                    }
+                }
+            }
         }
 
         .filter-connector-listing{
@@ -163,6 +185,30 @@
 
         .filter-connector-listing{
             grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
+        }
+
+        .filter-action-listing{
+            &.actions-5{
+                grid-template-columns: auto auto 1fr auto auto;
+
+                & > li{
+                    &:nth-child(1){
+                        @include set-grid(1, 1, 1, 1);
+                    }
+                    &:nth-child(2){
+                        @include set-grid(1, 2, 1, 1);
+                    }
+                    &:nth-child(3){
+                        @include set-grid(1, 3, 1, 1);
+                    }
+                    &:nth-child(4){
+                        @include set-grid(1, 4, 1, 1);
+                    }
+                    &:nth-child(5){
+                        @include set-grid(1, 5, 1, 1);
+                    }
+                }
+            }
         }
     }
 }

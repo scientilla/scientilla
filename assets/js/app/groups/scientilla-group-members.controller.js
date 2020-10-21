@@ -18,9 +18,7 @@
         'AuthService',
         'ModalService',
         'researchEntityService',
-        '$element',
-        '$rootScope',
-        '$location'
+        '$element'
     ];
 
     function controller(
@@ -30,9 +28,7 @@
         AuthService,
         ModalService,
         researchEntityService,
-        $element,
-        $rootScope,
-        $location
+        $element
     ) {
         const vm = this;
 
@@ -120,41 +116,61 @@
         }
 
         async function onFilter(q) {
-            let inherit = true;
+
             let members = [];
             let memberships = [];
-            const where = {
-                group: vm.group.id
-            };
-
-            const queryParams = $location.search();
-            if (_.has(queryParams, 'inherit') && queryParams.inherit === 'false') {
-                inherit = false;
-            }
+            let former = false;
+            let subgroups = false;
 
             query = q;
 
-            if (inherit) {
-                members = await researchEntityService.getAllMembers(vm.group, query);
+            if (_.has(query, 'where.former')) {
+                former = query.where.former;
+                delete query.where.former;
+            }
+
+            if (_.has(query, 'where.subgroups')) {
+                subgroups = query.where.subgroups;
+                delete query.where.subgroups;
+            }
+
+            if (former) {
+                delete query.where.active;
+            } else {
+                query.where.active = true;
+            }
+
+            switch (true) {
+                case subgroups && former:
+                    members = await researchEntityService.getAllMembers(vm.group, query);
+                    break;
+                case !subgroups && former:
+                    members = await researchEntityService.getMembers(vm.group, query);
+                    break;
+                case subgroups && !former:
+                    members = await researchEntityService.getAllActiveMembers(vm.group, query);
+                    break;
+                default:
+                    members = await researchEntityService.getActiveMembers(vm.group, query);
+                    break;
+            }
+
+            if (subgroups) {
                 if (members.length > 0) {
-                    where.user = members.map(m => m.id);
-                    memberships = await researchEntityService.getAllMembershipsOfGroup(vm.group, {
-                        where: where
+                    memberships = await researchEntityService.getAllMemberships(vm.group, {
+                        where: {
+                            group: vm.group.id,
+                            user: members.map(m => m.id)
+                        }
                     });
                 }
             } else {
-                where.level = 0;
-                memberships = await researchEntityService.getAllMembershipsOfGroup(vm.group, {
-                    where: where
-                });
-
-                if (memberships.length > 0) {
-                    query = _.merge(q, {
+                if (members.length > 0) {
+                    memberships = await researchEntityService.getMemberships(vm.group, {
                         where: {
-                            id: memberships.map(m => m.user)
+                            user: members.map(m => m.id)
                         }
                     });
-                    members = await researchEntityService.getAllMembers(vm.group, query);
                 }
             }
 
@@ -168,7 +184,6 @@
 
                     member.cssClass = member.membership.type === vm.membershipTypes.COLLABORATOR ? 'collaborator' :
                         [vm.membershipTypes.FORMER_MEMBER, vm.membershipTypes.FORMER_COLLABORATOR].includes(member.membership.type) ? 'former-collaborator' : {};
-
                 });
             }
 

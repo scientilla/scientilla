@@ -143,6 +143,9 @@
         Restangular.extendCollection('institutes', Prototyper.toInstitutesCollection);
         Restangular.extendCollection('users', Prototyper.toUsersCollection);
         Restangular.extendCollection('allMembers', Prototyper.toUsersCollection);
+        Restangular.extendCollection('members', Prototyper.toUsersCollection);
+        Restangular.extendCollection('activeMembers', Prototyper.toUsersCollection);
+        Restangular.extendCollection('allActiveMembers', Prototyper.toUsersCollection);
         Restangular.extendCollection('groups', Prototyper.toGroupsCollection);
         Restangular.extendCollection('taglabels', Prototyper.toTagLabelsCollection);
     }
