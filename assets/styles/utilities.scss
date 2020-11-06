@@ -34,3 +34,9 @@ label{
         margin: 0px;
     }
 }
+
+.vertical-align-middle{
+    display: flex;
+    height: 100%;
+    align-items: center;
+}

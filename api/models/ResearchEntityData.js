@@ -460,6 +460,16 @@ const defaultProperties = {
         definitions.privacy,
         definitions.privacyDefaultHidden
     ),
+    nationality: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    dateOfBirth: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
     groups: {
         type: 'array',
         default: [],
@@ -672,6 +682,8 @@ const thenProperties = {
     roleCategory: definitions.ifValueCheckHiddenPrivacy,
     phone: definitions.ifValueCheckHiddenPrivacy,
     gender: definitions.ifValueCheckHiddenPrivacy,
+    nationality: definitions.ifValueCheckHiddenPrivacy,
+    dateOfBirth: definitions.ifValueCheckHiddenPrivacy,
     groups: {
         items: definitions.ifNameCheckHiddenPrivacy
     },
@@ -850,6 +862,8 @@ const elseProperties = {
     roleCategory: definitions.ifValueCheckPublicPrivacy,
     phone: definitions.ifValueCheckPublicPrivacy,
     gender: definitions.ifValueCheckPublicPrivacy,
+    nationality: definitions.ifValueCheckPublicPrivacy,
+    dateOfBirth: definitions.ifValueCheckPublicPrivacy,
     groups: {
         items: definitions.ifValueCheckPublicPrivacy
     },
@@ -1436,6 +1450,8 @@ async function saveProfile(req) {
             profile.roleCategory = researchEntityData.profile.roleCategory;
             profile.phone = researchEntityData.profile.phone;
             profile.gender = researchEntityData.profile.gender;
+            profile.nationality = researchEntityData.profile.nationality;
+            profile.dateOfBirth = researchEntityData.profile.dateOfBirth;
             profile.groups = researchEntityData.profile.groups;
 
             if (!hasFiles && _.has(profile, 'image.value') && !_.isEmpty(profile.image.value)) {

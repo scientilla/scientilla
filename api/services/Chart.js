@@ -6,7 +6,7 @@ module.exports = {
     getChartsData
 };
 
-async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
+async function getChartsData(researchEntityId, Model, chartsKeys, refresh, role) {
 
     const documentTypes = DocumentTypes.get();
 
@@ -134,9 +134,74 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
         nocache: true
     }, {
         key: 'groupMembersByRole',
-        fn: getGroupMembersByRole,
-        researchEntityId: researchEntityId,
-        researchEntityType: researchEntityType
+        queryName: 'groupMembersByRole',
+        fn: query,
+        params: [researchEntityId]
+    },  {
+        key: 'groupAndSubgroupMembersByRole',
+        queryName: 'groupAndSubgroupMembersByRole',
+        fn: query,
+        params: [researchEntityId]
+    },  {
+        key: 'groupMembersByGender',
+        queryName: 'groupMembersByGender',
+        fn: query,
+        params: [researchEntityId]
+    },  {
+        key: 'groupMembersByGenderOfRole',
+        queryName: 'groupMembersByGenderOfRole',
+        fn: query,
+        params: [researchEntityId, role]
+    },  {
+        key: 'groupAndSubgroupMembersByGender',
+        queryName: 'groupAndSubgroupMembersByGender',
+        fn: query,
+        params: [researchEntityId]
+    },  {
+        key: 'groupAndSubgroupMembersByGenderOfRole',
+        queryName: 'groupAndSubgroupMembersByGenderOfRole',
+        fn: query,
+        params: [researchEntityId, role]
+    },  {
+        key: 'groupMembersByAgeRange',
+        queryName: 'groupMembersByAgeRange',
+        fn: query,
+        params: [researchEntityId]
+    },  {
+        key: 'groupMembersByAgeRangeOfRole',
+        queryName: 'groupMembersByAgeRangeOfRole',
+        fn: query,
+        params: [researchEntityId, role]
+    },  {
+        key: 'groupAndSubgroupMembersByAgeRange',
+        queryName: 'groupAndSubgroupMembersByAgeRange',
+        fn: query,
+        params: [researchEntityId]
+    },  {
+        key: 'groupAndSubgroupMembersByAgeRangeOfRole',
+        queryName: 'groupAndSubgroupMembersByAgeRangeOfRole',
+        fn: query,
+        params: [researchEntityId, role]
+    },  {
+        key: 'groupMembersByNationality',
+        queryName: 'groupMembersByNationality',
+        fn: query,
+        params: [researchEntityId]
+    },  {
+        key: 'groupMembersByNationalityOfRole',
+        queryName: 'groupMembersByNationalityOfRole',
+        fn: query,
+        params: [researchEntityId, role]
+    },  {
+        key: 'groupAndSubgroupMembersByNationality',
+        queryName: 'groupAndSubgroupMembersByNationality',
+        fn: query,
+        params: [researchEntityId]
+    },  {
+        key: 'groupAndSubgroupMembersByNationalityOfRole',
+        queryName: 'groupAndSubgroupMembersByNationalityOfRole',
+        fn: query,
+        params: [researchEntityId, role]
     }];
 
     let selectedCharts = [];
@@ -209,7 +274,21 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
                 'documentsByYear': 'documentsByYear',
                 'filteredAffiliatedDocumentsByYear': 'filteredAffiliatedDocumentsByYearGroup',
                 'filteredNotAffiliatedDocumentsByYear': 'filteredNotAffiliatedDocumentsByYearGroup',
-                'invitedTalksByYear': 'invitedTalksByYear'
+                'invitedTalksByYear': 'invitedTalksByYear',
+                'groupMembersByRole': 'groupMembersByRole',
+                'groupAndSubgroupMembersByRole': 'groupAndSubgroupMembersByRole',
+                'groupMembersByGender': 'groupMembersByGender',
+                'groupMembersByGenderOfRole': 'groupMembersByGenderOfRole',
+                'groupAndSubgroupMembersByGender': 'groupAndSubgroupMembersByGender',
+                'groupAndSubgroupMembersByGenderOfRole': 'groupAndSubgroupMembersByGenderOfRole',
+                'groupMembersByAgeRange': 'groupMembersByAgeRange',
+                'groupMembersByAgeRangeOfRole': 'groupMembersByAgeRangeOfRole',
+                'groupAndSubgroupMembersByAgeRange': 'groupAndSubgroupMembersByAgeRange',
+                'groupAndSubgroupMembersByAgeRangeOfRole': 'groupAndSubgroupMembersByAgeRangeOfRole',
+                'groupMembersByNationality': 'groupMembersByNationality',
+                'groupMembersByNationalityOfRole': 'groupMembersByNationalityOfRole',
+                'groupAndSubgroupMembersByNationality': 'groupAndSubgroupMembersByNationality',
+                'groupAndSubgroupMembersByNationalityOfRole': 'groupAndSubgroupMembersByNationalityOfRole'
             }
         };
         const transforms = {
@@ -298,100 +377,6 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
                     value: yearTotal
                 };
             });
-    }
-
-    async function getGroupMembersByRole(chart) {
-        if (chart.researchEntityType !== 'group')
-            return [];
-
-        const groupId = chart.researchEntityId;
-
-        const roles = {
-            pi: 'PI',
-            affiliated_researcher: 'Affiliated Researcher',
-            administrative: 'Administrative',
-            external_collaborator: 'External Collaborator',
-            phd: 'PhD',
-            post_doc: 'Post Doc',
-            research_support: 'Research Support',
-            researcher: 'Researcher',
-            scientific_director: 'Scientific Director',
-            technician: 'Technician',
-            technologist: 'Technologist',
-            visiting_scientist: 'Visiting Scientist',
-            director: 'Director',
-            other: 'Other'
-        };
-
-        const roleMapper = {
-            'researcher - center coordinator': roles.researcher,
-            'researcher tt (tt1)': roles.researcher,
-            'senior researcher tt (tt2)': roles.researcher,
-            'senior researcher tenured': roles.researcher,
-            'senior researcher tenured - center coordinator': roles.researcher,
-            'senior researcher tenured - research director': roles.researcher,
-            'senior researcher - center coordinator': roles.researcher,
-            'senior researcher - founding director': roles.researcher,
-            'senior researcher - research director': roles.researcher,
-            'technologist - center coordinator': roles.technologist,
-            'chief technician': roles.technician,
-            'affiliated researcher': roles.affiliated_researcher,
-            'administrative assistant': roles.administrative,
-            'administrative manager': roles.administrative,
-            'administrative supervisor': roles.administrative,
-            'support administrative assistant': roles.administrative,
-            'external collaborator': roles.external_collaborator,
-            'phd student': roles.phd,
-            'phd student fellow': roles.phd,
-            'phd/fellow': roles.phd,
-            'post doc': roles.post_doc,
-            'post doc fellow': roles.post_doc,
-            'research administrative': roles.research_support,
-            'research manager': roles.research_support,
-            'research support administrative junior': roles.research_support,
-            'research support administrative senior': roles.research_support,
-            'early-stage researcher': roles.researcher,
-            'researcher': roles.researcher,
-            'senior researcher': roles.researcher,
-            'scientific director': roles.scientific_director,
-            'senior technician': roles.technician,
-            'support technician': roles.technician,
-            'junior technician': roles.technician,
-            'technologist': roles.technologist,
-            'visiting scientist': roles.visiting_scientist,
-            'director': roles.director
-        };
-
-        const pis = await PrincipalInvestigator.find();
-
-        const memberships = await AllMembership.find({
-            group: groupId,
-            synchronized: true,
-            active: true
-        });
-        const members = await User.find({id: memberships.map(m => m.user)});
-        return members.reduce((acc, m) => {
-            let role;
-            if (pis.find(p => m.id === p.pi))
-                role = roles.pi;
-            else if (m.jobTitle)
-                role = roleMapper[m.jobTitle.toLocaleLowerCase()];
-
-            if (!role) role = roles.other;
-
-            const res = acc.find(r => r.role === role);
-            if (!res) {
-                acc.push({
-                    role: role,
-                    value: 1
-                });
-                return acc;
-            }
-
-            res.value++;
-            return acc;
-        }, []);
-
     }
 
     async function setDocuments() {

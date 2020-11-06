@@ -78,7 +78,8 @@ module.exports = {
         const id = req.params.researchEntityId;
         const refresh = req.param('refresh') === 'true';
         const chartsKeys = req.param('charts') || [];
-        res.halt(Chart.getChartsData(id, Model, chartsKeys, refresh));
+        const role = req.param('role') || false;
+        res.halt(Chart.getChartsData(id, Model, chartsKeys, refresh, role));
     },
     setAuthorhips: function (req, res) {
         const draftId = req.params.documentId;

@@ -1,0 +1,28 @@
+.card{
+    &.card-primary{
+        background: $primary-color;
+        border-color: $primary-color;
+        color: color-yiq($primary-color);
+
+        a{
+            color: color-yiq($primary-color);
+            text-decoration: underline;
+        }
+
+        .form-checkbox{
+            input{
+                &:checked{
+                    & + span{
+                        &:before{
+                            border-color: color-yiq($primary-color);
+                        }
+
+                        &:after{
+                            color: $primary-color;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,58 +1,254 @@
 <div class="group-info-tab">
-    <div class="table-responsive">
-        <table class="table table-striped table-condensed">
-            <tr>
-                <td><strong>Type:</strong></td>
-                <td>{{ vm.group.type }}</td>
-            </tr>
-            <tr ng-if="vm.group.pis.length">
-                <td><strong>PI:</strong></td>
-                <td>
-                    <ul class="pi">
-                        <li ng-repeat="pi in vm.group.pis">
-                            <a ng-href="#{{ pi.getProfileUrl() }}">{{ pi.getDisplayName() }}</a>
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-            <tr ng-if="vm.group.starting_date">
-                <td><strong>Starting date:</strong></td>
-                <td>{{ vm.group.starting_date | date : 'd LLLL yyyy' }}</td>
-            </tr>
-            <tr ng-if="vm.researchDomain">
-                <td><strong>Research domain:</strong></td>
-                <td>{{ vm.researchDomain.name }}</td>
-            </tr>
-            <tr ng-if="vm.interactions.length">
-                <td><strong>Interactions:</strong></td>
-                <td>
-                    <ul class="interactions">
-                        <li ng-repeat="interaction in vm.interactions">
-                            {{ interaction.name }}
-                        </li>
-                    </ul>
-                </td>
-            </tr>
-            <tr ng-if="vm.group.scopusId">
-                <td><strong>Scopus:</strong></td>
-                <td>
-                    <a
-                        ng-href="https://www.scopus.com/affil/profile.uri?afid={{vm.group.scopusId}}"
-                        target="_blank">
-                        Scopus profile
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td><strong>Current members*:</strong></td>
-                <td>{{ vm.totalMembers }}</td>
-            </tr>
-        </table>
-    </div>
 
-    <div class="chart-container">
-        <nvd3 options="vm.chart.options" data="vm.chart.data" class="chart"></nvd3>
-        <p class="chart-info">* This representation of group members may not be accurate or up-to-date. 
-            If you need to use this data, please contact the <a href="mailto:hr_servicedesk@iit.it">HCOD</a>.</p>
+    <scientilla-loading is-loading="vm.isLoading"></scientilla-loading>
+
+    <div ng-if="!vm.isLoading">
+        <div class="row">
+            <div class="col-12 col-sm-3">
+                <div class="card card-primary group-card">
+                    <div class="card-body">
+                        <h2>{{ vm.group.type }}</h2>
+                        <ul class="group-info-listing">
+                            <li ng-if="vm.group.pis.length">
+                                <strong>PI:</strong>
+                                <ul class="pi">
+                                    <li ng-repeat="pi in vm.group.pis">
+                                        <a ng-href="#{{ pi.getProfileUrl() }}">{{ pi.getDisplayName() }}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li ng-if="vm.group.starting_date">
+                                <strong>Starting date:</strong> {{ vm.group.starting_date | date : 'd LLLL yyyy' }}
+                            </li>
+                            <li ng-if="vm.researchDomain">
+                                <strong>Research domain:</strong> {{ vm.researchDomain.name }}
+                            </li>
+                            <li ng-if="vm.interactions.length">
+                                <strong>Interactions:</strong>
+                                <ul class="interactions">
+                                    <li ng-repeat="interaction in vm.interactions">
+                                        {{ interaction.name }}
+                                    </li>
+                                </ul>
+                            </li>
+                            <li ng-if="vm.group.scopusId">
+                                <strong>Scopus:</strong>
+                                <a
+                                    ng-href="https://www.scopus.com/affil/profile.uri?afid={{vm.group.scopusId}}"
+                                    target="_blank">
+                                    Scopus profile
+                                </a>
+                            </li>
+                            <li>
+                                <strong>Current members*:</strong> {{ vm.totalMembers }}
+                            </li>
+                        </ul>
+
+                        <div class="checkbox-container">
+                            <scientilla-checkbox-field
+                                id="include-subgroups"
+                                model="vm.includeSubgroups"
+                                structure="{ label: 'Include subgroups' }"></scientilla-checkbox-field>
+                        </div>
+
+                        <p class="chart-info">* This representation of group members may not be accurate or up-to-date.
+                            If you need to use this data, please contact the <a href="mailto:hr_servicedesk@iit.it">HCOD</a>.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body role-card">
+                        <scientilla-select-field
+                            model="vm.role"
+                            structure="vm.selectStructure">
+                        </scientilla-select-field>
+                        <em>This will update the "members by gender", "members by age range" and "member by country" chart.</em>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-9 column-by-role">
+                <h2 class="chart-title">Members by role</h2>
+                <div class="legend-info">
+                    <span class="subtotal">{{ vm.totalMembers }}</span>
+                    <span class="category-subtitle">members</span>
+                </div>
+                <div
+                    class="legend-container"
+                    ng-class="{ 'add-border' : vm.byRole.length > 7}"
+                    expand-legend>
+                    <ul class="js-legend legend legend-roles">
+                        <li ng-repeat="role in vm.byRole track by $index">
+                            <div class="bar-chart">
+                                <div class="chart">
+                                    <span ng-style="{ 'width': 'calc(' + role.percent + '% + 10px)', 'background-color': vm.colors[$index] }"></span>
+                                </div>
+                            </div>
+                            <div class="content">
+                                <span>{{ role.category }}</span>
+                                <span class="colorize-text">
+                                    {{ role.value }} {{ role.value === 1 ? 'member' : 'members'}}
+                                </span>
+                                <span class="colorize-text">{{ role.percent }}%</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <button
+                        class="js-see-more-less expand-button btn btn-outline-secondary"
+                        ng-class="{ 'hidden' : vm.byRole.length <= 7 }">
+                        <span class="see-more-text">See more</span>
+                        <span class="see-less-text">See less</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <hr class="extra-margin" />
+
+        <div class="row">
+            <div class="col-12 col-lg-6 column-by-gender">
+                <h2 class="chart-title">Members by gender</h2>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="chart-container chart-by-gender-container">
+                            <nvd3
+                                options="vm.donutChartOptions"
+                                data="vm.chartMaleData"
+                                class="chart chart-full"></nvd3>
+                            <div class="percentage-container">
+                                <div>
+                                    <span class="percentage">{{ vm.maleData.percentage }}%</span>
+                                    <span class="gender">Male</span>
+                                    <span class="count">
+                                        {{ vm.maleData.count }} {{ vm.maleData.count === 1 ? 'member' : 'members'}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="chart-container chart-by-gender-container">
+                            <nvd3
+                                options="vm.donutChartOptions"
+                                data="vm.chartFemaleData"
+                                class="chart chart-full"></nvd3>
+                            <div class="percentage-container">
+                                <div>
+                                    <span class="percentage">{{ vm.femaleData.percentage }}%</span>
+                                    <span class="gender">Female</span>
+                                    <span class="count">
+                                        {{ vm.femaleData.count }} {{ vm.femaleData.count === 1 ? 'member' : 'members'}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6 column-by-age-range">
+                <h2 class="chart-title">Members by age range</h2>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="chart-container">
+                            <nvd3
+                                options="vm.chartByAgeRange.options"
+                                data="vm.chartByAgeRange.data"
+                                class="chart chart-full"></nvd3>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="vertical-align-middle">
+                            <ul class="legend legend-default">
+                                <li
+                                    ng-repeat="range in vm.chartByAgeRange.data track by $index"
+                                    class="content">
+                                    <span
+                                        class="color"
+                                        ng-style="{ 'background-color': vm.colors[$index] }"></span>
+                                    <span class="colorize-text">{{ range.label }}</span>
+                                    <span class="colorize-text">
+                                        {{ range.count }} {{ range.count === 1 ? 'member' : 'members'}}
+                                    </span>
+                                    <span class="colorize-text">{{ range.percentage }}%</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="extra-margin" />
+
+        <h2 class="chart-title">Members by country</h2>
+        <div class="row">
+            <div class="col-12 col-lg-6">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="chart-container">
+                            <nvd3
+                                options="vm.chartByBiggestCountry.options"
+                                data="vm.chartByBiggestCountry.data"
+                                class="chart chart-full"></nvd3>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="vertical-align-middle">
+                            <ul class="legend legend-default">
+                                <li
+                                    ng-repeat="country in vm.chartByBiggestCountry.data track by $index"
+                                    class="content">
+                                    <span
+                                        class="color"
+                                        ng-style="{ 'background-color': country.color }"></span>
+                                    <span>{{ country.label }}</span>
+                                    <span class="colorize-text">
+                                        {{ country.count }} {{ country.count === 1 ? 'member' : 'members'}}
+                                    </span>
+                                    <span class="colorize-text">{{ country.percentage }}%</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-6">
+                <div class="stacked-bar-chart">
+                    <div class="legend-info">
+                        <span class="subtotal">{{ vm.totalCountries }}</span>
+                        <span class="category-subtitle">
+                            {{ vm.totalCountries === 1 ? 'country' : 'countries' }}
+                        </span>
+                    </div>
+
+                    <div
+                        class="legend-container"
+                        ng-class="{ 'add-border' : vm.byCountry.length > 7}"
+                        expand-legend>
+                        <ul class="js-legend legend legend-default">
+                            <li
+                                ng-repeat="country in vm.byCountry track by $index"class="content">
+                                <span
+                                    class="color"
+                                    ng-style="
+                                        !country.other && { 'background-color': vm.colors[$index] } ||
+                                        country.other && { 'background-color': vm.otherColor }
+                                    "></span>
+                                <span class="colorize-text">{{ country.label }}</span>
+                                <span class="colorize-text">
+                                    {{ country.value }} {{ country.value === 1 ? 'member' : 'members'}}
+                                </span>
+                                <span class="colorize-text">{{ country.percent }}%</span>
+                            </li>
+                        </ul>
+                        <button
+                            class="js-see-more-less expand-button btn btn-outline-secondary"
+                            ng-class="{ 'hidden' : vm.byCountry.length <= 7 }">
+                            <span class="see-more-text">See more</span>
+                            <span class="see-less-text">See less</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

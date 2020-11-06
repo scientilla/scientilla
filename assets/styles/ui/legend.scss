@@ -1,0 +1,169 @@
+.legend-container{
+    position: relative;
+    margin-bottom: 3rem;
+
+    &.add-border{
+        padding-bottom: 3rem;
+        border-bottom: .1rem solid $gray-200;
+    }
+
+    .legend{
+        max-height: 25rem;
+        overflow: hidden;
+
+        &.expand{
+            max-height: none;
+        }
+    }
+
+    .expand-button{
+        position: absolute;
+        left: 50%;
+        bottom: -1.1rem;
+        width: 6rem;
+        margin-left: -3rem;
+        padding: .5rem .5rem;
+        font-size: 1rem;
+        line-height: 1rem;
+        border-color: $gray-200;
+        color: $gray-400;
+        background: $white;
+
+        &.active,
+        &:hover,
+        &:focus:hover{
+            color: $white;
+            border-color: $gray;
+            background: $gray;
+        }
+
+        .see-more-text{
+            display: block;
+        }
+
+        .see-less-text{
+            display: none;
+        }
+
+        &.show-less{
+            .see-more-text{
+                display: none;
+            }
+
+            .see-less-text{
+                display: block;
+            }
+        }
+    }
+}
+
+.legend{
+    @include normalize-listing;
+
+    .color{
+        display: block;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: .3rem;
+    }
+
+    .content{
+        & > * {
+            padding-right: 2rem;
+            padding-left: 2rem;
+
+            &:first-child{
+                padding-left: 0px;
+                padding-right: 0px;
+            }
+
+            &:last-child{
+                padding-right: 0px;
+            }
+        }
+    }
+
+    .colorize-text{
+        color: $gray-400;
+    }
+
+    .percent-column{
+        min-width: 5rem;
+        text-align: right;
+    }
+
+    &.legend-default{
+        & > li{
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: auto 1fr auto auto;
+            align-items: center;
+
+            & + li {
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: .1rem solid $gray-100;
+            }
+        }
+    }
+
+    &.legend-roles{
+        & > li {
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+
+            & + li {
+                margin-top: 1rem;
+
+                .bar-chart{
+                    padding-top: 1.1rem;
+                }
+
+                .content{
+                    padding-top: 1rem;
+                    border-top: .1rem solid $gray-100;
+                }
+            }
+        }
+
+        .bar-chart{
+            margin-right: 2rem;
+
+            .chart{
+                position: relative;
+                display: block;
+                text-align: right;
+
+                &:after{
+                    position: absolute;
+                    top: 50%;
+                    left: 0px;
+                    z-index: -1;
+                    display: block;
+                    width: 100%;
+                    height: 1rem;
+                    margin-top: -.5rem;
+                    content: '';
+                    background: $gray-100;
+                    border-radius: .3rem;
+                }
+
+                span{
+                    display: inline-block;
+                    height: 1.5rem;
+                    vertical-align: middle;
+                    border-radius: .3rem;
+                }
+            }
+        }
+
+        .content{
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: 1fr auto auto;
+            align-items: center;
+        }
+    }
+}

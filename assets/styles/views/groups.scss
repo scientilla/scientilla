@@ -52,27 +52,47 @@
     &.group-detail{
 
         .group-info-tab{
-            .pi,
-            .interactions{
-                @include normalize-listing;
 
-                & > li{
-                    display: inline-block;
-                    vertical-align: top;
+            .group-card{
+                margin-bottom: 2rem;
 
-                    & + li{
-                        &:before{
+                .group-info-listing{
+                    @include normalize-listing;
+                    margin-bottom: 2rem;
+
+                    .pi,
+                    .interactions{
+                        @include normalize-listing('true');
+
+                        & > li{
                             display: inline-block;
-                            content: ',';
                             vertical-align: top;
+
+                            & + li{
+                                &:before{
+                                    display: inline-block;
+                                    content: ',';
+                                    vertical-align: top;
+                                }
+                            }
                         }
                     }
                 }
             }
 
+            .role-card{
+                em{
+                    display: block;
+                    margin-top: 1rem;
+                    color: $gray;
+                }
+            }
+
+            .checkbox-container{
+                margin-bottom: 2rem;
+            }
+
             .chart-container{
-                max-width: 800px;
-                margin-top: 5rem;
                 margin-left: auto;
                 margin-right: auto;
 
@@ -80,6 +100,10 @@
                     position: relative;
                     display: block;
                     padding-bottom: 50%;
+
+                    &.chart-full{
+                        padding-bottom: 100%;
+                    }
                 }
 
                 svg{
@@ -90,13 +114,71 @@
                     height: 100% !important;
                 }
 
-                .chart-info{
-                    max-width: 500px;
-                    margin-right: auto;
-                    margin-left: auto;
-                    font-style: italic;
-                    text-align: center;
+                .nvd3.nv-pie path{
+                    fill-opacity: 1;
                 }
+            }
+
+            .chart-by-gender-container{
+                position: relative;
+            }
+
+            .chart-title{
+                margin-bottom: 0px;
+            }
+
+            .percentage-container{
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                display: flex;
+                width: 100%;
+                height: 100%;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+            }
+
+            .gender{
+                @include h4;
+                display: block;
+                line-height: 1 !important;
+            }
+
+            .percentage{
+                @include h2;
+                line-height: 1 !important;
+            }
+
+            .count{
+                color: $gray-400;
+            }
+
+            .legend-info{
+                margin-bottom: 2rem;
+
+                .subtotal {
+                    font-size: 5rem;
+                    line-height: 1;
+                }
+
+                .category-subtitle{
+                    font-size: 2rem;
+                    color: $gray-400;
+                }
+            }
+
+            .column-by-role{
+                padding-left: 3rem;
+            }
+
+            .column-by-gender{
+                padding-right: 3rem;
+                border-right: .1rem solid $gray-100;
+            }
+
+            .column-by-age-range{
+                padding-left: 3rem;
             }
         }
 

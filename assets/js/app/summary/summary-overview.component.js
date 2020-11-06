@@ -40,7 +40,7 @@
                     let timer = null;
 
                     vm.customizations = customizations;
-                    ChartService.setStyles(vm.customizations);
+                    //ChartService.setStyles(vm.customizations);
 
                     vm.reload(vm.chartsData);
 

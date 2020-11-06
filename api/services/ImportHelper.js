@@ -630,6 +630,14 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
         privacy: defaultPrivacy,
         value: contract.genere
     };
+    profile.nationality = {
+        privacy: defaultPrivacy,
+        value: contract.nazionalita
+    };
+    profile.dateOfBirth = {
+        privacy: defaultPrivacy,
+        value: moment(contract.data_nascita, 'YYYYMMDD').format('YYYY-MM-DD')
+    };
 
     const groups = [];
     const lines = [];
