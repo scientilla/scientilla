@@ -33,8 +33,13 @@
 
         /* jshint ignore:start */
         vm.reload = async function () {
-            vm.chartsData = await ChartService.getBibliometricChartData(vm.researchEntity);
+            const refresh = !isMainGroup();
+            vm.chartsData = await ChartService.getBibliometricChartData(vm.researchEntity, refresh);
         };
+
+        function isMainGroup() {
+            return vm.researchEntity.id === 1;
+        }
         /* jshint ignore:end */
     }
 })();

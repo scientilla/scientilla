@@ -83,7 +83,7 @@
         };
 
         /* jshint ignore:start */
-        service.getDocumentsOveriewChartData = async (researchEntity, refresh = false) => {
+        service.getDocumentsOverviewChartData = async (researchEntity, refresh = false) => {
             return await getData(researchEntity, refresh, documentsOverviewCharts, 'documentsOverviewCharts');
         };
 
