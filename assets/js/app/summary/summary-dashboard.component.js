@@ -32,8 +32,11 @@
             /* jshint ignore:start */
             vm.$onInit = async () => {
                 vm.subResearchEntity = context.getSubResearchEntity();
-                vm.documentOverviewChartData = await ChartService.getDocumentsOveriewChartData(vm.subResearchEntity);
-                vm.bibliometricChartData = await ChartService.getBibliometricChartData(vm.subResearchEntity);
+
+                const refresh = !isMainGroup();
+
+                vm.documentOverviewChartData = await ChartService.getDocumentsOverviewChartData(vm.subResearchEntity, refresh);
+                vm.bibliometricChartData = await ChartService.getBibliometricChartData(vm.subResearchEntity, refresh);
             };
 
             async function recalculate() {
@@ -41,7 +44,10 @@
                     return;
 
                 vm.recalculating = true;
-                vm.chartsData = await ChartService.getData(vm.subResearchEntity, true);
+
+                const refresh = !isMainGroup();
+
+                vm.chartsData = await ChartService.getData(vm.subResearchEntity, refresh);
 
                 if (vm.chartsData.chartDataDate && vm.chartsData.chartDataDate[0].max) {
                     vm.lastRefresh = new Date(vm.chartsData.chartDataDate[0].max);
