@@ -35,7 +35,7 @@
             'config'
         ];
 
-        const userPopulates = ['administratedGroups', 'attributes', 'aliases', 'memberships', 'groupMemberships'];
+        const userPopulates = ['administratedGroups', 'attributes', 'aliases', 'memberships', 'groupMemberships', 'userData'];
 
         service.getNewUser = function () {
             var user = {
