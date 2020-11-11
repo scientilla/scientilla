@@ -93,6 +93,7 @@
             }
 
             .chart-container{
+                max-width: 300px;
                 margin-left: auto;
                 margin-right: auto;
 
@@ -168,17 +169,15 @@
                 }
             }
 
-            .column-by-role{
-                padding-left: 3rem;
+            .column-by-role,
+            .column-countries{
+                margin-top: 3rem;
             }
 
             .column-by-gender{
-                padding-right: 3rem;
-                border-right: .1rem solid $gray-100;
-            }
-
-            .column-by-age-range{
-                padding-left: 3rem;
+                margin-bottom: 3rem;
+                padding-bottom: 3rem;
+                border-bottom: .1rem solid $gray-100;
             }
         }
 
@@ -317,4 +316,45 @@
             }
         }
     }
+}
+
+@include media-breakpoint-up(lg) {
+    .groups {
+        &.group-detail {
+            .group-info-tab {
+                .column-by-role,
+                .column-countries{
+                    margin-top: 0px;
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(xl) {
+    .groups{
+        &.group-detail{
+            .group-info-tab{
+                .column-by-role{
+                    padding-left: 3rem;
+                }
+
+                .column-by-gender{
+                    margin-bottom: 0px;
+                    padding-right: 3rem;
+                    padding-bottom: 3rem;
+                    border-right: .1rem solid $gray-100;
+                    border-bottom: none;
+                }
+
+                .column-by-age-range{
+                    padding-left: 3rem;
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-between(md, lg) {
+
 }

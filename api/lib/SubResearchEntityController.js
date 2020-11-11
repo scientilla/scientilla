@@ -75,7 +75,7 @@ module.exports = {
     },
     getChartsData: function (req, res) {
         const Model = getModel(req);
-        const id = req.params.researchEntityId;
+        const id = req.params.id;
         const refresh = req.param('refresh') === 'true';
         const chartsKeys = req.param('charts') || [];
         const role = req.param('role') || false;
