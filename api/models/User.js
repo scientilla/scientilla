@@ -203,6 +203,7 @@ module.exports = _.merge({}, SubResearchEntity, {
         userData: {
             collection: 'userData',
             via: 'user',
+            unique: true
         },
         lastsynch: 'datetime',
         active: {

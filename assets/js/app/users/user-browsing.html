@@ -16,10 +16,63 @@
                 elements="vm.users">
 
             <ul class="user-listing">
-                <li ng-repeat="u in vm.users">
+                <li
+                    ng-repeat="u in vm.users"
+                    ng-init="profile = vm.getUserProfile(u)">
+
+                    <img src="{{ vm.getProfileImage(profile) }}" alt="{{ u | fullname }}" class="img-fluid">
+
                     <div class="user-content">
-                        <h3 class="user-fullname">{{u| fullname}}</h3>
-                        <a href="mailto:{{u.username}}" class="user-email">{{u.username}}</a>
+                        <div class="user-fullname">
+                            {{ u | fullname }}
+                        </div>
+                        <div class="job-title">
+                             {{ u.jobTitle }}
+                        </div>
+                        <div
+                            class="socials-container"
+                            ng-if="u.username || profile.socials.length > 0 || profile.phone">
+                            <ul
+                                class="socials">
+                                <li ng-if="u.username">
+                                    <a
+                                        target="_blank"
+                                        href="mailto:{{ u.username }}">
+                                        <i class="fas fa-envelope"></i>
+                                    </a>
+                                </li>
+                                <li ng-if="profile.phone">
+                                    <a
+                                        target="_blank"
+                                        href="tel:{{ vm.getPhone(profile.phone) }}">
+                                        <i class="fas fa-phone"></i>
+                                    </a>
+                                </li>
+                                <li ng-repeat="(social, url) in profile.socials">
+                                    <a
+                                        target="_blank"
+                                        href="{{ url }}">
+                                        <i class="{{ vm.socialClass(social) }}"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="memberships-container">
+                        <ul
+                            ng-if="profile"
+                            class="memberships">
+                            <li ng-repeat="center in vm.getUniqueCenters(profile)">
+                                <div>{{ center }}</div>
+                            </li>
+                            <li ng-repeat="group in vm.getUniqueGroups(profile)">
+                                <div>{{ group }}</div>
+                            </li>
+                            <li ng-repeat="office in vm.getUniqueOffices(profile)">
+                                <div>{{ office }}</div>
+                            </li>
+                        </ul>
                     </div>
 
                     <div class="dropdown-container">
