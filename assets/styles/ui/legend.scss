@@ -59,6 +59,7 @@
 
 .legend{
     @include normalize-listing;
+    width: 100%;
 
     .color{
         display: block;
@@ -67,29 +68,14 @@
         border-radius: .3rem;
     }
 
-    .content{
-        & > * {
-            padding-right: 2rem;
-            padding-left: 2rem;
-
-            &:first-child{
-                padding-left: 0px;
-                padding-right: 0px;
-            }
-
-            &:last-child{
-                padding-right: 0px;
-            }
-        }
-    }
-
     .colorize-text{
         color: $gray-400;
     }
 
-    .percent-column{
-        min-width: 5rem;
-        text-align: right;
+    .content{
+        .percentage-column{
+            min-width: 6.1rem;
+        }
     }
 
     &.legend-default{
@@ -103,6 +89,26 @@
                 margin-top: 1rem;
                 padding-top: 1rem;
                 border-top: .1rem solid $gray-100;
+            }
+        }
+
+        .content{
+            & > * {
+                padding-right: 2rem;
+                padding-left: 2rem;
+
+                &:first-child{
+                    padding-left: 0px;
+                    padding-right: 0px;
+                }
+
+                &:last-child{
+                    padding-right: 0px;
+                }
+            }
+
+            .percentage-column{
+                text-align: right;
             }
         }
     }
@@ -160,10 +166,41 @@
         }
 
         .content{
-            display: grid;
-            grid-template-rows: auto;
-            grid-template-columns: 1fr auto auto;
-            align-items: center;
+            span {
+                display: block;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .legend{
+
+        &.legend-roles{
+            .content{
+                display: grid;
+                grid-template-rows: auto;
+                grid-template-columns: 1fr auto auto;
+                align-items: center;
+
+                & > * {
+                    padding-right: 2rem;
+                    padding-left: 2rem;
+
+                    &:first-child{
+                        padding-left: 0px;
+                        padding-right: 0px;
+                    }
+
+                    &:last-child{
+                        padding-right: 0px;
+                    }
+                }
+
+                .percentage-column{
+                    text-align: right;
+                }
+            }
         }
     }
 }

@@ -98,24 +98,28 @@
 
         let charts = [];
         const groupChartAllRoles = [
+            'groupMembersTotal',
             'groupMembersByRole',
             'groupMembersByGender',
             'groupMembersByAgeRange',
             'groupMembersByNationality'
         ];
         const groupChartOfRole = [
+            'groupMembersTotal',
             'groupMembersByRole',
             'groupMembersByGenderOfRole',
             'groupMembersByAgeRangeOfRole',
             'groupMembersByNationalityOfRole'
         ];
         const includeSubgroupsChartsAllRoles = [
+            'groupAndSubgroupMembersTotal',
             'groupAndSubgroupMembersByRole',
             'groupAndSubgroupMembersByGender',
             'groupAndSubgroupMembersByAgeRange',
             'groupAndSubgroupMembersByNationality'
         ];
         const includeSubgroupsChartsOfRole = [
+            'groupAndSubgroupMembersTotal',
             'groupAndSubgroupMembersByRole',
             'groupAndSubgroupMembersByGenderOfRole',
             'groupAndSubgroupMembersByAgeRangeOfRole',
@@ -129,6 +133,7 @@
                 })
                 .map(c => c.charts[0]);
 
+            let total = 0;
             let byRole = [];
             let byGender = [];
             let byAgeRange = [];
@@ -167,24 +172,28 @@
 
             switch (true) {
                 case vm.role === defaultRole && !vm.includeSubgroups:
+                    total = charts[0].groupMembersTotal[0].count;
                     byRole = charts[0].groupMembersByRole;
                     byGender = charts[0].groupMembersByGender;
                     byAgeRange = charts[0].groupMembersByAgeRange[0];
                     byNationality = charts[0].groupMembersByNationality;
                     break;
                 case vm.role !== defaultRole && vm.includeSubgroups:
+                    total = charts[0].groupAndSubgroupMembersTotal[0].count;;
                     byRole = charts[0].groupAndSubgroupMembersByRole;
                     byGender = charts[0].groupAndSubgroupMembersByGenderOfRole;
                     byAgeRange = charts[0].groupAndSubgroupMembersByAgeRangeOfRole[0];
                     byNationality = charts[0].groupAndSubgroupMembersByNationalityOfRole;
                     break;
                 case vm.role !== defaultRole && !vm.includeSubgroups:
+                    total = charts[0].groupMembersTotal[0].count;;
                     byRole = charts[0].groupMembersByRole;
                     byGender = charts[0].groupMembersByGenderOfRole;
                     byAgeRange = charts[0].groupMembersByAgeRangeOfRole[0];
                     byNationality = charts[0].groupMembersByNationalityOfRole;
                     break;
                 default:
+                    total = charts[0].groupAndSubgroupMembersTotal[0].count;;
                     byRole = charts[0].groupAndSubgroupMembersByRole;
                     byGender = charts[0].groupAndSubgroupMembersByGender;
                     byAgeRange = charts[0].groupAndSubgroupMembersByAgeRange[0];
@@ -192,7 +201,8 @@
                     break;
             }
 
-            vm.totalMembers = byRole.reduce((tot, el) => tot + parseInt(el.count), 0);
+            vm.totalMembers = total;
+            vm.totalMembersByRole = byRole.reduce((tot, el) => tot + parseInt(el.count), 0);
 
             vm.byRole = byRole.map(role => {
                 return {
@@ -253,6 +263,8 @@
             vm.femaleData = byGender.find(d => d.gender === 'F') || { count: 0 };
             vm.femaleData.percentage = _.round((vm.femaleData.count / genderTotal) * 100, 2);
 
+            vm.genderTotal = genderTotal;
+
             vm.chartMaleData = [];
             vm.chartMaleData.push({
                 gender: 'Male',
@@ -294,6 +306,8 @@
                 }
             }
 
+            vm.ageRageTotal = ageRangeTotal;
+
             vm.chartByAgeRange = {
                 title: 'Age ranges',
                 data: ageRangeData,
@@ -319,16 +333,17 @@
             };
 
             // Country charts
-            const totalCountries = byNationality.reduce(function (accumulator, nationality) {
+            const totalByCountries = byNationality.reduce(function (accumulator, nationality) {
                 return accumulator + parseInt(nationality.count);
             }, 0);
+            vm.totalByCountries = totalByCountries;
             vm.byCountry = _.cloneDeep(
                 _.sortBy(
                     byNationality.map(data => {
                         return {
                             label: getCountryLabel(data.nationality),
                             value: parseInt(data.count),
-                            percent: getPercent(data.count, totalCountries)
+                            percent: getPercent(data.count, totalByCountries)
                         }
                     }), ['value']
                 ).reverse());
@@ -339,12 +354,12 @@
                 {
                     label: biggestCountry.label,
                     count: parseInt(biggestCountry.value),
-                    percentage: getPercent(biggestCountry.value, totalCountries),
+                    percentage: getPercent(biggestCountry.value, totalByCountries),
                     color: vm.colors[0]
                 }, {
                     label: 'Other countries',
-                    count: totalCountries - biggestCountry.value,
-                    percentage: getPercent(totalCountries - biggestCountry.value, totalCountries),
+                    count: totalByCountries - biggestCountry.value,
+                    percentage: getPercent(totalByCountries - biggestCountry.value, totalByCountries),
                     color: defaultChartColor
                 }
             ];

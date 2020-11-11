@@ -4,7 +4,7 @@
 
     <div ng-if="!vm.isLoading">
         <div class="row">
-            <div class="col-12 col-sm-3">
+            <div class="col-12 col-lg-6 col-xl-3">
                 <div class="card card-primary group-card">
                     <div class="card-body">
                         <h2>{{ vm.group.type }}</h2>
@@ -66,10 +66,10 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-sm-9 column-by-role">
+            <div class="col-12 col-lg-6 col-xl-9 column-by-role">
                 <h2 class="chart-title">Members by role</h2>
                 <div class="legend-info">
-                    <span class="subtotal">{{ vm.totalMembers }}</span>
+                    <span class="subtotal">{{ vm.totalMembersByRole }}</span>
                     <span class="category-subtitle">members</span>
                 </div>
                 <div
@@ -88,7 +88,7 @@
                                 <span class="colorize-text">
                                     {{ role.value }} {{ role.value === 1 ? 'member' : 'members'}}
                                 </span>
-                                <span class="colorize-text">{{ role.percent }}%</span>
+                                <span class="colorize-text percentage-column">{{ role.percent }}%</span>
                             </div>
                         </li>
                     </ul>
@@ -105,10 +105,11 @@
         <hr class="extra-margin" />
 
         <div class="row">
-            <div class="col-12 col-lg-6 column-by-gender">
+            <div class="col-12 col-xl-6 col-xxl-6 column-by-gender">
                 <h2 class="chart-title">Members by gender</h2>
+                <div class="hidden">Total members by gender: {{ vm.genderTotal }}</div>
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-12 col-sm-6 col-xl-12 col-xxl-6">
                         <div class="chart-container chart-by-gender-container">
                             <nvd3
                                 options="vm.donutChartOptions"
@@ -125,7 +126,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-12 col-sm-6 col-xl-12 col-xxl-6">
                         <div class="chart-container chart-by-gender-container">
                             <nvd3
                                 options="vm.donutChartOptions"
@@ -144,10 +145,11 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-6 column-by-age-range">
+            <div class="col-12 col-xl-6 col-xxl-6 column-by-age-range">
                 <h2 class="chart-title">Members by age range</h2>
+                <div class="hidden">Total members by age range: {{ vm.ageRageTotal }}</div>
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-12 col-md-4 col-lg-6 col-xl-12 col-xxl-6">
                         <div class="chart-container">
                             <nvd3
                                 options="vm.chartByAgeRange.options"
@@ -155,7 +157,7 @@
                                 class="chart chart-full"></nvd3>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-12 col-md-8 col-lg-6 col-xl-12 col-xxl-6">
                         <div class="vertical-align-middle">
                             <ul class="legend legend-default">
                                 <li
@@ -168,7 +170,7 @@
                                     <span class="colorize-text">
                                         {{ range.count }} {{ range.count === 1 ? 'member' : 'members'}}
                                     </span>
-                                    <span class="colorize-text">{{ range.percentage }}%</span>
+                                    <span class="colorize-text percentage-column">{{ range.percentage }}%</span>
                                 </li>
                             </ul>
                         </div>
@@ -180,10 +182,11 @@
         <hr class="extra-margin" />
 
         <h2 class="chart-title">Members by country</h2>
+        <div class="hidden">Total members by countries: {{ vm.totalByCountries }}</div>
         <div class="row">
-            <div class="col-12 col-lg-6">
+            <div class="col-12 col-lg-6 col-xl-5 col-xxl-6">
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-12 col-md-4 col-lg-12 col-xl-12 col-xxl-6">
                         <div class="chart-container">
                             <nvd3
                                 options="vm.chartByBiggestCountry.options"
@@ -191,7 +194,7 @@
                                 class="chart chart-full"></nvd3>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-12 col-md-8 col-lg-12 col-xl-12 col-xxl-6">
                         <div class="vertical-align-middle">
                             <ul class="legend legend-default">
                                 <li
@@ -204,14 +207,14 @@
                                     <span class="colorize-text">
                                         {{ country.count }} {{ country.count === 1 ? 'member' : 'members'}}
                                     </span>
-                                    <span class="colorize-text">{{ country.percentage }}%</span>
+                                    <span class="colorize-text percentage-column">{{ country.percentage }}%</span>
                                 </li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-6">
+            <div class="col-12 col-lg-6 col-xl-7 col-xxl-6 column-countries">
                 <div class="stacked-bar-chart">
                     <div class="legend-info">
                         <span class="subtotal">{{ vm.totalCountries }}</span>
@@ -237,7 +240,7 @@
                                 <span class="colorize-text">
                                     {{ country.value }} {{ country.value === 1 ? 'member' : 'members'}}
                                 </span>
-                                <span class="colorize-text">{{ country.percent }}%</span>
+                                <span class="colorize-text percentage-column">{{ country.percent }}%</span>
                             </li>
                         </ul>
                         <button
