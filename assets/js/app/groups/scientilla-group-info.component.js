@@ -20,7 +20,7 @@
 
         vm.charts = [];
         vm.includeSubgroups = true;
-        vm.isLoadingCharts = false;
+        vm.firstTimeLoaded = false;
         vm.isLoading = false;
 
         let includeSubgroupsWatcher;
@@ -30,6 +30,9 @@
         const defaultRole = 'all';
 
         vm.role = defaultRole;
+
+        vm.byCountryBiggestCountry = [];
+        vm.ageRangeData = [];
 
         vm.$onInit = () => {
             const registerTab = requireParentMethod($element, 'registerTab');
@@ -43,6 +46,8 @@
             roleWatcher = $scope.$watch('vm.role', () => {
                 vm.reload();
             });
+
+            initCharts();
         };
 
         vm.$onDestroy = () => {
@@ -61,7 +66,7 @@
         /* jshint ignore:start */
         vm.reload = async function () {
 
-            if (vm.isLoadingCharts) {
+            if (vm.isLoading) {
                 return;
             }
 
@@ -93,7 +98,7 @@
             vm.researchDomain = vm.group.getResearchDomain();
             vm.interactions = vm.group.getInteractions();
 
-            await initChart();
+            await loadChartData();
         };
 
         let charts = [];
@@ -126,113 +131,10 @@
             'groupAndSubgroupMembersByNationalityOfRole'
         ];
 
-        async function initChart() {
-
-            let charts = vm.charts.filter(c => {
-                return c.includeGroups === vm.includeSubgroups && c.role === vm.role
-                })
-                .map(c => c.charts[0]);
-
-            let total = 0;
-            let byRole = [];
-            let byGender = [];
-            let byAgeRange = [];
-            let byNationality = [];
-            const defaultChartColor = '#cccccc';
-
-            vm.isLoading = true;
-
-            function getCountryLabel(nationality) {
-                return ISO3166.getCountryName(nationality) ? ISO3166.getCountryName(nationality) : nationality;
-            }
-
-            function getPercent(numberOfMembers, total) {
-                return _.round((parseInt(numberOfMembers) / total) * 100, 2);
-            }
-
-            if (_.isEmpty(charts)) {
-                vm.isLoadingCharts = true;
-                vm.charts.push({
-                    role: vm.role,
-                    includeGroups: vm.includeSubgroups,
-                    charts: await vm.group.all('charts').getList(Object.assign(
-                        {},
-                        {
-                            refresh: true
-                        }, options)
-                    )
-                });
-                vm.isLoadingCharts = false;
-
-                charts = vm.charts.filter(c => {
-                        return c.includeGroups === vm.includeSubgroups && c.role === vm.role
-                    })
-                    .map(c => c.charts[0]);
-            }
-
-            switch (true) {
-                case vm.role === defaultRole && !vm.includeSubgroups:
-                    total = charts[0].groupMembersTotal[0].count;
-                    byRole = charts[0].groupMembersByRole;
-                    byGender = charts[0].groupMembersByGender;
-                    byAgeRange = charts[0].groupMembersByAgeRange[0];
-                    byNationality = charts[0].groupMembersByNationality;
-                    break;
-                case vm.role !== defaultRole && vm.includeSubgroups:
-                    total = charts[0].groupAndSubgroupMembersTotal[0].count;;
-                    byRole = charts[0].groupAndSubgroupMembersByRole;
-                    byGender = charts[0].groupAndSubgroupMembersByGenderOfRole;
-                    byAgeRange = charts[0].groupAndSubgroupMembersByAgeRangeOfRole[0];
-                    byNationality = charts[0].groupAndSubgroupMembersByNationalityOfRole;
-                    break;
-                case vm.role !== defaultRole && !vm.includeSubgroups:
-                    total = charts[0].groupMembersTotal[0].count;;
-                    byRole = charts[0].groupMembersByRole;
-                    byGender = charts[0].groupMembersByGenderOfRole;
-                    byAgeRange = charts[0].groupMembersByAgeRangeOfRole[0];
-                    byNationality = charts[0].groupMembersByNationalityOfRole;
-                    break;
-                default:
-                    total = charts[0].groupAndSubgroupMembersTotal[0].count;;
-                    byRole = charts[0].groupAndSubgroupMembersByRole;
-                    byGender = charts[0].groupAndSubgroupMembersByGender;
-                    byAgeRange = charts[0].groupAndSubgroupMembersByAgeRange[0];
-                    byNationality = charts[0].groupAndSubgroupMembersByNationality;
-                    break;
-            }
-
-            vm.totalMembers = total;
-            vm.totalMembersByRole = byRole.reduce((tot, el) => tot + parseInt(el.count), 0);
-
-            vm.byRole = byRole.map(role => {
-                return {
-                    category: role.category,
-                    value: parseInt(role.count),
-                    percent: _.round((parseInt(role.count) / vm.totalMembers) * 100, 2)
-                }
-            });
-
-            vm.roles = _.sortBy(vm.byRole.map(role => {
-                return {
-                    label: role.category,
-                    value: role.category
-                };
-            }), 'label');
-
-            vm.roles.unshift({
-                label: 'All',
-                value: defaultRole
-            });
-
-            vm.selectStructure = {
-                label: 'Select role:',
-                values: vm.roles
-            };
-
+        function initCharts() {
             vm.colors = ChartService.getColors();
             vm.otherColor = '#cfcece';
 
-            // Gender charts
             vm.donutChartOptions = {
                 chart: {
                     type: 'pieChart',
@@ -255,6 +157,155 @@
                 }
             };
 
+            vm.chartByAgeRangeOptions = {
+                chart: {
+                    type: 'pieChart',
+                    growOnHover: false,
+                    showLegend: false,
+                    showLabels: false,
+                    duration: 300,
+                    margin: 0,
+                    tooltip: {
+                        enabled: false
+                    },
+                    color: function(d, i) {
+                        return vm.colors[i % vm.colors.length]
+                    },
+                    x: d => d.label,
+                    y: d => d.count,
+                    valueFormat: d => d3.format('')(d)
+                }
+            };
+
+            vm.chartByBiggestCountryOptions = {
+                chart: {
+                    type: 'pieChart',
+                    labelThreshold: 0.02,
+                    growOnHover: false,
+                    showLegend: false,
+                    showLabels: false,
+                    duration: 300,
+                    margin: 0,
+                    tooltip: {
+                        enabled: false
+                    },
+                    color: function(d,i){
+                        return d.color || vm.colors[i % vm.colors.length]
+                    },
+                    x: d => d.label,
+                    y: d => d.count,
+                    valueFormat: d => d3.format('')(d),
+                }
+            };
+        }
+
+        async function loadChartData() {
+
+            vm.isLoading = true;
+
+            let charts = vm.charts.filter(c => {
+                    return c.includeGroups === vm.includeSubgroups && c.role === vm.role
+                })
+                .map(c => c.charts[0]);
+
+            let total = 0;
+            let byRole = [];
+            let byGender = [];
+            let byAgeRange = [];
+            let byNationality = [];
+            const defaultChartColor = '#cccccc';
+
+            function getCountryLabel(nationality) {
+                return ISO3166.getCountryName(nationality) ? ISO3166.getCountryName(nationality) : nationality;
+            }
+
+            function getPercent(numberOfMembers, total) {
+                return _.round((parseInt(numberOfMembers) / total) * 100, 2);
+            }
+
+            if (_.isEmpty(charts)) {
+                vm.charts.push({
+                    role: vm.role,
+                    includeGroups: vm.includeSubgroups,
+                    charts: await vm.group.all('charts').getList(Object.assign(
+                        {},
+                        {
+                            refresh: true
+                        }, options)
+                    )
+                });
+
+                charts = vm.charts.filter(c => {
+                        return c.includeGroups === vm.includeSubgroups && c.role === vm.role
+                    })
+                    .map(c => c.charts[0]);
+            }
+
+            switch (true) {
+                case vm.role === defaultRole && !vm.includeSubgroups:
+                    total = charts[0].groupMembersTotal[0].count;
+                    byRole = charts[0].groupMembersByRole;
+                    byGender = charts[0].groupMembersByGender;
+                    byAgeRange = charts[0].groupMembersByAgeRange[0];
+                    byNationality = charts[0].groupMembersByNationality;
+                    break;
+                case vm.role !== defaultRole && vm.includeSubgroups:
+                    total = charts[0].groupAndSubgroupMembersTotal[0].count;
+                    byRole = charts[0].groupAndSubgroupMembersByRole;
+                    byGender = charts[0].groupAndSubgroupMembersByGenderOfRole;
+                    byAgeRange = charts[0].groupAndSubgroupMembersByAgeRangeOfRole[0];
+                    byNationality = charts[0].groupAndSubgroupMembersByNationalityOfRole;
+                    break;
+                case vm.role !== defaultRole && !vm.includeSubgroups:
+                    total = charts[0].groupMembersTotal[0].count;
+                    byRole = charts[0].groupMembersByRole;
+                    byGender = charts[0].groupMembersByGenderOfRole;
+                    byAgeRange = charts[0].groupMembersByAgeRangeOfRole[0];
+                    byNationality = charts[0].groupMembersByNationalityOfRole;
+                    break;
+                default:
+                    total = charts[0].groupAndSubgroupMembersTotal[0].count;
+                    byRole = charts[0].groupAndSubgroupMembersByRole;
+                    byGender = charts[0].groupAndSubgroupMembersByGender;
+                    byAgeRange = charts[0].groupAndSubgroupMembersByAgeRange[0];
+                    byNationality = charts[0].groupAndSubgroupMembersByNationality;
+                    break;
+            }
+
+            vm.totalMembers = total;
+            vm.totalMembersByRole = byRole.reduce((tot, el) => tot + parseInt(el.count), 0);
+
+            vm.byRole = byRole.map(role => {
+                return {
+                    category: role.category,
+                    value: parseInt(role.count),
+                    percent: _.round((parseInt(role.count) / vm.totalMembers) * 100, 2)
+                }
+            });
+
+            vm.roles = _.sortBy(
+                vm.byRole.filter(role => role.category !== 'Others')
+                    .map(role => {
+                        return {
+                            label: role.category,
+                            value: role.category
+                        };
+                    }
+                ),
+                'label'
+            );
+
+            vm.roles.unshift({
+                label: 'All',
+                value: defaultRole
+            });
+
+            vm.selectStructure = {
+                label: 'Select role:',
+                values: vm.roles
+            };
+
+            // Gender charts
             const genderTotal = byGender.reduce(function (accumulator, gender) {
                 return accumulator + parseInt(gender.count);
             }, 0);
@@ -291,14 +342,16 @@
 
             // Age range chart
             let ageRangeTotal = 0;
-            const ageRangeData = [];
+
+            vm.ageRangeData = [];
+
             for (const label in byAgeRange) {
                 ageRangeTotal += parseInt(byAgeRange[label]);
             }
 
             for (const label in byAgeRange) {
                 if (byAgeRange[label] > 0) {
-                    ageRangeData.push({
+                    vm.ageRangeData.push({
                         label: label,
                         count: parseInt(byAgeRange[label]),
                         percentage: _.round((byAgeRange[label] / ageRangeTotal) * 100, 2)
@@ -307,30 +360,6 @@
             }
 
             vm.ageRageTotal = ageRangeTotal;
-
-            vm.chartByAgeRange = {
-                title: 'Age ranges',
-                data: ageRangeData,
-                options: {
-                    chart: {
-                        type: 'pieChart',
-                        growOnHover: false,
-                        showLegend: false,
-                        showLabels: false,
-                        duration: 300,
-                        margin: 0,
-                        tooltip: {
-                            enabled: false
-                        },
-                        color: function(d, i) {
-                            return vm.colors[i % vm.colors.length]
-                        },
-                        x: d => d.label,
-                        y: d => d.count,
-                        valueFormat: d => d3.format('')(d)
-                    }
-                }
-            };
 
             // Country charts
             const totalByCountries = byNationality.reduce(function (accumulator, nationality) {
@@ -350,7 +379,7 @@
             vm.totalCountries = vm.byCountry.length || 0;
 
             const biggestCountry = _.head(vm.byCountry);
-            const byCountryBiggestCountry = [
+            vm.byCountryBiggestCountry = [
                 {
                     label: biggestCountry.label,
                     count: parseInt(biggestCountry.value),
@@ -364,32 +393,8 @@
                 }
             ];
 
-            vm.chartByBiggestCountry= {
-                title: 'Nationalities',
-                data: byCountryBiggestCountry,
-                options: {
-                    chart: {
-                        type: 'pieChart',
-                        labelThreshold: 0.02,
-                        growOnHover: false,
-                        showLegend: false,
-                        showLabels: false,
-                        duration: 300,
-                        margin: 0,
-                        tooltip: {
-                            enabled: false
-                        },
-                        color: function(d,i){
-                            return d.color || vm.colors[i % vm.colors.length]
-                        },
-                        x: d => d.label,
-                        y: d => d.count,
-                        valueFormat: d => d3.format('')(d),
-                    }
-                }
-            };
-
             vm.isLoading = false;
+            vm.firstTimeLoaded = true;
         }
 
         /* jshint ignore:end */

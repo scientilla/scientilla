@@ -1,8 +1,8 @@
 <div class="group-info-tab">
 
-    <scientilla-loading is-loading="vm.isLoading"></scientilla-loading>
+    <scientilla-loading is-loading="!vm.firstTimeLoaded"></scientilla-loading>
 
-    <div ng-if="!vm.isLoading">
+    <div ng-if="vm.firstTimeLoaded">
         <div class="row">
             <div class="col-12 col-lg-6 col-xl-3">
                 <div class="card card-primary group-card">
@@ -152,8 +152,8 @@
                     <div class="col-12 col-md-4 col-lg-6 col-xl-12 col-xxl-6">
                         <div class="chart-container">
                             <nvd3
-                                options="vm.chartByAgeRange.options"
-                                data="vm.chartByAgeRange.data"
+                                options="vm.chartByAgeRangeOptions"
+                                data="vm.ageRangeData"
                                 class="chart chart-full"></nvd3>
                         </div>
                     </div>
@@ -161,7 +161,7 @@
                         <div class="vertical-align-middle">
                             <ul class="legend legend-default">
                                 <li
-                                    ng-repeat="range in vm.chartByAgeRange.data track by $index"
+                                    ng-repeat="range in vm.ageRangeData track by $index"
                                     class="content">
                                     <span
                                         class="color"
@@ -189,8 +189,8 @@
                     <div class="col-12 col-md-4 col-lg-12 col-xl-12 col-xxl-6">
                         <div class="chart-container">
                             <nvd3
-                                options="vm.chartByBiggestCountry.options"
-                                data="vm.chartByBiggestCountry.data"
+                                options="vm.chartByBiggestCountryOptions"
+                                data="vm.byCountryBiggestCountry"
                                 class="chart chart-full"></nvd3>
                         </div>
                     </div>
@@ -198,7 +198,7 @@
                         <div class="vertical-align-middle">
                             <ul class="legend legend-default">
                                 <li
-                                    ng-repeat="country in vm.chartByBiggestCountry.data track by $index"
+                                    ng-repeat="country in vm.byCountryBiggestCountry track by $index"
                                     class="content">
                                     <span
                                         class="color"
