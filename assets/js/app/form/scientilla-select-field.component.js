@@ -23,13 +23,16 @@
         let valuesWatcher;
 
         vm.$onInit = function () {
-            if (vm.structure.values)
+            if (_.has(vm.structure, 'values')) {
                 vm.values = vm.structure.values;
+            }
 
             if (vm.model === undefined || vm.model === null) vm.model = '?';
 
             valuesWatcher = $scope.$watch('vm.structure.values', function () {
-                vm.values = vm.structure.values;
+                if (_.has(vm.structure, 'values')) {
+                    vm.values = vm.structure.values;
+                }
             });
         };
 

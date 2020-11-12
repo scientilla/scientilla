@@ -1,11 +1,11 @@
 SELECT
-       count(*) filter (where DATE_PART('year', (ud.profile->'dateOfBirth'->>'value')::date) >= (DATE_PART('year', CURRENT_DATE) - 24)) as "<25",
-       count(*) filter (where DATE_PART('year', (ud.profile->'dateOfBirth'->>'value')::date) between (DATE_PART('year', CURRENT_DATE) - 29) and DATE_PART('year', CURRENT_DATE) - 25) as "25-29",
-       count(*) filter (where DATE_PART('year', (ud.profile->'dateOfBirth'->>'value')::date) between (DATE_PART('year', CURRENT_DATE) - 34) and DATE_PART('year', CURRENT_DATE) - 30) as "30-34",
-       count(*) filter (where DATE_PART('year', (ud.profile->'dateOfBirth'->>'value')::date) between (DATE_PART('year', CURRENT_DATE) - 44) and DATE_PART('year', CURRENT_DATE) - 35) as "35-44",
-       count(*) filter (where DATE_PART('year', (ud.profile->'dateOfBirth'->>'value')::date) between (DATE_PART('year', CURRENT_DATE) - 54) and DATE_PART('year', CURRENT_DATE) - 45) as "45-54",
-       count(*) filter (where DATE_PART('year', (ud.profile->'dateOfBirth'->>'value')::date) <= (DATE_PART('year', CURRENT_DATE) - 55)) as ">=55"
+       count(*) filter (WHERE DATE_PART('year', (ud.profile->'dateOfBirth'->>'value')::date) >= (DATE_PART('year', CURRENT_DATE) - 24)) AS "<25",
+       count(*) filter (WHERE DATE_PART('year', (ud.profile->'dateOfBirth'->>'value')::date) BETWEEN (DATE_PART('year', CURRENT_DATE) - 29) AND DATE_PART('year', CURRENT_DATE) - 25) AS "25-29",
+       count(*) filter (WHERE DATE_PART('year', (ud.profile->'dateOfBirth'->>'value')::date) BETWEEN (DATE_PART('year', CURRENT_DATE) - 34) AND DATE_PART('year', CURRENT_DATE) - 30) AS "30-34",
+       count(*) filter (WHERE DATE_PART('year', (ud.profile->'dateOfBirth'->>'value')::date) BETWEEN (DATE_PART('year', CURRENT_DATE) - 44) AND DATE_PART('year', CURRENT_DATE) - 35) AS "35-44",
+       count(*) filter (WHERE DATE_PART('year', (ud.profile->'dateOfBirth'->>'value')::date) BETWEEN (DATE_PART('year', CURRENT_DATE) - 54) AND DATE_PART('year', CURRENT_DATE) - 45) AS "45-54",
+       count(*) filter (where DATE_PART('year', (ud.profile->'dateOfBirth'->>'value')::date) <= (DATE_PART('year', CURRENT_DATE) - 55)) AS ">=55"
 FROM user_data ud
        JOIN "user" u ON u.research_entity = ud.research_entity
-       JOIN membership m on u.id = m."user"
-WHERE m.active = true AND m."group" = $1;
+       JOIN membership m ON u.id = m."user"
+WHERE m.active = TRUE AND m."group" = $1;
