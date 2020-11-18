@@ -7,5 +7,4 @@ SELECT
        count(*) filter (WHERE DATE_PART('year', (ud.profile->'dateOfBirth'->>'value')::date) <= (DATE_PART('year', CURRENT_DATE) - 55)) AS ">=55"
 FROM user_data ud
        JOIN "user" u ON u.research_entity = ud.research_entity
-       JOIN allmembership m ON u.id = m."user"
-WHERE m.active = TRUE AND m."group" = $1;
+       JOIN (SELECT "user", "group" FROM all_membership_group m WHERE m.active = true AND m.group = $1 GROUP BY m.user, m.group) as m ON u.id = m.user;

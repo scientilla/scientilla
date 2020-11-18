@@ -1,0 +1,67 @@
+<div class="admin-cid-association">
+    <h2>CID association</h2>
+
+    <p><em>When getting all the users Pentaho returns not always the wanted CID code, you can override this by inserting the correct CID manually.</em></p>
+
+    <table class="table">
+        <tr>
+            <th>User (email)</th>
+            <th>CID</th>
+            <th>Actions</th>
+        </tr>
+        <tr ng-repeat="association in vm.associations track by $index">
+            <td data-title="User (email)">
+                <div class="form-control disabled" ng-if="!association.editable">
+                    {{ association.email }}
+                </div>
+                <input
+                    type="text"
+                    class="form-control"
+                    ng-model="association.email"
+                    ng-if="association.editable">
+            </td>
+            <td data-title="CID">
+                <div class="form-control disabled" ng-if="!association.editable">
+                    {{ association.cid }}
+                </div>
+                <input
+                    type="text"
+                    class="form-control"
+                    ng-model="association.cid"
+                    ng-if="association.editable">
+            </td>
+            <td data-title="Actions">
+                <ul class="table-actions">
+                    <li ng-if="!association.editable">
+                        <button class="btn btn-outline-secondary" ng-click="vm.editAssociation($index)">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </li>
+                    <li ng-if="association.editable">
+                        <button class="btn btn-outline-secondary" ng-click="vm.lockAssociation($index)">
+                            <i class="fas fa-lock"></i>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="btn btn-danger" ng-click="vm.deleteAssociation($index)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    </table>
+
+    <ul class="associations-actions">
+        <li>
+            <button class="btn btn-primary" ng-click="vm.saveAssociations()">
+                <i class="fa fa-save fa-left"></i>Save associations
+            </button>
+        </li>
+        <li>
+            <button class="btn btn-outline-secondary" ng-click="vm.addAssociation()">
+                <i class="fa fa-plus fa-left"></i>Add association
+            </button>
+        </li>
+    </ul>
+</div>
