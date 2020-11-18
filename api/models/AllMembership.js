@@ -14,7 +14,7 @@ module.exports = {
         level: 'integer'
     },
     migrate: 'safe',
-    tableName: 'allmembership',
+    tableName: 'all_membership',
     autoUpdatedAt: false,
     autoCreatedAt: false
 };
