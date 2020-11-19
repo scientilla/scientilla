@@ -1,3 +1,2 @@
 SELECT count(*) AS count
-FROM all_membership_group m
-    WHERE m.active = TRUE AND m.group = $1;
+FROM (SELECT "user", "group" FROM all_membership_group m WHERE m.active = true AND m.group = $1 GROUP BY m.user, m.group) as m;
