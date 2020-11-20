@@ -122,7 +122,6 @@
 
             & + li {
                 .content{
-                    padding-top: 1rem;
                     border-top: .1rem solid $gray-100;
                 }
             }
@@ -177,6 +176,8 @@
         }
 
         .content{
+            padding-top: .4rem;
+
             span {
                 display: block;
             }
@@ -190,6 +191,7 @@
         &.legend-roles{
             .content{
                 display: grid;
+                height: 100%;
                 grid-template-rows: auto;
                 grid-template-columns: 1fr auto auto;
                 align-items: center;
