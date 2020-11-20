@@ -1,5 +1,5 @@
-CREATE OR REPLACE VIEW allmembership AS
-  SELECT DISTINCT ON ("user", "group") *
+CREATE OR REPLACE VIEW all_membership_group AS
+  SELECT DISTINCT ON ("user", "group", "child_group") *
   FROM (
          WITH RECURSIVE subg(parent_group, child_group, level) AS (
            SELECT

@@ -6,7 +6,7 @@ module.exports = {
     getChartsData
 };
 
-async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
+async function getChartsData(id, Model, chartsKeys, refresh, roles) {
 
     const documentTypes = DocumentTypes.get();
 
@@ -19,7 +19,7 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
         documentTypes[DocumentTypes.ABSTRACT_REPORT].id
     ];
 
-    const researchEntity = await Model.findOne({id: researchEntityId});
+    const researchEntity = await Model.findOne({id: id});
     const researchEntityType = researchEntity.getType();
 
     const mainInstituteId = 1;
@@ -28,77 +28,77 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
         key: 'journalsByYear',
         queryName: 'documentsByYear',
         fn: query,
-        params: [researchEntityId, SourceTypes.JOURNAL]
+        params: [id, SourceTypes.JOURNAL]
     }, {
         key: 'conferencesByYear',
         queryName: 'documentsByYear',
         fn: query,
-        params: [researchEntityId, SourceTypes.CONFERENCE]
+        params: [id, SourceTypes.CONFERENCE]
     }, {
         key: 'booksByYear',
         queryName: 'documentsByYear',
         fn: query,
-        params: [researchEntityId, SourceTypes.BOOK]
+        params: [id, SourceTypes.BOOK]
     }, {
         key: 'bookSeriesByYear',
         queryName: 'documentsByYear',
         fn: query,
-        params: [researchEntityId, SourceTypes.BOOKSERIES]
+        params: [id, SourceTypes.BOOKSERIES]
     }, {
         key: 'disseminationTalksByYear',
         queryName: 'invitedTalksByYear',
         fn: query,
-        params: [researchEntityId, 'Dissemination']
+        params: [id, 'Dissemination']
     }, {
         key: 'scientificTalksByYear',
         queryName: 'invitedTalksByYear',
         fn: query,
-        params: [researchEntityId, 'Scientific Event']
+        params: [id, 'Scientific Event']
     }, {
         key: 'documentsByType',
         queryName: 'documentsByType',
         fn: query,
-        params: [researchEntityId]
+        params: [id]
     }, {
         key: 'filteredAffiliatedJournalsByYear',
         queryName: 'filteredAffiliatedDocumentsByYear',
         fn: query,
-        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.JOURNAL]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.JOURNAL]
     }, {
         key: 'filteredAffiliatedConferencesByYear',
         queryName: 'filteredAffiliatedDocumentsByYear',
         fn: query,
-        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.CONFERENCE]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.CONFERENCE]
     }, {
         key: 'filteredAffiliatedBooksByYear',
         queryName: 'filteredAffiliatedDocumentsByYear',
         fn: query,
-        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOK]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOK]
     }, {
         key: 'filteredAffiliatedBookSeriesByYear',
         queryName: 'filteredAffiliatedDocumentsByYear',
         fn: query,
-        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES]
     }, {
         key: 'filteredNotAffiliatedJournalsByYear',
         queryName: 'filteredNotAffiliatedDocumentsByYear',
         fn: query,
-        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.JOURNAL]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.JOURNAL]
     }, {
         key: 'filteredNotAffiliatedConferencesByYear',
         queryName: 'filteredNotAffiliatedDocumentsByYear',
         fn: query,
-        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.CONFERENCE]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.CONFERENCE]
     }, {
         key: 'filteredNotAffiliatedBooksByYear',
         queryName: 'filteredNotAffiliatedDocumentsByYear',
         fn: query,
-        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOK]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOK]
     }, {
         key: 'filteredNotAffiliatedBookSeriesByYear',
         queryName: 'filteredNotAffiliatedDocumentsByYear',
         fn: query,
-        params: [researchEntityId, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES]
+        params: [id, mainInstituteId, excludedDocumentTypes, SourceTypes.BOOKSERIES]
     }, {
         key: 'hindexPerYear',
         fn: hindexPerYear,
@@ -130,13 +130,88 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
         key: 'chartDataDate',
         queryName: 'chartDataDate',
         fn: query,
-        params: [researchEntityId, researchEntityType],
+        params: [id, researchEntityType],
         nocache: true
     }, {
+        key: 'groupMembersTotal',
+        queryName: 'groupMembersTotal',
+        fn: query,
+        params: [id]
+    },  {
+        key: 'groupAndSubgroupMembersTotal',
+        queryName: 'groupAndSubgroupMembersTotal',
+        fn: query,
+        params: [id]
+    }, {
         key: 'groupMembersByRole',
-        fn: getGroupMembersByRole,
-        researchEntityId: researchEntityId,
-        researchEntityType: researchEntityType
+        queryName: 'groupMembersByRole',
+        fn: query,
+        params: [id]
+    },  {
+        key: 'groupAndSubgroupMembersByRole',
+        queryName: 'groupAndSubgroupMembersByRole',
+        fn: query,
+        params: [id]
+    },  {
+        key: 'groupMembersByGender',
+        queryName: 'groupMembersByGender',
+        fn: query,
+        params: [id]
+    },  {
+        key: 'groupMembersByGenderOfRoles',
+        queryName: 'groupMembersByGenderOfRoles',
+        fn: query,
+        params: [id, roles]
+    },  {
+        key: 'groupAndSubgroupMembersByGender',
+        queryName: 'groupAndSubgroupMembersByGender',
+        fn: query,
+        params: [id]
+    },  {
+        key: 'groupAndSubgroupMembersByGenderOfRoles',
+        queryName: 'groupAndSubgroupMembersByGenderOfRoles',
+        fn: query,
+        params: [id, roles]
+    },  {
+        key: 'groupMembersByAgeRange',
+        queryName: 'groupMembersByAgeRange',
+        fn: query,
+        params: [id]
+    },  {
+        key: 'groupMembersByAgeRangeOfRoles',
+        queryName: 'groupMembersByAgeRangeOfRoles',
+        fn: query,
+        params: [id, roles]
+    },  {
+        key: 'groupAndSubgroupMembersByAgeRange',
+        queryName: 'groupAndSubgroupMembersByAgeRange',
+        fn: query,
+        params: [id]
+    },  {
+        key: 'groupAndSubgroupMembersByAgeRangeOfRoles',
+        queryName: 'groupAndSubgroupMembersByAgeRangeOfRoles',
+        fn: query,
+        params: [id, roles]
+    },  {
+        key: 'groupMembersByNationality',
+        queryName: 'groupMembersByNationality',
+        fn: query,
+        params: [id]
+    },  {
+        key: 'groupMembersByNationalityOfRoles',
+        queryName: 'groupMembersByNationalityOfRoles',
+        fn: query,
+        params: [id, roles]
+    },  {
+        key: 'groupAndSubgroupMembersByNationality',
+        queryName: 'groupAndSubgroupMembersByNationality',
+        fn: query,
+        params: [id]
+    },  {
+        key: 'groupAndSubgroupMembersByNationalityOfRoles',
+        queryName: 'groupAndSubgroupMembersByNationalityOfRoles',
+        fn: query,
+        params: [id, roles]
     }];
 
     let selectedCharts = [];
@@ -209,7 +284,23 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
                 'documentsByYear': 'documentsByYear',
                 'filteredAffiliatedDocumentsByYear': 'filteredAffiliatedDocumentsByYearGroup',
                 'filteredNotAffiliatedDocumentsByYear': 'filteredNotAffiliatedDocumentsByYearGroup',
-                'invitedTalksByYear': 'invitedTalksByYear'
+                'invitedTalksByYear': 'invitedTalksByYear',
+                'groupMembersTotal': 'groupMembersTotal',
+                'groupAndSubgroupMembersTotal': 'groupAndSubgroupMembersTotal',
+                'groupMembersByRole': 'groupMembersByRole',
+                'groupAndSubgroupMembersByRole': 'groupAndSubgroupMembersByRole',
+                'groupMembersByGender': 'groupMembersByGender',
+                'groupMembersByGenderOfRoles': 'groupMembersByGenderOfRoles',
+                'groupAndSubgroupMembersByGender': 'groupAndSubgroupMembersByGender',
+                'groupAndSubgroupMembersByGenderOfRoles': 'groupAndSubgroupMembersByGenderOfRoles',
+                'groupMembersByAgeRange': 'groupMembersByAgeRange',
+                'groupMembersByAgeRangeOfRoles': 'groupMembersByAgeRangeOfRoles',
+                'groupAndSubgroupMembersByAgeRange': 'groupAndSubgroupMembersByAgeRange',
+                'groupAndSubgroupMembersByAgeRangeOfRoles': 'groupAndSubgroupMembersByAgeRangeOfRoles',
+                'groupMembersByNationality': 'groupMembersByNationality',
+                'groupMembersByNationalityOfRoles': 'groupMembersByNationalityOfRoles',
+                'groupAndSubgroupMembersByNationality': 'groupAndSubgroupMembersByNationality',
+                'groupAndSubgroupMembersByNationalityOfRoles': 'groupAndSubgroupMembersByNationalityOfRoles'
             }
         };
         const transforms = {
@@ -300,102 +391,8 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
             });
     }
 
-    async function getGroupMembersByRole(chart) {
-        if (chart.researchEntityType !== 'group')
-            return [];
-
-        const groupId = chart.researchEntityId;
-
-        const roles = {
-            pi: 'PI',
-            affiliated_researcher: 'Affiliated Researcher',
-            administrative: 'Administrative',
-            external_collaborator: 'External Collaborator',
-            phd: 'PhD',
-            post_doc: 'Post Doc',
-            research_support: 'Research Support',
-            researcher: 'Researcher',
-            scientific_director: 'Scientific Director',
-            technician: 'Technician',
-            technologist: 'Technologist',
-            visiting_scientist: 'Visiting Scientist',
-            director: 'Director',
-            other: 'Other'
-        };
-
-        const roleMapper = {
-            'researcher - center coordinator': roles.researcher,
-            'researcher tt (tt1)': roles.researcher,
-            'senior researcher tt (tt2)': roles.researcher,
-            'senior researcher tenured': roles.researcher,
-            'senior researcher tenured - center coordinator': roles.researcher,
-            'senior researcher tenured - research director': roles.researcher,
-            'senior researcher - center coordinator': roles.researcher,
-            'senior researcher - founding director': roles.researcher,
-            'senior researcher - research director': roles.researcher,
-            'technologist - center coordinator': roles.technologist,
-            'chief technician': roles.technician,
-            'affiliated researcher': roles.affiliated_researcher,
-            'administrative assistant': roles.administrative,
-            'administrative manager': roles.administrative,
-            'administrative supervisor': roles.administrative,
-            'support administrative assistant': roles.administrative,
-            'external collaborator': roles.external_collaborator,
-            'phd student': roles.phd,
-            'phd student fellow': roles.phd,
-            'phd/fellow': roles.phd,
-            'post doc': roles.post_doc,
-            'post doc fellow': roles.post_doc,
-            'research administrative': roles.research_support,
-            'research manager': roles.research_support,
-            'research support administrative junior': roles.research_support,
-            'research support administrative senior': roles.research_support,
-            'early-stage researcher': roles.researcher,
-            'researcher': roles.researcher,
-            'senior researcher': roles.researcher,
-            'scientific director': roles.scientific_director,
-            'senior technician': roles.technician,
-            'support technician': roles.technician,
-            'junior technician': roles.technician,
-            'technologist': roles.technologist,
-            'visiting scientist': roles.visiting_scientist,
-            'director': roles.director
-        };
-
-        const pis = await PrincipalInvestigator.find();
-
-        const memberships = await AllMembership.find({
-            group: groupId,
-            synchronized: true,
-            active: true
-        });
-        const members = await User.find({id: memberships.map(m => m.user)});
-        return members.reduce((acc, m) => {
-            let role;
-            if (pis.find(p => m.id === p.pi))
-                role = roles.pi;
-            else if (m.jobTitle)
-                role = roleMapper[m.jobTitle.toLocaleLowerCase()];
-
-            if (!role) role = roles.other;
-
-            const res = acc.find(r => r.role === role);
-            if (!res) {
-                acc.push({
-                    role: role,
-                    value: 1
-                });
-                return acc;
-            }
-
-            res.value++;
-            return acc;
-        }, []);
-
-    }
-
     async function setDocuments() {
-        const researchEntity = await Model.findOne({id: researchEntityId}).populate('documents');
+        const researchEntity = await Model.findOne({id: id}).populate('documents');
         documents = researchEntity.documents.filter(d => !excludedDocumentTypes.includes(d.documenttype));
     }
 
@@ -433,7 +430,7 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
         const cachedCharts = await ChartData.find({
             key: cc.map(c => c.key),
             researchEntityType: researchEntityType,
-            researchEntity: researchEntityId
+            researchEntity: id
         });
 
         return cachedCharts.length === cc.length;
@@ -458,7 +455,7 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
 
     async function getCachedData(key) {
         const res = await ChartData.findOne({
-            researchEntity: researchEntityId,
+            researchEntity: id,
             researchEntityType: researchEntityType,
             key: key
         });
@@ -469,18 +466,18 @@ async function getChartsData(researchEntityId, Model, chartsKeys, refresh) {
 
     async function cacheData(key, value) {
         const chartData = await ChartData.findOrCreate({
-            researchEntity: researchEntityId,
+            researchEntity: id,
             researchEntityType: researchEntityType,
             key: key
         }, {
-            researchEntity: researchEntityId,
+            researchEntity: id,
             researchEntityType: researchEntityType,
             key: key,
             value: value
         });
 
         await ChartData.update({id: chartData.id}, {
-            researchEntity: researchEntityId,
+            researchEntity: id,
             researchEntityType: researchEntityType,
             key: key,
             value: value

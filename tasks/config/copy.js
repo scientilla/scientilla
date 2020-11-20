@@ -70,7 +70,8 @@ module.exports = function (grunt) {
                     'tinycolor2/tinycolor.js',
                     'angularjs-color-picker/dist/angularjs-color-picker.js',
                     'angular-ui-sortable/dist/sortable.js',
-                    'angularjs-slider/dist/rzslider.min.js'
+                    'angularjs-slider/dist/rzslider.min.js',
+                    'iso-3166-country-codes-angular/dist/iso-3166-country-codes-angular.min.js'
                 ],
                 flatten: true,
                 dest: '.tmp/public/js/dependencies'

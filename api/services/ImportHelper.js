@@ -18,7 +18,8 @@ module.exports = {
     createUserObject,
     getProfileObject,
     importDirectorates,
-    filterEmployees
+    filterEmployees,
+    collectGroupCodes
 };
 
 const moment = require('moment');
@@ -85,12 +86,12 @@ async function getContractualHistoryOfCidCodes(codes) {
 
             if (_.isArray(cids)) {
                 for (const contract of cids) {
-                    if (_.has(contract, '_')) {
+                    if (_.has(contract, '_.step')) {
                         contracts.push(contract._);
                     }
                 }
             } else {
-                if (_.has(cids, '_')) {
+                if (_.has(cids, '_.step')) {
                     contracts.push(cids._);
                 }
             }
@@ -630,6 +631,14 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
         privacy: defaultPrivacy,
         value: contract.genere
     };
+    profile.nationality = {
+        privacy: defaultPrivacy,
+        value: contract.nazionalita
+    };
+    profile.dateOfBirth = {
+        privacy: defaultPrivacy,
+        value: moment(contract.data_nascita, 'YYYYMMDD').format('YYYY-MM-DD')
+    };
 
     const groups = [];
     const lines = [];
@@ -791,4 +800,26 @@ function filterEmployees(employees) {
         e.contratto_secondario !== 'X' &&
         !ignoredRoles.includes(e.Ruolo_AD)
     );
+}
+
+/**
+ * This function returns an array of codes
+ *
+ * @param {Object}        contract               Contract object.
+ *
+ * @returns {String[]}
+ */
+function collectGroupCodes(contract) {
+    const codes = [];
+    for (let i = 1; i <= 6; i++) {
+        if (!_.isEmpty(contract['linea_' + i]) && !_.isEmpty(contract['UO_' + i])) {
+            if (contract['UO_' + i] === 'IIT') {
+                codes.push('IIT1.01DS');
+            } else {
+                codes.push(contract['linea_' + i]);
+            }
+
+        }
+    }
+    return codes;
 }

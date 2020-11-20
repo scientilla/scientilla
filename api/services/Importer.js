@@ -1,6 +1,7 @@
 /* global Source, User, Group, SourceMetric, SourceTypes, Attribute, GroupAttribute, PrincipalInvestigator */
 /* global MembershipGroup, GroupTypes, ResearchEntityData, ResearchItemTypes, ResearchItem, ResearchItemKinds, Project */
 /* global Verify, Membership, MembershipGroup, GroupTypes, ResearchEntityData, Utils, ImportHelper, Patent */
+/* global GeneralSettings */
 
 // Importer.js - in api/services
 
@@ -15,7 +16,8 @@ module.exports = {
     removeExpiredUsers,
     importProjects,
     importPatents,
-    updateUserProfileGroups
+    updateUserProfileGroups,
+    analyseUserImport
 };
 
 const xlsx = require('xlsx');
@@ -471,22 +473,137 @@ async function importDirectorates() {
     await ImportHelper.importDirectorates(employees, groups);
 }
 
-async function importUserContracts(email = ImportHelper.getDefaultEmail(), override = false) {
+async function analyseUserImport() {
+    let roleAssociations = await GeneralSettings.findOne({ name: 'role-associations' });
+    const ignoredRoles = ImportHelper.getIgnoredRoles();
+    const govAndControl = 'Gov. & Control';
 
-    const collectGroupCodes = (contract) => {
-        const codes = [];
-        for (let i = 1; i <= 6; i++) {
-            if (!_.isEmpty(contract['linea_' + i]) && !_.isEmpty(contract['UO_' + i])) {
-                if (contract['UO_' + i] === 'IIT') {
-                    codes.push('IIT1.01DS');
-                } else {
-                    codes.push(contract['linea_' + i]);
+    try{
+        const options = ImportHelper.getUserImportRequestOptions('employees');
+
+        let employees = await ImportHelper.getEmployees(options);
+
+        if (!employees) {
+            return;
+        }
+
+        sails.log.info(`Received contracts: ${ employees.length }`);
+        sails.log.info('************************************************');
+
+        const contractsWithoutSubArea = employees.filter(c => !_.has(c, 'desc_sottoarea') || _.isEmpty(c.desc_sottoarea));
+        sails.log.info(`Contracts without sub area: ${ contractsWithoutSubArea.length }`);
+        sails.log.info('************************************************');
+
+        const contractsWihoutLines = employees.filter(c => (!_.has(c, 'linea_1') || _.isEmpty(c.linea_1)) && c.desc_sottoarea !== govAndControl);
+        sails.log.info(`Contracts without lines: ${ contractsWihoutLines.length }`);
+/*        for (const c of contractsWihoutLines) {
+            sails.log.debug(c.desc_sottoarea);
+        }*/
+        sails.log.info('************************************************');
+
+        employees = employees.filter(e => _.has(e, 'desc_sottoarea') &&
+            _.has(e, 'linea_1') &&
+            (
+                e.desc_sottoarea !== govAndControl ||
+                e.desc_sottoarea === govAndControl && e.linea_1 === 'PRS001'
+            ) &&
+            e.contratto_secondario !== 'X' &&
+            !ignoredRoles.includes(e.Ruolo_AD)
+        );
+
+        sails.log.info(`Contracts after filtering out 'Gov. & Control', 'Secondary contracts' and 'ignored roles': ${ employees.length }`);
+        sails.log.info('************************************************');
+
+        const contractsWithoutEmail = employees.filter(c => _.isEmpty(c.email));
+        //employees = employees.filter(c => !_.isEmpty(c.email));
+        sails.log.info(`Contracts without email: ${ contractsWithoutEmail.length }`);
+        for (const c of contractsWithoutEmail) {
+            sails.log.info(`Name: ${c.nome} Surname:${c.cognome}`);
+        }
+        sails.log.info('************************************************');
+
+        sails.log.info(`Contracts with email: ${ employees.length }`);
+        sails.log.info('************************************************');
+
+        const contractsWithoutRuolo1 = employees.filter(c => !_.has(c, 'Ruolo_1') || _.isEmpty(c.Ruolo_1));
+        sails.log.info(`Contracts without sub area: ${ contractsWithoutRuolo1.length }`);
+        sails.log.info('************************************************');
+
+        const groupedRoles = _.chain(employees)
+            .groupBy(e => e.Ruolo_1)
+            .map((value, key) => ({ role: key, employees: value }))
+            .value();
+
+        const totalEmployees = groupedRoles.reduce(function (accumulator, groupedRole) {
+            return accumulator + groupedRole.employees.length;
+        }, 0);
+        sails.log.info(`Total found employees: ${totalEmployees}`);
+        sails.log.info('************************************************');
+
+        roleAssociations = roleAssociations.data;
+        roleAssociations = _.chain(roleAssociations)
+            .groupBy(a => a.roleCategory)
+            .map((value, key) => ({
+                roleCategory: key,
+                originalRoles: roleAssociations.filter(a => a.roleCategory === key).map(a => a.originalRole)
+            }))
+            .value();
+
+        for (const group of roleAssociations) {
+            group.employees = [];
+
+            for (const groupRole of groupedRoles) {
+
+                const role = groupRole.role;
+                const employees =  groupRole.employees;
+
+                if (group.originalRoles.includes(role)) {
+                    group.employees = group.employees.concat(employees);
                 }
-
             }
         }
-        return codes;
-    };
+
+        roleAssociations = _.orderBy(roleAssociations, 'employees.length').reverse();
+        for (const group of roleAssociations) {
+            sails.log.info(`Role: ${ group.roleCategory }, employees: ${ group.employees.length }`);
+        }
+        sails.log.info('************************************************');
+
+        const totalEmployees2 = roleAssociations.reduce(function (accumulator, roleAssociation) {
+            return accumulator + roleAssociation.employees.length;
+        }, 0);
+        sails.log.info(`Total employees connected to a associated role: ${ totalEmployees2 }`);
+        sails.log.info('************************************************');
+
+        let allUsers = await User.find({active: true});
+        allUsers = allUsers.filter(u => u.role !== 'guest' && u.role !== 'evaluator');
+
+        const foundUsers = [];
+        for (const employee of employees) {
+            const user = allUsers.find(u => u.name === employee.nome &&
+                u.surname === employee.cognome &&
+                u.username === employee.email
+            );
+
+            if (!user) {
+                sails.log.info(`No user found with name: ${ employee.nome }, surname: ${ employee.cognome } and email: ${ employee.email }`);
+            } else {
+                const tmpUser = { name: employee.nome, surname: employee.cognome, email: employee.email };
+                if (foundUsers.find(u => JSON.stringify(u) === JSON.stringify(tmpUser))) {
+                    sails.log.info(`Duplicate user in scheda persona: ${ tmpUser.name } ${ tmpUser.surname }`);
+                } else {
+                    foundUsers.push(tmpUser);
+                }
+            }
+        }
+        sails.log.info(`${ foundUsers.length }/${ employees.length } are active users`);
+    } catch (e) {
+        sails.log.info('analyseUserImport');
+        sails.log.info(e);
+    }
+}
+
+async function importUserContracts(email = ImportHelper.getDefaultEmail(), override = false) {
 
     const startedTime = moment.utc();
     sails.log.info('The import started at ' + startedTime.format());
@@ -494,7 +611,6 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
 
     const defaultCompany = ImportHelper.getDefaultCompany();
     const valueHiddenPrivacy = ImportHelper.getValueHiddenPrivacy();
-
 
     // We cache the groups, membership groups and default profile.
     const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
@@ -507,6 +623,12 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
     const activeGroups = groups.filter(g => g.active === true);
 
     const ignoredRoles = ImportHelper.getIgnoredRoles();
+    let cidAssociations = await GeneralSettings.findOne({ name: 'cid-associations' });
+    if (_.has(cidAssociations, 'data')) {
+        cidAssociations = cidAssociations.data;
+    } else {
+        cidAssociations = [];
+    }
 
     const updatedResearchEntityDataItems = [];
     const newResearchEntityDataItems = [];
@@ -528,6 +650,21 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
 
         employees = ImportHelper.filterEmployees(employees);
 
+        let foundAssociations = false;
+        for (const cidAssociation of cidAssociations) {
+            const employee = employees.find(e => e.email === cidAssociation.email)
+
+            if (employee) {
+                employee.cid = cidAssociation.cid;
+                foundAssociations = true;
+                sails.log.debug(`Found CID association for user ${ employee.email}: ${ employee.cid }`);
+            }
+        }
+
+        if (foundAssociations) {
+            sails.log.info('....................................');
+        }
+
         // Get all CID codes in one Array
         const cidCodes = employees.map(employee => employee.cid);
         sails.log.info('Found ' + cidCodes.length + ' CID codes!');
@@ -544,6 +681,8 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
                     } else {
                         employee.contract.push(contract);
                     }
+                } else {
+                    sails.log.debug(`Contract doesn't have any steps: ${ employee.email } ${ employee.cid} `);
                 }
             }
         }
@@ -555,7 +694,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
         employees = ImportHelper.mergeDuplicateEmployees(employees);
 
         for (const employee of employees) {
-            const groupCodesOfContract = collectGroupCodes(employee);
+            const groupCodesOfContract = ImportHelper.collectGroupCodes(employee);
 
             // Get the groups of the contract
             const groupsOfContract = groups.filter(group => groupCodesOfContract.some(groupCode => {
@@ -563,7 +702,11 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
             }));
 
             let user = await User.findOne({cid: employee.cid});
+            if (employee.cid === '10003946') {
+                sails.log.debug(employee);
+            }
             if (!user) {
+                sails.log.debug(`Try to find ${ employee.email }`);
                 user = await User.findOne({username: employee.email});
             }
 

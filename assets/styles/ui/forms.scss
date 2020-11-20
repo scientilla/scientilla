@@ -129,6 +129,58 @@ label{
     }
 }
 
+.chart-checkbox{
+    &,
+    label{
+        margin-bottom: 0px;
+        font-weight: normal;
+        line-height: 1;
+
+        &:hover{
+            cursor: pointer;
+        }
+    }
+
+    input{
+        display: none;
+
+        & + span{
+            position: relative;
+            display: inline-block;
+            vertical-align: top;
+            line-height: 1;
+
+            &:before{
+                display: inline-block;
+                font-family: $font-awesome;
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: $gray-200;
+                content: '\f200';
+            }
+        }
+
+        &:checked{
+            & + span{
+                &:before{
+                    color: $primary;
+                }
+            }
+        }
+
+        &:disabled{
+            & + span{
+                cursor: not-allowed;
+
+                &:before{
+                    content: '\f110';
+                    animation: fa-spin 2s linear infinite;
+                }
+            }
+        }
+    }
+}
+
 .form-radio{
     &,
     label{
