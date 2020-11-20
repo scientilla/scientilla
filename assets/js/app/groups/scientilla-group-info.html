@@ -4,10 +4,16 @@
 
     <div ng-if="vm.firstTimeLoaded">
         <div class="row">
-            <div class="col-12 col-lg-6 col-xl-3">
+            <div class="col-12 col-xl-4 col-xxl-2 column-legend">
                 <div class="card card-primary group-card">
                     <div class="card-body">
                         <h2>{{ vm.group.type }}</h2>
+
+                        <div class="legend-info">
+                            <span class="subtotal">{{ vm.totalMembers }}</span>
+                            <span class="category-subtitle">members*</span>
+                        </div>
+
                         <ul class="group-info-listing">
                             <li ng-if="vm.group.pis.length">
                                 <strong>PI:</strong>
@@ -39,16 +45,19 @@
                                     Scopus profile
                                 </a>
                             </li>
-                            <li>
-                                <strong>Current members*:</strong> {{ vm.totalMembers }}
-                            </li>
                         </ul>
 
                         <div class="checkbox-container">
-                            <scientilla-checkbox-field
-                                id="include-subgroups"
-                                model="vm.includeSubgroups"
-                                structure="{ label: 'Include subgroups' }"></scientilla-checkbox-field>
+                            <div class="form-checkbox">
+                                <label for="include-subgroups" title="Include subgroups">
+                                    <input
+                                        type="checkbox"
+                                        id="include-subgroups"
+                                        ng-model="vm.includeSubgroups"
+                                        ng-disabled="vm.isLoading">
+                                    <span></span>Include subgroups
+                                </label>
+                            </div>
                         </div>
 
                         <p class="chart-info">* This representation of group members may not be accurate or up-to-date.
@@ -56,100 +65,93 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-body role-card">
-                        <scientilla-select-field
-                            model="vm.role"
-                            structure="vm.selectStructure">
-                        </scientilla-select-field>
-                        <em>This will update the "members by gender", "members by age range" and "member by country" chart.</em>
+                <div class="card role-card">
+                    <div class="card-body">
+                        <em>You can update the charts of "members by gender", "members by age range" and "member by
+                            country" by selecting a set of roles.</em>
+                        <em>Changing the set of roles can be done by clicking on the pie chart icon
+                            (<i class="fas fa-chart-pie"></i>) on the left side of the role of the "members by role"
+                            chart/table.</em>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-6 col-xl-9 column-by-role">
+            <div class="col-12 col-xl-8 col-xxl-6 column-by-role">
                 <h2 class="chart-title">Members by role</h2>
-                <div class="legend-info">
-                    <span class="subtotal">{{ vm.totalMembersByRole }}</span>
-                    <span class="category-subtitle">members</span>
-                </div>
-                <div
-                    class="legend-container"
-                    ng-class="{ 'add-border' : vm.byRole.length > 7}"
-                    expand-legend>
-                    <ul class="js-legend legend legend-roles">
-                        <li ng-repeat="role in vm.byRole track by $index">
+                <div class="hidden">{{ vm.totalMembersByRole }} members</div>
+                <ul class="legend legend-roles">
+                    <li ng-repeat="role in vm.byRole track by $index">
+                        <div class="checkbox-char-chart-container">
+                            <div class="chart-checkbox">
+                                <label ng-for="role.category" title="{{ role.title }}">
+                                    <input
+                                        type="checkbox"
+                                        ng-name="role.category"
+                                        ng-checked="role.selected"
+                                        ng-disabled="vm.isLoading"
+                                        ng-click="vm.checkSelectedRoles($event, role.category)">
+                                    <span></span>
+                                </label>
+                            </div>
                             <div class="bar-chart">
                                 <div class="chart">
-                                    <span ng-style="{ 'width': 'calc(' + role.percent + '% + 10px)', 'background-color': vm.colors[$index] }"></span>
-                                </div>
-                            </div>
-                            <div class="content">
-                                <span>{{ role.category }}</span>
-                                <span class="colorize-text">
-                                    {{ role.value }} {{ role.value === 1 ? 'member' : 'members'}}
-                                </span>
-                                <span class="colorize-text percentage-column">{{ role.percent }}%</span>
-                            </div>
-                        </li>
-                    </ul>
-                    <button
-                        class="js-see-more-less expand-button btn btn-outline-secondary"
-                        ng-class="{ 'hidden' : vm.byRole.length <= 7 }">
-                        <span class="see-more-text">See more</span>
-                        <span class="see-less-text">See less</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <hr class="extra-margin" />
-
-        <div class="row">
-            <div class="col-12 col-xl-6 col-xxl-6 column-by-gender">
-                <h2 class="chart-title">Members by gender</h2>
-                <div class="hidden">Total members by gender: {{ vm.genderTotal }}</div>
-                <div class="row">
-                    <div class="col-12 col-sm-6 col-xl-12 col-xxl-6">
-                        <div class="chart-container chart-by-gender-container">
-                            <nvd3
-                                options="vm.donutChartOptions"
-                                data="vm.chartMaleData"
-                                class="chart chart-full"></nvd3>
-                            <div class="percentage-container">
-                                <div>
-                                    <span class="percentage">{{ vm.maleData.percentage }}%</span>
-                                    <span class="gender">Male</span>
-                                    <span class="count">
-                                        {{ vm.maleData.count }} {{ vm.maleData.count === 1 ? 'member' : 'members'}}
-                                    </span>
+                                    <span ng-style="{
+                                        'width': 'calc(' + role.percent + '% + 10px - ((' + role.percent + ' / 100 ) * 10px))',
+                                        'background-color': vm.colors[$index]
+                                    }"></span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-12 col-sm-6 col-xl-12 col-xxl-6">
-                        <div class="chart-container chart-by-gender-container">
-                            <nvd3
-                                options="vm.donutChartOptions"
-                                data="vm.chartFemaleData"
-                                class="chart chart-full"></nvd3>
-                            <div class="percentage-container">
-                                <div>
-                                    <span class="percentage">{{ vm.femaleData.percentage }}%</span>
-                                    <span class="gender">Female</span>
-                                    <span class="count">
-                                        {{ vm.femaleData.count }} {{ vm.femaleData.count === 1 ? 'member' : 'members'}}
-                                    </span>
+                        <div class="content">
+                            <span>{{ role.category }}</span>
+                            <span class="colorize-text">
+                                {{ role.value }} {{ role.value === 1 ? 'member' : 'members'}}
+                            </span>
+                            <span class="colorize-text percentage-column">{{ role.percent }}%</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-12 col-xl-6 col-xxl-4 column-by-gender">
+                <div class="inner-column-by-gender">
+                    <h2 class="chart-title">Members by gender</h2>
+                    <div class="hidden">Total members by gender: {{ vm.genderTotal }}</div>
+                    <div class="chart-by-gender-outer-container">
+                        <div class="row">
+                            <div class="col-12 col-lg-6 col-xl-12">
+                                <div class="chart-container chart-by-gender-container">
+                                    <nvd3
+                                        options="vm.donutChartOptions"
+                                        data="vm.chartGenderData"
+                                        class="chart chart-full"></nvd3>
                                 </div>
+                            </div>
+                            <div class="col-12 col-lg-6 col-xl-12">
+                                <ul class="legend legend-default">
+                                    <li
+                                        ng-repeat="gender in vm.chartGenderData track by $index"
+                                        class="content">
+                                    <span
+                                        class="color"
+                                        ng-style="{ 'background-color': vm.colors[$index] }"></span>
+                                        <span class="colorize-text">{{ gender.label }}</span>
+                                        <span class="colorize-text">
+                                        {{ gender.count }} {{ gender.count === 1 ? 'member' : 'members'}}
+                                    </span>
+                                        <span class="colorize-text percentage-column">{{ gender.percentage }}%</span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="col-12 col-xl-6 col-xxl-6 column-by-age-range">
                 <h2 class="chart-title">Members by age range</h2>
                 <div class="hidden">Total members by age range: {{ vm.ageRageTotal }}</div>
                 <div class="row">
-                    <div class="col-12 col-md-4 col-lg-6 col-xl-12 col-xxl-6">
+                    <div class="col-12 col-lg-6 col-xl-12 col-xxl-6">
                         <div class="chart-container">
                             <nvd3
                                 options="vm.chartByAgeRangeOptions"
@@ -157,7 +159,7 @@
                                 class="chart chart-full"></nvd3>
                         </div>
                     </div>
-                    <div class="col-12 col-md-8 col-lg-6 col-xl-12 col-xxl-6">
+                    <div class="col-12 col-lg-6 col-xl-12 col-xxl-6">
                         <div class="vertical-align-middle">
                             <ul class="legend legend-default">
                                 <li
@@ -177,78 +179,76 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <hr class="extra-margin" />
-
-        <h2 class="chart-title">Members by country</h2>
-        <div class="hidden">Total members by countries: {{ vm.totalByCountries }}</div>
-        <div class="row">
-            <div class="col-12 col-lg-6 col-xl-5 col-xxl-6">
+            <div class="col-12 col-xxl-6 column-by-country">
+                <h2 class="chart-title">Members by country</h2>
+                <div class="hidden">Total members by countries: {{ vm.totalByCountries }}</div>
                 <div class="row">
-                    <div class="col-12 col-md-4 col-lg-12 col-xl-12 col-xxl-6">
-                        <div class="chart-container">
-                            <nvd3
-                                options="vm.chartByBiggestCountryOptions"
-                                data="vm.byCountryBiggestCountry"
-                                class="chart chart-full"></nvd3>
+                    <div class="col-12 col-xl-6 column-by-country-sub">
+                        <div class="row">
+                            <div class="col-12 col-lg-6 col-xl-12">
+                                <div class="chart-container">
+                                    <nvd3
+                                        options="vm.chartByBiggestCountryOptions"
+                                        data="vm.byCountryBiggestCountry"
+                                        class="chart chart-full"></nvd3>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6 col-xl-12">
+                                <div class="vertical-align-middle">
+                                    <ul class="legend legend-default">
+                                        <li
+                                            ng-repeat="country in vm.byCountryBiggestCountry track by $index"
+                                            class="content">
+                                            <span
+                                                class="color"
+                                                ng-style="{ 'background-color': country.color }"></span>
+                                                    <span>{{ country.label }}</span>
+                                                    <span class="colorize-text">
+                                                {{ country.count }} {{ country.count === 1 ? 'member' : 'members'}}
+                                            </span>
+                                            <span class="colorize-text percentage-column">{{ country.percentage }}%</span>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-12 col-md-8 col-lg-12 col-xl-12 col-xxl-6">
-                        <div class="vertical-align-middle">
-                            <ul class="legend legend-default">
-                                <li
-                                    ng-repeat="country in vm.byCountryBiggestCountry track by $index"
-                                    class="content">
-                                    <span
-                                        class="color"
-                                        ng-style="{ 'background-color': country.color }"></span>
-                                    <span>{{ country.label }}</span>
-                                    <span class="colorize-text">
-                                        {{ country.count }} {{ country.count === 1 ? 'member' : 'members'}}
-                                    </span>
-                                    <span class="colorize-text percentage-column">{{ country.percentage }}%</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12 col-lg-6 col-xl-7 col-xxl-6 column-countries">
-                <div class="stacked-bar-chart">
-                    <div class="legend-info">
-                        <span class="subtotal">{{ vm.totalCountries }}</span>
-                        <span class="category-subtitle">
-                            {{ vm.totalCountries === 1 ? 'country' : 'countries' }}
-                        </span>
-                    </div>
+                    <div class="col-12 col-xl-6 column-countries">
+                        <div class="stacked-bar-chart">
+                            <div class="legend-info">
+                                <span class="subtotal">{{ vm.totalCountries }}</span>
+                                <span class="category-subtitle">{{ vm.totalCountries === 1 ? 'country' : 'countries' }}</span>
+                            </div>
 
-                    <div
-                        class="legend-container"
-                        ng-class="{ 'add-border' : vm.byCountry.length > 7}"
-                        expand-legend>
-                        <ul class="js-legend legend legend-default">
-                            <li
-                                ng-repeat="country in vm.byCountry track by $index"class="content">
-                                <span
-                                    class="color"
-                                    ng-style="
-                                        !country.other && { 'background-color': vm.colors[$index] } ||
-                                        country.other && { 'background-color': vm.otherColor }
-                                    "></span>
-                                <span class="colorize-text">{{ country.label }}</span>
-                                <span class="colorize-text">
-                                    {{ country.value }} {{ country.value === 1 ? 'member' : 'members'}}
-                                </span>
-                                <span class="colorize-text percentage-column">{{ country.percent }}%</span>
-                            </li>
-                        </ul>
-                        <button
-                            class="js-see-more-less expand-button btn btn-outline-secondary"
-                            ng-class="{ 'hidden' : vm.byCountry.length <= 7 }">
-                            <span class="see-more-text">See more</span>
-                            <span class="see-less-text">See less</span>
-                        </button>
+                            <div
+                                class="legend-container"
+                                ng-class="{ 'add-border' : vm.byCountry.length > 7}"
+                                expand-legend>
+                                <ul class="js-legend legend legend-default">
+                                    <li
+                                        ng-repeat="country in vm.byCountry track by $index" class="content">
+                                        <span
+                                            class="color"
+                                            ng-style="
+                                                !country.other && { 'background-color': vm.colors[$index] } ||
+                                                country.other && { 'background-color': vm.otherColor }
+                                            "></span>
+                                        <span class="colorize-text">{{ country.label }}</span>
+                                        <span class="colorize-text">
+                                            {{ country.value }} {{ country.value === 1 ? 'member' : 'members'}}
+                                        </span>
+                                        <span class="colorize-text percentage-column">{{ country.percent }}%</span>
+                                    </li>
+                                </ul>
+                                <button
+                                    class="js-see-more-less expand-button btn btn-outline-secondary"
+                                    ng-class="{ 'hidden' : vm.byCountry.length <= 7 }">
+                                    <span class="see-more-text">See more</span>
+                                    <span class="see-less-text">See less</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

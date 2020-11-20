@@ -8,6 +8,6 @@ FROM general_settings gs,
        JOIN (SELECT "user", "group" FROM all_membership_group m WHERE m.active = true AND m.group = $1 GROUP BY m.user, m.group) as m ON u.id = m.user
 WHERE (
         (roles->>'roleCategory')::text IS NOT NULL AND
-        (roles->>'roleCategory')::text = $2
+        (roles->>'roleCategory')::text = ANY ($2)
 )
 GROUP BY nationality;

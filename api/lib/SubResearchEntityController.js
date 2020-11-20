@@ -78,8 +78,12 @@ module.exports = {
         const id = req.params.id;
         const refresh = req.param('refresh') === 'true';
         const chartsKeys = req.param('charts') || [];
-        const role = req.param('role') || false;
-        res.halt(Chart.getChartsData(id, Model, chartsKeys, refresh, role));
+        let roles = req.param('roles') || [];
+        if (typeof roles === 'string') {
+            roles = [];
+            roles.push(req.param('roles'));
+        }
+        res.halt(Chart.getChartsData(id, Model, chartsKeys, refresh, roles));
     },
     setAuthorhips: function (req, res) {
         const draftId = req.params.documentId;
