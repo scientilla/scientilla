@@ -67,11 +67,8 @@
 
                 <div class="card role-card">
                     <div class="card-body">
-                        <em>You can update the charts of "members by gender", "members by age range" and "member by
-                            country" by selecting a set of roles.</em>
-                        <em>Changing the set of roles can be done by clicking on the pie chart icon
-                            (<i class="fas fa-chart-pie"></i>) on the left side of the role of the "members by role"
-                            chart/table.</em>
+                        <em>You can update the charts by selecting a set of roles by clicking on the pie chart icon
+                            (<i class="fas fa-chart-pie"></i>). All the charts will be updated except "Members by role".</em>
                     </div>
                 </div>
             </div>
@@ -95,7 +92,7 @@
                             <div class="bar-chart">
                                 <div class="chart">
                                     <span ng-style="{
-                                        'width': 'calc(' + role.percent + '% + 10px - ((' + role.percent + ' / 100 ) * 10px))',
+                                        'width': role.percent + '%',
                                         'background-color': vm.colors[$index]
                                     }"></span>
                                 </div>
