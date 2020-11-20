@@ -6,7 +6,7 @@ module.exports = {
     getChartsData
 };
 
-async function getChartsData(id, Model, chartsKeys, refresh, role) {
+async function getChartsData(id, Model, chartsKeys, refresh, roles) {
 
     const documentTypes = DocumentTypes.get();
 
@@ -158,60 +158,60 @@ async function getChartsData(id, Model, chartsKeys, refresh, role) {
         fn: query,
         params: [id]
     },  {
-        key: 'groupMembersByGenderOfRole',
-        queryName: 'groupMembersByGenderOfRole',
+        key: 'groupMembersByGenderOfRoles',
+        queryName: 'groupMembersByGenderOfRoles',
         fn: query,
-        params: [id, role]
+        params: [id, roles]
     },  {
         key: 'groupAndSubgroupMembersByGender',
         queryName: 'groupAndSubgroupMembersByGender',
         fn: query,
         params: [id]
     },  {
-        key: 'groupAndSubgroupMembersByGenderOfRole',
-        queryName: 'groupAndSubgroupMembersByGenderOfRole',
+        key: 'groupAndSubgroupMembersByGenderOfRoles',
+        queryName: 'groupAndSubgroupMembersByGenderOfRoles',
         fn: query,
-        params: [id, role]
+        params: [id, roles]
     },  {
         key: 'groupMembersByAgeRange',
         queryName: 'groupMembersByAgeRange',
         fn: query,
         params: [id]
     },  {
-        key: 'groupMembersByAgeRangeOfRole',
-        queryName: 'groupMembersByAgeRangeOfRole',
+        key: 'groupMembersByAgeRangeOfRoles',
+        queryName: 'groupMembersByAgeRangeOfRoles',
         fn: query,
-        params: [id, role]
+        params: [id, roles]
     },  {
         key: 'groupAndSubgroupMembersByAgeRange',
         queryName: 'groupAndSubgroupMembersByAgeRange',
         fn: query,
         params: [id]
     },  {
-        key: 'groupAndSubgroupMembersByAgeRangeOfRole',
-        queryName: 'groupAndSubgroupMembersByAgeRangeOfRole',
+        key: 'groupAndSubgroupMembersByAgeRangeOfRoles',
+        queryName: 'groupAndSubgroupMembersByAgeRangeOfRoles',
         fn: query,
-        params: [id, role]
+        params: [id, roles]
     },  {
         key: 'groupMembersByNationality',
         queryName: 'groupMembersByNationality',
         fn: query,
         params: [id]
     },  {
-        key: 'groupMembersByNationalityOfRole',
-        queryName: 'groupMembersByNationalityOfRole',
+        key: 'groupMembersByNationalityOfRoles',
+        queryName: 'groupMembersByNationalityOfRoles',
         fn: query,
-        params: [id, role]
+        params: [id, roles]
     },  {
         key: 'groupAndSubgroupMembersByNationality',
         queryName: 'groupAndSubgroupMembersByNationality',
         fn: query,
         params: [id]
     },  {
-        key: 'groupAndSubgroupMembersByNationalityOfRole',
-        queryName: 'groupAndSubgroupMembersByNationalityOfRole',
+        key: 'groupAndSubgroupMembersByNationalityOfRoles',
+        queryName: 'groupAndSubgroupMembersByNationalityOfRoles',
         fn: query,
-        params: [id, role]
+        params: [id, roles]
     }];
 
     let selectedCharts = [];
@@ -290,17 +290,17 @@ async function getChartsData(id, Model, chartsKeys, refresh, role) {
                 'groupMembersByRole': 'groupMembersByRole',
                 'groupAndSubgroupMembersByRole': 'groupAndSubgroupMembersByRole',
                 'groupMembersByGender': 'groupMembersByGender',
-                'groupMembersByGenderOfRole': 'groupMembersByGenderOfRole',
+                'groupMembersByGenderOfRoles': 'groupMembersByGenderOfRoles',
                 'groupAndSubgroupMembersByGender': 'groupAndSubgroupMembersByGender',
-                'groupAndSubgroupMembersByGenderOfRole': 'groupAndSubgroupMembersByGenderOfRole',
+                'groupAndSubgroupMembersByGenderOfRoles': 'groupAndSubgroupMembersByGenderOfRoles',
                 'groupMembersByAgeRange': 'groupMembersByAgeRange',
-                'groupMembersByAgeRangeOfRole': 'groupMembersByAgeRangeOfRole',
+                'groupMembersByAgeRangeOfRoles': 'groupMembersByAgeRangeOfRoles',
                 'groupAndSubgroupMembersByAgeRange': 'groupAndSubgroupMembersByAgeRange',
-                'groupAndSubgroupMembersByAgeRangeOfRole': 'groupAndSubgroupMembersByAgeRangeOfRole',
+                'groupAndSubgroupMembersByAgeRangeOfRoles': 'groupAndSubgroupMembersByAgeRangeOfRoles',
                 'groupMembersByNationality': 'groupMembersByNationality',
-                'groupMembersByNationalityOfRole': 'groupMembersByNationalityOfRole',
+                'groupMembersByNationalityOfRoles': 'groupMembersByNationalityOfRoles',
                 'groupAndSubgroupMembersByNationality': 'groupAndSubgroupMembersByNationality',
-                'groupAndSubgroupMembersByNationalityOfRole': 'groupAndSubgroupMembersByNationalityOfRole'
+                'groupAndSubgroupMembersByNationalityOfRoles': 'groupAndSubgroupMembersByNationalityOfRoles'
             }
         };
         const transforms = {

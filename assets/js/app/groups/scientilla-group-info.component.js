@@ -24,27 +24,21 @@
         vm.isLoading = false;
 
         let includeSubgroupsWatcher;
-        let roleWatcher;
-        let options = {};
-
-        const defaultRole = 'all';
-
-        vm.role = defaultRole;
 
         vm.byCountryBiggestCountry = [];
         vm.ageRangeData = [];
+        vm.selectedRoles = [];
+        vm.byRole = [];
+
+        const excludeTitle = 'Click to exclude this role from the charts';
+        const includeTitle = 'Click to include this role into the charts';
 
         vm.$onInit = () => {
             const registerTab = requireParentMethod($element, 'registerTab');
             registerTab(vm);
 
             includeSubgroupsWatcher = $scope.$watch('vm.includeSubgroups', () => {
-                vm.role = defaultRole;
-                vm.reload();
-            });
-
-            roleWatcher = $scope.$watch('vm.role', () => {
-                vm.reload();
+                vm.reload(true);
             });
 
             initCharts();
@@ -57,48 +51,61 @@
             if (_.isFunction(includeSubgroupsWatcher)) {
                 includeSubgroupsWatcher();
             }
-
-            if (_.isFunction(roleWatcher)) {
-                roleWatcher();
-            }
         };
 
         /* jshint ignore:start */
-        vm.reload = async function () {
-
+        vm.reload = async function (forced = false) {
             if (vm.isLoading) {
                 return;
             }
 
-            switch (true) {
-                case vm.role === defaultRole && !vm.includeSubgroups:
-                    options = {
-                        charts: groupChartAllRoles,
-                    };
-                    break;
-                case vm.role !== defaultRole && vm.includeSubgroups:
-                    options = {
-                        charts: includeSubgroupsChartsOfRole,
-                        role: vm.role
-                    };
-                    break;
-                case vm.role !== defaultRole && !vm.includeSubgroups:
-                    options = {
-                        charts: groupChartOfRole,
-                        role: vm.role
-                    };
-                    break;
-                default:
-                    options = {
-                        charts: charts = includeSubgroupsChartsAllRoles
-                    };
-                    break;
+            vm.isLoading = true;
+
+            if (!vm.firstTimeLoaded) {
+                forced = true;
             }
 
             vm.researchDomain = vm.group.getResearchDomain();
             vm.interactions = vm.group.getInteractions();
 
-            await loadChartData();
+            await loadChartData(forced);
+
+            vm.isLoading = false;
+
+            $scope.$apply();
+        };
+
+        vm.checkSelectedRoles = (event, category) => {
+            if (!_.isEmpty(vm.byRole)) {
+                const role = vm.byRole.find(r => r.category === category);
+                role.selected = !role.selected;
+                if (role.selected) {
+                    role.title = excludeTitle;
+                } else {
+                    role.title = includeTitle;
+                }
+
+                if (vm.byRole.filter(r => r.selected).length === 0) {
+                    event.preventDefault();
+
+                    for (const role of vm.byRole) {
+                        role.selected = true;
+                        role.title = includeTitle;
+                    }
+                }
+
+                vm.selectedRoles = vm.byRole.filter(r => r.selected).map(r => r.category);
+
+                vm.reload(false);
+            }
+        };
+
+        vm.getTitle = (selected) => {
+            if (selected) {
+                return 'Click to exclude this role from the charts';
+            } else {
+                return 'Click to include this role into the charts'
+            }
         };
 
         let charts = [];
@@ -112,9 +119,9 @@
         const groupChartOfRole = [
             'groupMembersTotal',
             'groupMembersByRole',
-            'groupMembersByGenderOfRole',
-            'groupMembersByAgeRangeOfRole',
-            'groupMembersByNationalityOfRole'
+            'groupMembersByGenderOfRoles',
+            'groupMembersByAgeRangeOfRoles',
+            'groupMembersByNationalityOfRoles'
         ];
         const includeSubgroupsChartsAllRoles = [
             'groupAndSubgroupMembersTotal',
@@ -126,10 +133,37 @@
         const includeSubgroupsChartsOfRole = [
             'groupAndSubgroupMembersTotal',
             'groupAndSubgroupMembersByRole',
-            'groupAndSubgroupMembersByGenderOfRole',
-            'groupAndSubgroupMembersByAgeRangeOfRole',
-            'groupAndSubgroupMembersByNationalityOfRole'
+            'groupAndSubgroupMembersByGenderOfRoles',
+            'groupAndSubgroupMembersByAgeRangeOfRoles',
+            'groupAndSubgroupMembersByNationalityOfRoles',
         ];
+
+        function getDefaultPieChartOptions() {
+            return Object.assign({}, {
+                chart: {
+                    type: 'pieChart',
+                    growOnHover: false,
+                    showLegend: false,
+                    showLabels: false,
+                    duration: 300,
+                    margin: {
+                        top: 0,
+                        right: 0,
+                        bottom: 0,
+                        left: 0
+                    },
+                    tooltip: {
+                        enabled: false
+                    },
+                    color: function(d, i) {
+                        return vm.colors[i % vm.colors.length]
+                    },
+                    x: d => d.label,
+                    y: d => d.count,
+                    valueFormat: d => d3.format('')(d)
+                }
+            })
+        }
 
         function initCharts() {
             vm.colors = ChartService.getColors();
@@ -145,7 +179,12 @@
                     showLegend: false,
                     showLabels: false,
                     duration: 300,
-                    margin: 0,
+                    margin: {
+                        top: 0,
+                        right: 0,
+                        bottom: 0,
+                        left: 0
+                    },
                     tooltip: {
                         enabled: false
                     },
@@ -157,56 +196,22 @@
                 }
             };
 
-            vm.chartByAgeRangeOptions = {
-                chart: {
-                    type: 'pieChart',
-                    growOnHover: false,
-                    showLegend: false,
-                    showLabels: false,
-                    duration: 300,
-                    margin: 0,
-                    tooltip: {
-                        enabled: false
-                    },
-                    color: function(d, i) {
-                        return vm.colors[i % vm.colors.length]
-                    },
-                    x: d => d.label,
-                    y: d => d.count,
-                    valueFormat: d => d3.format('')(d)
-                }
-            };
-
-            vm.chartByBiggestCountryOptions = {
-                chart: {
-                    type: 'pieChart',
-                    labelThreshold: 0.02,
-                    growOnHover: false,
-                    showLegend: false,
-                    showLabels: false,
-                    duration: 300,
-                    margin: 0,
-                    tooltip: {
-                        enabled: false
-                    },
-                    color: function(d,i){
-                        return d.color || vm.colors[i % vm.colors.length]
-                    },
-                    x: d => d.label,
-                    y: d => d.count,
-                    valueFormat: d => d3.format('')(d),
-                }
-            };
+            vm.chartByAgeRangeOptions = getDefaultPieChartOptions();
+            vm.chartByBiggestCountryOptions = getDefaultPieChartOptions();
         }
 
-        async function loadChartData() {
-
-            vm.isLoading = true;
-
-            let charts = vm.charts.filter(c => {
-                    return c.includeGroups === vm.includeSubgroups && c.role === vm.role
-                })
-                .map(c => c.charts[0]);
+        async function loadChartData(forced = false) {
+            let charts = [];
+            if (forced) {
+                charts = vm.charts.filter(c => c.includeSubgroups === vm.includeSubgroups && c.forced === forced)
+                    .map(c => c.charts[0]);
+            } else {
+                charts = vm.charts.filter(c =>
+                    c.includeSubgroups === vm.includeSubgroups &&
+                    JSON.stringify(c.roles) === JSON.stringify(vm.selectedRoles) &&
+                    c.forced === forced
+                ).map(c => c.charts[0]);
+            }
 
             let total = 0;
             let byRole = [];
@@ -224,121 +229,162 @@
             }
 
             if (_.isEmpty(charts)) {
+
+                let options = {};
+
+                if (forced) {
+                    if (vm.includeSubgroups) {
+                        options = {
+                            charts: includeSubgroupsChartsAllRoles
+                        };
+                    } else {
+                        options = {
+                            charts: groupChartAllRoles,
+                        };
+                    }
+                } else {
+                    switch (true) {
+                        case !_.isEmpty(vm.selectedRoles) &&
+                            JSON.stringify(vm.byRole.map(r => r.category)) === JSON.stringify(vm.selectedRoles) &&
+                            !vm.includeSubgroups:
+                            options = {
+                                charts: groupChartAllRoles,
+                            };
+                            break;
+                        case !_.isEmpty(vm.selectedRoles) &&
+                            JSON.stringify(vm.byRole.map(r => r.category)) === JSON.stringify(vm.selectedRoles) &&
+                            vm.includeSubgroups:
+                            options = {
+                                charts: includeSubgroupsChartsAllRoles
+                            };
+                            break;
+                        case !_.isEmpty(vm.selectedRoles) &&
+                            JSON.stringify(vm.byRole.map(r => r.category)) !== JSON.stringify(vm.selectedRoles) &&
+                            !vm.includeSubgroups:
+                            options = {
+                                charts: groupChartOfRole,
+                                roles: vm.selectedRoles
+                            };
+                            break;
+                        default:
+                            options = {
+                                charts: includeSubgroupsChartsOfRole,
+                                roles: vm.selectedRoles
+                            };
+                            break;
+                    }
+                }
+
                 vm.charts.push({
-                    role: vm.role,
-                    includeGroups: vm.includeSubgroups,
-                    charts: await vm.group.all('charts').getList(Object.assign(
-                        {},
-                        {
-                            refresh: true
-                        }, options)
+                    roles: vm.selectedRoles,
+                    includeSubgroups: vm.includeSubgroups,
+                    forced: forced,
+                    charts: await vm.group.all('charts').getList(
+                        Object.assign({}, { refresh: true }, options)
                     )
                 });
 
-                charts = vm.charts.filter(c => {
-                        return c.includeGroups === vm.includeSubgroups && c.role === vm.role
-                    })
-                    .map(c => c.charts[0]);
+                if (forced) {
+                    charts = vm.charts.filter(c => c.includeSubgroups === vm.includeSubgroups && c.forced === forced)
+                        .map(c => c.charts[0]);
+                } else {
+                    charts = vm.charts.filter(c =>
+                        c.includeSubgroups === vm.includeSubgroups &&
+                        JSON.stringify(c.roles) === JSON.stringify(vm.selectedRoles) &&
+                        c.forced === forced
+                    ).map(c => c.charts[0]);
+                }
             }
 
-            switch (true) {
-                case vm.role === defaultRole && !vm.includeSubgroups:
-                    total = charts[0].groupMembersTotal[0].count;
-                    byRole = charts[0].groupMembersByRole;
-                    byGender = charts[0].groupMembersByGender;
-                    byAgeRange = charts[0].groupMembersByAgeRange[0];
-                    byNationality = charts[0].groupMembersByNationality;
-                    break;
-                case vm.role !== defaultRole && vm.includeSubgroups:
-                    total = charts[0].groupAndSubgroupMembersTotal[0].count;
-                    byRole = charts[0].groupAndSubgroupMembersByRole;
-                    byGender = charts[0].groupAndSubgroupMembersByGenderOfRole;
-                    byAgeRange = charts[0].groupAndSubgroupMembersByAgeRangeOfRole[0];
-                    byNationality = charts[0].groupAndSubgroupMembersByNationalityOfRole;
-                    break;
-                case vm.role !== defaultRole && !vm.includeSubgroups:
-                    total = charts[0].groupMembersTotal[0].count;
-                    byRole = charts[0].groupMembersByRole;
-                    byGender = charts[0].groupMembersByGenderOfRole;
-                    byAgeRange = charts[0].groupMembersByAgeRangeOfRole[0];
-                    byNationality = charts[0].groupMembersByNationalityOfRole;
-                    break;
-                default:
+            if (forced) {
+                if (vm.includeSubgroups) {
                     total = charts[0].groupAndSubgroupMembersTotal[0].count;
                     byRole = charts[0].groupAndSubgroupMembersByRole;
                     byGender = charts[0].groupAndSubgroupMembersByGender;
                     byAgeRange = charts[0].groupAndSubgroupMembersByAgeRange[0];
                     byNationality = charts[0].groupAndSubgroupMembersByNationality;
-                    break;
+                } else {
+                    total = charts[0].groupMembersTotal[0].count;
+                    byRole = charts[0].groupMembersByRole;
+                    byGender = charts[0].groupMembersByGender;
+                    byAgeRange = charts[0].groupMembersByAgeRange[0];
+                    byNationality = charts[0].groupMembersByNationality;
+                }
+            } else {
+                switch (true) {
+                    case !_.isEmpty(vm.selectedRoles) &&
+                        JSON.stringify(vm.byRole.map(r => r.category)) === JSON.stringify(vm.selectedRoles) &&
+                        !vm.includeSubgroups:
+                        total = charts[0].groupMembersTotal[0].count;
+                        byRole = charts[0].groupMembersByRole;
+                        byGender = charts[0].groupMembersByGender;
+                        byAgeRange = charts[0].groupMembersByAgeRange[0];
+                        byNationality = charts[0].groupMembersByNationality;
+                        break;
+                    case !_.isEmpty(vm.selectedRoles) &&
+                        JSON.stringify(vm.byRole.map(r => r.category)) === JSON.stringify(vm.selectedRoles) &&
+                        vm.includeSubgroups:
+                        total = charts[0].groupAndSubgroupMembersTotal[0].count;
+                        byRole = charts[0].groupAndSubgroupMembersByRole;
+                        byGender = charts[0].groupAndSubgroupMembersByGender;
+                        byAgeRange = charts[0].groupAndSubgroupMembersByAgeRange[0];
+                        byNationality = charts[0].groupAndSubgroupMembersByNationality;
+                        break;
+                    case !_.isEmpty(vm.selectedRoles) &&
+                        JSON.stringify(vm.byRole.map(r => r.category)) !== JSON.stringify(vm.selectedRoles) &&
+                        !vm.includeSubgroups:
+                        total = charts[0].groupMembersTotal[0].count;
+                        byRole = charts[0].groupMembersByRole;
+                        byGender = charts[0].groupMembersByGenderOfRoles;
+                        byAgeRange = charts[0].groupMembersByAgeRangeOfRoles[0];
+                        byNationality = charts[0].groupMembersByNationalityOfRoles;
+                        break;
+                    default:
+                        total = charts[0].groupAndSubgroupMembersTotal[0].count;
+                        byRole = charts[0].groupAndSubgroupMembersByRole;
+                        byGender = charts[0].groupAndSubgroupMembersByGenderOfRoles;
+                        byAgeRange = charts[0].groupAndSubgroupMembersByAgeRangeOfRoles[0];
+                        byNationality = charts[0].groupAndSubgroupMembersByNationalityOfRoles;
+                        break;
+                }
             }
 
             vm.totalMembers = total;
             vm.totalMembersByRole = byRole.reduce((tot, el) => tot + parseInt(el.count), 0);
 
-            vm.byRole = byRole.map(role => {
-                return {
-                    category: role.category,
-                    value: parseInt(role.count),
-                    percent: _.round((parseInt(role.count) / vm.totalMembers) * 100, 2)
-                }
-            });
-
-            vm.roles = _.sortBy(
-                vm.byRole.filter(role => role.category !== 'Others')
-                    .map(role => {
-                        return {
-                            label: role.category,
-                            value: role.category
-                        };
+            if (JSON.stringify(byRole.map(r => r.category)) !== JSON.stringify(vm.byRole.map(r => r.category))) {
+                vm.byRole = byRole.map(role => {
+                    return {
+                        category: role.category,
+                        selected: true,
+                        value: parseInt(role.count),
+                        percent: _.round((parseInt(role.count) / vm.totalMembers) * 100, 2),
+                        title: excludeTitle,
+                        disabled: false
                     }
-                ),
-                'label'
-            );
-
-            vm.roles.unshift({
-                label: 'All',
-                value: defaultRole
-            });
-
-            vm.selectStructure = {
-                label: 'Select role:',
-                values: vm.roles
-            };
+                });
+                vm.selectedRoles = vm.byRole.filter(r => r.selected).map(r => r.category);
+            }
 
             // Gender charts
             const genderTotal = byGender.reduce(function (accumulator, gender) {
                 return accumulator + parseInt(gender.count);
             }, 0);
             vm.maleData = byGender.find(d => d.gender === 'M') || { count: 0 };
-            vm.maleData.percentage = _.round((vm.maleData.count / genderTotal) * 100, 2);
             vm.femaleData = byGender.find(d => d.gender === 'F') || { count: 0 };
-            vm.femaleData.percentage = _.round((vm.femaleData.count / genderTotal) * 100, 2);
 
+            vm.chartGenderData = [];
+            vm.chartGenderData.push({
+                label: 'Male',
+                count: vm.maleData.count,
+                percentage: _.round((vm.maleData.count / genderTotal) * 100, 2)
+            });
+            vm.chartGenderData.push({
+                label: 'Female',
+                count: vm.femaleData.count,
+                percentage: _.round((vm.femaleData.count / genderTotal) * 100, 2)
+            });
             vm.genderTotal = genderTotal;
-
-            vm.chartMaleData = [];
-            vm.chartMaleData.push({
-                gender: 'Male',
-                count: vm.maleData.count,
-                color: vm.colors[0]
-            });
-            vm.chartMaleData.push({
-                gender: 'Female',
-                count: vm.femaleData.count,
-                color: defaultChartColor
-            });
-
-            vm.chartFemaleData = [];
-            vm.chartFemaleData.push({
-                gender: 'Female',
-                count: vm.femaleData.count,
-                color: vm.colors[0]
-            });
-            vm.chartFemaleData.push({
-                gender: 'Male',
-                count: vm.maleData.count,
-                color: defaultChartColor
-            });
 
             // Age range chart
             let ageRangeTotal = 0;
@@ -393,10 +439,10 @@
                 }
             ];
 
-            vm.isLoading = false;
             vm.firstTimeLoaded = true;
-        }
 
+            return Promise.resolve(1);
+        }
         /* jshint ignore:end */
     }
 })();
