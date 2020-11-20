@@ -21,6 +21,13 @@
         vm.editUser = editUser;
         vm.createNew = createNew;
         vm.loginAs = loginAs;
+        vm.getUserProfile = getUserProfile;
+        vm.getProfileImage = getProfileImage;
+        vm.socialClass = socialClass;
+        vm.getPhone = getPhone;
+        vm.getUniqueCenters = getUniqueCenters;
+        vm.getUniqueGroups = getUniqueGroups;
+        vm.getUniqueOffices = getUniqueOffices;
 
         vm.onFilter = onFilter;
         let query = {};
@@ -78,5 +85,101 @@
             onFilter(query);
         }
 
+        function getUserProfile(user) {
+            if (_.has(user, 'userData') && user.userData[0]) {
+                return user.userData[0];
+            }
+
+            return {};
+        }
+
+        function getUniqueCenters(profile) {
+            const centers = [];
+
+            if (_.has(profile, 'groups')) {
+                for (const group of profile.groups) {
+                    if (_.has(group, 'center.name') && !centers.includes(group.center.name)) {
+                        centers.push(group.center.name);
+                    }
+                }
+            }
+
+            return centers;
+        }
+
+        function getUniqueGroups(profile) {
+            const groups = [];
+
+            if (_.has(profile, 'groups')) {
+                for (const group of profile.groups) {
+                    if (_.has(group, 'name') && !groups.includes(group.name)) {
+                        groups.push(group.name);
+                    }
+                }
+            }
+
+            return groups;
+        }
+
+        function getUniqueOffices(profile) {
+            const offices = [];
+
+            if (_.has(profile, 'groups')) {
+                for (const group of profile.groups) {
+                    if (_.has(group, 'offices')) {
+                        for (const office of group.offices) {
+                            if (!offices.includes(office)) {
+                                offices.push(office);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return offices;
+        }
+
+        function getProfileImage(profile) {
+            if (_.has(profile, 'image') && profile.image) {
+                return profile.image;
+            } else {
+                if (!_.has(profile, 'gender') || profile.gender === 'M') {
+                    return '/images/man.png';
+                }
+
+                return '/images/woman.png';
+            }
+        }
+
+        function socialClass(social) {
+            switch (true) {
+                case social === 'linkedin':
+                    return 'fab fa-linkedin';
+                case social === 'twitter':
+                    return 'fab fa-twitter';
+                case social === 'facebook':
+                    return 'fab fa-facebook-square';
+                case social === 'instagram':
+                    return 'fab fa-instagram';
+                case social === 'researchgate':
+                    return 'fab fa-researchgate';
+                case social === 'googleScholar':
+                    return 'fas fa-graduation-cap';
+                case social === 'github':
+                    return 'fab fa-github';
+                case social === 'bitbucket':
+                    return 'fab fa-bitbucket';
+                case social === 'youtube':
+                    return 'fab fa-youtube';
+                case social === 'flickr':
+                    return 'fab fa-flickr';
+                default:
+                    break;
+            }
+        }
+
+        function getPhone(phone) {
+            return phone.replace(/\s/g, '');
+        }
     }
 })();

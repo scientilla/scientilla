@@ -18,7 +18,8 @@ module.exports = {
         },
         researchEntity: {
             columnName: 'research_entity',
-            model: 'researchEntity'
+            model: 'researchEntity',
+            unique: true
         },
         toJSON: function(replaceImage = true) {
             const data = this.toObject();
