@@ -5,16 +5,10 @@ module.exports = {
         },
         user: {
             model: 'User'
-        },
-        synchronized: 'boolean',
-        active: 'boolean',
-        child_group: {
-            model: 'Group'
-        },
-        level: 'integer'
+        }
     },
     migrate: 'safe',
-    tableName: 'all_active_membership',
+    tableName: 'all_active_membership_group',
     autoUpdatedAt: false,
     autoCreatedAt: false
 };
