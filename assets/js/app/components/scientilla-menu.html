@@ -64,6 +64,17 @@
             </div>
         </li>
         <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && vm.isAdmin()">
+            <label>Agreements</label>
+            <div class="list-group">
+                <a ng-href="{{ vm.getUrl('agreements/verified') }}"
+                   ng-class="{active: vm.isActive('/agreements/verified', true)}"
+                   class="list-group-item list-group-item-action">Verified</a>
+                <a ng-href="{{ vm.getUrl('agreements/drafts') }}"
+                   ng-class="{active: vm.isActive('/agreements/drafts', true)}"
+                   class="list-group-item list-group-item-action">Drafts</a>
+            </div>
+        </li>
+        <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && vm.isAdmin()">
             <label>Patents</label>
             <div class="list-group">
                 <a ng-href="{{ vm.getUrl('patents/verified') }}"

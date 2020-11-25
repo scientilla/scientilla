@@ -1,0 +1,60 @@
+.agreement {
+    @include normalize-listing;
+    font-size: 1.2rem;
+    border-left: 2px solid $primary-color;
+
+    & > li {
+        padding: 0px 1rem;
+    }
+
+    .agreement-title{
+        margin: 1rem 0px;
+        font-size: 2rem;
+        line-height: 2.2rem;
+    }
+
+    .agreement-info{
+        position: relative;
+
+        &.add-year-postfix{
+            min-height: 120px;
+        }
+    }
+
+    .agreement-actions{
+        @include normalize-listing;
+        @include clearfix;
+        margin: 1rem -.5rem 0px -.5rem;
+
+        & > li{
+            display: block;
+            padding: 0px .5rem;
+            float: left;
+            font-size: 1.4rem;
+        }
+    }
+}
+
+@include media-breakpoint-up(lg) {
+    .agreement{
+        display: grid;
+        grid-template-rows: auto;
+        grid-template-columns: auto 1fr auto;
+        border-left: 0px;
+
+        .agreement-info{
+            border-right: 2px solid $primary-color;
+
+            .agreement-year{
+                position: absolute;
+                top: -16px;
+                right: 2px;
+                display: block;
+                font-weight: bold;
+                transform-origin: bottom right;
+                transform: rotate(-90deg);
+                white-space: nowrap;
+            }
+        }
+    }
+}

@@ -1,0 +1,28 @@
+<scientilla-backend-layout>
+    <h1>Verified agreements</h1>
+    <scientilla-filter
+        category="verified-agreement"
+        on-filter="vm.onFilter"
+        elements="vm.agreements"
+        empty-list-message="No agreements found">
+        <scientilla-multicheck>
+            <buttons>
+                <scientilla-multicheck-button
+                    ng-disabled="true"
+                    subject="Export as CSV"
+                    on-click="vm.exportDownload">
+                    <i class="fas fa-download fa-left"></i>Export as CSV
+                </scientilla-multicheck-button>
+            </buttons>
+            <item-list>
+                <scientilla-checkable ng-repeat="agreement in vm.agreements" item="agreement" class="scientilla-checkable">
+                    <scientilla-agreement
+                        agreement="agreement"
+                        section="vm.agreementListSections.VERIFIED"
+                        class="agreement-container"></scientilla-agreement>
+                </scientilla-checkable>
+            </item-list>
+        </scientilla-multicheck>
+
+    </scientilla-filter>
+</scientilla-backend-layout>

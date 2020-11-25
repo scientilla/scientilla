@@ -1,0 +1,63 @@
+<ul class="agreement">
+    <li class="agreement-info">
+        <span class="agreement-year">{{ vm.agreement.startYear + ' - ' + vm.agreement.endYear }}</span>
+    </li>
+    <li class="agreement-metadata">
+        <div>
+            <scientilla-agreement-type-badge type="vm.agreement.type"></scientilla-agreement-type-badge>
+            <scientilla-agreement-pis agreement="vm.agreement"></scientilla-agreement-pis>
+        </div>
+
+        <h2 class="agreement-title has-action"
+            ng-click="vm.openDetails()"
+            ng-bind-html='vm.agreement | title'></h2>
+
+        <ng-container ng-if="vm.agreement.acronym">
+            <strong>Acronym:</strong> {{ vm.agreement.acronym }}<br>
+        </ng-container>
+
+        <ng-container ng-if="vm.agreement.role">
+            <strong>Role:</strong>
+            {{ vm.agreement.role }}<br>
+        </ng-container>
+
+        <ng-container ng-if="vm.agreement.status">
+            <strong>Status:</strong>
+            {{ vm.agreement.status }}<br>
+        </ng-container>
+
+        <ul class="agreement-actions">
+            <li
+                ng-if="vm.agreement.verified.length"
+                class="agreement-verified"
+                uib-tooltip-html="vm.getVerifiedNamesHTML()"
+                tooltip-class="text-left">
+                <i class="fas fa-check"></i> {{ vm.agreement.verified.length }}
+            </li>
+            <li
+                ng-if="vm.isPrivacyToShow()"
+                class="agreement-privacy-actions">
+                <i ng-click="vm.changePrivacy()"
+                   ng-if="vm.isPublic()"
+                   class="fas fa-globe-africa has-action"
+                   uib-tooltip-html="'The agreement is visible to everyone, click to change it'"></i>
+                <i ng-click="vm.changePrivacy()"
+                   ng-if="!vm.isPublic()"
+                   class="fas fa-lock has-action"
+                   uib-tooltip-html="'The agreement is visible only to scientilla users, click to change it'"></i>
+            </li>
+            <li
+                ng-if="vm.isFavoriteToShow()"
+                class="agreement-favorite-actions">
+                <i ng-click="vm.changeFavorite()"
+                   ng-if="vm.isFavorite()"
+                   class="fas fa-star has-action"
+                   uib-tooltip-html="'This agreement is one of your favorite'"></i>
+                <i ng-click="vm.changeFavorite()"
+                   ng-if="!vm.isFavorite()"
+                   class="far fa-star has-action"
+                   uib-tooltip-html="'Click here to make it favorite'"></i>
+            </li>
+        </ul>
+    </li>
+</ul>

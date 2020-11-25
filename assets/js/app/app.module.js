@@ -26,6 +26,7 @@
         'accomplishments',
         'documentation',
         'projects',
-        'patents'
+        'patents',
+        'agreements'
     ]);
 })();

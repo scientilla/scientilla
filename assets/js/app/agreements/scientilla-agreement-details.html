@@ -1,0 +1,51 @@
+<div>
+    <scientilla-agreement-type-badge type="vm.agreement.type"></scientilla-agreement-type-badge>
+    <scientilla-agreement-pis agreement="vm.agreement"></scientilla-agreement-pis>
+</div>
+<h3 class="agreement-title" ng-bind-html='vm.agreement | title'></h3>
+
+<ng-container ng-if="vm.agreement.code">
+    <strong>Code:</strong> {{ vm.agreement.code }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.agreement.acronym">
+    <strong>Acronym:</strong> {{ vm.agreement.acronym }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.agreement.abstract">
+    <strong>Abstract:</strong><br>{{ vm.agreement.abstract }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.agreement.startDate">
+    <strong>Start date:</strong>
+    {{ vm.agreement.startDate }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.agreement.endDate">
+    <strong>End date:</strong>
+    {{ vm.agreement.endDate }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.agreement.category">
+    <strong>Category:</strong>
+    {{ vm.agreement.category }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.agreement.payment">
+    <strong>Payment:</strong>
+    {{ vm.agreement.payment }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.agreement.role">
+    <strong>Role:</strong>
+    {{ vm.agreement.role }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.agreement.status">
+    <strong>Status:</strong> {{ vm.agreement.status }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.agreement.url">
+    <strong>Url:</strong>
+    {{ vm.agreement.url }}<br>
+</ng-container>
