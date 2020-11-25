@@ -425,19 +425,21 @@
             vm.totalCountries = vm.byCountry.length || 0;
 
             const biggestCountry = _.head(vm.byCountry);
-            vm.byCountryBiggestCountry = [
-                {
-                    label: biggestCountry.label,
-                    count: parseInt(biggestCountry.value),
-                    percentage: getPercent(biggestCountry.value, totalByCountries),
-                    color: vm.colors[0]
-                }, {
-                    label: 'Other countries',
-                    count: totalByCountries - biggestCountry.value,
-                    percentage: getPercent(totalByCountries - biggestCountry.value, totalByCountries),
-                    color: defaultChartColor
-                }
-            ];
+            if (!_.isEmpty(biggestCountry)) {
+                vm.byCountryBiggestCountry = [
+                    {
+                        label: biggestCountry.label,
+                        count: parseInt(biggestCountry.value),
+                        percentage: getPercent(biggestCountry.value, totalByCountries),
+                        color: vm.colors[0]
+                    }, {
+                        label: 'Other countries',
+                        count: totalByCountries - biggestCountry.value,
+                        percentage: getPercent(totalByCountries - biggestCountry.value, totalByCountries),
+                        color: defaultChartColor
+                    }
+                ];
+            }
 
             vm.firstTimeLoaded = true;
 
