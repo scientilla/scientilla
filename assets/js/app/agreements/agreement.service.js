@@ -8,6 +8,7 @@
 
         return {
             get: ResearchEntitiesService.getAgreements,
+            getDrafts: ResearchEntitiesService.getAgreementDrafts,
             exportDownload
         };
 

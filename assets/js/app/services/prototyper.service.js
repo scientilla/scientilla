@@ -45,7 +45,7 @@
             toPatentModel: toProjectModel,
             toPatentsCollection: applyToAll(toPatentModel),
             toAgreementModel: toAgreementModel,
-            toAgreementCollection: applyToAll(toAgreementModel),
+            toAgreementsCollection: applyToAll(toAgreementModel),
         };
         const userPrototype = {
             getAliases: function () {
@@ -476,7 +476,7 @@
         };
 
         const agreementPrototype = {
-            getAuthorLimit: function () {
+            getPILimit: function () {
                 return 10;
             },
         };
@@ -555,7 +555,7 @@
             _.defaultsDeep(agreement, agreementPrototype);
             service.toUsersCollection(agreement.verifiedUsers);
             service.toGroupsCollection(agreement.verifiedGroups);
-            service.toUsersCollection(agreement.authors);
+            service.toUsersCollection(agreement.pi);
             return agreement;
         }
 

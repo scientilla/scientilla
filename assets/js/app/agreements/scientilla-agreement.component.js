@@ -44,9 +44,12 @@
         vm.isFavoriteToShow = isFavoriteToShow;
         vm.changePrivacy = changePrivacy;
         vm.changeFavorite = changeFavorite;
-        vm.hasIITAsPartner = hasIITAsPartner;
 
         let researchEntity;
+
+        vm.showActions = [
+            agreementListSections.VERIFIED
+        ].includes(vm.section);
 
         vm.showPrivacy = [
             agreementListSections.VERIFIED
@@ -71,8 +74,6 @@
         /* jshint ignore:end */
 
         vm.getTypeTitle = GroupsService.getTypeTitle;
-
-        vm.lines = _.uniq(vm.agreement.lines.map(line => line.description));
 
         function openDetails() {
             ModalService

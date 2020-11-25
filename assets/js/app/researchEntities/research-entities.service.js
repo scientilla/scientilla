@@ -9,17 +9,21 @@
         'ResearchItemService',
         'researchItemKinds',
         'researchItemLabels',
-        'ResearchItemTypesService'
+        'ResearchItemTypesService',
+        'Prototyper'
     ];
 
-    function controller(Restangular,
-                        EventsService,
-                        ModalService,
-                        Notification,
-                        ResearchItemService,
-                        researchItemKinds,
-                        researchItemLabels,
-                        ResearchItemTypesService) {
+    function controller(
+        Restangular,
+        EventsService,
+        ModalService,
+        Notification,
+        ResearchItemService,
+        researchItemKinds,
+        researchItemLabels,
+        ResearchItemTypesService,
+        Prototyper
+    ) {
         const service = Restangular.service('researchentities');
 
         service.getResearchEntity = getResearchEntity;
@@ -49,6 +53,8 @@
         service.getMinMaxYears = getMinMaxYears;
         service.getPatents = getPatents;
         service.getPatentFamilies = getPatentFamilies;
+        service.getAgreements = getAgreements;
+        service.getAgreementDrafts = getAgreementDrafts;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
         const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
@@ -409,8 +415,72 @@
         async function getPatentFamilies(researchEntity, query) {
                 return await researchEntity.getList('patentFamilies', query);
         }
-
         /* jshint ignore:end */
+
+        function getAgreements() {
+            const agreements = [];
+            const agreement =  {
+                "title": "Lorem Ipsum is simply dummy text.",
+                "subject": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                "type": "Agreement type",
+                "startYear": "2019",
+                "endYear": "2022",
+                "startDate": "2019-03-01",
+                "endDate": "2022-02-28",
+                "budget": "€90.000",
+                "contribution": "€20.000",
+                "partners": [
+                    {
+                        "email": "Matteo.Marzi@iit.it",
+                        "name": "Matteo Jacopo Luca Nicolo",
+                        "surname": "Marzi"
+                    }
+                ],
+                "piStr": "Matteo.Marzi@iit.it Matteo Jacopo Luca Nicolo Marzi",
+                "pi": [
+                    {
+                        "email": "Matteo.Marzi@iit.it",
+                        "name": "Matteo Jacopo Luca Nicolo",
+                        "surname": "Marzi"
+                    }
+                ],
+                "verified": [
+                    {
+                        "researchEntity": {
+                            "id": 1
+                        }
+                    }
+                ],
+                "verifiedUsers": [],
+                "verifiedGroups": [
+                    {
+                        "researchEntity": {
+                            "id": 1
+                        }
+                    }
+                ],
+                "generatedGroup": false
+            };
+
+            for (let i = 0; i < 10; i++) {
+                const tmpAgreement = _.cloneDeep(agreement);
+                tmpAgreement.id = i;
+                if (i === 2) {
+                    tmpAgreement.generatedGroup = 2;
+                }
+                Prototyper.toAgreementModel(tmpAgreement);
+                console.log(tmpAgreement);
+                agreements.push(tmpAgreement);
+            }
+
+            console.log(agreements);
+
+            return agreements;
+        }
+
+        function getAgreementDrafts() {
+            return getAgreements();
+        }
 
         return service;
     }

@@ -214,6 +214,30 @@
                 {size: 'lg'});
         };
 
+        service.openAgreementDetails = function (agreement) {
+            const scopeVars = {
+                agreement
+            };
+
+            return openModal(`<div class="modal-header">
+                                <h3>Agreement details</h3>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    ng-click="vm.onClose()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <scientilla-agreement-details
+                                    agreement="vm.agreement"
+                                    class="agreement-details"></scientilla-agreement-details>
+                            </div>`,
+                scopeVars,
+                {size: 'lg'});
+        };
+
         service.openScientillaUserForm = function (user, settings = false) {
 
             const scopeVars = {

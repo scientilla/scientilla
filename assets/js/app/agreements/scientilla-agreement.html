@@ -12,18 +12,19 @@
             ng-click="vm.openDetails()"
             ng-bind-html='vm.agreement | title'></h2>
 
-        <ng-container ng-if="vm.agreement.acronym">
-            <strong>Acronym:</strong> {{ vm.agreement.acronym }}<br>
+        <ng-container ng-if="vm.agreement.type">
+            <strong>Type:</strong>
+            {{ vm.agreement.type }}<br>
         </ng-container>
 
-        <ng-container ng-if="vm.agreement.role">
-            <strong>Role:</strong>
-            {{ vm.agreement.role }}<br>
+        <ng-container ng-if="vm.agreement.budget">
+            <strong>Budget:</strong>
+            {{ vm.agreement.budget }}<br>
         </ng-container>
 
-        <ng-container ng-if="vm.agreement.status">
-            <strong>Status:</strong>
-            {{ vm.agreement.status }}<br>
+        <ng-container ng-if="vm.agreement.contribution">
+            <strong>Contribution:</strong>
+            {{ vm.agreement.contribution }}<br>
         </ng-container>
 
         <ul class="agreement-actions">
@@ -57,6 +58,20 @@
                    ng-if="!vm.isFavorite()"
                    class="far fa-star has-action"
                    uib-tooltip-html="'Click here to make it favorite'"></i>
+            </li>
+        </ul>
+    </li>
+    <li ng-if="vm.showActions">
+        <ul class="agreement-actions">
+            <li ng-if="!vm.agreement.generatedGroup">
+                <button class="btn btn-outline-secondary">
+                    <i class="fas fa-plus fa-left"></i>Generate new group
+                </button>
+            </li>
+            <li  ng-if="vm.agreement.generatedGroup">
+                <button class="btn btn-outline-primary">
+                    <i class="fas fa-eye fa-left"></i>View group
+                </button>
             </li>
         </ul>
     </li>

@@ -196,6 +196,47 @@
             }
         };
 
+        const agreementFormStructure = {
+            title: {
+                inputType: 'text',
+                label: 'Title',
+                matchColumn: 'title',
+                matchRule: 'contains',
+                type: 'field',
+            },
+            type: {
+                inputType: 'text',
+                label: 'Type',
+                matchColumn: 'type',
+                matchRule: 'contains',
+                type: 'field',
+            },
+            pi: {
+                inputType: 'text',
+                label: 'PI',
+                matchColumn: 'piStr',
+                matchRule: 'contains',
+                type: 'field',
+            },
+            year: {
+                inputType: 'range',
+                values: {},
+                label: 'Start year',
+                subLabel: '(range between)',
+                matchColumn: 'startYear',
+                rules: [
+                    {
+                        value: 'min',
+                        rule: '>='
+                    }, {
+                        value: 'max',
+                        rule: '<='
+                    }
+                ],
+                type: 'field',
+            }
+        };
+
         const formStructures = {
             accomplishment: accomplishmentFormStructure,
             'accomplishment-suggested': accomplishmentFormStructure,
@@ -206,6 +247,8 @@
             'verified-patent': patentFormStructure,
             'patent-family': patentFamilyFormStructure,
             'verified-patent-family': patentFamilyFormStructure,
+            agreement: agreementFormStructure,
+            'verified-agreement': agreementFormStructure,
             group: {
                 name: {
                     inputType: 'text',
@@ -345,6 +388,23 @@
             };
         }
 
+        async function setupAgreementStructure(constant, researchEntity) {
+            //const defaultValues = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'project');
+            //formStructures[constant].year.defaultValues = defaultValues;
+            //let yearValue = formStructures[constant].year.defaultValues.find(v => v.item_key === allProjectTypes.value);
+            let yearValue;
+            if (_.isNil(yearValue)) {
+                yearValue = {
+                    min: 2000,
+                    max: new Date().getFullYear()
+                };
+            }
+            formStructures[constant].year.values = {
+                min: parseInt(yearValue.min),
+                max: parseInt(yearValue.max)
+            };
+        }
+
         async function getStructure(constant, researchEntity = false) {
 
             let structure;
@@ -430,6 +490,27 @@
                     structure = formStructures[constant];
                     break;
                 case 'patent-family':
+                    structure = formStructures[constant];
+                    break;
+                case 'verified-agreement':
+                    await setupAgreementStructure(constant, researchEntity);
+                    structure = Object.assign(
+                        {},
+                        formStructures[constant],
+                        {
+                            favorites: {
+                                inputType: 'checkbox',
+                                label: 'Show only favorite agreements',
+                                defaultValue: false,
+                                matchColumn: 'favorites',
+                                type: 'action',
+                                valueType: 'boolean'
+                            }
+                        }
+                    );
+                    break;
+                case 'agreement':
+                    await setupAgreementStructure(constant, researchEntity);
                     structure = formStructures[constant];
                     break;
                 case 'document':
