@@ -420,6 +420,36 @@
         function getAgreements() {
             const agreements = [];
             const agreement =  {
+                "administrators": [
+                    {
+                        "username": "camilla.coletti@iit.it",
+                        "name": "Camilla",
+                        "surname": "Coletti",
+                        "slug": "camilla-coletti",
+                        "alreadyAccess": true,
+                        "alreadyOpenedSuggested": true,
+                        "already_changed_profile": false,
+                        "role": "user",
+                        "orcidId": null,
+                        "scopusId": "56227871700",
+                        "jobTitle": "Senior Researcher Tenure Track - Principal Investigator",
+                        "display_name": "Camilla",
+                        "display_surname": "Coletti",
+                        "config": {
+                            "scientific": true
+                        },
+                        "lastsynch": "2020-11-20T17:22:59.000Z",
+                        "active": true,
+                        "synchronized": true,
+                        "contract_end_date": "2025-06-29T22:00:00.000Z",
+                        "cid": "10000252",
+                        "id": 173,
+                        "createdAt": "2017-05-26T08:55:06.000Z",
+                        "updatedAt": "2020-12-01T11:05:13.000Z",
+                        "auth": 173,
+                        "researchEntity": 290
+                    }
+                ],
                 "title": "Lorem Ipsum is simply dummy text.",
                 "subject": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
                 "type": "Agreement type",
@@ -427,8 +457,8 @@
                 "endYear": "2022",
                 "startDate": "2019-03-01",
                 "endDate": "2022-02-28",
-                "budget": "€90.000",
-                "contribution": "€20.000",
+                "budget": 90000,
+                "contribution": 20000,
                 "partners": [
                     {
                         "email": "Matteo.Marzi@iit.it",
@@ -462,18 +492,15 @@
                 "generatedGroup": false
             };
 
-            for (let i = 0; i < 10; i++) {
+            for (let i = 1; i <= 10; i++) {
                 const tmpAgreement = _.cloneDeep(agreement);
                 tmpAgreement.id = i;
                 if (i === 2) {
-                    tmpAgreement.generatedGroup = 2;
+                    tmpAgreement.generatedGroup = i;
                 }
                 Prototyper.toAgreementModel(tmpAgreement);
-                console.log(tmpAgreement);
                 agreements.push(tmpAgreement);
             }
-
-            console.log(agreements);
 
             return agreements;
         }

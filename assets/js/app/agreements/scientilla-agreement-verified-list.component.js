@@ -13,13 +13,15 @@
     controller.$inject = [
         'AgreementService',
         'agreementListSections',
-        'context'
+        'context',
+        'ModalService'
     ];
 
     function controller(
         AgreementService,
         agreementListSections,
-        context
+        context,
+        ModalService
     ) {
         const vm = this;
 
@@ -40,6 +42,10 @@
 
         vm.$onDestroy = function () {
 
+        };
+
+        vm.generate = function (agreement) {
+            ModalService.openGenerateAgreementGroup(agreement);
         };
 
         /* jshint ignore:start */

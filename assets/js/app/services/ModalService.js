@@ -475,6 +475,26 @@
             return service.multipleChoiceConfirm(title, message, [], 'Close');
         };
 
+        service.openGenerateAgreementGroup = function (agreement) {
+
+            const scopeVars = {
+                agreement
+            };
+
+            return openModal(`<scientilla-generate-agreement-group-form\
+                    agreement="vm.agreement"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"
+                ></scientilla-generate-agreement-group-form>`,
+                scopeVars,
+                {
+                    size: 'md',
+                    backdrop: 'static',
+                    keyboard: false
+                });
+        };
+
         service.openScientillaResearchItemForm = function (researchEntity, researchItem, category) {
             const scopeVars = {
                 researchItem: researchItem,

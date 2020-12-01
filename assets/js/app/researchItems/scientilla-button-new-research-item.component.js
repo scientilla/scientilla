@@ -24,10 +24,14 @@
 
         let researchEntity;
 
-
         /* jshint ignore:start */
         vm.$onInit = async function () {
             vm.types = await ResearchItemTypesService.getTypes(vm.category);
+
+            if (_.isEmpty(vm.types)) {
+                vm.types.push(vm.category);
+            }
+
             researchEntity = await context.getResearchEntity();
         };
 

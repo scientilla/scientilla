@@ -1,66 +1,64 @@
 <scientilla-backend-layout>
     <h1>Draft agreements</h1>
     <scientilla-filter
-            category="agreement"
-            on-filter="vm.onFilter"
-            elements="vm.agreements"
-            empty-list-message="No agreements found">
+        category="agreement"
+        on-filter="vm.onFilter"
+        elements="vm.agreements"
+        empty-list-message="No agreements found">
 
         <scientilla-multicheck>
             <buttons>
                 <scientilla-multicheck-button
-                        subject="Verify agreement"
-                        on-click="vm.verifyDrafts">
+                    subject="Verify agreement"
+                    on-click="vm.verifyDrafts">
                     <i class="fas fa-check fa-left"></i>Verify
                 </scientilla-multicheck-button>
                 <scientilla-multicheck-button
-                        subject="Delete agreement"
-                        on-click="vm.deleteDrafts">
+                    subject="Delete agreement"
+                    on-click="vm.deleteDrafts">
                     <i class="far fa-trash-alt fa-left"></i>Delete
                 </scientilla-multicheck-button>
             </buttons>
             <item-list>
-                <scientilla-checkable ng-repeat="agreement in vm.drafts"
-                                      item="agreement"
-                                      class="scientilla-checkable">
+                <scientilla-checkable
+                    ng-repeat="agreement in vm.drafts"
+                    item="agreement"
+                    class="scientilla-checkable">
 
-                    <scientilla-agreement agreement="agreement"
-                                               section="vm.agreementListSections.DRAFT"
-                                               class="agreement-container"></scientilla-agreement>
+                    <scientilla-agreement
+                        agreement="agreement"
+                        section="vm.agreementListSections.DRAFT"
+                        class="agreement-container"></scientilla-agreement>
 
                     <div class="agreement-row-actions">
                         <div class="btn-group" uib-dropdown>
-                            <button ng-click="vm.edit(a)"
-                                    type="button"
-                                    class=" btn btn-primary"
-                                    title="Let you edit the agreement">
+                            <button
+                                ng-click="vm.edit(agreement)"
+                                type="button"
+                                class=" btn btn-primary"
+                                title="Let you edit the agreement">
                                 <i class="fas fa-edit fa-left"></i>Edit
                             </button>
 
                             <button
-                                    type="button"
-                                    class="btn dropdown-toggle only-icon"
-                                    ng-class="{'btn-warning': a.isComparable, 'btn-primary': !a.isComparable}"
-                                    uib-dropdown-toggle>
+                                type="button"
+                                class="btn btn-primary dropdown-toggle only-icon"
+                                uib-dropdown-toggle>
                             </button>
 
                             <div uib-dropdown-menu
                                  class="dropdown-menu">
 
-                                <button ng-click="vm.verify(a)"
-                                        ng-disabled="!vm.isValid(a)"
-                                        class="dropdown-item">
+                                <button
+                                    ng-click="vm.verify(agreement)"
+                                    ng-disabled="!vm.isValid(agreement)"
+                                    class="dropdown-item">
                                     <i class="fas fa-check fa-left"></i>Verify
                                 </button>
 
-                                <button ng-click="vm.editAffiliations(a)"
-                                        ng-disabled="!a.authors.length"
-                                        class="dropdown-item">
-                                    <i class="fas fa-university fa-left"></i>Edit affiliations
-                                </button>
-
-                                <button ng-click="vm.deleteDraft(vm.researchEntity, a)"
-                                        class="dropdown-item">
+                                <button
+                                    ng-click="vm.deleteDraft(vm.researchEntity, agreement)"
+                                    class="dropdown-item">
                                     <i class="fas fa-trash-alt fa-left"></i>Delete
                                 </button>
                             </div>

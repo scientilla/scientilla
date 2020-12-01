@@ -7,6 +7,7 @@
     function controller(ResearchEntitiesService, $http) {
 
         return {
+            edit: (researchEntity, draft) => ResearchEntitiesService.editDraft(researchEntity, draft, 'agreement'),
             get: ResearchEntitiesService.getAgreements,
             getDrafts: ResearchEntitiesService.getAgreementDrafts,
             exportDownload

@@ -1,8 +1,8 @@
 /* global angular */
 
 const agreementListSections = {
-    VERIFIED: 'verified-accomplishments',
-    DRAFT: 'draft-list-accomplishments',
+    VERIFIED: 'verified-agreements',
+    DRAFT: 'draft-list-agreements',
     GROUP: 'group-verified-agreements',
 };
 

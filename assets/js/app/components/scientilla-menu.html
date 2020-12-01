@@ -37,7 +37,7 @@
             </div>
         </li>
         <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific()">
-            <label class="label-add-accomplishment">
+            <label class="label-add-research-item">
                 Accomplishments
                 <scientilla-button-new-research-item
                         category="accomplishment"
@@ -64,7 +64,12 @@
             </div>
         </li>
         <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && vm.isAdmin()">
-            <label>Agreements</label>
+            <label class="label-add-research-item">
+                Agreements
+                <scientilla-button-new-research-item
+                    category="agreement"
+                    class="button-new-research-entity-container"></scientilla-button-new-research-item>
+            </label>
             <div class="list-group">
                 <a ng-href="{{ vm.getUrl('agreements/verified') }}"
                    ng-class="{active: vm.isActive('/agreements/verified', true)}"

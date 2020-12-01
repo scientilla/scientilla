@@ -553,6 +553,7 @@
 
         function toAgreementModel(agreement) {
             _.defaultsDeep(agreement, agreementPrototype);
+            service.toUsersCollection(agreement.administrators);
             service.toUsersCollection(agreement.verifiedUsers);
             service.toGroupsCollection(agreement.verifiedGroups);
             service.toUsersCollection(agreement.pi);

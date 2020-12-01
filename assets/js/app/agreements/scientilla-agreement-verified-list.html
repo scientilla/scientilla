@@ -20,6 +20,43 @@
                         agreement="agreement"
                         section="vm.agreementListSections.VERIFIED"
                         class="agreement-container"></scientilla-agreement>
+
+                    <div class="agreement-row-actions">
+                        <div
+                            ng-if="!agreement.generatedGroup"
+                            class="btn-group"
+                            uib-dropdown>
+                            <button
+                                type="button"
+                                class="btn btn-primary dropdown-toggle"
+                                uib-dropdown-toggle>
+                                Actions
+                            </button>
+
+                            <div
+                                uib-dropdown-menu
+                                class="dropdown-menu dropdown-menu-right">
+
+                                <button
+                                    ng-click="vm.unverify(agreement)"
+                                    class="dropdown-item">
+                                    <i class="fas fa-times fa-left"></i>Unverify
+                                </button>
+
+                                <button
+                                    ng-click="vm.generate(agreement)"
+                                    class="dropdown-item">
+                                    <i class="fas fa-plus fa-left"></i>Generate new group
+                                </button>
+                            </div>
+                        </div>
+
+                        <button
+                            class="btn btn-outline-secondary"
+                            ng-if="agreement.generatedGroup">
+                            <i class="fas fa-eye fa-left"></i>View group
+                        </button>
+                    </div>
                 </scientilla-checkable>
             </item-list>
         </scientilla-multicheck>

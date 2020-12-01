@@ -36,7 +36,6 @@
         vm.deleteDrafts = (drafts) => AgreementService.multipleDelete(vm.researchEntity, drafts);
         vm.verifyDrafts = (drafts) => AgreementService.multipleVerify(vm.researchEntity, drafts);
         vm.agreementListSections = agreementListSections;
-        vm.editAffiliations = (draft) => AgreementService.editAffiliations(vm.researchEntity, draft);
 
         let query = {};
 
