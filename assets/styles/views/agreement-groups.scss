@@ -1,0 +1,51 @@
+.agreement-groups{
+    &.agreement-groups-browsing{
+        .title-container{
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: 1fr auto;
+        }
+
+        .btn-add-group{
+            height: fit-content;
+        }
+
+        .agreement-group-listing{
+            @include normalize-listing;
+
+            & > li{
+                & + li{
+                    margin-top: 2rem;
+                    padding-top: 2rem;
+                    border-top: 1px solid $gray-300;
+                }
+            }
+
+            .user-fullname{
+                margin-bottom: 0px;
+            }
+        }
+
+        .agreement-group-administrators{
+            @include normalize-listing;
+        }
+
+        .agreement-group-title{
+            margin-bottom: .5rem;
+        }
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .agreement-groups{
+        &.agreement-groups-browsing{
+            .agreement-group-listing{
+                & > li{
+                    display: grid;
+                    grid-template-columns: 1fr auto;
+                    grid-template-rows: auto;
+                }
+            }
+        }
+    }
+}

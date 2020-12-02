@@ -7,6 +7,11 @@
 
     function configure($routeProvider) {
         $routeProvider
+            .when("/agreement-groups", {
+                templateUrl: "partials/agreement-browsing.html",
+                controller: "AgreementBrowsingController",
+                controllerAs: 'vm'
+            })
             .when("/:group?/agreements/verified", {
                 controller: 'requestHandler',
                 template: () => '' +

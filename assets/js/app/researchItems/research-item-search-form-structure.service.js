@@ -237,6 +237,16 @@
             }
         };
 
+        const agreementGroupFormStructure = {
+            title: {
+                inputType: 'text',
+                label: 'Title',
+                matchColumn: 'title',
+                matchRule: 'contains',
+                type: 'field',
+            }
+        };
+
         const formStructures = {
             accomplishment: accomplishmentFormStructure,
             'accomplishment-suggested': accomplishmentFormStructure,
@@ -249,6 +259,7 @@
             'verified-patent-family': patentFamilyFormStructure,
             agreement: agreementFormStructure,
             'verified-agreement': agreementFormStructure,
+            'agreement-group': agreementGroupFormStructure,
             group: {
                 name: {
                     inputType: 'text',
@@ -511,6 +522,9 @@
                     break;
                 case 'agreement':
                     await setupAgreementStructure(constant, researchEntity);
+                    structure = formStructures[constant];
+                    break;
+                case 'agreement-group':
                     structure = formStructures[constant];
                     break;
                 case 'document':

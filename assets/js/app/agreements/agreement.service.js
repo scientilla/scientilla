@@ -10,6 +10,7 @@
             edit: (researchEntity, draft) => ResearchEntitiesService.editDraft(researchEntity, draft, 'agreement'),
             get: ResearchEntitiesService.getAgreements,
             getDrafts: ResearchEntitiesService.getAgreementDrafts,
+            getGroups: ResearchEntitiesService.getAgreementGroups,
             exportDownload
         };
 

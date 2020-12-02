@@ -46,6 +46,8 @@
             toPatentsCollection: applyToAll(toPatentModel),
             toAgreementModel: toAgreementModel,
             toAgreementsCollection: applyToAll(toAgreementModel),
+            toAgreementGroupModel: toAgreementGroupModel,
+            toAgreementGroupsCollection: applyToAll(toAgreementGroupModel)
         };
         const userPrototype = {
             getAliases: function () {
@@ -481,6 +483,8 @@
             },
         };
 
+        const agreementGroupPrototype = {};
+
         function initializeAffiliations(document) {
             _.forEach(document.authorships, a => {
                 if (a.affiliations)
@@ -558,6 +562,12 @@
             service.toGroupsCollection(agreement.verifiedGroups);
             service.toUsersCollection(agreement.pi);
             return agreement;
+        }
+
+        function toAgreementGroupModel(group) {
+            _.defaultsDeep(group, agreementGroupPrototype);
+            service.toUsersCollection(group.administrators);
+            return group;
         }
 
         function checkDuplicates(document) {

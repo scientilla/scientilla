@@ -1,0 +1,38 @@
+<scientilla-backend-layout>
+    <div class="agreement-groups agreement-groups-browsing">
+        <h1 class="title">Agreements</h1>
+
+        <scientilla-filter
+            category="agreement-group"
+            on-filter="vm.onFilter"
+            elements="vm.agreementGroups"
+            empty-list-message="No agreement groups found">
+            <ul class="agreement-group-listing">
+                <li ng-repeat="g in vm.agreementGroups">
+                    <div class="agreement-group-info-container">
+                        <h3 class="agreement-group-title">
+                            {{ g.title }}
+                        </h3>
+
+                        <strong>Administrators:</strong>
+                        <ul class="agreement-group-administrators">
+                            <li ng-repeat="administrator in g.administrators">
+                                {{ administrator.surname }} {{ administrator.name }}
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="agreement-group-action-container">
+                        <button
+                            class="btn btn-outline-secondary"
+                            scientilla-click-confirm="Are you sure?"
+                            ng-click="vm.deleteAgreement(g)"
+                            href="javascript:void(0)">
+                            <i class="fas fa-trash fa-left"></i>Delete
+                        </button>
+                    </div>
+                </li>
+            </ul>
+        </scientilla-filter>
+    </div>
+</scientilla-backend-layout>

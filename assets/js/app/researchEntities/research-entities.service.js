@@ -55,6 +55,7 @@
         service.getPatentFamilies = getPatentFamilies;
         service.getAgreements = getAgreements;
         service.getAgreementDrafts = getAgreementDrafts;
+        service.getAgreementGroups = getAgreementGroups;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
         const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
@@ -507,6 +508,124 @@
 
         function getAgreementDrafts() {
             return getAgreements();
+        }
+
+        function getAgreementGroups() {
+            const groups = [];
+            const group =  {
+                "agreement": {
+                    "administrators": [
+                        {
+                            "username": "camilla.coletti@iit.it",
+                            "name": "Camilla",
+                            "surname": "Coletti",
+                            "slug": "camilla-coletti",
+                            "alreadyAccess": true,
+                            "alreadyOpenedSuggested": true,
+                            "already_changed_profile": false,
+                            "role": "user",
+                            "orcidId": null,
+                            "scopusId": "56227871700",
+                            "jobTitle": "Senior Researcher Tenure Track - Principal Investigator",
+                            "display_name": "Camilla",
+                            "display_surname": "Coletti",
+                            "config": {
+                                "scientific": true
+                            },
+                            "lastsynch": "2020-11-20T17:22:59.000Z",
+                            "active": true,
+                            "synchronized": true,
+                            "contract_end_date": "2025-06-29T22:00:00.000Z",
+                            "cid": "10000252",
+                            "id": 173,
+                            "createdAt": "2017-05-26T08:55:06.000Z",
+                            "updatedAt": "2020-12-01T11:05:13.000Z",
+                            "auth": 173,
+                            "researchEntity": 290
+                        }
+                    ],
+                    "title": "Lorem Ipsum is simply dummy text.",
+                    "subject": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                    "type": "Agreement type",
+                    "startYear": "2019",
+                    "endYear": "2022",
+                    "startDate": "2019-03-01",
+                    "endDate": "2022-02-28",
+                    "budget": 90000,
+                    "contribution": 20000,
+                    "partners": [
+                        {
+                            "email": "Matteo.Marzi@iit.it",
+                            "name": "Matteo Jacopo Luca Nicolo",
+                            "surname": "Marzi"
+                        }
+                    ],
+                    "piStr": "Matteo.Marzi@iit.it Matteo Jacopo Luca Nicolo Marzi",
+                    "pi": [
+                        {
+                            "email": "Matteo.Marzi@iit.it",
+                            "name": "Matteo Jacopo Luca Nicolo",
+                            "surname": "Marzi"
+                        }
+                    ],
+                    "verified": [
+                        {
+                            "researchEntity": {
+                                "id": 1
+                            }
+                        }
+                    ],
+                    "verifiedUsers": [],
+                    "verifiedGroups": [
+                        {
+                            "researchEntity": {
+                                "id": 1
+                            }
+                        }
+                    ],
+                    "generatedGroup": false
+                },
+                "administrators": [
+                    {
+                        "username": "camilla.coletti@iit.it",
+                        "name": "Camilla",
+                        "surname": "Coletti",
+                        "slug": "camilla-coletti",
+                        "alreadyAccess": true,
+                        "alreadyOpenedSuggested": true,
+                        "already_changed_profile": false,
+                        "role": "user",
+                        "orcidId": null,
+                        "scopusId": "56227871700",
+                        "jobTitle": "Senior Researcher Tenure Track - Principal Investigator",
+                        "display_name": "Camilla",
+                        "display_surname": "Coletti",
+                        "config": {
+                            "scientific": true
+                        },
+                        "lastsynch": "2020-11-20T17:22:59.000Z",
+                        "active": true,
+                        "synchronized": true,
+                        "contract_end_date": "2025-06-29T22:00:00.000Z",
+                        "cid": "10000252",
+                        "id": 173,
+                        "createdAt": "2017-05-26T08:55:06.000Z",
+                        "updatedAt": "2020-12-01T11:05:13.000Z",
+                        "auth": 173,
+                        "researchEntity": 290
+                    }
+                ],
+                "title": "Lorem Ipsum is simply dummy text.",
+            };
+
+            for (let i = 1; i <= 10; i++) {
+                const tmpGroup = _.cloneDeep(group);
+                tmpGroup.id = i;
+                Prototyper.toAgreementGroupModel(tmpGroup);
+                groups.push(tmpGroup);
+            }
+
+            return groups;
         }
 
         return service;
