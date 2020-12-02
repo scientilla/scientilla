@@ -55,7 +55,7 @@
 
             query = q;
 
-            vm.agreements = /*await*/ AgreementService.get(/*vm.researchEntity, query, favorites*/asyn);
+            vm.agreements = /*await*/ AgreementService.get(/*vm.researchEntity, query, favorites*/);
         }
         /* jshint ignore:end */
     }
