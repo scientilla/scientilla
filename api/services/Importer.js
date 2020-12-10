@@ -490,7 +490,7 @@ async function analyseUserImport() {
         sails.log.info(`Received contracts: ${ employees.length }`);
         sails.log.info('************************************************');
 
-        const contractsWithoutSubArea = employees.filter(c => !_.has(c, 'desc_sottoarea') || _.isEmpty(c.desc_sottoarea));
+        const contractsWithoutSubArea = employees.filter(c => !_.has(c, 'desc_sottoarea') || _.isEmpty(c.desc_sottoarea)).map(c =>  sails.log.debug(c));
         sails.log.info(`Contracts without sub area: ${ contractsWithoutSubArea.length }`);
         sails.log.info('************************************************');
 
@@ -526,7 +526,7 @@ async function analyseUserImport() {
         sails.log.info('************************************************');
 
         const contractsWithoutRuolo1 = employees.filter(c => !_.has(c, 'Ruolo_1') || _.isEmpty(c.Ruolo_1));
-        sails.log.info(`Contracts without sub area: ${ contractsWithoutRuolo1.length }`);
+        sails.log.info(`Contracts without Ruolo_1: ${ contractsWithoutRuolo1.length }`);
         sails.log.info('************************************************');
 
         const groupedRoles = _.chain(employees)
@@ -541,20 +541,25 @@ async function analyseUserImport() {
         sails.log.info('************************************************');
 
         roleAssociations = roleAssociations.data;
+        roleAssociations = roleAssociations.map(a => ({
+            originalRole: _.toLower(a.originalRole),
+            roleCategory: _.toLower(a.roleCategory)
+        }))
         roleAssociations = _.chain(roleAssociations)
             .groupBy(a => a.roleCategory)
-            .map((value, key) => ({
-                roleCategory: key,
-                originalRoles: roleAssociations.filter(a => a.roleCategory === key).map(a => a.originalRole)
-            }))
+            .map((value, key) => {
+                return {
+                    roleCategory: key,
+                    originalRoles: roleAssociations.filter(a => a.roleCategory === key).map(a => a.originalRole)
+                }
+            })
             .value();
 
         for (const group of roleAssociations) {
             group.employees = [];
 
             for (const groupRole of groupedRoles) {
-
-                const role = groupRole.role;
+                const role =  _.toLower(groupRole.role);
                 const employees =  groupRole.employees;
 
                 if (group.originalRoles.includes(role)) {

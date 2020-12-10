@@ -474,7 +474,6 @@ function getIgnoredRoles() {
         'Fellow',
         'gestione manuale',
         'Guest',
-        'Guest Student',
         'Tirocinio Formativo',
         'Work Experience'
     ];
