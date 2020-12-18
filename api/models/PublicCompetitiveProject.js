@@ -91,6 +91,9 @@ module.exports = _.merge({}, BaseModel, {
                 description: rl.description
             }));
 
+            json.instituteBudget = project.projectData.instituteBudget;
+            json.instituteContribution = project.projectData.instituteContribution;
+
             return json;
         }
     }
