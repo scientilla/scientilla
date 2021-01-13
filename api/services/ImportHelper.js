@@ -545,11 +545,11 @@ function createUserObject(ldapUsers = [], user = {}, employee = {}, contractEndD
     }
 
     if (_.has(employee, 'nome_AD') && !_.isEmpty(employee.nome_AD)) {
-        userObject.display_name = employee.nome_AD;
+        userObject.displayName = employee.nome_AD;
     }
 
     if (_.has(employee, 'cognome_AD') && !_.isEmpty(employee.cognome_AD)) {
-        userObject.display_surname = employee.cognome_AD;
+        userObject.displaySurname = employee.cognome_AD;
     }
 
     if (!_.has(user, 'config')) {
