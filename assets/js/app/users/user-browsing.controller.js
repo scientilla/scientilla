@@ -5,6 +5,7 @@
 
     UserBrowsingController.$inject = [
         'UsersService',
+        'PeopleService',
         'Notification',
         'AuthService',
         'ModalService',
@@ -12,7 +13,15 @@
         '$location'
     ];
 
-    function UserBrowsingController(UsersService, Notification, AuthService, ModalService, userConstants, $location) {
+    function UserBrowsingController(
+        UsersService,
+        PeopleService,
+        Notification,
+        AuthService,
+        ModalService,
+        userConstants,
+        $location
+    ) {
         const vm = this;
 
         vm.user = AuthService.user;
@@ -22,9 +31,7 @@
         vm.createNew = createNew;
         vm.loginAs = loginAs;
         vm.getUserProfile = getUserProfile;
-        vm.getProfileImage = getProfileImage;
         vm.socialClass = socialClass;
-        vm.getPhone = getPhone;
         vm.getUniqueCenters = getUniqueCenters;
         vm.getUniqueGroups = getUniqueGroups;
         vm.getUniqueOffices = getUniqueOffices;
@@ -37,7 +44,7 @@
 
             query.where.role = [userConstants.role.ADMINISTRATOR, userConstants.role.SUPERUSER, userConstants.role.USER];
 
-            return UsersService.getUsers(query)
+            return PeopleService.getPeople(query)
                 .then(function (users) {
                     vm.users = users;
                     return vm.users;
@@ -139,18 +146,6 @@
             return offices;
         }
 
-        function getProfileImage(profile) {
-            if (_.has(profile, 'image') && profile.image) {
-                return profile.image;
-            } else {
-                if (!_.has(profile, 'gender') || profile.gender === 'M') {
-                    return '/images/man.png';
-                }
-
-                return '/images/woman.png';
-            }
-        }
-
         function socialClass(social) {
             switch (true) {
                 case social === 'linkedin':
@@ -176,10 +171,6 @@
                 default:
                     break;
             }
-        }
-
-        function getPhone(phone) {
-            return phone.replace(/\s/g, '');
         }
     }
 })();

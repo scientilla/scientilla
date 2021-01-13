@@ -11,16 +11,13 @@
         </div>
 
         <scientilla-filter
-                category="user"
-                on-filter="vm.onFilter"
-                elements="vm.users">
+            category="user"
+            on-filter="vm.onFilter"
+            elements="vm.users">
 
             <ul class="user-listing">
-                <li
-                    ng-repeat="u in vm.users"
-                    ng-init="profile = vm.getUserProfile(u)">
-
-                    <img src="{{ vm.getProfileImage(profile) }}" alt="{{ u | fullname }}" class="img-fluid">
+                <li ng-repeat="u in vm.users">
+                    <img src="{{ u.image }}" alt="{{ u | fullname }}" class="img-fluid">
 
                     <div class="user-content">
                         <div class="user-fullname">
@@ -31,7 +28,7 @@
                         </div>
                         <div
                             class="socials-container"
-                            ng-if="u.username || profile.socials.length > 0 || profile.phone">
+                            ng-if="u.username || u.socials.length > 0 || u.phone">
                             <ul
                                 class="socials">
                                 <li ng-if="u.username">
@@ -41,14 +38,14 @@
                                         <i class="fas fa-envelope"></i>
                                     </a>
                                 </li>
-                                <li ng-if="profile.phone">
+                                <li ng-if="u.phone">
                                     <a
                                         target="_blank"
-                                        href="tel:{{ vm.getPhone(profile.phone) }}">
+                                        href="tel:{{ u.phone }}">
                                         <i class="fas fa-phone"></i>
                                     </a>
                                 </li>
-                                <li ng-repeat="(social, url) in profile.socials">
+                                <li ng-repeat="(social, url) in u.socials">
                                     <a
                                         target="_blank"
                                         href="{{ url }}">

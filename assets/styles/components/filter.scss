@@ -181,6 +181,12 @@
                     grid-template-columns: 3fr 3fr 3fr 160px 2fr 2fr 2fr;
                 }
             }
+
+            &.user{
+                &.fields-6{
+                    grid-template-columns: 2fr 2fr 1fr 1fr 1fr 1fr;
+                }
+            }
         }
 
         .filter-connector-listing{
