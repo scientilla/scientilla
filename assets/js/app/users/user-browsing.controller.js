@@ -39,65 +39,75 @@
         let query = {};
         vm.groups = [];
 
-        /* jshint ignore:start */
-        async function onFilter(q) {
-            if (_.isEmpty(vm.groups)) {
-                vm.groups = await GroupsService.getGroups();
-            }
-
-            query = q;
-            query.where.role = [userConstants.role.ADMINISTRATOR, userConstants.role.SUPERUSER, userConstants.role.USER];
-
-            const users = await PeopleService.getPeople(query);
-
-            for (const user of users) {
-                const centers = [];
-                if (_.has(user, 'groups')) {
-                    for (const group of user.groups) {
-                        const duplicateGroup = centers.find(c => c.name === group.center.name);
-                        if (_.has(group, 'center.name') && !duplicateGroup) {
-                            const center = vm.groups.find(c => c.name === group.center.name);
-                            if (center) {
-                                centers.push(center);
-                            }
-                        }
-                    }
+        function onFilter(q) {
+            const groupsAreLoaded = new Promise((resolve, reject) => {
+                if (_.isEmpty(vm.groups)) {
+                    return GroupsService.getGroups().then(groups => {
+                        vm.groups = groups;
+                        return resolve(groups);
+                    });
+                } else {
+                    return resolve(vm.groups);
                 }
+            });
 
-                const offices = [];
-                if (_.has(user, 'groups')) {
-                    for (const group of user.groups) {
-                        for (const office of group.offices) {
-                            const duplicateOffice = offices.find(o => o.name === office);
-                            if (!duplicateOffice) {
-                                offices.push(office);
+            return groupsAreLoaded.then(groups => {
+                query = q;
+                query.where.role = [userConstants.role.ADMINISTRATOR, userConstants.role.SUPERUSER, userConstants.role.USER];
+
+                return PeopleService.getPeople(query)
+                    .then(users => {
+                        for (const user of users) {
+                            const centers = [];
+                            if (_.has(user, 'groups')) {
+                                for (const group of user.groups) {
+                                    if (_.has(group, 'center.name')) {
+                                        const duplicateGroup = centers.find(c => c.name === group.center.name);
+                                        if (!duplicateGroup) {
+                                            const center = groups.find(c => c.name === group.center.name);
+                                            if (center) {
+                                                centers.push(center);
+                                            }
+                                        }
+                                    }
+                                }
                             }
-                        }
-                    }
-                }
 
-                const groups = [];
-                if (_.has(user, 'groups')) {
-                    for (const group of user.groups) {
-                        const duplicateGroup = groups.find(c => c.code === group.code);
-                        if (_.has(group, 'name') && !duplicateGroup) {
-                            const tmpGroup = vm.groups.find(c => c.code === group.code);
-                            if (tmpGroup) {
-                                groups.push(tmpGroup);
+                            const offices = [];
+                            if (_.has(user, 'groups')) {
+                                for (const group of user.groups) {
+                                    for (const office of group.offices) {
+                                        const duplicateOffice = offices.find(o => o.name === office);
+                                        if (!duplicateOffice) {
+                                            offices.push(office);
+                                        }
+                                    }
+                                }
                             }
+
+                            const userGroups = [];
+                            if (_.has(user, 'groups')) {
+                                for (const group of user.groups) {
+                                    const duplicateGroup = userGroups.find(c => c.code === group.code);
+                                    if (_.has(group, 'name') && !duplicateGroup) {
+                                        const tmpGroup = userGroups.find(c => c.code === group.code);
+                                        if (tmpGroup) {
+                                            userGroups.push(tmpGroup);
+                                        }
+                                    }
+                                }
+                            }
+
+                            user.centers = centers;
+                            user.offices = offices;
+                            user.groups = userGroups;
                         }
-                    }
-                }
 
-                user.centers = centers;
-                user.offices = offices;
-                user.groups = groups;
-            }
-
-            vm.users = users;
-            return vm.users;
+                        vm.users = users;
+                        return vm.users;
+                    });
+            });
         }
-        /* jshint ignore:end */
 
         function createNew() {
             openUserForm();
