@@ -12,5 +12,5 @@ WHERE m.active = TRUE AND
       (
           (roles->>'roleCategory')::text IS NOT NULL AND
           (roles->>'roleCategory')::text = ANY ($2)
-      )
+      ) AND u.active = true
 GROUP BY nationality;

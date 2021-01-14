@@ -6,7 +6,7 @@
          JOIN "user" u ON u.research_entity = ud.research_entity
          JOIN membership m ON u.id = m.user
          JOIN "group" g ON g.id = m.group
-  WHERE m.active = TRUE AND g.id = $1
+  WHERE m.active = TRUE AND g.id = $1 AND u.active = true
   GROUP BY category
 UNION
   SELECT 'Others' AS category,
@@ -20,6 +20,6 @@ UNION
         FROM general_settings gs,
              json_array_elements(gs.data) roles
         WHERE gs.name='role-associations'
-  )
+  ) AND u.active = true
   GROUP BY category
   ORDER BY count DESC, category ASC;

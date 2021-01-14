@@ -14,10 +14,12 @@
 
     wizardAliasEdit.$inject = [
         'Notification',
-        '$timeout'
+        '$timeout',
+        'UsersService',
+        'context'
     ];
 
-    function wizardAliasEdit(Notification, $timeout) {
+    function wizardAliasEdit(Notification, $timeout, UsersService, context) {
         const vm = this;
 
         vm.save = save;
@@ -28,11 +30,13 @@
 
         function save() {
             vm.saveStatus.setState('saving');
-            vm.user.save()
+            UsersService
+                .doSave(vm.user)
                 .then(() => {
                     vm.saveStatus.setState('saved');
                     Notification.success(vm.saveStatus.message);
                     vm.originalUser = angular.copy(vm.user);
+                    aliasesChanged();
 
                     $timeout(function() {
                         vm.saveStatus.setState('ready to save');
@@ -71,6 +75,12 @@
                 state: 'ready to save',
                 message: 'Save aliases'
             };
+        }
+
+        function aliasesChanged() {
+            const subResearchEntity = context.getSubResearchEntity();
+            if (subResearchEntity.id === vm.user.id && subResearchEntity.getType() === 'user')
+                subResearchEntity.aliases = vm.user.aliases;
         }
     }
 
