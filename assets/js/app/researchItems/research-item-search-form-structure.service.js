@@ -272,7 +272,7 @@
                 },
                 nationality: {
                     inputType: 'select',
-                    label: 'Country',
+                    label: 'Country of origin',
                     matchColumn: 'nationality',
                     type: 'field'
                 },

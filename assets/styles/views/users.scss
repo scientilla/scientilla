@@ -47,8 +47,6 @@
             .memberships{
                 @include normalize-listing;
                 @include clearfix;
-                margin-right: -.5rem;
-                margin-left: -.5rem;
 
                 li {
                     display: block;
@@ -57,15 +55,24 @@
                     padding-left: .5rem;
                 }
 
-                div{
+                div,
+                a{
                     display: block;
                     margin-bottom: 1rem;
                     padding: .5rem 1rem;
                     font-size: 1rem;
                     line-height: 1;
                     border-radius: 1rem;
+                }
+
+                div{
                     background: $gray-100;
                     color: $gray;
+                }
+
+                a{
+                    background-color: $primary-color;
+                    color: color-yiq($primary-color);
                 }
             }
 

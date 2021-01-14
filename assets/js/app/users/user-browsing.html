@@ -58,16 +58,20 @@
 
                     <div class="memberships-container">
                         <ul
-                            ng-if="profile"
+                            ng-if="u"
                             class="memberships">
-                            <li ng-repeat="center in vm.getUniqueCenters(profile)">
-                                <div>{{ center }}</div>
+                            <li ng-repeat="center in u.centers">
+                                <a
+                                    title="Center: {{ center.getDisplayName() }}"
+                                    ng-href="#{{ center.getProfileUrl() }}">{{ center.getDisplayName() }}</a>
                             </li>
-                            <li ng-repeat="group in vm.getUniqueGroups(profile)">
-                                <div>{{ group }}</div>
+                            <li ng-repeat="group in u.groups">
+                                <a
+                                    title="Research line: {{ group.getDisplayName() }}"
+                                    ng-href="#{{ group.getProfileUrl() }}">{{ group.getDisplayName() }}</a>
                             </li>
-                            <li ng-repeat="office in vm.getUniqueOffices(profile)">
-                                <div>{{ office }}</div>
+                            <li ng-repeat="office in u.offices">
+                                <div title="Office: {{ office }}">{{ office }}</div>
                             </li>
                         </ul>
                     </div>

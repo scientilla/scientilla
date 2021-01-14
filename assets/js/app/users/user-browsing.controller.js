@@ -10,7 +10,8 @@
         'AuthService',
         'ModalService',
         'userConstants',
-        '$location'
+        '$location',
+        'GroupsService'
     ];
 
     function UserBrowsingController(
@@ -20,7 +21,8 @@
         AuthService,
         ModalService,
         userConstants,
-        $location
+        $location,
+        GroupsService
     ) {
         const vm = this;
 
@@ -32,24 +34,70 @@
         vm.loginAs = loginAs;
         vm.getUserProfile = getUserProfile;
         vm.socialClass = socialClass;
-        vm.getUniqueCenters = getUniqueCenters;
-        vm.getUniqueGroups = getUniqueGroups;
-        vm.getUniqueOffices = getUniqueOffices;
 
         vm.onFilter = onFilter;
         let query = {};
+        vm.groups = [];
 
-        function onFilter(q) {
+        /* jshint ignore:start */
+        async function onFilter(q) {
+            if (_.isEmpty(vm.groups)) {
+                vm.groups = await GroupsService.getGroups();
+            }
+
             query = q;
-
             query.where.role = [userConstants.role.ADMINISTRATOR, userConstants.role.SUPERUSER, userConstants.role.USER];
 
-            return PeopleService.getPeople(query)
-                .then(function (users) {
-                    vm.users = users;
-                    return vm.users;
-                });
+            const users = await PeopleService.getPeople(query);
+
+            for (const user of users) {
+                const centers = [];
+                if (_.has(user, 'groups')) {
+                    for (const group of user.groups) {
+                        const duplicateGroup = centers.find(c => c.name === group.center.name);
+                        if (_.has(group, 'center.name') && !duplicateGroup) {
+                            const center = vm.groups.find(c => c.name === group.center.name);
+                            if (center) {
+                                centers.push(center);
+                            }
+                        }
+                    }
+                }
+
+                const offices = [];
+                if (_.has(user, 'groups')) {
+                    for (const group of user.groups) {
+                        for (const office of group.offices) {
+                            const duplicateOffice = offices.find(o => o.name === office);
+                            if (!duplicateOffice) {
+                                offices.push(office);
+                            }
+                        }
+                    }
+                }
+
+                const groups = [];
+                if (_.has(user, 'groups')) {
+                    for (const group of user.groups) {
+                        const duplicateGroup = groups.find(c => c.code === group.code);
+                        if (_.has(group, 'name') && !duplicateGroup) {
+                            const tmpGroup = vm.groups.find(c => c.code === group.code);
+                            if (tmpGroup) {
+                                groups.push(tmpGroup);
+                            }
+                        }
+                    }
+                }
+
+                user.centers = centers;
+                user.offices = offices;
+                user.groups = groups;
+            }
+
+            vm.users = users;
+            return vm.users;
         }
+        /* jshint ignore:end */
 
         function createNew() {
             openUserForm();
@@ -98,52 +146,6 @@
             }
 
             return {};
-        }
-
-        function getUniqueCenters(profile) {
-            const centers = [];
-
-            if (_.has(profile, 'groups')) {
-                for (const group of profile.groups) {
-                    if (_.has(group, 'center.name') && !centers.includes(group.center.name)) {
-                        centers.push(group.center.name);
-                    }
-                }
-            }
-
-            return centers;
-        }
-
-        function getUniqueGroups(profile) {
-            const groups = [];
-
-            if (_.has(profile, 'groups')) {
-                for (const group of profile.groups) {
-                    if (_.has(group, 'name') && !groups.includes(group.name)) {
-                        groups.push(group.name);
-                    }
-                }
-            }
-
-            return groups;
-        }
-
-        function getUniqueOffices(profile) {
-            const offices = [];
-
-            if (_.has(profile, 'groups')) {
-                for (const group of profile.groups) {
-                    if (_.has(group, 'offices')) {
-                        for (const office of group.offices) {
-                            if (!offices.includes(office)) {
-                                offices.push(office);
-                            }
-                        }
-                    }
-                }
-            }
-
-            return offices;
         }
 
         function socialClass(social) {
