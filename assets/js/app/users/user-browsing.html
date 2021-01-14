@@ -67,7 +67,7 @@
                             </li>
                             <li ng-repeat="group in u.groups">
                                 <a
-                                    title="Research line: {{ group.getDisplayName() }}"
+                                    title="{{ group.type }}: {{ group.getDisplayName() }}"
                                     ng-href="#{{ group.getProfileUrl() }}">{{ group.getDisplayName() }}</a>
                             </li>
                             <li ng-repeat="office in u.offices">

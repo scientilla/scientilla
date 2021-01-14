@@ -90,7 +90,7 @@
                                 for (const group of user.groups) {
                                     const duplicateGroup = userGroups.find(c => c.code === group.code);
                                     if (_.has(group, 'name') && !duplicateGroup) {
-                                        const tmpGroup = userGroups.find(c => c.code === group.code);
+                                        const tmpGroup = groups.find(c => c.code === group.code);
                                         if (tmpGroup) {
                                             userGroups.push(tmpGroup);
                                         }
