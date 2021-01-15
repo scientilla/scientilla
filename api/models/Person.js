@@ -168,7 +168,7 @@ module.exports = {
             }
 
             for (const property in person) {
-                if (_.isEmpty(person[property])) {
+                if (_.isNil(person[property]) || person[property] === "") {
                     delete person[property]
                 }
             }
