@@ -44,7 +44,7 @@ async function tryRequest(options, maxAttempts, attempts = 0) {
         if (attempts < maxAttempts) {
             return await tryRequest(options, maxAttempts, attempts + 1);
         }
-
+        sails.log.debug(`${e.response.status}: ${e.response.statusText}`);
         throw `Tried ${attempts} time(s), but failed to reach the API!`;
     }
 }
