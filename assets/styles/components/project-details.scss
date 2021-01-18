@@ -10,4 +10,23 @@
     .name-column{
         width: 200px;
     }
+
+    .project-logos{
+        @include normalize-listing;
+        @include clearfix;
+        margin-top: 2rem;
+        margin-right: -.5rem;
+        margin-left: -.5rem;
+
+        & > li{
+            display: block;
+            float: left;
+            padding-left: .5rem;
+            padding-right: .5rem;
+        }
+
+        img{
+            max-width: 150px;
+        }
+    }
 }
