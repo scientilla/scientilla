@@ -121,6 +121,7 @@
 
         Restangular.extendModel('documents', Prototyper.toDocumentModel);
         Restangular.extendModel('users', Prototyper.toUserModel);
+        Restangular.extendModel('people', Prototyper.toUserModel);
         Restangular.extendModel('groups', Prototyper.toGroupModel);
         Restangular.extendModel('drafts', Prototyper.toDocumentModel);
         Restangular.extendModel('externals', Prototyper.toDocumentModel);
@@ -142,6 +143,7 @@
         Restangular.extendCollection('authorships', Prototyper.toAuthorshipsCollection);
         Restangular.extendCollection('institutes', Prototyper.toInstitutesCollection);
         Restangular.extendCollection('users', Prototyper.toUsersCollection);
+        Restangular.extendCollection('people', Prototyper.toUsersCollection);
         Restangular.extendCollection('allMembers', Prototyper.toUsersCollection);
         Restangular.extendCollection('members', Prototyper.toUsersCollection);
         Restangular.extendCollection('activeMembers', Prototyper.toUsersCollection);

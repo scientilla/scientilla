@@ -121,8 +121,10 @@
     </ng-container>
 </ng-container>
 
-<ul ng-if="vm.project.logos">
+<ul
+    class="project-logos"
+    ng-if="vm.project.logos">
     <li ng-repeat="logo in vm.project.logos">
-        {{ logo }}
+        <img src="{{ logo.image }}" alt="{{ logo.name }}">
     </li>
 </ul>

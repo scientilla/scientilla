@@ -11,7 +11,9 @@
         'AuthService',
         'ExternalConnectorService',
         'Restangular',
-        'ResearchEntitiesService'
+        'ResearchEntitiesService',
+        'PeopleService',
+        'ISO3166'
     ];
 
     function ResearchItemSearchFormStructureService(
@@ -22,7 +24,9 @@
         AuthService,
         ExternalConnectorService,
         Restangular,
-        ResearchEntitiesService
+        ResearchEntitiesService,
+        PeopleService,
+        ISO3166
     ) {
 
         const service = {
@@ -231,7 +235,7 @@
                 },
                 active: {
                     inputType: 'checkbox',
-                    label: 'Active',
+                    label: 'Active groups',
                     matchColumn: 'active',
                     defaultValue: true,
                     type: 'action'
@@ -265,6 +269,38 @@
                         }
                     ],
                     type: 'field'
+                },
+                nationality: {
+                    inputType: 'select',
+                    label: 'Country of origin',
+                    matchColumn: 'nationality',
+                    type: 'field'
+                },
+                roleCategory: {
+                    inputType: 'select',
+                    label: 'Role category',
+                    matchColumn: 'roleCategory',
+                    matchRule: 'contains',
+                    type: 'field'
+                },
+                gender: {
+                    inputType: 'select',
+                    label: 'Gender',
+                    matchColumn: 'gender',
+                    type: 'field'
+                },
+                ageRange: {
+                    inputType: 'select',
+                    label: 'Age range',
+                    matchColumn: 'ageRange',
+                    type: 'field'
+                },
+                active: {
+                    inputType: 'checkbox',
+                    label: 'Active employees',
+                    matchColumn: 'active',
+                    defaultValue: true,
+                    type: 'action'
                 }
             },
             'group-member': {
@@ -488,6 +524,60 @@
                     structure = formStructures[constant];
                     break;
                 case 'user':
+                    formStructures[constant].gender.values = [{
+                        value: '?',
+                        label: 'All'
+                    }, {
+                        value: 'F',
+                        label: 'Female'
+                    }, {
+                        value: 'M',
+                        label: 'Male'
+                    }];
+
+                    formStructures[constant].ageRange.values = [{
+                        value: '?',
+                        label: 'All'
+                    }, {
+                        value: '<25',
+                        label: '<25'
+                    }, {
+                        value: '25-29',
+                        label: '25-29'
+                    }, {
+                        value: '30-34',
+                        label: '30-34'
+                    }, {
+                        value: '35-44',
+                        label: '35-44'
+                    }, {
+                        value: '45-54',
+                        label: '45-54'
+                    }, {
+                        value: '>=55',
+                        label: '>=55'
+                    }];
+
+                    let roleCategories = await PeopleService.getUniqueRoleCategories();
+                    roleCategories = roleCategories.plain();
+                    formStructures[constant].roleCategory.values = [{
+                        value: '?',
+                        label: 'All'
+                    }].concat(
+                        Object.keys(roleCategories)
+                            .map(k => ({label: roleCategories[k], value: roleCategories[k]}))
+                    );
+
+                    let nationalities = await PeopleService.getUniqueNationalities();
+                    nationalities = nationalities.plain();
+                    formStructures[constant].nationality.values = [{
+                        value: '?',
+                        label: 'All'
+                    }].concat(
+                        Object.keys(nationalities)
+                            .map(k => ({label: ISO3166.getCountryName(nationalities[k]), value: nationalities[k]}))
+                    );
+
                     structure = formStructures[constant];
                     break;
                 case 'group-member':

@@ -5,14 +5,25 @@
 
     UserBrowsingController.$inject = [
         'UsersService',
+        'PeopleService',
         'Notification',
         'AuthService',
         'ModalService',
         'userConstants',
-        '$location'
+        '$location',
+        'GroupsService'
     ];
 
-    function UserBrowsingController(UsersService, Notification, AuthService, ModalService, userConstants, $location) {
+    function UserBrowsingController(
+        UsersService,
+        PeopleService,
+        Notification,
+        AuthService,
+        ModalService,
+        userConstants,
+        $location,
+        GroupsService
+    ) {
         const vm = this;
 
         vm.user = AuthService.user;
@@ -22,26 +33,80 @@
         vm.createNew = createNew;
         vm.loginAs = loginAs;
         vm.getUserProfile = getUserProfile;
-        vm.getProfileImage = getProfileImage;
         vm.socialClass = socialClass;
-        vm.getPhone = getPhone;
-        vm.getUniqueCenters = getUniqueCenters;
-        vm.getUniqueGroups = getUniqueGroups;
-        vm.getUniqueOffices = getUniqueOffices;
 
         vm.onFilter = onFilter;
         let query = {};
+        vm.groups = [];
 
         function onFilter(q) {
-            query = q;
+            const groupsAreLoaded = new Promise((resolve, reject) => {
+                if (_.isEmpty(vm.groups)) {
+                    return GroupsService.getGroups().then(groups => {
+                        vm.groups = groups;
+                        return resolve(groups);
+                    });
+                } else {
+                    return resolve(vm.groups);
+                }
+            });
 
-            query.where.role = [userConstants.role.ADMINISTRATOR, userConstants.role.SUPERUSER, userConstants.role.USER];
+            return groupsAreLoaded.then(groups => {
+                query = q;
+                query.where.role = [userConstants.role.ADMINISTRATOR, userConstants.role.SUPERUSER, userConstants.role.USER];
 
-            return UsersService.getUsers(query)
-                .then(function (users) {
-                    vm.users = users;
-                    return vm.users;
-                });
+                return PeopleService.getPeople(query)
+                    .then(users => {
+                        for (const user of users) {
+                            const centers = [];
+                            if (_.has(user, 'groups')) {
+                                for (const group of user.groups) {
+                                    if (_.has(group, 'center.name')) {
+                                        const duplicateGroup = centers.find(c => c.name === group.center.name);
+                                        if (!duplicateGroup) {
+                                            const center = groups.find(c => c.name === group.center.name);
+                                            if (center) {
+                                                centers.push(center);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            const offices = [];
+                            if (_.has(user, 'groups')) {
+                                for (const group of user.groups) {
+                                    for (const office of group.offices) {
+                                        const duplicateOffice = offices.find(o => o.name === office);
+                                        if (!duplicateOffice) {
+                                            offices.push(office);
+                                        }
+                                    }
+                                }
+                            }
+
+                            const userGroups = [];
+                            if (_.has(user, 'groups')) {
+                                for (const group of user.groups) {
+                                    const duplicateGroup = userGroups.find(c => c.code === group.code);
+                                    if (_.has(group, 'name') && !duplicateGroup) {
+                                        const tmpGroup = groups.find(c => c.code === group.code);
+                                        if (tmpGroup) {
+                                            userGroups.push(tmpGroup);
+                                        }
+                                    }
+                                }
+                            }
+
+                            user.centers = centers;
+                            user.offices = offices;
+                            user.groups = userGroups;
+                        }
+
+                        vm.users = users;
+                        return vm.users;
+                    });
+            });
         }
 
         function createNew() {
@@ -93,64 +158,6 @@
             return {};
         }
 
-        function getUniqueCenters(profile) {
-            const centers = [];
-
-            if (_.has(profile, 'groups')) {
-                for (const group of profile.groups) {
-                    if (_.has(group, 'center.name') && !centers.includes(group.center.name)) {
-                        centers.push(group.center.name);
-                    }
-                }
-            }
-
-            return centers;
-        }
-
-        function getUniqueGroups(profile) {
-            const groups = [];
-
-            if (_.has(profile, 'groups')) {
-                for (const group of profile.groups) {
-                    if (_.has(group, 'name') && !groups.includes(group.name)) {
-                        groups.push(group.name);
-                    }
-                }
-            }
-
-            return groups;
-        }
-
-        function getUniqueOffices(profile) {
-            const offices = [];
-
-            if (_.has(profile, 'groups')) {
-                for (const group of profile.groups) {
-                    if (_.has(group, 'offices')) {
-                        for (const office of group.offices) {
-                            if (!offices.includes(office)) {
-                                offices.push(office);
-                            }
-                        }
-                    }
-                }
-            }
-
-            return offices;
-        }
-
-        function getProfileImage(profile) {
-            if (_.has(profile, 'image') && profile.image) {
-                return profile.image;
-            } else {
-                if (!_.has(profile, 'gender') || profile.gender === 'M') {
-                    return '/images/man.png';
-                }
-
-                return '/images/woman.png';
-            }
-        }
-
         function socialClass(social) {
             switch (true) {
                 case social === 'linkedin':
@@ -176,10 +183,6 @@
                 default:
                     break;
             }
-        }
-
-        function getPhone(phone) {
-            return phone.replace(/\s/g, '');
         }
     }
 })();
