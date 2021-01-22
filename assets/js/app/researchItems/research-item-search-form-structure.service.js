@@ -270,6 +270,13 @@
                     ],
                     type: 'field'
                 },
+                group: {
+                    inputType: 'autocomplete-group',
+                    label: 'Group',
+                    matchColumn: 'membership_groups',
+                    matchRule: 'like',
+                    type: 'field'
+                },
                 nationality: {
                     inputType: 'select',
                     label: 'Country of origin',
