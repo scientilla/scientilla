@@ -104,9 +104,19 @@
                         </div>
                         <div class="content">
                             <span>{{ role.category }}</span>
-                            <span class="colorize-text">
+                            <span
+                                ng-if="role.category === 'Others'"
+                                class="colorize-text"
+                            >
                                 {{ role.value }} {{ role.value === 1 ? 'member' : 'members'}}
                             </span>
+                            <a
+                                href="/#/users?active=true&roleCategory={{ role.category }}&group=%25-{{ vm.group.id }}-%25"
+                                ng-if="role.category !== 'Others'"
+                                class="colorize-text"
+                            >
+                                {{ role.value }} {{ role.value === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
+                            </a>
                             <span class="colorize-text percentage-column">{{ role.percent }}%</span>
                         </div>
                     </li>
