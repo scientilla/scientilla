@@ -238,7 +238,8 @@
                     label: 'Active groups',
                     matchColumn: 'active',
                     defaultValue: true,
-                    type: 'action'
+                    type: 'action',
+                    valueType: 'boolean'
                 }
             },
             user: {
@@ -307,7 +308,8 @@
                     label: 'Active employees',
                     matchColumn: 'active',
                     defaultValue: true,
-                    type: 'action'
+                    type: 'action',
+                    valueType: 'boolean'
                 }
             },
             'group-member': {
