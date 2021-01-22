@@ -26,7 +26,7 @@
 
         vm.$onInit = function () {
             if (vm.model) {
-                let id = parseInt(vm.model.slice(2).slice(0,-2))
+                let id = parseInt(vm.model.slice(2).slice(0,-2));
                 getGroups().then(groups => {
                     const group = groups.find(g => g.id === id);
 
