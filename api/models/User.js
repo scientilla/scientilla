@@ -605,8 +605,6 @@ module.exports = _.merge({}, SubResearchEntity, {
         await ResearchEntity.createResearchEntity(User, user, 'user');
 
         await User.createAliases(user);
-        if (User.isInternalUser(user))
-            await Group.addUserToDefaultGroup(user);
 
         cb();
     },
