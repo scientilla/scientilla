@@ -60,12 +60,12 @@
 
 <ng-container ng-if="vm.project.projectData.instituteBudget">
     <strong>Institute budget:</strong>
-    €{{ vm.project.projectData.instituteBudget }}<br>
+    {{ vm.project.projectData.instituteBudget | valuta }}<br>
 </ng-container>
 
 <ng-container ng-if="vm.project.projectData.instituteContribution">
     <strong>Institute funding:</strong>
-    €{{ vm.project.projectData.instituteContribution }}<br>
+    {{ vm.project.projectData.instituteContribution | valuta }}<br>
 </ng-container>
 
 <ng-container>
@@ -81,7 +81,7 @@
         <tr ng-repeat="member in vm.PIMembers">
             <td class="name-column">{{ vm.getAlias(member) }}</td>
             <td ng-repeat="annualContribution in member.annualContribution">
-                €{{ annualContribution.contribution }}
+                {{ annualContribution.contribution | valuta }}
             </td>
         </tr>
     </table>
@@ -98,7 +98,7 @@
         <tr ng-repeat="researchLine in vm.project.researchLines">
             <td class="name-column">{{ vm.getGroupName(researchLine) }}</td>
             <td ng-repeat="annualContribution in researchLine.annualContribution">
-                €{{ annualContribution.contribution }}
+                {{ annualContribution.contribution | valuta }}
             </td>
         </tr>
     </table>
