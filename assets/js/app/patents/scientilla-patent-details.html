@@ -108,12 +108,26 @@
 </ng-container>
 
 <ng-container ng-if="vm.patent.patentData.researchLines.length > 0">
-    <strong>Research lines:</strong>
-    <ul>
-        <li ng-repeat="researchLine in vm.patent.patentData.researchLines">
-            {{ researchLine.name + '  ' + researchLines.code }}<br>
-        </li>
-    </ul>
+    <ng-container ng-if="vm.patent.patentData.researchLines.length === 1">
+        <strong>Research line:</strong>
+        <ng-container ng-repeat="researchLine in vm.patent.patentData.researchLines">
+            <a href="{{ vm.getGroupUrl(researchLine) }}" ng-click="vm.closeModal()">
+                {{ vm.getGroupName(researchLine) }}
+            </a>
+        </ng-container>
+        <br>
+    </ng-container>
+
+    <ng-container ng-if="vm.patent.patentData.researchLines.length > 1">
+        <strong>Research lines:</strong>
+        <ul>
+            <li ng-repeat="researchLine in vm.patent.patentData.researchLines">
+                <a href="{{ vm.getGroupUrl(researchLine) }}" ng-click="vm.closeModal()">
+                    {{ vm.getGroupName(researchLine) }}
+                </a>
+            </li>
+        </ul>
+    </ng-container>
 </ng-container>
 
 <ng-container ng-if="vm.patent.patentData.researchPrograms.length > 0">
