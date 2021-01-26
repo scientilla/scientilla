@@ -35,6 +35,48 @@
     }
 }
 
+.project-status{
+    position: relative;
+    display: inline-block;
+    width: 1.2rem;
+    height: 1.2rem;
+    margin-top: .3rem;
+    margin-left: .1rem;
+    vertical-align: top;
+    border-radius: 50%;
+
+    &:before{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        font-family: $font-awesome;
+        font-weight: bold;
+        font-size: .8rem;
+        text-align: center;
+        color: $white;
+    }
+
+    &.working{
+        background: $success-color;
+
+        &:before{
+            margin-top: -.6rem;
+            margin-left: -.4rem;
+            content: '\f00c';
+        }
+    }
+
+    &.ended{
+        background: $error-color;
+
+        &:before{
+            margin-top: -.6rem;
+            margin-left: -.275rem;
+            content: '\f00d';
+        }
+    }
+}
+
 @include media-breakpoint-up(lg) {
     .project{
         display: grid;

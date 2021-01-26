@@ -27,7 +27,8 @@
 
         <ng-container ng-if="vm.project.status">
             <strong>Status:</strong>
-            {{ vm.project.status }}<br>
+            {{ vm.project.status }}
+            <span class="project-status" ng-class="vm.project.status"></span><br>
         </ng-container>
 
         <ul class="project-actions">

@@ -50,7 +50,9 @@
 </ng-container>
 
 <ng-container ng-if="vm.project.status">
-    <strong>Status:</strong> {{ vm.project.status }}<br>
+    <strong>Status:</strong>
+    {{ vm.project.status }}
+    <span class="project-status" ng-class="vm.project.status"></span><br>
 </ng-container>
 
 <ng-container ng-if="vm.project.url">
