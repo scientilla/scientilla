@@ -11,9 +11,9 @@
             }
         });
 
-    scientillaProjectDetails.$inject = ['context', 'AuthService', 'UserService', 'GroupsService'];
+    scientillaProjectDetails.$inject = ['context', 'AuthService', 'UserService', 'GroupsService', 'ModalService'];
 
-    function scientillaProjectDetails(context, AuthService, UserService, GroupsService) {
+    function scientillaProjectDetails(context, AuthService, UserService, GroupsService, ModalService) {
         const vm = this;
 
         vm.getAlias = UserService.getAlias;
@@ -50,7 +50,6 @@
             } else {
                 return vm.project.verifiedUsers.find(u => u.id === vm.subResearchEntity.id);
             }
-
             return false;
         }
         /* jshint ignore:end */
@@ -64,6 +63,32 @@
                 }
             }
             return researchLine.description;
+        };
+
+        vm.getGroupUrl = function(researchLine) {
+            if (!_.isEmpty(vm.groups)) {
+                const group = vm.groups.find(g => g.code === researchLine.code);
+
+                if (group) {
+                    return '/#' + group.getProfileUrl();
+                }
+            }
+            return;
+        };
+
+        vm.closeModal = function () {
+            ModalService.close('close');
+        };
+
+        vm.isGroup = function(researchLine) {
+            if (!_.isEmpty(vm.groups)) {
+                const group = vm.groups.find(g => g.code === researchLine.code);
+
+                if (group) {
+                    return group;
+                }
+            }
+            return false;
         };
     }
 

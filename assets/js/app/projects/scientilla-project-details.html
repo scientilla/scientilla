@@ -68,7 +68,7 @@
     {{ vm.project.projectData.instituteContribution | valuta }}<br>
 </ng-container>
 
-<ng-container>
+<ng-container ng-if="vm.PIMembers.length > 0">
     <br>
     <strong>Annual funding PIs:</strong>
     <table class="table">
@@ -85,7 +85,9 @@
             </td>
         </tr>
     </table>
+</ng-container>
 
+<ng-container ng-if="vm.project.researchLines.length > 0">
     <br>
     <strong>Annual funding research lines:</strong>
     <table class="table">
@@ -96,7 +98,16 @@
             </th>
         </tr>
         <tr ng-repeat="researchLine in vm.project.researchLines">
-            <td class="name-column">{{ vm.getGroupName(researchLine) }}</td>
+            <td class="name-column">
+                <ng-container ng-if="vm.isGroup(researchLine)">
+                    <a href="{{ vm.getGroupUrl(researchLine) }}" ng-click="vm.closeModal()">
+                        {{ vm.getGroupName(researchLine) }}
+                    </a>
+                </ng-container>
+                <ng-container ng-if="!vm.isGroup(researchLine)">
+                    {{ vm.getGroupName(researchLine) }}
+                </ng-container>
+            </td>
             <td ng-repeat="annualContribution in researchLine.annualContribution">
                 {{ annualContribution.contribution | valuta }}
             </td>
