@@ -51,8 +51,7 @@
 
         };
 
-        /* jshint ignore:start */
-        async function onFilter(q) {
+        function onFilter(q) {
             const favorites = q.where.favorites;
             delete q.where.favorites;
 
@@ -63,7 +62,6 @@
                     vm.projects = projects;
                 });
         }
-        /* jshint ignore:end */
     }
 
 })();
