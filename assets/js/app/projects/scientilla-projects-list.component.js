@@ -58,7 +58,10 @@
 
             query = q;
 
-            vm.projects = await ProjectService.get(vm.researchEntity, query, favorites);
+            return ProjectService.get(vm.researchEntity, query, favorites)
+                .then(projects => {
+                    vm.projects = projects;
+                });
         }
         /* jshint ignore:end */
     }
