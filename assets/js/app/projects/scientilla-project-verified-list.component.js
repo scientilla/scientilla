@@ -51,7 +51,7 @@
             return ProjectService.get(vm.researchEntity, query, favorites)
                 .then(projects => {
                     vm.projects = projects;
-                })
+                });
         }
     }
 
