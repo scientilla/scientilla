@@ -319,7 +319,8 @@ SELECT u.id                                              AS id,
            WHERE experiences_internal ->> 'privacy' = 'public'
               OR experiences_internal ->> 'privacy' = 'hidden'
        )                                                 AS experiences_internal,
-       u."updatedAt"                                     AS updated_at
+       u."updatedAt"                                     AS updated_at,
+       concat('-', array_to_string(array(select m.group from all_membership m where "user" = u.id), '-'), '-') AS membership_groups
 FROM "user" u
          JOIN research_entity_data red ON red.research_entity = u.research_entity
-         JOIN role_association ra ON ra.original_role = (red.profile -> 'roleCategory' ->> 'value')::text;
+         LEFT JOIN role_association ra ON LOWER(ra.original_role) = LOWER((red.profile -> 'roleCategory' ->> 'value')::text);

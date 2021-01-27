@@ -238,7 +238,8 @@
                     label: 'Active groups',
                     matchColumn: 'active',
                     defaultValue: true,
-                    type: 'action'
+                    type: 'action',
+                    valueType: 'boolean'
                 }
             },
             user: {
@@ -268,6 +269,13 @@
                             rule: 'contains',
                         }
                     ],
+                    type: 'field'
+                },
+                group: {
+                    inputType: 'autocomplete-group',
+                    label: 'Group',
+                    matchColumn: 'membership_groups',
+                    matchRule: 'like',
                     type: 'field'
                 },
                 nationality: {
@@ -300,7 +308,8 @@
                     label: 'Active employees',
                     matchColumn: 'active',
                     defaultValue: true,
-                    type: 'action'
+                    type: 'action',
+                    valueType: 'boolean'
                 }
             },
             'group-member': {

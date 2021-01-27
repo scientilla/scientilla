@@ -317,12 +317,6 @@ module.exports = _.merge({}, SubResearchEntity, {
             group.administrators.add(user);
         return group.savePromise();
     },
-    addUserToDefaultGroup: function (user) {
-        return Group.getDefaultGroup()
-            .then(group => Group.addAdministrator(group, user))
-            .then(group => Group.addMember(group, user))
-            .then(() => user);
-    },
     getAuthorshipModel: function () {
         return AuthorshipGroup;
     },

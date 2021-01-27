@@ -1,0 +1,28 @@
+<label>
+    <span ng-bind-html="vm.structure.label"></span>
+    <span ng-if="vm.structure.required">*</span>
+</label>
+<div class="dropdown-container add-scroll add-group-field-container">
+    <input
+        type="text"
+        class="{{ vm.cssClass }}"
+        ng-model="vm.autocompleteModel"
+        ng-model-options="{ allowInvalid: true }"
+        ng-disabled="vm.structure.disabled"
+        ng-class="{'is-invalid' : vm.errors}"
+        ng-blur="vm.structure.required && vm.validate(vm.name)"
+        data-ng-required="false"
+        uib-typeahead="group as group.getDisplayName() for group in vm.getGroups($viewValue)"
+        typeahead-editable="false"
+        typeahead-select-on-blur="true"
+        typeahead-loading="searching"
+        typeahead-no-results="noResults"/>
+</div>
+<input
+    class="hidden"
+    type="text"
+    ng-model="vm.model"
+    ng-change="vm.structure.required && vm.valueChanged(vm.name)">
+<scientilla-error-messages
+    class="error-messages"
+    errors="vm.errors"></scientilla-error-messages>

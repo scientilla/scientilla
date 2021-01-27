@@ -117,6 +117,10 @@
         };
 
         vm.$onInit = function () {
+            if (_.has(vm.group, 'id')) {
+                vm.formStructure.code.disabled = true;
+            }
+
             delete vm.group.members;
             delete vm.group.memberships;
             $scope.$watch('vm.group.name', nameChanged);
