@@ -147,6 +147,22 @@ module.exports = {
             columnName: 'experiences_internal',
             type: 'STRING'
         },
+        activeMemberships: {
+            columnName: 'active_memberships',
+            type: 'STRING'
+        },
+        activeAndFormerMemberships: {
+            columnName: 'active_and_former_memberships',
+            type: 'STRING'
+        },
+        activeMembershipsIncludingSubgroups: {
+            columnName: 'active_memberships_including_subgroups',
+            type: 'STRING'
+        },
+        activeAndFormerMembershipsIncludingSubgroups: {
+            columnName: 'active_and_former_memberships_including_subgroups',
+            type: 'STRING'
+        },
 
         toJSON: function () {
             const person = this.toObject();
