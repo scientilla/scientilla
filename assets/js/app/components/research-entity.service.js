@@ -30,12 +30,7 @@
         service.copyDocuments = copyDocuments;
         service.createDraft = createDraft;
         service.getExternalDocuments = getExternalDocuments;
-        service.getAllMembers = getAllMembers;
-        service.getAllActiveMembers = getAllActiveMembers;
         service.getAllMemberships = getAllMemberships;
-        service.getMembers = getMembers;
-        service.getActiveMembers = getActiveMembers;
-        service.getMemberships = getMemberships;
         service.deleteDraft = deleteDraft;
         service.deleteDrafts = deleteDrafts;
         service.setPrivateTags = setPrivateTags;
@@ -105,29 +100,6 @@
             }, populate);
 
             return researchEntity.getList('externalDocuments', q);
-        }
-
-        function getMembers(researchEntity, query) {
-            return researchEntity.getList('members', query);
-        }
-
-        function getActiveMembers(researchEntity, query) {
-            return researchEntity.getList('activeMembers', query);
-        }
-
-        function getMemberships(researchEntity, query = {limit: 0}) {
-            query.where = Object.assign({}, query.where, {
-                group: researchEntity.id
-            });
-            return Restangular.all('memberships').getList(query);
-        }
-
-        function getAllMembers(researchEntity, query) {
-            return researchEntity.getList('allMembers', query);
-        }
-
-        function getAllActiveMembers(researchEntity, query) {
-            return researchEntity.getList('allActiveMembers', query);
         }
 
         function getAllMemberships(researchEntity, query = {limit: 0}) {
