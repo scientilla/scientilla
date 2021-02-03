@@ -17,7 +17,7 @@
         const vm = this;
 
         vm.$onInit = function () {
-            console.log(vm.patentFamily);
+            //console.log(vm.patentFamily);
         };
     }
 
