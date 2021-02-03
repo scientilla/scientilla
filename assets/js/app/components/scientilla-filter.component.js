@@ -325,8 +325,7 @@
             vm.totalItems = vm.elements.count || 0;
         }
 
-        /* jshint ignore:start */
-        async function refreshList() {
+        function refreshList() {
             if (!onStatus(vm.STATUS_INITIAL_LOADING))
                 setStatus(vm.STATUS_LOADING);
 
@@ -341,7 +340,6 @@
                     setStatus(vm.STATUS_ERROR);
                 });
         }
-        /* jshint ignore:end */
 
         function getQuery() {
             const paginationQuery = {
