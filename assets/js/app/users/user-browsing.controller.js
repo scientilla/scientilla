@@ -11,7 +11,8 @@
         'ModalService',
         'userConstants',
         '$location',
-        'GroupsService'
+        'GroupsService',
+        'researchEntityService'
     ];
 
     function UserBrowsingController(
@@ -22,7 +23,8 @@
         ModalService,
         userConstants,
         $location,
-        GroupsService
+        GroupsService,
+        researchEntityService
     ) {
         const vm = this;
 
@@ -39,75 +41,185 @@
         let query = {};
         vm.groups = [];
 
-        function onFilter(q) {
-            const groupsAreLoaded = new Promise((resolve, reject) => {
-                if (_.isEmpty(vm.groups)) {
-                    return GroupsService.getGroups().then(groups => {
-                        vm.groups = groups;
-                        return resolve(groups);
+        vm.membershipTypes = {
+            MEMBER: {
+                id: 0,
+                label: 'Member'
+            },
+            COLLABORATOR: {
+                id: 1,
+                label: 'Collaborator'
+            },
+            FORMER_MEMBER: {
+                id: 2,
+                label: 'Former member'
+            },
+            FORMER_COLLABORATOR: {
+                id: 3,
+                label: 'Former collaborator'
+            }
+        };
+
+        /* jshint ignore:start */
+        async function onFilter(q, isRefreshing = false) {
+
+            if (_.isEmpty(vm.groups)) {
+                vm.groups = await GroupsService.getGroups();
+            }
+
+            let memberships = [];
+            let subgroups = true;
+            let formerEmployees = false;
+            let group = false;
+            let groupWhere = {};
+
+            query = q;
+
+            if (isRefreshing) {
+                if (_.has(query, 'where.active')) {
+                    formerEmployees = !query.where.active;
+                    delete query.where.active;
+                } else {
+                    formerEmployees = true;
+                }
+            } else {
+                if (_.has(query, 'where.formerEmployees')) {
+                    formerEmployees = query.where.formerEmployees;
+                    delete query.where.formerEmployees;
+                }
+            }
+
+            if (_.has(query, 'where.group')) {
+                group = query.where.group;
+                delete query.where.group;
+
+                if (group === 1) {
+                    group = false;
+                }
+            }
+
+            if (group) {
+                if (formerEmployees) {
+                    groupWhere = {
+                        activeAndFormerMembershipsIncludingSubgroups: {
+                            like: `%-${ group }-%`
+                        }
+                    };
+                } else {
+                    groupWhere = {
+                        activeMembershipsIncludingSubgroups: {
+                            like: `%-${ group }-%`
+                        }
+                    };
+                }
+            }
+
+            query.where = Object.assign({}, query.where, groupWhere);
+            query.where.role = [userConstants.role.ADMINISTRATOR, userConstants.role.SUPERUSER, userConstants.role.USER];
+
+            if (formerEmployees) {
+                delete query.where.active;
+            } else {
+                query.where.active = true;
+            }
+
+            const members = await PeopleService.getPeople(query);
+            for (const user of members) {
+                const centers = [];
+                if (_.has(user, 'groups')) {
+                    for (const group of user.groups) {
+                        if (_.has(group, 'center.name')) {
+                            const duplicateGroup = centers.find(c => c.name === group.center.name);
+                            if (!duplicateGroup) {
+                                const center = vm.groups.find(c => c.name === group.center.name);
+                                if (center) {
+                                    centers.push(center);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                const offices = [];
+                if (_.has(user, 'groups')) {
+                    for (const group of user.groups) {
+                        for (const office of group.offices) {
+                            const duplicateOffice = offices.find(o => o.name === office);
+                            if (!duplicateOffice) {
+                                offices.push(office);
+                            }
+                        }
+                    }
+                }
+
+                const userGroups = [];
+                if (_.has(user, 'groups')) {
+                    for (const group of user.groups) {
+                        const duplicateGroup = userGroups.find(c => c.code === group.code);
+                        if (_.has(group, 'name') && !duplicateGroup) {
+                            const tmpGroup = vm.groups.find(c => c.code === group.code);
+                            if (tmpGroup) {
+                                userGroups.push(tmpGroup);
+                            }
+                        }
+                    }
+                }
+
+                user.centers = centers;
+                user.offices = offices;
+                user.groups = userGroups;
+            }
+
+            if (members.length > 0) {
+                if (subgroups) {
+                    memberships = await researchEntityService.getAllMemberships(group, {
+                        where: {
+                            group: group,
+                            user: members.map(m => m.id)
+                        }
                     });
                 } else {
-                    return resolve(vm.groups);
-                }
-            });
-
-            return groupsAreLoaded.then(groups => {
-                query = q;
-                query.where.role = [userConstants.role.ADMINISTRATOR, userConstants.role.SUPERUSER, userConstants.role.USER];
-
-                return PeopleService.getPeople(query)
-                    .then(users => {
-                        for (const user of users) {
-                            const centers = [];
-                            if (_.has(user, 'groups')) {
-                                for (const group of user.groups) {
-                                    if (_.has(group, 'center.name')) {
-                                        const duplicateGroup = centers.find(c => c.name === group.center.name);
-                                        if (!duplicateGroup) {
-                                            const center = groups.find(c => c.name === group.center.name);
-                                            if (center) {
-                                                centers.push(center);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            const offices = [];
-                            if (_.has(user, 'groups')) {
-                                for (const group of user.groups) {
-                                    for (const office of group.offices) {
-                                        const duplicateOffice = offices.find(o => o.name === office);
-                                        if (!duplicateOffice) {
-                                            offices.push(office);
-                                        }
-                                    }
-                                }
-                            }
-
-                            const userGroups = [];
-                            if (_.has(user, 'groups')) {
-                                for (const group of user.groups) {
-                                    const duplicateGroup = userGroups.find(c => c.code === group.code);
-                                    if (_.has(group, 'name') && !duplicateGroup) {
-                                        const tmpGroup = groups.find(c => c.code === group.code);
-                                        if (tmpGroup) {
-                                            userGroups.push(tmpGroup);
-                                        }
-                                    }
-                                }
-                            }
-
-                            user.centers = centers;
-                            user.offices = offices;
-                            user.groups = userGroups;
+                    memberships = await researchEntityService.getMemberships(group, {
+                        where: {
+                            user: members.map(m => m.id)
                         }
-
-                        vm.users = users;
-                        return vm.users;
                     });
-            });
+                }
+            }
+
+            if (members.length > 0 && memberships.length > 0) {
+                members.forEach(member => {
+                    member.membership = memberships.find(m => m.user === member.id && m.group === group);
+                    if (!member.membership) {
+                        return;
+                    }
+                    member.membership.isMember = false;
+
+                    switch (true) {
+                        case !member.membership.synchronized && member.membership.active :
+                            member.membership.type = vm.membershipTypes.COLLABORATOR;
+                            member.cssClass = 'collaborator';
+                            break;
+                        case member.membership.synchronized && !member.membership.active :
+                            member.membership.type = vm.membershipTypes.FORMER_MEMBER;
+                            member.cssClass = 'former';
+                            break;
+                        case !member.membership.synchronized && !member.membership.active :
+                            member.membership.type = vm.membershipTypes.FORMER_COLLABORATOR;
+                            member.cssClass = 'former';
+                            break;
+                        default:
+                            member.membership.type = vm.membershipTypes.MEMBER;
+                            member.membership.isMember = true;
+                            break;
+                    }
+                });
+            }
+
+            vm.users = members;
+            return vm.users;
         }
+        /* jshint ignore:end */
 
         function createNew() {
             openUserForm();
@@ -121,19 +233,17 @@
             openUserForm(user);
         }
 
-        function deleteUser(user) {
-            user.remove()
-                .then(function () {
-                    Notification.success("User deleted");
-
-                    refreshList();
-
-                })
-                .catch(function () {
-                    Notification.warning("Failed to delete user");
-                });
-
+        /* jshint ignore:start */
+        async function deleteUser(user) {
+            try {
+                await UsersService.delete(user);
+                refreshList();
+                Notification.success("User deleted");
+            } catch (error) {
+                Notification.warning("Failed to delete user");
+            }
         }
+        /* jshint ignore:end */
 
         function loginAs(user) {
             AuthService.setupUserAccount(user.id);
@@ -147,7 +257,7 @@
         }
 
         function refreshList() {
-            onFilter(query);
+            onFilter(query, true);
         }
 
         function getUserProfile(user) {
