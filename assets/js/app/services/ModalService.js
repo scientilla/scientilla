@@ -236,6 +236,27 @@
                 });
         };
 
+        service.openCollaboratorForm = function (group, collaborator = false) {
+
+            const scopeVars = {
+                group,
+                collaborator
+            };
+
+            return openModal(
+                `<collaborator-form
+                    class="collaborator-modal"
+                    group="vm.group"
+                    collaborator="vm.collaborator"
+                    check-and-close="vm.checkAndClose"
+                ></collaborator-form>`,
+                scopeVars,
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                });
+        };
+
         service.openProfileForm = function () {
 
             const scopeVars = {
