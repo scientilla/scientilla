@@ -23,6 +23,7 @@
         service.getGroups = getGroups;
         service.getGroup = getGroup;
         service.addCollaborator = addCollaborator;
+        service.updateCollaborator= updateCollaborator;
         service.removeCollaborator = removeCollaborator;
         service.addRelative = addRelative;
         service.removeChild = removeChild;
@@ -201,6 +202,26 @@
             return Restangular
                 .all('memberships')
                 .customPOST(newMembership);
+        }
+
+        function updateCollaborator(group, user, active) {
+            const qs = {where: {group: group.id, user: user.id}};
+            return Restangular.all('memberships').customGET('', qs)
+                .then(res => {
+                    if (res.items.length !== 1) {
+                        throw 'Membership not found!';
+                    }
+
+                    const membership = res.items[0];
+                    membership.active = active;
+
+                    return Restangular
+                        .one('memberships', membership.id)
+                        .customPOST(membership);
+                })
+                .catch(function (error) {
+                    Notification.warning(error);
+                });
         }
 
         function removeCollaborator(group, user) {

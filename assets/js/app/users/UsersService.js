@@ -168,6 +168,10 @@
             _hasNoProfile = false;
         };
 
+        service.delete = async (user) => {
+            return await service.one(user.id).remove();
+        }
+
         /* jshint ignore:end */
 
         return service;

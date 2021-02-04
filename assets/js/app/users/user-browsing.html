@@ -16,7 +16,7 @@
             elements="vm.users">
 
             <ul class="user-listing">
-                <li ng-repeat="u in vm.users">
+                <li ng-repeat="u in vm.users" ng-class="u.cssClass">
                     <img src="{{ u.image }}" alt="{{ u | fullname }}" class="img-fluid">
 
                     <div class="user-content">
@@ -31,14 +31,14 @@
                             ng-if="u.username || u.socials.length > 0 || u.phone">
                             <ul
                                 class="socials">
-                                <li ng-if="u.username">
+                                <li ng-if="u.username && u.active">
                                     <a
                                         target="_blank"
                                         href="mailto:{{ u.username }}">
                                         <i class="fas fa-envelope"></i>
                                     </a>
                                 </li>
-                                <li ng-if="u.phone">
+                                <li ng-if="u.phone && u.active">
                                     <a
                                         target="_blank"
                                         href="tel:{{ u.phone }}">
@@ -54,6 +54,22 @@
                                 </li>
                             </ul>
                         </div>
+
+                        <ul
+                            class="badges"
+                            ng-if="!u.active"
+                        >
+                            <li ng-if="!u.active || u.membership && u.membership.type && !u.membership.isMember">
+                                <div>
+                                    Former employee
+                                </div>
+                            </li>
+                            <li ng-if="u.membership && u.membership.type && !u.membership.isMember">
+                                <div>
+                                    {{ u.membership.type.label }}
+                                </div>
+                            </li>
+                        </ul>
                     </div>
 
                     <div class="memberships-container">

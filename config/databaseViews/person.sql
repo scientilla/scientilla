@@ -1,25 +1,24 @@
-DROP VIEW IF EXISTS person CASCADE
 CREATE OR REPLACE VIEW person AS
-SELECT u.id                                              AS id,
-       u.username                                        AS username,
-       u.name                                            AS name,
-       u.surname                                         AS surname,
-       u.slug                                            AS slug,
-       u."alreadyAccess"                                 AS already_access,
-       u."alreadyOpenedSuggested"                        AS already_opened_suggested,
-       u.already_changed_profile                         AS already_changed_profile,
-       u.role                                            AS role,
-       u."orcidId"                                       AS orcid_id,
-       u."scopusId"                                      AS scopus_id,
-       u."jobTitle"                                      AS job_title,
-       u.display_name                                    AS display_name,
-       u.display_surname                                 AS display_surname,
-       u.research_entity                                 AS research_entity,
-       u.active                                          AS active,
-       ra.role_category                                  AS role_category,
-       (red.profile -> 'phone' ->> 'value')::text        AS phone,
-       (red.profile -> 'gender' ->> 'value')::text       AS gender,
-       (red.profile -> 'nationality' ->> 'value')::text  AS nationality,
+SELECT u.id                                             AS id,
+       u.username                                       AS username,
+       u.name                                           AS name,
+       u.surname                                        AS surname,
+       u.slug                                           AS slug,
+       u."alreadyAccess"                                AS already_access,
+       u."alreadyOpenedSuggested"                       AS already_opened_suggested,
+       u.already_changed_profile                        AS already_changed_profile,
+       u.role                                           AS role,
+       u."orcidId"                                      AS orcid_id,
+       u."scopusId"                                     AS scopus_id,
+       u."jobTitle"                                     AS job_title,
+       u.display_name                                   AS display_name,
+       u.display_surname                                AS display_surname,
+       u.research_entity                                AS research_entity,
+       u.active                                         AS active,
+       ra.role_category                                 AS role_category,
+       (red.profile -> 'phone' ->> 'value')::text       AS phone,
+       (red.profile -> 'gender' ->> 'value')::text      AS gender,
+       (red.profile -> 'nationality' ->> 'value')::text AS nationality,
        (
            CASE
                WHEN DATE_PART('year', (red.profile -> 'dateOfBirth' ->> 'value')::date) >=
@@ -43,8 +42,8 @@ SELECT u.id                                              AS id,
                WHEN DATE_PART('year', (red.profile -> 'dateOfBirth' ->> 'value')::date) <=
                     (DATE_PART('year', CURRENT_DATE) - 55) THEN '>=55'
                END
-           )                                             AS age_range,
-       (red.profile ->> 'groups')::text                  AS groups,
+           )                                            AS age_range,
+       (red.profile ->> 'groups')::text                 AS groups,
        (
            SELECT json_strip_nulls(
                           json_build_object(
@@ -144,7 +143,7 @@ SELECT u.id                                              AS id,
                                           )
                                   )
                               ))
-       )                                                 AS socials,
+       )                                                AS socials,
        (
            SELECT (red.profile -> 'image' ->> 'value')::text
            WHERE (red.profile -> 'image' ->> 'value')::text IS NOT NULL
@@ -153,13 +152,13 @@ SELECT u.id                                              AS id,
                    (red.profile -> 'image' ->> 'privacy')::text = 'public' OR
                    (red.profile -> 'image' ->> 'privacy')::text = 'hidden'
                )
-       )                                                 AS image,
+       )                                                AS image,
        (
            SELECT array_to_json(array_agg(titles ->> 'value'))
-           FROM json_array_elements(red.profile -> 'titles') titles
+           FROM jsonb_array_elements(red.profile -> 'titles') titles
            WHERE titles ->> 'privacy' = 'public'
               OR titles ->> 'privacy' = 'hidden'
-       )                                                 AS titles,
+       )                                                AS titles,
        (
            SELECT (red.profile -> 'description' ->> 'value')::text
            WHERE (red.profile -> 'description' ->> 'value')::text IS NOT NULL
@@ -168,7 +167,7 @@ SELECT u.id                                              AS id,
                    (red.profile -> 'description' ->> 'privacy')::text = 'public' OR
                    (red.profile -> 'description' ->> 'privacy')::text = 'hidden'
                )
-       )                                                 AS description,
+       )                                                AS description,
        (
            SELECT (red.profile -> 'role' ->> 'value')::text
            WHERE (red.profile -> 'role' ->> 'value')::text IS NOT NULL
@@ -177,7 +176,7 @@ SELECT u.id                                              AS id,
                    (red.profile -> 'role' ->> 'privacy')::text = 'public' OR
                    (red.profile -> 'role' ->> 'privacy')::text = 'hidden'
                )
-       )                                                 AS custom_role,
+       )                                                AS custom_role,
        (
            SELECT (red.profile -> 'website' ->> 'value')::text
            WHERE (red.profile -> 'website' ->> 'value')::text IS NOT NULL
@@ -186,7 +185,7 @@ SELECT u.id                                              AS id,
                    (red.profile -> 'website' ->> 'privacy')::text = 'public' OR
                    (red.profile -> 'website' ->> 'privacy')::text = 'hidden'
                )
-       )                                                 AS website,
+       )                                                AS website,
        (
            SELECT (red.profile -> 'address' ->> 'value')::text
            WHERE (red.profile -> 'address' ->> 'value')::text IS NOT NULL
@@ -195,13 +194,13 @@ SELECT u.id                                              AS id,
                    (red.profile -> 'address' ->> 'privacy')::text = 'public' OR
                    (red.profile -> 'address' ->> 'privacy')::text = 'hidden'
                )
-       )                                                 AS address,
+       )                                                AS address,
        (
            SELECT array_to_json(array_agg(interests ->> 'value'))
-           FROM json_array_elements(red.profile -> 'interests') interests
+           FROM jsonb_array_elements(red.profile -> 'interests') interests
            WHERE interests ->> 'privacy' = 'public'
               OR interests ->> 'privacy' = 'hidden'
-       )                                                 AS interests,
+       )                                                AS interests,
        (
            SELECT array_to_json(
                           array_agg(
@@ -217,10 +216,10 @@ SELECT u.id                                              AS id,
                                       )
                               )
                       )
-           FROM json_array_elements(red.profile -> 'experiencesExternal') experiences_external
+           FROM jsonb_array_elements(red.profile -> 'experiencesExternal') experiences_external
            WHERE experiences_external ->> 'privacy' = 'public'
               OR experiences_external ->> 'privacy' = 'hidden'
-       )                                                 AS experiences_external,
+       )                                                AS experiences_external,
        (
            SELECT array_to_json(
                           array_agg(
@@ -236,10 +235,10 @@ SELECT u.id                                              AS id,
                                       )
                               )
                       )
-           FROM json_array_elements(red.profile -> 'education') education
+           FROM jsonb_array_elements(red.profile -> 'education') education
            WHERE education ->> 'privacy' = 'public'
               OR education ->> 'privacy' = 'hidden'
-       )                                                 AS education,
+       )                                                AS education,
        (
            SELECT array_to_json(
                           array_agg(
@@ -253,10 +252,10 @@ SELECT u.id                                              AS id,
                                       )
                               )
                       )
-           FROM json_array_elements(red.profile -> 'certificates') certificates
+           FROM jsonb_array_elements(red.profile -> 'certificates') certificates
            WHERE certificates ->> 'privacy' = 'public'
               OR certificates ->> 'privacy' = 'hidden'
-       )                                                 AS certificates,
+       )                                                AS certificates,
        (
            SELECT array_to_json(
                           array_agg(
@@ -273,7 +272,7 @@ SELECT u.id                                              AS id,
                                                                          )
                                                                  )
                                                          )
-                                              FROM json_array_elements(categories -> 'skills') skills
+                                              FROM jsonb_array_elements(categories -> 'skills') skills
                                               WHERE skills ->> 'privacy' = 'public'
                                                  OR skills ->> 'privacy' = 'hidden'
                                           ),
@@ -282,11 +281,11 @@ SELECT u.id                                              AS id,
                                       )
                               )
                       )
-           FROM json_array_elements(red.profile -> 'skillCategories') categories
+           FROM jsonb_array_elements(red.profile -> 'skillCategories') categories
            WHERE categories ->> 'privacy' = 'public'
               OR categories ->> 'privacy' = 'hidden'
-       )                                                 AS skill_categories,
-       (red.profile ->> 'hidden')::text                  AS hidden,
+       )                                                AS skill_categories,
+       (red.profile ->> 'hidden')::text                 AS hidden,
        (
            SELECT array_to_json(
                           array_agg(
@@ -309,18 +308,53 @@ SELECT u.id                                              AS id,
                                                                                  )
                                                                          )
                                                                  )
-                                                      FROM json_array_elements(experiences_internal -> 'lines') lines
+                                                      FROM jsonb_array_elements(experiences_internal -> 'lines') lines
                                                   )
                                               )
                                       )
                               )
                       )
-           FROM json_array_elements(red.profile -> 'experiencesInternal') experiences_internal
+           FROM jsonb_array_elements(red.profile -> 'experiencesInternal') experiences_internal
            WHERE experiences_internal ->> 'privacy' = 'public'
               OR experiences_internal ->> 'privacy' = 'hidden'
-       )                                                 AS experiences_internal,
-       u."updatedAt"                                     AS updated_at,
-       concat('-', array_to_string(array(select m.group from all_membership m where "user" = u.id), '-'), '-') AS membership_groups
+       )                                                AS experiences_internal,
+       u."updatedAt"                                    AS updated_at,
+       concat(
+               '-',
+               array_to_string(
+                       array(SELECT DISTINCT m.group FROM membership m WHERE m.user = u.id AND active = true),
+                       '-'
+                   ),
+               '-'
+           )                                            AS active_memberships,
+       concat(
+               '-',
+               array_to_string(
+                       array(SELECT DISTINCT m.group FROM membership m WHERE m.user = u.id), '-'),
+               '-'
+           )                                            AS active_and_former_memberships,
+       concat(
+               '-',
+               array_to_string(
+                       array(
+                               SELECT DISTINCT amg.group
+                               FROM all_membership_group amg
+                               WHERE amg.user = u.id
+                                 AND active = true
+                           ),
+                       '-'
+                   ),
+               '-'
+           )                                            AS active_memberships_including_subgroups,
+       concat(
+               '-',
+               array_to_string(
+                       array(SELECT DISTINCT amg.group FROM all_membership_group amg WHERE amg.user = u.id),
+                       '-'
+                   ),
+               '-'
+           )                                            AS active_and_former_memberships_including_subgroups
 FROM "user" u
-         JOIN research_entity_data red ON red.research_entity = u.research_entity
-         LEFT JOIN role_association ra ON LOWER(ra.original_role) = LOWER((red.profile -> 'roleCategory' ->> 'value')::text);
+         LEFT JOIN research_entity_data red ON red.research_entity = u.research_entity
+         LEFT JOIN role_association ra
+                   ON LOWER(ra.original_role) = LOWER((red.profile -> 'roleCategory' ->> 'value')::text);
