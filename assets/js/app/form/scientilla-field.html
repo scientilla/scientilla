@@ -12,6 +12,26 @@
         on-validate="vm.onValidate({name})"
         on-change="vm.onChange({name})">
     </scientilla-text-field>
+    <scientilla-autocomplete-group-field
+        ng-if="vm.structure.inputType==='autocomplete-group'"
+        name="vm.name"
+        model="vm.values[vm.name]"
+        field-id="vm.id"
+        structure="vm.fieldStructure"
+        errors="vm.errors"
+        on-validate="vm.onValidate({name})"
+        on-change="vm.onChange({name})">
+    </scientilla-autocomplete-group-field>
+    <scientilla-range-field
+        ng-if="vm.structure.inputType==='range'"
+        name="vm.name"
+        model="vm.values[vm.name]"
+        field-id="vm.id"
+        structure="vm.fieldStructure"
+        errors="vm.errors"
+        on-validate="vm.onValidate({name})"
+        on-change="vm.onChange({name})">
+    </scientilla-range-field>
     <scientilla-select-field
         ng-if="vm.structure.inputType==='select'"
         model="vm.values[vm.name]"
@@ -33,6 +53,13 @@
         structure="vm.fieldStructure"
         errors="vm.errors">
     </scientilla-checkbox-field>
+    <scientilla-radio-field
+        ng-if="vm.structure.inputType==='radio'"
+        model="vm.values[vm.name]"
+        field-id="vm.id"
+        structure="vm.fieldStructure"
+        errors="vm.errors">
+    </scientilla-radio-field>
     <scientilla-attribute-field
         ng-if="vm.structure.inputType==='attribute'"
         model="vm.values[vm.name]"

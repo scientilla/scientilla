@@ -75,10 +75,15 @@ module.exports = {
     },
     getChartsData: function (req, res) {
         const Model = getModel(req);
-        const id = req.params.researchEntityId;
+        const id = req.params.id;
         const refresh = req.param('refresh') === 'true';
         const chartsKeys = req.param('charts') || [];
-        res.halt(Chart.getChartsData(id, Model, chartsKeys, refresh));
+        let roles = req.param('roles') || [];
+        if (typeof roles === 'string') {
+            roles = [];
+            roles.push(req.param('roles'));
+        }
+        res.halt(Chart.getChartsData(id, Model, chartsKeys, refresh, roles));
     },
     setAuthorhips: function (req, res) {
         const draftId = req.params.documentId;

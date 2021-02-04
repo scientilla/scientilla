@@ -1,0 +1,44 @@
+<div class="admin-group-overview">
+    <h2>Group overview</h2>
+
+    <scientilla-loading is-loading="vm.loading"></scientilla-loading>
+
+    <ul
+        ng-if="vm.institute && !vm.loading"
+        class="group-detail-listing">
+        <li>
+            <strong>Institute:</strong>
+            <a ng-href="#{{ vm.institute.getProfileUrl() }}">
+                {{ vm.institute.name }}
+            </a>
+            <ul>
+                <li ng-repeat="(type, groups) in vm.types">
+                    <strong>{{ vm.getTypeTitle(type, groups) }} ({{ groups.length }})</strong>
+                    <ul>
+                        <li
+                            ng-repeat="group in groups"
+                            ng-init="subtypes = vm.getGroupTypes(group)">
+                            <a ng-href="#{{ group.getProfileUrl() }}">
+                                {{ group.name }}
+                            </a>
+                            <ul ng-class="{ 'hidden': vm.getLength(subtypes) <= 0 }">
+                                <li ng-repeat="(subtype, subgroups) in subtypes">
+                                    <strong>{{ vm.getTypeTitle(subtype, subgroups) }} ({{ subgroups.length }})</strong>
+                                    <ul class="subgroup-listing">
+                                        <li ng-repeat="subgroup in subgroups">
+                                            <a ng-href="#{{ subgroup.getProfileUrl() }}">
+                                                {{ subgroup.name }}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <p ng-if="!vm.institute && !vm.loading">No membership-group records found!</p>
+</div>

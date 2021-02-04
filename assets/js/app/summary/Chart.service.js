@@ -4,13 +4,46 @@
     angular.module("services").factory("ChartService", ChartService);
 
     ChartService.$inject = [
-        'DocumentTypesService'
+        'DocumentTypesService',
+        'EventsService',
+        '$timeout'
     ];
 
     let styles = {};
     let colors = [];
+    const data = [];
+    const documentsOverviewCharts = [
+        'journalsByYear',
+        'conferencesByYear',
+        'booksByYear',
+        'bookSeriesByYear',
+        'documentsByType',
+        'disseminationTalksByYear',
+        'scientificTalksByYear'
+    ];
+    const bibliometricCharts = [
+        'journalsByYear',
+        'conferencesByYear',
+        'booksByYear',
+        'bookSeriesByYear',
+        'filteredAffiliatedJournalsByYear',
+        'filteredAffiliatedConferencesByYear',
+        'filteredAffiliatedBooksByYear',
+        'filteredAffiliatedBookSeriesByYear',
+        'filteredNotAffiliatedJournalsByYear',
+        'filteredNotAffiliatedConferencesByYear',
+        'filteredNotAffiliatedBooksByYear',
+        'filteredNotAffiliatedBookSeriesByYear',
+        'hindexPerYear',
+        'citationsPerYear',
+        'citationsPerDocumentYear',
+        'totalIfPerYear',
+        'totalSjrPerYear',
+        'totalSnipPerYear',
+        'chartDataDate'
+    ];
 
-    function ChartService(DocumentTypesService) {
+    function ChartService(DocumentTypesService, EventsService, $timeout) {
         const service = {
             previewDefaultOptions: {
                 chart: {
@@ -49,13 +82,18 @@
             }
         };
 
-        service.getData = (researchEntity, charts, refresh = false) =>
-            researchEntity.all('charts').getList({refresh: !!refresh, charts});
+        /* jshint ignore:start */
+        service.getDocumentsOverviewChartData = async (researchEntity, refresh = false) => {
+            return await getData(researchEntity, refresh, documentsOverviewCharts, 'documentsOverviewCharts');
+        };
+
+        service.getBibliometricChartData = async (researchEntity, refresh = false) => {
+            return await getData(researchEntity, refresh, bibliometricCharts, 'bibliometricCharts');
+        };
+        /* jshint ignore:end */
 
         service.setStyles = (customizations) => {
-            const darkenColors = [],
-                lightenColors = [];
-            let extendedColors = [];
+            let monochromatics = [];
 
             styles = customizations.styles;
             colors = [
@@ -74,47 +112,60 @@
             ];
 
             colors.forEach(color => {
-                const dark = tinycolor(color).darken(30).toString();
-                const light = tinycolor(color).lighten(30).toString();
+                monochromatics.push(tinycolor(color)
+                    .monochromatic(10)
+                    .sort((a, b) => {
+                       a = a.toHsl();
+                       b = b.toHsl();
 
-                if (dark !== '#ffffff' && dark !== '#000000' && typeof dark !== 'undefined') {
-                    darkenColors.push(dark);
-                }
+                       if (a.l > b.l) {
+                           return 1;
+                       }
 
-                if (light !== '#ffffff' && light !== '#000000' && typeof light !== 'undefined') {
-                    lightenColors.push(light);
-                }
+                       return -1;
+                    })
+                    .map(c => {
+                        const hsl = c.toHsl();
+                        if (hsl.l > 0.2) {
+                            return c.toHexString();
+                        }
+                    })
+                    .filter(c => c !== undefined)
+                );
             });
 
-            extendedColors.push(darkenColors[1]);
-            extendedColors.push(lightenColors[2]);
-            extendedColors.push(darkenColors[3]);
-            extendedColors.push(lightenColors[4]);
-            extendedColors.push(darkenColors[5]);
-            extendedColors.push(lightenColors[6]);
-            extendedColors.push(darkenColors[7]);
-            extendedColors.push(lightenColors[8]);
-            extendedColors.push(darkenColors[9]);
-            extendedColors.push(lightenColors[10]);
-            extendedColors.push(darkenColors[11]);
-            extendedColors.push(lightenColors[12]);
+            let done = false;
+            let color;
 
-            extendedColors.push(darkenColors[12]);
-            extendedColors.push(lightenColors[11]);
-            extendedColors.push(darkenColors[10]);
-            extendedColors.push(lightenColors[9]);
-            extendedColors.push(darkenColors[8]);
-            extendedColors.push(lightenColors[7]);
-            extendedColors.push(darkenColors[6]);
-            extendedColors.push(lightenColors[5]);
-            extendedColors.push(darkenColors[4]);
-            extendedColors.push(lightenColors[3]);
-            extendedColors.push(darkenColors[2]);
-            extendedColors.push(lightenColors[1]);
+            while (!done) {
+                let addedColor = false;
+                for (let i = 0; i < monochromatics.length; i++ ) {
+                    if (i%2 === 0) {
+                        color = monochromatics[i].shift();
+                    } else {
+                        color = monochromatics[i].pop();
+                    }
 
-            extendedColors = extendedColors.filter(color => color !== '#ffffff' && color !== '#000000' && typeof color !== 'undefined');
+                    if (color) {
+                        addedColor = true;
+                        colors.push(color);
+                    }
+                }
 
-            colors = colors.concat(extendedColors);
+                if (!addedColor) {
+                    done = true;
+                }
+            }
+
+            colors = _.uniq(colors);
+
+            colors = colors.filter(
+                color => color !== '#ffffff' && color !== '#000000' && typeof color !== 'undefined'
+            );
+        };
+
+        service.getColors = () => {
+            return colors;
         };
 
         service.getAsMainChart = chart => {
@@ -869,6 +920,54 @@
 
         function getDatamax(data) {
             return data.map(d => Math.max.apply(null, d.values.map(o => o.value)));
+        }
+
+        /* jshint ignore:start */
+        async function getData (researchEntity, refresh = false, charts = [], name) {
+            if (!data[researchEntity.researchEntity] || !_.has(data[researchEntity.researchEntity], name) || refresh) {
+                const res = await researchEntity.all('charts').getList({refresh: !!refresh, charts});
+
+                if (data[researchEntity.researchEntity]) {
+                    data[researchEntity.researchEntity][name] = res[0];
+                } else {
+                    data[researchEntity.researchEntity] = {
+                        [name]: res[0]
+                    };
+                }
+
+                // Delete data from array after one hour
+                const hour = 60 * 60 * 1000;
+                $timeout(() => {
+                    deleteData(researchEntity, name);
+                }, hour);
+
+                EventsService.subscribeAll(researchEntity, [
+                    EventsService.DRAFT_VERIFIED,
+                    EventsService.DOCUMENT_VERIFIED,
+                    EventsService.DOCUMENT_UNVERIFIED,
+                    EventsService.RESEARCH_ITEM_VERIFIED,
+                    EventsService.RESEARCH_ITEM_UNVERIFIED,
+                    EventsService.RESEARCH_ITEM_DRAFT_VERIFIED,
+                    EventsService.AUTH_LOGOUT
+                ], () => {
+                    deleteData(researchEntity, name);
+                });
+            }
+
+            return data[researchEntity.researchEntity][name];
+        }
+        /* jshint ignore:end */
+
+        function deleteData(researchEntity, name) {
+            if (_.has(data[researchEntity.researchEntity], name)) {
+                delete data[researchEntity.researchEntity][name];
+            }
+
+            if (_.isEmpty(data[researchEntity.researchEntity])) {
+                delete data[researchEntity.researchEntity];
+
+                EventsService.unsubscribeAll(researchEntity);
+            }
         }
     }
 }());

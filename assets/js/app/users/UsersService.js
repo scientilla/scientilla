@@ -31,8 +31,12 @@
             'jobTitle',
             'attributes',
             'alreadyOpenedSuggested',
-            'already_changed_profile'
+            'already_changed_profile',
+            'config'
         ];
+
+        const userGetPopulates = ['administratedGroups', 'attributes', 'aliases', 'memberships', 'groupMemberships', 'userData'];
+        const userSavePopulates = ['administratedGroups', 'attributes', 'memberships', 'groupMemberships', 'userData'];
 
         service.getNewUser = function () {
             var user = {
@@ -41,6 +45,7 @@
                 slug: "",
                 username: "",
                 role: userConstants.role.USER,
+                config: {scientific: false},
                 active: true,
                 synchronized: false
             };
@@ -58,10 +63,19 @@
         };
 
         service.save = function (user) {
-            if (user.id)
-                return Restangular.one('users', user.id).customPUT(user);
+
+            const userCopy = angular.copy(user);
+
+            Object.keys(userCopy).forEach(function(key) {
+                if (userSavePopulates.includes(key)) {
+                    delete userCopy[key];
+                }
+            });
+
+            if (userCopy.id)
+                return Restangular.one('users', userCopy.id).customPUT(userCopy);
             else
-                return this.post(user);
+                return this.post(userCopy);
         };
 
         service.doSave = function (user) {
@@ -83,35 +97,32 @@
         };
 
         service.getUser = function (userId) {
-            const populate = {populate: ['attributes', 'aliases', 'memberships', 'groupMemberships']};
-            return service.one(userId).get(populate);
+            const populate = {populate: userGetPopulates};
+            return service.one(userId).get(populate).then(function (user) {
+                Prototyper.toUserModel(user);
+                user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
+                return user;
+            });
         };
 
         service.getUsers = function (query) {
-            var populate = {populate: ['memberships', 'attributes', 'aliases']};
+            var populate = {populate: userGetPopulates};
             var q = _.merge({}, query, populate);
 
             return service.getList(q);
         };
 
         service.getSettings = function (userId) {
-            return this
-                .one(userId)
-                .get({populate: ['administratedGroups', 'attributes', 'aliases']})
-                .then(function (user) {
-                    Prototyper.toUserModel(user);
-                    user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
-                    return user;
-                });
+            return service.getUser(userId);
         };
 
         /* jshint ignore:start */
-        service.saveProfile = async (researchEntityId, profile) => {
+        service.saveProfile = async (researchEntityId, profile, profileImage = false) => {
             const formData = new FormData();
             formData.append('profile', JSON.stringify(profile));
 
-            if (profile.image && profile.image.file) {
-                formData.append('profileImage', profile.image.file);
+            if (profileImage) {
+                formData.append('profileImage', profileImage);
             }
 
             let response = await Restangular.one('researchentities', researchEntityId)

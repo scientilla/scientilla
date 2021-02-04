@@ -18,7 +18,8 @@ module.exports = {
         },
         researchEntity: {
             columnName: 'research_entity',
-            model: 'researchEntity'
+            model: 'researchEntity',
+            unique: true
         },
         toJSON: function(replaceImage = true) {
             const data = this.toObject();
@@ -63,6 +64,10 @@ module.exports = {
                     tmpProfile.active = profile.active;
                 }
 
+                if (_.has(profile, 'gender')) {
+                    tmpProfile.gender = profile.gender;
+                }
+
                 return tmpProfile;
             }
 
@@ -71,6 +76,7 @@ module.exports = {
             }
 
             delete profile.export;
+            delete profile.dateOfBirth;
 
             if (replaceImage && _.has(profile, 'image')) {
                 profile.image = path.join(

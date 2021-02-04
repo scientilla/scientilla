@@ -66,6 +66,7 @@ module.exports.policies = {
     AuthController: {
         '*': true
     },
+
     AliasController: defaultPolicy,
 
     AuthorshipController: defaultPolicy,
@@ -172,12 +173,31 @@ module.exports.policies = {
         getProfile: true,
         getEditProfile: isResearchEntityOwner,
         saveProfile: isResearchEntityOwner,
-        exportProfile: isResearchEntityOwner
+        exportProfile: isResearchEntityOwner,
+        minMaxYears: isLogged,
     }, defaultPolicy),
 
     ResearchItemTypeController: defaultPolicy,
 
     PublicCompetitiveProjectsController: defaultPolicy,
+
+    ProjectStatusController: defaultPolicy,
+
+    DocumentController: _.defaults({
+        export: isLogged,
+    }, defaultPolicy),
+
+    AccomplishmentController: _.defaults({
+        export: isLogged,
+    }, defaultPolicy),
+
+    ProjectController: _.defaults({
+        export: isLogged,
+    }, defaultPolicy),
+
+    PatentController: _.defaults({
+        export: isLogged,
+    }, defaultPolicy),
 
     BackupController: _.defaults({
         getDumps: isAdmin,
@@ -208,4 +228,9 @@ module.exports.policies = {
         getByName: isAdmin,
         saveByName: isAdmin,
     }, defaultAdminPolicy),
+
+    PersonController: _.defaults({
+        getUniqueRoleCategories: isLogged,
+        getUniqueNationalities: isLogged
+    }, defaultPolicy)
 };

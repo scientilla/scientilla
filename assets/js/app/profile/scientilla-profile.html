@@ -1,0 +1,140 @@
+<div class="summary summary-profile">
+    <scientilla-loading is-loading="vm.loading"></scientilla-loading>
+    <div
+            class="profile-blocks top"
+            ng-class="{
+            'has-1-block': vm.missingProfile,
+            'has-2-blocks': !vm.missingProfile && (!vm.profile.description && !vm.profile.interests) && vm.user.already_changed_profile,
+            'has-3-blocks': !vm.missingProfile && (
+                ((vm.profile.description || vm.profile.interests) && vm.user.already_changed_profile) ||
+                ((!vm.profile.description && !vm.profile.interests) && !vm.user.already_changed_profile)
+            ),
+            'has-4-blocks':
+                !vm.missingProfile && (vm.profile.description || vm.profile.interests) && !vm.user.already_changed_profile
+        }"
+            ng-if="!vm.loading">
+
+        <profile-basic-info-block
+            research-entity="vm.researchEntity"
+                profile="vm.profile"
+                former="!vm.user.active"
+                class="profile-block basic-info"
+                ng-if="!vm.missingProfile"></profile-basic-info-block>
+
+        <profile-missing-profile-block
+                class="profile-block missing-profile"
+                ng-if="vm.missingProfile"></profile-missing-profile-block>
+
+        <profile-about-block
+                profile="vm.profile"
+                class="profile-block about"
+                ng-if="vm.profile.description || vm.profile.interests"></profile-about-block>
+
+        <profile-edit-block
+                user="vm.user"
+                class="profile-block edit"
+                ng-if="!vm.user.already_changed_profile && !vm.missingProfile"></profile-edit-block>
+
+        <profile-export-block
+                class="profile-block export"
+                ng-if="!vm.missingProfile"></profile-export-block>
+    </div>
+    <div
+            class="profile-blocks bottom"
+            ng-class="{
+            'has-1-block': vm.numberOfItems === 1,
+            'has-2-blocks': vm.numberOfItems === 2,
+            'has-3-blocks': vm.numberOfItems === 3,
+            'has-4-blocks': vm.numberOfItems === 4,
+            'has-5-blocks': vm.numberOfItems === 5,
+            'has-6-blocks': vm.numberOfItems === 6,
+        }"
+            ng-if="!vm.loading && vm.numberOfItems > 0">
+
+        <profile-experiences-block
+                profile="vm.profile"
+                class="profile-block experiences"
+                ng-if="vm.profile.experiences && vm.profile.experiences.length > 0">
+        </profile-experiences-block>
+
+        <profile-education-block
+                profile="vm.profile"
+                class="profile-block education"
+                ng-if="vm.profile.education && vm.profile.education.length > 0">
+        </profile-education-block>
+
+        <profile-certificates-block
+                profile="vm.profile"
+                class="profile-block certificates"
+                ng-if="vm.profile.certificates && vm.profile.certificates.length > 0">
+        </profile-certificates-block>
+
+        <profile-skills-block
+                profile="vm.profile"
+                class="profile-block skills"
+                ng-if="vm.profile.skillCategories && vm.profile.skillCategories.length > 0">
+        </profile-skills-block>
+
+        <profile-documents-block
+                profile="vm.profile"
+                documents="vm.documents"
+                favorite-documents="vm.favoriteDocuments"
+                loading-documents="vm.loadingDocuments"
+                url-favorite-documents="vm.urlFavoriteDocuments"
+                url-all-documents="vm.urlAllDocuments"
+                class="profile-block documents"
+                ng-if="(
+                (vm.documents && vm.documents.length > 0) || vm.loadingDocuments
+            ) && vm.numberOfItems < 6 && vm.subResearchEntity.isScientific()">
+        </profile-documents-block>
+
+        <profile-accomplishments-block
+                profile="vm.profile"
+                accomplishments="vm.accomplishments"
+                favorite-accomplishments="vm.favoriteAccomplishments"
+                loading-accomplishments="vm.loadingAccomplishments"
+                url-favorite-accomplishments="vm.urlFavoriteAccomplishments"
+                url-all-accomplishments="vm.urlAllAccomplishments"
+                class="profile-block accomplishments"
+                ng-if="(
+                (vm.accomplishments && vm.accomplishments.length > 0) || vm.loadingsAccomplishments
+            ) && vm.numberOfItems < 6 && vm.subResearchEntity.isScientific()">
+        </profile-accomplishments-block>
+
+        <div
+                class="profile-block"
+                ng-if="vm.numberOfItems === 6 && (
+                (
+                    (vm.documents && vm.documents.length > 0) ||
+                    vm.loadingDocuments
+                ) || (
+                    (vm.accomplishments && vm.accomplishments.length > 0) ||
+                    vm.loadingAccomplishments
+                )
+            ) && vm.subResearchEntity.isScientific()">
+            <div class="profile-blocks bottom has-2-blocks">
+                <profile-documents-block
+                        profile="vm.profile"
+                        documents="vm.documents"
+                        favorite-documents="vm.favoriteDocuments"
+                        loading-documents="vm.loadingDocuments"
+                        url-favorite-documents="vm.urlFavoriteDocuments"
+                        url-all-documents="vm.urlAllDocuments"
+                        class="profile-block documents"
+                        ng-if="(vm.documents && vm.documents.length > 0) || vm.loadingDocuments">
+                </profile-documents-block>
+
+                <profile-accomplishments-block
+                        profile="vm.profile"
+                        accomplishments="vm.accomplishments"
+                        favorite-accomplishments="vm.favoriteAccomplishments"
+                        loading-accomplishments="vm.loadingAccomplishments"
+                        url-favorite-accomplishments="vm.urlFavoriteAccomplishments"
+                        url-all-accomplishments="vm.urlAllAccomplishments"
+                        class="profile-block accomplishments"
+                        ng-if="(vm.accomplishments && vm.accomplishments.length > 0) || vm.loadingAccomplishments">
+                </profile-accomplishments-block>
+            </div>
+        </div>
+    </div>
+</div>

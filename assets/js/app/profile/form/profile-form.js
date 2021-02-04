@@ -38,11 +38,21 @@
         vm.unsavedData = false;
         vm.profileIsLoaded = false;
         vm.selectedItem = '0';
+        vm.profileImage = false;
 
         let originalProfileJson = '';
 
+        let profileWatcher;
+
         vm.$onInit = function () {
+            vm.user = AuthService.user;
             getEditProfile();
+        };
+
+        vm.$onDestroy = function () {
+            if (profileWatcher) {
+                profileWatcher();
+            }
         };
 
         vm.removeItem = (options) => {
@@ -54,7 +64,7 @@
         };
 
         vm.save = (close = false) => {
-            UsersService.saveProfile(AuthService.user.researchEntity, vm.profile).then(response => {
+            UsersService.saveProfile(AuthService.user.researchEntity, vm.profile, vm.profileImage).then(response => {
 
                 vm.basicInformationHasErrors = false;
                 vm.aboutMeHasErrors = false;
@@ -147,7 +157,7 @@
         };
 
         function getEditProfile() {
-            let profileWatcher;
+
             UsersService.getProfile(AuthService.user.researchEntity, true).then(response => {
                 vm.profile = response.plain();
                 vm.profileIsLoaded = true;
@@ -192,7 +202,9 @@
                     return false;
                 case 'about-me':
                     if (
-                        angular.toJson(originalProfile.image) !== angular.toJson(vm.profile.image) ||
+                        angular.toJson(originalProfile.image.value) !== angular.toJson(vm.profile.image.value) ||
+                        angular.toJson(originalProfile.image.privacy) !== angular.toJson(vm.profile.image.privacy) ||
+                        vm.profile.image.file ||
                         angular.toJson(originalProfile.titles) !== angular.toJson(vm.profile.titles) ||
                         angular.toJson(originalProfile.description) !== angular.toJson(vm.profile.description) ||
                         angular.toJson(originalProfile.role) !== angular.toJson(vm.profile.role) ||

@@ -1,0 +1,64 @@
+<ul class="patent">
+    <li class="patent-info">
+        <span
+            ng-if="vm.patent.patentData.filingDate"
+            class="patent-year"
+            title="Filing date: {{ vm.patent.patentData.filingDate }}">
+            {{ vm.format(vm.patent.patentData.filingDate) | date: 'yyyy' }}
+        </span>
+        <img ng-src="{{ vm.customizations.logos.institute.src }}"
+             ng-if="vm.customizations.logos.institute.src && vm.hasMainGroupAffiliation()"
+             class="icon-iit"/>
+        <span class="icon-iit" ng-if="vm.hasMainGroupAffiliation()"></span>
+    </li>
+    <li class="patent-metadata">
+        <scientilla-research-item-authors
+            research-item="vm.patent"
+            collapsed="vm.collapsed"
+            type="preview"></scientilla-research-item-authors>
+
+        <h2
+            class="patent-title has-action"
+            ng-click="vm.openDetails()"
+            ng-bind-html='vm.patent.patentData | title'></h2>
+
+        <ng-container ng-if="vm.patent.familyDocket">
+            <strong>Docket:</strong> {{ vm.patent.familyDocket }}<br>
+        </ng-container>
+
+        <ng-container ng-if="vm.patent.patentData.application">
+            <strong>Application:</strong> {{ vm.patent.patentData.application }}<br>
+        </ng-container>
+
+        <ul class="patent-actions">
+            <li
+                ng-if="vm.patent.verified.length"
+                class="patent-verified"
+                uib-tooltip-html="vm.getVerifiedNamesHTML()"
+                tooltip-class="text-left">
+                <i class="fas fa-check"></i> {{ vm.patent.verified.length }}
+            </li>
+            <li ng-if="vm.isPrivacyToShow()"
+                class="patent-privacy-actions">
+                <i ng-click="vm.changePrivacy()"
+                   ng-if="vm.isPublic()"
+                   class="fas fa-globe-africa has-action"
+                   uib-tooltip-html="'The patent is visible to everyone, click to change it'"></i>
+                <i ng-click="vm.changePrivacy()"
+                   ng-if="!vm.isPublic()"
+                   class="fas fa-lock has-action"
+                   uib-tooltip-html="'The patent is visible only to scientilla users, click to change it'"></i>
+            </li>
+            <li ng-if="vm.showFavorite">
+                <i ng-click="vm.changeFavorite()"
+                   ng-if="vm.isFavorite()"
+                   class="fas fa-star has-action"
+                   uib-tooltip-html="'This patent is one of your favorite'"></i>
+                <i ng-click="vm.changeFavorite()"
+                   ng-if="!vm.isFavorite()"
+                   class="far fa-star has-action"
+                   uib-tooltip-html="'Click here to make it favorite'"></i>
+            </li>
+        </ul>
+    </li>
+</ul>

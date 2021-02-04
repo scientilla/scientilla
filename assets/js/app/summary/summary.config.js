@@ -13,34 +13,33 @@
                     if (_.has(params, 'group')) {
                         return '/' + params.group + '/dashboard/documents-overview';
                     } else {
-                        return '/dashboard/profile';
+                        return '/profile';
                     }
                 }
             })
-            .when("/dashboard/profile", {
-                template: `<profile-summary
-                    active-tab="profile"></profile-summary>`
+            .when("/profile", {
+                template: `<summary-profile></summary-profile>`
             })
             .when("/:group?/dashboard/documents-overview", {
                 controller: 'requestHandler',
-                template: `<profile-summary
-                    active-tab="documents-overview"></profile-summary>`,
+                template: `<summary-dashboard
+                    active-tab="documents-overview"></summary-dashboard>`,
                 resolve: {
                     authService: getAuthService
                 }
             })
             .when("/:group?/dashboard/bibliometric-charts", {
                 controller: 'requestHandler',
-                template: `<profile-summary
-                    active-tab="bibliometric-charts"></profile-summary>`,
+                template: `<summary-dashboard
+                    active-tab="bibliometric-charts"></summary-dashboard>`,
                 resolve: {
                     authService: getAuthService
                 }
             })
             .when("/:group/dashboard/calculated-data", {
                 controller: 'requestHandler',
-                template: `<profile-summary
-                    active-tab="calculated-data"></profile-summary>`,
+                template: `<summary-dashboard
+                    active-tab="calculated-data"></summary-dashboard>`,
                 resolve: {
                     authService: getAuthService
                 }

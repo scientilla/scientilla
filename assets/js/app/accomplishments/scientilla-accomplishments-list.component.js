@@ -19,7 +19,8 @@
         'accomplishmentListSections',
         'AuthService',
         'ResearchItemService',
-        'ResearchItemTypesService'
+        'ResearchItemTypesService',
+        '$element'
     ];
 
     function scientillaAccomplishmentsList(AccomplishmentService,
@@ -27,8 +28,12 @@
                                            accomplishmentListSections,
                                            AuthService,
                                            ResearchItemService,
-                                           ResearchItemTypesService) {
+                                           ResearchItemTypesService,
+                                           $element) {
         const vm = this;
+
+        vm.name = 'accomplishments-list';
+        vm.shouldBeReloaded = true;
 
         vm.accomplishments = [];
         vm.unverify = AccomplishmentService.unverify;
@@ -38,7 +43,22 @@
 
         let query = {};
 
-        vm.$onInit = function () {
+        vm.$onInit = () => {
+            const registerTab = requireParentMethod($element, 'registerTab');
+            registerTab(vm);
+        };
+
+        vm.$onDestroy = () => {
+            const unregisterTab = requireParentMethod($element, 'unregisterTab');
+            unregisterTab(vm);
+
+            EventsService.unsubscribeAll(vm);
+        };
+
+        vm.reload = function () {
+
+            EventsService.unsubscribeAll(vm);
+
             vm.editable = vm.section === accomplishmentListSections.VERIFIED && !AuthService.user.isViewOnly();
 
             EventsService.subscribeAll(vm, [
@@ -58,13 +78,18 @@
 
         /* jshint ignore:start */
         async function onFilter(q) {
+
             query = q;
             if (query && query.where && query.where.type) {
                 const types = await ResearchItemTypesService.getTypes();
                 const type = types.find(type => type.key === query.where.type);
                 query.where.type = type.id;
             }
-            vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, query);
+
+            return AccomplishmentService.get(vm.researchEntity, query)
+                .then(accomplishments => {
+                    vm.accomplishments = accomplishments;
+                });
         }
         /* jshint ignore:end */
     }

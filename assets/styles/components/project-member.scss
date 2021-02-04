@@ -1,0 +1,17 @@
+.project-member{
+    display: inline-block;
+
+    &:after{
+        display: inline-block;
+        vertical-align: top;
+        margin-left: -2px;
+        margin-right: 2px;
+        content: ',';
+    }
+
+    &:last-child{
+        &:after{
+            content: '';
+        }
+    }
+}

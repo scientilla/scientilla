@@ -24,7 +24,7 @@
         '$timeout',
         'ResearchItemSearchFormStructureService',
         '$location',
-        '$rootScope'
+        'context'
     ];
 
     function scientillaFilter(
@@ -34,7 +34,7 @@
         $timeout,
         ResearchItemSearchFormStructureService,
         $location,
-        $rootScope
+        context
     ) {
         const vm = this;
 
@@ -67,8 +67,17 @@
 
         vm.values = {};
 
+        vm.changeCollapse = function() {
+            vm.filterIsCollapsed = !vm.filterIsCollapsed;
+
+            $timeout(function() {
+                $scope.$broadcast('rzSliderForceRender');
+            });
+        };
+
         /* jshint ignore:start */
         vm.$onInit = async function () {
+            vm.researchEntity = await context.getResearchEntity();
             vm.itemsPerPage = pageSize;
             vm.status = vm.STATUS_INITIAL_LOADING;
 
@@ -78,9 +87,9 @@
             if (_.isUndefined(vm.elements))
                 vm.elements = [];
 
-            onDataCountChangeDeregisterer = $scope.$watch('vm.elements.count', onDataCountChange, true);
+            onDataCountChangeDeregisterer = $scope.$watch('vm.elements', onDataCountChange, true);
 
-            vm.searchFormStructure = await ResearchItemSearchFormStructureService.getStructure(vm.category);
+            vm.searchFormStructure = await ResearchItemSearchFormStructureService.getStructure(vm.category, vm.researchEntity);
 
             vm.searchFormStructure = _.assign({}, vm.searchFormStructure, {
                 buttonSearch: {
@@ -123,10 +132,13 @@
         /* jshint ignore:end */
 
         vm.$onDestroy = function () {
-            onDataCountChangeDeregisterer();
+            if (typeof onDataCountChangeDeregisterer === "function") {
+                onDataCountChangeDeregisterer();
+            }
         };
 
-        function onSubmit() {
+        function onSubmit(values) {
+            vm.values = values;
             if (!vm.onStatus(vm.STATUS_LOADING)) {
                 // Get current search parameters from URL
                 const params = $location.search();
@@ -145,7 +157,13 @@
                     const struct = vm.filterSearchFormStructure[key];
 
                     // Skip if nothing is selected if the inputType is a select
-                    if (struct && struct.inputType === 'select' && vm.values[key] === "?"){
+                    if (
+                        struct &&
+                        (
+                            (struct.inputType === 'select' && vm.values[key] === '?') ||
+                            (struct.inputType === 'radio' && vm.values[key] === 'all')
+                        )
+                    ){
                         return;
                     }
 
@@ -178,7 +196,7 @@
                 }
 
                 // Search
-                search(vm.values);
+                search();
             }
         }
 
@@ -234,6 +252,10 @@
                     return;
                 }
 
+                if (_.has(struct, 'skip') && struct.skip) {
+                    return;
+                }
+
                 // We set the where query
                 const whereAdd = {};
 
@@ -250,23 +272,33 @@
 
                     whereAdd.or = or;
                 } else {
-                    if (!struct.matchRule) {
-                        // Check if the type is an checkbox and cast the value to a boolean
-                        if (struct.type === 'checkbox') {
-                            whereAdd[struct.matchColumn] = (value === 'true');
-                        } else {
-                            whereAdd[struct.matchColumn] = value;
-                        }
-                    } else if (struct.matchRule === 'is null') {
-                        // If field option has matchRule equal to 'is null'
-                        if (!value) {
-                            // And the value is not true we add it to the query
-                            whereAdd[struct.matchColumn] = null;
-                        }
-                    } else {
-                        // If option matchRule is not 'is null' create object with the rule & value
+                    if (struct.inputType === 'range' && _.has(struct, 'rules') && _.isArray(struct.rules)) {
                         whereAdd[struct.matchColumn] = {};
-                        whereAdd[struct.matchColumn][struct.matchRule] = value;
+
+                        _.forEach(struct.rules, rule => {
+                            if (_.has(rule, 'rule') && _.has(rule, 'value')) {
+                                whereAdd[struct.matchColumn][rule.rule] = value[rule.value];
+                            }
+                        });
+                    } else {
+                        if (!struct.matchRule) {
+                            // Check if the type is an checkbox and cast the value to a boolean
+                            if (struct.type === 'checkbox') {
+                                whereAdd[struct.matchColumn] = (value === 'true');
+                            } else {
+                                whereAdd[struct.matchColumn] = value;
+                            }
+                        } else if (struct.matchRule === 'is null') {
+                            // If field option has matchRule equal to 'is null'
+                            if (!value) {
+                                // And the value is not true we add it to the query
+                                whereAdd[struct.matchColumn] = null;
+                            }
+                        } else {
+                            // If option matchRule is not 'is null' create object with the rule & value
+                            whereAdd[struct.matchColumn] = {};
+                            whereAdd[struct.matchColumn][struct.matchRule] = value;
+                        }
                     }
                 }
 
@@ -404,6 +436,12 @@
                     vm.itemsPerPage = vm.values.itemsPerPage;
                 }
             }
+
+            _.forEach(vm.filterSearchFormStructure, function (value, key) {
+                if (!_.has(vm.values, key) && _.has(value, 'defaultValue')) {
+                    vm.values[key] = value.defaultValue;
+                }
+            });
 
             // If we can proceed searching
             if (executeSearch) {

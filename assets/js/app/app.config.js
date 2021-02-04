@@ -10,10 +10,7 @@
     function configure(RestangularProvider, $routeProvider, localStorageServiceProvider, NotificationProvider) {
         $routeProvider
             .when("/", {
-                redirectTo: '/dashboard'
-            })
-            .otherwise({
-                redirectTo: "/dashboard"
+                redirectTo: '/profile'
             });
 
         RestangularProvider.setBaseUrl('/api/v1');
@@ -64,7 +61,7 @@
             const noRedirectUrls = ['/unavailable', '/login'];
             const goingToNoRedirectUrl = next.$$route && noRedirectUrls.includes(next.$$route.originalPath);
             if (!goingToNoRedirectUrl && !AuthService.isAvailable && !AuthService.isAdmin) {
-                Notification.warning('Sorry but scientilla is temporarly unavailable. Try again later.');
+                Notification.warning('Sorry but scientilla is temporarily unavailable. Try again later.');
                 ModalService.dismiss(null);
                 path.goTo('/unavailable');
                 return;
@@ -106,7 +103,7 @@
             if (status === 'DISABLED') {
                 AuthService.isAvailable = false;
                 if (!isAdmin) {
-                    Notification.warning('Sorry but scientilla is temporarly unavailable. Try again later.');
+                    Notification.warning('Sorry but scientilla is temporarily unavailable. Try again later.');
                     ModalService.dismiss(null);
                     path.goTo('/unavailable');
                 }
@@ -124,20 +121,33 @@
 
         Restangular.extendModel('documents', Prototyper.toDocumentModel);
         Restangular.extendModel('users', Prototyper.toUserModel);
+        Restangular.extendModel('people', Prototyper.toUserModel);
         Restangular.extendModel('groups', Prototyper.toGroupModel);
         Restangular.extendModel('drafts', Prototyper.toDocumentModel);
         Restangular.extendModel('externals', Prototyper.toDocumentModel);
         Restangular.extendModel('accomplishments', Prototyper.toAccomplishmentModel);
+        Restangular.extendModel('projects', Prototyper.toProjectModel);
+        Restangular.extendModel('patents', Prototyper.toPatentModel);
         Restangular.extendCollection('documents', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('externalDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('suggestedDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('discardedDocuments', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('favoriteDocuments', Prototyper.toDocumentsCollection);
+        Restangular.extendCollection('projects', Prototyper.toProjectsCollection);
+        Restangular.extendCollection('favoriteProjects', Prototyper.toProjectsCollection);
+        Restangular.extendCollection('accomplishments', Prototyper.toAccomplishmentsCollection);
+        Restangular.extendCollection('favoriteAccomplishments', Prototyper.toAccomplishmentsCollection);
+        Restangular.extendCollection('patents', Prototyper.toPatentsCollection);
+        Restangular.extendCollection('favoritePatents', Prototyper.toPatentsCollection);
         Restangular.extendCollection('drafts', Prototyper.toDocumentsCollection);
         Restangular.extendCollection('authorships', Prototyper.toAuthorshipsCollection);
         Restangular.extendCollection('institutes', Prototyper.toInstitutesCollection);
         Restangular.extendCollection('users', Prototyper.toUsersCollection);
+        Restangular.extendCollection('people', Prototyper.toUsersCollection);
         Restangular.extendCollection('allMembers', Prototyper.toUsersCollection);
+        Restangular.extendCollection('members', Prototyper.toUsersCollection);
+        Restangular.extendCollection('activeMembers', Prototyper.toUsersCollection);
+        Restangular.extendCollection('allActiveMembers', Prototyper.toUsersCollection);
         Restangular.extendCollection('groups', Prototyper.toGroupsCollection);
         Restangular.extendCollection('taglabels', Prototyper.toTagLabelsCollection);
     }

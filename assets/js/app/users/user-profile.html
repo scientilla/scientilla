@@ -14,6 +14,7 @@
         }"
         ng-if="!vm.loading && (vm.profile.name || vm.profile.surname) && vm.numberOfItems > 0">
         <profile-basic-info-block
+            research-entity="vm.researchEntity"
             profile="vm.profile"
             ng-if="vm.profile"
             former="!vm.user.active"
@@ -51,25 +52,27 @@
         <profile-documents-block
             profile="vm.profile"
             documents="vm.documents"
+            favorite-documents="vm.favoriteDocuments"
             loading-documents="vm.loadingDocuments"
             url-favorite-documents="vm.urlFavoriteDocuments"
             url-all-documents="vm.urlAllDocuments"
             class="profile-block documents"
             ng-if="(
                 (vm.documents && vm.documents.length > 0) || vm.loadingDocuments
-            ) && vm.numberOfItems < 8">
+            ) && vm.numberOfItems < 8 && vm.user.isScientific()">
         </profile-documents-block>
 
         <profile-accomplishments-block
             profile="vm.profile"
             accomplishments="vm.accomplishments"
+            favorite-accomplishments="vm.favoriteAccomplishments"
             loading-accomplishments="vm.loadingAccomplishments"
             url-favorite-accomplishments="vm.urlFavoriteAccomplishments"
             url-all-accomplishments="vm.urlAllAccomplishments"
             class="profile-block accomplishments"
             ng-if="(
                 (vm.accomplishments && vm.accomplishments.length > 0) || vm.loadingAccomplishments
-            ) && vm.numberOfItems < 8">
+            ) && vm.numberOfItems < 8 && vm.user.isScientific()">
         </profile-accomplishments-block>
 
         <div
@@ -80,11 +83,12 @@
                 ) || (
                     (vm.accomplishments && vm.accomplishments.length > 0) || vm.loadingAccomplishments
                 )
-            )">
+            ) && vm.user.isScientific()">
             <div class="profile-blocks bottom has-2-blocks">
                 <profile-documents-block
                     profile="vm.profile"
                     documents="vm.documents"
+                    favorite-documents="vm.favoriteDocuments"
                     loading-documents="vm.loadingDocuments"
                     url-favorite-documents="vm.urlFavoriteDocuments"
                     url-all-documents="vm.urlAllDocuments"
@@ -95,6 +99,7 @@
                 <profile-accomplishments-block
                     profile="vm.profile"
                     accomplishments="vm.accomplishments"
+                    favorite-accomplishments="vm.favoriteAccomplishments"
                     loading-accomplishments="vm.loadingAccomplishments"
                     url-favorite-accomplishments="vm.urlFavoriteAccomplishments"
                     url-all-accomplishments="vm.urlAllAccomplishments"
@@ -105,45 +110,7 @@
         </div>
     </div>
 
-    <div
-        ng-if="(!vm.profile || (!vm.profile.name && !vm.profile.surname)) && !vm.loading"
-        class="table-responsive">
-        <table class="table table-striped table-condensed">
-            <tr>
-                <td><strong>Name:</strong></td>
-                <td>{{vm.user.name}}</td>
-            </tr>
-            <tr>
-                <td><strong>Surname:</strong></td>
-                <td>{{vm.user.surname}}</td>
-            </tr>
-            <tr>
-                <td><strong>E&#8209;mail:</strong></td>
-                <td><a href="mailto:{{vm.user.username}}" title="Contact {{vm.user.name}}">{{vm.user.username}}</a>
-                </td>
-            </tr>
-            <tr>
-                <td><strong>Job Title:</strong></td>
-                <td>{{vm.user.jobTitle}}</td>
-            </tr>
-            <tr ng-if="vm.user.scopusId">
-                <td><strong>Scopus:</strong></td>
-                <td>
-                    <a ng-href="https://www.scopus.com/authid/detail.uri?origin=resultslist&authorId={{vm.user.scopusId}}&zone="
-                       target="_blank">
-                        View profile
-                    </a>
-                </td>
-            </tr>
-            <tr ng-if="vm.user.orcidId">
-                <td><strong>ORCID:</strong></td>
-                <td>
-                    <a ng-href="http://orcid.org/{{vm.user.orcidId}}"
-                       target="_blank">
-                        View profile
-                    </a>
-                </td>
-            </tr>
-        </table>
-    </div>
+    <user-profile-table
+        user="vm.user"
+        ng-if="(!vm.profile || (!vm.profile.name && !vm.profile.surname)) && !vm.loading"></user-profile-table>
 </div>

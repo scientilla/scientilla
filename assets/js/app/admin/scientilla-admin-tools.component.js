@@ -41,6 +41,10 @@
                     index: 4,
                     slug: 'role-association',
                     tabName: 'roleAssociation'
+                }, {
+                    index: 5,
+                    slug: 'group-overview',
+                    tabName: 'groupOverview'
                 }
             ];
 

@@ -8,7 +8,8 @@
         'Notification',
         'ResearchItemService',
         'researchItemKinds',
-        'researchItemLabels'
+        'researchItemLabels',
+        'ResearchItemTypesService'
     ];
 
     function controller(Restangular,
@@ -17,8 +18,9 @@
                         Notification,
                         ResearchItemService,
                         researchItemKinds,
-                        researchItemLabels) {
-        const service = Restangular.service("researchentities");
+                        researchItemLabels,
+                        ResearchItemTypesService) {
+        const service = Restangular.service('researchentities');
 
         service.getResearchEntity = getResearchEntity;
         service.getNewItemDraft = getNewItemDraft;
@@ -43,10 +45,14 @@
         service.getAccomplishments = getAccomplishments;
         service.setVerifyPrivacy = setVerifyPrivacy;
         service.setVerifyFavorite = setVerifyFavorite;
-
+        service.getProjects = getProjects;
+        service.getMinMaxYears = getMinMaxYears;
+        service.getPatents = getPatents;
+        service.getPatentFamilies = getPatentFamilies;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
-
+        const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
+        const patentPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
 
         /* jshint ignore:start */
 
@@ -234,23 +240,23 @@
             }
         }
 
-        async function getAccomplishment(id) {
-            return await Restangular.one('accomplishments', id).get({populate: accomplishmentPopulates});
+        async function getAccomplishment(id, populates = accomplishmentPopulates) {
+            return await Restangular.one('accomplishments', id).get({populate: populates});
         }
 
-        async function getAccomplishments(researchEntity, query, favorites = false) {
-            const populate = {populate: accomplishmentPopulates};
+        async function getAccomplishments(researchEntity, query, favorites = false, populates = accomplishmentPopulates) {
+            const populate = {populate: populates};
             const q = _.merge({}, query, populate);
 
             if (favorites) {
-                return await researchEntity.getList('favoriteAccomplishments', q);
+                return researchEntity.getList('favoriteAccomplishments', q);
             } else {
-                return await researchEntity.getList('accomplishments', q);
+                return researchEntity.getList('accomplishments', q);
             }
         }
 
-        async function getAccomplishmentDrafts(researchEntity, query) {
-            const populate = {populate: accomplishmentPopulates};
+        async function getAccomplishmentDrafts(researchEntity, query, populates = accomplishmentPopulates) {
+            const populate = {populate: populates};
             const q = _.defaultsDeep({}, query, populate);
             const draftList = await researchEntity.getList('accomplishmentDrafts', q);
 
@@ -330,7 +336,6 @@
             return researchEntity.customPOST({researchItemId}, 'copy-research-item');
         }
 
-
         async function setVerifyPrivacy(researchEntity, researchItem, verify) {
             try {
                 await researchEntity.one('researchitems', researchItem.id)
@@ -363,6 +368,46 @@
                 console.error(e);
                 Notification.warning('Failed to update affiliations');
             }
+        }
+
+        async function getMinMaxYears(researchEntity, type) {
+            return await researchEntity.one('min-max-years', type).get();
+        }
+
+        async function getProjects(researchEntity, query, favorites = false, populates = projectPopulates) {
+            const populate = {populate: populates};
+            const q = _.merge({}, query, populate);
+            const types = await ResearchItemTypesService.getTypes();
+
+            if (q.where && q.where.type) {
+                if (q.where.type === allProjectTypes.value) {
+                    delete q.where.type;
+                } else {
+                    const type = types.find(type => type.key === q.where.type);
+                    q.where.type = type.id;
+                }
+            }
+
+            if (favorites) {
+                return await researchEntity.getList('favoriteProjects', q);
+            } else {
+                return await researchEntity.getList('projects', q);
+            }
+        }
+
+        async function getPatents(researchEntity, query, favorites = false, populates = patentPopulates) {
+            const populate = {populate: populates};
+            const q = _.merge({}, query, populate);
+
+            if (favorites) {
+                return await researchEntity.getList('favoritePatents', q);
+            } else {
+                return await researchEntity.getList('patents', q);
+            }
+        }
+
+        async function getPatentFamilies(researchEntity, query) {
+                return await researchEntity.getList('patentFamilies', query);
         }
 
         /* jshint ignore:end */

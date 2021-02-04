@@ -22,11 +22,11 @@
         vm.isActive = isActive;
         vm.isAdmin = isAdmin;
         vm.getUrl = getUrl;
-        vm.getDashboardUrl = getDashboardUrl;
+        vm.isUser = isUser;
         vm.hasActiveExternalConnectors = false;
 
         const prefix = '#/';
-        let subResearchEntity = context.getSubResearchEntity();
+        vm.subResearchEntity = context.getSubResearchEntity();
 
         vm.$onInit = function () {
 
@@ -55,23 +55,23 @@
         function refresh() {
             vm.isLogged = AuthService.isLogged;
             vm.user = AuthService.user;
-            subResearchEntity = context.getSubResearchEntity();
+            vm.subResearchEntity = context.getSubResearchEntity();
         }
 
         function isActive(page, checkSubResearchEntity = false) {
             if (page === '/') {
                 // Add the group slug to the URL when the subResearchEntity is a group to check the active state of an URL
-                if (subResearchEntity.getType() === 'group' && checkSubResearchEntity) {
-                    return (path.current === '?#/' + subResearchEntity.slug || path.current === '#/' + subResearchEntity.slug);
+                if (vm.subResearchEntity.getType() === 'group' && checkSubResearchEntity) {
+                    return (path.current === '?#/' + vm.subResearchEntity.slug || path.current === '#/' + vm.subResearchEntity.slug);
                 } else {
                     return (path.current === '?#' + page || path.current === '#' + page);
                 }
             } else {
                 // Add the group slug to the URL when the subResearchEntity is a group to check the active state of an URL
-                if (subResearchEntity.getType() === 'group' && checkSubResearchEntity) {
+                if (vm.subResearchEntity.getType() === 'group' && checkSubResearchEntity) {
                     return (
-                        path.current.lastIndexOf('?#/' + subResearchEntity.slug + page, 0) === 0 ||
-                        path.current.lastIndexOf('#/' + subResearchEntity.slug + page, 0) === 0
+                        path.current.lastIndexOf('?#/' + vm.subResearchEntity.slug + page, 0) === 0 ||
+                        path.current.lastIndexOf('#/' + vm.subResearchEntity.slug + page, 0) === 0
                     );
                 } else {
                     return (
@@ -86,28 +86,23 @@
             return vm.user && vm.user.isAdmin();
         }
 
+        function isUser() {
+            return vm.subResearchEntity.getType() === 'user';
+        }
+
         function getUrl(url) {
-            if (subResearchEntity.getType() === 'group') {
-                return prefix + subResearchEntity.slug + '/' + url;
+            if (vm.subResearchEntity.getType() === 'group') {
+                return prefix + vm.subResearchEntity.slug + '/' + url;
             }
 
             return prefix + url;
-        }
-
-        function getDashboardUrl() {
-            const dashboardSlug = 'dashboard';
-            if (subResearchEntity.getType() === 'group') {
-                return prefix + subResearchEntity.slug + '/' + dashboardSlug;
-            }
-
-            return prefix + dashboardSlug;
         }
 
         function checkActiveConnectors() {
 
             vm.hasActiveExternalConnectors = false;
 
-            Object.keys(vm.connectors).forEach(function(connector) {
+            Object.keys(vm.connectors).forEach(function (connector) {
                 if (vm.connectors[connector].active) {
                     vm.hasActiveExternalConnectors = true;
                 }

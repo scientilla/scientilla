@@ -17,19 +17,38 @@
         'context',
         'AuthService',
         '$scope',
-        '$controller'
+        '$controller',
+        'ResearchEntitiesService',
+        '$timeout'
     ];
 
-    function GroupDetailsController(GroupsService, context, AuthService, $scope, $controller) {
+    function GroupDetailsController(
+        GroupsService,
+        context,
+        AuthService,
+        $scope,
+        $controller,
+        ResearchEntitiesService,
+        $timeout
+    ) {
         const vm = this;
-        angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
         vm.subResearchEntity = context.getSubResearchEntity();
         vm.loggedUser = AuthService.user;
         vm.refreshGroup = refreshGroup;
 
+        let activeTabWatcher = null;
+
         /* jshint ignore:start */
         vm.$onInit = async function () {
+
+            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
+                if (vm.activeTabIndex === 5) {
+                    $timeout(function () {
+                        $scope.$broadcast('rzSliderForceRender');
+                    });
+                }
+            });
 
             await refreshGroup();
 
@@ -50,29 +69,46 @@
                     slug: 'documents'
                 }, {
                     index: 4,
-                    slug: 'documents-overview',
-                    tabName: 'overview',
-                    getData: getData
+                    slug: 'accomplishments'
                 }, {
                     index: 5,
+                    slug: 'projects'
+                }, {
+                    index: 6,
+                    slug: 'documents-overview',
+                    tabName: 'overview-tab'
+                }, {
+                    index: 7,
                     slug: 'bibliometric-charts',
-                    tabName: 'metrics',
-                    getData: getData
+                    tabName: 'metrics-tab'
                 }
             ];
 
             vm.initializeTabs(tabIdentifiers);
         };
 
-        async function getData() {
-            return await vm.getChartsData(vm.group);
+        vm.$onDestroy = function () {
+            activeTabWatcher();
+        };
+
+        function refreshGroup() {
+            return GroupsService.getGroup(vm.groupId)
+                .then(async (group) => {
+                    vm.group = group;
+                    vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
+                });
         }
 
         /* jshint ignore:end */
 
-        function refreshGroup() {
-            return GroupsService.getGroup(vm.groupId)
-                .then(group => vm.group = group);
-        }
+        vm.isAdmin = function () {
+            return vm.loggedUser && vm.loggedUser.isAdmin();
+        };
+
+        vm.isScientific = function () {
+            if (!vm.group)
+                return true;
+            return ['Institute', 'Center', 'Research Line', 'Facility'].includes(vm.group.type);
+        };
     }
 })();

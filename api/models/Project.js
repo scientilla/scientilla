@@ -16,6 +16,8 @@ const fields = [
     'startDate',
     'endDate',
     'projectType',
+    'category',
+    'payment',
     'role',
     'status',
     'url',
@@ -52,14 +54,38 @@ module.exports = _.merge({}, BaseModel, {
             type: 'STRING',
             columnName: 'end_date'
         },
+        startYear: {
+            type: 'STRING',
+            columnName: 'start_year'
+        },
+        endYear: {
+            type: 'STRING',
+            columnName: 'end_year'
+        },
         projectType: {
             type: 'STRING',
             columnName: 'project_type'
+        },
+        projectType2: {
+            type: 'STRING',
+            columnName: 'project_type_2'
+        },
+        category: {
+            type: 'STRING',
+            columnName: 'category'
+        },
+        payment: {
+            type: 'STRING',
+            columnName: 'payment'
         },
         role: 'STRING',
         status: 'STRING',
         url: 'STRING',
         members: 'JSON',
+        piStr: {
+            type: 'STRING',
+            columnName: 'pi_str'
+        },
         researchLines: {
             type: 'JSON',
             columnName: 'research_lines'
@@ -80,6 +106,11 @@ module.exports = _.merge({}, BaseModel, {
         verifiedGroups: {
             collection: 'group',
             through: 'projectverifiedgroup'
+        },
+        favorites: {
+            collection: 'researchentity',
+            via: 'favoriteprojects',
+            through: 'projectfavorite'
         },
         async isValid() {
             const ResearchItemModel = Project.getResearchItemModel(this.type);
@@ -178,7 +209,21 @@ module.exports = _.merge({}, BaseModel, {
                 name: m.name,
                 surname: m.surname
             }));
-    }
+    },
+    async export(projectIds, format) {
+        const projects = await Project.find({id: projectIds})
+            .populate([
+                'type',
+            ]);
+
+        if (format === 'csv')
+            return Exporter.projectsToCsv(projects);
+
+        throw {
+            success: false,
+            message: 'Format not supported'
+        };
+    },
 });
 
 

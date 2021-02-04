@@ -38,6 +38,11 @@
 @import 'ui/profile';
 @import 'ui/edit-profile';
 @import 'ui/log-output';
+@import 'ui/group-listing';
+@import 'ui/range-slider';
+@import 'ui/legend';
+@import 'ui/card';
+@import 'ui/ribbon';
 
 @import 'components/header';
 @import 'components/footer';
@@ -59,6 +64,13 @@
 @import 'components/summary-overview';
 @import 'components/summary-metrics';
 @import 'components/loading-container';
+@import 'components/accomplishment';
+@import 'components/project';
+@import 'components/project-member';
+@import 'components/project-details';
+@import 'components/patent';
+@import 'components/patent-family';
+@import 'components/former-employee';
 
 @import 'views/login';
 @import 'views/users';

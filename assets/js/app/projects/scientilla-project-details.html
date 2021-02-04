@@ -1,0 +1,130 @@
+<div>
+    <scientilla-project-type-badge type="vm.project.type"></scientilla-project-type-badge>
+    <scientilla-project-pis project="vm.project"></scientilla-project-pis>
+</div>
+<h3 class="project-title" ng-bind-html='vm.project | title'></h3>
+
+<ng-container ng-if="vm.project.code">
+    <strong>Code:</strong> {{ vm.project.code }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.acronym">
+    <strong>Acronym:</strong> {{ vm.project.acronym }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.abstract">
+    <strong>Abstract:</strong><br>{{ vm.project.abstract }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.startDate">
+    <strong>Start date:</strong>
+    {{ vm.project.startDate }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.endDate">
+    <strong>End date:</strong>
+    {{ vm.project.endDate }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.projectType && vm.project.type.key === vm.projectTypeCompetitive">
+    <strong>Funding type:</strong> {{ vm.project.projectType }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.projectType2 && vm.project.type.key === vm.projectTypeCompetitive">
+    <strong>Action type:</strong> {{ vm.project.projectType2 }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.category">
+    <strong>Category:</strong>
+    {{ vm.project.category }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.payment">
+    <strong>Payment:</strong>
+    {{ vm.project.payment }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.role">
+    <strong>Role:</strong>
+    {{ vm.project.role }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.status">
+    <strong>Status:</strong> {{ vm.project.status }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.url">
+    <strong>Url:</strong>
+    {{ vm.project.url }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.projectData.instituteBudget">
+    <strong>Institute budget:</strong>
+    €{{ vm.project.projectData.instituteBudget }}<br>
+</ng-container>
+
+<ng-container ng-if="vm.project.projectData.instituteContribution">
+    <strong>Institute funding:</strong>
+    €{{ vm.project.projectData.instituteContribution }}<br>
+</ng-container>
+
+<ng-container>
+    <br>
+    <strong>Annual funding PIs:</strong>
+    <table class="table">
+        <tr ng-repeat="member in vm.PIMembers|limitTo:1">
+            <th class="name-column">Name</th>
+            <th ng-repeat="annualContribution in member.annualContribution">
+                {{ annualContribution.year }}
+            </th>
+        </tr>
+        <tr ng-repeat="member in vm.PIMembers">
+            <td class="name-column">{{ vm.getAlias(member) }}</td>
+            <td ng-repeat="annualContribution in member.annualContribution">
+                €{{ annualContribution.contribution }}
+            </td>
+        </tr>
+    </table>
+
+    <br>
+    <strong>Annual funding research lines:</strong>
+    <table class="table">
+        <tr ng-repeat="researchLine in vm.project.researchLines|limitTo:1">
+            <th class="name-column">Name</th>
+            <th ng-repeat="annualContribution in researchLine.annualContribution">
+                {{ annualContribution.year }}
+            </th>
+        </tr>
+        <tr ng-repeat="researchLine in vm.project.researchLines">
+            <td class="name-column">{{ vm.getGroupName(researchLine) }}</td>
+            <td ng-repeat="annualContribution in researchLine.annualContribution">
+                €{{ annualContribution.contribution }}
+            </td>
+        </tr>
+    </table>
+</ng-container>
+
+<ng-container ng-if="vm.lines">
+    <ng-container ng-if="vm.lines.length > 1">
+        <strong>Research lines:</strong>
+        <ul>
+            <li ng-repeat="line in vm.lines">
+                {{ line }}
+            </li>
+        </ul>
+    </ng-container>
+    <ng-container ng-if="vm.lines.length === 1">
+        <strong>Research line:</strong>
+        <ng-container ng-repeat="line in vm.lines">
+            {{ line }}<br>
+        </ng-container>
+    </ng-container>
+</ng-container>
+
+<ul
+    class="project-logos"
+    ng-if="vm.project.logos">
+    <li ng-repeat="logo in vm.project.logos">
+        <img src="{{ logo.image }}" alt="{{ logo.name }}">
+    </li>
+</ul>

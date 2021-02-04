@@ -35,6 +35,16 @@
                     group-id="${params.id}"
                     active-tab="documents"></scientilla-group-details>`
             })
+            .when("/groups/:id/accomplishments", {
+                template: params => `<scientilla-group-details
+                    group-id="${params.id}"
+                    active-tab="accomplishments"></scientilla-group-details>`
+            })
+            .when("/groups/:id/projects", {
+                template: params => `<scientilla-group-details
+                    group-id="${params.id}"
+                    active-tab="projects"></scientilla-group-details>`
+            })
             .when("/groups/:id/documents-overview", {
                 template: params => `<scientilla-group-details
                     group-id="${params.id}"

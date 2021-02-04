@@ -12,18 +12,33 @@
         });
 
     controller.$inject = [
+        'Restangular',
+        'researchEntityService',
         'ResearchEntitiesService',
         'UsersService',
+        'GroupsService',
         'documentListSections',
         'accomplishmentListSections',
         'AuthService',
         '$scope',
-        '$controller'
+        '$controller',
+        '$timeout'
     ];
 
-    function controller(ResearchEntitiesService, UsersService, documentListSections, accomplishmentListSections, AuthService, $scope, $controller) {
+    function controller(
+        Restangular,
+        researchEntityService,
+        ResearchEntitiesService,
+        UsersService,
+        GroupsService,
+        documentListSections,
+        accomplishmentListSections,
+        AuthService,
+        $scope,
+        $controller,
+        $timeout
+    ) {
         const vm = this;
-        angular.extend(vm, $controller('SummaryInterfaceController', {$scope: $scope}));
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
 
         vm.documentListSections = documentListSections;
@@ -31,6 +46,14 @@
         vm.loggedUser = AuthService.user;
 
         vm.activeTabIndex = 0;
+        vm.types = [];
+        vm.hasTypes = false;
+
+        vm.loading = false;
+
+        let allMemberships = [];
+
+        let activeTabWatcher = null;
 
         const tabIdentifiers = [
             {
@@ -47,66 +70,76 @@
                 slug: 'accomplishments'
             }, {
                 index: 4,
-                slug: 'documents-overview',
-                tabName: 'overview',
-                getData: getData
+                slug: 'projects'
             }, {
                 index: 5,
+                slug: 'documents-overview',
+                tabName: 'overview-tab'
+            }, {
+                index: 6,
                 slug: 'bibliometric-charts',
-                tabName: 'metrics',
-                getData: getData
+                tabName: 'metrics-tab'
             }
         ];
 
+        vm.getTypeTitle = GroupsService.getTypeTitle;
+
         vm.isActiveMember = (user, group) => {
-            const groupMembership = user.groupMemberships
-                .find(groupMembership => groupMembership.group === group.id);
-
-            return groupMembership.active;
-        };
-
-        vm.getTypeTitle = (type, groups) => {
-            switch (true) {
-                case type === 'Research Line' && groups.length === 1:
-                    return 'Research line';
-                case type === 'Research Line' && groups.length > 1:
-                    return 'Research lines';
-                case type === 'Institute' && groups.length === 1:
-                    return 'Institute';
-                case type === 'Institute' && groups.length > 1:
-                    return 'Institutes';
-                case type === 'Center' && groups.length === 1:
-                    return 'Center';
-                case type === 'Center' && groups.length > 1:
-                    return 'Centers';
-                case type === 'Facility' && groups.length === 1:
-                    return 'Facility';
-                case type === 'Facility' && groups.length > 1:
-                    return 'Facilities';
-                case type === 'Directorate' && groups.length === 1:
-                    return 'Directorate';
-                case type === 'Directorate' && groups.length > 1:
-                    return 'Directorates';
-                default:
-                    return '';
+            const membership = allMemberships.find(m => m.user === user.id && m.group === group.id);
+            if (membership) {
+                return membership.active;
             }
+            return false;
         };
 
         /* jshint ignore:start */
         vm.$onInit = async () => {
+            vm.loading = true;
+
+            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
+                if (vm.activeTabIndex === 4) {
+                    $timeout(function() {
+                        $scope.$broadcast('rzSliderForceRender');
+                    });
+                }
+            });
 
             vm.user = await UsersService.getUser(vm.userId);
-            vm.groupsByType = _.groupBy(vm.user.memberships, 'type');
-
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
+            allMemberships = await researchEntityService.getAllMemberships({ user: vm.user.id });
+
+            const groupIds = vm.user.memberships.map(g => g.id);
+            vm.institute = await GroupsService.getConnectedGroups(groupIds);
+
+            if (groupIds.length > 1) {
+                vm.types = _.groupBy(vm.institute.childGroups, 'type');
+            }
+
+            if (!_.isEmpty(vm.types)) {
+                vm.hasTypes = true;
+            }
+
+            vm.loading = false;
 
             vm.initializeTabs(tabIdentifiers);
         };
-
-        async function getData() {
-            return await vm.getChartsData(vm.user);
-        }
         /* jshint ignore:end */
+
+        vm.$onDestroy = function () {
+            activeTabWatcher();
+        };
+
+        vm.getGroupTypes = (group) => {
+            return _.groupBy(group.childGroups, 'type');
+        };
+
+        vm.getLength = (subtypes) => {
+            return Object.keys(subtypes).length;
+        };
+
+        vm.isAdmin = function () {
+            return vm.loggedUser && vm.loggedUser.isAdmin();
+        };
     }
 
 })();

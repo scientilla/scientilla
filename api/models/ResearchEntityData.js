@@ -455,6 +455,21 @@ const defaultProperties = {
         definitions.privacy,
         definitions.privacyDefaultHidden
     ),
+    gender: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    nationality: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
+    dateOfBirth: _.merge(
+        {},
+        definitions.privacy,
+        definitions.privacyDefaultHidden
+    ),
     groups: {
         type: 'array',
         default: [],
@@ -666,6 +681,9 @@ const thenProperties = {
     jobTitle: definitions.ifValueCheckHiddenPrivacy,
     roleCategory: definitions.ifValueCheckHiddenPrivacy,
     phone: definitions.ifValueCheckHiddenPrivacy,
+    gender: definitions.ifValueCheckHiddenPrivacy,
+    nationality: definitions.ifValueCheckHiddenPrivacy,
+    dateOfBirth: definitions.ifValueCheckHiddenPrivacy,
     groups: {
         items: definitions.ifNameCheckHiddenPrivacy
     },
@@ -843,6 +861,9 @@ const elseProperties = {
     jobTitle: definitions.ifValueCheckPublicPrivacy,
     roleCategory: definitions.ifValueCheckPublicPrivacy,
     phone: definitions.ifValueCheckPublicPrivacy,
+    gender: definitions.ifValueCheckPublicPrivacy,
+    nationality: definitions.ifValueCheckPublicPrivacy,
+    dateOfBirth: definitions.ifValueCheckPublicPrivacy,
     groups: {
         items: definitions.ifValueCheckPublicPrivacy
     },
@@ -1189,6 +1210,12 @@ function setupProfile(userData) {
     // We store the defaults of the research entity data schema.
     const defaultProfile = defaults(defaultSchema);
 
+    const privacyDefaultPublic = 'public';
+
+    if (!_.has(userData, 'imported_data') || _.isNil(userData.imported_data)) {
+        return;
+    }
+
     // We merge the defaults with the user's profile
     if (userData && !_.isEmpty(userData.profile)) {
 
@@ -1258,6 +1285,16 @@ function setupProfile(userData) {
                     'desc'
                 ]
             );
+        }
+
+        if (_.has(userData, 'profile.gender.value')) {
+            userData.profile.gender.value = userData.imported_data.genere;
+            userData.profile.gender.privacy = privacyDefaultPublic;
+        } else {
+            userData.profile.gender = {
+                value: userData.imported_data.genere,
+                privacy: privacyDefaultPublic
+            }
         }
 
         return _.merge({}, defaultProfile, userData.profile);
@@ -1412,40 +1449,22 @@ async function saveProfile(req) {
             profile.jobTitle = researchEntityData.profile.jobTitle;
             profile.roleCategory = researchEntityData.profile.roleCategory;
             profile.phone = researchEntityData.profile.phone;
+            profile.gender = researchEntityData.profile.gender;
+            profile.nationality = researchEntityData.profile.nationality;
+            profile.dateOfBirth = researchEntityData.profile.dateOfBirth;
             profile.groups = researchEntityData.profile.groups;
 
             if (!hasFiles && _.has(profile, 'image.value') && !_.isEmpty(profile.image.value)) {
                 profile.image.value = researchEntityData.profile.image.value;
             }
+
+            profile.experiencesInternal = researchEntityData.profile.experiencesInternal;
+            profile.hidden = researchEntityData.profile.hidden;
         }
 
         // Sorting experiences
         profile.experiencesExternal = _.orderBy(
             profile.experiencesExternal,
-            [
-                experience => new moment(experience.from, ISO8601Format),
-                experience => new moment(experience.to, ISO8601Format)
-            ],
-            [
-                'desc',
-                'desc'
-            ]
-        );
-
-        profile.experiencesInternal = _.orderBy(
-            profile.experiencesInternal,
-            [
-                experience => new moment(experience.from, ISO8601Format),
-                experience => new moment(experience.to, ISO8601Format)
-            ],
-            [
-                'desc',
-                'desc'
-            ]
-        );
-
-        profile.experiences = _.orderBy(
-            profile.experiences,
             [
                 experience => new moment(experience.from, ISO8601Format),
                 experience => new moment(experience.to, ISO8601Format)

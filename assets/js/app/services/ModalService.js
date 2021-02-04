@@ -30,10 +30,12 @@
         /* jshint ignore:start */
         service.checkAndClose = async function (isCloseable, reason) {
             if (!isCloseable()) {
-                const buttonKey = await service.multipleChoiceConfirm('Unsaved data!',
+                const buttonKey = await service.multipleChoiceConfirm(
+                    'Unsaved data!',
                     '',
                     {'continue': 'Continue editing', 'discard': 'Discard changes'},
-                    false);
+                    false
+                );
 
                 if (buttonKey === 'continue') return;
             }
@@ -140,6 +142,78 @@
                 {size: 'lg'});
         };
 
+        service.openProjectDetails = function (project) {
+            const scopeVars = {
+                project: project
+            };
+
+            return openModal(`<div class="modal-header">
+                                <h3>Project details</h3>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    ng-click="vm.onClose()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <scientilla-project-details
+                                    project="vm.project"
+                                    class="project-details"></scientilla-project-details>
+                            </div>`,
+                scopeVars,
+                {size: 'lg'});
+        };
+
+        service.openPatentDetails = function (patent) {
+            const scopeVars = {
+                patent: patent
+            };
+
+            return openModal(`<div class="modal-header">
+                                <h3>Patent details</h3>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    ng-click="vm.onClose()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <scientilla-patent-details
+                                    patent="vm.patent"
+                                    class="patent-details"></scientilla-patent-details>
+                            </div>`,
+                scopeVars,
+                {size: 'lg'});
+        };
+
+        service.openPatentFamilyDetails = function (patentFamily) {
+            const scopeVars = {
+                patentFamily: patentFamily
+            };
+
+            return openModal(`<div class="modal-header">
+                                <h3>Patent family details</h3>
+                                <button
+                                    type="button"
+                                    class="close"
+                                    ng-click="vm.onClose()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+
+                            <div class="modal-body">
+                                <scientilla-patent-family-details
+                                    patent-family="vm.patentFamily"
+                                    class="patent-family-details"></scientilla-patent-family-details>
+                            </div>`,
+                scopeVars,
+                {size: 'lg'});
+        };
+
         service.openScientillaUserForm = function (user, settings = false) {
 
             const scopeVars = {
@@ -149,7 +223,7 @@
 
             return openModal(
                 `<scientilla-user-form
-                    user="vm.user"
+                    original-user="vm.user"
                     settings="vm.settings"
                     on-failure="vm.onFailure"
                     on-submit="vm.onSubmit"

@@ -190,7 +190,8 @@
             @include normalize-listing;
         }
 
-        .admin-role-association{
+        .admin-role-association,
+        .admin-cid-association{
             margin-bottom: 4rem;
 
             tr,
@@ -251,6 +252,10 @@
                     float: left;
                 }
             }
+        }
+
+        .admin-group-overview{
+
         }
     }
 
@@ -376,7 +381,8 @@
                 }
             }
 
-            .admin-role-association{
+            .admin-role-association,
+            .admin-cid-association{
                 tr{
                     display: grid;
                     grid-template-columns: 1fr 1fr 100px;

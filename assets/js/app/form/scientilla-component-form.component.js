@@ -7,6 +7,7 @@
             controller: scientillaComponentForm,
             controllerAs: 'vm',
             bindings: {
+                category: '<?',
                 structure: '=',
                 cssClass: '@',
                 onSubmit: '&',
@@ -21,10 +22,10 @@
 
     scientillaComponentForm.$inject = [
         '$scope',
-        '$rootScope'
+        '$timeout'
     ];
 
-    function scientillaComponentForm($scope, $rootScope) {
+    function scientillaComponentForm($scope, $timeout) {
         const vm = this;
 
         vm.submit = submit;
@@ -33,6 +34,7 @@
         let onChangeWatchesDeregisters = [];
         let onStructureChangeDeregisterer;
 
+        vm.options = filterStructure('option');
         vm.fields = filterStructure('field');
         vm.actions = filterStructure('action');
         vm.connectors = filterStructure('connector');
@@ -97,13 +99,15 @@
 
         function submit() {
             clearNil();
-            if (_.isFunction(vm.onSubmit()))
+            if (_.isFunction(vm.onSubmit())) {
                 vm.onSubmit()(vm.values);
+            }
         }
 
         function onStructureChange() {
             deregisterOnChanges();
 
+            vm.options = filterStructure('option');
             vm.fields = filterStructure('field');
             vm.actions = filterStructure('action');
             vm.connectors = filterStructure('connector');
@@ -121,6 +125,44 @@
             });
 
             _.forEach(vm.structure, function (struct, key) {
+
+                onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, (newOption, oldOption) => {
+                    const changedStruct = vm.structure[key];
+
+                    if (changedStruct && changedStruct.type === 'option' && newOption !== vm.option) {
+                        let refresh = false;
+
+                        vm.option = newOption;
+                        vm.fields = filterStructure('field');
+                        setFilterValue(newOption, key);
+
+                        // Remove the values that are not a field of this option and no action
+                        _.forEach(vm.values, function(value, valueKey) {
+                            if (
+                                valueKey !== key &&
+                                !_.has(vm.fields, valueKey) &&
+                                !_.has(vm.actions, valueKey)
+                            ) {
+                                delete vm.values[valueKey];
+                            }
+                        });
+
+                        for (const fieldName in vm.fields) {
+                            const field = vm.fields[fieldName];
+                            if (_.has(field, 'inputType') && field.inputType === "range") {
+                                refresh = true;
+                                break;
+                            }
+                        }
+
+                        if (refresh) {
+                            $timeout(function() {
+                                $scope.$broadcast('rzSliderForceRender');
+                            });
+                        }
+                    }
+                }));
+
                 if (struct && !_.isUndefined(struct.onChange)) {
                     onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, (newValue, oldValue) => {
                         // Execute function only if values have changed
@@ -131,10 +173,12 @@
                 }
 
                 if (!_.isUndefined(vm.structure.onChange)) {
-                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, function(evt) {
+                    onChangeWatchesDeregisters.push($scope.$watch('vm.values.' + key, () => {
                         vm.structure.onChange(vm.values);
                     }));
                 }
+
+
             });
         }
 
@@ -161,11 +205,43 @@
                 let struct = vm.structure[name];
 
                 if (struct && struct.type === type) {
-                    structs[name] = struct;
+
+                    if (_.has(struct, 'visibleFor')) {
+                        if (struct.visibleFor.indexOf(vm.option) >= 0) {
+                            structs[name] = struct;
+                        }
+                    } else {
+                        structs[name] = struct;
+                    }
                 }
             });
 
             return structs;
+        }
+
+        function setFilterValue(value, name) {
+            const structs = [];
+            Object.keys(vm.structure).forEach(function(structName) {
+                let struct = vm.structure[structName];
+
+                if (struct.dependingOn === name) {
+                    structs.push(struct);
+                }
+            });
+
+            _.forEach(structs, function (struct) {
+                let yearValue = struct.defaultValues.find(v => v.item_key === value);
+                if (_.isNil(yearValue)) {
+                    yearValue = {
+                        min: 2000,
+                        max: new Date().getFullYear()
+                    };
+                }
+                struct.values = {
+                    min: parseInt(yearValue.min),
+                    max: parseInt(yearValue.max)
+                };
+            });
         }
 
         function getObjectSize(object) {

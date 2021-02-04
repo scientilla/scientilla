@@ -3,8 +3,17 @@
         <youtube-embed video="b3UTGJbeftA" class="scopus-video"></youtube-embed>
     </div>
     <div class="col-12 col-sm-6">
-        <p>By setting a Scopus identifier (Author ID), you will allow <strong>Scientilla</strong> for finding automatically most of your publications, including metadata. The Scopus ID is used in the <strong>external</strong> section to import documents.</p>
-        <p>Learn how to retrieve your personal Scopus identifier watching the video and fill the Scopus identifier field. <a href="https://www.scopus.com/search/form.uri?display=authorLookup" target="_blank">Click here</a> to look for your identifier.</p>
+        <p>By setting your Scopus identifier (Author ID) in <strong class="text-uppercase">Scientilla</strong>, the
+            system is going to <strong>find automatically the documents linked to your Scopus profile</strong>, including
+            <strong>metadata</strong> (citations, ...). Documents imported from Scopus will be shown in the External
+            section. Both <strong>the documents imported from Scopus and documents already present in</strong>
+            <strong class="text-uppercase">Scientilla</strong> that likely belong to you or your research line will be
+            shown in the <strong>Suggested</strong> section.</p>
+
+        <p>To see how to <strong>retrieve your personal Scopus identifier</strong>, please watch the video and fill the
+            Scopus identifier field.
+            <a href="https://www.scopus.com/search/form.uri?display=authorLookup" target="_blank">Click</a> here to look
+            for your identifier.</p>
 
         <form ng-submit="vm.save(form)" name="idsForm">
             <div class="form-group has-feedback">
@@ -17,7 +26,8 @@
                     ng-model="vm.user.scopusId">
             </div>
 
-            <p>If you have also an ORCID identifier, you can insert it below.</p>
+            <p>If you have also an <strong>ORCID</strong> identifier, you can insert it below. However, documents are
+                not retrieved so far by the ORCID/WebOfScience database. </p>
             
             <div class="form-group has-feedback">
                 <label for="orcidId">Orcid id</label>
@@ -30,10 +40,14 @@
             </div>
 
             <scientilla-button
+                ng-if="vm.showSaveButton"
                 type="submit"
-                ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData">{{ vm.saveStatus.message }}</scientilla-button>
+                ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData">
+                {{ vm.saveStatus.message }}
+            </scientilla-button>
 
             <scientilla-button
+                ng-if="vm.showSaveButton"
                 type="secondary"
                 ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData"
                 ng-click="vm.cancelSave()">Cancel</scientilla-button>

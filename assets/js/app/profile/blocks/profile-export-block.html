@@ -58,7 +58,7 @@
                 <span>Skills</span>
             </label>
         </li>
-        <li>
+        <li ng-if="vm.user.isScientific()">
             <label class="form-checkbox">
                 <input
                     type="checkbox"
@@ -66,12 +66,20 @@
                 <span>Documents</span>
             </label>
         </li>
-        <li>
+        <li ng-if="vm.user.isScientific()">
             <label class="form-checkbox">
                 <input
                     type="checkbox"
                     ng-model="vm.exportOptions.accomplishments">
                 <span>Accomplishments</span>
+            </label>
+        </li>
+        <li ng-if="vm.user.isScientific()">
+            <label class="form-checkbox">
+                <input
+                    type="checkbox"
+                    ng-model="vm.exportOptions.invitedTalks">
+                <span>Invited talks</span>
             </label>
         </li>
     </ul>
@@ -86,15 +94,20 @@
         <li>
             <button
                 class="btn btn-outline-primary"
+                ng-disabled="vm.isExporting['doc']"
                 ng-click="vm.exportProfile('doc')">
-                <i class="far fa-file-word fa-left"></i>DOCX
+                <span ng-if="!vm.isExporting['doc']"><i class="far fa-file-word fa-left"></i>DOCX</span>
+                <span ng-if="vm.isExporting['doc']"><i class="fas fa-spinner fa-spin fa-left"></i>Generating DOCX</span>
+
             </button>
         </li>
         <li>
             <button
                 class="btn btn-outline-primary"
+                ng-disabled="vm.isExporting['pdf']"
                 ng-click="vm.exportProfile('pdf')">
-                <i class="far fa-file-pdf fa-left"></i>PDF
+                <span ng-if="!vm.isExporting['pdf']"><i class="far fa-file-pdf fa-left"></i>PDF</span>
+                <span ng-if="vm.isExporting['pdf']"><i class="fas fa-spinner fa-spin fa-left"></i>Generating PDF</span>
             </button>
         </li>
     </ul>

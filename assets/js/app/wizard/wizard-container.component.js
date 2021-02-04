@@ -17,14 +17,16 @@
         'Notification',
         'ModalService',
         '$scope',
+        'UsersService'
     ];
 
-    function wizardContainer(context, Notification, ModalService, $scope) {
+    function wizardContainer(context, Notification, ModalService, $scope, UsersService) {
         const vm = this;
 
         vm.currentStep = 0;
-        vm.subResearchEntity = context.getSubResearchEntity();
-        vm.originalSubResearchEntity = angular.copy(vm.subResearchEntity);
+
+        vm.originalSubResearchEntity = context.getSubResearchEntity();
+        vm.subResearchEntity = angular.copy(vm.originalSubResearchEntity);
 
         vm.isStep = isStep;
         vm.closeModal = closeModal;
@@ -34,28 +36,41 @@
         vm.isNotPrev = isNotPrev;
         vm.isEnd = isEnd;
         vm.getStepsNumber = getStepsNumber;
+        vm.chooseType = chooseType;
 
         const accessLevels = {
             GROUP_ADMIN: 'groupAdmin',
             STANDARD: 'standard'
         };
 
+        const fields = [
+            'orcidId',
+            'scopusId',
+            'config'
+        ];
+
         const allSteps = [
             {
-                name: 'welcome',
-                component: 'wizard-welcome',
+                name: 'new-features',
+                component: 'wizard-new-features',
+                accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
+                subResearchEntityToSave: false
+            },
+            {
+                name: 'select-scientific-production',
+                component: 'wizard-select-scientific-production',
+                accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
+                subResearchEntityToSave: false
+            },
+            {
+                name: 'scientific-production',
+                component: 'wizard-scientific-production',
                 accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
                 subResearchEntityToSave: false
             },
             {
                 name: 'scopus-edit',
                 component: 'wizard-scopus-edit',
-                accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
-                subResearchEntityToSave: false
-            },
-            {
-                name: 'tutorial',
-                component: 'wizard-tutorial',
                 accessLevels: [accessLevels.GROUP_ADMIN, accessLevels.STANDARD],
                 subResearchEntityToSave: true
             },
@@ -112,7 +127,6 @@
 
         // You can close the modal once completed the wizard
         function closeModal() {
-
             if (!steps[vm.currentStep].subResearchEntityToSave) {
                 vm.resolve.callbacks.onClose();
                 return;
@@ -122,7 +136,11 @@
             if (vm.resolve.data.steps.includes('alias-edit'))
                 vm.subResearchEntity.alreadyOpenedSuggested = true;
 
-            return vm.subResearchEntity.save()
+            updateUserData();
+            return UsersService.save(vm.subResearchEntity)
+                .then(() => {
+                    vm.originalSubResearchEntity = angular.copy(vm.subResearchEntity);
+                })
                 .then(() => vm.resolve.callbacks.onClose())
                 .catch(() => Notification.warning("Failed to save user"));
         }
@@ -219,6 +237,33 @@
                         vm.resolve.callbacks.onClose();
                     }
                 }
+            }
+        }
+
+        function updateUserData() {
+            const subResearchEntity = context.getSubResearchEntity();
+            for (const key of fields) {
+                subResearchEntity[key] = vm.subResearchEntity[key];
+            }
+        }
+
+        function chooseType(type) {
+            vm.subResearchEntity.config.scientific = type;
+
+            if (type) {
+                updateUserData();
+                UsersService.save(vm.subResearchEntity)
+                    .then(() => {
+                        vm.originalSubResearchEntity = angular.copy(vm.subResearchEntity);
+                        setStep('next');
+                    });
+            } else {
+                vm.subResearchEntity.alreadyAccess = true;
+                updateUserData();
+                UsersService.save(vm.subResearchEntity)
+                    .then(() => {
+                        vm.resolve.callbacks.onClose();
+                    });
             }
         }
     }

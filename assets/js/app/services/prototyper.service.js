@@ -10,8 +10,7 @@
         'DocumentKinds',
         'documentFieldsRules',
         'documentOrigins',
-        'ValidateService',
-        'ExternalConnectorService'
+        'ValidateService'
     ];
 
     function Prototyper(
@@ -20,8 +19,7 @@
         DocumentKinds,
         documentFieldsRules,
         documentOrigins,
-        ValidateService,
-        ExternalConnectorService
+        ValidateService
     ) {
         const service = {
             toUserModel: toUserModel,
@@ -41,7 +39,11 @@
             toTagLabelModel: toTagLabelModel,
             toTagLabelsCollection: applyToAll(toTagLabelModel),
             toAccomplishmentModel: toAccomplishmentModel,
-            toAccomplishmentsCollection: applyToAll(toAccomplishmentModel)
+            toAccomplishmentsCollection: applyToAll(toAccomplishmentModel),
+            toProjectModel: toProjectModel,
+            toProjectsCollection: applyToAll(toProjectModel),
+            toPatentModel: toProjectModel,
+            toPatentsCollection: applyToAll(toPatentModel),
         };
         const userPrototype = {
             getAliases: function () {
@@ -52,8 +54,8 @@
                     surname = '';
 
                 switch (true) {
-                    case !_.isEmpty(this.display_name):
-                        name = this.display_name;
+                    case !_.isEmpty(this.displayName):
+                        name = this.displayName;
                         break;
                     case !_.isEmpty(this.name):
                         name = this.name;
@@ -64,8 +66,8 @@
                 }
 
                 switch (true) {
-                    case !_.isEmpty(this.display_surname):
-                        surname = this.display_surname;
+                    case !_.isEmpty(this.displaySurname):
+                        surname = this.displaySurname;
                         break;
                     case !_.isEmpty(this.surname):
                         surname = this.surname;
@@ -124,7 +126,17 @@
                 return [userConstants.role.GUEST, userConstants.role.EVALUATOR].includes(this.role);
             },
             isSuperViewer: function () {
-                return [userConstants.role.ADMINISTRATOR, userConstants.role.EVALUATOR].includes(this.role);
+                return [
+                    userConstants.role.SUPERUSER,
+                    userConstants.role.ADMINISTRATOR,
+                    userConstants.role.EVALUATOR
+                ].includes(this.role);
+            },
+            isScientific: function () {
+                if (_.has(this.config, 'scientific') && this.config.scientific) {
+                    return true;
+                }
+                return false;
             }
         };
         const groupPrototype = {
@@ -203,6 +215,9 @@
                     }, []);
 
                 return interactions.map(i => i.value);
+            },
+            isScientific: function () {
+                return true;
             }
         };
 
@@ -446,6 +461,18 @@
             }
         };
 
+        const projectPrototype = {
+            getPILimit: function () {
+                return 10;
+            },
+        };
+
+        const patentPrototype = {
+            getAuthorLimit: function () {
+                return 10;
+            },
+        };
+
         function initializeAffiliations(document) {
             _.forEach(document.authorships, a => {
                 if (a.affiliations)
@@ -480,6 +507,7 @@
             service.toUsersCollection(group.allMembers);
             service.toDocumentsCollection(group.documents);
             service.toGroupsCollection(group.childGroups);
+            service.toGroupsCollection(group.parentGroups);
             return group;
         }
 
@@ -498,6 +526,21 @@
             service.toUsersCollection(accomplishment.verifiedUsers);
             service.toGroupsCollection(accomplishment.verifiedGroups);
             return accomplishment;
+        }
+
+        function toProjectModel(project) {
+            _.defaultsDeep(project, projectPrototype);
+            service.toUsersCollection(project.verifiedUsers);
+            service.toUsersCollection(project.pi);
+            return project;
+        }
+
+        function toPatentModel(patent) {
+            _.defaultsDeep(patent, patentPrototype);
+            service.toUsersCollection(patent.verifiedUsers);
+            service.toGroupsCollection(patent.verifiedGroups);
+            service.toUsersCollection(patent.authors);
+            return patent;
         }
 
         function checkDuplicates(document) {

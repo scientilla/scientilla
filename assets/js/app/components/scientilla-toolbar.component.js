@@ -137,9 +137,10 @@
 
         function openWizard() {
             ModalService.openWizard([
-                'welcome',
+                'new-features',
+                'select-scientific-production',
+                'scientific-production',
                 'scopus-edit',
-                'tutorial',
                 'admin-tutorial',
             ], {
                 isClosable: true,

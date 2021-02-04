@@ -1,4 +1,4 @@
-/* global DocumentTypes, SourceTypes */
+/* global DocumentTypes, SourceTypes, ResearchItemTypes */
 // Exporter.js - in api/services
 
 const lescape = require('escape-latex');
@@ -9,9 +9,10 @@ const _ = require('lodash');
 module.exports = {
     documentsToCsv,
     documentsToBibtex,
-    accomplishmentsToCsv
+    accomplishmentsToCsv,
+    projectsToCsv,
+    patentsToCsv
 };
-
 
 function accomplishmentsToCsv(researchItems) {
     const rows = [[
@@ -52,6 +53,125 @@ function accomplishmentsToCsv(researchItems) {
     return csv;
 }
 
+function projectsToCsv(researchItems) {
+    const rows = [[
+        'Title',
+        'Abstract',
+        'Type',
+        'Code',
+        'Acronym',
+        'Start date',
+        'End date',
+        'Funding type',
+        'Action type',
+        'Role',
+        'Status',
+        'Institute budget',
+        'Institute funding',
+    ]].concat(researchItems.map(ri => {
+        const researchItem = ri.toJSON();
+        const row = [];
+        row.push(researchItem.title);
+        row.push(researchItem.abstract);
+        row.push(researchItem.type.label);
+        row.push(researchItem.code);
+        row.push(researchItem.acronym);
+        row.push(researchItem.startDate);
+        row.push(researchItem.endDate);
+
+        if (researchItem.type.key === ResearchItemTypes.PROJECT_COMPETITIVE) {
+            row.push(researchItem.projectType);
+        } else {
+            row.push('/');
+        }
+
+        if (researchItem.type.key === ResearchItemTypes.PROJECT_COMPETITIVE) {
+            row.push(researchItem.projectType2);
+        } else {
+            row.push('/');
+        }
+
+        row.push(researchItem.role);
+        row.push(researchItem.status);
+        row.push(researchItem.projectData.instituteBudget);
+        row.push(researchItem.projectData.instituteContribution);
+
+        return row;
+    }));
+
+    let csv = 'data:text/csv;charset=utf-8,';
+
+    rows.forEach(function (rowArray) {
+        csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
+            .join(',') + '\r\n';
+    });
+
+    return csv;
+}
+
+function patentsToCsv(researchItems) {
+    const rows = [[
+        'Title',
+        'Authors',
+        'Code',
+        'Abandoned expired assigned date',
+        'Application',
+        'Assignees',
+        'Attorney',
+        'Espacenet URL',
+        'Filing date',
+        'Investors',
+        'Issue date',
+        'Italian',
+        'Note',
+        'Patent',
+        'Patsnap URL',
+        'Priority',
+        'Priority pct expiration date',
+        'Publication date',
+        'Research domains',
+        'Research lines',
+        'Research programs',
+        'Statuses',
+    ]].concat(researchItems.map(ri => {
+        const researchItem = ri.toJSON();
+        const row = [];
+
+        row.push(researchItem.patentData.title);
+        row.push(researchItem.authorsStr);
+        row.push(researchItem.code);
+        row.push(researchItem.patentData.abandonedExpiredAssignedDate);
+        row.push(researchItem.patentData.application);
+        row.push(researchItem.patentData.assignees.map(a => a.name).join(', '));
+        row.push(researchItem.patentData.attorney);
+        row.push(researchItem.patentData.espacenetUrl);
+        row.push(researchItem.patentData.filingDate);
+        row.push(researchItem.patentData.inventors.map(i => i.surname + ' ' + i.name).join(', '));
+        row.push(researchItem.patentData.issueDate);
+        row.push(researchItem.patentData.italian);
+        row.push(researchItem.patentData.note);
+        row.push(researchItem.patentData.patent);
+        row.push(researchItem.patentData.patsnapUrl);
+        row.push(researchItem.patentData.priority);
+        row.push(researchItem.patentData.priorityPctExpirationDate);
+        row.push(researchItem.patentData.publicationDate);
+        row.push(researchItem.patentData.researchDomain.map(rd => rd.name).join(', '));
+        row.push(researchItem.patentData.researchLines.map(rl => rl.name).join(', '));
+        row.push(researchItem.patentData.researchPrograms.map(rp => rp.name).join(', '));
+        row.push(researchItem.patentData.statuses.map(s => s.description + ' ' + s.attachedAt).join(', '));
+
+        return row;
+    }));
+
+    let csv = 'data:text/csv;charset=utf-8,';
+
+    rows.forEach(function (rowArray) {
+        csv += rowArray.map(r => r ? '"' + r.toString().replace(/"/g, '""') + '"' : '""')
+            .join(',') + '\r\n';
+    });
+
+    return csv;
+}
 
 function documentsToCsv(documents) {
     const rows = [[
@@ -225,7 +345,8 @@ function getBibtex(document) {
         'MISC': {
             required: [
                 'author',
-                'title'
+                'title',
+                'year'
             ],
             optional: []
         },

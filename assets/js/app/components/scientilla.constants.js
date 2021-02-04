@@ -4,6 +4,7 @@
     const userConstants = {
         role: {
             USER: 'user',
+            SUPERUSER: 'superuser',
             ADMINISTRATOR: 'administrator',
             GUEST: 'guest',
             EVALUATOR: 'evaluator',
@@ -347,6 +348,11 @@
 
     const pathProfileImages = '/profile/images';
 
+    const genders = {
+        'F': 'Female',
+        'M': 'Male'
+    };
+
     angular.module('app')
         .constant('pageSize', 50)
         .constant('userConstants', userConstants)
@@ -364,5 +370,6 @@
         .constant('documentCategories', documentCategories)
         .constant('documentActions', documentActions)
         .constant('researchItemTypes', researchItemTypes)
-        .constant('pathProfileImages', pathProfileImages);
+        .constant('pathProfileImages', pathProfileImages)
+        .constant('genders', genders);
 })();

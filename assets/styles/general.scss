@@ -28,6 +28,17 @@ body{
     }
 }
 
+hr{
+    &.extra-margin{
+        margin-top: 3rem;
+        margin-bottom: 3rem;
+    }
+}
+
+.hidden{
+    display: none;
+}
+
 .main-view{
     position: relative;
     z-index: 1;

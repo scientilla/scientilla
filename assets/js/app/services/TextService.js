@@ -7,8 +7,6 @@
     function TextService() {
         let service = {};
 
-        service.unsavedData = [];
-
         service.joinStrings = (strings = [], seperator = ', ') => {
             return _.filter(strings).join(seperator);
         };

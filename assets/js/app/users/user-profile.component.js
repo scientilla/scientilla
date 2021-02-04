@@ -11,9 +11,19 @@
             }
         });
 
-    controller.$inject = ['UsersService', 'researchEntityService', 'ResearchEntitiesService', 'AccomplishmentService'];
+    controller.$inject = [
+        'UsersService',
+        'researchEntityService',
+        'ResearchEntitiesService',
+        'AccomplishmentService'
+    ];
 
-    function controller(UsersService, researchEntityService, ResearchEntitiesService, AccomplishmentService) {
+    function controller(
+        UsersService,
+        researchEntityService,
+        ResearchEntitiesService,
+        AccomplishmentService
+    ) {
         const vm = this;
 
         vm.urlAllDocuments = '/#/users/' + vm.user.id + '/documents';
@@ -33,25 +43,31 @@
 
         /* jshint ignore:start */
         vm.$onInit = async () => {
-            vm.profile = await UsersService.getUserProfile(vm.user.researchEntity);
+            vm.researchEntity = vm.user.researchEntity;
+            vm.profile = await UsersService.getUserProfile(vm.researchEntity);
 
             vm.loading = false;
 
-            vm.loadingDocuments = true;
-            vm.loadingAccomplishments = true;
-            setNumberOfItems();
+            if (vm.user.isScientific()) {
+                vm.loadingDocuments = true;
+                vm.loadingAccomplishments = true;
+                setNumberOfItems();
 
-            researchEntityService.getDocuments(vm.user).then(function (documents) {
-                vm.documents = documents;
+
+                vm.documents = await researchEntityService.getDocuments(vm.user, {limit: 1}, false, []);
+                vm.favoriteDocuments = await researchEntityService.getDocuments(vm.user, {}, true, []);
                 vm.loadingDocuments = false;
                 setNumberOfItems();
-            });
 
-            vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
-            vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {});
-            vm.loadingAccomplishments = false;
+                vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
+                vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {}, false, []);
+                vm.favoriteAccomplishments = await AccomplishmentService.get(vm.researchEntity, {}, true, []);
+                vm.loadingAccomplishments = false;
+            }
+
             setNumberOfItems();
         };
+
         /* jshint ignore:end */
 
         function setNumberOfItems() {
@@ -80,11 +96,19 @@
                 count++;
             }
 
-            if (vm.documents.length > 0 || vm.loadingDocuments) {
+            if (
+                vm.documents.length > 0 ||
+                vm.loadingDocuments &&
+                vm.user.isScientific()
+            ) {
                 count++;
             }
 
-            if (vm.accomplishments.length > 0 || vm.loadingAccomplishments) {
+            if (
+                vm.accomplishments.length > 0 ||
+                vm.loadingAccomplishments &&
+                vm.user.isScientific()
+            ) {
                 count++;
             }
 

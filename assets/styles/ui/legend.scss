@@ -1,0 +1,219 @@
+.legend-container{
+    position: relative;
+    margin-bottom: 3rem;
+
+    &.add-border{
+        padding-bottom: 3rem;
+        border-bottom: .1rem solid $gray-200;
+    }
+
+    .legend{
+        max-height: 25rem;
+        overflow: hidden;
+
+        &.expand{
+            max-height: none;
+        }
+    }
+
+    .expand-button{
+        position: absolute;
+        left: 50%;
+        bottom: -1.1rem;
+        width: 6rem;
+        margin-left: -3rem;
+        padding: .5rem .5rem;
+        font-size: 1rem;
+        line-height: 1rem;
+        border-color: $gray-200;
+        color: $gray-400;
+        background: $white;
+
+        &.active,
+        &:hover,
+        &:focus:hover{
+            color: $white;
+            border-color: $gray;
+            background: $gray;
+        }
+
+        .see-more-text{
+            display: block;
+        }
+
+        .see-less-text{
+            display: none;
+        }
+
+        &.show-less{
+            .see-more-text{
+                display: none;
+            }
+
+            .see-less-text{
+                display: block;
+            }
+        }
+    }
+}
+
+.legend{
+    @include normalize-listing;
+    width: 100%;
+
+    .color{
+        display: block;
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: .3rem;
+    }
+
+    .colorize-text{
+        color: $gray-400;
+    }
+
+    .content{
+        .percentage-column{
+            min-width: 6.1rem;
+        }
+    }
+
+    &.legend-default{
+        & > li{
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: auto 1fr auto auto;
+            align-items: center;
+
+            & + li {
+                margin-top: 1rem;
+                padding-top: 1rem;
+                border-top: .1rem solid $gray-100;
+            }
+        }
+
+        .content{
+            & > * {
+                padding-right: 2rem;
+                padding-left: 2rem;
+
+                &:first-child{
+                    padding-left: 0px;
+                    padding-right: 0px;
+                }
+
+                &:last-child{
+                    padding-right: 0px;
+                }
+            }
+
+            .percentage-column{
+                text-align: right;
+            }
+        }
+    }
+
+    &.legend-roles{
+        & > li {
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+
+            & + li {
+                .content{
+                    border-top: .1rem solid $gray-100;
+                }
+            }
+        }
+
+        .checkbox-char-chart-container{
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-template-rows: auto;
+
+            .chart-checkbox{
+                margin-left: -1.1rem;
+                input{
+                    & + span{
+                        padding: 1.1rem;
+                    }
+                }
+            }
+        }
+
+        .bar-chart{
+            margin-right: 2rem;
+            padding-top: 1.1rem;
+
+            .chart{
+                position: relative;
+                display: block;
+                text-align: right;
+
+                &:after{
+                    position: absolute;
+                    top: 50%;
+                    left: 0px;
+                    z-index: -1;
+                    display: block;
+                    width: 100%;
+                    height: 1rem;
+                    margin-top: -.5rem;
+                    content: '';
+                    background: $gray-100;
+                    border-radius: .3rem;
+                }
+
+                span{
+                    display: inline-block;
+                    height: 1.5rem;
+                    vertical-align: middle;
+                    border-radius: .3rem;
+                    transition: width .3s;
+                }
+            }
+        }
+
+        .content{
+            padding-top: .4rem;
+
+            span {
+                display: block;
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .legend{
+
+        &.legend-roles{
+            .content{
+                display: grid;
+                height: 100%;
+                grid-template-rows: auto;
+                grid-template-columns: 1fr auto auto;
+                align-items: center;
+
+                & > * {
+                    padding-right: 2rem;
+                    padding-left: 2rem;
+
+                    &:first-child{
+                        padding-left: 0px;
+                        padding-right: 0px;
+                    }
+
+                    &:last-child{
+                        padding-right: 0px;
+                    }
+                }
+
+                .percentage-column{
+                    text-align: right;
+                }
+            }
+        }
+    }
+}

@@ -1,4 +1,4 @@
-/* global require, User, Group, Document, sails, Auth, Authorship, SqlService, Alias, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate, ResearchEntity, Profile, ChartData */
+/*global require, User, Group, Document, sails, Alias, Auth, Authorship, SqlService, PerformanceCalculator, DocumentKinds, DocumentNotDuplicate, ResearchEntity, Profile, ChartData */
 'use strict';
 
 /**
@@ -16,7 +16,10 @@ const Promise = require("bluebird");
 const SubResearchEntity = require('../lib/SubResearchEntity');
 
 const USER = 'user';
+const SUPERUSER = 'superuser';
 const ADMINISTRATOR = 'administrator';
+const EVALUATOR = 'evaluator';
+const GUEST = 'guest';
 
 module.exports = _.merge({}, SubResearchEntity, {
     DEFAULT_SORTING: {
@@ -25,7 +28,10 @@ module.exports = _.merge({}, SubResearchEntity, {
         updatedAt: 'desc'
     },
     USER: USER,
+    SUPERUSER: SUPERUSER,
     ADMINISTRATOR: ADMINISTRATOR,
+    EVALUATOR: EVALUATOR,
+    GUEST: GUEST,
     attributes: require('waterlock').models.user.attributes({
         //Constants
         username: {
@@ -62,7 +68,13 @@ module.exports = _.merge({}, SubResearchEntity, {
         },
         role: {
             type: 'STRING',
-            enum: [USER, ADMINISTRATOR],
+            enum: [
+                USER,
+                SUPERUSER,
+                ADMINISTRATOR,
+                EVALUATOR,
+                GUEST
+            ],
             defaultsTo: USER
         },
         orcidId: {
@@ -74,13 +86,18 @@ module.exports = _.merge({}, SubResearchEntity, {
         jobTitle: {
             type: 'STRING'
         },
-        display_name: {
+        displayName: {
+            columnName: 'display_name',
             type: 'STRING',
             defaultsTo: ""
         },
-        display_surname: {
+        displaySurname: {
+            columnName: 'display_surname',
             type: 'STRING',
             defaultsTo: ""
+        },
+        config: {
+            type: 'JSON'
         },
         researchEntity: {
             columnName: 'research_entity',
@@ -188,6 +205,7 @@ module.exports = _.merge({}, SubResearchEntity, {
         userData: {
             collection: 'userData',
             via: 'user',
+            unique: true
         },
         lastsynch: 'datetime',
         active: {
@@ -246,7 +264,7 @@ module.exports = _.merge({}, SubResearchEntity, {
         // Check if username is unique
         await User.checkUsername(newUser);
         // Return created user
-        return await User.create(newUser);
+        return User.create(newUser);
     },
     createCompleteUser: async function (params) {
         params.username = _.toLower(params.username);
@@ -318,8 +336,8 @@ module.exports = _.merge({}, SubResearchEntity, {
     createAliases: async function (user) {
         let generatedAliasesStr = User.generateAliasesStr(user.name, user.surname)
 
-        if (_.has(user, 'display_name') && _.has(user, 'display_surname')) {
-            generatedAliasesStr = generatedAliasesStr.concat(User.generateAliasesStr(user.display_name, user.display_surname));
+        if (_.has(user, 'displayName') && _.has(user, 'displaySurname')) {
+            generatedAliasesStr = generatedAliasesStr.concat(User.generateAliasesStr(user.displayName, user.displaySurname));
         }
 
         const aliases = _.uniq(generatedAliasesStr).map(str => ({
@@ -587,8 +605,6 @@ module.exports = _.merge({}, SubResearchEntity, {
         await ResearchEntity.createResearchEntity(User, user, 'user');
 
         await User.createAliases(user);
-        if (User.isInternalUser(user))
-            await Group.addUserToDefaultGroup(user);
 
         cb();
     },

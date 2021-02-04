@@ -9,7 +9,7 @@
             controllerAs: 'vm',
             bindings: {
                 settings: '<?',
-                user: "<",
+                originalUser: "<",
                 onFailure: "&",
                 onSubmit: "&",
                 checkAndClose: "&"
@@ -31,24 +31,53 @@
         '$timeout'
     ];
 
-    function UserFormController(UsersService, Notification, $scope, AuthService, GroupsService, Prototyper, userConstants, context, ModalService, ValidateService, $timeout) {
+    function UserFormController(
+        UsersService,
+        Notification,
+        $scope,
+        AuthService,
+        GroupsService,
+        Prototyper,
+        userConstants,
+        context,
+        ModalService,
+        ValidateService,
+        $timeout
+    ) {
         const vm = this;
         vm.submit = submit;
         vm.cancel = cancel;
         vm.checkValidation = checkValidation;
         vm.fieldValueHasChanged = fieldValueHasChanged;
 
+        const fields = [
+            'username',
+            'name',
+            'surname',
+            'slug',
+            'jobTitle',
+            'orcidId',
+            'scopusId',
+            'password',
+            'role',
+            'config'
+        ];
+
         vm.userIsAdmin = AuthService.user.role === userConstants.role.ADMINISTRATOR;
         vm.roleSelectOptions = [
             {label: 'User', value: userConstants.role.USER},
+            {label: 'Super user', value: userConstants.role.SUPERUSER},
             {label: 'Administrator', value: userConstants.role.ADMINISTRATOR}
+        ];
+        vm.scientificSelectOptions = [
+            {label: 'Yes', value: true},
+            {label: 'No', value: false}
         ];
         vm.invalidAttributes = {};
         const deregisteres = [];
 
         vm.errors = [];
         vm.errorText = '';
-
         let originalUserJson = '';
         let timeout;
 
@@ -57,13 +86,19 @@
         vm.title = 'Create a new user';
 
         vm.$onInit = function () {
+            const subResearchEntity = context.getSubResearchEntity();
+            if (subResearchEntity.id === vm.originalUser.id) {
+                vm.user = angular.copy(subResearchEntity);
+            } else {
+                vm.user = angular.copy(vm.originalUser);
+            }
+
             deregisteres.push($scope.$watch('vm.user.name', nameChanged));
             deregisteres.push($scope.$watch('vm.user.surname', nameChanged));
 
-            const originalUser = angular.copy(vm.user);
-            if (!Array.isArray(originalUser.aliases))
-                originalUser.aliases = [];
-            originalUserJson = angular.toJson(originalUser);
+            if (!Array.isArray(vm.user.aliases))
+                vm.user.aliases = [];
+            originalUserJson = angular.toJson(vm.user);
 
             if (typeof vm.settings === 'undefined' || vm.settings === false) {
                 if (vm.user.id) {
@@ -141,6 +176,7 @@
                     } else {
                         Notification.success("User data saved");
                         aliasesChanged();
+                        updateUserData();
                         if (_.isFunction(vm.onSubmit()))
                             vm.onSubmit()(1);
                     }
@@ -160,7 +196,7 @@
 
         function aliasesChanged() {
             const subResearchEntity = context.getSubResearchEntity();
-            if (subResearchEntity.getType() === 'user')
+            if (subResearchEntity.id === vm.user.id && subResearchEntity.getType() === 'user')
                 subResearchEntity.aliases = vm.user.aliases;
         }
 
@@ -172,7 +208,9 @@
         }
 
         function cancel() {
-            vm.checkAndClose()(() => angular.toJson(vm.user) === originalUserJson);
+            if (_.isFunction(vm.checkAndClose())) {
+                vm.checkAndClose()(() => originalUserJson === angular.toJson(vm.user));
+            }
         }
 
         function executeOnFailure() {
@@ -180,5 +218,13 @@
                 vm.onFailure()();
         }
 
+        function updateUserData() {
+            const subResearchEntity = context.getSubResearchEntity();
+            if (subResearchEntity.id === vm.user.id) {
+                for (const key of fields) {
+                    subResearchEntity[key] = vm.user[key];
+                }
+            }
+        }
     }
 })();

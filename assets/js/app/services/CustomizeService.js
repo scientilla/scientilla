@@ -4,10 +4,11 @@
         .factory("CustomizeService", CustomizeService);
 
     CustomizeService.$inject = [
-        'Restangular'
+        'Restangular',
+        'ChartService'
     ];
 
-    function CustomizeService(Restangular) {
+    function CustomizeService(Restangular, ChartService) {
         let customizationSettings = null;
         return {
             getCustomizationsSync: getCustomizationsSync,
@@ -53,6 +54,7 @@
 
         async function refreshCustomizeSettings() {
             customizationSettings = await Restangular.one('customize').get();
+            ChartService.setStyles(customizationSettings);
         }
 
         /* jshint ignore:end */

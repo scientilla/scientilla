@@ -1,0 +1,19 @@
+<label>
+    <span ng-bind-html="vm.structure.label"></span>
+    <span ng-if="vm.structure.required">*</span>
+</label>
+<span
+    class="sub-label"
+    ng-if="vm.structure.subLabel"
+    ng-bind-html="vm.structure.subLabel"></span>
+<rzslider
+    rz-slider-model="vm.min"
+    rz-slider-high="vm.max"
+    rz-slider-options="vm.options"
+    placeholder="{{vm.structure.placeholder}}"
+    ng-class="{'is-invalid' : vm.errors}"
+    ng-disabled="vm.structure.disabled"
+    ng-blur="vm.structure.required && vm.validate(vm.name)"></rzslider>
+<scientilla-error-messages
+    class="error-messages"
+    errors="vm.errors"></scientilla-error-messages>

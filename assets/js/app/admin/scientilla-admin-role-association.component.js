@@ -29,12 +29,15 @@
             registerTab(vm);
 
             const res = await Restangular.one('general-setting', 'role-associations').get();
-            for (const association of res.data) {
-                vm.associations.push({
-                    originalRole: association.originalRole,
-                    roleCategory: association.roleCategory,
-                    editable: false
-                })
+
+            if (_.has(res, 'data') && !_.isEmpty(res.data)) {
+                for (const association of res.data) {
+                    vm.associations.push({
+                        originalRole: association.originalRole,
+                        roleCategory: association.roleCategory,
+                        editable: false
+                    })
+                }
             }
         };
         /* jshint ignore:end */

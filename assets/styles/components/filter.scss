@@ -1,4 +1,5 @@
 .filter-form-container{
+    .filter-option-listing,
     .filter-connector-listing,
     .filter-field-listing,
     .filter-action-listing{
@@ -11,11 +12,41 @@
         }
     }
 
+    .filter-field-listing{
+        &.project{
+            border-left: 0px;
+        }
+    }
+
+    .filter-option-listing{
+        strong{
+            display: inline-block;
+            margin-bottom: .5rem;
+            vertical-align: top;
+        }
+    }
+
     .items-per-page{
         label{
             font-weight: normal;
             margin-right: 1rem;
         }
+    }
+
+    label{
+        display: inline-block;
+        vertical-align: top;
+
+        &.form-radio{
+            display: block;
+        }
+    }
+
+    .sub-label{
+        display: inline-block;
+        vertical-align: top;
+        font-size: 1rem;
+        line-height: 1.8rem;
     }
 }
 
@@ -51,6 +82,28 @@
             &.actions-4{
                 grid-template-columns: auto 1fr auto auto;
             }
+
+            &.actions-5{
+                grid-template-columns: auto auto 1fr auto;
+
+                & > li{
+                    &:nth-child(1){
+                        @include set-grid(1, 1, 1, 1);
+                    }
+                    &:nth-child(2){
+                        @include set-grid(1, 2, 1, 1);
+                    }
+                    &:nth-child(3){
+                        @include set-grid(1, 3, 1, 1);
+                    }
+                    &:nth-child(4){
+                        @include set-grid(1, 4, 1, 1);
+                    }
+                    &:nth-child(5){
+                        @include set-grid(2, 1, 1, 4);
+                    }
+                }
+            }
         }
 
         .filter-connector-listing{
@@ -72,8 +125,11 @@
         .filter-field-listing{
             &.fields-2,
             &.fields-3,
+            &.fields-4,
             &.fields-5,
-            &.fields-6{
+            &.fields-6,
+            &.fields-7,
+            &.fields-8{
                 grid-template-columns: 1fr 1fr;
             }
         }
@@ -95,6 +151,10 @@
                 grid-template-columns: 1fr 200px 1fr;
             }
 
+            &.fields-4{
+                grid-template-columns: 1fr 1fr 100px 100px;
+            }
+
             &.fields-5{
                 grid-template-columns: 3fr 3fr 100px 100px 2fr;
             }
@@ -102,10 +162,59 @@
             &.fields-6{
                 grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
             }
+
+            &.fields-7{
+                grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr 2fr;
+            }
+
+            &.project,
+            &.verified-project{
+                &.fields-4{
+                    grid-template-columns: 3fr 3fr 3fr 160px;
+                }
+
+                &.fields-6{
+                    grid-template-columns: 3fr 3fr 3fr 160px 2fr 2fr;
+                }
+
+                &.fields-7{
+                    grid-template-columns: 3fr 3fr 3fr 160px 2fr 2fr 2fr;
+                }
+            }
+
+            &.user{
+                &.fields-7{
+                    grid-template-columns: 4fr 4fr 3fr 3fr 3fr 2fr 2fr;
+                }
+            }
         }
 
         .filter-connector-listing{
             grid-template-columns: 3fr 3fr 100px 100px 2fr 2fr;
+        }
+
+        .filter-action-listing{
+            &.actions-5{
+                grid-template-columns: auto auto 1fr auto auto;
+
+                & > li{
+                    &:nth-child(1){
+                        @include set-grid(1, 1, 1, 1);
+                    }
+                    &:nth-child(2){
+                        @include set-grid(1, 2, 1, 1);
+                    }
+                    &:nth-child(3){
+                        @include set-grid(1, 3, 1, 1);
+                    }
+                    &:nth-child(4){
+                        @include set-grid(1, 4, 1, 1);
+                    }
+                    &:nth-child(5){
+                        @include set-grid(1, 5, 1, 1);
+                    }
+                }
+            }
         }
     }
 }

@@ -11,6 +11,8 @@
         'LocalStorageModule',
         'scientilla-form',
         'color.picker',
+        'rzSlider',
+        'iso-3166-country-codes',
 
         /* Feature areas */
         'users',
@@ -22,6 +24,8 @@
         'summary',
         'profile',
         'accomplishments',
-        'documentation'
+        'documentation',
+        'projects',
+        'patents'
     ]);
 })();

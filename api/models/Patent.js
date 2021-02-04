@@ -36,6 +36,10 @@ module.exports = _.merge({}, BaseModel, {
             type: 'STRING',
             columnName: 'authors_str'
         },
+        familyDocket: {
+            type: 'STRING',
+            columnName: 'family_docket'
+        },
         patentFamilyData: {
             type: 'JSON',
             columnName: 'patent_family_data'
@@ -73,6 +77,11 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'researchentity',
             via: 'suggestedpatents',
             through: 'patentsuggestion'
+        },
+        favorites: {
+            collection: 'researchentity',
+            via: 'favoritepatents',
+            through: 'patentfavorite'
         },
         async isValid() {
             const ResearchItemModel = Patent.getResearchItemModel(this.type);
@@ -142,7 +151,20 @@ module.exports = _.merge({}, BaseModel, {
             application: external.application,
             kind: ResearchItemKinds.VERIFIED
         });
-    }
+    },
+    async export(patentIds, format) {
+        const patents = await Patent.find({id: patentIds})
+            .populate([
+            ]);
+
+        if (format === 'csv')
+            return Exporter.patentsToCsv(patents);
+
+        throw {
+            success: false,
+            message: 'Format not supported'
+        };
+    },
 });
 
 

@@ -1,13 +1,11 @@
-<scientilla-loading is-loading="vm.loading"></scientilla-loading>
+<scientilla-loading is-loading="!vm.charts"></scientilla-loading>
 
-<div class="summary-overview-container" ng-if="!vm.loading && vm.charts">
+<div class="summary-overview-container" ng-if="vm.charts">
     <div class="info-button-container">
-        <a
-            href=""
-            ng-click="vm.showInfo()"
-            class="btn btn-primary info-button">
+        <button ng-click="vm.showInfo()" class="btn btn-primary info-button">
             <i class="fas fa-info-circle fa-left"></i>Info
-        </a>
+        </button>
+        <h2 ng-if="vm.title" class="title">{{ vm.title }}</h2>
     </div>
 
     <ul class="summary-charts items-{{ vm.charts.length }}">
@@ -15,25 +13,22 @@
             <h3 class="chart-title">{{ vm.mainChart.title }}</h3>
             <div class="chart-outer-container">
                 <div class="chart-container">
-                    <nvd3
-                        options="vm.mainChart.options"
-                        data="vm.mainChart.data"
-                        class="chart"></nvd3>
+                    <nvd3 options="vm.mainChart.options"
+                          data="vm.mainChart.data"
+                          class="chart"></nvd3>
                 </div>
             </div>
         </li>
         <li class="preview-chart-container" ng-repeat="chart in vm.charts">
-            <div
-                class="chart-preview"
-                ng-class="{'chart-selected': vm.isChartSelected(chart)}"
-                ng-click="vm.changeChart(chart)">
+            <div class="chart-preview"
+                 ng-class="{'chart-selected': vm.isChartSelected(chart)}"
+                 ng-click="vm.changeChart(chart)">
                 <h3 class="chart-title">{{chart.title}}</h3>
                 <div class="chart-outer-container">
                     <div class="chart-container">
-                        <nvd3
-                            options="chart.options"
-                            data="chart.data"
-                            class="chart"></nvd3>
+                        <nvd3 options="chart.options"
+                              data="chart.data"
+                              class="chart"></nvd3>
                     </div>
                 </div>
             </div>

@@ -1,0 +1,1 @@
+CREATE OR REPLACE VIEW all_membership AS SELECT DISTINCT "user", "group" *  FROM all_membership_group
