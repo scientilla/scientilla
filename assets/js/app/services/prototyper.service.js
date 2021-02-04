@@ -54,10 +54,10 @@
                     surname = '';
 
                 switch (true) {
-                    case !_.isEmpty(this.display_name):
-                        name = this.display_name;
+                    case _.has(this, 'displayName') && !_.isEmpty(this.displayName):
+                        name = this.displayName;
                         break;
-                    case !_.isEmpty(this.name):
+                    case _.has(this, 'name') && !_.isEmpty(this.name):
                         name = this.name;
                         break;
                     default:
@@ -66,10 +66,10 @@
                 }
 
                 switch (true) {
-                    case !_.isEmpty(this.display_surname):
-                        surname = this.display_surname;
+                    case _.has(this, 'displaySurname') && !_.isEmpty(this.displaySurname):
+                        surname = this.displaySurname;
                         break;
-                    case !_.isEmpty(this.surname):
+                    case _.has(this, 'surname') && !_.isEmpty(this.surname):
                         surname = this.surname;
                         break;
                     default:

@@ -746,7 +746,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
                 insertedUsers.push(user);
             } else {
                 let displayNamesAreChanged = false;
-                if (user.display_name !== employee.nome_AD || user.display_surname !== employee.cognome_AD) {
+                if (user.displayName !== employee.nome_AD || user.displaySurname !== employee.cognome_AD) {
                     displayNamesAreChanged = true;
                 }
 
@@ -755,7 +755,6 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
 
                 if (displayNamesAreChanged) {
                     await User.createAliases(user);
-                    //sails.log.info('The display names are been updated to: ' + user.display_name + ' ' + user.display_surname);
                     updatedDisplayNames.push(user);
                 }
                 updatedUsers.push(user);

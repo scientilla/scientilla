@@ -11,7 +11,9 @@
         'AuthService',
         'ExternalConnectorService',
         'Restangular',
-        'ResearchEntitiesService'
+        'ResearchEntitiesService',
+        'PeopleService',
+        'ISO3166'
     ];
 
     function ResearchItemSearchFormStructureService(
@@ -22,7 +24,9 @@
         AuthService,
         ExternalConnectorService,
         Restangular,
-        ResearchEntitiesService
+        ResearchEntitiesService,
+        PeopleService,
+        ISO3166
     ) {
 
         const service = {
@@ -248,10 +252,11 @@
                 },
                 active: {
                     inputType: 'checkbox',
-                    label: 'Active',
+                    label: 'Active groups',
                     matchColumn: 'active',
                     defaultValue: true,
-                    type: 'action'
+                    type: 'action',
+                    valueType: 'boolean'
                 }
             },
             user: {
@@ -282,6 +287,45 @@
                         }
                     ],
                     type: 'field'
+                },
+                group: {
+                    inputType: 'autocomplete-group',
+                    label: 'Group',
+                    matchColumn: 'group',
+                    type: 'field'
+                },
+                nationality: {
+                    inputType: 'select',
+                    label: 'Country of origin',
+                    matchColumn: 'nationality',
+                    type: 'field'
+                },
+                roleCategory: {
+                    inputType: 'select',
+                    label: 'Role category',
+                    matchColumn: 'roleCategory',
+                    matchRule: 'contains',
+                    type: 'field'
+                },
+                gender: {
+                    inputType: 'select',
+                    label: 'Gender',
+                    matchColumn: 'gender',
+                    type: 'field'
+                },
+                ageRange: {
+                    inputType: 'select',
+                    label: 'Age range',
+                    matchColumn: 'ageRange',
+                    type: 'field'
+                },
+                formerEmployees: {
+                    matchColumn: 'formerEmployees',
+                    inputType: 'checkbox',
+                    label: 'Show former employees',
+                    defaultValue: false,
+                    type: 'action',
+                    valueType: 'boolean'
                 }
             },
             'group-member': {
@@ -313,18 +357,43 @@
                     ],
                     type: 'field'
                 },
+                nationality: {
+                    inputType: 'select',
+                    label: 'Country of origin',
+                    matchColumn: 'nationality',
+                    type: 'field'
+                },
+                roleCategory: {
+                    inputType: 'select',
+                    label: 'Role category',
+                    matchColumn: 'roleCategory',
+                    matchRule: 'contains',
+                    type: 'field'
+                },
+                gender: {
+                    inputType: 'select',
+                    label: 'Gender',
+                    matchColumn: 'gender',
+                    type: 'field'
+                },
+                ageRange: {
+                    inputType: 'select',
+                    label: 'Age range',
+                    matchColumn: 'ageRange',
+                    type: 'field'
+                },
                 subgroups: {
                     matchColumn: 'subgroups',
                     inputType: 'checkbox',
-                    label: 'Include members of subgroups',
+                    label: 'Show members of subgroups',
                     defaultValue: true,
                     type: 'action',
                     valueType: 'boolean'
                 },
-                former: {
-                    matchColumn: 'former',
+                formerMembers: {
+                    matchColumn: 'formerMembers',
                     inputType: 'checkbox',
-                    label: 'Include former members',
+                    label: 'Show former group members',
                     defaultValue: false,
                     type: 'action',
                     valueType: 'boolean'
@@ -383,12 +452,12 @@
 
             let structure;
 
-            switch (constant) {
-                case 'accomplishment':
+            switch (true) {
+                case constant === 'accomplishment':
                     formStructures[constant].accomplishmentType.values = await getResearchItemTypes('accomplishment');
                     structure = formStructures[constant];
                     break;
-                case 'accomplishment-suggested':
+                case constant === 'accomplishment-suggested':
                     formStructures[constant].accomplishmentType.values = await getResearchItemTypes('accomplishment');
 
                     structure = Object.assign({},
@@ -404,7 +473,7 @@
                             }
                         });
                     break;
-                case 'verified-accomplishment':
+                case constant === 'verified-accomplishment':
                     formStructures[constant].accomplishmentType.values = await getResearchItemTypes('accomplishment');
 
                     structure = Object.assign({},
@@ -420,7 +489,7 @@
                             }
                         });
                     break;
-                case 'verified-project':
+                case constant === 'verified-project':
                     await setupProjectStructure(constant, researchEntity);
                     structure = Object.assign(
                         {},
@@ -437,12 +506,13 @@
                         }
                     );
                     break;
-                case 'project':
+                case constant === 'project':
                     await setupProjectStructure(constant, researchEntity);
                     structure = formStructures[constant];
                     break;
-                case 'verified-patent':
+                case constant === 'verified-patent':
                     await setupPatentStructure(constant, researchEntity);
+                case constant === 'verified-patent':
                     structure = Object.assign(
                         {},
                         formStructures[constant],
@@ -458,19 +528,19 @@
                         }
                     );
                     break;
-                case 'patent':
+                case constant === 'patent':
                     structure = formStructures[constant];
                     break;
-                case 'verified-patent-family':
+                case constant === 'verified-patent-family':
                     structure = formStructures[constant];
                     break;
-                case 'patent-family':
+                case constant === 'patent-family':
                     structure = formStructures[constant];
                     break;
-                case 'document':
+                case constant === 'document':
                     structure = documentSearchForm;
                     break;
-                case 'external-document':
+                case constant === 'external-document':
                     structure = Object.assign({},
                         {
                             connector: await getConnectorField()
@@ -478,7 +548,7 @@
                         documentSearchForm
                     );
                     break;
-                case 'suggested-document':
+                case constant === 'suggested-document':
                     structure = Object.assign({},
                         documentSearchForm,
                         {
@@ -493,7 +563,7 @@
                         }
                     );
                     break;
-                case 'verified-document':
+                case constant === 'verified-document':
                     structure = Object.assign({},
                         documentSearchForm,
                         {
@@ -508,7 +578,7 @@
                         }
                     );
                     break;
-                case 'group':
+                case constant === 'group':
                     const user = AuthService.user;
                     formStructures[constant].type.values = [{
                         value: '?',
@@ -522,10 +592,61 @@
 
                     structure = formStructures[constant];
                     break;
-                case 'user':
-                    structure = formStructures[constant];
-                    break;
-                case 'group-member':
+                case constant === 'user' || constant === 'group-member':
+                    formStructures[constant].gender.values = [{
+                        value: '?',
+                        label: 'All'
+                    }, {
+                        value: 'F',
+                        label: 'Female'
+                    }, {
+                        value: 'M',
+                        label: 'Male'
+                    }];
+
+                    formStructures[constant].ageRange.values = [{
+                        value: '?',
+                        label: 'All'
+                    }, {
+                        value: '<25',
+                        label: '<25'
+                    }, {
+                        value: '25-29',
+                        label: '25-29'
+                    }, {
+                        value: '30-34',
+                        label: '30-34'
+                    }, {
+                        value: '35-44',
+                        label: '35-44'
+                    }, {
+                        value: '45-54',
+                        label: '45-54'
+                    }, {
+                        value: '>=55',
+                        label: '>=55'
+                    }];
+
+                    let roleCategories = await PeopleService.getUniqueRoleCategories();
+                    roleCategories = roleCategories.plain();
+                    formStructures[constant].roleCategory.values = [{
+                        value: '?',
+                        label: 'All'
+                    }].concat(
+                        Object.keys(roleCategories)
+                            .map(k => ({label: roleCategories[k], value: roleCategories[k]}))
+                    );
+
+                    let nationalities = await PeopleService.getUniqueNationalities();
+                    nationalities = nationalities.plain();
+                    formStructures[constant].nationality.values = [{
+                        value: '?',
+                        label: 'All'
+                    }].concat(
+                        Object.keys(nationalities)
+                            .map(k => ({label: ISO3166.getCountryName(nationalities[k]), value: nationalities[k]}))
+                    );
+
                     structure = formStructures[constant];
                     break;
                 default:
