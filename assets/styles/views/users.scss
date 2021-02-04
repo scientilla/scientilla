@@ -1,52 +1,66 @@
-.users{
-    &.users-browsing{
+.users {
+    &.users-browsing {
 
-        .title-container{
+        .title-container {
             display: grid;
             grid-template-rows: auto;
             grid-template-columns: 1fr auto;
         }
 
-        .btn-add-user{
+        .btn-add-user {
             height: fit-content;
         }
 
-        .user-listing{
+        .user-listing {
             @include normalize-listing;
 
-            & > li{
-                align-items: center;
+            & > li {
+                display: grid;
+                grid-template-columns: 80px 1fr;
+                grid-template-rows: auto;
 
-                & + li{
+                & + li {
                     margin-top: 2rem;
                     padding-top: 2rem;
                     border-top: 1px solid $gray-300;
                 }
             }
 
-            img{
-                width: 100px;
+            img {
+                @include set-grid(1, 1, 1, 1);
                 border-radius: .5rem;
             }
 
-            .user-content{
-                padding: 1rem 0px;
+            .user-content {
+                @include set-grid(1, 2, 1, 1);
+                padding: 0px 1rem;
             }
 
-            .user-fullname{
+            .memberships-container {
+                @include set-grid(2, 1, 1, 2);
+            }
+
+            .dropdown-container {
+                @include set-grid(3, 1, 1, 2);
+                margin-top: 1rem;
+            }
+
+            .user-fullname {
                 @include h5;
                 margin-bottom: .5rem;
                 line-height: 1 !important;
             }
 
-            .job-title{
+            .job-title {
                 margin-bottom: .5rem;
                 color: $gray;
             }
 
-            .memberships{
+            .memberships {
                 @include normalize-listing;
                 @include clearfix;
+                margin: 1rem -.5rem -1rem -.5rem;
+                overflow: hidden;
 
                 li {
                     display: block;
@@ -56,7 +70,7 @@
                 }
 
                 div,
-                a{
+                a {
                     display: block;
                     margin-bottom: 1rem;
                     padding: .5rem 1rem;
@@ -65,18 +79,18 @@
                     border-radius: 1rem;
                 }
 
-                div{
+                div {
                     background: $gray-100;
                     color: $gray;
                 }
 
-                a{
+                a {
                     background-color: $primary-color;
                     color: color-yiq($primary-color);
                 }
             }
 
-            .socials{
+            .socials {
                 @include normalize-listing;
                 @include clearfix;
                 margin-right: -.5rem;
@@ -88,30 +102,60 @@
                     padding-right: .5rem;
                     padding-left: .5rem;
                 }
-                
-                a{
+
+                a {
                     display: block;
                     line-height: 1;
+                }
+            }
+
+            .badges {
+                @include normalize-listing;
+                @include clearfix;
+                margin-right: -.5rem;
+                margin-left: -.5rem;
+
+                & > li {
+                    display: block;
+                    float: left;
+                    padding-right: .5rem;
+                    padding-left: .5rem;
+                }
+
+                div {
+                    display: inline-block;
+                    padding: .5rem 1rem;
+                    font-size: 1rem;
+                    line-height: 1;
+                    border-radius: 1rem;
+                    background: $gray-100;
+                    color: $gray;
+                }
+            }
+
+            .socials-container {
+                & + .badges {
+                    margin-top: .8rem;
                 }
             }
         }
     }
 
-    &.users-detail{
-        .user-fullname{
+    &.users-detail {
+        .user-fullname {
             margin-bottom: .5rem;
         }
 
-        .user-information{
+        .user-information {
             margin-top: 2rem;
         }
 
-        .profile-block{
+        .profile-block {
             margin-bottom: 3rem;
         }
 
         .groups,
-        .group-types{
+        .group-types {
             @include normalize-listing;
             margin-bottom: 1rem;
         }
@@ -119,31 +163,29 @@
 }
 
 @include media-breakpoint-up(sm) {
-    .users{
-        &.users-browsing{
-            .user-listing{
-                & > li{
-                    display: grid;
-                    grid-template-columns: 55px auto;
-                    grid-template-rows: auto;
+    .users {
+        &.users-browsing {
+            .user-listing {
+                & > li {
+                    grid-template-columns: 80px 1fr auto;
                 }
 
-                img{
+                img {
                     @include set-grid(1, 1, 1, 1);
                 }
 
-                .user-content{
+                .user-content {
                     @include set-grid(1, 2, 1, 1);
-                    padding: 0px 1rem;
+                    margin-top: 0px;
                 }
 
-                .memberships-container{
+                .memberships-container {
                     @include set-grid(2, 1, 1, 2);
-                    margin-top: 1rem;
                 }
 
-                .dropdown-container{
-                    @include set-grid(3, 1, 1, 2);
+                .dropdown-container {
+                    @include set-grid(1, 3, 2, 1);
+                    margin-top: 0rem;
                 }
             }
         }
@@ -345,25 +387,30 @@
             }
         }
 
-        &.users-browsing{
-            .user-listing{
-                & > li{
-                    grid-template-columns: 55px 3fr 2fr auto;
+        &.users-browsing {
+            .user-listing {
+                & > li {
+                    grid-template-columns: 80px 2fr 3fr auto;
                 }
 
-                img{
+                img {
                     @include set-grid(1, 1, 1, 1);
                 }
 
-                .user-content{
+                .user-content {
                     @include set-grid(1, 2, 1, 1);
                 }
 
-                .memberships-container{
+                .memberships-container {
                     @include set-grid(1, 3, 1, 1);
+                    padding: 0px 1rem;
+
+                    .memberships{
+                        margin-top: 0rem;
+                    }
                 }
 
-                .dropdown-container{
+                .dropdown-container {
                     @include set-grid(1, 4, 1, 1);
                 }
             }

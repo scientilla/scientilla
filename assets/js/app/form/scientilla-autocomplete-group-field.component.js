@@ -22,32 +22,49 @@
     function scientillaAutocompleteGroupField($scope, GroupsService) {
         const vm = this;
         vm.cssClass = 'form-control';
-        let watcher;
+        let watcherAutocompleteModel;
+        let watcherModel;
+        let groups = [];
 
-        vm.$onInit = function () {
+        /* jshint ignore:start */
+        vm.$onInit = async function () {
+            watcherAutocompleteModel = $scope.$watch('vm.autocompleteModel', function() {
+                if (_.has(vm.autocompleteModel, 'id')) {
+                    vm.model = vm.autocompleteModel.id;
+                } else {
+                    vm.model = null;
+                }
+            });
+
+            watcherModel = $scope.$watch('vm.model', function() {
+                if (!vm.model) {
+                    vm.autocompleteModel = null;
+                }
+            });
+
             if (vm.model) {
-                let id = parseInt(vm.model.slice(2).slice(0,-2));
-                getGroups().then(groups => {
+                let id = parseInt(vm.model);
+
+                if (_.isEmpty(groups)) {
+                    groups = await getGroups();
+
                     const group = groups.find(g => g.id === id);
 
                     if (group) {
                         vm.autocompleteModel = group;
                     }
-                });
-            }
-
-            watcher = $scope.$watch('vm.autocompleteModel', function() {
-                if (_.has(vm.autocompleteModel, 'id')) {
-                    vm.model = `%-${ vm.autocompleteModel.id }-%`;
-                } else {
-                    vm.model = null;
                 }
-            });
+            }
         };
+        /* jshint ignore:end */
 
         vm.$onDestroy = function () {
-            if (_.isFunction(watcher)) {
-                watcher();
+            if (_.isFunction(watcherAutocompleteModel)) {
+                watcherAutocompleteModel();
+            }
+
+            if (_.isFunction(watcherModel)) {
+                watcherModel();
             }
         };
 

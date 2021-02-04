@@ -15,7 +15,11 @@ const fields = [
 ];
 
 module.exports = _.merge({}, BaseModel, {
-    DEFAULT_SORTING: {},
+    DEFAULT_SORTING: {
+        filing_year: 'desc',
+        title: 'asc',
+        id: 'desc'
+    },
     migrate: 'safe',
     tableName: 'patent',
     autoUpdatedAt: false,
@@ -47,6 +51,10 @@ module.exports = _.merge({}, BaseModel, {
         patentData: {
             type: 'JSON',
             columnName: 'patent_data'
+        },
+        filingYear: {
+            type: 'STRING',
+            columnName: 'filing_year'
         },
         verified: {
             collection: 'patentverify',

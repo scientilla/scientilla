@@ -178,8 +178,6 @@
                     title: 'Facilities',
                     items: items
                 });
-
-                console.log(items);
             }
         }
     }

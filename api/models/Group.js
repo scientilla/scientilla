@@ -48,18 +48,6 @@ module.exports = _.merge({}, SubResearchEntity, {
             via: 'memberships',
             through: 'membership'
         },
-        activeMembers: {
-            collection: 'User',
-            through: 'activemembership'
-        },
-        allMembers: {
-            collection: 'User',
-            through: 'allmembership'
-        },
-        allActiveMembers: {
-            collection: 'User',
-            through: 'allactivemembershipgroup'
-        },
         memberships: {
             collection: 'membership',
             via: 'group'

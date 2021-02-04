@@ -11,6 +11,9 @@ module.exports = {
             columnName: 'group',
             model: 'Group'
         },
+        lastsynch: 'datetime',
+        active: 'boolean',
+        synchronized: 'boolean'
     },
     migrate: 'safe',
     tableName: 'membership',

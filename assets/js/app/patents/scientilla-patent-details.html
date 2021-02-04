@@ -11,54 +11,27 @@
 
 <hr/>
 
-<ng-container ng-if="vm.patent.code">
-    <strong>Code:</strong> {{ vm.patent.code }}<br>
-</ng-container>
-
 <ng-container ng-if="vm.patent.familyDocket">
     <strong>Docket:</strong> {{ vm.patent.familyDocket }}<br>
-</ng-container>
-
-<ng-container ng-if="vm.patent.patentData.abandonedExpiredAssignedDate">
-    <strong>Abandoned expired assigned date:</strong> {{ vm.patent.patentData.abandonedExpiredAssignedDate }}<br>
 </ng-container>
 
 <ng-container ng-if="vm.patent.patentData.application">
     <strong>Application:</strong> {{ vm.patent.patentData.application }}<br>
 </ng-container>
 
-<ng-container ng-if="vm.patent.patentData.assignees">
-    <strong>Assignees:</strong>
-    <ul>
-        <li ng-repeat="assignee in vm.patent.patentData.assignees">
-            {{ assignee.name }}<br>
-        </li>
-    </ul>
-</ng-container>
-
-<ng-container ng-if="vm.patent.patentData.attorney">
-    <strong>Attorney:</strong> {{ vm.patent.patentData.attorney }}<br>
-</ng-container>
-
-<ng-container ng-if="vm.patent.patentData.espacenetUrl">
-    <strong>Espacenet URL:</strong> {{ vm.patent.patentData.espacenetUrl }}<br>
-</ng-container>
-
-<ng-container ng-if="vm.patent.patentData.examiners.length > 0">
-    <strong>Examiners:</strong>
-    <ul>
-        <li ng-repeat="examiner in vm.patent.patentData.examiners">
-            {{ examiner.name + '  ' + examiner.surname }}<br>
-        </li>
-    </ul>
-</ng-container>
-
 <ng-container ng-if="vm.patent.patentData.filingDate">
     <strong>Filing date:</strong>  {{ vm.patent.patentData.filingDate }}<br>
 </ng-container>
 
+<ng-container ng-if="vm.patent.patentData.priority">
+    <strong>Priority:</strong> {{ vm.patent.patentData.priority }}<br>
+</ng-container>
+
+<br ng-if="vm.patent.familyDocket || vm.patent.patentData.application || vm.patent.patentData.filingDate || vm.patent.patentData.priority">
+
 <ng-container ng-if="vm.patent.patentData.inventors.length > 0">
-    <strong>Investors:</strong>
+    <strong ng-if="vm.patent.patentData.inventors.length === 1">Inventor:</strong>
+    <strong ng-if="vm.patent.patentData.inventors.length > 1">Inventors:</strong>
     <ul>
         <li ng-repeat="inventor in vm.patent.patentData.inventors">
             {{ inventor.surname + ' ' + inventor.name }}<br>
@@ -66,70 +39,58 @@
     </ul>
 </ng-container>
 
-<ng-container ng-if="vm.patent.patentData.issueDate">
-    <strong>Issue date:</strong> {{ vm.patent.patentData.issueDate }}<br>
+<ng-container ng-if="vm.patent.patentData.assignees">
+    <strong ng-if="vm.patent.patentData.assignees.length === 1">Assignee:</strong>
+    <strong ng-if="vm.patent.patentData.assignees.length > 1">Assignees:</strong>
+    <ul>
+        <li ng-repeat="assignee in vm.patent.patentData.assignees">
+            {{ assignee.name }}<br>
+        </li>
+    </ul>
 </ng-container>
 
-<ng-container ng-if="vm.patent.patentData.italian">
-    <strong>Italian:</strong> {{ vm.patent.patentData.italian }}<br>
-</ng-container>
-
-<ng-container ng-if="vm.patent.patentData.note">
-    <strong>Note:</strong> {{ vm.patent.patentData.note }}<br>
+<ng-container ng-if="vm.patent.patentData.researchLines.length > 0">
+    <strong ng-if="vm.patent.patentData.researchLines.length === 1">Research line:</strong>
+    <strong ng-if="vm.patent.patentData.researchLines.length > 1">Research lines:</strong>
+    <ul>
+        <li ng-repeat="researchLine in vm.patent.patentData.researchLines">
+            <a href="{{ vm.getGroupUrl(researchLine) }}" ng-click="vm.closeModal()">
+                {{ researchLine.name }}
+            </a>
+        </li>
+    </ul>
 </ng-container>
 
 <ng-container ng-if="vm.patent.patentData.patent">
     <strong>Patent:</strong> {{ vm.patent.patentData.patent }}<br>
 </ng-container>
 
-<ng-container ng-if="vm.patent.patentData.patsnapUrl">
-    <strong>Patsnap URL:</strong> {{ vm.patent.patentData.patsnapUrl }}<br>
+<ng-container ng-if="vm.patent.patentData.issueDate">
+    <strong>Issue date:</strong> {{ vm.patent.patentData.issueDate }}<br>
 </ng-container>
 
-<ng-container ng-if="vm.patent.patentData.priority">
-    <strong>Priority:</strong> {{ vm.patent.patentData.priority }}<br>
-</ng-container>
+<br ng-if="vm.patent.patentData.patent || vm.patent.patentData.issueDate">
 
-<ng-container ng-if="vm.patent.patentData.priorityPctExpirationDate">
-    <strong>Priority pct expiration date:</strong> {{ vm.patent.patentData.priorityPctExpirationDate }}<br>
+<ng-container ng-if="vm.patent.patentData.publication">
+    <strong>Publication number:</strong> {{ vm.patent.patentData.publication }}<br>
 </ng-container>
 
 <ng-container ng-if="vm.patent.patentData.publicationDate">
     <strong>Publication date:</strong> {{ vm.patent.patentData.publicationDate }}<br>
 </ng-container>
 
-<ng-container ng-if="vm.patent.patentData.researchDomain.length > 0">
-    <strong>Research domains:</strong>
-    <ul>
-        <li ng-repeat="domain in vm.patent.patentData.researchDomain">
-            {{ domain.name + '  ' + domain.code }}<br>
-        </li>
-    </ul>
+<br ng-if="vm.patent.patentData.publication || vm.patent.patentData.publicationDate">
+
+<ng-container ng-if="vm.patent.patentData.abandonedExpiredAssignedDate">
+    <strong>Abandoned expired assigned date:</strong> {{ vm.patent.patentData.abandonedExpiredAssignedDate }}<br>
 </ng-container>
 
-<ng-container ng-if="vm.patent.patentData.researchLines.length > 0">
-    <strong>Research lines:</strong>
-    <ul>
-        <li ng-repeat="researchLine in vm.patent.patentData.researchLines">
-            {{ researchLine.name + '  ' + researchLines.code }}<br>
-        </li>
-    </ul>
+<ng-container ng-if="vm.patent.patentData.priorityPctExpirationDate">
+    <strong>Priority pct expiration date:</strong> {{ vm.patent.patentData.priorityPctExpirationDate }}<br>
 </ng-container>
 
-<ng-container ng-if="vm.patent.patentData.researchPrograms.length > 0">
-    <strong>Research programs:</strong>
-    <ul>
-        <li ng-repeat="researchProgram in vm.patent.patentData.researchPrograms">
-            {{ researchProgram }}<br>
-        </li>
-    </ul>
-</ng-container>
+<br ng-if="vm.patent.patentData.abandonedExpiredAssignedDate || vm.patent.patentData.priorityPctExpirationDate">
 
-<ng-container ng-if="vm.patent.patentData.statuses.length > 0">
-    <strong>Statuses:</strong>
-    <ul>
-        <li ng-repeat="status in vm.patent.patentData.statuses">
-            {{ status.description + '  ' + status.attachedAt }}<br>
-        </li>
-    </ul>
+<ng-container ng-if="vm.patent.patentData.espacenetUrl">
+    <strong>Espacenet URL:</strong> {{ vm.patent.patentData.espacenetUrl }}<br>
 </ng-container>

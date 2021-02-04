@@ -7,76 +7,137 @@
     <item-list>
         <ul class="group-member-listing">
             <li ng-repeat="m in vm.members" ng-class="m.cssClass">
-                <div>
+                <img src="{{ m.image }}" alt="{{ u | fullname }}" class="img-fluid">
+
+                <div class="user-content">
                     <a
                         ng-href="#{{ m.getProfileUrl() }}"
                         class="group-member-fullname"
                         >
                         {{ m | fullname }}
                     </a>
-                    <ul class="member-info">
-                        <li><strong>Job title:</strong> {{ m.jobTitle }}</li>
-                        <li><strong>Label:</strong> {{ m.membership.type.label }}</li>
+                    <div class="job-title">
+                        {{ m.jobTitle }}
+                    </div>
+                    <div
+                        class="socials-container"
+                        ng-if="m.username || m.socials.length > 0 || m.phone">
+                        <ul
+                            class="socials">
+                            <li ng-if="m.username && m.active">
+                                <a
+                                    target="_blank"
+                                    href="mailto:{{ m.username }}">
+                                    <i class="fas fa-envelope"></i>
+                                </a>
+                            </li>
+                            <li ng-if="m.phone && m.active">
+                                <a
+                                    target="_blank"
+                                    href="tel:{{ m.phone }}">
+                                    <i class="fas fa-phone"></i>
+                                </a>
+                            </li>
+                            <li ng-repeat="(social, url) in m.socials">
+                                <a
+                                    target="_blank"
+                                    href="{{ url }}">
+                                    <i class="{{ vm.socialClass(social) }}"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <ul
+                        class="badges"
+                        ng-if="!m.active ||
+                            (m.membership && m.membership.type && !m.membership.isMember) ||
+                            m.membership.level > 0
+                        "
+                    >
+                        <li ng-if="!m.active">
+                            <div>
+                                Former employee
+                            </div>
+                        </li>
+                        <li ng-if="m.membership && m.membership.type && !m.membership.isMember">
+                            <div>
+                                {{ m.membership.type.label }}
+                            </div>
+                        </li>
+                        <li ng-if="m.membership.level > 0">
+                            <div>
+                                <i class="fa fa-user-times fa-left"></i>Inherited from subgroups
+                            </div>
+                        </li>
                     </ul>
-                    <!-- TODO -->
-                    <span
-                        ng-if="m.membership.level>0"
-                        title="Inherited from subgroups"
-                        class="fa fa-user-times"></span>
                 </div>
-                <div>
-                    <button
-                        ng-click="vm.removeCollaborator(m)"
-                        ng-if="vm.isAdmin() && m.membership.level === 0 && [vm.membershipTypes.COLLABORATOR.id,vm.membershipTypes.FORMER_COLLABORATOR.id].includes(m.membership.type.id)"
-                        class="btn btn-primary"
-                        title="Remove collaborator">
-                        <i class="fas fa-times"></i>
-                    </button>
+
+                <div class="memberships-container">
+                    <ul
+                        ng-if="m"
+                        class="memberships">
+                        <li ng-repeat="center in m.centers">
+                            <a
+                                title="Center: {{ center.getDisplayName() }}"
+                                ng-href="#{{ center.getProfileUrl() }}">{{ center.getDisplayName() }}</a>
+                        </li>
+                        <li ng-repeat="group in m.groups">
+                            <a
+                                title="{{ group.type }}: {{ group.getDisplayName() }}"
+                                ng-href="#{{ group.getProfileUrl() }}">{{ group.getDisplayName() }}</a>
+                        </li>
+                        <li ng-repeat="office in m.offices">
+                            <div title="Office: {{ office }}">{{ office }}</div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="dropdown-container">
+                    <div
+                        ng-if="vm.showCollaboratorButton(m)"
+                        class="btn-group"
+                        uib-dropdown
+                    >
+                        <button
+                            type="button"
+                            class="btn btn-primary only-icon"
+                            uib-dropdown-toggle>
+                            <i class="fas fa-user fa-left"></i>Collaborator
+                        </button>
+
+                        <div uib-dropdown-menu>
+                            <button
+                                class="dropdown-item"
+                                ng-click="vm.editCollaborator(m)">
+                                <i class="fas fa-edit fa-left"></i>Edit
+                            </button>
+
+                            <button
+                                ng-click="vm.removeCollaborator(m)"
+                                class="dropdown-item"
+                                title="Remove collaborator">
+                                <i class="fas fa-times fa-left"></i>Remove
+                            </button>
+                        </div>
+                    </div>
+
+                    <div
+                        ng-if="!vm.showCollaboratorButton(m)"
+                        class="btn-group"
+                        uib-dropdown
+                    >
+                        <button
+                            type="button"
+                            class="btn btn-primary only-icon invisible"
+                            uib-dropdown-toggle
+                            ng-disabled="true"
+                        >
+                            <i class="fas fa-user fa-left"></i>Collaborator
+                        </button>
+                    </div>
                 </div>
             </li>
         </ul>
     </item-list>
 </scientilla-filter>
-
-<div
-    ng-if="vm.isAdmin()"
-    class="card">
-    <div class="card-body d-print-none">
-        <h2>Add collaborator</h2>
-        <div class="dropdown-container add-scroll add-collaborator-field-container">
-            <input
-            type="text"
-            class="form-control add-collaborator-field"
-            ng-model="vm.selectedUser"
-            uib-typeahead="user as user.getDisplayName() for user in vm.getUsers($viewValue)"
-            typeahead-loading="searching"
-            typeahead-no-results="noResults"
-            data-ng-required="true"
-            placeholder="Search User"
-            ng-model-options="{ allowInvalid: true }"
-            typeahead-editable="false"
-            typeahead-select-on-blur="true"/>
-        </div>
-
-        <ul 
-            class="selected-user";
-            ng-show="vm.selectedUser">
-            <li>{{ vm.selectedUser.getDisplayName() }}</li>
-            <li>
-                <label class="form-checkbox">
-                    <input type="checkbox" ng-model="vm.selectedUserActive"/>
-                    <span>Active member?</span>
-                </label>
-            </li>
-            <li>
-                <button
-                    type="button"
-                    class="btn btn-primary"
-                    ng-click="vm.addCollaborator(vm.group, vm.selectedUser, vm.selectedUserActive)"
-                    title="Add {{vm.selectedUser.getDisplayName()}} as a collaborator">
-                    <i class="fas fa-plus fa-left"></i>Add collaborator
-                </button>
-            </li>
-        </ul>
-    </div>
-</div>

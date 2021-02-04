@@ -5,7 +5,7 @@ SELECT 1 AS id,
        (associations ->> 'originalRole')::text AS original_role,
        (associations ->> 'roleCategory') ::text AS role_category
 FROM (
-         SELECT json_array_elements(gs.data) AS associations
+         SELECT jsonb_array_elements(gs.data) AS associations
          FROM general_settings gs
      ) a,
      general_settings gs
