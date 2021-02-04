@@ -6,7 +6,7 @@ module.exports = {
         public: 'BOOLEAN',
         favorite: 'BOOLEAN',
         patentFamily: {
-            columnName: 'research_item',
+            columnName: 'patent_family',
             model: 'patentfamily'
         },
         researchEntity: {

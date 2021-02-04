@@ -1335,6 +1335,7 @@ async function importPatents() {
     }
 
     const patentSchema = {
+        id: 'id',
         application: 'application',
         filingDate: obj => patentDateFormat(obj.filing_date),
         publicationDate: obj => patentDateFormat(obj.publication_date),
@@ -1389,6 +1390,7 @@ async function importPatents() {
     }
     const patentFamilySchema = {
         docket: 'docket',
+        id: 'id',
         birthDate: obj => patentDateFormat(obj.birth_date),
         deathDate: obj => patentDateFormat(obj.death_date),
         knowledgeshareUrl: 'knowledgeshare_url',
@@ -1441,7 +1443,7 @@ async function importPatents() {
                     continue;
                 }
 
-                const code = patentFamilyData.docket + '|' + patentData.application;
+                const code = patentData.id;
 
                 const data = {
                     type: ResearchItemTypes.PATENT,
