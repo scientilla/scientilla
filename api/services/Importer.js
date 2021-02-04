@@ -1506,9 +1506,12 @@ async function importPatents() {
         const parentGroups = await MembershipGroup.find({child_group: groups.map(g => g.id)})
             .populate('parent_group');
 
+        const users = await User.find({username: ePatent.patentData.inventors.map(m => m.email)});
+
         const researchEntitiesId = [
             institute.id,
             ...groups.map(g => g.researchEntity),
+            ...users.map(u => u.researchEntity),
             ...parentGroups.map(pg => pg.parent_group.researchEntity)
         ];
 
