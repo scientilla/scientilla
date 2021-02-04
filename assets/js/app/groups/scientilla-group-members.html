@@ -48,7 +48,13 @@
                         </ul>
                     </div>
 
-                    <ul class="badges">
+                    <ul
+                        class="badges"
+                        ng-if="!m.active ||
+                            (m.membership && m.membership.type && !m.membership.isMember) ||
+                            m.membership.level > 0
+                        "
+                    >
                         <li ng-if="!m.active">
                             <div>
                                 Former employee
@@ -59,11 +65,12 @@
                                 {{ m.membership.type.label }}
                             </div>
                         </li>
+                        <li ng-if="m.membership.level > 0">
+                            <div>
+                                <i class="fa fa-user-times fa-left"></i>Inherited from subgroups
+                            </div>
+                        </li>
                     </ul>
-                    <span
-                        ng-if="m.membership.level>0"
-                        title="Inherited from subgroups"
-                        class="fa fa-user-times"></span>
                 </div>
 
                 <div class="memberships-container">
@@ -88,7 +95,7 @@
 
                 <div class="dropdown-container">
                     <div
-                        ng-if="vm.isAdmin() && m.membership.level === 0 && [vm.membershipTypes.COLLABORATOR.id,vm.membershipTypes.FORMER_COLLABORATOR.id].includes(m.membership.type.id)"
+                        ng-if="vm.showCollaboratorButton(m)"
                         class="btn-group"
                         uib-dropdown
                     >
@@ -116,9 +123,7 @@
                     </div>
 
                     <div
-                        ng-if="!(vm.isAdmin() &&
-                        m.membership.level === 0 &&
-                        [vm.membershipTypes.COLLABORATOR.id,vm.membershipTypes.FORMER_COLLABORATOR.id].includes(m.membership.type.id))"
+                        ng-if="!vm.showCollaboratorButton(m)"
                         class="btn-group"
                         uib-dropdown
                     >

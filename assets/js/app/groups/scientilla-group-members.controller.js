@@ -46,6 +46,7 @@
         vm.editCollaborator = editCollaborator;
         vm.getUsers = getUsers;
         vm.isAdmin = isAdmin;
+        vm.showCollaboratorButton = showCollaboratorButton;
 
         vm.membershipTypes = {
             MEMBER: {
@@ -305,6 +306,15 @@
         function isAdmin() {
             const user = AuthService.user;
             return user.isAdmin();
+        }
+
+        function showCollaboratorButton(m) {
+            return vm.isAdmin() &&
+                m.membership.level === 0 &&
+                [
+                    vm.membershipTypes.COLLABORATOR.id,
+                    vm.membershipTypes.FORMER_COLLABORATOR.id
+                ].includes(m.membership.type.id);
         }
     }
 })();
