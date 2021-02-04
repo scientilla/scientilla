@@ -30,6 +30,7 @@
         service.copyDocuments = copyDocuments;
         service.createDraft = createDraft;
         service.getExternalDocuments = getExternalDocuments;
+        service.getMemberships = getMemberships;
         service.getAllMemberships = getAllMemberships;
         service.deleteDraft = deleteDraft;
         service.deleteDrafts = deleteDrafts;
@@ -100,6 +101,13 @@
             }, populate);
 
             return researchEntity.getList('externalDocuments', q);
+        }
+
+        function getMemberships(researchEntity, query = {limit: 0}) {
+            query.where = Object.assign({}, query.where, {
+                group: researchEntity.id
+            });
+            return Restangular.all('memberships').getList(query);
         }
 
         function getAllMemberships(researchEntity, query = {limit: 0}) {
