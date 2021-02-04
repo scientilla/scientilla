@@ -37,6 +37,11 @@
 
                 vm.documentOverviewChartData = await ChartService.getDocumentsOverviewChartData(vm.subResearchEntity, refresh);
                 vm.bibliometricChartData = await ChartService.getBibliometricChartData(vm.subResearchEntity, refresh);
+
+                if (vm.bibliometricChartData.chartDataDate && vm.bibliometricChartData.chartDataDate[0].max) {
+                    vm.lastRefresh = new Date(vm.bibliometricChartData.chartDataDate[0].max);
+                }
+
             };
 
             async function recalculate() {
