@@ -188,6 +188,23 @@
                 matchRule: 'contains',
                 type: 'field'
             },
+            year: {
+                inputType: 'range',
+                values: {},
+                label: 'Start year',
+                subLabel: '(range between)',
+                matchColumn: 'filingYear',
+                rules: [
+                    {
+                        value: 'min',
+                        rule: '>='
+                    }, {
+                        value: 'max',
+                        rule: '<='
+                    }
+                ],
+                type: 'field',
+            }
         };
 
         const patentFamilyFormStructure = {
@@ -414,6 +431,23 @@
             };
         }
 
+        async function setupPatentStructure(constant, researchEntity) {
+            const defaultValues = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'patent');
+
+            formStructures[constant].year.defaultValues = defaultValues;
+            let yearValue = _.first(formStructures[constant].year.defaultValues);
+            if (_.isNil(yearValue)) {
+                yearValue = {
+                    min: 2000,
+                    max: new Date().getFullYear()
+                };
+            }
+            formStructures[constant].year.values = {
+                min: parseInt(yearValue.min),
+                max: parseInt(yearValue.max)
+            };
+        }
+
         async function getStructure(constant, researchEntity = false) {
 
             let structure;
@@ -476,6 +510,8 @@
                     await setupProjectStructure(constant, researchEntity);
                     structure = formStructures[constant];
                     break;
+                case constant === 'verified-patent':
+                    await setupPatentStructure(constant, researchEntity);
                 case constant === 'verified-patent':
                     structure = Object.assign(
                         {},

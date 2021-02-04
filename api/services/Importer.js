@@ -1337,6 +1337,7 @@ async function importPatents() {
     const patentSchema = {
         application: 'application',
         filingDate: obj => patentDateFormat(obj.filing_date),
+        publication: 'publication',
         publicationDate: obj => patentDateFormat(obj.publication_date),
         patent: 'patent',
         title: 'title',

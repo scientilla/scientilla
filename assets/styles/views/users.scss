@@ -390,7 +390,7 @@
         &.users-browsing {
             .user-listing {
                 & > li {
-                    grid-template-columns: 80px 3fr 2fr auto;
+                    grid-template-columns: 80px 2fr 3fr auto;
                 }
 
                 img {

@@ -93,15 +93,13 @@
                         uib-dropdown
                     >
                         <button
-                            ng-if="vm.isAdmin()"
                             type="button"
                             class="btn btn-primary only-icon"
                             uib-dropdown-toggle>
                             <i class="fas fa-user fa-left"></i>Collaborator
                         </button>
 
-                        <div ng-if="vm.isAdmin()"
-                             uib-dropdown-menu>
+                        <div uib-dropdown-menu>
                             <button
                                 class="dropdown-item"
                                 ng-click="vm.editCollaborator(m)">
@@ -110,12 +108,28 @@
 
                             <button
                                 ng-click="vm.removeCollaborator(m)"
-                                ng-if="vm.isAdmin() && m.membership.level === 0 && [vm.membershipTypes.COLLABORATOR.id,vm.membershipTypes.FORMER_COLLABORATOR.id].includes(m.membership.type.id)"
                                 class="dropdown-item"
                                 title="Remove collaborator">
                                 <i class="fas fa-times fa-left"></i>Remove
                             </button>
                         </div>
+                    </div>
+
+                    <div
+                        ng-if="!(vm.isAdmin() &&
+                        m.membership.level === 0 &&
+                        [vm.membershipTypes.COLLABORATOR.id,vm.membershipTypes.FORMER_COLLABORATOR.id].includes(m.membership.type.id))"
+                        class="btn-group"
+                        uib-dropdown
+                    >
+                        <button
+                            type="button"
+                            class="btn btn-primary only-icon invisible"
+                            uib-dropdown-toggle
+                            ng-disabled="true"
+                        >
+                            <i class="fas fa-user fa-left"></i>Collaborator
+                        </button>
                     </div>
                 </div>
             </li>

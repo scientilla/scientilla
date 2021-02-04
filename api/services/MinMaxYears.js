@@ -6,8 +6,9 @@
 //const _ = require('lodash');
 
 const sqlQueries = {
-    'project': 'api/queries/minMaxYearsProjects.sql',
     'accomplishment': 'api/queries/minMaxYearsAccomplishments.sql',
+    'project': 'api/queries/minMaxYearsProjects.sql',
+    'patent': 'api/queries/minMaxYearsPatents.sql',
 };
 
 module.exports = {

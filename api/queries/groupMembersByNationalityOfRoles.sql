@@ -2,7 +2,7 @@ SELECT
      (ud.profile->'nationality'->>'value')::text AS nationality,
      count(*)
 FROM general_settings gs,
-     json_array_elements(gs.data) roles
+     jsonb_array_elements(gs.data) roles
      JOIN user_data ud ON LOWER((ud.profile->'roleCategory'->>'value')::text) = LOWER((roles->>'originalRole')::text)
      JOIN "user" u ON u.research_entity = ud.research_entity
      JOIN membership m ON u.id = m.user
