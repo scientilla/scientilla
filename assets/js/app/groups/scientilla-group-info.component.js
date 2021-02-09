@@ -38,7 +38,8 @@
 
         vm.loadCharts = true;
 
-        vm.$onInit = () => {
+        /* jshint ignore:start */
+        vm.$onInit = async () => {
             const registerTab = requireParentMethod($element, 'registerTab');
             registerTab(vm);
 
@@ -65,6 +66,7 @@
 
             initCharts();
         };
+        /* jshint ignore:end */
 
         vm.$onDestroy = () => {
             const unregisterTab = requireParentMethod($element, 'unregisterTab');
