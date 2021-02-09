@@ -639,13 +639,16 @@
 
                     let nationalities = await PeopleService.getUniqueNationalities();
                     nationalities = nationalities.plain();
-                    formStructures[constant].nationality.values = [{
+                    nationalities = [{
                         value: '?',
                         label: 'All'
                     }].concat(
                         Object.keys(nationalities)
                             .map(k => ({label: ISO3166.getCountryName(nationalities[k]), value: nationalities[k]}))
                     );
+                    nationalities = _.sortBy(nationalities, 'label');
+
+                    formStructures[constant].nationality.values = nationalities;
 
                     structure = formStructures[constant];
                     break;
