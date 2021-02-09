@@ -58,12 +58,6 @@
 
     &.working{
         background: $success-color;
-
-        &:before{
-            margin-top: -.6rem;
-            margin-left: -.4rem;
-            content: '\f00c';
-        }
     }
 
     &.ended{
