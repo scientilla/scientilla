@@ -54,9 +54,16 @@
     <strong ng-if="vm.patent.patentData.researchLines.length > 1">Research lines:</strong>
     <ul>
         <li ng-repeat="researchLine in vm.patent.patentData.researchLines">
-            <a href="{{ vm.getGroupUrl(researchLine) }}" ng-click="vm.closeModal()">
+            <a
+                ng-if="vm.getGroupUrl(researchLine)"
+                ng-click="vm.closeModal()"
+                href="{{ vm.getGroupUrl(researchLine) }}"
+            >
                 {{ researchLine.name }}
             </a>
+            <span ng-if="!vm.getGroupUrl(researchLine)">
+                {{ researchLine.name }}
+            </span>
         </li>
     </ul>
 </ng-container>

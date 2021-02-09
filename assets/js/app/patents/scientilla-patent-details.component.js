@@ -44,7 +44,7 @@
                     return '/#' + group.getProfileUrl();
                 }
             }
-            return;
+            return false;
         };
 
         vm.closeModal = function () {
