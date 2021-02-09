@@ -375,11 +375,13 @@
 
             vm.chartGenderData = [];
             vm.chartGenderData.push({
+                value: 'M',
                 label: 'Male',
                 count: vm.maleData.count,
                 percentage: _.round((vm.maleData.count / genderTotal) * 100, 2)
             });
             vm.chartGenderData.push({
+                value: 'F',
                 label: 'Female',
                 count: vm.femaleData.count,
                 percentage: _.round((vm.femaleData.count / genderTotal) * 100, 2)
@@ -416,6 +418,7 @@
                 _.sortBy(
                     byNationality.map(data => {
                         return {
+                            key: data.nationality,
                             label: getCountryLabel(data.nationality),
                             value: parseInt(data.count),
                             percent: getPercent(data.count, totalByCountries)
@@ -428,6 +431,7 @@
             if (!_.isEmpty(biggestCountry)) {
                 vm.byCountryBiggestCountry = [
                     {
+                        key: biggestCountry.key,
                         label: biggestCountry.label,
                         count: parseInt(biggestCountry.value),
                         percentage: getPercent(biggestCountry.value, totalByCountries),
