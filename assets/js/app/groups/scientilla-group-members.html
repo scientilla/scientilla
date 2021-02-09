@@ -2,7 +2,9 @@
     category="group-member"
     on-filter="vm.onFilter"
     elements="vm.members"
-    empty-list-message="No members found">
+    empty-list-message="No members found"
+    filter-on-init="vm.loadMembers"
+>
 
     <item-list>
         <ul class="group-member-listing">

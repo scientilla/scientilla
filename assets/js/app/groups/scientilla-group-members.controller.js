@@ -7,7 +7,8 @@
             controllerAs: 'vm',
             bindings: {
                 group: '<',
-                refreshGroup: '&'
+                refreshGroup: '&',
+                active: '<?'
             }
         });
 
@@ -73,6 +74,10 @@
         vm.onFilter = onFilter;
         let query = {};
 
+        let activeWatcher;
+
+        vm.loadMembers = true;
+
         vm.$onInit = () => {
             const registerTab = requireParentMethod($element, 'registerTab');
             registerTab(vm);
@@ -80,11 +85,29 @@
             $scope.$on('refreshList', () => {
                 refreshList();
             });
+
+            if (_.has(vm, 'active')) {
+                vm.loadMembers = angular.copy(vm.active);
+
+                activeWatcher = $scope.$watch('vm.active', () => {
+                    vm.loadMembers = angular.copy(vm.active);
+
+                    if (vm.loadMembers) {
+                        $scope.$broadcast('filter');
+                    } else {
+                        vm.members = [];
+                    }
+                });
+            }
         };
 
         vm.$onDestroy = () => {
             const unregisterTab = requireParentMethod($element, 'unregisterTab');
             unregisterTab(vm);
+
+            if (_.isFunction(activeWatcher)) {
+                activeWatcher();
+            }
         };
 
         vm.reload = function () {
@@ -310,6 +333,7 @@
 
         function showCollaboratorButton(m) {
             return vm.isAdmin() &&
+                m.membership &&
                 m.membership.level === 0 &&
                 [
                     vm.membershipTypes.COLLABORATOR.id,

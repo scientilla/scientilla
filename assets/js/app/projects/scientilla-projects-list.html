@@ -2,7 +2,9 @@
     category="project"
     on-filter="vm.onFilter"
     elements="vm.projects"
-    empty-list-message="No projects found">
+    empty-list-message="No projects found"
+    filter-on-init="vm.loadProjects"
+>
 
     <scientilla-multicheck>
         <buttons>
