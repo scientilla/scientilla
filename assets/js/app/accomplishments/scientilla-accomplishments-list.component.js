@@ -9,7 +9,8 @@
             controllerAs: 'vm',
             bindings: {
                 researchEntity: '<',
-                section: '<'
+                section: '<',
+                active: '<?'
             }
         });
 
@@ -20,16 +21,20 @@
         'AuthService',
         'ResearchItemService',
         'ResearchItemTypesService',
-        '$element'
+        '$element',
+        '$scope'
     ];
 
-    function scientillaAccomplishmentsList(AccomplishmentService,
-                                           EventsService,
-                                           accomplishmentListSections,
-                                           AuthService,
-                                           ResearchItemService,
-                                           ResearchItemTypesService,
-                                           $element) {
+    function scientillaAccomplishmentsList(
+        AccomplishmentService,
+        EventsService,
+        accomplishmentListSections,
+        AuthService,
+        ResearchItemService,
+        ResearchItemTypesService,
+        $element,
+        $scope
+    ) {
         const vm = this;
 
         vm.name = 'accomplishments-list';
@@ -42,10 +47,27 @@
         vm.exportDownload = accomplishments => AccomplishmentService.exportDownload(accomplishments, 'csv');
 
         let query = {};
+        let activeWatcher;
+
+        vm.loadAccomplishments = true;
 
         vm.$onInit = () => {
             const registerTab = requireParentMethod($element, 'registerTab');
             registerTab(vm);
+
+            if (_.has(vm, 'active')) {
+                vm.loadAccomplishments = angular.copy(vm.active);
+
+                activeWatcher = $scope.$watch('vm.active', () => {
+                    vm.loadAccomplishments = angular.copy(vm.active);
+
+                    if (vm.loadAccomplishments) {
+                        $scope.$broadcast('filter');
+                    } else {
+                        vm.accomplishments = [];
+                    }
+                });
+            }
         };
 
         vm.$onDestroy = () => {
@@ -53,6 +75,10 @@
             unregisterTab(vm);
 
             EventsService.unsubscribeAll(vm);
+
+            if (_.isFunction(activeWatcher)) {
+                activeWatcher();
+            }
         };
 
         vm.reload = function () {
@@ -66,10 +92,6 @@
                 EventsService.RESEARCH_ITEM_VERIFIED,
                 EventsService.RESEARCH_ITEM_UNVERIFIED
             ], updateList);
-        };
-
-        vm.$onDestroy = function () {
-            EventsService.unsubscribeAll(vm);
         };
 
         function updateList() {

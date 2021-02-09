@@ -6,7 +6,8 @@
             templateUrl: 'partials/scientilla-group-info.html',
             controllerAs: 'vm',
             bindings: {
-                group: '<'
+                group: '<',
+                active: '<?'
             }
         });
 
@@ -33,6 +34,10 @@
         const excludeTitle = 'Click to exclude this role from the charts';
         const includeTitle = 'Click to include this role into the charts';
 
+        let activeWatcher;
+
+        vm.loadCharts = true;
+
         vm.$onInit = () => {
             const registerTab = requireParentMethod($element, 'registerTab');
             registerTab(vm);
@@ -40,6 +45,23 @@
             includeSubgroupsWatcher = $scope.$watch('vm.includeSubgroups', () => {
                 vm.reload(true);
             });
+
+            if (_.has(vm, 'active')) {
+                vm.loadCharts = angular.copy(vm.active);
+
+                activeWatcher = $scope.$watch('vm.active', async () => {
+                    vm.loadCharts = angular.copy(vm.active);
+
+                    if (vm.active) {
+                        await vm.reload(true);
+                    } else {
+                        vm.byCountryBiggestCountry = [];
+                        vm.ageRangeData = [];
+                        vm.selectedRoles = [];
+                        vm.byRole = [];
+                    }
+                });
+            }
 
             initCharts();
         };
@@ -51,11 +73,15 @@
             if (_.isFunction(includeSubgroupsWatcher)) {
                 includeSubgroupsWatcher();
             }
+
+            if (_.isFunction(activeWatcher)) {
+                activeWatcher();
+            }
         };
 
         /* jshint ignore:start */
         vm.reload = async function (forced = false) {
-            if (vm.isLoading) {
+            if (vm.isLoading || !vm.loadCharts) {
                 return;
             }
 
@@ -375,11 +401,13 @@
 
             vm.chartGenderData = [];
             vm.chartGenderData.push({
+                value: 'M',
                 label: 'Male',
                 count: vm.maleData.count,
                 percentage: _.round((vm.maleData.count / genderTotal) * 100, 2)
             });
             vm.chartGenderData.push({
+                value: 'F',
                 label: 'Female',
                 count: vm.femaleData.count,
                 percentage: _.round((vm.femaleData.count / genderTotal) * 100, 2)
@@ -416,6 +444,7 @@
                 _.sortBy(
                     byNationality.map(data => {
                         return {
+                            key: data.nationality,
                             label: getCountryLabel(data.nationality),
                             value: parseInt(data.count),
                             percent: getPercent(data.count, totalByCountries)
@@ -428,6 +457,7 @@
             if (!_.isEmpty(biggestCountry)) {
                 vm.byCountryBiggestCountry = [
                     {
+                        key: biggestCountry.key,
                         label: biggestCountry.label,
                         count: parseInt(biggestCountry.value),
                         percentage: getPercent(biggestCountry.value, totalByCountries),

@@ -50,22 +50,8 @@
                         }
                     }
 
-                    // Store search parameters
-                    const params = $location.search();
-
-                    // Create a string with the search parameters
-                    const queryString = Object.keys(params).map((key) => {
-                        return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-                    }).join('&');
-
-                    // Add the search parameters to the path
-                    let url = path;
-                    if (queryString.length > 0) {
-                        url += '?' + queryString;
-                    }
-
                     // Set the new URL without reloading the page
-                    $location.url(url, false);
+                    $location.url(path, false);
 
                     // Get the active tab
                     const activeRegisteredTab = vm.registeredTabs.find(

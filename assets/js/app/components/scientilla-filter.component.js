@@ -12,13 +12,13 @@
                 onFilter: '&',
                 category: '@',
                 filterLabel: '@?',
-                elements: '<?'
+                elements: '<?',
+                filterOnInit: '<?'
             }
         });
 
 
     scientillaFilter.$inject = [
-        'ResearchItemTypesService',
         'pageSize',
         '$scope',
         '$timeout',
@@ -28,7 +28,6 @@
     ];
 
     function scientillaFilter(
-        ResearchItemTypesService,
         pageSize,
         $scope,
         $timeout,
@@ -89,45 +88,20 @@
 
             onDataCountChangeDeregisterer = $scope.$watch('vm.elements', onDataCountChange, true);
 
-            vm.searchFormStructure = await ResearchItemSearchFormStructureService.getStructure(vm.category, vm.researchEntity);
+            if (
+                (_.has(vm, 'filterOnInit') && vm.filterOnInit) ||
+                !_.has(vm, 'filterOnInit')
+            ) {
+                await getFormStructure();
 
-            vm.searchFormStructure = _.assign({}, vm.searchFormStructure, {
-                buttonSearch: {
-                    inputType: 'submit',
-                    label: vm.filterLabel,
-                    type: 'action'
-                },
-                buttonReset: {
-                    inputType: 'button',
-                    label: 'Reset',
-                    onClick: 'reset',
-                    type: 'action'
-                },
-                itemsPerPage: {
-                    inputType: 'select',
-                    valueType: 'integer',
-                    label: 'Items per page',
-                    defaultValue: pageSize,
-                    values: vm.pageSizes.map(ps => ({value: ps, label: ps})),
-                    labelPosition: 'inline',
-                    cssClass: 'items-per-page',
-                    onChange: 'submit',
-                    type: 'action'
-                }
-            });
-
-            // Add the prefix to all keys of the form structure when the prefix is provided
-            if (!_.isUndefined(vm.prefix)) {
-                vm.filterSearchFormStructure = {};
-
-                for (const key of Object.keys(vm.searchFormStructure)) {
-                    vm.filterSearchFormStructure[vm.prefix + '_' + key] = vm.searchFormStructure[key];
-                }
-            } else {
-                vm.filterSearchFormStructure = _.cloneDeep(vm.searchFormStructure);
+                handleRouteParams();
             }
 
-            handleRouteParams();
+            $scope.$on('filter', async () => {
+                await getFormStructure();
+
+                handleRouteParams();
+            });
         };
         /* jshint ignore:end */
 
@@ -296,8 +270,10 @@
                             }
                         } else {
                             // If option matchRule is not 'is null' create object with the rule & value
-                            whereAdd[struct.matchColumn] = {};
-                            whereAdd[struct.matchColumn][struct.matchRule] = value;
+                            if (value) {
+                                whereAdd[struct.matchColumn] = {};
+                                whereAdd[struct.matchColumn][struct.matchRule] = value;
+                            }
                         }
                     }
                 }
@@ -451,5 +427,49 @@
                 onSubmit(vm.values);
             }
         }
+
+        /* jshint ignore:start */
+        async function getFormStructure() {
+            if (!vm.searchFormStructure) {
+                vm.searchFormStructure = await ResearchItemSearchFormStructureService.getStructure(vm.category, vm.researchEntity);
+
+                vm.searchFormStructure = _.assign({}, vm.searchFormStructure, {
+                    buttonSearch: {
+                        inputType: 'submit',
+                        label: vm.filterLabel,
+                        type: 'action'
+                    },
+                    buttonReset: {
+                        inputType: 'button',
+                        label: 'Reset',
+                        onClick: 'reset',
+                        type: 'action'
+                    },
+                    itemsPerPage: {
+                        inputType: 'select',
+                        valueType: 'integer',
+                        label: 'Items per page',
+                        defaultValue: pageSize,
+                        values: vm.pageSizes.map(ps => ({value: ps, label: ps})),
+                        labelPosition: 'inline',
+                        cssClass: 'items-per-page',
+                        onChange: 'submit',
+                        type: 'action'
+                    }
+                });
+
+                // Add the prefix to all keys of the form structure when the prefix is provided
+                if (!_.isUndefined(vm.prefix)) {
+                    vm.filterSearchFormStructure = {};
+
+                    for (const key of Object.keys(vm.searchFormStructure)) {
+                        vm.filterSearchFormStructure[vm.prefix + '_' + key] = vm.searchFormStructure[key];
+                    }
+                } else {
+                    vm.filterSearchFormStructure = _.cloneDeep(vm.searchFormStructure);
+                }
+            }
+        }
+        /* jshint ignore:end */
     }
 })();

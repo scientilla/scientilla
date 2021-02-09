@@ -117,7 +117,9 @@
         function addCollaborator() {
             ModalService.openCollaboratorForm(vm.group)
                 .then(() => {
-                    $scope.$broadcast('refreshList');
+                    if (vm.activeTabIndex === 1) {
+                        $scope.$broadcast('refreshList');
+                    }
                 });
         }
     }

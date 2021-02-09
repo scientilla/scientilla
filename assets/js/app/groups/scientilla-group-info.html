@@ -111,7 +111,7 @@
                                 {{ role.value }} {{ role.value === 1 ? 'member' : 'members'}}
                             </span>
                             <a
-                                href="/#/users?active=true&roleCategory={{ role.category }}&group=%25-{{ vm.group.id }}-%25"
+                                href="/#/groups/{{ vm.group.id }}/members?roleCategory={{ role.category }}"
                                 ng-if="role.category !== 'Others'"
                                 class="colorize-text"
                             >
@@ -144,13 +144,21 @@
                                     <li
                                         ng-repeat="gender in vm.chartGenderData track by $index"
                                         class="content">
-                                    <span
-                                        class="color"
-                                        ng-style="{ 'background-color': vm.colors[$index] }"></span>
-                                        <span class="colorize-text">{{ gender.label }}</span>
-                                        <span class="colorize-text">
-                                        {{ gender.count }} {{ gender.count === 1 ? 'member' : 'members'}}
-                                    </span>
+
+                                        <span
+                                           class="color"
+                                            ng-style="{ 'background-color': vm.colors[$index] }"
+                                        ></span>
+
+                                        <span>{{ gender.label }}</span>
+
+                                        <a
+                                            href="/#/groups/{{ vm.group.id }}/members?gender={{ gender.value }}"
+                                            class="colorize-text"
+                                        >
+                                            {{ gender.count }} {{ gender.count === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
+                                        </a>
+
                                         <span class="colorize-text percentage-column">{{ gender.percentage }}%</span>
                                     </li>
                                 </ul>
@@ -182,11 +190,15 @@
                                     class="content">
                                     <span
                                         class="color"
-                                        ng-style="{ 'background-color': vm.colors[$index] }"></span>
+                                        ng-style="{ 'background-color': vm.colors[$index] }"
+                                    ></span>
                                     <span class="colorize-text">{{ range.label }}</span>
-                                    <span class="colorize-text">
-                                        {{ range.count }} {{ range.count === 1 ? 'member' : 'members'}}
-                                    </span>
+                                    <a
+                                        href="/#/groups/{{ vm.group.id }}/members?ageRange={{ range.label }}"
+                                        class="colorize-text"
+                                    >
+                                        {{ range.count }} {{ range.count === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
+                                    </a>
                                     <span class="colorize-text percentage-column">{{ range.percentage }}%</span>
                                 </li>
                             </ul>
@@ -219,10 +231,21 @@
                                             class="content">
                                             <span
                                                 class="color"
-                                                ng-style="{ 'background-color': country.color }"></span>
-                                                    <span>{{ country.label }}</span>
-                                                    <span class="colorize-text">
-                                                {{ country.count }} {{ country.count === 1 ? 'member' : 'members'}}
+                                                ng-style="{ 'background-color': country.color }"
+                                            ></span>
+                                            <span>{{ country.label }}</span>
+                                            <a
+                                                href="/#/groups/{{ vm.group.id }}/members?nationality={{ country.key }}"
+                                                class="colorize-text"
+                                                ng-if="country.key"
+                                            >
+                                                {{ country.count }} {{ country.count === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
+                                            </a>
+                                            <span
+                                                class="colorize-text"
+                                                ng-if="!country.key"
+                                            >
+                                                {{ country.value }} {{ country.value === 1 ? 'member' : 'members'}}
                                             </span>
                                             <span class="colorize-text percentage-column">{{ country.percentage }}%</span>
                                         </li>
@@ -250,11 +273,15 @@
                                             ng-style="
                                                 !country.other && { 'background-color': vm.colors[$index] } ||
                                                 country.other && { 'background-color': vm.otherColor }
-                                            "></span>
+                                            "
+                                        ></span>
                                         <span class="colorize-text">{{ country.label }}</span>
-                                        <span class="colorize-text">
-                                            {{ country.value }} {{ country.value === 1 ? 'member' : 'members'}}
-                                        </span>
+                                        <a
+                                            href="/#/groups/{{ vm.group.id }}/members?nationality={{ country.key }}"
+                                            class="colorize-text"
+                                        >
+                                            {{ country.value }} {{ country.value === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
+                                        </a>
                                         <span class="colorize-text percentage-column">{{ country.percent }}%</span>
                                     </li>
                                 </ul>
