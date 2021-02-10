@@ -3,7 +3,7 @@
         <div class="title-container">
             <h1 class="title">{{ vm.group.getDisplayName() }}</h1>
             <button
-                ng-if="vm.group && vm.activeTabIndex === 1 && vm.isAdmin()"
+                ng-if="vm.group && vm.activeTabIndex === 1 && vm.isGroupAdmin()"
                 ng-click="vm.addCollaborator()"
                 class="btn btn-primary btn-add-collaborator">
                 Add collaborator<i class="fas fa-plus fa-right"></i>

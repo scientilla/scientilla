@@ -108,6 +108,10 @@
             return vm.loggedUser && vm.loggedUser.isAdmin();
         };
 
+        vm.isGroupAdmin = function () {
+            return AuthService.isAdmin;
+        };
+
         vm.isScientific = function () {
             if (!vm.group)
                 return true;

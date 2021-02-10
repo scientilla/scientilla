@@ -21,6 +21,11 @@
     min-width: 100%;
     max-width: 320px;
     overflow: hidden;
+
+    &.right{
+        right: 0px;
+        left: auto;
+    }
 }
 
 .add-scroll{

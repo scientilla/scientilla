@@ -22,7 +22,8 @@
         'PeopleService',
         '$element',
         'userConstants',
-        '$scope'
+        '$scope',
+        '$location'
     ];
 
     function controller(
@@ -35,19 +36,27 @@
         PeopleService,
         $element,
         userConstants,
-        $scope
+        $scope,
+        $location
     ) {
         const vm = this;
 
         vm.name = 'group-members';
         vm.shouldBeReloaded = true;
 
+        vm.user = AuthService.user;
         vm.documentListSections = documentListSections;
         vm.removeCollaborator = removeCollaborator;
         vm.editCollaborator = editCollaborator;
         vm.getUsers = getUsers;
         vm.isAdmin = isAdmin;
         vm.showCollaboratorButton = showCollaboratorButton;
+        vm.viewUser = viewUser;
+        vm.deleteUser = deleteUser;
+        vm.editUser = editUser;
+        vm.loginAs = loginAs;
+        vm.isGroupAdmin = isGroupAdmin;
+        vm.socialClass = socialClass;
 
         vm.membershipTypes = {
             MEMBER: {
@@ -326,19 +335,80 @@
             vm.refreshGroup()();
         }
 
+        function isGroupAdmin() {
+            return AuthService.isAdmin;
+        }
+
         function isAdmin() {
             const user = AuthService.user;
             return user.isAdmin();
         }
 
         function showCollaboratorButton(m) {
-            return vm.isAdmin() &&
-                m.membership &&
+            return isGroupAdmin() && m.membership &&
                 m.membership.level === 0 &&
                 [
                     vm.membershipTypes.COLLABORATOR.id,
                     vm.membershipTypes.FORMER_COLLABORATOR.id
                 ].includes(m.membership.type.id);
+        }
+
+        function viewUser(user) {
+            $location.url('/users/' + user.id);
+        }
+
+        function editUser(user) {
+            openUserForm(user);
+        }
+
+        /* jshint ignore:start */
+        async function deleteUser(user) {
+            try {
+                await UsersService.delete(user);
+                refreshList();
+                Notification.success("User deleted");
+            } catch (error) {
+                Notification.warning("Failed to delete user");
+            }
+        }
+        /* jshint ignore:end */
+
+        function loginAs(user) {
+            AuthService.setupUserAccount(user.id);
+        }
+
+        // private
+        function openUserForm(user) {
+            ModalService
+                .openScientillaUserForm(!user ? UsersService.getNewUser() : user.clone())
+                .then(refreshList);
+        }
+
+        function socialClass(social) {
+            switch (true) {
+                case social === 'linkedin':
+                    return 'fab fa-linkedin';
+                case social === 'twitter':
+                    return 'fab fa-twitter';
+                case social === 'facebook':
+                    return 'fab fa-facebook-square';
+                case social === 'instagram':
+                    return 'fab fa-instagram';
+                case social === 'researchgate':
+                    return 'fab fa-researchgate';
+                case social === 'googleScholar':
+                    return 'fas fa-graduation-cap';
+                case social === 'github':
+                    return 'fab fa-github';
+                case social === 'bitbucket':
+                    return 'fab fa-bitbucket';
+                case social === 'youtube':
+                    return 'fab fa-youtube';
+                case social === 'flickr':
+                    return 'fab fa-flickr';
+                default:
+                    break;
+            }
         }
     }
 })();

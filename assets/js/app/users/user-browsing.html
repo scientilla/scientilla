@@ -107,8 +107,11 @@
                                     uib-dropdown-toggle>
                             </button>
 
-                            <div ng-if="vm.user.isAdmin()"
-                                 uib-dropdown-menu>
+                            <div
+                                ng-if="vm.user.isAdmin()"
+                                uib-dropdown-menu
+                                class="right"
+                            >
                                 <button class="dropdown-item"
                                         ng-click="vm.loginAs(u)"
                                         href="javascript:void(0)">

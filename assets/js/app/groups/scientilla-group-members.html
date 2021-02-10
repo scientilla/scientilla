@@ -12,12 +12,9 @@
                 <img src="{{ m.image }}" alt="{{ u | fullname }}" class="img-fluid">
 
                 <div class="user-content">
-                    <a
-                        ng-href="#{{ m.getProfileUrl() }}"
-                        class="group-member-fullname"
-                        >
+                    <div class="group-member-fullname">
                         {{ m | fullname }}
-                    </a>
+                    </div>
                     <div class="job-title">
                         {{ m.jobTitle }}
                     </div>
@@ -97,46 +94,75 @@
 
                 <div class="dropdown-container">
                     <div
-                        ng-if="vm.showCollaboratorButton(m)"
                         class="btn-group"
                         uib-dropdown
                     >
                         <button
+                            ng-click="vm.viewUser(m)"
                             type="button"
-                            class="btn btn-primary only-icon"
-                            uib-dropdown-toggle>
-                            <i class="fas fa-user fa-left"></i>Collaborator
+                            class="btn btn-primary"
+                        >
+                            <i class="fas fa-user fa-left"></i>View profile
                         </button>
 
-                        <div uib-dropdown-menu>
+                        <button
+                            ng-if="vm.user.isAdmin() || vm.showCollaboratorButton(m)"
+                            type="button"
+                            class="btn btn-primary only-icon"
+                            uib-dropdown-toggle
+                        >
+                        </button>
+
+                        <div
+                            ng-if="vm.user.isAdmin() || vm.showCollaboratorButton(m)"
+                            uib-dropdown-menu
+                            class="right"
+                        >
                             <button
                                 class="dropdown-item"
-                                ng-click="vm.editCollaborator(m)">
+                                ng-click="vm.loginAs(m)"
+                                ng-if="vm.user.isAdmin()"
+                                href="javascript:void(0)"
+                            >
+                                <i class="fas fa-user fa-left"></i>Login as
+                            </button>
+
+                            <button
+                                class="dropdown-item"
+                                ng-click="vm.editUser(m)"
+                                ng-if="vm.user.isAdmin()"
+                                href="javascript:void(0)"
+                            >
                                 <i class="fas fa-edit fa-left"></i>Edit
+                            </button>
+
+                            <button
+                                class="dropdown-item"
+                                scientilla-click-confirm="Are you sure?"
+                                ng-click="vm.deleteUser(m)"
+                                ng-if="vm.user.isAdmin()"
+                                href="javascript:void(0)"
+                            >
+                                <i class="fas fa-trash fa-left"></i>Delete
+                            </button>
+
+                            <button
+                                class="dropdown-item"
+                                ng-click="vm.editCollaborator(m)"
+                                ng-if="vm.showCollaboratorButton(m)"
+                            >
+                                <i class="fas fa-edit fa-left"></i>Edit collaborator
                             </button>
 
                             <button
                                 ng-click="vm.removeCollaborator(m)"
                                 class="dropdown-item"
-                                title="Remove collaborator">
-                                <i class="fas fa-times fa-left"></i>Remove
+                                title="Remove collaborator"
+                                ng-if="vm.showCollaboratorButton(m)"
+                            >
+                                <i class="fas fa-times fa-left"></i>Remove collaborator
                             </button>
                         </div>
-                    </div>
-
-                    <div
-                        ng-if="!vm.showCollaboratorButton(m)"
-                        class="btn-group"
-                        uib-dropdown
-                    >
-                        <button
-                            type="button"
-                            class="btn btn-primary only-icon invisible"
-                            uib-dropdown-toggle
-                            ng-disabled="true"
-                        >
-                            <i class="fas fa-user fa-left"></i>Collaborator
-                        </button>
                     </div>
                 </div>
             </li>
