@@ -1,109 +1,207 @@
-<div ng-show="vm.isLogged" class="sidebar-menu">
+<div
+    ng-show="vm.isLogged"
+    class="sidebar-menu">
     <ul class="sidebar-listing">
         <li ng-if="!vm.user.isViewOnly()">
-            <a class="btn btn-dashboard"
-               ng-if="vm.isUser()"
-               ng-href="{{ vm.getUrl('profile') }}"
-               ng-class="{ 'btn-primary' : vm.isActive('/', true),  'btn-light' : !vm.isActive('/', true) }">
-                <i class="fas fa-user fa-left"></i>
-                Profile</a>
-            <a class="btn btn-dashboard"
-               ng-if="vm.subResearchEntity.isScientific()"
-               ng-href="{{ vm.getUrl('dashboard/documents-overview') }}"
-               ng-class="{ 'btn-primary' : vm.isActive('/', true),  'btn-light' : !vm.isActive('/', true) }">
-                <i class="fas fa-tachometer-alt fa-left"></i>
-                Dashboard</a>
+            <a
+                class="btn btn-dashboard"
+                ng-if="vm.isUser()"
+                ng-href="{{ vm.getUrl('profile') }}"
+                ng-class="{
+                    'btn-primary' : vm.isActive('/profile', true),
+                    'btn-light' : !vm.isActive('/profile', true)
+                }">
+                <i class="fas fa-user fa-left"></i>Profile
+            </a>
+            <a
+                class="btn btn-dashboard"
+                ng-if="vm.subResearchEntity.isScientific()"
+                ng-href="{{ vm.getUrl('dashboard/documents-overview') }}"
+                ng-class="{
+                    'btn-primary' : vm.isActive('/dashboard/documents-overview', true),
+                    'btn-light' : !vm.isActive('/dashboard/documents-overview', true)
+                }">
+                <i class="fas fa-tachometer-alt fa-left"></i>Dashboard
+            </a>
+            <a
+                class="btn btn-dashboard"
+                ng-if="vm.isGroup()"
+                ng-href="#/groups/{{ vm.subResearchEntity.id }}/info"
+                ng-class="{
+                    'btn-primary' : vm.isActive('/groups/{{ vm.subResearchEntity.id }}/info', false),
+                    'btn-light' : !vm.isActive('/groups/{{ vm.subResearchEntity.id }}/info', false)
+                }">
+                <i class="fas fa-info-circle fa-left"></i>Group info
+            </a>
+            <a
+                class="btn btn-dashboard"
+                ng-if="vm.isGroup()"
+                ng-href="#/groups/{{ vm.subResearchEntity.id }}/members"
+                ng-class="{
+                    'btn-primary' : vm.isActive('/groups/{{ vm.subResearchEntity.id }}/members', false),
+                    'btn-light' : !vm.isActive('/groups/{{ vm.subResearchEntity.id }}/members', false)
+                }">
+                <i class="fas fa-users fa-left"></i>Group members
+            </a>
         </li>
         <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific()">
             <label class="label-add-document">
                 Documents
-                <scientilla-button-new-document ng-if="!vm.user.isViewOnly()"
-                                                class="button-new-document-container"></scientilla-button-new-document>
+                <scientilla-button-new-document
+                    ng-if="!vm.user.isViewOnly()"
+                    class="button-new-document-container"
+                >
+                </scientilla-button-new-document>
             </label>
             <div class="list-group">
-                <a ng-href="{{ vm.getUrl('documents/suggested') }}"
-                   ng-class="{active: vm.isActive('/documents/suggested', true)}"
-                   class="list-group-item list-group-item-action">Suggested</a>
-                <a ng-href="{{ vm.getUrl('documents/verified') }}"
-                   ng-class="{active: vm.isActive('/documents/verified', true)}"
-                   class="list-group-item list-group-item-action">Verified</a>
-                <a ng-href="{{ vm.getUrl('documents/drafts') }}"
-                   ng-class="{active: vm.isActive('/documents/drafts', true)}"
-                   class="list-group-item list-group-item-action">Drafts</a>
-                <a ng-href="{{ vm.getUrl('documents/external') }}"
-                   ng-class="{active: vm.isActive('/documents/external', true)}"
-                   ng-if="vm.hasActiveExternalConnectors"
-                   class="list-group-item list-group-item-action">External</a>
+                <a
+                    ng-href="{{ vm.getUrl('documents/suggested') }}"
+                    ng-class="{active: vm.isActive('/documents/suggested', true)}"
+                    class="list-group-item list-group-item-action"
+                >
+                    Suggested
+                </a>
+                <a
+                    ng-href="{{ vm.getUrl('documents/verified') }}"
+                    ng-class="{active: vm.isActive('/documents/verified', true)}"
+                    class="list-group-item list-group-item-action"
+                >
+                    Verified
+                </a>
+                <a
+                    ng-href="{{ vm.getUrl('documents/drafts') }}"
+                    ng-class="{active: vm.isActive('/documents/drafts', true)}"
+                    class="list-group-item list-group-item-action"
+                >
+                    Drafts
+                </a>
+                <a
+                    ng-href="{{ vm.getUrl('documents/external') }}"
+                    ng-class="{active: vm.isActive('/documents/external', true)}"
+                    ng-if="vm.hasActiveExternalConnectors"
+                    class="list-group-item list-group-item-action"
+                >
+                    External
+                </a>
             </div>
         </li>
         <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific()">
             <label class="label-add-accomplishment">
                 Accomplishments
                 <scientilla-button-new-research-item
-                        category="accomplishment"
-                        class="button-new-research-entity-container"></scientilla-button-new-research-item>
+                    category="accomplishment"
+                    class="button-new-research-entity-container"
+                >
+                </scientilla-button-new-research-item>
             </label>
             <div class="list-group">
-                <a ng-href="{{ vm.getUrl('accomplishments/suggested') }}"
-                   ng-class="{active: vm.isActive('/accomplishments/suggested', true)}"
-                   class="list-group-item list-group-item-action">Suggested</a>
-                <a ng-href="{{ vm.getUrl('accomplishments/verified') }}"
-                   ng-class="{active: vm.isActive('/accomplishments/verified', true)}"
-                   class="list-group-item list-group-item-action">Verified</a>
-                <a ng-href="{{ vm.getUrl('accomplishments/drafts') }}"
-                   ng-class="{active: vm.isActive('/accomplishments/drafts', true)}"
-                   class="list-group-item list-group-item-action">Drafts</a>
+                <a
+                    ng-href="{{ vm.getUrl('accomplishments/suggested') }}"
+                    ng-class="{active: vm.isActive('/accomplishments/suggested', true)}"
+                    class="list-group-item list-group-item-action"
+                >
+                    Suggested
+                </a>
+                <a
+                    ng-href="{{ vm.getUrl('accomplishments/verified') }}"
+                    ng-class="{active: vm.isActive('/accomplishments/verified', true)}"
+                    class="list-group-item list-group-item-action"
+                >
+                    Verified
+                </a>
+                <a
+                    ng-href="{{ vm.getUrl('accomplishments/drafts') }}"
+                    ng-class="{active: vm.isActive('/accomplishments/drafts', true)}"
+                    class="list-group-item list-group-item-action"
+                >
+                    Drafts
+                </a>
             </div>
         </li>
         <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && vm.isAdmin()">
             <label>Projects</label>
             <div class="list-group">
-                <a ng-href="{{ vm.getUrl('projects/verified') }}"
-                   ng-class="{active: vm.isActive('/projects/verified', true)}"
-                   class="list-group-item list-group-item-action">Verified</a>
+                <a
+                    ng-href="{{ vm.getUrl('projects/verified') }}"
+                    ng-class="{active: vm.isActive('/projects/verified', true)}"
+                    class="list-group-item list-group-item-action"
+                >
+                    Verified
+                </a>
             </div>
         </li>
         <li ng-if="!vm.user.isViewOnly() && vm.subResearchEntity.isScientific() && vm.isAdmin()">
             <label>Patents</label>
             <div class="list-group">
-                <a ng-href="{{ vm.getUrl('patents/verified') }}"
-                   ng-class="{active: vm.isActive('/patents/verified', true)}"
-                   class="list-group-item list-group-item-action">Verified</a>
-                <a ng-href="{{ vm.getUrl('patent-families/verified') }}"
-                   ng-class="{active: vm.isActive('/patent-families/verified', true)}"
-                   class="list-group-item list-group-item-action">Families</a>
+                <a
+                    ng-href="{{ vm.getUrl('patents/verified') }}"
+                    ng-class="{active: vm.isActive('/patents/verified', true)}"
+                    class="list-group-item list-group-item-action"
+                >
+                    Verified
+                </a>
+                <a
+                    ng-href="{{ vm.getUrl('patent-families/verified') }}"
+                    ng-class="{active: vm.isActive('/patent-families/verified', true)}"
+                    class="list-group-item list-group-item-action">
+                    Families
+                </a>
             </div>
         </li>
         <li>
             <label>Explore</label>
             <div class="list-group">
-                <a ng-href="#/users"
-                   ng-class="{active: vm.isActive('/users')}"
-                   class="list-group-item list-group-item-action">People</a>
-                <a ng-href="#/groups"
-                   ng-class="{active: vm.isActive('/groups')}"
-                   class="list-group-item list-group-item-action">Groups</a>
+                <a
+                    ng-href="#/users"
+                    ng-class="{active: vm.isActive('/users')}"
+                    class="list-group-item list-group-item-action"
+                >
+                    People
+                </a>
+                <a
+                    ng-href="#/groups"
+                    ng-class="{active: vm.isActive('/groups')}"
+                    class="list-group-item list-group-item-action"
+                >
+                    Groups
+                </a>
             </div>
         </li>
         <li ng-if="vm.isAdmin()">
             <label>Admin</label>
             <div class="list-group">
-                <a ng-href="#/sources"
-                   ng-class="{active: vm.isActive('/sources')}"
-                   ng-if="vm.isAdmin()"
-                   class="list-group-item list-group-item-action">Sources</a>
-                <a ng-href="#/tools"
-                   ng-class="{active: vm.isActive('/tools')}"
-                   ng-if="vm.isAdmin()"
-                   class="list-group-item list-group-item-action">Tools</a>
-                <a ng-href="#/customize"
-                   ng-class="{active: vm.isActive('/customize')}"
-                   ng-if="vm.isAdmin()"
-                   class="list-group-item list-group-item-action">Customize</a>
-                <a ng-href="#/connectors"
-                   ng-class="{active: vm.isActive('/connectors')}"
-                   ng-if="vm.isAdmin()"
-                   class="list-group-item list-group-item-action">External connectors</a>
+                <a
+                    ng-href="#/sources"
+                    ng-class="{active: vm.isActive('/sources')}"
+                    ng-if="vm.isAdmin()"
+                    class="list-group-item list-group-item-action"
+                >
+                    Sources
+                </a>
+                <a
+                    ng-href="#/tools"
+                    ng-class="{active: vm.isActive('/tools')}"
+                    ng-if="vm.isAdmin()"
+                    class="list-group-item list-group-item-action"
+                >
+                    Tools
+                </a>
+                <a
+                    ng-href="#/customize"
+                    ng-class="{active: vm.isActive('/customize')}"
+                    ng-if="vm.isAdmin()"
+                    class="list-group-item list-group-item-action"
+                >
+                    Customize
+                </a>
+                <a
+                    ng-href="#/connectors"
+                    ng-class="{active: vm.isActive('/connectors')}"
+                    ng-if="vm.isAdmin()"
+                    class="list-group-item list-group-item-action"
+                >
+                    External connectors
+                </a>
             </div>
         </li>
     </ul>
