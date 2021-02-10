@@ -113,6 +113,7 @@
                             <a
                                 href="/#/groups/{{ vm.group.id }}/members?roleCategory={{ role.category }}"
                                 ng-if="role.category !== 'Others'"
+                                ng-click="vm.scrollToTop()"
                                 class="colorize-text"
                             >
                                 {{ role.value }} {{ role.value === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
@@ -154,6 +155,7 @@
 
                                         <a
                                             href="/#/groups/{{ vm.group.id }}/members?gender={{ gender.value }}"
+                                            ng-click="vm.scrollToTop()"
                                             class="colorize-text"
                                         >
                                             {{ gender.count }} {{ gender.count === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
@@ -195,6 +197,7 @@
                                     <span class="colorize-text">{{ range.label }}</span>
                                     <a
                                         href="/#/groups/{{ vm.group.id }}/members?ageRange={{ range.label }}"
+                                        ng-click="vm.scrollToTop()"
                                         class="colorize-text"
                                     >
                                         {{ range.count }} {{ range.count === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
@@ -236,6 +239,7 @@
                                             <span>{{ country.label }}</span>
                                             <a
                                                 href="/#/groups/{{ vm.group.id }}/members?nationality={{ country.key }}"
+                                                ng-click="vm.scrollToTop()"
                                                 class="colorize-text"
                                                 ng-if="country.key"
                                             >
@@ -278,6 +282,7 @@
                                         <span class="colorize-text">{{ country.label }}</span>
                                         <a
                                             href="/#/groups/{{ vm.group.id }}/members?nationality={{ country.key }}"
+                                            ng-click="vm.scrollToTop()"
                                             class="colorize-text"
                                         >
                                             {{ country.value }} {{ country.value === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>

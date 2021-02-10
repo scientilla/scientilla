@@ -478,5 +478,9 @@
             return Promise.resolve(1);
         }
         /* jshint ignore:end */
+
+        vm.scrollToTop = () => {
+            angular.element('html, body').animate({ scrollTop: 0 });
+        };
     }
 })();
