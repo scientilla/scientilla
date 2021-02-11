@@ -196,35 +196,39 @@
                 }
             }
 
-            switch (true) {
-                case subgroups && formerMembers:
-                    groupWhere = {
-                        activeAndFormerMembershipsIncludingSubgroups: {
-                            like: `%-${ vm.group.id }-%`
-                        }
-                    };
-                    break;
-                case !subgroups && formerMembers:
-                    groupWhere = {
-                        activeAndFormerMemberships: {
-                            like: `%-${ vm.group.id }-%`
-                        }
-                    };
-                    break;
-                case subgroups && !formerMembers:
-                    groupWhere = {
-                        activeMembershipsIncludingSubgroups: {
-                            like: `%-${ vm.group.id }-%`
-                        }
-                    };
-                    break;
-                default:
-                    groupWhere = {
-                        activeMemberships: {
-                            like: `%-${ vm.group.id }-%`
-                        }
-                    };
-                    break;
+            if (vm.group.id === 1 && subgroups && !formerMembers) {
+                groupWhere = {};
+            } else {
+                switch (true) {
+                    case subgroups && formerMembers:
+                        groupWhere = {
+                            activeAndFormerMembershipsIncludingSubgroups: {
+                                like: `%-${ vm.group.id }-%`
+                            }
+                        };
+                        break;
+                    case !subgroups && formerMembers:
+                        groupWhere = {
+                            activeAndFormerMemberships: {
+                                like: `%-${ vm.group.id }-%`
+                            }
+                        };
+                        break;
+                    case subgroups && !formerMembers:
+                        groupWhere = {
+                            activeMembershipsIncludingSubgroups: {
+                                like: `%-${ vm.group.id }-%`
+                            }
+                        };
+                        break;
+                    default:
+                        groupWhere = {
+                            activeMemberships: {
+                                like: `%-${ vm.group.id }-%`
+                            }
+                        };
+                        break;
+                }
             }
 
             query.where = Object.assign({}, query.where, groupWhere);
