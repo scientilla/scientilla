@@ -188,6 +188,13 @@
                 matchRule: 'contains',
                 type: 'field'
             },
+            application: {
+                inputType: 'text',
+                label: 'Application',
+                matchColumn: 'application',
+                matchRule: 'contains',
+                type: 'field'
+            },
             year: {
                 inputType: 'range',
                 values: {},
