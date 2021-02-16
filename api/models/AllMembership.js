@@ -1,10 +1,10 @@
 module.exports = {
     attributes: {
-        group: {
-            model: 'Group'
-        },
         user: {
             model: 'User'
+        },
+        group: {
+            model: 'Group'
         },
         synchronized: 'boolean',
         active: 'boolean',

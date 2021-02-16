@@ -12,11 +12,8 @@
         });
 
     controller.$inject = [
-        'Restangular',
-        'researchEntityService',
         'ResearchEntitiesService',
         'UsersService',
-        'GroupsService',
         'documentListSections',
         'accomplishmentListSections',
         'AuthService',
@@ -26,11 +23,8 @@
     ];
 
     function controller(
-        Restangular,
-        researchEntityService,
         ResearchEntitiesService,
         UsersService,
-        GroupsService,
         documentListSections,
         accomplishmentListSections,
         AuthService,
@@ -46,12 +40,6 @@
         vm.loggedUser = AuthService.user;
 
         vm.activeTabIndex = 0;
-        vm.types = [];
-        vm.hasTypes = false;
-
-        vm.loading = false;
-
-        let allMemberships = [];
 
         let activeTabWatcher = null;
 
@@ -82,19 +70,8 @@
             }
         ];
 
-        vm.getTypeTitle = GroupsService.getTypeTitle;
-
-        vm.isActiveMember = (user, group) => {
-            const membership = allMemberships.find(m => m.user === user.id && m.group === group.id);
-            if (membership) {
-                return membership.active;
-            }
-            return false;
-        };
-
         /* jshint ignore:start */
         vm.$onInit = async () => {
-            vm.loading = true;
 
             activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
                 if (vm.activeTabIndex === 4) {
@@ -104,22 +81,7 @@
                 }
             });
 
-            vm.user = await UsersService.getUser(vm.userId);
-            vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
-            allMemberships = await researchEntityService.getAllMemberships({ user: vm.user.id });
-
-            const groupIds = vm.user.memberships.map(g => g.id);
-            vm.institute = await GroupsService.getConnectedGroups(groupIds);
-
-            if (groupIds.length > 1) {
-                vm.types = _.groupBy(vm.institute.childGroups, 'type');
-            }
-
-            if (!_.isEmpty(vm.types)) {
-                vm.hasTypes = true;
-            }
-
-            vm.loading = false;
+            await loadUser();
 
             vm.initializeTabs(tabIdentifiers);
         };
@@ -129,17 +91,16 @@
             activeTabWatcher();
         };
 
-        vm.getGroupTypes = (group) => {
-            return _.groupBy(group.childGroups, 'type');
-        };
-
-        vm.getLength = (subtypes) => {
-            return Object.keys(subtypes).length;
-        };
-
         vm.isAdmin = function () {
             return vm.loggedUser && vm.loggedUser.isAdmin();
         };
+
+        /* jshint ignore:start */
+        async function loadUser() {
+            vm.user = await UsersService.getUser(vm.userId, ['memberships']);
+            vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.user.researchEntity);
+        }
+        /* jshint ignore:end */
     }
 
 })();

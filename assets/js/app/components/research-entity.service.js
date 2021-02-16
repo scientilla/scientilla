@@ -32,6 +32,7 @@
         service.getExternalDocuments = getExternalDocuments;
         service.getMemberships = getMemberships;
         service.getAllMemberships = getAllMemberships;
+        service.getAllMembershipGroups = getAllMembershipGroups;
         service.deleteDraft = deleteDraft;
         service.deleteDrafts = deleteDrafts;
         service.setPrivateTags = setPrivateTags;
@@ -115,6 +116,14 @@
                 group: researchEntity.id
             });
             return Restangular.all('allMemberships').getList(query);
+        }
+
+        function getAllMembershipGroups(userId, query = {limit: 0}) {
+            query.where = Object.assign({}, query.where, {
+                user: userId
+            });
+            query.populate = ['group', 'child_group'];
+            return Restangular.all('allMembershipGroups').getList(query);
         }
 
         function getSuggestedDocuments(researchEntity, query, populates = documentPopulates) {

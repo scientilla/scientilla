@@ -13,54 +13,17 @@
                 heading="Profile">
                 <user-profile
                     ng-if="vm.user"
-                    user="vm.user"></user-profile>
+                    user="vm.user"
+                    active="vm.activeTabIndex === 0"
+                ></user-profile>
             </uib-tab>
             <uib-tab
                 index="1"
                 heading="Groups">
-
-                <scientilla-loading is-loading="vm.loading"></scientilla-loading>
-
-                <ul
-                    ng-if="vm.institute"
-                    class="group-detail-listing">
-                    <li>
-                        <strong>Institute:</strong>
-                        <a ng-href="#{{ vm.institute.getProfileUrl() }}">
-                            {{ vm.institute.name }}
-                        </a>
-                        <ul ng-if="vm.hasTypes">
-                            <li ng-repeat="(type, groups) in vm.types">
-                                <strong>{{ vm.getTypeTitle(type, groups) }}:</strong>
-                                <ul>
-                                    <li
-                                        ng-repeat="group in groups"
-                                        ng-init="subtypes = vm.getGroupTypes(group)">
-                                        <a ng-href="#{{ group.getProfileUrl() }}">
-                                            {{ group.name }}
-                                        </a>
-                                        <ul ng-class="{ 'hidden': vm.getLength(subtypes) <= 0 }">
-                                            <li ng-repeat="(subtype, subgroups) in subtypes">
-                                                <strong>{{ vm.getTypeTitle(subtype, subgroups) }}:</strong>
-                                                <ul class="subgroup-listing">
-                                                    <li ng-repeat="subgroup in subgroups">
-                                                        <a ng-href="#{{ subgroup.getProfileUrl() }}">
-                                                            {{ subgroup.name }}
-                                                        </a>
-                                                        <span ng-if="!vm.isActiveMember(vm.user, subgroup)">(Former member)</span>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-                <div ng-if="!vm.hasTypes && !vm.loading">
-                    <p>No related groups found.</p>
-                </div>
+                <group-tree
+                    user="vm.user"
+                    active="vm.activeTabIndex === 1"
+                ></group-tree>
             </uib-tab>
             <uib-tab
                 index="2"
@@ -69,7 +32,8 @@
                 <scientilla-documents-list
                     ng-if="vm.user"
                     research-entity="vm.user"
-                    section="vm.documentListSections.USER"></scientilla-documents-list>
+                    section="vm.documentListSections.USER"
+                    active="vm.activeTabIndex === 2"></scientilla-documents-list>
             </uib-tab>
             <uib-tab
                 index="3"
@@ -78,7 +42,8 @@
                 <scientilla-accomplishments-list
                     ng-if="vm.researchEntity"
                     research-entity="vm.researchEntity"
-                    section="vm.accomplishmentListSections.USER"></scientilla-accomplishments-list>
+                    section="vm.accomplishmentListSections.USER"
+                    active="vm.activeTabIndex === 3"></scientilla-accomplishments-list>
             </uib-tab>
             <uib-tab
                 index="4"
@@ -87,7 +52,8 @@
                 <scientilla-projects-list
                     ng-if="vm.researchEntity"
                     research-entity="vm.researchEntity"
-                    section="vm.projectListSections.USER"></scientilla-projects-list>
+                    section="vm.projectListSections.USER"
+                    active="vm.activeTabIndex === 4"></scientilla-projects-list>
             </uib-tab>
             <uib-tab
                 index="5"

@@ -96,8 +96,12 @@
             });
         };
 
-        service.getUser = function (userId) {
-            const populate = {populate: userGetPopulates};
+        service.getUser = function (userId, populates = userGetPopulates) {
+            if (!populates.includes('administratedGroups')) {
+                populates.push('administratedGroups');
+            }
+
+            const populate = {populate: populates};
             return service.one(userId).get(populate).then(function (user) {
                 Prototyper.toUserModel(user);
                 user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');

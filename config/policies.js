@@ -232,5 +232,9 @@ module.exports.policies = {
     PersonController: _.defaults({
         getUniqueRoleCategories: isLogged,
         getUniqueNationalities: isLogged
-    }, defaultPolicy)
+    }, defaultPolicy),
+
+    AllMembershipController: defaultPolicy,
+
+    AllMembershipGroupController: defaultPolicy
 };

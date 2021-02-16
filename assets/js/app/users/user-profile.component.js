@@ -7,7 +7,8 @@
             controller: controller,
             controllerAs: 'vm',
             bindings: {
-                user: '<'
+                user: '<',
+                active: '<?'
             }
         });
 
@@ -15,14 +16,16 @@
         'UsersService',
         'researchEntityService',
         'ResearchEntitiesService',
-        'AccomplishmentService'
+        'AccomplishmentService',
+        '$scope'
     ];
 
     function controller(
         UsersService,
         researchEntityService,
         ResearchEntitiesService,
-        AccomplishmentService
+        AccomplishmentService,
+        $scope
     ) {
         const vm = this;
 
@@ -41,8 +44,32 @@
         vm.loadingDocuments = false;
         vm.loadingAccomplishments = false;
 
+        vm.loadProfile = false;
+
+        let activeWatcher;
+
         /* jshint ignore:start */
         vm.$onInit = async () => {
+            if (_.has(vm, 'active')) {
+                vm.loadProfile = angular.copy(vm.active);
+
+                activeWatcher = $scope.$watch('vm.active', () => {
+                    vm.loadProfile = angular.copy(vm.active);
+
+                    if (vm.loadProfile) {
+                        loadProfile();
+                    } else {
+                        vm.profile = false;
+                        vm.documents = [];
+                        vm.accomplishments = [];
+                    }
+                });
+            } else {
+                loadProfile();
+            }
+        };
+
+        async function loadProfile() {
             vm.researchEntity = vm.user.researchEntity;
             vm.profile = await UsersService.getUserProfile(vm.researchEntity);
 
@@ -52,7 +79,6 @@
                 vm.loadingDocuments = true;
                 vm.loadingAccomplishments = true;
                 setNumberOfItems();
-
 
                 vm.documents = await researchEntityService.getDocuments(vm.user, {limit: 1}, false, []);
                 vm.favoriteDocuments = await researchEntityService.getDocuments(vm.user, {}, true, []);
@@ -66,9 +92,15 @@
             }
 
             setNumberOfItems();
-        };
+        }
 
         /* jshint ignore:end */
+
+        vm.$onDestroy = () => {
+            if (_.isFunction(activeWatcher)) {
+                activeWatcher();
+            }
+        };
 
         function setNumberOfItems() {
             let count = 1;
