@@ -5,7 +5,7 @@
     class="group-detail-listing">
     <li>
         <strong>Institute:</strong>
-        <a ng-href="#{{ vm.mainMembership.getProfileUrl() }}">
+        <a ng-href="#{{ vm.mainMembership.group.getProfileUrl() }}">
             {{ vm.mainMembership.group.name }}
         </a>
         <ul ng-if="vm.hasTypes">

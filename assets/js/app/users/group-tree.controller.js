@@ -95,6 +95,7 @@
             }
 
             vm.mainMembership = uniqueMemberships.find(m => m.group.id === 1);
+            vm.mainMembership.group = Prototyper.toGroupModel(vm.mainMembership.group);
 
             if (allMembershipGroups.length > 1) {
                 vm.types = _.groupBy(vm.mainMembership.childMemberships, 'group.type');
