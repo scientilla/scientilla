@@ -138,6 +138,6 @@
     class="project-logos"
     ng-if="vm.project.logos">
     <li ng-repeat="logo in vm.project.logos">
-        <img src="{{ logo.image }}" alt="{{ logo.name }}">
+        <img ng-src="{{ logo.image }}" alt="{{ logo.name }}">
     </li>
 </ul>

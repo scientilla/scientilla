@@ -81,7 +81,7 @@
             return GroupsService.getGroup(group.id)
                 .then(group => context.setSubResearchEntity(group))
                 .then(() => {
-                    path.goTo('/' + group.slug + '/dashboard');
+                    path.goTo('/groups/' + group.id + '/info');
                 });
         }
 

@@ -17,7 +17,7 @@
 
             <ul class="user-listing">
                 <li ng-repeat="u in vm.users" ng-class="u.cssClass">
-                    <img src="{{ u.image }}" alt="{{ u | fullname }}" class="img-fluid">
+                    <img ng-src="{{ u.image }}" alt="{{ u | fullname }}" class="img-fluid">
 
                     <div class="user-content">
                         <div class="user-fullname">

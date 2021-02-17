@@ -11,9 +11,9 @@
             }
         });
 
-    controller.$inject = ['$scope', '$element', 'ISO3166', 'genders', 'ChartService'];
+    controller.$inject = ['$scope', '$element', 'ISO3166', 'genders', 'ChartService', 'GroupsService', 'Prototyper'];
 
-    function controller($scope, $element, ISO3166, genders, ChartService) {
+    function controller($scope, $element, ISO3166, genders, ChartService, GroupsService, Prototyper) {
         const vm = this;
 
         vm.name = 'group-info';
@@ -95,6 +95,9 @@
 
             vm.researchDomain = vm.group.getResearchDomain();
             vm.interactions = vm.group.getInteractions();
+
+            const parentMembershipGroups = await GroupsService.getParentMembershipGroups(vm.group.id);
+            vm.center = parentMembershipGroups.map(m => Prototyper.toGroupModel(m.parent_group)).find(g => g.type === 'Center');
 
             await loadChartData(forced);
 

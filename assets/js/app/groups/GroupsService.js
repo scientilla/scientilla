@@ -30,6 +30,7 @@
         service.getSettings = getSettings;
         service.getConnectedGroups = getConnectedGroups;
         service.getMembershipGroups = getMembershipGroups;
+        service.getParentMembershipGroups = getParentMembershipGroups;
         service.getTypeTitle = getTypeTitle;
         service.createInstituteStructure = createInstituteStructure;
 
@@ -95,7 +96,7 @@
         }
 
         function getGroups(query) {
-            const populate = {populate: ['administrators', 'attributes', 'groupAttributes', 'pis']};
+            const populate = {populate: ['administrators', 'attributes', 'groupAttributes','childGroups', 'parentGroups', 'pis']};
             const q = _.merge({}, query, populate);
 
             return service.getList(q);
@@ -104,6 +105,15 @@
         function getMembershipGroups() {
             return Restangular.all('membershipgroups').customGET('', {
                 //where: {active: true},
+                populate: ['parent_group', 'child_group']
+            }).then(res => {
+                return res.items;
+            });
+        }
+
+        function getParentMembershipGroups(groupId) {
+            return Restangular.all('membershipgroups').customGET('', {
+                where: { child_group: groupId },
                 populate: ['parent_group', 'child_group']
             }).then(res => {
                 return res.items;

@@ -8,8 +8,13 @@
 
     <item-list>
         <ul class="group-member-listing">
-            <li ng-repeat="m in vm.members" ng-class="m.cssClass">
-                <img src="{{ m.image }}" alt="{{ u | fullname }}" class="img-fluid">
+            <li
+                ng-repeat="m in vm.members"
+                ng-class="m.cssClass">
+                <img
+                    ng-src="{{ m.image }}"
+                    alt="{{ m | fullname }}"
+                    class="img-fluid">
 
                 <div class="user-content">
                     <div class="group-member-fullname">
