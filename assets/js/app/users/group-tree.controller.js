@@ -44,7 +44,7 @@
                     if (vm.active) {
                         loadGroupTree();
                     } else {
-                        vm.institute = false;
+                        vm.mainMembership = false;
                     }
                 });
 
@@ -59,51 +59,45 @@
         async function loadGroupTree() {
             vm.loading = true;
 
-            let institute = false;
-
             allMembershipGroups = await researchEntityService.getAllMembershipGroups(vm.user.id, {});
-            allMembershipGroups = _.orderBy(allMembershipGroups, 'level', 'desc');
-            const groupedAllMembershipGroups = _.cloneDeep(_.groupBy(allMembershipGroups, 'child_group.name'));
+            const groupedAllMembershipGroups = _.groupBy(allMembershipGroups, 'child_group.name');
 
-            for (const name in groupedAllMembershipGroups) {
-
-                const subgroups = groupedAllMembershipGroups[name];
-
-                for (const subgroup of subgroups) {
-
-                    if (subgroup.group.id === 1) {
-                        // Store the parent group as institute if it's empty
-                        if (_.isEmpty(institute)) {
-                            institute = Prototyper.toGroupModel(subgroup.group);
-                        }
-
-                        continue;
-                    }
-
-                    let parent = subgroups.find(s => s.level === subgroup.level + 1);
-
-                    // Skip if the parent element is empty
-                    if (!parent || !_.has(parent, 'group')) {
-                        continue;
-                    }
-
-                    parent = parent.group;
-
-                    if (parent.id === 1) {
-                        parent = institute;
-                    }
-
-                    if (!_.has(parent, 'childGroups')) {
-                        parent.childGroups = [];
-                    }
-                    parent.childGroups.push(Prototyper.toGroupModel(subgroup.group));
+            const uniqueMemberships = [];
+            for (const membership of allMembershipGroups) {
+                if (!uniqueMemberships.find(m => m.group.id === membership.group.id)) {
+                    uniqueMemberships.push(membership);
                 }
             }
 
-            vm.institute = institute;
+            for (const name in groupedAllMembershipGroups) {
+                const membershipGroup = _.orderBy(groupedAllMembershipGroups[name], 'level', 'asc');
+
+                for (const membership of membershipGroup) {
+                    const parentMembership = membershipGroup.find(m => m.level === membership.level + 1);
+
+                    if (!parentMembership) {
+                        continue;
+                    }
+
+                    const uniqueMembership = uniqueMemberships.find(m => m.group.id === parentMembership.group.id);
+
+                    if (uniqueMembership) {
+                        if (!_.has(uniqueMembership, 'childMemberships')) {
+                            uniqueMembership.childMemberships = [];
+                        }
+
+                        if (!uniqueMembership.childMemberships.find(m => m.group.id === membership.group.id)) {
+                            membership.group = Prototyper.toGroupModel(membership.group);
+                            uniqueMembership.childMemberships.push(membership);
+                        }
+                    }
+                }
+            }
+
+            vm.mainMembership = uniqueMemberships.find(m => m.group.id === 1);
 
             if (allMembershipGroups.length > 1) {
-                vm.types = _.groupBy(vm.institute.childGroups, 'type');
+                vm.types = _.groupBy(vm.mainMembership.childMemberships, 'group.type');
             }
 
             if (!_.isEmpty(vm.types)) {
@@ -129,7 +123,7 @@
         };
 
         vm.getGroupTypes = (group) => {
-            return _.groupBy(group.childGroups, 'type');
+            return _.groupBy(group.childMemberships, 'group.type');
         };
 
         vm.getLength = (subtypes) => {

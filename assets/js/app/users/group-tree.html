@@ -1,32 +1,32 @@
 <scientilla-loading is-loading="vm.loading"></scientilla-loading>
 
 <ul
-    ng-if="vm.institute"
+    ng-if="vm.mainMembership"
     class="group-detail-listing">
     <li>
         <strong>Institute:</strong>
-        <a ng-href="#{{ vm.institute.getProfileUrl() }}">
-            {{ vm.institute.name }}
+        <a ng-href="#{{ vm.mainMembership.getProfileUrl() }}">
+            {{ vm.mainMembership.group.name }}
         </a>
         <ul ng-if="vm.hasTypes">
-            <li ng-repeat="(type, groups) in vm.types">
-                <strong>{{ vm.getTypeTitle(type, groups) }}:</strong>
+            <li ng-repeat="(type, memberships) in vm.types track by $index">
+                <strong>{{ vm.getTypeTitle(type, memberships) }}:</strong>
                 <ul>
                     <li
-                        ng-repeat="group in groups"
-                        ng-init="subtypes = vm.getGroupTypes(group)">
-                        <a ng-href="#{{ group.getProfileUrl() }}">
-                            {{ group.name }}
+                        ng-repeat="membership in memberships track by $index"
+                        ng-init="subtypes = vm.getGroupTypes(membership)">
+                        <a ng-href="#{{ membership.group.getProfileUrl() }}">
+                            {{ membership.group.name }}
                         </a>
                         <ul ng-class="{ 'hidden': vm.getLength(subtypes) <= 0 }">
-                            <li ng-repeat="(subtype, subgroups) in subtypes">
-                                <strong>{{ vm.getTypeTitle(subtype, subgroups) }}:</strong>
+                            <li ng-repeat="(subtype, memberships) in subtypes track by $index">
+                                <strong>{{ vm.getTypeTitle(subtype, memberships) }}:</strong>
                                 <ul class="subgroup-listing">
-                                    <li ng-repeat="subgroup in subgroups">
-                                        <a ng-href="#{{ subgroup.getProfileUrl() }}">
-                                            {{ subgroup.name }}
+                                    <li ng-repeat="membership in memberships track by $index">
+                                        <a ng-href="#{{ membership.group.getProfileUrl() }}">
+                                            {{ membership.group.name }}
                                         </a>
-                                        <span ng-if="!vm.isActiveMember(vm.user, subgroup)">(Former member)</span>
+                                        <span ng-if="!vm.isActiveMember(vm.user, membership.group)">(Former member)</span>
                                     </li>
                                 </ul>
                             </li>
@@ -38,6 +38,6 @@
     </li>
 </ul>
 
-<div ng-if="!vm.hasTypes && !vm.loading">
+<div ng-if="!vm.mainMembership && !vm.loading">
     <p>No related groups found.</p>
 </div>
