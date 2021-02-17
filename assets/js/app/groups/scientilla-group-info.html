@@ -26,6 +26,9 @@
                             <li ng-if="vm.group.starting_date">
                                 <strong>Starting date:</strong> {{ vm.group.starting_date | date : 'd LLLL yyyy' }}
                             </li>
+                            <li ng-if="vm.center">
+                                <strong>Center:</strong> <a ng-href="#{{ vm.center.getProfileUrl() }}">{{ vm.center.name }}</a>
+                            </li>
                             <li ng-if="vm.researchDomain">
                                 <strong>Research domain:</strong> {{ vm.researchDomain.name }}
                             </li>
