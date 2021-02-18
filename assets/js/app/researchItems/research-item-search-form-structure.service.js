@@ -526,7 +526,7 @@
                         {
                             favorites: {
                                 inputType: 'checkbox',
-                                label: 'Show only favorite projects',
+                                label: 'Show only favorite patents',
                                 defaultValue: false,
                                 matchColumn: 'favorites',
                                 type: 'action',
