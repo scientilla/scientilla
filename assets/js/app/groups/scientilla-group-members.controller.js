@@ -301,6 +301,18 @@
 
             if (members.length > 0 && memberships.length > 0) {
                 members.forEach(member => {
+
+                    let isFormerOfCurrentGroup = false;
+                    if (subgroups) {
+                        isFormerOfCurrentGroup = !member.activeMembershipsIncludingSubgroups.includes(`-${ vm.group.id }-`);
+                    } else {
+                        isFormerOfCurrentGroup = !member.activeMemberships.includes(`-${ vm.group.id }-`);
+                    }
+
+                    if (!isFormerOfCurrentGroup) {
+                        return;
+                    }
+
                     member.membership = memberships.find(m => m.user === member.id && m.group === vm.group.id);
                     if (!member.membership) {
                         return;

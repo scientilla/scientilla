@@ -6,6 +6,7 @@ const axios = require('axios');
 const https = require('https');
 const util = require('util');
 const fs = require('fs');
+const { response } = require('express');
 const readFile = util.promisify(fs.readFile);
 
 module.exports = {
@@ -41,10 +42,17 @@ async function tryRequest(options, maxAttempts, attempts = 0) {
     try {
         return await axios(options);
     } catch (e) {
+
         if (attempts < maxAttempts) {
             return await tryRequest(options, maxAttempts, attempts + 1);
         }
-        sails.log.debug(`${e.response.status}: ${e.response.statusText}`);
+
+        if (e && e.response && e.response.status && e.response.statusText) {
+            sails.log.debug(`${e.response.status}: ${e.response.statusText}`);
+        } else {
+            sails.log.debug(e);
+        }
+
         throw `Tried ${attempts} time(s), but failed to reach the API!`;
     }
 }
