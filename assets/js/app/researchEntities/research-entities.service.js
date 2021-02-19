@@ -464,24 +464,16 @@
                     "Matteo Jacopo Luca Nicolo Marzi",
                     "John Doe"
                 ],
-                "referrers": [
-                    {
-                        "email": "jane.doe@iit.it",
-                        "name": "Jane",
-                        "surname": "Doe"
-                    }, {
-                        "email": "john.doe@iit.it",
-                        "name": "John",
-                        "surname": "Doe"
-                    }
-                ],
-                "authorStr": 'Doe J., Doe J.',
-                "piStr": "Matteo.Marzi@iit.it Matteo Jacopo Luca Nicolo Marzi",
+                "authorStr": 'Casier D., Moschini U.',
                 "pis": [
                     {
-                        "email": "Matteo.Marzi@iit.it",
-                        "name": "Matteo Jacopo Luca Nicolo",
-                        "surname": "Marzi"
+                        "email": "dieter.casier@iit.it",
+                        "name": "Casier",
+                        "surname": "Dieter"
+                    }, {
+                        "email": "ugo.moschini@iit.it",
+                        "name": "Moschini",
+                        "surname": "Ugo"
                     }
                 ],
                 "verified": [
@@ -566,24 +558,16 @@
                         "Matteo Jacopo Luca Nicolo Marzi",
                         "John Doe"
                     ],
-                    "referrers": [
-                        {
-                            "email": "jane.doe@iit.it",
-                            "name": "Jane",
-                            "surname": "Doe"
-                        }, {
-                            "email": "john.doe@iit.it",
-                            "name": "John",
-                            "surname": "Doe"
-                        }
-                    ],
-                    "authorStr": 'Doe J., Doe J.',
-                    "piStr": "Matteo.Marzi@iit.it Matteo Jacopo Luca Nicolo Marzi",
+                    "authorStr": 'Casier D., Moschini U.',
                     "pis": [
                         {
-                            "email": "Matteo.Marzi@iit.it",
-                            "name": "Matteo Jacopo Luca Nicolo",
-                            "surname": "Marzi"
+                            "email": "dieter.casier@iit.it",
+                            "name": "Casier",
+                            "surname": "Dieter"
+                        }, {
+                            "email": "ugo.moschini@iit.it",
+                            "name": "Moschini",
+                            "surname": "Ugo"
                         }
                     ],
                     "verified": [

@@ -2,12 +2,12 @@
 (function () {
     angular.module("app").factory("AgreementService", controller);
 
-    controller.$inject = ['ResearchEntitiesService', '$http'];
+    controller.$inject = ['ResearchEntitiesService', '$http', 'ModalService'];
 
-    function controller(ResearchEntitiesService, $http) {
+    function controller(ResearchEntitiesService, $http, ModalService) {
 
         return {
-            edit: (researchEntity, draft) => ResearchEntitiesService.editDraft(researchEntity, draft, 'agreement'),
+            edit: (researchEntity, draft) => ModalService.openAgreementForm(researchEntity, _.cloneDeep(draft)),
             get: ResearchEntitiesService.getAgreements,
             getDrafts: ResearchEntitiesService.getAgreementDrafts,
             getGroups: ResearchEntitiesService.getAgreementGroups,

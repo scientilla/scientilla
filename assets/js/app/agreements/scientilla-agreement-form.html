@@ -32,7 +32,7 @@
                 id="subject"
                 class="form-control"
                 cols="30"
-                rows="5"
+                rows="3"
                 ng-model="vm.agreement.subject"></textarea>
         </div>
 
@@ -47,7 +47,7 @@
                 ng-model="vm.agreement.agreementType">
         </div>
 
-        <agreement-partner-editor partners="vm.agreement.partner"></agreement-partner-editor>
+        <agreement-partner-editor partners="vm.agreement.partners"></agreement-partner-editor>
 
         <agreement-referrer-editor
             referrers="vm.agreement.pis"

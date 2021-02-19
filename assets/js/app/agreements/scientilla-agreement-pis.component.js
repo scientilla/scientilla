@@ -43,7 +43,7 @@
             let count = 1;
             vm.members = [];
 
-            for (const pi of vm.agreement.pi) {
+            for (const pi of vm.agreement.pis) {
                 const user = vm.agreement.verifiedUsers.find(u => u.username === pi.email.toLowerCase());
 
                 if (user) {

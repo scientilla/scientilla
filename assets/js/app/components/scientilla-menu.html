@@ -118,7 +118,7 @@
             <label class="label-add-research-item">
                 Agreements
                 <scientilla-button-new-research-item
-                    ng-if="vm.isSuperUser()"
+                    ng-if="vm.isSuperUser() && vm.subResearchEntity.id === 1"
                     category="agreement"
                     class="button-new-research-entity-container"
                 ></scientilla-button-new-research-item>
@@ -130,7 +130,7 @@
                     class="list-group-item list-group-item-action"
                 >Verified</a>
                 <a
-                    ng-if="vm.isSuperUser()"
+                    ng-if="vm.isSuperUser() && vm.subResearchEntity.id === 1"
                     ng-href="{{ vm.getUrl('agreements/drafts') }}"
                     ng-class="{active: vm.isActive('/agreements/drafts', true)}"
                     class="list-group-item list-group-item-action"
