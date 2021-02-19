@@ -181,6 +181,12 @@
                     grid-template-columns: 3fr 3fr 3fr 160px 2fr 2fr 2fr;
                 }
             }
+
+            &.verified-agreement{
+                &.fields-4{
+                    grid-template-columns: 3fr 3fr 3fr 160px;
+                }
+            }
         }
 
         .filter-connector-listing{
