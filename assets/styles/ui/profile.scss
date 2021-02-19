@@ -127,18 +127,22 @@
                         content: ', ';
                     }
                 }
-            }
-        }
 
-        .directorates{
-            .group-name{
-                & + .offices{
-                    &:before{
-                        display: inline-block;
-                        vertical-align: top;
-                        margin: 0px .4rem;
-                        content: '-';
+                &:first-child{
+                    & + li{
+                        &:before{
+                            content: '& ';
+                        }
                     }
+                }
+            }
+
+            & + .group-name{
+                &:before{
+                    display: inline-block;
+                    vertical-align: top;
+                    margin: 0px .4rem;
+                    content: '-';
                 }
             }
         }
