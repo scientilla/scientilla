@@ -20,6 +20,8 @@
         const vm = this;
 
         vm.isActive = isActive;
+        vm.isSuperViewer = isSuperViewer;
+        vm.isSuperUser = isSuperUser;
         vm.isAdmin = isAdmin;
         vm.getUrl = getUrl;
         vm.isUser = isUser;
@@ -80,6 +82,15 @@
                     );
                 }
             }
+        }
+
+
+        function isSuperViewer() {
+            return vm.user && vm.user.isSuperViewer();
+        }
+
+        function isSuperUser() {
+            return vm.user && vm.user.isSuperUser();
         }
 
         function isAdmin() {

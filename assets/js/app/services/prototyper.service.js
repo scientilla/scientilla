@@ -129,6 +129,12 @@
             isViewOnly: function () {
                 return [userConstants.role.GUEST, userConstants.role.EVALUATOR].includes(this.role);
             },
+            isSuperUser: function () {
+                return [
+                    userConstants.role.SUPERUSER,
+                    userConstants.role.ADMINISTRATOR,
+                ].includes(this.role);
+            },
             isSuperViewer: function () {
                 return [
                     userConstants.role.SUPERUSER,
