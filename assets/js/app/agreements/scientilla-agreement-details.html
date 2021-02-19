@@ -1,5 +1,5 @@
 <div>
-    <scientilla-agreement-type-badge type="vm.agreement.type"></scientilla-agreement-type-badge>
+    <scientilla-agreement-type-badge type="vm.agreement.agreement_type"></scientilla-agreement-type-badge>
     <scientilla-agreement-pis agreement="vm.agreement"></scientilla-agreement-pis>
 </div>
 <h3 class="agreement-title" ng-bind-html='vm.agreement | title'></h3>
@@ -12,10 +12,10 @@
 </ng-container>
 
 <ng-container
-    ng-if="vm.agreement.type"
+    ng-if="vm.agreement.agreement_type"
     class="agreement-type"
 >
-    {{ vm.agreement.type }}<br>
+    {{ vm.agreement.agreement_type }}
 </ng-container>
 
 <ng-container ng-if="vm.agreement.budget">
