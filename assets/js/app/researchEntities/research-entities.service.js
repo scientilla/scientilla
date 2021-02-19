@@ -465,6 +465,10 @@
                         "email": "Matteo.Marzi@iit.it",
                         "name": "Matteo Jacopo Luca Nicolo",
                         "surname": "Marzi"
+                    }, {
+                        "email": "john.doe@iit.it",
+                        "name": "John",
+                        "surname": "Doe"
                     }
                 ],
                 "piStr": "Matteo.Marzi@iit.it Matteo Jacopo Luca Nicolo Marzi",

@@ -13,19 +13,17 @@
             ng-bind-html='vm.agreement | title'></h2>
 
         <ng-container ng-if="vm.agreement.type">
-            <strong>Type:</strong>
             {{ vm.agreement.type }}<br>
         </ng-container>
 
-        <ng-container ng-if="vm.agreement.budget">
-            <strong>Budget:</strong>
-            €{{ vm.agreement.budget }}<br>
-        </ng-container>
-
-        <ng-container ng-if="vm.agreement.contribution">
-            <strong>Contribution:</strong>
-            €{{ vm.agreement.contribution }}<br>
-        </ng-container>
+        <ul
+            class="agreement-partners"
+            ng-if="vm.agreement.partners"
+        >
+            <li ng-repeat="partner in vm.agreement.partners">
+                {{ partner.getDisplayName() }}
+            </li>
+        </ul>
 
         <ul class="agreement-actions">
             <li

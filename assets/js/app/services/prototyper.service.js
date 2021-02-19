@@ -567,6 +567,7 @@
             service.toUsersCollection(agreement.verifiedUsers);
             service.toGroupsCollection(agreement.verifiedGroups);
             service.toUsersCollection(agreement.pi);
+            service.toUsersCollection(agreement.partners);
             return agreement;
         }
 

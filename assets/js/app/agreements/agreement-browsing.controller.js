@@ -25,7 +25,7 @@
         async function onFilter(q) {
             query = q;
 
-            vm.agreementGroups =  AgreementService.getGroups(query);
+            vm.agreementGroups = AgreementService.getGroups(query);
         }
         /* jshint ignore:end */
 
