@@ -214,6 +214,29 @@
                 {size: 'lg'});
         };
 
+        service.openAgreementForm = function (researchEntity, researchItem) {
+            const scopeVars = {
+                researchItem: researchItem,
+                researchEntity: researchEntity,
+            };
+
+            return openModal(
+                `<scientilla-agreement-form
+                    agreement="vm.researchItem"
+                    research-entity="vm.researchEntity"
+                    on-failure="vm.onFailure"
+                    on-submit="vm.onSubmit"
+                    check-and-close="vm.checkAndClose"
+                    close-fn="vm.onClose"
+                ></scientilla-agreement-form>`,
+                scopeVars,
+                {
+                    backdrop: 'static',
+                    keyboard: false
+                }
+            );
+        };
+
         service.openAgreementDetails = function (agreement) {
             const scopeVars = {
                 agreement
