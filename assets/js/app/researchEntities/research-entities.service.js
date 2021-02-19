@@ -453,7 +453,7 @@
                 ],
                 "title": "Lorem Ipsum is simply dummy text.",
                 "subject": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                "agreement_type": "Agreement type",
+                "agreementType": "Agreement type",
                 "startYear": "2019",
                 "endYear": "2022",
                 "startDate": "2019-03-01",
@@ -461,18 +461,23 @@
                 "budget": 90000,
                 "contribution": 20000,
                 "partners": [
+                    "Matteo Jacopo Luca Nicolo Marzi",
+                    "John Doe"
+                ],
+                "referrers": [
                     {
-                        "email": "Matteo.Marzi@iit.it",
-                        "name": "Matteo Jacopo Luca Nicolo",
-                        "surname": "Marzi"
+                        "email": "jane.doe@iit.it",
+                        "name": "Jane",
+                        "surname": "Doe"
                     }, {
                         "email": "john.doe@iit.it",
                         "name": "John",
                         "surname": "Doe"
                     }
                 ],
+                "authorStr": 'Doe J., Doe J.',
                 "piStr": "Matteo.Marzi@iit.it Matteo Jacopo Luca Nicolo Marzi",
-                "pi": [
+                "pis": [
                     {
                         "email": "Matteo.Marzi@iit.it",
                         "name": "Matteo Jacopo Luca Nicolo",
@@ -550,7 +555,7 @@
                     ],
                     "title": "Lorem Ipsum is simply dummy text.",
                     "subject": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                    "agreement_type": "Agreement type",
+                    "agreementType": "Agreement type",
                     "startYear": "2019",
                     "endYear": "2022",
                     "startDate": "2019-03-01",
@@ -558,14 +563,23 @@
                     "budget": 90000,
                     "contribution": 20000,
                     "partners": [
+                        "Matteo Jacopo Luca Nicolo Marzi",
+                        "John Doe"
+                    ],
+                    "referrers": [
                         {
-                            "email": "Matteo.Marzi@iit.it",
-                            "name": "Matteo Jacopo Luca Nicolo",
-                            "surname": "Marzi"
+                            "email": "jane.doe@iit.it",
+                            "name": "Jane",
+                            "surname": "Doe"
+                        }, {
+                            "email": "john.doe@iit.it",
+                            "name": "John",
+                            "surname": "Doe"
                         }
                     ],
+                    "authorStr": 'Doe J., Doe J.',
                     "piStr": "Matteo.Marzi@iit.it Matteo Jacopo Luca Nicolo Marzi",
-                    "pi": [
+                    "pis": [
                         {
                             "email": "Matteo.Marzi@iit.it",
                             "name": "Matteo Jacopo Luca Nicolo",

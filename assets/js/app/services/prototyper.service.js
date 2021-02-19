@@ -83,6 +83,26 @@
 
                 return _.trim(name + ' ' + surname);
             },
+            getName: function () {
+                switch (true) {
+                    case _.has(this, 'displayName') && !_.isEmpty(this.displayName):
+                        return this.displayName;
+                    case _.has(this, 'name') && !_.isEmpty(this.name):
+                        return this.name;
+                    default:
+                        return '';
+                }
+            },
+            getSurname: function () {
+                switch (true) {
+                    case _.has(this, 'displaySurname') && !_.isEmpty(this.displaySurname):
+                        return this.displaySurname;
+                    case _.has(this, 'surname') && !_.isEmpty(this.surname):
+                        return this.surname;
+                    default:
+                        return '';
+                }
+            },
             getType: function () {
                 return 'user';
             },
@@ -567,7 +587,6 @@
             service.toUsersCollection(agreement.verifiedUsers);
             service.toGroupsCollection(agreement.verifiedGroups);
             service.toUsersCollection(agreement.pi);
-            service.toUsersCollection(agreement.partners);
             return agreement;
         }
 

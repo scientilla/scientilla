@@ -1,6 +1,10 @@
 label{
     display: block;
     font-weight: bold;
+
+    em{
+        font-weight: normal;
+    }
 }
 
 .form-group{

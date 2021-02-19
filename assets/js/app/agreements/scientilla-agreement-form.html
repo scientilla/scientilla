@@ -26,7 +26,7 @@
         </div>
 
         <div class="form-group">
-            <label for="subject">Subject *</label>
+            <label for="subject">Subject</label>
             <textarea
                 name="subject"
                 id="subject"
@@ -44,10 +44,27 @@
                 name="type"
                 placeholder="Type"
                 class="form-control"
-                ng-model="vm.agreement.agreement_type">
+                ng-model="vm.agreement.agreementType">
         </div>
 
         <agreement-partner-editor partners="vm.agreement.partner"></agreement-partner-editor>
+
+        <agreement-referrer-editor
+            referrers="vm.agreement.pis"
+            author-str="vm.agreement.authorStr"
+        ></agreement-referrer-editor>
+
+        <div class="form-group">
+            <label for="subject">Author string * <em>(will be generated automatically from referrers.)</em></label>
+            <input
+                id="authorStr"
+                type="text"
+                name="authorStr"
+                class="form-control"
+                placeholder="Author string"
+                ng-disabled="true"
+                ng-model="vm.agreement.authorStr">
+        </div>
 
         <div class="form-group">
             <label for="subject">Start date *</label>

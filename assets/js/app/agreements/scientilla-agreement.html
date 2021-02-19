@@ -4,7 +4,7 @@
     </li>
     <li class="agreement-metadata">
         <div>
-            <scientilla-agreement-type-badge type="vm.agreement.agreement_type"></scientilla-agreement-type-badge>
+            <scientilla-agreement-type-badge type="vm.agreement.agreementType"></scientilla-agreement-type-badge>
             <scientilla-agreement-pis agreement="vm.agreement"></scientilla-agreement-pis>
         </div>
 
@@ -12,8 +12,8 @@
             ng-click="vm.openDetails()"
             ng-bind-html='vm.agreement | title'></h2>
 
-        <ng-container ng-if="vm.agreement.agreement_type">
-            {{ vm.agreement.agreement_type }}
+        <ng-container ng-if="vm.agreement.agreementType">
+            {{ vm.agreement.agreementType }}
         </ng-container>
 
         <ul
@@ -21,7 +21,7 @@
             ng-if="vm.agreement.partners"
         >
             <li ng-repeat="partner in vm.agreement.partners">
-                {{ partner.getDisplayName() }}
+                {{ partner }}
             </li>
         </ul>
 

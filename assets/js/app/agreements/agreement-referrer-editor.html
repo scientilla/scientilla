@@ -15,16 +15,11 @@
                     ng-blur="vm.checkValidation('title')"
                     ng-change="vm.fieldValueHasChanged('title')"
                     uib-typeahead="user as user.getDisplayName() for user in vm.getUsers($viewValue)"
+                    ng-keydown="$event.keyCode === 13 && vm.addReferrer($event)"
                     typeahead-loading="searching"
                     typeahead-no-results="noResults"
                     typeahead-editable="true"
                     typeahead-select-on-blur="false">
-                <!-- <input
-                    type="text"
-                    class="form-control"
-                    placeholder="Add referent and press Enter"
-                    ng-model="vm.newReferent"
-                    ng-keydown="$event.keyCode === 13 && vm.addReferent($event)"/> -->
                 <div
                     ng-if="vm.isDuplicate"
                     class="invalid-feedback"
@@ -39,7 +34,7 @@
                     type="button"
                     class="btn btn-primary btn-form-no-label"
                     ng-click="vm.addReferrer()"
-                    ng-disabled="vm.newReferrer.length === 0">
+                    ng-disabled="!vm.canAddReferrer">
                     <i class="fas fa-plus fa-left"></i>Add
                 </button>
             </div>
@@ -51,7 +46,7 @@
         class="form-group">
         <ul class="multiselect-list">
             <li class="list-group-item" ng-repeat="referrer in vm.referrers">
-                {{ referrer.getDisplayName() }}
+                {{ referrer.surname + ' ' + referrer.name }}
                 <a
                     href=""
                     ng-click="vm.removeReferrer(referrer)"
