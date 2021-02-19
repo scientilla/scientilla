@@ -1,0 +1,23 @@
+.agreement-details{
+    .agreement-subject,
+    .agreement-type{
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+    .agreement-partners{
+        @include normalize-listing;
+        @include clearfix;
+        margin-top: 1rem;
+
+        & > li{
+            display: inline-block;
+
+            & + li{
+                &:before{
+                    content: ', '
+                }
+            }
+        }
+    }
+}

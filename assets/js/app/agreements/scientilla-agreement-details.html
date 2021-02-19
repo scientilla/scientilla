@@ -4,23 +4,27 @@
 </div>
 <h3 class="agreement-title" ng-bind-html='vm.agreement | title'></h3>
 
-<ng-container ng-if="vm.agreement.subject">
-    <strong>Subject:</strong><br>
-    {{ vm.agreement.subject }}<br><br>
+<ng-container
+    ng-if="vm.agreement.subject"
+    class="agreement-subject"
+>
+    {{ vm.agreement.subject }}
 </ng-container>
 
-<ng-container ng-if="vm.agreement.type">
-    <strong>Type:</strong>
+<ng-container
+    ng-if="vm.agreement.type"
+    class="agreement-type"
+>
     {{ vm.agreement.type }}<br>
 </ng-container>
 
 <ng-container ng-if="vm.agreement.budget">
-    <strong>Budget:</strong>
+    <strong>Total budget:</strong>
     €{{ vm.agreement.budget }}<br>
 </ng-container>
 
 <ng-container ng-if="vm.agreement.contribution">
-    <strong>Contribution:</strong>
+    <strong>Institute budget:</strong>
     €{{ vm.agreement.contribution }}<br>
 </ng-container>
 
@@ -36,17 +40,10 @@
 
 <ng-container ng-if="vm.agreement.partners">
     <ng-container ng-if="vm.agreement.partners.length > 1">
-        <strong>Partners:</strong>
-        <ul>
+        <ul class="agreement-partners">
             <li ng-repeat="partner in vm.agreement.partners">
-                {{ partner.surname + ' ' + partner.name }}
+                {{ partner.getDisplayName() }}
             </li>
         </ul>
-    </ng-container>
-    <ng-container ng-if="vm.agreement.partners.length === 1">
-        <strong>Partner:</strong>
-        <ng-container ng-repeat="partner in vm.agreement.partners">
-            {{ partner.surname + ' ' + partner.name }}<br>
-        </ng-container>
     </ng-container>
 </ng-container>
