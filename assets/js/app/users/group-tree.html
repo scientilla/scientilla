@@ -1,0 +1,43 @@
+<scientilla-loading is-loading="vm.loading"></scientilla-loading>
+
+<ul
+    ng-if="vm.mainMembership"
+    class="group-detail-listing">
+    <li>
+        <strong>Institute:</strong>
+        <a ng-href="#{{ vm.mainMembership.group.getProfileUrl() }}">
+            {{ vm.mainMembership.group.name }}
+        </a>
+        <ul ng-if="vm.hasTypes">
+            <li ng-repeat="(type, memberships) in vm.types track by $index">
+                <strong>{{ vm.getTypeTitle(type, memberships) }}:</strong>
+                <ul>
+                    <li
+                        ng-repeat="membership in memberships track by $index"
+                        ng-init="subtypes = vm.getGroupTypes(membership)">
+                        <a ng-href="#{{ membership.group.getProfileUrl() }}">
+                            {{ membership.group.name }}
+                        </a>
+                        <ul ng-class="{ 'hidden': vm.getLength(subtypes) <= 0 }">
+                            <li ng-repeat="(subtype, memberships) in subtypes track by $index">
+                                <strong>{{ vm.getTypeTitle(subtype, memberships) }}:</strong>
+                                <ul class="subgroup-listing">
+                                    <li ng-repeat="membership in memberships track by $index">
+                                        <a ng-href="#{{ membership.group.getProfileUrl() }}">
+                                            {{ membership.group.name }}
+                                        </a>
+                                        <span ng-if="!vm.isActiveMember(vm.user, membership.group)">(Former member)</span>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ul>
+
+<div ng-if="!vm.mainMembership && !vm.loading">
+    <p>No related groups found.</p>
+</div>

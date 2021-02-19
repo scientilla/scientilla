@@ -7,7 +7,8 @@
             controllerAs: 'vm',
             bindings: {
                 group: '<',
-                refreshGroup: '&'
+                refreshGroup: '&',
+                active: '<?'
             }
         });
 
@@ -18,7 +19,11 @@
         'AuthService',
         'ModalService',
         'researchEntityService',
-        '$element'
+        'PeopleService',
+        '$element',
+        'userConstants',
+        '$scope',
+        '$location'
     ];
 
     function controller(
@@ -28,18 +33,30 @@
         AuthService,
         ModalService,
         researchEntityService,
-        $element
+        PeopleService,
+        $element,
+        userConstants,
+        $scope,
+        $location
     ) {
         const vm = this;
 
         vm.name = 'group-members';
         vm.shouldBeReloaded = true;
 
+        vm.user = AuthService.user;
         vm.documentListSections = documentListSections;
-        vm.addCollaborator = addCollaborator;
         vm.removeCollaborator = removeCollaborator;
+        vm.editCollaborator = editCollaborator;
         vm.getUsers = getUsers;
         vm.isAdmin = isAdmin;
+        vm.showCollaboratorButton = showCollaboratorButton;
+        vm.viewUser = viewUser;
+        vm.deleteUser = deleteUser;
+        vm.editUser = editUser;
+        vm.loginAs = loginAs;
+        vm.isGroupAdmin = isGroupAdmin;
+        vm.socialClass = socialClass;
 
         vm.membershipTypes = {
             MEMBER: {
@@ -61,18 +78,45 @@
         };
 
         vm.members = [];
+        vm.groups = [];
 
         vm.onFilter = onFilter;
         let query = {};
 
+        let activeWatcher;
+
+        vm.loadMembers = true;
+
         vm.$onInit = () => {
             const registerTab = requireParentMethod($element, 'registerTab');
             registerTab(vm);
+
+            $scope.$on('refreshList', () => {
+                refreshList();
+            });
+
+            if (_.has(vm, 'active')) {
+                vm.loadMembers = angular.copy(vm.active);
+
+                activeWatcher = $scope.$watch('vm.active', () => {
+                    vm.loadMembers = angular.copy(vm.active);
+
+                    if (vm.loadMembers) {
+                        $scope.$broadcast('filter');
+                    } else {
+                        vm.members = [];
+                    }
+                });
+            }
         };
 
         vm.$onDestroy = () => {
             const unregisterTab = requireParentMethod($element, 'unregisterTab');
             unregisterTab(vm);
+
+            if (_.isFunction(activeWatcher)) {
+                activeWatcher();
+            }
         };
 
         vm.reload = function () {
@@ -84,26 +128,18 @@
             const qs = {where: {or: [
                 {name: {contains: searchText}},
                 {surname: {contains: searchText}},
-                {display_name: {contains: searchText}},
-                {display_surname: {contains: searchText}}
+                {displayName: {contains: searchText}},
+                {displaySurname: {contains: searchText}}
             ]}};
             return UsersService.getUsers(qs);
         }
 
-        /* jshint ignore:start */
-
-        async function addCollaborator(group, user, active) {
-            try {
-                await GroupsService.addCollaborator(group, user, active);
-            } catch (e) {
-                delete vm.selectedUser;
-                return;
-            }
-
-            delete vm.selectedUser;
-            refresh();
+        function editCollaborator(member) {
+            ModalService.openCollaboratorForm(vm.group, member)
+                .then(refreshList);
         }
 
+        /* jshint ignore:start */
         async function removeCollaborator(user) {
             const buttonIndex = await ModalService.multipleChoiceConfirm('Removing group member',
                 `Are you sure you want to remove ${user.getDisplayName()} from the group members?`,
@@ -111,62 +147,151 @@
 
             if (buttonIndex === 'proceed') {
                 await GroupsService.removeCollaborator(vm.group, user);
-                refresh();
+                refreshList();
             }
         }
 
-        async function onFilter(q) {
+        async function onFilter(q, isRefreshing = false) {
 
-            let members = [];
+            if (_.isEmpty(vm.groups)) {
+                vm.groups = await GroupsService.getGroups();
+            }
+
             let memberships = [];
-            let former = false;
             let subgroups = false;
+            let formerMembers = false;
+            let groupWhere = {};
 
             query = q;
 
-            if (_.has(query, 'where.former')) {
-                former = query.where.former;
-                delete query.where.former;
-            }
+            if (isRefreshing) {
+                if (_.has(query, 'where.activeAndFormerMembershipsIncludingSubgroups')) {
+                    formerMembers = true;
+                    subgroups = true;
+                    delete query.where.activeAndFormerMembershipsIncludingSubgroups;
+                }
 
-            if (_.has(query, 'where.subgroups')) {
-                subgroups = query.where.subgroups;
-                delete query.where.subgroups;
-            }
+                if (_.has(query, 'where.activeAndFormerMemberships')) {
+                    formerMembers = true;
+                    delete query.where.activeAndFormerMemberships;
+                }
 
-            if (former) {
-                delete query.where.active;
+                if (_.has(query, 'where.activeMembershipsIncludingSubgroups')) {
+                    subgroups = true;
+                    delete query.where.activeMembershipsIncludingSubgroups;
+                }
+
+                if (_.has(query, 'where.activeMemberships')) {
+                    delete query.where.activeMemberships;
+                }
             } else {
-                query.where.active = true;
+                if (_.has(query, 'where.subgroups')) {
+                    subgroups = query.where.subgroups;
+                    delete query.where.subgroups;
+                }
+
+                if (_.has(query, 'where.formerMembers')) {
+                    formerMembers = query.where.formerMembers;
+                    delete query.where.formerMembers;
+                }
             }
 
-            switch (true) {
-                case subgroups && former:
-                    members = await researchEntityService.getAllMembers(vm.group, query);
-                    break;
-                case !subgroups && former:
-                    members = await researchEntityService.getMembers(vm.group, query);
-                    break;
-                case subgroups && !former:
-                    members = await researchEntityService.getAllActiveMembers(vm.group, query);
-                    break;
-                default:
-                    members = await researchEntityService.getActiveMembers(vm.group, query);
-                    break;
+            if (vm.group.id === 1 && subgroups && !formerMembers) {
+                groupWhere = {};
+            } else {
+                switch (true) {
+                    case subgroups && formerMembers:
+                        groupWhere = {
+                            activeAndFormerMembershipsIncludingSubgroups: {
+                                like: `%-${ vm.group.id }-%`
+                            }
+                        };
+                        break;
+                    case !subgroups && formerMembers:
+                        groupWhere = {
+                            activeAndFormerMemberships: {
+                                like: `%-${ vm.group.id }-%`
+                            }
+                        };
+                        break;
+                    case subgroups && !formerMembers:
+                        groupWhere = {
+                            activeMembershipsIncludingSubgroups: {
+                                like: `%-${ vm.group.id }-%`
+                            }
+                        };
+                        break;
+                    default:
+                        groupWhere = {
+                            activeMemberships: {
+                                like: `%-${ vm.group.id }-%`
+                            }
+                        };
+                        break;
+                }
             }
 
-            if (subgroups) {
-                if (members.length > 0) {
-                    memberships = await researchEntityService.getAllMemberships(vm.group, {
+            query.where = Object.assign({}, query.where, groupWhere);
+            query.where.active = true;
+            query.where.role = [userConstants.role.ADMINISTRATOR, userConstants.role.SUPERUSER, userConstants.role.USER];
+
+            const members = await PeopleService.getPeople(query);
+            for (const user of members) {
+                const centers = [];
+                if (_.has(user, 'groups')) {
+                    for (const group of user.groups) {
+                        if (_.has(group, 'center.name')) {
+                            const duplicateGroup = centers.find(c => c.name === group.center.name);
+                            if (!duplicateGroup) {
+                                const center = vm.groups.find(c => c.name === group.center.name);
+                                if (center) {
+                                    centers.push(center);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                const offices = [];
+                if (_.has(user, 'groups')) {
+                    for (const group of user.groups) {
+                        for (const office of group.offices) {
+                            const duplicateOffice = offices.find(o => o.name === office);
+                            if (!duplicateOffice) {
+                                offices.push(office);
+                            }
+                        }
+                    }
+                }
+
+                const userGroups = [];
+                if (_.has(user, 'groups')) {
+                    for (const group of user.groups) {
+                        const duplicateGroup = userGroups.find(c => c.code === group.code);
+                        if (_.has(group, 'name') && !duplicateGroup) {
+                            const tmpGroup = vm.groups.find(c => c.code === group.code);
+                            if (tmpGroup) {
+                                userGroups.push(tmpGroup);
+                            }
+                        }
+                    }
+                }
+
+                user.centers = centers;
+                user.offices = offices;
+                user.groups = userGroups;
+            }
+
+            if (members.length > 0) {
+                if (subgroups) {
+                    memberships = await researchEntityService.getAllMemberships(vm.group.id, {
                         where: {
                             group: vm.group.id,
                             user: members.map(m => m.id)
                         }
                     });
-                }
-            } else {
-                if (members.length > 0) {
-                    memberships = await researchEntityService.getMemberships(vm.group, {
+                } else {
+                    memberships = await researchEntityService.getMemberships(vm.group.id, {
                         where: {
                             user: members.map(m => m.id)
                         }
@@ -176,29 +301,130 @@
 
             if (members.length > 0 && memberships.length > 0) {
                 members.forEach(member => {
-                    member.membership = memberships.find(m => m.user === member.id);
-                    member.membership.type = member.membership.synchronized && member.membership.active ? vm.membershipTypes.MEMBER :
-                        !member.membership.synchronized && member.membership.active ? vm.membershipTypes.COLLABORATOR :
-                            member.membership.synchronized && !member.membership.active ? vm.membershipTypes.FORMER_MEMBER :
-                                !member.membership.synchronized && !member.membership.active ? vm.membershipTypes.FORMER_COLLABORATOR : undefined;
 
-                    member.cssClass = member.membership.type === vm.membershipTypes.COLLABORATOR ? 'collaborator' :
-                        [vm.membershipTypes.FORMER_MEMBER, vm.membershipTypes.FORMER_COLLABORATOR].includes(member.membership.type) ? 'former-collaborator' : {};
+                    let isFormerOfCurrentGroup = false;
+                    if (subgroups) {
+                        isFormerOfCurrentGroup = !member.activeMembershipsIncludingSubgroups.includes(`-${ vm.group.id }-`);
+                    } else {
+                        isFormerOfCurrentGroup = !member.activeMemberships.includes(`-${ vm.group.id }-`);
+                    }
+
+                    if (!isFormerOfCurrentGroup) {
+                        return;
+                    }
+
+                    member.membership = memberships.find(m => m.user === member.id && m.group === vm.group.id);
+                    if (!member.membership) {
+                        return;
+                    }
+                    member.membership.isMember = false;
+
+                    switch (true) {
+                        case !member.membership.synchronized && member.membership.active :
+                            member.membership.type = vm.membershipTypes.COLLABORATOR;
+                            member.cssClass = 'collaborator';
+                            break;
+                        case member.membership.synchronized && !member.membership.active :
+                            member.membership.type = vm.membershipTypes.FORMER_MEMBER;
+                            member.cssClass = 'former';
+                            break;
+                        case !member.membership.synchronized && !member.membership.active :
+                            member.membership.type = vm.membershipTypes.FORMER_COLLABORATOR;
+                            member.cssClass = 'former';
+                            break;
+                        default:
+                            member.membership.type = vm.membershipTypes.MEMBER;
+                            member.membership.isMember = true;
+                            break;
+                    }
                 });
             }
 
             vm.members = members;
-        }
 
-        function refresh() {
-            onFilter(query);
+            return vm.members;
+        }
+        /* jshint ignore:end */
+
+        function refreshList() {
+            onFilter(query, true);
             vm.refreshGroup()();
         }
 
-        /* jshint ignore:end */
+        function isGroupAdmin() {
+            return AuthService.isAdmin;
+        }
 
         function isAdmin() {
-            return AuthService.isAdmin;
+            const user = AuthService.user;
+            return user.isAdmin();
+        }
+
+        function showCollaboratorButton(m) {
+            return isGroupAdmin() && m.membership &&
+                m.membership.level === 0 &&
+                [
+                    vm.membershipTypes.COLLABORATOR.id,
+                    vm.membershipTypes.FORMER_COLLABORATOR.id
+                ].includes(m.membership.type.id);
+        }
+
+        function viewUser(user) {
+            $location.url('/users/' + user.id);
+        }
+
+        function editUser(user) {
+            openUserForm(user);
+        }
+
+        /* jshint ignore:start */
+        async function deleteUser(user) {
+            try {
+                await UsersService.delete(user);
+                refreshList();
+                Notification.success("User deleted");
+            } catch (error) {
+                Notification.warning("Failed to delete user");
+            }
+        }
+        /* jshint ignore:end */
+
+        function loginAs(user) {
+            AuthService.setupUserAccount(user.id);
+        }
+
+        // private
+        function openUserForm(user) {
+            ModalService
+                .openScientillaUserForm(!user ? UsersService.getNewUser() : user.clone())
+                .then(refreshList);
+        }
+
+        function socialClass(social) {
+            switch (true) {
+                case social === 'linkedin':
+                    return 'fab fa-linkedin';
+                case social === 'twitter':
+                    return 'fab fa-twitter';
+                case social === 'facebook':
+                    return 'fab fa-facebook-square';
+                case social === 'instagram':
+                    return 'fab fa-instagram';
+                case social === 'researchgate':
+                    return 'fab fa-researchgate';
+                case social === 'googleScholar':
+                    return 'fas fa-graduation-cap';
+                case social === 'github':
+                    return 'fab fa-github';
+                case social === 'bitbucket':
+                    return 'fab fa-bitbucket';
+                case social === 'youtube':
+                    return 'fab fa-youtube';
+                case social === 'flickr':
+                    return 'fab fa-flickr';
+                default:
+                    break;
+            }
         }
     }
 })();

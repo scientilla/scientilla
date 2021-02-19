@@ -26,8 +26,6 @@ module.exports = require('waterlock').actions.user(_.merge({}, SubResearchEntity
             Auth.destroy({user: userId}).exec(function (err, auths) {
                 if (err)
                     return res.negotiate(err);
-                if (auths.length !== 1)
-                    return res.negotiate(new Error("An error happened, " + auths.length + " auths deleted."));
                 res.ok(users[0]);
             });
         });

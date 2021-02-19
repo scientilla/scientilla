@@ -38,6 +38,8 @@
         vm.openWizard = openWizard;
         vm.openSuggestedWizard = openSuggestedWizard;
         vm.profile = false;
+        vm.isUser = isUser;
+        vm.isGroup = isGroup;
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
@@ -79,7 +81,7 @@
             return GroupsService.getGroup(group.id)
                 .then(group => context.setSubResearchEntity(group))
                 .then(() => {
-                    path.goTo('/' + group.slug + '/dashboard');
+                    path.goTo('/groups/' + group.id + '/info');
                 });
         }
 
@@ -148,6 +150,14 @@
             });
 
             document.body.classList.remove('mobile-menu-is-open');
+        }
+
+        function isUser() {
+            return vm.subResearchEntity.getType() === 'user';
+        }
+
+        function isGroup() {
+            return vm.subResearchEntity.getType() === 'group';
         }
     }
 

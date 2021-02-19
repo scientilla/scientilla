@@ -6,7 +6,7 @@
             <span
                 ng-if="!vm.user.administratedGroups.length"
                 class="btn btn-outline-secondary">
-                {{vm.subResearchEntity.getDisplayName()}}
+                {{ vm.subResearchEntity.getDisplayName() }}
             </span>
             <button
                 ng-if="vm.user.administratedGroups.length"
@@ -15,7 +15,10 @@
                 class="btn btn-outline-secondary"
                 uib-dropdown-toggle
                 ng-disabled="disabled">
-                <i class="fas fa-user fa-left"></i>
+                <i
+                    class="fas fa-user fa-left"
+                    ng-class="{ 'fa-user': vm.isUser(), 'fa-users': vm.isGroup() }"
+                ></i>
                 {{ vm.subResearchEntity.getDisplayName() }}
             </button>
             <ul
@@ -52,7 +55,7 @@
             Login
         </a>
     </li>
-    
+
     <li ng-if="vm.isLogged && vm.researchEntityIsUser() && !vm.user.isViewOnly()">
         <div uib-dropdown class="dropdown">
             <button

@@ -32,6 +32,24 @@ FROM (
                                JOIN author_affiliation aa on aa.author = a.id
                       WHERE a.research_item = ri.id
                         AND aa.institute = 1)
+         UNION
+         SELECT ri.id             AS accomplishment,
+                g.research_entity AS research_entity,
+                ri.kind
+         FROM "group" g
+                  JOIN membershipgroup m on g.id = m.parent_group
+                  JOIN "group" g2 on m."child_group" = g2.id
+                  JOIN research_item ri ON exists(
+                 SELECT guv.id
+                 FROM verify guv
+                 WHERE g2.research_entity = guv.research_entity
+                   AND ri.id = guv.research_item
+             )
+         WHERE exists(SELECT a.id
+                      FROM author a
+                               JOIN author_affiliation aa on aa.author = a.id
+                      WHERE a.research_item = ri.id
+                        AND aa.institute = 1)
      ) suggested
 
 WHERE kind = 'v'

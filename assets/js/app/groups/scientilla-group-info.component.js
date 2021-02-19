@@ -6,13 +6,14 @@
             templateUrl: 'partials/scientilla-group-info.html',
             controllerAs: 'vm',
             bindings: {
-                group: '<'
+                group: '<',
+                active: '<?'
             }
         });
 
-    controller.$inject = ['$scope', '$element', 'ISO3166', 'genders', 'ChartService'];
+    controller.$inject = ['$scope', '$element', 'ISO3166', 'genders', 'ChartService', 'GroupsService', 'Prototyper'];
 
-    function controller($scope, $element, ISO3166, genders, ChartService) {
+    function controller($scope, $element, ISO3166, genders, ChartService, GroupsService, Prototyper) {
         const vm = this;
 
         vm.name = 'group-info';
@@ -33,7 +34,12 @@
         const excludeTitle = 'Click to exclude this role from the charts';
         const includeTitle = 'Click to include this role into the charts';
 
-        vm.$onInit = () => {
+        let activeWatcher;
+
+        vm.loadCharts = true;
+
+        /* jshint ignore:start */
+        vm.$onInit = async () => {
             const registerTab = requireParentMethod($element, 'registerTab');
             registerTab(vm);
 
@@ -41,8 +47,26 @@
                 vm.reload(true);
             });
 
+            if (_.has(vm, 'active')) {
+                vm.loadCharts = angular.copy(vm.active);
+
+                activeWatcher = $scope.$watch('vm.active', async () => {
+                    vm.loadCharts = angular.copy(vm.active);
+
+                    if (vm.active) {
+                        await vm.reload(true);
+                    } else {
+                        vm.byCountryBiggestCountry = [];
+                        vm.ageRangeData = [];
+                        vm.selectedRoles = [];
+                        vm.byRole = [];
+                    }
+                });
+            }
+
             initCharts();
         };
+        /* jshint ignore:end */
 
         vm.$onDestroy = () => {
             const unregisterTab = requireParentMethod($element, 'unregisterTab');
@@ -51,11 +75,15 @@
             if (_.isFunction(includeSubgroupsWatcher)) {
                 includeSubgroupsWatcher();
             }
+
+            if (_.isFunction(activeWatcher)) {
+                activeWatcher();
+            }
         };
 
         /* jshint ignore:start */
         vm.reload = async function (forced = false) {
-            if (vm.isLoading) {
+            if (vm.isLoading || !vm.loadCharts) {
                 return;
             }
 
@@ -67,6 +95,9 @@
 
             vm.researchDomain = vm.group.getResearchDomain();
             vm.interactions = vm.group.getInteractions();
+
+            const parentMembershipGroups = await GroupsService.getParentMembershipGroups(vm.group.id);
+            vm.center = parentMembershipGroups.map(m => Prototyper.toGroupModel(m.parent_group)).find(g => g.type === 'Center');
 
             await loadChartData(forced);
 
@@ -375,11 +406,13 @@
 
             vm.chartGenderData = [];
             vm.chartGenderData.push({
+                value: 'M',
                 label: 'Male',
                 count: vm.maleData.count,
                 percentage: _.round((vm.maleData.count / genderTotal) * 100, 2)
             });
             vm.chartGenderData.push({
+                value: 'F',
                 label: 'Female',
                 count: vm.femaleData.count,
                 percentage: _.round((vm.femaleData.count / genderTotal) * 100, 2)
@@ -416,6 +449,7 @@
                 _.sortBy(
                     byNationality.map(data => {
                         return {
+                            key: data.nationality,
                             label: getCountryLabel(data.nationality),
                             value: parseInt(data.count),
                             percent: getPercent(data.count, totalByCountries)
@@ -425,24 +459,31 @@
             vm.totalCountries = vm.byCountry.length || 0;
 
             const biggestCountry = _.head(vm.byCountry);
-            vm.byCountryBiggestCountry = [
-                {
-                    label: biggestCountry.label,
-                    count: parseInt(biggestCountry.value),
-                    percentage: getPercent(biggestCountry.value, totalByCountries),
-                    color: vm.colors[0]
-                }, {
-                    label: 'Other countries',
-                    count: totalByCountries - biggestCountry.value,
-                    percentage: getPercent(totalByCountries - biggestCountry.value, totalByCountries),
-                    color: defaultChartColor
-                }
-            ];
+            if (!_.isEmpty(biggestCountry)) {
+                vm.byCountryBiggestCountry = [
+                    {
+                        key: biggestCountry.key,
+                        label: biggestCountry.label,
+                        count: parseInt(biggestCountry.value),
+                        percentage: getPercent(biggestCountry.value, totalByCountries),
+                        color: vm.colors[0]
+                    }, {
+                        label: 'Other countries',
+                        count: totalByCountries - biggestCountry.value,
+                        percentage: getPercent(totalByCountries - biggestCountry.value, totalByCountries),
+                        color: defaultChartColor
+                    }
+                ];
+            }
 
             vm.firstTimeLoaded = true;
 
             return Promise.resolve(1);
         }
         /* jshint ignore:end */
+
+        vm.scrollToTop = () => {
+            angular.element('html, body').animate({ scrollTop: 0 });
+        };
     }
 })();

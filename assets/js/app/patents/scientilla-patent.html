@@ -30,6 +30,10 @@
             <strong>Application:</strong> {{ vm.patent.patentData.application }}<br>
         </ng-container>
 
+        <ng-container ng-if="vm.patent.patentData.priority">
+            <em><strong>Priority</strong></em>
+        </ng-container>
+
         <ul class="patent-actions">
             <li
                 ng-if="vm.patent.verified.length"

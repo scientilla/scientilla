@@ -228,4 +228,13 @@ module.exports.policies = {
         getByName: isAdmin,
         saveByName: isAdmin,
     }, defaultAdminPolicy),
+
+    PersonController: _.defaults({
+        getUniqueRoleCategories: isLogged,
+        getUniqueNationalities: isLogged
+    }, defaultPolicy),
+
+    AllMembershipController: defaultPolicy,
+
+    AllMembershipGroupController: defaultPolicy
 };

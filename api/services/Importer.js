@@ -490,7 +490,7 @@ async function analyseUserImport() {
         sails.log.info(`Received contracts: ${ employees.length }`);
         sails.log.info('************************************************');
 
-        const contractsWithoutSubArea = employees.filter(c => !_.has(c, 'desc_sottoarea') || _.isEmpty(c.desc_sottoarea));
+        const contractsWithoutSubArea = employees.filter(c => !_.has(c, 'desc_sottoarea') || _.isEmpty(c.desc_sottoarea)).map(c =>  sails.log.debug(c));
         sails.log.info(`Contracts without sub area: ${ contractsWithoutSubArea.length }`);
         sails.log.info('************************************************');
 
@@ -526,7 +526,7 @@ async function analyseUserImport() {
         sails.log.info('************************************************');
 
         const contractsWithoutRuolo1 = employees.filter(c => !_.has(c, 'Ruolo_1') || _.isEmpty(c.Ruolo_1));
-        sails.log.info(`Contracts without sub area: ${ contractsWithoutRuolo1.length }`);
+        sails.log.info(`Contracts without Ruolo_1: ${ contractsWithoutRuolo1.length }`);
         sails.log.info('************************************************');
 
         const groupedRoles = _.chain(employees)
@@ -541,20 +541,25 @@ async function analyseUserImport() {
         sails.log.info('************************************************');
 
         roleAssociations = roleAssociations.data;
+        roleAssociations = roleAssociations.map(a => ({
+            originalRole: _.toLower(a.originalRole),
+            roleCategory: _.toLower(a.roleCategory)
+        }))
         roleAssociations = _.chain(roleAssociations)
             .groupBy(a => a.roleCategory)
-            .map((value, key) => ({
-                roleCategory: key,
-                originalRoles: roleAssociations.filter(a => a.roleCategory === key).map(a => a.originalRole)
-            }))
+            .map((value, key) => {
+                return {
+                    roleCategory: key,
+                    originalRoles: roleAssociations.filter(a => a.roleCategory === key).map(a => a.originalRole)
+                }
+            })
             .value();
 
         for (const group of roleAssociations) {
             group.employees = [];
 
             for (const groupRole of groupedRoles) {
-
-                const role = groupRole.role;
+                const role =  _.toLower(groupRole.role);
                 const employees =  groupRole.employees;
 
                 if (group.originalRoles.includes(role)) {
@@ -741,7 +746,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
                 insertedUsers.push(user);
             } else {
                 let displayNamesAreChanged = false;
-                if (user.display_name !== employee.nome_AD || user.display_surname !== employee.cognome_AD) {
+                if (user.displayName !== employee.nome_AD || user.displaySurname !== employee.cognome_AD) {
                     displayNamesAreChanged = true;
                 }
 
@@ -750,7 +755,6 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
 
                 if (displayNamesAreChanged) {
                     await User.createAliases(user);
-                    //sails.log.info('The display names are been updated to: ' + user.display_name + ' ' + user.display_surname);
                     updatedDisplayNames.push(user);
                 }
                 updatedUsers.push(user);
@@ -1331,8 +1335,10 @@ async function importPatents() {
     }
 
     const patentSchema = {
+        id: 'id',
         application: 'application',
         filingDate: obj => patentDateFormat(obj.filing_date),
+        publication: 'publication',
         publicationDate: obj => patentDateFormat(obj.publication_date),
         patent: 'patent',
         title: 'title',
@@ -1385,7 +1391,8 @@ async function importPatents() {
     }
     const patentFamilySchema = {
         docket: 'docket',
-        bithDate: obj => patentDateFormat(obj.birth_date),
+        id: 'id',
+        birthDate: obj => patentDateFormat(obj.birth_date),
         deathDate: obj => patentDateFormat(obj.death_date),
         knowledgeshareUrl: 'knowledgeshare_url',
         countries: 'countries'
@@ -1416,6 +1423,9 @@ async function importPatents() {
         }
 
         for (const patent of item.patent_family.patents) {
+            if (_.isEmpty(patent.statuses))
+                continue;
+
             totalItems++;
 
             try {
@@ -1434,7 +1444,7 @@ async function importPatents() {
                     continue;
                 }
 
-                const code = patentFamilyData.docket + '|' + patentData.application;
+                const code = patentData.id;
 
                 const data = {
                     type: ResearchItemTypes.PATENT,
@@ -1499,9 +1509,12 @@ async function importPatents() {
         const parentGroups = await MembershipGroup.find({child_group: groups.map(g => g.id)})
             .populate('parent_group');
 
+        const users = await User.find({username: ePatent.patentData.inventors.map(m => m.email)});
+
         const researchEntitiesId = [
             institute.id,
             ...groups.map(g => g.researchEntity),
+            ...users.map(u => u.researchEntity),
             ...parentGroups.map(pg => pg.parent_group.researchEntity)
         ];
 

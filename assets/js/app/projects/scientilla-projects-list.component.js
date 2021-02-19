@@ -9,22 +9,21 @@
             controllerAs: 'vm',
             bindings: {
                 researchEntity: '<',
-                section: '<'
+                section: '<',
+                active: '<?'
             }
         });
 
     scientillaProjectsList.$inject = [
         'ProjectService',
-        'projectListSections',
         '$element',
-        '$timeout'
+        '$scope'
     ];
 
     function scientillaProjectsList(
         ProjectService,
-        projectListSections,
         $element,
-        $timeout
+        $scope
     ) {
         const vm = this;
 
@@ -36,31 +35,53 @@
         vm.exportDownload = projects => ProjectService.exportDownload(projects, 'csv');
 
         let query = {};
+        let activeWatcher;
+
+        vm.loadProjects = true;
 
         vm.$onInit = () => {
             const registerTab = requireParentMethod($element, 'registerTab');
             registerTab(vm);
+
+            if (_.has(vm, 'active')) {
+                vm.loadProjects = angular.copy(vm.active);
+
+                activeWatcher = $scope.$watch('vm.active', () => {
+                    vm.loadProjects = angular.copy(vm.active);
+
+                    if (vm.loadProjects) {
+                        $scope.$broadcast('filter');
+                    } else {
+                        vm.projects = [];
+                    }
+                });
+            }
         };
 
         vm.$onDestroy = () => {
             const unregisterTab = requireParentMethod($element, 'unregisterTab');
             unregisterTab(vm);
+
+            if (_.isFunction(activeWatcher)) {
+                activeWatcher();
+            }
         };
 
         vm.reload = function () {
 
         };
 
-        /* jshint ignore:start */
-        async function onFilter(q) {
+        function onFilter(q) {
             const favorites = q.where.favorites;
             delete q.where.favorites;
 
             query = q;
 
-            vm.projects = await ProjectService.get(vm.researchEntity, query, favorites);
+            return ProjectService.get(vm.researchEntity, query, favorites)
+                .then(projects => {
+                    vm.projects = projects;
+                });
         }
-        /* jshint ignore:end */
     }
 
 })();

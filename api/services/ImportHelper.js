@@ -474,7 +474,6 @@ function getIgnoredRoles() {
         'Fellow',
         'gestione manuale',
         'Guest',
-        'Guest Student',
         'Tirocinio Formativo',
         'Work Experience'
     ];
@@ -532,7 +531,7 @@ function createUserObject(ldapUsers = [], user = {}, employee = {}, contractEndD
             );
             if (!_.isEmpty(foundEmployeeEmail)) {
                 keepCurrentUsername = true;
-                sails.log.debug(`The email address we received from Pentaho is not available in the Active Directory, 
+                sails.log.debug(`The email address we received from Pentaho is not available in the Active Directory,
                     but the old one does: ${user.username}`);
             }
         }
@@ -545,11 +544,11 @@ function createUserObject(ldapUsers = [], user = {}, employee = {}, contractEndD
     }
 
     if (_.has(employee, 'nome_AD') && !_.isEmpty(employee.nome_AD)) {
-        userObject.display_name = employee.nome_AD;
+        userObject.displayName = employee.nome_AD;
     }
 
     if (_.has(employee, 'cognome_AD') && !_.isEmpty(employee.cognome_AD)) {
-        userObject.display_surname = employee.cognome_AD;
+        userObject.displaySurname = employee.cognome_AD;
     }
 
     if (!_.has(user, 'config')) {
@@ -673,21 +672,19 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
             group.code = codeGroup.code;
             group.privacy = defaultPrivacy;
 
-            if (codeGroup.type === 'Directorate') {
-                const line = lines.find(line => line.code === code);
-                const offices = lines.filter(line => line.code === code).map(line => line.office).filter(o => o);
+            const line = lines.find(line => line.code === code);
+            const offices = lines.filter(line => line.code === code).map(line => line.office).filter(o => o);
 
-                if (offices.length === 1 && offices[0] === 'IIT') {
-                    group.type = 'Institute';
-                    group.name = 'Istituto Italiano di Tecnologia';
-                    group.code = 'IIT';
-                    skipCenter = true;
-                } else {
-                    group.type = 'Directorate';
-                    group.offices = offices;
-                    group.name = line.name;
-                    group.code = line.code;
-                }
+            if (offices.length === 1 && offices[0] === 'IIT') {
+                group.type = 'Institute';
+                group.name = 'Istituto Italiano di Tecnologia';
+                group.code = 'IIT';
+                skipCenter = true;
+            } else {
+                group.type = codeGroup.type;
+                group.offices = offices;
+                group.name = line.name;
+                group.code = line.code;
             }
 
             if (!skipCenter) {
@@ -774,7 +771,7 @@ async function importDirectorates(employees, groups) {
         }
     }
 
-    sails.log.info(`Created ${createdDirectorates.length} & updated ${updatedDirectorates.length} directorates. 
+    sails.log.info(`Created ${createdDirectorates.length} & updated ${updatedDirectorates.length} directorates.
         Please add them to their parent group and check their active state!`);
 }
 

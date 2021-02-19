@@ -41,6 +41,8 @@
         vm.editUserProfile = editUserProfile;
         vm.getUrl = getUrl;
         vm.profile = false;
+        vm.isUser = isUser;
+        vm.isGroup = isGroup;
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
@@ -88,7 +90,7 @@
                     context.setSubResearchEntity(group);
                 })
                 .then(() => {
-                    path.goTo('/' + group.slug + '/dashboard');
+                    path.goTo('/groups/' + group.id + '/info');
                 });
         }
 
@@ -161,6 +163,14 @@
             }
 
             return prefix + url;
+        }
+
+        function isUser() {
+            return vm.subResearchEntity.getType() === 'user';
+        }
+
+        function isGroup() {
+            return vm.subResearchEntity.getType() === 'group';
         }
     }
 })();

@@ -23,12 +23,14 @@
         service.getGroups = getGroups;
         service.getGroup = getGroup;
         service.addCollaborator = addCollaborator;
+        service.updateCollaborator= updateCollaborator;
         service.removeCollaborator = removeCollaborator;
         service.addRelative = addRelative;
         service.removeChild = removeChild;
         service.getSettings = getSettings;
         service.getConnectedGroups = getConnectedGroups;
         service.getMembershipGroups = getMembershipGroups;
+        service.getParentMembershipGroups = getParentMembershipGroups;
         service.getTypeTitle = getTypeTitle;
         service.createInstituteStructure = createInstituteStructure;
 
@@ -94,7 +96,7 @@
         }
 
         function getGroups(query) {
-            const populate = {populate: ['administrators', 'attributes', 'groupAttributes', 'pis']};
+            const populate = {populate: ['administrators', 'attributes', 'groupAttributes','childGroups', 'parentGroups', 'pis']};
             const q = _.merge({}, query, populate);
 
             return service.getList(q);
@@ -103,6 +105,15 @@
         function getMembershipGroups() {
             return Restangular.all('membershipgroups').customGET('', {
                 //where: {active: true},
+                populate: ['parent_group', 'child_group']
+            }).then(res => {
+                return res.items;
+            });
+        }
+
+        function getParentMembershipGroups(groupId) {
+            return Restangular.all('membershipgroups').customGET('', {
+                where: { child_group: groupId },
                 populate: ['parent_group', 'child_group']
             }).then(res => {
                 return res.items;
@@ -201,6 +212,26 @@
             return Restangular
                 .all('memberships')
                 .customPOST(newMembership);
+        }
+
+        function updateCollaborator(group, user, active) {
+            const qs = {where: {group: group.id, user: user.id}};
+            return Restangular.all('memberships').customGET('', qs)
+                .then(res => {
+                    if (res.items.length !== 1) {
+                        throw 'Membership not found!';
+                    }
+
+                    const membership = res.items[0];
+                    membership.active = active;
+
+                    return Restangular
+                        .one('memberships', membership.id)
+                        .customPOST(membership);
+                })
+                .catch(function (error) {
+                    Notification.warning(error);
+                });
         }
 
         function removeCollaborator(group, user) {

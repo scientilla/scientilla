@@ -50,7 +50,9 @@
 </ng-container>
 
 <ng-container ng-if="vm.project.status">
-    <strong>Status:</strong> {{ vm.project.status }}<br>
+    <strong>Status:</strong>
+    {{ vm.project.status }}
+    <span class="project-status" ng-class="vm.project.status"></span><br>
 </ng-container>
 
 <ng-container ng-if="vm.project.url">
@@ -60,15 +62,15 @@
 
 <ng-container ng-if="vm.project.projectData.instituteBudget">
     <strong>Institute budget:</strong>
-    €{{ vm.project.projectData.instituteBudget }}<br>
+    {{ vm.project.projectData.instituteBudget | valuta }}<br>
 </ng-container>
 
 <ng-container ng-if="vm.project.projectData.instituteContribution">
     <strong>Institute funding:</strong>
-    €{{ vm.project.projectData.instituteContribution }}<br>
+    {{ vm.project.projectData.instituteContribution | valuta }}<br>
 </ng-container>
 
-<ng-container>
+<ng-container ng-if="vm.PIMembers.length > 0">
     <br>
     <strong>Annual funding PIs:</strong>
     <table class="table">
@@ -81,11 +83,13 @@
         <tr ng-repeat="member in vm.PIMembers">
             <td class="name-column">{{ vm.getAlias(member) }}</td>
             <td ng-repeat="annualContribution in member.annualContribution">
-                €{{ annualContribution.contribution }}
+                {{ annualContribution.contribution | valuta }}
             </td>
         </tr>
     </table>
+</ng-container>
 
+<ng-container ng-if="vm.project.researchLines.length > 0">
     <br>
     <strong>Annual funding research lines:</strong>
     <table class="table">
@@ -96,9 +100,18 @@
             </th>
         </tr>
         <tr ng-repeat="researchLine in vm.project.researchLines">
-            <td class="name-column">{{ vm.getGroupName(researchLine) }}</td>
+            <td class="name-column">
+                <ng-container ng-if="vm.isGroup(researchLine)">
+                    <a href="{{ vm.getGroupUrl(researchLine) }}" ng-click="vm.closeModal()">
+                        {{ vm.getGroupName(researchLine) }}
+                    </a>
+                </ng-container>
+                <ng-container ng-if="!vm.isGroup(researchLine)">
+                    {{ vm.getGroupName(researchLine) }}
+                </ng-container>
+            </td>
             <td ng-repeat="annualContribution in researchLine.annualContribution">
-                €{{ annualContribution.contribution }}
+                {{ annualContribution.contribution | valuta }}
             </td>
         </tr>
     </table>
@@ -121,8 +134,10 @@
     </ng-container>
 </ng-container>
 
-<ul ng-if="vm.project.logos">
+<ul
+    class="project-logos"
+    ng-if="vm.project.logos">
     <li ng-repeat="logo in vm.project.logos">
-        {{ logo }}
+        <img ng-src="{{ logo.image }}" alt="{{ logo.name }}">
     </li>
 </ul>

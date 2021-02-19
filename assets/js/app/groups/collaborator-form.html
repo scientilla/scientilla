@@ -1,0 +1,61 @@
+<div class="modal-header">
+    <h3>{{ !!vm.collaborator.id ? 'Edit' : 'Add' }} collaborator</h3>
+    <button
+        type="button"
+        class="close"
+        ng-click="vm.cancel()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div
+        class="dropdown-container add-scroll add-collaborator-field-container"
+        ng-if="!vm.collaborator"
+    >
+        <input
+            type="text"
+            class="form-control add-collaborator-field"
+            ng-model="vm.selectedUser"
+            uib-typeahead="user as user.getDisplayName() for user in vm.getUsers($viewValue)"
+            typeahead-loading="searching"
+            typeahead-no-results="noResults"
+            data-ng-required="true"
+            placeholder="Search User"
+            ng-model-options="{ allowInvalid: true }"
+            typeahead-editable="false"
+            typeahead-select-on-blur="true"/>
+    </div>
+
+    <ul
+        class="selected-user"
+        ng-show="vm.selectedUser">
+        <li>{{ vm.selectedUser.getDisplayName() }}</li>
+        <li>
+            <label class="form-checkbox">
+                <input
+                    type="checkbox"
+                    ng-model="vm.selectedUserActive"/>
+                <span>Active collaborator?</span>
+            </label>
+        </li>
+    </ul>
+
+    <ul class="modal-buttons">
+        <li>
+            <button
+                type="button"
+                class="btn btn-primary"
+                ng-disabled="!vm.selectedUser"
+                ng-click="vm.addCollaborator(vm.group, vm.selectedUser, vm.selectedUserActive)"
+                title="Add {{ vm.selectedUser.getDisplayName() }} as a collaborator">
+                Save
+            </button>
+        </li>
+        <li>
+            <scientilla-button
+                type="cancel"
+                click="vm.cancel">Close</scientilla-button>
+        </li>
+    </ul>
+</div>

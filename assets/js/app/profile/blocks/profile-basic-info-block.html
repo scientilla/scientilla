@@ -1,7 +1,7 @@
 <ul class="card-container">
     <li ng-if="vm.former" class="former-employee">
         <div class="ribbon">
-            Former colleague
+            Former employee
         </div>
     </li>
     <li ng-class="vm.former ? '' : 'main-card'">
@@ -26,10 +26,10 @@
 
             <ul class="directorates" ng-if="vm.directorates.length > 0">
                 <li class="directorate" ng-repeat="directorate in vm.directorates track by $index">
-                    <span class="group-name">{{ directorate.name }}</span>
                     <ul class="offices" ng-if="directorate.offices.length > 0">
                         <li ng-repeat="office in directorate.offices track by $index">{{ office }}</li>
                     </ul>
+                    <span class="group-name">{{ directorate.name }}</span>
                 </li>
             </ul>
 
@@ -37,6 +37,9 @@
             <strong ng-if="vm.researchLines.length > 1">Research lines:</strong>
             <ul class="research-lines" ng-if="vm.researchLines.length > 0">
                 <li class="research-line" ng-repeat="researchLine in vm.researchLines track by $index">
+                    <ul class="offices" ng-if="researchLine.offices.length > 0">
+                        <li ng-repeat="office in researchLine.offices track by $index">{{ office }}</li>
+                    </ul>
                     <span class="group-name">{{ researchLine.name }}</span>
                     <span ng-if="researchLine.center" class="center-name">
                         {{ researchLine.center.name }}
@@ -48,6 +51,9 @@
             <strong ng-if="vm.facilities.length > 1">Facilities:</strong>
             <ul class="facilities" ng-if="vm.facilities.length > 0">
                 <li class="facility" ng-repeat="facility in vm.facilities track by $index">
+                    <ul class="offices" ng-if="facility.offices.length > 0">
+                        <li ng-repeat="office in facility.offices track by $index">{{ office }}</li>
+                    </ul>
                     <span class="group-name">{{ facility.name }}</span>
                     <span ng-if="facility.center" class="center-name">
                         {{ facility.center.name }}

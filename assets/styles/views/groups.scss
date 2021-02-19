@@ -1,42 +1,42 @@
-.groups{
-    &.groups-browsing{
-        .title-container{
+.groups {
+    &.groups-browsing {
+        .title-container {
             display: grid;
             grid-template-rows: auto;
             grid-template-columns: 1fr auto;
         }
 
-        .btn-add-group{
+        .btn-add-group {
             height: fit-content;
         }
 
-        .group-listing{
+        .group-listing {
             @include normalize-listing;
 
-            & > li{
-                & + li{
+            & > li {
+                & + li {
                     margin-top: 2rem;
                     padding-top: 2rem;
                     border-top: 1px solid $gray-300;
                 }
             }
 
-            .user-fullname{
+            .user-fullname {
                 margin-bottom: 0px;
             }
         }
 
-        .group-info-listing{
+        .group-info-listing {
             @include normalize-listing;
             margin-bottom: 1rem;
 
-            ul{
+            ul {
                 @include normalize-listing('true');
                 @include clearfix;
                 margin-left: -.5rem;
                 margin-right: -.5rem;
 
-                & > li{
+                & > li {
                     display: block;
                     padding: 0px .5rem;
                     float: left;
@@ -44,37 +44,47 @@
             }
         }
 
-        .group-title{
+        .group-title {
             margin-bottom: .5rem;
         }
     }
 
-    &.group-detail{
+    &.group-detail {
         padding-bottom: 3rem;
 
-        .group-info-tab{
+        .title-container {
+            display: grid;
+            grid-template-rows: auto;
+            grid-template-columns: 1fr auto;
+        }
 
-            .group-card{
+        .btn-add-collaborator {
+            height: fit-content;
+        }
+
+        .group-info-tab {
+
+            .group-card {
                 margin-bottom: 2rem;
 
-                h2{
+                h2 {
                     margin-bottom: 0px;
                 }
 
-                .group-info-listing{
+                .group-info-listing {
                     @include normalize-listing;
                     margin-bottom: 2rem;
 
                     .pi,
-                    .interactions{
+                    .interactions {
                         @include normalize-listing('true');
 
-                        & > li{
+                        & > li {
                             display: inline-block;
                             vertical-align: top;
 
-                            & + li{
-                                &:before{
+                            & + li {
+                                &:before {
                                     display: inline-block;
                                     content: ',';
                                     vertical-align: top;
@@ -85,36 +95,36 @@
                 }
             }
 
-            .role-card{
+            .role-card {
                 margin-bottom: 2rem;
 
-                em{
+                em {
                     display: block;
                     color: $gray;
                 }
             }
 
-            .checkbox-container{
+            .checkbox-container {
                 margin-bottom: 2rem;
             }
 
-            .chart-container{
+            .chart-container {
                 max-width: 300px;
                 margin-right: auto;
                 margin-bottom: 2rem;
                 margin-left: auto;
 
-                .chart{
+                .chart {
                     position: relative;
                     display: block;
                     padding-bottom: 50%;
 
-                    &.chart-full{
+                    &.chart-full {
                         padding-bottom: 100%;
                     }
                 }
 
-                svg{
+                svg {
                     position: absolute;
                     top: 0px;
                     left: 0px;
@@ -122,20 +132,20 @@
                     height: 100% !important;
                 }
 
-                .nvd3.nv-pie path{
+                .nvd3.nv-pie path {
                     fill-opacity: 1;
                 }
             }
 
-            .chart-title{
+            .chart-title {
                 margin-bottom: 1rem;
             }
 
-            .count{
+            .count {
                 color: $gray-400;
             }
 
-            .legend-info{
+            .legend-info {
                 margin-bottom: 2rem;
 
                 .subtotal {
@@ -143,25 +153,25 @@
                     line-height: 1;
                 }
 
-                .category-subtitle{
+                .category-subtitle {
                     font-size: 1.6rem;
                 }
             }
 
-            .column-countries{
+            .column-countries {
                 margin-top: 3rem;
             }
 
             .column-by-role,
             .column-by-gender,
-            .column-by-age-range{
-                &:after{
+            .column-by-age-range {
+                &:after {
                     @include bottom-line;
                 }
             }
 
-            .column-by-gender{
-                .inner-column-by-gender{
+            .column-by-gender {
+                .inner-column-by-gender {
                     display: grid;
                     grid-template-columns: 1fr;
                     grid-template-rows: auto 1fr;
@@ -170,53 +180,146 @@
             }
         }
 
-        .group-member-listing{
+        .group-member-listing {
             @include normalize-listing;
-            margin: 0px -1rem;
 
-            & > li{
+            & > li {
                 display: grid;
-                margin: 0px 1rem 2rem 1rem;
-                padding: 1rem 1rem 1rem 1.5rem;
+                grid-template-columns: 80px 1fr;
                 grid-template-rows: auto;
-                grid-template-columns: 1fr auto;
-                border: 1px solid $gray-300;
-                border-radius: .25rem;
+
+                & + li {
+                    margin-top: 2rem;
+                    padding-top: 2rem;
+                    border-top: 1px solid $gray-300;
+                }
             }
 
-            .group-member-fullname{
-                @include h3;
-                display: inline-block;
-                margin-bottom: 1rem;
-                vertical-align: top;
+            img {
+                @include set-grid(1, 1, 1, 1);
+                border-radius: .5rem;
             }
 
-            .collaborator{
-                border-color: $gray-300;
-                background: $gray-200;
+            .user-content {
+                @include set-grid(1, 2, 1, 1);
+                padding: 0px 1rem;
             }
 
-            .former-collaborator{
-                border-color: lighten($primary-color, 10%);
-                background: lighten($primary-color, 20%);
+            .memberships-container {
+                @include set-grid(2, 1, 1, 2);
             }
 
-            .member-info{
+            .dropdown-container {
+                @include set-grid(3, 1, 1, 2);
+                margin-top: 1rem;
+            }
+
+            .group-member-fullname {
+                @include h5;
+                margin-bottom: .5rem;
+                line-height: 1 !important;
+            }
+
+            .job-title {
+                margin-bottom: .5rem;
+                color: $gray;
+            }
+
+            .memberships {
                 @include normalize-listing;
+                @include clearfix;
+                margin: 1rem -.5rem -1rem -.5rem;
+                overflow: hidden;
+
+                li {
+                    display: block;
+                    float: left;
+                    padding-right: .5rem;
+                    padding-left: .5rem;
+                }
+
+                div,
+                a {
+                    display: block;
+                    margin-bottom: 1rem;
+                    padding: .5rem 1rem;
+                    font-size: 1rem;
+                    line-height: 1;
+                    border-radius: 1rem;
+                }
+
+                div {
+                    background: $gray-100;
+                    color: $gray;
+                }
+
+                a {
+                    background-color: $primary-color;
+                    color: color-yiq($primary-color);
+                }
+            }
+
+            .socials {
+                @include normalize-listing;
+                @include clearfix;
+                margin-right: -.5rem;
+                margin-left: -.5rem;
+
+                & > li {
+                    display: block;
+                    float: left;
+                    padding-right: .5rem;
+                    padding-left: .5rem;
+                }
+
+                a {
+                    display: block;
+                    line-height: 1;
+                }
+            }
+
+            .badges {
+                @include normalize-listing;
+                @include clearfix;
+                margin-right: -.5rem;
+                margin-left: -.5rem;
+
+                & > li {
+                    display: block;
+                    float: left;
+                    padding-right: .5rem;
+                    padding-left: .5rem;
+                }
+
+                div {
+                    display: inline-block;
+                    padding: .5rem 1rem;
+                    font-size: 1rem;
+                    line-height: 1;
+                    border-radius: 1rem;
+                    background: $gray-100;
+                    color: $gray;
+                }
+            }
+
+            .socials-container {
+                & + .badges {
+                    margin-top: .8rem;
+                }
             }
         }
 
         .add-collaborator-field-container,
-        .add-group-field-container{
+        .add-group-field-container {
             position: relative;
             width: 100%;
             max-width: 400px;
 
-            .form-control{
+            .form-control {
                 padding-right: 3rem;
             }
 
-            &:after{
+            &:after {
                 position: absolute;
                 top: 7px;
                 right: 10px;
@@ -228,20 +331,19 @@
             }
         }
 
-        .selected-user,
-        .selected-group{
+        .selected-group {
             @include normalize-listing;
 
-            & > li{
+            & > li {
                 padding: 1rem 0px;
             }
         }
 
-        .child-group-listing{
+        .child-group-listing {
             @include normalize-listing;
             margin-bottom: 2rem;
 
-            & > li{
+            & > li {
                 display: grid;
                 margin: 1rem -1rem 0px -1rem;
                 grid-template-columns: 1fr auto;
@@ -249,7 +351,7 @@
                 align-items: center;
             }
 
-            a{
+            a {
                 display: block;
                 margin: 0px 1rem;
             }
@@ -258,9 +360,9 @@
 }
 
 @include media-breakpoint-up(sm) {
-    .groups{
-        &.groups-browsing{
-            .group-listing{
+    .groups {
+        &.groups-browsing {
+            .group-listing {
                 & > li{
                     display: grid;
                     grid-template-columns: 1fr auto;
@@ -269,65 +371,101 @@
             }
         }
 
-        &.group-detail{
-            .selected-user{
-                display: grid;
-                margin: 2rem -1rem 0px -1rem;
-                grid-template-columns: 1fr auto auto;
-                grid-template-rows: auto;
-                align-items: center;
+        &.group-detail {
 
-                & > li{
-                    padding: 1rem;
-                }
-
-                .form-checkbox{
-                    margin: 0px;
-                }
-            }
-
-            .selected-group{
+            .selected-group {
                 display: grid;
                 margin: 2rem -1rem 0px -1rem;
                 grid-template-columns: 1fr auto;
                 grid-template-rows: auto;
                 align-items: center;
 
-                & > li{
+                & > li {
                     padding: 1rem;
                 }
             }
 
-            .group-member-listing{
-                display: grid;
-                grid-template-rows: auto;
-                grid-template-columns: 1fr 1fr;
+            .group-member-listing {
+                & > li {
+                    grid-template-columns: 80px 1fr auto;
+                }
+
+                img {
+                    @include set-grid(1, 1, 1, 1);
+                }
+
+                .user-content {
+                    @include set-grid(1, 2, 1, 1);
+                    margin-top: 0px;
+                }
+
+                .memberships-container {
+                    @include set-grid(2, 1, 1, 2);
+                }
+
+                .dropdown-container {
+                    @include set-grid(1, 3, 2, 1);
+                    margin-top: 0rem;
+                }
+            }
+        }
+    }
+}
+
+@include media-breakpoint-up(xl) {
+    .groups {
+        &.group-detail {
+            .group-member-listing {
+                & > li {
+                    grid-template-columns: 80px 2fr 3fr auto;
+                }
+
+                img {
+                    @include set-grid(1, 1, 1, 1);
+                }
+
+                .user-content {
+                    @include set-grid(1, 2, 1, 1);
+                }
+
+                .memberships-container {
+                    @include set-grid(1, 3, 1, 1);
+                    padding: 0px 1rem;
+
+                    .memberships{
+                        margin-top: 0rem;
+                    }
+                }
+
+                .dropdown-container {
+                    @include set-grid(1, 4, 1, 1);
+                }
             }
         }
     }
 }
 
 @include media-breakpoint-between(lg, xl) {
-    .groups{
-        &.group-detail{
-            .group-info-tab{
+    .groups {
+        &.group-detail {
+            .group-info-tab {
                 .column-by-role,
                 .column-by-gender,
-                .column-by-age-range{
-                    &:after{
+                .column-by-age-range {
+                    &:after {
                         display: none;
                     }
                 }
 
                 .column-legend,
-                .column-by-role{
+                .column-by-role {
                     margin-bottom: 3rem;
                 }
 
-                .column-by-gender{
+                .column-by-gender {
                     padding-right: 3rem;
 
-                    &:after{
+                    &:after {
                         position: absolute;
                         right: 0px;
                         top: 3rem;
@@ -339,23 +477,23 @@
                         border-bottom: 0px;
                     }
 
-                    &:before{
+                    &:before {
                         @include top-line;
                         margin-top: 0px;
                     }
                 }
 
-                .column-by-age-range{
+                .column-by-age-range {
                     padding-left: 3rem;
 
-                    &:before{
+                    &:before {
                         @include top-line;
                         margin-top: 0px;
                     }
                 }
 
-                .column-by-country{
-                    &:before{
+                .column-by-country {
+                    &:before {
                         @include bottom-line;
                     }
                 }
@@ -365,7 +503,7 @@
 }
 
 @include media-breakpoint-up(xxl) {
-    .groups{
+    .groups {
         &.group-detail {
             .group-info-tab {
                 .column-by-role,
@@ -376,16 +514,16 @@
                     }
                 }
 
-                .column-by-gender{
+                .column-by-gender {
                     padding-left: 3rem;
                 }
 
                 .column-by-role,
-                .column-by-age-range{
+                .column-by-age-range {
                     position: relative;
                     padding-right: 3rem;
 
-                    &:after{
+                    &:after {
                         position: absolute;
                         right: 0px;
                         top: 1rem;
@@ -398,28 +536,28 @@
                     }
                 }
 
-                .column-by-age-range{
+                .column-by-age-range {
                     &:after{
                         top: 6rem;
                         height: calc(100% - 6rem);
                     }
 
-                    &:before{
+                    &:before {
                         @include bottom-line;
                     }
                 }
 
-                .column-by-country{
+                .column-by-country {
                     padding-left: 3rem;
 
-                    &:before{
+                    &:before {
                         @include bottom-line;
                     }
                 }
 
                 .column-by-gender,
-                .column-by-country-sub{
-                    .legend{
+                .column-by-country-sub {
+                    .legend {
                         display: inline-block;
                         width: auto;
                         margin-top: 2rem;
@@ -428,8 +566,8 @@
                     }
                 }
 
-                .inner-column-by-gender{
-                    .chart-by-gender-outer-container{
+                .inner-column-by-gender {
+                    .chart-by-gender-outer-container {
                         display: flex;
                         height: 100%;
                         align-items: center;

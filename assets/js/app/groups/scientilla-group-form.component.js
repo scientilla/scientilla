@@ -117,6 +117,10 @@
         };
 
         vm.$onInit = function () {
+            if (_.has(vm.group, 'id')) {
+                vm.formStructure.code.disabled = true;
+            }
+
             delete vm.group.members;
             delete vm.group.memberships;
             $scope.$watch('vm.group.name', nameChanged);
@@ -218,8 +222,8 @@
             const qs = {where: {or: [
                 {name: {contains: searchText}},
                 {surname: {contains: searchText}},
-                {display_name: {contains: searchText}},
-                {display_surname: {contains: searchText}},
+                {displayName: {contains: searchText}},
+                {displaySurname: {contains: searchText}},
             ]}};
             const model = 'users';
             return {model: model, qs: qs};

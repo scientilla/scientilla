@@ -1,5 +1,7 @@
 CREATE OR REPLACE VIEW patent_family AS
-SELECT p.family_docket         as docket,
-       json_agg(p) as patents
+SELECT p.family_id     as id,
+       p.family_docket as docket,
+       jsonb_agg(p)    as patents
 FROM patent p
-GROUP BY p.family_docket;
+WHERE p.kind = 'v'
+GROUP BY p.family_id, p.family_docket;

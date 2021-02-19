@@ -1,1 +1,2 @@
-CREATE OR REPLACE VIEW all_membership AS SELECT DISTINCT "user", "group" *  FROM all_membership_group
+CREATE OR REPLACE VIEW all_membership AS
+    SELECT DISTINCT ON ("user", "group") * FROM all_membership_group_without_id;

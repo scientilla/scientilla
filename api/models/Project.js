@@ -28,7 +28,11 @@ const fields = [
 ];
 
 module.exports = _.merge({}, BaseModel, {
-    DEFAULT_SORTING: {},
+    DEFAULT_SORTING: {
+        start_year: 'desc',
+        title: 'asc',
+        id: 'desc'
+    },
     migrate: 'safe',
     tableName: 'project',
     autoUpdatedAt: false,

@@ -2,7 +2,9 @@
     category="document"
     on-filter="vm.onFilter"
     elements="vm.documents"
-    empty-list-message="No documents found">
+    empty-list-message="No documents found"
+    filter-on-init="vm.loadDocuments"
+>
 
     <scientilla-multicheck>
         <buttons>

@@ -86,11 +86,13 @@ module.exports = _.merge({}, SubResearchEntity, {
         jobTitle: {
             type: 'STRING'
         },
-        display_name: {
+        displayName: {
+            columnName: 'display_name',
             type: 'STRING',
             defaultsTo: ""
         },
-        display_surname: {
+        displaySurname: {
+            columnName: 'display_surname',
             type: 'STRING',
             defaultsTo: ""
         },
@@ -334,8 +336,8 @@ module.exports = _.merge({}, SubResearchEntity, {
     createAliases: async function (user) {
         let generatedAliasesStr = User.generateAliasesStr(user.name, user.surname)
 
-        if (_.has(user, 'display_name') && _.has(user, 'display_surname')) {
-            generatedAliasesStr = generatedAliasesStr.concat(User.generateAliasesStr(user.display_name, user.display_surname));
+        if (_.has(user, 'displayName') && _.has(user, 'displaySurname')) {
+            generatedAliasesStr = generatedAliasesStr.concat(User.generateAliasesStr(user.displayName, user.displaySurname));
         }
 
         const aliases = _.uniq(generatedAliasesStr).map(str => ({
@@ -603,8 +605,6 @@ module.exports = _.merge({}, SubResearchEntity, {
         await ResearchEntity.createResearchEntity(User, user, 'user');
 
         await User.createAliases(user);
-        if (User.isInternalUser(user))
-            await Group.addUserToDefaultGroup(user);
 
         cb();
     },

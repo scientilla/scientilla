@@ -35,7 +35,8 @@
             'config'
         ];
 
-        const userPopulates = ['administratedGroups', 'attributes', 'aliases', 'memberships', 'groupMemberships', 'userData'];
+        const userGetPopulates = ['administratedGroups', 'attributes', 'aliases', 'memberships', 'groupMemberships', 'userData'];
+        const userSavePopulates = ['administratedGroups', 'attributes', 'memberships', 'groupMemberships', 'userData'];
 
         service.getNewUser = function () {
             var user = {
@@ -66,7 +67,7 @@
             const userCopy = angular.copy(user);
 
             Object.keys(userCopy).forEach(function(key) {
-                if (userPopulates.includes(key)) {
+                if (userSavePopulates.includes(key)) {
                     delete userCopy[key];
                 }
             });
@@ -95,8 +96,12 @@
             });
         };
 
-        service.getUser = function (userId) {
-            const populate = {populate: userPopulates};
+        service.getUser = function (userId, populates = userGetPopulates) {
+            if (!populates.includes('administratedGroups')) {
+                populates.push('administratedGroups');
+            }
+
+            const populate = {populate: populates};
             return service.one(userId).get(populate).then(function (user) {
                 Prototyper.toUserModel(user);
                 user.administratedGroups = Restangular.restangularizeCollection(null, user.administratedGroups, 'groups');
@@ -105,7 +110,7 @@
         };
 
         service.getUsers = function (query) {
-            var populate = {populate: userPopulates};
+            var populate = {populate: userGetPopulates};
             var q = _.merge({}, query, populate);
 
             return service.getList(q);
@@ -166,6 +171,10 @@
             _profile = false;
             _hasNoProfile = false;
         };
+
+        service.delete = async (user) => {
+            return await service.one(user.id).remove();
+        }
 
         /* jshint ignore:end */
 

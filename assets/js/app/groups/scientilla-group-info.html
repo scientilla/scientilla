@@ -26,6 +26,9 @@
                             <li ng-if="vm.group.starting_date">
                                 <strong>Starting date:</strong> {{ vm.group.starting_date | date : 'd LLLL yyyy' }}
                             </li>
+                            <li ng-if="vm.center">
+                                <strong>Center:</strong> <a ng-href="#{{ vm.center.getProfileUrl() }}">{{ vm.center.name }}</a>
+                            </li>
                             <li ng-if="vm.researchDomain">
                                 <strong>Research domain:</strong> {{ vm.researchDomain.name }}
                             </li>
@@ -65,14 +68,18 @@
                     </div>
                 </div>
 
-                <div class="card role-card">
+                <div
+                    class="card role-card"
+                    ng-if="vm.totalMembers > 0">
                     <div class="card-body">
                         <em>You can update the charts by selecting a set of roles by clicking on the pie chart icon
                             (<i class="fas fa-chart-pie"></i>). All the charts will be updated except "Members by role".</em>
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-xl-8 col-xxl-6 column-by-role">
+            <div
+                class="col-12 col-xl-8 col-xxl-6 column-by-role"
+                ng-if="vm.totalMembers > 0">
                 <h2 class="chart-title">Members by role</h2>
                 <div class="hidden">{{ vm.totalMembersByRole }} members</div>
                 <ul class="legend legend-roles">
@@ -100,16 +107,29 @@
                         </div>
                         <div class="content">
                             <span>{{ role.category }}</span>
-                            <span class="colorize-text">
+                            <span
+                                ng-if="role.category === 'Others'"
+                                class="colorize-text"
+                            >
                                 {{ role.value }} {{ role.value === 1 ? 'member' : 'members'}}
                             </span>
+                            <a
+                                href="/#/groups/{{ vm.group.id }}/members?roleCategory={{ role.category }}"
+                                ng-if="role.category !== 'Others'"
+                                ng-click="vm.scrollToTop()"
+                                class="colorize-text"
+                            >
+                                {{ role.value }} {{ role.value === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
+                            </a>
                             <span class="colorize-text percentage-column">{{ role.percent }}%</span>
                         </div>
                     </li>
                 </ul>
             </div>
 
-            <div class="col-12 col-xl-6 col-xxl-4 column-by-gender">
+            <div
+                class="col-12 col-xl-6 col-xxl-4 column-by-gender"
+                ng-if="vm.totalMembers > 0">
                 <div class="inner-column-by-gender">
                     <h2 class="chart-title">Members by gender</h2>
                     <div class="hidden">Total members by gender: {{ vm.genderTotal }}</div>
@@ -128,13 +148,22 @@
                                     <li
                                         ng-repeat="gender in vm.chartGenderData track by $index"
                                         class="content">
-                                    <span
-                                        class="color"
-                                        ng-style="{ 'background-color': vm.colors[$index] }"></span>
-                                        <span class="colorize-text">{{ gender.label }}</span>
-                                        <span class="colorize-text">
-                                        {{ gender.count }} {{ gender.count === 1 ? 'member' : 'members'}}
-                                    </span>
+
+                                        <span
+                                           class="color"
+                                            ng-style="{ 'background-color': vm.colors[$index] }"
+                                        ></span>
+
+                                        <span>{{ gender.label }}</span>
+
+                                        <a
+                                            href="/#/groups/{{ vm.group.id }}/members?gender={{ gender.value }}"
+                                            ng-click="vm.scrollToTop()"
+                                            class="colorize-text"
+                                        >
+                                            {{ gender.count }} {{ gender.count === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
+                                        </a>
+
                                         <span class="colorize-text percentage-column">{{ gender.percentage }}%</span>
                                     </li>
                                 </ul>
@@ -144,7 +173,9 @@
                 </div>
             </div>
 
-            <div class="col-12 col-xl-6 col-xxl-6 column-by-age-range">
+            <div
+                class="col-12 col-xl-6 col-xxl-6 column-by-age-range"
+                ng-if="vm.totalMembers > 0">
                 <h2 class="chart-title">Members by age range</h2>
                 <div class="hidden">Total members by age range: {{ vm.ageRageTotal }}</div>
                 <div class="row">
@@ -164,11 +195,16 @@
                                     class="content">
                                     <span
                                         class="color"
-                                        ng-style="{ 'background-color': vm.colors[$index] }"></span>
+                                        ng-style="{ 'background-color': vm.colors[$index] }"
+                                    ></span>
                                     <span class="colorize-text">{{ range.label }}</span>
-                                    <span class="colorize-text">
-                                        {{ range.count }} {{ range.count === 1 ? 'member' : 'members'}}
-                                    </span>
+                                    <a
+                                        href="/#/groups/{{ vm.group.id }}/members?ageRange={{ range.label }}"
+                                        ng-click="vm.scrollToTop()"
+                                        class="colorize-text"
+                                    >
+                                        {{ range.count }} {{ range.count === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
+                                    </a>
                                     <span class="colorize-text percentage-column">{{ range.percentage }}%</span>
                                 </li>
                             </ul>
@@ -177,7 +213,9 @@
                 </div>
             </div>
 
-            <div class="col-12 col-xxl-6 column-by-country">
+            <div
+                class="col-12 col-xxl-6 column-by-country"
+                ng-if="vm.totalMembers > 0">
                 <h2 class="chart-title">Members by country</h2>
                 <div class="hidden">Total members by countries: {{ vm.totalByCountries }}</div>
                 <div class="row">
@@ -199,10 +237,22 @@
                                             class="content">
                                             <span
                                                 class="color"
-                                                ng-style="{ 'background-color': country.color }"></span>
-                                                    <span>{{ country.label }}</span>
-                                                    <span class="colorize-text">
-                                                {{ country.count }} {{ country.count === 1 ? 'member' : 'members'}}
+                                                ng-style="{ 'background-color': country.color }"
+                                            ></span>
+                                            <span>{{ country.label }}</span>
+                                            <a
+                                                href="/#/groups/{{ vm.group.id }}/members?nationality={{ country.key }}"
+                                                ng-click="vm.scrollToTop()"
+                                                class="colorize-text"
+                                                ng-if="country.key"
+                                            >
+                                                {{ country.count }} {{ country.count === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
+                                            </a>
+                                            <span
+                                                class="colorize-text"
+                                                ng-if="!country.key"
+                                            >
+                                                {{ country.value }} {{ country.value === 1 ? 'member' : 'members'}}
                                             </span>
                                             <span class="colorize-text percentage-column">{{ country.percentage }}%</span>
                                         </li>
@@ -230,11 +280,16 @@
                                             ng-style="
                                                 !country.other && { 'background-color': vm.colors[$index] } ||
                                                 country.other && { 'background-color': vm.otherColor }
-                                            "></span>
+                                            "
+                                        ></span>
                                         <span class="colorize-text">{{ country.label }}</span>
-                                        <span class="colorize-text">
-                                            {{ country.value }} {{ country.value === 1 ? 'member' : 'members'}}
-                                        </span>
+                                        <a
+                                            href="/#/groups/{{ vm.group.id }}/members?nationality={{ country.key }}"
+                                            ng-click="vm.scrollToTop()"
+                                            class="colorize-text"
+                                        >
+                                            {{ country.value }} {{ country.value === 1 ? 'member' : 'members'}}<i class="fa fa-eye fa-right"></i>
+                                        </a>
                                         <span class="colorize-text percentage-column">{{ country.percent }}%</span>
                                     </li>
                                 </ul>

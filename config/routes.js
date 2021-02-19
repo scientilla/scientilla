@@ -93,6 +93,8 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/groups/:researchEntityId/replace']: 'Group.replace',
     ['post ' + apiPrfx + '/users/:researchEntityId/replace']: 'User.replace',
     ['get ' + apiPrfx + '/researchentities/:researchEntityId/min-max-years/:type']: 'ResearchEntity.minMaxYears',
+    ['get ' + apiPrfx + '/people/unique-role-categories']: 'Person.getUniqueRoleCategories',
+    ['get ' + apiPrfx + '/people/unique-nationalities']: 'Person.getUniqueNationalities',
 
     //Research item API
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/delete']: 'ResearchEntity.deleteDrafts',

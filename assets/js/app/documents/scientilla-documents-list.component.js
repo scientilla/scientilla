@@ -12,7 +12,8 @@
             bindings: {
                 category: '<',
                 researchEntity: '<',
-                section: '<'
+                section: '<',
+                active: '<?'
             }
         });
 
@@ -23,7 +24,8 @@
         'EventsService',
         'documentListSections',
         'AuthService',
-        '$element'
+        '$element',
+        '$scope'
     ];
 
     function scientillaDocumentsList(
@@ -32,7 +34,8 @@
         EventsService,
         documentListSections,
         AuthService,
-        $element
+        $element,
+        $scope
     ) {
         const vm = this;
 
@@ -51,10 +54,27 @@
         vm.onFilter = onFilter;
 
         let query = {};
+        let activeWatcher;
+
+        vm.loadDocuments = true;
 
         vm.$onInit = () => {
             const registerTab = requireParentMethod($element, 'registerTab');
             registerTab(vm);
+
+            if (_.has(vm, 'active')) {
+                vm.loadDocuments = angular.copy(vm.active);
+
+                activeWatcher = $scope.$watch('vm.active', () => {
+                    vm.loadDocuments = angular.copy(vm.active);
+
+                    if (vm.loadDocuments) {
+                        $scope.$broadcast('filter');
+                    } else {
+                        vm.documents = [];
+                    }
+                });
+            }
         };
 
         vm.$onDestroy = () => {
@@ -62,10 +82,13 @@
             unregisterTab(vm);
 
             EventsService.unsubscribeAll(vm);
+
+            if (_.isFunction(activeWatcher)) {
+                activeWatcher();
+            }
         };
 
         vm.reload = function () {
-
             EventsService.unsubscribeAll(vm);
 
             vm.editable = vm.section === documentListSections.VERIFIED && !AuthService.user.isViewOnly();

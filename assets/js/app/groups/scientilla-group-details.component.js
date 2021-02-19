@@ -19,7 +19,8 @@
         '$scope',
         '$controller',
         'ResearchEntitiesService',
-        '$timeout'
+        '$timeout',
+        'ModalService'
     ];
 
     function GroupDetailsController(
@@ -29,13 +30,15 @@
         $scope,
         $controller,
         ResearchEntitiesService,
-        $timeout
+        $timeout,
+        ModalService
     ) {
         const vm = this;
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
         vm.subResearchEntity = context.getSubResearchEntity();
         vm.loggedUser = AuthService.user;
         vm.refreshGroup = refreshGroup;
+        vm.addCollaborator = addCollaborator;
 
         let activeTabWatcher = null;
 
@@ -105,10 +108,23 @@
             return vm.loggedUser && vm.loggedUser.isAdmin();
         };
 
+        vm.isGroupAdmin = function () {
+            return AuthService.isAdmin;
+        };
+
         vm.isScientific = function () {
             if (!vm.group)
                 return true;
             return ['Institute', 'Center', 'Research Line', 'Facility'].includes(vm.group.type);
         };
+
+        function addCollaborator() {
+            ModalService.openCollaboratorForm(vm.group)
+                .then(() => {
+                    if (vm.activeTabIndex === 1) {
+                        $scope.$broadcast('refreshList');
+                    }
+                });
+        }
     }
 })();

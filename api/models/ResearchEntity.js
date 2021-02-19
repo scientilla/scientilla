@@ -56,11 +56,11 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'project',
             through: 'projectfavorite'
         },
-        patents:{
+        patents: {
             collection: 'patent',
             through: 'patentverify'
         },
-        patentFamilies:{
+        patentFamilies: {
             collection: 'patentfamily',
             through: 'patentfamilyverify'
         },

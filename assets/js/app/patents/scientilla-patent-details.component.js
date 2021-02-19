@@ -11,15 +11,44 @@
             }
         });
 
-    scientillaPatentDetails.$inject = [];
+    scientillaPatentDetails.$inject = ['GroupsService', 'ModalService'];
 
-    function scientillaPatentDetails() {
+    function scientillaPatentDetails(GroupsService, ModalService) {
         const vm = this;
 
+        vm.groups = [];
         vm.collapsed = true;
 
-        vm.$onInit = function () {
+        /* jshint ignore:start */
+        vm.$onInit = async function () {
+            vm.groups = await GroupsService.getGroups();
+        };
+        /* jshint ignore:end */
 
+        vm.getGroupName = function(researchLine) {
+            if (!_.isEmpty(vm.groups)) {
+                const group = vm.groups.find(g => g.code === researchLine.code);
+
+                if (group) {
+                    return group.name;
+                }
+            }
+            return researchLine.description;
+        };
+
+        vm.getGroupUrl = function(researchLine) {
+            if (!_.isEmpty(vm.groups)) {
+                const group = vm.groups.find(g => g.code === researchLine.code);
+
+                if (group) {
+                    return '/#' + group.getProfileUrl();
+                }
+            }
+            return false;
+        };
+
+        vm.closeModal = function () {
+            ModalService.close('close');
         };
     }
 

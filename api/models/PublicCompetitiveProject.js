@@ -8,7 +8,7 @@ const BaseModel = require("../lib/BaseModel.js");
 const publicFields = [
     'id',
     'code',
-    'acronyn',
+    'acronym',
     'title',
     'abstract',
     'startDate',
@@ -90,6 +90,9 @@ module.exports = _.merge({}, BaseModel, {
                 code: rl.code,
                 description: rl.description
             }));
+
+            json.instituteBudget = project.projectData.instituteBudget;
+            json.instituteContribution = project.projectData.instituteContribution;
 
             return json;
         }

@@ -25,6 +25,7 @@
         vm.isAdmin = isAdmin;
         vm.getUrl = getUrl;
         vm.isUser = isUser;
+        vm.isGroup = isGroup;
         vm.hasActiveExternalConnectors = false;
 
         const prefix = '#/';
@@ -99,6 +100,10 @@
 
         function isUser() {
             return vm.subResearchEntity.getType() === 'user';
+        }
+
+        function isGroup() {
+            return vm.subResearchEntity.getType() === 'group';
         }
 
         function getUrl(url) {
