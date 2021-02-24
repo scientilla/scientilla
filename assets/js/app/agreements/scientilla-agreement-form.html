@@ -22,7 +22,7 @@
                 name="title"
                 placeholder="Title"
                 class="form-control"
-                ng-model="vm.agreement.title">
+                ng-model="vm.agreementData.title">
         </div>
 
         <div class="form-group">
@@ -33,7 +33,7 @@
                 class="form-control"
                 cols="30"
                 rows="3"
-                ng-model="vm.agreement.subject"></textarea>
+                ng-model="vm.agreementData.subject"></textarea>
         </div>
 
         <div class="form-group">
@@ -44,26 +44,26 @@
                 name="type"
                 placeholder="Type"
                 class="form-control"
-                ng-model="vm.agreement.agreementType">
+                ng-model="vm.agreementData.agreementType">
         </div>
 
-        <agreement-partner-editor partners="vm.agreement.partners"></agreement-partner-editor>
+        <agreement-partner-editor partners="vm.agreementData.partners"></agreement-partner-editor>
 
         <agreement-referrer-editor
-            referrers="vm.agreement.pis"
-            author-str="vm.agreement.authorStr"
+            referrers="vm.agreementData.pis"
+            author-str="vm.agreementData.piStr"
         ></agreement-referrer-editor>
 
         <div class="form-group">
             <label for="subject">Author string * <em>(will be generated automatically from referrers.)</em></label>
             <input
-                id="authorStr"
+                id="piStr"
                 type="text"
-                name="authorStr"
+                name="piStr"
                 class="form-control"
-                placeholder="Author string"
+                placeholder="Referrers string"
                 ng-disabled="true"
-                ng-model="vm.agreement.authorStr">
+                ng-model="vm.agreementData.piStr">
         </div>
 
         <div class="form-group">
@@ -82,11 +82,11 @@
                 show-button-bar="false"
                 is-open="vm.openStartDate"
                 ng-click="vm.openStartDate = true"
-                ng-model="vm.agreement.startDate">
+                ng-model="vm.agreementData.startDate">
         </div>
 
         <div class="form-group">
-            <label for="end-date">End date *</label>
+            <label for="end-date">End date</label>
             <input
                 id="end-date"
                 type="text"
@@ -101,11 +101,11 @@
                 show-button-bar="false"
                 is-open="vm.openEndDate"
                 ng-click="vm.openEndDate = true"
-                ng-model="vm.agreement.endDate">
+                ng-model="vm.agreementData.endDate">
         </div>
 
         <div class="form-group">
-            <label for="subject">Total budget *</label>
+            <label for="subject">Total budget</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text">€</span>
@@ -114,12 +114,12 @@
                     type="number"
                     class="form-control"
                     placeholder="Total budget"
-                    ng-model="vm.agreement.budget">
+                    ng-model="vm.agreementData.budget">
             </div>
         </div>
 
         <div class="form-group">
-            <label for="subject">Institute budget *</label>
+            <label for="subject">Institute budget</label>
             <div class="input-group">
                 <div class="input-group-prepend">
                     <span class="input-group-text">€</span>
@@ -128,7 +128,7 @@
                     type="number"
                     class="form-control"
                     placeholder="Institute budget"
-                    ng-model="vm.agreement.contribution">
+                    ng-model="vm.agreementData.contribution">
             </div>
         </div>
 

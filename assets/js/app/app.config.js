@@ -127,6 +127,7 @@
         Restangular.extendModel('externals', Prototyper.toDocumentModel);
         Restangular.extendModel('accomplishments', Prototyper.toAccomplishmentModel);
         Restangular.extendModel('projects', Prototyper.toProjectModel);
+        Restangular.extendModel('projectDrafts', Prototyper.toProjectModel);
         Restangular.extendModel('patents', Prototyper.toPatentModel);
         Restangular.extendModel('agreements', Prototyper.toAgreementModel);
         Restangular.extendCollection('documents', Prototyper.toDocumentsCollection);

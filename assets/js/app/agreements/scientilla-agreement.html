@@ -13,14 +13,14 @@
             ng-bind-html='vm.agreement | title'></h2>
 
         <ng-container ng-if="vm.agreement.agreementType">
-            {{ vm.agreement.agreementType }}
+            {{ vm.agreement.projectData.agreementType }}
         </ng-container>
 
         <ul
             class="agreement-partners"
             ng-if="vm.agreement.partners"
         >
-            <li ng-repeat="partner in vm.agreement.partners">
+            <li ng-repeat="partner in vm.agreement.projectData.partners">
                 {{ partner }}
             </li>
         </ul>

@@ -12,11 +12,11 @@
     <p>Please select the administrators of the group.</p>
 
     <scientilla-multicomplete
-        items="vm.agreement.administrators"
+        items="vm.administrators"
         query="vm.getUsersQuery"
-        filter="vm.agreement.administrators"
+        filter="vm.administrators"
         title="Administrators">
     </scientilla-multicomplete>
 
-    <button class="btn btn-primary">Generate</button>
+    <button class="btn btn-primary" ng-click="vm.generateGroup()">Generate</button>
 </div>

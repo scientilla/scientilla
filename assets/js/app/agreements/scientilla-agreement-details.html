@@ -5,17 +5,17 @@
 <h3 class="agreement-title" ng-bind-html='vm.agreement | title'></h3>
 
 <ng-container
-    ng-if="vm.agreement.subject"
-    class="agreement-subject"
+        ng-if="vm.agreement.projectData.subject"
+        class="agreement-subject"
 >
-    {{ vm.agreement.subject }}
+    {{ vm.agreement.projectData.subject }}
 </ng-container>
 
 <ng-container
-    ng-if="vm.agreement.agreementType"
-    class="agreement-type"
+        ng-if="vm.agreement.projectData.agreementType"
+        class="agreement-type"
 >
-    {{ vm.agreement.agreementType }}
+    {{ vm.agreement.projectData.agreementType }}
 </ng-container>
 
 <ng-container ng-if="vm.agreement.budget">
@@ -28,17 +28,17 @@
     €{{ vm.agreement.contribution }}<br>
 </ng-container>
 
-<ng-container ng-if="vm.agreement.startDate">
+<ng-container ng-if="vm.agreement.projectData.startDate">
     <strong>Start date:</strong>
-    {{ vm.agreement.startDate }}<br>
+    {{ vm.agreement.projectData.startDate | date: 'd/M/y'}}<br>
 </ng-container>
 
 <ng-container ng-if="vm.agreement.endDate">
     <strong>End date:</strong>
-    {{ vm.agreement.endDate }}<br>
+    {{ vm.agreement.projectData.endDate | date: 'd/M/y'}}<br>
 </ng-container>
 
-<ng-container ng-if="vm.agreement.partners">
+<ng-container ng-if="vm.agreement.projectData.partners">
     <ng-container ng-if="vm.agreement.partners.length > 1">
         <ul class="agreement-partners">
             <li ng-repeat="partner in vm.agreement.partners">

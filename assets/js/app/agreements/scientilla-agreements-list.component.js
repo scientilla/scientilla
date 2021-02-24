@@ -14,17 +14,17 @@
         });
 
     scientillaAgreementsList.$inject = [
+        'ProjectService',
         'AgreementService',
         'agreementListSections',
-        '$element',
-        '$timeout'
+        '$element'
     ];
 
     function scientillaAgreementsList(
+        ProjectService,
         AgreementService,
         agreementListSections,
-        $element,
-        $timeout
+        $element
     ) {
         const vm = this;
 
@@ -47,18 +47,14 @@
             unregisterTab(vm);
         };
 
-        vm.reload = function () {
-
-        };
-
         /* jshint ignore:start */
         async function onFilter(q) {
             const favorites = q.where.favorites;
             delete q.where.favorites;
 
-            query = q;
+            query =Object.assign({type:'project_agreement'}, q);
 
-            vm.agreements = /*await*/ AgreementService.get(vm.researchEntity, query, favorites);
+            vm.agreements = await ProjectService.get(vm.researchEntity, query, favorites);
         }
         /* jshint ignore:end */
     }

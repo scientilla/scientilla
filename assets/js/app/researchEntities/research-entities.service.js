@@ -10,7 +10,7 @@
         'researchItemKinds',
         'researchItemLabels',
         'ResearchItemTypesService',
-        'Prototyper'
+        'allProjectTypes'
     ];
 
     function controller(
@@ -22,7 +22,7 @@
         researchItemKinds,
         researchItemLabels,
         ResearchItemTypesService,
-        Prototyper
+        allProjectTypes
     ) {
         const service = Restangular.service('researchentities');
 
@@ -49,13 +49,12 @@
         service.getAccomplishments = getAccomplishments;
         service.setVerifyPrivacy = setVerifyPrivacy;
         service.setVerifyFavorite = setVerifyFavorite;
+        service.getProject = getProject;
         service.getProjects = getProjects;
+        service.getProjectDrafts = getProjectDrafts;
         service.getMinMaxYears = getMinMaxYears;
         service.getPatents = getPatents;
         service.getPatentFamilies = getPatentFamilies;
-        service.getAgreements = getAgreements;
-        service.getAgreementDrafts = getAgreementDrafts;
-        service.getAgreementGroups = getAgreementGroups;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
         const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
@@ -262,16 +261,21 @@
             }
         }
 
-        async function getAccomplishmentDrafts(researchEntity, query, populates = accomplishmentPopulates) {
+        async function getResearchItemDrafts(researchEntity, collectionName, query, populates) {
             const populate = {populate: populates};
             const q = _.defaultsDeep({}, query, populate);
-            const draftList = await researchEntity.getList('accomplishmentDrafts', q);
+            const draftList = await researchEntity.getList(collectionName, q);
 
             draftList.forEach(d => {
                 if (d.kind === 'd' && (new Date(d.createdAt)).toDateString() === (new Date()).toDateString())
                     ResearchItemService.addLabel(d, researchItemLabels.NEW);
             });
             return draftList;
+
+        }
+
+        async function getAccomplishmentDrafts(researchEntity, query, populates = accomplishmentPopulates) {
+            return getResearchItemDrafts(researchEntity, 'accomplishmentDrafts', query, populates);
         }
 
         async function getSuggestedAccomplishments(researchEntity, query) {
@@ -384,21 +388,34 @@
         async function getProjects(researchEntity, query, favorites = false, populates = projectPopulates) {
             const populate = {populate: populates};
             const q = _.merge({}, query, populate);
-            const types = await ResearchItemTypesService.getTypes();
 
-            if (q.where && q.where.type) {
-                if (q.where.type === allProjectTypes.value) {
-                    delete q.where.type;
-                } else {
-                    const type = types.find(type => type.key === q.where.type);
-                    q.where.type = type.id;
-                }
-            }
+            await setProjectType(q);
 
             if (favorites) {
                 return await researchEntity.getList('favoriteProjects', q);
             } else {
                 return await researchEntity.getList('projects', q);
+            }
+        }
+
+        async function getProject(id, populates = projectPopulates) {
+            return await Restangular.one('projects', id).get({populate: populates});
+        }
+
+        async function getProjectDrafts(researchEntity, query, populates = accomplishmentPopulates) {
+            await setProjectType(query);
+            return getResearchItemDrafts(researchEntity, 'projectDrafts', query, populates);
+        }
+
+        async function setProjectType(query) {
+            const types = await ResearchItemTypesService.getTypes();
+            if (query.where && query.where.type) {
+                if (query.where.type === allProjectTypes.value) {
+                    delete query.where.type;
+                } else {
+                    const type = types.find(type => type.key === query.where.type);
+                    query.where.type = type.id;
+                }
             }
         }
 
@@ -414,221 +431,10 @@
         }
 
         async function getPatentFamilies(researchEntity, query) {
-                return await researchEntity.getList('patentFamilies', query);
+            return await researchEntity.getList('patentFamilies', query);
         }
+
         /* jshint ignore:end */
-
-        function getAgreements() {
-            const agreements = [];
-            const agreement =  {
-                "administrators": [
-                    {
-                        "username": "camilla.coletti@iit.it",
-                        "name": "Camilla",
-                        "surname": "Coletti",
-                        "slug": "camilla-coletti",
-                        "alreadyAccess": true,
-                        "alreadyOpenedSuggested": true,
-                        "already_changed_profile": false,
-                        "role": "user",
-                        "orcidId": null,
-                        "scopusId": "56227871700",
-                        "jobTitle": "Senior Researcher Tenure Track - Principal Investigator",
-                        "display_name": "Camilla",
-                        "display_surname": "Coletti",
-                        "config": {
-                            "scientific": true
-                        },
-                        "lastsynch": "2020-11-20T17:22:59.000Z",
-                        "active": true,
-                        "synchronized": true,
-                        "contract_end_date": "2025-06-29T22:00:00.000Z",
-                        "cid": "10000252",
-                        "id": 173,
-                        "createdAt": "2017-05-26T08:55:06.000Z",
-                        "updatedAt": "2020-12-01T11:05:13.000Z",
-                        "auth": 173,
-                        "researchEntity": 290
-                    }
-                ],
-                "title": "Lorem Ipsum is simply dummy text.",
-                "subject": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                "agreementType": "Agreement type",
-                "startYear": "2019",
-                "endYear": "2022",
-                "startDate": "2019-03-01",
-                "endDate": "2022-02-28",
-                "budget": 90000,
-                "contribution": 20000,
-                "partners": [
-                    "Matteo Jacopo Luca Nicolo Marzi",
-                    "John Doe"
-                ],
-                "authorStr": 'Casier D., Moschini U.',
-                "pis": [
-                    {
-                        "email": "dieter.casier@iit.it",
-                        "name": "Casier",
-                        "surname": "Dieter"
-                    }, {
-                        "email": "ugo.moschini@iit.it",
-                        "name": "Moschini",
-                        "surname": "Ugo"
-                    }
-                ],
-                "verified": [
-                    {
-                        "researchEntity": {
-                            "id": 1
-                        }
-                    }
-                ],
-                "verifiedUsers": [],
-                "verifiedGroups": [
-                    {
-                        "researchEntity": {
-                            "id": 1
-                        }
-                    }
-                ],
-                "generatedGroup": false
-            };
-
-            for (let i = 1; i <= 10; i++) {
-                const tmpAgreement = _.cloneDeep(agreement);
-                tmpAgreement.id = i;
-                if (i === 2) {
-                    tmpAgreement.generatedGroup = i;
-                }
-                Prototyper.toAgreementModel(tmpAgreement);
-                agreements.push(tmpAgreement);
-            }
-
-            return agreements;
-        }
-
-        function getAgreementDrafts() {
-            return getAgreements();
-        }
-
-        function getAgreementGroups() {
-            const groups = [];
-            const group =  {
-                "agreement": {
-                    "administrators": [
-                        {
-                            "username": "camilla.coletti@iit.it",
-                            "name": "Camilla",
-                            "surname": "Coletti",
-                            "slug": "camilla-coletti",
-                            "alreadyAccess": true,
-                            "alreadyOpenedSuggested": true,
-                            "already_changed_profile": false,
-                            "role": "user",
-                            "orcidId": null,
-                            "scopusId": "56227871700",
-                            "jobTitle": "Senior Researcher Tenure Track - Principal Investigator",
-                            "display_name": "Camilla",
-                            "display_surname": "Coletti",
-                            "config": {
-                                "scientific": true
-                            },
-                            "lastsynch": "2020-11-20T17:22:59.000Z",
-                            "active": true,
-                            "synchronized": true,
-                            "contract_end_date": "2025-06-29T22:00:00.000Z",
-                            "cid": "10000252",
-                            "id": 173,
-                            "createdAt": "2017-05-26T08:55:06.000Z",
-                            "updatedAt": "2020-12-01T11:05:13.000Z",
-                            "auth": 173,
-                            "researchEntity": 290
-                        }
-                    ],
-                    "title": "Lorem Ipsum is simply dummy text.",
-                    "subject": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                    "agreementType": "Agreement type",
-                    "startYear": "2019",
-                    "endYear": "2022",
-                    "startDate": "2019-03-01",
-                    "endDate": "2022-02-28",
-                    "budget": 90000,
-                    "contribution": 20000,
-                    "partners": [
-                        "Matteo Jacopo Luca Nicolo Marzi",
-                        "John Doe"
-                    ],
-                    "authorStr": 'Casier D., Moschini U.',
-                    "pis": [
-                        {
-                            "email": "dieter.casier@iit.it",
-                            "name": "Casier",
-                            "surname": "Dieter"
-                        }, {
-                            "email": "ugo.moschini@iit.it",
-                            "name": "Moschini",
-                            "surname": "Ugo"
-                        }
-                    ],
-                    "verified": [
-                        {
-                            "researchEntity": {
-                                "id": 1
-                            }
-                        }
-                    ],
-                    "verifiedUsers": [],
-                    "verifiedGroups": [
-                        {
-                            "researchEntity": {
-                                "id": 1
-                            }
-                        }
-                    ],
-                    "generatedGroup": false
-                },
-                "administrators": [
-                    {
-                        "username": "camilla.coletti@iit.it",
-                        "name": "Camilla",
-                        "surname": "Coletti",
-                        "slug": "camilla-coletti",
-                        "alreadyAccess": true,
-                        "alreadyOpenedSuggested": true,
-                        "already_changed_profile": false,
-                        "role": "user",
-                        "orcidId": null,
-                        "scopusId": "56227871700",
-                        "jobTitle": "Senior Researcher Tenure Track - Principal Investigator",
-                        "display_name": "Camilla",
-                        "display_surname": "Coletti",
-                        "config": {
-                            "scientific": true
-                        },
-                        "lastsynch": "2020-11-20T17:22:59.000Z",
-                        "active": true,
-                        "synchronized": true,
-                        "contract_end_date": "2025-06-29T22:00:00.000Z",
-                        "cid": "10000252",
-                        "id": 173,
-                        "createdAt": "2017-05-26T08:55:06.000Z",
-                        "updatedAt": "2020-12-01T11:05:13.000Z",
-                        "auth": 173,
-                        "researchEntity": 290
-                    }
-                ],
-                "title": "Lorem Ipsum is simply dummy text.",
-            };
-
-            for (let i = 1; i <= 10; i++) {
-                const tmpGroup = _.cloneDeep(group);
-                tmpGroup.id = i;
-                Prototyper.toAgreementGroupModel(tmpGroup);
-                groups.push(tmpGroup);
-            }
-
-            return groups;
-        }
 
         return service;
     }

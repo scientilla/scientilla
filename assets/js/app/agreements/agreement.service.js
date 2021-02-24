@@ -8,9 +8,6 @@
 
         return {
             edit: (researchEntity, draft) => ModalService.openAgreementForm(researchEntity, _.cloneDeep(draft)),
-            get: ResearchEntitiesService.getAgreements,
-            getDrafts: ResearchEntitiesService.getAgreementDrafts,
-            getGroups: ResearchEntitiesService.getAgreementGroups,
             exportDownload
         };
 

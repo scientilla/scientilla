@@ -12,8 +12,8 @@ const allProjectTypes = {
 };
 
 const projectTypeCompetitive = 'project_competitive';
-
 const projectTypeIndustrial = 'project_industrial';
+const projectTypeAgreement = 'project_agreement';
 
 const industrialProjectCategories = {
     'Ricerca': 'Research',
@@ -128,6 +128,7 @@ angular.module('app')
     .constant('allProjectTypes', allProjectTypes)
     .constant('projectTypeCompetitive', projectTypeCompetitive)
     .constant('projectTypeIndustrial', projectTypeIndustrial)
+    .constant('projectTypeAgreement', projectTypeAgreement)
     .constant('industrialProjectCategories', industrialProjectCategories)
     .constant('industrialProjectPayments', industrialProjectPayments)
     .constant('projectStatuses', projectStatuses)

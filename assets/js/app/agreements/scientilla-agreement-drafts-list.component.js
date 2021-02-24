@@ -13,28 +13,29 @@
         });
 
     controller.$inject = [
-        'context',
+        'ProjectService',
         'AgreementService',
         'agreementListSections',
         'EventsService'
     ];
 
     function controller(
-        context,
+        ProjectService,
         AgreementService,
         agreementListSections,
         EventsService
     ) {
         const vm = this;
 
+        vm.agreements = [];
         vm.onFilter = onFilter;
-        vm.isValid = AgreementService.isValid;
+        vm.isValid = ProjectService.isValid;
 
-        vm.deleteDraft = AgreementService.delete;
+        vm.deleteDraft = ProjectService.delete;
         vm.edit = (draft) => AgreementService.edit(vm.researchEntity, draft);
-        vm.verify = (draft) => AgreementService.verify(vm.researchEntity, draft);
-        vm.deleteDrafts = (drafts) => AgreementService.multipleDelete(vm.researchEntity, drafts);
-        vm.verifyDrafts = (drafts) => AgreementService.multipleVerify(vm.researchEntity, drafts);
+        vm.verify = (draft) => ProjectService.verify(vm.researchEntity, draft);
+        vm.deleteDrafts = (drafts) => ProjectService.multipleDelete(vm.researchEntity, drafts);
+        vm.verifyDrafts = (drafts) => ProjectService.multipleVerify(vm.researchEntity, drafts);
         vm.agreementListSections = agreementListSections;
 
         let query = {};
@@ -60,9 +61,10 @@
         }
 
         async function onFilter(q) {
-            query = q;
-
-            vm.drafts = await AgreementService.getDrafts(vm.researchEntity, q);
+            if(!q.where)
+                q.where = {};
+            q.where.type = 'project_agreement'
+            vm.agreements = await ProjectService.getDrafts(vm.researchEntity, q);
         }
 
         /* jshint ignore:end */

@@ -42,7 +42,7 @@
         }
 
         function refreshList() {
-            onFilter(query);
+            return onFilter(query);
         }
     }
 })();

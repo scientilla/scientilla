@@ -16,10 +16,16 @@
                 heading="Info"
             >
                 <scientilla-group-info
-                    ng-if="vm.group"
+                    ng-if="vm.group && vm.group.type!==Project"
                     group="vm.group"
                     active="vm.activeTabIndex === 0"
                 ></scientilla-group-info>
+
+                <span
+                        ng-if="vm.group && vm.group.type===Project"
+                >
+                    AGREEMENT
+                </span>
             </uib-tab>
             <uib-tab
                 index="1"
