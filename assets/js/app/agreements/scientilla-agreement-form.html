@@ -38,13 +38,22 @@
 
         <div class="form-group">
             <label for="type">Type *</label>
-            <input
-                type="text"
-                id="type"
-                name="type"
-                placeholder="Type"
-                class="form-control"
-                ng-model="vm.agreementData.agreementType">
+            <div class="select-wrapper" ng-class="{'is-invalid' : vm.errors.agreementData.agreementType}">
+                <select
+                    class="form-control"
+                    id="agreementType"
+                    name="agreementType"
+                    required
+                    placeholder="Type"
+                    ng-model="vm.agreementData.agreementType"
+                    ng-model-options="{ allowInvalid: true }"
+                    ng-options="option.key as option.label for option in vm.agreementTypes"
+                    ng-class="{'is-invalid' : vm.errors.agreementData.agreementType}"
+                    ng-blur="vm.checkValidation('agreementType')"
+                    ng-change="vm.checkValidation('agreementType')">
+                    <option value="" disabled class="hidden">Type</option>
+                </select>
+            </div>
         </div>
 
         <agreement-partner-editor partners="vm.agreementData.partners"></agreement-partner-editor>

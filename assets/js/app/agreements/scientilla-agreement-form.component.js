@@ -19,14 +19,16 @@
         '$scope',
         '$timeout',
         'context',
-        'ProjectService'
+        'ProjectService',
+        'agreementTypes'
     ];
 
     function scientillaAgreementFormController(
         $scope,
         $timeout,
         context,
-        ProjectService
+        ProjectService,
+        agreementTypes
     ) {
         const vm = this;
 
@@ -49,6 +51,8 @@
         vm.datePickerOptions = {
             showWeeks: false
         };
+
+        vm.agreementTypes = agreementTypes;
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
