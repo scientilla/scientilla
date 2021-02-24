@@ -114,11 +114,11 @@
                 >Verified</a>
             </div>
         </li>
-        <li ng-if="!vm.user.isViewOnly() && (vm.subResearchEntity.isScientific() || vm.isSuperUser())">
+        <li ng-if="vm.isGroup() && vm.subResearchEntity.type === 'Institute'">
             <label class="label-add-research-item">
                 Agreements
+                {{ vm.subResearchEntity.type }}
                 <scientilla-button-new-research-item
-                    ng-if="vm.isSuperUser() && vm.subResearchEntity.id === 1"
                     category="agreement"
                     class="button-new-research-entity-container"
                 ></scientilla-button-new-research-item>
@@ -130,7 +130,6 @@
                     class="list-group-item list-group-item-action"
                 >Verified</a>
                 <a
-                    ng-if="vm.isSuperUser() && vm.subResearchEntity.id === 1"
                     ng-href="{{ vm.getUrl('agreements/drafts') }}"
                     ng-class="{active: vm.isActive('/agreements/drafts', true)}"
                     class="list-group-item list-group-item-action"
