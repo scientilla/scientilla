@@ -11,6 +11,7 @@ module.exports = {
     EDITORSHIP: 'editorship',
     PROJECT_COMPETITIVE: 'project_competitive',
     PROJECT_INDUSTRIAL: 'project_industrial',
+    PROJECT_AGREEMENT: 'project_agreement',
     PATENT: 'patent',
     init: async () => {
         let researchItemTypesArray = await ResearchItemType.find();
@@ -32,6 +33,7 @@ module.exports = {
             [this.ORGANIZED_EVENT]: Accomplishment,
             [this.PROJECT_COMPETITIVE]: Project,
             [this.PROJECT_INDUSTRIAL]: Project,
+            [this.PROJECT_AGREEMENT]: Project,
             [this.PATENT]: Patent,
         };
 

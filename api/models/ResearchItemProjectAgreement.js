@@ -1,12 +1,12 @@
-/* global require, ResearchItemProjectIndustrial, JsonValidator */
+/* global require, ResearchItemProjectAgreement, JsonValidator */
 'use strict';
 
 const BaseModel = require("../lib/BaseModel.js");
 
-const validate = JsonValidator.getProjectIndustrialValidator();
+const validate = JsonValidator.getProjectAgreementValidator();
 
 module.exports = _.merge({}, BaseModel, {
-    tableName: 'research_item_project_industrial',
+    tableName: 'research_item_project_agreement',
     attributes: {
         researchItem: {
             model: 'researchitem',
@@ -35,7 +35,7 @@ module.exports = _.merge({}, BaseModel, {
         isValid: () => true,
     },
     getFields() {
-        return ['researchItem', 'group','startYear', 'endYear', 'piStr', 'projectData'];
+        return ['researchItem', 'group', 'startYear', 'endYear', 'piStr', 'projectData'];
     },
     async selectData(itemData) {
         return _.pick(itemData, this.getFields());

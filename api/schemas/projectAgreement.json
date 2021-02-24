@@ -1,0 +1,65 @@
+{
+  "$id": "projectAgreement",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "agreementType": {
+      "type": "string"
+    },
+    "startDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "endDate": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "budget": {
+      "type": "number"
+    },
+    "contribution": {
+      "type": "number"
+    },
+    "partners": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pis": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "oneOf": [
+              {
+                "enum": [
+                  ""
+                ]
+              },
+              {
+                "format": "email"
+              }
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "surname": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      }
+    }
+  }
+}

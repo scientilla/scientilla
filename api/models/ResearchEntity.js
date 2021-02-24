@@ -44,6 +44,10 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'project',
             through: 'projectverify'
         },
+        projectDrafts: {
+            collection: 'project',
+            via: 'draftCreator'
+        },
         publicCompetitiveProjects: {
             collection: 'publiccompetitiveproject',
             through: 'publiccompetitiveprojectverify'
