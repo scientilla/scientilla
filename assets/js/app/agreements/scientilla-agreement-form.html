@@ -22,7 +22,15 @@
                 name="title"
                 placeholder="Title"
                 class="form-control"
-                ng-model="vm.agreementData.title">
+                ng-model="vm.agreementData.title"
+                ng-class="{'is-invalid' : vm.errors.title}"
+                ng-blur="vm.checkValidation('title')"
+                ng-change="vm.fieldValueHasChanged('title')"
+            >
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.title"
+            ></scientilla-error-messages>
         </div>
 
         <div class="form-group">
@@ -33,34 +41,50 @@
                 class="form-control"
                 cols="30"
                 rows="3"
-                ng-model="vm.agreementData.subject"></textarea>
+                ng-model="vm.agreementData.subject"
+            ></textarea>
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.subject"
+            ></scientilla-error-messages>
         </div>
 
         <div class="form-group">
             <label for="type">Type *</label>
-            <div class="select-wrapper" ng-class="{'is-invalid' : vm.errors.agreementData.agreementType}">
+            <div class="select-wrapper" ng-class="{'is-invalid' : vm.errors.agreementType}">
                 <select
                     class="form-control"
                     id="agreementType"
                     name="agreementType"
-                    required
                     placeholder="Type"
                     ng-model="vm.agreementData.agreementType"
                     ng-model-options="{ allowInvalid: true }"
                     ng-options="option.key as option.label for option in vm.agreementTypes"
-                    ng-class="{'is-invalid' : vm.errors.agreementData.agreementType}"
+                    ng-class="{'is-invalid' : vm.errors.agreementType}"
                     ng-blur="vm.checkValidation('agreementType')"
                     ng-change="vm.checkValidation('agreementType')">
                     <option value="" disabled class="hidden">Type</option>
                 </select>
             </div>
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.agreementType"
+            ></scientilla-error-messages>
         </div>
 
-        <agreement-partner-editor partners="vm.agreementData.partners"></agreement-partner-editor>
+        <agreement-partner-editor
+            partners="vm.agreementData.partners"
+            errors="vm.errors"
+            check-validation="vm.checkValidation(field)"
+            field-value-has-changed="vm.fieldValueHasChanged(field)"
+        ></agreement-partner-editor>
 
         <agreement-referrer-editor
             referrers="vm.agreementData.pis"
-            author-str="vm.agreementData.piStr"
+            pi-str="vm.agreementData.piStr"
+            errors="vm.errors"
+            check-validation="vm.checkValidation(field)"
+            field-value-has-changed="vm.fieldValueHasChanged(field)"
         ></agreement-referrer-editor>
 
         <div class="form-group">
@@ -72,7 +96,13 @@
                 class="form-control"
                 placeholder="Referrers string"
                 ng-disabled="true"
-                ng-model="vm.agreementData.piStr">
+                ng-model="vm.agreementData.piStr"
+                ng-class="{'is-invalid' : vm.errors.piStr}"
+            >
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.piStr"
+            ></scientilla-error-messages>
         </div>
 
         <div class="form-group">
@@ -91,7 +121,15 @@
                 show-button-bar="false"
                 is-open="vm.openStartDate"
                 ng-click="vm.openStartDate = true"
-                ng-model="vm.agreementData.startDate">
+                ng-model="vm.agreementData.startDate"
+                ng-class="{'is-invalid' : vm.errors.startDate}"
+                ng-blur="vm.checkValidation('startDate')"
+                ng-change="vm.fieldValueHasChanged('startDate')"
+            >
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.startDate"
+            ></scientilla-error-messages>
         </div>
 
         <div class="form-group">
@@ -110,7 +148,15 @@
                 show-button-bar="false"
                 is-open="vm.openEndDate"
                 ng-click="vm.openEndDate = true"
-                ng-model="vm.agreementData.endDate">
+                ng-model="vm.agreementData.endDate"
+                ng-class="{'is-invalid' : vm.errors.endDate}"
+                ng-blur="vm.checkValidation('endDate')"
+                ng-change="vm.fieldValueHasChanged('endDate')"
+            >
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.endDate"
+            ></scientilla-error-messages>
         </div>
 
         <div class="form-group">
@@ -123,8 +169,16 @@
                     type="number"
                     class="form-control"
                     placeholder="Total budget"
-                    ng-model="vm.agreementData.budget">
+                    ng-model="vm.agreementData.budget"
+                    ng-class="{'is-invalid' : vm.errors.budget}"
+                    ng-blur="vm.checkValidation('budget')"
+                    ng-change="vm.fieldValueHasChanged('budget')"
+                >
             </div>
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.budget"
+            ></scientilla-error-messages>
         </div>
 
         <div class="form-group">
@@ -137,8 +191,16 @@
                     type="number"
                     class="form-control"
                     placeholder="Institute budget"
-                    ng-model="vm.agreementData.contribution">
+                    ng-model="vm.agreementData.contribution"
+                    ng-class="{'is-invalid' : vm.errors.contribution}"
+                    ng-blur="vm.checkValidation('contribution')"
+                    ng-change="vm.fieldValueHasChanged('contribution')"
+                >
             </div>
+            <scientilla-error-messages
+                class="error-messages"
+                errors="vm.errors.contribution"
+            ></scientilla-error-messages>
         </div>
 
         <ul class="modal-buttons">
@@ -146,15 +208,15 @@
                 <scientilla-button
                     type="button"
                     click="vm.save"
-                    ng-disabled="vm.saveStatus.state !== 'ready to save' || !vm.unsavedData">
-                    {{ vm.saveStatus.message }}
+                    ng-disabled="vm.formStatus.saveState !== 'ready to save' || !vm.unsavedData">
+                    {{ vm.formStatus.saveMessage }}
                 </scientilla-button>
             </li>
             <li>
                 <scientilla-button
                     type="submit"
-                    ng-disabled="vm.verifyStatus.state !== 'ready to verify'"
-                    click="vm.verify">{{ vm.verifyStatus.message }}
+                    ng-disabled="vm.formStatus.verifyState !== 'ready to verify'"
+                    click="vm.verify">{{ vm.formStatus.verifyMessage }}
                 </scientilla-button>
             </li>
             <li>
@@ -169,8 +231,8 @@
             ng-if="vm.errorText"
             class="modal-error"
             ng-class="{
-                'text-danger' : vm.mode == 'verify',
-                'text-warning': vm.mode == 'draft'
+                'text-danger' : vm.formStatus.mode == 'verify',
+                'text-warning': vm.formStatus.mode == 'draft'
             }">
             {{ vm.errorText }}
         </div>

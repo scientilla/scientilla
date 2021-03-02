@@ -12,9 +12,19 @@
         ]
     };
 
-    controller.$inject = ['Restangular', 'EventsService', 'ResearchEntitiesService', '$http'];
+    controller.$inject = [
+        'Restangular',
+        'EventsService',
+        'ResearchEntitiesService',
+        '$http'
+    ];
 
-    function controller(Restangular, EventsService, ResearchEntitiesService, $http) {
+    function controller(
+        Restangular,
+        EventsService,
+        ResearchEntitiesService,
+        $http
+    ) {
 
         return {
             get: ResearchEntitiesService.getProjects,
@@ -29,8 +39,6 @@
             multipleVerify: ResearchEntitiesService.multipleVerify,
             unverify: ResearchEntitiesService.unverify,
             filterFields,
-            isValid,
-            validate,
             generateGroup,
             exportDownload
         };
@@ -57,17 +65,7 @@
                 EventsService.publish(EventsService.RESEARCH_ITEM_VERIFIED, prj);
 
         }
-
         /* jshint ignore:end */
-
-
-        function isValid(project) {
-            return true;
-        }
-
-        function validate(project, field = false) {
-            return true;
-        }
 
         function exportDownload(projects, format = 'csv') {
             const filename = 'Projects_Export.csv';
@@ -88,11 +86,11 @@
             });
         }
 
-        function filterFields(project) {
+        function filterFields(project, fields) {
             if (!project.type)
                 return {};
             const filteredProject = {};
-            fields[project.type].forEach(key => filteredProject[key] = project[key] ? project[key] : null);
+            fields.forEach(key => filteredProject[key] = project[key] ? project[key] : null);
             return filteredProject;
         }
     }

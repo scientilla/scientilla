@@ -20,7 +20,12 @@
         '$timeout',
         'context',
         'ProjectService',
-        'agreementTypes'
+        'agreementTypes',
+        'agreementRequiredFields',
+        'agreementFieldRules',
+        'agreementFields',
+        'FormStatus',
+        'ValidateService'
     ];
 
     function scientillaAgreementFormController(
@@ -28,25 +33,26 @@
         $timeout,
         context,
         ProjectService,
-        agreementTypes
+        agreementTypes,
+        agreementRequiredFields,
+        agreementFieldRules,
+        agreementFields,
+        FormStatus,
+        ValidateService
     ) {
         const vm = this;
 
+        vm.formStatus = new FormStatus('draft');
+
         vm.unsavedData = false;
+        vm.errors = {};
+        vm.errorText = '';
 
         vm.cancel = close;
         vm.verify = verify;
         vm.save = save;
-
-        vm.saveStatus = {
-            state: 'ready to save',
-            message: 'Save draft'
-        };
-
-        vm.verifyStatus = {
-            state: 'ready to verify',
-            message: 'Save & verify'
-        };
+        vm.checkValidation = checkValidation;
+        vm.fieldValueHasChanged = fieldValueHasChanged;
 
         vm.datePickerOptions = {
             showWeeks: false
@@ -54,20 +60,87 @@
 
         vm.agreementTypes = agreementTypes;
 
+        let fieldTimeout;
+        const fieldDelay = 500;
+
+        let watchers = [];
+
         /* jshint ignore:start */
         vm.$onInit = async function () {
             vm.researchEntity = await context.getResearchEntity();
             if (_.has(vm.agreement, 'projectData')) {
                 vm.agreementData = vm.agreement.projectData;
-                vm.agreementData.startDate = new Date(vm.agreement.projectData.startDate);
-                vm.agreementData.endDate = new Date(vm.agreement.projectData.endDate);
-            } else vm.agreementData = {
-                pis: [],
-                partners: []
-            };
+                if (_.has(vm.agreement.projectData, 'startDate')) {
+                    vm.agreementData.startDate = new Date(vm.agreement.projectData.startDate);
+                } else {
+                    vm.agreementData.startDate = '';
+                }
+                if (_.has(vm.agreement.projectData, 'endDate')) {
+                    vm.agreementData.endDate = new Date(vm.agreement.projectData.endDate);
+                } else {
+                    vm.agreementData.endDate = '';
+                }
+            } else {
+                vm.agreementData = {
+                    pis: [],
+                    partners: [],
+                    piStr: '',
+                    startDate: '',
+                    endDate: ''
+                };
+            }
 
-            $scope.$watch('form.$pristine', formUntouched => vm.unsavedData = !formUntouched);
+            // Listen to the form reset to trigger $setPristine
+            const resetFormInteractionWatcher = $scope.$watch('vm.formStatus.resetFormInteraction', function () {
+                if (vm.formStatus.resetFormInteraction) {
+                    vm.formStatus.resetFormInteraction = false;
+
+                    // Reset the user interaction with the form
+                    $scope.form.$setPristine();
+                }
+            });
+
+            const formPristineWatcher = $scope.$watch('form.$pristine', formUntouched => vm.unsavedData = !formUntouched);
+
+            const piStrWatcher = $scope.$watch('vm.agreementData.piStr',  function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    vm.checkValidation('piStr');
+                }
+            });
+
+            watchers.push(resetFormInteractionWatcher);
+            watchers.push(formPristineWatcher);
+            watchers.push(piStrWatcher);
         };
+        /* jshint ignore:end */
+
+        vm.$onDestroy = function () {
+            for (const watcher in watchers) {
+                if (_.isFunction(watcher)) {
+                    watcher();
+                }
+            }
+        };
+
+        function checkValidation(field = false) {
+            if (field) {
+                vm.errors[field] = ValidateService.validate(vm.agreementData, field, agreementRequiredFields, agreementFieldRules);
+
+                if (!vm.errors[field]) {
+                    delete vm.errors[field];
+                }
+            } else {
+                vm.errors = ValidateService.validate(vm.agreementData, false, agreementRequiredFields, agreementFieldRules);
+            }
+
+            vm.errorText = !_.isEmpty(vm.errors) ? 'Please fix the warnings before verifying!' : '';
+        }
+
+        function fieldValueHasChanged(field = false) {
+            $timeout.cancel(fieldTimeout);
+
+            fieldTimeout = $timeout(() => checkValidation(field), fieldDelay);
+        }
 
         function save() {
             vm.errors = {};
@@ -77,32 +150,35 @@
 
         /* jshint ignore:start */
         async function processSave(updateState = false) {
-            //if (updateState)
-            //    vm.saveStatus.setState('saving');
+            if (updateState) {
+                vm.formStatus.setSaveStatus('saving');
+            }
 
             vm.errorText = '';
-            //vm.errors = ProjectService.validate(vm.agreement);
+            vm.errors = ValidateService.validate(vm.agreementData, false, agreementRequiredFields, agreementFieldRules);
 
             setAgreement();
 
-
-            if (!_.isEmpty(vm.errors))
+            if (!_.isEmpty(vm.errors)) {
                 vm.errorText = 'The draft has been saved but please fix the warnings before verifying!';
+            }
 
-            const filteredAgreement = ProjectService.filterFields(vm.agreement);
+            const filteredAgreement = ProjectService.filterFields(vm.agreement, agreementFields);
 
             if (vm.agreement.id) {
                 filteredAgreement.id = vm.agreement.id;
                 await ProjectService.update(vm.researchEntity, filteredAgreement);
             } else {
                 const draft = await ProjectService.create(vm.researchEntity, filteredAgreement);
-                vm.agreement.id = draft.researchItem.id;
+                if (draft && draft.researchItem && draft.researchItem.id) {
+                    vm.agreement.id = draft.researchItem.id;
+                }
             }
 
-            //if (updateState) {
-            //    vm.saveStatus.setState('saved');
-            //    $timeout(() => vm.saveStatus.setState('ready to save'), 1000);
-            //}
+            if (updateState) {
+                vm.formStatus.setSaveStatus('saved');
+                $timeout(() => vm.formStatus.setSaveStatus('ready to save'), 1000);
+            }
 
             vm.unsavedData = false;
         }
@@ -110,45 +186,52 @@
         async function verify() {
             vm.errorText = '';
             vm.errors = {};
-            //vm.verifyStatus.setState('verifying');
+            vm.formStatus.setVerifyStatus('verifying');
 
             $timeout(async function () {
-                setAgreement();
-                vm.errors = await ProjectService.validate(vm.agreement);
+                vm.errors = await ValidateService.validate(vm.agreementData, false, agreementRequiredFields, agreementFieldRules);
 
-                if (Object.keys(vm.errors).length === 0) {
+                setAgreement();
+
+                if (_.isEmpty(vm.errors)) {
                     // Is valid
                     await processSave();
-                    //vm.verifyStatus.setState('verified');
+                    vm.formStatus.setVerifyStatus('verified');
                     await vm.closeFn()();
                     ProjectService.verify(vm.researchEntity, vm.agreement);
                 } else {
                     // Is not valid
-                    //vm.verifyStatus.setState('failed');
+                    vm.formStatus.setVerifyStatus('failed');
                     vm.errorText = 'The draft has been saved but not been verified! Please correct the errors on this form!';
 
                     await processSave(false);
 
-                    $timeout(function () {
-                        //vm.verifyStatus.setState('ready to verify');
-                    }, 1000);
+                    $timeout(() => vm.formStatus.setVerifyStatus('ready to verify'), 1000);
                 }
             }, 200);
         }
+        /* jshint ignore:end */
 
         function setAgreement() {
             vm.agreement.piStr = vm.agreementData.piStr;
             vm.agreement.startYear = vm.agreementData.startDate ? vm.agreementData.startDate.getFullYear() : null;
             vm.agreement.endYear = vm.agreementData.endDate ? vm.agreementData.endDate.getFullYear() : null;
             vm.agreement.type = 'project_agreement';
-            vm.agreement.projectData = vm.agreementData;
+            vm.agreement.projectData = angular.copy(vm.agreementData);
+
+            if (_.isEmpty(vm.agreement.projectData.startDate)) {
+                delete vm.agreement.projectData.startDate;
+            }
+
+            if (_.isEmpty(vm.agreement.projectData.endDate)) {
+                delete vm.agreement.projectData.endDate;
+            }
         }
 
         function close() {
-            if (_.isFunction(vm.checkAndClose()))
+            if (_.isFunction(vm.checkAndClose())) {
                 vm.checkAndClose()(() => !vm.unsavedData);
+            }
         }
-
-        /* jshint ignore:end */
     }
 })();

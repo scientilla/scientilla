@@ -22,6 +22,42 @@ const agreementTypes = [
     }
 ];
 
+const agreementFieldRules = {
+    piStr: {
+        regex: /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)*$/,
+        message: 'Author string is not valid. It should be in the form \"Molinari E., Bozzini F., Semprini F.\".'
+    },
+    startDate: {
+        isDate: true,
+        message: 'Not a valid date.'
+    },
+    endDate: {
+        allowNull: true,
+        isDate: true,
+        message: 'Not a valid date.'
+    }
+};
+
+const agreementRequiredFields = [
+    'title',
+    'agreementType',
+    'partners',
+    'pis',
+    'piStr',
+    'startDate'
+];
+
+const agreementFields = [
+    'startYear',
+    'endYear',
+    'piStr',
+    'projectData',
+    'type'
+];
+
 angular.module('app')
     .constant('agreementListSections', agreementListSections)
-    .constant('agreementTypes', agreementTypes);
+    .constant('agreementTypes', agreementTypes)
+    .constant('agreementFieldRules', agreementFieldRules)
+    .constant('agreementRequiredFields', agreementRequiredFields)
+    .constant('agreementFields', agreementFields);

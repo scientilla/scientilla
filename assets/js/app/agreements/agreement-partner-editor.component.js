@@ -7,7 +7,9 @@
             controller: agreementPartnerEditor,
             controllerAs: 'vm',
             bindings: {
-                partners: '='
+                partners: '=',
+                errors: '<',
+                checkValidation: '&'
             }
         });
 
@@ -23,8 +25,9 @@
             vm.newPartner = '';
             vm.isDuplicate = false;
 
-            if (!_.isArray(vm.partners))
+            if (!_.isArray(vm.partners)) {
                 vm.partners = [];
+            }
         };
 
         vm.$onDestroy = function () {
@@ -41,6 +44,8 @@
                 }
             }
 
+            vm.checkValidation({field: 'partners'});
+
             if ($event) {
                 $event.preventDefault();
             }
@@ -49,6 +54,7 @@
         function removePartner(partner) {
             const index = vm.partners.indexOf(partner);
             vm.partners.splice(index, 1);
+            vm.checkValidation({field: 'partners'});
         }
     }
 

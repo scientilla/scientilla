@@ -8,13 +8,21 @@
                     class="form-control"
                     placeholder="Add partner and press Enter"
                     ng-model="vm.newPartner"
-                    ng-keydown="$event.keyCode === 13 && vm.addPartner($event)"/>
+                    ng-keydown="$event.keyCode === 13 && vm.addPartner($event)"
+                    ng-class="{'is-invalid' : vm.errors.partners}"
+                    ng-blur="vm.checkValidation({field: 'partners'})"
+                    ng-change="vm.fieldValueHasChanged({field: 'partners'})"
+                />
                 <div
                     ng-if="vm.isDuplicate"
                     class="invalid-feedback"
                 >
                     This partner is already been added.
                 </div>
+                <scientilla-error-messages
+                    class="error-messages"
+                    errors="vm.errors.partners"
+                ></scientilla-error-messages>
             </div>
         </li>
         <li>

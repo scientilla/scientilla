@@ -10,10 +10,9 @@
                     class="form-control"
                     placeholder="Add referrer"
                     ng-model="vm.newReferrer"
-                    data-ng-required="true"
-                    ng-class="{'is-invalid' : vm.errors.title}"
-                    ng-blur="vm.checkValidation('title')"
-                    ng-change="vm.fieldValueHasChanged('title')"
+                    ng-class="{'is-invalid' : vm.errors.pis}"
+                    ng-blur="vm.checkValidation({field: 'pis'})"
+                    ng-change="vm.fieldValueHasChanged({field: 'pis'})"
                     uib-typeahead="user as user.getDisplayName() for user in vm.getUsers($viewValue)"
                     ng-keydown="$event.keyCode === 13 && vm.addReferrer($event)"
                     typeahead-loading="searching"
@@ -26,6 +25,10 @@
                 >
                     This referrer is already been added.
                 </div>
+                <scientilla-error-messages
+                    class="error-messages"
+                    errors="vm.errors.pis"
+                ></scientilla-error-messages>
             </div>
         </li>
         <li>

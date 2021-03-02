@@ -8,7 +8,10 @@
             controllerAs: 'vm',
             bindings: {
                 referrers: '=',
-                authorStr: '='
+                piStr: '=',
+                errors: '<',
+                checkValidation: '&',
+                fieldValueHasChanged: '&'
             }
         });
 
@@ -32,8 +35,8 @@
                 vm.referrers = [];
             }
 
-            if (!vm.authorStr) {
-                vm.authorStr = '';
+            if (!vm.piStr) {
+                vm.piStr = '';
             }
 
             newReferrerWatcher = $scope.$watch('vm.newReferrer', function() {
@@ -68,19 +71,21 @@
                         name: vm.newReferrer.getName()
                     });
 
-                    setAuthorStr(vm.newReferrer);
+                    setPiStr(vm.newReferrer);
 
                     vm.newReferrer = '';
                     vm.isDuplicate = false;
                 }
             }
 
+            vm.checkValidation({field: 'pis'});
+
             if ($event) {
                 $event.preventDefault();
             }
         }
 
-        function setAuthorStr(user) {
+        function setPiStr(user) {
             let alias = false;
 
             if (user.aliases.length > 0) {
@@ -88,10 +93,10 @@
             }
 
             if (alias && alias.str) {
-                if (vm.authorStr.length > 0) {
-                    vm.authorStr = vm.authorStr.concat(', ' + alias.str);
+                if (vm.piStr.length > 0) {
+                    vm.piStr = vm.piStr.concat(', ' + alias.str);
                 } else {
-                    vm.authorStr = alias.str;
+                    vm.piStr = alias.str;
                 }
             }
         }
@@ -101,14 +106,15 @@
             vm.referrers = vm.referrers.filter(r => r.email !== referrer.email);
             const referrerUsers = await getReferrerUsers();
 
-            vm.authorStr = '';
+            vm.piStr = '';
             for (const referrer of vm.referrers) {
                 const referrerUser = referrerUsers.find(u => u.username === referrer.email);
                 if (referrerUser) {
-                    setAuthorStr(referrerUser);
+                    setPiStr(referrerUser);
                 }
             }
 
+            vm.checkValidation({field: 'pis'});
         }
         /* jshint ignore:end */
 
