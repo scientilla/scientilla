@@ -16,14 +16,20 @@
         'Restangular',
         'EventsService',
         'ResearchEntitiesService',
-        '$http'
+        '$http',
+        'ValidateService',
+        'agreementRequiredFields',
+        'agreementFieldRules',
     ];
 
     function controller(
         Restangular,
         EventsService,
         ResearchEntitiesService,
-        $http
+        $http,
+        ValidateService,
+        agreementRequiredFields,
+        agreementFieldRules
     ) {
 
         return {
@@ -40,7 +46,8 @@
             unverify: ResearchEntitiesService.unverify,
             filterFields,
             generateGroup,
-            exportDownload
+            exportDownload,
+            isValid
         };
 
         /* jshint ignore:start */
@@ -92,6 +99,21 @@
             const filteredProject = {};
             fields.forEach(key => filteredProject[key] = project[key] ? project[key] : null);
             return filteredProject;
+        }
+
+        function isValid(agreement) {
+            const agreementData = agreement.projectData;
+            if (_.has(agreement.projectData, 'startDate')) {
+                agreementData.startDate = new Date(agreement.projectData.startDate);
+            } else {
+                agreementData.startDate = '';
+            }
+            if (_.has(agreement.projectData, 'endDate')) {
+                agreementData.endDate = new Date(agreement.projectData.endDate);
+            } else {
+                agreementData.endDate = '';
+            }
+            return _.isEmpty(ValidateService.validate(agreementData, false, agreementRequiredFields, agreementFieldRules));
         }
     }
 })();
