@@ -7,59 +7,85 @@
     function ValidateService() {
         let service = {};
 
+        function skipNullField(object, field, rule) {
+            if (_.has(rule, 'allowNull')) {
+                if (rule.allowNull && _.isNull(object[field])) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function addError(errors, field, error) {
+            if (typeof errors[field] === 'undefined') {
+                errors[field] = [];
+            }
+            errors[field].push(error);
+        }
+
+        function testRule(errors, object, field, rule) {
+
+            if (
+                (!_.has(rule, 'isDate') && object[field] && rule && rule.regex && !rule.regex.test(object[field])) ||
+                (_.has(rule, 'isDate') && typeof object[field] === 'undefined')
+            ) {
+                addError(errors, field, {
+                    rule: 'valid',
+                    message: rule.message
+                });
+            }
+        }
+
+        function fieldIsRequired(requiredFields, field) {
+            if (requiredFields.length > 0 && requiredFields.indexOf(field) > -1) {
+                return true;
+            }
+
+            return false;
+        }
+
+        function checkFieldIsAvailable(errors, object, field, rule) {
+            if (
+                (_.has(rule, 'isDate') && object[field] === null) ||
+                (!_.has(rule, 'isDate') && (!object[field] || (_.isArray(object[field]) && _.isEmpty(object[field]))))
+            ) {
+                addError(errors, field, {
+                    rule: 'required',
+                    message: 'This field is required.'
+                });
+            }
+        }
+
         service.validate = function(object = {}, field = false, requiredFields = [], rules = []) {
             let errors = {};
 
             // Check if a specific field is been provided, otherwise validate all the fields.
             if (field) {
-                if (object[field] && typeof rules[field] !== 'undefined') {
-                    if (!rules[field].regex.test(object[field])) {
-                        if (typeof errors[field] === 'undefined') {
-                            errors[field] = [];
-                        }
-                        errors[field].push({
-                            rule: 'valid',
-                            message: rules[field].message
-                        });
-                    }
+                const rule = rules[field];
+
+                if (skipNullField(object, field, rule)) {
+                    return;
                 }
 
-                if (!object[field] && requiredFields.indexOf(field) > -1) {
-                    if (typeof errors[field] === 'undefined') {
-                        errors[field] = [];
-                    }
-                    errors[field].push({
-                        rule: 'required',
-                        message: 'This field is required.'
-                    });
+                testRule(errors, object, field, rule);
+
+                if (fieldIsRequired(requiredFields, field)) {
+                    checkFieldIsAvailable(errors, object, field, rule);
                 }
 
                 return errors[field];
             } else {
                 _.forEach(rules, function(rule, ruleField) {
-                    if (object[ruleField]) {
-                        if (!rule.regex.test(object[ruleField])) {
-                            if (typeof errors[ruleField] === 'undefined') {
-                                errors[ruleField] = [];
-                            }
-                            errors[ruleField].push({
-                                rule: 'valid',
-                                message: rule.message
-                            });
-                        }
+                    if (skipNullField(object, ruleField, rule)) {
+                        return;
                     }
+
+                    testRule(errors, object, ruleField, rule);
                 });
 
                 _.forEach(requiredFields, function(requiredField) {
-                    if (!object[requiredField]) {
-                        if (typeof errors[requiredField] === 'undefined') {
-                            errors[requiredField] = [];
-                        }
-                        errors[requiredField].push({
-                            rule: 'required',
-                            message: 'This field is required.'
-                        });
-                    }
+                    checkFieldIsAvailable(errors, object, requiredField);
                 });
 
                 return errors;
