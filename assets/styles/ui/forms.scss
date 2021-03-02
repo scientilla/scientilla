@@ -8,7 +8,12 @@ label{
 }
 
 .form-group{
+    position: relative;
     margin-bottom: 2rem;
+
+    .dropdown-menu{
+        max-width: 100%;
+    }
 }
 
 .form-control{
