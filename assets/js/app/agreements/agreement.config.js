@@ -14,34 +14,12 @@
             })
             .when("/:group?/agreements/verified", {
                 controller: 'requestHandler',
-                template: () => '' +
-                    '<scientilla-agreement-verified-list></scientilla-agreement-verified-list>',
-                resolve: {
-                    authService: getAuthService
-                }
+                template: () => '<scientilla-agreement-verified-list></scientilla-agreement-verified-list>'
             })
             .when("/:group?/agreements/drafts", {
                 controller: 'requestHandler',
-                template: params => '' +
-                    '<scientilla-agreement-drafts-list research-entity="$resolve.researchEntity">' +
-                    '</scientilla-agreement-drafts-list>',
-                resolve: {
-                    researchEntity: getResearchEntity,
-                    authService: getAuthService
-                }
+                template: () => '<scientilla-agreement-drafts-list></scientilla-agreement-drafts-list>'
             });
-
-        getResearchEntity.$inject = ['context'];
-
-        function getResearchEntity(context) {
-            return context.getResearchEntity();
-        }
-
-        getAuthService.$inject = ['AuthService'];
-
-        function getAuthService(AuthService) {
-            return AuthService;
-        }
     }
 
 })();

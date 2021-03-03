@@ -22,33 +22,15 @@
             })
             .when("/:group?/dashboard/documents-overview", {
                 controller: 'requestHandler',
-                template: `<summary-dashboard
-                    active-tab="documents-overview"></summary-dashboard>`,
-                resolve: {
-                    authService: getAuthService
-                }
+                template: `<summary-dashboard active-tab="documents-overview"></summary-dashboard>`
             })
             .when("/:group?/dashboard/bibliometric-charts", {
                 controller: 'requestHandler',
-                template: `<summary-dashboard
-                    active-tab="bibliometric-charts"></summary-dashboard>`,
-                resolve: {
-                    authService: getAuthService
-                }
+                template: `<summary-dashboard active-tab="bibliometric-charts"></summary-dashboard>`
             })
             .when("/:group/dashboard/calculated-data", {
                 controller: 'requestHandler',
-                template: `<summary-dashboard
-                    active-tab="calculated-data"></summary-dashboard>`,
-                resolve: {
-                    authService: getAuthService
-                }
+                template: `<summary-dashboard active-tab="calculated-data"></summary-dashboard>`
             });
-
-        getAuthService.$inject = ['AuthService'];
-
-        function getAuthService(AuthService) {
-            return AuthService;
-        }
     }
 })();

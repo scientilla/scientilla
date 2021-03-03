@@ -4,10 +4,9 @@
         .controller('requestHandler', requestHandler);
 
     requestHandler.$inject = [
-        '$scope',
         '$routeParams',
         'path',
-        'authService',
+        'AuthService',
         'context'
     ];
 
@@ -15,10 +14,10 @@
      * This function handles the request declared above.
      * It validates the group slug (optional) and redirects if the group slug is not valid.
      */
-    function requestHandler($scope, $routeParams, path, authService, context) {
+    function requestHandler($routeParams, path, AuthService, context) {
 
         let activeGroup;
-        const user = authService.user;
+        const user = AuthService.user;
 
         if (!$routeParams.group) {
             return context.setSubResearchEntity(user);

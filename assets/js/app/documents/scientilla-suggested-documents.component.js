@@ -8,7 +8,6 @@
             controller: scientillaSuggestedDocumentsController,
             controllerAs: 'vm',
             bindings: {
-                researchEntity: '<'
             }
         });
 
@@ -64,6 +63,7 @@
                 subResearchEntity.save();
             }
         };
+
 
         vm.$onDestroy = function () {
             EventsService.unsubscribeAll(vm);

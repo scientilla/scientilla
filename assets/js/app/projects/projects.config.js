@@ -9,18 +9,8 @@
         $routeProvider
             .when("/:group?/projects/verified", {
                 controller: 'requestHandler',
-                template: () => '' +
-                    '<scientilla-project-verified-list></scientilla-project-verified-list>',
-                resolve: {
-                    authService: getAuthService
-                }
+                template: () => '<scientilla-project-verified-list></scientilla-project-verified-list>'
             });
-
-        getAuthService.$inject = ['AuthService'];
-
-        function getAuthService(AuthService) {
-            return AuthService;
-        }
     }
 
 })();

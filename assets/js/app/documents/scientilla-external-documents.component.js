@@ -7,7 +7,6 @@
             controller: scientillaExternalDocuments,
             controllerAs: 'vm',
             bindings: {
-                researchEntity: '<'
             }
         });
 

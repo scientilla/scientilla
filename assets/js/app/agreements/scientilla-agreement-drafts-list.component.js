@@ -8,11 +8,11 @@
             controller,
             controllerAs: 'vm',
             bindings: {
-                researchEntity: '<'
             }
         });
 
     controller.$inject = [
+        'context',
         'ProjectService',
         'AgreementService',
         'agreementListSections',
@@ -20,6 +20,7 @@
     ];
 
     function controller(
+        context,
         ProjectService,
         AgreementService,
         agreementListSections,
@@ -42,6 +43,8 @@
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
+            vm.researchEntity = await context.getResearchEntity();
+
             EventsService.subscribeAll(vm, [
                 EventsService.RESEARCH_ITEM_DRAFT_DELETED,
                 EventsService.RESEARCH_ITEM_DRAFT_UPDATED,
@@ -51,6 +54,7 @@
                 EventsService.RESEARCH_ITEM_UNVERIFIED
             ], updateList);
         };
+        /* jshint ignore:end */
 
         vm.$onDestroy = function () {
             EventsService.unsubscribeAll(vm);
@@ -60,13 +64,13 @@
             return onFilter(query);
         }
 
+        /* jshint ignore:start */
         async function onFilter(q) {
             if(!q.where)
                 q.where = {};
             q.where.type = 'project_agreement'
             vm.agreements = await ProjectService.getDrafts(vm.researchEntity, q);
         }
-
         /* jshint ignore:end */
 
     }

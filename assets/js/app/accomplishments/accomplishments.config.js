@@ -9,46 +9,16 @@
         $routeProvider
             .when("/:group?/accomplishments/suggested", {
                 controller: 'requestHandler',
-                template: params => '' +
-                    '<scientilla-accomplishment-suggested-list research-entity="$resolve.researchEntity">' +
-                    '</scientilla-accomplishment-suggested-list>',
-                resolve: {
-                    researchEntity: getResearchEntity,
-                    authService: getAuthService
-                }
+                template: () => '<scientilla-accomplishment-suggested-list></scientilla-accomplishment-suggested-list>'
             })
             .when("/:group?/accomplishments/verified", {
                 controller: 'requestHandler',
-                template: params => '' +
-                    '<scientilla-accomplishment-verified-list research-entity="$resolve.researchEntity">' +
-                    '</scientilla-accomplishment-verified-list>',
-                resolve: {
-                    researchEntity: getResearchEntity,
-                    authService: getAuthService
-                }
+                template: () => '<scientilla-accomplishment-verified-list></scientilla-accomplishment-verified-list>'
             })
             .when("/:group?/accomplishments/drafts", {
                 controller: 'requestHandler',
-                template: params => '' +
-                    '<scientilla-accomplishment-drafts-list research-entity="$resolve.researchEntity">' +
-                    '</scientilla-accomplishment-drafts-list>',
-                resolve: {
-                    researchEntity: getResearchEntity,
-                    authService: getAuthService
-                }
+                template: () => '<scientilla-accomplishment-drafts-list></scientilla-accomplishment-drafts-list>'
             });
-
-        getResearchEntity.$inject = ['context'];
-
-        function getResearchEntity(context) {
-            return context.getResearchEntity();
-        }
-
-        getAuthService.$inject = ['AuthService'];
-
-        function getAuthService(AuthService) {
-            return AuthService;
-        }
     }
 
 })();

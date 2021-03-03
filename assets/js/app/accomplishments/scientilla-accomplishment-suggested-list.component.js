@@ -8,7 +8,6 @@
             controller,
             controllerAs: 'vm',
             bindings: {
-                researchEntity: '<'
             }
         });
 
@@ -39,6 +38,7 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
             const subResearchEntity = await context.getSubResearchEntity();
+            vm.researchEntity = await context.getResearchEntity();
 
             EventsService.subscribeAll(vm, [
                 EventsService.RESEARCH_ITEM_VERIFIED,

@@ -8,7 +8,6 @@
             controller,
             controllerAs: 'vm',
             bindings: {
-                researchEntity: '<'
             }
         });
 
