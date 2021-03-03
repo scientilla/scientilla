@@ -13,7 +13,8 @@
         'Restangular',
         'ResearchEntitiesService',
         'PeopleService',
-        'ISO3166'
+        'ISO3166',
+        'agreementTypes'
     ];
 
     function ResearchItemSearchFormStructureService(
@@ -26,7 +27,8 @@
         Restangular,
         ResearchEntitiesService,
         PeopleService,
-        ISO3166
+        ISO3166,
+        agreementTypes
     ) {
 
         const service = {
@@ -232,10 +234,10 @@
                 matchRule: 'contains',
                 type: 'field',
             },
-            type: {
-                inputType: 'text',
+            agreementType: {
+                inputType: 'select',
                 label: 'Type',
-                matchColumn: 'type',
+                matchColumn: 'projectType',
                 matchRule: 'contains',
                 type: 'field',
             },
@@ -493,6 +495,7 @@
         }
 
         async function setupAgreementStructure(constant, researchEntity) {
+            formStructures[constant].agreementType.values = getAgreementTypes();
             //const defaultValues = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'project');
             //formStructures[constant].year.defaultValues = defaultValues;
             //let yearValue = formStructures[constant].year.defaultValues.find(v => v.item_key === allProjectTypes.value);
@@ -854,6 +857,17 @@
             }
 
             return fundings;
+        }
+
+        function getAgreementTypes() {
+            const types = [];
+            types.push({value: '?', label: 'Select'});
+
+            for (const type of agreementTypes) {
+                types.push({value: type.key, label: type.label});
+            }
+
+            return types;
         }
     }
 })();
