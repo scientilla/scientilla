@@ -70,23 +70,23 @@
             vm.researchEntity = await context.getResearchEntity();
             if (_.has(vm.agreement, 'projectData')) {
                 vm.agreementData = vm.agreement.projectData;
-                if (_.has(vm.agreement.projectData, 'startDate')) {
+                if (_.has(vm.agreement.projectData, 'startDate') && vm.agreementData.startDate !== null) {
                     vm.agreementData.startDate = new Date(vm.agreement.projectData.startDate);
                 } else {
-                    vm.agreementData.startDate = '';
+                    vm.agreementData.startDate = null;
                 }
-                if (_.has(vm.agreement.projectData, 'endDate')) {
+                if (_.has(vm.agreement.projectData, 'endDate') && vm.agreementData.endDate !== null) {
                     vm.agreementData.endDate = new Date(vm.agreement.projectData.endDate);
                 } else {
-                    vm.agreementData.endDate = '';
+                    vm.agreementData.endDate = null;
                 }
             } else {
                 vm.agreementData = {
                     pis: [],
                     partners: [],
-                    piStr: '',
-                    startDate: '',
-                    endDate: ''
+                    piStr: null,
+                    startDate: null,
+                    endDate: null
                 };
             }
 
@@ -218,14 +218,6 @@
             vm.agreement.endYear = vm.agreementData.endDate ? vm.agreementData.endDate.getFullYear() : null;
             vm.agreement.type = 'project_agreement';
             vm.agreement.projectData = angular.copy(vm.agreementData);
-
-            if (_.isEmpty(vm.agreement.projectData.startDate)) {
-                delete vm.agreement.projectData.startDate;
-            }
-
-            if (_.isEmpty(vm.agreement.projectData.endDate)) {
-                delete vm.agreement.projectData.endDate;
-            }
         }
 
         function close() {
