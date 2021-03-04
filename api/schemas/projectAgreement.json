@@ -12,12 +12,24 @@
       "type": "string"
     },
     "startDate": {
-      "type": "string",
-      "format": "date-time"
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        }, {
+          "type": "null"
+        }
+      ]
     },
     "endDate": {
-      "type": "string",
-      "format": "date-time"
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        }, {
+          "type": "null"
+        }
+      ]
     },
     "budget": {
       "type": "number"
