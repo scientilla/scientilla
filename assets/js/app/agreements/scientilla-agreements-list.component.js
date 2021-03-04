@@ -16,14 +16,12 @@
     scientillaAgreementsList.$inject = [
         'ProjectService',
         'AgreementService',
-        'agreementListSections',
         '$element'
     ];
 
     function scientillaAgreementsList(
         ProjectService,
         AgreementService,
-        agreementListSections,
         $element
     ) {
         const vm = this;

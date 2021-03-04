@@ -32,30 +32,6 @@
                 tooltip-class="text-left">
                 <i class="fas fa-check"></i> {{ vm.agreement.verified.length }}
             </li>
-            <li
-                ng-if="vm.isPrivacyToShow()"
-                class="agreement-privacy-actions">
-                <i ng-click="vm.changePrivacy()"
-                   ng-if="vm.isPublic()"
-                   class="fas fa-globe-africa has-action"
-                   uib-tooltip-html="'The agreement is visible to everyone, click to change it'"></i>
-                <i ng-click="vm.changePrivacy()"
-                   ng-if="!vm.isPublic()"
-                   class="fas fa-lock has-action"
-                   uib-tooltip-html="'The agreement is visible only to scientilla users, click to change it'"></i>
-            </li>
-            <li
-                ng-if="vm.isFavoriteToShow()"
-                class="agreement-favorite-actions">
-                <i ng-click="vm.changeFavorite()"
-                   ng-if="vm.isFavorite()"
-                   class="fas fa-star has-action"
-                   uib-tooltip-html="'This agreement is one of your favorite'"></i>
-                <i ng-click="vm.changeFavorite()"
-                   ng-if="!vm.isFavorite()"
-                   class="far fa-star has-action"
-                   uib-tooltip-html="'Click here to make it favorite'"></i>
-            </li>
         </ul>
     </li>
 </ul>
