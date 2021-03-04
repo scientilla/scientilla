@@ -6,11 +6,10 @@
     AgreementBrowsingController.$inject = [
         'AgreementService',
         'Notification',
-        'ModalService',
         'AuthService'
     ];
 
-    function AgreementBrowsingController(AgreementService, Notification, ModalService, AuthService) {
+    function AgreementBrowsingController(AgreementService, Notification, AuthService) {
         const vm = this;
 
         vm.user = AuthService.user;
