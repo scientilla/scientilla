@@ -16,23 +16,19 @@
     controller.$inject = [
         'GroupsService',
         'ModalService',
-        'AgreementService',
         'context',
-        'EventsService',
-        'CustomizeService',
         'ResearchEntitiesService',
-        'agreementListSections'
+        'agreementListSections',
+        'TextService'
     ];
 
     function controller(
         GroupsService,
         ModalService,
-        AgreementService,
         context,
-        EventsService,
-        CustomizeService,
         ResearchEntitiesService,
-        agreementListSections
+        agreementListSections,
+        TextService
     ) {
 
         const vm = this;
@@ -62,18 +58,23 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
             researchEntity = await context.getResearchEntity();
-
-            EventsService.subscribe(vm, EventsService.CUSTOMIZATIONS_CHANGED, function (event, customizations) {
-                vm.customizations = customizations;
-            });
-
-            CustomizeService.getCustomizations().then(customizations => {
-                vm.customizations = customizations;
-            });
         };
         /* jshint ignore:end */
 
         vm.getTypeTitle = GroupsService.getTypeTitle;
+
+        vm.getAgreementYears = () => {
+            const years = [];
+            if (vm.agreement.startYear) {
+                years.push(vm.agreement.startYear);
+            }
+
+            if (vm.agreement.endYear) {
+                years.push(vm.agreement.endYear);
+            }
+
+            return TextService.joinStrings(years, ' - ');
+        };
 
         function openDetails() {
             ModalService
