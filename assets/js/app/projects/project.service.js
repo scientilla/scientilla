@@ -102,18 +102,7 @@
         }
 
         function isValid(agreement) {
-            const agreementData = agreement.projectData;
-            if (_.has(agreement.projectData, 'startDate')) {
-                agreementData.startDate = new Date(agreement.projectData.startDate);
-            } else {
-                agreementData.startDate = '';
-            }
-            if (_.has(agreement.projectData, 'endDate')) {
-                agreementData.endDate = new Date(agreement.projectData.endDate);
-            } else {
-                agreementData.endDate = '';
-            }
-            return _.isEmpty(ValidateService.validate(agreementData, false, agreementRequiredFields, agreementFieldRules));
+            return _.isEmpty(ValidateService.validate(agreement.projectData, false, agreementRequiredFields, agreementFieldRules));
         }
     }
 })();
