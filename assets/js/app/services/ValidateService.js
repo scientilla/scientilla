@@ -46,14 +46,17 @@
         }
 
         function checkFieldIsAvailable(errors, object, field, rule) {
-            if (
-                (_.has(rule, 'isDate') && object[field] === null) ||
-                (!_.has(rule, 'isDate') && (!object[field] || (_.isArray(object[field]) && _.isEmpty(object[field]))))
-            ) {
-                addError(errors, field, {
-                    rule: 'required',
-                    message: 'This field is required.'
-                });
+            // Only check if the field is required when it doesn't have other errors
+            if (typeof errors[field] === 'undefined') {
+                if (
+                    (_.has(rule, 'isDate') && object[field] === null) ||
+                    (!_.has(rule, 'isDate') && (!object[field] || (_.isArray(object[field]) && _.isEmpty(object[field]))))
+                ) {
+                    addError(errors, field, {
+                        rule: 'required',
+                        message: 'This field is required.'
+                    });
+                }
             }
         }
 
@@ -71,21 +74,21 @@
                 testRule(errors, object, field, rule);
 
                 if (fieldIsRequired(requiredFields, field)) {
-                    checkFieldIsAvailable(errors, object, field, rule);
+                    checkFieldIsAvailable(errors, object, field);
                 }
 
                 return errors[field];
             } else {
-                _.forEach(rules, function(rule, ruleField) {
-                    if (skipNullField(object, ruleField, rule)) {
+                _.forEach(rules, function(rule, field) {
+                    if (skipNullField(object, field, rule)) {
                         return;
                     }
 
-                    testRule(errors, object, ruleField, rule);
+                    testRule(errors, object, field, rule);
                 });
 
-                _.forEach(requiredFields, function(requiredField) {
-                    checkFieldIsAvailable(errors, object, requiredField);
+                _.forEach(requiredFields, function(field) {
+                    checkFieldIsAvailable(errors, object, field);
                 });
 
                 return errors;
