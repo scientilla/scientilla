@@ -41,16 +41,9 @@
 
         function getPIs() {
             let count = 1;
-            vm.members = [];
 
             for (const pi of vm.agreement.projectData.pis) {
-                const user = vm.agreement.verifiedUsers.find(u => u.username === pi.email.toLowerCase());
-
-                if (user) {
-                    vm.pis.push(user);
-                } else {
-                    vm.pis.push(pi);
-                }
+                vm.pis.push(pi);
 
                 if (vm.collapsed && count === vm.agreement.getPILimit()) {
                     break;
