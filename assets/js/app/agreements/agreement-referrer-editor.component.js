@@ -8,6 +8,7 @@
             controllerAs: 'vm',
             bindings: {
                 referrers: '=',
+                unsavedData: '=',
                 piStr: '=',
                 errors: '<',
                 checkValidation: '&',
@@ -75,6 +76,7 @@
 
                     vm.newReferrer = '';
                     vm.isDuplicate = false;
+                    vm.unsavedData = true;
                 }
             }
 
@@ -115,6 +117,7 @@
             }
 
             vm.checkValidation({field: 'pis'});
+            vm.unsavedData = true;
         }
         /* jshint ignore:end */
 

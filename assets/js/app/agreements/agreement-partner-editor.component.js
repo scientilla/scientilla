@@ -8,6 +8,7 @@
             controllerAs: 'vm',
             bindings: {
                 partners: '=',
+                unsavedData: '=',
                 errors: '<',
                 checkValidation: '&'
             }
@@ -41,6 +42,7 @@
                     vm.partners.push(vm.newPartner);
                     vm.newPartner = '';
                     vm.isDuplicate = false;
+                    vm.unsavedData = true;
                 }
             }
 
@@ -55,6 +57,7 @@
             const index = vm.partners.indexOf(partner);
             vm.partners.splice(index, 1);
             vm.checkValidation({field: 'partners'});
+            vm.unsavedData = true;
         }
     }
 

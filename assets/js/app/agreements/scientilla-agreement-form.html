@@ -74,6 +74,7 @@
 
         <agreement-partner-editor
             partners="vm.agreementData.partners"
+            unsaved-data="vm.unsavedData"
             errors="vm.errors"
             check-validation="vm.checkValidation(field)"
             field-value-has-changed="vm.fieldValueHasChanged(field)"
@@ -81,6 +82,7 @@
 
         <agreement-referrer-editor
             referrers="vm.agreementData.pis"
+            unsaved-data="vm.unsavedData"
             pi-str="vm.agreementData.piStr"
             errors="vm.errors"
             check-validation="vm.checkValidation(field)"

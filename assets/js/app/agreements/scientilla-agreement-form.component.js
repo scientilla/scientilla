@@ -102,15 +102,8 @@
 
             const formPristineWatcher = $scope.$watch('form.$pristine', formUntouched => vm.unsavedData = !formUntouched);
 
-            const piStrWatcher = $scope.$watch('vm.agreementData.piStr',  function (newValue, oldValue) {
-                if (newValue !== oldValue) {
-                    vm.checkValidation('piStr');
-                }
-            });
-
             watchers.push(resetFormInteractionWatcher);
             watchers.push(formPristineWatcher);
-            watchers.push(piStrWatcher);
         };
         /* jshint ignore:end */
 
