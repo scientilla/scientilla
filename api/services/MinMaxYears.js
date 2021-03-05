@@ -3,11 +3,11 @@
 
 "use strict";
 
-//const _ = require('lodash');
-
 const sqlQueries = {
     'accomplishment': 'api/queries/minMaxYearsAccomplishments.sql',
     'project': 'api/queries/minMaxYearsProjects.sql',
+    'verified_agreements': 'api/queries/minMaxYearsVerifiedAgreements.sql',
+    'agreement_drafts': 'api/queries/minMaxYearsAgreementDrafts.sql',
     'patent': 'api/queries/minMaxYearsPatents.sql',
 };
 

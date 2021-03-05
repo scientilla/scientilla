@@ -494,12 +494,11 @@
             };
         }
 
-        async function setupAgreementStructure(constant, researchEntity) {
+        async function setupAgreementStructure(constant, researchEntity, type = 'agreement_drafts') {
             formStructures[constant].agreementType.values = getAgreementTypes();
-            //const defaultValues = await ResearchEntitiesService.getMinMaxYears(researchEntity, 'project');
-            //formStructures[constant].year.defaultValues = defaultValues;
-            //let yearValue = formStructures[constant].year.defaultValues.find(v => v.item_key === allProjectTypes.value);
-            let yearValue;
+            const defaultValues = await ResearchEntitiesService.getMinMaxYears(researchEntity, type);
+            formStructures[constant].year.defaultValues = defaultValues;
+            let yearValue = _.first(formStructures[constant].year.defaultValues);
             if (_.isNil(yearValue)) {
                 yearValue = {
                     min: 2000,
@@ -619,7 +618,7 @@
                     structure = formStructures[constant];
                     break;
                 case constant === 'verified-agreement':
-                    await setupAgreementStructure(constant, researchEntity);
+                    await setupAgreementStructure(constant, researchEntity, 'verified_agreements');
                     structure = Object.assign(
                         {},
                         formStructures[constant],

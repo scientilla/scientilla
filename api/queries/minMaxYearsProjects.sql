@@ -7,7 +7,7 @@ SELECT
 FROM verify v
        JOIN project p on v.research_item = p.id
        JOIN research_item_type rit ON p.type = rit.id
-WHERE v.research_entity = $1
+WHERE v.research_entity = $1 AND rit.key IN ('project_competitive', 'project_industrial')
 GROUP BY research_entity, item_key, item_type
 
 UNION ALL
@@ -21,5 +21,5 @@ SELECT
 FROM verify v
        JOIN project p on v.research_item = p.id
        JOIN research_item_type rit ON p.type = rit.id
-WHERE v.research_entity = $1
+WHERE v.research_entity = $1 AND rit.key IN ('project_competitive', 'project_industrial')
 GROUP BY research_entity, item_type, item_key;

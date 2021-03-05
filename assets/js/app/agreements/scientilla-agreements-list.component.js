@@ -52,7 +52,7 @@
             const favorites = q.where.favorites;
             delete q.where.favorites;
 
-            query =Object.assign({type:'project_agreement'}, q);
+            query = Object.assign({type:'project_agreement'}, q);
 
             vm.agreements = await ProjectService.get(vm.researchEntity, query, favorites);
         }
