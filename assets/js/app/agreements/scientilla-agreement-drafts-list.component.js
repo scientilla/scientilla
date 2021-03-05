@@ -14,17 +14,19 @@
     controller.$inject = [
         'context',
         'ProjectService',
-        'AgreementService',
         'agreementListSections',
-        'EventsService'
+        'EventsService',
+        'agreementRequiredFields',
+        'agreementFieldRules'
     ];
 
     function controller(
         context,
         ProjectService,
-        AgreementService,
         agreementListSections,
-        EventsService
+        EventsService,
+        agreementRequiredFields,
+        agreementFieldRules
     ) {
         const vm = this;
 
@@ -33,11 +35,13 @@
         vm.isValid = ProjectService.isValid;
 
         vm.deleteDraft = ProjectService.delete;
-        vm.edit = (draft) => AgreementService.edit(vm.researchEntity, draft);
+        vm.edit = (draft) => ProjectService.editAgreement(vm.researchEntity, draft);
         vm.verify = (draft) => ProjectService.verify(vm.researchEntity, draft);
         vm.deleteDrafts = (drafts) => ProjectService.multipleDelete(vm.researchEntity, drafts);
         vm.verifyDrafts = (drafts) => ProjectService.multipleVerify(vm.researchEntity, drafts);
         vm.agreementListSections = agreementListSections;
+        vm.agreementRequiredFields = agreementRequiredFields;
+        vm.agreementFieldRules = agreementFieldRules;
 
         let query = {};
 

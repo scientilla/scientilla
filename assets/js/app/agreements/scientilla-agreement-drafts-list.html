@@ -52,7 +52,7 @@
                             >
                                 <button
                                     ng-click="vm.verify(agreement)"
-                                    ng-disabled="!vm.isValid(agreement)"
+                                    ng-disabled="!vm.isValid(agreement.projectData, vm.agreementRequiredFields, vm.agreementFieldRules)"
                                     class="dropdown-item">
                                     <i class="fas fa-check fa-left"></i>Verify
                                 </button>
