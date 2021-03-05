@@ -4,20 +4,23 @@
     </li>
     <li class="agreement-metadata">
         <div>
-            <scientilla-agreement-pis agreement="vm.agreement"></scientilla-agreement-pis>
+            <scientilla-agreement-pis
+                class="agreement-pis"
+                agreement="vm.agreement"
+            ></scientilla-agreement-pis>
         </div>
 
         <h2 class="agreement-title has-action"
             ng-click="vm.openDetails()"
             ng-bind-html='vm.agreement | title'></h2>
 
-        <ng-container ng-if="vm.agreement.agreementType">
+        <ng-container ng-if="vm.agreement.projectData.agreementType">
             {{ vm.agreement.projectData.agreementType }}
         </ng-container>
 
         <ul
             class="agreement-partners"
-            ng-if="vm.agreement.partners"
+            ng-if="vm.agreement.projectData.partners"
         >
             <li ng-repeat="partner in vm.agreement.projectData.partners">
                 {{ partner }}
