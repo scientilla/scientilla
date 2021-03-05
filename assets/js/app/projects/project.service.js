@@ -18,8 +18,7 @@
         'ResearchEntitiesService',
         '$http',
         'ValidateService',
-        'agreementRequiredFields',
-        'agreementFieldRules',
+        'ModalService'
     ];
 
     function controller(
@@ -28,8 +27,7 @@
         ResearchEntitiesService,
         $http,
         ValidateService,
-        agreementRequiredFields,
-        agreementFieldRules
+        ModalService
     ) {
 
         return {
@@ -47,7 +45,8 @@
             filterFields,
             generateGroup,
             exportDownload,
-            isValid
+            isValid,
+            editAgreement: (researchEntity, draft) => ModalService.openAgreementForm(researchEntity, _.cloneDeep(draft)),
         };
 
         /* jshint ignore:start */
@@ -74,11 +73,10 @@
         }
         /* jshint ignore:end */
 
-        function exportDownload(projects, format = 'csv') {
-            const filename = 'Projects_Export.csv';
-            $http.post('/api/v1/projects/export', {
+        function exportDownload(items, format = 'csv', filename = projectDownloadFileName, url = projectExportUrl) {
+            $http.post(url, {
                 format: format,
-                projectIds: projects.map(d => d.id)
+                ids: items.map(d => d.id)
             }).then((res) => {
                 const element = document.createElement('a');
                 element.setAttribute('href', encodeURI(res.data));
@@ -101,8 +99,8 @@
             return filteredProject;
         }
 
-        function isValid(agreement) {
-            return _.isEmpty(ValidateService.validate(agreement.projectData, false, agreementRequiredFields, agreementFieldRules));
+        function isValid(item, requiredFields, rules) {
+            return _.isEmpty(ValidateService.validate(item, false, requiredFields, rules));
         }
     }
 })();
