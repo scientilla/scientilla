@@ -1,5 +1,8 @@
 <div>
-    <scientilla-agreement-pis agreement="vm.agreement"></scientilla-agreement-pis>
+    <scientilla-agreement-pis
+        agreement="vm.agreement"
+        class="agreement-pis"
+    ></scientilla-agreement-pis>
 </div>
 
 <h3 class="agreement-title" ng-bind-html='vm.agreement | title'></h3>
@@ -18,14 +21,14 @@
     {{ vm.agreement.projectData.agreementType }}
 </ng-container>
 
-<ng-container ng-if="vm.agreement.budget">
+<ng-container ng-if="vm.agreement.projectData.budget">
     <strong>Total budget:</strong>
-    €{{ vm.agreement.budget }}<br>
+    €{{ vm.agreement.projectData.budget }}<br>
 </ng-container>
 
-<ng-container ng-if="vm.agreement.contribution">
+<ng-container ng-if="vm.agreement.projectData.contribution">
     <strong>Institute budget:</strong>
-    €{{ vm.agreement.contribution }}<br>
+    €{{ vm.agreement.projectData.contribution }}<br>
 </ng-container>
 
 <ng-container ng-if="vm.agreement.projectData.startDate">
@@ -38,12 +41,11 @@
     {{ vm.agreement.projectData.endDate | date: 'd/M/y'}}<br>
 </ng-container>
 
-<ng-container ng-if="vm.agreement.projectData.partners">
-    <ng-container ng-if="vm.agreement.partners.length > 1">
-        <ul class="agreement-partners">
-            <li ng-repeat="partner in vm.agreement.partners">
-                {{ partner }}
-            </li>
-        </ul>
-    </ng-container>
-</ng-container>
+<ul
+    ng-if="vm.agreement.projectData.partners && vm.agreement.projectData.partners.length > 0"
+    class="agreement-partners"
+>
+    <li ng-repeat="partner in vm.agreement.projectData.partners">
+        {{ partner }}
+    </li>
+</ul>
