@@ -7,6 +7,23 @@
         padding: 0px 1rem;
     }
 
+    .agreement-pis {
+        @include clearfix;
+
+        .agreement-pi {
+            display: block;
+            float: left;
+
+            & + .agreement-pi {
+                &:before {
+                    display: inline-block;
+                    vertical-align: top;
+                    content: ',';
+                }
+            }
+        }
+    }
+
     .agreement-title{
         margin: 1rem 0px;
         font-size: 2rem;

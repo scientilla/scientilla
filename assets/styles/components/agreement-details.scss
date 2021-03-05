@@ -20,4 +20,21 @@
             }
         }
     }
+
+    .agreement-pis {
+        @include clearfix;
+
+        .agreement-pi {
+            display: block;
+            float: left;
+
+            & + .agreement-pi {
+                &:before {
+                    display: inline-block;
+                    vertical-align: top;
+                    content: ',';
+                }
+            }
+        }
+    }
 }
