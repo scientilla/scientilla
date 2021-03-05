@@ -12,7 +12,7 @@
     rz-slider-options="vm.options"
     placeholder="{{vm.structure.placeholder}}"
     ng-class="{'is-invalid' : vm.errors}"
-    ng-disabled="vm.structure.disabled"
+    ng-disabled="vm.structure.disabled || vm.options.disabled"
     ng-blur="vm.structure.required && vm.validate(vm.name)"></rzslider>
 <scientilla-error-messages
     class="error-messages"

@@ -38,8 +38,7 @@
             }
         };
 
-        vm.min = vm.structure.values.min;
-        vm.max = vm.structure.values.max;
+        onModelChange();
 
         let onValueChangeDeregisterer;
 
@@ -67,8 +66,15 @@
             vm.min = vm.structure.values.min;
             vm.max = vm.structure.values.max;
 
-            vm.options.floor = vm.min;
-            vm.options.ceil = vm.max;
+            if (vm.min === vm.max) {
+                vm.options.floor = vm.min - 1;
+                vm.options.ceil = vm.max + 1;
+                vm.options.disabled = true;
+            } else {
+                vm.options.floor = vm.structure.values.min;
+                vm.options.ceil = vm.structure.values.max;
+                vm.options.disabled = false;
+            }
         }
     }
 
