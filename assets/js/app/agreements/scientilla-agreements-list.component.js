@@ -15,14 +15,16 @@
 
     scientillaAgreementsList.$inject = [
         'ProjectService',
-        'AgreementService',
-        '$element'
+        '$element',
+        'agreementDownloadFileName',
+        'agreementExportUrl'
     ];
 
     function scientillaAgreementsList(
         ProjectService,
-        AgreementService,
-        $element
+        $element,
+        agreementDownloadFileName,
+        agreementExportUrl
     ) {
         const vm = this;
 
@@ -31,7 +33,7 @@
 
         vm.agreements = [];
         vm.onFilter = onFilter;
-        vm.exportDownload = agreements => AgreementService.exportDownload(agreements, 'csv');
+        vm.exportDownload = agreements => ProjectService.exportDownload(agreements, 'csv', agreementDownloadFileName, agreementExportUrl);
 
         let query = {};
 

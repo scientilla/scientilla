@@ -12,20 +12,22 @@
 
     controller.$inject = [
         'ProjectService',
-        'AgreementService',
         'EventsService',
         'agreementListSections',
         'context',
-        'ModalService'
+        'ModalService',
+        'agreementDownloadFileName',
+        'agreementExportUrl'
     ];
 
     function controller(
         ProjectService,
-        AgreementService,
         EventsService,
         agreementListSections,
         context,
-        ModalService
+        ModalService,
+        agreementDownloadFileName,
+        agreementExportUrl
     ) {
         const vm = this;
 
@@ -33,7 +35,7 @@
         vm.agreements = [];
         vm.onFilter = onFilter;
         vm.unverify = (agreement) => ProjectService.unverify(vm.researchEntity, agreement);
-        vm.exportDownload = agreements => AgreementService.exportDownload(agreements, 'csv');
+        vm.exportDownload = agreements => ProjectService.exportDownload(agreements, 'csv', agreementDownloadFileName, agreementExportUrl);
 
         let query = {
             where: {}
