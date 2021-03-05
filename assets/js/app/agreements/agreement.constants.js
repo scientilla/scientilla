@@ -55,9 +55,15 @@ const agreementFields = [
     'type'
 ];
 
+const agreementDownloadFileName = 'Agreement_Export.csv';
+
+const agreementExportUrl = '/api/v1/agreements/export';
+
 angular.module('app')
     .constant('agreementListSections', agreementListSections)
     .constant('agreementTypes', agreementTypes)
     .constant('agreementFieldRules', agreementFieldRules)
     .constant('agreementRequiredFields', agreementRequiredFields)
-    .constant('agreementFields', agreementFields);
+    .constant('agreementFields', agreementFields)
+    .constant('agreementDownloadFileName', agreementDownloadFileName)
+    .constant('agreementExportUrl', agreementExportUrl);
