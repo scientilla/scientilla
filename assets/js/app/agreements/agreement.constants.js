@@ -55,7 +55,7 @@ const agreementFields = [
     'type'
 ];
 
-const agreementDownloadFileName = 'Agreement_Export.csv';
+const agreementDownloadFileName = 'Agreements_Export.csv';
 
 const agreementExportUrl = '/api/v1/agreements/export';
 
