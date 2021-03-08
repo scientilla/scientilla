@@ -269,7 +269,8 @@
         CENTER: 'Center',
         RESEARCH_LINE: 'Research Line',
         FACILITY: 'Facility',
-        DIRECTORATE: 'Directorate'
+        DIRECTORATE: 'Directorate',
+        PROJECT: 'Project'
     };
 
     const groupTypeLabels = {

@@ -4,12 +4,12 @@
         .controller('AgreementBrowsingController', AgreementBrowsingController);
 
     AgreementBrowsingController.$inject = [
-        'AgreementService',
+        'ProjectService',
         'Notification',
         'AuthService'
     ];
 
-    function AgreementBrowsingController(AgreementService, Notification, AuthService) {
+    function AgreementBrowsingController(ProjectService, Notification, AuthService) {
         const vm = this;
 
         vm.user = AuthService.user;
@@ -24,7 +24,7 @@
         async function onFilter(q) {
             query = q;
 
-            vm.agreementGroups = AgreementService.getGroups(query);
+            vm.agreementGroups = await ProjectService.getGroups(query);
         }
         /* jshint ignore:end */
 

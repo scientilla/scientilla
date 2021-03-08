@@ -18,7 +18,9 @@
         'ResearchEntitiesService',
         '$http',
         'ValidateService',
-        'ModalService'
+        'ModalService',
+        'GroupsService',
+        'groupTypes'
     ];
 
     function controller(
@@ -27,7 +29,9 @@
         ResearchEntitiesService,
         $http,
         ValidateService,
-        ModalService
+        ModalService,
+        GroupsService,
+        groupTypes
     ) {
 
         return {
@@ -47,6 +51,7 @@
             exportDownload,
             isValid,
             editAgreement: (researchEntity, draft) => ModalService.openAgreementForm(researchEntity, _.cloneDeep(draft)),
+            getGroups
         };
 
         /* jshint ignore:start */
@@ -101,6 +106,11 @@
 
         function isValid(item, requiredFields, rules) {
             return _.isEmpty(ValidateService.validate(item, false, requiredFields, rules));
+        }
+
+        function getGroups(query = {}) {
+            query.where.type = groupTypes.PROJECT;
+            return GroupsService.getGroups(query);
         }
     }
 })();
