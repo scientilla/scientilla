@@ -12,6 +12,29 @@
                 controller: "AgreementBrowsingController",
                 controllerAs: 'vm'
             })
+            .when("/agreement-groups/:id", {
+                redirectTo: '/agreement-groups/:id/info'
+            })
+            .when("/agreement-groups/:id/info", {
+                template: params => `<agreement-group-details
+                    group-id="${params.id}"
+                    active-tab="info"></agreement-group-details>`
+            })
+            .when("/agreement-groups/:id/documents", {
+                template: params => `<agreement-group-details
+                    group-id="${params.id}"
+                    active-tab="documents"></agreement-group-details>`
+            })
+            .when("/agreement-groups/:id/accomplishments", {
+                template: params => `<agreement-group-details
+                    group-id="${params.id}"
+                    active-tab="accomplishments"></agreement-group-details>`
+            })
+            .when("/agreement-groups/:id/patents", {
+                template: params => `<agreement-group-details
+                    group-id="${params.id}"
+                    active-tab="projects"></agreement-group-details>`
+            })
             .when("/:group?/agreements/verified", {
                 controller: 'requestHandler',
                 template: () => '<scientilla-agreement-verified-list></scientilla-agreement-verified-list>'

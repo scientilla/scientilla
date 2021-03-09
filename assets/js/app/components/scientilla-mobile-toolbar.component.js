@@ -16,17 +16,21 @@
         'GroupsService',
         'UsersService',
         'ModalService',
-        'path'
+        'path',
+        'groupTypes'
     ];
 
-    function scientillaToolbar(EventsService,
-                               AuthService,
-                               Settings,
-                               context,
-                               GroupsService,
-                               UsersService,
-                               ModalService,
-                               path) {
+    function scientillaToolbar(
+        EventsService,
+        AuthService,
+        Settings,
+        context,
+        GroupsService,
+        UsersService,
+        ModalService,
+        path,
+        groupTypes
+    ) {
         const vm = this;
         vm.wizardOpened = false;
         vm.isRegisterEnabled = false;
@@ -81,7 +85,11 @@
             return GroupsService.getGroup(group.id)
                 .then(group => context.setSubResearchEntity(group))
                 .then(() => {
-                    path.goTo('/groups/' + group.id + '/info');
+                    if (group.type === groupTypes.PROJECT) {
+                        path.goTo('/agreement-groups/' + group.id + '/info');
+                    } else {
+                        path.goTo('/groups/' + group.id + '/info');
+                    }
                 });
         }
 

@@ -37,6 +37,8 @@
         vm.unverify = (agreement) => ProjectService.unverify(vm.researchEntity, agreement);
         vm.exportDownload = agreements => ProjectService.exportDownload(agreements, 'csv', agreementDownloadFileName, agreementExportUrl);
 
+        vm.subResearchEntity = context.getSubResearchEntity();
+
         let query = {
             where: {}
         };

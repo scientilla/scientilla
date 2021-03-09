@@ -1,0 +1,48 @@
+<scientilla-backend-layout>
+    <div class="groups group-detail">
+        <div class="title-container">
+            <h1 class="title">{{ vm.group.getDisplayName() }}</h1>
+        </div>
+
+        <uib-tabset active="vm.activeTabIndex">
+            <uib-tab
+                index="0"
+                heading="Info"
+            >
+            </uib-tab>
+            <uib-tab
+                index="1"
+                heading="Documents"
+            >
+                <scientilla-documents-list
+                    ng-if="vm.group"
+                    research-entity="vm.group"
+                    section="vm.documentListSections.GROUP"
+                    active="vm.activeTabIndex === 1"
+                ></scientilla-documents-list>
+            </uib-tab>
+            <uib-tab
+                index="2"
+                heading="Accomplishments"
+            >
+                <scientilla-accomplishments-list
+                    ng-if="vm.researchEntity"
+                    research-entity="vm.researchEntity"
+                    section="vm.accomplishmentListSections.GROUP"
+                    active="vm.activeTabIndex === 2"
+                ></scientilla-accomplishments-list>
+            </uib-tab>
+            <uib-tab
+                index="3"
+                heading="Patents"
+            >
+                <scientilla-patents-list
+                    ng-if="vm.researchEntity"
+                    research-entity="vm.researchEntity"
+                    section="vm.patentListSections.GROUP"
+                    active="vm.activeTabIndex === 3"
+                ></scientilla-patents-list>
+            </uib-tab>
+        </uib-tabset>
+    </div>
+</scientilla-backend-layout>
