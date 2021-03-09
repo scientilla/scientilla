@@ -10,6 +10,12 @@
             display: block;
             padding: 0px 1rem;
         }
+
+        &.patent,
+        &.document,
+        &.accomplishment{
+            border-left: 0px !important;
+        }
     }
 
     .filter-field-listing{
