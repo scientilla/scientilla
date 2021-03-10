@@ -15,10 +15,9 @@
         class="profile-blocks"
     >
         <profile-basic-info-block
-            research-entity="vm.researchEntity"
+            user="vm.user"
             profile="vm.profile"
-            ng-if="vm.profile"
-            former="!vm.user.active"
+            ng-if="vm.user && vm.profile"
             class="profile-block basic-info"></profile-basic-info-block>
 
         <profile-about-block

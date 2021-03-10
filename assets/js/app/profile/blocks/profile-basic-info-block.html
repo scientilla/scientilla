@@ -68,7 +68,9 @@
     </li>
     <li class="contact-card" ng-if="!vm.former">
         <div class="profile-card">
-            <profile-contact-listing profile="vm.profile"></profile-contact-listing>
+            <profile-contact-listing
+                user="vm.user"
+                profile="vm.profile"></profile-contact-listing>
         </div>
     </li>
 </ul>

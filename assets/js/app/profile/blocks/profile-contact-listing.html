@@ -12,6 +12,16 @@
             <i class="fas fa-phone"></i> {{ vm.profile.telephone }}
         </a>
     </li>
+    <li ng-if="vm.user.scopusId">
+        <a href="https://www.scopus.com/authid/detail.uri?authorId={{ vm.user.scopusId }}" target="_blank">
+            <i class="fas fa-external-link-alt fa-left"></i>Scopus profile
+        </a>
+    </li>
+    <li ng-if="vm.user.orcidId">
+        <a href="https://orcid.org/{{ vm.user.orcidId }}" target="_blank">
+            <i class="fas fa-external-link-alt fa-left"></i>ORCiD
+        </a>
+    </li>
     <li ng-if="vm.profile.socials" class="socials-list-item">
         <ul class="socials-listing">
             <li ng-if="vm.profile.socials.linkedin">
