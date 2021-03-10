@@ -1,7 +1,7 @@
 <div class="user-profile">
     <scientilla-loading is-loading="vm.loading"></scientilla-loading>
     <div
-        class="profile-blocks"
+        ng-if="!vm.loading && vm.profile && vm.numberOfItems > 0"
         ng-class="{
             'has-1-block': vm.numberOfItems === 1,
             'has-2-blocks': vm.numberOfItems === 2,
@@ -12,7 +12,8 @@
             'has-7-blocks': vm.numberOfItems === 7,
             'has-8-blocks': vm.numberOfItems === 8,
         }"
-        ng-if="!vm.loading && (vm.profile.name || vm.profile.surname) && vm.numberOfItems > 0">
+        class="profile-blocks"
+    >
         <profile-basic-info-block
             research-entity="vm.researchEntity"
             profile="vm.profile"
@@ -111,6 +112,7 @@
     </div>
 
     <user-profile-table
+        ng-if="!vm.profile && vm.user && !vm.loading"
         user="vm.user"
-        ng-if="(!vm.profile || (!vm.profile.name && !vm.profile.surname)) && !vm.loading"></user-profile-table>
+    ></user-profile-table>
 </div>

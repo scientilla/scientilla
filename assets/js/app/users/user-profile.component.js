@@ -54,6 +54,7 @@
                 vm.loadProfile = angular.copy(vm.active);
 
                 activeWatcher = $scope.$watch('vm.active', () => {
+                    vm.loading = true;
                     vm.loadProfile = angular.copy(vm.active);
 
                     if (vm.loadProfile) {
@@ -72,6 +73,7 @@
         async function loadProfile() {
             vm.researchEntity = vm.user.researchEntity;
             vm.profile = await UsersService.getUserProfile(vm.researchEntity);
+            setNumberOfItems();
 
             vm.loading = false;
 
@@ -89,9 +91,8 @@
                 vm.accomplishments = await AccomplishmentService.get(vm.researchEntity, {}, false, []);
                 vm.favoriteAccomplishments = await AccomplishmentService.get(vm.researchEntity, {}, true, []);
                 vm.loadingAccomplishments = false;
+                setNumberOfItems();
             }
-
-            setNumberOfItems();
         }
 
         /* jshint ignore:end */
