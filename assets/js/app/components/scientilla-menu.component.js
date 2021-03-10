@@ -13,10 +13,11 @@
         'EventsService',
         'path',
         'context',
-        'ExternalConnectorService'
+        'ExternalConnectorService',
+        'groupTypes'
     ];
 
-    function scientillaMenu(AuthService, EventsService, path, context, ExternalConnectorService) {
+    function scientillaMenu(AuthService, EventsService, path, context, ExternalConnectorService, groupTypes) {
         const vm = this;
 
         vm.isActive = isActive;
@@ -27,6 +28,7 @@
         vm.isUser = isUser;
         vm.isGroup = isGroup;
         vm.hasActiveExternalConnectors = false;
+        vm.isProject = isProject;
 
         const prefix = '#/';
         vm.subResearchEntity = context.getSubResearchEntity();
@@ -123,6 +125,14 @@
                     vm.hasActiveExternalConnectors = true;
                 }
             });
+        }
+
+        function isProject() {
+            if (isGroup() && vm.subResearchEntity.type === groupTypes.PROJECT) {
+                return true;
+            }
+
+            return false;
         }
     }
 

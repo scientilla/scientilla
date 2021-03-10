@@ -10,7 +10,8 @@
         'DocumentKinds',
         'documentFieldsRules',
         'documentOrigins',
-        'ValidateService'
+        'ValidateService',
+        'groupTypes'
     ];
 
     function Prototyper(
@@ -19,7 +20,8 @@
         DocumentKinds,
         documentFieldsRules,
         documentOrigins,
-        ValidateService
+        ValidateService,
+        groupTypes
     ) {
         const service = {
             toUserModel: toUserModel,
