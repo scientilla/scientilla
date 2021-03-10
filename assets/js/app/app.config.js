@@ -59,7 +59,7 @@
 
         $rootScope.$on("$routeChangeStart", (event, next, current) => {
             const noRedirectUrls = ['/unavailable', '/login'];
-            const goingToNoRedirectUrl = next.$$route && noRedirectUrls.includes(next.$$route.originalPath);
+            const goingToNoRedirectUrl = next && next.$$route && noRedirectUrls.includes(next.$$route.originalPath);
             if (!goingToNoRedirectUrl && !AuthService.isAvailable && !AuthService.isAdmin) {
                 Notification.warning('Sorry but scientilla is temporarily unavailable. Try again later.');
                 ModalService.dismiss(null);
