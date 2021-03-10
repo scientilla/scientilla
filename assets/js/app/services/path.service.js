@@ -13,7 +13,7 @@
 
     function path($location, EventsService, $route, AuthService, userConstants) {
         const current = $location.url();
-        let next = current === '/unavailable' ? '/' : current;
+        let next = current === '/unavailable' ? '/' : current.split('?')[0];
         const service = {
             current: current,
             goTo: goTo,
