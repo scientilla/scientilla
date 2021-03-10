@@ -7,29 +7,29 @@
             controller: profileBasicInfoBlock,
             controllerAs: 'vm',
             bindings: {
-                researchEntity: '<',
-                profile: '<',
-                former: '<?'
+                user: '<',
+                profile: '<'
             }
         });
 
-    profileBasicInfoBlock.$inject = ['AuthService', 'pathProfileImages', 'TextService'];
+    profileBasicInfoBlock.$inject = ['pathProfileImages', 'TextService'];
 
-    function profileBasicInfoBlock(AuthService, pathProfileImages, TextService) {
+    function profileBasicInfoBlock(pathProfileImages, TextService) {
         const vm = this;
-
-        vm.pathProfileImages = pathProfileImages + '/' + vm.researchEntity;
 
         vm.researchLines = [];
         vm.facilities = [];
         vm.directorates = [];
         vm.institutes = [];
 
-        vm.joinStrings = function (strings, seperator) {
-            return TextService.joinStrings(strings, seperator);
+        vm.joinStrings = function (strings, separator) {
+            return TextService.joinStrings(strings, separator);
         };
 
         vm.$onInit = function () {
+            vm.researchEntity = vm.user.researchEntity;
+            vm.former = !vm.user.active;
+            vm.pathProfileImages = pathProfileImages + '/' + vm.researchEntity;
             vm.researchLines = vm.profile.groups.filter(group => group.type === 'Research Line');
             vm.facilities = vm.profile.groups.filter(group => group.type === 'Facility');
             vm.directorates = vm.profile.groups.filter(group => group.type === 'Directorate');
