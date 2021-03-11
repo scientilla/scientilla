@@ -619,20 +619,7 @@
                     break;
                 case constant === 'verified-agreement':
                     await setupAgreementStructure(constant, researchEntity, 'verified_agreements');
-                    structure = Object.assign(
-                        {},
-                        formStructures[constant],
-                        {
-                            favorites: {
-                                inputType: 'checkbox',
-                                label: 'Show only favorite agreements',
-                                defaultValue: false,
-                                matchColumn: 'favorites',
-                                type: 'action',
-                                valueType: 'boolean'
-                            }
-                        }
-                    );
+                    structure =  formStructures[constant];
                     break;
                 case constant === 'agreement':
                     await setupAgreementStructure(constant, researchEntity);
