@@ -20,7 +20,9 @@
         'ValidateService',
         'ModalService',
         'GroupsService',
-        'groupTypes'
+        'groupTypes',
+        'projectTypeAgreement',
+        'Prototyper'
     ];
 
     function controller(
@@ -31,10 +33,13 @@
         ValidateService,
         ModalService,
         GroupsService,
-        groupTypes
+        groupTypes,
+        projectTypeAgreement,
+        Prototyper
     ) {
 
         return {
+            getAgreementOfGroup,
             get: ResearchEntitiesService.getProjects,
             getDrafts: ResearchEntitiesService.getProjectDrafts,
             create: ResearchEntitiesService.createDraft,
@@ -112,5 +117,13 @@
             query.where.type = groupTypes.PROJECT;
             return GroupsService.getGroups(query);
         }
+
+        /* jshint ignore:start */
+        async function getAgreementOfGroup(group) {
+            const response = await Restangular.one('projects').get({where: {key: projectTypeAgreement, group: group.id}});
+            const agreements = response.items;
+            return Prototyper.toAgreementModel(agreements[0]);
+        }
+        /* jshint ignore:end */
     }
 })();

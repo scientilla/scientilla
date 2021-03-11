@@ -2,6 +2,13 @@
     <div class="groups group-detail">
         <div class="title-container">
             <h1 class="title">{{ vm.group.getDisplayName() }}</h1>
+            <button
+                ng-if="vm.group && vm.activeTabIndex === 1 && vm.isGroupAdmin()"
+                ng-click="vm.addCollaborator()"
+                class="btn btn-primary btn-add-collaborator"
+            >
+                Add collaborator<i class="fas fa-plus fa-right"></i>
+            </button>
         </div>
 
         <uib-tabset active="vm.activeTabIndex">
@@ -9,38 +16,53 @@
                 index="0"
                 heading="Info"
             >
+                <agreement-info
+                    ng-if="vm.group"
+                    group="vm.group"
+                ></agreement-info>
             </uib-tab>
             <uib-tab
                 index="1"
+                heading="Members"
+            >
+                <scientilla-group-members
+                    ng-if="vm.group"
+                    group="vm.group"
+                    refresh-group="vm.refreshGroup"
+                    active="vm.activeTabIndex === 1"
+                ></scientilla-group-members>
+            </uib-tab>
+            <uib-tab
+                index="2"
                 heading="Documents"
             >
                 <scientilla-documents-list
                     ng-if="vm.group"
                     research-entity="vm.group"
                     section="vm.documentListSections.GROUP"
-                    active="vm.activeTabIndex === 1"
+                    active="vm.activeTabIndex === 2"
                 ></scientilla-documents-list>
             </uib-tab>
             <uib-tab
-                index="2"
+                index="3"
                 heading="Accomplishments"
             >
                 <scientilla-accomplishments-list
                     ng-if="vm.researchEntity"
                     research-entity="vm.researchEntity"
                     section="vm.accomplishmentListSections.GROUP"
-                    active="vm.activeTabIndex === 2"
+                    active="vm.activeTabIndex === 3"
                 ></scientilla-accomplishments-list>
             </uib-tab>
             <uib-tab
-                index="3"
+                index="4"
                 heading="Patents"
             >
                 <scientilla-patents-list
                     ng-if="vm.researchEntity"
                     research-entity="vm.researchEntity"
                     section="vm.patentListSections.GROUP"
-                    active="vm.activeTabIndex === 3"
+                    active="vm.activeTabIndex === 4"
                 ></scientilla-patents-list>
             </uib-tab>
         </uib-tabset>

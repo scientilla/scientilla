@@ -18,7 +18,8 @@
         'AuthService',
         '$scope',
         '$controller',
-        'ResearchEntitiesService'
+        'ResearchEntitiesService',
+        'ModalService'
     ];
 
     function AgreementGroupDetailsController(
@@ -27,13 +28,15 @@
         AuthService,
         $scope,
         $controller,
-        ResearchEntitiesService
+        ResearchEntitiesService,
+        ModalService
     ) {
         const vm = this;
         angular.extend(vm, $controller('TabsController', {$scope: $scope}));
         vm.subResearchEntity = context.getSubResearchEntity();
         vm.loggedUser = AuthService.user;
         vm.refreshGroup = refreshGroup;
+        vm.addCollaborator = addCollaborator;
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
@@ -46,12 +49,15 @@
                     tabName: 'group-info'
                 }, {
                     index: 1,
-                    slug: 'documents'
+                    slug: 'members'
                 }, {
                     index: 2,
-                    slug: 'accomplishments'
+                    slug: 'documents'
                 }, {
                     index: 3,
+                    slug: 'accomplishments'
+                }, {
+                    index: 4,
                     slug: 'patents'
                 }
             ];
@@ -63,7 +69,19 @@
             vm.group = await GroupsService.getGroup(vm.groupId);
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
         }
-
         /* jshint ignore:end */
+
+        vm.isGroupAdmin = function () {
+            return AuthService.isAdmin;
+        };
+
+        function addCollaborator() {
+            ModalService.openCollaboratorForm(vm.group)
+                .then(() => {
+                    if (vm.activeTabIndex === 1) {
+                        $scope.$broadcast('refreshList');
+                    }
+                });
+        }
     }
 })();

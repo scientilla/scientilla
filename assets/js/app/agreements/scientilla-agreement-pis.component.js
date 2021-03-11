@@ -26,7 +26,9 @@
                 vm.collapsed = true;
             }
 
-            getPIs();
+            if (_.has(vm.agreement, 'projectData.pis')){
+                getPIs();
+            }
         };
 
         vm.toggleCollapse = toggleCollapse;

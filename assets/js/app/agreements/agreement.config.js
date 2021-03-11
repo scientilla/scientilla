@@ -20,6 +20,11 @@
                     group-id="${params.id}"
                     active-tab="info"></agreement-group-details>`
             })
+            .when("/agreement-groups/:id/members", {
+                template: params => `<agreement-group-details
+                    group-id="${params.id}"
+                    active-tab="members"></agreement-group-details>`
+            })
             .when("/agreement-groups/:id/documents", {
                 template: params => `<agreement-group-details
                     group-id="${params.id}"

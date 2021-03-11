@@ -402,7 +402,7 @@
             return await Restangular.one('projects', id).get({populate: populates});
         }
 
-        async function getProjectDrafts(researchEntity, query, populates = accomplishmentPopulates) {
+        async function getProjectDrafts(researchEntity, query, populates = projectPopulates) {
             await setProjectType(query);
             return getResearchItemDrafts(researchEntity, 'projectDrafts', query, populates);
         }
