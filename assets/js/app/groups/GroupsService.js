@@ -21,6 +21,7 @@
         service.save = save;
         service.doSave = doSave;
         service.getGroups = getGroups;
+        service.get = get;
         service.getGroup = getGroup;
         service.addCollaborator = addCollaborator;
         service.updateCollaborator= updateCollaborator;
@@ -93,6 +94,14 @@
         function getGroup(groupId) {
             const populate = {populate: ['members', 'administrators', 'attributes', 'groupAttributes', 'memberships', 'childGroups', 'parentGroups', 'pis']};
             return service.one(groupId).get(populate);
+        }
+
+        function get(query) {
+            const populate = {populate: ['members', 'administrators', 'attributes', 'groupAttributes', 'memberships', 'childGroups', 'parentGroups', 'pis']};
+            const q = _.merge({}, query, populate);
+            return service.getList(q).then(res => {
+                return res[0];
+            });
         }
 
         function getGroups(query) {

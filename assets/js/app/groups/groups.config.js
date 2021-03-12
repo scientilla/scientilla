@@ -54,7 +54,90 @@
                 template: params => `<scientilla-group-details
                     group-id="${params.id}"
                     active-tab="bibliometric-charts"></scientilla-group-details>`
+            })
+            .when("/:group/info", {
+                controller: 'requestHandler',
+                template: () => `<scientilla-group-details
+                    group-slug="$resolve.slug"
+                    active-tab="info"></scientilla-group-details>`,
+                resolve: {
+                    slug: getSlug
+                }
+            })
+            .when("/:group/members", {
+                controller: 'requestHandler',
+                template: () => `<scientilla-group-details
+                    group-slug="$resolve.slug"
+                    active-tab="members"></scientilla-group-details>`,
+                resolve: {
+                    slug: getSlug
+                }
+            })
+            .when("/:group/child-groups", {
+                controller: 'requestHandler',
+                template: () => `<scientilla-group-details
+                    group-slug="$resolve.slug"
+                    active-tab="child-groups"></scientilla-group-details>`,
+                resolve: {
+                    slug: getSlug
+                }
+            })
+            .when("/:group/documents", {
+                controller: 'requestHandler',
+                template: () => `<scientilla-group-details
+                    group-slug="$resolve.slug"
+                    active-tab="documents"></scientilla-group-details>`,
+                resolve: {
+                    slug: getSlug
+                }
+            })
+            .when("/:group/accomplishments", {
+                controller: 'requestHandler',
+                template: () => `<scientilla-group-details
+                    group-slug="$resolve.slug"
+                    active-tab="accomplishments"></scientilla-group-details>`,
+                resolve: {
+                    slug: getSlug
+                }
+            })
+            .when("/:group/projects", {
+                controller: 'requestHandler',
+                template: () => `<scientilla-group-details
+                    group-slug="$resolve.slug"
+                    active-tab="projects"></scientilla-group-details>`,
+                resolve: {
+                    slug: getSlug
+                }
+            })
+            .when("/:group/documents-overview", {
+                controller: 'requestHandler',
+                template: () => `<scientilla-group-details
+                    group-slug="$resolve.slug"
+                    active-tab="documents-overview"></scientilla-group-details>`,
+                resolve: {
+                    slug: getSlug
+                }
+            })
+            .when("/:group/bibliometric-charts", {
+                controller: 'requestHandler',
+                template: () => `<scientilla-group-details
+                    group-slug="$resolve.slug"
+                    active-tab="bibliometric-charts"></scientilla-group-details>`,
+                resolve: {
+                    slug: getSlug
+                }
             });
-    }
 
+        getSlug.$inject = ['$route'];
+
+        function getSlug($route) {
+            let slug = false;
+
+            if (_.has($route, 'current.params.group')) {
+                slug = $route.current.params.group;
+            }
+
+            return slug;
+        }
+    }
 })();

@@ -7,124 +7,115 @@
             templateUrl: 'partials/scientilla-group-details.html',
             controllerAs: 'vm',
             bindings: {
-                groupId: '<',
+                groupId: '<?',
+                groupSlug: '<?',
                 activeTab: '@?'
             }
         });
 
     GroupDetailsController.$inject = [
         'GroupsService',
-        'context',
-        'AuthService',
-        '$scope',
-        '$controller',
         'ResearchEntitiesService',
-        '$timeout',
-        'ModalService'
+        'groupTypes',
+        '$location'
     ];
 
     function GroupDetailsController(
         GroupsService,
-        context,
-        AuthService,
-        $scope,
-        $controller,
         ResearchEntitiesService,
-        $timeout,
-        ModalService
+        groupTypes,
+        $location
     ) {
         const vm = this;
-        angular.extend(vm, $controller('TabsController', {$scope: $scope}));
-        vm.subResearchEntity = context.getSubResearchEntity();
-        vm.loggedUser = AuthService.user;
-        vm.refreshGroup = refreshGroup;
-        vm.addCollaborator = addCollaborator;
 
-        let activeTabWatcher = null;
+        vm.groupTypes = groupTypes;
+
+        vm.defaultTabIdentifiers = [
+            {
+                index: 0,
+                slug: 'info',
+                tabName: 'group-info'
+            }, {
+                index: 1,
+                slug: 'members',
+                tabName: 'group-members'
+            }, {
+                index: 2,
+                slug: 'child-groups'
+            }, {
+                index: 3,
+                slug: 'documents'
+            }, {
+                index: 4,
+                slug: 'accomplishments'
+            }, {
+                index: 5,
+                slug: 'projects'
+            }, {
+                index: 6,
+                slug: 'documents-overview',
+                tabName: 'overview-tab'
+            }, {
+                index: 7,
+                slug: 'bibliometric-charts',
+                tabName: 'metrics-tab'
+            }
+        ];
+
+        vm.projectTabIdentifiers = [
+            {
+                index: 0,
+                slug: 'info',
+                tabName: 'group-info'
+            }, {
+                index: 1,
+                slug: 'members'
+            }, {
+                index: 2,
+                slug: 'documents'
+            }, {
+                index: 3,
+                slug: 'accomplishments'
+            }, {
+                index: 4,
+                slug: 'patents'
+            }
+        ];
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
+            let query = {};
+            if (vm.groupSlug) {
+                query.where = {slug: vm.groupSlug};
+            } else {
+                query = vm.groupId;
+            }
+            vm.group = await GroupsService.get(query);
+            vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
 
-            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
-                if (vm.activeTabIndex === 5) {
-                    $timeout(function () {
-                        $scope.$broadcast('rzSliderForceRender');
-                    });
+            let redirect = false;
+            if (vm.group.type === groupTypes.PROJECT) {
+                const tab = vm.projectTabIdentifiers.find(t => t.slug === vm.activeTab);
+
+                if (!tab) {
+                    redirect = true;
                 }
-            });
+            } else {
+                const tab = vm.defaultTabIdentifiers.find(t => t.slug === vm.activeTab);
 
-            await refreshGroup();
-
-            const tabIdentifiers = [
-                {
-                    index: 0,
-                    slug: 'info',
-                    tabName: 'group-info'
-                }, {
-                    index: 1,
-                    slug: 'members',
-                    tabName: 'group-members'
-                }, {
-                    index: 2,
-                    slug: 'child-groups'
-                }, {
-                    index: 3,
-                    slug: 'documents'
-                }, {
-                    index: 4,
-                    slug: 'accomplishments'
-                }, {
-                    index: 5,
-                    slug: 'projects'
-                }, {
-                    index: 6,
-                    slug: 'documents-overview',
-                    tabName: 'overview-tab'
-                }, {
-                    index: 7,
-                    slug: 'bibliometric-charts',
-                    tabName: 'metrics-tab'
+                if (!tab) {
+                    redirect = true;
                 }
-            ];
+            }
 
-            vm.initializeTabs(tabIdentifiers);
+            if (redirect) {
+                $location.url(`/${ vm.group.slug }/info`);
+            }
         };
-
-        vm.$onDestroy = function () {
-            activeTabWatcher();
-        };
-
-        function refreshGroup() {
-            return GroupsService.getGroup(vm.groupId)
-                .then(async (group) => {
-                    vm.group = group;
-                    vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
-                });
-        }
-
         /* jshint ignore:end */
 
-        vm.isAdmin = function () {
-            return vm.loggedUser && vm.loggedUser.isAdmin();
-        };
+        vm.$onDestroy = function () {
 
-        vm.isGroupAdmin = function () {
-            return AuthService.isAdmin;
         };
-
-        vm.isScientific = function () {
-            if (!vm.group)
-                return true;
-            return ['Institute', 'Center', 'Research Line', 'Facility'].includes(vm.group.type);
-        };
-
-        function addCollaborator() {
-            ModalService.openCollaboratorForm(vm.group)
-                .then(() => {
-                    if (vm.activeTabIndex === 1) {
-                        $scope.$broadcast('refreshList');
-                    }
-                });
-        }
     }
 })();

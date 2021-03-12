@@ -21,7 +21,7 @@
 
         let activeWatcher;
 
-        vm.agreement = {};
+        vm.agreement = null;
 
         /* jshint ignore:start */
         vm.$onInit = async () => {
@@ -33,7 +33,7 @@
                     if (vm.active) {
                         await vm.reload();
                     } else {
-                        vm.agreement = {};
+                        vm.agreement = null;
                     }
                 });
             }

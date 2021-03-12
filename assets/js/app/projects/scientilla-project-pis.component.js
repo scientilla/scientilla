@@ -43,7 +43,11 @@
             let count = 1;
             vm.members = [];
 
-            for (const pi of vm.project.pi) {
+            if (!_.has(vm.project, 'projectData.pis')) {
+                return;
+            }
+
+            for (const pi of vm.project.projectData.pis) {
                 const user = vm.project.verifiedUsers.find(u => u.username === pi.email.toLowerCase());
 
                 if (user) {

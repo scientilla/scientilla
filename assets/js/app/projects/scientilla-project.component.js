@@ -72,8 +72,6 @@
 
         vm.getTypeTitle = GroupsService.getTypeTitle;
 
-        vm.lines = _.uniq(vm.project.lines.map(line => line.description));
-
         function openDetails() {
             ModalService
                 .openProjectDetails(vm.project);

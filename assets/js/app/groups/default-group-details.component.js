@@ -2,9 +2,9 @@
 (function () {
     angular
         .module('groups')
-        .component('agreementGroupDetails', {
-            controller: AgreementGroupDetailsController,
-            templateUrl: 'partials/agreement-group-details.html',
+        .component('defaultGroupDetails', {
+            controller: DefaultGroupDetailsController,
+            templateUrl: 'partials/default-group-details.html',
             controllerAs: 'vm',
             bindings: {
                 group: '<',
@@ -13,23 +13,25 @@
             }
         });
 
-        AgreementGroupDetailsController.$inject = [
+        DefaultGroupDetailsController.$inject = [
         'GroupsService',
         'context',
         'AuthService',
         '$scope',
         '$controller',
         'ResearchEntitiesService',
+        '$timeout',
         'ModalService'
     ];
 
-    function AgreementGroupDetailsController(
+    function DefaultGroupDetailsController(
         GroupsService,
         context,
         AuthService,
         $scope,
         $controller,
         ResearchEntitiesService,
+        $timeout,
         ModalService
     ) {
         const vm = this;
@@ -39,21 +41,48 @@
         vm.refreshGroup = refreshGroup;
         vm.addCollaborator = addCollaborator;
 
+        let activeTabWatcher = null;
+
         /* jshint ignore:start */
         vm.$onInit = async function () {
+
+            activeTabWatcher = $scope.$watch('vm.activeTabIndex', () => {
+                if (vm.activeTabIndex === 5) {
+                    $timeout(function () {
+                        $scope.$broadcast('rzSliderForceRender');
+                    });
+                }
+            });
+
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
 
             vm.initializeTabs(vm.tabs);
         };
+        /* jshint ignore:end */
 
+        vm.$onDestroy = function () {
+            activeTabWatcher();
+        };
+
+        /* jshint ignore:start */
         async function refreshGroup() {
             vm.group = await GroupsService.getGroup(vm.group.id);
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
         }
         /* jshint ignore:end */
 
+        vm.isAdmin = function () {
+            return vm.loggedUser && vm.loggedUser.isAdmin();
+        };
+
         vm.isGroupAdmin = function () {
             return AuthService.isAdmin;
+        };
+
+        vm.isScientific = function () {
+            if (!vm.group)
+                return true;
+            return ['Institute', 'Center', 'Research Line', 'Facility'].includes(vm.group.type);
         };
 
         function addCollaborator() {

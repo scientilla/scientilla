@@ -17,50 +17,30 @@
             <a
                 class="btn btn-dashboard"
                 ng-if="(vm.isUser() && vm.subResearchEntity.isScientific()) || (vm.isGroup() && !vm.isProject())"
-                ng-href="{{ vm.getUrl('dashboard/documents-overview') }}"
+                ng-href="{{ vm.getUrl('dashboard') }}"
                 ng-class="{
-                    'btn-primary' : vm.isActive('/dashboard/documents-overview', true),
-                    'btn-light' : !vm.isActive('/dashboard/documents-overview', true)
+                    'btn-primary' : vm.isActive('/dashboard', true),
+                    'btn-light' : !vm.isActive('/dashboard', true)
                 }">
                 <i class="fas fa-tachometer-alt fa-left"></i>Dashboard
             </a>
             <a
                 class="btn btn-dashboard"
-                ng-if="vm.isGroup() && !vm.isProject()"
-                ng-href="#/groups/{{ vm.subResearchEntity.id }}/info"
+                ng-if="vm.isGroup()"
+                ng-href="#/{{ vm.subResearchEntity.slug }}/info"
                 ng-class="{
-                    'btn-primary' : vm.isActive('/groups/{{ vm.subResearchEntity.id }}/info', false),
-                    'btn-light' : !vm.isActive('/groups/{{ vm.subResearchEntity.id }}/info', false)
+                    'btn-primary' : vm.isActive('/{{ vm.subResearchEntity.slug }}/info', false),
+                    'btn-light' : !vm.isActive('/{{ vm.subResearchEntity.slug }}/info', false)
                 }">
                 <i class="fas fa-info-circle fa-left"></i>Group info
             </a>
             <a
                 class="btn btn-dashboard"
-                ng-if="vm.isGroup() && vm.isProject()"
-                ng-href="#/agreement-groups/{{ vm.subResearchEntity.id }}/info"
+                ng-if="vm.isGroup()"
+                ng-href="#/{{ vm.subResearchEntity.slug }}/members"
                 ng-class="{
-                    'btn-primary' : vm.isActive('/agreement-groups/{{ vm.subResearchEntity.id }}/info', false),
-                    'btn-light' : !vm.isActive('/agreement-groups/{{ vm.subResearchEntity.id }}/info', false)
-                }">
-                <i class="fas fa-info-circle fa-left"></i>Group info
-            </a>
-            <a
-                class="btn btn-dashboard"
-                ng-if="vm.isGroup() && !vm.isProject()"
-                ng-href="#/groups/{{ vm.subResearchEntity.id }}/members"
-                ng-class="{
-                    'btn-primary' : vm.isActive('/groups/{{ vm.subResearchEntity.id }}/members', false),
-                    'btn-light' : !vm.isActive('/groups/{{ vm.subResearchEntity.id }}/members', false)
-                }">
-                <i class="fas fa-users fa-left"></i>Group members
-            </a>
-            <a
-                class="btn btn-dashboard"
-                ng-if="vm.isGroup() && vm.isProject()"
-                ng-href="#/agreement-groups/{{ vm.subResearchEntity.id }}/members"
-                ng-class="{
-                    'btn-primary' : vm.isActive('/agreement-groups/{{ vm.subResearchEntity.id }}/members', false),
-                    'btn-light' : !vm.isActive('/agreement-groups/{{ vm.subResearchEntity.id }}/members', false)
+                    'btn-primary' : vm.isActive('/{{ vm.subResearchEntity.slug }}/members', false),
+                    'btn-light' : !vm.isActive('/{{ vm.subResearchEntity.slug }}/members', false)
                 }">
                 <i class="fas fa-users fa-left"></i>Group members
             </a>

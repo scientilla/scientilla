@@ -12,32 +12,37 @@
                 controller: "AgreementBrowsingController",
                 controllerAs: 'vm'
             })
-            .when("/agreement-groups/:id", {
-                redirectTo: '/agreement-groups/:id/info'
+            .when("/agreement-groups/:group", {
+                redirectTo: '/agreement-groups/:group/info'
             })
-            .when("/agreement-groups/:id/info", {
+            .when("/agreement-groups/:group/info", {
+                controller: 'requestHandler',
                 template: params => `<agreement-group-details
-                    group-id="${params.id}"
+                    group-id="${params.group}"
                     active-tab="info"></agreement-group-details>`
             })
-            .when("/agreement-groups/:id/members", {
+            .when("/agreement-groups/:group/members", {
+                controller: 'requestHandler',
                 template: params => `<agreement-group-details
-                    group-id="${params.id}"
+                    group-id="${params.group}"
                     active-tab="members"></agreement-group-details>`
             })
-            .when("/agreement-groups/:id/documents", {
+            .when("/agreement-groups/:group/documents", {
+                controller: 'requestHandler',
                 template: params => `<agreement-group-details
-                    group-id="${params.id}"
+                    group-id="${params.group}"
                     active-tab="documents"></agreement-group-details>`
             })
-            .when("/agreement-groups/:id/accomplishments", {
+            .when("/agreement-groups/:group/accomplishments", {
+                controller: 'requestHandler',
                 template: params => `<agreement-group-details
-                    group-id="${params.id}"
+                    group-id="${params.group}"
                     active-tab="accomplishments"></agreement-group-details>`
             })
-            .when("/agreement-groups/:id/patents", {
+            .when("/agreement-groups/:group/patents", {
+                controller: 'requestHandler',
                 template: params => `<agreement-group-details
-                    group-id="${params.id}"
+                    group-id="${params.group}"
                     active-tab="projects"></agreement-group-details>`
             })
             .when("/:group?/agreements/verified", {
