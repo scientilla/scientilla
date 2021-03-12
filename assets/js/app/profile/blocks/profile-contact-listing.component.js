@@ -7,6 +7,7 @@
             controller: profileContactListing,
             controllerAs: 'vm',
             bindings: {
+                user: '<',
                 profile: '<',
             }
         });
