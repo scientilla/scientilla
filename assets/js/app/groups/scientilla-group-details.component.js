@@ -87,8 +87,10 @@
             let query = {};
             if (vm.groupSlug) {
                 query.where = {slug: vm.groupSlug};
-            } else {
-                query = vm.groupId;
+            }
+
+            if (vm.groupId) {
+                query.where = {id: vm.groupId};
             }
             vm.group = await GroupsService.get(query);
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
