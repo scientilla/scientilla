@@ -139,8 +139,6 @@ module.exports = _.merge({}, BaseModel, {
                     code: rl.code,
                     description: rl.description
                 }));
-            if (project.pi)
-                project.searchPi = project.pi.map(p => `${p.email}-${p.name} ${p.surname}`).join(',');
             return project
         }
     },
