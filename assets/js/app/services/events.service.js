@@ -1,3 +1,5 @@
+// noinspection JSVoidFunctionReturnValueUsed
+
 (function () {
     angular.module("services")
         .factory("EventsService", service);
@@ -7,8 +9,8 @@
     ];
 
     function service($rootScope) {
-        var subscriptions = [];
-        var service = {
+        const subscriptions = [];
+        const service = {
             AUTH_LOGIN: 'auth.login',
             AUTH_LOGOUT: 'auth.logout',
             AUTH_USER_CHANGED: 'auth.userChanged',
@@ -51,6 +53,8 @@
 
             USER_PROFILE_CHANGED: 'userProfile.changed',
             USER_PROFILE_SAVED: 'userProfile.saved',
+
+            PROJECT_GROUP_CREATED: 'projectGroup.created',
         };
 
         service.publish = function (event, args) {
@@ -58,19 +62,19 @@
         };
 
         service.subscribe = function (subscriber, event, cb) {
-            var subscription = getOrCreateSubscription(subscriber);
+            const subscription = getOrCreateSubscription(subscriber);
             register(subscription, event, cb);
         };
 
         service.subscribeAll = function (subscriber, events, cb) {
-            var subscription = getOrCreateSubscription(subscriber);
+            const subscription = getOrCreateSubscription(subscriber);
             _(events).each(function (event) {
                 register(subscription, event, cb);
             });
         };
 
         service.unsubscribeAll = function (subscriber) {
-            var subscription = getOrCreateSubscription(subscriber);
+            const subscription = getOrCreateSubscription(subscriber);
 
             _(subscription.unregisterFunctions)
                 .forEach(function (unregister) {
