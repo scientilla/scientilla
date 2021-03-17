@@ -1,4 +1,4 @@
-/* global Importer, ExternalImporter */
+/* global Importer, ExternalImporter, AgreementsImporter */
 const Sails = require('sails');
 const _ = require('lodash');
 
@@ -22,7 +22,8 @@ module.exports = function (grunt) {
                 'patents': Importer.importPatents,
                 'directorates': Importer.importDirectorates,
                 'update-profile-groups': Importer.updateUserProfileGroups,
-                'analyse-user-import': Importer.analyseUserImport
+                'analyse-user-import': Importer.analyseUserImport,
+                'agreements': AgreementsImporter.importAgreements
             };
 
             try {
