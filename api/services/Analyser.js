@@ -6,6 +6,7 @@
 
 module.exports = {
     searchScientillaUsersInActiveDirectory,
+    searchForUsersWithWrongPentahoEmail,
     searchForGovAndControlUsers,
     searchForUsersWithoutDocumentsAndAccomplishments
 };
@@ -37,10 +38,33 @@ async function searchScientillaUsersInActiveDirectory() {
     sails.log.debug('There are ' + notFoundUsers.length + ' users that don\'t  exist in the Active Directory.');
 }
 
+async function searchForUsersWithWrongPentahoEmail() {
+    const options = ImportHelper.getUserImportRequestOptions('employees');
+    let employees = await ImportHelper.getEmployees(options);
+
+    employees = ImportHelper.filterEmployees(employees);
+
+    const ldapUsers = await Utils.getActiveDirectoryUsers();
+
+    const notFoundEmployees = [];
+
+    for (const employee of employees) {
+        const found = ldapUsers.find(
+            ldapUser => _.toLower(ldapUser.userPrincipalName) === _.toLower(employee.email)
+        );
+
+        if (_.isEmpty(found)) {
+            sails.log.debug(`Not found in LDAP: ${employee.email} ${employee.nome} ${employee.cognome}`);
+            notFoundEmployees.push(employee);
+        }
+    }
+    console.log(notFoundEmployees.length);
+}
+
 // Change to find not delete
 async function searchForGovAndControlUsers() {
-    const options = Importer.getEmployeesRequestOptions();
-    const employees = await Importer.getEmployees(options);
+    const options = ImportHelper.getUserImportRequestOptions('employees');
+    const employees = await ImportHelper.getEmployees(options);
     const boardEmployees = employees.filter(e => _.has(e, 'desc_sottoarea') && e.desc_sottoarea === 'Gov. & Control');
     const foundUsers = [];
 
@@ -56,7 +80,7 @@ async function searchForGovAndControlUsers() {
         }
 
         if (user) {
-            sails.log.debug('Found a user in Scientilla that should not be there: ' + user);
+            sails.log.debug(`Found a user in Scientilla that should not be there: ${user.username} ${user.name} ${user.surname}`);
             foundUsers.push(user);
         }
     }
