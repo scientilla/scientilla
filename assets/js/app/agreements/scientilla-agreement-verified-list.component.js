@@ -43,6 +43,8 @@
             where: {}
         };
 
+        const agreementPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'group'];
+
         /* jshint ignore:start */
         vm.$onInit = async function () {
             vm.researchEntity = await context.getResearchEntity();
@@ -68,11 +70,9 @@
 
         /* jshint ignore:start */
         async function onFilter(q) {
-            const favorites = q.where.favorites;
-            delete q.where.favorites;
             q.where.type = 'project_agreement'
 
-            vm.agreements = await ProjectService.get(vm.researchEntity, q, favorites);
+            vm.agreements = await ProjectService.get(vm.researchEntity, q, false, agreementPopulates);
         }
 
         /* jshint ignore:end */
