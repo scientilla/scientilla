@@ -240,6 +240,7 @@ module.exports = _.merge({}, BaseModel, {
 
         const group = await Group.create({
             name: prj.title,
+            slug: prj.title + prj.id,
             type: GroupTypes.PROJECT,
             active: true
         });
