@@ -1,4 +1,4 @@
-/* global require, Project,ResearchItemTypes, ResearchItemProjectCompetitive, ResearchItemProjectIndustrial, ResearchItemProjectAgreement, ResearchItemKinds, Group, GroupTypes  */
+/* global require, Project,ResearchItemTypes, ResearchItemProjectCompetitive, ResearchItemProjectIndustrial, ResearchItemProjectAgreement, ResearchItemKinds, Group, GroupTypes, Utils  */
 'use strict';
 
 const _ = require('lodash');
@@ -240,7 +240,7 @@ module.exports = _.merge({}, BaseModel, {
 
         const group = await Group.create({
             name: prj.title,
-            slug: prj.title + prj.id,
+            slug: Utils.stringToSlug(prj.title + prj.id),
             type: GroupTypes.PROJECT,
             active: true
         });

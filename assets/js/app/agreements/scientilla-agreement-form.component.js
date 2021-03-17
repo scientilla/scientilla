@@ -25,7 +25,8 @@
         'agreementFieldRules',
         'agreementFields',
         'FormStatus',
-        'ValidateService'
+        'ValidateService',
+        'EventsService'
     ];
 
     function scientillaAgreementFormController(
@@ -38,7 +39,8 @@
         agreementFieldRules,
         agreementFields,
         FormStatus,
-        ValidateService
+        ValidateService,
+        EventsService
     ) {
         const vm = this;
 
@@ -161,11 +163,13 @@
             if (vm.agreement.id) {
                 filteredAgreement.id = vm.agreement.id;
                 await ProjectService.update(vm.researchEntity, filteredAgreement);
+                EventsService.publish(EventsService.DRAFT_UPDATED, vm.agreement);
             } else {
                 const draft = await ProjectService.create(vm.researchEntity, filteredAgreement);
                 if (draft && draft.researchItem && draft.researchItem.id) {
                     vm.agreement.id = draft.researchItem.id;
                 }
+                EventsService.publish(EventsService.DRAFT_CREATED, vm.agreement);
             }
 
             if (updateState) {

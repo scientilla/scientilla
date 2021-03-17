@@ -17,15 +17,15 @@
 
     scientillaGenerateAgreementGroupFormController.$inject = [
         'ProjectService',
-        'UsersService'
+        'UsersService',
+        'EventsService'
     ];
 
-    function scientillaGenerateAgreementGroupFormController(ProjectService, UsersService) {
+    function scientillaGenerateAgreementGroupFormController(ProjectService, UsersService, EventsService) {
         const vm = this;
 
         vm.cancel = close;
         vm.generateGroup = generateGroup;
-        vm.viewGroup = viewGroup;
         vm.getUsersQuery = getUsersQuery;
 
         /* jshint ignore:start */
@@ -55,11 +55,8 @@
 
         async function generateGroup() {
             await ProjectService.generateGroup(vm.agreement, vm.administrators);
+            EventsService.publish(EventsService.PROJECT_GROUP_CREATED, vm.agreement);
             close();
-        }
-
-        function viewGroup() {
-
         }
 
         /* jshint ignore:end */
