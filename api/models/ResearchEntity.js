@@ -81,6 +81,7 @@ module.exports = _.merge({}, BaseModel, {
             return;
 
         const entity = await ResearchEntity.create({type: type});
+        re.researchEntity = entity.id;
         await Model.update({id: re.id}, {researchEntity: entity.id});
     },
     async getAliases(researchEntity) {
