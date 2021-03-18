@@ -1378,15 +1378,24 @@ async function saveProfile(req) {
     if (hasFiles) {
         const imagePath = path.join(pathProfileImages, researchEntityId);
         const filePath = path.resolve(sails.config.appPath, imagePath);
-        let newProfileImage;
 
         await new Promise(function (resolve, reject) {
 
             let filename = req.file('profileImage')._files[0].stream.filename;
-            const prefix = '200x200_';
             const originalImage = path.join(filePath, filename);
-            const croppedImage = path.join(filePath, prefix + filename);
-            newProfileImage = prefix + filename;
+
+            const widthSmall = 200;
+            const heightSmall = 200;
+            const prefixSmall = `${widthSmall}x${heightSmall}_`;
+            const croppedImageSmall = path.join(filePath, prefixSmall + filename);
+
+            const widthBig = 600;
+            const heightBig = 600;
+            const prefixBig = `${widthBig}x${heightBig}_`;
+            const croppedImageBig = path.join(filePath, prefixBig + filename);
+
+            newProfileImageSmall = prefixSmall + filename;
+            newProfileImageBig = prefixBig + filename;
 
             req.file('profileImage').upload({
                 dirname: filePath,
@@ -1397,14 +1406,18 @@ async function saveProfile(req) {
                 }
 
                 await sharp(originalImage)
-                    .resize(200, 200)
-                    .toFile(croppedImage);
+                    .resize(widthSmall, heightSmall)
+                    .toFile(croppedImageSmall);
+
+                await sharp(originalImage)
+                    .resize(widthBig, heightBig)
+                    .toFile(croppedImageBig);
 
                 if (files.length > 0) {
                     let src = files[0].fd.split('/');
                     src = src[src.length - 1];
 
-                    profile.image.value = prefix + src;
+                    profile.image.value = prefixBig + src;
                 }
 
                 resolve();
@@ -1417,7 +1430,7 @@ async function saveProfile(req) {
 
         // Remove all other profile images
         for (const file of files) {
-            if (newProfileImage && newProfileImage !== file) {
+            if (![newProfileImageSmall, newProfileImageBig].includes(file)) {
                 await unlink(path.join(filePath, file));
             }
         }

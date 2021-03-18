@@ -12,7 +12,7 @@
             display: inline-block;
         }
     }
-    
+
     .profile-tabs{
         & > .nav-tabs{
             display: none;
@@ -222,8 +222,6 @@
         }
     }
 
-
-
     .iit-website-options{
         @include normalize-listing;
 
@@ -244,6 +242,11 @@
         .fas{
             min-width: 1.5rem;
         }
+    }
+
+    .image-info{
+        display: block;
+        margin-top: .5rem;
     }
 
     .image-container{
