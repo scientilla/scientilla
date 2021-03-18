@@ -7,8 +7,7 @@
 module.exports = {
     searchScientillaUsersInActiveDirectory,
     searchForUsersWithWrongPentahoEmail,
-    searchForGovAndControlUsers,
-    searchForUsersWithoutDocumentsAndAccomplishments
+    searchForGovAndControlUsers
 };
 
 async function searchScientillaUsersInActiveDirectory() {
@@ -58,7 +57,7 @@ async function searchForUsersWithWrongPentahoEmail() {
             notFoundEmployees.push(employee);
         }
     }
-    console.log(notFoundEmployees.length);
+    sails.log.debug(notFoundEmployees.length);
 }
 
 // Change to find not delete
@@ -86,46 +85,4 @@ async function searchForGovAndControlUsers() {
     }
 
     sails.log.debug('There are ' + foundUsers.length + ' users that shouldn\'t be in the database.');
-}
-
-async function searchForUsersWithoutDocumentsAndAccomplishments() {
-    const usersWithDocuments = [];
-    const usersWithoutDocuments = [];
-    const usersWithAccomplishments = [];
-    const usersWithoutAccomplishments = [];
-
-    const users = await User.find();
-
-    for (const u of users) {
-        const user = await User.findOne({ id: u.id }).populate('documents');
-        if (user.documents.length > 0) {
-            usersWithDocuments.push(user.id);
-        } else {
-            usersWithoutDocuments.push(user.id);
-        }
-    }
-
-    const researchEntities = await ResearchEntity.find({ type: 'user' });
-    for (const r of researchEntities) {
-        const researchEntity = await ResearchEntity.findOne({ id: r.id }).populate(['user', 'accomplishments']);
-        if (_.isNil(researchEntity.user[0]) || _.isNil(researchEntity.user[0].id)) {
-            continue;
-        }
-
-        if (researchEntity.accomplishments.length > 0) {
-            usersWithAccomplishments.push(researchEntity.user[0].id);
-        } else {
-            usersWithoutAccomplishments.push(researchEntity.user[0].id);
-        }
-    }
-
-    const userIdsWithoutDocumentsAndAccomplishments = usersWithoutDocuments.filter(
-        id => usersWithoutAccomplishments.includes(id)
-    );
-
-    sails.log.debug('Found ' + userIdsWithoutDocumentsAndAccomplishments.length + ' without any documents and accomplishments');
-
-    await User.destroy({ id: userIdsWithoutDocumentsAndAccomplishments });
-
-    return userIdsWithoutDocumentsAndAccomplishments;
 }
