@@ -22,6 +22,9 @@
                 <img ng-src="{{ vm.pathProfileImages + vm.profile.image.value }}" alt="" class="img-fluid rounded-circle profile-image">
                 <button class="btn-remove-image" ng-click="vm.profile.image.value = vm.profileImage = ''"><i class="fas fa-trash"></i></button>
             </div>
+            <em
+                class="image-info"
+                ng-if="!vm.profile.image.value">We suggest to upload an image with the minimum resolution of 600px by 600px and a maximum file size of 500KB.</em>
             <scientilla-field-errors
                 errors="vm.profile.image.errors.value"></scientilla-field-errors>
         </div>
