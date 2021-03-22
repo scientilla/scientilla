@@ -21,6 +21,25 @@
           "type": "string"
         }
       }
+    },
+    "notEmptyDate": {
+      "type": "string",
+      "format": "date-time",
+      "errorMessage": "This field is required."
+    },
+    "date": {
+      "anyOf": [
+        {
+          "type": "string",
+          "format": "date-time"
+        },
+        {
+          "type": "string",
+          "maxLength": 0
+        },
+        { "type": "null" }
+      ],
+      "errorMessage": "This should be a valid date."
     }
   }
 }
