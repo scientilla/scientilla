@@ -199,7 +199,7 @@
                             duplicateIDsOfDocument.push(duplicateID);
                         }
                     }
-                })
+                });
             }
 
             if (_.has(duplicate, 'duplicates')) {
@@ -218,7 +218,7 @@
                             duplicateIDsOfDuplicate.push(duplicateID);
                         }
                     }
-                })
+                });
             }
 
             duplicateIDsOfDocument.forEach(id => {
