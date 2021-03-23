@@ -41,7 +41,7 @@
                         </button>
                         <button
                             class="btn btn-warning"
-                            ng-click="vm.compareDocuments(d, d.getComparisonDuplicates(), vm.category)"
+                            ng-click="vm.compareDocuments(d, d.getComparisonDuplicates(), vm.documentCategories.VERIFIED)"
                             ng-disabled="!d.isValid()"
                             type="button"
                             uib-tooltip="Open the comparison form"
