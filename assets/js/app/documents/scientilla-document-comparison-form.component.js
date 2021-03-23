@@ -71,6 +71,8 @@
         };
 
         vm.collapsed = true;
+        vm.isReplaceable = false;
+        vm.firstDuplicateIsSelected = false;
 
         function keepDocument() {
             executeOnSubmit({option: documentActions.COMPARE.KEEP_DOCUMENT});
@@ -176,16 +178,69 @@
             return _.get(documentTypes.find(dt => dt.key === document.type), 'label');
         }
 
+        function isReplaceable(duplicate) {
+            let replaceable = true;
+            const duplicateIDsOfDocument = [];
+            const duplicateIDsOfDuplicate = [];
+
+            if (_.has(vm.document, 'duplicates')) {
+                vm.document.duplicates.map(d => {
+                    if (_.has(d, 'duplicate') && _.has(d, 'document')) {
+                        let duplicateID;
+                        if (d.duplicate === vm.document.id) {
+                            duplicateID = d.document;
+                        }
+
+                        if (d.document === vm.document.id) {
+                            duplicateID = d.duplicate;
+                        }
+
+                        if (duplicateID && !duplicateIDsOfDocument.includes(duplicateID)) {
+                            duplicateIDsOfDocument.push(duplicateID);
+                        }
+                    }
+                })
+            }
+
+            if (_.has(duplicate, 'duplicates')) {
+                duplicate.duplicates.map(d => {
+                    if (_.has(d, 'duplicate') && _.has(d, 'document')) {
+                        let duplicateID;
+                        if (d.duplicate === duplicate.id) {
+                            duplicateID = d.document;
+                        }
+
+                        if (d.document === duplicate.id) {
+                            duplicateID = d.duplicate;
+                        }
+
+                        if (duplicateID && duplicateID !== vm.document.id && !duplicateIDsOfDuplicate.includes(duplicateID)) {
+                            duplicateIDsOfDuplicate.push(duplicateID);
+                        }
+                    }
+                })
+            }
+
+            duplicateIDsOfDocument.forEach(id => {
+                if (duplicateIDsOfDuplicate.includes(id)) {
+                    replaceable = false;
+                }
+            });
+
+            return replaceable;
+        }
+
         vm.positionTop = 0;
         let tmpDuplicate = false;
-        let timer;
 
         function mouseover(duplicate, event) {
             if ($window.innerWidth > 767) {
-                timer = $timeout(function () {
+                $timeout(function () {
                     if (duplicate !== tmpDuplicate) {
                         tmpDuplicate = duplicate;
 
+                        vm.isReplaceable = isReplaceable(duplicate);
+                        vm.firstDuplicateIsSelected = true;
                         vm.positionTop = event.currentTarget.offsetTop;
 
                         compare(duplicate);
