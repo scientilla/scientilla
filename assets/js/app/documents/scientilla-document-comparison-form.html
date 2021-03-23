@@ -204,7 +204,7 @@
 
             <li class="column-duplicates">
                 <div class="title-container">
-                    <h4 class="title">Similar documents</h4>
+                    <h4 class="title">Similar verified {{ vm.duplicates.length === 1 ? 'document' : 'documents' }}</h4>
                 </div>
 
                 <ul class="document-duplicates-listing js-document-duplicates-listing">
@@ -370,22 +370,42 @@
                             <li>
                                 <button
                                     ng-click="vm.useDuplicate(duplicate)"
+                                    ng-disabled="!vm.isReplaceable"
+                                    ng-class="{'btn-danger' : !vm.isReplaceable}"
                                     class="btn btn-primary"
                                     title="Replace the similar document with the source document">
                                     Replace this document
                                 </button>
+
+                                <span
+                                    class="not-replaceable"
+                                    ng-if="!vm.isReplaceable"
+                                >
+                                    This similar verified document has duplicates of it's own, please fix this first in the verified section.
+                                </span>
                             </li>
                         </ul>
 
                         <div class="button-replace-container">
-                            <span>Replace</span>
+                            <span
+                                ng-class="{'text-danger' : vm.firstDuplicateIsSelected && !vm.isReplaceable}"
+                            >Replace</span>
 
                             <button
                                 ng-click="vm.useDuplicate()"
+                                ng-disabled="!vm.isReplaceable"
+                                ng-class="{'is-replaceable': vm.isReplaceable, 'btn-danger' : vm.firstDuplicateIsSelected && !vm.isReplaceable}"
                                 class="btn btn-primary"
                                 title="Replace the similar document with the source document">
                                 <i class="fas fa-long-arrow-alt-right"></i>
                             </button>
+
+                            <span
+                                class="not-replaceable"
+                                ng-if="vm.firstDuplicateIsSelected && !vm.isReplaceable"
+                            >
+                                This similar verified document has duplicates of it's own, please fix this first in the verified section.
+                            </span>
                         </div>
                     </li>
                 </ul>

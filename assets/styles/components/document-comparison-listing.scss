@@ -15,7 +15,7 @@
     margin-top: 3rem;
 
     .column-icon{
-        width: 7rem;
+        width: 10rem;
     }
 
     .column-duplicates,
@@ -69,8 +69,9 @@
             top: 50%;
             right: auto;
             bottom: auto;
-            left: -7rem;
+            left: -11rem;
             display: block;
+            width: 10rem;
             margin-top: -3.6rem;
             margin-left: 0px;
             opacity: 0;
@@ -84,6 +85,12 @@
                 margin-bottom: .5rem;
                 color: $gray;
                 font-weight: bold;
+
+                &.not-replaceable{
+                    font-size: 1rem;
+                    font-weight: 400;
+                    color: $danger;
+                }
             }
 
             .btn{
@@ -95,17 +102,25 @@
                     margin-left: 1.5rem;
                 }
 
-                &:hover{
-                    i{
-                        opacity: 0;
-                        -webkit-animation: arrow-right 1.5s ease-in-out infinite;
-                        -moz-animation:    arrow-right 1.5s ease-in-out infinite;
-                        -o-animation:      arrow-right 1.5s ease-in-out infinite;
-                        animation:         arrow-right 1.5s ease-in-out infinite;
+                &.is-replaceable{
+                    &:hover{
+                        i{
+                            opacity: 0;
+                            -webkit-animation: arrow-right 1.5s ease-in-out infinite;
+                            -moz-animation:    arrow-right 1.5s ease-in-out infinite;
+                            -o-animation:      arrow-right 1.5s ease-in-out infinite;
+                            animation:         arrow-right 1.5s ease-in-out infinite;
+                        }
                     }
                 }
             }
         }
+    }
+
+    .not-replaceable{
+        display: block;
+        margin-top: .5rem;
+        color: $danger;
     }
 
     .document-kind{
