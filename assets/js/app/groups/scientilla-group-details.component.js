@@ -7,8 +7,7 @@
             templateUrl: 'partials/scientilla-group-details.html',
             controllerAs: 'vm',
             bindings: {
-                groupId: '<?',
-                groupSlug: '<?',
+                groupParam: '<',
                 activeTab: '@?'
             }
         });
@@ -17,14 +16,16 @@
         'GroupsService',
         'ResearchEntitiesService',
         'groupTypes',
-        '$location'
+        '$location',
+        '$window'
     ];
 
     function GroupDetailsController(
         GroupsService,
         ResearchEntitiesService,
         groupTypes,
-        $location
+        $location,
+        $window
     ) {
         const vm = this;
 
@@ -85,33 +86,39 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
             let query = {};
-            if (vm.groupSlug) {
-                query.where = {slug: vm.groupSlug};
-            }
 
-            if (vm.groupId) {
-                query.where = {id: vm.groupId};
-            }
-            vm.group = await GroupsService.get(query);
-            vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
-
-            let redirect = false;
-            if (vm.group.type === groupTypes.PROJECT) {
-                const tab = vm.projectTabIdentifiers.find(t => t.slug === vm.activeTab);
-
-                if (!tab) {
-                    redirect = true;
-                }
+            if (/^\d+$/.test(vm.groupParam)) {
+                query.where = { id: vm.groupParam };
             } else {
-                const tab = vm.defaultTabIdentifiers.find(t => t.slug === vm.activeTab);
-
-                if (!tab) {
-                    redirect = true;
-                }
+                query.where = { slug: vm.groupParam };
             }
 
-            if (redirect) {
-                $location.url(`/${ vm.group.slug }/info`);
+            vm.group = await GroupsService.get(query);
+
+            if (_.isUndefined(vm.group)) {
+                $window.location.href = '/#/404';
+            } else {
+
+                vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
+
+                let redirect = false;
+                if (vm.group.type === groupTypes.PROJECT) {
+                    const tab = vm.projectTabIdentifiers.find(t => t.slug === vm.activeTab);
+
+                    if (!tab) {
+                        redirect = true;
+                    }
+                } else {
+                    const tab = vm.defaultTabIdentifiers.find(t => t.slug === vm.activeTab);
+
+                    if (!tab) {
+                        redirect = true;
+                    }
+                }
+
+                if (redirect) {
+                    $location.url(`/groups/${ vm.group.slug }/info`);
+                }
             }
         };
         /* jshint ignore:end */
