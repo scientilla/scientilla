@@ -55,6 +55,7 @@
             USER_PROFILE_SAVED: 'userProfile.saved',
 
             PROJECT_GROUP_CREATED: 'projectGroup.created',
+            PROJECT_GROUP_DELETED: 'projectGroup.deleted',
         };
 
         service.publish = function (event, args) {

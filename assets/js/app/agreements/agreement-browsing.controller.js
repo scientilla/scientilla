@@ -6,10 +6,11 @@
     AgreementBrowsingController.$inject = [
         'ProjectService',
         'Notification',
-        'AuthService'
+        'AuthService',
+        'EventsService'
     ];
 
-    function AgreementBrowsingController(ProjectService, Notification, AuthService) {
+    function AgreementBrowsingController(ProjectService, Notification, AuthService, EventsService) {
         const vm = this;
 
         vm.user = AuthService.user;
@@ -33,6 +34,7 @@
             agreement.remove()
                 .then(function () {
                     Notification.success("Agreement deleted");
+                    EventsService.publish(EventsService.PROJECT_GROUP_DELETED, agreement);
                     refreshList();
                 })
                 .catch(function () {

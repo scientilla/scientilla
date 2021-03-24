@@ -60,6 +60,11 @@
                 EventsService.CONTEXT_CHANGE
             ], refresh);
 
+            EventsService.subscribeAll(vm, [
+                EventsService.PROJECT_GROUP_CREATED,
+                EventsService.PROJECT_GROUP_DELETED
+            ], reloadUser);
+
             vm.profile = await UsersService.getProfile(AuthService.user.researchEntity);
 
             refresh();
@@ -72,6 +77,14 @@
 
         const prefix = '#/';
         let subResearchEntity = context.getSubResearchEntity();
+
+        /* jshint ignore:start */
+        async function reloadUser() {
+            await AuthService.refreshUserAccount();
+            vm.isLogged = AuthService.isLogged;
+            vm.user = AuthService.user;
+        }
+        /* jshint ignore:end */
 
         function refresh() {
             vm.isLogged = AuthService.isLogged;
