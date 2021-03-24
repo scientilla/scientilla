@@ -80,9 +80,9 @@
 
         /* jshint ignore:start */
         async function reloadUser() {
-            await AuthService.refreshUserAccount();
+            /*await AuthService.refreshUserAccount();
             vm.isLogged = AuthService.isLogged;
-            vm.user = AuthService.user;
+            vm.user = AuthService.user;*/
         }
         /* jshint ignore:end */
 
