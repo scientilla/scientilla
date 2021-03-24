@@ -370,8 +370,8 @@
                             <li>
                                 <button
                                     ng-click="vm.useDuplicate(duplicate)"
-                                    ng-disabled="!vm.isReplaceable"
-                                    ng-class="{'btn-danger' : !vm.isReplaceable}"
+                                    ng-disabled="!duplicate.isReplaceable"
+                                    ng-class="{'btn-danger' : !duplicate.isReplaceable}"
                                     class="btn btn-primary"
                                     title="Replace the similar document with the source document">
                                     Replace this document
@@ -379,14 +379,17 @@
 
                                 <span
                                     class="not-replaceable"
-                                    ng-if="!vm.isReplaceable"
+                                    ng-if="!duplicate.isReplaceable"
                                 >
-                                    This similar verified document has duplicates of it's own, please fix this first in the verified section.
+                                    The similar document (already verified) has duplicates of its own: please remove first the duplicates in the Verified section.
                                 </span>
                             </li>
                         </ul>
 
-                        <div class="button-replace-container">
+                        <div
+                            class="button-replace-container"
+                            ng-class="{'is-replaceable': vm.isReplaceable, 'not-replaceable' : !vm.isReplaceable}"
+                        >
                             <span
                                 ng-class="{'text-danger' : vm.firstDuplicateIsSelected && !vm.isReplaceable}"
                             >Replace</span>
@@ -404,7 +407,7 @@
                                 class="not-replaceable"
                                 ng-if="vm.firstDuplicateIsSelected && !vm.isReplaceable"
                             >
-                                This similar verified document has duplicates of it's own, please fix this first in the verified section.
+                                The similar document on the right (already verified) has duplicates of its own: please remove first the duplicates in the Verified section.
                             </span>
                         </div>
                     </li>

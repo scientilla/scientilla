@@ -67,6 +67,10 @@
 
             if (vm.duplicates.length > 0) {
                 compare(vm.duplicates[0]);
+
+                vm.duplicates.forEach(d => {
+                    d.isReplaceable = isReplaceable(d);
+                });
             }
         };
 
@@ -180,46 +184,13 @@
 
         function isReplaceable(duplicate) {
             let replaceable = true;
-            const duplicateIDsOfDocument = [];
-            const duplicateIDsOfDuplicate = [];
 
-            if (_.has(vm.document, 'duplicates')) {
-                vm.document.duplicates.map(d => {
-                    if (_.has(d, 'duplicate') && _.has(d, 'document')) {
-                        let duplicateID;
-                        if (d.duplicate === vm.document.id) {
-                            duplicateID = d.document;
-                        }
+            const duplicateIDsOfDocument = vm.document.duplicates.filter(d => d.kind === 'v')
+                .map(d => d.duplicate === vm.document.id ? d.document : d.duplicate);
 
-                        if (d.document === vm.document.id) {
-                            duplicateID = d.duplicate;
-                        }
-
-                        if (duplicateID && !duplicateIDsOfDocument.includes(duplicateID)) {
-                            duplicateIDsOfDocument.push(duplicateID);
-                        }
-                    }
-                });
-            }
-
-            if (_.has(duplicate, 'duplicates')) {
-                duplicate.duplicates.map(d => {
-                    if (_.has(d, 'duplicate') && _.has(d, 'document')) {
-                        let duplicateID;
-                        if (d.duplicate === duplicate.id) {
-                            duplicateID = d.document;
-                        }
-
-                        if (d.document === duplicate.id) {
-                            duplicateID = d.duplicate;
-                        }
-
-                        if (duplicateID && duplicateID !== vm.document.id && !duplicateIDsOfDuplicate.includes(duplicateID)) {
-                            duplicateIDsOfDuplicate.push(duplicateID);
-                        }
-                    }
-                });
-            }
+            const duplicateIDsOfDuplicate = duplicate.duplicates.filter(d => d.kind === 'v')
+                .map(d => d.duplicate === duplicate.id ? d.document : d.duplicate)
+                .filter(d => d !== vm.document.id);
 
             duplicateIDsOfDocument.forEach(id => {
                 if (duplicateIDsOfDuplicate.includes(id)) {
