@@ -1,0 +1,27 @@
+<scientilla-print-header class="d-none d-print-block"></scientilla-print-header>
+
+<div class="main-container js-main-container">
+    <header class="header" fixed-header>
+        <div class="container-fluid">
+            <ul class="header-listing">
+                <li>
+                    <a href="#/" class="login-link">Login</a>
+                </li>
+                <li>
+                    <a href="https://iit.it" class="iit-link">
+                        <img
+                            class="logo"
+                            ng-if="vm.customizations.logos && vm.customizations.logos.header && vm.customizations.logos.header.src"
+                            ng-src="{{ vm.customizations.logos.header.src }}"
+                            alt="{{ vm.customizations.logos.header.name }}">
+                        <span class="d-none">Istituto Italiano di Tecnologia</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="main-view" ng-transclude></div>
+</div>
+
+<scientilla-footer class="footer-container"></scientilla-footer>

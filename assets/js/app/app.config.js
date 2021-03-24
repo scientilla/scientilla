@@ -11,7 +11,8 @@
         $routeProvider
             .when("/", {
                 redirectTo: '/profile'
-            });
+            })
+            .otherwise({ redirectTo: '/404' });
 
         RestangularProvider.setBaseUrl('/api/v1');
 
@@ -91,6 +92,18 @@
                 ModalService.dismiss(null);
                 AuthService.logout();
                 return false;
+            }
+
+            if (response.status === 403) {
+                path.goTo('/403');
+            }
+
+            if (response.status === 404) {
+                path.goTo('/404');
+            }
+
+            if (response.status === 500) {
+                path.goTo('/500');
             }
 
             return true;

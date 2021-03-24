@@ -28,7 +28,5 @@
         if (activeGroup) {
             return context.setSubResearchEntity(activeGroup);
         }
-
-        path.goTo('/');
     }
 })();
