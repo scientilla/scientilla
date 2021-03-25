@@ -57,7 +57,8 @@ module.exports = function (grunt) {
                 src: [
                     'angularjs-color-picker/dist/angularjs-color-picker.css',
                     'angularjs-color-picker/dist/themes/angularjs-color-picker-bootstrap.css',
-                    'angularjs-slider/dist/rzslider.css'
+                    'angularjs-slider/dist/rzslider.css',
+                    'textangular/dist/textAngular.css'
                 ],
                 flatten: true,
                 dest: '.tmp/public/styles/dependencies'
@@ -71,7 +72,10 @@ module.exports = function (grunt) {
                     'angularjs-color-picker/dist/angularjs-color-picker.js',
                     'angular-ui-sortable/dist/sortable.js',
                     'angularjs-slider/dist/rzslider.min.js',
-                    'iso-3166-country-codes-angular/dist/iso-3166-country-codes-angular.min.js'
+                    'iso-3166-country-codes-angular/dist/iso-3166-country-codes-angular.min.js',
+                    'textangular/dist/textAngular-rangy.min.js',
+                    'textangular/dist/textAngular-sanitize.min.js',
+                    'textangular/dist/textAngular.min.js'
                 ],
                 flatten: true,
                 dest: '.tmp/public/js/dependencies'

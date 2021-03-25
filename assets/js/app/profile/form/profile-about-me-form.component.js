@@ -12,9 +12,9 @@
             }
         });
 
-    profileAboutMeForm.$inject = ['ProfileService', 'AuthService', 'pathProfileImages', '$scope'];
+    profileAboutMeForm.$inject = ['ProfileService', 'AuthService', 'pathProfileImages', '$scope', 'taOptions', 'taTools'];
 
-    function profileAboutMeForm(ProfileService, AuthService, pathProfileImages, $scope) {
+    function profileAboutMeForm(ProfileService, AuthService, pathProfileImages, $scope, taOptions, taTools) {
         const vm = this;
 
         let watchers = [];
@@ -35,6 +35,31 @@
                     checkImage();
                 })
             );
+
+            taOptions.toolbar = [
+                ['p', 'quote'],
+                ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
+                ['indent', 'outdent'],
+                ['insertLink']
+            ];
+
+            taOptions.defaultTagAttributes.a.target = '_blank';
+
+            taTools.p.iconclass = 'fas fa-paragraph';
+            taTools.p.buttontext = '';
+            taTools.quote.iconclass = 'fas fa-quote-right';
+            taTools.bold.iconclass = 'fas fa-bold';
+            taTools.italics.iconclass = 'fas fa-italic';
+            taTools.underline.iconclass = 'fas fa-underline';
+            taTools.strikeThrough.iconclass = 'fas fa-strikethrough';
+            taTools.ul.iconclass = 'fas fa-list-ul';
+            taTools.ol.iconclass = 'fas fa-list-ol';
+            taTools.redo.iconclass = 'fas fa-redo';
+            taTools.undo.iconclass = 'fas fa-undo';
+            taTools.clear.iconclass = 'fas fa-ban';
+            taTools.indent.iconclass = 'fas fa-indent';
+            taTools.outdent.iconclass = 'fas fa-outdent';
+            taTools.insertLink.iconclass = 'fas fa-link';
         };
 
         vm.$onDestroy = function () {
@@ -82,6 +107,14 @@
                 }
             }
         }
+
+        vm.format = function (html) {
+            return html.replace(/(<\/?(?:a|p|ul|ol|li|strong|b|em|i|u|strike|blockquote|br)[^>]*>)|<[^>]+>/ig, '$1')
+                .replace(/ rel=("|\')(.*?)("|\')/gm, '')
+                .replace(/ style=("|\')(.*?)("|\')/gm, '')
+                .replace(/ class=("|\')(.*?)("|\')/gm, '')
+                .replace(/ id=("|\')(.*?)("|\')/gm, '');
+        };
     }
 
 })();
