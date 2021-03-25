@@ -183,22 +183,15 @@
         }
 
         function isReplaceable(duplicate) {
-            let replaceable = true;
+            if (vm.category === vm.documentCategories.VERIFIED) {
+                return true;
+            }
 
-            const duplicateIDsOfDocument = vm.document.duplicates.filter(d => d.kind === 'v')
-                .map(d => d.duplicate === vm.document.id ? d.document : d.duplicate);
-
-            const duplicateIDsOfDuplicate = duplicate.duplicates.filter(d => d.kind === 'v')
+            const duplicateIDsOfDuplicate = duplicate.duplicates.filter(d => d.duplicateKind === 'v')
                 .map(d => d.duplicate === duplicate.id ? d.document : d.duplicate)
                 .filter(d => d !== vm.document.id);
 
-            duplicateIDsOfDocument.forEach(id => {
-                if (duplicateIDsOfDuplicate.includes(id)) {
-                    replaceable = false;
-                }
-            });
-
-            return replaceable;
+            return duplicateIDsOfDuplicate.length === 0;
         }
 
         vm.positionTop = 0;
