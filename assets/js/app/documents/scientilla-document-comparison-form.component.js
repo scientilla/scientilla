@@ -67,6 +67,10 @@
 
             if (vm.duplicates.length > 0) {
                 compare(vm.duplicates[0]);
+
+                vm.duplicates.forEach(d => {
+                    d.isReplaceable = isReplaceable(d);
+                });
             }
         };
 
@@ -179,55 +183,15 @@
         }
 
         function isReplaceable(duplicate) {
-            let replaceable = true;
-            const duplicateIDsOfDocument = [];
-            const duplicateIDsOfDuplicate = [];
-
-            if (_.has(vm.document, 'duplicates')) {
-                vm.document.duplicates.map(d => {
-                    if (_.has(d, 'duplicate') && _.has(d, 'document')) {
-                        let duplicateID;
-                        if (d.duplicate === vm.document.id) {
-                            duplicateID = d.document;
-                        }
-
-                        if (d.document === vm.document.id) {
-                            duplicateID = d.duplicate;
-                        }
-
-                        if (duplicateID && !duplicateIDsOfDocument.includes(duplicateID)) {
-                            duplicateIDsOfDocument.push(duplicateID);
-                        }
-                    }
-                });
+            if (vm.category === vm.documentCategories.VERIFIED) {
+                return true;
             }
 
-            if (_.has(duplicate, 'duplicates')) {
-                duplicate.duplicates.map(d => {
-                    if (_.has(d, 'duplicate') && _.has(d, 'document')) {
-                        let duplicateID;
-                        if (d.duplicate === duplicate.id) {
-                            duplicateID = d.document;
-                        }
+            const duplicateIDsOfDuplicate = duplicate.duplicates.filter(d => d.duplicateKind === 'v')
+                .map(d => d.duplicate === duplicate.id ? d.document : d.duplicate)
+                .filter(d => d !== vm.document.id);
 
-                        if (d.document === duplicate.id) {
-                            duplicateID = d.duplicate;
-                        }
-
-                        if (duplicateID && duplicateID !== vm.document.id && !duplicateIDsOfDuplicate.includes(duplicateID)) {
-                            duplicateIDsOfDuplicate.push(duplicateID);
-                        }
-                    }
-                });
-            }
-
-            duplicateIDsOfDocument.forEach(id => {
-                if (duplicateIDsOfDuplicate.includes(id)) {
-                    replaceable = false;
-                }
-            });
-
-            return replaceable;
+            return duplicateIDsOfDuplicate.length === 0;
         }
 
         vm.positionTop = 0;

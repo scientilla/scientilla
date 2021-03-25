@@ -255,7 +255,10 @@
             .selected-duplicate{
                 .button-replace-container{
                     opacity: 1;
-                    pointer-events: auto;
+
+                    &.is-replaceable{
+                        pointer-events: auto;
+                    }
                 }
             }
         }
