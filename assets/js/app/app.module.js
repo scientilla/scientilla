@@ -13,6 +13,7 @@
         'color.picker',
         'rzSlider',
         'iso-3166-country-codes',
+        'textAngular',
 
         /* Feature areas */
         'users',
