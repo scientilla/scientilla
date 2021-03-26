@@ -193,6 +193,16 @@
         },
         "role": {
           "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "maxLength": 75,
+                  "errorMessage": "This field is limited 75 characters!"
+                }
+              }
+            },
             { "$ref": "profileDefs#/definitions/stringValue" },
             { "$ref": "profileDefs#/definitions/privacy" },
             { "$ref": "profileDefs#/definitions/privacyDefaultHidden" }
@@ -200,6 +210,16 @@
         },
         "website": {
           "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "maxLength": 75,
+                  "errorMessage": "This field is limited 75 characters!"
+                }
+              }
+            },
             { "$ref": "profileDefs#/definitions/urlValue" },
             { "$ref": "profileDefs#/definitions/privacy" },
             { "$ref": "profileDefs#/definitions/privacyDefaultHidden" }
