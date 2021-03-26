@@ -82,6 +82,8 @@
                     vm.context === 'roleCategory' ||
                     vm.context === 'phone' ||
                     vm.context === 'gender' ||
+                    vm.context === 'nationality' ||
+                    vm.context === 'dateOfBirth' ||
                     groupsRegex.test(vm.context)
                 :
                     if (vm.profile.hidden) {

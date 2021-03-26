@@ -202,8 +202,8 @@
                     return false;
                 case 'about-me':
                     if (
-                        angular.toJson(originalProfile.image.value) !== angular.toJson(vm.profile.image.value) ||
-                        angular.toJson(originalProfile.image.privacy) !== angular.toJson(vm.profile.image.privacy) ||
+                        (originalProfile.image && angular.toJson(originalProfile.image.value) !== angular.toJson(vm.profile.image.value)) ||
+                        (originalProfile.image && angular.toJson(originalProfile.image.privacy) !== angular.toJson(vm.profile.image.privacy)) ||
                         vm.profile.image.file ||
                         angular.toJson(originalProfile.titles) !== angular.toJson(vm.profile.titles) ||
                         angular.toJson(originalProfile.description) !== angular.toJson(vm.profile.description) ||

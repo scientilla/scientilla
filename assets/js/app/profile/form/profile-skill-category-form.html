@@ -5,11 +5,11 @@
                 <div
                     class="form-group"
                     ng-class="{'has-error': vm.profile.skillCategories[vm.key].errors.categoryName}">
-                    <label for="skill-category">Category</label>
+                    <label for="skill-category[{{ vm.key }}]">Category</label>
                     <input
                         type="text"
                         class="form-control"
-                        id="skill-category"
+                        id="skill-category[{{ vm.key }}]"
                         placeholder="Category"
                         ng-model="vm.category.categoryName"
                         ng-class="{

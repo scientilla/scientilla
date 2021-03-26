@@ -11,9 +11,9 @@
             }
         });
 
-    profileBasicInformationForm.$inject = ['$scope', 'TextService'];
+    profileBasicInformationForm.$inject = ['$scope', 'TextService', 'ISO3166'];
 
-    function profileBasicInformationForm($scope, TextService) {
+    function profileBasicInformationForm($scope, TextService, ISO3166) {
         const vm = this;
 
         vm.basicInformation = [];
@@ -96,6 +96,22 @@
                     label: 'Gender',
                     value: getGender(vm.profile.gender.value),
                     model: 'gender'
+                });
+            }
+
+            if (_.has(vm.profile, 'nationality.value') && _.has(vm.profile, 'nationality.privacy')) {
+                vm.basicInformation.push({
+                    label: 'Nationality',
+                    value: ISO3166.getCountryName(vm.profile.nationality.value),
+                    model: 'nationality'
+                });
+            }
+
+            if (_.has(vm.profile, 'dateOfBirth.value') && _.has(vm.profile, 'dateOfBirth.privacy')) {
+                vm.basicInformation.push({
+                    label: 'Date of birth',
+                    value: vm.profile.dateOfBirth.value,
+                    model: 'dateOfBirth'
                 });
             }
 

@@ -1,0 +1,25 @@
+{
+  "$id": "profile",
+  "type": "object",
+  "if": {
+    "type": "object",
+    "properties": {
+      "hidden": {
+        "type": "boolean",
+        "const": true
+      }
+    }
+  },
+  "then": {
+    "allOf": [
+      { "$ref": "profileDefault#/definitions/profile" },
+      { "$ref": "profileHidden#/definitions/profile" }
+    ]
+  },
+  "else": {
+    "allOf": [
+      { "$ref": "profileDefault#/definitions/profile" },
+      { "$ref": "profilePublic#/definitions/profile" }
+    ]
+  }
+}

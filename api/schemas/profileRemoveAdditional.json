@@ -1,0 +1,536 @@
+{
+  "$id": "profileRemoveAdditional",
+  "type": "object",
+  "properties": {
+    "username": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "name": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "surname": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "jobTitle": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "roleCategory": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "phone": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "gender": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "nationality": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "dateOfBirth": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "groups": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "center": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "code": {
+                "type": "string"
+              }
+            }
+          },
+          "offices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "privacy": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "socials": {
+      "type": "object",
+      "properties": {
+        "linkedin": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "privacy": {
+              "type": "string"
+            }
+          }
+        },
+        "twitter": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "privacy": {
+              "type": "string"
+            }
+          }
+        },
+        "facebook": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "privacy": {
+              "type": "string"
+            }
+          }
+        },
+        "instagram": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "privacy": {
+              "type": "string"
+            }
+          }
+        },
+        "researchgate": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "privacy": {
+              "type": "string"
+            }
+          }
+        },
+        "googleScholar": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "privacy": {
+              "type": "string"
+            }
+          }
+        },
+        "github": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "privacy": {
+              "type": "string"
+            }
+          }
+        },
+        "bitbucket": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "privacy": {
+              "type": "string"
+            }
+          }
+        },
+        "youtube": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "privacy": {
+              "type": "string"
+            }
+          }
+        },
+        "flickr": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "string"
+            },
+            "privacy": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "image": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "titles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "privacy": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "description": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "role": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "website": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "privacy": {
+          "type": "string"
+        }
+      }
+    },
+    "interests": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "privacy": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "experiencesExternal": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "string"
+          },
+          "jobTitle": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "jobDescription": {
+            "type": "string"
+          },
+          "privacy": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "education": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "institute": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "privacy": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "certificates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "favorite": {
+            "type": "boolean"
+          },
+          "privacy": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "skillCategories": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "categoryName": {
+            "type": "string"
+          },
+          "skills": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                },
+                "favorite": {
+                  "type": "boolean"
+                },
+                "privacy": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "privacy": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "hidden": {
+      "type": "boolean"
+    },
+    "publicWebsite": {
+      "type": "object",
+      "properties": {
+        "favoritePublications": {
+          "type": "boolean"
+        },
+        "allPublications": {
+          "type": "boolean"
+        },
+        "disseminationTalks": {
+          "type": "boolean"
+        },
+        "scientificTalks": {
+          "type": "boolean"
+        },
+        "oralPresentations": {
+          "type": "boolean"
+        },
+        "awardAchievement": {
+          "type": "boolean"
+        },
+        "organizedEvent": {
+          "type": "boolean"
+        },
+        "editorship": {
+          "type": "boolean"
+        }
+      }
+    },
+    "export": {
+      "type": "object",
+      "properties": {
+        "basicInformation": {
+          "type": "string"
+        }
+      }
+    },
+    "experiencesInternal": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "jobTitle": {
+            "type": "string"
+          },
+          "company": {
+            "type": "string"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "office": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "privacy": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

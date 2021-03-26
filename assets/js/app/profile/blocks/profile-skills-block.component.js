@@ -18,17 +18,27 @@
 
         vm.favoriteSkills = [];
 
+        let watcher;
+
         vm.$onInit = function () {
-            if (!_.isEmpty(vm.profile)) {
-                vm.favoriteSkills = getFavoriteSkills(vm.profile);
+            vm.favoriteSkills = getFavoriteSkills();
+
+            watcher = $scope.$watch('vm.profile', () => {
+                vm.favoriteSkills = getFavoriteSkills();
+            });
+        };
+
+        vm.$onDestroy = function () {
+            if (_.isFunction(watcher)) {
+                watcher();
             }
         };
 
-        function getFavoriteSkills(profile) {
+        function getFavoriteSkills() {
             const allSkills = [];
             const favoriteSkills = [];
-            if (!_.isEmpty(profile.skillCategories)) {
-                profile.skillCategories.map(category => {
+            if (!_.isEmpty(vm.profile && vm.profile.skillCategories)) {
+                vm.profile.skillCategories.map(category => {
                     if (!_.isEmpty(category.skills)) {
                         category.skills.map(skill => {
                             if (skill.favorite) {
