@@ -113,7 +113,8 @@
                 .replace(/ rel=("|\')(.*?)("|\')/gm, '')
                 .replace(/ style=("|\')(.*?)("|\')/gm, '')
                 .replace(/ class=("|\')(.*?)("|\')/gm, '')
-                .replace(/ id=("|\')(.*?)("|\')/gm, '');
+                .replace(/ id=("|\')(.*?)("|\')/gm, '')
+                .replace(/<img .*?>/gm, '');
         };
     }
 

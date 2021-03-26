@@ -233,3 +233,10 @@ ul{
 .text-warning{
     color: $neon-carrot;
 }
+
+blockquote{
+    padding-left: 1rem;
+    font-size: 1.6rem;
+    line-height: 1.6rem;
+    border-left: .3rem solid $primary;
+}
