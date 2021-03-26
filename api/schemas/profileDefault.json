@@ -199,7 +199,7 @@
                 "value": {
                   "type": "string",
                   "maxLength": 75,
-                  "errorMessage": "This field is limited 75 characters!"
+                  "errorMessage": "This field is limited to 75 characters!"
                 }
               }
             },
@@ -216,7 +216,7 @@
                 "value": {
                   "type": "string",
                   "maxLength": 255,
-                  "errorMessage": "This field is limited 255 characters!"
+                  "errorMessage": "This field is limited to 255 characters!"
                 }
               }
             },
