@@ -147,17 +147,18 @@
             class="form-group"
             ng-class="{'has-error': vm.profile.description.errors.value}">
             <label for="description">Description</label>
-            <textarea
+            <text-angular
                 name="description"
                 id="description"
                 cols="30"
                 rows="10"
-                class="form-control"
                 ng-model="vm.profile.description.value"
                 ng-class="{
                     'is-invalid': vm.profile.description.errors.value,
                     'is-invisible' : vm.profile.description.privacy === 'invisible'
-                }"></textarea>
+                }"
+                ta-paste="vm.format($html)"
+            ></text-angular>
             <scientilla-field-errors
                 errors="vm.profile.description.errors.value"></scientilla-field-errors>
         </div>

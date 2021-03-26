@@ -10,6 +10,7 @@ const path = require('path');
 const util = require('util');
 const PdfPrinter = require('pdfmake');
 const { Base64Encode } = require('base64-stream');
+const { htmlToText } = require('html-to-text');
 
 function concatStrings(strings = [], options = {}) {
     options = _.extend({
@@ -1137,7 +1138,7 @@ async function toPDF(researchEntityId, options = {}) {
                         text: 'About me',
                         style: 'h2'
                     }, {
-                        text: profile.description
+                        text: htmlToText(profile.description, { wordwrap: false })
                     }
                 ]
             });
@@ -2460,6 +2461,9 @@ async function toDoc(researchEntityId, options = {}) {
         }
     }
 
+    let htmlText = htmlToText(profile.description, { wordwrap: false, preserveNewlines: true });
+    htmlText = htmlText.replace(/^\s*\n/gm, '');
+
     // About me
     if (options.about && !_.isEmpty(profile.description)) {
         text.push(
@@ -2471,7 +2475,7 @@ async function toDoc(researchEntityId, options = {}) {
         text.push(
             new Paragraph({
                 children: [
-                    new TextRun(profile.description)
+                    new TextRun(htmlText)
                 ],
                 style: 'default'
             })
