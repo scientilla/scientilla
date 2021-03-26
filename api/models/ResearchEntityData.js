@@ -589,13 +589,31 @@ const defaultProperties = {
         definitions.privacyDefaultHidden
     ),
     role: _.merge(
-        {},
+        {
+            type: 'object',
+            properties: {
+                value: {
+                    type: 'string',
+                    maxLength: 75,
+                    errorMessage: 'This field is limited 75 characters!'
+                }
+            }
+        },
         definitions.string,
         definitions.privacy,
         definitions.privacyDefaultHidden
     ),
     website: _.merge(
-        {},
+        {
+            type: 'object',
+            properties: {
+                value: {
+                    type: 'string',
+                    maxLength: 75,
+                    errorMessage: 'This field is limited 75 characters!'
+                }
+            }
+        },
         definitions.url,
         definitions.privacy,
         definitions.privacyDefaultHidden
