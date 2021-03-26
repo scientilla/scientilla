@@ -5,8 +5,9 @@
   "keywords": [],
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.0",
-    "ajv": "^6.12.2",
-    "ajv-errors": "^1.0.1",
+    "ajv": "^7.2.1",
+    "ajv-errors": "^2.0.1",
+    "ajv-formats": "^1.5.1",
     "angular-ui-sortable": "^0.19.0",
     "angularjs-color-picker": "^3.4.8",
     "ansi-to-html": "^0.6.14",

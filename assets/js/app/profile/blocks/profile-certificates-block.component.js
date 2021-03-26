@@ -18,17 +18,27 @@
 
         vm.favoriteCertificates = [];
 
+        let watcher;
+
         vm.$onInit = function () {
-            if (!_.isEmpty(vm.profile)) {
-                vm.favoriteCertificates = getFavoriteCertificates(vm.profile);
+            vm.favoriteCertificates = getFavoriteCertificates();
+
+            watcher = $scope.$watch('vm.profile', () => {
+                vm.favoriteCertificates = getFavoriteCertificates();
+            });
+        };
+
+        vm.$onDestroy = function () {
+            if (_.isFunction(watcher)) {
+                watcher();
             }
         };
 
-        function getFavoriteCertificates(profile) {
+        function getFavoriteCertificates() {
             const allCertificates = [];
             const favoriteCertificates = [];
-            if (!_.isEmpty(profile.certificates)) {
-                profile.certificates.map(certificate => {
+            if (!_.isEmpty(vm.profile && vm.profile.certificates)) {
+                vm.profile.certificates.map(certificate => {
                     if (certificate.favorite) {
                         favoriteCertificates.push(certificate.title);
                     }

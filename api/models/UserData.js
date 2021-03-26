@@ -96,7 +96,7 @@ module.exports = {
     tableName: 'user_data',
     autoUpdatedAt: false,
     autoCreatedAt: false,
-    getProfileImage: async function(user, profile) {
+    getProfileImage: function(user, profile) {
 
         if (_.has(profile, 'image.value') && profile.image.value) {
             return '/profile/images/' + user.researchEntity.toString() + '/' + profile.image.value;

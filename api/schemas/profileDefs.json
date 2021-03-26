@@ -1,0 +1,350 @@
+{
+  "$id": "profileDefs",
+  "definitions": {
+    "name": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "code": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "urlValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "pattern": "^$|^(http|https)://",
+          "default": ""
+        }
+      },
+      "errorMessage": {
+        "properties": {
+          "value": "This should be a valid URL starting with http:// or https://"
+        }
+      }
+    },
+    "stringValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "notEmptyStringValue": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "$ref": "defs#/definitions/notEmptyString"
+        }
+      },
+      "required": ["value"]
+    },
+    "privacy": {
+      "type": "object",
+      "properties": {
+        "privacy": {
+          "type": "string"
+        }
+      },
+      "required": ["privacy"]
+    },
+    "privacyDefaultHidden": {
+      "type": "object",
+      "properties": {
+        "privacy": {
+          "default": "hidden"
+        }
+      }
+    },
+    "privacyEnumHidden": {
+      "type": "object",
+      "properties": {
+        "privacy": {
+          "enum": ["hidden"]
+        }
+      }
+    },
+    "privacyDefaultPublic": {
+      "type": "object",
+      "properties": {
+        "privacy": {
+          "default": "public"
+        }
+      }
+    },
+    "privacyEnumPublic": {
+      "type": "object",
+      "properties": {
+        "privacy": {
+          "enum": ["public"]
+        }
+      }
+    },
+    "privacyEnumInvisible": {
+      "type": "object",
+      "properties": {
+        "privacy": {
+          "enum": ["invisible"]
+        }
+      }
+    },
+    "ifValueCheckPublicPrivacy": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["value"]
+      },
+      "then": { "$ref": "profileDefs#/definitions/privacyEnumPublic" }
+    },
+    "ifJobTitleCheckHiddenPrivacy": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "jobTitle": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["jobTitle"]
+      },
+      "then": { "$ref": "profileDefs#/definitions/privacyEnumHidden" }
+    },
+    "ifValueCheckHiddenPrivacy": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["value"]
+      },
+      "then": { "$ref": "profileDefs#/definitions/privacyEnumHidden" }
+    },
+    "ifNameCheckHiddenPrivacy": {
+      "if": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": ["name"]
+      },
+      "then": { "$ref": "profileDefs#/definitions/privacyEnumHidden" }
+    },
+    "externalExperience": {
+      "type": "object",
+      "properties": {
+        "company": {
+          "$ref": "defs#/definitions/notEmptyString"
+        },
+        "jobTitle": {
+          "$ref": "defs#/definitions/notEmptyString"
+        },
+        "from": {
+          "$ref": "defs#/definitions/notEmptyDate"
+        },
+        "to": {
+          "$ref": "defs#/definitions/date"
+        },
+        "location": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "jobDescription": {
+          "type": "string"
+        }
+      },
+      "required": ["company", "jobTitle", "from"]
+    },
+    "educationItem": {
+      "type": "object",
+      "properties": {
+        "institute": {
+          "$ref": "defs#/definitions/notEmptyString"
+        },
+        "title": {
+          "$ref": "defs#/definitions/notEmptyString"
+        },
+        "from": {
+          "$ref": "defs#/definitions/notEmptyDate"
+        },
+        "to": {
+          "$ref": "defs#/definitions/date"
+        },
+        "location": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      },
+      "required": ["institute", "title", "from"]
+    },
+    "certificate": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "$ref": "defs#/definitions/notEmptyString"
+        },
+        "description": {
+          "type": "string"
+        },
+        "date": {
+          "$ref": "defs#/definitions/date"
+        },
+        "favorite": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": ["title", "favorite"]
+    },
+    "publicWebsite": {
+      "type": "object",
+      "properties": {
+        "favoritePublications": {
+          "type": "boolean",
+          "default": false
+        },
+        "allPublications": {
+          "type": "boolean",
+          "default": false
+        },
+        "disseminationTalks": {
+          "type": "boolean",
+          "default": false
+        },
+        "scientificTalks": {
+          "type": "boolean",
+          "default": false
+        },
+        "oralPresentations": {
+          "type": "boolean",
+          "default": false
+        },
+        "awardAchievement": {
+          "type": "boolean",
+          "default": false
+        },
+        "organizedEvent": {
+          "type": "boolean",
+          "default": false
+        },
+        "editorship": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": [
+        "favoritePublications",
+        "allPublications",
+        "disseminationTalks",
+        "scientificTalks",
+        "oralPresentations",
+        "awardAchievement",
+        "organizedEvent",
+        "editorship"
+      ]
+    },
+    "export": {
+      "type": "object",
+      "properties": {
+        "basicInformation": {
+          "type": "string",
+          "default": ""
+        }
+      }
+    },
+    "internalExperience": {
+      "type": "object",
+      "properties": {
+        "jobTitle": {
+          "type": "string"
+        },
+        "company": {
+          "type": "string"
+        },
+        "lines": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "office": {
+                "type": "string"
+              }
+            },
+            "required": ["code", "name"]
+          }
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        }
+      },
+      "required": ["lines", "jobTitle", "company", "from"]
+    },
+    "skill": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "$ref": "defs#/definitions/notEmptyString"
+        },
+        "favorite": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "required": ["value", "favorite"]
+    },
+    "skillCategory": {
+      "type": "object",
+      "properties": {
+        "categoryName": {
+          "$ref": "defs#/definitions/notEmptyString"
+        },
+        "skills": {
+          "type": "array",
+          "default": [],
+          "items": {
+            "allOf": [
+              { "$ref": "profileDefs#/definitions/privacy" },
+              { "$ref": "profileDefs#/definitions/privacyDefaultHidden" },
+              { "$ref": "profileDefs#/definitions/skill" }
+            ]
+          }
+        }
+      },
+      "required": ["categoryName"]
+    }
+  }
+}
