@@ -55,6 +55,10 @@ hr{
     padding-bottom: 6rem;
 }
 
+.ta-scroll-window div.popover {
+    display: none !important;
+}
+
 @include media-breakpoint-up(sm){
     .main-container{
         display: flex;
