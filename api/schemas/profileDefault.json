@@ -77,7 +77,6 @@
                   },
                   "offices": {
                     "type": "array",
-                    "default": [],
                     "items": {
                       "type": "string"
                     }
