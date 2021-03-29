@@ -659,13 +659,15 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
     const codes = lines.map(line => line.code).filter((value, index, self) => self.indexOf(value) === index);
 
     for (const code of codes) {
-        const group = {
-            offices: []
-        };
+
         const codeGroup = activeGroups.find(group => group.code === code);
         let skipCenter = false;
 
         if (codeGroup) {
+
+            const group = {
+                offices: []
+            };
 
             group.type = codeGroup.type;
             group.name = codeGroup.name;
@@ -704,9 +706,9 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
                     }
                 }
             }
-        }
 
-        groups.push(group);
+            groups.push(group);
+        }
     }
 
     profile.groups = groups;
