@@ -662,12 +662,9 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
 
         const codeGroup = activeGroups.find(group => group.code === code);
         let skipCenter = false;
+        const group = {};
 
         if (codeGroup) {
-
-            const group = {
-                offices: []
-            };
 
             group.type = codeGroup.type;
             group.name = codeGroup.name;
@@ -706,9 +703,13 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
                     }
                 }
             }
-
-            groups.push(group);
+        } else {
+            group.type = 'Institute';
+            group.name = 'Istituto Italiano di Tecnologia';
+            group.code = 'IIT';
         }
+
+        groups.push(group);
     }
 
     profile.groups = groups;
