@@ -10,6 +10,7 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 const JsonValidator = require('../services/JsonValidator');
+const util = require('util');
 
 const pathProfileImages = path.join('profile', 'images');
 const validateProfile = JsonValidator.getProfileValidator();
