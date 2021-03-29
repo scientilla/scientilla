@@ -146,8 +146,6 @@ async function importGroups() {
         sails.log.debug(e);
     }
     // Store data in variables:
-    // researchDomainsData = res.research_domains
-    // researchStructuresDate = res.research_structures
     const {
         research_domains: researchDomainsData,
         research_structures: researchStructuresData
@@ -707,9 +705,6 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
             }));
 
             let user = await User.findOne({cid: employee.cid});
-            if (employee.cid === '10003946') {
-                sails.log.debug(employee);
-            }
             if (!user) {
                 sails.log.debug(`Try to find ${ employee.email }`);
                 user = await User.findOne({username: employee.email});
@@ -1201,8 +1196,6 @@ async function importProjects() {
 
 async function updateUserProfileGroups() {
     const groups = await Group.find();
-    //sails.log.debug(groups);
-
     const chunk = 500;
     let i = 0;
     let researchEntityDataRecords = [];
