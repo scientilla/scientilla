@@ -143,6 +143,10 @@
                 const offices = [];
                 if (_.has(user, 'groups')) {
                     for (const group of user.groups) {
+                        if (!_.has(group, 'offices')) {
+                            continue;
+                        }
+
                         for (const office of group.offices) {
                             const duplicateOffice = offices.find(o => o.name === office);
                             if (!duplicateOffice) {
