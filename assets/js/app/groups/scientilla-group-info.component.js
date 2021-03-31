@@ -11,9 +11,9 @@
             }
         });
 
-    controller.$inject = ['$scope', '$element', 'ISO3166', 'genders', 'ChartService', 'GroupsService', 'Prototyper'];
+    controller.$inject = ['$scope', '$element', 'ISO3166', 'genders', 'ChartService', 'GroupsService', 'Prototyper', 'AuthService'];
 
-    function controller($scope, $element, ISO3166, genders, ChartService, GroupsService, Prototyper) {
+    function controller($scope, $element, ISO3166, genders, ChartService, GroupsService, Prototyper, AuthService) {
         const vm = this;
 
         vm.name = 'group-info';
@@ -23,6 +23,7 @@
         vm.includeSubgroups = true;
         vm.firstTimeLoaded = false;
         vm.isLoading = false;
+        vm.loggedUser = AuthService.user;
 
         let includeSubgroupsWatcher;
 

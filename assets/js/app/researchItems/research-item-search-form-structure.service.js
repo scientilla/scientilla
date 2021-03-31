@@ -314,12 +314,6 @@
                     matchRule: 'contains',
                     type: 'field'
                 },
-                gender: {
-                    inputType: 'select',
-                    label: 'Gender',
-                    matchColumn: 'gender',
-                    type: 'field'
-                },
                 ageRange: {
                     inputType: 'select',
                     label: 'Age range',
@@ -375,12 +369,6 @@
                     label: 'Role category',
                     matchColumn: 'roleCategory',
                     matchRule: 'contains',
-                    type: 'field'
-                },
-                gender: {
-                    inputType: 'select',
-                    label: 'Gender',
-                    matchColumn: 'gender',
                     type: 'field'
                 },
                 ageRange: {
@@ -600,17 +588,6 @@
                     structure = formStructures[constant];
                     break;
                 case constant === 'user' || constant === 'group-member':
-                    formStructures[constant].gender.values = [{
-                        value: '?',
-                        label: 'All'
-                    }, {
-                        value: 'F',
-                        label: 'Female'
-                    }, {
-                        value: 'M',
-                        label: 'Male'
-                    }];
-
                     formStructures[constant].ageRange.values = [{
                         value: '?',
                         label: 'All'
