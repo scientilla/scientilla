@@ -73,7 +73,7 @@
 
         function getDatepickerOptions() {
             return {
-                showWeeks: false,
+                showWeeks: false
             };
         }
 

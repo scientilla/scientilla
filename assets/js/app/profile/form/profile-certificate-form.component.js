@@ -14,31 +14,33 @@
             }
         });
 
-    profileCertificateForm.$inject = ['ProfileService', '$scope'];
+    profileCertificateForm.$inject = ['ProfileService', '$scope', 'DateService'];
 
-    function profileCertificateForm(ProfileService, $scope) {
+    function profileCertificateForm(ProfileService, $scope, DateService) {
         const vm = this;
 
         vm.open = false;
         vm.datePickerOptions = [];
+        vm.date = null;
+        const timezone = 'Europe/Rome';
 
-        let certificateWatcher;
+        const watchers = [];
 
         vm.$onInit = function () {
             vm.context = 'certificates[' + vm.key + ']';
             vm.datePickerOptions = ProfileService.getDatepickerOptions();
 
-            certificateWatcher = $scope.$watch('vm.certificate', function() {
-                if (typeof vm.certificate.date === 'string') {
-                    vm.certificate.date = new Date(vm.certificate.date);
-                }
-            });
+            if (typeof vm.certificate.date === 'string') {
+                vm.date = DateService.toDate(vm.certificate.date);
+            }
         };
 
         vm.$onDestroy = function () {
-            if (_.isFunction(certificateWatcher)) {
-                certificateWatcher();
-            }
+            watchers.forEach(watcher => {
+                if (_.isFunction(watcher)) {
+                    watcher();
+                }
+            });
         };
 
         vm.removeItem = options => {
@@ -61,6 +63,14 @@
                 vm.profile.certificates.splice(key, 1);
                 vm.profile.certificates.splice(key + 1, 0, certificate);
             }
+        };
+
+        vm.changeDate = () => {
+            if (!vm.date) {
+                return;
+            }
+
+            vm.certificate.date = DateService.toOurTimezone(vm.date);
         };
     }
 

@@ -75,7 +75,9 @@ module.exports = function (grunt) {
                     'iso-3166-country-codes-angular/dist/iso-3166-country-codes-angular.min.js',
                     'textangular/dist/textAngular-rangy.min.js',
                     'textangular/dist/textAngular-sanitize.min.js',
-                    'textangular/dist/textAngular.min.js'
+                    'textangular/dist/textAngular.min.js',
+                    'moment/min/moment-with-locales.min.js',
+                    'moment-timezone/builds/moment-timezone-with-data.min.js'
                 ],
                 flatten: true,
                 dest: '.tmp/public/js/dependencies'

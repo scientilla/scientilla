@@ -33,7 +33,7 @@ var fontFilesToInject = [
 var jsFilesToInject = [
     // Load sails.io before everything else
 //    'js/dependencies/sails.io.js',
-    
+
     // Dependencies like jQuery, or Angular are brought in here
     'js/dependencies/jquery.min.js',
     'js/dependencies/jquery-ui.js',
@@ -44,9 +44,11 @@ var jsFilesToInject = [
     'js/dependencies/tinycolor.js',
     'js/dependencies/angularjs-color-picker.js',
     'js/dependencies/sortable.js',
+    'js/dependencies/moment-with-locales.min.js',
+    'js/dependencies/moment-timezone-with-data.min.js',
 
     'js/dependencies/**/*.js',
-    
+
     'js/**/*.module.js',
     // All of the rest of your client-side js files
     // will be injected here in no particular order.
