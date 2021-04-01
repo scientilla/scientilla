@@ -176,11 +176,7 @@ module.exports = {
             if (person.image) {
                 person.image = path.join('profile', 'images', person.researchEntity.toString(), person.image);
             } else {
-                person.image = path.join('images', 'woman.png');
-
-                if (person.gender === 'M') {
-                    person.image = path.join('images', 'man.png');
-                }
+                person.image = path.join('images', 'default-profile.jpg');
             }
 
             for (const property in person) {
@@ -188,6 +184,8 @@ module.exports = {
                     delete person[property]
                 }
             }
+
+            delete person.gender;
 
             return person;
         }

@@ -158,24 +158,45 @@
                 }
             }
 
-            .column-countries {
-                margin-top: 3rem;
-            }
+            &.has-gender-chart{
+                .column-countries {
+                    margin-top: 3rem;
+                }
 
-            .column-by-role,
-            .column-by-gender,
-            .column-by-age-range {
-                &:after {
-                    @include bottom-line;
+                .column-by-role,
+                .column-by-gender,
+                .column-by-age-range {
+                    &:after {
+                        @include bottom-line;
+                    }
+                }
+
+                .column-by-gender {
+                    .inner-column-by-gender {
+                        display: grid;
+                        grid-template-columns: 1fr;
+                        grid-template-rows: auto 1fr;
+                        height: 100%;
+                    }
                 }
             }
 
-            .column-by-gender {
-                .inner-column-by-gender {
-                    display: grid;
-                    grid-template-columns: 1fr;
-                    grid-template-rows: auto 1fr;
-                    height: 100%;
+            &.has-no-gender-chart{
+                .column-countries {
+                    margin-top: 3rem;
+                }
+
+                .column-by-gender,
+                .column-by-age-range {
+                    &:after {
+                        @include bottom-line;
+                    }
+                }
+
+                .column-by-age-range {
+                    &:before{
+                        @include top-line;
+                    }
                 }
             }
         }
@@ -449,52 +470,54 @@
     .groups {
         &.group-detail {
             .group-info-tab {
-                .column-by-role,
-                .column-by-gender,
-                .column-by-age-range {
-                    &:after {
-                        display: none;
-                    }
-                }
-
-                .column-legend,
-                .column-by-role {
-                    margin-bottom: 3rem;
-                }
-
-                .column-by-gender {
-                    padding-right: 3rem;
-
-                    &:after {
-                        position: absolute;
-                        right: 0px;
-                        top: 3rem;
-                        display: block;
-                        width: 1px;
-                        height: calc(100% - 3rem);
-                        content: '';
-                        border-right: .1rem solid $gray-100;
-                        border-bottom: 0px;
+                &.has-gender-chart {
+                    .column-by-role,
+                    .column-by-gender,
+                    .column-by-age-range {
+                        &:after {
+                            display: none;
+                        }
                     }
 
-                    &:before {
-                        @include top-line;
-                        margin-top: 0px;
+                    .column-legend,
+                    .column-by-role {
+                        margin-bottom: 3rem;
                     }
-                }
 
-                .column-by-age-range {
-                    padding-left: 3rem;
+                    .column-by-gender {
+                        padding-right: 3rem;
 
-                    &:before {
-                        @include top-line;
-                        margin-top: 0px;
+                        &:after {
+                            position: absolute;
+                            right: 0px;
+                            top: 3rem;
+                            display: block;
+                            width: 1px;
+                            height: calc(100% - 3rem);
+                            content: '';
+                            border-right: .1rem solid $gray-100;
+                            border-bottom: 0px;
+                        }
+
+                        &:before {
+                            @include top-line;
+                            margin-top: 0px;
+                        }
                     }
-                }
 
-                .column-by-country {
-                    &:before {
-                        @include bottom-line;
+                    .column-by-age-range {
+                        padding-left: 3rem;
+
+                        &:before {
+                            @include top-line;
+                            margin-top: 0px;
+                        }
+                    }
+
+                    .column-by-country {
+                        &:before {
+                            @include bottom-line;
+                        }
                     }
                 }
             }
@@ -506,72 +529,123 @@
     .groups {
         &.group-detail {
             .group-info-tab {
-                .column-by-role,
-                .column-by-gender,
-                .column-by-age-range {
-                    &:after {
-                        display: none;
+                &.has-gender-chart {
+                    .column-by-role,
+                    .column-by-gender,
+                    .column-by-age-range {
+                        &:after {
+                            display: none;
+                        }
+                    }
+
+                    .column-by-gender {
+                        padding-left: 3rem;
+                    }
+
+                    .column-by-role,
+                    .column-by-age-range {
+                        position: relative;
+                        padding-right: 3rem;
+
+                        &:after {
+                            position: absolute;
+                            right: 0px;
+                            top: 1rem;
+                            display: block;
+                            width: 1px;
+                            height: calc(100% - 1rem);
+                            content: '';
+                            border-right: .1rem solid $gray-100;
+                            border-bottom: 0px;
+                        }
+                    }
+
+                    .column-by-age-range {
+                        &:after{
+                            top: 6rem;
+                            height: calc(100% - 6rem);
+                        }
+
+                        &:before {
+                            @include bottom-line;
+                        }
+                    }
+
+                    .column-by-country {
+                        padding-left: 3rem;
+
+                        &:before {
+                            @include bottom-line;
+                        }
+                    }
+
+                    .column-by-gender,
+                    .column-by-country-sub {
+                        .legend {
+                            display: inline-block;
+                            width: auto;
+                            margin-top: 2rem;
+                            margin-left: auto;
+                            margin-right: auto;
+                        }
+                    }
+
+                    .inner-column-by-gender {
+                        .chart-by-gender-outer-container {
+                            display: flex;
+                            height: 100%;
+                            align-items: center;
+                            justify-content: center;
+                        }
                     }
                 }
 
-                .column-by-gender {
-                    padding-left: 3rem;
-                }
-
-                .column-by-role,
-                .column-by-age-range {
-                    position: relative;
-                    padding-right: 3rem;
-
-                    &:after {
-                        position: absolute;
-                        right: 0px;
-                        top: 1rem;
-                        display: block;
-                        width: 1px;
-                        height: calc(100% - 1rem);
-                        content: '';
-                        border-right: .1rem solid $gray-100;
-                        border-bottom: 0px;
-                    }
-                }
-
-                .column-by-age-range {
-                    &:after{
-                        top: 6rem;
-                        height: calc(100% - 6rem);
+                &.has-no-gender-chart{
+                    .column-by-role,
+                    .column-by-age-range {
+                        &:after {
+                            display: none;
+                        }
                     }
 
-                    &:before {
-                        @include bottom-line;
+                    .column-by-role,
+                    .column-by-age-range {
+                        position: relative;
+                        padding-right: 3rem;
+
+                        &:after {
+                            position: absolute;
+                            right: 0px;
+                            top: 1rem;
+                            display: block;
+                            width: 1px;
+                            height: calc(100% - 1rem);
+                            content: '';
+                            border-right: .1rem solid $gray-100;
+                            border-bottom: 0px;
+                        }
                     }
-                }
 
-                .column-by-country {
-                    padding-left: 3rem;
+                    .column-by-age-range {
+                        &:after{
+                            top: 6rem;
+                            height: calc(100% - 6rem);
+                        }
 
-                    &:before {
-                        @include bottom-line;
+                        &:before {
+                            margin-top: 0px;
+                            padding-top: 0px;
+                            border-top: 0px;
+                            @include bottom-line;
+                        }
                     }
-                }
 
-                .column-by-gender,
-                .column-by-country-sub {
-                    .legend {
-                        display: inline-block;
-                        width: auto;
-                        margin-top: 2rem;
-                        margin-left: auto;
-                        margin-right: auto;
-                    }
-                }
+                    .column-by-country {
+                        padding-left: 3rem;
 
-                .inner-column-by-gender {
-                    .chart-by-gender-outer-container {
-                        display: flex;
-                        height: 100%;
-                        align-items: center;
-                        justify-content: center;
+                        &:before {
+                            @include bottom-line;
+                        }
                     }
                 }
             }
