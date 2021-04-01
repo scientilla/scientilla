@@ -631,11 +631,11 @@ function getProfileObject(researchEntityData, contract, allMembershipGroups, act
         value: contract.genere
     };
     profile.nationality = {
-        privacy: defaultPrivacy,
+        privacy: getValueHiddenPrivacy(),
         value: contract.nazionalita
     };
     profile.dateOfBirth = {
-        privacy: defaultPrivacy,
+        privacy: getValueHiddenPrivacy(),
         value: moment(contract.data_nascita, 'YYYYMMDD').format('YYYY-MM-DD')
     };
 

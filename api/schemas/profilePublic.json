@@ -14,10 +14,10 @@
         "phone": { "$ref": "profileDefs#/definitions/ifValueCheckPublicPrivacy" },
         "gender": { "$ref": "profileDefs#/definitions/ifValueCheckPublicPrivacy" },
         "nationality": {
-          "$ref": "profileDefs#/definitions/ifValueCheckPublicPrivacy"
+          "$ref": "profileDefs#/definitions/ifValueCheckHiddenPrivacy"
         },
         "dateOfBirth": {
-          "$ref": "profileDefs#/definitions/ifValueCheckPublicPrivacy"
+          "$ref": "profileDefs#/definitions/ifValueCheckHiddenPrivacy"
         },
         "groups": {
           "type": "array",

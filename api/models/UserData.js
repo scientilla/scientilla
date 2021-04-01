@@ -77,6 +77,7 @@ module.exports = {
 
             delete profile.export;
             delete profile.dateOfBirth;
+            delete profile.nationality;
 
             if (replaceImage && _.has(profile, 'image')) {
                 profile.image = path.join(

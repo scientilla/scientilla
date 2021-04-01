@@ -103,7 +103,8 @@
                 vm.basicInformation.push({
                     label: 'Nationality',
                     value: ISO3166.getCountryName(vm.profile.nationality.value),
-                    model: 'nationality'
+                    model: 'nationality',
+                    info: 'Your nationality is only used in a group chart.'
                 });
             }
 
@@ -111,7 +112,8 @@
                 vm.basicInformation.push({
                     label: 'Date of birth',
                     value: vm.profile.dateOfBirth.value,
-                    model: 'dateOfBirth'
+                    model: 'dateOfBirth',
+                    info: 'Your date of birth is only used for setting your age range, which is used in a group chart.'
                 });
             }
 

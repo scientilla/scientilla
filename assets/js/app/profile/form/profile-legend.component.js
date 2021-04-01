@@ -26,11 +26,10 @@
 
             switch (true) {
                 case vm.type === 'basic-information' :
-                    if (vm.profile.hidden) {
-                        vm.showHidden = true;
-                    } else {
+                    if (!vm.profile.hidden) {
                         vm.showPublic = true;
                     }
+                    vm.showHidden = true;
                     vm.showLegend = true;
                     break;
                 case
