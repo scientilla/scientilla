@@ -273,11 +273,19 @@
                 &.fields-6{
                     grid-template-columns: 4fr 4fr 3fr 3fr 3fr 2fr;
                 }
+
+                &.fields-7{
+                    grid-template-columns: 4fr 4fr 3fr 3fr 3fr 2fr 2fr;
+                }
             }
 
             &.group-member{
                 &.fields-5{
                     grid-template-columns: 4fr 4fr 3fr 3fr 2fr;
+                }
+
+                &.fields-6{
+                    grid-template-columns: 4fr 4fr 3fr 3fr 2fr 2fr;
                 }
             }
         }
