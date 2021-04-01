@@ -25,6 +25,16 @@
             </a>
             <a
                 class="btn btn-dashboard"
+                ng-if="vm.user.isSuperViewer()"
+                ng-href="#/groups/1/info"
+                ng-class="{
+                    'btn-primary' : vm.isActive('/groups/1/info', true),
+                    'btn-light' : !vm.isActive('/groups/1/info', true)
+                }">
+                <i class="fas fa-university fa-left"></i>Institute
+            </a>
+            <a
+                class="btn btn-dashboard"
                 ng-if="vm.isGroup()"
                 ng-href="#/groups/{{ vm.subResearchEntity.id }}/info"
                 ng-class="{
