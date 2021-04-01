@@ -314,6 +314,12 @@
                     matchRule: 'contains',
                     type: 'field'
                 },
+                gender: {
+                    inputType: 'select',
+                    label: 'Gender',
+                    matchColumn: 'gender',
+                    type: 'field'
+                },
                 ageRange: {
                     inputType: 'select',
                     label: 'Age range',
@@ -369,6 +375,12 @@
                     label: 'Role category',
                     matchColumn: 'roleCategory',
                     matchRule: 'contains',
+                    type: 'field'
+                },
+                gender: {
+                    inputType: 'select',
+                    label: 'Gender',
+                    matchColumn: 'gender',
                     type: 'field'
                 },
                 ageRange: {
@@ -588,7 +600,24 @@
                     structure = formStructures[constant];
                     break;
                 case constant === 'user' || constant === 'group-member':
-                    formStructures[constant].ageRange.values = [{
+                    structure = angular.copy(formStructures[constant]);
+
+                    if (!AuthService.user.isSuperViewer()) {
+                        delete structure.gender;
+                    } else {
+                        structure.gender.values = [{
+                            value: '?',
+                            label: 'All'
+                        }, {
+                            value: 'F',
+                            label: 'Female'
+                        }, {
+                            value: 'M',
+                            label: 'Male'
+                        }];
+                    }
+
+                    structure.ageRange.values = [{
                         value: '?',
                         label: 'All'
                     }, {
@@ -613,7 +642,7 @@
 
                     let roleCategories = await PeopleService.getUniqueRoleCategories();
                     roleCategories = roleCategories.plain();
-                    formStructures[constant].roleCategory.values = [{
+                    structure.roleCategory.values = [{
                         value: '?',
                         label: 'All'
                     }].concat(
@@ -632,9 +661,7 @@
                         label: 'All'
                     });
 
-                    formStructures[constant].nationality.values = nationalities;
-
-                    structure = formStructures[constant];
+                    structure.nationality.values = nationalities;
                     break;
                 default:
                     break;
