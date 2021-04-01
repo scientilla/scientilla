@@ -22,7 +22,6 @@
         vm.open = false;
         vm.datePickerOptions = [];
         vm.date = null;
-        const timezone = 'Europe/Rome';
 
         const watchers = [];
 

@@ -14,9 +14,9 @@
             }
         });
 
-    profileEducationForm.$inject = ['ProfileService', '$scope'];
+    profileEducationForm.$inject = ['ProfileService', '$scope', 'DateService'];
 
-    function profileEducationForm(ProfileService, $scope) {
+    function profileEducationForm(ProfileService, $scope, DateService) {
         const vm = this;
 
         vm.openFrom = false;
@@ -26,6 +26,9 @@
 
         let educationWatcher;
 
+        vm.dateFrom = null;
+        vm.dateTo = null;
+
         vm.$onInit = function () {
             vm.context = 'education[' + vm.key + ']';
             vm.datePickerOptions = ProfileService.getDatepickerOptions();
@@ -34,11 +37,11 @@
 
             educationWatcher = $scope.$watch('vm.education', function() {
                 if (typeof vm.education.from === 'string' && !_.isEmpty(vm.education.from)) {
-                    vm.education.from = new Date(vm.education.from);
+                    vm.dateFrom = DateService.toDate(vm.education.from);
                 }
 
                 if (typeof vm.education.to === 'string' && !_.isEmpty(vm.education.to)) {
-                    vm.education.to = new Date(vm.education.to);
+                    vm.dateTo = DateService.toDate(vm.education.to);
                 }
 
                 vm.currentEducation = vm.education.to ? false : true;
@@ -75,6 +78,22 @@
             } else {
                 vm.education.to = new Date();
             }
+        };
+
+        vm.changeDateFrom = () => {
+            if (!vm.dateFrom) {
+                return;
+            }
+
+            vm.education.from = DateService.toOurTimezone(vm.dateFrom);
+        };
+
+        vm.changeDateTo = () => {
+            if (!vm.dateTo) {
+                return;
+            }
+
+            vm.education.to = DateService.toOurTimezone(vm.dateTo);
         };
     }
 
