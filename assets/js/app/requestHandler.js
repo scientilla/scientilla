@@ -7,14 +7,15 @@
         '$routeParams',
         'path',
         'AuthService',
-        'context'
+        'context',
+        '$location'
     ];
 
     /*
      * This function handles the request declared above.
      * It validates the group slug (optional) and redirects if the group slug is not valid.
      */
-    function requestHandler($routeParams, path, AuthService, context) {
+    function requestHandler($routeParams, path, AuthService, context, $location) {
 
         let activeGroup;
         const user = AuthService.user;
@@ -26,9 +27,13 @@
         activeGroup = user.administratedGroups.find(g => g.slug === $routeParams.group);
 
         if (activeGroup) {
-            return context.setSubResearchEntity(activeGroup);
+            if ($location.path() === '/' + activeGroup.slug) {
+                return path.goTo(`/${ activeGroup.slug }/info`);
+            } else {
+                return context.setSubResearchEntity(activeGroup);
+            }
         }
 
-        path.goTo('/');
+        return path.goTo('/404');
     }
 })();

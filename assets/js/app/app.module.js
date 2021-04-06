@@ -15,9 +15,9 @@
         'iso-3166-country-codes',
 
         /* Feature areas */
+        'errors',
         'users',
         'documents',
-        'groups',
         'services',
         'wizard',
         'admin',
@@ -27,6 +27,7 @@
         'documentation',
         'projects',
         'patents',
-        'agreements'
+        'agreements',
+        'groups' // Groups module has to be last because of the routes configuration
     ]);
 })();
