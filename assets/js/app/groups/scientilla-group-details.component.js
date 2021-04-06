@@ -7,8 +7,7 @@
             templateUrl: 'partials/scientilla-group-details.html',
             controllerAs: 'vm',
             bindings: {
-                groupId: '<?',
-                groupSlug: '<?',
+                groupParam: '<',
                 activeTab: '@?'
             }
         });
@@ -85,13 +84,12 @@
         /* jshint ignore:start */
         vm.$onInit = async function () {
             let query = {};
-            if (vm.groupSlug) {
-                query.where = {slug: vm.groupSlug};
+            if (/^\d+$/.test(vm.groupParam)) {
+                query.where = { id: vm.groupParam };
+            } else {
+                query.where = { slug: vm.groupParam };
             }
 
-            if (vm.groupId) {
-                query.where = {id: vm.groupId};
-            }
             vm.group = await GroupsService.get(query);
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
 

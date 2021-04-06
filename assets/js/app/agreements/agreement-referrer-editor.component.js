@@ -95,7 +95,7 @@
             }
 
             if (alias && alias.str) {
-                if (vm.piStr.length > 0) {
+                if (vm.piStr && vm.piStr.length > 0) {
                     vm.piStr = vm.piStr.concat(', ' + alias.str);
                 } else {
                     vm.piStr = alias.str;
@@ -122,13 +122,17 @@
         /* jshint ignore:end */
 
         function getUsers(searchText) {
-            const qs = { where: { or: [
-                { name: { contains: searchText } },
-                { surname: { contains: searchText } },
-                { display_name: { contains: searchText } },
-                { display_surname: { contains: searchText } },
-                { username: { contains: searchText } }
-            ]}};
+            const qs = { where: { or: []}};
+            const search = searchText.split(' ');
+
+            search.forEach(text => {
+                qs.where.or.push({ name: { contains: text } });
+                qs.where.or.push({ surname: { contains: text } });
+                qs.where.or.push({ display_name: { contains: text } });
+                qs.where.or.push({ display_surname: { contains: text } });
+                qs.where.or.push({ username: { contains: text } });
+            });
+
             return UsersService.getUsers(qs);
         }
 
