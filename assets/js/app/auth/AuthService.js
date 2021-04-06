@@ -33,10 +33,24 @@
             register: register,
             logout: logout,
             setupUserAccount: setupUserAccount,
-            savedProfile: savedProfile
+            savedProfile: savedProfile,
+            refreshUserAccount: refreshUserAccount
         };
 
         return service;
+
+        function refreshUserAccount() {
+            if (!service.isAvailable && !service.isAdmin) {
+                return;
+            }
+
+            return UsersService.getSettings(service.userId)
+                .then(function (user) {
+                    service.user = user;
+                    service.userId = user.id;
+                    service.username = user.username;
+                });
+        }
 
         function setupUserAccount(userId) {
             if (!service.isAvailable && !service.isAdmin) {
@@ -98,7 +112,7 @@
         }
 
         function login(credentials) {
-            
+
             if (credentials.username) {
                 credentials.username = credentials.username.toLowerCase();
             }

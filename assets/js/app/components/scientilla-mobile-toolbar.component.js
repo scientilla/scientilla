@@ -59,6 +59,11 @@
                 EventsService.CONTEXT_CHANGE
             ], refresh);
 
+            EventsService.subscribeAll(vm, [
+                EventsService.PROJECT_GROUP_CREATED,
+                EventsService.PROJECT_GROUP_DELETED
+            ], reloadUser);
+
             vm.profile = await UsersService.getProfile(AuthService.user.researchEntity);
 
             refresh();
@@ -68,6 +73,14 @@
         vm.$onDestroy = function () {
             EventsService.unsubscribeAll(vm);
         };
+
+        /* jshint ignore:start */
+        async function reloadUser() {
+            await AuthService.refreshUserAccount();
+            vm.isLogged = AuthService.isLogged;
+            vm.user = AuthService.user;
+        }
+        /* jshint ignore:end */
 
         function refresh() {
             vm.isLogged = AuthService.isLogged;
@@ -101,8 +114,7 @@
             if (vm.subResearchEntity.getType() === 'user') {
                 openForm = ModalService.openScientillaUserForm(vm.user, true);
                 researchEntityService = UsersService;
-            }
-            else {
+            } else {
                 openForm = ModalService.openScientillaGroupForm;
                 researchEntityService = GroupsService;
             }
