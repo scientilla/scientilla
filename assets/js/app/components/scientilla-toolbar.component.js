@@ -62,7 +62,8 @@
 
             EventsService.subscribeAll(vm, [
                 EventsService.PROJECT_GROUP_CREATED,
-                EventsService.PROJECT_GROUP_DELETED
+                EventsService.PROJECT_GROUP_DELETED,
+                EventsService.GROUP_UPDATED
             ], reloadUser);
 
             vm.profile = await UsersService.getProfile(AuthService.user.researchEntity);

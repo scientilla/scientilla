@@ -26,14 +26,14 @@
 
         activeGroup = user.administratedGroups.find(g => g.slug === $routeParams.group);
 
-        if (activeGroup) {
-            if ($location.path() === '/' + activeGroup.slug) {
-                return path.goTo(`/${ activeGroup.slug }/info`);
-            } else {
-                return context.setSubResearchEntity(activeGroup);
-            }
+        if (!activeGroup) {
+            return path.goTo('/404');
         }
 
-        return path.goTo('/404');
+        if ($location.path() === '/' + activeGroup.slug) {
+            return path.goTo(`/${ activeGroup.slug }/info`);
+        } else {
+            return context.setSubResearchEntity(activeGroup);
+        }
     }
 })();
