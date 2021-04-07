@@ -23,12 +23,22 @@
         '$scope',
         'groupTypes',
         'groupTypeLabels',
-        'ModalService',
         'ValidateService',
-        '$timeout'
+        '$timeout',
+        'EventsService'
     ];
 
-    function GroupFormController(GroupsService, Notification, AuthService, $scope, groupTypes, groupTypeLabels, ModalService, ValidateService, $timeout) {
+    function GroupFormController(
+        GroupsService,
+        Notification,
+        AuthService,
+        $scope,
+        groupTypes,
+        groupTypeLabels,
+        ValidateService,
+        $timeout,
+        EventsService
+    ) {
         const vm = this;
         vm.getUsersQuery = getUsersQuery;
         vm.cancel = cancel;
@@ -196,6 +206,7 @@
                 .then(function () {
                     vm.errorText = '';
                     Notification.success("Group data saved");
+                    EventsService.publish(EventsService.GROUP_UPDATED);
                     originalGroupJson = angular.copy(vm.group);
                     if (_.isFunction(vm.onSubmit()))
                         vm.onSubmit()(1);
