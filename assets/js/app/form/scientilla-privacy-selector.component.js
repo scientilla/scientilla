@@ -119,7 +119,6 @@
                     showHiddenOption = true;
                     showInvisibleOption = true;
                     break;
-
                 case
                     vm.context === 'nationality' ||
                     vm.context === 'dateOfBirth'

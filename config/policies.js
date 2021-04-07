@@ -94,6 +94,7 @@ module.exports.policies = {
         getPublications: true,
         getHighImpactPublications: true,
         getFavoritePublications: true,
+        getOralPresentations: true,
         getDisseminationTalks: true,
         getScientificTalks: true,
         getAccomplishments: true,
