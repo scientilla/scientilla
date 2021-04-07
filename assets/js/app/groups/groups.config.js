@@ -16,143 +16,170 @@
                 redirectTo: '/groups/:group/info'
             })
             .when("/groups/:group/info", {
-                template: params => `<scientilla-group-details
-                    group-param="${params.group}"
-                    active-tab="info"></scientilla-group-details>`
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="info"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
             })
             .when("/groups/:group/members", {
-                template: params => `<scientilla-group-details
-                    group-param="${params.group}"
-                    active-tab="members"></scientilla-group-details>`
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="members"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
             })
             .when("/groups/:group/child-groups", {
-                template: params => `<scientilla-group-details
-                    group-param="${params.group}"
-                    active-tab="child-groups"></scientilla-group-details>`
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="child-groups"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
             })
             .when("/groups/:group/documents", {
-                template: params => `<scientilla-group-details
-                    group-param="${params.group}"
-                    active-tab="documents"></scientilla-group-details>`
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="documents"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
             })
             .when("/groups/:group/accomplishments", {
-                template: params => `<scientilla-group-details
-                    group-param="${params.group}"
-                    active-tab="accomplishments"></scientilla-group-details>`
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="accomplishments"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
             })
             .when("/groups/:group/projects", {
-                template: params => `<scientilla-group-details
-                    group-param="${params.group}"
-                    active-tab="projects"></scientilla-group-details>`
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="projects"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
             })
             .when("/groups/:group/patents", {
-                template: params => `<scientilla-group-details
-                    group-param="${params.group}"
-                    active-tab="patents"></scientilla-group-details>`
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="patents"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
             })
             .when("/groups/:group/documents-overview", {
-                template: params => `<scientilla-group-details
-                    group-param="${params.group}"
-                    active-tab="documents-overview"></scientilla-group-details>`
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="documents-overview"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
             })
             .when("/groups/:group/bibliometric-charts", {
-                template: params => `<scientilla-group-details
-                    group-param="${params.group}"
-                    active-tab="bibliometric-charts"></scientilla-group-details>`
+                template: () => `<scientilla-group-details
+                    group-param="$resolve.param"
+                    active-tab="bibliometric-charts"></scientilla-group-details>`,
+                resolve: {
+                    param: getSlugOrId
+                }
             })
             .when("/:group/info", {
                 controller: 'requestHandler',
                 template: () => `<scientilla-group-details
-                    group-param="$resolve.slug"
+                    group-param="$resolve.param"
                     active-tab="info"></scientilla-group-details>`,
                 resolve: {
-                    slug: getSlug
+                    param: getSlugOrId
                 }
             })
             .when("/:group/members", {
                 controller: 'requestHandler',
                 template: () => `<scientilla-group-details
-                    group-param="$resolve.slug"
+                    group-param="$resolve.param"
                     active-tab="members"></scientilla-group-details>`,
                 resolve: {
-                    slug: getSlug
+                    param: getSlugOrId
                 }
             })
             .when("/:group/child-groups", {
                 controller: 'requestHandler',
                 template: () => `<scientilla-group-details
-                    group-param="$resolve.slug"
+                    group-param="$resolve.param"
                     active-tab="child-groups"></scientilla-group-details>`,
                 resolve: {
-                    slug: getSlug
+                    param: getSlugOrId
                 }
             })
             .when("/:group/documents", {
                 controller: 'requestHandler',
                 template: () => `<scientilla-group-details
-                    group-param="$resolve.slug"
+                    group-param="$resolve.param"
                     active-tab="documents"></scientilla-group-details>`,
                 resolve: {
-                    slug: getSlug
+                    param: getSlugOrId
                 }
             })
             .when("/:group/accomplishments", {
                 controller: 'requestHandler',
                 template: () => `<scientilla-group-details
-                    group-param="$resolve.slug"
+                    group-param="$resolve.param"
                     active-tab="accomplishments"></scientilla-group-details>`,
                 resolve: {
-                    slug: getSlug
+                    param: getSlugOrId
                 }
             })
             .when("/:group/projects", {
                 controller: 'requestHandler',
                 template: () => `<scientilla-group-details
-                    group-param="$resolve.slug"
+                    group-param="$resolve.param"
                     active-tab="projects"></scientilla-group-details>`,
                 resolve: {
-                    slug: getSlug
+                    param: getSlugOrId
                 }
             })
             .when("/:group/patents", {
                 controller: 'requestHandler',
                 template: () => `<scientilla-group-details
-                    group-param="$resolve.slug"
+                    group-param="$resolve.param"
                     active-tab="patents"></scientilla-group-details>`,
                 resolve: {
-                    slug: getSlug
+                    param: getSlugOrId
                 }
             })
             .when("/:group/documents-overview", {
                 controller: 'requestHandler',
                 template: () => `<scientilla-group-details
-                    group-param="$resolve.slug"
+                    group-param="$resolve.param"
                     active-tab="documents-overview"></scientilla-group-details>`,
                 resolve: {
-                    slug: getSlug
+                    param: getSlugOrId
                 }
             })
             .when("/:group/bibliometric-charts", {
                 controller: 'requestHandler',
                 template: () => `<scientilla-group-details
-                    group-param="$resolve.slug"
+                    group-param="$resolve.param"
                     active-tab="bibliometric-charts"></scientilla-group-details>`,
                 resolve: {
-                    slug: getSlug
+                    param: getSlugOrId
                 }
             })
             .when("/:group", {
                 controller: 'requestHandler',
                 template: () => '',
                 resolve: {
-                    slug: getSlug
+                    param: getSlugOrId
                 }
             })
             .otherwise({ redirectTo: '/404' });
 
-        getSlug.$inject = ['$route'];
+        getSlugOrId.$inject = ['$route'];
 
-        function getSlug($route) {
+        function getSlugOrId($route) {
             let slug = false;
 
             if (_.has($route, 'current.params.group')) {

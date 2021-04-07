@@ -16,14 +16,14 @@
         'GroupsService',
         'ResearchEntitiesService',
         'groupTypes',
-        '$location'
+        'path'
     ];
 
     function GroupDetailsController(
         GroupsService,
         ResearchEntitiesService,
         groupTypes,
-        $location
+        path
     ) {
         const vm = this;
 
@@ -91,6 +91,10 @@
             }
 
             vm.group = await GroupsService.get(query);
+            if (!vm.group) {
+                return path.goTo('/404');
+            }
+
             vm.researchEntity = await ResearchEntitiesService.getResearchEntity(vm.group.researchEntity);
 
             let redirect = false;
@@ -109,7 +113,7 @@
             }
 
             if (redirect) {
-                $location.url(`/${ vm.group.slug }/info`);
+                return path.goTo(`/${ vm.group.slug }/info`);
             }
         };
         /* jshint ignore:end */
