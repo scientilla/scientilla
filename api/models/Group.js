@@ -90,6 +90,11 @@ module.exports = _.merge({}, SubResearchEntity, {
             via: 'researchEntity',
             through: 'favoritepublicationgroup'
         },
+        oralPresentations: {
+            collection: 'Document',
+            via: 'researchEntity',
+            through: 'oralpresentationgroup'
+        },
         disseminationTalks: {
             collection: 'Document',
             via: 'researchEntity',
