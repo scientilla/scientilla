@@ -4,7 +4,7 @@
     angular.module('scientilla-form')
         .component('scientillaDateField', {
             templateUrl: 'partials/scientilla-year-field.html',
-            controller: scientillaDateField,
+            controller: scientillaYearField,
             controllerAs: 'vm',
             bindings: {
                 model: '=',
@@ -13,11 +13,11 @@
             }
         });
 
-    scientillaDateField.$inject = [
+        scientillaYearField.$inject = [
         '$scope'
     ];
 
-    function scientillaDateField($scope) {
+    function scientillaYearField($scope) {
         const vm = this;
         vm.cssClass = 'form-control';
 

@@ -54,14 +54,14 @@
                                     class="form-control"
                                     id="education[{{ vm.key }}]-from"
                                     placeholder="yyyy"
-                                    transform-date
                                     datepicker-options="vm.datePickerOptions"
-                                    ng-model="vm.education.from"
-                                    ng-model-options="{allowInvalid: true}"
+                                    ng-model="vm.dateFrom"
+                                    ng-model-options="{allowInvalid: true, timezone: 'utc'}"
                                     uib-datepicker-popup="yyyy"
                                     show-button-bar="false"
                                     is-open="vm.openFrom"
                                     ng-click="vm.openFrom = true"
+                                    ng-change="vm.changeDateFrom()"
                                     ng-class="{
                                         'is-invalid': vm.profile.education[vm.key].errors.from,
                                         'is-invisible' : vm.profile.education[vm.key].privacy === 'invisible'
@@ -92,14 +92,14 @@
                                     class="form-control"
                                     id="education[{{ vm.key }}]-to"
                                     placeholder="yyyy"
-                                    transform-date
                                     datepicker-options="vm.datePickerOptions"
-                                    ng-model="vm.education.to"
-                                    ng-model-options="{allowInvalid: true}"
+                                    ng-model="vm.dateTo"
+                                    ng-model-options="{allowInvalid: true, timezone: 'utc'}"
                                     uib-datepicker-popup="yyyy"
                                     show-button-bar="false"
                                     is-open="vm.openTo"
                                     ng-click="vm.openTo = true"
+                                    ng-change="vm.changeDateTo()"
                                     ng-class="{
                                         'is-invalid': vm.profile.education[vm.key].errors.to,
                                         'is-invisible' : vm.profile.education[vm.key].privacy === 'invisible'

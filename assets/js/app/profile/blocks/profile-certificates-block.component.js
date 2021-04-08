@@ -76,7 +76,7 @@
                                         ng-if="certificate.description">{{ certificate.description }}</div>
                                     <span
                                         class="date"
-                                        ng-if="certificate.date">{{ certificate.date | date: 'dd/MM/yyyy' }}</span>
+                                        ng-if="certificate.date">{{ certificate.date | addDateOffset | date: 'dd/MM/yyyy' }}</span>
                                 </li>
                             </ul>
                         </div>`,

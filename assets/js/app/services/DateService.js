@@ -7,6 +7,8 @@
     function DateService() {
         let service = {};
 
+        const timezone = 'Europe/Rome';
+
         service.format = (value) => {
             return new Date(value);
         };
@@ -31,6 +33,16 @@
             }
 
             return false;
+        };
+
+        service.toDate = date => {
+            const offset = moment.utc(date).tz(timezone).utcOffset();
+
+            return moment.utc(date).add(offset, 'minutes').toDate();
+        };
+
+        service.toOurTimezone = date => {
+            return moment.utc(date).tz(timezone).startOf('day').toISOString();
         };
 
         return service;

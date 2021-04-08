@@ -49,14 +49,14 @@
                             class="form-control"
                             id="certificates[{{ vm.key }}]-date"
                             placeholder="dd/mm/yyyy"
-                            transform-date
                             datepicker-options="vm.datePickerOptions"
-                            ng-model="vm.certificate.date"
-                            ng-model-options="{allowInvalid: true}"
+                            ng-model="vm.date"
+                            ng-model-options="{allowInvalid: true, timezone: 'utc'}"
                             uib-datepicker-popup="dd/MM/yyyy"
                             show-button-bar="false"
                             is-open="vm.open"
                             ng-click="vm.open = true"
+                            ng-change="vm.changeDate()"
                             ng-class="{
                                 'is-invalid': vm.profile.certificates[vm.key].errors.date,
                                 'is-invisible' : vm.profile.certificates[vm.key].privacy === 'invisible'

@@ -14,9 +14,9 @@
             }
         });
 
-    profileExperienceForm.$inject = ['ProfileService', '$scope'];
+    profileExperienceForm.$inject = ['ProfileService', '$scope', 'DateService'];
 
-    function profileExperienceForm(ProfileService, $scope) {
+    function profileExperienceForm(ProfileService, $scope, DateService) {
         const vm = this;
 
         vm.openFrom = false;
@@ -26,6 +26,9 @@
 
         let experienceWatcher;
 
+        vm.dateFrom = null;
+        vm.dateTo = null;
+
         vm.$onInit = function () {
             vm.context = 'experiencesExternal[' + vm.key + ']';
             vm.datePickerOptions = ProfileService.getDatepickerOptions();
@@ -34,11 +37,11 @@
 
             experienceWatcher = $scope.$watch('vm.experience', function() {
                 if (typeof vm.experience.from === 'string' && !_.isEmpty(vm.experience.from)) {
-                    vm.experience.from = new Date(vm.experience.from);
+                    vm.dateFrom = DateService.toDate(vm.experience.from);
                 }
 
                 if (typeof vm.experience.to === 'string' && !_.isEmpty(vm.experience.to)) {
-                    vm.experience.to = new Date(vm.experience.to);
+                    vm.dateTo = DateService.toDate(vm.experience.to);
                 }
 
                 vm.currentExperience = vm.experience.to ? false : true;
@@ -75,6 +78,22 @@
             } else {
                 vm.experience.to = new Date();
             }
+        };
+
+        vm.changeDateFrom = () => {
+            if (!vm.dateFrom) {
+                return;
+            }
+
+            vm.experience.from = DateService.toOurTimezone(vm.dateFrom);
+        };
+
+        vm.changeDateTo = () => {
+            if (!vm.dateTo) {
+                return;
+            }
+
+            vm.experience.to = DateService.toOurTimezone(vm.dateTo);
         };
     }
 
