@@ -9,7 +9,7 @@
             bindings: {
                 referrers: '=',
                 unsavedData: '=',
-                piStr: '=',
+                authorsStr: '=',
                 errors: '<',
                 checkValidation: '&',
                 fieldValueHasChanged: '&'
@@ -36,16 +36,12 @@
                 vm.referrers = [];
             }
 
-            if (!vm.piStr) {
-                vm.piStr = '';
+            if (!vm.authorsStr) {
+                vm.authorsStr = '';
             }
 
             newReferrerWatcher = $scope.$watch('vm.newReferrer', function() {
-                if (vm.newReferrer && vm.newReferrer.username) {
-                    vm.canAddReferrer = true;
-                } else {
-                    vm.canAddReferrer = false;
-                }
+                vm.canAddReferrer = !!(vm.newReferrer && vm.newReferrer.username);
             });
         };
 
@@ -72,7 +68,7 @@
                         name: vm.newReferrer.getName()
                     });
 
-                    setPiStr(vm.newReferrer);
+                    setAuthorsStr(vm.newReferrer);
 
                     vm.newReferrer = '';
                     vm.isDuplicate = false;
@@ -87,7 +83,7 @@
             }
         }
 
-        function setPiStr(user) {
+        function setAuthorsStr(user) {
             let alias = false;
 
             if (user.aliases.length > 0) {
@@ -95,10 +91,10 @@
             }
 
             if (alias && alias.str) {
-                if (vm.piStr.length > 0) {
-                    vm.piStr = vm.piStr.concat(', ' + alias.str);
+                if (vm.authorsStr.length > 0) {
+                    vm.authorsStr = vm.authorsStr.concat(', ' + alias.str);
                 } else {
-                    vm.piStr = alias.str;
+                    vm.authorsStr = alias.str;
                 }
             }
         }
@@ -108,11 +104,11 @@
             vm.referrers = vm.referrers.filter(r => r.email !== referrer.email);
             const referrerUsers = await getReferrerUsers();
 
-            vm.piStr = '';
+            vm.authorsStr = '';
             for (const referrer of vm.referrers) {
                 const referrerUser = referrerUsers.find(u => u.username === referrer.email);
                 if (referrerUser) {
-                    setPiStr(referrerUser);
+                    setAuthorsStr(referrerUser);
                 }
             }
 

@@ -1083,13 +1083,13 @@ async function importProjects() {
                     endYear = projectData.endDate.slice(0, projectData.endDate.indexOf('-'));
                 }
 
+                const pis = projectData.members.filter(member => ['pi', 'co_pi'].includes(member.role));
+
                 const data = {
                     type: type,
                     startYear: startYear,
                     endYear: endYear,
-                    piStr: projectData.members.filter(member => ['pi', 'co_pi'].includes(member.role))
-                        .map(pi => pi.email + ' ' + pi.name + ' ' + pi.surname)
-                        .join(', '),
+                    authorsStr: await ResearchItem.generateAuthorsStr(pis),
                     projectData: projectData
                 };
 

@@ -1,4 +1,4 @@
-/* global require, ResearchItem, ResearchItemKinds, ResearchItemTypes, Verify, Author */
+/* global require, ResearchItem, ResearchItemKinds, ResearchItemTypes, Verify, Author, User, Alias */
 'use strict';
 
 const _ = require("lodash");
@@ -219,11 +219,20 @@ module.exports = _.merge({}, BaseModel, {
     async getItem(subItem) {
         return await ResearchItem.findOne({id: subItem.item});
     },
-    getFields: function () {
+    getFields() {
         return fields.map(f => f.name);
     },
-    selectData: function (draftData) {
+    selectData(draftData) {
         const documentFields = Document.getFields();
         return _.pick(draftData, documentFields);
+    },
+    async generateAuthorsStr(usersData = []) {
+        const users = await User.find({username: usersData.map(ud => ud.email)});
+        const userAliases = await Alias.getFirstAlias(users.map(u => u.id));
+
+        return usersData.map(ud => {
+            const user = users.find(u => u.username === ud.email);
+            return user ? userAliases.find(a => a.user === user.id).str : User.generateAliasesStr(ud.name, ud.surname);
+        }).join(', ');
     }
 });
