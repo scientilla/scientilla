@@ -93,7 +93,7 @@
             pi: {
                 inputType: 'text',
                 label: 'PI',
-                matchColumn: 'piStr',
+                matchColumn: 'authorsStr',
                 matchRule: 'contains',
                 type: 'field',
                 visibleFor: [allProjectTypes.value, projectTypeCompetitive, projectTypeIndustrial]
@@ -244,7 +244,7 @@
             pi: {
                 inputType: 'text',
                 label: 'PI',
-                matchColumn: 'piStr',
+                matchColumn: 'authorsStr',
                 matchRule: 'contains',
                 type: 'field',
             },

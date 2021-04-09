@@ -57,7 +57,7 @@
         service.getPatentFamilies = getPatentFamilies;
 
         const accomplishmentPopulates = ['type', 'authors', 'affiliations', 'institutes', 'verified', 'source', 'verifiedUsers', 'verifiedGroups'];
-        const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups'];
+        const projectPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
         const patentPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'authors', 'affiliations', 'institutes'];
 
         /* jshint ignore:start */

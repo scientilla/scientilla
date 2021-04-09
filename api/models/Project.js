@@ -89,9 +89,9 @@ module.exports = _.merge({}, BaseModel, {
         status: 'STRING',
         url: 'STRING',
         members: 'JSON',
-        piStr: {
+        authorsStr: {
             type: 'STRING',
-            columnName: 'pi_str'
+            columnName: 'authors_str'
         },
         researchLines: {
             type: 'JSON',
@@ -113,6 +113,19 @@ module.exports = _.merge({}, BaseModel, {
         verifiedGroups: {
             collection: 'group',
             through: 'projectverifiedgroup'
+        },
+        authors: {
+            collection: 'projectauthor',
+            via: 'project'
+        },
+        affiliations: {
+            collection: 'projectaffiliation',
+            via: 'project',
+        },
+        institutes: {
+            collection: 'institute',
+            via: 'project',
+            through: 'projectaffiliation'
         },
         favorites: {
             collection: 'researchentity',

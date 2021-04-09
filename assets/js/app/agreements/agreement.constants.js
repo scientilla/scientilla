@@ -23,7 +23,7 @@ const agreementTypes = [
 ];
 
 const agreementFieldRules = {
-    piStr: {
+    authorsStr: {
         regex: /^(([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)(,\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+(\s([a-zA-ZÀ-ÖØ-öø-ÿ]|-|')+)*\s(([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)(\s?([a-zA-ZÀ-ÖØ-öø-ÿ]|-)+\.)*)*$/,
         message: 'Author string is not valid. It should be in the form \"Molinari E., Bozzini F., Semprini F.\".'
     },
@@ -43,14 +43,14 @@ const agreementRequiredFields = [
     'agreementType',
     'partners',
     'pis',
-    'piStr',
+    'authorsStr',
     'startDate'
 ];
 
 const agreementFields = [
     'startYear',
     'endYear',
-    'piStr',
+    'authorsStr',
     'projectData',
     'type'
 ];

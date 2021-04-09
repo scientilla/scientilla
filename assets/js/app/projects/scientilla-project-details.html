@@ -1,8 +1,13 @@
 <div>
     <scientilla-project-type-badge type="vm.project.type"></scientilla-project-type-badge>
-    <scientilla-project-pis project="vm.project"></scientilla-project-pis>
+    <scientilla-research-item-authors research-item="vm.project"
+                                      collapsed="vm.collapsed"
+                                      type="default"></scientilla-research-item-authors>
 </div>
 <h3 class="project-title" ng-bind-html='vm.project | title'></h3>
+
+<scientilla-research-item-affiliations research-item="vm.project"
+                                       collapsed="vm.collapsed"></scientilla-research-item-affiliations>
 
 <ng-container ng-if="vm.project.code">
     <strong>Code:</strong> {{ vm.project.code }}<br>
