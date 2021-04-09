@@ -114,6 +114,19 @@ module.exports = _.merge({}, BaseModel, {
             collection: 'group',
             through: 'projectverifiedgroup'
         },
+        authors: {
+            collection: 'projectauthor',
+            via: 'project'
+        },
+        affiliations: {
+            collection: 'projectaffiliation',
+            via: 'project',
+        },
+        institutes: {
+            collection: 'institute',
+            via: 'project',
+            through: 'projectaffiliation'
+        },
         favorites: {
             collection: 'researchentity',
             via: 'favoriteprojects',

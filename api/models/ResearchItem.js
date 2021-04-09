@@ -13,16 +13,18 @@ const needsAuthorsTypes = {
     [ResearchItemTypes.AWARD_ACHIEVEMENT]: true,
     [ResearchItemTypes.EDITORSHIP]: true,
     [ResearchItemTypes.ORGANIZED_EVENT]: true,
-    [ResearchItemTypes.PROJECT_COMPETITIVE]: false,
-    [ResearchItemTypes.PROJECT_INDUSTRIAL]: false,
+    [ResearchItemTypes.PROJECT_COMPETITIVE]: true,
+    [ResearchItemTypes.PROJECT_INDUSTRIAL]: true,
+    [ResearchItemTypes.PROJECT_AGREEMENT]: true,
     [ResearchItemTypes.PATENT]: true
 };
 const needsAffiliationTypes = {
     [ResearchItemTypes.AWARD_ACHIEVEMENT]: true,
     [ResearchItemTypes.EDITORSHIP]: true,
     [ResearchItemTypes.ORGANIZED_EVENT]: true,
-    [ResearchItemTypes.PROJECT_COMPETITIVE]: false,
-    [ResearchItemTypes.PROJECT_INDUSTRIAL]: false,
+    [ResearchItemTypes.PROJECT_COMPETITIVE]: true,
+    [ResearchItemTypes.PROJECT_INDUSTRIAL]: true,
+    [ResearchItemTypes.PROJECT_AGREEMENT]: false,
     [ResearchItemTypes.PATENT]: true
 };
 
@@ -227,12 +229,12 @@ module.exports = _.merge({}, BaseModel, {
         return _.pick(draftData, documentFields);
     },
     async generateAuthorsStr(usersData = []) {
-        const users = await User.find({username: usersData.map(ud => ud.email)});
+        const users = await User.find({username: usersData.map(ud => ud.email.toLocaleLowerCase())});
         const userAliases = await Alias.getFirstAlias(users.map(u => u.id));
 
         return usersData.map(ud => {
             const user = users.find(u => u.username === ud.email);
-            return user ? userAliases.find(a => a.user === user.id).str : User.generateAliasesStr(ud.name, ud.surname);
+            return user ? userAliases.find(a => a.user === user.id).str : User.generateAliasesStr(ud.name, ud.surname)[0];
         }).join(', ');
     }
 });

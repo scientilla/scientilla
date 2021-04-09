@@ -1103,9 +1103,14 @@ async function importProjects() {
                     continue;
                 }
 
+                const authorsData = pis.map((pi, pos) => ({
+                    affiliations: pi.email.includes('@iit.it') ? [1] : [],
+                    position: pos
+                }));
+
                 const prj = await Project.findOne({code: code, kind: ResearchItemKinds.EXTERNAL});
                 if (!prj) {
-                    await ResearchItem.createExternal(config.origin, code, data);
+                    await ResearchItem.createExternal(config.origin, code, data, authorsData);
                     created++;
                 } else if (JSON.stringify(prj.projectData) !== JSON.stringify(data.projectData)) {
                     await ResearchItem.updateExternal(prj.id, data);
