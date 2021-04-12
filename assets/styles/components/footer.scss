@@ -1,15 +1,21 @@
-.footer{
+.footer-container{
     position: absolute;
     bottom: 0px;
     left: 0px;
-    z-index: 4;
+    z-index: 7;
     width: 100%;
+}
+
+.footer{
     padding: 1rem 0px;
     background: $footer-background-color;
     color: color-yiq($footer-background-color);
 
     a{
         color: color-yiq($footer-background-color);
+    }
+
+    a[href^="mailto:"]{
         text-decoration: underline;
     }
 

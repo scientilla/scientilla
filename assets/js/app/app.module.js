@@ -14,6 +14,7 @@
         'rzSlider',
         'iso-3166-country-codes',
         'textAngular',
+        'ngCookies',
 
         /* Feature areas */
         'errors',
@@ -29,6 +30,7 @@
         'projects',
         'patents',
         'agreements',
+        'cookies',
         'groups' // Groups module has to be last because of the routes configuration
     ]);
 })();
