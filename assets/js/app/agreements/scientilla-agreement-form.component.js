@@ -86,7 +86,7 @@
                 vm.agreementData = {
                     pis: [],
                     partners: [],
-                    piStr: null,
+                    authorsStr: null,
                     startDate: null,
                     endDate: null
                 };
@@ -210,7 +210,7 @@
         /* jshint ignore:end */
 
         function setAgreement() {
-            vm.agreement.piStr = vm.agreementData.piStr;
+            vm.agreement.authorsStr = vm.agreementData.authorsStr;
             vm.agreement.startYear = vm.agreementData.startDate ? vm.agreementData.startDate.getFullYear() : null;
             vm.agreement.endYear = vm.agreementData.endDate ? vm.agreementData.endDate.getFullYear() : null;
             vm.agreement.type = 'project_agreement';

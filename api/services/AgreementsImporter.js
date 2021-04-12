@@ -26,15 +26,22 @@ async function importAgreements() {
         if (_.isEmpty(agreementRawData.pis))
             continue;
 
-        const pis = await User.find({username: agreementRawData.pis.split(',')}).populate('aliases');
+        const pis = agreementRawData.pis.split(',').map(email => {
+            const nameSurname = email.split('@')[0].split('.');
+            return {
+                email,
+                name: nameSurname[0],
+                surname: nameSurname[1]
+            };
+        });
 
         const agreementsData = {
             type: ResearchItemTypes.PROJECT_AGREEMENT,
             startYear: startDate ? startDate.getFullYear() : null,
             endYear: endDate ? endDate.getFullYear() : null,
-            piStr: pis.map(pi => pi.aliases[0].str).join(', '),
+            authorsStr: await ResearchItem.generateAuthorsStr(pis),
             projectData: {
-                pis: pis.map(pi => ({email: pi.username, name: pi.name, surname: pi.surname})),
+                pis: pis,
                 partners: agreementRawData.partners.split(','),
                 startDate: startDate ? startDate.toISOString() : null,
                 endDate: endDate ? endDate.toISOString() : null,
@@ -53,12 +60,10 @@ async function importAgreements() {
             console.log(e);
         }
 
-        if (pis.length) {
-            try {
-                await Verify.verify(draft.id, 1, {});
-            } catch (e) {
-                console.log(e);
-            }
+        try {
+            await Verify.verify(draft.id, 1, {});
+        } catch (e) {
+            console.log(e);
         }
     }
 }

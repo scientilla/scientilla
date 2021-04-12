@@ -83,7 +83,7 @@
         <agreement-referrer-editor
             referrers="vm.agreementData.pis"
             unsaved-data="vm.unsavedData"
-            pi-str="vm.agreementData.piStr"
+            pi-str="vm.agreementData.authorsStr"
             errors="vm.errors"
             check-validation="vm.checkValidation(field)"
             field-value-has-changed="vm.fieldValueHasChanged(field)"
@@ -92,18 +92,18 @@
         <div class="form-group">
             <label for="subject">Author string * <em>(will be generated automatically from referrers.)</em></label>
             <input
-                id="piStr"
+                id="authorsStr"
                 type="text"
-                name="piStr"
+                name="authorsStr"
                 class="form-control"
                 placeholder="Referrers string"
                 ng-disabled="true"
-                ng-model="vm.agreementData.piStr"
-                ng-class="{'is-invalid' : vm.errors.piStr}"
+                ng-model="vm.agreementData.authorsStr"
+                ng-class="{'is-invalid' : vm.errors.authorsStr}"
             >
             <scientilla-error-messages
                 class="error-messages"
-                errors="vm.errors.piStr"
+                errors="vm.errors.authorsStr"
             ></scientilla-error-messages>
         </div>
 

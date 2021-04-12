@@ -42,6 +42,10 @@ module.exports = {
             await Alias.destroy({id: toDelete.map(td => td.id)});
         if (toCreate.length)
             await Alias.create(toCreate);
+    },
+    async getFirstAlias(userIds = []) {
+        const aliases = await Alias.find({user: userIds});
+        return userIds.map(uid => aliases.find(a => a.user === uid));
     }
 };
 

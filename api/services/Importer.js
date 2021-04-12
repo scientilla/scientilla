@@ -472,11 +472,11 @@ async function importDirectorates() {
 }
 
 async function analyseUserImport() {
-    let roleAssociations = await GeneralSettings.findOne({ name: 'role-associations' });
+    let roleAssociations = await GeneralSettings.findOne({name: 'role-associations'});
     const ignoredRoles = ImportHelper.getIgnoredRoles();
     const govAndControl = 'Gov. & Control';
 
-    try{
+    try {
         const options = ImportHelper.getUserImportRequestOptions('employees');
 
         let employees = await ImportHelper.getEmployees(options);
@@ -485,18 +485,18 @@ async function analyseUserImport() {
             return;
         }
 
-        sails.log.info(`Received contracts: ${ employees.length }`);
+        sails.log.info(`Received contracts: ${employees.length}`);
         sails.log.info('************************************************');
 
-        const contractsWithoutSubArea = employees.filter(c => !_.has(c, 'desc_sottoarea') || _.isEmpty(c.desc_sottoarea)).map(c =>  sails.log.debug(c));
-        sails.log.info(`Contracts without sub area: ${ contractsWithoutSubArea.length }`);
+        const contractsWithoutSubArea = employees.filter(c => !_.has(c, 'desc_sottoarea') || _.isEmpty(c.desc_sottoarea)).map(c => sails.log.debug(c));
+        sails.log.info(`Contracts without sub area: ${contractsWithoutSubArea.length}`);
         sails.log.info('************************************************');
 
         const contractsWihoutLines = employees.filter(c => (!_.has(c, 'linea_1') || _.isEmpty(c.linea_1)) && c.desc_sottoarea !== govAndControl);
-        sails.log.info(`Contracts without lines: ${ contractsWihoutLines.length }`);
-/*        for (const c of contractsWihoutLines) {
-            sails.log.debug(c.desc_sottoarea);
-        }*/
+        sails.log.info(`Contracts without lines: ${contractsWihoutLines.length}`);
+        /*        for (const c of contractsWihoutLines) {
+                    sails.log.debug(c.desc_sottoarea);
+                }*/
         sails.log.info('************************************************');
 
         employees = employees.filter(e => _.has(e, 'desc_sottoarea') &&
@@ -509,27 +509,27 @@ async function analyseUserImport() {
             !ignoredRoles.includes(e.Ruolo_AD)
         );
 
-        sails.log.info(`Contracts after filtering out 'Gov. & Control', 'Secondary contracts' and 'ignored roles': ${ employees.length }`);
+        sails.log.info(`Contracts after filtering out 'Gov. & Control', 'Secondary contracts' and 'ignored roles': ${employees.length}`);
         sails.log.info('************************************************');
 
         const contractsWithoutEmail = employees.filter(c => _.isEmpty(c.email));
         //employees = employees.filter(c => !_.isEmpty(c.email));
-        sails.log.info(`Contracts without email: ${ contractsWithoutEmail.length }`);
+        sails.log.info(`Contracts without email: ${contractsWithoutEmail.length}`);
         for (const c of contractsWithoutEmail) {
             sails.log.info(`Name: ${c.nome} Surname:${c.cognome}`);
         }
         sails.log.info('************************************************');
 
-        sails.log.info(`Contracts with email: ${ employees.length }`);
+        sails.log.info(`Contracts with email: ${employees.length}`);
         sails.log.info('************************************************');
 
         const contractsWithoutRuolo1 = employees.filter(c => !_.has(c, 'Ruolo_1') || _.isEmpty(c.Ruolo_1));
-        sails.log.info(`Contracts without Ruolo_1: ${ contractsWithoutRuolo1.length }`);
+        sails.log.info(`Contracts without Ruolo_1: ${contractsWithoutRuolo1.length}`);
         sails.log.info('************************************************');
 
         const groupedRoles = _.chain(employees)
             .groupBy(e => e.Ruolo_1)
-            .map((value, key) => ({ role: key, employees: value }))
+            .map((value, key) => ({role: key, employees: value}))
             .value();
 
         const totalEmployees = groupedRoles.reduce(function (accumulator, groupedRole) {
@@ -557,8 +557,8 @@ async function analyseUserImport() {
             group.employees = [];
 
             for (const groupRole of groupedRoles) {
-                const role =  _.toLower(groupRole.role);
-                const employees =  groupRole.employees;
+                const role = _.toLower(groupRole.role);
+                const employees = groupRole.employees;
 
                 if (group.originalRoles.includes(role)) {
                     group.employees = group.employees.concat(employees);
@@ -568,14 +568,14 @@ async function analyseUserImport() {
 
         roleAssociations = _.orderBy(roleAssociations, 'employees.length').reverse();
         for (const group of roleAssociations) {
-            sails.log.info(`Role: ${ group.roleCategory }, employees: ${ group.employees.length }`);
+            sails.log.info(`Role: ${group.roleCategory}, employees: ${group.employees.length}`);
         }
         sails.log.info('************************************************');
 
         const totalEmployees2 = roleAssociations.reduce(function (accumulator, roleAssociation) {
             return accumulator + roleAssociation.employees.length;
         }, 0);
-        sails.log.info(`Total employees connected to a associated role: ${ totalEmployees2 }`);
+        sails.log.info(`Total employees connected to a associated role: ${totalEmployees2}`);
         sails.log.info('************************************************');
 
         let allUsers = await User.find({active: true});
@@ -589,17 +589,17 @@ async function analyseUserImport() {
             );
 
             if (!user) {
-                sails.log.info(`No user found with name: ${ employee.nome }, surname: ${ employee.cognome } and email: ${ employee.email }`);
+                sails.log.info(`No user found with name: ${employee.nome}, surname: ${employee.cognome} and email: ${employee.email}`);
             } else {
-                const tmpUser = { name: employee.nome, surname: employee.cognome, email: employee.email };
+                const tmpUser = {name: employee.nome, surname: employee.cognome, email: employee.email};
                 if (foundUsers.find(u => JSON.stringify(u) === JSON.stringify(tmpUser))) {
-                    sails.log.info(`Duplicate user in scheda persona: ${ tmpUser.name } ${ tmpUser.surname }`);
+                    sails.log.info(`Duplicate user in scheda persona: ${tmpUser.name} ${tmpUser.surname}`);
                 } else {
                     foundUsers.push(tmpUser);
                 }
             }
         }
-        sails.log.info(`${ foundUsers.length }/${ employees.length } are active users`);
+        sails.log.info(`${foundUsers.length}/${employees.length} are active users`);
     } catch (e) {
         sails.log.info('analyseUserImport');
         sails.log.info(e);
@@ -626,7 +626,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
     const activeGroups = groups.filter(g => g.active === true);
 
     const ignoredRoles = ImportHelper.getIgnoredRoles();
-    let cidAssociations = await GeneralSettings.findOne({ name: 'cid-associations' });
+    let cidAssociations = await GeneralSettings.findOne({name: 'cid-associations'});
     if (_.has(cidAssociations, 'data')) {
         cidAssociations = cidAssociations.data;
     } else {
@@ -660,7 +660,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
             if (employee) {
                 employee.cid = cidAssociation.cid;
                 foundAssociations = true;
-                sails.log.debug(`Found CID association for user ${ employee.email}: ${ employee.cid }`);
+                sails.log.debug(`Found CID association for user ${employee.email}: ${employee.cid}`);
             }
         }
 
@@ -685,7 +685,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
                         employee.contract.push(contract);
                     }
                 } else {
-                    sails.log.debug(`Contract doesn't have any steps: ${ employee.email } ${ employee.cid} `);
+                    sails.log.debug(`Contract doesn't have any steps: ${employee.email} ${employee.cid} `);
                 }
             }
         }
@@ -706,7 +706,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
 
             let user = await User.findOne({cid: employee.cid});
             if (!user) {
-                sails.log.debug(`Try to find ${ employee.email }`);
+                sails.log.debug(`Try to find ${employee.email}`);
                 user = await User.findOne({username: employee.email});
             }
 
@@ -1059,10 +1059,16 @@ async function importProjects() {
         }
 
         const errors = [];
-        let totalItems = 0, created = 0, updated = 0;
+        let totalItems = 0, internalProjects = 0, created = 0, updated = 0;
 
         for (const project of projects) {
             totalItems++;
+
+            if (project.projectType2 === 'INTERNAL') {
+                internalProjects++;
+                continue;
+            }
+
             try {
                 const projectData = mapObject(project, schemas[type]);
 
@@ -1077,13 +1083,13 @@ async function importProjects() {
                     endYear = projectData.endDate.slice(0, projectData.endDate.indexOf('-'));
                 }
 
+                const pis = projectData.members.filter(member => ['pi', 'co_pi'].includes(member.role));
+
                 const data = {
                     type: type,
                     startYear: startYear,
                     endYear: endYear,
-                    piStr: projectData.members.filter(member => ['pi', 'co_pi'].includes(member.role))
-                        .map(pi => pi.email + ' ' + pi.name + ' ' + pi.surname)
-                        .join(', '),
+                    authorsStr: await ResearchItem.generateAuthorsStr(pis),
                     projectData: projectData
                 };
 
@@ -1097,9 +1103,14 @@ async function importProjects() {
                     continue;
                 }
 
+                const authorsData = pis.map((pi, pos) => ({
+                    affiliations: pi.email.includes('@iit.it') ? [1] : [],
+                    position: pos
+                }));
+
                 const prj = await Project.findOne({code: code, kind: ResearchItemKinds.EXTERNAL});
                 if (!prj) {
-                    await ResearchItem.createExternal(config.origin, code, data);
+                    await ResearchItem.createExternal(config.origin, code, data, authorsData);
                     created++;
                 } else if (JSON.stringify(prj.projectData) !== JSON.stringify(data.projectData)) {
                     await ResearchItem.updateExternal(prj.id, data);
@@ -1112,6 +1123,7 @@ async function importProjects() {
 
         sails.log.info(`import ${type} completed`);
         sails.log.info(`${totalItems} found`);
+        sails.log.info(`${internalProjects} internal projects`);
         sails.log.info(`external created: ${created}`);
         sails.log.info(`external updated: ${updated}`);
         sails.log.info(`errors: ${errors.length}`);

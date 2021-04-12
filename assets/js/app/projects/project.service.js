@@ -4,7 +4,7 @@
 
     const fields = {
         project_agreement: [
-            'piStr',
+            'authorsStr',
             'startYear',
             'endYear',
             'type',

@@ -43,7 +43,7 @@
             where: {}
         };
 
-        const agreementPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'group'];
+        const agreementPopulates = ['type', 'verified', 'verifiedUsers', 'verifiedGroups', 'group', 'authors', 'affiliations'];
 
         /* jshint ignore:start */
         vm.$onInit = async function () {
