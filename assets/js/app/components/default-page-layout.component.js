@@ -1,26 +1,26 @@
 (function () {
     'use strict';
 
-    angular.module('documentation')
-        .component('documentationLayout', {
-            templateUrl: 'partials/documentation-layout.html',
-            controller: documentationLayout,
+    angular.module('components')
+        .component('defaultPageLayout', {
+            templateUrl: 'partials/default-page-layout.html',
+            controller: controller,
             controllerAs: 'vm',
             transclude: true
         });
 
-    documentationLayout.$inject = [
+        controller.$inject = [
         '$rootScope',
         'EventsService',
         'CustomizeService',
         'AuthService'
     ];
 
-    function documentationLayout($rootScope, EventsService, CustomizeService, AuthService) {
+    function controller($rootScope, EventsService, CustomizeService, AuthService) {
         var vm = this;
 
         vm.$onInit = function () {
-            $rootScope.bodyLayout = 'documentation';
+            $rootScope.bodyLayout = 'page';
 
             EventsService.subscribe(vm, EventsService.CUSTOMIZATIONS_CHANGED, function (event, customizations) {
                 vm.customizations = customizations;

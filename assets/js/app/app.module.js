@@ -14,6 +14,7 @@
         'rzSlider',
         'iso-3166-country-codes',
         'textAngular',
+        'ngCookies',
 
         /* Feature areas */
         'users',
@@ -27,6 +28,7 @@
         'accomplishments',
         'documentation',
         'projects',
-        'patents'
+        'patents',
+        'cookies'
     ]);
 })();
