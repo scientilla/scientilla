@@ -233,7 +233,7 @@ module.exports = _.merge({}, BaseModel, {
         const userAliases = await Alias.getFirstAlias(users.map(u => u.id));
 
         return usersData.map(ud => {
-            const user = users.find(u => u.username === ud.email);
+            const user = users.find(u => u.username === ud.email.toLocaleLowerCase());
             return user ? userAliases.find(a => a.user === user.id).str : User.generateAliasesStr(ud.name, ud.surname)[0];
         }).join(', ');
     }
