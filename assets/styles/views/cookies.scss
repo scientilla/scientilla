@@ -1,0 +1,38 @@
+.cookie-notice{
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    left: 2rem;
+    z-index: 8;
+    display: block;
+    padding: 2rem;
+    background: $header-background-color;
+    color: color-yiq($header-background-color);
+
+    .cookie-title{
+        @include h3;
+        display: block;
+        margin-bottom: 1rem;
+    }
+
+    .cookie-text{
+        margin-bottom: 2rem;
+    }
+
+    a{
+        color: $white;
+        text-decoration: underline;
+    }
+}
+
+.cookies-policy{
+    .cookies-table{
+        margin-top: 2rem;
+    }
+}
+
+@include media-breakpoint-up(sm) {
+    .cookie-notice{
+        left: auto;
+    }
+}

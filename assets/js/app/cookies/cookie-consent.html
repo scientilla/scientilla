@@ -1,0 +1,13 @@
+<div
+    ng-if="!vm.consent"
+    class="cookie-notice"
+>
+    <div>
+        <span class="cookie-title"><i class="fas fa-cookie-bite fa-left"></i>Cookies</span>
+        <p class=cookie-text>Scientilla uses cookies in order to personalize your site experience.<br/>By using Scientilla you consent cookies. Read <a href="/#/cookies-policy">here</a> our cookies policy.</p>
+        <button
+            ng-click="vm.accept()"
+            class="btn btn-default"
+        >Ok, I consent.</button>
+    </div>
+</div>
