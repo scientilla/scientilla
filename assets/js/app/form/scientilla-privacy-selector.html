@@ -1,19 +1,37 @@
-<ul
-    class="privacy-selector"
+<div
+    uib-dropdown
+    class="privacy-selector btn-group"
     ng-class="vm.cssClass"
-    uib-tooltip-html="vm.getTooltipText()"
-    tooltip-placement="top-right">
-    <li ng-repeat="option in vm.options">
-        <label for="{{ vm.context }}-{{ option }}">
-            <input
-                type="radio"
-                id="{{ vm.context }}-{{ option }}"
-                value="{{ option }}"
-                data-context="{{ vm.context }}"
-                name="{{ vm.context }}-privacy"
-                ng-model="vm.model"
-                ng-click="vm.changeOption($event)"/>
-            <span></span>
-        </label>
-    </li>
-</ul>
+    is-open="vm.isOpen"
+>
+    <button
+        type="button"
+        class="btn btn-outline-secondary"
+        uib-dropdown-toggle
+        ng-disabled="disabled">
+        <i ng-class="vm.getSelectedOptionIcon(option)"></i>
+    </button>
+    <ul
+        uib-dropdown-menu
+        class="dropdown-menu dropdown-menu-right"
+    >
+        <li ng-repeat="option in vm.options">
+            <div
+                class="dropdown-item disabled"
+                ng-bind-html="vm.getDropdownText(option)"
+                ng-if="vm.isOptionDisabled(option)"
+                ng-click="$event.stopPropagation()"
+            >
+                {{ vm.getDropdownText(option) }}
+            </div>
+            <button
+                class="dropdown-item"
+                ng-click="vm.setModel(option)"
+                ng-bind-html="vm.getDropdownText(option)"
+                ng-if="!vm.isOptionDisabled(option)"
+            >
+                {{ vm.getDropdownText(option) }}
+            </button>
+        </li>
+    </ul>
+</div>

@@ -40,6 +40,8 @@
 
         let watchers = [];
 
+        vm.isOpen = false;
+
         vm.$onInit = function () {
             const cssClasses = [];
 
@@ -129,17 +131,23 @@
                     break;
             }
 
-            vm.options = [];
+            vm.options = [
+                'public',
+                'hidden',
+                'invisible'
+            ];
+
+            vm.enabledOptions = [];
             if (showPublicOption) {
-                vm.options.push('public');
+                vm.enabledOptions.push('public');
             }
 
             if (showHiddenOption) {
-                vm.options.push('hidden');
+                vm.enabledOptions.push('hidden');
             }
 
             if (showInvisibleOption) {
-                vm.options.push('invisible');
+                vm.enabledOptions.push('invisible');
             }
 
             // Add css class to remove the margin
@@ -193,32 +201,35 @@
             watchers = [];
         };
 
-        vm.changeOption = $event => {
-            const radioButtons = angular.element('[data-context="' + vm.context + '"]');
-            let index = 0;
-
-            $event.stopPropagation();
-
-            for (let i = 0; i < radioButtons.length; i++) {
-                const radiobutton = radioButtons[i];
-                if (radiobutton.checked) {
-                    if (i === radioButtons.length - 1) {
-                        index = 0;
-                    } else {
-                        index = i + 1;
-                    }
-
-                    break;
-                }
+        vm.isOptionDisabled = option => {
+            if (vm.enabledOptions.includes(option)) {
+                return false;
             }
 
-            const newSelectedRadioButton = radioButtons[index];
-            const newSelectedOption = newSelectedRadioButton.getAttribute('value');
-            vm.model = newSelectedOption;
+            return true;
         };
 
-        vm.getTooltipText = () => {
-            return ProfileService.getPrivacyTooltipText(vm.options);
+        vm.getDropdownText = option => {
+            return ProfileService.getPrivacyDropdownText(option);
+        };
+
+        vm.getSelectedOptionIcon = () => {
+            switch(vm.model) {
+                case 'public':
+                    return 'fas fa-globe-europe';
+                case 'hidden':
+                    return 'fas fa-lock';
+                case 'invisible':
+                    return 'fas fa-eye-slash';
+                default:
+                    return 'No correct option!';
+            }
+        };
+
+        vm.setModel = option => {
+            if (!vm.isOptionDisabled(option)) {
+                vm.model = option;
+            }
         };
     }
 
