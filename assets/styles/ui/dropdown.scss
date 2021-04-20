@@ -7,6 +7,16 @@
         background: $primary-color;
         color: $white !important;
     }
+
+    &.disabled,
+    &:disabled{
+        background: none !important;
+        color: $gray !important;
+
+        &:hover{
+            cursor: not-allowed;
+        }
+    }
 }
 
 .dropdown-toggle{

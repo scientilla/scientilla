@@ -90,19 +90,15 @@
         display: grid;
         margin-left: -.75rem;
         margin-right: -.75rem;
-        grid-template-columns: 1fr 40px;
+        grid-template-columns: 1fr 80px;
         grid-template-rows: auto;
 
         & > li{
             padding: 0px .75rem;
 
-            &:nth-child(1) {
-                //padding-right: 6rem;
-            }
-
             &:nth-child(2){
                 align-self: start;
-                text-align: center;
+                text-align: right;
 
                 .form-privacy{
                     input{
@@ -392,10 +388,6 @@
             & > .nav-tabs{
                 display: flex;
             }
-        }
-
-        .enable-listing {
-            grid-template-columns: 1fr 80px;
         }
 
         .field-listing{

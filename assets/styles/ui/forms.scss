@@ -295,88 +295,21 @@ label{
 }
 
 .privacy-selector{
-    @include normalize-listing;
     margin-top: 2.3rem;
 
     &.no-label{
         margin-top: 0px;
     }
 
-    &.one-option{
-        input[type='radio'] {
-            & + span {
-                cursor: default;
-            }
-        }
+    .privacy-icon{
+        min-width: 1.5rem;
     }
 
-    &.is-invalid{
-        input[type='radio'] {
-            & + span {
-                &:before {
-                    color: $danger;
-                }
-            }
-        }
-    }
-
-    & > li {
+    .privacy-info{
         display: block;
-    }
-
-    label{
-        margin: 0px;
-    }
-
-    input[type='radio'] {
-        display: none;
-
-        & + span {
-            position: relative;
-            display: none;
-            text-align:  center;
-            padding: .8rem 0px;
-            vertical-align: top;
-            line-height: 1;
-            cursor: pointer;
-
-            &:before {
-                display: block;
-                font-family: $font-awesome;
-                font-size: 1.4rem;
-                font-weight: 900;
-            }
-        }
-
-        &[value='public'] {
-            & + span {
-                &:before {
-                    content: '\f57c';
-                }
-            }
-        }
-
-        &[value='hidden'] {
-            & + span {
-                &:before {
-                    content: '\f023';
-                }
-            }
-        }
-
-        &[value='invisible'] {
-            & + span {
-                &:before {
-                    content: '\f070';
-                }
-            }
-        }
-
-        &:checked {
-            & + span {
-                display: block;
-            }
-        }
+        margin-top: -.5rem;
+        margin-left: 2rem;
+        font-size: 1rem;
     }
 }
 

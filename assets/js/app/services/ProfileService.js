@@ -12,7 +12,7 @@
             exportProfile: exportProfile,
             addItem: addItem,
             removeItem: removeItem,
-            getPrivacyTooltipText: getPrivacyTooltipText,
+            getPrivacyDropdownText: getPrivacyDropdownText,
             getFavoriteTooltipText: getFavoriteTooltipText,
             getDatepickerOptions: getDatepickerOptions
         };
@@ -35,33 +35,17 @@
             }
         }
 
-        function getPrivacyTooltipText(options) {
-
-            switch (true) {
-                case
-                    _.includes(options, 'public') &&
-                    !_.includes(options, 'hidden') &&
-                    !_.includes(options, 'invisible')
-                :
-                    return 'This field can only be set to "Public"!';
-                case
-                    !_.includes(options, 'public') &&
-                    _.includes(options, 'hidden') &&
-                    !_.includes(options, 'invisible')
-                :
-                    return 'This field can only be set to "Scientilla only"!';
-                case
-                    !_.includes(options, 'public') &&
-                    _.includes(options, 'hidden') &&
-                    _.includes(options, 'invisible')
-                :
-                    return 'Set the privacy of this field to "Scientilla only" or "Hidden"!';
-                case
-                    _.includes(options, 'public') &&
-                    _.includes(options, 'hidden') &&
-                    _.includes(options, 'invisible')
-                :
-                    return 'Set the privacy of this field to "Public", "Scientilla only" or "Hidden"!';
+        function getPrivacyDropdownText(option) {
+            switch(option) {
+                case 'public':
+                    return `<i class="fas fa-globe-europe fa-left privacy-icon"></i><strong>Public</strong>
+                        <span class="privacy-info">Visible on Scientilla and the public website.</span>`;
+                case 'hidden':
+                    return `<i class="fas fa-lock fa-left privacy-icon"></i><strong>Locked</strong>
+                        <span class="privacy-info">Only visible on Scientilla.</span>`;
+                case 'invisible':
+                    return `<i class="fas fa-eye-slash fa-left privacy-icon"></i><strong>Not visible</strong>
+                        <span class="privacy-info">Only visible during editing.</span>`;
                 default:
                     return 'No correct option!';
             }
