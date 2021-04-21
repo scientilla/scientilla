@@ -1,5 +1,13 @@
 <ul class="enable-listing">
     <li>
+        <label>Privacy</label>
+        <scientilla-privacy-selector
+            context-object="vm.context"
+            profile="vm.profile"
+            errors="vm.experience.errors.privacy"
+            model="vm.experience.privacy"></scientilla-privacy-selector>
+    </li>
+    <li>
         <ul class="field-listing">
             <li>
                 <ul class="experience-form">
@@ -207,12 +215,5 @@
                 </ul>
             </li>
         </ul>
-    </li>
-    <li>
-        <scientilla-privacy-selector
-            context-object="vm.context"
-            profile="vm.profile"
-            errors="vm.experience.errors.privacy"
-            model="vm.experience.privacy"></scientilla-privacy-selector>
     </li>
 </ul>

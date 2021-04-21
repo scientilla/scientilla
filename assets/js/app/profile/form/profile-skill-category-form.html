@@ -1,11 +1,18 @@
+<label for="skill-category[{{ vm.key }}]">Category</label>
 <ul class="enable-listing">
+    <li>
+        <scientilla-privacy-selector
+            context-object="vm.context"
+            profile="vm.profile"
+            errors="vm.category.errors.privacy"
+            model="vm.category.privacy"></scientilla-privacy-selector>
+    </li>
     <li>
         <ul class="skill-category-field-listing">
             <li>
                 <div
                     class="form-group"
                     ng-class="{'has-error': vm.profile.skillCategories[vm.key].errors.categoryName}">
-                    <label for="skill-category[{{ vm.key }}]">Category</label>
                     <input
                         type="text"
                         class="form-control"
@@ -20,14 +27,14 @@
                         errors="vm.profile.skillCategories[vm.key].errors.categoryName"></scientilla-field-errors>
                 </div>
             </li>
-            <li class="action-column desktop-actions">
+            <li class="desktop-actions">
                 <div class="form-group">
                     <div class="btn btn-outline-secondary">
                         <i class="fas fa-arrows-alt"></i>
                     </div>
                 </div>
             </li>
-            <li class="action-column desktop-actions">
+            <li class="desktop-actions">
                 <div class="form-group">
                     <button
                         class="btn btn-outline-secondary"
@@ -39,7 +46,7 @@
                     </button>
                 </div>
             </li>
-            <li class="action-column desktop-actions">
+            <li class="desktop-actions">
                 <button
                     class="btn btn-link"
                     ng-click="vm.addItem({
@@ -96,12 +103,5 @@
                 </ul>
             </li>
         </ul>
-    </li>
-    <li>
-        <scientilla-privacy-selector
-            context-object="vm.context"
-            profile="vm.profile"
-            errors="vm.category.errors.privacy"
-            model="vm.category.privacy"></scientilla-privacy-selector>
     </li>
 </ul>
