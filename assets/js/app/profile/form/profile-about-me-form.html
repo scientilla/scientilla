@@ -1,9 +1,16 @@
+<label for="image">Image</label>
 <ul class="enable-listing">
+    <li>
+        <scientilla-privacy-selector
+            context-string="image"
+            model="vm.profile.image.privacy"
+            errors="vm.profile.image.errors.privacy"
+            profile="vm.profile"></scientilla-privacy-selector>
+    </li>
     <li>
         <div
             class="form-group"
             ng-class="{'has-error': vm.profile.image.errors.value}">
-            <label for="image">Image</label>
             <input
                 type="file"
                 class="form-control"
@@ -29,19 +36,19 @@
                 errors="vm.profile.image.errors.value"></scientilla-field-errors>
         </div>
     </li>
-    <li>
-        <scientilla-privacy-selector
-            context-string="image"
-            model="vm.profile.image.privacy"
-            errors="vm.profile.image.errors.privacy"
-            profile="vm.profile"></scientilla-privacy-selector>
-    </li>
 </ul>
 
 <label class="label-title">Titles</label>
 <ul class="item-listing title-listing" ui-sortable="vm.options" ng-model="vm.profile.titles">
     <li ng-repeat="(key, title) in vm.profile.titles track by $index">
         <ul class="enable-listing no-labels">
+            <li>
+                <scientilla-privacy-selector
+                    context-string="titles[{{ key }}]"
+                    model="vm.profile.titles[key].privacy"
+                    errors="vm.profile.titles[key].errors.privacy"
+                    profile="vm.profile"></scientilla-privacy-selector>
+            </li>
             <li>
                 <ul class="field-listing">
                     <li>
@@ -120,13 +127,6 @@
                     </li>
                 </ul>
             </li>
-            <li>
-                <scientilla-privacy-selector
-                    context-string="titles[{{ key }}]"
-                    model="vm.profile.titles[key].privacy"
-                    errors="vm.profile.titles[key].errors.privacy"
-                    profile="vm.profile"></scientilla-privacy-selector>
-            </li>
         </ul>
     </li>
 
@@ -141,12 +141,19 @@
     </li>
 </ul>
 
+<label for="description">Description</label>
 <ul class="enable-listing">
+    <li>
+        <scientilla-privacy-selector
+            context-string="description"
+            profile="vm.profile"
+            errors="vm.profile.description.errors.privacy"
+            model="vm.profile.description.privacy"></scientilla-privacy-selector>
+    </li>
     <li>
         <div
             class="form-group"
             ng-class="{'has-error': vm.profile.description.errors.value}">
-            <label for="description">Description</label>
             <text-angular
                 name="description"
                 id="description"
@@ -163,21 +170,21 @@
                 errors="vm.profile.description.errors.value"></scientilla-field-errors>
         </div>
     </li>
-    <li>
-        <scientilla-privacy-selector
-            context-string="description"
-            profile="vm.profile"
-            errors="vm.profile.description.errors.privacy"
-            model="vm.profile.description.privacy"></scientilla-privacy-selector>
-    </li>
 </ul>
 
+<label for="role">Role</label>
 <ul class="enable-listing">
+    <li>
+        <scientilla-privacy-selector
+            context-string="role"
+            profile="vm.profile"
+            errors="vm.profile.role.errors.privacy"
+            model="vm.profile.role.privacy"></scientilla-privacy-selector>
+    </li>
     <li>
         <div
             class="form-group"
             ng-class="{'has-error': vm.profile.role.errors.value}">
-            <label for="role">Role</label>
             <input
                 type="text"
                 class="form-control"
@@ -192,21 +199,21 @@
                 errors="vm.profile.role.errors.value"></scientilla-field-errors>
         </div>
     </li>
-    <li>
-        <scientilla-privacy-selector
-            context-string="role"
-            profile="vm.profile"
-            errors="vm.profile.role.errors.privacy"
-            model="vm.profile.role.privacy"></scientilla-privacy-selector>
-    </li>
 </ul>
 
+<label for="website">Website</label>
 <ul class="enable-listing">
+    <li>
+        <scientilla-privacy-selector
+            context-string="website"
+            profile="vm.profile"
+            errors="vm.profile.website.errors.privacy"
+            model="vm.profile.website.privacy"></scientilla-privacy-selector>
+    </li>
     <li>
         <div
             class="form-group"
             ng-class="{'has-error': vm.profile.website.errors.value}">
-            <label for="website">Website</label>
             <input
                 type="text"
                 class="form-control"
@@ -221,21 +228,21 @@
                 errors="vm.profile.website.errors.value"></scientilla-field-errors>
         </div>
     </li>
-    <li>
-        <scientilla-privacy-selector
-            context-string="website"
-            profile="vm.profile"
-            errors="vm.profile.website.errors.privacy"
-            model="vm.profile.website.privacy"></scientilla-privacy-selector>
-    </li>
 </ul>
 
+<label for="address">Address</label>
 <ul class="enable-listing">
+    <li>
+        <scientilla-privacy-selector
+            context-string="address"
+            profile="vm.profile"
+            errors="vm.profile.address.errors.privacy"
+            model="vm.profile.address.privacy"></scientilla-privacy-selector>
+    </li>
     <li>
         <div
             class="form-group"
             ng-class="{'has-error': vm.profile.address.errors.value}">
-            <label for="address">Address</label>
             <input
                 type="text"
                 class="form-control"
@@ -249,13 +256,6 @@
             <scientilla-field-errors
                 errors="vm.profile.address.errors.value"></scientilla-field-errors>
         </div>
-    </li>
-    <li>
-        <scientilla-privacy-selector
-            context-string="address"
-            profile="vm.profile"
-            errors="vm.profile.address.errors.privacy"
-            model="vm.profile.address.privacy"></scientilla-privacy-selector>
     </li>
 </ul>
 

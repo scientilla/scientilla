@@ -90,15 +90,14 @@
         display: grid;
         margin-left: -.75rem;
         margin-right: -.75rem;
-        grid-template-columns: 1fr 80px;
+        grid-template-columns: 6.6rem 1fr;
         grid-template-rows: auto;
 
         & > li{
             padding: 0px .75rem;
 
-            &:nth-child(2){
+            &:nth-child(1){
                 align-self: start;
-                text-align: right;
 
                 .form-privacy{
                     input{
@@ -117,7 +116,7 @@
 
         &.no-labels{
             & > li{
-                &:nth-child(2){
+                &:nth-child(1){
                     label {
                         margin-top: 0rem;
                     }
@@ -140,12 +139,8 @@
             }
 
             .form-checkbox{
-                //line-height: 1;
-
                 input{
                     & + span {
-                        //line-height: 1;
-
                         &:before{
                             margin: 0px;
                         }

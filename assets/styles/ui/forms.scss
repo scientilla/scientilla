@@ -304,10 +304,8 @@ label{
 }
 
 .privacy-selector{
-    margin-top: 2.3rem;
-
-    &.no-label{
-        margin-top: 0px;
+    .dropdown-toggle{
+        min-width: 5.1rem;
     }
 
     .privacy-icon{

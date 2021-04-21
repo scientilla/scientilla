@@ -32,14 +32,12 @@
             </select>
         </div>
     </div>
-    
+
     <uib-tabset active="vm.active" class="profile-tabs js-profile-tabs" ng-if="vm.profileIsLoaded">
         <uib-tab
             index="0"
             heading="Basic information"
             ng-class="{'has-error' : vm.basicInformationHasErrors, 'changed' : vm.changed['basic-info']}">
-            <profile-privacy-legend></profile-privacy-legend>
-
             <profile-basic-information-form
                 profile="vm.profile"></profile-basic-information-form>
 
@@ -54,8 +52,6 @@
             index="1"
             heading="About me"
             ng-class="{'has-error' : vm.aboutMeHasErrors, 'changed' : vm.changed['about-me']}">
-            <profile-privacy-legend></profile-privacy-legend>
-
             <profile-about-me-form
                 profile="vm.profile"
                 profile-image="vm.profileImage"
@@ -70,8 +66,6 @@
             index="2"
             heading="Socials"
             ng-class="{'has-error' : vm.errors['socials'], 'changed' : vm.changed['socials']}">
-            <profile-privacy-legend></profile-privacy-legend>
-
             <profile-socials-form
                 profile="vm.profile"
                 errors="vm.errors"></profile-socials-form>
@@ -91,14 +85,19 @@
 
             <div class="h5 internal-experiences-title">Experiences within IIT</div>
 
-            <profile-privacy-legend
-                show="vm.profile.experiencesInternal.length > 0"></profile-privacy-legend>
-
             <ul class="item-listing add-lines">
                 <li
                     ng-repeat="(key, experience) in vm.profile.experiencesInternal track by $index"
                     ng-init="type = vm.getType(experience)">
                     <ul class="enable-listing">
+                        <li>
+                            <label>Privacy</label>
+                            <scientilla-privacy-selector
+                                context-string="experiencesInternal[{{ key }}]"
+                                model="vm.profile.experiencesInternal[key].privacy"
+                                errors="vm.profile.experiencesInternal[key].errors.privacy"
+                                profile="vm.profile"></scientilla-privacy-selector>
+                        </li>
                         <li>
                             <ul class="field-listing">
                                 <li>
@@ -213,13 +212,6 @@
                                 </li>
                             </ul>
                         </li>
-                        <li>
-                            <scientilla-privacy-selector
-                                context-string="experiencesInternal[{{ key }}]"
-                                model="vm.profile.experiencesInternal[key].privacy"
-                                errors="vm.profile.experiencesInternal[key].errors.privacy"
-                                profile="vm.profile"></scientilla-privacy-selector>
-                        </li>
                     </ul>
                 </li>
             </ul>
@@ -228,9 +220,6 @@
                 please contact <a href="mailto:hr_servicedesk@iit.it">HCOD</a>.</em>
 
             <div class="h5 external-experiences-title">Experiences outside of IIT</div>
-
-            <profile-privacy-legend
-                show="vm.profile.experiencesExternal.length > 0"></profile-privacy-legend>
 
             <ul class="item-listing add-lines">
                 <li ng-repeat="(key, experience) in vm.profile.experiencesExternal track by $index">
@@ -260,8 +249,6 @@
             index="4"
             heading="Education"
             ng-class="{'has-error' : vm.errors['education'], 'changed' : vm.changed['education']}">
-            <profile-privacy-legend
-                show="vm.profile.education.length > 0"></profile-privacy-legend>
 
             <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.education">
                 <li ng-repeat="(key, education) in vm.profile.education track by $index">
@@ -291,8 +278,6 @@
             index="5"
             heading="Certificates"
             ng-class="{'has-error' : vm.errors['certificates'], 'changed' : vm.changed['certificates']}">
-            <profile-privacy-legend
-                show="vm.profile.certificates.length > 0"></profile-privacy-legend>
 
             <ul class="item-listing add-lines" ui-sortable ng-model="vm.profile.certificates">
                 <li ng-repeat="(key, certificate) in vm.profile.certificates track by $index">
@@ -322,8 +307,6 @@
             index="6"
             heading="Skills"
             ng-class="{'has-error' : vm.errors['skillCategories'], 'changed' : vm.changed['skills']}">
-            <profile-privacy-legend
-                show="vm.profile.skillCategories.length > 0"></profile-privacy-legend>
 
             <ul class="item-listing" ui-sortable ng-model="vm.profile.skillCategories">
                 <li
