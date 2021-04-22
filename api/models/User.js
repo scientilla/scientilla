@@ -245,13 +245,30 @@ module.exports = _.merge({}, SubResearchEntity, {
             });
     },
     setSlug: async function (user) {
-        const basicSlug = user.username.toLowerCase().trim().replace(/\./gi, '-').split('@')[0];
+        const name = user.displayName ? user.displayName : user.name;
+        const surname = user.displaySurname ? user.displaySurname : user.surname;
+
+        // Create basic slug
+        let basicSlug = Utils.stringToSlug([name, surname].filter(s => s).join('-'));
+
+        // Check if slug is longer than 3 characters, validation is set to three
+        if (basicSlug.length < 3) {
+            basicSlug = new Date.toString();
+        }
 
         let slug = basicSlug;
         while (true) {
-            const otherUserBySlug = await User.findOneBySlug(slug);
-            if (!otherUserBySlug)
+            // Find user by slug except user itself
+            const otherUsersBySlug = await User.find({
+                id: { '!': user.id },
+                slug: slug
+            });
+
+            // No user found, break loop
+            if (otherUsersBySlug.length === 0)
                 break;
+
+            // Otherwise add random number to slug and try again
             slug = basicSlug + _.random(1, 999);
         }
 
