@@ -77,7 +77,8 @@ module.exports = function (grunt) {
                     'textangular/dist/textAngular-sanitize.min.js',
                     'textangular/dist/textAngular.min.js',
                     'moment/min/moment-with-locales.min.js',
-                    'moment-timezone/builds/moment-timezone-with-data.min.js'
+                    'moment-timezone/builds/moment-timezone-with-data.min.js',
+                    'angular-cookies/angular-cookies.js'
                 ],
                 flatten: true,
                 dest: '.tmp/public/js/dependencies'
