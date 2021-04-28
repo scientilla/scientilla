@@ -109,7 +109,7 @@ async function getContractualHistoryOfCidCodes(codes) {
         }
     } catch (e) {
         sails.log.debug('importUserHistoryContracts:getContractualHistoryOfCIDCodes');
-        sails.log.debug(e);
+        throw e;
     }
     return contracts;
 }

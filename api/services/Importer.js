@@ -675,6 +675,10 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
         // Get the contractual history of the CID codes
         const contracts = await ImportHelper.getContractualHistoryOfCidCodes(cidCodes);
 
+        if (contracts.length === 0) {
+            return;
+        }
+
         for (const contract of contracts) {
             if (contract.contratto_secondario !== 'X') {
                 const employee = employees.find(e => e.cid === contract.cid);
