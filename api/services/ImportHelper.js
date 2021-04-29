@@ -456,7 +456,7 @@ async function getEmployees(options) {
         }
     } catch (e) {
         sails.log.debug('ImporterHelper:getEmployees');
-        sails.log.debug(e);
+        throw e;
     }
 }
 
