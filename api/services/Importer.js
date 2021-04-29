@@ -625,8 +625,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
 
     const activeGroups = groups.filter(g => g.active === true);
 
-    const ignoredRoles = ImportHelper.getIgnoredRoles();
-    let cidAssociations = await GeneralSettings.findOne({name: 'cid-associations'});
+    let cidAssociations = await GeneralSettings.findOne({ name: 'cid-associations' });
     if (_.has(cidAssociations, 'data')) {
         cidAssociations = cidAssociations.data;
     } else {
@@ -639,6 +638,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
     const updatedUsers = [];
     const updatedDisplayNames = [];
     const insertedUsers = [];
+    const notActiveUsers = [];
 
     try {
         // Endpoint options to get all users
@@ -668,12 +668,40 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
             sails.log.info('....................................');
         }
 
+        // Not active employees
+        const notActiveEmployees = employees.filter(e => _.has(e, 'stato_dip') && e.stato_dip === 'cessato');
+
+        for (const employee of notActiveEmployees) {
+            const user = await ImportHelper.findEmployeeUser(employee);
+
+            if (user) {
+                if (_.has(employee, 'data_fine_validita')) {
+                    let contractEndDate = null;
+
+                    const date = moment(employee.data_fine_validita, ImportHelper.getISO8601Format());
+
+                    if (date.isValid() && date.isBefore('9999-01-01')) {
+                        contractEndDate = date;
+                    }
+                    user.contract_end_date = contractEndDate;
+                }
+                notActiveUsers.push(user);
+            }
+        }
+
+        // Only use the employees without stato_dip === 'cessato'
+        employees = employees.filter(e => _.has(e, 'stato_dip') && e.stato_dip !== 'cessato');
+
         // Get all CID codes in one Array
         const cidCodes = employees.map(employee => employee.cid);
         sails.log.info('Found ' + cidCodes.length + ' CID codes!');
 
         // Get the contractual history of the CID codes
         const contracts = await ImportHelper.getContractualHistoryOfCidCodes(cidCodes);
+
+        if (contracts.length === 0) {
+            return;
+        }
 
         for (const contract of contracts) {
             if (contract.contratto_secondario !== 'X') {
@@ -858,8 +886,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
             active: true
         };
 
-        let disabledSynchronizedMemberships = [],
-            disabledUsers = [];
+        let disabledSynchronizedMemberships = [];
 
         const contractEndDate = moment().subtract(1, 'days').startOf('day').format();
 
@@ -870,27 +897,33 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
             if (user) {
                 // Deactivate all memberships of the selected user that aren't in sync
                 disabledSynchronizedMemberships = await Membership.update(_.merge({user: user.id}, condition), {active: false});
-
-                // Deactivate the selected user if it's not in sync
-                disabledUsers = await User.update(
-                    _.merge({id: user.id}, condition), {active: false, contract_end_date: contractEndDate}
-                );
             }
         } else {
             // Deactivate all memberships of users that aren't in sync
             disabledSynchronizedMemberships = await Membership.update(condition, {active: false});
+        }
 
-            // Deactivate all users that aren't in sync
-            disabledUsers = await User.update(condition, {active: false, contract_end_date: contractEndDate});
+        for (const user of notActiveUsers) {
+            const userData = {
+                active: false
+            };
+
+            user.contract_end_date = moment().format(ImportHelper.getISO8601Format());
+
+            if (user.contract_end_date) {
+                userData.contract_end_date = user.contract_end_date;
+            }
+
+            await User.update({id: user.id}, userData);
         }
 
         let disabledCollaborations = [];
 
-        if (disabledUsers.length > 0) {
+        if (notActiveUsers.length > 0) {
             // Set the membership active to false for the disabled users or user
             disabledCollaborations = await Membership.update({
                 synchronized: false,
-                user: disabledUsers.map(user => user.id),
+                user: notActiveUsers.map(user => user.id),
                 active: true
             }, {active: false});
         }
@@ -909,7 +942,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
         sails.log.info('Updated the display names for ' + updatedDisplayNames.length + ' Users!');
         sails.log.info('....................................');
 
-        sails.log.info(disabledUsers.length + ' Users disabled + changed contract end date!');
+        sails.log.info(notActiveUsers.length + ' Users disabled + changed contract end date!');
         sails.log.info('....................................');
 
         sails.log.info(disabledMemberships + ' Memberships disabled!');
