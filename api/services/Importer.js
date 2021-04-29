@@ -501,10 +501,12 @@ async function analyseUserImport() {
 
         employees = employees.filter(e => _.has(e, 'desc_sottoarea') &&
             _.has(e, 'linea_1') &&
+            _.has(e, 'stato_dip') &&
             (
                 e.desc_sottoarea !== govAndControl ||
                 e.desc_sottoarea === govAndControl && e.linea_1 === 'PRS001'
             ) &&
+            e.stato_dip !== 'cessato' &&
             e.contratto_secondario !== 'X' &&
             !ignoredRoles.includes(e.Ruolo_AD)
         );
