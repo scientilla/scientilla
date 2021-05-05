@@ -257,19 +257,23 @@ module.exports = _.merge({}, SubResearchEntity, {
         }
 
         let slug = basicSlug;
+        let slugNumber = 1;
         while (true) {
             // Find user by slug except user itself
-            const otherUsersBySlug = await User.find({
-                id: { '!': user.id },
+            let otherUsersBySlug = await User.find({
                 slug: slug
             });
+            otherUsersBySlug = otherUsersBySlug.filter(u => u.id !== user.id);
 
             // No user found, break loop
             if (otherUsersBySlug.length === 0)
                 break;
 
-            // Otherwise add random number to slug and try again
-            slug = basicSlug + _.random(1, 999);
+            // Otherwise add number to slug and try again
+            slug = basicSlug + slugNumber;
+
+            // Increase by one
+            slugNumber++;
         }
 
         user.slug = slug;
@@ -280,34 +284,15 @@ module.exports = _.merge({}, SubResearchEntity, {
         newUser.username = _.toLower(newUser.username);
         // Check if username is unique
         await User.checkUsername(newUser);
+
+        // Add the role to the user
+        await User.setNewUserRole(newUser);
+
+        // Set the slug for the user
+        await User.setSlug(newUser);
+
         // Return created user
         return User.create(newUser);
-    },
-    createCompleteUser: async function (params) {
-        params.username = _.toLower(params.username);
-        const attributes = _.keys(User._attributes);
-        const userObj = _.pick(params, attributes);
-        await User.checkUsername(userObj);
-        const user = await User.create(userObj);
-        const authAttributes = _.keys(Auth._attributes);
-        const auth = _.pick(params, authAttributes);
-        return new Promise(function (resolve, reject) {
-            waterlock.engine.attachAuthToUser(auth, user,
-                function (err) {
-                    if (err) {
-                        sails.log.debug(`An error happened while creating a user`);
-                        sails.log.debug(err);
-                        reject(err);
-                    } else
-                        resolve(user);
-                });
-        });
-    },
-    registerUser: function (user) {
-        if (User.isInternalUser(user)) {
-            throw 'Cannot create domain users';
-        }
-        return User.createCompleteUser(user);
     },
     setNewUserRole: function (user) {
         return User
@@ -373,21 +358,6 @@ module.exports = _.merge({}, SubResearchEntity, {
         if (!_.isEmpty(newAliases)) {
             await Alias.create(newAliases);
         }
-    },
-    copyAuthData: function (user) {
-        if (!user.auth)
-            return user;
-
-        return Auth
-            .findOneById(user.auth)
-            .then(function (auth) {
-                user.username = auth.username;
-                user.name = auth.name;
-                user.surname = auth.surname;
-
-                return user;
-            });
-
     },
     getAuthorshipsData: async function (document, researchEntityId, verificationData = {}) {
         const user = await User.findOneById(researchEntityId);
@@ -605,15 +575,6 @@ module.exports = _.merge({}, SubResearchEntity, {
 
         document.authorships.push(authorship);
         return document;
-    },
-    beforeCreate: function (user, cb) {
-        Promise.resolve(user)
-            .then(User.copyAuthData)
-            .then(User.setNewUserRole)
-            .then(User.setSlug)
-            .then(function () {
-                cb();
-            });
     },
     afterCreate: async function (user, cb) {
         if (!user.id)

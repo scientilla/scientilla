@@ -852,7 +852,7 @@ async function findEmployeeUser(employee) {
         }, condition));
 
         if (users.length === 1) {
-            sails.log.debug(`Found ${users.length} users with the same CID code: ${employee.cid}`);
+            sails.log.debug(`Found ${users.length} user with the same CID code: ${employee.cid}, email: ${employee.email}, name: ${employee.nome}, surname: ${employee.cognome}`);
             return users[0];
         }
 

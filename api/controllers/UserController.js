@@ -30,10 +30,6 @@ module.exports = require('waterlock').actions.user(_.merge({}, SubResearchEntity
             });
         });
     },
-    create: function (req, res, next) {
-        var params = waterlock._utils.allParams(req);
-        res.halt(User.createCompleteUser(params));
-    },
     addTags: function (req, res) {
         var documentId = req.params.documentId;
         var userId = req.params.researchEntityId;
