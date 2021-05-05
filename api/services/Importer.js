@@ -736,7 +736,7 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
 
             let user = await User.findOne({cid: employee.cid});
             if (!user) {
-                sails.log.debug(`Try to find ${ employee.email }`);
+                sails.log.debug(`Try to find email: ${ employee.email }, user not found with CID ${employee.cid}`);
                 user = await User.findOne({username: employee.email});
             }
 
@@ -931,6 +931,36 @@ async function importUserContracts(email = ImportHelper.getDefaultEmail(), overr
         }
 
         const disabledMemberships = disabledSynchronizedMemberships.length + disabledCollaborations.length;
+
+        // Only check this for all users
+        if (email === ImportHelper.getDefaultEmail()) {
+            const notExpectedActiveUsers = await User.find(condition);
+            if (notExpectedActiveUsers.length > 0) {
+                sails.log.info(`Found ${notExpectedActiveUsers.length} users that has to be checked manually`);
+            }
+            for (const user of notExpectedActiveUsers) {
+                sails.log.info(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`);
+            }
+            if (notExpectedActiveUsers.length > 0) {
+                sails.log.info('....................................');
+            }
+        }
+
+        const nextYear = moment().add(1, 'years');
+        const conditionNotActiveUser = {
+            active: false,
+            contract_end_date: {'>': nextYear.format()},
+        }
+        const notActiveUsersWrongContractEndDate = await User.find(conditionNotActiveUser);
+        if (notActiveUsersWrongContractEndDate.length > 0) {
+            sails.log.info(`Found ${notActiveUsersWrongContractEndDate.length} users that has to be checked manually`);
+        }
+        for (const user of notActiveUsersWrongContractEndDate) {
+            sails.log.info(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`);
+        }
+        if (notActiveUsersWrongContractEndDate.length > 0) {
+            sails.log.info('....................................');
+        }
 
         sails.log.info('Found ' + employees.length + ' employees with a primary contract & valid role!');
         sails.log.info('....................................');
