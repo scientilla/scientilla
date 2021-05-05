@@ -260,10 +260,10 @@ module.exports = _.merge({}, SubResearchEntity, {
         let slugNumber = 1;
         while (true) {
             // Find user by slug except user itself
-            const otherUsersBySlug = await User.find({
-                id: { '!': user.id },
+            let otherUsersBySlug = await User.find({
                 slug: slug
             });
+            otherUsersBySlug = otherUsersBySlug.filter(u => u.id !== user.id);
 
             // No user found, break loop
             if (otherUsersBySlug.length === 0)
