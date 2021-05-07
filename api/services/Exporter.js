@@ -6,13 +6,116 @@ const _ = require('lodash');
 
 "use strict";
 
+const bibtexDocumentTypes = [];
+const bibtexDocumentTypesMap = {}
+const bibtexDourceTypesMap = {};
+const bibtexEntryFields = {};
+
 module.exports = {
     documentsToCsv,
     documentsToBibtex,
+    getBibtex,
     accomplishmentsToCsv,
     projectsToCsv,
     patentsToCsv
 };
+
+function bibtexInit() {
+    if (!_.isEmpty(bibtexDocumentTypes))
+        return;
+
+    bibtexDocumentTypes.push(DocumentTypes.INVITED_TALK);
+    bibtexDocumentTypes.push(DocumentTypes.ABSTRACT_REPORT);
+    bibtexDocumentTypes.push(DocumentTypes.ERRATUM);
+    bibtexDocumentTypes.push(DocumentTypes.POSTER);
+    bibtexDocumentTypes.push(DocumentTypes.PHD_THESIS);
+    bibtexDocumentTypes.push(DocumentTypes.REPORT);
+
+    bibtexDocumentTypesMap[DocumentTypes.PHD_THESIS] = 'PHDTHESIS';
+    bibtexDocumentTypesMap[DocumentTypes.ABSTRACT_REPORT] = 'TECHREPORT';
+    bibtexDocumentTypesMap[DocumentTypes.ERRATUM] = 'MISC';
+    bibtexDocumentTypesMap[DocumentTypes.REPORT] = 'MISC';
+    bibtexDocumentTypesMap[DocumentTypes.POSTER] = 'MISC';
+    bibtexDocumentTypesMap[DocumentTypes.INVITED_TALK] = 'MISC';
+
+    bibtexDourceTypesMap[SourceTypes.JOURNAL] = 'ARTICLE';
+    bibtexDourceTypesMap[SourceTypes.CONFERENCE] = 'CONFERENCE';
+    bibtexDourceTypesMap[SourceTypes.BOOK] = 'BOOK';
+    bibtexDourceTypesMap[SourceTypes.BOOKSERIES] = 'INCOLLECTION';
+
+    bibtexEntryFields['ARTICLE'] = {
+        required: [
+            'author',
+            'title',
+            'journal',
+            'year'
+        ],
+        optional: [
+            'volume',
+            'number',
+            'pages'
+        ]
+    };
+    bibtexEntryFields['CONFERENCE'] = {
+        required: [
+            'author',
+            'title',
+            'booktitle',
+            'year'
+        ],
+        optional: [
+            'pages'
+        ]
+    };
+    bibtexEntryFields['BOOK'] = {
+        required: [
+            'author',
+            'title',
+            'publisher',
+            'year'
+        ],
+        optional: [
+            'volume'
+        ]
+    };
+    bibtexEntryFields['INCOLLECTION'] = {
+        required: [
+            'author',
+            'title',
+            'booktitle',
+            'year'
+        ],
+        optional: [
+            'pages'
+        ]
+    };
+    bibtexEntryFields['PHDTHESIS'] = {
+        required: [
+            'author',
+            'title',
+            'school',
+            'year'
+        ],
+        optional: []
+    };
+    bibtexEntryFields['TECHREPORT'] = {
+        required: [
+            'author',
+            'title',
+            'institution',
+            'year'
+        ],
+        optional: []
+    };
+    bibtexEntryFields['MISC'] = {
+        required: [
+            'author',
+            'title',
+            'year'
+        ],
+        optional: []
+    };
+}
 
 function accomplishmentsToCsv(researchItems) {
     const rows = [[
@@ -223,120 +326,22 @@ function documentsToBibtex(documents) {
     let bibtex = 'data:text/plain;charset=utf-8,';
 
     documents.forEach(document => {
-        bibtex += getBibtex(document) + '\n\n';
+        bibtex += getBibtex(document.toJSON()) + '\n\n';
     });
 
     return bibtex;
 
 }
 
-function getBibtex(document) {
-    const doc = document.toJSON();
+function getBibtex(doc) {
 
-    let entryType = 'ARTICLE';
+    bibtexInit();
 
-    if ([
-        DocumentTypes.INVITED_TALK,
-        DocumentTypes.ABSTRACT_REPORT,
-        DocumentTypes.ERRATUM,
-        DocumentTypes.POSTER,
-        DocumentTypes.PHD_THESIS,
-        DocumentTypes.REPORT
-    ].includes(doc.documenttype.key)) {
-        const map = {
-            [DocumentTypes.PHD_THESIS]: 'PHDTHESIS',
-            [DocumentTypes.ABSTRACT_REPORT]: 'TECHREPORT',
-            [DocumentTypes.ERRATUM]: 'MISC',
-            [DocumentTypes.REPORT]: 'MISC',
-            [DocumentTypes.POSTER]: 'MISC',
-            [DocumentTypes.INVITED_TALK]: 'MISC',
-        };
-        entryType = map[doc.documenttype.key];
-    } else {
-        const map = {
-            [SourceTypes.JOURNAL]: 'ARTICLE',
-            [SourceTypes.CONFERENCE]: 'CONFERENCE',
-            [SourceTypes.BOOK]: 'BOOK',
-            [SourceTypes.BOOKSERIES]: 'INCOLLECTION',
+    const entryType = bibtexDocumentTypes.includes(doc.documenttype.key) ?
+        bibtexDocumentTypesMap[doc.documenttype.key] :
+        bibtexDourceTypesMap[doc.source.sourcetype.key];
 
-        };
-        entryType = map[doc.source.sourcetype.key];
-    }
-
-    const entryFields = {
-        'ARTICLE': {
-            required: [
-                'author',
-                'title',
-                'journal',
-                'year'
-            ],
-            optional: [
-                'volume',
-                'number',
-                'pages'
-            ]
-        },
-        'CONFERENCE': {
-            required: [
-                'author',
-                'title',
-                'booktitle',
-                'year'
-            ],
-            optional: [
-                'pages'
-            ]
-        },
-        'BOOK': {
-            required: [
-                'author',
-                'title',
-                'publisher',
-                'year'
-            ],
-            optional: [
-                'volume'
-            ]
-        },
-        'INCOLLECTION': {
-            required: [
-                'author',
-                'title',
-                'booktitle',
-                'year'
-            ],
-            optional: [
-                'pages'
-            ]
-        },
-        'PHDTHESIS': {
-            required: [
-                'author',
-                'title',
-                'school',
-                'year'
-            ],
-            optional: []
-        },
-        'TECHREPORT': {
-            required: [
-                'author',
-                'title',
-                'institution',
-                'year'
-            ],
-            optional: []
-        },
-        'MISC': {
-            required: [
-                'author',
-                'title',
-                'year'
-            ],
-            optional: []
-        },
-    };
+    if (!entryType) return;
 
     const fieldsMapper = {
         author: getBibtexAuthors(doc),
@@ -353,15 +358,12 @@ function getBibtex(document) {
     };
 
     const fields = {};
-
-    entryFields[entryType].required.forEach(f => fields[f] = fieldsMapper[f]);
-    entryFields[entryType].optional.forEach(f => {
+    bibtexEntryFields[entryType].required.forEach(f => fields[f] = fieldsMapper[f]);
+    bibtexEntryFields[entryType].optional.forEach(f => {
         if (fieldsMapper[f]) fields[f] = fieldsMapper[f];
     });
 
-
     return formatBibtex(getBibtexKey(doc), fields, entryType);
-
 }
 
 function getBibtexKey(doc) {
