@@ -37,10 +37,9 @@
             );
 
             taOptions.toolbar = [
-                ['p', 'quote'],
-                ['bold', 'italics', 'underline', 'strikeThrough', 'ul', 'ol', 'redo', 'undo', 'clear'],
-                ['indent', 'outdent'],
-                ['insertLink']
+                ['p', 'quote', 'bold', 'italics', 'underline', 'strikeThrough'],
+                ['ul', 'ol', 'redo', 'undo', 'clear'],
+                ['indent', 'outdent', 'insertLink']
             ];
 
             taOptions.defaultTagAttributes.a.target = '_blank';
@@ -114,6 +113,7 @@
                 .replace(/ style=("|\')(.*?)("|\')/gm, '')
                 .replace(/ class=("|\')(.*?)("|\')/gm, '')
                 .replace(/ id=("|\')(.*?)("|\')/gm, '')
+                .replace(/<script .*?>/gm, '')
                 .replace(/<img .*?>/gm, '');
         };
     }

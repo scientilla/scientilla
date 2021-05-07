@@ -1,4 +1,11 @@
-<ul class="enable-listing no-labels">
+<ul class="enable-listing">
+    <li>
+        <scientilla-privacy-selector
+            context-object="vm.context"
+            profile="vm.profile"
+            errors="vm.interest.errors.privacy"
+            model="vm.interest.privacy"></scientilla-privacy-selector>
+    </li>
     <li>
         <ul class="field-listing">
             <li>
@@ -76,12 +83,5 @@
                 </ul>
             </li>
         </ul>
-    </li>
-    <li>
-        <scientilla-privacy-selector
-            context-object="vm.context"
-            profile="vm.profile"
-            errors="vm.interest.errors.privacy"
-            model="vm.interest.privacy"></scientilla-privacy-selector>
     </li>
 </ul>

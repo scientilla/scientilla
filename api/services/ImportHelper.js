@@ -1,4 +1,4 @@
-/* global ResearchEntityData, Group, Utils */
+/* global ResearchEntityData, Group, Utils, User */
 // ImportHelper.js - in api/services
 
 "use strict";
@@ -19,7 +19,9 @@ module.exports = {
     getProfileObject,
     importDirectorates,
     filterEmployees,
-    collectGroupCodes
+    collectGroupCodes,
+    findEmployeeUser,
+    getISO8601Format
 };
 
 const moment = require('moment');
@@ -61,8 +63,13 @@ function getUserImportRequestOptions(type, extraParams = {}) {
         options.params,
         extraParams);
 
-    if (type === 'employees' && !options.params.email)
-        options.params.email = getDefaultEmail();
+    if (type === 'employees') {
+        if (!options.params.email) {
+            options.params.email = getDefaultEmail();
+        }
+
+        options.params.statodip = 'tutti';
+    }
 
     return options;
 }
@@ -109,7 +116,7 @@ async function getContractualHistoryOfCidCodes(codes) {
         }
     } catch (e) {
         sails.log.debug('importUserHistoryContracts:getContractualHistoryOfCIDCodes');
-        sails.log.debug(e);
+        throw e;
     }
     return contracts;
 }
@@ -456,7 +463,7 @@ async function getEmployees(options) {
         }
     } catch (e) {
         sails.log.debug('ImporterHelper:getEmployees');
-        sails.log.debug(e);
+        throw e;
     }
 }
 
@@ -822,4 +829,38 @@ function collectGroupCodes(contract) {
         }
     }
     return codes;
+}
+
+/**
+ * This function returns an user object of false if the user is not found
+ *
+ * @param {Object}        employee               Employee contract object.
+ *
+ * @returns {Object|false}
+ */
+async function findEmployeeUser(employee) {
+    const condition = {
+        active: true
+    };
+
+    let users = [];
+
+    // By CID code
+    if (_.has(employee, 'cid') && !_.isEmpty(employee.cid)) {
+        users = await User.find(_.merge({
+            cid: employee.cid
+        }, condition));
+
+        if (users.length === 1) {
+            sails.log.debug(`Found ${users.length} user with the same CID code: ${employee.cid}, email: ${employee.email}, name: ${employee.nome}, surname: ${employee.cognome}`);
+            return users[0];
+        }
+
+        if (users.length > 1) {
+            sails.log.debug(`Found ${users.length} users with the same CID code: ${employee.cid}`);
+            return false;
+        }
+    }
+
+    return false;
 }

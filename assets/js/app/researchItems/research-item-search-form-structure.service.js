@@ -472,7 +472,7 @@
             const projectTypes = _.concat(
                 [{value: allProjectTypes.value, label: allProjectTypes.label}],
                 await getResearchItemTypes('project', true)
-            );
+            ).filter(type => type.value !== 'project_agreement');
             formStructures[constant].projectType.values = projectTypes;
             formStructures[constant].status.values = await getProjectStatuses();
             formStructures[constant].payment.values = getProjectPayments();
