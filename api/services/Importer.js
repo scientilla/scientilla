@@ -1131,7 +1131,7 @@ async function importProjects() {
     }
 
     async function projectAutoVerify() {
-        let errors = [];
+        let errors = {other: 0};
         let newVerify = 0, unverified = 0;
         const externalProjects = await Project.find({kind: ResearchItemKinds.EXTERNAL});
 
@@ -1140,8 +1140,8 @@ async function importProjects() {
             const verifiedProject = await Project.findOne({
                 kind: ResearchItemKinds.VERIFIED,
                 code: eProject.code
-            })
-                .populate('verified');
+            }).populate('verified');
+
             let verified = [];
             if (verifiedProject)
                 verified = verifiedProject.verified.map(v => v.researchEntity);
@@ -1172,25 +1172,27 @@ async function importProjects() {
             const toVerify = _.difference(researchEntitiesId, verified);
             const toUnverify = _.difference(verified, researchEntitiesId);
 
-            for (const researchEntityId of _.uniq(toVerify))
-                try {
-                    await Verify.verify(eProject.id, researchEntityId);
-                    newVerify++;
-                } catch (e) {
-                    errors.push(e);
-                }
-
-            for (const researchEntityId of _.uniq(toUnverify))
+            for (const researchEntityId of _.uniq(toUnverify)) {
                 try {
                     await Verify.unverify(researchEntityId, verifiedProject.id);
                     unverified++;
                 } catch (e) {
-                    errors.push(e);
+                    setError(errors, e.message);
                 }
+            }
+
+            for (const researchEntityId of _.uniq(toVerify)) {
+                try {
+                    await Verify.verify(eProject.id, researchEntityId);
+                    newVerify++;
+                } catch (e) {
+                    setError(errors, e.message);
+                }
+            }
 
             const res = await autoVerify(eProject, verifiedProject, toVerify, toUnverify);
 
-            errors = errors.concat(res.errors);
+            res.errors.forEach(e => setError(errors, e.message));
             unverified += res.unverified;
             newVerify += newVerify;
 
@@ -1199,10 +1201,8 @@ async function importProjects() {
         sails.log.info('Autoverify completed');
         sails.log.info(`added ${newVerify} new verifications`);
         sails.log.info(`removed ${unverified} old verifications`);
-        if (errors.length) {
-            sails.log.debug(`but there were ${errors.length} errors:`);
-            sails.log.debug(JSON.stringify(errors[0]));
-        }
+        sails.log.debug(`errors:`);
+        sails.log.debug(errors);
     }
 }
 
@@ -1592,4 +1592,11 @@ function mapObectsArray(arr, schema) {
     if (!Array.isArray(arr))
         return [];
     return arr.map(e => mapObject(e, schema));
+}
+
+function setError(errors, message) {
+    if (message)
+        errors[message] = errors[message] + 1 || 0;
+    else
+        errors.other++;
 }
