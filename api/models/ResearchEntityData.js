@@ -262,8 +262,6 @@ async function getEditProfile(researchEntityId) {
         researchEntity: researchEntityId
     });
 
-    sails.log.debug(data);
-
     // Return false of the data object doesn't have the profile property.
     if (!_.has(data, 'profile') || _.isNil(data.profile)) {
         return false;
