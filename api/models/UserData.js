@@ -8,7 +8,10 @@ const path = require('path');
 module.exports = {
     attributes: {
         profile: 'JSON',
-        imported_data: 'JSON',
+        importedData: {
+            columnName: 'imported_data',
+            type: 'JSON'
+        },
         user: {
             model: 'user'
         },
