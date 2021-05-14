@@ -285,17 +285,24 @@ module.exports = _.merge({}, SubResearchEntity, {
     createUserWithoutAuth: async (newUser) => {
         // Lowercase email
         newUser.username = _.toLower(newUser.username);
-        // Check if username is unique
-        await User.checkUsername(newUser);
 
-        // Add the role to the user
-        await User.setNewUserRole(newUser);
+        try {
+            // Check if username is unique
+            await User.checkUsername(newUser);
 
-        // Set the slug for the user
-        await User.setSlug(newUser);
+            // Add the role to the user
+            await User.setNewUserRole(newUser);
 
-        // Return created user
-        return User.create(newUser);
+            // Set the slug for the user
+            await User.setSlug(newUser);
+
+            // Return created user
+            return User.create(newUser);
+        } catch(e) {
+            sails.log.debug(`Couldn't create a user for ${newUser.username}`);
+            sails.log.debug(e);
+        }
+
     },
     setNewUserRole: function (user) {
         return User
