@@ -4,7 +4,8 @@ module.exports = {
     importUsers,
     removeExpiredUsers,
     analyseUserImport,
-    updateUserProfileGroups
+    updateUserProfileGroups,
+    getUserImportRequestOptions
 };
 
 const moment = require('moment');
