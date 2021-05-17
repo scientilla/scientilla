@@ -618,7 +618,7 @@ async function importProjects() {
         const reqOptions = config.request;
 
         try {
-            projects = await Utils.waitForSuccesfulRequest(reqOptions);
+            projects = await Utils.waitForSuccessfulRequest(reqOptions);
         } catch (e) {
             sails.log.debug(e);
         }
@@ -871,7 +871,7 @@ async function importPatents() {
     const reqOptions = config.request;
 
     try {
-        res = await Utils.waitForSuccesfulRequest(reqOptions);
+        res = await Utils.waitForSuccessfulRequest(reqOptions);
     } catch (e) {
         sails.log.debug(e);
         throw (e);

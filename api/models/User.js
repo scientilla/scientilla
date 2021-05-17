@@ -299,7 +299,7 @@ module.exports = _.merge({}, SubResearchEntity, {
             // Return created user
             return User.create(newUser);
         } catch(e) {
-            sails.log.debug(`Couldn't create a user for ${newUser.username}`);
+            sails.log.debug(`Couldn't create an user for ${newUser.username}`);
             sails.log.debug(e);
         }
 

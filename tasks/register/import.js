@@ -23,7 +23,7 @@ module.exports = function (grunt) {
                 'users': UserImporter.importUsers,
                 'update-profile-groups': UserImporter.updateUserProfileGroups,
                 'analyse-user-import': UserImporter.analyseUserImport,
-                'agreements': AgreementsImporter.importAgreements
+                'agreements': Importer.importAgreements
             };
 
             try {
