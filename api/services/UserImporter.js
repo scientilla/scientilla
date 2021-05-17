@@ -681,7 +681,7 @@ async function updateUserProfileGroups() {
  */
  async function getEmployees(options) {
     try {
-        let response = await Utils.waitForSuccesfulRequest(options);
+        let response = await Utils.waitForSuccessfulRequest(options);
 
         if (!_.has(response, '_.scheda') || _.isEmpty(response._.scheda)) {
             return false;
@@ -779,7 +779,7 @@ async function getContractualHistoryOfCidCodes(codes) {
         const groups = _.chunk(codes, chunkLength);
         for (const group of groups) {
             const options = getUserImportRequestOptions('history', {cid: group.join(',')});
-            const response = await Utils.waitForSuccesfulRequest(options);
+            const response = await Utils.waitForSuccessfulRequest(options);
             handleResponse(response);
         }
     } catch (e) {
