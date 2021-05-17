@@ -5,7 +5,7 @@ module.exports = {
     removeExpiredUsers,
     analyseUserImport,
     updateUserProfileGroups,
-    getUserImportRequestOptions
+    getUserImportRequestOptions,
 };
 
 const moment = require('moment');
@@ -46,8 +46,41 @@ async function importUsers(email = getDefaultEmail()) {
         // Override the CID of specified employees
         employees = await overrideCIDAssociations(employees, email);
 
-        // Filter out the employees with a secondary contract and ignored role
+        // Filter out employees with a invalid email, a secondary contract or ignored role
         employees = filterEmployees(employees);
+
+        // Filter out invalid email addresses, use the cid as temporary email address
+        let showLine = false;
+        employees = employees.filter(employee => {
+            if (
+                _.has(employee, 'email') &&
+                !_.isNull(employee.email) &&
+                !_.isEmpty(employee.email) &&
+                employee.email.endsWith('@iit.it')
+            ) {
+                return employee;
+            } else {
+                if (
+                    _.has(employee, 'stato_dip') &&
+                    employee.stato_dip !== 'cessato'
+                ) {
+                    sails.log.info(`Missing email for employee ${employee.nome} ${employee.cognome}`);
+                    showLine = true;
+                } else {
+                    if (
+                        _.has(employee, 'Ruolo_AD') &&
+                        employee.Ruolo_AD !== 'Guest Student'
+                    ) {
+                        employee.email = `${employee.cid}@iit.it`;
+                        return employee;
+                    }
+                }
+            }
+        });
+
+        if (showLine) {
+            sails.log.info('....................................');
+        }
 
         // Check if there are multiple active employees with the same email address (excluding empty email addresses) in the employees array
         getMissingCIDAssociations(employees);
@@ -123,12 +156,7 @@ async function importUsers(email = getDefaultEmail()) {
                 user = await User.findOne({username: employee.email});
                 if (!user) {
                     // Skip employee if it's a former Guest Student
-                    if (
-                        _.has(employee, 'stato_dip') &&
-                        employee.stato_dip === 'cessato' &&
-                        _.has(employee, 'Ruolo_AD') &&
-                        employee.Ruolo_AD === 'Guest Student'
-                    ) {
+                    if (isFormerGuestStudent(employee)) {
                         continue;
                     }
                 }
@@ -140,6 +168,12 @@ async function importUsers(email = getDefaultEmail()) {
                 await User.createUserWithoutAuth(userObject);
                 // Search user again to populate ResearchEntity after creation
                 user = await User.findOne({cid: employee.cid});
+
+                if (user.email === `${employee.cid}@iit.it`) {
+                    user.email = `${user.id}@iit.it`;
+                    user = await User.update({id: user.id}, user);
+                }
+
                 createdUsers.push(user);
             } else {
                 // Update user with current data
@@ -163,6 +197,10 @@ async function importUsers(email = getDefaultEmail()) {
             if (!user) {
                 sails.log.error('No user!');
                 continue;
+            }
+
+            if (!user.id) {
+                sails.log.info(user);
             }
 
             if (_.has(employee, 'stato_dip') && employee.stato_dip !== 'cessato') {
@@ -347,32 +385,42 @@ async function importUsers(email = getDefaultEmail()) {
             sails.log.info('....................................');
         }
 
+        const util = require('util');
+
         // Reporting
         sails.log.info(disabledMemberships.length + ' memberships disabled!');
+        sails.log.info(util.inspect(disabledMemberships, false, null, true));
         sails.log.info('....................................');
 
         sails.log.info(enabledMemberships.length + ' memberships enabled!');
+        sails.log.info(util.inspect(enabledMemberships, false, null, true));
         sails.log.info('....................................');
 
         sails.log.info(deactivatedUsers.length + ' users deactivated!');
+        sails.log.info(util.inspect(deactivatedUsers, false, null, true));
         sails.log.info('....................................');
 
         sails.log.info(activatedUsers.length + ' users activated!');
+        sails.log.info(util.inspect(activatedUsers, false, null, true));
         sails.log.info('....................................');
 
         sails.log.info(createdUsers.length + ' users created!');
+        sails.log.info(util.inspect(createdUsers, false, null, true));
         sails.log.info('....................................');
 
         sails.log.info(updatedUsers.length + ' users updated!');
+        sails.log.info(util.inspect(updatedUsers, false, null, true));
         sails.log.info('....................................');
 
         sails.log.info(upToDateUsers.length + ' users up-to-date!');
         sails.log.info('....................................');
 
         sails.log.info(updatedResearchEntityDataItems.length + ' ResearchEntityData records updated!');
+        sails.log.info(util.inspect(updatedResearchEntityDataItems, false, null, true));
         sails.log.info('....................................');
 
         sails.log.info(newResearchEntityDataItems.length + ' ResearchEntityData records created!');
+        sails.log.info(util.inspect(newResearchEntityDataItems, false, null, true));
         sails.log.info('....................................');
 
         sails.log.info(upToDateResearchEntityDataItems.length + ' ResearchEntityData records are already up-to-date!');
@@ -642,6 +690,19 @@ async function updateUserProfileGroups() {
     if (!_.isEmpty(uniqueChangedCenters)) {
         sails.log.info('Codes: ' + uniqueChangedCenters.map(group => group.code).join(', '));
     }
+}
+
+function isFormerGuestStudent(employee) {
+    if (
+        _.has(employee, 'stato_dip') &&
+        employee.stato_dip === 'cessato' &&
+        _.has(employee, 'Ruolo_AD') &&
+        employee.Ruolo_AD === 'Guest Student'
+    ) {
+        return true;
+    }
+
+    return false;
 }
 
 /**
@@ -1147,7 +1208,11 @@ async function getContractualHistoryOfCidCodes(codes) {
     }
 
     if (_.has(employee, 'stato_dip') && employee.stato_dip === 'cessato') {
-        userObject.username = `${user.id}@iit.it`;
+        if (_.has(user, 'id')) {
+            userObject.username = `${user.id}@iit.it`;
+        } else {
+            userObject.username = `${employee.cid}@iit.it`;
+        }
         userObject.active = false;
     } else {
         const foundEmployeeEmail = ldapUsers.find(u => _.toLower(u.userPrincipalName) === _.toLower(employee.email));
