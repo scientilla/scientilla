@@ -336,7 +336,7 @@ async function importUsers(email = getDefaultEmail()) {
                         }
                     );
                     researchEntityData = await ResearchEntityData.findOne({id: researchEntityData.id});
-                    updatedResearchEntityDataItems.push(researchEntityData[0]);
+                    updatedResearchEntityDataItems.push(researchEntityData);
                 } else {
                     upToDateResearchEntityDataItems.push(researchEntityData);
                 }
