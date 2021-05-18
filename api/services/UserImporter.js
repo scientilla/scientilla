@@ -171,18 +171,21 @@ async function importUsers(email = getDefaultEmail()) {
 
                 if (user.email === `${employee.cid}@iit.it`) {
                     user.email = `${user.id}@iit.it`;
-                    user = await User.update({id: user.id}, user);
+                    await User.update({id: user.id}, user);
+                    user = await User.findOne({id: user.id});
                 }
 
                 createdUsers.push(user);
             } else {
                 // Update user with current data
                 if (!isUserEqualWithUserObject(user, userObject)) {
-                    user = await User.update({id: user.id}, userObject);
+                    await User.update({id: user.id}, userObject);
+                    user = await User.findOne({id: user.id});
                     updatedUsers.push(user);
                 } else {
                     // User is already up-to-date, only set the lastsynch
                     await User.update({id: user.id}, {lastsynch: moment().utc().format()});
+                    user = await User.findOne({id: user.id});
                     upToDateUsers.push(user);
                 }
 
@@ -191,6 +194,7 @@ async function importUsers(email = getDefaultEmail()) {
                     user.displaySurname !== employee.cognome_AD
                 ) {
                     await User.createAliases(user);
+                    sails.log.info(`Create aliases for ${user.username}`);
                 }
             }
 
@@ -222,11 +226,12 @@ async function importUsers(email = getDefaultEmail()) {
                         membership = await Group.addMember(group, user);
                     }
 
-                    const updatedMembership = await Membership.update(condition, {
+                    await Membership.update(condition, {
                         lastsynch: moment().utc().format(),
                         synchronized: true,
                         active: true
                     });
+                    const updatedMembership = await Membership.findOne(condition);
 
                     if (!membership.active) {
                         enabledMemberships.push(updatedMembership);
@@ -242,19 +247,21 @@ async function importUsers(email = getDefaultEmail()) {
 
                 const disabledMembershipsOfUser = activeMembershipsOfUser.filter(m => !groupsOfContractIds.includes(m.group));
                 for (let membership of disabledMembershipsOfUser) {
-                    const disabledMembership = await Membership.update({
+                    await Membership.update({
                         id: membership.id,
                     }, {
                         lastsynch: moment().utc().format(),
                         active: false
                     });
+                    const disabledMembership = await Membership.findOne({id: membership.id});
                     disabledMemberships.push(disabledMembership);
                 }
 
                 // Activate user
                 if (!user.active) {
-                    const activatedUser = await User.update({id: user.id}, {active: true});
-                    activatedUsers.push(activatedUser);
+                    await User.update({id: user.id}, {active: true});
+                    user = await User.findOne({id: user.id});
+                    activatedUsers.push(user);
                 }
             } else {
                 // Disable all memberships for not active users
@@ -272,8 +279,9 @@ async function importUsers(email = getDefaultEmail()) {
 
                 // Deactivate user
                 if (user.active) {
-                    const deactivatedUser = await User.update({id: user.id}, {active: false});
-                    deactivatedUsers.push(deactivatedUser);
+                    await User.update({id: user.id}, {active: false});
+                    user = await User.findOne({id: user.id});
+                    deactivatedUsers.push(user);
                 }
             }
 
@@ -320,13 +328,14 @@ async function importUsers(email = getDefaultEmail()) {
                 }
 
                 if (!_.isEqual(researchEntityData.profile, profile)) {
-                    researchEntityData = await ResearchEntityData.update(
+                    await ResearchEntityData.update(
                         {id: researchEntityData.id},
                         {
                             profile: profile,
                             importedData: employee
                         }
                     );
+                    researchEntityData = await ResearchEntityData.findOne({id: researchEntityData.id});
                     updatedResearchEntityDataItems.push(researchEntityData[0]);
                 } else {
                     upToDateResearchEntityDataItems.push(researchEntityData);
@@ -649,6 +658,8 @@ async function updateUserProfileGroups() {
                     {id: researchEntityDataRecord.id},
                     {profile: JSON.stringify(researchEntityDataRecord.profile)}
                 );
+
+                researchEntityDataRecord = await ResearchEntityData.findOne({id: researchEntityDataRecord.id});
 
                 changedResearchEntityDataRecords.push(researchEntityDataRecord);
             }
