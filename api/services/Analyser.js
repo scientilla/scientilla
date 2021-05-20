@@ -38,10 +38,10 @@ async function searchScientillaUsersInActiveDirectory() {
 }
 
 async function searchForUsersWithWrongPentahoEmail() {
-    const options = ImportHelper.getUserImportRequestOptions('employees');
-    let employees = await ImportHelper.getEmployees(options);
+    const options = UserImporter.getUserImportRequestOptions('employees');
+    let employees = await UserImporter.getEmployees(options);
 
-    employees = ImportHelper.filterEmployees(employees);
+    employees = UserImporter.filterEmployees(employees);
 
     const ldapUsers = await Utils.getActiveDirectoryUsers();
 
@@ -62,8 +62,8 @@ async function searchForUsersWithWrongPentahoEmail() {
 
 // Change to find not delete
 async function searchForGovAndControlUsers() {
-    const options = ImportHelper.getUserImportRequestOptions('employees');
-    const employees = await ImportHelper.getEmployees(options);
+    const options = UserImporter.getUserImportRequestOptions('employees');
+    const employees = await UserImporter.getEmployees(options);
     const boardEmployees = employees.filter(e => _.has(e, 'desc_sottoarea') && e.desc_sottoarea === 'Gov. & Control');
     const foundUsers = [];
 

@@ -16,14 +16,14 @@ module.exports = function (grunt) {
                     'all': ExternalImporter.updateAllExternal,
                     'metadata': ExternalImporter.updateMetadata
                 },
-                'users': Importer.importUserContracts,
                 'expired': Importer.removeExpiredUsers,
                 'projects': Importer.importProjects,
                 'patents': Importer.importPatents,
                 'directorates': Importer.importDirectorates,
-                'update-profile-groups': Importer.updateUserProfileGroups,
-                'analyse-user-import': Importer.analyseUserImport,
-                'agreements': AgreementsImporter.importAgreements
+                'users': UserImporter.importUsers,
+                'update-profile-groups': UserImporter.updateUserProfileGroups,
+                'analyse-user-import': UserImporter.analyseUserImport,
+                'agreements': Importer.importAgreements
             };
 
             try {

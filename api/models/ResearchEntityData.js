@@ -24,7 +24,10 @@ module.exports = {
             columnName: 'research_entity',
             model: 'researchentity'
         },
-        imported_data: 'JSON',
+        importedData: {
+            type: 'JSON',
+            columnName: 'imported_data'
+        },
         profile: 'JSON',
     },
     tableName: 'research_entity_data',
@@ -143,55 +146,56 @@ function filterProfile(profile, onlyPublic = false) {
 /**
  * Returns the profile object with defaults
  *
- * @param {Object} userData
+ * @param {Object} researchEntityData
  *
  * @returns {Object} profile
  */
-function setupProfile(userData) {
+function setupProfile(researchEntityData) {
     // We store the defaults of the research entity data schema.
     const defaultProfile = JsonValidator.getDefaultProfile();
     const privacyDefaultPublic = 'public';
 
-    if (!_.has(userData, 'imported_data') || _.isNil(userData.imported_data)) {
+    if (!_.has(researchEntityData, 'importedData') || _.isNil(researchEntityData.importedData)) {
         return;
     }
 
     // We merge the defaults with the user's profile
-    if (userData && !_.isEmpty(userData.profile)) {
+    if (researchEntityData && !_.isEmpty(researchEntityData.profile)) {
 
+        if (!_.has(researchEntityData.profile, 'roleCategory.value') || _.isEmpty(researchEntityData.profile.roleCategory.value)) {
+            researchEntityData.profile.roleCategory = {};
+            researchEntityData.profile.roleCategory.privacy = 'public';
+            researchEntityData.profile.roleCategory.value = researchEntityData.importedData.Ruolo_1;
+        }
+
+        //TODO
         const associations = RoleAssociations.get();
-        if (!_.has(userData.profile, 'roleCategory.value') || _.isEmpty(userData.profile.roleCategory.value)) {
-            userData.profile.roleCategory = {};
-            userData.profile.roleCategory.privacy = 'public';
-            userData.profile.roleCategory.value = userData.imported_data.Ruolo_1;
-        }
-
-        const association = associations.find(a => a.originalRole === userData.profile.roleCategory.value);
+        const association = associations.find(a => a.originalRole === researchEntityData.profile.roleCategory.value);
         if (association) {
-            userData.profile.roleCategory.value = association.roleCategory;
+            researchEntityData.profile.roleCategory.value = association.roleCategory;
         } else {
-            userData.profile.roleCategory.value = '';
+            researchEntityData.profile.roleCategory.value = '';
         }
 
-        if (_.has(userData.profile, 'experiencesExternal') || _.has(userData.profile, 'experiencesInternal')) {
+        if (_.has(researchEntityData.profile, 'experiencesExternal') || _.has(researchEntityData.profile, 'experiencesInternal')) {
 
             switch (true) {
-                case _.has(userData.profile, 'experiencesExternal') && _.has(userData.profile, 'experiencesInternal') :
-                    userData.profile.experiences = userData.profile.experiencesExternal.concat(userData.profile.experiencesInternal);
+                case _.has(researchEntityData.profile, 'experiencesExternal') && _.has(researchEntityData.profile, 'experiencesInternal') :
+                    researchEntityData.profile.experiences = researchEntityData.profile.experiencesExternal.concat(researchEntityData.profile.experiencesInternal);
                     break;
-                case !_.has(userData.profile, 'experiencesExternal') && _.has(userData.profile, 'experiencesInternal') :
-                    userData.profile.experiences = userData.profile.experiencesInternal;
+                case !_.has(researchEntityData.profile, 'experiencesExternal') && _.has(researchEntityData.profile, 'experiencesInternal') :
+                    researchEntityData.profile.experiences = researchEntityData.profile.experiencesInternal;
                     break;
-                case _.has(userData.profile, 'experiencesExternal') && !_.has(userData.profile, 'experiencesInternal') :
-                    userData.profile.experiences = userData.profile.experiencesExternal;
+                case _.has(researchEntityData.profile, 'experiencesExternal') && !_.has(researchEntityData.profile, 'experiencesInternal') :
+                    researchEntityData.profile.experiences = researchEntityData.profile.experiencesExternal;
                     break;
                 default:
-                    userData.profile.experiences = [];
+                    researchEntityData.profile.experiences = [];
                     break;
             }
 
-            userData.profile.experiencesExternal = _.orderBy(
-                userData.profile.experiencesExternal,
+            researchEntityData.profile.experiencesExternal = _.orderBy(
+                researchEntityData.profile.experiencesExternal,
                 [
                     experience => new moment(experience.from, ISO8601Format),
                     experience => new moment(experience.to, ISO8601Format)
@@ -202,8 +206,8 @@ function setupProfile(userData) {
                 ]
             );
 
-            userData.profile.experiencesInternal = _.orderBy(
-                userData.profile.experiencesInternal,
+            researchEntityData.profile.experiencesInternal = _.orderBy(
+                researchEntityData.profile.experiencesInternal,
                 [
                     experience => new moment(experience.from, ISO8601Format),
                     experience => new moment(experience.to, ISO8601Format)
@@ -214,8 +218,8 @@ function setupProfile(userData) {
                 ]
             );
 
-            userData.profile.experiences = _.orderBy(
-                userData.profile.experiences,
+            researchEntityData.profile.experiences = _.orderBy(
+                researchEntityData.profile.experiences,
                 [
                     experience => new moment(experience.from, ISO8601Format),
                     experience => new moment(experience.to, ISO8601Format)
@@ -227,17 +231,17 @@ function setupProfile(userData) {
             );
         }
 
-        if (_.has(userData, 'profile.gender.value')) {
-            userData.profile.gender.value = userData.imported_data.genere;
-            userData.profile.gender.privacy = privacyDefaultPublic;
+        if (_.has(researchEntityData, 'profile.gender.value')) {
+            researchEntityData.profile.gender.value = researchEntityData.importedData.genere;
+            researchEntityData.profile.gender.privacy = privacyDefaultPublic;
         } else {
-            userData.profile.gender = {
-                value: userData.imported_data.genere,
+            researchEntityData.profile.gender = {
+                value: researchEntityData.importedData.genere,
                 privacy: privacyDefaultPublic
             }
         }
 
-        return _.merge({}, defaultProfile, userData.profile);
+        return _.merge({}, defaultProfile, researchEntityData.profile);
     }
 
     // We create a new profile with the defaults

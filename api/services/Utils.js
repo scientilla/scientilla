@@ -10,7 +10,7 @@ const readFile = util.promisify(fs.readFile);
 
 module.exports = {
     stringToSlug,
-    waitForSuccesfulRequest,
+    waitForSuccessfulRequest,
     getActiveDirectoryUsers
 };
 
@@ -33,7 +33,7 @@ function stringToSlug (str) {
 }
 
 
-async function waitForSuccesfulRequest(options) {
+async function waitForSuccessfulRequest(options) {
     const maxAttempts = 5;
 
     options.timeout = options.timeout || 100000;
