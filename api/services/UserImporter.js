@@ -14,6 +14,8 @@ moment.locale('en');
 const zone = moment.tz.guess();
 const valuePublicPrivacy = 'public';
 
+const convert = require('xml-js');
+
 async function importUsers(email = getDefaultEmail()) {
 
     const startedTime = moment().utc();
@@ -30,7 +32,7 @@ async function importUsers(email = getDefaultEmail()) {
     const upToDateResearchEntityDataItems = [];
 
     sails.log.info('The import started at ' + startedTime.format());
-    sails.log.info('-----------------------------------------------------------------');
+    sails.log.info('....................................');
 
     try {
         // Endpoint options to get all users
@@ -325,6 +327,22 @@ async function importUsers(email = getDefaultEmail()) {
                     // Replace all the current public privacy settings to hidden
                     profileJSONString = profileJSONString.replace(/"privacy":"public"/gm, '"privacy":"' + getValueHiddenPrivacy() + '"');
                     profile = JSON.parse(profileJSONString);
+                }
+
+                for (const property in researchEntityData.profile) {
+                    if (
+                        !_.has(profile, property) ||
+                        (
+                            _.has(profile, property) &&
+                            !_.isEqual(researchEntityData.profile[property], profile[property])
+                        )
+                    ) {
+                        const util = require('util');
+                        sails.log.debug(property);
+                        //sails.log.debug(util.inspect(researchEntityData.profile[property], false, null, true));
+                        //sails.log.debug(util.inspect(profile[property], false, null, true));
+                        //sails.log.debug(_.omit(researchEntityData.profile[property], profile[property]));
+                    }
                 }
 
                 if (!_.isEqual(researchEntityData.profile, profile)) {
@@ -728,7 +746,7 @@ function isFormerGuestStudent(employee) {
     options.params = Object.assign({
             rep: 'PROD',
             trans,
-            output: 'json'
+            output: 'xml'
         },
         options.params,
         extraParams);
@@ -756,11 +774,13 @@ function isFormerGuestStudent(employee) {
     try {
         let response = await Utils.waitForSuccessfulRequest(options);
 
-        if (!_.has(response, '_.scheda') || _.isEmpty(response._.scheda)) {
+        response = convert.xml2js(response, {compact: true, spaces: 4, textFn: RemoveJsonTextAttribute});
+
+        if (!_.has(response, 'scheda_persona.scheda') || _.isEmpty(response.scheda_persona.scheda)) {
             return false;
         }
 
-        response = response._.scheda;
+        response = response.scheda_persona.scheda;
 
         if (_.isArray(response)) {
             return response;
@@ -829,18 +849,18 @@ async function getContractualHistoryOfCidCodes(codes) {
     const chunkLength = 250;
 
     function handleResponse(response) {
-        if (_.has(response, '_.CID') && !_.isEmpty(response._.CID)) {
-            const cids = response._.CID;
+        if (_.has(response, 'StoricoContrattuale.CID') && !_.isEmpty(response.StoricoContrattuale.CID)) {
+            const cids = response.StoricoContrattuale.CID;
 
             if (_.isArray(cids)) {
                 for (const contract of cids) {
-                    if (_.has(contract, '_.step')) {
-                        contracts.push(contract._);
+                    if (_.has(contract, 'step')) {
+                        contracts.push(contract);
                     }
                 }
             } else {
-                if (_.has(cids, '_.step')) {
-                    contracts.push(cids._);
+                if (_.has(cids, 'step')) {
+                    contracts.push(cids);
                 }
             }
         }
@@ -852,7 +872,8 @@ async function getContractualHistoryOfCidCodes(codes) {
         const groups = _.chunk(codes, chunkLength);
         for (const group of groups) {
             const options = getUserImportRequestOptions('history', {cid: group.join(',')});
-            const response = await Utils.waitForSuccessfulRequest(options);
+            let response = await Utils.waitForSuccessfulRequest(options);
+            response = convert.xml2js(response, {compact: true, spaces: 4, textFn: RemoveJsonTextAttribute});
             handleResponse(response);
         }
     } catch (e) {
@@ -1033,9 +1054,9 @@ async function getContractualHistoryOfCidCodes(codes) {
  */
  function handleStep(step) {
     if (
-        _.has(step, '_.linea') &&
-        _.has(step, '_.stato') &&
-        (step._.stato === 'in forza' || step._.stato === 'sospeso')
+        _.has(step, 'linea') &&
+        _.has(step, 'stato') &&
+        (step.stato === 'in forza' || step.stato === 'sospeso')
     ) {
         const handledStep = {
             from: null,
@@ -1043,27 +1064,27 @@ async function getContractualHistoryOfCidCodes(codes) {
             lines: []
         };
 
-        if (_.has(step, '_.data_inizio')) {
+        if (_.has(step, 'data_inizio')) {
             // Skip step if it is one of the future
-            if (moment(step._.data_inizio, 'DD/MM/YYYY').isAfter(moment())) {
+            if (moment(step.data_inizio, 'DD/MM/YYYY').isAfter(moment())) {
                 return;
             }
 
-            handledStep.from = moment.tz(step._.data_inizio, 'DD/MM/YYYY', zone).utc().format(getISO8601Format());
+            handledStep.from = moment.tz(step.data_inizio, 'DD/MM/YYYY', zone).utc().format(getISO8601Format());
         }
 
-        if (_.has(step, '_.data_fine')) {
-            const to = moment(step._.data_fine, 'DD/MM/YYYY');
+        if (_.has(step, 'data_fine')) {
+            const to = moment(step.data_fine, 'DD/MM/YYYY');
             if (!moment('31/12/9999', 'DD/MM/YYYY').isSame(to)) {
-                handledStep.to = moment.tz(step._.data_fine, 'DD/MM/YYYY', zone).utc().format(getISO8601Format());
+                handledStep.to = moment.tz(step.data_fine, 'DD/MM/YYYY', zone).utc().format(getISO8601Format());
             }
         }
 
-        if (_.has(step, '_.Ruolo_AD')) {
-            handledStep.jobTitle = step._.Ruolo_AD;
+        if (_.has(step, 'Ruolo_AD')) {
+            handledStep.jobTitle = step.Ruolo_AD;
         }
 
-        const lines = step._.linea;
+        const lines = step.linea;
         if (_.isArray(lines)) {
             let tmpLines = lines.map(line => line._).map(line => {
                 const tmpLine = {};
@@ -1295,40 +1316,6 @@ async function getContractualHistoryOfCidCodes(codes) {
         }
     }
     return codes;
-}
-
-/**
- * This function returns an user object or false if the user is not found.
- *
- * @param {Object}        employee               Employee contract object.
- *
- * @returns {Object|false}
- */
- async function findEmployeeUser(employee) {
-    const condition = {
-        active: true
-    };
-
-    let users = [];
-
-    // By CID code
-    if (_.has(employee, 'cid') && !_.isEmpty(employee.cid)) {
-        users = await User.find(_.merge({
-            cid: employee.cid
-        }, condition));
-
-        if (users.length === 1) {
-            sails.log.debug(`Found ${users.length} user with the same CID code: ${employee.cid}, email: ${employee.email}, name: ${employee.nome}, surname: ${employee.cognome}`);
-            return users[0];
-        }
-
-        if (users.length > 1) {
-            sails.log.debug(`Found ${users.length} users with the same CID code: ${employee.cid}`);
-            return false;
-        }
-    }
-
-    return false;
 }
 
 /**
@@ -1583,4 +1570,18 @@ function getMissingCIDAssociations(employees = []) {
     if (foundDuplicates) {
         sails.log.info('....................................');
     }
+}
+
+/**
+ * Removes the text attribute
+ *
+ * @param {String}        value               value of element.
+ * @param {Object}        parentElement       parent element.
+ */
+function RemoveJsonTextAttribute(value, parentElement){
+    try {
+        const keyNo = Object.keys(parentElement._parent).length;
+        const keyName = Object.keys(parentElement._parent)[keyNo-1];
+        parentElement._parent[keyName] = value;
+    } catch(e) {}
 }
