@@ -1108,7 +1108,7 @@ async function importProjects() {
     }
 
     await doImport(ResearchItemTypes.PROJECT_COMPETITIVE);
-    await doImport(ResearchItemTypes.PROJECT_INDUSTRIAL);
+    //await doImport(ResearchItemTypes.PROJECT_INDUSTRIAL);
 
     await projectAutoVerify();
 
