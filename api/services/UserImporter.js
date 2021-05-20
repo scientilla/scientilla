@@ -1549,6 +1549,10 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
         sails.log.debug('--------');
     }
 
+    sails.log.debug('contractEndDate');
+    sails.log.debug(user.contractEndDate, userObject.contractEndDate);
+    sails.log.debug('--------');
+
     return false;
 }
 
