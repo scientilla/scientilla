@@ -1483,12 +1483,10 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
         user.jobTitle === userObject.jobTitle &&
         (
             (
-                moment(user.contractEndDate, getISO8601Format()).isValid() &&
-                moment(userObject.contractEndDate, getISO8601Format()).isValid() &&
-                moment(user.contractEndDate, getISO8601Format()).isSame(moment(userObject.contractEndDate, getISO8601Format()))
+                user.contractEndDate !== null &&
+                userObject.contractEndDate !== null &&
+                JSON.stringify(user.contractEndDate) === JSON.stringify(userObject.contractEndDate)
             ) || (
-                !moment(user.contractEndDate, getISO8601Format()).isValid() &&
-                !moment(userObject.contractEndDate, getISO8601Format()).isValid() &&
                 user.contractEndDate === null &&
                 userObject.contractEndDate === null
             )
@@ -1500,58 +1498,6 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
     ) {
         return true;
     }
-
-    if (user.cid !== userObject.cid) {
-        sails.log.debug('CID');
-        sails.log.debug(user.cid, userObject.cid);
-        sails.log.debug('--------');
-    }
-
-    if (user.name !== userObject.name) {
-        sails.log.debug('name');
-        sails.log.debug(ser.name, userObject.name);
-        sails.log.debug('--------');
-    }
-
-    if (user.surname !== userObject.surname) {
-        sails.log.debug('surname');
-        sails.log.debug(ser.surname, userObject.surname);
-        sails.log.debug('--------');
-    }
-
-    if (user.jobTitle !== userObject.jobTitle) {
-        sails.log.debug('jobTitle');
-        sails.log.debug(ser.jobTitle, userObject.jobTitle);
-        sails.log.debug('--------');
-    }
-
-    if (user.username !== userObject.username) {
-        sails.log.debug('username');
-        sails.log.debug(user.username, userObject.username);
-        sails.log.debug('--------');
-    }
-
-    if (user.displayName !== userObject.displayName) {
-        sails.log.debug('displayName');
-        sails.log.debug(user.displayName, userObject.displayName);
-        sails.log.debug('--------');
-    }
-
-    if (user.displaySurname !== userObject.displaySurname) {
-        sails.log.debug('displaySurname');
-        sails.log.debug(user.displaySurname, userObject.displaySurname);
-        sails.log.debug('--------');
-    }
-
-    if (JSON.stringify(user.config) !== JSON.stringify(userObject.config)) {
-        sails.log.debug('config');
-        sails.log.debug(user.config),JSON.stringify(userObject.config);
-        sails.log.debug('--------');
-    }
-
-    sails.log.debug('contractEndDate');
-    sails.log.debug(user.contractEndDate, userObject.contractEndDate);
-    sails.log.debug('--------');
 
     return false;
 }
