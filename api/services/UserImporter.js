@@ -1483,9 +1483,7 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
             (
                 user.contractEndDate !== null &&
                 userObject.contractEndDate !== null &&
-                moment(user.contractEndDate).isValid() &&
-                moment(userObject.contractEndDate, getISO8601Format()).isValid() &&
-                moment(userObject.contractEndDate, getISO8601Format()).isSame(moment(user.contractEndDate))
+                JSON.stringify(user.contractEndDate) === JSON.stringify(userObject.contractEndDate)
             ) || (
                 user.contractEndDate === null &&
                 userObject.contractEndDate === null
