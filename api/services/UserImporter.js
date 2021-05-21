@@ -111,19 +111,17 @@ async function importUsers(email = getDefaultEmail()) {
 
         // Add the contract to the employees
         for (const contract of historyContracts) {
-            if (contract.contratto_secondario !== 'X') {
+            if (_.has(contract, 'step')) {
                 const employee = employees.find(e => e.cid === contract.cid);
                 if (employee) {
-                    if (_.has(contract, 'step')) {
-                        if (!_.has(employee, 'contract')) {
-                            employee.contract = [contract];
-                        } else {
-                            employee.contract.push(contract);
-                        }
+                    if (!_.has(employee, 'contract')) {
+                        employee.contract = [contract];
                     } else {
-                        sails.log.debug(`Contract doesn't have any steps: ${employee.email} ${employee.cid} `);
+                        employee.contract.push(contract);
                     }
                 }
+            } else {
+                sails.log.debug(`Contract doesn't have any steps: ${employee.email} ${employee.cid} `);
             }
         }
 
@@ -1485,7 +1483,9 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
             (
                 user.contractEndDate !== null &&
                 userObject.contractEndDate !== null &&
-                JSON.stringify(user.contractEndDate) === JSON.stringify(userObject.contractEndDate)
+                moment(user.contractEndDate).isValid() &&
+                moment(userObject.contractEndDate, getISO8601Format()).isValid() &&
+                moment(userObject.contractEndDate, getISO8601Format()).isSame(moment(user.contractEndDate))
             ) || (
                 user.contractEndDate === null &&
                 userObject.contractEndDate === null
@@ -1530,6 +1530,7 @@ async function overrideCIDAssociations(employees = [], email = getDefaultEmail()
         employees = employees.filter(e => !toBeIgnoredCIDs.includes(e.cid));
 
         const employee = employees.find(e => e.email === cidAssociation.email);
+        employee.cid = cidAssociation.cid;
         foundAssociations = true;
         sails.log.info(`Found CID association for user ${employee.email}: ${employee.cid}`);
     }
