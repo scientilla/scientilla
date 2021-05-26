@@ -16,6 +16,9 @@ const valuePublicPrivacy = 'public';
 
 const convert = require('xml-js');
 
+const util = require('util');
+
+
 async function importUsers(email = getDefaultEmail()) {
 
     const startedTime = moment().utc();
@@ -121,12 +124,14 @@ async function importUsers(email = getDefaultEmail()) {
                     }
                 }
             } else {
-                sails.log.debug(`Contract doesn't have any steps: ${employee.email} ${employee.cid} `);
+                sails.log.debug(`Contract doesn't have any steps: ${employee.email} ${employee.cid}`);
             }
         }
 
         // Only keep the employees with a contract
         employees = employees.filter(e => _.has(e, 'contract'));
+
+        //sails.log.debug(util.inspect(employees, false, null, true /* enable colors */));
 
         // Merge the duplicate employees
         employees = mergeDuplicateEmployees(employees);
@@ -207,21 +212,21 @@ async function importUsers(email = getDefaultEmail()) {
                 sails.log.info(user);
             }
 
-            if (_.has(employee, 'stato_dip') && employee.stato_dip !== 'cessato') {
-                const groupCodesOfContract = collectGroupCodes(employee);
+            const groupCodesOfContract = collectGroupCodes(employee);
 
-                // Get the groups of the contract
-                const groupsOfContract = groups.filter(group => groupCodesOfContract.some(groupCode => {
-                    return _.toLower(groupCode) === _.toLower(group.code)
-                }));
+            // Get the groups of the active contract
+            const groupsOfContract = groups.filter(group => groupCodesOfContract.some(groupCode => {
+                return _.toLower(groupCode) === _.toLower(group.code)
+            }));
 
-                for (let group of groupsOfContract) {
-                    const condition = {
-                        user: user.id,
-                        group: group.id
-                    };
-                    let membership = await Membership.findOne(condition);
+            for (let group of groupsOfContract) {
+                const condition = {
+                    user: user.id,
+                    group: group.id
+                };
+                let membership = await Membership.findOne(condition);
 
+                if (_.has(employee, 'stato_dip') && employee.stato_dip !== 'cessato') {
                     if (!membership) {
                         membership = await Group.addMember(group, user);
                     }
@@ -236,8 +241,103 @@ async function importUsers(email = getDefaultEmail()) {
                     if (!membership.active) {
                         enabledMemberships.push(updatedMembership);
                     }
+                } else {
+                    if (!membership) {
+                        await Membership.create({
+                            user: user.id,
+                            group: group.id,
+                            lastsynch: moment().utc().format(),
+                            synchronized: true,
+                            active: false
+                        });
+                    }
+                }
+            }
+
+            // Get the groups of the history contracts
+            const uniqueSteps = [];
+
+            function handleLine(step, line, employee) {
+                if (_.has(line, 'codice')) {
+                    let active = false;
+                    let code = line.codice;
+
+                    if (_.has(line, 'UO') && line.UO === 'IIT') {
+                        code = 'IIT1.01DS';
+                    }
+
+                    if (
+                        _.has(employee, 'stato_dip') &&
+                        employee.stato_dip !== 'cessato' &&
+                        !moment(step.data_fine, 'DD/MM/YYYY').isBefore(moment())
+                    ) {
+                        active = true;
+                    }
+
+                    const uniqueStep = uniqueSteps.find(step => step.code === code);
+                    if (uniqueStep) {
+                        uniqueStep.active = active;
+                    } else {
+                        uniqueSteps.push({
+                            code,
+                            active
+                        });
+                    }
+                }
+            }
+
+            let steps = [];
+            if (_.isArray(contract.step)) {
+                steps = _.orderBy(contract.step.filter(step => _.has(step, 'data_fine')), 'data_fine', 'asc');
+            } else {
+                steps.push(contract.step);
+            }
+
+            steps.forEach(step => {
+                if (!_.has(step, 'linea') || _.has(step, 'data_fine')) {
+                    return;
                 }
 
+                if (_.isArray(step.linea)) {
+                    step.linea.forEach(line => {
+                        handleLine(step, line, employee);
+                    });
+                } else {
+                    handleLine(step, step.linea, employee);
+                }
+            });
+
+            for (const step of uniqueSteps) {
+
+                const group = groups.find(group => group.code === step.code);
+                if (group) {
+                    const condition = {
+                        user: user.id,
+                        group: group.id
+                    }
+
+                    let membership = await Membership.findOne(condition);
+
+                    if (membership) {
+                        await Membership.update(condition, {
+                            lastsynch: moment().utc().format(),
+                            synchronized: true,
+                            active: step.active
+                        });
+                    } else {
+                        sails.log.debug('Add missing membership');
+                        await Membership.create({
+                            user: user.id,
+                            group: group.id,
+                            lastsynch: moment().utc().format(),
+                            synchronized: true,
+                            active: step.active
+                        });
+                    }
+                }
+            }
+
+            if (_.has(employee, 'stato_dip') && employee.stato_dip !== 'cessato') {
                 // Disable all the memberships of the user and the groups where the user doesn't have a contract of
                 const groupsOfContractIds = groupsOfContract.map(group => group.id);
                 const activeMembershipsOfUser = await Membership.find({
@@ -335,7 +435,6 @@ async function importUsers(email = getDefaultEmail()) {
                             !_.isEqual(researchEntityData.profile[property], profile[property])
                         )
                     ) {
-                        const util = require('util');
                         sails.log.debug(property);
                         //sails.log.debug(util.inspect(researchEntityData.profile[property], false, null, true));
                         //sails.log.debug(util.inspect(profile[property], false, null, true));
@@ -409,8 +508,6 @@ async function importUsers(email = getDefaultEmail()) {
         if (notActiveUsersWrongContractEndDate.length > 0) {
             sails.log.info('....................................');
         }
-
-        const util = require('util');
 
         // Reporting
         sails.log.info(disabledMemberships.length + ' memberships disabled!');
@@ -1483,7 +1580,9 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
             (
                 user.contractEndDate !== null &&
                 userObject.contractEndDate !== null &&
-                JSON.stringify(user.contractEndDate) === JSON.stringify(userObject.contractEndDate)
+                moment(user.contractEndDate).isValid() &&
+                moment(userObject.contractEndDate.toString(), getISO8601Format()).isValid() &&
+                moment(userObject.contractEndDate.toString(), getISO8601Format()).isSame(moment(user.contractEndDate))
             ) || (
                 user.contractEndDate === null &&
                 userObject.contractEndDate === null
