@@ -416,17 +416,9 @@ async function importUsers(email = getDefaultEmail()) {
                     ]
                 );
 
-                researchEntityData.profile.experiencesInternal = _.orderBy(
-                    researchEntityData.profile.experiencesInternal,
-                    [
-                        experience => new moment(experience.from, getISO8601Format()),
-                        experience => new moment(experience.to, getISO8601Format())
-                    ],
-                    [
-                        'desc',
-                        'desc'
-                    ]
-                );
+                // This should not be in the profile, will be added in the toJSON of the UserData model
+                delete profile.experiences;
+                delete researchEntityData.experiences;
 
                 let profileJSONString = JSON.stringify(profile);
 
@@ -434,22 +426,6 @@ async function importUsers(email = getDefaultEmail()) {
                     // Replace all the current public privacy settings to hidden
                     profileJSONString = profileJSONString.replace(/"privacy":"public"/gm, '"privacy":"' + getValueHiddenPrivacy() + '"');
                     profile = JSON.parse(profileJSONString);
-                }
-
-                for (const property in researchEntityData.profile) {
-                    if (
-                        !_.has(profile, property) ||
-                        (
-                            _.has(profile, property) &&
-                            !_.isEqual(researchEntityData.profile[property], profile[property])
-                        )
-                    ) {
-                        sails.log.debug(employee.email, property);
-                        //sails.log.debug(util.inspect(researchEntityData.profile[property], false, null, true));
-                        //sails.log.debug(util.inspect(profile[property], false, null, true));
-                        //sails.log.debug(_.isEqual(researchEntityData.profile[property], profile[property]));
-                        //sails.log.debug(util.inspect(profile, false, null, true));
-                    }
                 }
 
                 if (!_.isEqual(researchEntityData.profile, profile)) {
