@@ -18,10 +18,9 @@ const convert = require('xml-js');
 
 const util = require('util');
 
-
 async function importUsers(email = getDefaultEmail()) {
 
-    const startedTime = moment().utc();
+    const startedTime = moment();
 
     const disabledMemberships = [];
     const enabledMemberships = [];
@@ -131,8 +130,6 @@ async function importUsers(email = getDefaultEmail()) {
         // Only keep the employees with a contract
         employees = employees.filter(e => _.has(e, 'contract'));
 
-        //sails.log.debug(util.inspect(employees, false, null, true /* enable colors */));
-
         // Merge the duplicate employees
         employees = mergeDuplicateEmployees(employees);
 
@@ -189,7 +186,7 @@ async function importUsers(email = getDefaultEmail()) {
                     updatedUsers.push(user);
                 } else {
                     // User is already up-to-date, only set the lastsynch
-                    await User.update({id: user.id}, {lastsynch: moment().utc().format()});
+                    await User.update({id: user.id}, {lastsynch: moment().format()});
                     user = await User.findOne({id: user.id});
                     upToDateUsers.push(user);
                 }
@@ -232,7 +229,7 @@ async function importUsers(email = getDefaultEmail()) {
                     }
 
                     await Membership.update(condition, {
-                        lastsynch: moment().utc().format(),
+                        lastsynch: moment().format(),
                         synchronized: true,
                         active: true
                     });
@@ -246,7 +243,7 @@ async function importUsers(email = getDefaultEmail()) {
                         await Membership.create({
                             user: user.id,
                             group: group.id,
-                            lastsynch: moment().utc().format(),
+                            lastsynch: moment().format(),
                             synchronized: true,
                             active: false
                         });
@@ -320,7 +317,7 @@ async function importUsers(email = getDefaultEmail()) {
 
                     if (membership) {
                         await Membership.update(condition, {
-                            lastsynch: moment().utc().format(),
+                            lastsynch: moment().format(),
                             synchronized: true,
                             active: step.active
                         });
@@ -329,7 +326,7 @@ async function importUsers(email = getDefaultEmail()) {
                         await Membership.create({
                             user: user.id,
                             group: group.id,
-                            lastsynch: moment().utc().format(),
+                            lastsynch: moment().format(),
                             synchronized: true,
                             active: step.active
                         });
@@ -350,7 +347,7 @@ async function importUsers(email = getDefaultEmail()) {
                     await Membership.update({
                         id: membership.id,
                     }, {
-                        lastsynch: moment().utc().format(),
+                        lastsynch: moment().format(),
                         active: false
                     });
                     const disabledMembership = await Membership.findOne({id: membership.id});
@@ -369,7 +366,7 @@ async function importUsers(email = getDefaultEmail()) {
                     user: user.id,
                     active: true
                 }, {
-                    lastsynch: moment().utc().format(),
+                    lastsynch: moment().format(),
                     active: false
                 });
 
@@ -419,6 +416,18 @@ async function importUsers(email = getDefaultEmail()) {
                     ]
                 );
 
+                researchEntityData.profile.experiencesInternal = _.orderBy(
+                    researchEntityData.profile.experiencesInternal,
+                    [
+                        experience => new moment(experience.from, getISO8601Format()),
+                        experience => new moment(experience.to, getISO8601Format())
+                    ],
+                    [
+                        'desc',
+                        'desc'
+                    ]
+                );
+
                 let profileJSONString = JSON.stringify(profile);
 
                 if (profile.hidden) {
@@ -435,10 +444,11 @@ async function importUsers(email = getDefaultEmail()) {
                             !_.isEqual(researchEntityData.profile[property], profile[property])
                         )
                     ) {
-                        sails.log.debug(property);
+                        sails.log.debug(employee.email, property);
                         //sails.log.debug(util.inspect(researchEntityData.profile[property], false, null, true));
                         //sails.log.debug(util.inspect(profile[property], false, null, true));
-                        //sails.log.debug(_.omit(researchEntityData.profile[property], profile[property]));
+                        //sails.log.debug(_.isEqual(researchEntityData.profile[property], profile[property]));
+                        //sails.log.debug(util.inspect(profile, false, null, true));
                     }
                 }
 
@@ -497,7 +507,7 @@ async function importUsers(email = getDefaultEmail()) {
         // Check if a user has a contract end date greater than now + 1 year.
         const notActiveUsersWrongContractEndDate = await User.find({
             active: false,
-            contractEndDate: { '>': moment().utc().format() },
+            contractEndDate: { '>': moment().format() },
         });
         if (notActiveUsersWrongContractEndDate.length > 0) {
             sails.log.info(`Found ${notActiveUsersWrongContractEndDate.length} users that has to be checked manually`);
@@ -548,7 +558,7 @@ async function importUsers(email = getDefaultEmail()) {
         sails.log.info(upToDateResearchEntityDataItems.length + ' ResearchEntityData records are already up-to-date!');
         sails.log.info('....................................');
 
-        sails.log.info('Stopped at ' + moment().utc().format());
+        sails.log.info('Stopped at ' + moment().format());
     } catch (e) {
         sails.log.info('importUserContracts');
         sails.log.info(e);
@@ -556,7 +566,7 @@ async function importUsers(email = getDefaultEmail()) {
 }
 
 async function removeExpiredUsers() {
-    const fiveYearsAgo = moment().utc().subtract('5', 'years').startOf('day');
+    const fiveYearsAgo = moment().subtract('5', 'years').startOf('day');
     let deletedUsers = await User.destroy({
         contractEndDate: {'<=': fiveYearsAgo.format()}
     });
@@ -1165,13 +1175,14 @@ async function getContractualHistoryOfCidCodes(codes) {
                 return;
             }
 
-            handledStep.from = moment.tz(step.data_inizio, 'DD/MM/YYYY', zone).utc().format(getISO8601Format());
+            handledStep.from = moment(step.data_inizio, 'DD/MM/YYYY').format(getISO8601Format());
         }
 
         if (_.has(step, 'data_fine')) {
             const to = moment(step.data_fine, 'DD/MM/YYYY');
+
             if (!moment('31/12/9999', 'DD/MM/YYYY').isSame(to)) {
-                handledStep.to = moment.tz(step.data_fine, 'DD/MM/YYYY', zone).utc().format(getISO8601Format());
+                handledStep.to = to.format(getISO8601Format());
             }
         }
 
@@ -1181,7 +1192,7 @@ async function getContractualHistoryOfCidCodes(codes) {
 
         const lines = step.linea;
         if (_.isArray(lines)) {
-            let tmpLines = lines.map(line => line._).map(line => {
+            let tmpLines = lines.map(line => {
                 const tmpLine = {};
                 if (_.has(line, 'codice')) {
                     tmpLine.code = line.codice;
@@ -1209,7 +1220,7 @@ async function getContractualHistoryOfCidCodes(codes) {
 
             handledStep.lines = tmpLines;
         } else {
-            const line = lines._;
+            const line = lines;
             const newLine = {};
             if (_.has(line, 'codice')) {
                 newLine.code = line.codice;
@@ -1308,7 +1319,7 @@ async function getContractualHistoryOfCidCodes(codes) {
         name: null,
         surname: null,
         jobTitle: null,
-        lastsynch: moment().utc().format(),
+        lastsynch: moment().format(),
         synchronized: true,
         contractEndDate: null
     };
@@ -1327,7 +1338,7 @@ async function getContractualHistoryOfCidCodes(codes) {
 
     if (_.has(employee, 'data_fine_rapporto')) {
 
-        const date = moment(employee.data_fine_rapporto, getISO8601Format());
+        const date = moment(employee.data_fine_rapporto, 'YYYY-MM-DD');
 
         if (date.isValid() && date.isBefore('9999-01-01')) {
             userObject.contractEndDate = date.format(getISO8601Format());
@@ -1580,9 +1591,9 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
             (
                 user.contractEndDate !== null &&
                 userObject.contractEndDate !== null &&
-                moment(user.contractEndDate).isValid() &&
-                moment(userObject.contractEndDate.toString(), getISO8601Format()).isValid() &&
-                moment(userObject.contractEndDate.toString(), getISO8601Format()).isSame(moment(user.contractEndDate))
+                moment(user.contractEndDate, getISO8601Format()).isValid() &&
+                moment(userObject.contractEndDate, getISO8601Format()).isValid() &&
+                moment.utc(userObject.contractEndDate, getISO8601Format()).isSame(moment.utc(user.contractEndDate, getISO8601Format()))
             ) || (
                 user.contractEndDate === null &&
                 userObject.contractEndDate === null

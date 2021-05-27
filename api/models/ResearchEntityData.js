@@ -169,7 +169,6 @@ function setupProfile(researchEntityData) {
             researchEntityData.profile.roleCategory.value = researchEntityData.importedData.Ruolo_1;
         }
 
-        //TODO
         const associations = RoleAssociations.get();
         const association = associations.find(a => a.originalRole === researchEntityData.profile.roleCategory.value);
         if (association) {
