@@ -11,7 +11,6 @@ module.exports = {
 const moment = require('moment');
 moment.locale('en');
 
-const zone = moment.tz.guess();
 const valuePublicPrivacy = 'public';
 
 const convert = require('xml-js');
@@ -285,13 +284,18 @@ async function importUsers(email = getDefaultEmail()) {
 
             let steps = [];
             if (_.isArray(contract.step)) {
-                steps = _.orderBy(contract.step.filter(step => _.has(step, 'data_fine')), 'data_fine', 'asc');
+                steps = contract.step.filter(step => _.has(step, 'data_fine'));
+                steps = steps.sort(function(a, b) {
+                    const dateA = moment(a.data_fine, 'DD/MM/YYYY');
+                    const dateB = moment(b.data_fine, 'DD/MM/YYYY');
+                    return dateA.isAfter(dateB);
+                });
             } else {
                 steps.push(contract.step);
             }
 
             steps.forEach(step => {
-                if (!_.has(step, 'linea') || _.has(step, 'data_fine')) {
+                if (!_.has(step, 'linea') || !_.has(step, 'data_fine')) {
                     return;
                 }
 
