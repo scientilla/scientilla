@@ -265,7 +265,8 @@ async function importUsers(email = getDefaultEmail()) {
                     if (
                         _.has(employee, 'stato_dip') &&
                         employee.stato_dip !== 'cessato' &&
-                        !moment(step.data_fine, 'DD/MM/YYYY').isBefore(moment())
+                        !moment(step.data_fine, 'DD/MM/YYYY').isBefore(moment()) &&
+                        !moment(step.data_inizio, 'DD/MM/YYYY').isAfter(moment())
                     ) {
                         active = true;
                     }
@@ -284,7 +285,7 @@ async function importUsers(email = getDefaultEmail()) {
 
             let steps = [];
             if (_.isArray(contract.step)) {
-                steps = contract.step.filter(step => _.has(step, 'data_fine'));
+                steps = contract.step.filter(step => _.has(step, 'data_fine') && _.has(step, 'data_inizio'));
                 steps = steps.sort(function(a, b) {
                     const dateA = moment(a.data_fine, 'DD/MM/YYYY');
                     const dateB = moment(b.data_fine, 'DD/MM/YYYY');
@@ -295,7 +296,7 @@ async function importUsers(email = getDefaultEmail()) {
             }
 
             steps.forEach(step => {
-                if (!_.has(step, 'linea') || !_.has(step, 'data_fine')) {
+                if (!_.has(step, 'linea') || !_.has(step, 'data_fine') || !_.has(step, 'data_inizio')) {
                     return;
                 }
 
