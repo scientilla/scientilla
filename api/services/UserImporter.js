@@ -265,8 +265,7 @@ async function importUsers(email = getDefaultEmail()) {
                     if (
                         _.has(employee, 'stato_dip') &&
                         employee.stato_dip !== 'cessato' &&
-                        !moment(step.data_fine, 'DD/MM/YYYY').isBefore(moment()) &&
-                        !moment(step.data_inizio, 'DD/MM/YYYY').isAfter(moment())
+                        !moment(step.data_fine, 'DD/MM/YYYY').isBefore(moment())
                     ) {
                         active = true;
                     }
@@ -285,7 +284,10 @@ async function importUsers(email = getDefaultEmail()) {
 
             let steps = [];
             if (_.isArray(contract.step)) {
-                steps = contract.step.filter(step => _.has(step, 'data_fine') && _.has(step, 'data_inizio'));
+                steps = contract.step.filter(step => _.has(step, 'data_fine') &&
+                    _.has(step, 'data_inizio') &&
+                    !moment(step.data_inizio, 'DD/MM/YYYY').isAfter(moment())
+                );
                 steps = steps.sort(function(a, b) {
                     const dateA = moment(a.data_fine, 'DD/MM/YYYY');
                     const dateB = moment(b.data_fine, 'DD/MM/YYYY');
