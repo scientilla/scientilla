@@ -218,7 +218,8 @@ async function importUsers(email = getDefaultEmail()) {
             for (let group of groupsOfContract) {
                 const condition = {
                     user: user.id,
-                    group: group.id
+                    group: group.id,
+                    synchronized: true
                 };
                 let membership = await Membership.findOne(condition);
 
@@ -229,7 +230,6 @@ async function importUsers(email = getDefaultEmail()) {
 
                     await Membership.update(condition, {
                         lastsynch: moment().format(),
-                        synchronized: true,
                         active: true
                     });
                     const updatedMembership = await Membership.findOne(condition);
@@ -264,8 +264,10 @@ async function importUsers(email = getDefaultEmail()) {
 
                     if (
                         _.has(employee, 'stato_dip') &&
-                        employee.stato_dip !== 'cessato' &&
-                        !moment(step.data_fine, 'DD/MM/YYYY').isBefore(moment())
+                        employee.stato_dip !== 'cessato' && (
+                            moment(step.data_fine, 'DD/MM/YYYY').isAfter(moment()) ||
+                            moment(step.data_fine, 'DD/MM/YYYY').isSame(moment(), 'day')
+                        )
                     ) {
                         active = true;
                     }
@@ -317,15 +319,15 @@ async function importUsers(email = getDefaultEmail()) {
                 if (group) {
                     const condition = {
                         user: user.id,
-                        group: group.id
-                    }
+                        group: group.id,
+                        synchronized: true
+                    };
 
                     let membership = await Membership.findOne(condition);
 
                     if (membership) {
                         await Membership.update(condition, {
                             lastsynch: moment().format(),
-                            synchronized: true,
                             active: step.active
                         });
                     } else {
@@ -346,7 +348,8 @@ async function importUsers(email = getDefaultEmail()) {
                 const groupsOfContractIds = groupsOfContract.map(group => group.id);
                 const activeMembershipsOfUser = await Membership.find({
                     user: user.id,
-                    active: true
+                    active: true,
+                    synchronized: true
                 });
 
                 const disabledMembershipsOfUser = activeMembershipsOfUser.filter(m => !groupsOfContractIds.includes(m.group));
