@@ -6,6 +6,8 @@ module.exports = {
     analyseUserImport,
     updateUserProfileGroups,
     getUserImportRequestOptions,
+    getEmployees,
+    filterEmployees
 };
 
 const moment = require('moment');
