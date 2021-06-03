@@ -1436,19 +1436,19 @@ async function getContractualHistoryOfCidCodes(codes) {
         defaultPrivacy = getValueHiddenPrivacy();
     }
 
-    let name = contract.nome;
+    let name = _.isObject(contract.nome) ? '' : contract.nome;
     if (!_.isEmpty(contract.nome_AD)) {
         name = contract.nome_AD;
     }
 
-    let surname = contract.cognome;
+    let surname = _.isObject(contract.cognome) ? '' : contract.cognome;
     if (!_.isEmpty(contract.cognome_AD)) {
         surname = contract.cognome_AD;
     }
 
     profile.username = {
         privacy: defaultPrivacy,
-        value: contract.email
+        value: _.isObject(contract.email) ? '' : contract.email
     };
     profile.name = {
         privacy: defaultPrivacy,
@@ -1460,27 +1460,27 @@ async function getContractualHistoryOfCidCodes(codes) {
     };
     profile.phone = {
         privacy: defaultPrivacy,
-        value: contract.telefono
+        value: _.isObject(contract.telefono) ? '' : contract.telefono
     };
     profile.jobTitle = {
         privacy: defaultPrivacy,
-        value: contract.Ruolo_AD
+        value: _.isObject(contract.Ruolo_AD) ? '' : contract.Ruolo_AD
     };
     profile.roleCategory = {
         privacy: defaultPrivacy,
-        value: contract.Ruolo_1
+        value: _.isObject(contract.Ruolo_1) ? '' : contract.Ruolo_1
     };
     profile.gender = {
         privacy: defaultPrivacy,
-        value: contract.genere
+        value: _.isObject(contract.genere) ? '' : contract.genere
     };
     profile.nationality = {
         privacy: getValueHiddenPrivacy(),
-        value: contract.nazionalita
+        value: _.isObject(contract.nazionalita) ? '' : contract.nazionalita
     };
     profile.dateOfBirth = {
         privacy: getValueHiddenPrivacy(),
-        value: moment(contract.data_nascita, 'YYYYMMDD').format('YYYY-MM-DD')
+        value: _.isObject(contract.data_nascita) ? '' : moment(contract.data_nascita, 'YYYYMMDD').format('YYYY-MM-DD')
     };
 
     const groups = [];
