@@ -34,9 +34,9 @@ function stringToSlug (str) {
 
 
 async function waitForSuccessfulRequest(options) {
-    const maxAttempts = 5;
+    const maxAttempts = 10;
 
-    options.timeout = options.timeout || 100000;
+    options.timeout = options.timeout || 600000;
 
     if (options.httpsAgent) {
         options.httpsAgent = new https.Agent(Object.assign({},
