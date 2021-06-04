@@ -146,6 +146,17 @@ async function importUsers(email = getDefaultEmail()) {
                 continue;
             }
 
+            // Replace empty objects by empty strings
+            if (_.isArray(contract.step)) {
+                for (const step of contract.step) {
+                    replaceEmptyObjectByEmptyString(step);
+                    replaceEmptyObjectByEmptyString(step.linea);
+                }
+            } else {
+                replaceEmptyObjectByEmptyString(contract.step);
+                replaceEmptyObjectByEmptyString(contract.step.linea);
+            }
+
             let handledSteps = mergeStepsOfContract(contract);
             const handledStepsOfLastFiveYears = getValidSteps(handledSteps);
 
@@ -875,6 +886,9 @@ function isFormerGuestStudent(employee) {
 
         response = response.scheda_persona.scheda;
 
+        // Replace empty objects with empty string
+        replaceEmptyObjectByEmptyString(response);
+
         if (_.isArray(response)) {
             return response;
         } else {
@@ -928,6 +942,15 @@ function getDefaultCompany() {
     return 'Istituto Italiano di Tecnologia';
 }
 
+function replaceEmptyObjectByEmptyString(object) {
+    // Replace empty objects with empty string
+    for (const [key, value] of Object.entries(object)) {
+        if (_.isObject(value) && _.isEmpty(value)) {
+            object[key] = '';
+        }
+    }
+}
+
 /**
  * Get the contractual history for an array of cid codes
  *
@@ -948,11 +971,17 @@ async function getContractualHistoryOfCidCodes(codes) {
             if (_.isArray(cids)) {
                 for (const contract of cids) {
                     if (_.has(contract, 'step')) {
+                        // Replace empty objects with empty string
+                        replaceEmptyObjectByEmptyString(contract)
+
                         contracts.push(contract);
                     }
                 }
             } else {
                 if (_.has(cids, 'step')) {
+                    // Replace empty objects with empty string
+                    replaceEmptyObjectByEmptyString(cids)
+
                     contracts.push(cids);
                 }
             }
