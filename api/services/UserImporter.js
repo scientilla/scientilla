@@ -264,7 +264,7 @@ async function importUsers(email = getDefaultEmail()) {
             }
 
             // Get the groups of the history contracts
-            const uniqueSteps = [];
+            let uniqueSteps = [];
 
             function handleLine(step, line, employee) {
                 if (_.has(line, 'codice')) {
@@ -326,9 +326,13 @@ async function importUsers(email = getDefaultEmail()) {
                 }
             });
 
-            for (const step of uniqueSteps) {
+            // Filter out the groups that are set by the profile in scheda_persona because some contracts are in the past but should be active,
+            const groupsOfContractCodes = groupsOfContract.map(group => group.code);
+            uniqueSteps = uniqueSteps.filter(s => !groupsOfContractCodes.includes(s.code));
 
+            for (const step of uniqueSteps) {
                 const group = groups.find(group => group.code === step.code);
+
                 if (group) {
                     const condition = {
                         user: user.id,
@@ -722,13 +726,12 @@ async function analyseUserImport() {
 }
 
 async function updateUserProfileGroups() {
+    const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
     const groups = await Group.find();
+    const activeGroups = groups.filter(g => g.active === true);
     const chunk = 500;
     let i = 0;
     let researchEntityDataRecords = [];
-
-    const changedGroups = [];
-    const changedCenters = [];
     const changedResearchEntityDataRecords = [];
 
     do {
@@ -736,29 +739,14 @@ async function updateUserProfileGroups() {
 
         for (const researchEntityDataRecord of researchEntityDataRecords) {
 
+            let defaultPrivacy = valuePublicPrivacy;
+            if (researchEntityDataRecord.profile.hidden) {
+                defaultPrivacy = getValueHiddenPrivacy();
+            }
+
             const originalProfile = _.cloneDeep(researchEntityDataRecord.profile);
 
-            for (const profileGroup of researchEntityDataRecord.profile.groups) {
-
-                const group = groups.find(group => group.code === profileGroup.code);
-
-                if (group) {
-                    if (profileGroup.name !== group.name) {
-                        profileGroup.name = group.name;
-                        changedGroups.push(group);
-                    }
-
-                    if (_.has(profileGroup, 'center.code') && _.has(profileGroup, 'center.name')) {
-
-                        const center = groups.find(group => group.code === profileGroup.center.code);
-
-                        if (profileGroup.center.name !== center.name) {
-                            profileGroup.center.name = center.name;
-                            changedCenters.push(center);
-                        }
-                    }
-                }
-            }
+            researchEntityDataRecord.profile.groups = getProfileGroups(allMembershipGroups, activeGroups, researchEntityDataRecord.importedData, defaultPrivacy);
 
             for (const experience of researchEntityDataRecord.profile.experiencesInternal) {
                 if (_.has(experience, 'lines')) {
@@ -768,14 +756,13 @@ async function updateUserProfileGroups() {
                         if (group) {
                             if (line.name !== group.name) {
                                 line.name = group.name;
-                                changedGroups.push(group);
                             }
                         }
                     }
                 }
             }
 
-            if (JSON.stringify(originalProfile) !== JSON.stringify(researchEntityDataRecord.profile)) {
+            if (!_.isEqual(originalProfile, researchEntityDataRecord.profile)) {
                 await ResearchEntityData.update(
                     {id: researchEntityDataRecord.id},
                     {profile: JSON.stringify(researchEntityDataRecord.profile)}
@@ -794,34 +781,6 @@ async function updateUserProfileGroups() {
         const researchEntityIds = changedResearchEntityDataRecords.map(r => r.researchEntity);
         const users = await User.find({researchEntity: researchEntityIds});
         sails.log.info('User(s): ' + users.map(user => user.username).join(', '));
-    }
-
-    const uniqueChangedGroups = changedGroups.reduce((acc, current) => {
-        const x = acc.find(item => item.code === current.code);
-        if (!x) {
-            return acc.concat([current]);
-        } else {
-            return acc;
-        }
-    }, []);
-
-    sails.log.info('Unique changed groups: ' + uniqueChangedGroups.length);
-    if (!_.isEmpty(uniqueChangedGroups)) {
-        sails.log.info('Codes: ' + uniqueChangedGroups.map(group => group.code).join(', '));
-    }
-
-    const uniqueChangedCenters = changedCenters.reduce((acc, current) => {
-        const x = acc.find(item => item.code === current.code);
-        if (!x) {
-            return acc.concat([current]);
-        } else {
-            return acc;
-        }
-    }, []);
-
-    sails.log.info('Unique changed centers: ' + uniqueChangedCenters.length);
-    if (!_.isEmpty(uniqueChangedCenters)) {
-        sails.log.info('Codes: ' + uniqueChangedCenters.map(group => group.code).join(', '));
     }
 }
 
@@ -1512,6 +1471,23 @@ async function getContractualHistoryOfCidCodes(codes) {
         value: _.isObject(contract.data_nascita) ? '' : moment(contract.data_nascita, 'YYYYMMDD').format('YYYY-MM-DD')
     };
 
+    profile.groups = getProfileGroups(allMembershipGroups, activeGroups, contract, defaultPrivacy);
+
+    return profile;
+}
+
+/**
+ * This function returns an array with the groups of the user's contract.
+ *
+ * @param {Object[]}      allMembershipGroups               array of all memberships of groups.
+ * @param {Object[]}      activeGroups                      array of active groups.
+ * @param {Object}        contract                          User contract object.
+ * @param {String}        defaultPrivacy                    Default privacy string.
+ *
+ * @returns {object[]}
+ */
+function getProfileGroups(allMembershipGroups, activeGroups, contract, defaultPrivacy) {
+
     const groups = [];
     const lines = [];
 
@@ -1532,7 +1508,6 @@ async function getContractualHistoryOfCidCodes(codes) {
     const codes = lines.map(line => line.code).filter((value, index, self) => self.indexOf(value) === index);
 
     for (const code of codes) {
-
         const codeGroup = activeGroups.find(group => group.code === code);
         let skipCenter = false;
         const group = {};
@@ -1572,7 +1547,7 @@ async function getContractualHistoryOfCidCodes(codes) {
                             privacy: defaultPrivacy
                         };
                     } else {
-                        sails.log.info('We are only expecting a center as parent group!');
+                        sails.log.info(`We are only expecting a center as parent group! ${parentGroup.name} ${parentGroup.code}`);
                     }
                 }
             }
@@ -1585,9 +1560,7 @@ async function getContractualHistoryOfCidCodes(codes) {
         groups.push(group);
     }
 
-    profile.groups = groups;
-
-    return profile;
+    return groups;
 }
 
 /**
