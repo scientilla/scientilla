@@ -781,9 +781,9 @@ async function updateUserProfileGroups() {
                     {profile: JSON.stringify(researchEntityDataRecord.profile)}
                 );
 
-                researchEntityDataRecord = await ResearchEntityData.findOne({id: researchEntityDataRecord.id});
+                const researchEntityData = await ResearchEntityData.findOne({id: researchEntityDataRecord.id});
 
-                changedResearchEntityDataRecords.push(researchEntityDataRecord);
+                changedResearchEntityDataRecords.push(researchEntityData);
             }
         }
         i++;
