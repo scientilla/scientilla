@@ -2,6 +2,7 @@
 
 "use strict";
 
+const moment = require('moment');
 const axios = require('axios');
 const https = require('https');
 const util = require('util');
@@ -57,9 +58,18 @@ async function waitForSuccessfulRequest(options) {
 }
 
 async function tryRequest(options, maxAttempts, attempts = 0) {
+    const waitFor = 60000; // 60000 ms = 1 minute
+
     try {
+        if (attempts != 0) {
+            await new Promise(resolve => setTimeout(resolve, waitFor));
+        }
+
+        sails.log.debug(`${moment()} Try to reach ${axios.getUri(options)} for the ${attempts + 1}th time ...`);
+
         return await axios(options);
     } catch (e) {
+        sails.log.debug(`${moment()} Failed to reach ${axios.getUri(options)} for the ${attempts + 1}th time ...`);
 
         if (attempts < maxAttempts) {
             return await tryRequest(options, maxAttempts, attempts + 1);
