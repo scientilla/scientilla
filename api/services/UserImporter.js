@@ -6,17 +6,22 @@ module.exports = {
     analyseUserImport,
     updateUserProfileGroups,
     getUserImportRequestOptions,
+    getEmployees,
+    filterEmployees
 };
 
 const moment = require('moment');
 moment.locale('en');
 
-const zone = moment.tz.guess();
 const valuePublicPrivacy = 'public';
+
+const convert = require('xml-js');
+
+const util = require('util');
 
 async function importUsers(email = getDefaultEmail()) {
 
-    const startedTime = moment().utc();
+    const startedTime = moment();
 
     const disabledMemberships = [];
     const enabledMemberships = [];
@@ -30,7 +35,7 @@ async function importUsers(email = getDefaultEmail()) {
     const upToDateResearchEntityDataItems = [];
 
     sails.log.info('The import started at ' + startedTime.format());
-    sails.log.info('-----------------------------------------------------------------');
+    sails.log.info('....................................');
 
     try {
         // Endpoint options to get all users
@@ -109,19 +114,17 @@ async function importUsers(email = getDefaultEmail()) {
 
         // Add the contract to the employees
         for (const contract of historyContracts) {
-            if (contract.contratto_secondario !== 'X') {
+            if (_.has(contract, 'step')) {
                 const employee = employees.find(e => e.cid === contract.cid);
                 if (employee) {
-                    if (_.has(contract, 'step')) {
-                        if (!_.has(employee, 'contract')) {
-                            employee.contract = [contract];
-                        } else {
-                            employee.contract.push(contract);
-                        }
+                    if (!_.has(employee, 'contract')) {
+                        employee.contract = [contract];
                     } else {
-                        sails.log.debug(`Contract doesn't have any steps: ${employee.email} ${employee.cid} `);
+                        employee.contract.push(contract);
                     }
                 }
+            } else {
+                sails.log.debug(`Contract doesn't have any steps: ${employee.email} ${employee.cid}`);
             }
         }
 
@@ -141,6 +144,17 @@ async function importUsers(email = getDefaultEmail()) {
             // Skip employee if the contract has no step or cid
             if (!_.has(contract, 'step') || !_.has(contract, 'cid')) {
                 continue;
+            }
+
+            // Replace empty objects by empty strings
+            if (_.isArray(contract.step)) {
+                for (const step of contract.step) {
+                    replaceEmptyObjectByEmptyString(step);
+                    replaceEmptyObjectByEmptyString(step.linea);
+                }
+            } else {
+                replaceEmptyObjectByEmptyString(contract.step);
+                replaceEmptyObjectByEmptyString(contract.step.linea);
             }
 
             let handledSteps = mergeStepsOfContract(contract);
@@ -184,7 +198,7 @@ async function importUsers(email = getDefaultEmail()) {
                     updatedUsers.push(user);
                 } else {
                     // User is already up-to-date, only set the lastsynch
-                    await User.update({id: user.id}, {lastsynch: moment().utc().format()});
+                    await User.update({id: user.id}, {lastsynch: moment().format()});
                     user = await User.findOne({id: user.id});
                     upToDateUsers.push(user);
                 }
@@ -207,28 +221,28 @@ async function importUsers(email = getDefaultEmail()) {
                 sails.log.info(user);
             }
 
-            if (_.has(employee, 'stato_dip') && employee.stato_dip !== 'cessato') {
-                const groupCodesOfContract = collectGroupCodes(employee);
+            const groupCodesOfContract = collectGroupCodes(employee);
 
-                // Get the groups of the contract
-                const groupsOfContract = groups.filter(group => groupCodesOfContract.some(groupCode => {
-                    return _.toLower(groupCode) === _.toLower(group.code)
-                }));
+            // Get the groups of the active contract
+            const groupsOfContract = groups.filter(group => groupCodesOfContract.some(groupCode => {
+                return _.toLower(groupCode) === _.toLower(group.code)
+            }));
 
-                for (let group of groupsOfContract) {
-                    const condition = {
-                        user: user.id,
-                        group: group.id
-                    };
-                    let membership = await Membership.findOne(condition);
+            for (let group of groupsOfContract) {
+                const condition = {
+                    user: user.id,
+                    group: group.id,
+                    synchronized: true
+                };
+                let membership = await Membership.findOne(condition);
 
+                if (_.has(employee, 'stato_dip') && employee.stato_dip !== 'cessato') {
                     if (!membership) {
                         membership = await Group.addMember(group, user);
                     }
 
                     await Membership.update(condition, {
-                        lastsynch: moment().utc().format(),
-                        synchronized: true,
+                        lastsynch: moment().format(),
                         active: true
                     });
                     const updatedMembership = await Membership.findOne(condition);
@@ -236,13 +250,123 @@ async function importUsers(email = getDefaultEmail()) {
                     if (!membership.active) {
                         enabledMemberships.push(updatedMembership);
                     }
+                } else {
+                    if (!membership) {
+                        await Membership.create({
+                            user: user.id,
+                            group: group.id,
+                            lastsynch: moment().format(),
+                            synchronized: true,
+                            active: false
+                        });
+                    }
+                }
+            }
+
+            // Get the groups of the history contracts
+            let uniqueSteps = [];
+
+            function handleLine(step, line, employee) {
+                if (_.has(line, 'codice')) {
+                    let active = false;
+                    let code = line.codice;
+
+                    if (_.has(line, 'UO') && line.UO === 'IIT') {
+                        code = 'IIT1.01DS';
+                    }
+
+                    if (
+                        _.has(employee, 'stato_dip') &&
+                        employee.stato_dip !== 'cessato' && (
+                            moment(step.data_fine, 'DD/MM/YYYY').isAfter(moment()) ||
+                            moment(step.data_fine, 'DD/MM/YYYY').isSame(moment(), 'day')
+                        )
+                    ) {
+                        active = true;
+                    }
+
+                    const uniqueStep = uniqueSteps.find(step => step.code === code);
+                    if (uniqueStep) {
+                        uniqueStep.active = active;
+                    } else {
+                        uniqueSteps.push({
+                            code,
+                            active
+                        });
+                    }
+                }
+            }
+
+            let steps = [];
+            if (_.isArray(contract.step)) {
+                steps = contract.step.filter(step => _.has(step, 'data_fine') &&
+                    _.has(step, 'data_inizio') &&
+                    !moment(step.data_inizio, 'DD/MM/YYYY').isAfter(moment())
+                );
+                steps = steps.sort(function(a, b) {
+                    const dateA = moment(a.data_fine, 'DD/MM/YYYY');
+                    const dateB = moment(b.data_fine, 'DD/MM/YYYY');
+                    return dateA.isAfter(dateB);
+                });
+            } else {
+                steps.push(contract.step);
+            }
+
+            steps.forEach(step => {
+                if (!_.has(step, 'linea') || !_.has(step, 'data_fine') || !_.has(step, 'data_inizio')) {
+                    return;
                 }
 
+                if (_.isArray(step.linea)) {
+                    step.linea.forEach(line => {
+                        handleLine(step, line, employee);
+                    });
+                } else {
+                    handleLine(step, step.linea, employee);
+                }
+            });
+
+            // Filter out the groups that are set by the profile in scheda_persona because some contracts are in the past but should be active,
+            const groupsOfContractCodes = groupsOfContract.map(group => group.code);
+            uniqueSteps = uniqueSteps.filter(s => !groupsOfContractCodes.includes(s.code));
+
+            for (const step of uniqueSteps) {
+                const group = groups.find(group => group.code === step.code);
+
+                if (group) {
+                    const condition = {
+                        user: user.id,
+                        group: group.id,
+                        synchronized: true
+                    };
+
+                    let membership = await Membership.findOne(condition);
+
+                    if (membership) {
+                        await Membership.update(condition, {
+                            lastsynch: moment().format(),
+                            active: step.active
+                        });
+                    } else {
+                        sails.log.debug('Add missing membership');
+                        await Membership.create({
+                            user: user.id,
+                            group: group.id,
+                            lastsynch: moment().format(),
+                            synchronized: true,
+                            active: step.active
+                        });
+                    }
+                }
+            }
+
+            if (_.has(employee, 'stato_dip') && employee.stato_dip !== 'cessato') {
                 // Disable all the memberships of the user and the groups where the user doesn't have a contract of
                 const groupsOfContractIds = groupsOfContract.map(group => group.id);
                 const activeMembershipsOfUser = await Membership.find({
                     user: user.id,
-                    active: true
+                    active: true,
+                    synchronized: true
                 });
 
                 const disabledMembershipsOfUser = activeMembershipsOfUser.filter(m => !groupsOfContractIds.includes(m.group));
@@ -250,7 +374,7 @@ async function importUsers(email = getDefaultEmail()) {
                     await Membership.update({
                         id: membership.id,
                     }, {
-                        lastsynch: moment().utc().format(),
+                        lastsynch: moment().format(),
                         active: false
                     });
                     const disabledMembership = await Membership.findOne({id: membership.id});
@@ -269,7 +393,7 @@ async function importUsers(email = getDefaultEmail()) {
                     user: user.id,
                     active: true
                 }, {
-                    lastsynch: moment().utc().format(),
+                    lastsynch: moment().format(),
                     active: false
                 });
 
@@ -319,6 +443,10 @@ async function importUsers(email = getDefaultEmail()) {
                     ]
                 );
 
+                // This should not be in the profile, will be added in the toJSON of the UserData model
+                delete profile.experiences;
+                delete researchEntityData.experiences;
+
                 let profileJSONString = JSON.stringify(profile);
 
                 if (profile.hidden) {
@@ -362,27 +490,35 @@ async function importUsers(email = getDefaultEmail()) {
         sails.log.info('....................................');
 
         // Check if a user is active but we expected not active
-        if (email === getDefaultEmail()) {
-            const notExpectedActiveUsers = await User.find({
-                lastsynch: { '<': startedTime.format() },
-                synchronized: true,
-                active: true
-            });
-            if (notExpectedActiveUsers.length > 0) {
-                sails.log.info(`Found ${notExpectedActiveUsers.length} users that are active but expected not to be active, please check manually:`);
-            }
-            for (const user of notExpectedActiveUsers) {
-                sails.log.info(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`);
-            }
-            if (notExpectedActiveUsers.length > 0) {
-                sails.log.info('....................................');
-            }
+        const notExpectedActiveUsersCondition = {
+            lastsynch: { '<': startedTime.format() },
+            synchronized: true,
+            active: true
+        };
+
+        if (email !== getDefaultEmail()) {
+            notExpectedActiveUsersCondition.username = email;
+        }
+
+        const notExpectedActiveUsers = await User.find(notExpectedActiveUsersCondition);
+        if (notExpectedActiveUsers.length > 0) {
+            sails.log.info(`Found ${notExpectedActiveUsers.length} users that are active but expected not to be active, please check manually:`);
+        }
+        for (const user of notExpectedActiveUsers) {
+            sails.log.info(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`);
+
+            const employee = employees.find(e => e.email === user.username);
+            sails.log.info('Found employee:');
+            sails.log.info(employee);
+        }
+        if (notExpectedActiveUsers.length > 0) {
+            sails.log.info('....................................');
         }
 
         // Check if a user has a contract end date greater than now + 1 year.
         const notActiveUsersWrongContractEndDate = await User.find({
             active: false,
-            contractEndDate: { '>': moment().utc().format() },
+            contractEndDate: { '>': moment().format() },
         });
         if (notActiveUsersWrongContractEndDate.length > 0) {
             sails.log.info(`Found ${notActiveUsersWrongContractEndDate.length} users that has to be checked manually`);
@@ -393,8 +529,6 @@ async function importUsers(email = getDefaultEmail()) {
         if (notActiveUsersWrongContractEndDate.length > 0) {
             sails.log.info('....................................');
         }
-
-        const util = require('util');
 
         // Reporting
         sails.log.info(disabledMemberships.length + ' memberships disabled!');
@@ -435,7 +569,7 @@ async function importUsers(email = getDefaultEmail()) {
         sails.log.info(upToDateResearchEntityDataItems.length + ' ResearchEntityData records are already up-to-date!');
         sails.log.info('....................................');
 
-        sails.log.info('Stopped at ' + moment().utc().format());
+        sails.log.info('Stopped at ' + moment().format());
     } catch (e) {
         sails.log.info('importUserContracts');
         sails.log.info(e);
@@ -443,7 +577,7 @@ async function importUsers(email = getDefaultEmail()) {
 }
 
 async function removeExpiredUsers() {
-    const fiveYearsAgo = moment().utc().subtract('5', 'years').startOf('day');
+    const fiveYearsAgo = moment().subtract('5', 'years').startOf('day');
     let deletedUsers = await User.destroy({
         contractEndDate: {'<=': fiveYearsAgo.format()}
     });
@@ -600,13 +734,12 @@ async function analyseUserImport() {
 }
 
 async function updateUserProfileGroups() {
+    const allMembershipGroups = await MembershipGroup.find().populate('parent_group');
     const groups = await Group.find();
+    const activeGroups = groups.filter(g => g.active === true);
     const chunk = 500;
     let i = 0;
     let researchEntityDataRecords = [];
-
-    const changedGroups = [];
-    const changedCenters = [];
     const changedResearchEntityDataRecords = [];
 
     do {
@@ -614,29 +747,14 @@ async function updateUserProfileGroups() {
 
         for (const researchEntityDataRecord of researchEntityDataRecords) {
 
+            let defaultPrivacy = valuePublicPrivacy;
+            if (researchEntityDataRecord.profile.hidden) {
+                defaultPrivacy = getValueHiddenPrivacy();
+            }
+
             const originalProfile = _.cloneDeep(researchEntityDataRecord.profile);
 
-            for (const profileGroup of researchEntityDataRecord.profile.groups) {
-
-                const group = groups.find(group => group.code === profileGroup.code);
-
-                if (group) {
-                    if (profileGroup.name !== group.name) {
-                        profileGroup.name = group.name;
-                        changedGroups.push(group);
-                    }
-
-                    if (_.has(profileGroup, 'center.code') && _.has(profileGroup, 'center.name')) {
-
-                        const center = groups.find(group => group.code === profileGroup.center.code);
-
-                        if (profileGroup.center.name !== center.name) {
-                            profileGroup.center.name = center.name;
-                            changedCenters.push(center);
-                        }
-                    }
-                }
-            }
+            researchEntityDataRecord.profile.groups = getProfileGroups(allMembershipGroups, activeGroups, researchEntityDataRecord.importedData, defaultPrivacy);
 
             for (const experience of researchEntityDataRecord.profile.experiencesInternal) {
                 if (_.has(experience, 'lines')) {
@@ -646,22 +764,21 @@ async function updateUserProfileGroups() {
                         if (group) {
                             if (line.name !== group.name) {
                                 line.name = group.name;
-                                changedGroups.push(group);
                             }
                         }
                     }
                 }
             }
 
-            if (JSON.stringify(originalProfile) !== JSON.stringify(researchEntityDataRecord.profile)) {
+            if (!_.isEqual(originalProfile, researchEntityDataRecord.profile)) {
                 await ResearchEntityData.update(
                     {id: researchEntityDataRecord.id},
                     {profile: JSON.stringify(researchEntityDataRecord.profile)}
                 );
 
-                researchEntityDataRecord = await ResearchEntityData.findOne({id: researchEntityDataRecord.id});
+                const researchEntityData = await ResearchEntityData.findOne({id: researchEntityDataRecord.id});
 
-                changedResearchEntityDataRecords.push(researchEntityDataRecord);
+                changedResearchEntityDataRecords.push(researchEntityData);
             }
         }
         i++;
@@ -672,34 +789,6 @@ async function updateUserProfileGroups() {
         const researchEntityIds = changedResearchEntityDataRecords.map(r => r.researchEntity);
         const users = await User.find({researchEntity: researchEntityIds});
         sails.log.info('User(s): ' + users.map(user => user.username).join(', '));
-    }
-
-    const uniqueChangedGroups = changedGroups.reduce((acc, current) => {
-        const x = acc.find(item => item.code === current.code);
-        if (!x) {
-            return acc.concat([current]);
-        } else {
-            return acc;
-        }
-    }, []);
-
-    sails.log.info('Unique changed groups: ' + uniqueChangedGroups.length);
-    if (!_.isEmpty(uniqueChangedGroups)) {
-        sails.log.info('Codes: ' + uniqueChangedGroups.map(group => group.code).join(', '));
-    }
-
-    const uniqueChangedCenters = changedCenters.reduce((acc, current) => {
-        const x = acc.find(item => item.code === current.code);
-        if (!x) {
-            return acc.concat([current]);
-        } else {
-            return acc;
-        }
-    }, []);
-
-    sails.log.info('Unique changed centers: ' + uniqueChangedCenters.length);
-    if (!_.isEmpty(uniqueChangedCenters)) {
-        sails.log.info('Codes: ' + uniqueChangedCenters.map(group => group.code).join(', '));
     }
 }
 
@@ -728,7 +817,7 @@ function isFormerGuestStudent(employee) {
     options.params = Object.assign({
             rep: 'PROD',
             trans,
-            output: 'json'
+            output: 'xml'
         },
         options.params,
         extraParams);
@@ -756,11 +845,16 @@ function isFormerGuestStudent(employee) {
     try {
         let response = await Utils.waitForSuccessfulRequest(options);
 
-        if (!_.has(response, '_.scheda') || _.isEmpty(response._.scheda)) {
+        response = convert.xml2js(response, {compact: true, spaces: 4, textFn: RemoveJsonTextAttribute});
+
+        if (!_.has(response, 'scheda_persona.scheda') || _.isEmpty(response.scheda_persona.scheda)) {
             return false;
         }
 
-        response = response._.scheda;
+        response = response.scheda_persona.scheda;
+
+        // Replace empty objects with empty string
+        replaceEmptyObjectByEmptyString(response);
 
         if (_.isArray(response)) {
             return response;
@@ -815,6 +909,15 @@ function getDefaultCompany() {
     return 'Istituto Italiano di Tecnologia';
 }
 
+function replaceEmptyObjectByEmptyString(object) {
+    // Replace empty objects with empty string
+    for (const [key, value] of Object.entries(object)) {
+        if (_.isObject(value) && _.isEmpty(value)) {
+            object[key] = '';
+        }
+    }
+}
+
 /**
  * Get the contractual history for an array of cid codes
  *
@@ -829,18 +932,24 @@ async function getContractualHistoryOfCidCodes(codes) {
     const chunkLength = 250;
 
     function handleResponse(response) {
-        if (_.has(response, '_.CID') && !_.isEmpty(response._.CID)) {
-            const cids = response._.CID;
+        if (_.has(response, 'StoricoContrattuale.CID') && !_.isEmpty(response.StoricoContrattuale.CID)) {
+            const cids = response.StoricoContrattuale.CID;
 
             if (_.isArray(cids)) {
                 for (const contract of cids) {
-                    if (_.has(contract, '_.step')) {
-                        contracts.push(contract._);
+                    if (_.has(contract, 'step')) {
+                        // Replace empty objects with empty string
+                        replaceEmptyObjectByEmptyString(contract)
+
+                        contracts.push(contract);
                     }
                 }
             } else {
-                if (_.has(cids, '_.step')) {
-                    contracts.push(cids._);
+                if (_.has(cids, 'step')) {
+                    // Replace empty objects with empty string
+                    replaceEmptyObjectByEmptyString(cids)
+
+                    contracts.push(cids);
                 }
             }
         }
@@ -852,7 +961,8 @@ async function getContractualHistoryOfCidCodes(codes) {
         const groups = _.chunk(codes, chunkLength);
         for (const group of groups) {
             const options = getUserImportRequestOptions('history', {cid: group.join(',')});
-            const response = await Utils.waitForSuccessfulRequest(options);
+            let response = await Utils.waitForSuccessfulRequest(options);
+            response = convert.xml2js(response, {compact: true, spaces: 4, textFn: RemoveJsonTextAttribute});
             handleResponse(response);
         }
     } catch (e) {
@@ -1033,9 +1143,9 @@ async function getContractualHistoryOfCidCodes(codes) {
  */
  function handleStep(step) {
     if (
-        _.has(step, '_.linea') &&
-        _.has(step, '_.stato') &&
-        (step._.stato === 'in forza' || step._.stato === 'sospeso')
+        _.has(step, 'linea') &&
+        _.has(step, 'stato') &&
+        (step.stato === 'in forza' || step.stato === 'sospeso')
     ) {
         const handledStep = {
             from: null,
@@ -1043,29 +1153,30 @@ async function getContractualHistoryOfCidCodes(codes) {
             lines: []
         };
 
-        if (_.has(step, '_.data_inizio')) {
+        if (_.has(step, 'data_inizio')) {
             // Skip step if it is one of the future
-            if (moment(step._.data_inizio, 'DD/MM/YYYY').isAfter(moment())) {
+            if (moment(step.data_inizio, 'DD/MM/YYYY').isAfter(moment())) {
                 return;
             }
 
-            handledStep.from = moment.tz(step._.data_inizio, 'DD/MM/YYYY', zone).utc().format(getISO8601Format());
+            handledStep.from = moment(step.data_inizio, 'DD/MM/YYYY').format(getISO8601Format());
         }
 
-        if (_.has(step, '_.data_fine')) {
-            const to = moment(step._.data_fine, 'DD/MM/YYYY');
+        if (_.has(step, 'data_fine')) {
+            const to = moment(step.data_fine, 'DD/MM/YYYY');
+
             if (!moment('31/12/9999', 'DD/MM/YYYY').isSame(to)) {
-                handledStep.to = moment.tz(step._.data_fine, 'DD/MM/YYYY', zone).utc().format(getISO8601Format());
+                handledStep.to = to.format(getISO8601Format());
             }
         }
 
-        if (_.has(step, '_.Ruolo_AD')) {
-            handledStep.jobTitle = step._.Ruolo_AD;
+        if (_.has(step, 'Ruolo_AD')) {
+            handledStep.jobTitle = step.Ruolo_AD;
         }
 
-        const lines = step._.linea;
+        const lines = step.linea;
         if (_.isArray(lines)) {
-            let tmpLines = lines.map(line => line._).map(line => {
+            let tmpLines = lines.map(line => {
                 const tmpLine = {};
                 if (_.has(line, 'codice')) {
                     tmpLine.code = line.codice;
@@ -1093,7 +1204,7 @@ async function getContractualHistoryOfCidCodes(codes) {
 
             handledStep.lines = tmpLines;
         } else {
-            const line = lines._;
+            const line = lines;
             const newLine = {};
             if (_.has(line, 'codice')) {
                 newLine.code = line.codice;
@@ -1192,7 +1303,7 @@ async function getContractualHistoryOfCidCodes(codes) {
         name: null,
         surname: null,
         jobTitle: null,
-        lastsynch: moment().utc().format(),
+        lastsynch: moment().format(),
         synchronized: true,
         contractEndDate: null
     };
@@ -1211,7 +1322,7 @@ async function getContractualHistoryOfCidCodes(codes) {
 
     if (_.has(employee, 'data_fine_rapporto')) {
 
-        const date = moment(employee.data_fine_rapporto, getISO8601Format());
+        const date = moment(employee.data_fine_rapporto, 'YYYY-MM-DD');
 
         if (date.isValid() && date.isBefore('9999-01-01')) {
             userObject.contractEndDate = date.format(getISO8601Format());
@@ -1298,40 +1409,6 @@ async function getContractualHistoryOfCidCodes(codes) {
 }
 
 /**
- * This function returns an user object or false if the user is not found.
- *
- * @param {Object}        employee               Employee contract object.
- *
- * @returns {Object|false}
- */
- async function findEmployeeUser(employee) {
-    const condition = {
-        active: true
-    };
-
-    let users = [];
-
-    // By CID code
-    if (_.has(employee, 'cid') && !_.isEmpty(employee.cid)) {
-        users = await User.find(_.merge({
-            cid: employee.cid
-        }, condition));
-
-        if (users.length === 1) {
-            sails.log.debug(`Found ${users.length} user with the same CID code: ${employee.cid}, email: ${employee.email}, name: ${employee.nome}, surname: ${employee.cognome}`);
-            return users[0];
-        }
-
-        if (users.length > 1) {
-            sails.log.debug(`Found ${users.length} users with the same CID code: ${employee.cid}`);
-            return false;
-        }
-    }
-
-    return false;
-}
-
-/**
  * This function returns an user profile object created with the passed data.
  *
  * @param {Object}          researchEntityData
@@ -1355,19 +1432,19 @@ async function getContractualHistoryOfCidCodes(codes) {
         defaultPrivacy = getValueHiddenPrivacy();
     }
 
-    let name = contract.nome;
+    let name = _.isObject(contract.nome) ? '' : contract.nome;
     if (!_.isEmpty(contract.nome_AD)) {
         name = contract.nome_AD;
     }
 
-    let surname = contract.cognome;
+    let surname = _.isObject(contract.cognome) ? '' : contract.cognome;
     if (!_.isEmpty(contract.cognome_AD)) {
         surname = contract.cognome_AD;
     }
 
     profile.username = {
         privacy: defaultPrivacy,
-        value: contract.email
+        value: _.isObject(contract.email) ? '' : contract.email
     };
     profile.name = {
         privacy: defaultPrivacy,
@@ -1379,28 +1456,45 @@ async function getContractualHistoryOfCidCodes(codes) {
     };
     profile.phone = {
         privacy: defaultPrivacy,
-        value: contract.telefono
+        value: _.isObject(contract.telefono) ? '' : contract.telefono
     };
     profile.jobTitle = {
         privacy: defaultPrivacy,
-        value: contract.Ruolo_AD
+        value: _.isObject(contract.Ruolo_AD) ? '' : contract.Ruolo_AD
     };
     profile.roleCategory = {
         privacy: defaultPrivacy,
-        value: contract.Ruolo_1
+        value: _.isObject(contract.Ruolo_1) ? '' : contract.Ruolo_1
     };
     profile.gender = {
         privacy: defaultPrivacy,
-        value: contract.genere
+        value: _.isObject(contract.genere) ? '' : contract.genere
     };
     profile.nationality = {
         privacy: getValueHiddenPrivacy(),
-        value: contract.nazionalita
+        value: _.isObject(contract.nazionalita) ? '' : contract.nazionalita
     };
     profile.dateOfBirth = {
         privacy: getValueHiddenPrivacy(),
-        value: moment(contract.data_nascita, 'YYYYMMDD').format('YYYY-MM-DD')
+        value: _.isObject(contract.data_nascita) ? '' : moment(contract.data_nascita, 'YYYYMMDD').format('YYYY-MM-DD')
     };
+
+    profile.groups = getProfileGroups(allMembershipGroups, activeGroups, contract, defaultPrivacy);
+
+    return profile;
+}
+
+/**
+ * This function returns an array with the groups of the user's contract.
+ *
+ * @param {Object[]}      allMembershipGroups               array of all memberships of groups.
+ * @param {Object[]}      activeGroups                      array of active groups.
+ * @param {Object}        contract                          User contract object.
+ * @param {String}        defaultPrivacy                    Default privacy string.
+ *
+ * @returns {object[]}
+ */
+function getProfileGroups(allMembershipGroups, activeGroups, contract, defaultPrivacy) {
 
     const groups = [];
     const lines = [];
@@ -1422,7 +1516,6 @@ async function getContractualHistoryOfCidCodes(codes) {
     const codes = lines.map(line => line.code).filter((value, index, self) => self.indexOf(value) === index);
 
     for (const code of codes) {
-
         const codeGroup = activeGroups.find(group => group.code === code);
         let skipCenter = false;
         const group = {};
@@ -1462,7 +1555,7 @@ async function getContractualHistoryOfCidCodes(codes) {
                             privacy: defaultPrivacy
                         };
                     } else {
-                        sails.log.info('We are only expecting a center as parent group!');
+                        sails.log.info(`We are only expecting a center as parent group! ${parentGroup.name} ${parentGroup.code}`);
                     }
                 }
             }
@@ -1475,9 +1568,7 @@ async function getContractualHistoryOfCidCodes(codes) {
         groups.push(group);
     }
 
-    profile.groups = groups;
-
-    return profile;
+    return groups;
 }
 
 /**
@@ -1496,12 +1587,12 @@ function isUserEqualWithUserObject(user = {}, userObject = {}) {
         user.jobTitle === userObject.jobTitle &&
         (
             (
+                user.contractEndDate !== null &&
+                userObject.contractEndDate !== null &&
                 moment(user.contractEndDate, getISO8601Format()).isValid() &&
                 moment(userObject.contractEndDate, getISO8601Format()).isValid() &&
-                moment(user.contractEndDate, getISO8601Format()).isSame(moment(userObject.contractEndDate, getISO8601Format()))
+                moment.utc(userObject.contractEndDate, getISO8601Format()).isSame(moment.utc(user.contractEndDate, getISO8601Format()))
             ) || (
-                !moment(user.contractEndDate, getISO8601Format()).isValid() &&
-                !moment(userObject.contractEndDate, getISO8601Format()).isValid() &&
                 user.contractEndDate === null &&
                 userObject.contractEndDate === null
             )
@@ -1545,6 +1636,7 @@ async function overrideCIDAssociations(employees = [], email = getDefaultEmail()
         employees = employees.filter(e => !toBeIgnoredCIDs.includes(e.cid));
 
         const employee = employees.find(e => e.email === cidAssociation.email);
+        employee.cid = cidAssociation.cid;
         foundAssociations = true;
         sails.log.info(`Found CID association for user ${employee.email}: ${employee.cid}`);
     }
@@ -1583,4 +1675,18 @@ function getMissingCIDAssociations(employees = []) {
     if (foundDuplicates) {
         sails.log.info('....................................');
     }
+}
+
+/**
+ * Removes the text attribute
+ *
+ * @param {String}        value               value of element.
+ * @param {Object}        parentElement       parent element.
+ */
+function RemoveJsonTextAttribute(value, parentElement){
+    try {
+        const keyNo = Object.keys(parentElement._parent).length;
+        const keyName = Object.keys(parentElement._parent)[keyNo-1];
+        parentElement._parent[keyName] = value;
+    } catch(e) {}
 }

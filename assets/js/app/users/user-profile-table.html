@@ -8,7 +8,7 @@
             <td><strong>Surname:</strong></td>
             <td>{{ vm.user.surname }}</td>
         </tr>
-        <tr>
+        <tr ng-if="vm.user.active">
             <td><strong>E&#8209;mail:</strong></td>
             <td><a href="mailto:{{ vm.user.username }}" title="Contact {{ vm.user.name }}">{{ vm.user.username }}</a>
             </td>

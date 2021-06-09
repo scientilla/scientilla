@@ -2,6 +2,7 @@
 
 "use strict";
 
+const moment = require('moment');
 const axios = require('axios');
 const https = require('https');
 const util = require('util');
@@ -34,9 +35,9 @@ function stringToSlug (str) {
 
 
 async function waitForSuccessfulRequest(options) {
-    const maxAttempts = 5;
+    const maxAttempts = 10;
 
-    options.timeout = options.timeout || 100000;
+    options.timeout = options.timeout || 600000;
 
     if (options.httpsAgent) {
         options.httpsAgent = new https.Agent(Object.assign({},
@@ -57,18 +58,27 @@ async function waitForSuccessfulRequest(options) {
 }
 
 async function tryRequest(options, maxAttempts, attempts = 0) {
+    const waitFor = 60000; // 60000 ms = 1 minute
+
     try {
+        if (attempts != 0) {
+            await new Promise(resolve => setTimeout(resolve, waitFor));
+        }
+
+        sails.log.info(`${moment()} Try to reach ${axios.getUri(options)} for the ${attempts + 1}th time ...`);
+
         return await axios(options);
     } catch (e) {
+        sails.log.info(`${moment()} Failed to reach ${axios.getUri(options)} for the ${attempts + 1}th time ...`);
 
         if (attempts < maxAttempts) {
             return await tryRequest(options, maxAttempts, attempts + 1);
         }
 
         if (e && e.response && e.response.status && e.response.statusText) {
-            sails.log.debug(`${e.response.status}: ${e.response.statusText}`);
+            sails.log.info(`${e.response.status}: ${e.response.statusText}`);
         } else {
-            sails.log.debug(e);
+            sails.log.info(e);
         }
 
         throw `Tried ${attempts} time(s), but failed to reach the API!`;

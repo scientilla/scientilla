@@ -2,6 +2,7 @@
     <div class="users users-detail">
         <h1 class="user-fullname">{{vm.user.getDisplayName()}}</h1>
         <a
+            ng-if="vm.user.active"
             href="mailto:{{vm.user.username}}"
             class="user-email">{{vm.user.username}}</a>
 
