@@ -490,21 +490,29 @@ async function importUsers(email = getDefaultEmail()) {
         sails.log.info('....................................');
 
         // Check if a user is active but we expected not active
-        if (email === getDefaultEmail()) {
-            const notExpectedActiveUsers = await User.find({
-                lastsynch: { '<': startedTime.format() },
-                synchronized: true,
-                active: true
-            });
-            if (notExpectedActiveUsers.length > 0) {
-                sails.log.info(`Found ${notExpectedActiveUsers.length} users that are active but expected not to be active, please check manually:`);
-            }
-            for (const user of notExpectedActiveUsers) {
-                sails.log.info(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`);
-            }
-            if (notExpectedActiveUsers.length > 0) {
-                sails.log.info('....................................');
-            }
+        const notExpectedActiveUsersCondition = {
+            lastsynch: { '<': startedTime.format() },
+            synchronized: true,
+            active: true
+        };
+
+        if (email !== getDefaultEmail()) {
+            notExpectedActiveUsersCondition.username = email;
+        }
+
+        const notExpectedActiveUsers = await User.find(notExpectedActiveUsersCondition);
+        if (notExpectedActiveUsers.length > 0) {
+            sails.log.info(`Found ${notExpectedActiveUsers.length} users that are active but expected not to be active, please check manually:`);
+        }
+        for (const user of notExpectedActiveUsers) {
+            sails.log.info(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`);
+
+            const employee = employees.find(e => e.email === user.username);
+            sails.log.info('Found employee:');
+            sails.log.info(employee);
+        }
+        if (notExpectedActiveUsers.length > 0) {
+            sails.log.info('....................................');
         }
 
         // Check if a user has a contract end date greater than now + 1 year.
