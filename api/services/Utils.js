@@ -65,20 +65,20 @@ async function tryRequest(options, maxAttempts, attempts = 0) {
             await new Promise(resolve => setTimeout(resolve, waitFor));
         }
 
-        sails.log.debug(`${moment()} Try to reach ${axios.getUri(options)} for the ${attempts + 1}th time ...`);
+        sails.log.info(`${moment()} Try to reach ${axios.getUri(options)} for the ${attempts + 1}th time ...`);
 
         return await axios(options);
     } catch (e) {
-        sails.log.debug(`${moment()} Failed to reach ${axios.getUri(options)} for the ${attempts + 1}th time ...`);
+        sails.log.info(`${moment()} Failed to reach ${axios.getUri(options)} for the ${attempts + 1}th time ...`);
 
         if (attempts < maxAttempts) {
             return await tryRequest(options, maxAttempts, attempts + 1);
         }
 
         if (e && e.response && e.response.status && e.response.statusText) {
-            sails.log.debug(`${e.response.status}: ${e.response.statusText}`);
+            sails.log.info(`${e.response.status}: ${e.response.statusText}`);
         } else {
-            sails.log.debug(e);
+            sails.log.info(e);
         }
 
         throw `Tried ${attempts} time(s), but failed to reach the API!`;
