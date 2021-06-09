@@ -526,7 +526,7 @@ async function importProjects() {
     };
 
     const membersSchema = {
-        email: 'email',
+        email: obj => obj.email.toLocaleLowerCase(),
         name: 'firstname',
         surname: 'lastname',
         role: obj => obj.flag_pi ? 'pi' : obj.flag_copi ? 'co_pi' : 'member',
@@ -629,7 +629,7 @@ async function importProjects() {
         for (const project of projects) {
             totalItems++;
 
-            if (project.projectType2 === 'INTERNAL') {
+            if (project.project_type_2 === 'INTERNAL') {
                 internalProjects++;
                 continue;
             }
@@ -659,11 +659,10 @@ async function importProjects() {
                 };
 
                 const code = data.projectData.code;
-                if (!code) {
+                if (!code || pis.length === 0) {
                     errors.push({
-                        success: false,
-                        researchItem: data,
-                        message: 'Missing required field "code"'
+                        project: data.projectData.acronym,
+                        message: 'Missing required field "code" or "PI"'
                     });
                     continue;
                 }
@@ -677,8 +676,8 @@ async function importProjects() {
                 if (!prj) {
                     await ResearchItem.createExternal(config.origin, code, data, authorsData);
                     created++;
-                } else if (JSON.stringify(prj.projectData) !== JSON.stringify(data.projectData)) {
-                    await ResearchItem.updateExternal(prj.id, data);
+                } else if (!_.isEqual(prj.projectData, data.projectData)) {
+                    await ResearchItem.updateExternal(prj.id, data, authorsData);
                     updated++;
                 }
             } catch (e) {
