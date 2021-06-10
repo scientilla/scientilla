@@ -134,7 +134,7 @@ async function importUsers(email = getDefaultEmail()) {
         // Merge the duplicate employees
         employees = mergeDuplicateEmployees(employees);
 
-        sails.log.info('Looping over employees...');
+        sails.log.info(`Looping over ${employees.length} employees...`);
 
         for (const employee of employees) {
 
