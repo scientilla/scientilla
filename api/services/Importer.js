@@ -621,6 +621,7 @@ async function importProjects() {
             projects = await Utils.waitForSuccessfulRequest(reqOptions);
         } catch (e) {
             sails.log.debug(e);
+            throw e;
         }
 
         const errors = [];
