@@ -42,7 +42,8 @@ async function importUsers(email = getDefaultEmail()) {
         const options = getUserImportRequestOptions('employees', {email});
 
         // Get all the employees from Pentaho.
-        let employees = await getEmployees(options);
+        let originalEmployees = await getEmployees(options);
+        let employees = [...originalEmployees];
 
         if (email !== getDefaultEmail()) {
             employees = employees.filter(e => e.email === email);
@@ -507,9 +508,9 @@ async function importUsers(email = getDefaultEmail()) {
         for (const user of notExpectedActiveUsers) {
             sails.log.info(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`);
 
-            const employee = employees.find(e => e.email === user.username);
+            const employee = originalEmployees.find(e => e.email === user.username);
             sails.log.info('Found employee:');
-            sails.log.info(employee);
+            sails.log.info(util.inspect(employee, false, null, true));
         }
         if (notExpectedActiveUsers.length > 0) {
             sails.log.info('....................................');
