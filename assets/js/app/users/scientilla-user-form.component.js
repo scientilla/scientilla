@@ -96,8 +96,6 @@
             deregisteres.push($scope.$watch('vm.user.name', nameChanged));
             deregisteres.push($scope.$watch('vm.user.surname', nameChanged));
 
-            if (!Array.isArray(vm.user.aliases))
-                vm.user.aliases = [];
             originalUserJson = angular.toJson(vm.user);
 
             if (typeof vm.settings === 'undefined' || vm.settings === false) {
@@ -175,7 +173,6 @@
                         vm.errorText = 'Please correct the errors on this form!';
                     } else {
                         Notification.success("User data saved");
-                        aliasesChanged();
                         updateUserData();
                         if (_.isFunction(vm.onSubmit()))
                             vm.onSubmit()(1);
@@ -192,12 +189,6 @@
                 return;
             if (!vm.user.id)
                 vm.user.slug = calculateSlug(vm.user);
-        }
-
-        function aliasesChanged() {
-            const subResearchEntity = context.getSubResearchEntity();
-            if (subResearchEntity.id === vm.user.id && subResearchEntity.getType() === 'user')
-                subResearchEntity.aliases = vm.user.aliases;
         }
 
         function calculateSlug(user) {

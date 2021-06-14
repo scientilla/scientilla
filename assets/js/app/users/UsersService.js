@@ -35,8 +35,7 @@
             'config'
         ];
 
-        const userGetPopulates = ['administratedGroups', 'attributes', 'aliases', 'memberships', 'groupMemberships', 'userData'];
-        const userSavePopulates = ['administratedGroups', 'attributes', 'memberships', 'groupMemberships', 'userData'];
+        const userPopulates = ['administratedGroups', 'attributes', 'aliases', 'memberships', 'groupMemberships', 'userData'];
 
         service.getNewUser = function () {
             var user = {
@@ -67,7 +66,7 @@
             const userCopy = angular.copy(user);
 
             Object.keys(userCopy).forEach(function(key) {
-                if (userSavePopulates.includes(key)) {
+                if (userPopulates.includes(key)) {
                     delete userCopy[key];
                 }
             });
@@ -86,9 +85,6 @@
                 userData.synchronized = user.synchronized;
             }
 
-            if (_.isArray(user.aliases))
-                userData.aliases = user.aliases;
-
             return this.save(userData).then(function (res) {
                 return user;
             }, function (res) {
@@ -96,7 +92,7 @@
             });
         };
 
-        service.getUser = function (userId, populates = userGetPopulates) {
+        service.getUser = function (userId, populates = userPopulates) {
             if (!populates.includes('administratedGroups')) {
                 populates.push('administratedGroups');
             }
@@ -110,7 +106,7 @@
         };
 
         service.getUsers = function (query) {
-            var populate = {populate: userGetPopulates};
+            var populate = {populate: userPopulates};
             var q = _.merge({}, query, populate);
 
             return service.getList(q);
@@ -174,8 +170,7 @@
 
         service.delete = async (user) => {
             return await service.one(user.id).remove();
-        }
-
+        };
         /* jshint ignore:end */
 
         return service;

@@ -45,8 +45,8 @@ module.exports.routes = {
     ['post ' + apiPrfx + '/groups/:researchEntityId/drafts']: 'Group.createDraft',
     ['put ' + apiPrfx + '/users/:researchEntityId/drafts/verify-drafts']: 'User.verifyDrafts',
     ['put ' + apiPrfx + '/groups/:researchEntityId/drafts/verify-drafts']: 'Group.verifyDrafts',
-    ['put ' + apiPrfx + '/users/:researchEntityId']: 'User.updateProfile',
-    ['put ' + apiPrfx + '/groups/:researchEntityId']: 'Group.updateProfile',
+    ['put ' + apiPrfx + '/users/:researchEntityId']: 'User.updateSettings',
+    ['put ' + apiPrfx + '/groups/:researchEntityId']: 'Group.updateSettings',
     ['delete ' + apiPrfx + '/users/:researchEntityId/drafts/:draftId']: 'User.deleteDraft',
     ['delete ' + apiPrfx + '/groups/:researchEntityId/drafts/:draftId']: 'Group.deleteDraft',
     ['put ' + apiPrfx + '/users/:researchEntityId/drafts/delete']: 'User.deleteDrafts',
@@ -95,6 +95,7 @@ module.exports.routes = {
     ['get ' + apiPrfx + '/researchentities/:researchEntityId/min-max-years/:type']: 'ResearchEntity.minMaxYears',
     ['get ' + apiPrfx + '/people/unique-role-categories']: 'Person.getUniqueRoleCategories',
     ['get ' + apiPrfx + '/people/unique-nationalities']: 'Person.getUniqueNationalities',
+    ['put ' + apiPrfx + '/users/:userId/aliases']: 'User.saveAliases',
 
     //Research item API
     ['put ' + apiPrfx + '/researchentities/:researchEntityId/researchitemdrafts/delete']: 'ResearchEntity.deleteDrafts',
