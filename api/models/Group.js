@@ -313,7 +313,7 @@ module.exports = _.merge({}, SubResearchEntity, {
     getAuthorshipModel: function () {
         return AuthorshipGroup;
     },
-    updateProfile: async function (groupId, groupData) {
+    updateSettings: async function (groupId, groupData) {
         delete groupData.memberships;
         delete groupData.members;
         const oldResearchEntity = await Group.findOne({id: groupId});

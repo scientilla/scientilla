@@ -158,6 +158,7 @@ module.exports.policies = {
         getMBOOverallPerformance: true,
         getMBOInstitutePerformance: true,
         getMBOInvitedTalks: true,
+        aliases: isActivityOwner
     }, defaultPolicy),
 
     UserDataController: _.defaults({
