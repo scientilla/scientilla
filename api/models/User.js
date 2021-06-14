@@ -358,10 +358,17 @@ module.exports = _.merge({}, SubResearchEntity, {
         }));
 
         const newAliases = [];
+        let firstAlias = true;
         for (const alias of aliases) {
             const foundAlias = await Alias.findOne(alias);
             if (!foundAlias) {
+                if (firstAlias) {
+                    alias.main = true;
+                } else {
+                    alias.main = false;
+                }
                 newAliases.push(alias);
+                firstAlias = false;
             }
         }
 
