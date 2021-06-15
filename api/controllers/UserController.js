@@ -50,5 +50,10 @@ module.exports = require('waterlock').actions.user(_.merge({}, SubResearchEntity
         const username = req.query.email;
         const year = req.query.year;
         res.halt(User.getMBOInvitedTalks(username, year));
+    },
+    saveAliases: function (req, res) {
+        const userId = req.params.userId;
+        const aliases = req.body;
+        res.halt(Alias.createOrUpdateAll(userId, aliases));
     }
 }));

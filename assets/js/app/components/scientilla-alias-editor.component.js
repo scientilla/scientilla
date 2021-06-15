@@ -23,6 +23,7 @@
         vm.newAliasIsCorrect = true;
         vm.newAliasIsDuplicate = false;
         vm.originalAliases = angular.copy(vm.aliases);
+        vm.toggleMainAlias = toggleMainAlias;
 
         vm.$onInit = function () {
             vm.newAlias = '';
@@ -82,6 +83,16 @@
             for (const c of wordSeparators)
                 retStr = retStr.split(c).map(capitalize).join(c);
             return retStr;
+        }
+
+        function toggleMainAlias(alias, $event = false) {
+            vm.aliases.forEach(a => a.main = false);
+            const mainAlias = vm.aliases.find(a => a.str === alias.str);
+            mainAlias.main = true;
+
+            if ($event) {
+                $event.preventDefault();
+            }
         }
     }
 

@@ -17,7 +17,14 @@ const valuePublicPrivacy = 'public';
 
 const convert = require('xml-js');
 
+const path = require('path');
 const util = require('util');
+const fs = require('fs');
+const writeFile = util.promisify(fs.writeFile);
+const readdir = util.promisify(fs.readdir);
+const unlink = util.promisify(fs.unlink);
+
+const logDirectory = path.join('logs', 'userImport');
 
 async function importUsers(email = getDefaultEmail()) {
 
@@ -42,7 +49,8 @@ async function importUsers(email = getDefaultEmail()) {
         const options = getUserImportRequestOptions('employees', {email});
 
         // Get all the employees from Pentaho.
-        let employees = await getEmployees(options);
+        let originalEmployees = await getEmployees(options);
+        let employees = _.cloneDeep(originalEmployees);
 
         if (email !== getDefaultEmail()) {
             employees = employees.filter(e => e.email === email);
@@ -134,7 +142,7 @@ async function importUsers(email = getDefaultEmail()) {
         // Merge the duplicate employees
         employees = mergeDuplicateEmployees(employees);
 
-        sails.log.info('Looping over employees...');
+        sails.log.info(`Looping over ${employees.length} employees...`);
 
         for (const employee of employees) {
 
@@ -507,7 +515,7 @@ async function importUsers(email = getDefaultEmail()) {
         for (const user of notExpectedActiveUsers) {
             sails.log.info(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`);
 
-            const employee = employees.find(e => e.email === user.username);
+            const employee = originalEmployees.find(e => e.email === user.username);
             sails.log.info('Found employee:');
             sails.log.info(employee);
         }
@@ -856,6 +864,26 @@ function isFormerGuestStudent(employee) {
         // Replace empty objects with empty string
         replaceEmptyObjectByEmptyString(response);
 
+        if (_.has(sails, 'config.scientilla.userImport.debug') && sails.config.scientilla.userImport.debug) {
+
+            const files = await readdir(logDirectory);
+            for (const file of files) {
+                if (file.endsWith('.log')) {
+                    await unlink(path.join(logDirectory, file));
+                }
+            }
+
+            const userLog = {
+                request: {
+                    url: options.url,
+                    headers: options.headers,
+                    params: options.params
+                },
+                response: response
+            };
+            await writeFile(path.join(logDirectory, 'employees.log'), JSON.stringify(userLog, null, 4));
+        }
+
         if (_.isArray(response)) {
             return response;
         } else {
@@ -959,11 +987,25 @@ async function getContractualHistoryOfCidCodes(codes) {
     // the Pentaho API endpoint cannot handle a large group of CID codes.
     try {
         const groups = _.chunk(codes, chunkLength);
+        let count = 1;
         for (const group of groups) {
             const options = getUserImportRequestOptions('history', {cid: group.join(',')});
             let response = await Utils.waitForSuccessfulRequest(options);
             response = convert.xml2js(response, {compact: true, spaces: 4, textFn: RemoveJsonTextAttribute});
             handleResponse(response);
+
+            if (_.has(sails, 'config.scientilla.userImport.debug') && sails.config.scientilla.userImport.debug) {
+                const historyLog = {
+                    request: {
+                        url: options.url,
+                        headers: options.headers,
+                        params: options.params
+                    },
+                    response: response
+                };
+                await writeFile(path.join(logDirectory, `history-${count}.log`), JSON.stringify(historyLog, null, 4));
+            }
+            count++;
         }
     } catch (e) {
         sails.log.debug('importUserHistoryContracts:getContractualHistoryOfCIDCodes');

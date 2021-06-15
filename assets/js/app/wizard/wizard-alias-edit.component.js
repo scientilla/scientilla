@@ -15,11 +15,11 @@
     wizardAliasEdit.$inject = [
         'Notification',
         '$timeout',
-        'UsersService',
-        'context'
+        'context',
+        'Restangular'
     ];
 
-    function wizardAliasEdit(Notification, $timeout, UsersService, context) {
+    function wizardAliasEdit(Notification, $timeout, context, Restangular) {
         const vm = this;
 
         vm.save = save;
@@ -28,29 +28,32 @@
         vm.$onDestroy = function () {
         };
 
-        function save() {
+        /* jshint ignore:start */
+        async function save() {
             vm.saveStatus.setState('saving');
-            UsersService
-                .doSave(vm.user)
-                .then(() => {
-                    vm.saveStatus.setState('saved');
-                    Notification.success(vm.saveStatus.message);
-                    vm.originalUser = angular.copy(vm.user);
-                    aliasesChanged();
-
-                    $timeout(function() {
-                        vm.saveStatus.setState('ready to save');
-                    }, 1000);
-                })
-                .catch(() => {
-                    vm.saveStatus.setState('failed');
-                    Notification.warning(vm.saveStatus.message);
-
-                    $timeout(function() {
-                        vm.saveStatus.setState('ready to save');
-                    }, 1000);
+            try {
+                const newAliases = vm.user.aliases.map(a => {
+                    return {str: a.str, main: a.main};
                 });
+                await Restangular.one('users', vm.user.id).customPUT(newAliases, 'aliases');
+                vm.saveStatus.setState('saved');
+                Notification.success(vm.saveStatus.message);
+                vm.originalUser = angular.copy(vm.user);
+                aliasesChanged();
+
+                $timeout(function() {
+                    vm.saveStatus.setState('ready to save');
+                }, 1000);
+            } catch(e) {
+                vm.saveStatus.setState('failed');
+                Notification.warning(vm.saveStatus.message);
+
+                $timeout(function() {
+                    vm.saveStatus.setState('ready to save');
+                }, 1000);
+            }
         }
+        /* jshint ignore:end */
 
         function saveStatus() {
             return {
