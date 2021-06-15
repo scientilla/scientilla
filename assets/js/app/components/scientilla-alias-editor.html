@@ -1,5 +1,5 @@
-<div>
-    <ul class="alias-listing">
+<div class="alias-editor">
+    <ul class="alias-form-listing">
         <li>
             <div
                 class="form-group"
@@ -40,16 +40,50 @@
     <div
         ng-if="vm.aliases.length > 0"
         class="form-group">
-        <ul class="multiselect-list">
-            <li class="list-group-item" ng-repeat="alias in vm.aliases">
-                {{ alias.str }}
-                <a
-                    href=""
-                    ng-click="vm.removeAlias(alias)"
-                    class="badge badge-primary">
-                    <i class="fas fa-times"></i>
-                </a>
+        <ul class="alias-edit-list">
+            <li ng-repeat="alias in vm.aliases">
+                <ul class="alias-edit-list-item">
+                    <li>
+                        <div class="form-control disabled">
+                            {{ alias.str }}
+                        </div>
+                    </li>
+                    <li>
+                        <a
+                            href="#"
+                            ng-click="vm.toggleMainAlias(alias, $event)"
+                            class="btn btn-outline-secondary"
+                            title="Mark as Main Alias"
+                        >
+                            <i class="fa-bookmark" ng-class="alias.main ? 'fas' : 'far'"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <button
+                            href="#"
+                            ng-click="vm.removeAlias(alias)"
+                            ng-disabled="alias.main"
+                            class="btn btn-outline-secondary"
+                            ng-title="alias.main ? 'You cannot remove your main alias!' : 'Remove alias'"
+                        >
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </li>
+                </ul>
             </li>
         </ul>
     </div>
+
+    <ul class="alias-legend">
+        <li>
+            <p>You must always have one alias set as Main Alias. The current Main Alias cannot be deleted.<br />
+            Therefore, before deleting the current Main Alias, you should select another alias as Main Alias.</p>
+        </li>
+        <li>
+            <i class="fas fa-bookmark"></i>: Mark as Main Alias.
+        </li>
+        <li>
+            <i class="fas fa-times"></i>: Remove alias.
+        </li>
+    </ul>
 </div>

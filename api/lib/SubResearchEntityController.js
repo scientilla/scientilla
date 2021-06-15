@@ -90,11 +90,11 @@ module.exports = {
         const authorshipsData = req.body;
         res.halt(Document.setAuthorships(draftId, authorshipsData));
     },
-    updateProfile: function (req, res) {
+    updateSettings: function (req, res) {
         const researchEntityId = req.params.researchEntityId;
         const Model = getModel(req);
         const researchEntityData = req.body;
-        res.halt(Model.updateProfile(researchEntityId, researchEntityData));
+        res.halt(Model.updateSettings(researchEntityId, researchEntityData));
     },
     deleteDraft: function (req, res) {
         const Model = getModel(req);

@@ -1,0 +1,52 @@
+.alias-editor{
+    .alias-form-listing{
+        @include normalize-listing;
+        display: grid;
+        margin: 0px -.5rem;
+        grid-template-columns: 1fr auto;
+        grid-template-rows: auto;
+
+        & > li{
+            padding:  0px .5rem;
+        }
+
+        .form-group{
+            margin-bottom: 1rem;
+        }
+    }
+
+    .alias-edit-list{
+        @include normalize-listing;
+
+        & > li{
+            margin-bottom: 1rem;
+        }
+
+        .alias-edit-list-item{
+            @include normalize-listing;
+            display: grid;
+            margin: 0px -.5rem;
+            grid-template-columns: 1fr auto auto;
+            grid-template-rows: auto;
+
+            & > li{
+                padding:  0px .5rem;
+            }
+        }
+    }
+
+    .alias-legend{
+        @include normalize-listing;
+        margin-top: -1rem;
+        margin-bottom: 2rem;
+        font-style: italic;
+        font-size: 1rem;
+        color: $gray-600;
+
+        & > li{
+            &:first-child {
+                margin-bottom: 1rem;
+            }
+        }
+    }
+}
