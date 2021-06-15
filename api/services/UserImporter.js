@@ -511,7 +511,6 @@ async function importUsers(email = getDefaultEmail()) {
             const employee = originalEmployees.find(e => e.email === user.username);
             sails.log.info('Found employee:');
             sails.log.info(employee);
-            sails.log.info(util.inspect(employee.contract, false, null, true));
         }
         if (notExpectedActiveUsers.length > 0) {
             sails.log.info('....................................');
