@@ -984,11 +984,7 @@ async function getContractualHistoryOfCidCodes(codes) {
     try {
         const groups = _.chunk(codes, chunkLength);
         let count = 1;
-        const waitFor = 60000; // 60000 ms = 1 minute
         for (const group of groups) {
-            if (count > 1) {
-                await new Promise(resolve => setTimeout(resolve, waitFor));
-            }
             const options = getUserImportRequestOptions('history', {cid: group.join(',')});
             const xml = await Utils.waitForSuccessfulRequest(options);
             const response = convert.xml2js(xml, {compact: true, spaces: 4, textFn: RemoveJsonTextAttribute});
