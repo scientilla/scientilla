@@ -857,7 +857,13 @@ function isFormerGuestStudent(employee) {
         response = response.scheda_persona.scheda;
 
         // Replace empty objects with empty string
-        replaceEmptyObjectByEmptyString(response);
+        if (_.isArray(response)) {
+            for (const employee of response) {
+                replaceEmptyObjectByEmptyString(employee);
+            }
+        } else {
+            replaceEmptyObjectByEmptyString(response);
+        }
 
         if (_.has(sails, 'config.scientilla.userImport.debug') && sails.config.scientilla.userImport.debug) {
 
