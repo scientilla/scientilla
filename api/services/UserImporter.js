@@ -239,8 +239,7 @@ async function importUsers(email = getDefaultEmail()) {
             for (let group of groupsOfContract) {
                 const condition = {
                     user: user.id,
-                    group: group.id,
-                    synchronized: true
+                    group: group.id
                 };
                 let membership = await Membership.findOne(condition);
 
@@ -514,10 +513,6 @@ async function importUsers(email = getDefaultEmail()) {
         }
         for (const user of notExpectedActiveUsers) {
             sails.log.info(`Email: ${user.username}, name: ${user.name}, surname: ${user.surname}`);
-
-            const employee = originalEmployees.find(e => e.email === user.username);
-            sails.log.info('Found employee:');
-            sails.log.info(employee);
         }
         if (notExpectedActiveUsers.length > 0) {
             sails.log.info('....................................');
@@ -851,9 +846,9 @@ function isFormerGuestStudent(employee) {
  */
  async function getEmployees(options) {
     try {
-        let response = await Utils.waitForSuccessfulRequest(options);
+        let xml = await Utils.waitForSuccessfulRequest(options);
 
-        response = convert.xml2js(response, {compact: true, spaces: 4, textFn: RemoveJsonTextAttribute});
+        let response = convert.xml2js(xml, {compact: true, spaces: 4, textFn: RemoveJsonTextAttribute});
 
         if (!_.has(response, 'scheda_persona.scheda') || _.isEmpty(response.scheda_persona.scheda)) {
             return false;
@@ -879,6 +874,7 @@ function isFormerGuestStudent(employee) {
                     headers: options.headers,
                     params: options.params
                 },
+                xml: xml,
                 response: response
             };
             await writeFile(path.join(logDirectory, 'employees.log'), JSON.stringify(userLog, null, 4));
@@ -988,10 +984,14 @@ async function getContractualHistoryOfCidCodes(codes) {
     try {
         const groups = _.chunk(codes, chunkLength);
         let count = 1;
+        const waitFor = 60000; // 60000 ms = 1 minute
         for (const group of groups) {
+            if (count > 1) {
+                await new Promise(resolve => setTimeout(resolve, waitFor));
+            }
             const options = getUserImportRequestOptions('history', {cid: group.join(',')});
-            let response = await Utils.waitForSuccessfulRequest(options);
-            response = convert.xml2js(response, {compact: true, spaces: 4, textFn: RemoveJsonTextAttribute});
+            const xml = await Utils.waitForSuccessfulRequest(options);
+            const response = convert.xml2js(xml, {compact: true, spaces: 4, textFn: RemoveJsonTextAttribute});
             handleResponse(response);
 
             if (_.has(sails, 'config.scientilla.userImport.debug') && sails.config.scientilla.userImport.debug) {
@@ -1001,6 +1001,7 @@ async function getContractualHistoryOfCidCodes(codes) {
                         headers: options.headers,
                         params: options.params
                     },
+                    xml: xml,
                     response: response
                 };
                 await writeFile(path.join(logDirectory, `history-${count}.log`), JSON.stringify(historyLog, null, 4));
