@@ -134,7 +134,7 @@ module.exports.routes = {
     ['get ' + userUsernamePath + '/competitive-projects']: 'User.getCompetitiveProjects',
     ['get ' + userUsernamePath + '/industrial-projects']: 'User.getIndustrialProjects',
     ['get ' + userUsernamePath + '/patent-families']: 'User.getPatentFamilies',
-    ['get ' + userUsernamePath + '/patents']: 'Group.getPatents',
+    ['get ' + userUsernamePath + '/patents']: 'User.getPatents',
     ['get ' + userUsernamePath + '/profile']: 'User.getPublicProfile',
     ['get ' + userUsernamePath + '/profile-image']: 'userData.getProfileImage',
 
